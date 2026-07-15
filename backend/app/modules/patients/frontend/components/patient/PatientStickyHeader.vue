@@ -100,7 +100,7 @@ const actionItems = computed(() => [
 <template>
   <header
     class="patient-sticky-header sticky top-0 z-30 -mx-4 sm:mx-0 bg-surface/90 backdrop-blur border-b border-default px-4 sm:px-3 py-2.5"
-    aria-label="Cabecera del paciente"
+    :aria-label="t('patients.header.ariaLabel')"
   >
     <div class="flex items-center gap-3 sm:gap-4">
       <UButton

@@ -1,0 +1,27 @@
+Bonjour {{ admin_name }},
+
+L'AEAT a REJETÉ l'enregistrement Verifactu de la facture {{ invoice_number }} de la clinique "{{ clinic_name }}".
+Tant que vous ne résolvez pas ce problème, vous ne pourrez pas émettre de nouvelles factures (la chaîne d'empreintes serait compromise).
+
+Facture : {{ invoice_number }}
+Code AEAT : {{ codigo_error or '—' }}
+Motif : {{ friendly_message }}
+
+Étapes :
+{% if suggested_cta == 'edit_clinic' -%}
+1. Accédez à Paramètres → Clinique et vérifiez le CIF/NIF.
+2. Retournez dans Paramètres → Verifactu → File d'attente et cliquez sur « Régénérer et renvoyer ».
+{% elif suggested_cta == 'edit_billing_party' -%}
+1. Ouvrez la facture {{ invoice_number }} et cliquez sur « Modifier les données du client » dans la bannière.
+2. Après enregistrement, l'enregistrement est renvoyé automatiquement.
+{% elif suggested_cta == 'edit_lines' -%}
+1. Vérifiez le mapping de la TVA et les montants de la facture.
+2. Créez une facture d'avoir si la facture était déjà payée.
+{% else -%}
+1. Accédez à Paramètres → Verifactu → File d'attente pour voir les détails.
+2. Si la cause n'est pas claire, contactez le support en joignant le code d'erreur.
+{% endif %}
+
+{% if queue_url -%}
+File Verifactu : {{ queue_url }}
+{%- endif %}

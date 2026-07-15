@@ -26,7 +26,8 @@
     "menu": "Menú",
     "openMenu": "Abrir menú",
     "close": "Cerrar",
-    "toggleSidebar": "Alternar barra lateral"
+    "toggleSidebar": "Alternar barra lateral",
+    "defaultClinicName": "Clínica"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -82,7 +83,8 @@
     "save": "Guardar",
     "create": "Crear",
     "delete": "Eliminar",
-    "close": "Cerrar"
+    "close": "Cerrar",
+    "remove": "Eliminar"
   },
   "patients": {
     "title": "Pacientes",
@@ -325,6 +327,7 @@
     "editMedicalHistory": "Editar historial médico",
     "medicalSnapshot": {
       "title": "Información médica",
+      "allergiesLabel": "Alergias",
       "allergiesEmpty": "Sin alergias conocidas",
       "allergiesNotReviewed": "Historial médico no registrado",
       "completeHistory": "Completar historial",
@@ -358,6 +361,12 @@
     },
     "administrative": {
       "title": "Administración"
+    },
+    "header": {
+      "ariaLabel": "Cabecera del paciente"
+    },
+    "quickActions": {
+      "ariaLabel": "Acciones rápidas del paciente"
     }
   },
   "patientDetail": {
@@ -373,7 +382,8 @@
       "budgets": "Presupuestos",
       "billing": "Facturación",
       "payments": "Pagos",
-      "documents": "Documentos"
+      "documents": "Documentos",
+      "gallery": "Galería"
     },
     "historyPlaceholder": "Notas clínicas disponibles en futura versión",
     "noAppointments": "Este paciente no tiene citas",
@@ -1181,7 +1191,9 @@
         "scheduled": "Operación programada. Aplica los cambios para completarla.",
         "applied": "Cambios aplicados correctamente."
       }
-    }
+    },
+    "navLabel": "Categorías de ajustes",
+    "attentionRequired": "Atención requerida"
   },
   "selector": {
     "recentPatients": "Pacientes recientes",
@@ -1218,6 +1230,7 @@
     "save": "Guardar",
     "add": "Añadir",
     "cancel": "Cancelar",
+    "clear": "Limpiar",
     "close": "Cerrar",
     "delete": "Eliminar",
     "comingSoon": "Próximamente",
@@ -1239,12 +1252,15 @@
     "viewDetails": "Ver detalle",
     "previous": "Anterior",
     "next": "Siguiente",
+    "previousYear": "Año anterior",
+    "nextYear": "Año siguiente",
     "undo": "Deshacer",
     "undone": "Deshecho",
     "added": "Añadido",
     "removed": "Eliminado",
     "page": "Página {current} de {total}",
     "noData": "Sin datos",
+    "noValue": "sin valor",
     "noResults": "Sin resultados",
     "search": "Buscar...",
     "selectAll": "Todos",
@@ -1268,6 +1284,9 @@
     "readOnly": "Solo lectura",
     "createdBy": "Creado por",
     "date": "Fecha",
+    "upload": "Subir foto",
+    "uploading": "Subiendo…",
+    "maxFileSize": "hasta 10 MB",
     "days": {
       "sunday": "Domingo",
       "monday": "Lunes",
@@ -1283,7 +1302,8 @@
     "yesterday": "Ayer",
     "copied": "Copiado al portapapeles",
     "copy": "Copiar",
-    "copyFailed": "No se pudo copiar"
+    "copyFailed": "No se pudo copiar",
+    "durationMinutes": "{value} min"
   },
   "cabinet": {
     "toast": {
@@ -2846,7 +2866,104 @@
     "deleteSuccess": "Documento eliminado",
     "deleteError": "Error al eliminar documento",
     "updateSuccess": "Documento actualizado",
-    "updateError": "Error al actualizar documento"
+    "updateError": "Error al actualizar documento",
+    "viewer": {
+      "loading": "Cargando documento...",
+      "error": "No se pudo cargar el documento",
+      "downloadInstead": "Descargar en su lugar",
+      "unsupported": "Vista previa no disponible para este tipo de archivo",
+      "zoomOut": "Alejar",
+      "zoomIn": "Acercar",
+      "resetZoom": "Restablecer a 100%",
+      "zoomHint": "Ctrl + rueda del ratón para zoom"
+    },
+    "typeDesc": {
+      "consent": "Documento firmado",
+      "id_scan": "DNI / pasaporte",
+      "insurance": "Póliza o tarjeta",
+      "report": "Reporte clínico",
+      "referral": "Carta de remisión",
+      "other": "Sin clasificar"
+    },
+    "errors": {
+      "mime": "Tipo no permitido. Solo PDF, JPG o PNG.",
+      "size": "El archivo supera 10 MB."
+    },
+    "pdfPreviewHint": "Vista previa tras subir",
+    "uploadHelp": "Clasifica el archivo para que aparezca en su categoría."
+  },
+  "photoGallery": {
+    "title": "Galería del paciente",
+    "add": "Añadir foto",
+    "empty": "No hay fotos todavía",
+    "uploadFirst": "Sube la primera",
+    "showingOf": "Mostrando {count} de {total}",
+    "upload": "Subir foto",
+    "uploadHelp": "Clasifica para que aparezca en la categoría correcta",
+    "dropHere": "Arrastra una foto o haz clic",
+    "category": "Tipo",
+    "subtype": "Vista",
+    "titlePlaceholder": "Frontal intraoral — 02/05",
+    "capturedAt": "Fecha",
+    "exifHint": "Auto desde EXIF",
+    "cat": {
+      "all": "Todas",
+      "intraoral": "Intraoral",
+      "extraoral": "Extraoral",
+      "xray": "Radiografía",
+      "clinical": "Antes/Después",
+      "other": "Otra"
+    },
+    "catDesc": {
+      "intraoral": "Dentro de la boca",
+      "extraoral": "Cara y perfil",
+      "xray": "Imagen radiológica",
+      "clinical": "Comparativa de tratamiento",
+      "other": "Sin clasificar"
+    },
+    "sub": {
+      "frontal": "Frontal",
+      "lateral_left": "Lateral izda",
+      "lateral_right": "Lateral dcha",
+      "occlusal_upper": "Oclusal sup",
+      "occlusal_lower": "Oclusal inf",
+      "palatal": "Palatal",
+      "lingual": "Lingual",
+      "smile": "Sonrisa",
+      "rest": "Reposo",
+      "frontal_face": "Frontal",
+      "profile_left": "Perfil izdo",
+      "profile_right": "Perfil dcho",
+      "three_quarter_left": "3/4 izdo",
+      "three_quarter_right": "3/4 dcho",
+      "panoramic": "Panorámica",
+      "periapical": "Periapical",
+      "bitewing": "Aleta",
+      "ceph_lat": "Cefalo lateral",
+      "ceph_pa": "Cefalo PA",
+      "cbct": "CBCT",
+      "occlusal_xray": "Oclusal Rx",
+      "before": "Antes",
+      "after": "Después",
+      "progress": "Progreso",
+      "reference": "Referencia",
+      "portrait": "Retrato",
+      "document_scan": "Documento",
+      "model_photo": "Modelo"
+    },
+    "compare": {
+      "before": "Antes",
+      "after": "Después"
+    },
+    "pair": {
+      "pickHint": "Elige la foto a emparejar:",
+      "noCandidates": "Sin fotos disponibles. Sube otra primero.",
+      "paired": "Emparejada",
+      "exitCompare": "Salir de la comparativa",
+      "compare": "Comparar",
+      "unpair": "Quitar",
+      "pair": "Emparejar antes/después"
+    }
   },
   "help": {
     "label": "Ayuda",
@@ -2854,5 +2971,13 @@
     "drawerTitle": "Ayuda de esta página",
     "unavailable": "Aún no hay ayuda contextual para esta página.",
     "openFullManual": "Abrir manual completo"
+  },
+  "charts": {
+    "trend": {
+      "ariaLabel": "Tendencia en {count} puntos"
+    },
+    "donut": {
+      "ariaLabel": "Gráfico circular, {count} segmentos"
+    }
   }
 }

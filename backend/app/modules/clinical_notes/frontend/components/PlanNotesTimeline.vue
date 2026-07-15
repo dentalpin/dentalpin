@@ -259,7 +259,7 @@ function resolveTreatmentName(item: PlannedTreatmentItem): string | null {
 
 function formatDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleString()
+    return new Date(iso).toLocaleString(locale.value)
   } catch {
     return iso
   }

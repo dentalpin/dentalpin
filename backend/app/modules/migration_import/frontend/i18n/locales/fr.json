@@ -1,0 +1,90 @@
+{
+  "migrationImport": {
+    "settingsCard": {
+      "title": "Migration de données (dental-bridge)",
+      "description": "Importez un fichier DPMF produit par dental-bridge (patients, rendez-vous, budgets, paiements, documents)."
+    },
+    "page": {
+      "title": "Migration de données",
+      "subtitle": "Importez les données extraites par dental-bridge dans cette clinique."
+    },
+    "upload": {
+      "dropFile": "Déposez le fichier .dpm ici, ou cliquez pour en choisir un",
+      "passphrase": "Phrase secrète (fichiers chiffrés uniquement)",
+      "passphraseHelp": "Uniquement requis pour .dpm.enc / .dpm.zst.enc",
+      "submit": "Télécharger et valider",
+      "uploading": "Téléchargement…",
+      "error": "Échec du téléchargement"
+    },
+    "validate": {
+      "running": "Vérification du fichier…",
+      "ok": "Le fichier est valide",
+      "failed": "La validation a échoué"
+    },
+    "preview": {
+      "title": "Aperçu",
+      "entities": "Entités",
+      "samples": "Échantillons",
+      "warnings": "Avertissements",
+      "files": "Fichiers joints",
+      "filesTotal": "Total",
+      "filesWithSha": "Avec sha256",
+      "filesWithoutSha": "Sans sha256",
+      "verifactuCheckbox": "Importer les données légales Verifactu",
+      "verifactuHelp": "Préserve les hachages légaux (Verifactu) sur les factures. Uniquement disponible lorsque le module Verifactu est installé et que le fichier contient ces données.",
+      "confirm": "Confirmer et importer",
+      "warning": "Cette action est irréversible. Vérifiez les données avant de confirmer."
+    },
+    "filters": {
+      "title": "Filtrage des professionnels",
+      "description": "Le personnel filtré est importé comme inactif (conservé pour les références historiques mais masqué de l'agenda). Vous pouvez les réactiver plus tard dans Paramètres → Utilisateurs.",
+      "totalLabel": "Total",
+      "deactivatedLabel": "Inactif dans la source",
+      "orphansLabel": "Colonnes agenda uniquement",
+      "stale24mLabel": "Aucune activité depuis 24 mois",
+      "minActivityLabel": "Activité minimale (mois)",
+      "minActivityHelp": "Désactiver doucement les professionnels sans trace clinique plus récente que ce nombre de mois. Réglez sur 0 pour désactiver.",
+      "excludeOrphans": "Exclure les colonnes agenda uniquement sans enregistrement de collaborateur réel",
+      "excludeInactive": "Exclure les professionnels marqués comme inactifs dans la source",
+      "excludeNonClinical": "Importer uniquement les dentistes et hygiénistes (ignorer les auxiliaires et le personnel administratif)"
+    },
+    "execute": {
+      "running": "Importation…",
+      "progress": "{processed} sur {total} entités",
+      "ok": "Importation terminée",
+      "failed": "Échec de l'importation"
+    },
+    "proposals": {
+      "title": "Vérifier les associations de catalogue",
+      "subtitle": "Associez chaque traitement Gesdén au catalogue DentalPin avant l'importation.",
+      "build": "Calculer les propositions",
+      "building": "Calcul en cours…",
+      "summary": "{total} propositions : {link} liées, {fuzzy} approximatives, {create} à créer",
+      "bulkAccept": "Accepter toutes les correspondances avec une confiance ≥ 0.9",
+      "accepted": "{n} propositions acceptées.",
+      "columnSource": "Traitement Gesdén",
+      "columnProposed": "Proposition",
+      "columnAction": "Action",
+      "columnStatus": "Statut",
+      "actionLink": "Lier au catalogue",
+      "actionFuzzy": "Correspondance approximative",
+      "actionCreate": "Créer nouveau",
+      "operatorPending": "En attente",
+      "operatorAccepted": "Accepté",
+      "operatorRelinked": "Relié",
+      "operatorCreated": "Créer nouveau",
+      "operatorIgnored": "Ignoré",
+      "acceptRow": "Accepter",
+      "ignoreRow": "Ignorer"
+    },
+    "status": {
+      "uploaded": "Téléversé",
+      "validating": "Validation en cours",
+      "validated": "Validé",
+      "previewing": "Aperçu",
+      "executing": "Importation en cours",
+      "completed": "Terminé",
+      "failed": "Échoué"
+    }
+  }
+}

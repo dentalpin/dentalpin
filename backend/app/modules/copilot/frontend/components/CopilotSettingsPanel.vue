@@ -28,6 +28,13 @@ interface CopilotMetrics {
 }
 
 const { t } = useI18n()
+
+function toolDisplayName(name: string): string {
+  const i18nKey = name.replace(/\./g, '_')
+  const key = `copilot.settings.metrics.toolNames.${i18nKey}`
+  const translated = t(key)
+  return translated !== key ? translated : name
+}
 const toast = useToast()
 const api = useApi()
 const { users, fetchUsers } = useUsers()
@@ -234,7 +241,7 @@ async function save() {
                 :key="tool.tool_name"
                 class="flex justify-between"
               >
-                <span class="font-mono text-xs">{{ tool.tool_name }}</span>
+                <span class="font-mono text-xs">{{ toolDisplayName(tool.tool_name) }}</span>
                 <span class="text-muted">
                   {{ tool.calls }}
                   <template v-if="tool.errors">

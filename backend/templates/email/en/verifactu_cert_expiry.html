@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Verifactu certificate expiry - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>Verifactu certificate</h2>
+
+<p>Hello {{ admin_name }},</p>
+
+{% if is_expired %}
+<div class="alert alert-error">
+    <strong>Your Verifactu certificate has expired.</strong> You must renew it as soon as possible to continue issuing invoices compliant with Spanish tax regulations.
+</div>
+{% else %}
+<div class="alert alert-warning">
+    <strong>Your Verifactu certificate will expire in {{ days_left }} days.</strong> Please renew it before the expiry date to avoid interruptions.
+</div>
+{% endif %}
+
+<div class="info-box">
+    {% if subject_cn %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Certificate subject</div>
+            <div class="value">{{ subject_cn }}</div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Expiry date</div>
+            <div class="value">{{ valid_until }}</div>
+        </div>
+    </div>
+</div>
+
+<p>You can manage your certificate in the Verifactu settings of your clinic.</p>
+{% endblock %}

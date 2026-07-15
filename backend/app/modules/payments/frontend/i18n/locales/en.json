@@ -200,6 +200,7 @@
         "emptyCta": "Record first payment",
         "loadError": "Could not load patient ledger.",
         "retry": "Retry",
+        "drPrefix": "Dr. {name}",
         "types": {
           "payment": "Payment",
           "refund": "Refund",

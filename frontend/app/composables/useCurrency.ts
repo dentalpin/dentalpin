@@ -21,8 +21,19 @@ export function useCurrency() {
     }).format(value)
   }
 
+  function symbol(): string {
+    const currency = currentClinic.value?.currency ?? 'EUR'
+    const parts = new Intl.NumberFormat(currentLocale.value, {
+      style: 'currency',
+      currency,
+      currencyDisplay: 'narrowSymbol'
+    }).formatToParts(0)
+    return parts.find(p => p.type === 'currency')?.value ?? currency
+  }
+
   return {
     format,
+    symbol,
     currency: computed(() => currentClinic.value?.currency ?? 'EUR')
   }
 }

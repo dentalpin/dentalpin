@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add French locale (`fr.json`) with full UI coverage.
+
 - fix(security): lock the payment row `FOR UPDATE` before the refund
   cap check (audit S3/C1, #97). Two concurrent refunds could both read
   `already_refunded` before either inserted, letting Σrefund exceed

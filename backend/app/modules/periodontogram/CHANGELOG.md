@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add French locale (`fr.json`) with full UI coverage.
+
 - fix(frontend): call `api.del` instead of the non-existent `api.delete`
   when discarding a draft (audit frontend #1, #95). `useApi` exposes
   `del`, so `discardDraft` threw a TypeError before any request fired —

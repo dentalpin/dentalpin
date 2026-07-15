@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Devis - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Bonjour {{ patient_name }},</h2>
+
+<p>Nous vous envoyons le devis détaillé pour votre traitement dentaire.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">N° Devis</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Date</div>
+            <div class="value">{{ budget_date }}</div>
+        </div>
+    </div>
+</div>
+
+{% if treatments %}
+<table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+    <thead>
+        <tr style="border-bottom: 2px solid #e4e4e7;">
+            <th style="text-align: left; padding: 12px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #71717a;">Traitement</th>
+            <th style="text-align: right; padding: 12px 0; font-size: 12px; font-weight: 600; text-transform: uppercase; color: #71717a;">Montant</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for treatment in treatments %}
+        <tr style="border-bottom: 1px solid #f4f4f5;">
+            <td style="padding: 12px 0;">
+                <div style="font-weight: 500;">{{ treatment.name }}</div>
+                {% if treatment.tooth %}
+                <div style="font-size: 14px; color: #71717a;">Dent : {{ treatment.tooth }}</div>
+                {% endif %}
+            </td>
+            <td style="text-align: right; padding: 12px 0;">{{ treatment.price }} €</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        {% if subtotal and total != subtotal %}
+        <tr>
+            <td style="padding: 12px 0; text-align: right; font-weight: 500;">Sous-total :</td>
+            <td style="padding: 12px 0; text-align: right;">{{ subtotal }} €</td>
+        </tr>
+        {% endif %}
+        {% if discount_amount %}
+        <tr>
+            <td style="padding: 12px 0; text-align: right; font-weight: 500; color: #22c55e;">Réduction :</td>
+            <td style="padding: 12px 0; text-align: right; color: #22c55e;">-{{ discount_amount }} €</td>
+        </tr>
+        {% endif %}
+        <tr style="border-top: 2px solid #18181b;">
+            <td style="padding: 16px 0; text-align: right; font-size: 18px; font-weight: 600;">Total :</td>
+            <td style="padding: 16px 0; text-align: right; font-size: 18px; font-weight: 600;">{{ total }} €</td>
+        </tr>
+    </tfoot>
+</table>
+{% endif %}
+
+{% if validity_days %}
+<div class="alert alert-info">
+    <strong>Validité :</strong> Ce devis est valide pendant {{ validity_days }} jours à compter de la date d'émission.
+</div>
+{% endif %}
+
+{% if notes %}
+<p><strong>Observations :</strong> {{ notes }}</p>
+{% endif %}
+
+<p>Si vous avez des questions sur le devis ou souhaitez programmer votre traitement, n'hésitez pas à nous contacter.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Nous contacter</a>
+</div>
+{% endif %}
+
+<p>Restant à votre disposition.</p>
+{% endblock %}

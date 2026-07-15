@@ -54,6 +54,7 @@
     "composer": {
       "placeholder": "Escribe la nota…",
       "templates": "Plantillas",
+      "attach": "Adjuntar foto o documento",
       "bindToTooth": "Asociar al diente {n}"
     },
     "linked": {
@@ -107,6 +108,17 @@
       "general": {
         "followUp": "Seguimiento general"
       }
+    },
+    "templateBodies": {
+      "endo_single_visit": "Diagnóstico: \nAnestesia: \nCanales localizados: \nLongitud de trabajo: \nObturación: \nPost-op: ",
+      "endo_multi_visit": "Sesión: \nCanales trabajados: \nMedicación intracanala: \nPróxima cita: ",
+      "perio_scaling": "Cuadrantes tratados: \nProfundidad de sondaje: \nSangrado al sondaje: \nIndicaciones higiene: ",
+      "implant_placement": "Implante (marca / diámetro / longitud): \nTorque final (Ncm): \nEstabilidad primaria: \nInjerto: \nPost-op: ",
+      "diagnosis_caries": "Hallazgo: caries \nProfundidad: \nSíntomas: \nPrueba de vitalidad: \nTratamiento sugerido: ",
+      "diagnosis_periapical": "Lesión periapical \nDiente: \nRadiografía: \nPruebas (percusión, palpación): \nDiagnóstico: ",
+      "admin_phone_call": "Llamada del paciente: \nMotivo: \nAcción tomada: \nSeguimiento: ",
+      "admin_reschedule": "Solicita cambio de cita: \nFecha actual: \nNueva propuesta: ",
+      "general_follow_up": "Hallazgos: \nProcedimiento realizado: \nIndicaciones al paciente: "
     }
   }
 }

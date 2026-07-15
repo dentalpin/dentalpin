@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add French locale (`fr.json`) with full UI coverage.
+
 - feat(conversation): inbound replies + bidirectional WhatsApp (Phase 2A,
   ADR 0017). ``communication_messages`` gains ``direction`` (outbound/inbound)
   and ``body_text``; it is now the full per-patient thread (Alembic

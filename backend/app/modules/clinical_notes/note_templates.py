@@ -17,6 +17,7 @@ from typing import Final, TypedDict
 class NoteTemplate(TypedDict):
     id: str
     i18n_key: str
+    body_i18n_key: str
     body: str
 
 
@@ -25,6 +26,7 @@ NOTE_TEMPLATES: Final[dict[str, list[NoteTemplate]]] = {
         {
             "id": "endo_single_visit",
             "i18n_key": "clinicalNotes.templates.endo.singleVisit",
+            "body_i18n_key": "clinicalNotes.templateBodies.endo_single_visit",
             "body": (
                 "Diagnóstico: \n"
                 "Anestesia: \n"
@@ -37,6 +39,7 @@ NOTE_TEMPLATES: Final[dict[str, list[NoteTemplate]]] = {
         {
             "id": "endo_multi_visit",
             "i18n_key": "clinicalNotes.templates.endo.multiVisit",
+            "body_i18n_key": "clinicalNotes.templateBodies.endo_multi_visit",
             "body": (
                 "Sesión: \nConductos trabajados: \nMedicación intraconducto: \nPróxima cita: "
             ),
@@ -46,6 +49,7 @@ NOTE_TEMPLATES: Final[dict[str, list[NoteTemplate]]] = {
         {
             "id": "perio_scaling",
             "i18n_key": "clinicalNotes.templates.perio.scaling",
+            "body_i18n_key": "clinicalNotes.templateBodies.perio_scaling",
             "body": (
                 "Cuadrantes tratados: \n"
                 "Profundidad de sondaje: \n"
@@ -58,6 +62,7 @@ NOTE_TEMPLATES: Final[dict[str, list[NoteTemplate]]] = {
         {
             "id": "implant_placement",
             "i18n_key": "clinicalNotes.templates.implant.placement",
+            "body_i18n_key": "clinicalNotes.templateBodies.implant_placement",
             "body": (
                 "Implante (marca / diámetro / longitud): \n"
                 "Torque final (Ncm): \n"
@@ -71,6 +76,7 @@ NOTE_TEMPLATES: Final[dict[str, list[NoteTemplate]]] = {
         {
             "id": "diagnosis_caries",
             "i18n_key": "clinicalNotes.templates.diagnosis.caries",
+            "body_i18n_key": "clinicalNotes.templateBodies.diagnosis_caries",
             "body": (
                 "Hallazgo: caries \nProfundidad: \nSíntomas: \nPrueba de vitalidad: \n"
                 "Tratamiento sugerido: "
@@ -79,6 +85,7 @@ NOTE_TEMPLATES: Final[dict[str, list[NoteTemplate]]] = {
         {
             "id": "diagnosis_periapical",
             "i18n_key": "clinicalNotes.templates.diagnosis.periapical",
+            "body_i18n_key": "clinicalNotes.templateBodies.diagnosis_periapical",
             "body": (
                 "Lesión periapical \nDiente: \nRadiografía: \n"
                 "Pruebas (percusión, palpación): \nDiagnóstico: "
@@ -89,11 +96,13 @@ NOTE_TEMPLATES: Final[dict[str, list[NoteTemplate]]] = {
         {
             "id": "admin_phone_call",
             "i18n_key": "clinicalNotes.templates.admin.phoneCall",
+            "body_i18n_key": "clinicalNotes.templateBodies.admin_phone_call",
             "body": "Llamada del paciente: \nMotivo: \nAcción tomada: \nSeguimiento: ",
         },
         {
             "id": "admin_reschedule",
             "i18n_key": "clinicalNotes.templates.admin.reschedule",
+            "body_i18n_key": "clinicalNotes.templateBodies.admin_reschedule",
             "body": "Solicita cambio de cita: \nFecha actual: \nNueva propuesta: ",
         },
     ],
@@ -101,6 +110,7 @@ NOTE_TEMPLATES: Final[dict[str, list[NoteTemplate]]] = {
         {
             "id": "general_follow_up",
             "i18n_key": "clinicalNotes.templates.general.followUp",
+            "body_i18n_key": "clinicalNotes.templateBodies.general_follow_up",
             "body": "Hallazgos: \nProcedimiento realizado: \nIndicaciones al paciente: ",
         },
     ],

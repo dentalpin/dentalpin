@@ -29,6 +29,7 @@ from app.modules.billing.models import Invoice
 from app.modules.budget.models import Budget
 from app.modules.odontogram.models import Treatment
 from app.modules.treatment_plan.models import PlannedTreatmentItem, TreatmentPlan
+from app.seeds.demo_data import t
 
 from .models import PatientTimeline
 
@@ -49,14 +50,41 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
         if not appt.patient_id:
             continue
 
-        title_es = {
-            "scheduled": "Cita programada",
-            "confirmed": "Cita programada",
-            "completed": "Cita completada",
-            "cancelled": "Cita cancelada",
-            "no_show": "Paciente no asistió",
-        }.get(appt.status, "Cita")
-        treatment_label = appt.treatment_type or "Consulta"
+        title_map = {
+            "scheduled": t(
+                {
+                    "es": "Cita programada",
+                    "en": "Scheduled appointment",
+                    "fr": "Rendez-vous planifié",
+                }
+            ),
+            "confirmed": t(
+                {
+                    "es": "Cita programada",
+                    "en": "Scheduled appointment",
+                    "fr": "Rendez-vous planifié",
+                }
+            ),
+            "completed": t(
+                {
+                    "es": "Cita completada",
+                    "en": "Completed appointment",
+                    "fr": "Rendez-vous terminé",
+                }
+            ),
+            "cancelled": t(
+                {"es": "Cita cancelada", "en": "Cancelled appointment", "fr": "Rendez-vous annulé"}
+            ),
+            "no_show": t(
+                {"es": "Paciente no asistió", "en": "Patient no-show", "fr": "Patient absent"}
+            ),
+        }
+        title_es = title_map.get(
+            appt.status, t({"es": "Cita", "en": "Appointment", "fr": "Rendez-vous"})
+        )
+        treatment_label = appt.treatment_type or t(
+            {"es": "Consulta", "en": "Consultation", "fr": "Consultation"}
+        )
         occurred = appt.end_time if appt.status == "completed" else appt.start_time
 
         event_type_map = {
@@ -97,7 +125,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                 event_category="treatment",
                 source_table="treatment_plans",
                 source_id=plan.id,
-                title=f"Plan de tratamiento creado: {plan.title or plan.plan_number}",
+                title=f"{t({'es': 'Plan de tratamiento creado', 'en': 'Treatment plan created', 'fr': 'Plan de traitement créé'})}: {plan.title or plan.plan_number}",
                 event_data={"plan_number": plan.plan_number},
                 occurred_at=plan.created_at or datetime.now(UTC),
                 created_by=plan.created_by,
@@ -122,7 +150,12 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
             if item.treatment and item.treatment.catalog_item
             else {}
         ) or {}
-        item_name = names.get("es") or names.get("en") or "tratamiento"
+        item_name = (
+            names.get("es")
+            or names.get("en")
+            or names.get("fr")
+            or t({"es": "tratamiento", "en": "treatment", "fr": "traitement"})
+        )
         patient_id = item.treatment.patient_id if item.treatment else None
         if not patient_id:
             continue
@@ -134,7 +167,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                 event_category="treatment",
                 source_table="planned_treatment_items",
                 source_id=item.id,
-                title=f"Tratamiento del plan completado: {item_name}",
+                title=f"{t({'es': 'Tratamiento del plan completado', 'en': 'Plan treatment completed', 'fr': 'Traitement du plan terminé'})}: {item_name}",
                 event_data={"plan_id": str(item.treatment_plan_id)},
                 occurred_at=item.completed_at or item.created_at or datetime.now(UTC),
                 created_by=item.completed_by,
@@ -150,7 +183,13 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
     )
     for treatment in performed.scalars().all():
         names = (treatment.catalog_item.names if treatment.catalog_item else {}) or {}
-        name = names.get("es") or names.get("en") or treatment.clinical_type or "tratamiento"
+        name = (
+            names.get("es")
+            or names.get("en")
+            or names.get("fr")
+            or treatment.clinical_type
+            or t({"es": "tratamiento", "en": "treatment", "fr": "traitement"})
+        )
         teeth = [t.tooth_number for t in treatment.teeth]
         teeth_label = ", ".join(str(t) for t in teeth) if teeth else None
         db.add(
@@ -161,8 +200,10 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                 event_category="treatment",
                 source_table="treatments",
                 source_id=treatment.id,
-                title=f"Tratamiento realizado: {name}",
-                description=f"Dientes: {teeth_label}" if teeth_label else None,
+                title=f"{t({'es': 'Tratamiento realizado', 'en': 'Treatment performed', 'fr': 'Traitement réalisé'})}: {name}",
+                description=f"{t({'es': 'Dientes', 'en': 'Teeth', 'fr': 'Dents'})}: {teeth_label}"
+                if teeth_label
+                else None,
                 event_data={
                     "clinical_type": treatment.clinical_type,
                     "tooth_numbers": teeth,
@@ -185,7 +226,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                     event_category="financial",
                     source_table="budgets",
                     source_id=budget.id,
-                    title=f"Presupuesto enviado: {budget.budget_number}",
+                    title=f"{t({'es': 'Presupuesto enviado', 'en': 'Budget sent', 'fr': 'Devis envoyé'})}: {budget.budget_number}",
                     event_data={
                         "budget_number": budget.budget_number,
                         "total": str(budget.total),
@@ -203,7 +244,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                     event_category="financial",
                     source_table="budgets",
                     source_id=budget.id,
-                    title=f"Presupuesto aceptado: {budget.budget_number}",
+                    title=f"{t({'es': 'Presupuesto aceptado', 'en': 'Budget accepted', 'fr': 'Devis accepté'})}: {budget.budget_number}",
                     event_data={
                         "budget_number": budget.budget_number,
                         "total": str(budget.total),
@@ -225,7 +266,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                     event_category="financial",
                     source_table="invoices",
                     source_id=invoice.id,
-                    title=f"Factura emitida: {invoice.invoice_number or '—'}",
+                    title=f"{t({'es': 'Factura emitida', 'en': 'Invoice issued', 'fr': 'Facture émise'})}: {invoice.invoice_number or '—'}",
                     event_data={
                         "invoice_number": invoice.invoice_number,
                         "total": str(invoice.total),
@@ -249,7 +290,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                     event_category="financial",
                     source_table="invoices",
                     source_id=invoice.id,
-                    title=f"Factura pagada: {invoice.invoice_number or '—'}",
+                    title=f"{t({'es': 'Factura pagada', 'en': 'Invoice paid', 'fr': 'Facture payée'})}: {invoice.invoice_number or '—'}",
                     event_data={
                         "invoice_number": invoice.invoice_number,
                         "total": str(invoice.total),

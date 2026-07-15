@@ -236,6 +236,7 @@ class NoteTemplateResponse(BaseModel):
     id: str
     category: str
     i18n_key: str
+    body_i18n_key: str
     body: str
 
 

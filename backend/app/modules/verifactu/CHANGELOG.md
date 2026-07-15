@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add French locale (`fr.json`) with full UI coverage.
+
 - fix(frontend): the queue tabs (Pendientes/Rechazadas/Fallos) rendered
   the same unfiltered list — `listQueue` passed `{ params }`, which
   `useApi` dropped. Switched to the new `useApi` `query` option so the

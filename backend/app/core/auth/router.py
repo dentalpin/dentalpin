@@ -729,7 +729,7 @@ async def update_budget_settings(
 
 
 class _CommunicationsSettingsPatch(BaseModel):
-    language: str | None = Field(default=None, pattern="^(es|en)$")
+    language: str | None = Field(default=None, pattern="^(es|en|fr)$")
 
 
 class _CommunicationsSettingsResponse(BaseModel):

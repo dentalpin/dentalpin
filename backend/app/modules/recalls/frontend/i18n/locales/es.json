@@ -111,6 +111,7 @@
       "description": "Intervalos por motivo y mapeo de tratamientos",
       "intervals": "Intervalos por defecto (meses)",
       "categoryMap": "Tratamiento → motivo",
+      "categoryKeyPlaceholder": "clave de categoría del catálogo",
       "autoSuggest": "Sugerir recordatorio al completar un tratamiento",
       "autoLink": "Vincular cita al recordatorio existente al agendar",
       "saved": "Configuración guardada"

@@ -55,7 +55,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { create } = usePayments()
-const { format: formatCurrency } = useCurrency()
+const { format: formatCurrency, symbol: currencySymbol } = useCurrency()
 
 const isBudgetContext = computed(() => Boolean(props.defaultBudgetId))
 const isPatientLocked = computed(() => Boolean(props.defaultPatientId))
@@ -292,7 +292,7 @@ function handleKeydown(e: KeyboardEvent) {
               inputmode="decimal"
               class="w-full text-3xl font-semibold py-3 px-4 pr-14 rounded-token-md border border-default bg-surface focus:outline-none focus:ring-2 focus:ring-[var(--color-primary)] tnum"
             >
-            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-muted pointer-events-none">€</span>
+            <span class="absolute right-4 top-1/2 -translate-y-1/2 text-xl text-muted pointer-events-none">{{ currencySymbol() }}</span>
           </div>
           <div
             v-if="suggestedAmount !== undefined && suggestedAmount > 0"

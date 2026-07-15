@@ -39,7 +39,7 @@ function categoryHref(cat: VisibleCategory): string {
   <nav
     class="flex flex-col gap-0.5"
     :class="fullWidth ? '' : 'sticky top-20'"
-    aria-label="Settings categories"
+    :aria-label="t('settings.navLabel')"
   >
     <NuxtLink
       v-for="cat in registry.categories.value"
@@ -65,7 +65,7 @@ function categoryHref(cat: VisibleCategory): string {
           <span
             v-if="cat.hasAttention"
             class="w-2 h-2 rounded-full bg-(--color-warning-accent) shrink-0"
-            aria-label="Atención requerida"
+            :aria-label="t('settings.attentionRequired')"
           />
         </div>
         <p

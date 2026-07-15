@@ -36,6 +36,7 @@ const emit = defineEmits<{
 }>()
 
 const toast = useToast()
+const { t } = useI18n()
 
 const {
   saving,
@@ -51,8 +52,8 @@ const {
 watch(lastError, (err) => {
   if (err) {
     toast.add({
-      title: 'No se pudo guardar el cambio',
-      description: 'Comprueba tu conexión e intenta de nuevo.',
+      title: t('periodontogram.errors.saveFailed'),
+      description: t('periodontogram.errors.checkConnection'),
       color: 'error',
       icon: 'i-lucide-alert-triangle'
     })
@@ -177,7 +178,7 @@ const liveIndices = computed<PerioIndices | null>(() => {
     <div
       class="overflow-x-auto pb-2"
       role="region"
-      aria-label="Periodontograma — arcadas superior e inferior"
+      :aria-label="t('periodontogram.chart.ariaLabel')"
     >
       <div class="min-w-[1100px] space-y-4">
         <PerioArchBlock

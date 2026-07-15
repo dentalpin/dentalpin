@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Estimate accepted - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>Estimate accepted</h2>
+
+<p>Hello {{ patient_name }},</p>
+
+<p>Your estimate <strong>#{{ budget_number }}</strong> from <strong>{{ clinic_name | default('DentalPin') }}</strong> has been accepted.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div class="label">Estimate</div>
+        <div class="value">#{{ budget_number }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">Accepted on</div>
+        <div class="value">{{ accepted_date }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">Total</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+</div>
+
+<p>We will contact you shortly to schedule the corresponding appointments.</p>
+{% endblock %}

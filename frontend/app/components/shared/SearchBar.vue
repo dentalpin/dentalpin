@@ -23,6 +23,8 @@ const emit = defineEmits<{
   'update:debounced': [value: string]
 }>()
 
+const { t } = useI18n()
+
 const local = ref(props.modelValue)
 let timer: ReturnType<typeof setTimeout> | null = null
 
@@ -66,7 +68,7 @@ function clear() {
           color="neutral"
           size="xs"
           icon="i-lucide-x"
-          :aria-label="'Clear'"
+          :aria-label="t('common.clear')"
           @click="clear"
         />
       </template>

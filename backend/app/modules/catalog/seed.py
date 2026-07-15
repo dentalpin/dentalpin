@@ -38,19 +38,19 @@ from .models import (
 VAT_TYPES: list[dict[str, Any]] = [
     {
         "key": "exempt",
-        "names": {"es": "Exento", "en": "Exempt"},
+        "names": {"es": "Exento", "en": "Exempt", "fr": "Exonéré"},
         "rate": 0.0,
         "is_default": True,
     },
     {
         "key": "reduced",
-        "names": {"es": "Reducido (10%)", "en": "Reduced (10%)"},
+        "names": {"es": "Reducido (10%)", "en": "Reduced (10%)", "fr": "Réduit (10%)"},
         "rate": 10.0,
         "is_default": False,
     },
     {
         "key": "standard",
-        "names": {"es": "General (21%)", "en": "Standard (21%)"},
+        "names": {"es": "General (21%)", "en": "Standard (21%)", "fr": "Général (21%)"},
         "rate": 21.0,
         "is_default": False,
     },
@@ -63,100 +63,110 @@ VAT_TYPES: list[dict[str, Any]] = [
 CATEGORIES: list[dict[str, Any]] = [
     {
         "key": "diagnostico",
-        "names": {"es": "Diagnóstico", "en": "Diagnostic"},
+        "names": {"es": "Diagnóstico", "en": "Diagnostic", "fr": "Diagnostic"},
         "descriptions": {
             "es": "Servicios de diagnóstico y evaluación",
             "en": "Diagnostic and evaluation services",
+            "fr": "Services de diagnostique et d'évaluation",
         },
         "display_order": 1,
         "icon": "i-lucide-stethoscope",
     },
     {
         "key": "preventivo",
-        "names": {"es": "Preventivo", "en": "Preventive"},
+        "names": {"es": "Preventivo", "en": "Preventive", "fr": "Préventif"},
         "descriptions": {
             "es": "Prevención e higiene dental",
             "en": "Preventive and hygiene",
+            "fr": "Prévention et hygiène dentaire",
         },
         "display_order": 2,
         "icon": "i-lucide-shield-check",
     },
     {
         "key": "restauradora",
-        "names": {"es": "Restauradora", "en": "Restorative"},
+        "names": {"es": "Restauradora", "en": "Restorative", "fr": "Restauration"},
         "descriptions": {
             "es": "Restauración dental",
             "en": "Dental restoration",
+            "fr": "Restauration dentaire",
         },
         "display_order": 3,
         "icon": "i-lucide-brush",
     },
     {
         "key": "endodoncia",
-        "names": {"es": "Endodoncia", "en": "Endodontics"},
+        "names": {"es": "Endodoncia", "en": "Endodontics", "fr": "Endodontie"},
         "descriptions": {
             "es": "Tratamientos de conducto radicular",
             "en": "Root canal treatments",
+            "fr": "Traitements des canaux radiculaires",
         },
         "display_order": 4,
         "icon": "i-lucide-activity",
     },
     {
         "key": "periodoncia",
-        "names": {"es": "Periodoncia", "en": "Periodontics"},
+        "names": {"es": "Periodoncia", "en": "Periodontics", "fr": "Parodontie"},
         "descriptions": {
             "es": "Encías y tejidos de soporte",
             "en": "Gums and supporting tissues",
+            "fr": "Gencives et tissus de soutien",
         },
         "display_order": 5,
         "icon": "i-lucide-heart-pulse",
     },
     {
         "key": "cirugia",
-        "names": {"es": "Cirugía", "en": "Surgery"},
+        "names": {"es": "Cirugía", "en": "Surgery", "fr": "Chirurgie"},
         "descriptions": {
             "es": "Procedimientos quirúrgicos dentales",
             "en": "Dental surgical procedures",
+            "fr": "Procédures chirurgicales dentaires",
         },
         "display_order": 6,
         "icon": "i-lucide-scissors",
     },
     {
         "key": "ortodoncia",
-        "names": {"es": "Ortodoncia", "en": "Orthodontics"},
+        "names": {"es": "Ortodoncia", "en": "Orthodontics", "fr": "Orthodontie"},
         "descriptions": {
             "es": "Ortodoncia y alineación",
             "en": "Orthodontics and alignment",
+            "fr": "Orthodontie et alignement",
         },
         "display_order": 7,
         "icon": "i-lucide-align-center",
     },
     {
         "key": "estetica",
-        "names": {"es": "Estética", "en": "Cosmetic"},
+        "names": {"es": "Estética", "en": "Cosmetic", "fr": "Esthétique"},
         "descriptions": {
             "es": "Estética dental",
             "en": "Cosmetic dentistry",
+            "fr": "Esthétique dentaire",
         },
         "display_order": 8,
         "icon": "i-lucide-sparkles",
     },
     {
         "key": "protesis",
-        "names": {"es": "Prótesis", "en": "Prosthetics"},
+        "names": {"es": "Prótesis", "en": "Prosthetics", "fr": "Prothèses"},
         "descriptions": {
             "es": "Prótesis y férulas",
             "en": "Prosthetics and splints",
+            "fr": "Prothèses et gouttières",
         },
         "display_order": 9,
         "icon": "i-lucide-puzzle",
     },
     {
         "key": "pediatrica",
-        "names": {"es": "Odontopediatría", "en": "Pediatric"},
+        "names": {"es": "Odontopediatría", "en": "Pediatric", "fr": "Odontologie pédiatrique"},
         "descriptions": {
             "es": "Tratamientos para niños",
             "en": "Treatments for children",
+            "fr": "Traitements pour enfants",
         },
         "display_order": 10,
         "icon": "i-lucide-baby",
@@ -200,10 +210,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "diagnostico": [
         {
             "internal_code": "DX-VISIT",
-            "names": {"es": "Primera Visita", "en": "First Visit"},
+            "names": {"es": "Primera Visita", "en": "First Visit", "fr": "Première visite"},
             "descriptions": {
                 "es": "Consulta inicial con exploración y diagnóstico",
                 "en": "Initial consultation with examination and diagnosis",
+                "fr": "Consultation initiale avec examen et diagnostique",
             },
             "treatment_scope": "global_mouth",
             "is_diagnostic": False,
@@ -215,7 +226,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-REVIEW",
-            "names": {"es": "Revisión", "en": "Follow-up"},
+            "names": {"es": "Revisión", "en": "Follow-up", "fr": "Contrôle"},
             "treatment_scope": "global_mouth",
             "default_price": Decimal("20.00"),
             "default_duration_minutes": 20,
@@ -224,7 +235,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-RXPA",
-            "names": {"es": "Radiografía Periapical", "en": "Periapical X-Ray"},
+            "names": {
+                "es": "Radiografía Periapical",
+                "en": "Periapical X-Ray",
+                "fr": "Radiographie périapicale",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("15.00"),
             "default_duration_minutes": 10,
@@ -233,7 +248,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-RXPAN",
-            "names": {"es": "Radiografía Panorámica", "en": "Panoramic X-Ray"},
+            "names": {
+                "es": "Radiografía Panorámica",
+                "en": "Panoramic X-Ray",
+                "fr": "Radiographie panoramique",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("45.00"),
             "default_duration_minutes": 10,
@@ -242,7 +261,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-CBCT",
-            "names": {"es": "CBCT (TAC 3D)", "en": "CBCT (3D Scan)"},
+            "names": {
+                "es": "CBCT (TAC 3D)",
+                "en": "CBCT (3D Scan)",
+                "fr": "CBCT (Tomodensitométrie 3D)",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("120.00"),
             "default_duration_minutes": 20,
@@ -251,7 +274,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-STUDY",
-            "names": {"es": "Estudio Ortodóncico", "en": "Orthodontic Study"},
+            "names": {
+                "es": "Estudio Ortodóncico",
+                "en": "Orthodontic Study",
+                "fr": "Étude orthodontique",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("90.00"),
             "default_duration_minutes": 45,
@@ -260,7 +287,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-PHOTO",
-            "names": {"es": "Fotografías intraorales", "en": "Intraoral Photos"},
+            "names": {
+                "es": "Fotografías intraorales",
+                "en": "Intraoral Photos",
+                "fr": "Photographies intraorales",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("30.00"),
             "default_duration_minutes": 15,
@@ -269,7 +300,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-URGENT",
-            "names": {"es": "Visita de urgencia", "en": "Emergency visit"},
+            "names": {
+                "es": "Visita de urgencia",
+                "en": "Emergency visit",
+                "fr": "Visite d'urgence",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("60.00"),
             "default_duration_minutes": 30,
@@ -278,7 +313,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-2ND-OPINION",
-            "names": {"es": "Segunda opinión", "en": "Second opinion"},
+            "names": {"es": "Segunda opinión", "en": "Second opinion", "fr": "Deuxième avis"},
             "treatment_scope": "global_mouth",
             "default_price": Decimal("50.00"),
             "default_duration_minutes": 30,
@@ -287,7 +322,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-TELE",
-            "names": {"es": "Telerradiografía lateral", "en": "Lateral cephalogram"},
+            "names": {
+                "es": "Telerradiografía lateral",
+                "en": "Lateral cephalogram",
+                "fr": "Téléradiographie latérale",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("45.00"),
             "default_duration_minutes": 15,
@@ -299,8 +338,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "preventivo": [
         {
             "internal_code": "PREV-CLEAN",
-            "names": {"es": "Limpieza dental", "en": "Dental Cleaning"},
-            "descriptions": {"es": "Tartrectomía y pulido", "en": "Scaling and polishing"},
+            "names": {"es": "Limpieza dental", "en": "Dental Cleaning", "fr": "Détartrage"},
+            "descriptions": {
+                "es": "Tartrectomía y pulido",
+                "en": "Scaling and polishing",
+                "fr": "Détartrage et polissage",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("60.00"),
             "default_duration_minutes": 45,
@@ -309,7 +352,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PREV-FLUOR",
-            "names": {"es": "Fluorización", "en": "Fluoride Application"},
+            "names": {"es": "Fluorización", "en": "Fluoride Application", "fr": "Fluoration"},
             "treatment_scope": "global_mouth",
             "default_price": Decimal("25.00"),
             "default_duration_minutes": 15,
@@ -318,8 +361,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PREV-CHECKUP",
-            "names": {"es": "Revisión", "en": "Checkup"},
-            "descriptions": {"es": "Revisión general", "en": "General checkup"},
+            "names": {"es": "Revisión", "en": "Checkup", "fr": "Contrôle"},
+            "descriptions": {
+                "es": "Revisión general",
+                "en": "General checkup",
+                "fr": "Contrôle général",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("30.00"),
             "default_duration_minutes": 20,
@@ -328,7 +375,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PREV-SEAL",
-            "names": {"es": "Sellador de fosas y fisuras", "en": "Pit and Fissure Sealant"},
+            "names": {
+                "es": "Sellador de fosas y fisuras",
+                "en": "Pit and Fissure Sealant",
+                "fr": "Scellement de sillons et fissures",
+            },
             "treatment_scope": "tooth",
             "requires_surfaces": True,
             "default_price": Decimal("30.00"),
@@ -341,7 +392,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PREV-HYGIENE-EDU",
-            "names": {"es": "Instrucciones de higiene", "en": "Oral Hygiene Instruction"},
+            "names": {
+                "es": "Instrucciones de higiene",
+                "en": "Oral Hygiene Instruction",
+                "fr": "Instructions d'hygiène buccale",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("20.00"),
             "default_duration_minutes": 20,
@@ -353,6 +408,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Tartrectomía con curetaje",
                 "en": "Scaling with curettage",
+                "fr": "Détartrage avec curetage",
             },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("110.00"),
@@ -362,7 +418,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PREV-CLEAN-PED",
-            "names": {"es": "Profilaxis infantil", "en": "Pediatric prophylaxis"},
+            "names": {
+                "es": "Profilaxis infantil",
+                "en": "Pediatric prophylaxis",
+                "fr": "Prophylaxie pédiatrique",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("40.00"),
             "default_duration_minutes": 30,
@@ -380,6 +440,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Obturación composite",
                 "en": "Composite filling",
+                "fr": "Obturation composite",
             },
             "treatment_scope": "tooth",
             "requires_surfaces": True,
@@ -400,7 +461,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-AMAL",
-            "names": {"es": "Obturación amalgama", "en": "Amalgam filling"},
+            "names": {
+                "es": "Obturación amalgama",
+                "en": "Amalgam filling",
+                "fr": "Obturation amalgame",
+            },
             "treatment_scope": "tooth",
             "requires_surfaces": True,
             "default_price": Decimal("55.00"),
@@ -420,7 +485,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-TEMP",
-            "names": {"es": "Obturación temporal", "en": "Temporary filling"},
+            "names": {
+                "es": "Obturación temporal",
+                "en": "Temporary filling",
+                "fr": "Obturation temporaire",
+            },
             "treatment_scope": "tooth",
             "requires_surfaces": True,
             "default_price": Decimal("40.00"),
@@ -434,7 +503,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         # Incrustaciones
         {
             "internal_code": "REST-INLAY-COMP",
-            "names": {"es": "Inlay composite", "en": "Composite inlay"},
+            "names": {"es": "Inlay composite", "en": "Composite inlay", "fr": "Inlay composite"},
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 60,
@@ -446,7 +515,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-INLAY-CER",
-            "names": {"es": "Inlay cerámico", "en": "Ceramic inlay"},
+            "names": {"es": "Inlay cerámico", "en": "Ceramic inlay", "fr": "Inlay céramique"},
             "treatment_scope": "tooth",
             "default_price": Decimal("350.00"),
             "default_duration_minutes": 60,
@@ -458,7 +527,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-OVER-COMP",
-            "names": {"es": "Overlay composite", "en": "Composite overlay"},
+            "names": {
+                "es": "Overlay composite",
+                "en": "Composite overlay",
+                "fr": "Overlay composite",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("240.00"),
             "default_duration_minutes": 75,
@@ -470,7 +543,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-OVER-CER",
-            "names": {"es": "Overlay cerámico", "en": "Ceramic overlay"},
+            "names": {"es": "Overlay cerámico", "en": "Ceramic overlay", "fr": "Overlay céramique"},
             "treatment_scope": "tooth",
             "default_price": Decimal("450.00"),
             "default_duration_minutes": 75,
@@ -483,7 +556,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         # Carillas (per_tooth pricing — ideal for "carillas múltiples")
         {
             "internal_code": "REST-VEN-COMP",
-            "names": {"es": "Carilla composite", "en": "Composite veneer"},
+            "names": {
+                "es": "Carilla composite",
+                "en": "Composite veneer",
+                "fr": "Facette composite",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("280.00"),
             "default_duration_minutes": 60,
@@ -495,7 +572,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-VEN-PORC",
-            "names": {"es": "Carilla porcelana", "en": "Porcelain veneer"},
+            "names": {
+                "es": "Carilla porcelana",
+                "en": "Porcelain veneer",
+                "fr": "Facette céramique",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("480.00"),
             "default_duration_minutes": 90,
@@ -507,7 +588,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-VEN-ZIR",
-            "names": {"es": "Carilla zirconio", "en": "Zirconia veneer"},
+            "names": {"es": "Carilla zirconio", "en": "Zirconia veneer", "fr": "Facette zircone"},
             "treatment_scope": "tooth",
             "default_price": Decimal("550.00"),
             "default_duration_minutes": 90,
@@ -520,7 +601,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         # Coronas unitarias / múltiples (per_tooth pricing)
         {
             "internal_code": "REST-CROWN-MC",
-            "names": {"es": "Corona metal-cerámica", "en": "Metal-ceramic crown"},
+            "names": {
+                "es": "Corona metal-cerámica",
+                "en": "Metal-ceramic crown",
+                "fr": "Couronne métal-céramique",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("400.00"),
             "default_duration_minutes": 90,
@@ -531,18 +616,22 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "visualization_config": {"color": "#F59E0B"},
             "sessions": [
                 {
-                    "labels": {"es": "Toma de medidas", "en": "Impressions"},
+                    "labels": {
+                        "es": "Toma de medidas",
+                        "en": "Impressions",
+                        "fr": "Prise d'empreinte",
+                    },
                     "default_price": Decimal("150.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement"},
+                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose"},
                     "default_price": Decimal("250.00"),
                 },
             ],
         },
         {
             "internal_code": "REST-CROWN-ZIR",
-            "names": {"es": "Corona zirconio", "en": "Zirconia crown"},
+            "names": {"es": "Corona zirconio", "en": "Zirconia crown", "fr": "Couronne zircone"},
             "treatment_scope": "tooth",
             "default_price": Decimal("550.00"),
             "default_duration_minutes": 90,
@@ -553,18 +642,26 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "visualization_config": {"color": "#FBBF24"},
             "sessions": [
                 {
-                    "labels": {"es": "Toma de medidas", "en": "Impressions"},
+                    "labels": {
+                        "es": "Toma de medidas",
+                        "en": "Impressions",
+                        "fr": "Prise d'empreinte",
+                    },
                     "default_price": Decimal("200.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement"},
+                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose"},
                     "default_price": Decimal("350.00"),
                 },
             ],
         },
         {
             "internal_code": "REST-CROWN-DISI",
-            "names": {"es": "Corona disilicato de litio", "en": "Lithium disilicate crown"},
+            "names": {
+                "es": "Corona disilicato de litio",
+                "en": "Lithium disilicate crown",
+                "fr": "Couronne disilicate de lithium",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("650.00"),
             "default_duration_minutes": 90,
@@ -575,18 +672,22 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "visualization_config": {"color": "#FDE68A"},
             "sessions": [
                 {
-                    "labels": {"es": "Toma de medidas", "en": "Impressions"},
+                    "labels": {
+                        "es": "Toma de medidas",
+                        "en": "Impressions",
+                        "fr": "Prise d'empreinte",
+                    },
                     "default_price": Decimal("250.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement"},
+                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose"},
                     "default_price": Decimal("400.00"),
                 },
             ],
         },
         {
             "internal_code": "REST-CROWN-METAL",
-            "names": {"es": "Corona metal", "en": "Metal crown"},
+            "names": {"es": "Corona metal", "en": "Metal crown", "fr": "Couronne métallique"},
             "treatment_scope": "tooth",
             "default_price": Decimal("350.00"),
             "default_duration_minutes": 90,
@@ -598,7 +699,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-CROWN-PROV",
-            "names": {"es": "Corona provisional", "en": "Provisional crown"},
+            "names": {
+                "es": "Corona provisional",
+                "en": "Provisional crown",
+                "fr": "Couronne provisoire",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("150.00"),
             "default_duration_minutes": 45,
@@ -616,6 +721,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Corona sobre implante metal-cerámica",
                 "en": "Metal-ceramic crown on implant",
+                "fr": "Couronne sur implant métal-céramique",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("600.00"),
@@ -627,11 +733,15 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "visualization_config": {"color": "#F59E0B"},
             "sessions": [
                 {
-                    "labels": {"es": "Toma de medidas", "en": "Impressions"},
+                    "labels": {
+                        "es": "Toma de medidas",
+                        "en": "Impressions",
+                        "fr": "Prise d'empreinte",
+                    },
                     "default_price": Decimal("200.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement"},
+                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose"},
                     "default_price": Decimal("400.00"),
                 },
             ],
@@ -641,6 +751,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Corona sobre implante zirconio",
                 "en": "Zirconia crown on implant",
+                "fr": "Couronne sur implant zircone",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("750.00"),
@@ -652,11 +763,15 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "visualization_config": {"color": "#FBBF24"},
             "sessions": [
                 {
-                    "labels": {"es": "Toma de medidas", "en": "Impressions"},
+                    "labels": {
+                        "es": "Toma de medidas",
+                        "en": "Impressions",
+                        "fr": "Prise d'empreinte",
+                    },
                     "default_price": Decimal("250.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement"},
+                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose"},
                     "default_price": Decimal("500.00"),
                 },
             ],
@@ -666,6 +781,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Corona provisional sobre implante",
                 "en": "Provisional crown on implant",
+                "fr": "Couronne provisoire sur implant",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
@@ -679,7 +795,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         # Puentes (per_role pricing)
         {
             "internal_code": "REST-BRIDGE-MC",
-            "names": {"es": "Puente metal-cerámica", "en": "Metal-ceramic bridge"},
+            "names": {
+                "es": "Puente metal-cerámica",
+                "en": "Metal-ceramic bridge",
+                "fr": "Pont métal-céramique",
+            },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("400.00"),
             "default_duration_minutes": 120,
@@ -692,7 +812,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-BRIDGE-ZIR",
-            "names": {"es": "Puente zirconio", "en": "Zirconia bridge"},
+            "names": {"es": "Puente zirconio", "en": "Zirconia bridge", "fr": "Pont zircone"},
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("500.00"),
             "default_duration_minutes": 120,
@@ -705,7 +825,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-BRIDGE-MARY",
-            "names": {"es": "Puente Maryland", "en": "Maryland bridge"},
+            "names": {"es": "Puente Maryland", "en": "Maryland bridge", "fr": "Pont du Maryland"},
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("350.00"),
             "default_duration_minutes": 90,
@@ -719,7 +839,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         # Férulas
         {
             "internal_code": "REST-SPLINT-OCC",
-            "names": {"es": "Férula de descarga", "en": "Occlusal splint"},
+            "names": {
+                "es": "Férula de descarga",
+                "en": "Occlusal splint",
+                "fr": "Gouttière d'occlusion",
+            },
             "treatment_scope": "global_arch",
             "default_price": Decimal("220.00"),
             "default_duration_minutes": 60,
@@ -734,6 +858,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Férula periodontal de contención",
                 "en": "Periodontal retention splint",
+                "fr": "Gouttière de contention parodontale",
             },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("80.00"),
@@ -749,6 +874,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Reconstrucción amplia con composite",
                 "en": "Large composite reconstruction",
+                "fr": "Reconstruction extensive en composite",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("160.00"),
@@ -764,6 +890,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Reparación de obturación",
                 "en": "Filling repair",
+                "fr": "Réparation d'obturation",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("55.00"),
@@ -776,7 +903,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-CROWN-RECEMENT",
-            "names": {"es": "Recementado de corona", "en": "Crown recementation"},
+            "names": {
+                "es": "Recementado de corona",
+                "en": "Crown recementation",
+                "fr": "Recimentation de couronne",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("60.00"),
             "default_duration_minutes": 20,
@@ -791,6 +922,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Corona sobre diente endodonciado",
                 "en": "Crown over endodontically treated tooth",
+                "fr": "Couronne sur dent dévitalisée",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("450.00"),
@@ -803,7 +935,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-HEAL-ABUT",
-            "names": {"es": "Pilar de cicatrización", "en": "Healing abutment"},
+            "names": {
+                "es": "Pilar de cicatrización",
+                "en": "Healing abutment",
+                "fr": "Pilier de cicatrisation",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("150.00"),
             "default_duration_minutes": 30,
@@ -815,7 +951,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-DEF-ABUT",
-            "names": {"es": "Pilar definitivo", "en": "Definitive abutment"},
+            "names": {
+                "es": "Pilar definitivo",
+                "en": "Definitive abutment",
+                "fr": "Pilier définitif",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("250.00"),
             "default_duration_minutes": 30,
@@ -830,7 +970,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "endodoncia": [
         {
             "internal_code": "ENDO-UNI",
-            "names": {"es": "Endodoncia unirradicular", "en": "Single-root endodontics"},
+            "names": {
+                "es": "Endodoncia unirradicular",
+                "en": "Single-root endodontics",
+                "fr": "Endodontie uniradiculaire",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 60,
@@ -842,7 +986,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-BI",
-            "names": {"es": "Endodoncia birradicular", "en": "Two-root endodontics"},
+            "names": {
+                "es": "Endodoncia birradicular",
+                "en": "Two-root endodontics",
+                "fr": "Endodontie biradiculaire",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("280.00"),
             "default_duration_minutes": 75,
@@ -854,7 +1002,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-MULTI",
-            "names": {"es": "Endodoncia molar", "en": "Molar endodontics"},
+            "names": {
+                "es": "Endodoncia molar",
+                "en": "Molar endodontics",
+                "fr": "Endodontie molaire",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("380.00"),
             "default_duration_minutes": 90,
@@ -865,22 +1017,34 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "visualization_config": {"color": "#7C3AED"},
             "sessions": [
                 {
-                    "labels": {"es": "Apertura y conductometría", "en": "Access and length"},
+                    "labels": {
+                        "es": "Apertura y conductometría",
+                        "en": "Access and length",
+                        "fr": "Ouverture et détermination",
+                    },
                     "default_price": Decimal("130.00"),
                 },
                 {
-                    "labels": {"es": "Limpieza y conformación", "en": "Cleaning and shaping"},
+                    "labels": {
+                        "es": "Limpieza y conformación",
+                        "en": "Cleaning and shaping",
+                        "fr": "Nettoyage et mise en forme",
+                    },
                     "default_price": Decimal("130.00"),
                 },
                 {
-                    "labels": {"es": "Obturación", "en": "Obturation"},
+                    "labels": {"es": "Obturación", "en": "Obturation", "fr": "Obturation"},
                     "default_price": Decimal("120.00"),
                 },
             ],
         },
         {
             "internal_code": "ENDO-RETREAT",
-            "names": {"es": "Re-tratamiento endodóncico", "en": "Endodontic retreatment"},
+            "names": {
+                "es": "Re-tratamiento endodóncico",
+                "en": "Endodontic retreatment",
+                "fr": "Retraitement endodontique",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("380.00"),
             "default_duration_minutes": 90,
@@ -892,7 +1056,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-POST-FIBER",
-            "names": {"es": "Perno de fibra", "en": "Fiber post"},
+            "names": {"es": "Perno de fibra", "en": "Fiber post", "fr": "Pivot en fibre"},
             "treatment_scope": "tooth",
             "default_price": Decimal("120.00"),
             "default_duration_minutes": 45,
@@ -904,7 +1068,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-POST-METAL",
-            "names": {"es": "Perno colado", "en": "Cast post"},
+            "names": {"es": "Perno colado", "en": "Cast post", "fr": "Pivot coulé"},
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 60,
@@ -916,7 +1080,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-URGENT",
-            "names": {"es": "Apertura cameral urgente", "en": "Emergency pulp chamber opening"},
+            "names": {
+                "es": "Apertura cameral urgente",
+                "en": "Emergency pulp chamber opening",
+                "fr": "Ouverture d'urgence de la chambre pulpaire",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("80.00"),
             "default_duration_minutes": 30,
@@ -931,6 +1099,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Recambio de medicación intraconducto",
                 "en": "Intracanal medication refresh",
+                "fr": "Renouvellement de médicament intraradiculaire",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("60.00"),
@@ -943,7 +1112,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-APICOFORM",
-            "names": {"es": "Apicoformación", "en": "Apexification"},
+            "names": {"es": "Apicoformación", "en": "Apexification", "fr": "Apexification"},
             "treatment_scope": "tooth",
             "default_price": Decimal("280.00"),
             "default_duration_minutes": 75,
@@ -955,7 +1124,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-PED",
-            "names": {"es": "Endodoncia en pieza temporal", "en": "Endodontics on primary tooth"},
+            "names": {
+                "es": "Endodoncia en pieza temporal",
+                "en": "Endodontics on primary tooth",
+                "fr": "Endodontie sur dent temporaire",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("140.00"),
             "default_duration_minutes": 45,
@@ -970,7 +1143,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "periodoncia": [
         {
             "internal_code": "PERIO-SCAL",
-            "names": {"es": "Tartrectomía simple", "en": "Simple scaling"},
+            "names": {
+                "es": "Tartrectomía simple",
+                "en": "Simple scaling",
+                "fr": "Détartrage simple",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("60.00"),
             "default_duration_minutes": 30,
@@ -982,6 +1159,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Raspado y alisado radicular (por cuadrante)",
                 "en": "Root scaling and planing (per quadrant)",
+                "fr": "Détartrage et surfaçage radiculaire (par quadrant)",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
@@ -991,7 +1169,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-SURG",
-            "names": {"es": "Cirugía periodontal", "en": "Periodontal surgery"},
+            "names": {
+                "es": "Cirugía periodontal",
+                "en": "Periodontal surgery",
+                "fr": "Chirurgie parodontale",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("450.00"),
             "default_duration_minutes": 90,
@@ -1000,7 +1182,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-GRAFT",
-            "names": {"es": "Injerto gingival", "en": "Gingival graft"},
+            "names": {"es": "Injerto gingival", "en": "Gingival graft", "fr": "Greffe gingivale"},
             "treatment_scope": "tooth",
             "default_price": Decimal("380.00"),
             "default_duration_minutes": 75,
@@ -1009,7 +1191,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-BONE",
-            "names": {"es": "Regeneración ósea guiada", "en": "Guided bone regeneration"},
+            "names": {
+                "es": "Regeneración ósea guiada",
+                "en": "Guided bone regeneration",
+                "fr": "Régénération osseuse guidée",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("550.00"),
             "default_duration_minutes": 90,
@@ -1018,7 +1204,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-MAINT",
-            "names": {"es": "Mantenimiento periodontal", "en": "Periodontal maintenance"},
+            "names": {
+                "es": "Mantenimiento periodontal",
+                "en": "Periodontal maintenance",
+                "fr": "Entretien parodontal",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("90.00"),
             "default_duration_minutes": 45,
@@ -1027,7 +1217,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-CURET-SEXT",
-            "names": {"es": "Curetaje por sextante", "en": "Curettage per sextant"},
+            "names": {
+                "es": "Curetaje por sextante",
+                "en": "Curettage per sextant",
+                "fr": "Curetage par sextant",
+            },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("90.00"),
             "default_duration_minutes": 45,
@@ -1036,7 +1230,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-STUDY",
-            "names": {"es": "Estudio periodontal (sondaje)", "en": "Periodontal probing study"},
+            "names": {
+                "es": "Estudio periodontal (sondaje)",
+                "en": "Periodontal probing study",
+                "fr": "Étude parodontale (sondage)",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("70.00"),
             "default_duration_minutes": 45,
@@ -1048,6 +1246,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Férula de contención post-RAR",
                 "en": "Post-SRP retention splint",
+                "fr": "Gouttière de contention post-DDR",
             },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("150.00"),
@@ -1060,7 +1259,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-GINGIV",
-            "names": {"es": "Gingivectomía", "en": "Gingivectomy"},
+            "names": {"es": "Gingivectomía", "en": "Gingivectomy", "fr": "Gingivectomie"},
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 45,
@@ -1072,6 +1271,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Cirugía periodontal resectiva",
                 "en": "Resective periodontal surgery",
+                "fr": "Chirurgie parodontale résécative",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("480.00"),
@@ -1084,6 +1284,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Cirugía periodontal regenerativa",
                 "en": "Regenerative periodontal surgery",
+                "fr": "Chirurgie parodontale régénérative",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("580.00"),
@@ -1096,7 +1297,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "cirugia": [
         {
             "internal_code": "SURG-EXT-SIMPLE",
-            "names": {"es": "Extracción simple", "en": "Simple extraction"},
+            "names": {
+                "es": "Extracción simple",
+                "en": "Simple extraction",
+                "fr": "Extraction simple",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("80.00"),
             "default_duration_minutes": 30,
@@ -1108,7 +1313,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-EXT-COMPLEX",
-            "names": {"es": "Extracción compleja", "en": "Complex extraction"},
+            "names": {
+                "es": "Extracción compleja",
+                "en": "Complex extraction",
+                "fr": "Extraction compliquée",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("140.00"),
             "default_duration_minutes": 45,
@@ -1120,7 +1329,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-EXT-3MOLAR",
-            "names": {"es": "Extracción tercer molar", "en": "Wisdom tooth extraction"},
+            "names": {
+                "es": "Extracción tercer molar",
+                "en": "Wisdom tooth extraction",
+                "fr": "Extraction de la dent de sagesse",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("200.00"),
             "default_duration_minutes": 60,
@@ -1135,6 +1348,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Extracción quirúrgica con ostectomía",
                 "en": "Surgical extraction with osteotomy",
+                "fr": "Extraction chirurgicale avec ostéotomie",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("280.00"),
@@ -1147,7 +1361,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-IMP-TI",
-            "names": {"es": "Implante de titanio", "en": "Titanium implant"},
+            "names": {
+                "es": "Implante de titanio",
+                "en": "Titanium implant",
+                "fr": "Implant en titane",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("1100.00"),
             "default_duration_minutes": 90,
@@ -1158,22 +1376,38 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "visualization_config": {"color": "#10B981"},
             "sessions": [
                 {
-                    "labels": {"es": "Cirugía de implante", "en": "Implant surgery"},
+                    "labels": {
+                        "es": "Cirugía de implante",
+                        "en": "Implant surgery",
+                        "fr": "Chirurgie implantaire",
+                    },
                     "default_price": Decimal("700.00"),
                 },
                 {
-                    "labels": {"es": "Pilar de cicatrización", "en": "Healing abutment"},
+                    "labels": {
+                        "es": "Pilar de cicatrización",
+                        "en": "Healing abutment",
+                        "fr": "Pilier de cicatrisation",
+                    },
                     "default_price": Decimal("150.00"),
                 },
                 {
-                    "labels": {"es": "Colocación de corona", "en": "Crown placement"},
+                    "labels": {
+                        "es": "Colocación de corona",
+                        "en": "Crown placement",
+                        "fr": "Pose de couronne",
+                    },
                     "default_price": Decimal("250.00"),
                 },
             ],
         },
         {
             "internal_code": "SURG-IMP-ZIR",
-            "names": {"es": "Implante de zirconio", "en": "Zirconia implant"},
+            "names": {
+                "es": "Implante de zirconio",
+                "en": "Zirconia implant",
+                "fr": "Implant en zircone",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("1500.00"),
             "default_duration_minutes": 90,
@@ -1185,7 +1419,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-SINUS",
-            "names": {"es": "Elevación de seno", "en": "Sinus lift"},
+            "names": {"es": "Elevación de seno", "en": "Sinus lift", "fr": "Élévation sinusienne"},
             "treatment_scope": "tooth",
             "default_price": Decimal("800.00"),
             "default_duration_minutes": 90,
@@ -1194,7 +1428,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-BONE-GRAFT",
-            "names": {"es": "Injerto óseo", "en": "Bone graft"},
+            "names": {"es": "Injerto óseo", "en": "Bone graft", "fr": "Greffe osseuse"},
             "treatment_scope": "tooth",
             "default_price": Decimal("450.00"),
             "default_duration_minutes": 75,
@@ -1203,7 +1437,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-APEC",
-            "names": {"es": "Apicectomía", "en": "Apicoectomy"},
+            "names": {"es": "Apicectomía", "en": "Apicoectomy", "fr": "Apicectomie"},
             "treatment_scope": "tooth",
             "default_price": Decimal("320.00"),
             "default_duration_minutes": 75,
@@ -1215,7 +1449,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-FREN",
-            "names": {"es": "Frenectomía", "en": "Frenectomy"},
+            "names": {"es": "Frenectomía", "en": "Frenectomy", "fr": "Frénectomie"},
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 30,
@@ -1224,7 +1458,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-BIOPSY",
-            "names": {"es": "Biopsia", "en": "Biopsy"},
+            "names": {"es": "Biopsia", "en": "Biopsy", "fr": "Biopsie"},
             "treatment_scope": "tooth",
             "default_price": Decimal("220.00"),
             "default_duration_minutes": 45,
@@ -1236,6 +1470,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Injerto de tejido conectivo",
                 "en": "Connective tissue graft",
+                "fr": "Greffe de tissu conjonctif",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("420.00"),
@@ -1245,7 +1480,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-CROWN-LENGTH",
-            "names": {"es": "Alargamiento coronario", "en": "Crown lengthening"},
+            "names": {
+                "es": "Alargamiento coronario",
+                "en": "Crown lengthening",
+                "fr": "Allongement coronaire",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("380.00"),
             "default_duration_minutes": 75,
@@ -1254,7 +1493,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-CYST",
-            "names": {"es": "Exéresis de quiste", "en": "Cyst removal"},
+            "names": {"es": "Exéresis de quiste", "en": "Cyst removal", "fr": "Exérèse de kyste"},
             "treatment_scope": "tooth",
             "default_price": Decimal("550.00"),
             "default_duration_minutes": 90,
@@ -1269,6 +1508,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Extracción de pieza incluida",
                 "en": "Impacted tooth extraction",
+                "fr": "Extraction de dent incluse",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("250.00"),
@@ -1281,7 +1521,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-BONE-REGUL",
-            "names": {"es": "Regularización ósea", "en": "Bone reshaping"},
+            "names": {
+                "es": "Regularización ósea",
+                "en": "Bone reshaping",
+                "fr": "Régularisation osseuse",
+            },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("220.00"),
             "default_duration_minutes": 60,
@@ -1293,6 +1537,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Plasma rico en plaquetas",
                 "en": "Platelet-rich plasma",
+                "fr": "Plasma riche en plaquettes",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
@@ -1305,6 +1550,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Tratamiento de periimplantitis",
                 "en": "Peri-implantitis treatment",
+                "fr": "Traitement de péri-implantite",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("420.00"),
@@ -1314,7 +1560,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-BONE-VERT",
-            "names": {"es": "Aumento óseo vertical", "en": "Vertical bone augmentation"},
+            "names": {
+                "es": "Aumento óseo vertical",
+                "en": "Vertical bone augmentation",
+                "fr": "Augmentation osseuse verticale",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("750.00"),
             "default_duration_minutes": 90,
@@ -1323,7 +1573,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-BONE-HORIZ",
-            "names": {"es": "Aumento óseo horizontal", "en": "Horizontal bone augmentation"},
+            "names": {
+                "es": "Aumento óseo horizontal",
+                "en": "Horizontal bone augmentation",
+                "fr": "Augmentation osseuse horizontale",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("650.00"),
             "default_duration_minutes": 90,
@@ -1335,6 +1589,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Elevación de seno cerrada (atraumática)",
                 "en": "Closed sinus lift (atraumatic)",
+                "fr": "Élévation sinusienne fermée (atraumatique)",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("500.00"),
@@ -1347,7 +1602,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "ortodoncia": [
         {
             "internal_code": "ORTO-METAL",
-            "names": {"es": "Ortodoncia brackets metálicos", "en": "Metal braces"},
+            "names": {
+                "es": "Ortodoncia brackets metálicos",
+                "en": "Metal braces",
+                "fr": "Bagues métalliques",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("2500.00"),
             "default_duration_minutes": 60,
@@ -1356,7 +1615,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-CERAM",
-            "names": {"es": "Ortodoncia brackets estéticos", "en": "Ceramic braces"},
+            "names": {
+                "es": "Ortodoncia brackets estéticos",
+                "en": "Ceramic braces",
+                "fr": "Bagues esthétiques",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("3500.00"),
             "default_duration_minutes": 60,
@@ -1365,7 +1628,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-LINGUAL",
-            "names": {"es": "Ortodoncia lingual", "en": "Lingual braces"},
+            "names": {"es": "Ortodoncia lingual", "en": "Lingual braces", "fr": "Bagues linguales"},
             "treatment_scope": "global_mouth",
             "default_price": Decimal("5500.00"),
             "default_duration_minutes": 60,
@@ -1374,7 +1637,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-INV-LITE",
-            "names": {"es": "Invisalign Lite", "en": "Invisalign Lite"},
+            "names": {"es": "Invisalign Lite", "en": "Invisalign Lite", "fr": "Invisalign Lite"},
             "treatment_scope": "global_mouth",
             "default_price": Decimal("2900.00"),
             "default_duration_minutes": 45,
@@ -1383,7 +1646,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-INV-FULL",
-            "names": {"es": "Invisalign Full", "en": "Invisalign Full"},
+            "names": {"es": "Invisalign Full", "en": "Invisalign Full", "fr": "Invisalign Full"},
             "treatment_scope": "global_mouth",
             "default_price": Decimal("4500.00"),
             "default_duration_minutes": 45,
@@ -1392,7 +1655,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-BRACK",
-            "names": {"es": "Bracket individual (reposición)", "en": "Bracket (replacement)"},
+            "names": {
+                "es": "Bracket individual (reposición)",
+                "en": "Bracket (replacement)",
+                "fr": "Bracket individuel (remplacement)",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("45.00"),
             "default_duration_minutes": 20,
@@ -1404,7 +1671,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-REVIEW",
-            "names": {"es": "Revisión de ortodoncia", "en": "Orthodontic review"},
+            "names": {
+                "es": "Revisión de ortodoncia",
+                "en": "Orthodontic review",
+                "fr": "Contrôle d'orthodontie",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("40.00"),
             "default_duration_minutes": 30,
@@ -1413,7 +1684,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-RET-FIX",
-            "names": {"es": "Retenedor fijo", "en": "Fixed retainer"},
+            "names": {"es": "Retenedor fijo", "en": "Fixed retainer", "fr": "Contention fixe"},
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 45,
@@ -1425,7 +1696,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-RET-REM",
-            "names": {"es": "Retenedor removible", "en": "Removable retainer"},
+            "names": {
+                "es": "Retenedor removible",
+                "en": "Removable retainer",
+                "fr": "Contention amovible",
+            },
             "treatment_scope": "global_arch",
             "default_price": Decimal("120.00"),
             "default_duration_minutes": 30,
@@ -1434,7 +1709,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-ATTACH",
-            "names": {"es": "Ataches de Invisalign", "en": "Invisalign attachments"},
+            "names": {
+                "es": "Ataches de Invisalign",
+                "en": "Invisalign attachments",
+                "fr": "Attachements Invisalign",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("60.00"),
             "default_duration_minutes": 30,
@@ -1446,7 +1725,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-BRACK-CEMENT",
-            "names": {"es": "Cementado de bracket", "en": "Bracket bonding"},
+            "names": {
+                "es": "Cementado de bracket",
+                "en": "Bracket bonding",
+                "fr": "Collage de bracket",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("35.00"),
             "default_duration_minutes": 15,
@@ -1458,7 +1741,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-BRACK-DEBOND",
-            "names": {"es": "Descementado de brackets", "en": "Bracket removal"},
+            "names": {
+                "es": "Descementado de brackets",
+                "en": "Bracket removal",
+                "fr": "Dépose des bagues",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("120.00"),
             "default_duration_minutes": 45,
@@ -1467,7 +1754,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-SEPARATOR",
-            "names": {"es": "Separadores ortodóncicos", "en": "Orthodontic separators"},
+            "names": {
+                "es": "Separadores ortodóncicos",
+                "en": "Orthodontic separators",
+                "fr": "Séparateurs orthodontiques",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("50.00"),
             "default_duration_minutes": 20,
@@ -1476,7 +1767,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-PALATAL-EXP",
-            "names": {"es": "Expansor palatino", "en": "Palatal expander"},
+            "names": {
+                "es": "Expansor palatino",
+                "en": "Palatal expander",
+                "fr": "Dilatateur palatin",
+            },
             "treatment_scope": "global_arch",
             "default_price": Decimal("450.00"),
             "default_duration_minutes": 60,
@@ -1488,6 +1783,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Microtornillo / anclaje esquelético temporal (TAD)",
                 "en": "Temporary anchorage device (TAD)",
+                "fr": "Dispositif d'ancrage temporaire (TAD)",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("250.00"),
@@ -1500,7 +1796,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "estetica": [
         {
             "internal_code": "EST-BLAN-AMB",
-            "names": {"es": "Blanqueamiento ambulatorio", "en": "At-home whitening"},
+            "names": {
+                "es": "Blanqueamiento ambulatorio",
+                "en": "At-home whitening",
+                "fr": "Blanchiment à domicile",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("250.00"),
             "default_duration_minutes": 30,
@@ -1509,7 +1809,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "EST-BLAN-CLIN",
-            "names": {"es": "Blanqueamiento en clínica", "en": "In-office whitening"},
+            "names": {
+                "es": "Blanqueamiento en clínica",
+                "en": "In-office whitening",
+                "fr": "Blanchiment en cabinet",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("400.00"),
             "default_duration_minutes": 90,
@@ -1518,7 +1822,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "EST-BLAN-COMBO",
-            "names": {"es": "Blanqueamiento combinado", "en": "Combined whitening"},
+            "names": {
+                "es": "Blanqueamiento combinado",
+                "en": "Combined whitening",
+                "fr": "Blanchiment combiné",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("550.00"),
             "default_duration_minutes": 120,
@@ -1527,7 +1835,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "EST-MICROAB",
-            "names": {"es": "Microabrasión", "en": "Microabrasion"},
+            "names": {"es": "Microabrasión", "en": "Microabrasion", "fr": "Microabrasion"},
             "treatment_scope": "tooth",
             "default_price": Decimal("120.00"),
             "default_duration_minutes": 45,
@@ -1536,7 +1844,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "EST-REMIN",
-            "names": {"es": "Remineralización estética", "en": "Aesthetic remineralization"},
+            "names": {
+                "es": "Remineralización estética",
+                "en": "Aesthetic remineralization",
+                "fr": "Reminéralisation esthétique",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("90.00"),
             "default_duration_minutes": 30,
@@ -1548,6 +1860,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Reconstrucción estética con composite",
                 "en": "Aesthetic composite reconstruction",
+                "fr": "Reconstruction esthétique en composite",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("220.00"),
@@ -1560,6 +1873,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Eliminación de pigmentación",
                 "en": "Pigmentation removal",
+                "fr": "Élimination des pigmentations",
             },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("90.00"),
@@ -1572,7 +1886,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "protesis": [
         {
             "internal_code": "PROT-FULL-SUP",
-            "names": {"es": "Prótesis completa superior", "en": "Full upper denture"},
+            "names": {
+                "es": "Prótesis completa superior",
+                "en": "Full upper denture",
+                "fr": "Prothèse complète supérieure",
+            },
             "treatment_scope": "global_arch",
             "default_price": Decimal("900.00"),
             "default_duration_minutes": 90,
@@ -1581,7 +1899,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PROT-FULL-INF",
-            "names": {"es": "Prótesis completa inferior", "en": "Full lower denture"},
+            "names": {
+                "es": "Prótesis completa inferior",
+                "en": "Full lower denture",
+                "fr": "Prothèse complète inférieure",
+            },
             "treatment_scope": "global_arch",
             "default_price": Decimal("900.00"),
             "default_duration_minutes": 90,
@@ -1590,7 +1912,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PROT-PART-METAL",
-            "names": {"es": "Prótesis parcial esquelética", "en": "Partial metal denture"},
+            "names": {
+                "es": "Prótesis parcial esquelética",
+                "en": "Partial metal denture",
+                "fr": "Prothèse partielle squelettique",
+            },
             "treatment_scope": "global_arch",
             "default_price": Decimal("750.00"),
             "default_duration_minutes": 90,
@@ -1599,7 +1925,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PROT-PART-ACR",
-            "names": {"es": "Prótesis parcial acrílica", "en": "Partial acrylic denture"},
+            "names": {
+                "es": "Prótesis parcial acrílica",
+                "en": "Partial acrylic denture",
+                "fr": "Prothèse partielle acrylique",
+            },
             "treatment_scope": "global_arch",
             "default_price": Decimal("450.00"),
             "default_duration_minutes": 75,
@@ -1611,6 +1941,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Sobredentadura sobre implantes",
                 "en": "Implant-supported overdenture",
+                "fr": "Surprothèse sur implants",
             },
             "treatment_scope": "global_arch",
             "default_price": Decimal("1800.00"),
@@ -1620,7 +1951,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PROT-REBASE",
-            "names": {"es": "Rebasado de prótesis", "en": "Denture reline"},
+            "names": {
+                "es": "Rebasado de prótesis",
+                "en": "Denture reline",
+                "fr": "Rebasage de prothèse",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("120.00"),
             "default_duration_minutes": 45,
@@ -1629,7 +1964,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PROT-REPAIR",
-            "names": {"es": "Reparación de prótesis", "en": "Denture repair"},
+            "names": {
+                "es": "Reparación de prótesis",
+                "en": "Denture repair",
+                "fr": "Réparation de prothèse",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("80.00"),
             "default_duration_minutes": 30,
@@ -1641,6 +1980,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Prótesis provisional removible",
                 "en": "Provisional removable denture",
+                "fr": "Prothèse provisoire amovible",
             },
             "treatment_scope": "global_arch",
             "default_price": Decimal("350.00"),
@@ -1650,7 +1990,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PROT-OCC-ADJ",
-            "names": {"es": "Ajuste oclusal", "en": "Occlusal adjustment"},
+            "names": {
+                "es": "Ajuste oclusal",
+                "en": "Occlusal adjustment",
+                "fr": "Ajustement occlusal",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("60.00"),
             "default_duration_minutes": 30,
@@ -1662,7 +2006,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "pediatrica": [
         {
             "internal_code": "PED-FLUOR",
-            "names": {"es": "Fluorización pediátrica", "en": "Pediatric fluoride"},
+            "names": {
+                "es": "Fluorización pediátrica",
+                "en": "Pediatric fluoride",
+                "fr": "Fluoration pédiatrique",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("25.00"),
             "default_duration_minutes": 15,
@@ -1671,7 +2019,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PED-SEAL",
-            "names": {"es": "Sellador pediátrico", "en": "Pediatric sealant"},
+            "names": {
+                "es": "Sellador pediátrico",
+                "en": "Pediatric sealant",
+                "fr": "Scellement de sillons pédiatrique",
+            },
             "treatment_scope": "tooth",
             "requires_surfaces": True,
             "default_price": Decimal("25.00"),
@@ -1684,7 +2036,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PED-PULPOTOMY",
-            "names": {"es": "Pulpotomía", "en": "Pulpotomy"},
+            "names": {"es": "Pulpotomía", "en": "Pulpotomy", "fr": "Pulpotomie"},
             "treatment_scope": "tooth",
             "default_price": Decimal("150.00"),
             "default_duration_minutes": 45,
@@ -1696,7 +2048,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PED-CROWN-SS",
-            "names": {"es": "Corona preformada pediátrica", "en": "Stainless steel crown"},
+            "names": {
+                "es": "Corona preformada pediátrica",
+                "en": "Stainless steel crown",
+                "fr": "Couronne préformée pédiatrique",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 45,
@@ -1708,7 +2064,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PED-SPACE",
-            "names": {"es": "Mantenedor de espacio simple", "en": "Simple space maintainer"},
+            "names": {
+                "es": "Mantenedor de espacio simple",
+                "en": "Simple space maintainer",
+                "fr": "Mainteneur d'espace simple",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("150.00"),
             "default_duration_minutes": 45,
@@ -1720,6 +2080,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Mantenedor de espacio compuesto",
                 "en": "Compound space maintainer",
+                "fr": "Mainteneur d'espace composé",
             },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("220.00"),
@@ -1729,7 +2090,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PED-EXT-TEMP",
-            "names": {"es": "Extracción de pieza temporal", "en": "Primary tooth extraction"},
+            "names": {
+                "es": "Extracción de pieza temporal",
+                "en": "Primary tooth extraction",
+                "fr": "Extraction de dent temporaire",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("55.00"),
             "default_duration_minutes": 30,
@@ -1744,6 +2109,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
             "names": {
                 "es": "Obturación en dentición temporal",
                 "en": "Primary tooth filling",
+                "fr": "Obturation sur dent temporaire",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("45.00"),
@@ -1764,7 +2130,11 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PED-PULPECTOMY",
-            "names": {"es": "Pulpectomía pediátrica", "en": "Pediatric pulpectomy"},
+            "names": {
+                "es": "Pulpectomía pediátrica",
+                "en": "Pediatric pulpectomy",
+                "fr": "Pulpectomie pédiatrique",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("160.00"),
             "default_duration_minutes": 60,

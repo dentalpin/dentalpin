@@ -15,7 +15,7 @@ const props = defineProps<{
   ctx: { patientId: string }
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { listGroupedForPatient } = useClinicalNotes()
 
 const groups = ref<PlanNotesGroup[]>([])
@@ -35,7 +35,7 @@ watch(() => props.ctx?.patientId, refresh, { immediate: true })
 
 function formatDate(iso: string): string {
   try {
-    return new Date(iso).toLocaleString()
+    return new Date(iso).toLocaleString(locale.value)
   } catch {
     return iso
   }

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add French locale (`fr.json`) with full UI coverage.
+
 - feat: initial release. WhatsApp delivery for the notifications gateway via
   Kapso (Meta Cloud API). Community, installable/removable (issue #63).
 - `KapsoAdapter` (template + free-form session sends) registered into the

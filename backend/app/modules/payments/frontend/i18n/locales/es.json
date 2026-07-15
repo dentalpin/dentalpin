@@ -200,6 +200,7 @@
         "emptyCta": "Registrar primer pago",
         "loadError": "No se pudo cargar el estado de cuenta.",
         "retry": "Reintentar",
+        "drPrefix": "Dr. {name}",
         "types": {
           "payment": "Pago",
           "refund": "Devolución",

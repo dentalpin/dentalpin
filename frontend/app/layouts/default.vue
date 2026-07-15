@@ -326,7 +326,7 @@ function isActive(to: string): boolean {
               class="w-4 h-4 text-subtle shrink-0"
             />
             <span class="text-ui text-muted truncate">
-              {{ clinic.clinicName.value || 'Clínica' }}
+              {{ clinic.clinicName.value || t('nav.defaultClinicName') }}
             </span>
           </div>
         </ClientOnly>

@@ -50,6 +50,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{ 'point-click': [x: string] }>()
 
+const { t } = useI18n()
+
 const W = 800
 const H = computed(() => props.height)
 const PAD_L = 8
@@ -178,7 +180,7 @@ const cursor = computed(() => {
         :viewBox="`0 0 ${W} ${H}`"
         preserveAspectRatio="none"
         role="img"
-        :aria-label="`Trend over ${series.length} points`"
+        :aria-label="t('charts.trend.ariaLabel', { count: series.length })"
         class="w-full h-full overflow-visible"
       >
         <path

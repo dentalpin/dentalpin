@@ -35,7 +35,7 @@ class GetCatalogItemArgs(BaseModel):
 def _name(names: dict | None) -> str | None:
     if not names:
         return None
-    return names.get("es") or names.get("en") or next(iter(names.values()), None)
+    return names.get("es") or names.get("en") or names.get("fr") or next(iter(names.values()), None)
 
 
 def _summary(item) -> dict:

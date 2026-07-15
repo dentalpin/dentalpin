@@ -23,7 +23,7 @@ const { t } = useI18n()
   <nav
     class="patient-bottom-bar lg:hidden fixed inset-x-0 bottom-0 z-40 bg-surface/95 backdrop-blur border-t border-default px-2 py-1.5"
     :style="{ paddingBottom: 'calc(0.375rem + env(safe-area-inset-bottom))' }"
-    aria-label="Patient quick actions"
+    :aria-label="t('patients.quickActions.ariaLabel')"
   >
     <div class="flex items-stretch gap-1">
       <button

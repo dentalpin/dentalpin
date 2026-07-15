@@ -128,7 +128,7 @@ async function onConfirm(force: boolean) {
     }
   } catch (err: unknown) {
     const e = err as { data?: { detail?: string }, message?: string }
-    const detail = e?.data?.detail ?? e?.message ?? 'error'
+    const detail = e?.data?.detail ?? e?.message ?? t('common.error')
     confirmError.value = detail
     // If uninstall was blocked by reverse-deps or removable=false, offer force.
     if (

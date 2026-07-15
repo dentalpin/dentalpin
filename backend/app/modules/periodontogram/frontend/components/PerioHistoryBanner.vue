@@ -13,7 +13,7 @@ const emit = defineEmits<{
   returnToCurrent: []
 }>()
 
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 
 function formatDate(iso: string): string {
   try {
@@ -34,10 +34,10 @@ function formatDate(iso: string): string {
   >
     <div class="flex items-center gap-2">
       <UIcon name="i-lucide-history" />
-      <span>Viendo sesión del <strong>{{ formatDate(date) }}</strong> (solo lectura).</span>
+      <span>{{ t('periodontogram.history.viewingSession', { date: formatDate(date) }) }}</span>
     </div>
     <UButton variant="outline" size="xs" @click="emit('returnToCurrent')">
-      Volver al actual
+      {{ t('periodontogram.history.returnToCurrent') }}
     </UButton>
   </div>
 </template>

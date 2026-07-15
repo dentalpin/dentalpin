@@ -44,8 +44,8 @@ const href = computed(
 )
 
 const ctaLabel = computed(() => {
-  if (debt.value > 0) return t('patientDetail.collect', 'Cobrar')
-  return t('patientDetail.viewLedger', 'Abrir cobros')
+  if (debt.value > 0) return t('patientDetail.collect')
+  return t('patientDetail.viewLedger')
 })
 
 const isEmpty = computed(() =>
@@ -55,7 +55,7 @@ const isEmpty = computed(() =>
 
 <template>
   <SummaryCard
-    :title="t('patientDetail.balance', 'Saldo')"
+    :title="t('patientDetail.balance')"
     icon="i-lucide-wallet"
     :severity="severity"
     :loading="status === 'pending'"
@@ -63,7 +63,7 @@ const isEmpty = computed(() =>
     :to="href"
   >
     <template #empty>
-      {{ t('patientDetail.noPayments', 'Sin movimientos') }}
+      {{ t('patientDetail.noPayments') }}
     </template>
 
     <dl class="space-y-1 text-ui">
@@ -72,7 +72,7 @@ const isEmpty = computed(() =>
         class="flex items-baseline justify-between gap-2"
       >
         <dt class="text-caption text-muted">
-          {{ t('payments.balance.debt', 'Debe') }}
+          {{ t('payments.balance.debt') }}
         </dt>
         <dd class="text-h2 text-[var(--color-danger-accent)] tnum">
           {{ formatCurrency(debt) }}
@@ -83,7 +83,7 @@ const isEmpty = computed(() =>
         class="flex items-baseline justify-between gap-2"
       >
         <dt class="text-caption text-muted">
-          {{ t('payments.balance.credit', 'A cuenta') }}
+          {{ t('payments.balance.credit') }}
         </dt>
         <dd class="text-default tnum">
           {{ formatCurrency(credit) }}
@@ -91,7 +91,7 @@ const isEmpty = computed(() =>
       </div>
       <div class="flex items-baseline justify-between gap-2">
         <dt class="text-caption text-muted">
-          {{ t('payments.balance.paid', 'Total cobrado') }}
+          {{ t('payments.balance.paid') }}
         </dt>
         <dd class="text-default tnum">
           {{ formatCurrency(totalPaid) }}

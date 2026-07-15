@@ -1,0 +1,2948 @@
+{
+  "app": {
+    "name": "DentalPin",
+    "tagline": "Gestion de clinique dentaire"
+  },
+  "demo": {
+    "bannerMessage": "Démo publique — n'entrez pas de données réelles de patients. La base de données est réinitialisée périodiquement.",
+    "bannerDismiss": "Fermer",
+    "credentialsTitle": "Identifiants de la démo",
+    "credentialsNote": "Uniquement pour évaluation — affiché car il s'agit d'une instance de démo publique.",
+    "copyEmail": "Copier l'email",
+    "copyPassword": "Copier le mot de passe",
+    "copied": "Copié dans le presse-papiers"
+  },
+  "nav": {
+    "dashboard": "Accueil",
+    "patients": "Patients",
+    "appointments": "Agenda",
+    "recalls": "Rappels",
+    "treatmentPlans": "Plans de traitement",
+    "budgets": "Devis",
+    "invoices": "Factures",
+    "reports": "Rapports",
+    "settings": "Paramètres",
+    "defaultClinicName": "Clinique",
+    "catalog": "Catalogue",
+    "menu": "Menu",
+    "openMenu": "Ouvrir le menu",
+    "close": "Fermer",
+    "toggleSidebar": "Basculer la barre latérale"
+  },
+  "auth": {
+    "login": "Connexion",
+    "logout": "Déconnexion",
+    "email": "Email",
+    "password": "Mot de passe",
+    "loginButton": "Se connecter",
+    "loginSuccess": "Connexion réussie",
+    "invalidCredentials": "Email ou mot de passe incorrect",
+    "emailRequired": "Saisissez votre email",
+    "passwordRequired": "Saisissez votre mot de passe",
+    "emailInvalid": "Adresse email invalide",
+    "accountInactive": "Votre compte est inactif. Contactez votre administrateur",
+    "tooManyAttempts": "Trop de tentatives. Réessayez dans quelques minutes",
+    "sessionExpired": "Votre session a expiré",
+    "networkError": "Impossible de se connecter au serveur",
+    "serverError": "Le serveur est indisponible. Veuillez réessayer dans quelques minutes",
+    "unknownError": "Erreur inattendue. Veuillez réessayer"
+  },
+  "setup": {
+    "title": "Configuration initiale",
+    "subtitle": "Créez le compte administrateur et votre clinique pour commencer",
+    "stepAccount": "Compte administrateur",
+    "stepClinic": "Informations de la clinique",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "passwordConfirm": "Confirmer le mot de passe",
+    "passwordHint": "Au moins 8 caractères, avec des lettres et des chiffres",
+    "clinicName": "Nom de la clinique",
+    "taxId": "Identifiant fiscal",
+    "next": "Suivant",
+    "back": "Retour",
+    "submit": "Créer et démarrer",
+    "success": "Tout est prêt ! Bienvenue sur DentalPin",
+    "firstNameRequired": "Saisissez le prénom",
+    "lastNameRequired": "Saisissez le nom",
+    "emailRequired": "Saisissez l'email",
+    "emailInvalid": "L'email n'est pas valide",
+    "passwordRequired": "Saisissez un mot de passe",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordWeak": "Le mot de passe doit contenir des lettres et des chiffres",
+    "passwordMismatch": "Les mots de passe ne correspondent pas",
+    "clinicNameRequired": "Saisissez le nom de la clinique",
+    "taxIdRequired": "Saisissez l'identifiant fiscal",
+    "alreadyInitialized": "Le système est déjà configuré. Veuillez vous connecter.",
+    "error": "La configuration n'a pas pu être terminée. Veuillez réessayer"
+  },
+  "actions": {
+    "edit": "Modifier",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "create": "Créer",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "remove": "Retirer"
+  },
+  "patients": {
+    "title": "Patients",
+    "create": "Nouveau patient",
+    "edit": "Modifier le patient",
+    "search": "Rechercher un patient...",
+    "searchPlaceholder": "Nom ou téléphone",
+    "noResults": "Aucun patient trouvé",
+    "empty": "Aucun patient enregistré",
+    "emptyAction": "Créer le premier patient",
+    "name": "Nom",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "phone": "Téléphone",
+    "email": "Email",
+    "dateOfBirth": "Date de naissance",
+    "notes": "Notes",
+    "created": "Patient créé",
+    "updated": "Patient mis à jour",
+    "archived": "Patient archivé",
+    "notFound": "Patient introuvable",
+    "archiveConfirm": "Archiver le patient {name} ?",
+    "archiveDescription": "Cette action masquera le patient des recherches. Les rendez-vous existants ne seront pas supprimés.",
+    "cancel": "Annuler",
+    "archive": "Archiver",
+    "dangerZone": {
+      "title": "Zone de danger",
+      "archiveHelp": "Archiver le patient pour le masquer des recherches. Les rendez-vous et l'historique sont conservés."
+    },
+    "billingSection": "Informations de facturation",
+    "billingSectionHint": "Ces données seront automatiquement utilisées lors de la création de factures pour ce patient.",
+    "editingBillingForInvoice": "Modification des données de facturation. Les changements seront reflétés dans la facture.",
+    "returnToInvoice": "Retour à la facture",
+    "billingName": "Nom de facturation",
+    "billingNamePlaceholder": "Nom ou société pour les factures",
+    "billingTaxId": "Identifiant fiscal",
+    "billingEmail": "Email de facturation",
+    "billingAddress": "Adresse de facturation",
+    "billingComplete": "Complet",
+    "billingIncomplete": "Incomplet",
+    "demographics": "Données démographiques",
+    "nationalId": "Pièce d'identité",
+    "nationalIdType": "Type de document",
+    "passport": "Passeport",
+    "profession": "Profession",
+    "workplace": "Lieu de travail",
+    "years": "ans",
+    "status": {
+      "active": "Actif",
+      "archived": "Archivé"
+    },
+    "filters": {
+      "status": "Statut",
+      "city": "Ville",
+      "withDebt": "Avec solde débiteur",
+      "doNotContact": "Ne pas contacter",
+      "doNotContactOnly": "Uniquement ne-pas-contacter",
+      "doNotContactOnlyContactable": "Uniquement joignables"
+    },
+    "columns": {
+      "city": "Ville",
+      "contact": "Contact",
+      "debt": "Solde débiteur"
+    },
+    "sort": {
+      "lastVisit": "Dernière visite",
+      "lastName": "Nom",
+      "firstName": "Prénom",
+      "createdAt": "Inscrit le",
+      "updatedAt": "Récemment modifié"
+    },
+    "doNotContact": {
+      "label": "Ne pas contacter",
+      "hint": "Le patient sera exclu de la liste d'appels et des communications automatisées",
+      "badge": "Ne pas contacter"
+    },
+    "gender": {
+      "label": "Genre",
+      "select": "Sélectionner le genre",
+      "male": "Homme",
+      "female": "Femme",
+      "other": "Autre",
+      "preferNotSay": "Préfère ne pas préciser"
+    },
+    "emergencyContact": {
+      "title": "Contact d'urgence",
+      "hasContact": "A un contact d'urgence",
+      "noContact": "Aucun contact d'urgence enregistré",
+      "name": "Nom complet",
+      "namePlaceholder": "Nom du contact",
+      "relationship": "Lien de parenté",
+      "relationshipPlaceholder": "Sélectionner le lien",
+      "phone": "Téléphone",
+      "phonePlaceholder": "Téléphone du contact",
+      "email": "Email",
+      "emailPlaceholder": "Email du contact",
+      "isLegalGuardian": "Est tuteur légal",
+      "remove": "Supprimer le contact",
+      "relationships": {
+        "spouse": "Conjoint",
+        "parent": "Parent",
+        "child": "Enfant",
+        "sibling": "Frère/Sœur",
+        "friend": "Ami",
+        "other": "Autre"
+      }
+    },
+    "medicalHistory": {
+      "title": "Antécédents médicaux",
+      "save": "Enregistrer l'historique",
+      "fetchError": "Erreur lors du chargement des antécédents médicaux",
+      "saveSuccess": "Antécédents médicaux enregistrés",
+      "saveError": "Erreur lors de l'enregistrement des antécédents médicaux",
+      "allergies": "Allergies",
+      "allergiesCount": "{n} allergie | {n} allergies",
+      "onAnticoagulants": "Sous traitement anticoagulant",
+      "allergyName": "Nom de l'allergie",
+      "type": "Type",
+      "allergyTypes": {
+        "drug": "Médicamenteuse",
+        "food": "Alimentaire",
+        "material": "Matériau",
+        "environmental": "Environnementale"
+      },
+      "severity": {
+        "low": "Faible",
+        "medium": "Modérée",
+        "high": "Élevée",
+        "critical": "Critique"
+      },
+      "medications": "Médicaments",
+      "medicationName": "Nom du médicament",
+      "dosage": "Dosage",
+      "frequency": "Fréquence",
+      "systemicDiseases": "Maladies systémiques",
+      "diseaseName": "Nom de la maladie",
+      "diseaseTypes": {
+        "cardiovascular": "Cardiovasculaire",
+        "respiratory": "Respiratoire",
+        "endocrine": "Endocrine",
+        "neurological": "Neurologique",
+        "autoimmune": "Autoimmune",
+        "other": "Autre"
+      },
+      "critical": "Critique",
+      "controlled": "Contrôlée",
+      "notControlled": "Non contrôlée",
+      "specialConditions": "Conditions particulières",
+      "pregnant": "Enceinte",
+      "pregnancyWeek": "Semaine de grossesse",
+      "lactating": "Allaitante",
+      "anticoagulants": "Anticoagulants",
+      "anticoagulantMedication": "Médicament anticoagulant",
+      "inrValue": "Valeur de l'INR",
+      "anesthesiaReaction": "Réaction à l'anesthésie",
+      "anesthesiaReactionDetails": "Détails de la réaction",
+      "bruxism": "Bruxisme",
+      "lifestyle": "Mode de vie",
+      "smoker": "Fumeur",
+      "smokingFrequency": "Cigarettes/jour",
+      "alcoholConsumption": "Consommation d'alcool",
+      "alcohol": {
+        "none": "Aucune",
+        "occasional": "Occasionnelle",
+        "moderate": "Modérée",
+        "heavy": "Importante"
+      },
+      "surgicalHistory": "Antécédents chirurgicaux",
+      "procedure": "Acte"
+    },
+    "timeline": {
+      "empty": "Aucune activité enregistrée pour le moment",
+      "emptyFiltered": "Aucun événement dans cette catégorie",
+      "clearFilter": "Afficher toute l'activité",
+      "endOfTimeline": "Fin de la chronologie",
+      "totalEntries": "{count} entrée | {count} entrées",
+      "groups": {
+        "today": "Aujourd'hui",
+        "yesterday": "Hier",
+        "thisWeek": "Cette semaine",
+        "thisMonth": "Ce mois-ci",
+        "earlier": "Plus tôt"
+      },
+      "author": "par {name}",
+      "meta": {
+        "cabinet": "Cabinet {name}",
+        "teeth": "Dents : {list}",
+        "total": "Total : {amount}",
+        "number": "N° {value}",
+        "via": "Via {channel}",
+        "template": "Modèle : {key}",
+        "docType": "Type : {type}"
+      },
+      "categories": {
+        "all": "Tout",
+        "visit": "Visites",
+        "treatment": "Traitements",
+        "financial": "Financier",
+        "communication": "Communications",
+        "medical": "Antécédents médicaux",
+        "document": "Documents",
+        "note": "Notes cliniques"
+      }
+    },
+    "alerts": {
+      "title": "{count} alerte | {count} alertes",
+      "label": "Alertes cliniques"
+    },
+    "editDemographics": "Modifier les données démographiques",
+    "editEmergencyContact": "Modifier le contact d'urgence",
+    "editBilling": "Modifier les informations de facturation",
+    "editMedicalHistory": "Modifier les antécédents médicaux",
+    "medicalSnapshot": {
+      "title": "Informations médicales",
+      "allergiesLabel": "Allergies",
+      "allergiesEmpty": "Aucune allergie connue",
+      "allergiesNotReviewed": "Antécédents médicaux non enregistrés",
+      "completeHistory": "Historique complet",
+      "reviewedOn": "Revu le {date}",
+      "conditions": {
+        "pregnantWeek": "Enceinte · s. {week}",
+        "anticoagulantInr": "Anticoagulant · INR {inr}",
+        "smokerFreq": "Fumeur · {freq}/jour"
+      }
+    },
+    "visitSummary": {
+      "title": "Résumé de la visite",
+      "lastVisit": "Dernière visite",
+      "nextAppointment": "Prochain rendez-vous",
+      "noLastVisit": "Aucune visite précédente",
+      "noNextAppointment": "Aucun rendez-vous programmé"
+    },
+    "personalInfo": {
+      "title": "Informations personnelles",
+      "ageLabel": "{age} ans",
+      "birthWithAge": "{date} ({age} ans)"
+    },
+    "contactInfo": {
+      "title": "Contact",
+      "copyPhone": "Copier le téléphone",
+      "copyEmail": "Copier l'email",
+      "address": "Adresse",
+      "addEmergency": "Ajouter un contact d'urgence",
+      "addGuardian": "Ajouter un tuteur légal",
+      "guardianRequired": "Tuteur légal requis"
+    },
+    "administrative": {
+      "title": "Administratif"
+    },
+    "header": {
+      "ariaLabel": "En-tête du patient"
+    },
+    "quickActions": {
+      "ariaLabel": "Actions rapides du patient"
+    }
+  },
+  "patientDetail": {
+    "tabs": {
+      "summary": "Résumé",
+      "info": "Infos",
+      "clinical": "Clinique",
+      "odontogram": "Odontogramme",
+      "administration": "Administration",
+      "history": "Historique",
+      "timeline": "Activité",
+      "appointments": "Rendez-vous",
+      "budgets": "Devis",
+      "billing": "Facturation",
+      "payments": "Paiements",
+      "documents": "Documents",
+      "gallery": "Galerie"
+    },
+    "historyPlaceholder": "Notes cliniques disponibles dans une future version",
+    "noAppointments": "Ce patient n'a aucun rendez-vous",
+    "scheduleAppointment": "Programmer un rendez-vous",
+    "noBudgets": "Ce patient n'a aucun devis",
+    "createBudget": "Créer un devis",
+    "viewAllBudgets": "Voir tous les devis",
+    "activePlan": "Plan actif",
+    "noActivePlan": "Aucun plan actif",
+    "viewPlan": "Ouvrir le plan",
+    "createPlan": "Créer un plan",
+    "nextAppointment": "Prochain rendez-vous",
+    "noUpcomingAppointments": "Aucun rendez-vous à venir",
+    "openAppointment": "Ouvrir le rendez-vous",
+    "reschedule": "Reporter",
+    "balance": "Solde",
+    "collect": "Encaisser",
+    "viewLedger": "Ouvrir le grand livre",
+    "noPayments": "Aucun mouvement",
+    "diagnoses": "Diagnostics",
+    "pending": "non traité",
+    "noDiagnoses": "Aucune anomalie en attente",
+    "openOdontogram": "Ouvrir l'odontogramme",
+    "medicalHistory": "Antécédents médicaux",
+    "completeMedicalHistory": "Aucun antécédent médical. Complétez-les pour enregistrer les allergies, les conditions et les médicaments.",
+    "editMedicalHistory": "Modifier les antécédents médicaux",
+    "quickActions": "Actions rapides",
+    "edit": "Modifier",
+    "editPatient": "Modifier le patient",
+    "noSummaryCards": "Aucun module enregistré dans le résumé.",
+    "actions": {
+      "label": "Actions",
+      "newAppointment": "Rendez-vous",
+      "collect": "Encaisser",
+      "newNote": "Note",
+      "newBudget": "Devis",
+      "uploadDocument": "Document"
+    }
+  },
+  "patientBilling": {
+    "totalBudgeted": "Total estimé",
+    "workInProgress": "Travaux en cours",
+    "workCompleted": "Travaux terminés",
+    "totalInvoiced": "Total facturé",
+    "totalPaid": "Total payé",
+    "balancePending": "Solde en attente",
+    "invoices": "Factures",
+    "createInvoice": "Créer une facture",
+    "noInvoices": "Ce patient n'a aucune facture",
+    "pending": "En attente"
+  },
+  "odontogram": {
+    "title": "Odontogramme",
+    "tooth": "Dent",
+    "globals": {
+      "category": "Bouche complète",
+      "applied": "{name} ajouté au plan",
+      "archPickerTitle": "Quelle arcade pour « {name} » ?",
+      "upperArch": "Arcade supérieure",
+      "lowerArch": "Arcade inférieure"
+    },
+    "selectCondition": "Sélectionner l'état",
+    "readOnly": "Lecture seule",
+    "legend": "Légende",
+    "statusLegend": "Statut du traitement",
+    "toothPosition": "Position dentaire",
+    "displaced": "Déplacée",
+    "rotated": "Tournée",
+    "dentition": {
+      "permanent": "Permanentes",
+      "deciduous": "Temporaires",
+      "toggle": "Basculer la dentition"
+    },
+    "quadrants": {
+      "upper": "Arcade supérieure",
+      "lower": "Arcade inférieure",
+      "upperRight": "Supérieur droit",
+      "upperLeft": "Supérieur gauche",
+      "lowerRight": "Inférieur droit",
+      "lowerLeft": "Inférieur gauche"
+    },
+    "surfaces": {
+      "M": "Mésiale",
+      "D": "Distale",
+      "O": "Occlusale",
+      "V": "Vestibulaire",
+      "L": "Linguale"
+    },
+    "conditions": {
+      "healthy": "Saine",
+      "caries": "Carie",
+      "filling": "Obturation",
+      "crown": "Couronne",
+      "missing": "Absente",
+      "root_canal": "Traitement canalaire",
+      "implant": "Implant",
+      "bridge_pontic": "Pont de bridge",
+      "bridge_abutment": "Pilier de bridge",
+      "extraction_indicated": "Extraction indiquée",
+      "sealant": "Scellant",
+      "fracture": "Fracture"
+    },
+    "history": {
+      "title": "Historique des modifications",
+      "noChanges": "Aucune modification enregistrée",
+      "changedBy": "Modifié par",
+      "changeTypes": {
+        "created": "Créé",
+        "general_condition": "État général",
+        "surface_update": "Mise à jour de surface",
+        "note": "Note"
+      }
+    },
+    "messages": {
+      "updated": "Odontogramme mis à jour",
+      "error": "Erreur lors de la mise à jour de l'odontogramme",
+      "loadError": "Impossible de charger l'odontogramme"
+    },
+    "actions": {
+      "save": "Enregistrer",
+      "reset": "Réinitialiser",
+      "print": "Imprimer"
+    },
+    "status": {
+      "existing": "Existant",
+      "planned": "Planifié"
+    },
+    "treatments": {
+      "title": "Traitements",
+      "addTreatment": "Ajouter un traitement",
+      "selectStatus": "Sélectionner le statut",
+      "noTreatments": "Aucun traitement enregistré",
+      "markPerformed": "Marquer comme réalisé",
+      "categories": {
+        "common": "Courant",
+        "restorative": "Restauratrice",
+        "diagnostic": "Diagnostic",
+        "orthodontic": "Orthodontie",
+        "periodontic": "Parodontie",
+        "position": "Position",
+        "other": "Autre",
+        "diagnostico": "Diagnostic",
+        "restauradora": "Restauratrice",
+        "cirugia": "Chirurgie",
+        "endodoncia": "Endodontie",
+        "ortodoncia": "Orthodontie"
+      },
+      "types": {
+        "pulpitis": "Pulpite",
+        "caries": "Carie",
+        "incipient_caries": "Carie naissante",
+        "pigmentation": "Pigmentation",
+        "fracture": "Fracture",
+        "missing": "Absente",
+        "periapical_small": "Péricimentaire <2mm",
+        "periapical_medium": "Péricimentaire 2-4mm",
+        "periapical_large": "Péricimentaire >4mm",
+        "rotated": "Tournée",
+        "displaced": "Déplacée",
+        "unerupted": "Non éruptée",
+        "filling": "Obturation",
+        "filling_composite": "Obturation en composite",
+        "filling_amalgam": "Obturation en amalgame",
+        "filling_temporary": "Obturation provisoire",
+        "sealant": "Scellant",
+        "veneer": "Facette",
+        "inlay": "Inlay",
+        "overlay": "Onlay",
+        "crown": "Couronne",
+        "crown_on_implant": "Couronne sur implant",
+        "provisional_crown_on_implant": "Couronne provisoire sur implant",
+        "pontic": "Pont",
+        "bridge_pontic": "Pont de bridge",
+        "bridge_abutment": "Pilier de bridge",
+        "extraction": "Extraction",
+        "implant": "Implant",
+        "apicoectomy": "Apicectomie",
+        "root_canal": "Traitement canalaire",
+        "root_canal_full": "Dépulpage complet",
+        "root_canal_two_thirds": "Traitement canalaire 2/3",
+        "root_canal_half": "Traitement canalaire 1/2",
+        "root_canal_overfill": "Surcharge de traitement canalaire",
+        "post": "Dentine",
+        "bracket": "Bracket",
+        "tube": "Tube",
+        "band": "Bague",
+        "attachment": "Attachement",
+        "retainer": "Contention",
+        "rotate": "Tournée",
+        "displace": "Déplacée",
+        "splint": "Attelle",
+        "migrated": "Traitement général"
+      },
+      "treatmentAdded": "Traitement ajouté",
+      "treatmentPerformed": "Traitement marqué comme réalisé",
+      "treatmentDeleted": "Traitement supprimé",
+      "status": {
+        "existing": "Existant",
+        "planned": "Planifié"
+      }
+    },
+    "position": {
+      "displaced": "Déplacée",
+      "rotated": "Tournée",
+      "normal": "Normale"
+    },
+    "views": {
+      "occlusal": "Vue occlusale",
+      "lateral": "Vue latérale",
+      "dual": "Vue double"
+    },
+    "selectSurfaces": "Sélectionner les surfaces",
+    "selectedSurfaces": "Surfaces sélectionnées",
+    "surfacesSelected": "surface(s) sélectionnée(s)",
+    "instructions": {
+      "selectTreatment": "Sélectionnez un traitement à appliquer",
+      "clickTooth": "Cliquez sur la dent pour appliquer"
+    },
+    "addToPlan": "Ajouter au plan",
+    "noPlan": "Aucun plan",
+    "createNewPlan": "Créer un nouveau plan...",
+    "applyTo": "Appliquer à",
+    "oneTooth": "1 dent",
+    "multipleTeeth": "Plusieurs dents",
+    "surfacePricingHint": "Prix par surface : {range}",
+    "toothNames": {
+      "centralIncisor": "Incisive centrale",
+      "lateralIncisor": "Incisive latérale",
+      "canine": "Canine",
+      "firstPremolar": "Première prémolaire",
+      "secondPremolar": "Deuxième prémolaire",
+      "firstMolar": "Première molaire",
+      "secondMolar": "Deuxième molaire",
+      "thirdMolar": "Troisième molaire"
+    },
+    "positions": {
+      "upper": "supérieure",
+      "lower": "inférieure",
+      "left": "gauche",
+      "right": "droite"
+    },
+    "tooltip": {
+      "clickToEdit": "Cliquer pour modifier"
+    },
+    "planning": "Planification",
+    "diagnosisMode": "Diagnostic",
+    "treatmentList": {
+      "title": "Liste des traitements",
+      "noTreatments": "Aucun traitement enregistré"
+    },
+    "changeHistory": {
+      "title": "Historique des modifications",
+      "noChanges": "Aucune modification enregistrée",
+      "treatmentAdded": "Traitement"
+    },
+    "timeline": {
+      "title": "Chronologie",
+      "viewingDate": "Affichage : {date}",
+      "viewingHistory": "Vous consultez l'état historique de l'odontogramme",
+      "returnToNow": "Revenir à l'état actuel",
+      "noHistory": "Aucun historique antérieur"
+    },
+    "multiTooth": {
+      "bridge": {
+        "label": "Bridge fixe"
+      },
+      "splint": {
+        "label": "Attelle"
+      },
+      "veneers": {
+        "label": "Facettes multiples"
+      },
+      "crowns": {
+        "label": "Couronnes multiples"
+      },
+      "pillar": "pilier",
+      "pontic": "pont",
+      "roleHint": "Cliquez sur une dent pour basculer pilier / pont.",
+      "needPillar": "Le bridge nécessite au moins une dent pilier.",
+      "confirmHint": "Vous êtes sur le point de créer un groupe de traitement avec {n} dents.",
+      "willBePlanned": "Le groupe sera marqué comme planifié.",
+      "willBeExisting": "Le groupe sera enregistré comme existant.",
+      "hints": {
+        "range": "Cliquez sur la première dent, puis sur la dernière",
+        "free": "Cliquez pour ajouter ou retirer des dents"
+      },
+      "errors": {
+        "tooFew": "Au moins {n} dents requises",
+        "tooMany": "Maximum {n} dents autorisées",
+        "sameArchRequired": "Les dents doivent être dans la même arcade"
+      },
+      "sectionLabel": "Traitements multi-dents"
+    }
+  },
+  "clinical": {
+    "modes": {
+      "history": "Historique",
+      "diagnosis": "Diagnostic",
+      "plans": "Plans de traitement",
+      "appointments": "Rendez-vous"
+    },
+    "history": {
+      "stateAt": "État au",
+      "changesOnDate": "Modifications à cette date",
+      "noChanges": "Aucune modification enregistrée"
+    },
+    "diagnosis": {
+      "registeredConditions": "Conditions diagnostiquées",
+      "registerConditions": "Enregistrer les conditions",
+      "noConditions": "Aucune condition enregistrée",
+      "startDiagnosis": "Sélectionnez une dent et ajoutez les conditions existantes",
+      "generalConditions": "Conditions générales",
+      "readyToCreatePlan": "Diagnostic terminé ?",
+      "createPlan": "Créer un plan de traitement",
+      "continuePlan": "Continuer le plan « {name} »",
+      "selectPlan": "Sélectionner un plan",
+      "continue": "Continuer",
+      "odontogramTab": "Odontogramme"
+    },
+    "plans": {
+      "title": "Plans de traitement",
+      "create": "Nouveau plan",
+      "backToList": "Retour aux plans",
+      "treatments": "Traitements du plan",
+      "addTreatment": "Ajouter un traitement",
+      "total": "Total",
+      "activate": "Activer le plan",
+      "generateBudget": "Générer le devis",
+      "empty": "Aucun plan de traitement",
+      "emptyDescription": "Créez un plan pour organiser les traitements du patient",
+      "createFirst": "Créer le premier plan",
+      "active": "Plans actifs",
+      "drafts": "Brouillons",
+      "completed": "Terminés",
+      "closed": "Fermés",
+      "other": "Autres",
+      "noItems": "Aucun traitement dans le plan",
+      "markComplete": "Marquer comme terminé",
+      "removeItem": "Retirer du plan",
+      "sessions": {
+        "progress": "{done}/{total} séances",
+        "markDone": "Marquer la séance comme terminée",
+        "cancel": "Annuler la séance",
+        "markedDone": "Séance marquée comme terminée",
+        "cancelled": "Séance annulée",
+        "untitled": "Séance {n}"
+      },
+      "unknownTreatment": "Traitement",
+      "odontogram": "Odontogramme",
+      "pending": "en attente",
+      "dragToReorder": "Glisser pour réordonner",
+      "reorderHint": "Utilisez Alt + touches fléchées pour déplacer",
+      "emptyDraft": {
+        "title": "Planifiez les traitements",
+        "step1": "Choisissez un traitement dans la barre ci-dessous",
+        "step2": "Cliquez sur une dent dans l'odontogramme",
+        "step3": "Confirmez le plan pour générer le devis et les rendez-vous"
+      },
+      "steps": {
+        "plan": "Planifier",
+        "confirm": "Confirmer",
+        "inProgress": "En cours"
+      },
+      "confirmCta": {
+        "titleWithItems": "Confirmer le plan",
+        "subtitleWithItems": "La confirmation débloque la génération du devis et la planification des rendez-vous.",
+        "empty": "Ajoutez au moins un traitement pour confirmer le plan"
+      },
+      "ghostHint": "Disponible après confirmation du plan",
+      "addedToPlan": "Ajouté au plan",
+      "addingToPlan": "Ajout à ce plan",
+      "cancelPlan": "Annuler le plan",
+      "locked": {
+        "title": "Plan verrouillé",
+        "subtitle": "Le devis {number} a été émis. Pour modifier les traitements, utilisez Rouvrir (si en attente) ou Renégocier le devis.",
+        "viewBudget": "Voir le devis"
+      }
+    },
+    "tooth": "Dent"
+  },
+  "appointments": {
+    "title": "Agenda",
+    "create": "Nouveau rendez-vous",
+    "edit": "Modifier le rendez-vous",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "week": "Semaine",
+    "prevWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "selectPatient": "Sélectionner un patient",
+    "selectProfessional": "Sélectionner un professionnel",
+    "openPatientFile": "Ouvrir le dossier patient",
+    "patient": "Patient",
+    "professional": "Professionnel",
+    "cabinet": "Cabinet",
+    "date": "Date",
+    "time": "Heure",
+    "startTime": "Heure de début",
+    "duration": "Durée",
+    "treatmentType": "Type de traitement",
+    "treatments": "Traitements",
+    "addTreatment": "Ajouter un traitement",
+    "selectTreatment": "Sélectionner un traitement",
+    "estimatedDuration": "Durée estimée",
+    "notes": "Notes",
+    "hasNotes": "A des notes",
+    "status": {
+      "label": "Statut",
+      "scheduled": "Planifié",
+      "confirmed": "Confirmé",
+      "checked_in": "En salle d'attente",
+      "in_treatment": "En fauteuil",
+      "completed": "Terminé",
+      "cancelled": "Annulé",
+      "no_show": "Absence"
+    },
+    "scheduled": "Planifié",
+    "confirmed": "Confirmé",
+    "inProgress": "En cours",
+    "in_progress": "En cours",
+    "completed": "Terminé",
+    "cancelled": "Annulé",
+    "noShow": "Absence",
+    "no_show": "Absence",
+    "transitions": {
+      "confirmed": "Marquer comme confirmé",
+      "checked_in": "Enregistrer l'arrivée",
+      "in_treatment": "Placer en fauteuil",
+      "completed": "Terminer le rendez-vous",
+      "cancelled": "Annuler le rendez-vous",
+      "no_show": "Marquer comme absence"
+    },
+    "timer": {
+      "startsIn": "commence dans {minutes} min",
+      "startsInOverdue": "{minutes} min de retard",
+      "waiting": "attente {minutes} min",
+      "inTreatment": "{elapsed}/{planned} min",
+      "completedAt": "terminé à {time}",
+      "cancelledAt": "annulé",
+      "noShowAt": "absence"
+    },
+    "confirmTransitionTitle": "Confirmer le changement de statut",
+    "confirmCancelMessage": "Annuler ce rendez-vous ? Le changement sera enregistré.",
+    "confirmNoShowMessage": "Marquer ce patient comme absent ? Le changement sera enregistré.",
+    "noteLabel": "Note (facultatif)",
+    "transitionFailed": "Impossible de modifier le statut du rendez-vous",
+    "when": "Quand",
+    "whereWho": "Cabinet et professionnel",
+    "followup": {
+      "title": "Actions post-rendez-vous"
+    },
+    "created": "Rendez-vous créé",
+    "saved": "Rendez-vous enregistré",
+    "updated": "Rendez-vous mis à jour",
+    "conflict": "Ce créneau est déjà occupé",
+    "cancel": "Annuler le rendez-vous",
+    "markCompleted": "Marquer comme terminé",
+    "markNoShow": "Absence",
+    "dailyView": "Jour",
+    "weeklyView": "Semaine",
+    "kanbanView": "Kanban",
+    "kanban": {
+      "upcoming": "À venir",
+      "waiting": "Salle d'attente",
+      "inChair": "En fauteuil",
+      "done": "Terminés",
+      "missed": "Absence / Annulé",
+      "free": "Libre",
+      "inactive": "Inactif",
+      "empty": "Aucun rendez-vous",
+      "nextIn": "Prochain à {time}",
+      "subtitleCount": "{count} rendez-vous",
+      "subtitleEmpty": "Aucun rendez-vous",
+      "subtitleWaiting": "{count} en attente · moy {avg} min",
+      "subtitleInChair": "{busy} occupé(s) · {free} libre(s)"
+    },
+    "cabinetAssignment": {
+      "assignLater": "Attribuer plus tard",
+      "unassigned": "Non attribué",
+      "assign": "Attribuer un cabinet",
+      "reassign": "Réattribuer le cabinet",
+      "unassign": "Retirer l'attribution du cabinet",
+      "requiredForTreatment": "Attribuez un cabinet avant de passer au traitement"
+    },
+    "professionals": {
+      "strip": "Professionnels",
+      "state": {
+        "free": "Libre",
+        "in_treatment": "En fauteuil",
+        "on_break": "En pause",
+        "off": "Absent"
+      }
+    },
+    "noProfessionals": "Aucun professionnel configuré",
+    "overlapWarning": "Chevauchements détectés",
+    "overlapProfessional": "Le professionnel a {count} rendez-vous(s) à cet horaire",
+    "overlapCabinet": "Le cabinet a {count} rendez-vous(s) à cet horaire",
+    "selectDuration": "Sélectionner la durée...",
+    "sendEmail": "Envoyer un email",
+    "sendConfirmationEmail": "Envoyer la confirmation",
+    "resendConfirmation": "Renvoyer la confirmation",
+    "sendReminderEmail": "Envoyer un rappel",
+    "emailSent": "Email envoyé avec succès",
+    "automatic": "automatique",
+    "selectPatientFirst": "Sélectionnez un patient pour voir les traitements en attente",
+    "noPendingTreatments": "Aucun traitement en attente",
+    "createPlanFirst": "Créez un plan de traitement pour ce patient",
+    "addTreatmentFromPlan": "Ajouter un traitement du plan",
+    "selectPendingTreatment": "Sélectionner un traitement en attente",
+    "emptyDay": "Aucun rendez-vous pour ce jour",
+    "noPatient": "Aucun patient",
+    "freeSlots": {
+      "byProfessional": "Professionnel",
+      "byCabinet": "Cabinet",
+      "freeSuffix": "libre",
+      "freeShort": "libre",
+      "noFreeTime": "Aucun créneau libre",
+      "tapToBook": "Appuyez pour réserver",
+      "tapToBookAria": "Créneau libre de {duration} à {time}",
+      "nextFreeAt": "Prochain à {time}",
+      "gapsAtLeast": "{count} créneaux ≥ {min} min",
+      "minDuration": "Minimum",
+      "noFreeSlots": "Aucun créneau libre aujourd'hui",
+      "clinicClosed": "Clinique fermée",
+      "professionalOff": "Absent",
+      "onBreak": "En pause"
+    }
+  },
+  "dashboard": {
+    "greetings": {
+      "morning": "Bonjour",
+      "afternoon": "Bon après-midi",
+      "evening": "Bonsoir"
+    },
+    "welcome": "Bienvenue sur DentalPin",
+    "welcomeMessage": "Commencez par créer votre premier patient.",
+    "quickActions": {
+      "newAppointment": "Nouveau rendez-vous",
+      "newPatient": "Nouveau patient",
+      "search": "Rechercher un patient",
+      "searchPlaceholder": "Rechercher par nom, téléphone ou email"
+    },
+    "timeline": {
+      "title": "Aujourd'hui",
+      "empty": "Aucun rendez-vous prévu aujourd'hui",
+      "now": "Maintenant",
+      "openSchedule": "Ouvrir l'agenda"
+    },
+    "todayKpi": {
+      "title": "Rendez-vous du jour",
+      "completed": "terminés",
+      "inProgress": "en cours",
+      "upcoming": "à venir",
+      "cancelled": "annulés",
+      "noShow": "absences",
+      "empty": "Aucun rendez-vous aujourd'hui"
+    },
+    "inClinic": {
+      "title": "En clinique maintenant",
+      "inTreatment": "{n} en fauteuil",
+      "waiting": "{n} en attente",
+      "empty": "Personne en clinique"
+    },
+    "unconfirmed": {
+      "title": "Non confirmés pour demain",
+      "empty": "Tous les rendez-vous de demain sont confirmés",
+      "confirm": "Confirmer",
+      "confirmError": "Impossible de confirmer"
+    },
+    "overdue": {
+      "title": "Paiements en retard",
+      "daysOverdue": "{n} jour de retard | {n} jours de retard",
+      "viewAll": "Voir tout",
+      "empty": "Aucune facture en retard"
+    },
+    "recent": {
+      "title": "Patients récents",
+      "empty": "Aucun patient pour le moment"
+    },
+    "weekGlance": {
+      "title": "Résumé de la semaine",
+      "subtitle": "7 derniers jours vs 7 jours précédents",
+      "appointments": "Rendez-vous",
+      "completed": "Terminés",
+      "invoiced": "Facturés",
+      "empty": "Aucune donnée cette semaine"
+    }
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre clinique, équipe et modules.",
+    "allCategories": "Toutes les catégories",
+    "navLabel": "Catégories des paramètres",
+    "attentionRequired": "Attention requise",
+    "categories": {
+      "general": {
+        "label": "Général",
+        "description": "Profil de la clinique, image de marque et fuseau horaire."
+      },
+      "workspace": {
+        "label": "Espace de travail",
+        "description": "Cabinets, horaires d'ouverture et disponibilité."
+      },
+      "people": {
+        "label": "Personnel",
+        "description": "Utilisateurs, rôles et invitations."
+      },
+      "clinical": {
+        "label": "Clinique",
+        "description": "Catalogue, paramètres par défaut et modèles de traitements."
+      },
+      "billing": {
+        "label": "Facturation & fiscalité",
+        "description": "Séries de factures, TVA et conformité fiscale."
+      },
+      "communications": {
+        "label": "Communications",
+        "description": "Notifications, SMTP et modèles."
+      },
+      "integrations": {
+        "label": "Intégrations",
+        "description": "Services et fournisseurs externes."
+      },
+      "modules": {
+        "label": "Modules",
+        "description": "Installer, mettre à jour et désinstaller des modules."
+      },
+      "account": {
+        "label": "Compte",
+        "description": "Votre profil, mot de passe et langue."
+      }
+    },
+    "search": {
+      "placeholder": "Rechercher dans les paramètres…",
+      "empty": "Aucun résultat pour cette recherche.",
+      "navigate": "naviguer",
+      "open": "ouvrir"
+    },
+    "locked": {
+      "title": "Vous n'avez pas accès à cette section",
+      "description": "Demandez à un administrateur de la clinique de vous accorder les permissions requises."
+    },
+    "emptyCategory": {
+      "title": "Aucune option disponible",
+      "description": "Lorsque des modules compatibles sont activés, leurs paramètres apparaîtront ici."
+    },
+    "loadError": {
+      "description": "Impossible de charger cet éditeur. Réessayez dans quelques secondes."
+    },
+    "comingSoon": {
+      "title": "Bientôt disponible",
+      "subtitle": "Nous travaillons sur cette section. En attendant, vous pouvez gérer cela via l'API."
+    },
+    "onboarding": {
+      "title": "Terminez la configuration de votre clinique",
+      "subtitle": "Vous avez {count} étape(s) en attente pour finaliser la configuration initiale.",
+      "dismiss": "Fermer",
+      "items": {
+        "clinicInfo": {
+          "label": "Complétez le profil de la clinique",
+          "description": "Nom, identifiant fiscal et adresse apparaissent sur les devis et factures."
+        },
+        "cabinets": {
+          "label": "Créez au moins un cabinet",
+          "description": "Sans cabinets, vous ne pouvez pas planifier de rendez-vous."
+        }
+      }
+    },
+    "cabinetsDescription": "Salles ou boxes où les patients sont traités.",
+    "usersDescription": "Comptes ayant accès à cette clinique et leurs rôles.",
+    "profileDescription": "Vos informations personnelles dans cette clinique.",
+    "clinic": "Clinique",
+    "profile": "Profil",
+    "clinicName": "Nom de la clinique",
+    "clinicInfo": "Informations de la clinique",
+    "clinicInfoDescription": "Ces données apparaîtront sur les devis et documents",
+    "taxId": "Identifiant fiscal",
+    "legalName": "Raison sociale",
+    "legalNameHelp": "Raison sociale de l'entité pour la facturation. Laissez vide pour utiliser le nom de la clinique.",
+    "street": "Adresse",
+    "city": "Ville",
+    "postalCode": "Code postal",
+    "country": "Pays",
+    "countryPlaceholder": "Sélectionner un pays",
+    "countrySearchPlaceholder": "Rechercher un pays…",
+    "phone": "Téléphone",
+    "timezone": "Fuseau horaire",
+    "timezoneHelp": "Tous les horaires et rendez-vous sont interprétés dans ce fuseau horaire.",
+    "currency": "Devise",
+    "currencyHelp": "Devise utilisée dans toute la clinique pour les devis, factures et le catalogue.",
+    "editClinicInfo": "Modifier les informations",
+    "clinicUpdated": "Informations de la clinique mises à jour",
+    "clinicUpdateError": "Erreur lors de la mise à jour des informations",
+    "cabinets": "Cabinets",
+    "language": "Langue",
+    "languageDescription": "Sélectionnez votre langue préférée",
+    "users": "Utilisateurs de la clinique",
+    "newUser": "Nouvel utilisateur",
+    "createUser": "Créer un utilisateur",
+    "editUser": "Modifier l'utilisateur",
+    "deleteUser": "Supprimer l'utilisateur",
+    "deleteUserConfirm": "Êtes-vous sûr de vouloir retirer",
+    "deleteUserNote": "L'utilisateur perdra l'accès à cette clinique mais son compte ne sera pas supprimé.",
+    "noUsers": "Aucun utilisateur enregistré",
+    "youTag": "(vous)",
+    "userActive": "Utilisateur actif",
+    "userInactiveNote": "(Ne peut pas se connecter)",
+    "saveChanges": "Enregistrer les modifications",
+    "noCabinets": "Aucun cabinet configuré",
+    "addCabinet": "Ajouter",
+    "newCabinet": "Nouveau cabinet",
+    "editCabinet": "Modifier le cabinet",
+    "deleteCabinet": "Supprimer le cabinet",
+    "deleteCabinetConfirm": "Êtes-vous sûr de vouloir supprimer le cabinet",
+    "deleteCabinetNote": "Les rendez-vous existants dans ce cabinet ne seront pas affectés.",
+    "createCabinet": "Créer le cabinet",
+    "roles": {
+      "admin": "Administrateur",
+      "dentist": "Dentiste",
+      "hygienist": "Hygiéniste",
+      "assistant": "Assistant(e)",
+      "receptionist": "Réceptionniste"
+    },
+    "errors": {
+      "loadUsers": "Erreur lors du chargement des utilisateurs",
+      "createUser": "Erreur lors de la création de l'utilisateur",
+      "updateUser": "Erreur lors de la mise à jour de l'utilisateur",
+      "deleteUser": "Erreur lors de la suppression de l'utilisateur",
+      "emailExists": "L'email existe déjà",
+      "userNotFound": "Utilisateur introuvable",
+      "operationNotAllowed": "Opération non autorisée",
+      "invalidData": "Données invalides"
+    },
+    "messages": {
+      "userCreated": "Utilisateur créé avec succès",
+      "userUpdated": "Utilisateur mis à jour avec succès",
+      "userDeleted": "Utilisateur retiré de la clinique"
+    },
+    "modules": {
+      "title": "Modules",
+      "subtitle": "Installer, désinstaller et mettre à jour les modules de la clinique.",
+      "description": "Gérez les modules actifs dans votre clinique.",
+      "deps": "Dépendances",
+      "noDeps": "Aucune dépendance",
+      "state": {
+        "installed": "Installé",
+        "uninstalled": "Non installé",
+        "toInstall": "Installation en attente",
+        "toUpgrade": "Mise à jour en attente",
+        "toRemove": "Suppression en attente",
+        "disabled": "Désactivé",
+        "error": "Erreur"
+      },
+      "category": {
+        "official": "Officiel",
+        "community": "Communauté"
+      },
+      "actions": {
+        "install": "Installer",
+        "uninstall": "Désinstaller",
+        "upgrade": "Mettre à jour",
+        "apply": "Appliquer les modifications",
+        "viewDetails": "Détails",
+        "force": "Forcer la désinstallation"
+      },
+      "confirmInstall": {
+        "title": "Installer {name} ?",
+        "message": "Le module sera programmé pour installation et deviendra actif après application des modifications.",
+        "scheduled": "Ces dépendances seront également installées :"
+      },
+      "confirmUninstall": {
+        "title": "Désinstaller {name} ?",
+        "warning": "Les tables du module seront supprimées. Une sauvegarde pg_dump est créée d'abord pour pouvoir récupérer les données.",
+        "forceHint": "Ignore les modules dépendants. À utiliser uniquement si vous savez ce que vous faites."
+      },
+      "confirmUpgrade": {
+        "title": "Mettre à jour {name} ?",
+        "message": "Le module sera mis à jour vers la version du manifest sur disque lorsque les modifications seront appliquées."
+      },
+      "confirmApply": {
+        "title": "Appliquer les modifications",
+        "message": "Le backend redémarrera. La session peut être brièvement interrompue pendant l'exécution des opérations en attente."
+      },
+      "pending": {
+        "banner": "Modifications en attente :",
+        "apply": "Appliquer les modifications"
+      },
+      "doctor": {
+        "banner": "Problèmes détectés dans le système de modules.",
+        "orphans": "modules orphelins",
+        "missingDeps": "dépendances manquantes",
+        "manifestErrors": "erreurs de manifest",
+        "errored": "modules en erreur"
+      },
+      "detail": {
+        "state": "État",
+        "category": "Catégorie",
+        "installedAt": "Installé le",
+        "lastChange": "Dernière modification",
+        "baseRevision": "Révision de base",
+        "appliedRevision": "Révision appliquée",
+        "manifest": "Manifest complet",
+        "errorMessage": "Message d'erreur",
+        "operationLog": "Journal d'opérations",
+        "noOperations": "Aucune opération enregistrée."
+      },
+      "restart": {
+        "inProgress": "Redémarrage du backend…",
+        "done": "Modifications appliquées",
+        "failed": "Échec de l'application des modifications",
+        "timeout": "Délai d'attente dépassé en attendant le backend"
+      },
+      "toasts": {
+        "scheduled": "Opération programmée. Appliquez les modifications pour finaliser.",
+        "applied": "Modifications appliquées avec succès."
+      }
+    }
+  },
+  "selector": {
+    "recentPatients": "Patients récents",
+    "commonTreatments": "Traitements courants",
+    "noRecentPatients": "Aucun patient récent",
+    "noCommonTreatments": "Aucun traitement courant",
+    "noMatches": "Aucune correspondance",
+    "typeToSearch": "Tapez pour rechercher..."
+  },
+  "density": {
+    "switchToCompact": "Vue compacte",
+    "switchToComfortable": "Vue confortable"
+  },
+  "patientSelector": {
+    "createOption": "Créer le patient « {query} »",
+    "createOptionEmpty": "Créer un nouveau patient",
+    "newBadge": "Nouveau",
+    "duplicateWarning": "{name} existe déjà avec ce téléphone",
+    "useExisting": "Utiliser ce patient",
+    "createForm": {
+      "title": "Nouveau patient",
+      "back": "Retour à la recherche",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "phone": "Téléphone",
+      "phoneHint": "Vous pouvez l'ajouter plus tard sur le dossier patient.",
+      "submit": "Créer et sélectionner",
+      "cancel": "Annuler",
+      "errorGeneric": "Impossible de créer le patient. Réessayez."
+    }
+  },
+  "common": {
+    "save": "Enregistrer",
+    "add": "Ajouter",
+    "cancel": "Annuler",
+    "clear": "Effacer",
+    "close": "Fermer",
+    "delete": "Supprimer",
+    "comingSoon": "Bientôt disponible",
+    "edit": "Modifier",
+    "change": "modification | modifications",
+    "back": "Retour",
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "completed": "Terminé",
+    "retry": "Réessayer",
+    "refresh": "Actualiser",
+    "hide": "Masquer",
+    "forbidden": "Accès refusé",
+    "confirm": "Confirmer",
+    "yes": "Oui",
+    "no": "Non",
+    "actions": "Actions",
+    "viewDetails": "Voir les détails",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "previousYear": "Année précédente",
+    "nextYear": "Année suivante",
+    "undo": "Annuler",
+    "undone": "Annulé",
+    "added": "Ajouté",
+    "removed": "Retiré",
+    "page": "Page {current} sur {total}",
+    "noData": "Aucune donnée",
+    "noValue": "pas de valeur",
+    "noResults": "Aucun résultat",
+    "search": "Rechercher...",
+    "selectAll": "Tout",
+    "deselectAll": "Aucun",
+    "all": "Tout",
+    "required": "Ce champ est obligatoire",
+    "invalidEmail": "Email invalide",
+    "networkError": "Erreur de connexion",
+    "serverError": "Erreur serveur",
+    "notFound": "Introuvable",
+    "offline": "Hors ligne — les données peuvent ne pas être à jour",
+    "inactive": "Inactif",
+    "name": "Nom",
+    "color": "Couleur",
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Minimum 8 caractères",
+    "role": "Rôle",
+    "readOnly": "Lecture seule",
+    "createdBy": "Créé par",
+    "date": "Date",
+    "upload": "Envoyer",
+    "uploading": "Envoi…",
+    "maxFileSize": "jusqu'à 10 Mo",
+    "durationMinutes": "{value} min",
+    "days": {
+      "sunday": "Dimanche",
+      "monday": "Lundi",
+      "tuesday": "Mardi",
+      "wednesday": "Mercredi",
+      "thursday": "Jeudi",
+      "friday": "Vendredi",
+      "saturday": "Samedi"
+    },
+    "now": "Maintenant",
+    "today": "Aujourd'hui",
+    "tomorrow": "Demain",
+    "yesterday": "Hier",
+    "copied": "Copié dans le presse-papiers",
+    "copy": "Copier",
+    "copyFailed": "Impossible de copier"
+  },
+  "cabinet": {
+    "toast": {
+      "created": "Cabinet créé",
+      "updated": "Cabinet mis à jour",
+      "deleted": "Cabinet supprimé",
+      "duplicateName": "Un cabinet avec ce nom existe déjà",
+      "notFound": "Cabinet introuvable",
+      "createFailed": "Échec de la création du cabinet",
+      "updateFailed": "Échec de la mise à jour du cabinet",
+      "deleteFailed": "Échec de la suppression du cabinet"
+    }
+  },
+  "professionals": {
+    "toast": {
+      "loadFailed": "Échec du chargement des professionnels"
+    }
+  },
+  "lists": {
+    "empty": {
+      "title": "Aucun résultat",
+      "description": "Ajustez les filtres ou effacez-les pour voir tous les enregistrements."
+    },
+    "resultCount": "{shown} sur {total}",
+    "filter": {
+      "title": "Filtres",
+      "more": "Filtres",
+      "moreCount": "Filtres ({count})",
+      "clear": "Effacer",
+      "apply": "Appliquer",
+      "date": "Dates",
+      "dateFrom": "Du",
+      "dateTo": "Au",
+      "searchPlaceholder": "Rechercher...",
+      "noResults": "Aucune correspondance",
+      "all": "Tout"
+    },
+    "sort": {
+      "label": "Trier",
+      "asc": "Croissant",
+      "desc": "Décroissant"
+    },
+    "datePreset": {
+      "today": "Aujourd'hui",
+      "last7": "7 derniers jours",
+      "last30": "30 derniers jours",
+      "thisMonth": "Ce mois-ci",
+      "thisQuarter": "Trimestre",
+      "thisYear": "Année",
+      "custom": "Personnalisé"
+    },
+    "truncatedWarning": "Résultats tronqués (>1000). Affinez les filtres."
+  },
+  "shared": {
+    "totals": "Totaux",
+    "info": "Détails",
+    "moreActions": "Plus d'actions",
+    "criticalBanner": {
+      "dismiss": "Fermer l'alerte"
+    },
+    "collect": {
+      "amountLabel": "Montant à encaisser",
+      "methodLabel": "Mode de paiement",
+      "dateLabel": "Date de paiement",
+      "today": "Aujourd'hui",
+      "quickFull": "Intégral",
+      "optionalDetails": "Ajouter une référence ou des notes (facultatif)",
+      "referenceLabel": "Référence",
+      "referencePlaceholder": "ex. numéro de transaction POS",
+      "notesLabel": "Notes internes",
+      "submit": "Encaisser",
+      "cancel": "Annuler"
+    }
+  },
+  "validation": {
+    "required": "Ce champ est obligatoire",
+    "email": "Saisissez un email valide",
+    "minLength": "Minimum {min} caractères",
+    "maxLength": "Maximum {max} caractères",
+    "phone": "Saisissez un numéro de téléphone valide"
+  },
+  "time": {
+    "minutes": "{n} min",
+    "hours": "{n} heure | {n} heures"
+  },
+  "calendar": {
+    "today": "Aujourd'hui",
+    "prevWeek": "Semaine précédente",
+    "nextWeek": "Semaine suivante",
+    "monday": "Lundi",
+    "tuesday": "Mardi",
+    "wednesday": "Mercredi",
+    "thursday": "Jeudi",
+    "friday": "Vendredi",
+    "saturday": "Samedi",
+    "sunday": "Dimanche"
+  },
+  "catalog": {
+    "title": "Catalogue de traitements",
+    "description": "Gérer les traitements, la tarification et la configuration de la TVA",
+    "items": "Traitements",
+    "categories": "Catégories",
+    "noItems": "Aucun traitement dans le catalogue",
+    "searchPlaceholder": "Rechercher par code ou nom...",
+    "code": "Code",
+    "name": "Nom",
+    "category": "Catégorie",
+    "price": "Prix",
+    "defaultPrice": "Prix de base",
+    "costPrice": "Prix de revient",
+    "currency": "Devise",
+    "vatType": "Type de TVA",
+    "vatRate": "TVA %",
+    "duration": "Durée",
+    "system": "Système",
+    "newItem": "Nouveau traitement",
+    "editItem": "Modifier le traitement",
+    "deleteItem": "Supprimer le traitement",
+    "deleteItemConfirm": "Êtes-vous sûr de vouloir supprimer le traitement « {name} » ?",
+    "deleteItemNote": "Cette action est irréversible.",
+    "pricing": "Tarification",
+    "scheduling": "Planification",
+    "characteristics": "Caractéristiques",
+    "scope": "Périmètre",
+    "requiresAppointment": "Nécessite un rendez-vous",
+    "isDiagnostic": "Est diagnostique",
+    "requiresSurfaces": "Nécessite des surfaces",
+    "materialNotes": "Notes sur le matériel",
+    "materialNotesPlaceholder": "Matériaux ou fournitures requis...",
+    "active": "Actif",
+    "vatTypes": {
+      "exempt": "Exonéré",
+      "reduced": "Réduit",
+      "standard": "Normal"
+    },
+    "scopeTypes": {
+      "tooth": "Dent",
+      "multi_tooth": "Multi-dents",
+      "global_mouth": "Bouche complète",
+      "global_arch": "Par arcade"
+    },
+    "pricingStrategy": {
+      "label": "Stratégie de tarification",
+      "help": "Comment le prix du traitement est calculé lorsqu'il est appliqué",
+      "flat": "Forfait (prix unique)",
+      "per_tooth": "Par dent (× nombre de dents)",
+      "per_surface": "Par surface (paliers)",
+      "per_role": "Par rôle (bridge : pilier/pont)"
+    },
+    "surfacePrices": {
+      "title": "Prix par nombre de surfaces",
+      "help": "Définissez le prix pour 1 à 5 surfaces. Lorsque des surfaces sont sélectionnées sur une dent, le palier correspondant est utilisé. Les paliers manquants reviennent au palier inférieur rempli le plus proche.",
+      "tier": "{n} surf."
+    },
+    "sessions": {
+      "title": "Séances (facturation fractionnée)",
+      "help": "Définissez les étapes nommées du traitement et de la facturation (ex. couronne : « Empreintes » + « Pose »). La somme doit être égale au prix de base.",
+      "label": "Libellé",
+      "labelPlaceholder": "ex. Empreintes",
+      "price": "Montant",
+      "add": "Ajouter une séance",
+      "sumStatus": "Somme {sum} € · Total {total} €"
+    },
+    "categoryCreated": "Catégorie créée",
+    "categoryUpdated": "Catégorie mise à jour",
+    "categoryDeleted": "Catégorie supprimée",
+    "categoryKeyExists": "Une catégorie avec cette clé existe déjà",
+    "categoryCreateFailed": "Erreur lors de la création de la catégorie",
+    "categoryUpdateFailed": "Erreur lors de la mise à jour de la catégorie",
+    "categoryDeleteFailed": "Erreur lors de la suppression de la catégorie",
+    "cannotModifySystemCategory": "Impossible de modifier une catégorie système",
+    "cannotDeleteSystemCategory": "Impossible de supprimer une catégorie système",
+    "itemCreated": "Traitement créé",
+    "itemUpdated": "Traitement mis à jour",
+    "itemDeleted": "Traitement supprimé",
+    "itemCodeExists": "Un traitement avec ce code existe déjà",
+    "categoryNotFound": "Catégorie introuvable",
+    "itemCreateFailed": "Erreur lors de la création du traitement",
+    "itemUpdateFailed": "Erreur lors de la mise à jour du traitement",
+    "itemDeleteFailed": "Erreur lors de la suppression du traitement",
+    "cannotModifySystemItem": "Impossible de modifier un traitement système",
+    "cannotDeleteSystemItem": "Impossible de supprimer un traitement système",
+    "odontogramMapping": "Visualisation odontogramme",
+    "odontogramMappingDescription": "Associez ce traitement à un type de visualisation odontogramme pour qu'il apparaisse dans le dossier patient.",
+    "odontogramType": "Type de traitement",
+    "clinicalCategory": "Catégorie clinique",
+    "noOdontogramMapping": "Aucune association",
+    "odontogramMappingHint": "Les caractéristiques du traitement seront automatiquement ajustées en fonction du type sélectionné.",
+    "selectCategory": "Sélectionner une catégorie...",
+    "selectVatType": "Sélectionner un type de TVA...",
+    "selectScope": "Sélectionner un périmètre...",
+    "selectOdontogramType": "Sélectionner un type...",
+    "selectClinicalCategory": "Sélectionner une catégorie...",
+    "expandAll": "Tout développer",
+    "collapseAll": "Tout réduire",
+    "unnamed": "Sans titre",
+    "activeHint": "Disponible pour les devis et plans",
+    "tabs": {
+      "general": "Général",
+      "pricing": "Tarification",
+      "scheduling": "Planification",
+      "clinical": "Clinique"
+    }
+  },
+  "placeholders": {
+    "selectRole": "Sélectionner un rôle..."
+  },
+  "vatTypes": {
+    "title": "Types de TVA",
+    "description": "Gérer les types de TVA disponibles pour les traitements",
+    "name": "Nom",
+    "rate": "Taux",
+    "default": "Par défaut",
+    "system": "Système",
+    "active": "Actif",
+    "new": "Nouveau type de TVA",
+    "edit": "Modifier le type de TVA",
+    "delete": "Supprimer le type de TVA",
+    "setAsDefault": "Définir par défaut",
+    "showInactive": "Afficher les inactifs",
+    "noItems": "Aucun type de TVA configuré",
+    "namePlaceholder": "Ex. : Réduit (10%)",
+    "systemNote": "Les types de TVA système ne peuvent changer que leur statut par défaut.",
+    "deleteConfirm": "Êtes-vous sûr de vouloir supprimer le type de TVA",
+    "deleteNote": "Les traitements utilisant ce type de TVA ne seront pas affectés.",
+    "created": "Type de TVA créé",
+    "updated": "Type de TVA mis à jour",
+    "deleted": "Type de TVA supprimé",
+    "loadError": "Erreur lors du chargement des types de TVA",
+    "createError": "Erreur lors de la création du type de TVA",
+    "updateError": "Erreur lors de la mise à jour du type de TVA",
+    "deleteError": "Erreur lors de la suppression du type de TVA"
+  },
+  "treatmentPlans": {
+    "title": "Plans de traitement",
+    "description": "Gérer les plans de traitement des patients",
+    "new": "Nouveau plan",
+    "create": "Créer un plan de traitement",
+    "edit": "Modifier le plan",
+    "view": "Voir le plan",
+    "delete": "Supprimer le plan",
+    "noItems": "Ce plan n'a aucun traitement",
+    "noPlans": "Ce patient n'a aucun plan de traitement",
+    "noPlansHint": "Marquez des traitements sur l'odontogramme et créez un plan pour les organiser",
+    "createFirst": "Créer le premier plan",
+    "empty": "Aucun plan de traitement enregistré",
+    "emptyAction": "Créer le premier plan",
+    "searchPlaceholder": "Rechercher par numéro, patient ou titre...",
+    "planNumber": "Numéro",
+    "patient": "Patient",
+    "untitled": "Sans titre",
+    "untitledPlan": "Plan sans titre",
+    "itemCount": "{count} traitement | {count} traitements",
+    "treatments": "traitements",
+    "progress": "Progression",
+    "pendingTreatments": "Traitements en attente",
+    "completedTreatments": "Traitements terminés",
+    "linkedBudget": "Devis lié",
+    "unknownTreatment": "Traitement inconnu",
+    "globalTreatment": "Traitement général",
+    "activePlan": "Plan actif",
+    "otherPlans": "Autres plans",
+    "viewAllPlans": "Voir l'historique des plans",
+    "activate": "Activer",
+    "generateBudget": "Générer le devis",
+    "scheduleAppointment": "Programmer un rendez-vous",
+    "status": {
+      "draft": "Brouillon",
+      "pending": "En attente",
+      "active": "Actif",
+      "completed": "Terminé",
+      "closed": "Fermé",
+      "archived": "Archivé"
+    },
+    "fields": {
+      "title": "Titre",
+      "titlePlaceholder": "Ex. : Réhabilitation orale complète",
+      "assignedProfessional": "Professionnel assigné",
+      "selectProfessional": "Sélectionner un professionnel",
+      "diagnosisNotes": "Notes de diagnostique",
+      "diagnosisNotesPlaceholder": "Diagnostic et observations cliniques...",
+      "internalNotes": "Notes internes",
+      "internalNotesPlaceholder": "Notes visibles uniquement par le personnel..."
+    },
+    "modal": {
+      "subtitle": "Organiser les traitements du patient",
+      "titleHint": "Facultatif — aide à identifier le plan",
+      "additionalNotes": "Notes supplémentaires",
+      "quickTip": "Après la création du plan, vous pouvez ajouter des traitements depuis l'odontogramme ou le catalogue.",
+      "createButton": "Créer le plan"
+    },
+    "actions": {
+      "activate": "Activer le plan",
+      "confirm": "Confirmer le plan",
+      "complete": "Marquer comme terminé",
+      "generateBudget": "Générer le devis",
+      "linkBudget": "Lier un devis",
+      "syncBudget": "Synchroniser le devis",
+      "cancelPlan": "Annuler le plan",
+      "reopen": "Rouvrir",
+      "close": "Fermer le plan",
+      "reactivate": "Réactiver le plan",
+      "logContact": "Enregistrer le contact"
+    },
+    "items": {
+      "title": "Traitements",
+      "add": "Ajouter un traitement",
+      "addSelected": "Ajouter {count} traitement | Ajouter {count} traitements",
+      "remove": "Retirer le traitement",
+      "empty": "Aucun traitement dans ce plan",
+      "assignedProfessional": "Dentiste assigné",
+      "assignedProfessionalAriaLabel": "Changer le dentiste assigné pour ce traitement",
+      "useUsersPlanDoctor": "Utiliser le dentiste du plan",
+      "noProfessional": "Aucun dentiste assigné",
+      "inactiveProfessional": "Professionnel inactif",
+      "cascadeReassign": {
+        "title": "Réattribuer les traitements en attente ?",
+        "body": "Vous avez changé le dentiste du plan. {count} traitement(s) en attente étaient assignés à {previousName}. Les réattribuer au nouveau dentiste également ?",
+        "confirm": "Oui, réattribuer les en attente",
+        "cancel": "Non, conserver tels quels"
+      }
+    },
+    "filters": {
+      "allStatuses": "Tous les statuts"
+    },
+    "confirmations": {
+      "delete": "Supprimer ce plan de traitement ?",
+      "completeItem": "Marquer le traitement comme terminé ?",
+      "completeItemDescription": "Cette action est irréversible.",
+      "activateTitle": "Confirmer le plan de traitement ?",
+      "activateDescription": "La confirmation débloque la génération de devis et la planification de rendez-vous. Vous pouvez continuer à ajouter ou terminer des traitements après.",
+      "unlockTitle": "Modifier le plan ?",
+      "unlockIntro": "Ce plan a déjà le devis {number} émis. Pour le modifier, le devis actuel doit être annulé.",
+      "unlockConsequence1": "Le devis {number} sera annulé et ne sera plus valide pour le patient.",
+      "unlockConsequence2": "Vous pourrez ajouter, modifier ou retirer des traitements du plan.",
+      "unlockConsequence3": "Vous devrez générer un nouveau devis une fois les modifications terminées.",
+      "unlockConsequence4": "Le devis annulé est conservé dans l'historique pour traçabilité.",
+      "cancelTitle": "Annuler le plan de traitement ?",
+      "cancelDescription": "Le plan passera à l'état annulé et les traitements planifiés non réalisés seront retirés de l'odontogramme. L'historique du plan est conservé."
+    },
+    "messages": {
+      "created": "Plan de traitement créé",
+      "updated": "Plan de traitement mis à jour",
+      "deleted": "Plan de traitement supprimé",
+      "itemsAdded": "Traitements ajoutés au plan"
+    },
+    "itemCompleted": "Traitement terminé",
+    "budgetGenerated": "Devis généré",
+    "created": "Plan de traitement créé",
+    "updated": "Plan de traitement mis à jour",
+    "statusUpdated": "Statut du plan mis à jour",
+    "deleted": "Plan de traitement supprimé",
+    "budgetLinked": "Devis lié au plan",
+    "budgetSynced": "Devis synchronisé",
+    "errors": {
+      "load": "Erreur lors du chargement des plans de traitement",
+      "create": "Erreur lors de la création du plan de traitement",
+      "update": "Erreur lors de la mise à jour du plan de traitement",
+      "delete": "Erreur lors de la suppression du plan de traitement"
+    },
+    "notes": {
+      "title": "Notes cliniques",
+      "empty": "Aucune note clinique pour le moment",
+      "addNote": "Ajouter une note",
+      "edit": "Modifier la note",
+      "delete": "Supprimer la note",
+      "attachments": "Pièces jointes",
+      "author": "Auteur",
+      "createdAt": "Créé le",
+      "templatePicker": "Modèles",
+      "bodyPlaceholder": "Rédigez la note clinique…",
+      "saved": "Note enregistrée",
+      "deleted": "Note supprimée"
+    },
+    "completionNudge": {
+      "title": "Terminer le traitement",
+      "description": "Ajoutez une note clinique décrivant ce qui s'est passé lors de cette visite avant de le marquer comme terminé.",
+      "completeWithNote": "Terminer avec une note",
+      "skip": "Passer la note",
+      "skipConfirm": "Terminer sans note clinique ?"
+    },
+    "visitNote": {
+      "title": "Note clinique de visite",
+      "save": "Enregistrer la note",
+      "empty": "Aucune note de visite pour le moment",
+      "saved": "Note enregistrée"
+    },
+    "clinicalNotesTab": "Notes cliniques",
+    "filterBy": {
+      "plan": "Plan",
+      "item": "Traitement",
+      "visit": "Visite",
+      "all": "Tout"
+    },
+    "byPlan": {
+      "empty": "Ce patient n'a aucune note clinique dans un plan de traitement",
+      "planNotesLabel": "Notes du plan",
+      "noNotesForTreatment": "Aucune note pour ce traitement",
+      "noNotesForPlan": "Aucune note dans ce plan"
+    },
+    "noteTemplates": {
+      "endo": {
+        "singleVisit": "Endodontie — séance unique",
+        "multiVisit": "Endodontie — multi-séances"
+      },
+      "perio": {
+        "scaling": "Détartrage / surfaçage radiculaire"
+      },
+      "implant": {
+        "placement": "Pose d'implant"
+      },
+      "general": {
+        "followUp": "Suivi général"
+      }
+    },
+    "closureReason": {
+      "rejected_by_patient": "Refusé par le patient",
+      "expired": "Expiré",
+      "cancelled_by_clinic": "Annulé par la clinique",
+      "patient_abandoned": "Abandon par le patient",
+      "other": "Autre raison"
+    },
+    "confirmed": "Plan confirmé",
+    "reopened": "Plan rouvert",
+    "closed": "Plan fermé",
+    "reactivated": "Plan réactivé",
+    "contactLogged": "Contact enregistré",
+    "modals": {
+      "confirm": {
+        "title": "Confirmer le plan",
+        "description": "Le plan passera à l'état En attente et un devis brouillon sera automatiquement créé. Les traitements deviennent en lecture seule une fois confirmés.",
+        "submit": "Confirmer le plan"
+      },
+      "reopen": {
+        "title": "Rouvrir le plan pour modification",
+        "description": "Cela annulera le devis actuel. Le plan reviendra en Brouillon pour que vous puissiez modifier les traitements.",
+        "submit": "Rouvrir"
+      },
+      "close": {
+        "title": "Fermer le plan",
+        "description": "Choisissez la raison de la fermeture. Les traitements en attente seront archivés.",
+        "reasonLabel": "Raison",
+        "noteLabel": "Note (facultatif)",
+        "submit": "Fermer le plan"
+      },
+      "reactivate": {
+        "title": "Réactiver un plan fermé",
+        "description": "Cela réactivera un plan fermé le {date} pour « {reason} ». Continuer ?",
+        "submit": "Réactiver"
+      },
+      "contactLog": {
+        "title": "Enregistrer le contact",
+        "description": "Enregistre le point de contact sans modifier le statut du plan.",
+        "channelLabel": "Canal",
+        "noteLabel": "Note (facultatif)",
+        "submit": "Enregistrer"
+      }
+    }
+  },
+  "pipeline": {
+    "title": "Pipeline des plans",
+    "description": "Gérer le pipeline des traitements.",
+    "tabs": {
+      "por_presupuestar": "À deviser",
+      "esperando_paciente": "En attente patient",
+      "sin_cita": "Sans rendez-vous",
+      "sin_proxima_cita": "Sans prochain rendez-vous",
+      "cerrados": "Fermés",
+      "listado": "Liste"
+    },
+    "row": {
+      "patient": "Patient",
+      "plan": "Plan",
+      "budget": "Devis",
+      "items": "Traitements",
+      "daysIn": "{n} jour(s) dans ce statut",
+      "nextAppt": "Prochain rdv",
+      "noNextAppt": "Aucun rendez-vous",
+      "noBudget": "Aucun devis"
+    },
+    "actions": {
+      "open": "Ouvrir",
+      "send": "Envoyer",
+      "remind": "Renvoyer",
+      "schedule": "Planifier",
+      "scheduleNext": "Planifier le suivant",
+      "reactivate": "Réactiver",
+      "call": "Appeler",
+      "whatsapp": "WhatsApp",
+      "markContacted": "Marquer comme contacté",
+      "acceptInClinic": "Accepter en clinique"
+    },
+    "search": "Rechercher par nom ou numéro…",
+    "empty": "Aucune ligne dans cet onglet.",
+    "loading": "Chargement…"
+  },
+  "budget": {
+    "title": "Devis",
+    "description": "Gérer les devis de traitements pour les patients",
+    "new": "Nouveau devis",
+    "edit": "Modifier le devis",
+    "view": "Voir le devis",
+    "delete": "Supprimer le devis",
+    "duplicate": "Créer une nouvelle version",
+    "noItems": "Aucun devis",
+    "empty": "Aucun devis enregistré",
+    "emptyAction": "Créer le premier devis",
+    "linkedToPlan": "Lié au plan",
+    "searchPlaceholder": "Rechercher par numéro ou patient...",
+    "budgetNumber": "Numéro",
+    "version": "Version",
+    "treatmentPlan": "Plan de traitement",
+    "patient": "Patient",
+    "selectPatient": "Sélectionner un patient",
+    "selectPatientHint": "Recherchez et sélectionnez le patient pour ce devis",
+    "professional": "Professionnel",
+    "validFrom": "Valable à partir du",
+    "validUntil": "Valable jusqu'au",
+    "validUntilHint": "Laissez vide pour un devis sans date d'expiration",
+    "noExpiry": "Aucune date d'expiration",
+    "createAndAddItems": "Créer et ajouter les traitements",
+    "subtotal": "Sous-total",
+    "totalDiscount": "Remise totale",
+    "totalTax": "TVA totale",
+    "total": "Total",
+    "globalDiscount": "Remise globale",
+    "discountType": "Type de remise",
+    "discountValue": "Valeur de la remise",
+    "percentage": "Pourcentage",
+    "absolute": "Montant fixe",
+    "internalNotes": "Notes internes",
+    "internalNotesPlaceholder": "Notes visibles uniquement par le personnel...",
+    "patientNotes": "Notes patient",
+    "patientNotesPlaceholder": "Notes visibles sur le devis...",
+    "status": {
+      "title": "Statut",
+      "draft": "Brouillon",
+      "sent": "Envoyé",
+      "partially_accepted": "Partiellement accepté",
+      "accepted": "Accepté",
+      "in_progress": "En cours",
+      "completed": "Terminé",
+      "invoiced": "Facturé",
+      "rejected": "Refusé",
+      "expired": "Expiré",
+      "cancelled": "Annulé"
+    },
+    "itemStatus": {
+      "pending": "En attente",
+      "accepted": "Accepté",
+      "rejected": "Refusé",
+      "in_progress": "En cours",
+      "completed": "Terminé"
+    },
+    "actions": {
+      "send": "Envoyer au patient",
+      "accept": "Accepter le devis",
+      "acceptPartial": "Accepter la sélection",
+      "reject": "Refuser",
+      "cancel": "Annuler le devis",
+      "duplicate": "Créer une nouvelle version",
+      "downloadPdf": "Télécharger le PDF",
+      "previewPdf": "Aperçu du PDF",
+      "startTreatment": "Commencer le traitement",
+      "completeTreatment": "Terminer le traitement",
+      "renegotiate": "Renégocier",
+      "acceptInClinic": "Accepter en clinique",
+      "resend": "Renvoyer",
+      "sendReminder": "Envoyer un rappel",
+      "setPublicCode": "Définir le code d'accès",
+      "unlockPublic": "Déverrouiller l'accès"
+    },
+    "items": {
+      "title": "Traitements",
+      "add": "Ajouter un traitement",
+      "remove": "Retirer le traitement",
+      "edit": "Modifier le traitement",
+      "empty": "Aucun traitement dans ce devis",
+      "singular": "traitement",
+      "plural": "traitements",
+      "addFromCatalog": "Ajouter depuis le catalogue",
+      "addFromOdontogram": "Ajouter depuis l'odontogramme",
+      "treatment": "Traitement",
+      "searchCatalog": "Rechercher dans le catalogue de traitements...",
+      "unitPrice": "Prix unitaire",
+      "quantity": "Quantité",
+      "discount": "Remise",
+      "lineTotal": "Total ligne",
+      "tooth": "Dent",
+      "toothNumber": "Numéro de dent",
+      "toothNumberPlaceholder": "Ex. : 11, 21, 36...",
+      "surfaces": "Surfaces",
+      "notes": "Notes",
+      "notesPlaceholder": "Notes sur ce traitement..."
+    },
+    "signature": {
+      "title": "Signature numérique",
+      "viewAction": "Voir la signature",
+      "signedBy": "Signé par",
+      "signedAt": "Signé le",
+      "methodLabel": "Méthode",
+      "relationshipLabel": "Lien de parenté",
+      "documentHash": "Hash du document (SHA-256)",
+      "hashHint": "Hash {short} — lie la signature à ce PDF exact. Toute modification l'invaliderait.",
+      "downloadSignedPdf": "Télécharger le PDF signé",
+      "downloadError": "Impossible de télécharger le PDF signé.",
+      "notSigned": "Aucune signature n'a encore été capturée pour ce devis.",
+      "method": {
+        "drawn": "Signature manuscrite",
+        "clickAccept": "Clic pour accepter",
+        "external": "Fournisseur externe"
+      },
+      "email": "Email",
+      "relationship": "Lien avec le patient",
+      "patient": "Patient",
+      "guardian": "Tuteur légal",
+      "representative": "Représentant",
+      "accept": "J'accepte les termes du devis",
+      "signHere": "Signez ici",
+      "clear": "Effacer la signature"
+    },
+    "history": {
+      "title": "Historique des modifications",
+      "noChanges": "Aucune modification enregistrée",
+      "actions": {
+        "created": "Devis créé",
+        "updated": "Devis mis à jour",
+        "status_changed": "Statut modifié",
+        "item_added": "Traitement ajouté",
+        "item_removed": "Traitement retiré",
+        "signed": "Devis signé",
+        "sent": "Devis envoyé",
+        "duplicated": "Nouvelle version créée",
+        "deleted": "Devis supprimé",
+        "item_treatment_started": "Traitement commencé",
+        "item_treatment_completed": "Traitement terminé"
+      }
+    },
+    "versions": {
+      "title": "Versions",
+      "current": "Actuelle",
+      "viewVersion": "Voir la version"
+    },
+    "confirmations": {
+      "send": "Envoyer le devis au patient ?",
+      "sendDescription": "Le devis sera marqué comme envoyé.",
+      "reject": "Refuser le devis ?",
+      "rejectDescription": "Cette action est irréversible.",
+      "cancel": "Annuler le devis ?",
+      "cancelDescription": "Cette action est irréversible.",
+      "delete": "Supprimer le devis ?",
+      "deleteDescription": "Cette action est irréversible."
+    },
+    "send": {
+      "description": "Vous pouvez envoyer le devis par email ou le marquer comme envoyé manuellement (imprimé ou remis en main propre).",
+      "sendByEmail": "Envoyer par email",
+      "willSendTo": "Sera envoyé à",
+      "noPatientEmail": "Le patient n'a pas d'email enregistré",
+      "customMessage": "Message personnalisé (facultatif)",
+      "customMessagePlaceholder": "Ajoutez un message pour le patient...",
+      "manualNote": "Le devis sera marqué comme envoyé sans envoyer d'email.",
+      "sendEmail": "Envoyer l'email",
+      "markAsSent": "Marquer comme envoyé"
+    },
+    "messages": {
+      "created": "Devis créé",
+      "updated": "Devis mis à jour",
+      "deleted": "Devis supprimé",
+      "sent": "Devis envoyé",
+      "sentByEmail": "Devis envoyé par email",
+      "sentManually": "Devis marqué comme envoyé",
+      "accepted": "Devis accepté",
+      "rejected": "Devis refusé",
+      "cancelled": "Devis annulé",
+      "duplicated": "Nouvelle version créée",
+      "itemAdded": "Traitement ajouté",
+      "itemUpdated": "Traitement mis à jour",
+      "itemRemoved": "Traitement retiré",
+      "treatmentStarted": "Traitement commencé",
+      "treatmentCompleted": "Traitement terminé"
+    },
+    "errors": {
+      "load": "Erreur lors du chargement des devis",
+      "create": "Erreur lors de la création du devis",
+      "update": "Erreur lors de la mise à jour du devis",
+      "delete": "Erreur lors de la suppression du devis",
+      "send": "Erreur lors de l'envoi du devis",
+      "accept": "Erreur lors de l'acceptation du devis",
+      "reject": "Erreur lors du refus du devis",
+      "notFound": "Devis introuvable",
+      "onlyDraft": "Seuls les devis en brouillon peuvent être modifiés"
+    },
+    "filters": {
+      "allStatuses": "Tous les statuts",
+      "status": "Statut",
+      "paymentStatus": "Statut",
+      "professional": "Professionnel",
+      "validity": "Validité",
+      "validityValid": "Valide",
+      "validityExpiringSoon": "Expire dans 7 jours",
+      "validityExpired": "Expiré",
+      "dateFrom": "Du",
+      "dateTo": "Au",
+      "showExpired": "Afficher les expirés",
+      "advanced": "Filtres avancés",
+      "clear": "Effacer les filtres"
+    },
+    "sortFields": {
+      "createdAt": "Créé le",
+      "validUntil": "Valable jusqu'au",
+      "total": "Total",
+      "status": "Statut",
+      "budgetNumber": "Numéro"
+    },
+    "validity": {
+      "expired": "Expiré",
+      "expiresIn": "Expire dans {days}j"
+    },
+    "pdf": {
+      "generating": "Génération du PDF...",
+      "downloadError": "Erreur lors du téléchargement du PDF"
+    },
+    "modals": {
+      "renegotiate": {
+        "title": "Renégocier le devis",
+        "description": "Cela annulera le devis actuel et rouvrira le plan en Brouillon pour que vous puissiez ajuster les traitements.",
+        "submit": "Renégocier"
+      },
+      "acceptInClinic": {
+        "title": "Accepter le devis en clinique",
+        "description": "Capturez l'acceptation du patient. Vous pouvez collecter une signature sur tablette (facultatif).",
+        "signerLabel": "Nom complet du signataire",
+        "captureSignature": "Capturer la signature",
+        "submit": "Marquer comme accepté"
+      },
+      "setPublicCode": {
+        "title": "Définir le code d'accès",
+        "description": "Ce patient n'a ni téléphone ni date de naissance dans le dossier. Définissez un code à 4-6 chiffres et partagez-le oralement avec le patient. N'INCLUEZ PAS le code dans l'email.",
+        "codeLabel": "Code (4-6 chiffres)",
+        "submit": "Enregistrer le code"
+      }
+    },
+    "publicLink": {
+      "action": "Partager le lien",
+      "title": "Lien patient",
+      "help": "Copiez ce lien et partagez-le avec le patient via WhatsApp, SMS ou email. Une vérification sera demandée avant de consulter le devis.",
+      "copy": "Copier le lien",
+      "copied": "Copié !",
+      "whatsapp": "Envoyer via WhatsApp",
+      "whatsappNoPhone": "Le patient n'a pas de téléphone enregistré",
+      "whatsappGreeting": "Bonjour {name}, voici votre devis :",
+      "whatsappGreetingFallback": "Bonjour, voici votre devis :",
+      "preview": "Aperçu",
+      "statusSent": "Envoyé",
+      "statusAccepted": "Accepté",
+      "statusRejected": "Refusé",
+      "statusExpired": "Expiré"
+    },
+    "public": {
+      "title": "Votre devis",
+      "intro": "{clinic} vous a envoyé ce devis. Examinez les traitements et choisissez une option.",
+      "greeting": "Bonjour, {name}",
+      "subtitle": "Votre plan de traitement personnalisé",
+      "budgetNumber": "Devis",
+      "issuedOn": "Émis le {date}",
+      "items": "Traitements inclus",
+      "tooth": "Dent {number}",
+      "subtotal": "Sous-total",
+      "discount": "Remise",
+      "tax": "TVA",
+      "total": "Total",
+      "validUntil": "Valable jusqu'au {date}",
+      "trustSecure": "Connexion sécurisée",
+      "trustEncrypted": "Données chiffrées",
+      "trustSignature": "Signature légalement contraignante",
+      "needHelp": "Besoin d'aide ? Appelez la clinique",
+      "noteFromClinic": "Message de la clinique",
+      "callClinic": "Appeler la clinique",
+      "emailClinic": "Envoyer un email",
+      "cta_accept": "Accepter et signer",
+      "cta_reject": "Pas intéressé",
+      "expired": "Ce devis a expiré. Veuillez contacter la clinique.",
+      "locked": "Accès verrouillé après trop de tentatives. Veuillez appeler la clinique.",
+      "already_accepted": "Vous avez déjà accepté ce devis. La clinique vous contactera pour planifier votre premier rendez-vous.",
+      "already_rejected": "Vous avez refusé ce devis. Si vous changez d'avis, veuillez appeler la clinique.",
+      "download": {
+        "signedPdf": "Télécharger le PDF signé",
+        "notSigned": "Ce devis n'a pas encore de signature jointe.",
+        "error": "Impossible de télécharger le PDF. Veuillez réessayer.",
+        "reauthIntro": "Pour des raisons de sécurité, veuillez vérifier votre identité à nouveau pour télécharger le PDF signé."
+      },
+      "verify": {
+        "title": "Vérifiez votre identité",
+        "intro": "Pour protéger vos informations, confirmez un détail avant de consulter votre devis.",
+        "phone_last4_label": "4 derniers chiffres de votre téléphone",
+        "dob_label": "Votre date de naissance",
+        "manual_code_label": "Code communiqué par la clinique",
+        "submit": "Continuer",
+        "invalid": "Détail incorrect. Veuillez réessayer.",
+        "locked": "Accès verrouillé après trop de tentatives. Veuillez appeler la clinique.",
+        "rate_limited": "Trop de tentatives. Attendez 15 minutes."
+      },
+      "accept": {
+        "title": "Accepter et signer",
+        "signerLabel": "Votre nom complet",
+        "signatureLabel": "Signez ici (facultatif)",
+        "signatureClear": "Effacer",
+        "consent": "J'accepte ce devis et autorise le traitement décrit.",
+        "submit": "Confirmer l'acceptation",
+        "success": "Terminé ! La clinique vous contactera pour planifier votre premier rendez-vous."
+      },
+      "reject": {
+        "title": "Pas intéressé",
+        "intro": "Pourquoi ce devis ne vous convient-il pas ?",
+        "reasonLabel": "Raison",
+        "noteLabel": "Commentaire (facultatif)",
+        "submit": "Confirmer le refus",
+        "success": "Nous avons informé la clinique.",
+        "reasons": {
+          "price": "Prix",
+          "time": "Manque de temps",
+          "second_opinion": "Deuxième avis",
+          "other": "Autre raison"
+        }
+      }
+    },
+    "settings": {
+      "title": "Paramètres des devis",
+      "description": "Configurer l'expiration, les rappels et la vérification du lien public.",
+      "cards": {
+        "expiry": {
+          "title": "Expiration et fermeture automatique",
+          "description": "Durée de validité d'un devis avant expiration et délai de fermeture automatique des plans en attente."
+        },
+        "reminders": {
+          "title": "Rappels automatiques",
+          "description": "Activez les rappels par email à 7j et 14j pour les patients sans réponse."
+        },
+        "publicLink": {
+          "title": "Lien public et vérification",
+          "description": "Configurez la protection du lien devis accessible au patient."
+        }
+      },
+      "expiry": {
+        "validityDays": "Validité du devis (jours)",
+        "validityHelp": "Après ce nombre de jours sans réponse, le devis passe en Expiré (plage 7-180).",
+        "autoCloseDays": "Jours avant fermeture automatique du plan",
+        "autoCloseHelp": "Les plans avec un devis expiré et sans action pendant ce nombre de jours passent à Fermé (plage 7-180).",
+        "save": "Enregistrer"
+      },
+      "reminders": {
+        "enabled": "Envoyer des rappels automatiques à 7j et 14j",
+        "enabledHelp": "Lorsqu'activé, le système envoie un email au patient concernant les devis en attente. Lorsque désactivé, la réception suit manuellement.",
+        "save": "Enregistrer"
+      },
+      "publicLink": {
+        "authDisabled": "Désactiver la vérification du lien public",
+        "authDisabledHelp": "Lorsqu'activé, le patient voit le devis avec le lien uniquement — sans vérification téléphone ou date de naissance. Acceptez le risque si le lien est partagé.",
+        "save": "Enregistrer"
+      },
+      "saved": "Paramètres enregistrés"
+    }
+  },
+  "notifications": {
+    "communications": {
+      "language": {
+        "cardTitle": "Langue des communications",
+        "cardDescription": "Langue utilisée dans la vue devis patient, les emails et SMS.",
+        "title": "Langue des communications patient",
+        "label": "Langue",
+        "help": "S'applique à la vue devis accessible au patient et aux modèles email/SMS automatisés. L'interface du personnel conserve la préférence linguistique de chaque utilisateur.",
+        "save": "Enregistrer",
+        "saved": "Langue enregistrée"
+      }
+    },
+    "title": "Notifications",
+    "description": "Configurer les notifications email de la clinique",
+    "pageDescription": "Configurez quelles notifications sont envoyées automatiquement et lesquelles nécessitent un envoi manuel.",
+    "autoVsManual": "Notifications automatiques vs manuelles",
+    "autoVsManualDescription": "Définissez quelles notifications sont envoyées automatiquement lorsqu'un événement se produit et lesquelles nécessitent que l'utilisateur les envoie manuellement.",
+    "notificationType": "Type de notification",
+    "enabled": "Activé",
+    "autoSend": "Envoi automatique",
+    "options": "Options",
+    "hoursBefore": "h avant",
+    "testConnection": "Tester la connexion",
+    "testEmailTitle": "Envoyer un email de test",
+    "testEmailDescription": "Nous enverrons un email de test pour vérifier que la configuration fonctionne correctement.",
+    "sendTestEmail": "Envoyer un test",
+    "test_email_sent": "Email de test envoyé avec succès",
+    "settings_saved": "Paramètres enregistrés",
+    "emailProvider": "Fournisseur d'email",
+    "providerConfigured": "Fournisseur d'email configuré",
+    "providerNote": "La configuration du serveur email se fait dans les variables d'environnement du serveur.",
+    "infoTitle": "Information",
+    "infoAutoSend": "Envoi automatique : La notification est envoyée lorsque l'événement se produit (ex. lors de la création d'un rendez-vous).",
+    "infoManualSend": "Envoi manuel : Un bouton apparaîtra pour envoyer la notification quand vous le souhaitez.",
+    "infoDisabled": "Désactivé : La notification ne sera pas envoyée et l'option d'envoi n'apparaîtra pas.",
+    "types": {
+      "appointment_confirmation": "Confirmation de rendez-vous",
+      "appointment_confirmation_desc": "Email de confirmation lorsqu'un rendez-vous est planifié",
+      "appointment_cancelled": "Annulation de rendez-vous",
+      "appointment_cancelled_desc": "Email de notification lorsqu'un rendez-vous est annulé",
+      "appointment_reminder": "Rappel de rendez-vous",
+      "appointment_reminder_desc": "Email de rappel avant le rendez-vous",
+      "budget_sent": "Envoi de devis",
+      "budget_sent_desc": "Email avec les détails du devis",
+      "budget_accepted": "Devis accepté",
+      "budget_accepted_desc": "Email de confirmation lorsqu'un devis est accepté",
+      "welcome": "Bienvenue",
+      "welcome_desc": "Email de bienvenue pour les nouveaux patients"
+    },
+    "sendConfirmation": "Envoyer la confirmation",
+    "sendReminder": "Envoyer le rappel",
+    "sendCancellation": "Envoyer l'annulation",
+    "sendBudget": "Envoyer par email",
+    "sendAcceptance": "Envoyer la confirmation",
+    "sendWelcome": "Envoyer la bienvenue",
+    "sendEmail": "Envoyer l'email",
+    "errors": {
+      "fetch_failed": "Erreur lors du chargement des paramètres",
+      "save_failed": "Erreur lors de l'enregistrement des paramètres",
+      "test_failed": "Erreur lors de l'envoi de l'email de test",
+      "send_failed": "Erreur lors de l'envoi de la notification"
+    },
+    "smtp": {
+      "title": "Configuration du serveur email",
+      "description": "Configurez le serveur SMTP pour envoyer les emails depuis votre clinique. Chaque clinique peut avoir sa propre configuration.",
+      "configure": "Configurer",
+      "provider": "Fournisseur",
+      "host": "Serveur",
+      "port": "Port",
+      "username": "Nom d'utilisateur",
+      "password": "Mot de passe",
+      "passwordHint": "Laissez vide pour conserver le mot de passe actuel",
+      "useTls": "Utiliser TLS",
+      "useSsl": "Utiliser SSL",
+      "fromEmail": "Email d'expédition",
+      "fromName": "Nom d'expédition",
+      "security": "Sécurité",
+      "testConnection": "Tester la connexion",
+      "testConnectionTitle": "Tester la configuration avant d'enregistrer",
+      "testEmailPlaceholder": "Adresse email de test",
+      "test_success": "Connexion SMTP réussie. Email de test envoyé.",
+      "test_failed": "Erreur de connexion SMTP",
+      "settings_saved": "Paramètres SMTP enregistrés",
+      "consoleNote": "En mode console, les emails sont affichés dans la console serveur au lieu d'être envoyés. Utile pour le développement.",
+      "disabledNote": "Avec l'email désactivé, aucune notification email ne sera envoyée depuis cette clinique.",
+      "status": {
+        "not_configured": "Non configuré",
+        "verified": "Vérifié et fonctionnel",
+        "not_verified": "Configuré mais non vérifié",
+        "disabled": "Email désactivé",
+        "console": "Mode console (développement)"
+      },
+      "errors": {
+        "fetch_failed": "Erreur lors du chargement des paramètres SMTP",
+        "save_failed": "Erreur lors de l'enregistrement des paramètres SMTP",
+        "test_failed": "Erreur lors du test de connexion SMTP"
+      }
+    }
+  },
+  "invoice": {
+    "title": "Factures",
+    "description": "Gérer les factures et la facturation",
+    "new": "Nouvelle facture",
+    "edit": "Modifier la facture",
+    "view": "Voir la facture",
+    "delete": "Supprimer la facture",
+    "noItems": "Aucune facture",
+    "empty": "Aucune facture enregistrée",
+    "emptyAction": "Créer la première facture",
+    "searchPlaceholder": "Rechercher par numéro ou patient...",
+    "notFound": "Facture introuvable",
+    "draftNoNumber": "Brouillon",
+    "details": "Détails",
+    "invoiceNumber": "Numéro de facture",
+    "patient": "Patient",
+    "searchPatient": "Rechercher un patient",
+    "searchPatientPlaceholder": "Rechercher par nom...",
+    "professional": "Professionnel",
+    "billingData": "Données de facturation",
+    "billingName": "Nom de facturation",
+    "taxId": "Identifiant fiscal",
+    "billingEmail": "Email de facturation",
+    "billingAddress": "Adresse de facturation",
+    "billingDataComplete": "Complet",
+    "billingDataIncomplete": "Incomplet",
+    "billingDataIncompleteHint": "Il manque des informations de facturation au patient.",
+    "editPatientBilling": "Modifier les données du patient",
+    "fromPatient": "Depuis le patient",
+    "editInPatient": "Modifier dans le profil",
+    "billingFromPatientHint": "Ces données proviennent du dossier du patient. Pour les modifier, modifiez les informations de facturation du patient.",
+    "paymentTerms": "Conditions de paiement",
+    "linkedToBudget": "Lié au devis",
+    "selectPatient": "Sélectionner un patient",
+    "noBillingData": "Aucune donnée de facturation",
+    "street": "Rue",
+    "city": "Ville",
+    "postalCode": "Code postal",
+    "province": "Province",
+    "country": "Pays",
+    "linkedBudget": "Devis lié",
+    "creditNoteFor": "Avoir pour",
+    "paymentTermDays": "Délai de paiement (jours)",
+    "dueDate": "Date d'échéance",
+    "issueDate": "Date d'émission",
+    "subtotal": "Sous-total",
+    "discount": "Remise",
+    "totalDiscount": "Remise totale",
+    "tax": "Taxe",
+    "total": "Total",
+    "paid": "Payé",
+    "totalPaid": "Total payé",
+    "balance": "Solde",
+    "balanceDue": "Montant dû",
+    "overdue": "En retard",
+    "overdueDays": "En retard de {n}j",
+    "info": {
+      "issueDate": "Date d'émission",
+      "dueDate": "Date d'échéance",
+      "issuedBy": "Émis par",
+      "createdBy": "Créé par",
+      "createdAt": "Créé le",
+      "budget": "Devis",
+      "creditNoteFor": "Avoir pour"
+    },
+    "criticalBanner": {
+      "aeatRejected": {
+        "title": "L'AEAT a rejeté cette facture",
+        "cta": "Corriger et soumettre à nouveau"
+      },
+      "billingIncomplete": {
+        "title": "Données de facturation incomplètes",
+        "cta": "Compléter les données"
+      }
+    },
+    "collect": {
+      "title": "Encaisser la facture",
+      "submit": "Encaisser",
+      "noteAppliedToInvoice": "appliqué à cette facture.",
+      "notePendingAfter": "Solde restant",
+      "noteFullySettled": "Ce paiement règle intégralement la facture.",
+      "noteToInvoice": "appliqué à cette facture et",
+      "noteExcessToOnAccount": "crédité au compte du patient.",
+      "noteInvoiceSettled": "Cette facture est déjà payée.",
+      "noteToOnAccount": "sera créditée au compte du patient."
+    },
+    "tooth": "Dent",
+    "vat": "TVA",
+    "currency": "Devise",
+    "internalNotes": "Notes internes",
+    "internalNotesPlaceholder": "Notes visibles uniquement par le personnel...",
+    "publicNotes": "Notes publiques",
+    "publicNotesPlaceholder": "Notes visibles sur la facture...",
+    "items": "Lignes",
+    "addItem": "Ajouter une ligne",
+    "editItem": "Modifier la ligne",
+    "selectTreatment": "Traitement",
+    "searchCatalog": "Rechercher un traitement dans le catalogue...",
+    "itemDescription": "Description",
+    "itemPrice": "Prix unitaire",
+    "itemQuantity": "Quantité",
+    "selectVatType": "Sélectionner le type de TVA",
+    "summary": "Récapitulatif",
+    "createDraft": "Créer un brouillon",
+    "createFromBudget": "Créer une facture depuis un devis",
+    "notes": "Notes",
+    "status": {
+      "draft": "Brouillon",
+      "issued": "Émise",
+      "partial": "Partiellement payée",
+      "paid": "Payée",
+      "cancelled": "Annulée",
+      "voided": "Annulée"
+    },
+    "actions": {
+      "issue": "Émettre la facture",
+      "void": "Annuler",
+      "recordPayment": "Enregistrer le paiement",
+      "createCreditNote": "Créer un avoir",
+      "downloadPdf": "Télécharger le PDF",
+      "previewPdf": "Aperçu du PDF",
+      "sendEmail": "Envoyer par email"
+    },
+    "recordPayment": "Enregistrer le paiement",
+    "paymentAmount": "Montant",
+    "paymentMethod": "Mode de paiement",
+    "paymentDate": "Date de paiement",
+    "paymentReference": "Référence",
+    "paymentReferencePlaceholder": "Numéro de transaction, reçu...",
+    "paymentNotes": "Notes de paiement",
+    "paymentVoided": "Paiement annulé",
+    "createCreditNote": "Créer un avoir",
+    "creditNoteReason": "Raison de l'avoir",
+    "creditNoteReasonPlaceholder": "Décrivez la raison de l'avoir...",
+    "creditNoteInfo": "Un avoir sera créé pour le montant total de la facture.",
+    "prompts": {
+      "voidPaymentReason": "Saisissez la raison de l'annulation de ce paiement"
+    },
+    "payments": {
+      "title": "Paiements",
+      "record": "Enregistrer un paiement",
+      "void": "Annuler le paiement",
+      "amount": "Montant",
+      "method": "Mode de paiement",
+      "date": "Date",
+      "reference": "Référence",
+      "notes": "Notes",
+      "noPayments": "Aucun paiement enregistré",
+      "recorded": "Paiement enregistré",
+      "voided": "Paiement annulé",
+      "voidReason": "Raison de l'annulation",
+      "voidReasonPlaceholder": "Raison de l'annulation de ce paiement...",
+      "methods": {
+        "cash": "Espèces",
+        "card": "Carte",
+        "bank_transfer": "Virement bancaire",
+        "direct_debit": "Prélèvement",
+        "insurance": "Assurance",
+        "other": "Autre"
+      }
+    },
+    "creditNote": {
+      "title": "Avoir",
+      "create": "Créer un avoir",
+      "reason": "Raison",
+      "reasonPlaceholder": "Raison de l'avoir...",
+      "selectItems": "Sélectionner les lignes à rectifier",
+      "fullCreditNote": "Avoir complet (toutes les lignes)",
+      "partialCreditNote": "Avoir partiel (lignes sélectionnées)",
+      "originalInvoice": "Facture originale",
+      "created": "Avoir créé"
+    },
+    "history": {
+      "title": "Historique",
+      "noChanges": "Aucune modification enregistrée",
+      "actions": {
+        "created": "Facture créée",
+        "updated": "Facture mise à jour",
+        "issued": "Facture émise",
+        "voided": "Facture annulée",
+        "payment_recorded": "Paiement enregistré",
+        "payment_voided": "Paiement annulé",
+        "credit_note_created": "Avoir créé"
+      }
+    },
+    "fromBudget": "Créer une facture depuis un devis",
+    "selectItems": "Sélectionner les lignes à facturer",
+    "selectItemsHint": "Sélectionnez les lignes du devis que vous souhaitez facturer",
+    "availableQuantity": "Disponible",
+    "quantityToInvoice": "Qté à facturer",
+    "alreadyInvoiced": "Déjà facturé",
+    "remaining": "Restant",
+    "noItemsAvailable": "Aucune ligne disponible à facturer",
+    "allItemsInvoiced": "Toutes les lignes ont été facturées",
+    "series": {
+      "title": "Série de factures",
+      "prefix": "Préfixe",
+      "type": "Type",
+      "currentNumber": "Numéro actuel",
+      "resetYearly": "Réinitialiser annuellement",
+      "default": "Par défaut",
+      "active": "Actif",
+      "invoice": "Facture",
+      "credit_note": "Avoir"
+    },
+    "filters": {
+      "allStatuses": "Statut",
+      "overdueOnly": "En retard",
+      "dateFrom": "Du",
+      "dateTo": "Au"
+    },
+    "sortFields": {
+      "created": "Créé le",
+      "issueDate": "Date d'émission",
+      "dueDate": "Date d'échéance",
+      "total": "Total"
+    },
+    "overdueByDays": "En retard de {days}j",
+    "pdf": {
+      "generating": "Génération du PDF...",
+      "downloadError": "Erreur lors du téléchargement du PDF"
+    },
+    "reports": {
+      "title": "Rapports de facturation",
+      "summary": "Résumé",
+      "overdue": "En retard",
+      "overdueInvoices": "Factures en retard",
+      "byPaymentMethod": "Par mode de paiement",
+      "byProfessional": "Par professionnel",
+      "vatSummary": "Résumé de la TVA",
+      "gaps": "Lacunes de numérotation",
+      "period": "Période",
+      "from": "Du",
+      "to": "Au",
+      "refresh": "Actualiser",
+      "totalInvoiced": "Total facturé",
+      "totalCollected": "Total encaissé",
+      "totalPaid": "Total payé",
+      "totalPending": "Total en attente",
+      "pending": "Solde en attente",
+      "invoices": "factures",
+      "paid": "payées",
+      "payments": "paiements",
+      "noGaps": "Aucune lacune dans la numérotation",
+      "gapsFound": "{count} lacune(s) trouvée(s) dans la numérotation",
+      "gapsDetected": "Lacunes détectées dans la numérotation",
+      "missingNumbers": "Numéros manquants :",
+      "noData": "Aucune donnée pour la période sélectionnée",
+      "noOverdue": "Aucune facture en retard",
+      "daysOverdue": "jours de retard",
+      "vatType": "Type de TVA",
+      "base": "Base",
+      "tax": "Taxe",
+      "thisMonth": "Ce mois-ci",
+      "thisQuarter": "Ce trimestre",
+      "thisYear": "Cette année",
+      "lastMonth": "Le mois dernier",
+      "lastQuarter": "Le trimestre dernier",
+      "lastYear": "L'année dernière"
+    },
+    "confirmations": {
+      "issue": "Émettre la facture ?",
+      "issueDescription": "Une fois émise, la facture ne peut plus être modifiée. Seuls les paiements peuvent être enregistrés ou des avoirs créés.",
+      "void": "Annuler la facture ?",
+      "voidDescription": "Cette action est irréversible.",
+      "delete": "Supprimer la facture ?",
+      "deleteDescription": "Cette action est irréversible."
+    },
+    "messages": {
+      "created": "Facture créée",
+      "updated": "Facture mise à jour",
+      "deleted": "Facture supprimée",
+      "issued": "Facture émise",
+      "voided": "Facture annulée",
+      "itemAdded": "Ligne ajoutée",
+      "itemUpdated": "Ligne mise à jour",
+      "sentByEmail": "Facture envoyée par email",
+      "sentManually": "Facture marquée comme envoyée"
+    },
+    "send": {
+      "title": "Envoyer la facture",
+      "description": "Vous pouvez envoyer la facture par email ou la marquer comme envoyée manuellement (imprimée ou remise en main propre).",
+      "sendByEmail": "Envoyer par email",
+      "willSendTo": "Sera envoyée à",
+      "noPatientEmail": "Le patient n'a pas d'adresse email",
+      "customMessage": "Message personnalisé (facultatif)",
+      "customMessagePlaceholder": "Ajoutez un message pour le patient...",
+      "manualNote": "La facture sera marquée comme envoyée sans envoyer d'email.",
+      "sendEmail": "Envoyer l'email",
+      "markAsSent": "Marquer comme envoyée"
+    },
+    "errors": {
+      "load": "Erreur lors du chargement des factures",
+      "create": "Erreur lors de la création de la facture",
+      "update": "Erreur lors de la mise à jour de la facture",
+      "delete": "Erreur lors de la suppression de la facture",
+      "issue": "Erreur lors de l'émission de la facture",
+      "void": "Erreur lors de l'annulation de la facture",
+      "recordPayment": "Erreur lors de l'enregistrement du paiement",
+      "voidPayment": "Erreur lors de l'annulation du paiement",
+      "createCreditNote": "Erreur lors de la création de l'avoir",
+      "send": "Erreur lors de l'envoi de la facture",
+      "creditNoteReasonRequired": "La raison de l'avoir est requise",
+      "notFound": "Facture introuvable",
+      "onlyDraft": "Seules les factures en brouillon peuvent être modifiées",
+      "canOnlyDeleteDraft": "Seules les factures en brouillon peuvent être supprimées",
+      "patientRequired": "Le patient est requis",
+      "itemsRequired": "Au moins une ligne est requise",
+      "itemRequired": "La description et le prix sont requis",
+      "selectCatalogItem": "Veuillez sélectionner un traitement dans le catalogue",
+      "cannotEdit": "Seules les factures en brouillon peuvent être modifiées",
+      "billingIncomplete": "La facture ne peut pas être émise car les données de facturation sont incomplètes. Veuillez compléter les informations de facturation du patient pour continuer."
+    },
+    "newItemsPending": "Nouvelles lignes en attente d'enregistrement"
+  },
+  "reports": {
+    "title": "Rapports",
+    "subtitle": "Analyses et statistiques de la clinique",
+    "viewReports": "Voir les rapports",
+    "noAccess": "Vous n'avez accès à aucun rapport",
+    "dashboard": {
+      "title": "Tableau de bord",
+      "subtitle": "Votre clinique en un coup d'œil",
+      "period": "Période",
+      "snapshotBadge": "Aujourd'hui",
+      "snapshotTooltip": "Non affecté par la plage de dates",
+      "vsPrev": "vs. période précédente",
+      "empty": {
+        "noData": "Aucune donnée dans cette plage"
+      },
+      "drilldown": {
+        "title": "Détails",
+        "payments": "Paiements"
+      },
+      "kpi": {
+        "cashCollected": "Encaissements",
+        "cashCollectedHint": "{count} paiements",
+        "patientAdvance": "Crédit patient",
+        "patientAdvanceHint": "Avances non affectées",
+        "production": "Production",
+        "productionHint": "{count} traitements",
+        "byMethod": "Par mode de paiement",
+        "methodCount": "{count} paiements",
+        "total": "Total",
+        "newPatients": "Nouveaux patients",
+        "newPatientsHint": "{rate}% des rendez-vous totaux",
+        "appointmentFunnel": "Taux d'absence",
+        "funnelHint": "{completed}% terminés",
+        "avgCollectedTicket": "Ticket moyen encaissé",
+        "avgTicketHint": "Sur {count} paiements",
+        "aging": "Créances vieillissantes"
+      },
+      "charts": {
+        "cashOverTime": "Encaissements dans le temps",
+        "productionByDoctor": "Production par médecin",
+        "refunded": "Remboursements"
+      },
+      "production": {
+        "unassigned": "Non attribué",
+        "others": "Autres",
+        "treatmentCount": "{count} traitements"
+      },
+      "aging": {
+        "bucket0_30": "0-30 jours",
+        "bucket31_60": "31-60 jours",
+        "bucket61_90": "61-90 jours",
+        "bucket90plus": "90+ jours",
+        "empty": "Aucune créance en attente",
+        "patientCount": "{count} patients"
+      }
+    },
+    "billing": {
+      "title": "Facturation",
+      "description": "Revenus, paiements, TVA et factures en retard",
+      "summary": "Résumé",
+      "overdue": "En retard",
+      "overdueInvoices": "Factures en retard",
+      "byPaymentMethod": "Par mode de paiement",
+      "byProfessional": "Par professionnel",
+      "vatSummary": "Résumé de la TVA",
+      "gaps": "Lacunes de numérotation",
+      "period": "Période",
+      "from": "Du",
+      "to": "Au",
+      "refresh": "Actualiser",
+      "totalInvoiced": "Total facturé",
+      "totalCollected": "Total encaissé",
+      "pending": "Solde en attente",
+      "invoices": "factures",
+      "paid": "payées",
+      "payments": "paiements",
+      "gapsDetected": "Lacunes détectées dans la numérotation",
+      "missingNumbers": "Numéros manquants :",
+      "noData": "Aucune donnée pour la période sélectionnée",
+      "noOverdue": "Aucune facture en retard",
+      "daysOverdue": "jours de retard",
+      "vatType": "Type de TVA",
+      "base": "Base",
+      "tax": "Taxe",
+      "thisMonth": "Ce mois-ci",
+      "thisQuarter": "Ce trimestre",
+      "thisYear": "Cette année",
+      "lastMonth": "Le mois dernier",
+      "lastQuarter": "Le trimestre dernier",
+      "lastYear": "L'année dernière"
+    },
+    "budgets": {
+      "title": "Devis",
+      "description": "Taux d'acceptation, analyse par professionnel et traitements",
+      "comingSoonDescription": "Les rapports de devis seront bientôt disponibles. Vous pourrez analyser les taux d'acceptation, les devis par professionnel et les traitements les plus demandés.",
+      "features": {
+        "acceptanceRate": "Taux d'acceptation",
+        "acceptanceRateDesc": "Pourcentage de devis acceptés vs refusés",
+        "byProfessional": "Par professionnel",
+        "byProfessionalDesc": "Devis créés par chaque professionnel",
+        "byTreatment": "Par traitement",
+        "byTreatmentDesc": "Traitements les plus devisés",
+        "averageValue": "Valeur moyenne",
+        "averageValueDesc": "Montant moyen des devis"
+      },
+      "labels": {
+        "totalCreated": "Total créés",
+        "accepted": "Acceptés",
+        "rejected": "refusés",
+        "pending": "en attente",
+        "completed": "Terminés",
+        "acceptanceRate": "Taux d'acceptation",
+        "averageValue": "Valeur moyenne",
+        "byStatus": "Par statut",
+        "topTreatments": "Traitements les plus devisés",
+        "treatment": "Traitement",
+        "occurrences": "Occurrences",
+        "quantity": "Quantité"
+      }
+    },
+    "scheduling": {
+      "title": "Agenda",
+      "description": "Premières visites, heures travaillées et occupation",
+      "comingSoonDescription": "Les rapports d'agenda seront bientôt disponibles. Vous pourrez analyser les premières visites, les heures par professionnel et les taux d'annulation.",
+      "features": {
+        "firstVisits": "Premières visites",
+        "firstVisitsDesc": "Nouveaux patients par période",
+        "hoursWorked": "Heures travaillées",
+        "hoursWorkedDesc": "Temps par professionnel",
+        "cancellations": "Annulations",
+        "cancellationsDesc": "Taux d'annulation et d'absence",
+        "cabinetUtilization": "Occupation des cabinets",
+        "cabinetUtilizationDesc": "Utilisation de chaque cabinet"
+      },
+      "labels": {
+        "totalAppointments": "Total des rendez-vous",
+        "completionRate": "Taux de complétion",
+        "completed": "terminés",
+        "cancellationRate": "Taux d'annulation",
+        "cancelled": "annulés",
+        "noShowRate": "Taux d'absence",
+        "noShows": "absences",
+        "newPatients": "nouveaux patients",
+        "firstVisitRate": "Taux de première visite",
+        "ofTotalAppointments": "des rendez-vous totaux",
+        "appointmentsInPeriod": "Rendez-vous dans la période",
+        "excludingCancelled": "hors annulés",
+        "appointments": "rendez-vous",
+        "byDayOfWeek": "Par jour de la semaine",
+        "statusBreakdown": "Répartition par statut",
+        "pending": "en attente"
+      },
+      "analytics": {
+        "funnel": "Entonnoir de statuts",
+        "funnelDesc": "Répartition des rendez-vous par statut dans la période",
+        "waitingTimes": "Temps d'attente",
+        "waitingTimesDesc": "Minutes entre l'arrivée du patient et l'entrée en fauteuil",
+        "punctuality": "Ponctualité des patients",
+        "punctualityDesc": "Écart entre l'heure prévue et l'arrivée réelle",
+        "durationVariance": "Durée prévue vs réelle",
+        "durationVarianceDesc": "Comparaison entre la durée prévue et le temps réel en fauteuil",
+        "samples": "Échantillons",
+        "average": "Moyenne",
+        "median": "Médiane",
+        "p90": "P90",
+        "avgDelta": "Delta moyen",
+        "medianDelta": "Delta médian",
+        "onTime": "% à l'heure",
+        "avgOverrun": "Dépassement moyen",
+        "overrunCount": "Nombre de dépassements",
+        "underCount": "Nombre de sous-temps",
+        "completionRate": "Complétion",
+        "noShowRate": "Absence",
+        "cancellationRate": "Annulation",
+        "punctuality_early": "En avance (<-5)",
+        "punctuality_on_time": "À l'heure (±5)",
+        "punctuality_late_short": "En retard (5-15)",
+        "punctuality_late_long": "En retard (>15)"
+      },
+      "tabs": {
+        "overview": "Vue d'ensemble",
+        "activity": "Activité",
+        "quality": "Qualité"
+      },
+      "hero": {
+        "inPeriod": "dans la période"
+      },
+      "filters": {
+        "cabinet": "Cabinet",
+        "professional": "Professionnel",
+        "custom": "Plage personnalisée",
+        "all": "Tous",
+        "clear": "Effacer les filtres"
+      },
+      "empty": {
+        "title": "Aucune donnée pour cette période",
+        "desc": "Essayez une plage de dates plus large ou supprimez les filtres."
+      }
+    }
+  },
+  "invoiceSeries": {
+    "title": "Séries de facturation",
+    "description": "Configurer les préfixes et la numérotation des factures",
+    "regularInvoices": "Factures",
+    "creditNotes": "Avoirs",
+    "new": "Nouvelle série",
+    "newTitle": "Nouvelle série de {type}",
+    "editTitle": "Modifier la série",
+    "prefix": "Préfixe",
+    "prefixHint": "ex. FAC, AVO. L'année sera ajoutée automatiquement.",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Description optionnelle de la série...",
+    "nextNumber": "Numéro suivant",
+    "preview": "Aperçu",
+    "resetYearly": "Réinitialisation annuelle",
+    "resetYearlyLabel": "Réinitialiser la numérotation chaque année",
+    "setAsDefault": "Définir par défaut",
+    "activeLabel": "Série active",
+    "showInactive": "Afficher les inactives",
+    "noItems": "Aucune série configurée",
+    "resetCounter": "Réinitialiser le compteur",
+    "currentNumber": "Numéro actuel",
+    "seriesPrefix": "Préfixe de la série",
+    "newNumber": "Nouveau numéro",
+    "newNumberHint": "Le numéro doit être supérieur au plus grand numéro existant dans cette série.",
+    "resetWarningTitle": "Attention",
+    "resetWarning": "Cette action sera enregistrée dans le journal d'audit et ne peut pas être annulée.",
+    "confirmReset": "Réinitialiser le compteur",
+    "created": "Série créée avec succès",
+    "saved": "Série mise à jour avec succès",
+    "resetSuccess": "Compteur réinitialisé avec succès"
+  },
+  "documents": {
+    "title": "Documents",
+    "add": "Ajouter",
+    "edit": "Modifier le document",
+    "upload": "Télécharger un document",
+    "uploading": "Téléchargement...",
+    "empty": "Aucun document pour le moment",
+    "uploadFirst": "Télécharger le premier document",
+    "types": {
+      "consent": "Consentement",
+      "id_scan": "Pièce d'identité",
+      "insurance": "Assurance",
+      "report": "Rapport",
+      "referral": "Orientation",
+      "other": "Autre"
+    },
+    "fields": {
+      "type": "Type",
+      "title": "Titre",
+      "titlePlaceholder": "Titre du document",
+      "description": "Description",
+      "descriptionPlaceholder": "Notes facultatives"
+    },
+    "dropzone": {
+      "hint": "Glissez-déposez un fichier ici, ou cliquez pour sélectionner"
+    },
+    "filter": {
+      "allTypes": "Tous les types"
+    },
+    "deleteConfirm": {
+      "title": "Supprimer le document",
+      "message": "Êtes-vous sûr de vouloir supprimer ce document ? Cette action est irréversible."
+    },
+    "fetchError": "Erreur lors du chargement des documents",
+    "uploadSuccess": "Document téléchargé avec succès",
+    "uploadError": "Erreur lors du téléchargement du document",
+    "downloadError": "Erreur lors du téléchargement du document",
+    "deleteSuccess": "Document supprimé",
+    "deleteError": "Erreur lors de la suppression du document",
+    "updateSuccess": "Document mis à jour",
+    "updateError": "Erreur lors de la mise à jour du document",
+    "viewer": {
+      "loading": "Chargement du document...",
+      "error": "Impossible de charger le document",
+      "downloadInstead": "Télécharger à la place",
+      "unsupported": "Aperçu non disponible pour ce type de fichier",
+      "zoomOut": "Zoom arrière",
+      "zoomIn": "Zoom avant",
+      "resetZoom": "Réinitialiser à 100%",
+      "zoomHint": "Ctrl + molette pour zoomer"
+    },
+    "typeDesc": {
+      "consent": "Document signé",
+      "id_scan": "DNI / passeport",
+      "insurance": "Police ou carte",
+      "report": "Rapport clinique",
+      "referral": "Lettre d'orientation",
+      "other": "Non classifié"
+    },
+    "errors": {
+      "mime": "Type de fichier non autorisé. Seuls PDF, JPG ou PNG sont acceptés.",
+      "size": "Le fichier dépasse 10 Mo."
+    },
+    "pdfPreviewHint": "Aperçu disponible après l'envoi",
+    "uploadHelp": "Classez le fichier pour qu'il apparaisse dans la bonne catégorie."
+  },
+  "photoGallery": {
+    "title": "Galerie du patient",
+    "add": "Ajouter une photo",
+    "empty": "Aucune photo pour le moment",
+    "uploadFirst": "Envoyer la première",
+    "showingOf": "{count} sur {total} photos",
+    "upload": "Envoyer une photo",
+    "uploadHelp": "Classez pour qu'elle apparaisse dans la bonne catégorie",
+    "dropHere": "Glissez une photo ici ou cliquez",
+    "category": "Type",
+    "subtype": "Vue",
+    "titlePlaceholder": "Frontal intraoral — 02/05",
+    "capturedAt": "Date",
+    "exifHint": "Automatique depuis l'EXIF",
+    "cat": {
+      "all": "Toutes",
+      "intraoral": "Intraorale",
+      "extraoral": "Extraorale",
+      "xray": "Radiographie",
+      "clinical": "Avant/Après",
+      "other": "Autre"
+    },
+    "catDesc": {
+      "intraoral": "À l'intérieur de la bouche",
+      "extraoral": "Visage et profil",
+      "xray": "Image radiologique",
+      "clinical": "Comparaison de traitement",
+      "other": "Non classifié"
+    },
+    "sub": {
+      "frontal": "Frontal",
+      "lateral_left": "Latéral gauche",
+      "lateral_right": "Latéral droit",
+      "occlusal_upper": "Occlusale supérieure",
+      "occlusal_lower": "Occlusale inférieure",
+      "palatal": "Palatin",
+      "lingual": "Lingual",
+      "smile": "Sourire",
+      "rest": "Repos",
+      "frontal_face": "Frontal",
+      "profile_left": "Profil gauche",
+      "profile_right": "Profil droit",
+      "three_quarter_left": "3/4 gauche",
+      "three_quarter_right": "3/4 droit",
+      "panoramic": "Panoramique",
+      "periapical": "Périapicale",
+      "bitewing": "Bitewing",
+      "ceph_lat": "Céphalo latéral",
+      "ceph_pa": "Céphalo PA",
+      "cbct": "CBCT",
+      "occlusal_xray": "Occlusale Rx",
+      "before": "Avant",
+      "after": "Après",
+      "progress": "Progrès",
+      "reference": "Référence",
+      "portrait": "Portrait",
+      "document_scan": "Document",
+      "model_photo": "Modèle"
+    },
+    "compare": {
+      "before": "Avant",
+      "after": "Après"
+    },
+    "pair": {
+      "pickHint": "Choisissez la photo à apparier :",
+      "noCandidates": "Aucune photo disponible. Envoyez-en une autre d'abord.",
+      "paired": "Appariée",
+      "exitCompare": "Quitter la comparaison",
+      "compare": "Comparer",
+      "unpair": "Retirer",
+      "pair": "Apparier avant/après"
+    }
+  },
+  "help": {
+    "label": "Aide",
+    "openHelp": "Ouvrir l'aide",
+    "drawerTitle": "Aide pour cette page",
+    "unavailable": "Aucune aide contextuelle disponible pour cette page pour le moment.",
+    "openFullManual": "Ouvrir le manuel complet"
+  },
+  "charts": {
+    "trend": {
+      "ariaLabel": "Tendance sur {count} points"
+    },
+    "donut": {
+      "ariaLabel": "Diagramme circulaire, {count} segments"
+    }
+  }
+}

@@ -392,7 +392,7 @@ const allReportsEmpty = computed(() => {
               :aria-label="t('payments.reports.drilldown.viewPatients')"
               @click="goToPatientsWithDebt()"
             >
-              <div class="text-caption text-muted">{{ b.label }}d</div>
+              <div class="text-caption text-muted">{{ t('payments.reports.bucket', { range: b.label }) }}</div>
               <div class="text-ui font-medium text-default tnum mt-0.5">
                 {{ formatMoney(b.total) }}
               </div>

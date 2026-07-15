@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Treatment estimate - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>Treatment estimate</h2>
+
+<p>Hello {{ patient_name }},</p>
+
+<p>Please find below the treatment estimate <strong>#{{ budget_number }}</strong> from <strong>{{ clinic_name | default('DentalPin') }}</strong>:</p>
+
+{% if treatments %}
+<div class="info-box">
+    {% for t in treatments %}
+    <div class="info-row">
+        <div style="flex: 2;">
+            <div class="label">{{ t.name }}{% if t.tooth %} — Tooth {{ t.tooth }}{% endif %}</div>
+        </div>
+        <div style="flex: 1; text-align: right;">
+            <div class="value">{{ t.price }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="info-box">
+    {% if discount_amount %}
+    <div class="info-row">
+        <div class="label">Subtotal</div>
+        <div class="value">{{ subtotal }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">Discount</div>
+        <div class="value">-{{ discount_amount }}</div>
+    </div>
+    {% endif %}
+    <div class="info-row">
+        <div class="label">Total</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+    {% if validity_days %}
+    <div class="info-row">
+        <div class="label">Valid for</div>
+        <div class="value">{{ validity_days }} days</div>
+    </div>
+    {% endif %}
+</div>
+
+{% if notes %}
+<p><strong>Notes:</strong> {{ notes }}</p>
+{% endif %}
+
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+<p>Please contact us if you have any questions about this estimate.</p>
+{% endblock %}

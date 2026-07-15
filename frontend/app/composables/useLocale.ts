@@ -1,16 +1,17 @@
 import { STORAGE_KEYS } from '~/constants/storage'
+import type { CodeLang } from '~/types'
 
 export function useLocale() {
   const { locale, setLocale, locales } = useI18n()
 
   const availableLocales = computed(() =>
-    (locales.value as Array<{ code: string, name: string }>).map(l => ({
+    (locales.value as Array<{ code: CodeLang, name: string }>).map(l => ({
       code: l.code,
       name: l.name
     }))
   )
 
-  async function changeLocale(code: string): Promise<void> {
+  async function changeLocale(code: CodeLang): Promise<void> {
     if (import.meta.client) {
       localStorage.setItem(STORAGE_KEYS.LOCALE, code)
     }
@@ -18,6 +19,7 @@ export function useLocale() {
   }
 
   return {
+    locale,
     currentLocale: computed(() => locale.value),
     availableLocales,
     changeLocale

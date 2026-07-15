@@ -1,0 +1,38 @@
+{
+  "whatsapp_kapso": {
+    "settings": {
+      "title": "WhatsApp (Kapso)",
+      "description": "Connectez le numéro WhatsApp de la clinique via Kapso pour envoyer et recevoir des messages."
+    },
+    "connection": "Connexion",
+    "verified": "Vérifié",
+    "notVerified": "Non vérifié",
+    "apiKey": "Clé API Kapso",
+    "phoneNumberId": "Phone number ID",
+    "businessAccountId": "Business account ID",
+    "businessAccountHelp": "Nécessaire pour synchroniser les modèles approuvés.",
+    "displayPhone": "Numéro visible",
+    "webhookSecret": "Secret du webhook",
+    "secretStored": "Enregistré. Laissez vide pour le conserver.",
+    "webhook": "Webhook",
+    "webhookHelp": "Collez cette URL dans les paramètres webhook de Kapso pour recevoir les statuts et les réponses.",
+    "copy": "Copier",
+    "copied": "URL copiée",
+    "templates": "Modèles",
+    "sync": "Synchroniser",
+    "noTemplates": "Aucun modèle approuvé. Synchronisez pour les récupérer depuis Kapso.",
+    "notificationType": "Type de notification",
+    "template": "Modèle",
+    "map": "Associer",
+    "mapped": "Modèle associé",
+    "mapError": "Impossible d'associer le modèle",
+    "test": "Envoi test",
+    "sendTest": "Envoyer un test",
+    "testOk": "Message test envoyé",
+    "testFail": "Échec de l'envoi du test",
+    "saved": "Paramètres enregistrés",
+    "saveError": "Impossible d'enregistrer",
+    "synced": "{n} modèles synchronisés",
+    "syncError": "Impossible de synchroniser"
+  }
+}

@@ -1,0 +1,82 @@
+{
+  "schedules": {
+    "nav": {
+      "clinicHours": "Horaires de la clinique",
+      "professionalSchedules": "Emplois du temps des professionnels"
+    },
+    "settingsCards": {
+      "clinicHoursTitle": "Horaires de la clinique",
+      "clinicHoursDescription": "Définir les horaires d'ouverture hebdomadaires de la clinique et les dates spéciales (congés, horaires réduits).",
+      "professionalHoursTitle": "Emplois du temps des professionnels",
+      "professionalHoursDescription": "Définir les emplois du temps individuels de chaque professionnel et gérer les congés ou autres périodes d'indisponibilité."
+    },
+    "clinicHours": {
+      "title": "Horaires de la clinique",
+      "subtitle": "Définir les horaires d'ouverture de la clinique pour chaque jour de la semaine.",
+      "weeklyTemplate": "Modèle hebdomadaire",
+      "overrides": "Dates spéciales",
+      "addOverride": "Ajouter une date spéciale",
+      "editOverride": "Modifier la date spéciale",
+      "save": "Enregistrer les modifications",
+      "saved": "Emploi du temps mis à jour",
+      "savedError": "Échec de l'enregistrement de l'emploi du temps"
+    },
+    "professionalHours": {
+      "title": "Emplois du temps des professionnels",
+      "selectProfessional": "Sélectionner un professionnel",
+      "weeklyTemplate": "Emploi du temps hebdomadaire",
+      "overrides": "Absences et horaires spéciaux",
+      "addOverride": "Ajouter une absence",
+      "editOverride": "Modifier l'absence",
+      "save": "Enregistrer les modifications",
+      "saved": "Emploi du temps mis à jour"
+    },
+    "weekday": {
+      "0": "Lundi",
+      "1": "Mardi",
+      "2": "Mercredi",
+      "3": "Jeudi",
+      "4": "Vendredi",
+      "5": "Samedi",
+      "6": "Dimanche",
+      "closed": "Fermé",
+      "addShift": "Ajouter un créneau",
+      "removeShift": "Supprimer le créneau",
+      "start": "Début",
+      "end": "Fin"
+    },
+    "overrides": {
+      "startDate": "Date de début",
+      "endDate": "Date de fin",
+      "kind": "Type",
+      "reason": "Motif",
+      "reasonPlaceholder": "Par exemple : Noël, conférence...",
+      "closed": "Fermé",
+      "customHours": "Horaires personnalisés",
+      "unavailable": "Indisponible",
+      "noOverrides": "Aucune date spéciale planifiée",
+      "delete": "Supprimer",
+      "confirmDelete": "Supprimer cette période ?",
+      "add": "Ajouter",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "analytics": {
+      "occupancyTitle": "Taux d'occupation par cabine",
+      "utilizationTitle": "Utilisation par professionnel",
+      "peakHoursTitle": "Heures de pointe",
+      "bookedMinutes": "Minutes réservées",
+      "availableMinutes": "Minutes disponibles",
+      "rate": "Taux d'occupation",
+      "noData": "Aucune donnée pour la période sélectionnée"
+    },
+    "availability": {
+      "clinicClosed": "Clinique fermée",
+      "professionalOff": "Professionnel indisponible",
+      "outsideHours": "En dehors des horaires configurés",
+      "confirmOutside": "Ce créneau est en dehors des heures de travail. Créer le rendez-vous quand même ?",
+      "confirm": "Créer quand même",
+      "cancel": "Annuler"
+    }
+  }
+}

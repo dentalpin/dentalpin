@@ -383,6 +383,7 @@ async def list_note_templates(
                     id=tpl["id"],
                     category=category,
                     i18n_key=tpl["i18n_key"],
+                    body_i18n_key=tpl["body_i18n_key"],
                     body=tpl["body"],
                 )
             )
@@ -394,6 +395,7 @@ async def list_note_templates(
                         id=tpl["id"],
                         category=cat,
                         i18n_key=tpl["i18n_key"],
+                        body_i18n_key=tpl["body_i18n_key"],
                         body=tpl["body"],
                     )
                 )

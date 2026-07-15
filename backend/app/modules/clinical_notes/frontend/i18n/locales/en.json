@@ -54,6 +54,7 @@
     "composer": {
       "placeholder": "Write the note…",
       "templates": "Templates",
+      "attach": "Attach photo or document",
       "bindToTooth": "Attach to tooth {n}"
     },
     "linked": {
@@ -107,6 +108,17 @@
       "general": {
         "followUp": "General follow-up"
       }
+    },
+    "templateBodies": {
+      "endo_single_visit": "Diagnosis: \nAnesthesia: \nCanals located: \nWorking length: \nObturation: \nPost-op: ",
+      "endo_multi_visit": "Session: \nCanals worked: \nIntracanal medication: \nNext appointment: ",
+      "perio_scaling": "Quadrants treated: \nProbing depth: \nBleeding on probing: \nHygiene instructions: ",
+      "implant_placement": "Implant (brand / diameter / length): \nFinal torque (Ncm): \nPrimary stability: \nGraft: \nPost-op: ",
+      "diagnosis_caries": "Finding: caries \nDepth: \nSymptoms: \nVitality test: \nSuggested treatment: ",
+      "diagnosis_periapical": "Periapical lesion \nTooth: \nX-ray: \nTests (percussion, palpation): \nDiagnosis: ",
+      "admin_phone_call": "Patient call: \nReason: \nAction taken: \nFollow-up: ",
+      "admin_reschedule": "Reschedule request: \nCurrent date: \nNew proposal: ",
+      "general_follow_up": "Findings: \nProcedure performed: \nPatient instructions: "
     }
   }
 }

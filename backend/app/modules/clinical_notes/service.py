@@ -571,6 +571,14 @@ def _author_brief(author) -> dict:
     }
 
 
+def _resolve_label(
+    names: dict[str, str] | None,
+) -> str | None:
+    """Resolve a display label from catalog names: es → en → fr."""
+    names = names or {}
+    return next((names[k] for k in ("es", "en", "fr") if names.get(k)), None)
+
+
 def _build_linked(
     note: ClinicalNote,
     plan_by_id: dict[UUID, TreatmentPlan],
@@ -588,9 +596,8 @@ def _build_linked(
         treatment = treatments_by_id.get(note.owner_id)
         teeth = [t.tooth_number for t in (treatment.teeth or [])] if treatment else []
         catalog = treatment.catalog_item if treatment else None
-        names = (catalog.names if catalog else None) or {}
-        label = (
-            names.get("es") or names.get("en") or (treatment.clinical_type if treatment else None)
+        label = _resolve_label(catalog.names if catalog else None) or (
+            treatment.clinical_type if treatment else None
         )
         return {
             "kind": "treatment",
@@ -729,7 +736,9 @@ async def list_merged_for_plan(db: AsyncSession, clinic_id: UUID, plan_id: UUID)
 
 
 async def list_grouped_for_patient(
-    db: AsyncSession, clinic_id: UUID, patient_id: UUID
+    db: AsyncSession,
+    clinic_id: UUID,
+    patient_id: UUID,
 ) -> list[dict]:
     """Per-plan grouping with plan-level + per-treatment buckets, newest plan first."""
     plans_result = await db.execute(
@@ -776,11 +785,12 @@ async def list_grouped_for_patient(
             label = None
             teeth: list[int] = []
             if treatment:
-                catalog = treatment.catalog_item
-                if catalog and catalog.names:
-                    label = catalog.names.get("es") or catalog.names.get("en")
-                if not label:
-                    label = treatment.clinical_type
+                label = (
+                    _resolve_label(
+                        treatment.catalog_item.names if treatment.catalog_item else None,
+                    )
+                    or treatment.clinical_type
+                )
                 teeth = [t.tooth_number for t in (treatment.teeth or [])]
             treatment_groups.append(
                 {

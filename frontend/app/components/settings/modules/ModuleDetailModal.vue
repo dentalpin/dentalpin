@@ -30,7 +30,7 @@ async function fetchLog() {
     logEntries.value = await operations(props.module.name, 20)
   } catch (err: unknown) {
     const e = err as { data?: { detail?: string }, message?: string }
-    logError.value = e?.data?.detail ?? e?.message ?? 'error'
+    logError.value = e?.data?.detail ?? e?.message ?? t('common.error')
     logEntries.value = []
   } finally {
     loadingLog.value = false

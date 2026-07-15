@@ -18,6 +18,7 @@ import {
 
 export function useTreatmentCatalog() {
   const api = useApi()
+  const { locale } = useLocale()
 
   // State
   const treatments = useState<OdontogramTreatment[]>('treatmentCatalog:treatments', () => [])
@@ -96,7 +97,7 @@ export function useTreatmentCatalog() {
         },
         clinical_category: category.key,
         category_key: category.key,
-        category_names: { es: category.labelKey, en: category.labelKey }
+        category_names: { es: category.labelKey, en: category.labelKey, fr: category.labelKey }
       }))
     }
     return grouped
@@ -162,7 +163,7 @@ export function useTreatmentCatalog() {
         },
         clinical_category: categoryKey,
         category_key: categoryKey,
-        category_names: { es: constantCategory.labelKey, en: constantCategory.labelKey }
+        category_names: { es: constantCategory.labelKey, en: constantCategory.labelKey, fr: constantCategory.labelKey }
       }))
     }
 
@@ -199,7 +200,7 @@ export function useTreatmentCatalog() {
           },
           clinical_category: category.key,
           category_key: category.key,
-          category_names: { es: category.labelKey, en: category.labelKey }
+          category_names: { es: category.labelKey, en: category.labelKey, fr: category.labelKey }
         }
       }
     }
@@ -226,11 +227,12 @@ export function useTreatmentCatalog() {
    */
   function getTreatmentName(
     treatmentType: string,
-    locale = 'es'
+    overrideLocale?: string
   ): string {
+    const loc = overrideLocale || locale.value
     const treatment = getTreatmentByType(treatmentType)
     if (treatment) {
-      return treatment.names[locale] || treatment.names.es || treatmentType
+      return treatment.names[loc] || treatment.names.es || treatment.names.en || treatmentType
     }
     return treatmentType
   }
@@ -277,11 +279,12 @@ export function useTreatmentCatalog() {
     return layers
   }
 
-  function getCategoryLabel(categoryKey: string, locale = 'es'): string {
+  function getCategoryLabel(categoryKey: string, overrideLocale?: string): string {
+    const loc = overrideLocale || locale.value
     if (useCatalog.value) {
       const treatments = treatmentsByCategory.value[categoryKey]
       if (treatments && treatments.length > 0) {
-        return treatments[0].category_names[locale] || categoryKey
+        return treatments[0].category_names[loc] || treatments[0].category_names.es || treatments[0].category_names.en || categoryKey
       }
     }
 

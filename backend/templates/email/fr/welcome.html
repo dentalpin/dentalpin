@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Bienvenue à {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Bienvenue {{ patient_name }} !</h2>
+
+<p>Merci de vous être inscrit(e) auprès de {{ clinic_name }}. Nous sommes ravis de pouvoir vous aider à prendre soin de votre santé dentaire.</p>
+
+<div class="alert alert-success">
+    Votre dossier patient a été créé avec succès dans notre système.
+</div>
+
+<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 16px; font-weight: 600;">Que pouvez-vous faire maintenant ?</h3>
+
+<ul style="padding-left: 20px; color: #3f3f46;">
+    <li style="margin-bottom: 8px;">Prendre votre premier rendez-vous de bilan</li>
+    <li style="margin-bottom: 8px;">Consulter nos services et traitements</li>
+    <li style="margin-bottom: 8px;">Nous contacter pour toute question</li>
+</ul>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Prendre mon premier rendez-vous</a>
+</div>
+{% endif %}
+
+<div class="info-box">
+    <div class="label">Horaires d'ouverture</div>
+    <div class="value">{{ clinic_hours | default('Lundi à Vendredi : 9h00 - 20h00') }}</div>
+</div>
+
+<p>N'hésitez pas à nous contacter si vous avez des questions. Nous sommes là pour vous aider.</p>
+
+<p>À bientôt !</p>
+{% endblock %}

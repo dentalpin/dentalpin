@@ -1081,7 +1081,7 @@ class InvoiceService:
             internal_code = None
             if budget_item.catalog_item:
                 names = budget_item.catalog_item.names or {}
-                description = names.get("es") or names.get("en") or description
+                description = names.get("es") or names.get("en") or names.get("fr") or description
                 internal_code = budget_item.catalog_item.internal_code
 
             # Create invoice item

@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- i18n: correct French dental terminology in seed data (Contention,
+  Bracket, Scellement de sillons, Fluoration, Diagnostic, ...).
+
+- i18n: add French names/descriptions to seed data (categories,
+  treatment items, session labels, VAT type names).
+
 - feat(tools): expose `list_catalog_items` + `get_catalog_item` READ
   agent tools (wrap `CatalogService`) so the copilot can read the
   treatment catalog — name, code, category, price, duration, scope.

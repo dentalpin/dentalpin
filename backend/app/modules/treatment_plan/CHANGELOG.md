@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `fr` fallback to plan item name resolution in service
+  layer so French-localized treatment names display correctly.
+
 - refactor(scheduler): declare the ``auto_close_expired_plans`` cron job
   via ``get_scheduled_jobs()`` instead of being imported by name in
   ``app/core/scheduler.py``.

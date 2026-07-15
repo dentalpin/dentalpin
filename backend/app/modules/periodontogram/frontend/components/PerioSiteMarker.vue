@@ -21,13 +21,15 @@ const colourClass = computed(() => probingDepthClasses(props.site?.probing_depth
 // Tap targets bump to 44px on touch devices via the @media block in
 // the style section below. Visual size stays compact on desktop.
 const sizeClass = computed(() => (props.size === 'sm' ? 'h-4 w-4 text-[10px]' : 'h-5 w-5 text-xs'))
+
+const { t } = useI18n()
 </script>
 
 <template>
   <span
     class="perio-site-marker inline-flex items-center justify-center rounded-full font-mono font-medium ring-1 ring-inset"
     :class="[colourClass, sizeClass]"
-    :aria-label="`Sitio ${site?.site_code ?? ''}, sondaje ${site?.probing_depth_mm ?? 'sin valor'}`"
+    :aria-label="t('periodontogram.arch.siteMarkerAria', { code: site?.site_code ?? '', depth: site?.probing_depth_mm ?? t('common.noValue') })"
   >
     <span v-if="site?.probing_depth_mm != null">{{ site.probing_depth_mm }}</span>
     <span v-else>·</span>

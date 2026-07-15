@@ -9,6 +9,7 @@ os.environ["TESTING"] = "true"
 import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+from sqlalchemy.pool import NullPool
 
 from app.config import settings
 
@@ -16,6 +17,7 @@ from app.config import settings
 from app.core.auth.models import Clinic, ClinicMembership, User  # noqa: F401
 from app.core.plugins.loader import load_modules
 from app.database import Base, get_db
+from app.database import engine as app_engine
 from app.main import app
 from app.modules.agenda.models import (  # noqa: F401
     Appointment,
@@ -96,11 +98,26 @@ load_modules(app)
 TEST_DATABASE_URL = settings.DATABASE_URL
 
 
+@pytest_asyncio.fixture(autouse=True)
+async def _dispose_app_engine() -> AsyncGenerator[None, None]:
+    """Dispose the global app engine after every test.
+
+    Event handlers (e.g. patient_timeline) use the module-level
+    ``app.database.engine``; its pooled connections stay bound to the
+    test's event loop and leak once the loop closes, exhausting CI
+    Postgres near the end of the suite (TooManyConnectionsError).
+    """
+    yield
+    await app_engine.dispose()
+
+
 @pytest_asyncio.fixture
 async def db_session() -> AsyncGenerator[AsyncSession, None]:
     """Create a fresh database session for each test."""
     # Create a new engine for each test to avoid connection conflicts
-    test_engine = create_async_engine(TEST_DATABASE_URL, echo=False)
+    # NullPool: with one engine per test, pooled idle connections pile up
+    # across ~800 tests and CI Postgres hits max_connections (100).
+    test_engine = create_async_engine(TEST_DATABASE_URL, echo=False, poolclass=NullPool)
     test_session_maker = async_sessionmaker(
         test_engine, class_=AsyncSession, expire_on_commit=False
     )

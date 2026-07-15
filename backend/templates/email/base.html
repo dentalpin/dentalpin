@@ -238,7 +238,7 @@
             <!-- Footer -->
             <div class="email-footer">
                 {% block footer %}
-                <p>Este email fue enviado por {{ clinic_name | default('DentalPin') }}</p>
+                <p>{{ footer_sent_by | default('Este email fue enviado por ' ~ (clinic_name | default('DentalPin'))) }}</p>
                 {% if clinic_phone %}
                 <p>Tel: {{ clinic_phone }}</p>
                 {% endif %}

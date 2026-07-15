@@ -1,0 +1,124 @@
+{
+  "clinicalNotes": {
+    "types": {
+      "administrative": "Administratif",
+      "diagnosis": "Diagnostic",
+      "treatment": "Traitement",
+      "treatment_plan": "Plan",
+      "appointment_clinical": "Clinique",
+      "appointment_administrative": "Administratif"
+    },
+    "appointment": {
+      "addByType": "Ajouter une note {label}",
+      "empty": "Aucune note sur ce rendez-vous pour le moment. Utilisez les boutons ci-dessus pour en ajouter une."
+    },
+    "feed": {
+      "filterLabel": "Filtres",
+      "filterAll": "Toutes",
+      "filterClear": "Effacer les filtres",
+      "filterStatus": "Affichage de {n} sur {total} types",
+      "addAdministrative": "Note administrative",
+      "loadMore": "Charger plus",
+      "empty": {
+        "title": "Aucune note pour le moment",
+        "help": "Les notes administratives, de diagnostique et de traitement apparaîtront ici par ordre chronologique."
+      }
+    },
+    "diagnosisSidebar": {
+      "title": "Notes",
+      "addNote": "Ajouter une note",
+      "empty": "Aucune note dans cette catégorie."
+    },
+    "treatmentButton": {
+      "title": "Notes de traitement",
+      "add": "Ajouter une note",
+      "empty": "Aucune note sur ce traitement pour le moment.",
+      "aria": "Notes de traitement ({n})"
+    },
+    "timeline": {
+      "addPlanNote": "Note de plan",
+      "empty": "Aucune note pour le moment.",
+      "emptyForFilter": "Aucune note ne correspond au filtre.",
+      "source": {
+        "plan": "Plan",
+        "treatment": "Traitement",
+        "visit": "Visite"
+      }
+    },
+    "byPlan": {
+      "empty": "Ce patient n'a pas encore de notes cliniques liées à un plan.",
+      "planNotesLabel": "Notes du plan",
+      "unknownTreatment": "Traitement",
+      "noNotesForTreatment": "Aucune note sur ce traitement pour le moment."
+    },
+    "composer": {
+      "placeholder": "Écrivez la note…",
+      "templates": "Modèles",
+      "attach": "Joindre une photo ou un document",
+      "bindToTooth": "Attacher à la dent {n}"
+    },
+    "linked": {
+      "tooth": "Dent {n}",
+      "treatment": "Traitement",
+      "treatmentOnTooth": "{label} (dent {n})",
+      "plan": "Plan",
+      "planNamed": "Plan : {label}"
+    },
+    "actions": {
+      "showMore": "Afficher plus",
+      "showLess": "Afficher moins",
+      "openLinked": "Ouvrir le contexte"
+    },
+    "author": {
+      "unknown": "Auteur inconnu"
+    },
+    "time": {
+      "justNow": "à l'instant",
+      "minutesAgo": "il y a {n} min",
+      "hoursAgo": "il y a {n} h",
+      "daysAgo": "il y a {n} j"
+    },
+    "toasts": {
+      "saved": "Note enregistrée",
+      "deleted": "Note supprimée",
+      "saveFailed": "Impossible d'enregistrer la note"
+    },
+    "confirms": {
+      "delete": "Supprimer cette note ? La récupération nécessite de contacter le support."
+    },
+    "templates": {
+      "endo": {
+        "singleVisit": "Endodontie (visite unique)",
+        "multiVisit": "Endodontie (visites multiples)"
+      },
+      "perio": {
+        "scaling": "Détartrage / RAR"
+      },
+      "implant": {
+        "placement": "Pose d'implant"
+      },
+      "diagnosis": {
+        "caries": "Carie",
+        "periapical": "Lésion périapicale"
+      },
+      "admin": {
+        "phoneCall": "Appel téléphonique du patient",
+        "reschedule": "Demande de report"
+      },
+      "general": {
+        "followUp": "Suivi général"
+      }
+    },
+    "templateBodies": {
+      "endo_single_visit": "Diagnostic : \nAnesthésie : \nCanaux localisés : \nLongueur de travail : \nObturation : \nPost-op : ",
+      "endo_multi_visit": "Séance : \nCanaux traités : \nMédicament intracanalaire : \nProchain rendez-vous : ",
+      "perio_scaling": "Quadrants traités : \nProfondeur de sondage : \nSangrado au sondage : \nConsignes d'hygiène : ",
+      "implant_placement": "Implant (marque / diamètre / longueur) : \nCouple final (Ncm) : \nStabilité primaire : \nGreffe : \nPost-op : ",
+      "diagnosis_caries": "Observation : carie \nProfondeur : \nSymptômes : \nTest de vitalité : \nTraitement suggéré : ",
+      "diagnosis_periapical": "Lésion périapicale \nDent : \nRadiographie : \nPercussion, palpation : \nDiagnostic : ",
+      "admin_phone_call": "Appel du patient : \nMotif : \nAction entreprise : \nSuivi : ",
+      "admin_reschedule": "Demande de report : \nDate actuelle : \nNouvelle proposition : ",
+      "general_follow_up": "Observations : \nProcédure réalisée : \nConsignes au patient : "
+    }
+  }
+}

@@ -39,6 +39,8 @@ const props = withDefaults(defineProps<Props>(), {
 
 defineEmits<{ 'slice-click': [key: string] }>()
 
+const { t } = useI18n()
+
 const PALETTE: Tone[] = ['primary', 'success', 'info', 'warning', 'danger', 'neutral']
 
 function toneVar(tone: Tone): string {
@@ -129,7 +131,7 @@ const isEmpty = computed(() => !total.value)
         :height="size"
         :viewBox="`0 0 ${size} ${size}`"
         role="img"
-        :aria-label="`Donut, ${slices.length} segments`"
+        :aria-label="t('charts.donut.ariaLabel', { count: slices.length })"
       >
         <path
           v-for="s in rendered"

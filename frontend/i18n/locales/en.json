@@ -22,6 +22,7 @@
     "invoices": "Invoices",
     "reports": "Reports",
     "settings": "Settings",
+    "defaultClinicName": "Clinic",
     "catalog": "Catalog",
     "menu": "Menu",
     "openMenu": "Open menu",
@@ -82,7 +83,8 @@
     "save": "Save",
     "create": "Create",
     "delete": "Delete",
-    "close": "Close"
+    "close": "Close",
+    "remove": "Remove"
   },
   "patients": {
     "title": "Patients",
@@ -297,6 +299,7 @@
     "editMedicalHistory": "Edit medical history",
     "medicalSnapshot": {
       "title": "Medical information",
+      "allergiesLabel": "Allergies",
       "allergiesEmpty": "No known allergies",
       "allergiesNotReviewed": "Medical history not recorded",
       "completeHistory": "Complete history",
@@ -330,6 +333,12 @@
     },
     "administrative": {
       "title": "Administrative"
+    },
+    "header": {
+      "ariaLabel": "Patient header"
+    },
+    "quickActions": {
+      "ariaLabel": "Patient quick actions"
     }
   },
   "patientDetail": {
@@ -345,7 +354,8 @@
       "budgets": "Budgets",
       "billing": "Billing",
       "payments": "Payments",
-      "documents": "Documents"
+      "documents": "Documents",
+      "gallery": "Gallery"
     },
     "historyPlaceholder": "Clinical notes available in future version",
     "noAppointments": "This patient has no appointments",
@@ -938,6 +948,8 @@
     "title": "Settings",
     "subtitle": "Manage your clinic, team and modules.",
     "allCategories": "All categories",
+    "navLabel": "Settings categories",
+    "attentionRequired": "Attention required",
     "categories": {
       "general": {
         "label": "General",
@@ -1196,6 +1208,7 @@
     "save": "Save",
     "add": "Add",
     "cancel": "Cancel",
+    "clear": "Clear",
     "close": "Close",
     "delete": "Delete",
     "comingSoon": "Coming soon",
@@ -1217,12 +1230,15 @@
     "viewDetails": "View details",
     "previous": "Previous",
     "next": "Next",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
     "undo": "Undo",
     "undone": "Undone",
     "added": "Added",
     "removed": "Removed",
     "page": "Page {current} of {total}",
     "noData": "No data",
+    "noValue": "no value",
     "noResults": "No results",
     "search": "Search...",
     "selectAll": "All",
@@ -1246,6 +1262,10 @@
     "readOnly": "Read only",
     "createdBy": "Created by",
     "date": "Date",
+    "upload": "Upload",
+    "uploading": "Uploading…",
+    "maxFileSize": "up to 10 MB",
+    "durationMinutes": "{value} min",
     "days": {
       "sunday": "Sunday",
       "monday": "Monday",
@@ -2368,7 +2388,7 @@
       "void": "Void payment",
       "amount": "Amount",
       "method": "Payment method",
-      "date": "Date",
+    "date": "Date",
       "reference": "Reference",
       "notes": "Notes",
       "noPayments": "No payments recorded",
@@ -2739,6 +2759,38 @@
       }
     }
   },
+  "invoiceSeries": {
+    "title": "Invoice Series",
+    "description": "Configure invoice prefixes and numbering",
+    "regularInvoices": "Invoices",
+    "creditNotes": "Credit Notes",
+    "new": "New series",
+    "newTitle": "New {type} series",
+    "editTitle": "Edit series",
+    "prefix": "Prefix",
+    "prefixHint": "e.g. INV, CR. The year will be added automatically.",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Optional series description...",
+    "nextNumber": "Next number",
+    "preview": "Preview",
+    "resetYearly": "Yearly reset",
+    "resetYearlyLabel": "Reset numbering every year",
+    "setAsDefault": "Set as default",
+    "activeLabel": "Active series",
+    "showInactive": "Show inactive",
+    "noItems": "No series configured",
+    "resetCounter": "Reset counter",
+    "currentNumber": "Current number",
+    "seriesPrefix": "Series prefix",
+    "newNumber": "New number",
+    "newNumberHint": "The number must be greater than the highest existing number in this series.",
+    "resetWarningTitle": "Warning",
+    "resetWarning": "This action will be recorded in the audit log and cannot be undone.",
+    "confirmReset": "Reset counter",
+    "created": "Series created successfully",
+    "saved": "Series updated successfully",
+    "resetSuccess": "Counter reset successfully"
+  },
   "documents": {
     "title": "Documents",
     "add": "Add",
@@ -2779,7 +2831,104 @@
     "deleteSuccess": "Document deleted",
     "deleteError": "Error deleting document",
     "updateSuccess": "Document updated",
-    "updateError": "Error updating document"
+    "updateError": "Error updating document",
+    "viewer": {
+      "loading": "Loading document...",
+      "error": "Could not load document",
+      "downloadInstead": "Download instead",
+      "unsupported": "Preview not available for this file type",
+      "zoomOut": "Zoom out",
+      "zoomIn": "Zoom in",
+      "resetZoom": "Reset to 100%",
+      "zoomHint": "Ctrl + scroll to zoom"
+    },
+    "typeDesc": {
+      "consent": "Signed document",
+      "id_scan": "DNI / passport",
+      "insurance": "Policy or card",
+      "report": "Clinical report",
+      "referral": "Referral letter",
+      "other": "Unclassified"
+    },
+    "errors": {
+      "mime": "File type not allowed. Only PDF, JPG or PNG.",
+      "size": "File exceeds 10 MB."
+    },
+    "pdfPreviewHint": "Preview available after upload",
+    "uploadHelp": "Classify the file so it appears in the correct category."
+  },
+  "photoGallery": {
+    "title": "Patient gallery",
+    "add": "Add photo",
+    "empty": "No photos yet",
+    "uploadFirst": "Upload the first one",
+    "showingOf": "Showing {count} of {total}",
+    "upload": "Upload photo",
+    "uploadHelp": "Classify so it appears in the correct category",
+    "dropHere": "Drag a photo here or click",
+    "category": "Type",
+    "subtype": "View",
+    "titlePlaceholder": "Frontal intraoral — 02/05",
+    "capturedAt": "Date",
+    "exifHint": "Auto from EXIF",
+    "cat": {
+      "all": "All",
+      "intraoral": "Intraoral",
+      "extraoral": "Extraoral",
+      "xray": "X-ray",
+      "clinical": "Before/After",
+      "other": "Other"
+    },
+    "catDesc": {
+      "intraoral": "Inside the mouth",
+      "extraoral": "Face and profile",
+      "xray": "Radiological image",
+      "clinical": "Treatment comparison",
+      "other": "Unclassified"
+    },
+    "sub": {
+      "frontal": "Frontal",
+      "lateral_left": "Left lateral",
+      "lateral_right": "Right lateral",
+      "occlusal_upper": "Upper occlusal",
+      "occlusal_lower": "Lower occlusal",
+      "palatal": "Palatal",
+      "lingual": "Lingual",
+      "smile": "Smile",
+      "rest": "Rest",
+      "frontal_face": "Frontal",
+      "profile_left": "Left profile",
+      "profile_right": "Right profile",
+      "three_quarter_left": "3/4 left",
+      "three_quarter_right": "3/4 right",
+      "panoramic": "Panoramic",
+      "periapical": "Periapical",
+      "bitewing": "Bitewing",
+      "ceph_lat": "Ceph lateral",
+      "ceph_pa": "Ceph PA",
+      "cbct": "CBCT",
+      "occlusal_xray": "Occlusal X-ray",
+      "before": "Before",
+      "after": "After",
+      "progress": "Progress",
+      "reference": "Reference",
+      "portrait": "Portrait",
+      "document_scan": "Document",
+      "model_photo": "Model"
+    },
+    "compare": {
+      "before": "Before",
+      "after": "After"
+    },
+    "pair": {
+      "pickHint": "Choose the photo to pair:",
+      "noCandidates": "No photos available. Upload another first.",
+      "paired": "Paired",
+      "exitCompare": "Exit comparison",
+      "compare": "Compare",
+      "unpair": "Remove",
+      "pair": "Pair before/after"
+    }
   },
   "help": {
     "label": "Help",
@@ -2787,5 +2936,13 @@
     "drawerTitle": "Help for this page",
     "unavailable": "No contextual help available for this page yet.",
     "openFullManual": "Open full manual"
+  },
+  "charts": {
+    "trend": {
+      "ariaLabel": "Trend over {count} points"
+    },
+    "donut": {
+      "ariaLabel": "Donut chart, {count} segments"
+    }
   }
 }

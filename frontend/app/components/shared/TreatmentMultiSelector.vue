@@ -93,7 +93,7 @@ const totalDuration = computed(() =>
             v-if="item.default_duration_minutes"
             class="text-caption text-subtle"
           >
-            {{ item.default_duration_minutes }} min
+            {{ t('common.durationMinutes', { value: item.default_duration_minutes }) }}
           </span>
           <span class="text-sm font-semibold text-primary-accent">
             {{ formatPrice(item.default_price) }}
@@ -113,7 +113,7 @@ const totalDuration = computed(() =>
         v-if="totalDuration > 0"
         class="text-caption text-subtle text-right"
       >
-        {{ t('appointments.estimatedDuration') }}: {{ totalDuration }} min
+        {{ t('appointments.estimatedDuration') }}: {{ t('common.durationMinutes', { value: totalDuration }) }}
       </div>
     </div>
 

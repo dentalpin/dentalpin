@@ -105,7 +105,14 @@
         "avgLatency": "Latencia media",
         "conversations": "Conversaciones",
         "tokenBudget": "Presupuesto mensual de tokens",
-        "topTools": "Herramientas más usadas"
+        "topTools": "Herramientas más usadas",
+        "toolNames": {
+          "recalls_list_due_recalls": "Recordatorios pendientes",
+          "budget_list_budgets": "Presupuestos pendientes",
+          "patients_list_patients": "Búsqueda de pacientes",
+          "appointments_list_appointments": "Citas",
+          "invoices_list_invoices": "Facturas"
+        }
       }
     },
     "tool": {

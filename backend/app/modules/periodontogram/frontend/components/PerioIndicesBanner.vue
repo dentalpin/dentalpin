@@ -122,9 +122,9 @@ function confirmDiscard() {
             class="text-xs"
             aria-hidden="true"
           />
-          <span v-if="saveState === 'saving'">Guardando…</span>
-          <span v-else-if="saveState === 'dirty'">Cambios pendientes</span>
-          <span v-else>Cambios guardados</span>
+          <span v-if="saveState === 'saving'">{{ t('periodontogram.saveState.saving') }}</span>
+          <span v-else-if="saveState === 'dirty'">{{ t('periodontogram.saveState.dirty') }}</span>
+          <span v-else>{{ t('periodontogram.saveState.saved') }}</span>
         </span>
       </div>
 
@@ -138,7 +138,7 @@ function confirmDiscard() {
           size="sm"
           @click="showDiscard = true"
         >
-          Descartar borrador
+          {{ t('periodontogram.session.discardDraft') }}
         </UButton>
         <UButton
           icon="i-lucide-check"
@@ -146,7 +146,7 @@ function confirmDiscard() {
           color="primary"
           @click="showClose = true"
         >
-          Cerrar sesión
+          {{ t('periodontogram.session.closeSession') }}
         </UButton>
       </div>
     </div>
@@ -193,20 +193,19 @@ function confirmDiscard() {
     <!-- Close-session confirmation modal -->
     <UModal
       :open="showClose"
-      title="Cerrar sesión periodontal"
+      :title="t('periodontogram.session.closeTitle')"
       @update:open="(v) => { showClose = v }"
     >
       <template #body>
         <div class="space-y-3 p-4">
           <p class="text-sm text-muted">
-            Una vez cerrada, la sesión queda inmutable y aparece en el historial.
-            Para correcciones tendrás que abrir una nueva sesión.
+            {{ t('periodontogram.session.closeDescription') }}
           </p>
-          <UFormField label="Nota (opcional)">
+          <UFormField :label="t('periodontogram.indicesBanner.noteLabel')">
             <UTextarea
               v-model="notes"
               :rows="3"
-              placeholder="Observaciones de la exploración…"
+              :placeholder="t('periodontogram.indicesBanner.observationsPlaceholder')"
             />
           </UFormField>
         </div>
@@ -214,10 +213,10 @@ function confirmDiscard() {
       <template #footer>
         <div class="flex justify-end gap-2 p-2">
           <UButton variant="outline" color="neutral" @click="showClose = false">
-            Cancelar
+            {{ t('periodontogram.session.cancel') }}
           </UButton>
           <UButton color="primary" icon="i-lucide-check" @click="confirmClose">
-            Cerrar sesión
+            {{ t('periodontogram.session.closeButton') }}
           </UButton>
         </div>
       </template>
@@ -226,24 +225,23 @@ function confirmDiscard() {
     <!-- Discard-draft confirmation modal -->
     <UModal
       :open="showDiscard"
-      title="Descartar borrador"
+      :title="t('periodontogram.session.discardTitle')"
       @update:open="(v) => { showDiscard = v }"
     >
       <template #body>
         <div class="p-4">
           <p class="text-sm text-muted">
-            Se eliminarán todos los datos introducidos en esta sesión.
-            Esta acción no se puede deshacer.
+            {{ t('periodontogram.session.discardDescription') }}
           </p>
         </div>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2 p-2">
           <UButton variant="outline" color="neutral" @click="showDiscard = false">
-            Cancelar
+            {{ t('periodontogram.session.cancel') }}
           </UButton>
           <UButton color="error" icon="i-lucide-trash-2" @click="confirmDiscard">
-            Descartar
+            {{ t('periodontogram.session.discardButton') }}
           </UButton>
         </div>
       </template>

@@ -89,7 +89,7 @@ function allergyTooltip(a: AllergyEntry): string {
     <!-- Allergies block — three states -->
     <section
       class="mb-4"
-      aria-label="Alergias"
+      :aria-label="t('patients.medicalSnapshot.allergiesLabel')"
     >
       <!-- A. No medical data at all -->
       <div

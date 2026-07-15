@@ -1,0 +1,185 @@
+{
+  "nav": {
+    "copilot": "IA"
+  },
+  "copilot": {
+    "title": "IA",
+    "open": "Ouvrir l'IA",
+    "empty": "Demandez-moi des informations sur les patients, l'agenda, ou pour prendre un rendez-vous.",
+    "placeholder": "Écrivez votre message…",
+    "send": "Envoyer",
+    "copy": "Copier",
+    "new": "Nouvelle conversation",
+    "thinking": "Réflexion…",
+    "you": "Vous",
+    "assistant": "IA",
+    "trust": "Vos données sont protégées",
+    "phase": {
+      "working": "En cours…",
+      "writing": "Écriture…"
+    },
+    "tabs": {
+      "pending": "À faire",
+      "chat": "Discussion"
+    },
+    "pending": {
+      "empty": "Rien en attente. Vous êtes à jour.",
+      "unknownPatient": "Patient inconnu",
+      "group": {
+        "recall": "Rappels à suivre",
+        "budget": "Devis en attente de réponse"
+      }
+    },
+    "nudge": {
+      "act": "Y jeter un œil",
+      "dismiss": "Ignorer",
+      "appointmentCancelled": {
+        "text": "Le rendez-vous de {time} a été annulé — un créneau vient de s'ouvrir.",
+        "prompt": "Le rendez-vous de {time} a été annulé. Trouvez des patients en rappel qui pourraient remplir ce créneau."
+      }
+    },
+    "suggest": {
+      "heading": "Comment puis-je aider ?",
+      "cat": {
+        "workflows": "Flux de travail",
+        "patients": "Patients",
+        "agenda": "Agenda",
+        "recalls": "Rappels",
+        "money": "Encaissements et devis",
+        "reports": "Rapports"
+      },
+      "dailyBriefing": "Briefing du jour",
+      "prepareVisit": "Préparer une visite",
+      "fillGap": "Remplir un créneau",
+      "searchPatient": "Trouver un patient",
+      "patientSummary": "Résumer un patient",
+      "freeSlots": "Créneaux libres aujourd'hui",
+      "bookAppointment": "Prendre un rendez-vous",
+      "dueRecalls": "Rappels à échéance",
+      "pendingBudgets": "Devis non répondus",
+      "recordPayment": "Enregistrer un paiement",
+      "monthCollections": "Encaissements du mois",
+      "agendaSummary": "Vue d'ensemble de l'agenda",
+      "prompt": {
+        "dailyBriefing": "Donnez-moi le briefing du jour : rendez-vous d'aujourd'hui, rappels en retard et devis non répondus",
+        "prepareVisit": "Préparez-moi la prochaine visite d'un patient",
+        "fillGap": "Un créneau s'est libéré dans l'agenda, qui pouvons-nous appeler ?",
+        "searchPatient": "Trouver un patient",
+        "patientSummary": "Donnez-moi le résumé d'un patient",
+        "freeSlots": "Quels créneaux sont libres aujourd'hui ?",
+        "bookAppointment": "Je veux prendre un rendez-vous",
+        "dueRecalls": "Quels rappels sont à échéance ce mois-ci ?",
+        "pendingBudgets": "Quels devis sont envoyés et sans réponse ?",
+        "recordPayment": "Je veux enregistrer un paiement patient",
+        "monthCollections": "Résumé des encaissements du mois",
+        "agendaSummary": "Donnez-moi un aperçu de l'agenda d'aujourd'hui"
+      }
+    },
+    "settings": {
+      "title": "Copilot",
+      "description": "Assistant IA : briefing matinal et moteur",
+      "saved": "Paramètres enregistrés",
+      "digest": {
+        "title": "E-mail de briefing matinal",
+        "description": "Chaque matin : rendez-vous du jour, rappels en retard et devis non répondus.",
+        "enabled": "Envoyer le briefing quotidien",
+        "hour": "Heure d'envoi",
+        "hourHelp": "Interprété dans le fuseau horaire de la clinique.",
+        "recipients": "Destinataires",
+        "recipientsHelp": "Chaque destinataire reçoit son propre briefing, limité à ce que son rôle peut voir.",
+        "recipientsPlaceholder": "Sélectionner le personnel…"
+      },
+      "engine": {
+        "title": "Moteur",
+        "provider": "Fournisseur",
+        "model": "Modèle",
+        "redaction": "Rédaction PHI",
+        "redactionOn": "Activé",
+        "redactionOff": "Désactivé"
+      },
+      "metrics": {
+        "title": "Utilisation",
+        "description": "Les {days} derniers jours.",
+        "toolCalls": "Appels d'outils",
+        "errorRate": "Taux d'erreur",
+        "avgLatency": "Latence moyenne",
+        "conversations": "Conversations",
+        "tokenBudget": "Budget de tokens mensuel",
+        "topTools": "Outils les plus utilisés",
+        "toolNames": {
+          "recalls_list_due_recalls": "Rappels en retard",
+          "budget_list_budgets": "Devis en attente",
+          "patients_list_patients": "Recherche de patients",
+          "appointments_list_appointments": "Rendez-vous",
+          "invoices_list_invoices": "Factures"
+        }
+      }
+    },
+    "tool": {
+      "running": "Exécution de {name}…",
+      "done": "{name} terminé",
+      "failed": "{name} échoué"
+    },
+    "card": {
+      "viewPatient": "Voir le dossier",
+      "noResults": "Aucun résultat",
+      "notFound": "Introuvable",
+      "more": "+{n} de plus",
+      "freeSlots": "Créneaux libres",
+      "appointments": "Rendez-vous",
+      "patients": "Patients"
+    },
+    "patientStatus": {
+      "active": "actif",
+      "archived": "archivé"
+    },
+    "apptStatus": {
+      "scheduled": "Planifié",
+      "confirmed": "Confirmé",
+      "checked_in": "Enregistré",
+      "in_treatment": "En cours de traitement",
+      "completed": "Terminé",
+      "cancelled": "Annulé",
+      "no_show": "Pas présenté"
+    },
+    "confirm": {
+      "title": "Confirmer l'action",
+      "body": "L'IA souhaite exécuter {name}.",
+      "approve": "Confirmer",
+      "reject": "Annuler",
+      "approved": "Confirmé",
+      "rejected": "Annulé",
+      "destructiveNote": "Cette action est irréversible.",
+      "action": {
+        "book_appointment": "L'IA souhaite prendre un rendez-vous.",
+        "cancel_appointment": "L'IA souhaite annuler un rendez-vous.",
+        "create_patient": "L'IA souhaite créer un patient."
+      },
+      "field": {
+        "patient_id": "Patient",
+        "professional_id": "Professionnel",
+        "appointment_id": "Rendez-vous",
+        "cabinet_id": "Cabine",
+        "cabinet": "Cabine",
+        "start_time": "Date",
+        "end_time": "Fin",
+        "datetime": "Date",
+        "service": "Prestation",
+        "reason": "Motif",
+        "duration_minutes": "Durée (min)",
+        "first_name": "Prénom",
+        "last_name": "Nom",
+        "phone": "Téléphone",
+        "email": "E-mail",
+        "date_of_birth": "Date de naissance",
+        "query": "Recherche"
+      }
+    },
+    "budgetExceeded": "La limite mensuelle d'utilisation de l'IA a été atteinte.",
+    "error": "Une erreur s'est produite.",
+    "page": {
+      "title": "IA",
+      "subtitle": "Votre assistant de clinique, limité à vos permissions."
+    }
+  }
+}

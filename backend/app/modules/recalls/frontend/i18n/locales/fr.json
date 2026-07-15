@@ -1,0 +1,129 @@
+{
+  "recalls": {
+    "title": "Rappels",
+    "callList": "Liste d'appels",
+    "noRecallsThisMonth": "Aucun rappel en attente ce mois-ci",
+    "filters": {
+      "month": "Mois",
+      "reason": "Motif",
+      "professional": "Professionnel",
+      "status": "Statut",
+      "priority": "Priorité",
+      "overdue": "Afficher les en retard",
+      "any": "Tous",
+      "thisMonth": "Ce mois-ci"
+    },
+    "counters": {
+      "due_this_week": "Échéance cette semaine",
+      "due_this_month": "Échéance ce mois-ci",
+      "overdue": "En retard",
+      "scheduled_this_month": "Planifiés ce mois-ci",
+      "completed_this_month": "Terminés ce mois-ci",
+      "conversion_rate": "Taux de conversion"
+    },
+    "setRecall": "Planifier un rappel",
+    "setRecallShort": "Rappel",
+    "history": "Historique des rappels",
+    "viewAll": "Voir tout",
+    "pillNext": "Prochain rappel : {month} · {reason}",
+    "pillNone": "Aucun rappel actif",
+    "reasons": {
+      "hygiene": "Hygiène",
+      "checkup": "Contrôle",
+      "ortho_review": "Revue d'orthodontie",
+      "implant_review": "Revue d'implant",
+      "post_op": "Post-opératoire",
+      "treatment_followup": "Suivi de traitement",
+      "other": "Autre"
+    },
+    "priority": {
+      "low": "Basse",
+      "normal": "Normale",
+      "high": "Haute"
+    },
+    "status": {
+      "pending": "En attente",
+      "contacted_no_answer": "Pas de réponse",
+      "contacted_scheduled": "Planifié",
+      "contacted_declined": "Refusé",
+      "done": "Terminé",
+      "cancelled": "Annulé",
+      "needs_review": "À revoir"
+    },
+    "actions": {
+      "call": "Appeler",
+      "logAttempt": "Enregistrer la tentative",
+      "noAnswer": "Pas de réponse",
+      "book": "Prendre rendez-vous",
+      "snooze": "Reporter",
+      "cancel": "Annuler",
+      "markDone": "Marquer terminé",
+      "exportCsv": "Exporter CSV",
+      "save": "Enregistrer"
+    },
+    "closeoutPrompt": {
+      "title": "Planifier un rappel ?",
+      "subtitle": "Le patient vient de terminer — quand devons-nous le rappeler ?",
+      "skip": "Pas maintenant"
+    },
+    "modal": {
+      "title": "Planifier un rappel",
+      "subtitle": "Marquer le patient pour un rappel futur",
+      "patient": "Patient",
+      "reason": "Motif",
+      "when": "Quand",
+      "month": "Mois cible",
+      "targetMonth": "Mois cible",
+      "preciseDate": "Choisir un jour précis",
+      "priority": "Priorité",
+      "assigned": "Professionnel assigné",
+      "note": "Note interne",
+      "notePlaceholder": "Détail optionnel (ex. « Vérifier la couronne sur 47 »)",
+      "optional": "optionnel",
+      "duplicateGuard": "Un rappel en attente existe déjà pour ce patient et ce motif. Il sera mis à jour."
+    },
+    "doNotContact": {
+      "cannotSchedule": "Ce patient est marqué « Ne pas contacter ». Les rappels ne peuvent pas être planifiés. Mettez à jour la préférence démographique pour réactiver le contact."
+    },
+    "activeRecallHint": "Rappel actif · appuyez pour gérer",
+    "logAttempt": {
+      "channel": "Canal",
+      "outcome": "Résultat",
+      "note": "Note",
+      "submit": "Enregistrer la tentative"
+    },
+    "channel": {
+      "phone": "Téléphone",
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "E-mail"
+    },
+    "outcome": {
+      "no_answer": "Pas de réponse",
+      "voicemail": "Messagerie vocale",
+      "scheduled": "Rendez-vous planifié",
+      "declined": "Refusé",
+      "wrong_number": "Mauvais numéro"
+    },
+    "snoozePrompt": "Reporter de combien de mois ?",
+    "settings": {
+      "title": "Rappels",
+      "description": "Intervalles par défaut + correspondance catégorie de traitement",
+      "intervals": "Intervalles par défaut (mois)",
+      "categoryMap": "Traitement → motif",
+      "categoryKeyPlaceholder": "clé de catégorie du catalogue",
+      "autoSuggest": "Suggérer un rappel lorsqu'un traitement est terminé",
+      "autoLink": "Lier un rendez-vous planifié à un rappel en attente",
+      "saved": "Paramètres enregistrés"
+    },
+    "dashboard": {
+      "title": "Rappels"
+    },
+    "suggestion": {
+      "title": "Rappel suggéré",
+      "body": "Après ce traitement, nous suggérons un rappel dans {month} ({reason}).",
+      "create": "Créer le rappel",
+      "dismiss": "Ignorer"
+    }
+  }
+}

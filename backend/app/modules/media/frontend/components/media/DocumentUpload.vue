@@ -181,7 +181,7 @@ async function submit() {
           {{ t('documents.dropzone.hint', 'Arrastra un documento o haz clic') }}
         </p>
         <p class="mt-1 text-xs text-muted">
-          PDF · JPG · PNG — hasta 10 MB
+          PDF · JPG · PNG — {{ t('common.maxFileSize', 'hasta 10 MB') }}
         </p>
       </div>
       <input

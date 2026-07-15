@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment cancelled - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>Appointment cancelled</h2>
+
+<p>Hello {{ patient_name }},</p>
+
+<p>Your appointment at <strong>{{ clinic_name | default('DentalPin') }}</strong> has been cancelled.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Date</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Time</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Professional</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% if cancellation_reason %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Reason</div>
+            <div class="value">{{ cancellation_reason }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<p>To schedule a new appointment, please contact us.</p>
+{% endblock %}

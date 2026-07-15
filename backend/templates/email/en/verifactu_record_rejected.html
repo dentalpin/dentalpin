@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Invoice rejected by AEAT - action required - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>Invoice rejected by AEAT</h2>
+
+<p>Hello {{ admin_name }},</p>
+
+<div class="alert alert-error">
+    <strong>Action required:</strong> An invoice has been rejected by the Spanish Tax Agency (AEAT).
+</div>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Invoice</div>
+            <div class="value">{{ invoice_number }}</div>
+        </div>
+    </div>
+    {% if codigo_error %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Error code</div>
+            <div class="value">{{ codigo_error }}</div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Description</div>
+            <div class="value">{{ friendly_message }}</div>
+        </div>
+    </div>
+    {% if field %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Affected field</div>
+            <div class="value">{{ field }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if suggested_cta %}
+<p><strong>Recommended action:</strong> {{ suggested_cta }}</p>
+{% endif %}
+
+<p>Please review the rejection in the Verifactu settings of your clinic and take the necessary corrective action.</p>
+{% endblock %}

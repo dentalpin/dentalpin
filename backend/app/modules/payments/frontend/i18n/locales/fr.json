@@ -1,0 +1,287 @@
+{
+  "payments": {
+    "nav": {
+      "payments": "Paiements",
+      "reports": "Rapports de paiements"
+    },
+    "balance": {
+      "debt": "Doit",
+      "credit": "En compte",
+      "paid": "Total payé"
+    },
+    "list": {
+      "title": "Paiements",
+      "subtitle": "Paiements patients, avances sur devis et crédit en compte.",
+      "empty": "Aucun paiement enregistré.",
+      "new": "Nouveau paiement",
+      "searchPlaceholder": "Patient ou référence",
+      "filterDateFrom": "Du",
+      "filterDateTo": "Au",
+      "filterMethod": "Mode de paiement",
+      "filterPatient": "Patient",
+      "filter": {
+        "method": "Mode de paiement",
+        "hasRefunds": "Avec remboursements",
+        "hasUnallocated": "Non alloué",
+        "patient": "Patient",
+        "withDebt": "Avec dette",
+        "paymentStatus": "Statut"
+      },
+      "sort": {
+        "paymentDate": "Date",
+        "amount": "Montant"
+      },
+      "budgetStatus": {
+        "paid": "Payé",
+        "partial": "Partiel",
+        "unpaid": "Impayé"
+      },
+      "row": {
+        "debtTooltip": "Solde débiteur du patient",
+        "creditTooltip": "Solde créditeur du patient",
+        "allocationsLabel": "Allocation",
+        "refundedLabel": "Remboursé",
+        "noPatient": "Aucun patient"
+      },
+      "columnDate": "Date",
+      "columnPatient": "Patient",
+      "columnAmount": "Montant",
+      "columnMethod": "Mode",
+      "columnAllocations": "Allocation",
+      "columnNet": "Net",
+      "columnActions": "Actions"
+    },
+    "detail": {
+      "title": "Paiement {reference}",
+      "amount": "Montant",
+      "method": "Mode de paiement",
+      "date": "Date",
+      "recordedBy": "Enregistré par",
+      "allocations": "Allocations",
+      "refunds": "Remboursements",
+      "refund": "Remboursement",
+      "refundedTotal": "Remboursé",
+      "netAmount": "Net",
+      "reference": "Référence",
+      "notes": "Notes"
+    },
+    "new": {
+      "title": "Enregistrer un paiement",
+      "patient": "Patient",
+      "patientPlaceholder": "Rechercher un patient...",
+      "unknownPatient": "Patient inconnu",
+      "amount": "Montant",
+      "suggestedHint": "En attente de facturation : {amount}",
+      "useSuggested": "utiliser ce montant",
+      "method": "Mode de paiement",
+      "moreMethods": "Plus d'options",
+      "date": "Date",
+      "today": "Aujourd'hui",
+      "advanced": "Options avancées",
+      "reference": "Référence",
+      "referencePlaceholder": "N° autorisation CB, référence de virement...",
+      "notes": "Notes",
+      "allocations": "Allocation",
+      "allocationsHint": "Répartir ce paiement sur des devis ou le laisser en crédit patient.",
+      "addAllocation": "Ajouter une allocation",
+      "allocationToBudget": "Au devis",
+      "allocationOnAccount": "En compte",
+      "sumLabel": "Somme :",
+      "sumMismatch": "ne correspond pas au montant",
+      "submit": "Enregistrer",
+      "submitWithAmount": "Facturer {amount}",
+      "cancel": "Annuler",
+      "errPatient": "Sélectionnez un patient",
+      "errAmount": "Saisissez un montant supérieur à 0",
+      "errSum": "La somme des allocations doit être égale au montant",
+      "errUnknown": "Impossible d'enregistrer le paiement. Réessayez."
+    },
+    "methods": {
+      "cash": "Espèces",
+      "card": "Carte",
+      "bank_transfer": "Virement",
+      "direct_debit": "Prélèvement",
+      "insurance": "Assurance",
+      "other": "Autre"
+    },
+    "refund": {
+      "title": "Rembourser le paiement",
+      "amount": "Montant",
+      "method": "Mode de remboursement",
+      "reason": "Motif",
+      "note": "Détails",
+      "submit": "Rembourser",
+      "reasonCodes": {
+        "duplicate": "Paiement en double",
+        "overpaid": "Surpaiement",
+        "treatment_cancelled": "Traitement annulé",
+        "dispute": "Litige",
+        "other": "Autre"
+      }
+    },
+    "ledger": {
+      "title": "Grand livre du patient",
+      "totalPaid": "Total payé",
+      "totalEarned": "Traitement réalisé",
+      "patientCredit": "Solde créditeur du patient",
+      "clinicReceivable": "Créances de la clinique",
+      "onAccount": "En compte",
+      "empty": "Aucun mouvement."
+    },
+    "budgetCard": {
+      "title": "Paiements du devis",
+      "budgetTotal": "Devisé",
+      "collected": "Encaissé",
+      "pending": "En attente",
+      "collect": "Encaisser",
+      "empty": "Aucun paiement imputé à ce devis pour le moment.",
+      "collectedLabel": "Encaissé",
+      "pendingLabel": "En attente",
+      "outOfTotal": "sur {total} au total",
+      "settled": "Devis entièrement encaissé",
+      "history": "Historique des paiements",
+      "payment": "Paiement",
+      "emptyDetailed": "Aucun paiement enregistré pour le moment. Utilisez « Encaisser » pour enregistrer le premier."
+    },
+    "budgetCollect": {
+      "title": "Encaisser le devis",
+      "amountLabel": "Montant",
+      "methodLabel": "Mode de paiement",
+      "dateLabel": "Date du paiement",
+      "today": "Aujourd'hui",
+      "quickFull": "Total",
+      "optionalDetails": "Ajouter une référence ou des notes (optionnel)",
+      "referenceLabel": "Référence",
+      "referencePlaceholder": "ex. N° de transaction TPV",
+      "notesLabel": "Notes internes",
+      "submit": "Encaisser",
+      "cancel": "Annuler",
+      "success": "Paiement enregistré",
+      "errorGeneric": "Impossible d'enregistrer le paiement",
+      "noteAppliedToBudget": "appliqué au devis.",
+      "notePendingAfter": "Restant",
+      "noteFullySettled": "Le devis sera entièrement réglé.",
+      "noteToBudget": "appliqué au devis et",
+      "noteExcessToOnAccount": "en crédit patient.",
+      "noteBudgetSettled": "Le devis est déjà entièrement payé.",
+      "noteToOnAccount": "en crédit patient."
+    },
+    "pendingCharges": {
+      "title": "En attente de facturation",
+      "count": "{n} séances",
+      "more": "+ {n} de plus",
+      "collect": "Encaisser {amount}",
+      "unnamedSession": "Séance sans titre"
+    },
+    "patientPanel": {
+      "title": "Grand livre du patient",
+      "kpis": {
+        "totalPaid": "Total payé",
+        "debt": "Créances de la clinique",
+        "onAccount": "En compte"
+      },
+      "sidebar": {
+        "title": "Résumé",
+        "credit": "Crédit patient",
+        "lastPayment": "Dernier paiement",
+        "noLastPayment": "Aucun paiement pour le moment",
+        "totalEarned": "Traitement réalisé"
+      },
+      "banner": {
+        "debtTitle": "Doit {amount} à la clinique",
+        "debtDescription": "Le total payé est inférieur au traitement réalisé.",
+        "creditTitle": "A {amount} en crédit",
+        "creditDescription": "A payé plus que le traitement réalisé."
+      },
+      "cobrar": "Enregistrer un paiement",
+      "timeline": {
+        "title": "Mouvements",
+        "empty": "Aucun mouvement enregistré",
+        "emptyCta": "Enregistrer le premier paiement",
+        "loadError": "Impossible de charger le grand livre du patient.",
+        "retry": "Réessayer",
+        "drPrefix": "Dr {name}",
+        "types": {
+          "payment": "Paiement",
+          "refund": "Remboursement",
+          "earned": "Traitement réalisé"
+        },
+        "treatmentStatus": {
+          "planned": "Planifié",
+          "performed": "Ralisé",
+          "completed": "Terminé",
+          "cancelled": "Annulé",
+          "in_progress": "En cours"
+        },
+        "rowMenu": {
+          "detail": "Voir le détail",
+          "refund": "Rembourser"
+        }
+      },
+      "refundModal": {
+        "title": "Rembourser le paiement",
+        "amount": "Montant du remboursement",
+        "method": "Mode de remboursement",
+        "reason": "Motif",
+        "note": "Détails (optionnel)",
+        "submit": "Confirmer le remboursement",
+        "cancel": "Annuler",
+        "errorGeneric": "Impossible d'enregistrer le remboursement"
+      }
+    },
+    "reports": {
+      "title": "Rapports de paiements",
+      "subtitle": "Encaissements, remboursements, soldes patients et tendances pour la période.",
+      "cardDescription": "Encaissements, remboursements, soldes patients, vieillissement et tendances.",
+      "period": "Période",
+      "refresh": "Actualiser",
+      "collected": "Encaissé",
+      "refunded": "Remboursé",
+      "net": "Net",
+      "patientCredit": "Total crédit patient",
+      "patientCreditHint": "Soldes en compte ou avances.",
+      "clinicReceivable": "Créances de la clinique",
+      "refundRatio": "Taux de remboursement",
+      "byMethod": "Par mode de paiement",
+      "byProfessional": "Par professionnel",
+      "byProfessionalHint": "Traitement réalisé, non encaissé.",
+      "aging": "Vieillissement des créances",
+      "agingHint": "Patients avec solde débiteur groupés par ancienneté de la dette.",
+      "refunds": "Remboursements par motif",
+      "refundsHint": "Distribution des remboursements par motif enregistré.",
+      "bucket": "{range} jours",
+      "unknownProfessional": "Non assigné",
+      "countShort": "{n} transactions",
+      "countPatients": "{n} patients",
+      "granularity": {
+        "day": "Jour",
+        "week": "Semaine",
+        "month": "Mois"
+      },
+      "hero": {
+        "netCollected": "Net encaissé",
+        "netCollectedHint": "Encaissements moins remboursements sur la période.",
+        "receivable": "Créances en attente",
+        "receivableHint": "Traitement réalisé non encore encaissé, par ancienneté.",
+        "vsPrevious": "vs. période précédente",
+        "transactionsCount": "{n} transactions sur la période"
+      },
+      "trend": {
+        "title": "Tendance des encaissements",
+        "subtitle": "Net par tranche. La ligne pointillée représente les remboursements."
+      },
+      "empty": {
+        "noDataTitle": "Aucune donnée pour cette période",
+        "noDataDescription": "Ajustez la période ou enregistrez un paiement pour commencer à voir le rapport.",
+        "noTrend": "Pas assez de points pour tracer la tendance.",
+        "noMethods": "Aucun encaissement par mode de paiement sur la période.",
+        "noProfessionals": "Aucun traitement réalisé sur la période.",
+        "noReceivable": "Aucun patient avec dette en attente."
+      },
+      "drilldown": {
+        "viewPayments": "Voir les paiements de la période",
+        "viewPatients": "Voir les patients endettés"
+      }
+    }
+  }
+}

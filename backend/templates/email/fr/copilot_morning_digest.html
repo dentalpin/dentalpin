@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Briefing du jour - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Briefing du {{ today }}</h2>
+
+{% if appointments is not none %}
+<h3>Rendez-vous du jour ({{ appointments | length }})</h3>
+{% if appointments %}
+<div class="info-box">
+    {% for a in appointments %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ a.start_time[11:16] if a.start_time else '' }}</div>
+            <div class="value">{{ a.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Statut</div>
+            <div class="value">{{ a.status }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>Aucun rendez-vous prévu pour aujourd'hui.</p>
+{% endif %}
+{% endif %}
+
+{% if recalls is not none %}
+<h3>Rappels en retard ({{ recalls | length }})</h3>
+{% if recalls %}
+<div class="info-box">
+    {% for r in recalls %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ r.reason }}</div>
+            <div class="value">{{ r.patient_name or '—' }}{% if r.phone %} · {{ r.phone }}{% endif %}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Priorité</div>
+            <div class="value">{{ r.priority }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>Aucun rappel en retard.</p>
+{% endif %}
+{% endif %}
+
+{% if budgets is not none %}
+<h3>Devis en attente de réponse ({{ budgets | length }})</h3>
+{% if budgets %}
+<div class="info-box">
+    {% for b in budgets %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ b.number }}</div>
+            <div class="value">{{ b.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Montant</div>
+            <div class="value">{{ b.total }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>Aucun devis en attente de réponse.</p>
+{% endif %}
+{% endif %}
+
+<p style="color: #71717a; font-size: 14px;">
+    Résumé automatique généré par le copilot de DentalPin. Vous pouvez
+    le désactiver ou modifier l'heure dans Paramètres → Copilot.
+</p>
+{% endblock %}

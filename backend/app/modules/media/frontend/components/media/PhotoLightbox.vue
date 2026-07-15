@@ -196,7 +196,7 @@ function toggleCompare() {
             <button
               type="button"
               class="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-white/40"
-              :aria-label="t('actions.close', 'Cerrar')"
+              :aria-label="t('common.close')"
               @click="close"
             >
               <UIcon
@@ -213,7 +213,7 @@ function toggleCompare() {
             v-if="index > 0 && !comparing"
             type="button"
             class="absolute left-2 top-1/2 hidden -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/60 sm:block"
-            aria-label="Previous"
+            :aria-label="t('common.previous')"
             @click="prev"
           >
             <UIcon
@@ -287,7 +287,7 @@ function toggleCompare() {
             v-if="index < documents.length - 1 && !comparing"
             type="button"
             class="absolute right-2 top-1/2 hidden -translate-y-1/2 rounded-full bg-black/40 p-2 text-white hover:bg-black/60 sm:block"
-            aria-label="Next"
+            :aria-label="t('common.next')"
             @click="next"
           >
             <UIcon

@@ -111,6 +111,7 @@
       "description": "Default intervals + treatment-category mapping",
       "intervals": "Default intervals (months)",
       "categoryMap": "Treatment → reason",
+      "categoryKeyPlaceholder": "catalog category key",
       "autoSuggest": "Suggest a recall when a treatment is completed",
       "autoLink": "Link a scheduled appointment to a pending recall",
       "saved": "Settings saved"

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}{% if is_expired %}Votre certificat Verifactu a expiré{% else %}Votre certificat Verifactu expire bientôt{% endif %}{% endblock %}
+
+{% block content %}
+<h2>Bonjour {{ admin_name }},</h2>
+
+{% if is_expired %}
+<div class="alert alert-error">
+    Le certificat numérique de la clinique <strong>{{ clinic_name }}</strong> utilisé pour signer les envois à l'AEAT (Veri*Factu) <strong>a expiré</strong>. Tant que vous ne le renouvelez pas, les enregistrements resteront en file d'attente et l'AEAT rejettera tout envoi.
+</div>
+{% else %}
+<div class="alert alert-warning">
+    Le certificat numérique de la clinique <strong>{{ clinic_name }}</strong> utilisé pour signer les envois à l'AEAT (Veri*Factu) expire dans <strong>{{ days_left }} jour{% if days_left != 1 %}s{% endif %}</strong>. Nous vous recommandons de le renouveler avant la date limite pour éviter toute interruption de la facturation.
+</div>
+{% endif %}
+
+<div class="info-box">
+    <div class="label">Titulaire du certificat</div>
+    <div class="value">{{ subject_cn or '—' }}</div>
+</div>
+
+<div class="info-box">
+    <div class="label">Date d'expiration</div>
+    <div class="value">{{ valid_until.strftime('%d/%m/%Y') }}</div>
+</div>
+
+<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 16px; font-weight: 600;">Que devez-vous faire ?</h3>
+
+<ol style="padding-left: 20px; color: #3f3f46;">
+    <li style="margin-bottom: 8px;">Demandez un nouveau certificat auprès de la FNMT (Représentant de Personne Juridique, Personne Physique ou Sceau d'Entreprise).</li>
+    <li style="margin-bottom: 8px;">Connectez-vous à DentalPin en tant qu'administrateur et accédez à <em>Paramètres → Verifactu → Certificat</em>.</li>
+    <li style="margin-bottom: 8px;">Téléversez le nouveau fichier <code>.pfx</code> et saisissez son mot de passe. L'ancien certificat est archivé pour audit.</li>
+</ol>
+
+<p>Si vous avez besoin d'aide, répondez à cet email et nous vous guiderons pas à pas.</p>
+{% endblock %}

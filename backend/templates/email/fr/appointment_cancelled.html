@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Rendez-vous annulé - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Bonjour {{ patient_name }},</h2>
+
+<p>Nous vous informons que votre rendez-vous a été annulé.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Date</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Heure</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div>
+            <div class="label">Professionnel</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if cancellation_reason %}
+<div class="alert alert-warning">
+    <strong>Motif :</strong> {{ cancellation_reason }}
+</div>
+{% endif %}
+
+<p>Si vous souhaitez reprogrammer votre rendez-vous, n'hésitez pas à nous contacter.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Prendre un nouveau rendez-vous</a>
+</div>
+{% endif %}
+
+<p>Nous nous excusons pour les désagréments occasionnés.</p>
+{% endblock %}

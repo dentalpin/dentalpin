@@ -5,6 +5,14 @@ import type { RecallSettings } from '../composables/useRecalls'
 const { t } = useI18n()
 const toast = useToast()
 const recallsApi = useRecalls()
+const { getCategoryLabel } = useTreatmentCatalog()
+const { categories: catalogCategories, getCategoryName, fetchCategories } = useCatalog()
+
+function resolveCategoryName(key: string): string {
+  const cat = catalogCategories.value.find(c => c.key === key)
+  if (cat) return getCategoryName(cat)
+  return t(getCategoryLabel(key))
+}
 
 const settings = ref<RecallSettings | null>(null)
 const isLoading = ref(false)
@@ -22,7 +30,10 @@ async function load() {
   }
 }
 
-onMounted(load)
+onMounted(() => {
+  load()
+  fetchCategories()
+})
 
 async function save() {
   if (!settings.value || isSaving.value) return
@@ -131,7 +142,7 @@ function removeCategory(key: string) {
             :key="row.key"
             class="flex items-center justify-between gap-3 py-2"
           >
-            <span class="font-mono text-sm">{{ row.key }}</span>
+            <span class="font-mono text-sm">{{ resolveCategoryName(row.key) }}</span>
             <span class="text-subtle">→</span>
             <span class="flex-1">{{ t(`recalls.reasons.${row.reason}`) }}</span>
             <UButton
@@ -146,7 +157,7 @@ function removeCategory(key: string) {
         <div class="flex gap-2 mt-3">
           <UInput
             v-model="newCategoryKey"
-            placeholder="catalog category key"
+            :placeholder="t('recalls.settings.categoryKeyPlaceholder')"
             class="flex-1"
           />
           <USelectMenu

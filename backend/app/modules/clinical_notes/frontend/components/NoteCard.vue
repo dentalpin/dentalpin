@@ -35,7 +35,7 @@ const emit = defineEmits<{
   'open-linked': [linked: ClinicalNoteLinked]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { metaFor } = useNoteTypeMeta()
 
 const meta = computed(() => metaFor(props.noteType))
@@ -60,7 +60,7 @@ function formatRelative(iso: string): string {
     if (diffH < 24) return t('clinicalNotes.time.hoursAgo', { n: diffH })
     const diffD = Math.round(diffH / 24)
     if (diffD < 7) return t('clinicalNotes.time.daysAgo', { n: diffD })
-    return new Date(iso).toLocaleDateString()
+    return new Date(iso).toLocaleDateString(locale.value)
   } catch {
     return iso
   }
@@ -68,7 +68,7 @@ function formatRelative(iso: string): string {
 
 function formatAbsolute(iso: string): string {
   try {
-    return new Date(iso).toLocaleString()
+    return new Date(iso).toLocaleString(locale.value)
   } catch {
     return iso
   }

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome to {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>Welcome!</h2>
+
+<p>Hello {{ patient_name }},</p>
+
+<p>We are delighted to welcome you to <strong>{{ clinic_name | default('DentalPin') }}</strong>.</p>
+
+<p>You can now manage your appointments, view your treatment history, and access all our services through our platform.</p>
+
+<p>If you have any questions, do not hesitate to contact us.</p>
+{% endblock %}

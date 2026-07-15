@@ -16,7 +16,7 @@ const emit = defineEmits<{
   editGuardian: []
 }>()
 
-const { t } = useI18n()
+const { t, te } = useI18n()
 
 const phoneHref = computed(() => (props.patient.phone ? `tel:${props.patient.phone}` : undefined))
 const emailHref = computed(() => (props.patient.email ? `mailto:${props.patient.email}` : undefined))
@@ -37,16 +37,14 @@ const emergencyRelationshipLabel = computed(() => {
   const rel = props.patient.emergency_contact?.relationship
   if (!rel) return null
   const key = `patients.emergencyContact.relationships.${rel}`
-  const translated = t(key)
-  return translated === key ? rel : translated
+  return te(key) ? t(key) : rel
 })
 
 const guardianRelationshipLabel = computed(() => {
   const rel = props.patient.legal_guardian?.relationship
   if (!rel) return null
   const key = `patients.legalGuardian.relationships.${rel}`
-  const translated = t(key)
-  return translated === key ? rel : translated
+  return te(key) ? t(key) : rel
 })
 </script>
 

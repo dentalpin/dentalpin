@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Facture rejetée par l'AEAT — action requise{% endblock %}
+
+{% block content %}
+<h2>Bonjour {{ admin_name }},</h2>
+
+<div class="alert alert-error">
+    L'AEAT a <strong>rejeté</strong> l'enregistrement Verifactu de la facture <strong>{{ invoice_number }}</strong> de la clinique <strong>{{ clinic_name }}</strong>.
+    Tant que vous ne résolvez pas ce problème, <strong>vous ne pourrez pas émettre de nouvelles factures</strong> (la chaîne d'empreintes serait compromise).
+</div>
+
+<div class="info-box">
+    <div class="label">Facture</div>
+    <div class="value">{{ invoice_number }}</div>
+</div>
+
+<div class="info-box">
+    <div class="label">Code AEAT</div>
+    <div class="value">{{ codigo_error or '—' }}</div>
+</div>
+
+<div class="info-box">
+    <div class="label">Motif</div>
+    <div class="value">{{ friendly_message }}</div>
+</div>
+
+<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 16px; font-weight: 600;">Que faire maintenant ?</h3>
+
+<ol style="padding-left: 20px; color: #3f3f46;">
+    {% if suggested_cta == 'edit_clinic' %}
+    <li style="margin-bottom: 8px;">Accédez à <em>Paramètres → Clinique</em> et vérifiez le CIF/NIF de la clinique.</li>
+    <li style="margin-bottom: 8px;">Retournez dans <em>Paramètres → Verifactu → File d'attente</em> et cliquez sur <strong>« Régénérer et renvoyer »</strong>.</li>
+    {% elif suggested_cta == 'edit_billing_party' %}
+    <li style="margin-bottom: 8px;">Ouvrez la facture {{ invoice_number }} et cliquez sur <strong>« Modifier les données du client »</strong> dans la bannière rouge.</li>
+    <li style="margin-bottom: 8px;">Après enregistrement, l'enregistrement est renvoyé automatiquement.</li>
+    {% elif suggested_cta == 'edit_lines' %}
+    <li style="margin-bottom: 8px;">Vérifiez le mapping de la TVA et les montants de la facture {{ invoice_number }}.</li>
+    <li style="margin-bottom: 8px;">Créez une facture d'avoir si la facture était déjà payée ou réémettez-la si c'était un brouillon.</li>
+    {% else %}
+    <li style="margin-bottom: 8px;">Accédez à <em>Paramètres → Verifactu → File d'attente</em> pour voir les détails du rejet.</li>
+    <li style="margin-bottom: 8px;">Si la cause n'est pas claire, contactez le support en joignant le code d'erreur.</li>
+    {% endif %}
+</ol>
+
+{% if queue_url %}
+<p style="margin-top: 20px;">
+    <a href="{{ queue_url }}" style="display: inline-block; padding: 10px 16px; background: #18181b; color: #fff; text-decoration: none; border-radius: 6px;">Ouvrir la file Verifactu</a>
+</p>
+{% endif %}
+{% endblock %}

@@ -25,6 +25,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.agenda.models import Appointment
 from app.modules.patients.models import Patient
+from app.seeds.demo_data import t
 
 from .models import Recall, RecallContactAttempt
 from .service import RecallSettingsService
@@ -52,7 +53,11 @@ _SCENARIOS = (
         "priority": "normal",
         "status": "pending",
         "attempts": 0,
-        "note": "Recordatorio de higiene anual.",
+        "note": {
+            "es": "Recordatorio de higiene anual.",
+            "en": "Annual hygiene reminder.",
+            "fr": "Rappel d'hygiène annuel.",
+        },
     },
     {
         "key": "no_answer_overdue_checkup",
@@ -61,7 +66,11 @@ _SCENARIOS = (
         "priority": "normal",
         "status": "contacted_no_answer",
         "attempts": 2,
-        "note": "Revisión anual; no contesta al teléfono fijo.",
+        "note": {
+            "es": "Revisión anual; no contesta al teléfono fijo.",
+            "en": "Annual checkup; no answer on landline.",
+            "fr": "Contrôle annuel ; pas de réponse au téléphone fixe.",
+        },
     },
     {
         "key": "scheduled_postop_high",
@@ -70,7 +79,11 @@ _SCENARIOS = (
         "priority": "high",
         "status": "contacted_scheduled",
         "attempts": 1,
-        "note": "Postoperatorio de cirugía 36; cita confirmada.",
+        "note": {
+            "es": "Postoperatorio de cirugía 36; cita confirmada.",
+            "en": "Post-op surgery 36; appointment confirmed.",
+            "fr": "Post-opératoire chirurgie 36 ; rendez-vous confirmé.",
+        },
     },
     {
         "key": "done_last_month_hygiene",
@@ -79,7 +92,11 @@ _SCENARIOS = (
         "priority": "normal",
         "status": "done",
         "attempts": 1,
-        "note": "Higiene completada en visita previa.",
+        "note": {
+            "es": "Higiene completada en visita previa.",
+            "en": "Hygiene completed at previous visit.",
+            "fr": "Hygiène complétée lors de la visite précédente.",
+        },
     },
     {
         "key": "pending_next_month_ortho",
@@ -88,7 +105,11 @@ _SCENARIOS = (
         "priority": "normal",
         "status": "pending",
         "attempts": 0,
-        "note": "Revisión mensual de ortodoncia.",
+        "note": {
+            "es": "Revisión mensual de ortodoncia.",
+            "en": "Monthly orthodontic review.",
+            "fr": "Contrôle mensuel d'orthodontie.",
+        },
     },
     {
         "key": "needs_review_implant",
@@ -97,7 +118,11 @@ _SCENARIOS = (
         "priority": "high",
         "status": "needs_review",
         "attempts": 0,
-        "note": "Revisión de implante 46; revisar contacto.",
+        "note": {
+            "es": "Revisión de implante 46; revisar contacto.",
+            "en": "Implant 46 review; check contact.",
+            "fr": "Révision implant 46 ; vérifier le contact.",
+        },
     },
     {
         "key": "cancelled_treatment_followup",
@@ -106,7 +131,11 @@ _SCENARIOS = (
         "priority": "low",
         "status": "cancelled",
         "attempts": 1,
-        "note": "Paciente declina seguimiento.",
+        "note": {
+            "es": "Paciente declina seguimiento.",
+            "en": "Patient declines follow-up.",
+            "fr": "Patient décline le suivi.",
+        },
     },
     {
         "key": "pending_three_months_implant",
@@ -115,16 +144,36 @@ _SCENARIOS = (
         "priority": "normal",
         "status": "pending",
         "attempts": 0,
-        "note": "Control de implante a los 3 meses.",
+        "note": {
+            "es": "Control de implante a los 3 meses.",
+            "en": "Implant check at 3 months.",
+            "fr": "Contrôle d'implant à 3 mois.",
+        },
     },
 )
 
 
 _ATTEMPT_NOTES = (
-    "Llamada al móvil sin respuesta.",
-    "Buzón de voz; mensaje dejado.",
-    "Indica que llamemos la próxima semana.",
-    "Acuerda agendar tras revisar agenda laboral.",
+    {
+        "es": "Llamada al móvil sin respuesta.",
+        "en": "Called mobile, no answer.",
+        "fr": "Appel mobile sans réponse.",
+    },
+    {
+        "es": "Buzón de voz; mensaje dejado.",
+        "en": "Voicemail; message left.",
+        "fr": "Messagerie ; message laissé.",
+    },
+    {
+        "es": "Indica que llamemos la próxima semana.",
+        "en": "Asks us to call next week.",
+        "fr": "Demande de rappeler la semaine prochaine.",
+    },
+    {
+        "es": "Acuerda agendar tras revisar agenda laboral.",
+        "en": "Agrees to schedule after checking work calendar.",
+        "fr": "Accepte de planifier après vérification de l'agenda.",
+    },
 )
 
 
@@ -207,7 +256,7 @@ async def seed_recalls_demo(
             due_month=due_month,
             due_date=None,
             reason=scenario["reason"],
-            reason_note=scenario["note"],
+            reason_note=t(scenario["note"]),
             priority=scenario["priority"],
             status=scenario["status"],
             recommended_by=dentist_id,
@@ -247,7 +296,7 @@ async def seed_recalls_demo(
                     channel=channel,
                     outcome=outcome,
                     attempted_at=now - timedelta(days=k + 1, hours=2 * k),
-                    note=_ATTEMPT_NOTES[(i + k) % len(_ATTEMPT_NOTES)],
+                    note=t(_ATTEMPT_NOTES[(i + k) % len(_ATTEMPT_NOTES)]),
                 )
             )
             stats["attempts"] += 1

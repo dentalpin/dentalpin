@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "accountingExport": "Export comptable"
+  },
+  "accountingExport": {
+    "title": "Export comptable",
+    "subtitle": "Téléchargez les factures et paiements de la période pour les transmettre à votre comptable.",
+    "period": "Période",
+    "from": "Du",
+    "to": "Au",
+    "presets": {
+      "currentMonth": "Mois en cours",
+      "previousMonth": "Mois précédent",
+      "currentQuarter": "Trimestre en cours",
+      "previousQuarter": "Trimestre précédent",
+      "yearToDate": "Année en cours",
+      "custom": "Personnalisé"
+    },
+    "actions": {
+      "preview": "Aperçu",
+      "download": "Télécharger (.zip)"
+    },
+    "counters": {
+      "invoices": "Factures",
+      "payments": "Paiements",
+      "base": "Base",
+      "total": "Total"
+    },
+    "cols": {
+      "numero": "Numéro",
+      "fecha_emision": "Date",
+      "cliente": "Client",
+      "nif": "Numéro fiscal",
+      "base": "Base",
+      "cuota_iva": "TVA",
+      "total": "Total",
+      "estado": "Statut"
+    }
+  }
+}

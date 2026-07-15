@@ -13,7 +13,16 @@
       "closedBadge": "Sesión cerrada",
       "recordedAt": "Registrada el {date}",
       "openDraft": "Abrir nueva sesión",
-      "continueDraft": "Continuar borrador"
+      "continueDraft": "Continuar borrador",
+      "cancel": "Cancelar",
+      "closeSession": "Cerrar sesión",
+      "closeButton": "Cerrar sesión",
+      "closeTitle": "Cerrar sesión periodontal",
+      "closeDescription": "Una vez cerrada, la sesión queda inmutable y aparece en el historial. Para correcciones tendrás que abrir una nueva sesión.",
+      "discardDraft": "Descartar borrador",
+      "discardButton": "Descartar",
+      "discardTitle": "Descartar borrador",
+      "discardDescription": "Se eliminarán todos los datos introducidos en esta sesión. Esta acción no se puede deshacer."
     },
     "indices": {
       "bop": "Sangrado",
@@ -21,9 +30,55 @@
       "calMean": "CAL medio",
       "deepPockets": "Bolsas ≥5mm"
     },
+    "arch": {
+      "upper": "Superior",
+      "lower": "Inferior",
+      "palatal": "Palatino",
+      "lingual": "Lingual",
+      "vestibular": "Vestibular",
+      "probing": "Sondaje",
+      "margin": "Margen",
+      "bleeding": "Sangrado",
+      "plaque": "Placa",
+      "probingTitle": "{code} sondaje (0–15 mm)",
+      "marginTitle": "{code} margen gingival (-5 a 10 mm)",
+      "plaqueTitle": "{code} placa (clic para alternar)",
+      "bleedingTitle": "{code} sangrado (clic para alternar)",
+      "implant": "Implante",
+      "implantToggleOn": "Implante (clic para quitar)",
+      "implantToggleOff": "Clic para marcar como implante",
+      "mobility": "Movilidad",
+      "mobilityTitle": "Clic para cambiar movilidad (0–3)",
+      "prognosis": "Pronóstico",
+      "prognosisTitle": "Bueno / Medio / Dudoso / Sin esperanza",
+      "furcaV": "Furca V",
+      "furcaVTitle": "Furca vestibular (0/I/II/III)",
+      "furcaLP": "Furca L/P",
+      "furcaLPTitle": "Furca lingual/palatina (0/I/II/III)",
+      "gingivalWidth": "Anchura encía",
+      "siteMarkerAria": "Sitio {code}, sondaje {depth}"
+    },
     "loading": "Cargando periodontograma…",
     "errors": {
-      "loadFailed": "No se pudo cargar el periodontograma."
+      "loadFailed": "No se pudo cargar el periodontograma.",
+      "saveFailed": "No se pudo guardar el cambio",
+      "checkConnection": "Comprueba tu conexión e intenta de nuevo."
+    },
+    "chart": {
+      "ariaLabel": "Periodontograma — arcadas superior e inferior"
+    },
+    "history": {
+      "viewingSession": "Viendo sesión del {date} (solo lectura).",
+      "returnToCurrent": "Volver al actual"
+    },
+    "indicesBanner": {
+      "noteLabel": "Nota (opcional)",
+      "observationsPlaceholder": "Observaciones de la exploración…"
+    },
+    "saveState": {
+      "saving": "Guardando…",
+      "dirty": "Cambios pendientes",
+      "saved": "Cambios guardados"
     }
   }
 }

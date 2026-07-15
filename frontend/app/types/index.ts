@@ -1,4 +1,6 @@
 // User types
+import type { SUPPORTED_LOCALES } from '~/constants/languages'
+
 export interface User {
   id: string
   email: string
@@ -2268,6 +2270,7 @@ export interface NoteTemplate {
   id: string
   category: string
   i18n_key: string
+  body_i18n_key: string
   body: string
 }
 
@@ -2349,3 +2352,5 @@ export interface GenerateBudgetResponse {
   budget_id: string
   budget_number: string
 }
+
+export type CodeLang = typeof SUPPORTED_LOCALES[number]

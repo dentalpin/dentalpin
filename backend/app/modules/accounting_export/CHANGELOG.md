@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add French locale (`fr.json`) with full UI coverage.
+
 - Initial release. Optional, removable, model-free module that exports
   billing data for the accountant (*gestoría*) — issue #73.
 - Endpoints `GET /preview` (counts + totals + sample) and `GET /run`

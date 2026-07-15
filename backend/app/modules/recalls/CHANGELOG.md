@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- i18n: correct French wording in seed note (Contrôle mensuel).
+
+- i18n: add French translations to seed data; fix `t()` dict pattern.
+
 - fix(security): reject `create` when `patient_id` belongs to another
   clinic (audit multi-tenancy #1, #95). Previously the recall was
   inserted with the caller's `clinic_id` but no check that the patient

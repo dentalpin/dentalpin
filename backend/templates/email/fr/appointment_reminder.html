@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Rappel de rendez-vous - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Bonjour {{ patient_name }},</h2>
+
+<p>Nous vous rappelons que vous avez un rendez-vous prévu :</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Date</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Heure</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div>
+            <div class="label">Professionnel</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% if cabinet_name %}
+    <div class="info-row">
+        <div>
+            <div class="label">Cabinet</div>
+            <div class="value">{{ cabinet_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% if treatment_type %}
+    <div class="info-row">
+        <div>
+            <div class="label">Traitement</div>
+            <div class="value">{{ treatment_type }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="alert alert-info">
+    <strong>Rappel :</strong> Merci d'arriver 10 minutes avant votre rendez-vous.
+</div>
+
+{% if notes %}
+<p><strong>Notes :</strong> {{ notes }}</p>
+{% endif %}
+
+<p>Si vous ne pouvez pas vous présenter, merci de nous en informer à l'avance afin que nous puissions réattribuer le créneau.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Confirmer ma présence</a>
+</div>
+{% endif %}
+
+<p>À bientôt !</p>
+{% endblock %}

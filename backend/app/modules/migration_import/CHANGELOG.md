@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add French locale (`fr.json`) with full UI coverage.
+
 - fix(entity_mappings): widen ``source_canonical_uuid`` from
   ``VARCHAR(36)`` to ``VARCHAR(64)`` (alembic ``mig_0004``). The
   ``appointment_note`` sidecar registers a derived canonical of shape

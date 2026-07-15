@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add French locale (`fr.json`) with full UI coverage.
+
 - feat(pending): "Pendientes" feed (IA redesign Fase 2, ADR 0015). New
   read-only `GET /pending` aggregates overdue recalls + budgets awaiting
   response through the tool registry with the caller's role (RBAC parity;

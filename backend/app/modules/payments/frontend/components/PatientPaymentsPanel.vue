@@ -180,7 +180,7 @@ function entryMeta(entry: PatientLedgerEntry): string[] {
   if (entry.entry_type !== 'earned') return []
   const parts: string[] = []
   if (entry.treatment_status) parts.push(treatmentStatusLabel(entry.treatment_status))
-  if (entry.professional_name) parts.push(`Dr. ${entry.professional_name}`)
+  if (entry.professional_name) parts.push(t('payments.patientPanel.timeline.drPrefix', { name: entry.professional_name }))
   return parts
 }
 

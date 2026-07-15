@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Devis accepté - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Bonjour {{ patient_name }},</h2>
+
+<p>Nous avons bien enregistré l'acceptation de votre devis. Merci de votre confiance.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">N° Devis</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Date d'acceptation</div>
+            <div class="value">{{ accepted_date }}</div>
+        </div>
+    </div>
+    <div class="info-row">
+        <div>
+            <div class="label">Total du traitement</div>
+            <div class="value" style="font-size: 20px; color: #3b82f6;">{{ total }} €</div>
+        </div>
+    </div>
+</div>
+
+<div class="alert alert-success">
+    <strong>Étape suivante !</strong> Nous vous contacterons pour planifier les rendez-vous nécessaires à votre traitement.
+</div>
+
+{% if notes %}
+<p><strong>Notes :</strong> {{ notes }}</p>
+{% endif %}
+
+<p>Si vous avez des questions ou souhaitez programmer votre premier rendez-vous, contactez-nous.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Prendre rendez-vous</a>
+</div>
+{% endif %}
+
+<p>Merci de votre confiance !</p>
+{% endblock %}

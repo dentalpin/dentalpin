@@ -203,7 +203,7 @@ async function submit() {
           {{ t('photoGallery.dropHere', 'Arrastra una foto o haz clic') }}
         </p>
         <p class="text-xs text-muted mt-1">
-          JPG · PNG · HEIC · WebP — hasta 10 MB
+          JPG · PNG · HEIC · WebP — {{ t('common.maxFileSize', 'hasta 10 MB') }}
         </p>
       </div>
       <input

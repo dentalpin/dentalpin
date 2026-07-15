@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `fr` fallback to invoice description resolution in
+  service layer so French-localized treatment names appear on invoices.
+
 - fix(security): lock the invoice row `FOR UPDATE` on the payment and
   issue endpoints (audit S3/C2 + C4, #97). Two concurrent payments could
   both read the full `balance_due` and over-collect past the total; two

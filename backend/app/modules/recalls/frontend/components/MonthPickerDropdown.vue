@@ -9,7 +9,7 @@ interface Props {
 const props = defineProps<Props>()
 const emit = defineEmits<{ 'update:modelValue': [value: string] }>()
 
-const { locale } = useI18n()
+const { t, locale } = useI18n()
 
 const open = ref(false)
 
@@ -77,7 +77,7 @@ function goToday() {
             size="xs"
             variant="ghost"
             color="neutral"
-            :aria-label="'Previous year'"
+            :aria-label="t('common.previousYear')"
             @click="shiftYear(-1)"
           />
           <span class="font-medium tnum">{{ viewYear }}</span>
@@ -86,7 +86,7 @@ function goToday() {
             size="xs"
             variant="ghost"
             color="neutral"
-            :aria-label="'Next year'"
+            :aria-label="t('common.nextYear')"
             @click="shiftYear(1)"
           />
         </div>

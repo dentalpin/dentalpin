@@ -13,7 +13,16 @@
       "closedBadge": "Closed session",
       "recordedAt": "Recorded on {date}",
       "openDraft": "Open new session",
-      "continueDraft": "Continue draft"
+      "continueDraft": "Continue draft",
+      "closeTitle": "Close periodontal session",
+      "closeDescription": "Once closed, the session is immutable and appears in history. To make corrections you will need to open a new session.",
+      "closeButton": "Close session",
+      "discardTitle": "Discard draft",
+      "discardDescription": "All data entered in this session will be deleted. This action cannot be undone.",
+      "discardButton": "Discard",
+      "cancel": "Cancel",
+      "closeSession": "Close session",
+      "discardDraft": "Discard draft"
     },
     "indices": {
       "bop": "Bleeding",
@@ -21,9 +30,55 @@
       "calMean": "Mean CAL",
       "deepPockets": "Pockets ≥5mm"
     },
+    "saveState": {
+      "saving": "Saving…",
+      "dirty": "Unsaved changes",
+      "saved": "Changes saved"
+    },
+    "history": {
+      "viewingSession": "Viewing session from {date} (read-only).",
+      "returnToCurrent": "Return to current"
+    },
+    "arch": {
+      "upper": "Upper",
+      "lower": "Lower",
+      "palatal": "Palatal",
+      "lingual": "Lingual",
+      "vestibular": "Vestibular",
+      "probing": "Probing",
+      "margin": "Margin",
+      "bleeding": "Bleeding",
+      "plaque": "Plaque",
+      "probingTitle": "{code} probing (0–15 mm)",
+      "marginTitle": "{code} gingival margin (-5 to 10 mm)",
+      "plaqueTitle": "{code} plaque (click to toggle)",
+      "bleedingTitle": "{code} bleeding (click to toggle)",
+      "implant": "Implant",
+      "implantToggleOn": "Implant (click to remove)",
+      "implantToggleOff": "Click to mark as implant",
+      "mobility": "Mobility",
+      "mobilityTitle": "Click to change mobility (0–3)",
+      "prognosis": "Prognosis",
+      "prognosisTitle": "Good / Fair / Doubtful / Hopeless",
+      "furcaV": "Furca V",
+      "furcaVTitle": "Vestibular furcation (0/I/II/III)",
+      "furcaLP": "Furca L/P",
+      "furcaLPTitle": "Lingual/palatal furcation (0/I/II/III)",
+      "gingivalWidth": "Gingival width",
+      "siteMarkerAria": "Site {code}, probing {depth}"
+    },
+    "chart": {
+      "ariaLabel": "Periodontogram — upper and lower arches"
+    },
+    "indicesBanner": {
+      "observationsPlaceholder": "Examination notes…",
+      "noteLabel": "Note (optional)"
+    },
     "loading": "Loading periodontogram…",
     "errors": {
-      "loadFailed": "Could not load the periodontogram."
+      "loadFailed": "Could not load the periodontogram.",
+      "saveFailed": "Could not save the change.",
+      "checkConnection": "Check your connection and try again."
     }
   }
 }

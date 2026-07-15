@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Appointment confirmation - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>Appointment confirmation</h2>
+
+<p>Hello {{ patient_name }},</p>
+
+<p>We confirm your appointment at <strong>{{ clinic_name | default('DentalPin') }}</strong>:</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Date</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Time</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Professional</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<p>If you need to reschedule or cancel, please contact us as soon as possible.</p>
+{% endblock %}
