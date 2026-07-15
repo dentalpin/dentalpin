@@ -14,9 +14,13 @@
     "/module_layers/clinical_notes/frontend",
     "/module_layers/schedules/frontend",
     "/module_layers/recalls/frontend",
+    "/module_layers/migration_import/frontend",
     "/module_layers/notifications/frontend",
     "/module_layers/patient_timeline/frontend",
-    "/module_layers/reports/frontend"
+    "/module_layers/reports/frontend",
+    "/module_layers/accounting_export/frontend",
+    "/module_layers/periodontogram/frontend",
+    "/module_layers/whatsapp_kapso/frontend"
   ],
   "modules": [
     {
@@ -76,6 +80,10 @@
       "path": "/module_layers/recalls/frontend"
     },
     {
+      "name": "migration_import",
+      "path": "/module_layers/migration_import/frontend"
+    },
+    {
       "name": "notifications",
       "path": "/module_layers/notifications/frontend"
     },
@@ -86,6 +94,18 @@
     {
       "name": "reports",
       "path": "/module_layers/reports/frontend"
+    },
+    {
+      "name": "accounting_export",
+      "path": "/module_layers/accounting_export/frontend"
+    },
+    {
+      "name": "periodontogram",
+      "path": "/module_layers/periodontogram/frontend"
+    },
+    {
+      "name": "whatsapp_kapso",
+      "path": "/module_layers/whatsapp_kapso/frontend"
     }
   ],
   "version": 1

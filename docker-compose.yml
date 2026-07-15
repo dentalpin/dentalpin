@@ -61,7 +61,7 @@ services:
       NUXT_PUBLIC_API_BASE_URL: http://localhost:8000
       NODE_OPTIONS: --max-old-space-size=4096
     ports:
-      - "3000:3000"
+      - "8080:3000"
     depends_on:
       backend:
         condition: service_started
