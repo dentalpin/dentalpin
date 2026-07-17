@@ -10,6 +10,8 @@
     "/module_layers/contacts/frontend",
     "/module_layers/copilot/frontend",
     "/module_layers/expenses/frontend",
+    "/module_layers/inventory/frontend",
+    "/module_layers/lab_orders/frontend",
     "/module_layers/media/frontend",
     "/module_layers/patients_clinical/frontend",
     "/module_layers/treatment_plan/frontend",
@@ -61,6 +63,14 @@
     {
       "name": "expenses",
       "path": "/module_layers/expenses/frontend"
+    },
+    {
+      "name": "inventory",
+      "path": "/module_layers/inventory/frontend"
+    },
+    {
+      "name": "lab_orders",
+      "path": "/module_layers/lab_orders/frontend"
     },
     {
       "name": "media",

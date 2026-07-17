@@ -29,7 +29,9 @@
     "close": "Fermer",
     "toggleSidebar": "Basculer la barre latérale",
 	"expenses": "Dépenses",
-	"contacts": "Contacts"
+	"contacts": "Contacts",
+	"labOrders":"Commandes Labo",
+	"inventory": "Inventaire"
   },
   "auth": {
     "login": "Connexion",

@@ -1,0 +1,34 @@
+{
+  "labOrders": {
+    "title": "Commandes de laboratoire",
+    "add": "Nouvelle commande",
+    "sentDate": "Envoyée",
+    "patient": "Patient",
+    "lab": "Laboratoire",
+    "workType": "Type de travail",
+    "tooth": "Dent",
+    "status": "Statut",
+    "expectedDate": "Date prévue",
+    "notes": "Notes",
+    "filterByStatus": "Filtrer par statut",
+    "selectPatient": "Sélectionner un patient",
+    "selectLab": "Sélectionner un laboratoire",
+    "noLabsHint": "Ajoutez d'abord un laboratoire dans Contacts avant de créer une commande.",
+    "workTypes": {
+      "crown": "Couronne",
+      "bridge": "Bridge",
+      "denture": "Prothèse",
+      "implant": "Implant",
+      "veneer": "Facette",
+      "orthodontic": "Appareil orthodontique",
+      "other": "Autre"
+    },
+    "statuses": {
+      "sent": "Envoyée",
+      "in_progress": "En cours",
+      "ready": "Prête",
+      "received": "Reçue",
+      "cancelled": "Annulée"
+    }
+  }
+}

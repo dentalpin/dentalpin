@@ -78,6 +78,10 @@ migration_import = "app.modules.migration_import:MigrationImportModule"
 copilot = "app.modules.copilot:CopilotModule"
 expenses = "app.modules.expenses:ExpensesModule"
 contacts = "app.modules.contacts:ContactsModule"
+lab_orders = "app.modules.lab_orders:LabOrdersModule"
+inventory = "app.modules.inventory:InventoryModule"
+
+
 
 
 

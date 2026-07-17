@@ -1,0 +1,34 @@
+{
+  "labOrders": {
+    "title": "Pedidos de laboratorio",
+    "add": "Nuevo pedido",
+    "sentDate": "Enviado",
+    "patient": "Paciente",
+    "lab": "Laboratorio",
+    "workType": "Tipo de trabajo",
+    "tooth": "Diente",
+    "status": "Estado",
+    "expectedDate": "Fecha estimada",
+    "notes": "Notas",
+    "filterByStatus": "Filtrar por estado",
+    "selectPatient": "Seleccionar paciente",
+    "selectLab": "Seleccionar laboratorio",
+    "noLabsHint": "Añade un laboratorio en Contactos antes de crear un pedido.",
+    "workTypes": {
+      "crown": "Corona",
+      "bridge": "Puente",
+      "denture": "Prótesis",
+      "implant": "Implante",
+      "veneer": "Carilla",
+      "orthodontic": "Aparato de ortodoncia",
+      "other": "Otro"
+    },
+    "statuses": {
+      "sent": "Enviado",
+      "in_progress": "En proceso",
+      "ready": "Listo",
+      "received": "Recibido",
+      "cancelled": "Cancelado"
+    }
+  }
+}

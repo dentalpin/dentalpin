@@ -29,7 +29,9 @@
     "close": "Close",
     "toggleSidebar": "Toggle sidebar",
     "expenses": "Expenses",
-	"contacts": "Contacts"
+	"contacts": "Contacts",
+	"labOrders": "Lab Orders",
+	"inventory": "Inventory"
   },
   "auth": {
     "login": "Log in",
