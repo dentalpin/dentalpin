@@ -31,7 +31,8 @@
     "expenses": "Expenses",
 	"contacts": "Contacts",
 	"labOrders": "Lab Orders",
-	"inventory": "Inventory"
+	"inventory": "Inventory",
+	"tasks": "Tasks"
   },
   "auth": {
     "login": "Log in",

@@ -160,5 +160,9 @@ export const PERMISSIONS = {
   inventory: {
     read: 'inventory.read',
     write: 'inventory.write'
+  },
+   tasks: {
+    read: 'tasks.read',
+    write: 'tasks.write'
   }
 } as const

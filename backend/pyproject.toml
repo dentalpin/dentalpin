@@ -80,6 +80,8 @@ expenses = "app.modules.expenses:ExpensesModule"
 contacts = "app.modules.contacts:ContactsModule"
 lab_orders = "app.modules.lab_orders:LabOrdersModule"
 inventory = "app.modules.inventory:InventoryModule"
+tasks = "app.modules.tasks:TasksModule"
+
 
 
 

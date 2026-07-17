@@ -31,7 +31,8 @@
     "defaultClinicName": "Clínica",
 	"contacts": "Contacts",
 	"labOrders":"Pedidos de Lab.",
-	"inventory": "Inventario"
+	"inventory": "Inventario",
+	"tasks": "Tareas"
   },
   "auth": {
     "login": "Iniciar sesión",

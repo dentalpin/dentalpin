@@ -31,7 +31,8 @@
 	"expenses": "Dépenses",
 	"contacts": "Contacts",
 	"labOrders":"Commandes Labo",
-	"inventory": "Inventaire"
+	"inventory": "Inventaire",
+	"tasks": "Tâches"
   },
   "auth": {
     "login": "Connexion",

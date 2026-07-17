@@ -1,0 +1,21 @@
+{
+  "tasks": {
+    "title": "Tablón de tareas",
+    "add": "Nueva tarea",
+    "open": "Abiertas",
+    "done": "Hechas",
+    "loading": "Cargando tareas…",
+    "empty": "Nada por aquí.",
+    "taskTitle": "Tarea",
+    "description": "Descripción",
+    "assignTo": "Asignar a",
+    "assignedTo": "Asignada a",
+    "due": "Vence",
+    "createdBy": "De",
+    "priorities": {
+      "low": "Baja",
+      "normal": "Normal",
+      "high": "Alta"
+    }
+  }
+}
