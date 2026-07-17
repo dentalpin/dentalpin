@@ -28,7 +28,8 @@
     "close": "Cerrar",
     "toggleSidebar": "Alternar barra lateral",
 	"expenses" : "Gastos",
-    "defaultClinicName": "Clínica"
+    "defaultClinicName": "Clínica",
+	"contacts": "Contacts"
   },
   "auth": {
     "login": "Iniciar sesión",

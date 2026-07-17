@@ -7,6 +7,7 @@
     "/module_layers/budget/frontend",
     "/module_layers/payments/frontend",
     "/module_layers/billing/frontend",
+    "/module_layers/contacts/frontend",
     "/module_layers/copilot/frontend",
     "/module_layers/expenses/frontend",
     "/module_layers/media/frontend",
@@ -48,6 +49,10 @@
     {
       "name": "billing",
       "path": "/module_layers/billing/frontend"
+    },
+    {
+      "name": "contacts",
+      "path": "/module_layers/contacts/frontend"
     },
     {
       "name": "copilot",

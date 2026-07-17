@@ -77,6 +77,8 @@ verifactu = "app.modules.verifactu:VerifactuModule"
 migration_import = "app.modules.migration_import:MigrationImportModule"
 copilot = "app.modules.copilot:CopilotModule"
 expenses = "app.modules.expenses:ExpensesModule"
+contacts = "app.modules.contacts:ContactsModule"
+
 
 
 [tool.setuptools.packages.find]

@@ -28,7 +28,8 @@
     "openMenu": "Ouvrir le menu",
     "close": "Fermer",
     "toggleSidebar": "Basculer la barre latérale",
-	"expenses": "Dépenses"
+	"expenses": "Dépenses",
+	"contacts": "Contacts"
   },
   "auth": {
     "login": "Connexion",

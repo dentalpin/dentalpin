@@ -1,0 +1,20 @@
+{
+  "contacts": {
+    "title": "Contacts",
+    "add": "Add contact",
+    "edit": "Edit contact",
+    "name": "Name",
+    "type": "Type",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "notes": "Notes",
+    "search": "Search contacts",
+    "filterByType": "Filter by type",
+    "types": {
+      "lab": "Lab",
+      "supplier": "Supplier",
+      "other": "Other"
+    }
+  }
+}
