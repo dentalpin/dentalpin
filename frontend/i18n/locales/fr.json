@@ -27,7 +27,8 @@
     "menu": "Menu",
     "openMenu": "Ouvrir le menu",
     "close": "Fermer",
-    "toggleSidebar": "Basculer la barre latérale"
+    "toggleSidebar": "Basculer la barre latérale",
+	"expenses": "Dépenses"
   },
   "auth": {
     "login": "Connexion",

@@ -1,0 +1,21 @@
+{
+  "expenses": {
+    "title": "Expenses",
+    "add": "Add expense",
+    "date": "Date",
+    "category": "Category",
+    "amount": "Amount",
+    "description": "Description",
+    "filterByCategory": "Filter by category",
+    "categories": {
+      "rent": "Rent",
+      "utilities": "Utilities",
+      "salaries": "Salaries",
+      "supplies": "Supplies",
+      "equipment": "Equipment",
+      "insurance": "Insurance",
+      "maintenance": "Maintenance",
+      "other": "Other"
+    }
+  }
+}

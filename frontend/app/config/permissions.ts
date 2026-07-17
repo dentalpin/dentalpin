@@ -144,5 +144,9 @@ export const PERMISSIONS = {
   accountingExport: {
     read: 'accounting_export.export.read',
     run: 'accounting_export.export.run'
+  },
+  expenses: {
+    read: 'expenses.read',
+    write: 'expenses.write'
   }
 } as const

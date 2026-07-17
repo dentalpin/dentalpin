@@ -1,0 +1,21 @@
+{
+  "expenses": {
+    "title": "Dépenses",
+    "add": "Ajouter une dépense",
+    "date": "Date",
+    "category": "Catégorie",
+    "amount": "Montant",
+    "description": "Description",
+    "filterByCategory": "Filtrer par catégorie",
+    "categories": {
+      "rent": "Loyer",
+      "utilities": "Charges",
+      "salaries": "Salaires",
+      "supplies": "Fournitures",
+      "equipment": "Équipement",
+      "insurance": "Assurance",
+      "maintenance": "Entretien",
+      "other": "Autre"
+    }
+  }
+}

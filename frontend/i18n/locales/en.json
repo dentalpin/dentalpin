@@ -27,7 +27,8 @@
     "menu": "Menu",
     "openMenu": "Open menu",
     "close": "Close",
-    "toggleSidebar": "Toggle sidebar"
+    "toggleSidebar": "Toggle sidebar",
+    "expenses": "Expenses"
   },
   "auth": {
     "login": "Log in",

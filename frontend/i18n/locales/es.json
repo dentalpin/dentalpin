@@ -27,6 +27,7 @@
     "openMenu": "Abrir menú",
     "close": "Cerrar",
     "toggleSidebar": "Alternar barra lateral",
+	"expenses" : "Gastos",
     "defaultClinicName": "Clínica"
   },
   "auth": {
