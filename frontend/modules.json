@@ -21,8 +21,9 @@
     "/module_layers/notifications/frontend",
     "/module_layers/patient_timeline/frontend",
     "/module_layers/reports/frontend",
-    "/module_layers/periodontogram/frontend",
-    "/module_layers/tasks/frontend"
+    "/module_layers/tasks/frontend",
+    "/module_layers/accounting_export/frontend",
+    "/module_layers/periodontogram/frontend"
   ],
   "modules": [
     {
@@ -110,12 +111,16 @@
       "path": "/module_layers/reports/frontend"
     },
     {
-      "name": "periodontogram",
-      "path": "/module_layers/periodontogram/frontend"
-    },
-    {
       "name": "tasks",
       "path": "/module_layers/tasks/frontend"
+    },
+    {
+      "name": "accounting_export",
+      "path": "/module_layers/accounting_export/frontend"
+    },
+    {
+      "name": "periodontogram",
+      "path": "/module_layers/periodontogram/frontend"
     }
   ],
   "version": 1

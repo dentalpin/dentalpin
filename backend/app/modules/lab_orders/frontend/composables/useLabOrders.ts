@@ -66,20 +66,20 @@ export function useLabOrders() {
       if (v === undefined || v === null || v === '') continue
       qs.append(k, String(v))
     }
-    const url = `/api/v1/lab-orders/${qs.toString() ? `?${qs.toString()}` : ''}`
+    const url = `/api/v1/lab_orders/${qs.toString() ? `?${qs.toString()}` : ''}`
     return await api.get<ApiPaged<LabOrder>>(url)
   }
 
   async function create(payload: LabOrderCreatePayload): Promise<ApiOk<LabOrder>> {
-    return await api.post<ApiOk<LabOrder>>('/api/v1/lab-orders/', payload)
+    return await api.post<ApiOk<LabOrder>>('/api/v1/lab_orders/', payload)
   }
 
   async function update(id: string, payload: LabOrderUpdatePayload): Promise<ApiOk<LabOrder>> {
-    return await api.patch<ApiOk<LabOrder>>(`/api/v1/lab-orders/${id}`, payload)
+    return await api.patch<ApiOk<LabOrder>>(`/api/v1/lab_orders/${id}`, payload)
   }
 
   async function remove(id: string): Promise<ApiOk<null>> {
-    return await api.del<ApiOk<null>>(`/api/v1/lab-orders/${id}`)
+    return await api.del<ApiOk<null>>(`/api/v1/lab_orders/${id}`)
   }
 
   return { list, create, update, remove }
