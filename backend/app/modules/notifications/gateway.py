@@ -482,6 +482,14 @@ class NotificationGateway:
                     continue
                 return channel, addr, "template", None
 
+            if channel == Channel.SMS:
+                addr = (patient.phone if patient else None) or to_address
+                if not addr:
+                    continue
+                if prefs is not None and not prefs.sms_enabled:
+                    continue
+                return channel, addr, "template", None
+
             if channel == Channel.WHATSAPP:
                 addr = patient.phone if patient else None
                 if not addr:

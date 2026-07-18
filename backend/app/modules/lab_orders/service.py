@@ -173,6 +173,7 @@ class LabOrderService:
         if payload.lab_contact_id is not None:
             await LabOrderService._assert_contact_exists(db, clinic_id, payload.lab_contact_id)
 
+        old_status = order.status
         data = payload.model_dump(exclude_unset=True)
         # Convenience: marking an order "received" auto-stamps today's date
         # if the caller didn't supply one explicitly.
@@ -189,7 +190,10 @@ class LabOrderService:
         # tasks exists — tasks subscribes to this, lab_orders just announces
         # it. Plain string event, not in the core EventType enum, since
         # this is a custom-module connector, not a core event.
-        if "status" in data:
+        # Guard on old_status != order.status (not just "status" in data) so
+        # a repeated/duplicate request with the same status can never
+        # publish twice and create duplicate tasks.
+        if "status" in data and order.status != old_status:
             await event_bus.publish(
                 "lab_order.status_changed",
                 {

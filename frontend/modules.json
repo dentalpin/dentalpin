@@ -20,7 +20,9 @@
     "/module_layers/recalls/frontend",
     "/module_layers/notifications/frontend",
     "/module_layers/patient_timeline/frontend",
+    "/module_layers/recall_reminders/frontend",
     "/module_layers/reports/frontend",
+    "/module_layers/sms_gateway/frontend",
     "/module_layers/tasks/frontend",
     "/module_layers/accounting_export/frontend",
     "/module_layers/periodontogram/frontend"
@@ -107,8 +109,16 @@
       "path": "/module_layers/patient_timeline/frontend"
     },
     {
+      "name": "recall_reminders",
+      "path": "/module_layers/recall_reminders/frontend"
+    },
+    {
       "name": "reports",
       "path": "/module_layers/reports/frontend"
+    },
+    {
+      "name": "sms_gateway",
+      "path": "/module_layers/sms_gateway/frontend"
     },
     {
       "name": "tasks",

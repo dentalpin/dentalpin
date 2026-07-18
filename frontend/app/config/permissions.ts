@@ -164,5 +164,9 @@ export const PERMISSIONS = {
    tasks: {
     read: 'tasks.read',
     write: 'tasks.write'
+  },
+  smsGateway: {
+    read: 'sms_gateway.settings.read',
+    write: 'sms_gateway.settings.write'
   }
 } as const

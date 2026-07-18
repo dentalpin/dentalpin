@@ -48,17 +48,6 @@ class TasksModule(BaseModule):
         },
     }
 
-    def __init__(self) -> None:
-        # Phase 6: re-attach the lab_orders event subscription on every
-        # boot — the in-memory event bus is wiped on restart, so this
-        # can't only happen in `install()` (which only runs once, from
-        # the admin UI). Idempotent-safe: subscribing twice would only
-        # matter if this constructor ran twice for the same instance,
-        # which the module loader doesn't do. Same reasoning as verifactu.
-        from .handlers import register_event_handlers
-
-        register_event_handlers()
-
     def get_models(self) -> list:
         return [Task]
 
@@ -73,7 +62,14 @@ class TasksModule(BaseModule):
 
         return tools.get_tools()
 
-    async def uninstall(self, ctx) -> None:
-        from .handlers import unregister_event_handlers
+    def get_event_handlers(self) -> dict:
+        # Phase 6: the official extension point for event subscriptions —
+        # the loader calls this exactly once per final (deduplicated)
+        # module instance, unlike a manual subscribe() in __init__, which
+        # double-fires when DENTALPIN_DEV_MODULE_SCAN's filesystem-scan
+        # fallback briefly instantiates a second, discarded copy of this
+        # module (its __init__ still runs before the duplicate is thrown
+        # away). This is what caused the "2 tasks from 1 status change" bug.
+        from .handlers import _on_lab_order_ready
 
-        unregister_event_handlers()
+        return {"lab_order.status_changed": _on_lab_order_ready}

@@ -81,6 +81,8 @@ contacts = "app.modules.contacts:ContactsModule"
 lab_orders = "app.modules.lab_orders:LabOrdersModule"
 inventory = "app.modules.inventory:InventoryModule"
 tasks = "app.modules.tasks:TasksModule"
+sms_gateway = "app.modules.sms_gateway:SmsGatewayModule"
+recall_reminders = "app.modules.recall_reminders:RecallRemindersModule"
 
 
 
