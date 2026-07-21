@@ -16,6 +16,11 @@
       "low": "Low",
       "normal": "Normal",
       "high": "High"
+    },
+    "dashboard": {
+      "title": "Handoff tasks",
+      "open": "Open",
+      "viewAll": "View all"
     }
   }
 }

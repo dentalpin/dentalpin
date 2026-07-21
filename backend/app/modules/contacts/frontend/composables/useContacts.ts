@@ -1,4 +1,4 @@
-export type ContactType = 'lab' | 'supplier' | 'other'
+export type ContactType = 'lab' | 'supplier' | 'delegate' | 'other'
 
 export interface Contact {
   id: string

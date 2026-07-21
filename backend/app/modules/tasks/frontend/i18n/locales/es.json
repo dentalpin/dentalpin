@@ -16,6 +16,11 @@
       "low": "Baja",
       "normal": "Normal",
       "high": "Alta"
+    },
+    "dashboard": {
+      "title": "Tareas pendientes",
+      "open": "Abiertas",
+      "viewAll": "Ver todas"
     }
   }
 }

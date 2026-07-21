@@ -21,7 +21,8 @@
       "implant": "Implant",
       "veneer": "Veneer",
       "orthodontic": "Orthodontic appliance",
-      "other": "Other"
+      "other": "Other",
+      "repair": "Repair"
     },
     "statuses": {
       "sent": "Sent",
@@ -29,6 +30,19 @@
       "ready": "Ready",
       "received": "Received",
       "cancelled": "Cancelled"
+    },
+    "dashboard": {
+      "title": "Pending lab work",
+      "viewAll": "View all"
+    },
+    "impressionType": "Impression type",
+    "antagonistInfo": "Antagonist info",
+    "shade": "Shade (Vita Classical)",
+    "impressionTypes": {
+      "alginate": "Alginate",
+      "pvs_silicone": "PVS / Silicone",
+      "digital_scan": "Digital scan",
+      "other": "Other"
     }
   }
 }

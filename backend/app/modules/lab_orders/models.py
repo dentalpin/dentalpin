@@ -15,8 +15,9 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base, TimestampMixin
 
-WORK_TYPES = ("crown", "bridge", "denture", "implant", "veneer", "orthodontic", "other")
+WORK_TYPES = ("crown", "bridge", "denture", "implant", "veneer", "orthodontic", "repair", "other")
 ORDER_STATUSES = ("sent", "in_progress", "ready", "received", "cancelled")
+IMPRESSION_TYPES = ("alginate", "pvs_silicone", "digital_scan", "other")
 
 
 class LabOrder(Base, TimestampMixin):
@@ -31,6 +32,9 @@ class LabOrder(Base, TimestampMixin):
 
     work_type: Mapped[str] = mapped_column(String(20), index=True)
     tooth_reference: Mapped[str | None] = mapped_column(String(50))
+    impression_type: Mapped[str | None] = mapped_column(String(20))
+    antagonist_info: Mapped[str | None] = mapped_column(String(500))
+    shade: Mapped[str | None] = mapped_column(String(10))
     status: Mapped[str] = mapped_column(String(20), index=True, default="sent")
 
     sent_date: Mapped[date] = mapped_column(Date)

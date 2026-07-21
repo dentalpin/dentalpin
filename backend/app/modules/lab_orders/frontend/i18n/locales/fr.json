@@ -21,7 +21,8 @@
       "implant": "Implant",
       "veneer": "Facette",
       "orthodontic": "Appareil orthodontique",
-      "other": "Autre"
+      "other": "Autre",
+      "repair": "Réparation"
     },
     "statuses": {
       "sent": "Envoyée",
@@ -29,6 +30,19 @@
       "ready": "Prête",
       "received": "Reçue",
       "cancelled": "Annulée"
+    },
+    "dashboard": {
+      "title": "Travaux de laboratoire en attente",
+      "viewAll": "Voir tout"
+    },
+    "impressionType": "Type d'empreinte",
+    "antagonistInfo": "Info antagoniste",
+    "shade": "Teinte (Vita Classical)",
+    "impressionTypes": {
+      "alginate": "Alginate",
+      "pvs_silicone": "PVS / Silicone",
+      "digital_scan": "Empreinte numérique",
+      "other": "Autre"
     }
   }
 }

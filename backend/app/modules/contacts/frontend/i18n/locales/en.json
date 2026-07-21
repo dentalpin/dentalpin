@@ -14,7 +14,8 @@
     "types": {
       "lab": "Lab",
       "supplier": "Supplier",
-      "other": "Other"
+      "other": "Other",
+      "delegate": "Delegate"
     }
   }
 }

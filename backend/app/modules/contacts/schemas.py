@@ -8,7 +8,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
-ContactType = Literal["lab", "supplier", "other"]
+ContactType = Literal["lab", "supplier", "delegate", "other"]
 
 
 class ContactCreate(BaseModel):

@@ -18,6 +18,11 @@
       "materials": "Materials",
       "medication": "Medication",
       "other": "Other"
+    },
+    "dashboard": {
+      "title": "Stock alerts",
+      "lowStock": "Items low on stock",
+      "viewAll": "View all"
     }
   }
 }

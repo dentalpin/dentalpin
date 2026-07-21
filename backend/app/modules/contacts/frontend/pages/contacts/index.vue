@@ -14,7 +14,7 @@ if (!can(PERMISSIONS.contacts.read)) {
 
 const canWrite = computed(() => can(PERMISSIONS.contacts.write))
 
-const TYPES: ContactType[] = ['lab', 'supplier', 'other']
+const TYPES: ContactType[] = ['lab', 'supplier', 'delegate', 'other']
 const typeOptions = computed(() =>
   TYPES.map(ty => ({ value: ty, label: t(`contacts.types.${ty}`) }))
 )
@@ -102,6 +102,7 @@ const columns = [
   { accessorKey: 'contact_type', header: t('contacts.type') },
   { accessorKey: 'phone', header: t('contacts.phone') },
   { accessorKey: 'email', header: t('contacts.email') },
+  { accessorKey: 'notes', header: t('contacts.notes') },
   { accessorKey: 'actions', header: '' }
 ]
 </script>
@@ -143,6 +144,15 @@ const columns = [
     >
       <template #contact_type-cell="{ row }">
         {{ t(`contacts.types.${row.original.contact_type}`) }}
+      </template>
+      <template #notes-cell="{ row }">
+        <span
+          v-if="row.original.notes"
+          class="text-caption text-subtle line-clamp-1"
+          :title="row.original.notes"
+        >
+          {{ row.original.notes }}
+        </span>
       </template>
       <template #actions-cell="{ row }">
         <div v-if="canWrite" class="flex gap-1">

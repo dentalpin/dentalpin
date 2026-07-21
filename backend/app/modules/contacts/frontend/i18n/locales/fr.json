@@ -14,7 +14,8 @@
     "types": {
       "lab": "Laboratoire",
       "supplier": "Fournisseur",
-      "other": "Autre"
+      "other": "Autre",
+      "delegate": "Délégué"
     }
   }
 }

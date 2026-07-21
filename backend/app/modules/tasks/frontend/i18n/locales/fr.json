@@ -16,6 +16,11 @@
       "low": "Basse",
       "normal": "Normale",
       "high": "Haute"
+    },
+    "dashboard": {
+      "title": "Tâches en attente",
+      "open": "En cours",
+      "viewAll": "Voir tout"
     }
   }
 }

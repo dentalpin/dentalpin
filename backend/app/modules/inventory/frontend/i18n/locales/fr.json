@@ -18,6 +18,11 @@
       "materials": "Matériaux",
       "medication": "Médicaments",
       "other": "Autre"
+    },
+    "dashboard": {
+      "title": "Alertes de stock",
+      "lowStock": "Articles en stock bas",
+      "viewAll": "Voir tout"
     }
   }
 }

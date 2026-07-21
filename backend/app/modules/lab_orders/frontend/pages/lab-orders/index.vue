@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PERMISSIONS } from '~~/app/config/permissions'
 import type { Patient } from '~/types'
-import { useLabOrders, type LabOrder, type OrderStatus, type WorkType } from '../../composables/useLabOrders'
+import { useLabOrders, type LabOrder, type OrderStatus, type WorkType, type ImpressionType, type Shade, VITA_CLASSICAL_SHADES } from '../../composables/useLabOrders'
 
 definePageMeta({ middleware: ['auth'] })
 
@@ -20,8 +20,13 @@ if (!can(PERMISSIONS.labOrders.read)) {
 
 const canWrite = computed(() => can(PERMISSIONS.labOrders.write))
 
-const WORK_TYPES: WorkType[] = ['crown', 'bridge', 'denture', 'implant', 'veneer', 'orthodontic', 'other']
+const WORK_TYPES: WorkType[] = ['crown', 'bridge', 'denture', 'implant', 'veneer', 'orthodontic', 'repair', 'other']
 const workTypeOptions = computed(() => WORK_TYPES.map(w => ({ value: w, label: t(`labOrders.workTypes.${w}`) })))
+
+const IMPRESSION_TYPES: ImpressionType[] = ['alginate', 'pvs_silicone', 'digital_scan', 'other']
+const impressionTypeOptions = computed(() => IMPRESSION_TYPES.map(i => ({ value: i, label: t(`labOrders.impressionTypes.${i}`) })))
+
+const shadeOptions = computed(() => VITA_CLASSICAL_SHADES.map(s => ({ value: s, label: s })))
 
 const STATUSES: OrderStatus[] = ['sent', 'in_progress', 'ready', 'received', 'cancelled']
 const statusOptions = computed(() => STATUSES.map(s => ({ value: s, label: t(`labOrders.statuses.${s}`) })))
@@ -64,6 +69,9 @@ const form = ref({
   lab_contact_id: '',
   work_type: 'crown' as WorkType,
   tooth_reference: '',
+  impression_type: '' as ImpressionType | '',
+  antagonist_info: '',
+  shade: '',
   sent_date: new Date().toISOString().slice(0, 10),
   expected_date: '',
   notes: ''
@@ -75,6 +83,9 @@ function openCreate() {
     lab_contact_id: labContacts.value[0]?.id ?? '',
     work_type: 'crown',
     tooth_reference: '',
+    impression_type: '',
+    antagonist_info: '',
+    shade: '',
     sent_date: new Date().toISOString().slice(0, 10),
     expected_date: '',
     notes: ''
@@ -91,6 +102,9 @@ async function submit() {
       lab_contact_id: form.value.lab_contact_id,
       work_type: form.value.work_type,
       tooth_reference: form.value.tooth_reference || null,
+      impression_type: form.value.impression_type || null,
+      antagonist_info: form.value.antagonist_info || null,
+      shade: (form.value.shade || null) as Shade | null,
       sent_date: form.value.sent_date,
       expected_date: form.value.expected_date || null,
       notes: form.value.notes || null
@@ -190,6 +204,9 @@ const columns = [
           <USelect v-model="form.lab_contact_id" :items="labContactOptions" :placeholder="t('labOrders.selectLab')" />
           <USelect v-model="form.work_type" :items="workTypeOptions" />
           <UInput v-model="form.tooth_reference" :placeholder="t('labOrders.tooth')" />
+          <USelect v-model="form.impression_type" :items="impressionTypeOptions" :placeholder="t('labOrders.impressionType')" />
+          <UInput v-model="form.antagonist_info" :placeholder="t('labOrders.antagonistInfo')" />
+          <USelect v-model="form.shade" :items="shadeOptions" :placeholder="t('labOrders.shade')" />
           <UInput v-model="form.sent_date" type="date" />
           <UInput v-model="form.expected_date" type="date" :placeholder="t('labOrders.expectedDate')" />
           <UInput v-model="form.notes" :placeholder="t('labOrders.notes')" />

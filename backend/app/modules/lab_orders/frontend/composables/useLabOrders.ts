@@ -5,9 +5,20 @@ export type WorkType =
   | 'implant'
   | 'veneer'
   | 'orthodontic'
+  | 'repair'
   | 'other'
 
 export type OrderStatus = 'sent' | 'in_progress' | 'ready' | 'received' | 'cancelled'
+
+export type ImpressionType = 'alginate' | 'pvs_silicone' | 'digital_scan' | 'other'
+
+export const VITA_CLASSICAL_SHADES = [
+  'A1', 'A2', 'A3', 'A3.5', 'A4',
+  'B1', 'B2', 'B3', 'B4',
+  'C1', 'C2', 'C3', 'C4',
+  'D2', 'D3', 'D4'
+] as const
+export type Shade = typeof VITA_CLASSICAL_SHADES[number]
 
 export interface LabOrder {
   id: string
@@ -16,6 +27,9 @@ export interface LabOrder {
   lab_contact_id: string
   work_type: WorkType
   tooth_reference?: string | null
+  impression_type?: ImpressionType | null
+  antagonist_info?: string | null
+  shade?: Shade | null
   status: OrderStatus
   sent_date: string
   expected_date?: string | null
@@ -31,6 +45,9 @@ export interface LabOrderCreatePayload {
   lab_contact_id: string
   work_type: WorkType
   tooth_reference?: string | null
+  impression_type?: ImpressionType | null
+  antagonist_info?: string | null
+  shade?: Shade | null
   sent_date: string
   expected_date?: string | null
   notes?: string | null
@@ -40,6 +57,9 @@ export interface LabOrderUpdatePayload {
   lab_contact_id?: string
   work_type?: WorkType
   tooth_reference?: string | null
+  impression_type?: ImpressionType | null
+  antagonist_info?: string | null
+  shade?: Shade | null
   status?: OrderStatus
   expected_date?: string | null
   received_date?: string | null

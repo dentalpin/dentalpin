@@ -6,6 +6,25 @@
       "placeholder": "Écrivez une réponse…",
       "replyError": "Impossible d'envoyer la réponse",
       "windowClosed": "La fenêtre de 24h est fermée. Utilisez un modèle pour rouvrir la conversation."
+    },
+    "templatesPage": {
+      "cardTitle": "Modèles de notification",
+      "cardDescription": "Gérez les modèles de messages utilisés pour les rappels et autres notifications.",
+      "title": "Modèles de notification",
+      "description": "Créez et modifiez les modèles utilisés lors de l'envoi d'e-mails, SMS ou messages WhatsApp.",
+      "add": "Nouveau modèle",
+      "edit": "Modifier le modèle",
+      "key": "Clé",
+      "channel": "Canal",
+      "locale": "Langue",
+      "subject": "Objet",
+      "body": "Corps",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "system": "Intégré",
+      "systemLocked": "Intégré — non modifiable",
+      "notesPlaceholder": "Description (facultatif)",
+      "saved": "Modèle enregistré"
     }
   }
 }
