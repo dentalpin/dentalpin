@@ -39,11 +39,18 @@ class LabOrdersModule(BaseModule):
             "layer_path": "frontend",
             "navigation": [
                 {
-                    "label": "nav.labOrders",
+                    "label": "nav.labOrdersForm",
+                    "icon": "i-lucide-clipboard-plus",
+                    "to": "/lab-orders/new",
+                    "permission": "lab_orders.write",
+                    "order": 92,
+                },
+                {
+                    "label": "nav.labOrdersStatus",
                     "icon": "i-lucide-flask-conical",
                     "to": "/lab-orders",
                     "permission": "lab_orders.read",
-                    "order": 92,
+                    "order": 92.5,
                 },
             ],
         },

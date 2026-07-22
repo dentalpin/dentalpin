@@ -29,10 +29,18 @@
     "close": "Close",
     "toggleSidebar": "Toggle sidebar",
     "expenses": "Expenses",
-	"contacts": "Contacts",
-	"labOrders": "Lab Orders",
-	"inventory": "Inventory",
-	"tasks": "Tasks"
+    "contacts": "Contacts",
+    "labOrders": "Lab Orders",
+    "inventory": "Inventory",
+    "tasks": "Tasks",
+    "labOrdersForm": "Order Form",
+    "labOrdersStatus": "Order Status",
+    "groups": {
+      "clinical": "Clinical",
+      "financials": "Financials",
+      "practiceManagement": "Practice Management",
+      "lab": "Lab"
+    }
   },
   "auth": {
     "login": "Log in",
@@ -2393,7 +2401,7 @@
       "void": "Void payment",
       "amount": "Amount",
       "method": "Payment method",
-    "date": "Date",
+      "date": "Date",
       "reference": "Reference",
       "notes": "Notes",
       "noPayments": "No payments recorded",

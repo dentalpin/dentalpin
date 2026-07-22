@@ -27,12 +27,20 @@
     "openMenu": "Abrir menú",
     "close": "Cerrar",
     "toggleSidebar": "Alternar barra lateral",
-	"expenses" : "Gastos",
+    "expenses": "Gastos",
     "defaultClinicName": "Clínica",
-	"contacts": "Contacts",
-	"labOrders":"Pedidos de Lab.",
-	"inventory": "Inventario",
-	"tasks": "Tareas"
+    "contacts": "Contacts",
+    "labOrders": "Pedidos de Lab.",
+    "inventory": "Inventario",
+    "tasks": "Tareas",
+    "labOrdersForm": "Formulario de Pedido",
+    "labOrdersStatus": "Estado de Pedidos",
+    "groups": {
+      "clinical": "Clínica",
+      "financials": "Finanzas",
+      "practiceManagement": "Gestión de Consulta",
+      "lab": "Laboratorio"
+    }
   },
   "auth": {
     "login": "Iniciar sesión",

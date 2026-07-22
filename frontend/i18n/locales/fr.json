@@ -28,11 +28,19 @@
     "openMenu": "Ouvrir le menu",
     "close": "Fermer",
     "toggleSidebar": "Basculer la barre latérale",
-	"expenses": "Dépenses",
-	"contacts": "Contacts",
-	"labOrders":"Commandes Labo",
-	"inventory": "Inventaire",
-	"tasks": "Tâches"
+    "expenses": "Dépenses",
+    "contacts": "Contacts",
+    "labOrders": "Commandes Labo",
+    "inventory": "Inventaire",
+    "tasks": "Tâches",
+    "labOrdersForm": "Formulaire de Commande",
+    "labOrdersStatus": "Statut des Commandes",
+    "groups": {
+      "clinical": "Clinique",
+      "financials": "Finances",
+      "practiceManagement": "Gestion du Cabinet",
+      "lab": "Labo"
+    }
   },
   "auth": {
     "login": "Connexion",
