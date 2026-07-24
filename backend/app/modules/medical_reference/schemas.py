@@ -44,6 +44,26 @@ class ReferenceMedicationResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+# --- Surgery ------------------------------------------------------------
+
+
+class ReferenceSurgeryCreate(BaseModel):
+    name: str = Field(min_length=1, max_length=150)
+
+
+class ReferenceSurgeryUpdate(BaseModel):
+    name: str | None = Field(default=None, min_length=1, max_length=150)
+    is_active: bool | None = None
+
+
+class ReferenceSurgeryResponse(BaseModel):
+    id: UUID
+    name: str
+    is_active: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 # --- Disease ----------------------------------------------------------------
 
 
@@ -65,3 +85,67 @@ class ReferenceDiseaseResponse(BaseModel):
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)
+
+
+# --- Interactions & contraindications --------------------------------------
+
+
+class ReferenceInteractionCreate(BaseModel):
+    medication_a_id: UUID
+    medication_b_id: UUID
+    risk_note: str = Field(min_length=1)
+
+
+class ReferenceInteractionUpdate(BaseModel):
+    risk_note: str | None = Field(default=None, min_length=1)
+    is_active: bool | None = None
+
+
+class ReferenceInteractionResponse(BaseModel):
+    id: UUID
+    medication_a_id: UUID
+    medication_a_name: str
+    medication_b_id: UUID
+    medication_b_name: str
+    risk_note: str
+    is_active: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class ReferenceContraindicationCreate(BaseModel):
+    disease_id: UUID
+    medication_id: UUID
+    risk_note: str = Field(min_length=1)
+
+
+class ReferenceContraindicationUpdate(BaseModel):
+    risk_note: str | None = Field(default=None, min_length=1)
+    is_active: bool | None = None
+
+
+class ReferenceContraindicationResponse(BaseModel):
+    id: UUID
+    disease_id: UUID
+    disease_name: str
+    medication_id: UUID
+    medication_name: str
+    risk_note: str
+    is_active: bool
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+# --- Active per-patient flags ------------------------------------------------
+
+
+class PatientFlag(BaseModel):
+    """One detected warning for a patient — either an interaction between
+    two of their recorded medications, or a disease contraindicating one
+    of their medications."""
+
+    type: str  # "interaction" | "contraindication"
+    risk_note: str
+    # For interaction: [medication_a_name, medication_b_name]
+    # For contraindication: [disease_name, medication_name]
+    involved: list[str]

@@ -266,7 +266,8 @@
         "heavy": "Heavy"
       },
       "surgicalHistory": "Surgical history",
-      "procedure": "Procedure"
+      "procedure": "Procedure",
+      "warningsTitle": "Interaction / contraindication warning"
     },
     "timeline": {
       "empty": "No activity recorded yet",

@@ -7,7 +7,10 @@
     "tabs": {
       "allergies": "Allergies",
       "medications": "Medications",
-      "diseases": "Diseases"
+      "diseases": "Diseases",
+      "surgeries": "Surgeries",
+      "interactions": "Interactions",
+      "contraindications": "Contraindications"
     },
     "name": "Name",
     "status": "Status",
@@ -19,6 +22,10 @@
     "addError": "Could not add item",
     "updateError": "Could not update item",
     "deactivateError": "Could not deactivate item",
-    "itemCount": "{count} items"
+    "itemCount": "{count} items",
+    "medicationA": "Medication A",
+    "medicationB": "Medication B",
+    "riskNote": "Risk",
+    "riskNotePlaceholder": "Describe the risk…"
   }
 }

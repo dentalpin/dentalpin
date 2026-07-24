@@ -422,6 +422,7 @@ const canSave = computed(() => {
           <MedicalHistoryForm
             v-if="medicalHistory"
             :model-value="medicalHistory"
+            :patient-id="props.patient?.id"
             hide-actions
           />
         </div>

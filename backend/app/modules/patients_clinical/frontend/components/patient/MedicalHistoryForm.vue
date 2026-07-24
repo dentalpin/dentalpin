@@ -3,6 +3,7 @@ import type { AllergyEntry, MedicationEntry, MedicalHistory, SurgicalHistoryEntr
 
 interface Props {
   modelValue: MedicalHistory
+  patientId?: string
   readonly?: boolean
   hideActions?: boolean
 }
@@ -18,7 +19,24 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
-const { search: searchMedicalReference } = useMedicalReference()
+const { search: searchMedicalReference, fetchPatientFlags } = useMedicalReference()
+
+// Active interaction/contraindication warnings for this patient — computed
+// server-side from whichever of their medications/diseases have a
+// reference_id (free-text-only legacy entries can't be reliably matched,
+// see MedicalReferenceService.get_patient_flags).
+const flags = ref<{ type: string, risk_note: string, involved: string[] }[]>([])
+async function loadFlags() {
+  if (!props.patientId) return
+  flags.value = await fetchPatientFlags(props.patientId)
+}
+onMounted(loadFlags)
+// Re-check whenever the medication or disease list changes — covers both
+// adding a new entry and removing one that was causing a flag.
+watch(
+  () => [props.modelValue.medications.length, props.modelValue.systemic_diseases.length],
+  loadFlags
+)
 
 // Local copy for editing
 const localData = computed({
@@ -130,13 +148,14 @@ const newSurgery = ref<SurgicalHistoryEntry>({
   procedure: '',
   surgery_date: undefined,
   complications: undefined,
-  notes: undefined
+  notes: undefined,
+  reference_id: undefined
 })
 
 function addSurgery() {
   if (!newSurgery.value.procedure.trim()) return
   localData.value.surgical_history.push({ ...newSurgery.value })
-  newSurgery.value = { procedure: '', surgery_date: undefined, complications: undefined, notes: undefined }
+  newSurgery.value = { procedure: '', surgery_date: undefined, complications: undefined, notes: undefined, reference_id: undefined }
 }
 
 function removeSurgery(index: number) {
@@ -158,6 +177,27 @@ function handleSave() {
 
 <template>
   <div class="medical-history-form space-y-6">
+    <!-- Active interaction/contraindication warnings -->
+    <UAlert
+      v-if="flags.length > 0"
+      color="error"
+      variant="subtle"
+      icon="i-lucide-alert-octagon"
+      :title="t('patients.medicalHistory.warningsTitle')"
+    >
+      <template #description>
+        <ul class="space-y-1 mt-1">
+          <li
+            v-for="(flag, i) in flags"
+            :key="i"
+          >
+            <span class="font-medium">{{ flag.involved.join(' + ') }}</span>
+            — {{ flag.risk_note }}
+          </li>
+        </ul>
+      </template>
+    </UAlert>
+
     <!-- Allergies Section -->
     <UAccordion
       :items="[{ label: t('patients.medicalHistory.allergies'), icon: 'i-lucide-alert-triangle', defaultOpen: true, slot: 'allergies' }]"
@@ -522,8 +562,10 @@ function handleSave() {
             v-if="!readonly"
             class="grid grid-cols-1 md:grid-cols-3 gap-2"
           >
-            <UInput
+            <ReferenceSearchInput
               v-model="newSurgery.procedure"
+              v-model:reference-id="newSurgery.reference_id"
+              kind="surgeries"
               :placeholder="t('patients.medicalHistory.procedure')"
             />
             <UInput

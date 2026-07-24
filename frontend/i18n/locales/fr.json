@@ -266,7 +266,8 @@
         "heavy": "Importante"
       },
       "surgicalHistory": "Antécédents chirurgicaux",
-      "procedure": "Acte"
+      "procedure": "Acte",
+      "warningsTitle": "Alerte d'interaction / contre-indication"
     },
     "timeline": {
       "empty": "Aucune activité enregistrée pour le moment",

@@ -7,7 +7,10 @@
     "tabs": {
       "allergies": "Allergies",
       "medications": "Médicaments",
-      "diseases": "Maladies"
+      "diseases": "Maladies",
+      "surgeries": "Chirurgies",
+      "interactions": "Interactions",
+      "contraindications": "Contre-indications"
     },
     "name": "Nom",
     "status": "Statut",
@@ -19,6 +22,10 @@
     "addError": "Impossible d'ajouter l'élément",
     "updateError": "Impossible de mettre à jour l'élément",
     "deactivateError": "Impossible de désactiver l'élément",
-    "itemCount": "{count} éléments"
+    "itemCount": "{count} éléments",
+    "medicationA": "Médicament A",
+    "medicationB": "Médicament B",
+    "riskNote": "Risque",
+    "riskNotePlaceholder": "Décrivez le risque…"
   }
 }
