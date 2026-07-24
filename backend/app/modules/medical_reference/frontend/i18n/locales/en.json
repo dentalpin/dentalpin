@@ -1,0 +1,24 @@
+{
+  "medicalReference": {
+    "settingsLabel": "Medical Reference Lists",
+    "settingsDescription": "Manage the allergy, medication, and disease lists used across patient records.",
+    "title": "Medical Reference Lists",
+    "description": "These lists power the searchable dropdowns in patient medical history. Deactivating an item removes it from future searches without affecting existing patient records.",
+    "tabs": {
+      "allergies": "Allergies",
+      "medications": "Medications",
+      "diseases": "Diseases"
+    },
+    "name": "Name",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "showInactive": "Show inactive",
+    "newItemPlaceholder": "New item name…",
+    "addSuccess": "Added",
+    "addError": "Could not add item",
+    "updateError": "Could not update item",
+    "deactivateError": "Could not deactivate item",
+    "itemCount": "{count} items"
+  }
+}

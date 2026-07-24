@@ -31,7 +31,7 @@ async function load() {
       search: search.value,
       low_stock_only: lowStockOnly.value,
       page: 1,
-      page_size: 100
+      page_size: 1000
     })
     items.value = res.data
   } finally {

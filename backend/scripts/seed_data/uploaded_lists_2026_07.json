@@ -1,0 +1,1498 @@
+{
+  "allergies": [
+    "Pénicilline / Amoxicilline",
+    "Céphalosporines",
+    "Clindamycine",
+    "Érythromycine",
+    "Métronidazole",
+    "Tétracyclines",
+    "Sulfamides",
+    "AINS (ibuprofène, aspirine)",
+    "Paracétamol",
+    "Codéine / opioïdes",
+    "Anesthésiques locaux",
+    "Latex",
+    "Nickel / alliages métalliques",
+    "Acryliques / méthacrylates",
+    "Eugénol",
+    "Chlorhexidine",
+    "Formaldéhyde",
+    "Bis‑GMA",
+    "Métabisulfite de sodium"
+  ],
+  "apci_diseases": [
+    "Diabète insulinodépendant ou non insulinodépendant ne pouvant être équilibré par le seul régime",
+    "Dysthyroïdies",
+    "Affections hypophysaires",
+    "Affections surrénaliennes",
+    "HTA sévère",
+    "Cardiopathies congénitales et valvulopathies",
+    "Insuffisance cardiaque et troubles du rythme",
+    "Affections coronariennes et leurs complications",
+    "Phlébites",
+    "Tuberculose active",
+    "Insuffisance respiratoire chronique",
+    "Sclérose en plaques",
+    "Epilepsie",
+    "Maladie de Parkinson",
+    "Psychoses et névroses",
+    "Insuffisance rénale chronique",
+    "Rhumatismes inflammatoires chroniques",
+    "Maladies auto-immunes",
+    "Tumeurs et hémopathies malignes",
+    "Les maladies inflammatoires chroniques de l'intestin",
+    "Hépatites chroniques actives",
+    "Cirrhoses et insuffisance hépatique",
+    "Glaucome",
+    "Mucoviscidose"
+  ],
+  "general_diseases": [
+    "Hypertension artérielle",
+    "Diabète de type 1",
+    "Diabète de type 2",
+    "Cardiopathie ischémique / angine de poitrine",
+    "Infarctus du myocarde (antécédent)",
+    "Insuffisance cardiaque",
+    "AVC / AIT",
+    "Asthme",
+    "BPCO",
+    "Insuffisance rénale chronique",
+    "Maladie hépatique chronique",
+    "Hépatite B / C",
+    "VIH / SIDA",
+    "Tuberculose",
+    "Épilepsie",
+    "Maladie de Parkinson",
+    "Sclérose en plaques",
+    "Maladie d’Alzheimer / démence",
+    "Polyarthrite rhumatoïde",
+    "Arthrose",
+    "Ostéoporose",
+    "Hyperthyroïdie",
+    "Hypothyroïdie",
+    "Ulcère gastroduodénal",
+    "Reflux gastro‑œsophagien",
+    "MICI (Crohn / rectocolite)",
+    "Anémie",
+    "Troubles de la coagulation",
+    "Cancer (actuel ou antécédent)",
+    "Greffe d’organe",
+    "Troubles psychiatriques",
+    "Rhinite allergique / rhume des foins"
+  ],
+  "medications": [
+    "Primacaine Adrénalinée (1/100 000) Articaïne + Épinéphrine",
+    "Lignospan (2%) Lidocaïne + Épinéphrine",
+    "Xylocaïne (2%) Lidocaïne",
+    "Scandonest (2% Spéciale) Mépivacaïne + Épinéphrine",
+    "Scandonest (3% Sans Vasoconstricteur) Mépivacaïne",
+    "Marcaine (0.5%) Bupivacaïne",
+    "Hurricaine (20%) Benzocaïne",
+    "Clamoxyl (500mg) Amoxicilline",
+    "Clamoxyl (1g) Amoxicilline",
+    "Augmentin (1g/125mg) Amoxicilline + Acide clavulanique",
+    "Rovamycine (1.5 M.U.I) Spiramycine",
+    "Rovamycine (3 M.U.I) Spiramycine",
+    "Flagyl (500mg) Métronidazole",
+    "Rodogyl (750 000 UI/125mg) Spiramycine + Métronidazole",
+    "Birodogyl (1.5 M.U.I/250mg) Spiramycine + Métronidazole",
+    "Erythrocine (500mg) Érythromycine",
+    "Zithromax (500mg) Azithromycine",
+    "Zeclar (500mg) Clarithromycine",
+    "Dalacine (300mg) Clindamycine",
+    "Vibramycine (100mg) Doxycycline",
+    "Doliprane (500mg) Paracétamol",
+    "Doliprane (1000mg) Paracétamol",
+    "Acupan (20mg/2ml) Néfopam",
+    "Ixprim (37.5mg/325mg) Paracétamol + Tramadol",
+    "Zaldiar (37.5mg/325mg) Paracétamol + Tramadol",
+    "Dafalgan Codéine (500mg/30mg) Paracétamol + Codéine",
+    "Tramal (50mg) Tramadol",
+    "Brufen (400mg) Ibuprofène",
+    "Brufen (600mg) Ibuprofène",
+    "Profenid (100mg) Kétoprofène",
+    "Bi-Profenid (150mg) Kétoprofène",
+    "Nifluril (250mg) Acide niflumique",
+    "Voltarene (50mg) Diclofénac",
+    "Feldene (20mg) Piroxicam",
+    "Solupred (20mg) Prednisolone",
+    "Cortancyl (20mg) Prednisone",
+    "Dectancyl (0.5mg) Dexaméthasone",
+    "Medrol (16mg) Méthylprednisolone",
+    "Eludril Gé (0.1%) Chlorhexidine",
+    "Prexidine (0.12%) Chlorhexidine",
+    "Hextril (0.1%) Hétidine",
+    "Betadine Bain de Bouche (10%) Povidone iodée",
+    "Eau Oxygénée (10 Volumes) Peroxyde d'hydrogène",
+    "Bicarbonate de sodium (1.4%) Bicarbonate de sodium",
+    "Exacyl (500mg) Acide tranexamique",
+    "Spongel (Standard) Éponge de gélatine",
+    "Surgicel (Standard) Cellulose oxydée",
+    "Daktarin (2%) Miconazole",
+    "Mycostatine (100 000 UI/ml) Nystatine",
+    "Fungizone (10%) Amphotéricine B",
+    "Zovirax (200mg) Aciclovir",
+    "Esidrex (25mg) Hydrochlorothiazide",
+    "Lasilix (40mg) Furosémide",
+    "Aldactone (50mg) Spironolactone",
+    "Fludex (1.5mg) Indapamide",
+    "Detensiel (10mg) Bisoprolol",
+    "Tenormine (100mg) Aténolol",
+    "Avlocardyl (40mg) Propranolol",
+    "Nebilet (5mg) Nébivolol",
+    "Lopressor (100mg) Métoprolol",
+    "Amlor (5mg) Amlodipine",
+    "Adalate (20mg) Nifédipine",
+    "Tildiem (60mg) Diltiazem",
+    "Loxen (20mg) Nicardipine",
+    "Lopril (25mg) Captopril",
+    "Renitec (20mg) Énalapril",
+    "Coversyl (5mg) Périndopril",
+    "Triatec (5mg) Ramipril",
+    "Zestril (20mg) Lisinopril",
+    "Cozaar (50mg) Losartan",
+    "Aprovel (150mg) Irbésartan",
+    "Tareg (80mg) Valsartan",
+    "Atacand (8mg) Candésartan",
+    "Micardis (80mg) Telmisartan",
+    "Aldomet (250mg) Méthyldopa",
+    "Glucophage (850mg) Metformine",
+    "Amarel (2mg) Glimépiride",
+    "Diamicron (60mg) Gliclazide",
+    "Daonil (5mg) Glibenclamide",
+    "Glucor (50mg) Acarbose",
+    "Januvia (100mg) Sitagliptine",
+    "Galvus (50mg) Vildagliptine",
+    "Trajenta (5mg) Linagliptine",
+    "Jardiance (10mg) Empagliflozine",
+    "Forxiga (10mg) Dapagliflozine",
+    "Actrapid (100 UI/ml) Insuline humaine rapide",
+    "Insulatard (100 UI/ml) Insuline isophane NPH",
+    "Lantus (100 UI/ml) Insuline glargine",
+    "Humalog (100 UI/ml) Insuline lispro",
+    "Novorapid (100 UI/ml) Insuline asparte",
+    "Levemir (100 UI/ml) Insuline détémir",
+    "Kardegic (75mg) Acide acétylsalicylique",
+    "Plavix (75mg) Clopidogrel",
+    "Sintrom (4mg) Acénocoumarol",
+    "Previscan (20mg) Fluindione",
+    "Xarelto (20mg) Rivaroxaban",
+    "Eliquis (5mg) Apixaban",
+    "Pradaxa (150mg) Dabigatran",
+    "Fosamax (70mg) Acide alendronique",
+    "Actonel (35mg) Acide risédronique",
+    "Zometa (4mg/5ml) Acide zolédronique",
+    "Aclasta (5mg/100ml) Acide zolédronique",
+    "Prolia (60mg) Dénosumab",
+    "Xgeva (120mg) Dénosumab",
+    "Ventoline (100µg) Salbutamol",
+    "Symbicort (160µg/4.5µg) Budésonide + Formotérol",
+    "Seretide (250µg/50µg) Fluticasone + Salmétérol",
+    "Innovair (100µg/6µg) Béclométasone + Formotérol",
+    "Singulair (10mg) Montélukast",
+    "Atrovent (20µg) Ipratropium",
+    "Levothyrox (50µg) Lévothyroxine",
+    "Euthyrox (50µg) Lévothyroxine",
+    "Thyrozol (20mg) Thiamazole",
+    "Basdene (25mg) Benzylthiouracile",
+    "Depakine (500mg) Acide Valproïque",
+    "Tegretol (200mg) Carbamazépine",
+    "Keppra (500mg) Lévétiracétam",
+    "Lyrica (75mg) Prégabaline",
+    "Neurontin (300mg) Gabapentine",
+    "Mopral (20mg) Oméprazole",
+    "Inexium (40mg) Ésoprazole",
+    "Pantoloc (40mg) Pantoprazole",
+    "Ogast (30mg) Lansoprazole",
+    "Seroplex (10mg) Escitalopram",
+    "Zoloft (50mg) Sertraline",
+    "Prozac (20mg) Fluoxétine",
+    "Lexomil (6mg) Bromazépam",
+    "Xanax (0.5mg) Alprazolam",
+    "Temesta (1mg) Lorazépam",
+    "Novatrex (2.5mg) Méthotrexate",
+    "Imurel (50mg) Azathioprine",
+    "Neoral (50mg) Ciclosporine",
+    "MabThera (500mg) Rituximab"
+  ],
+  "inventory_items": [
+    {
+      "name": "Acide phosphorique",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Adhesif",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Adhesif ORTHO",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Aiguilles anesthesie 03 21",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "medication"
+    },
+    {
+      "name": "Aiguilles irrigation endodontique",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Air Fresh",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Ajax",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Applicateurs adhesif",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 012",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 014",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 016",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 016 x 022",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 016 x 025",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 017 x 025",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 018",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 018 x 025",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Lower 019 x 025",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper 012",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper 014",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper 016",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper 016 x 022",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper 017 x 025",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper 018 x 025",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper 019 x 025",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper Reverse 016 x 022",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper Reverse 017 x 025",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc NiTi Upper Reverse 018",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc SS Lower 019 x 025",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Arc SS Upper 019 x 025",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Articaine 1 100000",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "medication"
+    },
+    {
+      "name": "Bain de bouche concentré 5L",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Betadine",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "medication"
+    },
+    {
+      "name": "Bioceramique",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Boites orthodontique pour gouttière",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Bone Tac case 21 EA TBM 02",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Bouton lingual base ovoide",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Bracket",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Brossettes DSR",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Café",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Canules aspiration salivaire 100pcs",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cavit",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cavit Photo",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Chainette Close",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Chainette Open",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Chainette Short",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Champ sterile",
+      "low_stock_threshold": 5.0,
+      "quantity_on_hand": 0.0,
+      "category": "ppe"
+    },
+    {
+      "name": "Champs propres 500pcs",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "ppe"
+    },
+    {
+      "name": "Ciment de scellement definitif",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Clona",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Coffret composite",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Coins interdentaire",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite A 35",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite A1",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite A2",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite A3",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite B1",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite B2",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite fluide A1",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite fluide A2",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite fluide A3",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite fluide A3.5",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Composite fluide B1",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Compresses",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "ppe"
+    },
+    {
+      "name": "Cones de gutta 04 20",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cones de gutta 04 25",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cones de gutta 06 20",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cones de gutta 06 25",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cones de papier 04 20",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cones de papier 04 25",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cones de papier 04 30",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cones de papier 06 20",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Crimpable Ceramic MultiHook",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Crimpable Hook 3 Hooks Curved Left 6mm",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Crimpable Hook 3 Hooks Curved Right 6mm",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Crimpable Hook Curved Left 6mm",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Crimpable Hook Curved Right 6mm",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Cupules de polissage",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Desinfectant concentré pour aspiration",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Desinfectant concentré pour instruments 5L",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Désodorisant",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Detartrine",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Digue fluide",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Disques de polissage composite",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Distributeur de papiers serviettes",
+      "low_stock_threshold": 13.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Double Hook lingual button",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Eau oxygenee",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "medication"
+    },
+    {
+      "name": "Ecarteur plastique",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "EDTA Gel",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "EDTA liquide",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Elastique 2 et demi OZ 14",
+      "low_stock_threshold": 20.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Elastique 316",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Elastique 4 OZ 14",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Embouts melangeurs GM",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Embouts melangeurs PM",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Feuilles de digue",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fil d'éviction",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fil de ligature",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fils de suture 3 0",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Flitox",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule CA N 12",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule CA N 14 long col",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule CA N 16",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule Turbine Diamentee 16 Courte",
+      "low_stock_threshold": 4.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule Turbine Diamentee 16 Long col",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule Turbine Diamentee 18",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule Turbine Tungstene 14 Courte",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule Turbine Tungstene 14 Long col",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule Turbine Tungstene 16 Courte",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise boule Turbine Tungstene 16 Long col",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise Diamentee Conge Fin",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise Diamentee Conge Large",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise Endo Z",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise finition composite bague jaune",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise finition composite bague rouge",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise Flamme",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise L1 Fis",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise preparation Facette",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Fraise Roue",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Gants Nitril Taille M",
+      "low_stock_threshold": 10.0,
+      "quantity_on_hand": 0.0,
+      "category": "ppe"
+    },
+    {
+      "name": "Gants Nitril Taille S",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "ppe"
+    },
+    {
+      "name": "Gobelets",
+      "low_stock_threshold": 4.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Granules os resorbable",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Gresyl",
+      "low_stock_threshold": 13.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Housse capteur RVG",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Hydroxyde de calcium Seringue",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT C 35 10",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT C 30 18",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT C 35 14",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT C 35 16",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT M 35 10",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT M 35 12",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT M 35 14",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT M 40 06",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT M 40 08",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT M 40 10",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT M 40 12",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 30 10",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 30 12",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 30 14",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 35 06",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 35 08",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 35 10",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 35 12",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 35 14",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 38 06",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 38 08",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 38 10",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 38 12",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 42 06",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 42 08",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 42 10",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Implant ROOTT R 42 12",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Insert US G1",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Javel",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Kit collage des facettes céramiques",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Kit Composite collage orthodontique",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Kit irrigation moteur implant",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Kit Matrices",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Kit tubes molaires",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Lame de bistouri N 15",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Ligatures elastiques Couleur GRISE",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Limes mecanisees 04 20",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Limes mecanisees 06 20",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Limes mecanisees 06 25",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Limes mecanisees Opener",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Limes mecanisees Retraitement",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Limes N 10 25mm",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Limes N 15 25mm",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Limes N 15 31mm",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Lingettes désinfectante",
+      "low_stock_threshold": 10.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Liquide de modelage",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Masques",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "ppe"
+    },
+    {
+      "name": "Membrane résorbable",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Membrane titane",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Minivis orthodontique",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Papier a articuler",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Pilier angulé ROOTT A1A15",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Pilier angulé ROOTT A1A25",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Pilier MultiUnit ROOTT R M1",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Plaques Clear Aligner 0.75 x 125",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Resine de collage orthodontique",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Resine de scellement",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Ressort Ni-Ti Open Spring .012",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Rotational Wedge RW",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Rouleau de coton salivaire",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Rouleau de papier toilette",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Rouleau de papiers serviettes",
+      "low_stock_threshold": 5.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Rouleau de sterilisation 150mm",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Rouleau de sterilisation 50mm",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Rouleau de sterilisation 75mm",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Sachets poubelle GM",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Sachets poubelle PM",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Savon liquide",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Seringue a usage unique 3 ml",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Seringue a usage unique 5 ml",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Serum physiologique",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Spray Desinfectant",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Surblouse Jettable",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Tenons fibrés Assortiment",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "TiBase ROOTT M PCOM",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "TiBase ROOTT R PCO1S",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "TiBase ROOTT R PCOR",
+      "low_stock_threshold": 3.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "TiBase ROOTT R PCORS",
+      "low_stock_threshold": 4.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Tips laser N°4",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Torque spring 16 22",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Transfert ROOTT M TOM",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Transfert ROOTT R TO",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Tubes molaires LL",
+      "low_stock_threshold": 1.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Tubes molaires LR",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Tubes molaires UL",
+      "low_stock_threshold": 2.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Tubes molaires UR",
+      "low_stock_threshold": 0.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Vis de cicatrisation ROOTT M GFM0",
+      "low_stock_threshold": 8.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    },
+    {
+      "name": "Vis de cicatrisation ROOTT R GFP3",
+      "low_stock_threshold": 4.0,
+      "quantity_on_hand": 0.0,
+      "category": "consumables"
+    }
+  ]
+}

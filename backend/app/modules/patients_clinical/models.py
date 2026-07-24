@@ -79,6 +79,10 @@ class Allergy(Base, TimestampMixin):
     severity: Mapped[str] = mapped_column(String(20), default="medium", index=True)
     reaction: Mapped[str | None] = mapped_column(String(500))
     notes: Mapped[str | None] = mapped_column(Text)
+    # Loose link to medical_reference.ReferenceAllergy — plain UUID, no FK
+    # constraint, so this module works standalone if that one is removed.
+    # Null when the name was typed free-text rather than picked from the list.
+    reference_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
 
 
 class Medication(Base, TimestampMixin):
@@ -99,6 +103,7 @@ class Medication(Base, TimestampMixin):
     frequency: Mapped[str | None] = mapped_column(String(100))
     start_date: Mapped[date | None] = mapped_column(Date)
     notes: Mapped[str | None] = mapped_column(Text)
+    reference_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
 
 
 class SystemicDisease(Base, TimestampMixin):
@@ -121,6 +126,7 @@ class SystemicDisease(Base, TimestampMixin):
     is_critical: Mapped[bool] = mapped_column(Boolean, default=False, index=True)
     medications: Mapped[str | None] = mapped_column(Text)
     notes: Mapped[str | None] = mapped_column(Text)
+    reference_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
 
 
 class SurgicalHistory(Base, TimestampMixin):

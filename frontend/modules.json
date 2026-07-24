@@ -25,6 +25,8 @@
     "/module_layers/sms_gateway/frontend",
     "/module_layers/tasks/frontend",
     "/module_layers/accounting_export/frontend",
+    "/module_layers/medical_reference/frontend",
+    "/module_layers/patient_admin/frontend",
     "/module_layers/periodontogram/frontend"
   ],
   "modules": [
@@ -127,6 +129,14 @@
     {
       "name": "accounting_export",
       "path": "/module_layers/accounting_export/frontend"
+    },
+    {
+      "name": "medical_reference",
+      "path": "/module_layers/medical_reference/frontend"
+    },
+    {
+      "name": "patient_admin",
+      "path": "/module_layers/patient_admin/frontend"
     },
     {
       "name": "periodontogram",

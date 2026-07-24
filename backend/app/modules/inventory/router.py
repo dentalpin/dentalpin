@@ -30,7 +30,7 @@ async def list_items(
     search: str | None = Query(default=None, max_length=100),
     low_stock_only: bool = Query(default=False),
     page: int = Query(default=1, ge=1),
-    page_size: int = Query(default=20, ge=1, le=100),
+    page_size: int = Query(default=20, ge=1, le=1000),
 ) -> PaginatedApiResponse[InventoryItemResponse]:
     items, total = await InventoryService.list_items(
         db, ctx.clinic_id, category, search, low_stock_only, page, page_size

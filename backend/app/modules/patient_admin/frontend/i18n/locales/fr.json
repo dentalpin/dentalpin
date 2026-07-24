@@ -1,0 +1,22 @@
+{
+  "patientAdmin": {
+    "title": "Famille",
+    "emptyHint": "Aucun lien familial enregistré.",
+    "relationships": {
+      "title": "Liens familiaux",
+      "searchPatient": "Rechercher un patient à lier…",
+      "addSuccess": "Lien ajouté",
+      "addError": "Impossible d'ajouter le lien",
+      "removeError": "Impossible de supprimer le lien",
+      "types": {
+        "parent": "Parent",
+        "child": "Enfant",
+        "spouse": "Conjoint(e)",
+        "sibling": "Frère/Sœur",
+        "guardian": "Tuteur/Tutrice",
+        "ward": "Pupille",
+        "other": "Autre"
+      }
+    }
+  }
+}
