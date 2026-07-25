@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "staffActivity": "Staff Activity"
+  },
+  "staffActivity": {
+    "title": "Staff Activity",
+    "filters": {
+      "staff": "Staff",
+      "actionType": "Action type",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "search": "Search",
+      "apply": "Filter"
+    }
+  }
+}

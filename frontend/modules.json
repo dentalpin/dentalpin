@@ -28,7 +28,8 @@
     "/module_layers/accounting_export/frontend",
     "/module_layers/medical_reference/frontend",
     "/module_layers/patient_admin/frontend",
-    "/module_layers/periodontogram/frontend"
+    "/module_layers/periodontogram/frontend",
+    "/module_layers/staff_activity/frontend"
   ],
   "modules": [
     {
@@ -146,6 +147,10 @@
     {
       "name": "periodontogram",
       "path": "/module_layers/periodontogram/frontend"
+    },
+    {
+      "name": "staff_activity",
+      "path": "/module_layers/staff_activity/frontend"
     }
   ],
   "version": 1

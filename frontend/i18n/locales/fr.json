@@ -40,8 +40,8 @@
       "financials": "Finances",
       "practiceManagement": "Gestion du Cabinet",
       "lab": "Labo",
-	  "medications": "Médicaments"
-	
+	  "medications": "Médicaments",
+	"staffActivity": "Journal d'activité"
     }
   },
   "auth": {

@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "staffActivity": "Registro de actividad"
+  },
+  "staffActivity": {
+    "title": "Registro de actividad",
+    "filters": {
+      "staff": "Personal",
+      "actionType": "Tipo de acción",
+      "dateFrom": "Desde",
+      "dateTo": "Hasta",
+      "search": "Buscar",
+      "apply": "Filtrar"
+    }
+  }
+}

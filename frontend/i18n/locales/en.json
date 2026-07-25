@@ -40,7 +40,8 @@
       "financials": "Financials",
       "practiceManagement": "Practice Management",
       "lab": "Lab",
-	  "medications": "Medications"
+	  "medications": "Medications",
+	"staffActivity": "Staff Activity" 
     }
   },
   "auth": {

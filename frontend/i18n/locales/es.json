@@ -40,7 +40,8 @@
       "financials": "Finanzas",
       "practiceManagement": "Gestión de Consulta",
       "lab": "Laboratorio",
-	  "medications": "Medicamentos"
+	  "medications": "Medicamentos",
+	"staffActivity": "Registro de actividad"  
     }
   },
   "auth": {
