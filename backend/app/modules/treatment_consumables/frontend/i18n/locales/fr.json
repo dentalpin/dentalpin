@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "treatmentConsumables": "Consommables par traitement"
+  },
+  "treatmentConsumables": {
+    "title": "Consommables par traitement",
+    "selectTreatment": "Traitement",
+    "searchTreatments": "Rechercher un traitement par nom ou code...",
+    "inventoryItem": "Article d'inventaire",
+    "searchInventory": "Rechercher dans l'inventaire par nom...",
+    "quantity": "Quantité",
+    "add": "Ajouter",
+    "remove": "Supprimer",
+    "change": "Changer",
+    "loading": "Chargement..."
+  }
+}

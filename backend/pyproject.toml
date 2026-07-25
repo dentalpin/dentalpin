@@ -85,6 +85,7 @@ sms_gateway = "app.modules.sms_gateway:SmsGatewayModule"
 recall_reminders = "app.modules.recall_reminders:RecallRemindersModule"
 medications = "app.modules.medications:MedicationsModule"
 staff_activity = "app.modules.staff_activity:StaffActivityModule"
+treatment_consumables = "app.modules.treatment_consumables:TreatmentConsumablesModule"
 
 
 

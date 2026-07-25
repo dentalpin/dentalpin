@@ -41,7 +41,8 @@
       "practiceManagement": "Practice Management",
       "lab": "Lab",
 	  "medications": "Medications",
-	"staffActivity": "Staff Activity" 
+	"staffActivity": "Staff Activity",
+	"treatmentConsumables": "Treatment Consumables"
     }
   },
   "auth": {

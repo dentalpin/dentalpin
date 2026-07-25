@@ -41,7 +41,9 @@
       "practiceManagement": "Gestión de Consulta",
       "lab": "Laboratorio",
 	  "medications": "Medicamentos",
-	"staffActivity": "Registro de actividad"  
+	"staffActivity": "Registro de actividad",
+	"treatmentConsumables": "Consumibles por tratamiento"
+	
     }
   },
   "auth": {

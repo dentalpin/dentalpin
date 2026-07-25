@@ -29,7 +29,8 @@
     "/module_layers/medical_reference/frontend",
     "/module_layers/patient_admin/frontend",
     "/module_layers/periodontogram/frontend",
-    "/module_layers/staff_activity/frontend"
+    "/module_layers/staff_activity/frontend",
+    "/module_layers/treatment_consumables/frontend"
   ],
   "modules": [
     {
@@ -151,6 +152,10 @@
     {
       "name": "staff_activity",
       "path": "/module_layers/staff_activity/frontend"
+    },
+    {
+      "name": "treatment_consumables",
+      "path": "/module_layers/treatment_consumables/frontend"
     }
   ],
   "version": 1

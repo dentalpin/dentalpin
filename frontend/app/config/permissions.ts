@@ -173,7 +173,11 @@ export const PERMISSIONS = {
     read: 'medications.read',
     write: 'medications.write'
   },
-   staffActivity: {
+  staffActivity: {
     read: 'staff_activity.view'
-  }
+  },
+  treatmentConsumables: {
+    read: 'treatment_consumables.read',
+    write: 'treatment_consumables.write'
+  },
 } as const

@@ -41,7 +41,8 @@
       "practiceManagement": "Gestion du Cabinet",
       "lab": "Labo",
 	  "medications": "Médicaments",
-	"staffActivity": "Journal d'activité"
+	"staffActivity": "Journal d'activité",
+	"treatmentConsumables": "Consommables par traitement"
     }
   },
   "auth": {

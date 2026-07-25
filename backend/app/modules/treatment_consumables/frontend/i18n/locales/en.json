@@ -1,0 +1,17 @@
+{
+  "nav": {
+    "treatmentConsumables": "Treatment Consumables"
+  },
+  "treatmentConsumables": {
+    "title": "Treatment Consumables",
+    "selectTreatment": "Treatment",
+    "searchTreatments": "Search treatments by name or code...",
+    "inventoryItem": "Inventory item",
+    "searchInventory": "Search inventory by name...",
+    "quantity": "Quantity",
+    "add": "Add",
+    "remove": "Remove",
+    "change": "Change",
+    "loading": "Loading..."
+  }
+}
