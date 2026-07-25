@@ -2961,5 +2961,32 @@
     "donut": {
       "ariaLabel": "Donut chart, {count} segments"
     }
+  },
+    "inventory": {
+    "edit": "Edit item",
+    "unitCost": "Unit cost",
+    "averageCost": "Average cost",
+    "movements": {
+      "title": "Movement history",
+      "add": "Record a movement",
+      "quantityDelta": "Quantity",
+      "quantityAfter": "Qty after",
+      "reference": "Reference",
+      "date": "Date",
+      "reason": "Reason",
+      "filterByReason": "Filter by reason",
+      "export": "Export CSV",
+      "total": "movements",
+      "reasons": {
+        "purchase": "Purchase",
+        "return": "Return",
+        "donation": "Donation",
+        "adjustment": "Adjustment",
+        "damaged": "Damaged",
+        "expired": "Expired",
+        "lost": "Lost",
+        "used": "Used"
+      }
+    }
   }
 }

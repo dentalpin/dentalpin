@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { useInventory, type InventoryCategory, type InventoryItem } from '../../composables/useInventory'
+import InventoryMovementsModal from '../../components/InventoryMovementsModal.vue'
 
 definePageMeta({ middleware: ['auth'] })
 
@@ -56,11 +57,20 @@ const form = ref({
   unit: '',
   quantity_on_hand: 0,
   low_stock_threshold: 0,
+  unit_cost: null as number | null,
   notes: ''
 })
 
 function openCreate() {
-  form.value = { name: '', category: 'consumables', unit: '', quantity_on_hand: 0, low_stock_threshold: 0, notes: '' }
+  form.value = {
+    name: '',
+    category: 'consumables',
+    unit: '',
+    quantity_on_hand: 0,
+    low_stock_threshold: 0,
+    unit_cost: null,
+    notes: ''
+  }
   showModal.value = true
 }
 
@@ -73,6 +83,7 @@ async function submit() {
       unit: form.value.unit || null,
       quantity_on_hand: form.value.quantity_on_hand,
       low_stock_threshold: form.value.low_stock_threshold,
+      unit_cost: form.value.unit_cost,
       notes: form.value.notes || null
     })
     showModal.value = false
@@ -81,6 +92,54 @@ async function submit() {
     saving.value = false
   }
 }
+
+// --- Edit item modal (new in Phase 12 — mainly for unit_cost) ---
+const showEditModal = ref(false)
+const editSaving = ref(false)
+const editingId = ref<string | null>(null)
+const editForm = ref({
+  name: '',
+  category: 'consumables' as InventoryCategory,
+  unit: '',
+  low_stock_threshold: 0,
+  unit_cost: null as number | null,
+  notes: ''
+})
+
+function openEdit(item: InventoryItem) {
+  editingId.value = item.id
+  editForm.value = {
+    name: item.name,
+    category: item.category,
+    unit: item.unit ?? '',
+    low_stock_threshold: Number(item.low_stock_threshold),
+    unit_cost: item.unit_cost !== null && item.unit_cost !== undefined ? Number(item.unit_cost) : null,
+    notes: item.notes ?? ''
+  }
+  showEditModal.value = true
+}
+
+async function submitEdit() {
+  if (!editingId.value) return
+  editSaving.value = true
+  try {
+    await inventoryApi.update(editingId.value, {
+      name: editForm.value.name,
+      category: editForm.value.category,
+      unit: editForm.value.unit || null,
+      low_stock_threshold: editForm.value.low_stock_threshold,
+      unit_cost: editForm.value.unit_cost,
+      notes: editForm.value.notes || null
+    })
+    showEditModal.value = false
+    await load()
+  } finally {
+    editSaving.value = false
+  }
+}
+
+// --- Movement history modal ---
+const historyItem = ref<InventoryItem | null>(null)
 
 async function remove(id: string) {
   await inventoryApi.remove(id)
@@ -91,6 +150,8 @@ const columns = [
   { accessorKey: 'name', header: t('inventory.name') },
   { accessorKey: 'category', header: t('inventory.category') },
   { accessorKey: 'quantity_on_hand', header: t('inventory.quantity') },
+  { accessorKey: 'unit_cost', header: t('inventory.unitCost') },
+  { accessorKey: 'average_cost', header: t('inventory.averageCost') },
   { accessorKey: 'actions', header: '' }
 ]
 </script>
@@ -150,17 +211,32 @@ const columns = [
           <span>{{ row.original.quantity_on_hand }}{{ row.original.unit ? ` ${row.original.unit}` : '' }}</span>
         </div>
       </template>
+      <template #unit_cost-cell="{ row }">
+        {{ row.original.unit_cost ?? '—' }}
+      </template>
+      <template #average_cost-cell="{ row }">
+        {{ row.original.average_cost ?? '—' }}
+      </template>
       <template #actions-cell="{ row }">
-        <div v-if="canWrite" class="flex gap-1">
-          <UButton icon="i-lucide-minus" variant="ghost" size="xs" @click="bump(row.original, -1)" />
-          <UButton icon="i-lucide-plus" variant="ghost" size="xs" @click="bump(row.original, 1)" />
+        <div class="flex gap-1">
           <UButton
-            icon="i-lucide-trash-2"
+            icon="i-lucide-history"
             variant="ghost"
-            color="error"
             size="xs"
-            @click="remove(row.original.id)"
+            @click="historyItem = row.original"
           />
+          <template v-if="canWrite">
+            <UButton icon="i-lucide-minus" variant="ghost" size="xs" @click="bump(row.original, -1)" />
+            <UButton icon="i-lucide-plus" variant="ghost" size="xs" @click="bump(row.original, 1)" />
+            <UButton icon="i-lucide-pencil" variant="ghost" size="xs" @click="openEdit(row.original)" />
+            <UButton
+              icon="i-lucide-trash-2"
+              variant="ghost"
+              color="error"
+              size="xs"
+              @click="remove(row.original.id)"
+            />
+          </template>
         </div>
       </template>
     </UTable>
@@ -176,6 +252,7 @@ const columns = [
           <UInput v-model="form.unit" :placeholder="t('inventory.unit')" />
           <UInput v-model.number="form.quantity_on_hand" type="number" step="1" :placeholder="t('inventory.quantity')" />
           <UInput v-model.number="form.low_stock_threshold" type="number" step="1" :placeholder="t('inventory.lowStockThreshold')" />
+          <UInput v-model.number="form.unit_cost" type="number" step="0.01" :placeholder="t('inventory.unitCost')" />
           <UInput v-model="form.notes" :placeholder="t('inventory.notes')" />
           <div class="flex justify-end gap-2">
             <UButton variant="ghost" @click="showModal = false">
@@ -188,5 +265,36 @@ const columns = [
         </div>
       </template>
     </UModal>
+
+    <UModal v-model:open="showEditModal">
+      <template #content>
+        <div class="p-4 space-y-4">
+          <h2 class="text-h3 text-default">
+            {{ t('inventory.edit') }}
+          </h2>
+          <UInput v-model="editForm.name" :placeholder="t('inventory.name')" />
+          <USelect v-model="editForm.category" :items="categoryOptions" />
+          <UInput v-model="editForm.unit" :placeholder="t('inventory.unit')" />
+          <UInput v-model.number="editForm.low_stock_threshold" type="number" step="1" :placeholder="t('inventory.lowStockThreshold')" />
+          <UInput v-model.number="editForm.unit_cost" type="number" step="0.01" :placeholder="t('inventory.unitCost')" />
+          <UInput v-model="editForm.notes" :placeholder="t('inventory.notes')" />
+          <div class="flex justify-end gap-2">
+            <UButton variant="ghost" @click="showEditModal = false">
+              {{ t('actions.cancel') }}
+            </UButton>
+            <UButton :loading="editSaving" @click="submitEdit">
+              {{ t('actions.save') }}
+            </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
+
+    <InventoryMovementsModal
+      v-if="historyItem"
+      :item="historyItem"
+      @close="historyItem = null"
+      @changed="load"
+    />
   </div>
 </template>

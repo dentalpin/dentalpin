@@ -2961,5 +2961,32 @@
     "donut": {
       "ariaLabel": "Diagramme circulaire, {count} segments"
     }
+  },
+    "inventory": {
+    "edit": "Modifier l'article",
+    "unitCost": "Coût unitaire",
+    "averageCost": "Coût moyen",
+    "movements": {
+      "title": "Historique des mouvements",
+      "add": "Enregistrer un mouvement",
+      "quantityDelta": "Quantité",
+      "quantityAfter": "Qté après",
+      "reference": "Référence",
+      "date": "Date",
+      "reason": "Motif",
+      "filterByReason": "Filtrer par motif",
+      "export": "Exporter CSV",
+      "total": "mouvements",
+      "reasons": {
+        "purchase": "Achat",
+        "return": "Retour",
+        "donation": "Don",
+        "adjustment": "Ajustement",
+        "damaged": "Endommagé",
+        "expired": "Périmé",
+        "lost": "Perdu",
+        "used": "Utilisé"
+      }
+    }
   }
 }

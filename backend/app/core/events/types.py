@@ -229,3 +229,6 @@ class EventType:
     COPILOT_TOOL_INVOKED = "copilot.tool.invoked"
     COPILOT_BUDGET_THRESHOLD_REACHED = "copilot.budget.threshold_reached"
     COPILOT_DIGEST_SENT = "copilot.digest.sent"
+    
+    # Inventory events (inventory module — Phase 12 cost & movement tracking)
+    INVENTORY_MOVEMENT_RECORDED = "inventory.movement_recorded"
