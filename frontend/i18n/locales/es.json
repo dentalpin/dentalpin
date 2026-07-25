@@ -39,7 +39,8 @@
       "clinical": "Clínica",
       "financials": "Finanzas",
       "practiceManagement": "Gestión de Consulta",
-      "lab": "Laboratorio"
+      "lab": "Laboratorio",
+	  "medications": "Medicamentos"
     }
   },
   "auth": {

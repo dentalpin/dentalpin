@@ -1,0 +1,59 @@
+{
+  "medications": {
+    "title": "Medications",
+    "search": "Search by name",
+    "filters": {
+      "form": "Form",
+      "active": "Status",
+      "all": "All"
+    },
+    "table": {
+      "name": "Name",
+      "dose": "Dose",
+      "form": "Form",
+      "regimen": "Regimen",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "form": {
+      "tablet": "Tablet",
+      "capsule": "Capsule",
+      "syrup": "Syrup",
+      "gel": "Gel",
+      "mouthwash": "Mouthwash",
+      "injection": "Injection",
+      "cream": "Cream",
+      "other": "Other"
+    },
+    "unit": {
+      "mg": "mg",
+      "g": "g",
+      "ml": "ml",
+      "UI": "UI",
+      "%": "%",
+      "other": "Other"
+    },
+    "actions": {
+      "add": "Add medication",
+      "edit": "Edit medication",
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "fields": {
+      "name": "Drug name",
+      "dose": "Dose",
+      "unit": "Unit",
+      "form": "Form",
+      "timesPerDay": "Times per day",
+      "instructions": "Instructions",
+      "isPrescribed": "Prescribed / active"
+    },
+    "empty": "No medications found",
+    "confirmDelete": "Delete this medication? This cannot be undone."
+  }
+}

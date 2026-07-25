@@ -168,5 +168,9 @@ export const PERMISSIONS = {
   smsGateway: {
     read: 'sms_gateway.settings.read',
     write: 'sms_gateway.settings.write'
+  },
+  medications: {
+    read: 'medications.read',
+    write: 'medications.write'
   }
 } as const

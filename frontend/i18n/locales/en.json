@@ -39,7 +39,8 @@
       "clinical": "Clinical",
       "financials": "Financials",
       "practiceManagement": "Practice Management",
-      "lab": "Lab"
+      "lab": "Lab",
+	  "medications": "Medications"
     }
   },
   "auth": {

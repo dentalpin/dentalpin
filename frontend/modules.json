@@ -13,6 +13,7 @@
     "/module_layers/inventory/frontend",
     "/module_layers/lab_orders/frontend",
     "/module_layers/media/frontend",
+    "/module_layers/medications/frontend",
     "/module_layers/patients_clinical/frontend",
     "/module_layers/treatment_plan/frontend",
     "/module_layers/clinical_notes/frontend",
@@ -81,6 +82,10 @@
     {
       "name": "media",
       "path": "/module_layers/media/frontend"
+    },
+    {
+      "name": "medications",
+      "path": "/module_layers/medications/frontend"
     },
     {
       "name": "patients_clinical",
