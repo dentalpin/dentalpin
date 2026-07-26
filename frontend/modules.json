@@ -26,11 +26,11 @@
     "/module_layers/sms_gateway/frontend",
     "/module_layers/tasks/frontend",
     "/module_layers/accounting_export/frontend",
+    "/module_layers/treatment_consumables/frontend",
     "/module_layers/medical_reference/frontend",
     "/module_layers/patient_admin/frontend",
     "/module_layers/periodontogram/frontend",
-    "/module_layers/staff_activity/frontend",
-    "/module_layers/treatment_consumables/frontend"
+    "/module_layers/staff_activity/frontend"
   ],
   "modules": [
     {
@@ -138,6 +138,10 @@
       "path": "/module_layers/accounting_export/frontend"
     },
     {
+      "name": "treatment_consumables",
+      "path": "/module_layers/treatment_consumables/frontend"
+    },
+    {
       "name": "medical_reference",
       "path": "/module_layers/medical_reference/frontend"
     },
@@ -152,10 +156,6 @@
     {
       "name": "staff_activity",
       "path": "/module_layers/staff_activity/frontend"
-    },
-    {
-      "name": "treatment_consumables",
-      "path": "/module_layers/treatment_consumables/frontend"
     }
   ],
   "version": 1

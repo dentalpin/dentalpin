@@ -147,5 +147,28 @@ export function useInventory() {
     return await api.get<ApiOk<InventoryUsageSummary>>(`/api/v1/inventory/${id}/usage`)
   }
 
-  return { list, create, update, adjust, remove, listMovements, createMovement, getUsage }
+  // Server returns text/csv. useApi's $fetch has no responseType option
+  // exposed, but ofetch auto-detects a non-JSON content-type and returns
+  // the raw response text for "text/*" types — so this comes back as a
+  // plain string, not parsed/mangled. The caller turns it into a Blob to
+  // trigger an actual file save (fetch responses don't auto-download).
+  async function exportCsv(
+    id: string,
+    filters: Omit<InventoryMovementFilters, 'page' | 'page_size'> = {}
+  ): Promise<string> {
+    const qs = toQueryString(filters)
+    return await api.get<string>(`/api/v1/inventory/${id}/movements/export${qs ? `?${qs}` : ''}`)
+  }
+
+  return {
+    list,
+    create,
+    update,
+    adjust,
+    remove,
+    listMovements,
+    createMovement,
+    getUsage,
+    exportCsv
+  }
 }

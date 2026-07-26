@@ -63,32 +63,27 @@ async function submit() {
   }
 }
 
-// Client-side CSV export from the currently loaded (filtered) rows.
-// The server also exposes GET /{item_id}/movements/export for full,
-// unpaginated history — wire that in instead if you need more than
-// what's loaded here.
-function exportCsv() {
-  const header = ['movement_date', 'reason', 'quantity_delta', 'quantity_after', 'unit_cost', 'reference', 'notes']
-  const lines = [header.join(',')]
-  for (const m of movements.value) {
-    const row = [
-      m.movement_date,
-      m.reason,
-      m.quantity_delta,
-      m.quantity_after,
-      m.unit_cost ?? '',
-      m.reference ?? '',
-      (m.notes ?? '').replace(/\n/g, ' ').replace(/,/g, ';')
-    ]
-    lines.push(row.join(','))
+// Full-history export via the server endpoint (up to 5000 rows),
+// respecting the current reason filter — not limited to the ≤200 rows
+// loaded in this modal. exportCsv() returns the raw CSV text; we still
+// have to build the Blob/anchor ourselves since a plain fetch response
+// never triggers a browser save dialog on its own.
+const exporting = ref(false)
+
+async function exportCsv() {
+  exporting.value = true
+  try {
+    const csvText = await inventoryApi.exportCsv(props.item.id, { reason: filterReason.value })
+    const blob = new Blob([csvText], { type: 'text/csv' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `inventory-movements-${props.item.name}.csv`
+    a.click()
+    URL.revokeObjectURL(url)
+  } finally {
+    exporting.value = false
   }
-  const blob = new Blob([lines.join('\n')], { type: 'text/csv' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = `inventory-movements-${props.item.name}.csv`
-  a.click()
-  URL.revokeObjectURL(url)
 }
 </script>
 
@@ -100,7 +95,7 @@ function exportCsv() {
           <h2 class="text-h3 text-default">
             {{ t('inventory.movements.title') }} — {{ item.name }}
           </h2>
-          <UButton icon="i-lucide-download" variant="ghost" size="xs" @click="exportCsv">
+          <UButton icon="i-lucide-download" variant="ghost" size="xs" :loading="exporting" @click="exportCsv">
             {{ t('inventory.movements.export') }}
           </UButton>
         </div>

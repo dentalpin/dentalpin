@@ -12,6 +12,11 @@
     "add": "Add",
     "remove": "Remove",
     "change": "Change",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "currentlyViewing": "Currently viewing:",
+    "cancel": "Cancel",
+    "addLink": "Add a link",
+    "allLinks": "All linked consumables",
+    "empty": "No consumables linked yet."
   }
 }

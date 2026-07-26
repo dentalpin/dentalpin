@@ -12,6 +12,11 @@
     "add": "Ajouter",
     "remove": "Supprimer",
     "change": "Changer",
-    "loading": "Chargement..."
+    "loading": "Chargement...",
+    "currentlyViewing": "Actuellement affiché :",
+    "cancel": "Annuler",
+    "addLink": "Ajouter un lien",
+    "allLinks": "Tous les consommables liés",
+    "empty": "Aucun consommable lié pour le moment."
   }
 }
