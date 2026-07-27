@@ -132,6 +132,7 @@ class SurgicalHistoryCreate(BaseModel):
     surgery_date: date | None = None
     complications: str | None = None
     notes: str | None = None
+    reference_id: UUID | None = None
 
 
 class SurgicalHistoryUpdate(BaseModel):
@@ -139,6 +140,7 @@ class SurgicalHistoryUpdate(BaseModel):
     surgery_date: date | None = None
     complications: str | None = None
     notes: str | None = None
+    reference_id: UUID | None = None
 
 
 class SurgicalHistoryResponse(SurgicalHistoryCreate):

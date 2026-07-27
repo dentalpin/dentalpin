@@ -35,6 +35,7 @@ class InventoryService:
             low_stock_threshold=payload.low_stock_threshold,
             unit_cost=payload.unit_cost,
             average_cost=payload.unit_cost,
+            reorder_max_quantity=payload.reorder_max_quantity,
             notes=payload.notes,
             created_by=created_by,
         )

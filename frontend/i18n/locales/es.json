@@ -40,11 +40,12 @@
       "financials": "Finanzas",
       "practiceManagement": "Gestión de Consulta",
       "lab": "Laboratorio",
-	  "medications": "Medicamentos",
-	"staffActivity": "Registro de actividad",
-	"treatmentConsumables": "Consumibles por tratamiento"
-	
-    }
+      "medications": "Medicamentos",
+      "staffActivity": "Registro de actividad",
+      "treatmentConsumables": "Consumibles por tratamiento"
+    },
+    "purchaseOrders": "Órdenes de Compra",
+    "reorderSuggestions": "Sugerencias de Reposición"
   },
   "auth": {
     "login": "Iniciar sesión",
@@ -2998,7 +2999,7 @@
       "ariaLabel": "Gráfico circular, {count} segmentos"
     }
   },
-    "inventory": {
+  "inventory": {
     "edit": "Editar artículo",
     "unitCost": "Coste unitario",
     "averageCost": "Coste medio",
@@ -3023,6 +3024,127 @@
         "lost": "Perdido",
         "used": "Usado"
       }
+    },
+    "suppliers": {
+      "title": "Proveedores",
+      "supplier": "Proveedor",
+      "sku": "SKU",
+      "price": "Precio",
+      "leadTime": "Plazo de entrega",
+      "preferred": "Preferido",
+      "add": "Vincular proveedor",
+      "pickSupplier": "Elegir proveedor",
+      "empty": "Aún no hay proveedores vinculados."
     }
+  },
+  "contacts": {
+    "title": "Contactos",
+    "add": "Nuevo contacto",
+    "edit": "Editar contacto",
+    "search": "Buscar contactos...",
+    "filterByType": "Filtrar por tipo",
+    "name": "Nombre",
+    "type": "Tipo",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "address": "Dirección",
+    "notes": "Notas",
+    "types": {
+      "lab": "Laboratorio",
+      "supplier": "Proveedor",
+      "delegate": "Delegado",
+      "other": "Otro"
+    },
+    "supplier": {
+      "sectionTitle": "Datos del proveedor",
+      "website": "Sitio web",
+      "paymentTerms": "Condiciones de pago",
+      "leadTimeDays": "Plazo de entrega (días)",
+      "preferred": "Proveedor preferido"
+    }
+  },
+  "purchaseOrders": {
+    "title": "Órdenes de Compra",
+    "create": "Nueva orden de compra",
+    "search": "Buscar por N.º de orden o proveedor",
+    "filterByStatus": "Filtrar por estado",
+    "pickSupplier": "Elegir proveedor",
+    "pickItem": "Elegir artículo",
+    "number": "N.º OC",
+    "supplier": "Proveedor",
+    "status": "Estado",
+    "orderDate": "Fecha de pedido",
+    "expectedDelivery": "Entrega prevista",
+    "shipping": "Envío",
+    "tax": "Impuestos",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "notes": "Notas",
+    "item": "Artículo",
+    "qty": "Cant.",
+    "unitPrice": "Precio unitario",
+    "lineTotal": "Total de línea",
+    "addItem": "Añadir artículo",
+    "send": "Enviar al proveedor",
+    "markSentNoEmail": "Marcar como enviada (sin correo)",
+    "confirm": "Confirmar",
+    "cancel": "Cancelar orden",
+    "cancelReason": "Motivo de la cancelación",
+    "confirmCancel": "Confirmar cancelación",
+    "cancelledNote": "Cancelada",
+    "viewPdf": "Ver PDF",
+    "statuses": {
+      "draft": "Borrador",
+      "sent": "Enviada",
+      "confirmed": "Confirmada",
+      "partially_received": "Recibida parcialmente",
+      "fully_received": "Recibida completa",
+      "cancelled": "Cancelada"
+    },
+    "receiving": {
+      "title": "Recibir Entrega",
+      "button": "Recibir entrega",
+      "remaining": "Pendiente",
+      "receivedNow": "Recibiendo ahora",
+      "qualityLabel": "Calidad",
+      "quality": {
+        "good": "Bueno",
+        "damaged": "Dañado",
+        "expired": "Caducado",
+        "wrongItem": "Artículo incorrecto"
+      },
+      "qualityHint": "Solo las cantidades \"Buenas\" se añaden al stock. Las dañadas/caducadas/incorrectas quedan registradas pero no se añaden al inventario.",
+      "nothingOwed": "No queda nada pendiente de recibir en esta orden.",
+      "confirm": "Registrar recepción",
+      "history": "Historial de entregas"
+    }
+  },
+  "reorder": {
+    "title": "Sugerencias de Reposición",
+    "explanation": "Basado en el consumo medio de los últimos 90 días y el plazo de entrega del proveedor de cada artículo. Revisa antes de generar órdenes — son puntos de partida, no garantías.",
+    "item": "Artículo",
+    "onHand": "En stock",
+    "avgDailyUsage": "Uso diario medio",
+    "leadTime": "Plazo de entrega",
+    "suggestedQty": "Cant. sugerida",
+    "supplier": "Proveedor",
+    "unitPrice": "Precio unitario",
+    "estimatedCost": "Coste estimado",
+    "lowConfidence": "confianza baja",
+    "noSupplierLinked": "Sin proveedor vinculado",
+    "generatePOs": "Generar orden(es) de compra",
+    "empty": "Actualmente no hay artículos con stock bajo."
+  },
+  "supplierRatings": {
+    "title": "Rendimiento del Proveedor",
+    "onTimeDelivery": "Entrega puntual",
+    "ordersCompleted": "órdenes completadas",
+    "qualityGoodRate": "Calidad (tasa de buenos)",
+    "linesReceived": "líneas recibidas",
+    "avgUnitPrice": "Precio unitario medio pagado",
+    "communication": "Comunicación",
+    "addRating": "Añadir valoración",
+    "notesPlaceholder": "Notas (opcional)",
+    "history": "Historial de valoraciones"
   }
 }

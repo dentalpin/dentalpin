@@ -1840,6 +1840,7 @@ export interface SurgicalHistoryEntry {
   surgery_date?: string
   complications?: string
   notes?: string
+  reference_id?: string | null
 }
 
 // Full Medical History

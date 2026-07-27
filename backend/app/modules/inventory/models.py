@@ -60,6 +60,11 @@ class InventoryItem(Base, TimestampMixin):
     # never touched by non-purchase movements, since those change
     # quantity but not the cost basis of what remains.
     average_cost: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)
+    # Target stock level for reorder automation (Phase 13e) — "reorder
+    # up to this quantity". Nullable: without it, the reorder-suggestion
+    # heuristic falls back to average-usage-based sizing instead of a
+    # hard target. Optional per item, not required.
+    reorder_max_quantity: Mapped[float | None] = mapped_column(Numeric(10, 2), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text)
     created_by: Mapped[UUID | None] = mapped_column(ForeignKey("users.id"))
 

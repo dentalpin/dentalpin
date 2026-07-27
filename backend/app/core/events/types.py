@@ -232,3 +232,9 @@ class EventType:
     
     # Inventory events (inventory module — Phase 12 cost & movement tracking)
     INVENTORY_MOVEMENT_RECORDED = "inventory.movement_recorded"
+    # Purchase order events (purchase_orders module — Phase 13c/13d)
+    PURCHASE_ORDER_CREATED = "purchase_order.created"
+    PURCHASE_ORDER_SENT = "purchase_order.sent"
+    PURCHASE_ORDER_CONFIRMED = "purchase_order.confirmed"
+    PURCHASE_ORDER_CANCELLED = "purchase_order.cancelled"
+    PURCHASE_ORDER_RECEIVED = "purchase_order.received"

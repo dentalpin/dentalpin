@@ -2,6 +2,7 @@
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { useInventory, type InventoryCategory, type InventoryItem } from '../../composables/useInventory'
 import InventoryMovementsModal from '../../components/InventoryMovementsModal.vue'
+import SupplierItemsModal from '../../../../supplier_items/frontend/components/SupplierItemsModal.vue'
 
 definePageMeta({ middleware: ['auth'] })
 
@@ -140,6 +141,8 @@ async function submitEdit() {
 
 // --- Movement history modal ---
 const historyItem = ref<InventoryItem | null>(null)
+// Phase 13b — per-item supplier pricing links (supplier_items module).
+const suppliersItem = ref<InventoryItem | null>(null)
 
 async function remove(id: string) {
   await inventoryApi.remove(id)
@@ -225,6 +228,12 @@ const columns = [
             size="xs"
             @click="historyItem = row.original"
           />
+          <UButton
+            icon="i-lucide-truck"
+            variant="ghost"
+            size="xs"
+            @click="suppliersItem = row.original"
+          />
           <template v-if="canWrite">
             <UButton icon="i-lucide-minus" variant="ghost" size="xs" @click="bump(row.original, -1)" />
             <UButton icon="i-lucide-plus" variant="ghost" size="xs" @click="bump(row.original, 1)" />
@@ -295,6 +304,13 @@ const columns = [
       :item="historyItem"
       @close="historyItem = null"
       @changed="load"
+    />
+
+    <SupplierItemsModal
+      v-if="suppliersItem"
+      :item-id="suppliersItem.id"
+      :item-name="suppliersItem.name"
+      @close="suppliersItem = null"
     />
   </div>
 </template>

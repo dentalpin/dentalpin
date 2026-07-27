@@ -180,4 +180,20 @@ export const PERMISSIONS = {
     read: 'treatment_consumables.read',
     write: 'treatment_consumables.write'
   },
+  supplierItems: {
+    read: 'supplier_items.read',
+    write: 'supplier_items.write'
+  }, 
+  purchaseOrders: {
+    read: 'purchase_orders.read', 
+	write: 'purchase_orders.write' 
+  }, 
+  inventoryReorder: {
+    read: 'inventory_reorder.read', 
+	write: 'inventory_reorder.write'
+  },  
+  supplierRatings: {
+    read: 'supplier_ratings.read', 
+	write: 'supplier_ratings.write' 
+  }
 } as const

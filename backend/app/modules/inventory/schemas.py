@@ -23,6 +23,7 @@ class InventoryItemCreate(BaseModel):
     quantity_on_hand: Decimal = Field(default=Decimal("0"), ge=0, max_digits=10, decimal_places=2)
     low_stock_threshold: Decimal = Field(default=Decimal("0"), ge=0, max_digits=10, decimal_places=2)
     unit_cost: Decimal | None = Field(default=None, ge=0, max_digits=10, decimal_places=2)
+    reorder_max_quantity: Decimal | None = Field(default=None, ge=0, max_digits=10, decimal_places=2)
     notes: str | None = Field(default=None, max_length=2000)
 
 
@@ -32,6 +33,7 @@ class InventoryItemUpdate(BaseModel):
     unit: str | None = Field(default=None, max_length=30)
     low_stock_threshold: Decimal | None = Field(default=None, ge=0, max_digits=10, decimal_places=2)
     unit_cost: Decimal | None = Field(default=None, ge=0, max_digits=10, decimal_places=2)
+    reorder_max_quantity: Decimal | None = Field(default=None, ge=0, max_digits=10, decimal_places=2)
     notes: str | None = Field(default=None, max_length=2000)
 
 
@@ -59,6 +61,7 @@ class InventoryItemResponse(BaseModel):
     low_stock_threshold: Decimal
     unit_cost: Decimal | None
     average_cost: Decimal | None
+    reorder_max_quantity: Decimal | None
     is_low_stock: bool
     notes: str | None
     created_by: UUID | None

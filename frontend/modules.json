@@ -24,13 +24,18 @@
     "/module_layers/recall_reminders/frontend",
     "/module_layers/reports/frontend",
     "/module_layers/sms_gateway/frontend",
+    "/module_layers/staff_activity/frontend",
     "/module_layers/tasks/frontend",
-    "/module_layers/accounting_export/frontend",
     "/module_layers/treatment_consumables/frontend",
+    "/module_layers/accounting_export/frontend",
+    "/module_layers/suppliers/frontend",
+    "/module_layers/supplier_items/frontend",
+    "/module_layers/purchase_orders/frontend",
+    "/module_layers/inventory_reorder/frontend",
     "/module_layers/medical_reference/frontend",
     "/module_layers/patient_admin/frontend",
     "/module_layers/periodontogram/frontend",
-    "/module_layers/staff_activity/frontend"
+    "/module_layers/supplier_ratings/frontend"
   ],
   "modules": [
     {
@@ -130,16 +135,36 @@
       "path": "/module_layers/sms_gateway/frontend"
     },
     {
+      "name": "staff_activity",
+      "path": "/module_layers/staff_activity/frontend"
+    },
+    {
       "name": "tasks",
       "path": "/module_layers/tasks/frontend"
+    },
+    {
+      "name": "treatment_consumables",
+      "path": "/module_layers/treatment_consumables/frontend"
     },
     {
       "name": "accounting_export",
       "path": "/module_layers/accounting_export/frontend"
     },
     {
-      "name": "treatment_consumables",
-      "path": "/module_layers/treatment_consumables/frontend"
+      "name": "suppliers",
+      "path": "/module_layers/suppliers/frontend"
+    },
+    {
+      "name": "supplier_items",
+      "path": "/module_layers/supplier_items/frontend"
+    },
+    {
+      "name": "purchase_orders",
+      "path": "/module_layers/purchase_orders/frontend"
+    },
+    {
+      "name": "inventory_reorder",
+      "path": "/module_layers/inventory_reorder/frontend"
     },
     {
       "name": "medical_reference",
@@ -154,8 +179,8 @@
       "path": "/module_layers/periodontogram/frontend"
     },
     {
-      "name": "staff_activity",
-      "path": "/module_layers/staff_activity/frontend"
+      "name": "supplier_ratings",
+      "path": "/module_layers/supplier_ratings/frontend"
     }
   ],
   "version": 1

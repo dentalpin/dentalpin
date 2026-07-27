@@ -146,6 +146,7 @@ class SurgicalHistory(Base, TimestampMixin):
     surgery_date: Mapped[date | None] = mapped_column(Date)
     complications: Mapped[str | None] = mapped_column(Text)
     notes: Mapped[str | None] = mapped_column(Text)
+    reference_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
 
 
 class EmergencyContact(Base, TimestampMixin):
