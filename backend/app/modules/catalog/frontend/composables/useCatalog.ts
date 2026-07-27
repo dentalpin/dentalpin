@@ -16,6 +16,24 @@ import type {
   TreatmentCatalogItemUpdate
 } from '~~/app/types'
 
+/**
+ * Extract the FastAPI error `detail` from a fetch error, so toasts can show
+ * the exact server message instead of a generic one. Returns null for
+ * network errors or unexpected bodies (caller falls back to generic text).
+ */
+function apiErrorDetail(e: unknown): string | null {
+  const detail = (e as { data?: { detail?: unknown } }).data?.detail
+  if (typeof detail === 'string') return detail
+  if (Array.isArray(detail)) {
+    // 422 validation errors: [{loc: ["body", "field"], msg: "..."}]
+    const parts = (detail as Array<{ loc?: unknown[], msg?: string }>)
+      .map(d => [Array.isArray(d.loc) ? d.loc.slice(1).join('.') : '', d.msg].filter(Boolean).join(': '))
+      .filter(Boolean)
+    return parts.length ? parts.join('; ') : null
+  }
+  return null
+}
+
 export function useCatalog() {
   const api = useApi()
   const { t, locale } = useI18n()
@@ -94,7 +112,7 @@ export function useCatalog() {
       } else {
         toast.add({
           title: t('common.error'),
-          description: t('catalog.categoryCreateFailed'),
+          description: apiErrorDetail(e) || t('catalog.categoryCreateFailed'),
           color: 'error'
         })
       }
@@ -133,7 +151,7 @@ export function useCatalog() {
       } else {
         toast.add({
           title: t('common.error'),
-          description: t('catalog.categoryUpdateFailed'),
+          description: apiErrorDetail(e) || t('catalog.categoryUpdateFailed'),
           color: 'error'
         })
       }
@@ -166,7 +184,7 @@ export function useCatalog() {
       } else {
         toast.add({
           title: t('common.error'),
-          description: t('catalog.categoryDeleteFailed'),
+          description: apiErrorDetail(e) || t('catalog.categoryDeleteFailed'),
           color: 'error'
         })
       }
@@ -267,7 +285,7 @@ export function useCatalog() {
       } else {
         toast.add({
           title: t('common.error'),
-          description: t('catalog.itemCreateFailed'),
+          description: apiErrorDetail(e) || t('catalog.itemCreateFailed'),
           color: 'error'
         })
       }
@@ -306,7 +324,7 @@ export function useCatalog() {
       } else {
         toast.add({
           title: t('common.error'),
-          description: t('catalog.itemUpdateFailed'),
+          description: apiErrorDetail(e) || t('catalog.itemUpdateFailed'),
           color: 'error'
         })
       }
@@ -339,7 +357,7 @@ export function useCatalog() {
       } else {
         toast.add({
           title: t('common.error'),
-          description: t('catalog.itemDeleteFailed'),
+          description: apiErrorDetail(e) || t('catalog.itemDeleteFailed'),
           color: 'error'
         })
       }

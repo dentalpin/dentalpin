@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(frontend): error toasts in `useCatalog` now show the exact API
+  error `detail` (string or 422 validation list) instead of always
+  falling back to the generic "Error al crear/actualizar/eliminar"
+  message. Generic text remains the fallback for network errors.
+
 - i18n: correct French dental terminology in seed data (Contention,
   Bracket, Scellement de sillons, Fluoration, Diagnostic, ...).
 
