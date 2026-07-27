@@ -80,23 +80,9 @@ const currencyOptions = computed(() => {
   })).sort((a, b) => collator.compare(a.label, b.label))
 })
 
-const timezoneOptions = [
-  { label: 'Europe/Madrid', value: 'Europe/Madrid' },
-  { label: 'Europe/London', value: 'Europe/London' },
-  { label: 'Europe/Paris', value: 'Europe/Paris' },
-  { label: 'Europe/Berlin', value: 'Europe/Berlin' },
-  { label: 'Europe/Lisbon', value: 'Europe/Lisbon' },
-  { label: 'Europe/Rome', value: 'Europe/Rome' },
-  { label: 'Atlantic/Canary', value: 'Atlantic/Canary' },
-  { label: 'America/New_York', value: 'America/New_York' },
-  { label: 'America/Chicago', value: 'America/Chicago' },
-  { label: 'America/Denver', value: 'America/Denver' },
-  { label: 'America/Los_Angeles', value: 'America/Los_Angeles' },
-  { label: 'America/Mexico_City', value: 'America/Mexico_City' },
-  { label: 'America/Buenos_Aires', value: 'America/Buenos_Aires' },
-  { label: 'America/Sao_Paulo', value: 'America/Sao_Paulo' },
-  { label: 'UTC', value: 'UTC' }
-]
+// Full IANA list from the runtime — the previous curated list had no
+// Asia/Africa/Oceania zones (reported by a user in GMT+7).
+const timezoneOptions = Intl.supportedValuesOf('timeZone').map(tz => ({ label: tz, value: tz }))
 
 const editing = ref(false)
 const isSaving = ref(false)
@@ -314,11 +300,13 @@ function formatAddress(address?: Record<string, string>): string {
           :label="t('settings.timezone')"
           :help="t('settings.timezoneHelp')"
         >
-          <USelect
+          <USelectMenu
             v-model="form.timezone"
             :items="timezoneOptions"
             value-key="value"
             label-key="label"
+            searchable
+            class="w-full"
           />
         </UFormField>
         <UFormField

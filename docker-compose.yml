@@ -54,11 +54,15 @@ services:
       context: .
       dockerfile: frontend/Dockerfile
       args:
-        API_BASE_URL: http://localhost:8000
+        # The browser resolves this URL, so it must be reachable from the
+        # device running it. Set API_BASE_URL=http://<host-lan-ip>:8000 in
+        # .env (plus the same origin in ALLOWED_ORIGINS) to reach the app
+        # from a phone or another machine.
+        API_BASE_URL: ${API_BASE_URL:-http://localhost:8000}
     environment:
       NITRO_HOST: 0.0.0.0
       NITRO_PORT: 3000
-      NUXT_PUBLIC_API_BASE_URL: http://localhost:8000
+      NUXT_PUBLIC_API_BASE_URL: ${API_BASE_URL:-http://localhost:8000}
       NODE_OPTIONS: --max-old-space-size=4096
     ports:
       - "8080:3000"

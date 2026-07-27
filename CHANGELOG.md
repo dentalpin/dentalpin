@@ -40,6 +40,19 @@ frontend as a Nuxt layer under its own Python package.
   tables exist. Round-trip `upgrade head → downgrade base → upgrade
   head` is clean and `test_alembic_roundtrip` no longer xfails.
 
+### Fixed
+
+- `docker-compose.yml` hardcoded `http://localhost:8000` as the frontend's
+  API base (build arg + runtime env), so the documented `API_BASE_URL` in
+  `.env` had no effect and the app was unreachable from any device other
+  than the Docker host — the browser resolved `localhost` to itself.
+  Both now read `${API_BASE_URL:-http://localhost:8000}`.
+
+- Clinic timezone selector only offered 15 curated European/American
+  zones. It now lists the runtime's full IANA set (`Intl.supportedValuesOf`)
+  in a searchable `USelectMenu`; the backend already validated against
+  `zoneinfo`, so any IANA id was accepted all along.
+
 ## [2.0.0] - 2026-04-21
 
 First release on the post-Fase-B module architecture. Covers the
