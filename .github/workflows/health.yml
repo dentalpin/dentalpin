@@ -26,6 +26,10 @@ permissions:
 
 env:
   ISSUE_TITLE: "Published images are not pullable"
+  # The alert jobs deliberately skip checkout — they have nothing to build.
+  # Without a git remote `gh` cannot infer the repository and dies with
+  # "not a git repository", so name it explicitly.
+  GH_REPO: ${{ github.repository }}
 
 jobs:
   check:
