@@ -11,6 +11,15 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+## [2.1.0] - 2026-07-28
+
+First release cut through the automated pipeline. The eleven modules that
+landed since 2.0.0 — payments, copilot, verifactu, recalls, schedules,
+notifications, periodontogram, clinical_notes, accounting_export,
+migration_import, whatsapp_kapso — are listed per-PR in the generated
+release notes and documented in their own module CHANGELOGs; the
+narrative version of that work belongs to the next major.
+
 ### Added
 
 - **Prebuilt images and a one-command install.** Tagging a release now
