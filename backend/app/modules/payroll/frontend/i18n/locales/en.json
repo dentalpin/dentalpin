@@ -1,0 +1,52 @@
+{
+  "payroll": {
+    "title": "Payroll",
+    "tabs": { "employees": "Employees", "periods": "Payroll Runs", "reports": "Reports" },
+    "staff": {
+      "add": "Add employee",
+      "edit": "Edit payroll profile",
+      "user": "User",
+      "baseSalary": "Base salary",
+      "hourlyRate": "Hourly rate",
+      "taxRegime": "Tax regime",
+      "bankTax": "Bank/Tax",
+      "bank": "Bank on file",
+      "tax": "Tax ID on file",
+      "status": "Status",
+      "active": "Active",
+      "inactive": "Inactive",
+      "userIdPlaceholder": "User ID (UUID)",
+      "bankAccountPlaceholder": "Bank account (leave blank to keep unchanged)",
+      "taxIdPlaceholder": "Tax ID (leave blank to keep unchanged)"
+    },
+    "periods": {
+      "add": "New payroll period",
+      "period": "Period",
+      "status": "Status",
+      "statusValues": { "draft": "Draft", "processed": "Processed", "paid": "Paid" }
+    },
+    "entries": {
+      "title": "Entries",
+      "staff": "Staff",
+      "gross": "Gross",
+      "deductions": "Deductions",
+      "net": "Net",
+      "paid": "Paid",
+      "paidYes": "Paid",
+      "paidNo": "Unpaid",
+      "edit": "Edit entry"
+    },
+    "reports": {
+      "monthly": "Monthly summary",
+      "annual": "Annual summary",
+      "month": "Month",
+      "year": "Year",
+      "run": "Run",
+      "gross": "Gross",
+      "deductions": "Deductions",
+      "net": "Net",
+      "employees": "Employees",
+      "monthsProcessed": "Months processed"
+    }
+  }
+}

@@ -45,7 +45,9 @@
       "treatmentConsumables": "Treatment Consumables"
     },
     "purchaseOrders": "Purchase Orders",
-    "reorderSuggestions": "Reorder Suggestions"
+    "reorderSuggestions": "Reorder Suggestions",
+	"documents": "Documents",
+	"payroll": "Payroll"
   },
   "auth": {
     "login": "Log in",

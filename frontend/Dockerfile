@@ -15,7 +15,7 @@ COPY backend/app/modules /module_layers
 # Copy the frontend source code
 COPY frontend/ .
 
-ENV NODE_OPTIONS=--max-old-space-size=8192
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
 RUN npm run build
 # Production stage

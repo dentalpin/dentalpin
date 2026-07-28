@@ -45,7 +45,10 @@
       "treatmentConsumables": "Consumibles por tratamiento"
     },
     "purchaseOrders": "Órdenes de Compra",
-    "reorderSuggestions": "Sugerencias de Reposición"
+    "reorderSuggestions": "Sugerencias de Reposición",
+	"documents": "Documentos",
+	"payroll": "Nomina"
+	
   },
   "auth": {
     "login": "Iniciar sesión",

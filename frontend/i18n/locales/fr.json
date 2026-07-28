@@ -45,7 +45,9 @@
       "treatmentConsumables": "Consommables par traitement"
     },
     "purchaseOrders": "Bons de Commande",
-    "reorderSuggestions": "Suggestions de Réapprovisionnement"
+    "reorderSuggestions": "Suggestions de Réapprovisionnement",
+	"documents": "Documents",
+	"payroll": "Paie"
   },
   "auth": {
     "login": "Connexion",

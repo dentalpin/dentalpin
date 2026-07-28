@@ -1,0 +1,118 @@
+{
+  "documents": {
+    "title": "Documents",
+    "filter": {
+      "all": "All types"
+    },
+    "types": {
+      "prescription": "Prescription",
+      "certificate": "Certificate",
+      "referral": "Referral letter",
+      "radiology_request": "Radiology request"
+    },
+    "new": {
+      "prescription": "New prescription",
+      "certificate": "New certificate",
+      "referral": "New referral letter",
+      "radiology_request": "New radiology request"
+    },
+    "table": {
+      "type": "Type",
+      "title": "Title",
+      "created_at": "Created",
+      "download": "Download PDF",
+      "loading": "Loading documents…",
+      "empty": "No documents yet."
+    },
+    "form": {
+      "patient": "Patient",
+      "drug_name": "Medication",
+      "dosage": "Dosage",
+      "instructions": "Instructions",
+      "quantity": "Quantity",
+      "add_item": "Add medication",
+      "remove": "Remove",
+      "notes": "Notes",
+      "reason": "Reason",
+      "specialist_name": "Specialist name",
+      "specialty": "Specialty",
+      "clinical_history": "Relevant clinical history",
+      "routine": "Routine",
+      "urgent": "Urgent",
+      "exam_type": "Exam requested",
+      "tooth_reference": "Tooth reference",
+      "clinical_indication": "Clinical indication",
+      "generate": "Generate PDF",
+      "saving": "Generating…",
+      "errors": {
+        "patient_required": "Please select a patient.",
+        "generic": "Something went wrong generating the document."
+      },
+      "back": "Back",
+      "other": "Other (specify)",
+      "manualEntry": "Manual entry (type below)",
+      "selectFromCatalog": "Select from medication catalog",
+      "perDay": "day",
+      "medForm": {
+        "tablet": "tablet",
+        "capsule": "capsule",
+        "syrup": "syrup",
+        "gel": "gel",
+        "mouthwash": "mouthwash",
+        "injection": "injection",
+        "cream": "cream",
+        "other": "other"
+      }
+    },
+    "certificate": {
+      "work_absence": "Work absence",
+      "school_absence": "School absence",
+      "fitness_for_work": "Fitness for work"
+    },
+    "letterhead": {
+      "title": "Letterhead",
+      "practice_name": "Practice name",
+      "legal_name": "Legal name",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "logo_url": "Logo URL",
+      "registration_number": "Professional registration number",
+      "footer_text": "Footer text",
+      "save": "Save",
+      "saving": "Saving…",
+      "saved": "Saved."
+    },
+    "nav": "Documents",
+    "specialties": {
+      "orthodontics": "Orthodontics",
+      "endodontics": "Endodontics",
+      "periodontics": "Periodontics",
+      "oral_maxillofacial_surgery": "Oral & Maxillofacial Surgery",
+      "pediatric_dentistry": "Pediatric Dentistry",
+      "prosthodontics": "Prosthodontics",
+      "oral_pathology": "Oral Pathology",
+      "oral_medicine": "Oral Medicine",
+      "implantology": "Implantology",
+      "cardiology": "Cardiology",
+      "endocrinology_diabetes": "Endocrinology / Diabetes",
+      "rheumatology": "Rheumatology",
+      "ent": "ENT (Otolaryngology)",
+      "internal_medicine": "Internal Medicine",
+      "hematology": "Hematology",
+      "allergy_immunology": "Allergy & Immunology",
+      "psychiatry": "Psychiatry",
+      "anesthesiology": "Anesthesiology",
+      "pediatrics": "Pediatrics"
+    },
+    "examTypes": {
+      "panoramic": "Panoramic (Orthopantomogram)",
+      "periapical": "Periapical",
+      "bitewing": "Bitewing",
+      "occlusal": "Occlusal",
+      "cephalometric": "Cephalometric",
+      "cbct": "CBCT (Cone Beam CT)",
+      "tmj_view": "TMJ View"
+    }
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "payroll": {
+    "title": "Nómina",
+    "tabs": { "employees": "Empleados", "periods": "Períodos de nómina", "reports": "Informes" },
+    "staff": {
+      "add": "Añadir empleado",
+      "edit": "Editar perfil de nómina",
+      "user": "Usuario",
+      "baseSalary": "Salario base",
+      "hourlyRate": "Tarifa por hora",
+      "taxRegime": "Régimen fiscal",
+      "bankTax": "Banco/Fiscal",
+      "bank": "Cuenta bancaria registrada",
+      "tax": "ID fiscal registrado",
+      "status": "Estado",
+      "active": "Activo",
+      "inactive": "Inactivo",
+      "userIdPlaceholder": "ID de usuario (UUID)",
+      "bankAccountPlaceholder": "Cuenta bancaria (dejar en blanco para no cambiar)",
+      "taxIdPlaceholder": "ID fiscal (dejar en blanco para no cambiar)"
+    },
+    "periods": {
+      "add": "Nuevo período de nómina",
+      "period": "Período",
+      "status": "Estado",
+      "statusValues": { "draft": "Borrador", "processed": "Procesado", "paid": "Pagado" }
+    },
+    "entries": {
+      "title": "Entradas",
+      "staff": "Empleado",
+      "gross": "Bruto",
+      "deductions": "Deducciones",
+      "net": "Neto",
+      "paid": "Pagado",
+      "paidYes": "Pagado",
+      "paidNo": "Pendiente",
+      "edit": "Editar entrada"
+    },
+    "reports": {
+      "monthly": "Resumen mensual",
+      "annual": "Resumen anual",
+      "month": "Mes",
+      "year": "Año",
+      "run": "Calcular",
+      "gross": "Bruto",
+      "deductions": "Deducciones",
+      "net": "Neto",
+      "employees": "Empleados",
+      "monthsProcessed": "Meses procesados"
+    }
+  }
+}

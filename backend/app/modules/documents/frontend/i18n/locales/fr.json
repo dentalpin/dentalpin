@@ -1,0 +1,118 @@
+{
+  "documents": {
+    "title": "Documents",
+    "filter": {
+      "all": "Tous les types"
+    },
+    "types": {
+      "prescription": "Ordonnance",
+      "certificate": "Certificat",
+      "referral": "Lettre de recommandation",
+      "radiology_request": "Demande de radiologie"
+    },
+    "new": {
+      "prescription": "Nouvelle ordonnance",
+      "certificate": "Nouveau certificat",
+      "referral": "Nouvelle lettre de recommandation",
+      "radiology_request": "Nouvelle demande de radiologie"
+    },
+    "table": {
+      "type": "Type",
+      "title": "Titre",
+      "created_at": "Créé",
+      "download": "Télécharger le PDF",
+      "loading": "Chargement des documents…",
+      "empty": "Aucun document pour le moment."
+    },
+    "form": {
+      "patient": "Patient",
+      "drug_name": "Médicament",
+      "dosage": "Posologie",
+      "instructions": "Instructions",
+      "quantity": "Quantité",
+      "add_item": "Ajouter un médicament",
+      "remove": "Retirer",
+      "notes": "Notes",
+      "reason": "Motif",
+      "specialist_name": "Nom du spécialiste",
+      "specialty": "Spécialité",
+      "clinical_history": "Antécédents cliniques pertinents",
+      "routine": "Routine",
+      "urgent": "Urgent",
+      "exam_type": "Examen demandé",
+      "tooth_reference": "Référence dentaire",
+      "clinical_indication": "Indication clinique",
+      "generate": "Générer le PDF",
+      "saving": "Génération…",
+      "errors": {
+        "patient_required": "Veuillez sélectionner un patient.",
+        "generic": "Une erreur est survenue lors de la génération du document."
+      },
+      "back": "Retour",
+      "other": "Autre (préciser)",
+      "manualEntry": "Saisie manuelle (écrire ci-dessous)",
+      "selectFromCatalog": "Choisir dans le catalogue de médicaments",
+      "perDay": "jour",
+      "medForm": {
+        "tablet": "comprimé",
+        "capsule": "capsule",
+        "syrup": "sirop",
+        "gel": "gel",
+        "mouthwash": "bain de bouche",
+        "injection": "injection",
+        "cream": "crème",
+        "other": "autre"
+      }
+    },
+    "certificate": {
+      "work_absence": "Absence au travail",
+      "school_absence": "Absence scolaire",
+      "fitness_for_work": "Aptitude au travail"
+    },
+    "letterhead": {
+      "title": "En-tête",
+      "practice_name": "Nom du cabinet",
+      "legal_name": "Raison sociale",
+      "address": "Adresse",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "logo_url": "URL du logo",
+      "registration_number": "Numéro d'enregistrement professionnel",
+      "footer_text": "Texte de pied de page",
+      "save": "Enregistrer",
+      "saving": "Enregistrement…",
+      "saved": "Enregistré."
+    },
+    "nav": "Documents",
+    "specialties": {
+      "orthodontics": "Orthodontie",
+      "endodontics": "Endodontie",
+      "periodontics": "Parodontologie",
+      "oral_maxillofacial_surgery": "Chirurgie orale et maxillo-faciale",
+      "pediatric_dentistry": "Dentisterie pédiatrique",
+      "prosthodontics": "Prothèse dentaire",
+      "oral_pathology": "Pathologie orale",
+      "oral_medicine": "Médecine orale",
+      "implantology": "Implantologie",
+      "cardiology": "Cardiologie",
+      "endocrinology_diabetes": "Endocrinologie / Diabète",
+      "rheumatology": "Rhumatologie",
+      "ent": "ORL (Oto-rhino-laryngologie)",
+      "internal_medicine": "Médecine interne",
+      "hematology": "Hématologie",
+      "allergy_immunology": "Allergologie et Immunologie",
+      "psychiatry": "Psychiatrie",
+      "anesthesiology": "Anesthésiologie",
+      "pediatrics": "Pédiatrie"
+    },
+    "examTypes": {
+      "panoramic": "Panoramique (Orthopantomogramme)",
+      "periapical": "Rétro-alvéolaire",
+      "bitewing": "Rétro-coronaire",
+      "occlusal": "Occlusale",
+      "cephalometric": "Céphalométrique",
+      "cbct": "CBCT (Tomographie à faisceau conique)",
+      "tmj_view": "Cliché de l'ATM"
+    }
+  }
+}

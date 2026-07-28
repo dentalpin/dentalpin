@@ -66,8 +66,8 @@ export const PERMISSIONS = {
     schedulingRead: 'reports.scheduling.read'
   },
   documents: {
-    read: 'media.documents.read',
-    write: 'media.documents.write'
+    read: 'documents.read',
+    write: 'documents.write'
   },
   attachments: {
     read: 'media.attachments.read',
@@ -195,5 +195,9 @@ export const PERMISSIONS = {
   supplierRatings: {
     read: 'supplier_ratings.read', 
 	write: 'supplier_ratings.write' 
+  },
+  payroll: {
+    read: 'payroll.read',
+    write: 'payroll.write'
   }
 } as const

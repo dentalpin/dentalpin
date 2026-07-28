@@ -238,3 +238,10 @@ class EventType:
     PURCHASE_ORDER_CONFIRMED = "purchase_order.confirmed"
     PURCHASE_ORDER_CANCELLED = "purchase_order.cancelled"
     PURCHASE_ORDER_RECEIVED = "purchase_order.received"
+    
+    #Generate Documents (phase 14)
+    DOCUMENT_GENERATED = "document.generated"
+
+    # Payroll events (payroll module -- Phase 15)
+    PAYROLL_PERIOD_PROCESSED = "payroll.period_processed"
+    PAYROLL_PAYMENT_MADE = "payroll.payment_made"

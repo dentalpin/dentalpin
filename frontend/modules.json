@@ -9,6 +9,7 @@
     "/module_layers/billing/frontend",
     "/module_layers/contacts/frontend",
     "/module_layers/copilot/frontend",
+    "/module_layers/documents/frontend",
     "/module_layers/expenses/frontend",
     "/module_layers/inventory/frontend",
     "/module_layers/lab_orders/frontend",
@@ -21,6 +22,7 @@
     "/module_layers/recalls/frontend",
     "/module_layers/notifications/frontend",
     "/module_layers/patient_timeline/frontend",
+    "/module_layers/payroll/frontend",
     "/module_layers/recall_reminders/frontend",
     "/module_layers/reports/frontend",
     "/module_layers/sms_gateway/frontend",
@@ -75,6 +77,10 @@
       "path": "/module_layers/copilot/frontend"
     },
     {
+      "name": "documents",
+      "path": "/module_layers/documents/frontend"
+    },
+    {
       "name": "expenses",
       "path": "/module_layers/expenses/frontend"
     },
@@ -121,6 +127,10 @@
     {
       "name": "patient_timeline",
       "path": "/module_layers/patient_timeline/frontend"
+    },
+    {
+      "name": "payroll",
+      "path": "/module_layers/payroll/frontend"
     },
     {
       "name": "recall_reminders",
