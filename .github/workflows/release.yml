@@ -84,6 +84,8 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     strategy:
+      # One image failing should not cancel the other's diagnosis.
+      fail-fast: false
       matrix:
         name: [backend, frontend]
     steps:
@@ -126,9 +128,13 @@ jobs:
         run: |
           IMAGE="${REGISTRY}/${GITHUB_REPOSITORY}-${{ matrix.name }}"
           TAG="${{ inputs.tag || github.ref_name }}"
+          # Parse it — `--raw` pretty-prints, so grepping for
+          # "architecture":"amd64" misses the space after the colon and
+          # fails a manifest that is perfectly fine.
           MANIFEST=$(docker buildx imagetools inspect "${IMAGE}:${TAG#v}" --raw)
           for arch in amd64 arm64; do
-            echo "$MANIFEST" | grep -q "\"architecture\":\"$arch\"" \
+            echo "$MANIFEST" | jq -e --arg a "$arch" \
+              '[.manifests[]?.platform | select(.os == "linux" and .architecture == $a)] | length > 0' >/dev/null \
               || { echo "::error::$IMAGE is missing linux/$arch"; exit 1; }
           done
           echo "$IMAGE ships amd64 and arm64."
