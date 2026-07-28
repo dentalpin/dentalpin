@@ -1,0 +1,61 @@
+name: Bug report
+description: Something is broken
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Installation trouble is usually faster to sort out in
+        [Q&A](https://github.com/martinezsalmeron/dentalpin/discussions/categories/q-a)
+        or on [Telegram](https://t.me/dentalpin). Use this form when the
+        software itself misbehaves.
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: And what you expected instead.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Log in as receptionist
+        2. Open the weekly schedule
+        3. Drag an appointment onto an occupied slot
+        4. ...
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Release tag, or `git rev-parse --short HEAD` for a source checkout.
+      placeholder: v2.0.0
+    validations:
+      required: true
+
+  - type: dropdown
+    id: install
+    attributes:
+      label: How are you running it
+      options:
+        - docker-compose.prod.yml (prebuilt images)
+        - docker-compose.yml (built from source)
+        - Coolify
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant logs
+      description: |
+        `docker compose logs backend --tail 50`. Scrub patient data before
+        pasting — this is a public tracker.
+      render: shell
