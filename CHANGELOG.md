@@ -13,6 +13,16 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Added
 
+- **Prebuilt images and a one-command install.** Tagging a release now
+  builds and publishes `ghcr.io/martinezsalmeron/dentalpin-backend` and
+  `-frontend`, and publishes the GitHub Release with notes taken from
+  this file. `docker-compose.prod.yml` runs the stack straight from those
+  images with no clone and no build; a Caddy container fronts both
+  services on a single origin, so TLS is provisioned automatically from
+  `PUBLIC_URL` and there is no CORS to configure. One image serves every
+  deployment — Nuxt overrides `runtimeConfig.public.apiBaseUrl` from
+  `NUXT_PUBLIC_API_BASE_URL` at boot rather than baking the URL in.
+
 - **First-time setup assistant** (issue #85). A fresh install (no users)
   now bootstraps from the UI: `GET /api/v1/auth/setup/status` reports
   whether the system is initialized, and `POST /api/v1/auth/setup`

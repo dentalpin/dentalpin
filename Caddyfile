@@ -1,0 +1,23 @@
+# Single origin for the whole app. PUBLIC_URL doubles as the site
+# address: give it an https host and Caddy provisions the certificate
+# itself; leave it at http://localhost and it serves plain HTTP.
+
+{$PUBLIC_URL:http://localhost} {
+	handle /api/* {
+		reverse_proxy backend:8000 {
+			# The copilot streams SSE; without this Caddy buffers the
+			# response and the chat appears frozen until the turn ends.
+			flush_interval -1
+		}
+	}
+
+	handle /health* {
+		reverse_proxy backend:8000
+	}
+
+	handle {
+		reverse_proxy frontend:3000
+	}
+
+	encode gzip
+}
