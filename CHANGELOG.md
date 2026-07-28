@@ -11,6 +11,15 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- Published images were `amd64` only, so `docker compose up` failed at the
+  very first command on Apple Silicon and on ARM VPS instances (Hetzner's
+  CAX line, the cheapest in Europe and popular with self-hosters) with a
+  bare `no matching manifest for linux/arm64/v8`. Each architecture now
+  builds on its own native runner and a merge step publishes one manifest
+  list per image, verified to carry both before the release is cut.
+
 ## [2.1.0] - 2026-07-28
 
 First release cut through the automated pipeline. The eleven modules that
