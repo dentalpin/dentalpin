@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block title %}Consulta cancelada - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Olá {{ patient_name }},</h2>
+
+<p>Informamos que a sua consulta foi cancelada.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Data</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Hora</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div>
+            <div class="label">Profissional</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if cancellation_reason %}
+<div class="alert alert-warning">
+    <strong>Motivo:</strong> {{ cancellation_reason }}
+</div>
+{% endif %}
+
+<p>Se pretender remarcar a sua consulta, não hesite em contactar-nos.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Marcar nova consulta</a>
+</div>
+{% endif %}
+
+<p>Pedimos desculpa pelo incómodo causado.</p>
+{% endblock %}

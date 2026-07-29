@@ -1,0 +1,129 @@
+{
+  "recalls": {
+    "title": "Reconvocações",
+    "callList": "Lista de chamadas",
+    "noRecallsThisMonth": "Sem reconvocações pendentes este mês",
+    "filters": {
+      "month": "Mês",
+      "reason": "Motivo",
+      "professional": "Profissional",
+      "status": "Estado",
+      "priority": "Prioridade",
+      "overdue": "Mostrar em atraso",
+      "any": "Qualquer",
+      "thisMonth": "Este mês"
+    },
+    "counters": {
+      "due_this_week": "A vencer esta semana",
+      "due_this_month": "A vencer este mês",
+      "overdue": "Em atraso",
+      "scheduled_this_month": "Agendadas este mês",
+      "completed_this_month": "Concluídas este mês",
+      "conversion_rate": "Conversão"
+    },
+    "setRecall": "Definir reconvocação",
+    "setRecallShort": "Reconvocação",
+    "history": "Histórico de reconvocações",
+    "viewAll": "Ver tudo",
+    "pillNext": "Próxima reconvocação: {month} · {reason}",
+    "pillNone": "Sem reconvocação ativa",
+    "reasons": {
+      "hygiene": "Higiene",
+      "checkup": "Consulta de rotina",
+      "ortho_review": "Revisão de ortodontia",
+      "implant_review": "Revisão de implante",
+      "post_op": "Pós-operatório",
+      "treatment_followup": "Seguimento de tratamento",
+      "other": "Outro"
+    },
+    "priority": {
+      "low": "Baixa",
+      "normal": "Normal",
+      "high": "Alta"
+    },
+    "status": {
+      "pending": "Pendente",
+      "contacted_no_answer": "Sem resposta",
+      "contacted_scheduled": "Agendada",
+      "contacted_declined": "Recusada",
+      "done": "Concluída",
+      "cancelled": "Cancelada",
+      "needs_review": "Precisa de revisão"
+    },
+    "actions": {
+      "call": "Telefonar",
+      "logAttempt": "Registar tentativa",
+      "noAnswer": "Sem resposta",
+      "book": "Marcar consulta",
+      "snooze": "Adiar",
+      "cancel": "Cancelar",
+      "markDone": "Marcar como concluída",
+      "exportCsv": "Exportar CSV",
+      "save": "Guardar"
+    },
+    "closeoutPrompt": {
+      "title": "Agendar uma reconvocação?",
+      "subtitle": "O paciente acabou de terminar — quando devemos voltar a contactá-lo?",
+      "skip": "Agora não"
+    },
+    "modal": {
+      "title": "Definir reconvocação",
+      "subtitle": "Sinalize o paciente para um contacto futuro",
+      "patient": "Paciente",
+      "reason": "Motivo",
+      "when": "Quando",
+      "month": "Mês alvo",
+      "targetMonth": "Mês alvo",
+      "preciseDate": "Escolher um dia específico",
+      "priority": "Prioridade",
+      "assigned": "Profissional responsável",
+      "note": "Nota interna",
+      "notePlaceholder": "Detalhe opcional (ex.: 'Rever restauração no 47')",
+      "optional": "opcional",
+      "duplicateGuard": "Já existe uma reconvocação pendente para este paciente e motivo. Será atualizada."
+    },
+    "doNotContact": {
+      "cannotSchedule": "Este paciente está assinalado como \"Não contactar\". Não é possível agendar reconvocações. Altere a preferência nos dados demográficos para voltar a permitir o contacto."
+    },
+    "activeRecallHint": "Reconvocação ativa · toque para gerir",
+    "logAttempt": {
+      "channel": "Canal",
+      "outcome": "Resultado",
+      "note": "Nota",
+      "submit": "Registar tentativa"
+    },
+    "channel": {
+      "phone": "Telefone",
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "Email"
+    },
+    "outcome": {
+      "no_answer": "Sem resposta",
+      "voicemail": "Correio de voz",
+      "scheduled": "Consulta agendada",
+      "declined": "Recusou",
+      "wrong_number": "Número errado"
+    },
+    "snoozePrompt": "Adiar por quantos meses?",
+    "settings": {
+      "title": "Reconvocações",
+      "description": "Intervalos predefinidos + correspondência com categorias de tratamento",
+      "intervals": "Intervalos predefinidos (meses)",
+      "categoryMap": "Tratamento → motivo",
+      "categoryKeyPlaceholder": "chave da categoria do catálogo",
+      "autoSuggest": "Sugerir uma reconvocação quando um tratamento é concluído",
+      "autoLink": "Associar uma consulta agendada a uma reconvocação pendente",
+      "saved": "Definições guardadas"
+    },
+    "dashboard": {
+      "title": "Reconvocações"
+    },
+    "suggestion": {
+      "title": "Reconvocação sugerida",
+      "body": "Após este tratamento sugerimos uma reconvocação em {month} ({reason}).",
+      "create": "Criar reconvocação",
+      "dismiss": "Dispensar"
+    }
+  }
+}

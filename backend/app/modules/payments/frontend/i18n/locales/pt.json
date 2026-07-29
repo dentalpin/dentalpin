@@ -1,0 +1,287 @@
+{
+  "payments": {
+    "nav": {
+      "payments": "Pagamentos",
+      "reports": "Relatórios de pagamentos"
+    },
+    "balance": {
+      "debt": "Deve",
+      "credit": "Em conta",
+      "paid": "Total pago"
+    },
+    "list": {
+      "title": "Pagamentos",
+      "subtitle": "Pagamentos de pacientes, adiantamentos de orçamentos e crédito em conta.",
+      "empty": "Nenhum pagamento registado.",
+      "new": "Novo pagamento",
+      "searchPlaceholder": "Paciente ou referência",
+      "filterDateFrom": "De",
+      "filterDateTo": "Até",
+      "filterMethod": "Método",
+      "filterPatient": "Paciente",
+      "filter": {
+        "method": "Método",
+        "hasRefunds": "Com reembolsos",
+        "hasUnallocated": "Por afetar",
+        "patient": "Paciente",
+        "withDebt": "Com dívida",
+        "paymentStatus": "Estado"
+      },
+      "sort": {
+        "paymentDate": "Data",
+        "amount": "Montante"
+      },
+      "budgetStatus": {
+        "paid": "Pago",
+        "partial": "Parcial",
+        "unpaid": "Por pagar"
+      },
+      "row": {
+        "debtTooltip": "Saldo em dívida do paciente",
+        "creditTooltip": "Saldo de crédito do paciente",
+        "allocationsLabel": "Afetação",
+        "refundedLabel": "Reembolsado",
+        "noPatient": "Sem paciente"
+      },
+      "columnDate": "Data",
+      "columnPatient": "Paciente",
+      "columnAmount": "Montante",
+      "columnMethod": "Método",
+      "columnAllocations": "Afetação",
+      "columnNet": "Líquido",
+      "columnActions": "Ações"
+    },
+    "detail": {
+      "title": "Pagamento {reference}",
+      "amount": "Montante",
+      "method": "Método",
+      "date": "Data",
+      "recordedBy": "Registado por",
+      "allocations": "Afetações",
+      "refunds": "Reembolsos",
+      "refund": "Reembolsar",
+      "refundedTotal": "Reembolsado",
+      "netAmount": "Líquido",
+      "reference": "Referência",
+      "notes": "Notas"
+    },
+    "new": {
+      "title": "Registar pagamento",
+      "patient": "Paciente",
+      "patientPlaceholder": "Procurar paciente...",
+      "unknownPatient": "Paciente desconhecido",
+      "amount": "Montante",
+      "suggestedHint": "Por cobrar: {amount}",
+      "useSuggested": "usar este montante",
+      "method": "Método",
+      "moreMethods": "Mais opções",
+      "date": "Data",
+      "today": "Hoje",
+      "advanced": "Opções avançadas",
+      "reference": "Referência",
+      "referencePlaceholder": "N.º de autorização do cartão, referência da transferência...",
+      "notes": "Notas",
+      "allocations": "Afetação",
+      "allocationsHint": "Distribua este pagamento por orçamentos ou deixe-o no crédito do paciente.",
+      "addAllocation": "Adicionar afetação",
+      "allocationToBudget": "Para orçamento",
+      "allocationOnAccount": "Em conta",
+      "sumLabel": "Soma:",
+      "sumMismatch": "não coincide com o montante",
+      "submit": "Registar",
+      "submitWithAmount": "Cobrar {amount}",
+      "cancel": "Cancelar",
+      "errPatient": "Selecione um paciente",
+      "errAmount": "Introduza um montante superior a 0",
+      "errSum": "A soma das afetações tem de ser igual ao montante",
+      "errUnknown": "Não foi possível registar o pagamento. Tente novamente."
+    },
+    "methods": {
+      "cash": "Numerário",
+      "card": "Cartão",
+      "bank_transfer": "Transferência",
+      "direct_debit": "Débito direto",
+      "insurance": "Seguro",
+      "other": "Outro"
+    },
+    "refund": {
+      "title": "Reembolsar pagamento",
+      "amount": "Montante",
+      "method": "Método",
+      "reason": "Motivo",
+      "note": "Detalhes",
+      "submit": "Reembolsar",
+      "reasonCodes": {
+        "duplicate": "Pagamento duplicado",
+        "overpaid": "Pagamento em excesso",
+        "treatment_cancelled": "Tratamento cancelado",
+        "dispute": "Litígio",
+        "other": "Outro"
+      }
+    },
+    "ledger": {
+      "title": "Conta corrente do paciente",
+      "totalPaid": "Total pago",
+      "totalEarned": "Tratamento realizado",
+      "patientCredit": "Saldo de crédito do paciente",
+      "clinicReceivable": "Valor a receber pela clínica",
+      "onAccount": "Em conta",
+      "empty": "Sem movimentos."
+    },
+    "budgetCard": {
+      "title": "Pagamentos do orçamento",
+      "budgetTotal": "Orçamentado",
+      "collected": "Cobrado",
+      "pending": "Pendente",
+      "collect": "Cobrar",
+      "empty": "Ainda não há pagamentos afetados a este orçamento.",
+      "collectedLabel": "Cobrado",
+      "pendingLabel": "Pendente",
+      "outOfTotal": "de {total} no total",
+      "settled": "Orçamento totalmente cobrado",
+      "history": "Histórico de pagamentos",
+      "payment": "Pagamento",
+      "emptyDetailed": "Ainda não foram cobrados pagamentos. Use \"Cobrar\" para registar o primeiro."
+    },
+    "budgetCollect": {
+      "title": "Cobrar orçamento",
+      "amountLabel": "Montante",
+      "methodLabel": "Método de pagamento",
+      "dateLabel": "Data do pagamento",
+      "today": "Hoje",
+      "quickFull": "Total",
+      "optionalDetails": "Adicionar referência ou notas (opcional)",
+      "referenceLabel": "Referência",
+      "referencePlaceholder": "Ex.: id da transação no TPA",
+      "notesLabel": "Notas internas",
+      "submit": "Cobrar",
+      "cancel": "Cancelar",
+      "success": "Pagamento registado",
+      "errorGeneric": "Não foi possível registar o pagamento",
+      "noteAppliedToBudget": "aplicados ao orçamento.",
+      "notePendingAfter": "Restante",
+      "noteFullySettled": "O orçamento ficará totalmente liquidado.",
+      "noteToBudget": "aplicados ao orçamento e",
+      "noteExcessToOnAccount": "para o crédito em conta do paciente.",
+      "noteBudgetSettled": "O orçamento já está totalmente pago.",
+      "noteToOnAccount": "vão para o crédito em conta do paciente."
+    },
+    "pendingCharges": {
+      "title": "Por cobrar",
+      "count": "{n} sessões",
+      "more": "+ {n} mais",
+      "collect": "Cobrar {amount}",
+      "unnamedSession": "Sessão sem título"
+    },
+    "patientPanel": {
+      "title": "Conta corrente do paciente",
+      "kpis": {
+        "totalPaid": "Total pago",
+        "debt": "Valor a receber pela clínica",
+        "onAccount": "Em conta"
+      },
+      "sidebar": {
+        "title": "Resumo",
+        "credit": "Crédito do paciente",
+        "lastPayment": "Último pagamento",
+        "noLastPayment": "Ainda não há pagamentos",
+        "totalEarned": "Tratamento realizado"
+      },
+      "banner": {
+        "debtTitle": "Deve {amount} à clínica",
+        "debtDescription": "O total pago é inferior ao tratamento realizado.",
+        "creditTitle": "Tem {amount} de crédito",
+        "creditDescription": "Pagou mais do que o tratamento realizado."
+      },
+      "cobrar": "Registar pagamento",
+      "timeline": {
+        "title": "Movimentos",
+        "empty": "Nenhum movimento registado",
+        "emptyCta": "Registar o primeiro pagamento",
+        "loadError": "Não foi possível carregar a conta corrente do paciente.",
+        "retry": "Tentar novamente",
+        "drPrefix": "Dr(a). {name}",
+        "types": {
+          "payment": "Pagamento",
+          "refund": "Reembolso",
+          "earned": "Tratamento realizado"
+        },
+        "treatmentStatus": {
+          "planned": "Planeado",
+          "performed": "Realizado",
+          "completed": "Concluído",
+          "cancelled": "Cancelado",
+          "in_progress": "Em curso"
+        },
+        "rowMenu": {
+          "detail": "Ver detalhe",
+          "refund": "Reembolsar"
+        }
+      },
+      "refundModal": {
+        "title": "Reembolsar pagamento",
+        "amount": "Montante do reembolso",
+        "method": "Método do reembolso",
+        "reason": "Motivo",
+        "note": "Detalhes (opcional)",
+        "submit": "Confirmar reembolso",
+        "cancel": "Cancelar",
+        "errorGeneric": "Não foi possível registar o reembolso"
+      }
+    },
+    "reports": {
+      "title": "Relatórios de pagamentos",
+      "subtitle": "Cobranças, reembolsos, saldos de pacientes e tendências do período.",
+      "cardDescription": "Cobrado, reembolsos, saldos de pacientes, antiguidade e tendências.",
+      "period": "Período",
+      "refresh": "Atualizar",
+      "collected": "Cobrado",
+      "refunded": "Reembolsado",
+      "net": "Líquido",
+      "patientCredit": "Total de crédito dos pacientes",
+      "patientCreditHint": "Saldos em conta ou adiantamentos.",
+      "clinicReceivable": "Valor a receber pela clínica",
+      "refundRatio": "Rácio de reembolsos",
+      "byMethod": "Por método",
+      "byProfessional": "Por profissional",
+      "byProfessionalHint": "Tratamento realizado, não cobrado.",
+      "aging": "Antiguidade dos saldos",
+      "agingHint": "Pacientes com saldo em dívida agrupados pela antiguidade da dívida.",
+      "refunds": "Reembolsos por motivo",
+      "refundsHint": "Distribuição dos reembolsos pelo motivo registado.",
+      "bucket": "{range} dias",
+      "unknownProfessional": "Sem atribuição",
+      "countShort": "{n} transações",
+      "countPatients": "{n} pacientes",
+      "granularity": {
+        "day": "Dia",
+        "week": "Semana",
+        "month": "Mês"
+      },
+      "hero": {
+        "netCollected": "Cobrado líquido",
+        "netCollectedHint": "Cobranças menos reembolsos no período.",
+        "receivable": "Saldo por receber",
+        "receivableHint": "Tratamento realizado ainda não cobrado, por antiguidade.",
+        "vsPrevious": "vs. período anterior",
+        "transactionsCount": "{n} transações no período"
+      },
+      "trend": {
+        "title": "Tendência das cobranças",
+        "subtitle": "Líquido por intervalo. A linha tracejada sobrepõe os reembolsos."
+      },
+      "empty": {
+        "noDataTitle": "Sem dados neste intervalo",
+        "noDataDescription": "Ajuste o período ou registe um pagamento para começar a ver o relatório.",
+        "noTrend": "Pontos insuficientes para traçar a tendência.",
+        "noMethods": "Sem cobranças por método no período.",
+        "noProfessionals": "Sem tratamento realizado no período.",
+        "noReceivable": "Sem pacientes com dívida por liquidar."
+      },
+      "drilldown": {
+        "viewPayments": "Ver pagamentos do período",
+        "viewPatients": "Ver pacientes com dívida"
+      }
+    }
+  }
+}

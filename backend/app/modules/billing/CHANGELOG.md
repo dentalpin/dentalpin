@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `pt` fallback to invoice description resolution in
+  service layer so Portuguese-localized treatment names appear on invoices.
+
 - i18n: add `fr` fallback to invoice description resolution in
   service layer so French-localized treatment names appear on invoices.
 

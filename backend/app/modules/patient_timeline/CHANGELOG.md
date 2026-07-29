@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `pt` fallback to treatment name resolution in the demo
+  timeline seed.
+
 - feat(agents): expose `tools.py` — `get_patient_timeline` (READ)
   wrapping `TimelineService.get_timeline`. Returns structured event
   metadata only (type/category/title/timestamp); free-text description +

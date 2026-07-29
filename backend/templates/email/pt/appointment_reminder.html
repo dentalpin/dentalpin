@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Lembrete de consulta - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Olá {{ patient_name }},</h2>
+
+<p>Lembramos que tem uma consulta marcada:</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Data</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Hora</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div>
+            <div class="label">Profissional</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% if cabinet_name %}
+    <div class="info-row">
+        <div>
+            <div class="label">Gabinete</div>
+            <div class="value">{{ cabinet_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% if treatment_type %}
+    <div class="info-row">
+        <div>
+            <div class="label">Tratamento</div>
+            <div class="value">{{ treatment_type }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="alert alert-info">
+    <strong>Lembrete:</strong> agradecemos que chegue 10 minutos antes da consulta.
+</div>
+
+{% if notes %}
+<p><strong>Notas:</strong> {{ notes }}</p>
+{% endif %}
+
+<p>Se não puder comparecer, avise-nos com antecedência para podermos reatribuir o horário.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Confirmar a minha presença</a>
+</div>
+{% endif %}
+
+<p>Até breve!</p>
+{% endblock %}

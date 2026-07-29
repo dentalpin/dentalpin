@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add Portuguese locale (`notifications-pt.json`) with full UI coverage.
+
 - i18n: add French locale (`fr.json`) with full UI coverage.
 
 - feat(conversation): inbound replies + bidirectional WhatsApp (Phase 2A,

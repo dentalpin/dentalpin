@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Confirmação de consulta - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Olá {{ patient_name }},</h2>
+
+<p>A sua consulta foi confirmada. Estes são os detalhes:</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Data</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">Hora</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div>
+            <div class="label">Profissional</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% if cabinet_name %}
+    <div class="info-row">
+        <div>
+            <div class="label">Gabinete</div>
+            <div class="value">{{ cabinet_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% if treatment_type %}
+    <div class="info-row">
+        <div>
+            <div class="label">Tratamento</div>
+            <div class="value">{{ treatment_type }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+{% if notes %}
+<div class="alert alert-info">
+    <strong>Notas:</strong> {{ notes }}
+</div>
+{% endif %}
+
+<p>Agradecemos que chegue 10 minutos antes da consulta. Se precisar de cancelar ou remarcar, avise-nos com pelo menos 24 horas de antecedência.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Telefonar à clínica</a>
+</div>
+{% endif %}
+
+<p>Até breve!</p>
+{% endblock %}

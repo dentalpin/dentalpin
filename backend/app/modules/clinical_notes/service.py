@@ -574,9 +574,9 @@ def _author_brief(author) -> dict:
 def _resolve_label(
     names: dict[str, str] | None,
 ) -> str | None:
-    """Resolve a display label from catalog names: es → en → fr."""
+    """Resolve a display label from catalog names: es → en → fr → pt."""
     names = names or {}
-    return next((names[k] for k in ("es", "en", "fr") if names.get(k)), None)
+    return next((names[k] for k in ("es", "en", "fr", "pt") if names.get(k)), None)
 
 
 def _build_linked(

@@ -1,0 +1,27 @@
+Olá {{ admin_name }},
+
+A AEAT RECUSOU o registo Verifactu da fatura {{ invoice_number }} da clínica "{{ clinic_name }}".
+Enquanto não resolver este problema, não poderá emitir novas faturas (a cadeia de hashes ficaria comprometida).
+
+Fatura: {{ invoice_number }}
+Código AEAT: {{ codigo_error or '—' }}
+Motivo: {{ friendly_message }}
+
+Passos:
+{% if suggested_cta == 'edit_clinic' -%}
+1. Aceda a Definições → Clínica e verifique o CIF/NIF.
+2. Volte a Definições → Verifactu → Fila de envio e clique em «Regenerar e reenviar».
+{% elif suggested_cta == 'edit_billing_party' -%}
+1. Abra a fatura {{ invoice_number }} e clique em «Editar os dados do cliente» na faixa de aviso.
+2. Depois de guardar, o registo é reenviado automaticamente.
+{% elif suggested_cta == 'edit_lines' -%}
+1. Verifique a correspondência do IVA e os montantes da fatura.
+2. Emita uma nota de crédito se a fatura já estava paga.
+{% else -%}
+1. Aceda a Definições → Verifactu → Fila de envio para ver os detalhes.
+2. Se a causa não for clara, contacte o suporte indicando o código de erro.
+{% endif %}
+
+{% if queue_url -%}
+Fila Verifactu: {{ queue_url }}
+{%- endif %}

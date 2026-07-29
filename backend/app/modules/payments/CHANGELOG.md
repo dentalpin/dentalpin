@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add Portuguese locale (`pt.json`) with full UI coverage.
+
 - i18n: add French locale (`fr.json`) with full UI coverage.
 
 - fix(security): lock the payment row `FOR UPDATE` before the refund

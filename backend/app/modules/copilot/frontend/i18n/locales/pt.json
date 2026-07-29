@@ -1,0 +1,185 @@
+{
+  "nav": {
+    "copilot": "IA"
+  },
+  "copilot": {
+    "title": "IA",
+    "open": "Abrir a IA",
+    "empty": "Pergunte-me sobre pacientes, a agenda ou peça-me para marcar uma consulta.",
+    "placeholder": "Escreva a sua mensagem…",
+    "send": "Enviar",
+    "copy": "Copiar",
+    "new": "Nova conversa",
+    "thinking": "A pensar…",
+    "you": "Você",
+    "assistant": "IA",
+    "trust": "Os seus dados estão protegidos",
+    "phase": {
+      "working": "A trabalhar…",
+      "writing": "A escrever…"
+    },
+    "tabs": {
+      "pending": "Por fazer",
+      "chat": "Conversa"
+    },
+    "pending": {
+      "empty": "Nada pendente. Está tudo em dia.",
+      "unknownPatient": "Paciente desconhecido",
+      "group": {
+        "recall": "Reconvocações a seguir",
+        "budget": "Orçamentos a aguardar resposta"
+      }
+    },
+    "nudge": {
+      "act": "Ver isto",
+      "dismiss": "Dispensar",
+      "appointmentCancelled": {
+        "text": "A consulta das {time} foi cancelada — ficou uma vaga livre.",
+        "prompt": "A consulta das {time} foi cancelada. Encontra pacientes com reconvocação que possam ocupar essa vaga."
+      }
+    },
+    "suggest": {
+      "heading": "Como posso ajudar?",
+      "cat": {
+        "workflows": "Fluxos de trabalho",
+        "patients": "Pacientes",
+        "agenda": "Agenda",
+        "recalls": "Reconvocações",
+        "money": "Cobranças e orçamentos",
+        "reports": "Relatórios"
+      },
+      "dailyBriefing": "Resumo diário",
+      "prepareVisit": "Preparar uma visita",
+      "fillGap": "Preencher uma vaga",
+      "searchPatient": "Encontrar um paciente",
+      "patientSummary": "Resumir um paciente",
+      "freeSlots": "Vagas livres hoje",
+      "bookAppointment": "Marcar uma consulta",
+      "dueRecalls": "Reconvocações a vencer",
+      "pendingBudgets": "Orçamentos sem resposta",
+      "recordPayment": "Registar um pagamento",
+      "monthCollections": "Cobranças deste mês",
+      "agendaSummary": "Visão geral da agenda",
+      "prompt": {
+        "dailyBriefing": "Dá-me o resumo diário: consultas de hoje, reconvocações em atraso e orçamentos sem resposta",
+        "prepareVisit": "Prepara-me a próxima visita de um paciente",
+        "fillGap": "Ficou uma vaga livre na agenda, a quem podemos telefonar?",
+        "searchPatient": "Encontra um paciente",
+        "patientSummary": "Dá-me um resumo de um paciente",
+        "freeSlots": "Que vagas livres há hoje?",
+        "bookAppointment": "Quero marcar uma consulta",
+        "dueRecalls": "Que reconvocações vencem este mês?",
+        "pendingBudgets": "Que orçamentos foram enviados e estão sem resposta?",
+        "recordPayment": "Quero registar um pagamento de um paciente",
+        "monthCollections": "Resumo das cobranças deste mês",
+        "agendaSummary": "Dá-me uma visão geral da agenda de hoje"
+      }
+    },
+    "settings": {
+      "title": "Copilot",
+      "description": "Assistente de IA: resumo diário e motor",
+      "saved": "Definições guardadas",
+      "digest": {
+        "title": "Email de resumo matinal",
+        "description": "Todas as manhãs: consultas de hoje, reconvocações em atraso e orçamentos sem resposta.",
+        "enabled": "Enviar resumo diário",
+        "hour": "Hora de envio",
+        "hourHelp": "Interpretada no fuso horário da clínica.",
+        "recipients": "Destinatários",
+        "recipientsHelp": "Cada destinatário recebe o seu próprio resumo, limitado ao que o seu perfil pode ver.",
+        "recipientsPlaceholder": "Selecionar membros da equipa…"
+      },
+      "engine": {
+        "title": "Motor",
+        "provider": "Fornecedor",
+        "model": "Modelo",
+        "redaction": "Ocultação de dados clínicos",
+        "redactionOn": "Ativada",
+        "redactionOff": "Desativada"
+      },
+      "metrics": {
+        "title": "Utilização",
+        "description": "Últimos {days} dias.",
+        "toolCalls": "Chamadas a ferramentas",
+        "errorRate": "Taxa de erro",
+        "avgLatency": "Latência média",
+        "conversations": "Conversas",
+        "tokenBudget": "Orçamento mensal de tokens",
+        "topTools": "Ferramentas mais usadas",
+        "toolNames": {
+          "recalls_list_due_recalls": "Reconvocações em atraso",
+          "budget_list_budgets": "Orçamentos pendentes",
+          "patients_list_patients": "Pesquisa de pacientes",
+          "appointments_list_appointments": "Consultas",
+          "invoices_list_invoices": "Faturas"
+        }
+      }
+    },
+    "tool": {
+      "running": "A executar {name}…",
+      "done": "{name} concluído",
+      "failed": "{name} falhou"
+    },
+    "card": {
+      "viewPatient": "Ver ficha",
+      "noResults": "Sem resultados",
+      "notFound": "Não encontrado",
+      "more": "+{n} mais",
+      "freeSlots": "Vagas livres",
+      "appointments": "Consultas",
+      "patients": "Pacientes"
+    },
+    "patientStatus": {
+      "active": "ativo",
+      "archived": "arquivado"
+    },
+    "apptStatus": {
+      "scheduled": "Agendada",
+      "confirmed": "Confirmada",
+      "checked_in": "Chegada registada",
+      "in_treatment": "Em tratamento",
+      "completed": "Concluída",
+      "cancelled": "Cancelada",
+      "no_show": "Faltou"
+    },
+    "confirm": {
+      "title": "Confirmar ação",
+      "body": "A IA quer executar {name}.",
+      "approve": "Confirmar",
+      "reject": "Cancelar",
+      "approved": "Confirmada",
+      "rejected": "Cancelada",
+      "destructiveNote": "Esta ação não pode ser anulada.",
+      "action": {
+        "book_appointment": "A IA quer marcar uma consulta.",
+        "cancel_appointment": "A IA quer cancelar uma consulta.",
+        "create_patient": "A IA quer criar um paciente."
+      },
+      "field": {
+        "patient_id": "Paciente",
+        "professional_id": "Profissional",
+        "appointment_id": "Consulta",
+        "cabinet_id": "Gabinete",
+        "cabinet": "Gabinete",
+        "start_time": "Data",
+        "end_time": "Fim",
+        "datetime": "Data",
+        "service": "Serviço",
+        "reason": "Motivo",
+        "duration_minutes": "Duração (min)",
+        "first_name": "Nome",
+        "last_name": "Apelido",
+        "phone": "Telefone",
+        "email": "Email",
+        "date_of_birth": "Data de nascimento",
+        "query": "Pesquisa"
+      }
+    },
+    "budgetExceeded": "Foi atingido o limite mensal de utilização da IA.",
+    "error": "Algo correu mal.",
+    "page": {
+      "title": "IA",
+      "subtitle": "O assistente da sua clínica, limitado às suas permissões."
+    }
+  }
+}

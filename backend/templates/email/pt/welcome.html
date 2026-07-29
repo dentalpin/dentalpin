@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}Bem-vindo à {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Bem-vindo, {{ patient_name }}!</h2>
+
+<p>Obrigado por se ter registado na {{ clinic_name }}. É um prazer poder ajudá-lo a cuidar da sua saúde oral.</p>
+
+<div class="alert alert-success">
+    A sua ficha de paciente foi criada com sucesso no nosso sistema.
+</div>
+
+<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 16px; font-weight: 600;">O que pode fazer agora?</h3>
+
+<ul style="padding-left: 20px; color: #3f3f46;">
+    <li style="margin-bottom: 8px;">Marcar a sua primeira consulta de avaliação</li>
+    <li style="margin-bottom: 8px;">Conhecer os nossos serviços e tratamentos</li>
+    <li style="margin-bottom: 8px;">Contactar-nos para qualquer questão</li>
+</ul>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Marcar a minha primeira consulta</a>
+</div>
+{% endif %}
+
+<div class="info-box">
+    <div class="label">Horário de funcionamento</div>
+    <div class="value">{{ clinic_hours | default('Segunda a sexta-feira: 9h00 - 20h00') }}</div>
+</div>
+
+<p>Não hesite em contactar-nos se tiver alguma dúvida. Estamos aqui para ajudar.</p>
+
+<p>Até breve!</p>
+{% endblock %}

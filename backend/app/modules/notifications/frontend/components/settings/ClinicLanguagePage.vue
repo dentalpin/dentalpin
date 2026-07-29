@@ -2,10 +2,12 @@
 const { t } = useI18n()
 const { settings, loading, saving, fetch, update } = useCommunicationsSettings()
 
-const language = ref<'es' | 'en' | 'fr'>('es')
+const language = ref<'es' | 'en' | 'fr' | 'pt'>('es')
+
+const SUPPORTED = ['en', 'fr', 'pt'] as const
 
 watch(settings, (s) => {
-  if (s) language.value = (s.language === 'en' || s.language === 'fr' ? s.language : 'es')
+  if (s) language.value = (SUPPORTED.includes(s.language as typeof SUPPORTED[number]) ? s.language as typeof language.value : 'es')
 })
 
 onMounted(fetch)
@@ -14,6 +16,7 @@ const options = [
   { value: 'es', label: 'Español' },
   { value: 'en', label: 'English' },
   { value: 'fr', label: 'Français' },
+  { value: 'pt', label: 'Português' },
 ]
 
 async function save() {

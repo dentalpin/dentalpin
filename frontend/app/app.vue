@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { fr, es, en } from '@nuxt/ui/locale'
+import { fr, es, en, pt } from '@nuxt/ui/locale'
 
 const { t, locale } = useI18n()
 
-const nuxtUILocales: Record<string, typeof en> = { en, fr, es }
+const nuxtUILocales: Record<string, typeof en> = { en, fr, es, pt }
 const nuxtUILocale = computed(() => nuxtUILocales[locale.value] || en)
 
 useHead(() => ({

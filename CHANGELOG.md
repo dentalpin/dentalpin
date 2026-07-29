@@ -11,6 +11,26 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Added
+
+- **Portuguese (pt-PT) translation.** The fourth UI language after
+  Spanish, English and French. Ships the ~2,340-key core locale plus a
+  `pt.json` for each of the eleven module layers, so every screen the
+  modules contribute is covered too, and the language appears in
+  Settings → Account → Language with no further configuration. Patient
+  communications can also be switched to Portuguese: the clinic-wide
+  communications language accepts `pt` and the full set of transactional
+  email templates (appointment confirmation / reminder / cancellation,
+  quote sent / accepted, welcome, morning digest, Verifactu alerts) is
+  translated. Nuxt UI's own `pt` locale is wired in so date pickers and
+  built-in component strings follow. Backend catalog-name resolution
+  gained a `pt` fallback, so treatments named in Portuguese resolve on
+  invoices, plans, the timeline and the agent tools rather than silently
+  falling back to the internal code.
+
+  Not included: the user manual and the demo seed data stay on
+  `es/en/fr`, matching how French shipped.
+
 ### Fixed
 
 - Published images were `amd64` only, so `docker compose up` failed at the
