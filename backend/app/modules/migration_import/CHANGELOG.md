@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add Portuguese locale (`pt.json`) with full UI coverage.
+
 - i18n: add French locale (`fr.json`) with full UI coverage.
 
 - fix(entity_mappings): widen ``source_canonical_uuid`` from

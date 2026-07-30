@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `pt` fallback to the agent-tool catalog name resolver so
+  Portuguese-localized treatment names resolve.
+
 - fix(frontend): error toasts in `useCatalog` now show the exact API
   error `detail` (string or 422 validation list) instead of always
   falling back to the generic "Error al crear/actualizar/eliminar"

@@ -1,0 +1,110 @@
+name: Images health
+
+# Uptime Kuma (status.dentalpin.com) already watches every HTTP surface —
+# demo, site, docs, the raw install files. This covers the one thing it
+# cannot: whether the published images are still anonymously pullable and
+# still carry both architectures.
+#
+# The release workflow verifies that at publish time. This catches what
+# happens afterwards — a package flipped to private, a tag overwritten or
+# deleted, a registry-side change. All silent, all fatal: every new
+# self-hoster fails on the first command of the documented install and
+# nobody finds out until one of them bothers to complain.
+#
+# Anonymous on purpose. Authenticating would prove the manifest exists
+# while hiding the failure that actually matters — a visitor with no
+# credentials being unable to pull.
+
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+env:
+  ISSUE_TITLE: "Published images are not pullable"
+  # The alert jobs deliberately skip checkout — they have nothing to build.
+  # Without a git remote `gh` cannot infer the repository and dies with
+  # "not a git repository", so name it explicitly.
+  GH_REPO: ${{ github.repository }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Images are pullable without credentials and ship both arches
+        run: |
+          fail=0
+          for image in backend frontend; do
+            ref="ghcr.io/${GITHUB_REPOSITORY}-${image}:latest"
+
+            if ! manifest=$(docker manifest inspect "$ref" 2>&1); then
+              echo "  FAIL $ref cannot be pulled anonymously"
+              echo "$manifest" | head -3
+              fail=1
+              continue
+            fi
+
+            for arch in amd64 arm64; do
+              if echo "$manifest" | jq -e --arg a "$arch" \
+                '[.manifests[]?.platform | select(.os == "linux" and .architecture == $a)] | length > 0' >/dev/null; then
+                echo "  ok   $ref has linux/$arch"
+              else
+                echo "  FAIL $ref is missing linux/$arch"
+                fail=1
+              fi
+            done
+          done
+          exit $fail
+
+  alert:
+    needs: check
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      # One issue that collects comments, not a new issue every run. An
+      # alert that spams is an alert people mute.
+      - name: Open or update the alert issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          existing=$(gh issue list --state open --search "\"$ISSUE_TITLE\" in:title" \
+            --json number --jq '.[0].number // empty')
+
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "Still failing: $RUN_URL"
+            exit 0
+          fi
+
+          gh issue create --title "$ISSUE_TITLE" --label bug --body \
+          "The published container images could not be pulled anonymously, or
+          are missing an architecture. Every new self-hoster following the
+          README fails on the first command while this is true.
+
+          Logs: $RUN_URL
+
+          Most likely causes, in order: the ghcr package visibility was
+          flipped to private, or a release run published only one
+          architecture.
+
+          This issue closes itself on the next green check."
+
+  resolve:
+    needs: check
+    if: success()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Close the alert issue if one is open
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          existing=$(gh issue list --state open --search "\"$ISSUE_TITLE\" in:title" \
+            --json number --jq '.[0].number // empty')
+          if [ -n "$existing" ]; then
+            gh issue close "$existing" \
+              --comment "Pullable again as of $(date -u +'%Y-%m-%d %H:%M UTC'). Closing automatically."
+          fi

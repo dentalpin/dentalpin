@@ -1,0 +1,84 @@
+{
+  "periodontogram": {
+    "tab": {
+      "label": "Periodontograma"
+    },
+    "empty": {
+      "title": "Ainda não há exames periodontais",
+      "description": "Abra uma nova sessão para registar profundidades de sondagem, hemorragia, placa e as restantes métricas SEPA.",
+      "cta": "Iniciar exame"
+    },
+    "session": {
+      "draftBadge": "Rascunho em curso",
+      "closedBadge": "Sessão fechada",
+      "recordedAt": "Registada a {date}",
+      "openDraft": "Abrir nova sessão",
+      "continueDraft": "Continuar rascunho",
+      "closeTitle": "Fechar sessão periodontal",
+      "closeDescription": "Depois de fechada, a sessão é imutável e passa a constar no histórico. Para fazer correções terá de abrir uma nova sessão.",
+      "closeButton": "Fechar sessão",
+      "discardTitle": "Descartar rascunho",
+      "discardDescription": "Todos os dados introduzidos nesta sessão serão eliminados. Esta ação não pode ser anulada.",
+      "discardButton": "Descartar",
+      "cancel": "Cancelar",
+      "closeSession": "Fechar sessão",
+      "discardDraft": "Descartar rascunho"
+    },
+    "indices": {
+      "bop": "Hemorragia",
+      "pi": "Placa",
+      "calMean": "CAL médio",
+      "deepPockets": "Bolsas ≥5 mm"
+    },
+    "saveState": {
+      "saving": "A guardar…",
+      "dirty": "Alterações por guardar",
+      "saved": "Alterações guardadas"
+    },
+    "history": {
+      "viewingSession": "A visualizar a sessão de {date} (apenas leitura).",
+      "returnToCurrent": "Voltar à atual"
+    },
+    "arch": {
+      "upper": "Superior",
+      "lower": "Inferior",
+      "palatal": "Palatina",
+      "lingual": "Lingual",
+      "vestibular": "Vestibular",
+      "probing": "Sondagem",
+      "margin": "Margem",
+      "bleeding": "Hemorragia",
+      "plaque": "Placa",
+      "probingTitle": "Sondagem de {code} (0–15 mm)",
+      "marginTitle": "Margem gengival de {code} (-5 a 10 mm)",
+      "plaqueTitle": "Placa em {code} (clique para alternar)",
+      "bleedingTitle": "Hemorragia em {code} (clique para alternar)",
+      "implant": "Implante",
+      "implantToggleOn": "Implante (clique para remover)",
+      "implantToggleOff": "Clique para marcar como implante",
+      "mobility": "Mobilidade",
+      "mobilityTitle": "Clique para alterar a mobilidade (0–3)",
+      "prognosis": "Prognóstico",
+      "prognosisTitle": "Bom / Razoável / Duvidoso / Sem prognóstico",
+      "furcaV": "Furca V",
+      "furcaVTitle": "Furca vestibular (0/I/II/III)",
+      "furcaLP": "Furca L/P",
+      "furcaLPTitle": "Furca lingual/palatina (0/I/II/III)",
+      "gingivalWidth": "Largura gengival",
+      "siteMarkerAria": "Local {code}, sondagem {depth}"
+    },
+    "chart": {
+      "ariaLabel": "Periodontograma — arcadas superior e inferior"
+    },
+    "indicesBanner": {
+      "observationsPlaceholder": "Notas do exame…",
+      "noteLabel": "Nota (opcional)"
+    },
+    "loading": "A carregar o periodontograma…",
+    "errors": {
+      "loadFailed": "Não foi possível carregar o periodontograma.",
+      "saveFailed": "Não foi possível guardar a alteração.",
+      "checkConnection": "Verifique a sua ligação e tente novamente."
+    }
+  }
+}

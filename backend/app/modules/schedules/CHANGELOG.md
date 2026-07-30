@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add Portuguese locale (`pt.json`) with full UI coverage.
+
 - i18n: add French locale (`fr.json`) with full UI coverage.
 
 - fix(agents): `find_free_slots` now returns contiguous free **windows**

@@ -1,0 +1,36 @@
+name: Feature request
+description: Propose something DentalPin should do
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What problem does this solve
+      description: |
+        Describe the situation in the clinic, not the solution. What
+        happens today, how often, and what it costs whoever deals with it.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: What you have in mind
+    validations:
+      required: true
+
+  - type: input
+    id: module
+    attributes:
+      label: Which module
+      description: |
+        Leave blank if unsure. See
+        [docs/modules-catalog.md](https://github.com/martinezsalmeron/dentalpin/blob/main/docs/modules-catalog.md).
+      placeholder: agenda
+
+  - type: input
+    id: country
+    attributes:
+      label: Country
+      description: Matters for anything touching billing, tax or regulation.
+      placeholder: ES

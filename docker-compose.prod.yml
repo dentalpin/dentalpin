@@ -1,0 +1,96 @@
+# Production stack from prebuilt images. No repo clone, no build.
+#
+#   curl -O https://raw.githubusercontent.com/martinezsalmeron/dentalpin/main/docker-compose.prod.yml
+#   curl -O https://raw.githubusercontent.com/martinezsalmeron/dentalpin/main/Caddyfile
+#   curl -o .env https://raw.githubusercontent.com/martinezsalmeron/dentalpin/main/.env.prod.example
+#   # edit .env, then:
+#   docker compose -f docker-compose.prod.yml up -d
+#
+# Caddy fronts both services on a single origin, so the browser only ever
+# talks to PUBLIC_URL: no CORS to configure, and TLS is provisioned
+# automatically from Let's Encrypt when PUBLIC_URL is a real https host.
+
+services:
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-dental_clinic}
+      POSTGRES_USER: ${POSTGRES_USER:-dental}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-dental} -d ${POSTGRES_DB:-dental_clinic}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    restart: unless-stopped
+
+  backend:
+    image: ghcr.io/martinezsalmeron/dentalpin-backend:${DENTALPIN_VERSION:-latest}
+    environment:
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-dental}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-dental_clinic}
+      SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
+      BUDGET_PUBLIC_SECRET_KEY: ${BUDGET_PUBLIC_SECRET_KEY:-}
+      ENVIRONMENT: production
+      ALLOWED_ORIGINS: ${PUBLIC_URL:-http://localhost}
+      STORAGE_BACKEND: local
+      STORAGE_LOCAL_PATH: /app/storage
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # Seeds the demo clinic on first boot. Leave at 0 for a real clinic.
+      SEED_ON_STARTUP: ${SEED_ON_STARTUP:-0}
+      SEED_LANG: ${SEED_LANG:-es}
+    volumes:
+      - storage_data:/app/storage
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health', timeout=2).status == 200 else 1)"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  frontend:
+    image: ghcr.io/martinezsalmeron/dentalpin-frontend:${DENTALPIN_VERSION:-latest}
+    environment:
+      # Nuxt overrides runtimeConfig.public.apiBaseUrl from this at boot,
+      # so one image serves every deployment — nothing is baked in.
+      NUXT_PUBLIC_API_BASE_URL: ${PUBLIC_URL:-http://localhost}
+      API_BASE_URL_SERVER: http://backend:8000
+      NUXT_PUBLIC_DOCS_URL: ${DOCS_URL:-https://docs.dentalpin.com}
+    depends_on:
+      backend:
+        condition: service_started
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/ || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+    restart: unless-stopped
+
+  caddy:
+    image: caddy:2-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      PUBLIC_URL: ${PUBLIC_URL:-http://localhost}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - frontend
+      - backend
+    restart: unless-stopped
+
+volumes:
+  pgdata:
+  storage_data:
+  caddy_data:
+  caddy_config:

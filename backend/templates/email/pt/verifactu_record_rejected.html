@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Fatura recusada pela AEAT — ação necessária{% endblock %}
+
+{% block content %}
+<h2>Olá {{ admin_name }},</h2>
+
+<div class="alert alert-error">
+    A AEAT <strong>recusou</strong> o registo Verifactu da fatura <strong>{{ invoice_number }}</strong> da clínica <strong>{{ clinic_name }}</strong>.
+    Enquanto não resolver este problema, <strong>não poderá emitir novas faturas</strong> (a cadeia de hashes ficaria comprometida).
+</div>
+
+<div class="info-box">
+    <div class="label">Fatura</div>
+    <div class="value">{{ invoice_number }}</div>
+</div>
+
+<div class="info-box">
+    <div class="label">Código AEAT</div>
+    <div class="value">{{ codigo_error or '—' }}</div>
+</div>
+
+<div class="info-box">
+    <div class="label">Motivo</div>
+    <div class="value">{{ friendly_message }}</div>
+</div>
+
+<h3 style="margin-top: 24px; margin-bottom: 12px; font-size: 16px; font-weight: 600;">O que fazer agora?</h3>
+
+<ol style="padding-left: 20px; color: #3f3f46;">
+    {% if suggested_cta == 'edit_clinic' %}
+    <li style="margin-bottom: 8px;">Aceda a <em>Definições → Clínica</em> e verifique o CIF/NIF da clínica.</li>
+    <li style="margin-bottom: 8px;">Volte a <em>Definições → Verifactu → Fila de envio</em> e clique em <strong>«Regenerar e reenviar»</strong>.</li>
+    {% elif suggested_cta == 'edit_billing_party' %}
+    <li style="margin-bottom: 8px;">Abra a fatura {{ invoice_number }} e clique em <strong>«Editar os dados do cliente»</strong> na faixa vermelha.</li>
+    <li style="margin-bottom: 8px;">Depois de guardar, o registo é reenviado automaticamente.</li>
+    {% elif suggested_cta == 'edit_lines' %}
+    <li style="margin-bottom: 8px;">Verifique a correspondência do IVA e os montantes da fatura {{ invoice_number }}.</li>
+    <li style="margin-bottom: 8px;">Emita uma nota de crédito se a fatura já estava paga, ou volte a emiti-la se ainda era um rascunho.</li>
+    {% else %}
+    <li style="margin-bottom: 8px;">Aceda a <em>Definições → Verifactu → Fila de envio</em> para ver os detalhes da recusa.</li>
+    <li style="margin-bottom: 8px;">Se a causa não for clara, contacte o suporte indicando o código de erro.</li>
+    {% endif %}
+</ol>
+
+{% if queue_url %}
+<p style="margin-top: 20px;">
+    <a href="{{ queue_url }}" style="display: inline-block; padding: 10px 16px; background: #18181b; color: #fff; text-decoration: none; border-radius: 6px;">Abrir a fila Verifactu</a>
+</p>
+{% endif %}
+{% endblock %}

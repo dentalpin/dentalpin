@@ -4,7 +4,17 @@
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](./README.es.md)
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](./README.fr.md)
 
-Open source dental clinic management software. Built with modular architecture for extensibility.
+**Open source dental clinic management software.** Patients, odontogram, scheduling,
+treatment plans, billing and a built-in AI copilot — modular, self-hosted, API-first.
+
+### ▶ [**Try the live demo**](https://demo.dentalpin.com)
+
+Sign in with `admin@demo.clinic` / `demo1234` — full admin access to a seeded clinic.
+Reset every night, so poke at anything.
+
+[![DentalPin — patient record with odontogram](docs/screenshots/patients.png)](https://demo.dentalpin.com)
+
+<sub>[Website](https://www.dentalpin.com) · [Docs](https://docs.dentalpin.com) · [Telegram](https://t.me/dentalpin) · [More screenshots ↓](#screenshots)</sub>
 
 ## Why DentalPin?
 
@@ -60,9 +70,6 @@ Join our [**Telegram channel**](https://t.me/dentalpin) for support, installatio
 
 ## Screenshots
 
-### AI Copilot
-![AI Copilot](docs/screenshots/ia.png)
-
 ### Dashboard
 ![Dashboard](docs/screenshots/home.png)
 
@@ -81,7 +88,30 @@ Join our [**Telegram channel**](https://t.me/dentalpin) for support, installatio
 ### Settings
 ![Settings](docs/screenshots/settings.png)
 
-## Quick Start
+## Install
+
+Prebuilt images, no clone, no build. On any server with Docker:
+
+```bash
+curl -O https://raw.githubusercontent.com/martinezsalmeron/dentalpin/main/docker-compose.prod.yml
+curl -O https://raw.githubusercontent.com/martinezsalmeron/dentalpin/main/Caddyfile
+curl -o .env https://raw.githubusercontent.com/martinezsalmeron/dentalpin/main/.env.prod.example
+
+# Set PUBLIC_URL, POSTGRES_PASSWORD and SECRET_KEY in .env, then:
+docker compose -f docker-compose.prod.yml up -d
+```
+
+Point a domain at the server, set `PUBLIC_URL=https://your-domain`, and TLS is
+provisioned on first boot — Caddy fronts both services on a single origin, so
+there is no CORS and no certificate to renew. Set `SEED_ON_STARTUP=1` to load
+the demo clinic and look around before going live.
+
+Images: [`dentalpin-backend`](https://github.com/martinezsalmeron/dentalpin/pkgs/container/dentalpin-backend) ·
+[`dentalpin-frontend`](https://github.com/martinezsalmeron/dentalpin/pkgs/container/dentalpin-frontend)
+
+## Quick Start (development)
+
+Builds from source with hot reload:
 
 ```bash
 # Start services

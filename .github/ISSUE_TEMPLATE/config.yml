@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Installation help and questions
+    url: https://github.com/martinezsalmeron/dentalpin/discussions/categories/q-a
+    about: Anything that starts with "how do I" — answers stay searchable here.
+  - name: Telegram channel
+    url: https://t.me/dentalpin
+    about: Live chat with other clinics and the maintainers.
+  - name: Security vulnerability
+    url: https://github.com/martinezsalmeron/dentalpin/security/advisories/new
+    about: Report privately. Never in a public issue — this software holds patient data.

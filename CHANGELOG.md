@@ -13,6 +13,54 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Added
 
+- **Portuguese (pt-PT) translation.** The fourth UI language after
+  Spanish, English and French. Ships the ~2,340-key core locale plus a
+  `pt.json` for each of the eleven module layers, so every screen the
+  modules contribute is covered too, and the language appears in
+  Settings → Account → Language with no further configuration. Patient
+  communications can also be switched to Portuguese: the clinic-wide
+  communications language accepts `pt` and the full set of transactional
+  email templates (appointment confirmation / reminder / cancellation,
+  quote sent / accepted, welcome, morning digest, Verifactu alerts) is
+  translated. Nuxt UI's own `pt` locale is wired in so date pickers and
+  built-in component strings follow. Backend catalog-name resolution
+  gained a `pt` fallback, so treatments named in Portuguese resolve on
+  invoices, plans, the timeline and the agent tools rather than silently
+  falling back to the internal code.
+
+  Not included: the user manual and the demo seed data stay on
+  `es/en/fr`, matching how French shipped.
+
+### Fixed
+
+- Published images were `amd64` only, so `docker compose up` failed at the
+  very first command on Apple Silicon and on ARM VPS instances (Hetzner's
+  CAX line, the cheapest in Europe and popular with self-hosters) with a
+  bare `no matching manifest for linux/arm64/v8`. Each architecture now
+  builds on its own native runner and a merge step publishes one manifest
+  list per image, verified to carry both before the release is cut.
+
+## [2.1.0] - 2026-07-28
+
+First release cut through the automated pipeline. The eleven modules that
+landed since 2.0.0 — payments, copilot, verifactu, recalls, schedules,
+notifications, periodontogram, clinical_notes, accounting_export,
+migration_import, whatsapp_kapso — are listed per-PR in the generated
+release notes and documented in their own module CHANGELOGs; the
+narrative version of that work belongs to the next major.
+
+### Added
+
+- **Prebuilt images and a one-command install.** Tagging a release now
+  builds and publishes `ghcr.io/martinezsalmeron/dentalpin-backend` and
+  `-frontend`, and publishes the GitHub Release with notes taken from
+  this file. `docker-compose.prod.yml` runs the stack straight from those
+  images with no clone and no build; a Caddy container fronts both
+  services on a single origin, so TLS is provisioned automatically from
+  `PUBLIC_URL` and there is no CORS to configure. One image serves every
+  deployment — Nuxt overrides `runtimeConfig.public.apiBaseUrl` from
+  `NUXT_PUBLIC_API_BASE_URL` at boot rather than baking the URL in.
+
 - **First-time setup assistant** (issue #85). A fresh install (no users)
   now bootstraps from the UI: `GET /api/v1/auth/setup/status` reports
   whether the system is initialized, and `POST /api/v1/auth/setup`

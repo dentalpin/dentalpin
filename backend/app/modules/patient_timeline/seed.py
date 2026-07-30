@@ -154,6 +154,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
             names.get("es")
             or names.get("en")
             or names.get("fr")
+            or names.get("pt")
             or t({"es": "tratamiento", "en": "treatment", "fr": "traitement"})
         )
         patient_id = item.treatment.patient_id if item.treatment else None
@@ -187,6 +188,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
             names.get("es")
             or names.get("en")
             or names.get("fr")
+            or names.get("pt")
             or treatment.clinical_type
             or t({"es": "tratamiento", "en": "treatment", "fr": "traitement"})
         )

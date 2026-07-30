@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- i18n: extend the catalog label fallback chain to `es → en → fr → pt`.
+
+- i18n: add Portuguese locale (`pt.json`) with full UI coverage.
+
 - i18n: correct French terminology in `fr.json` (Diagnostic).
 
 - i18n: add French locale (`fr.json`); add French translations to seed

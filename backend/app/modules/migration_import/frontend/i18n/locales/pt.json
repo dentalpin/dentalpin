@@ -1,0 +1,90 @@
+{
+  "migrationImport": {
+    "settingsCard": {
+      "title": "Migração de dados (dental-bridge)",
+      "description": "Importe um ficheiro DPMF produzido pelo dental-bridge (pacientes, consultas, orçamentos, pagamentos, documentos)."
+    },
+    "page": {
+      "title": "Migração de dados",
+      "subtitle": "Importe para esta clínica os dados extraídos pelo dental-bridge."
+    },
+    "upload": {
+      "dropFile": "Largue aqui o ficheiro .dpm ou clique para escolher um",
+      "passphrase": "Frase-passe (apenas para ficheiros encriptados)",
+      "passphraseHelp": "Só é necessária para .dpm.enc / .dpm.zst.enc",
+      "submit": "Carregar e validar",
+      "uploading": "A carregar…",
+      "error": "Falha no carregamento"
+    },
+    "validate": {
+      "running": "A verificar o ficheiro…",
+      "ok": "O ficheiro é válido",
+      "failed": "A validação falhou"
+    },
+    "preview": {
+      "title": "Pré-visualização",
+      "entities": "Entidades",
+      "samples": "Amostras",
+      "warnings": "Avisos",
+      "files": "Ficheiros anexos",
+      "filesTotal": "Total",
+      "filesWithSha": "Com sha256",
+      "filesWithoutSha": "Sem sha256",
+      "verifactuCheckbox": "Importar dados legais Verifactu",
+      "verifactuHelp": "Preserva os hashes legais (Verifactu) nas faturas. Só está disponível quando o módulo Verifactu está instalado e o ficheiro contém esses dados.",
+      "confirm": "Confirmar e importar",
+      "warning": "Esta ação não pode ser anulada. Reveja os dados antes de confirmar."
+    },
+    "filters": {
+      "title": "Filtragem de profissionais",
+      "description": "Os profissionais filtrados são importados como inativos (mantidos para referências históricas, mas ocultos na agenda). Pode reativá-los mais tarde em Definições → Utilizadores.",
+      "totalLabel": "Total",
+      "deactivatedLabel": "Inativos na origem",
+      "orphansLabel": "Colunas só de agenda",
+      "stale24mLabel": "Sem atividade nos últimos 24 m",
+      "minActivityLabel": "Atividade mínima (meses)",
+      "minActivityHelp": "Desativa suavemente os profissionais sem registo clínico mais recente do que este número de meses. Defina 0 para desativar.",
+      "excludeOrphans": "Excluir colunas só de agenda sem registo real de colaborador",
+      "excludeInactive": "Excluir profissionais marcados como inativos na origem",
+      "excludeNonClinical": "Importar apenas médicos dentistas e higienistas (ignorar auxiliares e pessoal administrativo)"
+    },
+    "execute": {
+      "running": "A importar…",
+      "progress": "{processed} de {total} entidades",
+      "ok": "Importação concluída",
+      "failed": "A importação falhou"
+    },
+    "proposals": {
+      "title": "Rever as correspondências do catálogo",
+      "subtitle": "Associe cada tratamento do Gesdén ao catálogo do DentalPin antes de importar.",
+      "build": "Calcular propostas",
+      "building": "A calcular…",
+      "summary": "{total} propostas: {link} associadas, {fuzzy} aproximadas, {create} a criar",
+      "bulkAccept": "Aceitar todas as correspondências com confiança ≥ 0,9",
+      "accepted": "{n} propostas aceites.",
+      "columnSource": "Tratamento Gesdén",
+      "columnProposed": "Proposta",
+      "columnAction": "Ação",
+      "columnStatus": "Estado",
+      "actionLink": "Associar ao catálogo",
+      "actionFuzzy": "Correspondência aproximada",
+      "actionCreate": "Criar novo",
+      "operatorPending": "Pendente",
+      "operatorAccepted": "Aceite",
+      "operatorRelinked": "Reassociado",
+      "operatorCreated": "Criar novo",
+      "operatorIgnored": "Ignorado",
+      "acceptRow": "Aceitar",
+      "ignoreRow": "Ignorar"
+    },
+    "status": {
+      "uploaded": "Carregado",
+      "validating": "A validar",
+      "validated": "Validado",
+      "previewing": "Pré-visualização",
+      "executing": "A importar",
+      "completed": "Concluído",
+      "failed": "Falhou"
+    }
+  }
+}

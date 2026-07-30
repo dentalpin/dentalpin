@@ -4,7 +4,18 @@
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](./README.es.md)
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](./README.fr.md)
 
-Logiciel open source de gestion de cliniques dentaires. Conçu avec une architecture modulaire pour l'extensibilité.
+**Logiciel open source de gestion de cliniques dentaires.** Patients, odontogramme,
+agenda, plans de traitement, facturation et un copilote IA intégré — modulaire,
+auto-hébergé, API-first.
+
+### ▶ [**Essayer la démo en ligne**](https://demo.dentalpin.com)
+
+Connectez-vous avec `admin@demo.clinic` / `demo1234` — accès administrateur complet
+à une clinique de démonstration. Réinitialisée chaque nuit, n'hésitez pas à tout tester.
+
+[![DentalPin — dossier patient avec odontogramme](docs/screenshots/patients.png)](https://demo.dentalpin.com)
+
+<sub>[Site web](https://www.dentalpin.com) · [Documentation](https://docs.dentalpin.com) · [Telegram](https://t.me/dentalpin) · [Plus de captures ↓](#captures-décran)</sub>
 
 ## Pourquoi DentalPin ?
 
@@ -59,9 +70,6 @@ Rendez-vous sur [**dentalpin.com**](https://www.dentalpin.com) pour des informat
 Rejoignez notre [**chaîne Telegram**](https://t.me/dentalpin) pour du support, de l'aide à l'installation et des questions.
 
 ## Captures d'écran
-
-### Copilot IA
-![AI Copilot](docs/screenshots/ia.png)
 
 ### Tableau de bord
 ![Dashboard](docs/screenshots/home.png)

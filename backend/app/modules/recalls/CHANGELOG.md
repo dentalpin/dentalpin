@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add Portuguese locale (`pt.json`) with full UI coverage.
+
 - i18n: correct French wording in seed note (Contrôle mensuel).
 
 - i18n: add French translations to seed data; fix `t()` dict pattern.

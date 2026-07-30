@@ -11,7 +11,8 @@ export default defineNuxtConfig({
     locales: [
       { code: 'en', file: 'notifications-en.json' },
       { code: 'es', file: 'notifications-es.json' },
-      { code: 'fr', file: 'notifications-fr.json' }
+      { code: 'fr', file: 'notifications-fr.json' },
+      { code: 'pt', file: 'notifications-pt.json' }
     ],
     langDir: 'locales'
   }

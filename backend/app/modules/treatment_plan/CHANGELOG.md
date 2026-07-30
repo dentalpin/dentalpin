@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `pt` fallback to plan item name resolution in service
+  layer so Portuguese-localized treatment names display correctly.
+
 - i18n: add `fr` fallback to plan item name resolution in service
   layer so French-localized treatment names display correctly.
 
