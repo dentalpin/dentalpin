@@ -1,0 +1,2948 @@
+{
+  "app": {
+    "name": "DentalPin",
+    "tagline": "Dental clinic management"
+  },
+  "demo": {
+    "bannerMessage": "Public demo — do not enter real patient data. The database is reset periodically.",
+    "bannerDismiss": "Dismiss",
+    "credentialsTitle": "Demo credentials",
+    "credentialsNote": "For evaluation only — shown because this is a public demo instance.",
+    "copyEmail": "Copy email",
+    "copyPassword": "Copy password",
+    "copied": "Copied to clipboard"
+  },
+  "nav": {
+    "dashboard": "Home",
+    "patients": "Patients",
+    "appointments": "Schedule",
+    "recalls": "Recalls",
+    "treatmentPlans": "Treatment Plans",
+    "budgets": "Quotes",
+    "invoices": "Invoices",
+    "reports": "Reports",
+    "settings": "Settings",
+    "defaultClinicName": "Clinic",
+    "catalog": "Catalog",
+    "menu": "Menu",
+    "openMenu": "Open menu",
+    "close": "Close",
+    "toggleSidebar": "Toggle sidebar"
+  },
+  "auth": {
+    "login": "Log in",
+    "logout": "Log out",
+    "email": "Email",
+    "password": "Password",
+    "loginButton": "Sign in",
+    "loginSuccess": "Signed in successfully",
+    "invalidCredentials": "Incorrect email or password",
+    "emailRequired": "Enter your email",
+    "passwordRequired": "Enter your password",
+    "emailInvalid": "Invalid email address",
+    "accountInactive": "Your account is inactive. Contact your administrator",
+    "tooManyAttempts": "Too many attempts. Try again in a few minutes",
+    "sessionExpired": "Your session has expired",
+    "networkError": "Could not connect to the server",
+    "serverError": "The server is unavailable. Please try again in a few minutes",
+    "unknownError": "Unexpected error. Please try again"
+  },
+  "setup": {
+    "title": "First-time setup",
+    "subtitle": "Create the administrator account and your clinic to get started",
+    "stepAccount": "Administrator account",
+    "stepClinic": "Clinic details",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "password": "Password",
+    "passwordConfirm": "Confirm password",
+    "passwordHint": "At least 8 characters, with letters and numbers",
+    "clinicName": "Clinic name",
+    "taxId": "Tax ID",
+    "next": "Next",
+    "back": "Back",
+    "submit": "Create and start",
+    "success": "All set! Welcome to DentalPin",
+    "firstNameRequired": "Enter the first name",
+    "lastNameRequired": "Enter the last name",
+    "emailRequired": "Enter the email",
+    "emailInvalid": "The email is not valid",
+    "passwordRequired": "Enter a password",
+    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordWeak": "Password must include letters and numbers",
+    "passwordMismatch": "Passwords do not match",
+    "clinicNameRequired": "Enter the clinic name",
+    "taxIdRequired": "Enter the Tax ID",
+    "alreadyInitialized": "The system is already set up. Please log in.",
+    "error": "Setup could not be completed. Please try again"
+  },
+  "actions": {
+    "edit": "Edit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "delete": "Delete",
+    "close": "Close",
+    "remove": "Remove"
+  },
+  "patients": {
+    "title": "Patients",
+    "create": "New patient",
+    "edit": "Edit patient",
+    "search": "Search patient...",
+    "searchPlaceholder": "Name or phone",
+    "noResults": "No patients found",
+    "empty": "No patients registered",
+    "emptyAction": "Create first patient",
+    "name": "Name",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "phone": "Phone",
+    "email": "Email",
+    "dateOfBirth": "Date of birth",
+    "notes": "Notes",
+    "created": "Patient created",
+    "updated": "Patient updated",
+    "archived": "Patient archived",
+    "notFound": "Patient not found",
+    "archiveConfirm": "Archive patient {name}?",
+    "archiveDescription": "This action will hide the patient from searches. Existing appointments will not be deleted.",
+    "cancel": "Cancel",
+    "archive": "Archive",
+    "dangerZone": {
+      "title": "Danger zone",
+      "archiveHelp": "Archive the patient to hide them from searches. Appointments and history are preserved."
+    },
+    "billingSection": "Billing information",
+    "billingSectionHint": "This data will be automatically used when creating invoices for this patient.",
+    "editingBillingForInvoice": "Editing billing data. Changes will reflect in the invoice.",
+    "returnToInvoice": "Return to invoice",
+    "billingName": "Billing name",
+    "billingNamePlaceholder": "Name or company for invoices",
+    "billingTaxId": "Tax ID",
+    "billingEmail": "Billing email",
+    "billingAddress": "Billing address",
+    "billingComplete": "Complete",
+    "billingIncomplete": "Incomplete",
+    "demographics": "Demographics",
+    "nationalId": "ID document",
+    "nationalIdType": "Document type",
+    "passport": "Passport",
+    "profession": "Profession",
+    "workplace": "Workplace",
+    "years": "years",
+    "status": {
+      "active": "Active",
+      "archived": "Archived"
+    },
+    "filters": {
+      "status": "Status",
+      "city": "City",
+      "withDebt": "With debt",
+      "doNotContact": "Do not contact",
+      "doNotContactOnly": "Only do-not-contact",
+      "doNotContactOnlyContactable": "Only contactable"
+    },
+    "columns": {
+      "city": "City",
+      "contact": "Contact",
+      "debt": "Debt"
+    },
+    "sort": {
+      "lastVisit": "Last visit",
+      "lastName": "Last name",
+      "firstName": "First name",
+      "createdAt": "Joined",
+      "updatedAt": "Recently edited"
+    },
+    "doNotContact": {
+      "label": "Do not contact",
+      "hint": "Patient will be excluded from the call list and automated outreach",
+      "badge": "Do not contact"
+    },
+    "gender": {
+      "label": "Gender",
+      "select": "Select gender",
+      "male": "Male",
+      "female": "Female",
+      "other": "Other",
+      "preferNotSay": "Prefer not to say"
+    },
+    "emergencyContact": {
+      "title": "Emergency contact",
+      "hasContact": "Has emergency contact",
+      "noContact": "No emergency contact registered",
+      "name": "Full name",
+      "namePlaceholder": "Contact name",
+      "relationship": "Relationship",
+      "relationshipPlaceholder": "Select relationship",
+      "phone": "Phone",
+      "phonePlaceholder": "Contact phone",
+      "email": "Email",
+      "emailPlaceholder": "Contact email",
+      "isLegalGuardian": "Is legal guardian",
+      "remove": "Remove contact",
+      "relationships": {
+        "spouse": "Spouse",
+        "parent": "Parent",
+        "child": "Child",
+        "sibling": "Sibling",
+        "friend": "Friend",
+        "other": "Other"
+      }
+    },
+    "medicalHistory": {
+      "title": "Medical history",
+      "save": "Save history",
+      "fetchError": "Error loading medical history",
+      "saveSuccess": "Medical history saved",
+      "saveError": "Error saving medical history",
+      "allergies": "Allergies",
+      "allergiesCount": "{n} allergy | {n} allergies",
+      "onAnticoagulants": "On anticoagulant therapy",
+      "allergyName": "Allergy name",
+      "type": "Type",
+      "allergyTypes": {
+        "drug": "Drug",
+        "food": "Food",
+        "material": "Material",
+        "environmental": "Environmental"
+      },
+      "severity": {
+        "low": "Low",
+        "medium": "Medium",
+        "high": "High",
+        "critical": "Critical"
+      },
+      "medications": "Medications",
+      "medicationName": "Medication name",
+      "dosage": "Dosage",
+      "frequency": "Frequency",
+      "systemicDiseases": "Systemic diseases",
+      "diseaseName": "Disease name",
+      "diseaseTypes": {
+        "cardiovascular": "Cardiovascular",
+        "respiratory": "Respiratory",
+        "endocrine": "Endocrine",
+        "neurological": "Neurological",
+        "autoimmune": "Autoimmune",
+        "other": "Other"
+      },
+      "critical": "Critical",
+      "controlled": "Controlled",
+      "notControlled": "Not controlled",
+      "specialConditions": "Special conditions",
+      "pregnant": "Pregnant",
+      "pregnancyWeek": "Pregnancy week",
+      "lactating": "Lactating",
+      "anticoagulants": "Anticoagulants",
+      "anticoagulantMedication": "Anticoagulant medication",
+      "inrValue": "INR value",
+      "anesthesiaReaction": "Anesthesia reaction",
+      "anesthesiaReactionDetails": "Reaction details",
+      "bruxism": "Bruxism",
+      "lifestyle": "Lifestyle",
+      "smoker": "Smoker",
+      "smokingFrequency": "Cigarettes/day",
+      "alcoholConsumption": "Alcohol consumption",
+      "alcohol": {
+        "none": "None",
+        "occasional": "Occasional",
+        "moderate": "Moderate",
+        "heavy": "Heavy"
+      },
+      "surgicalHistory": "Surgical history",
+      "procedure": "Procedure"
+    },
+    "timeline": {
+      "empty": "No activity recorded yet",
+      "emptyFiltered": "No events in this category",
+      "clearFilter": "Show all activity",
+      "endOfTimeline": "End of timeline",
+      "totalEntries": "{count} entry | {count} entries",
+      "groups": {
+        "today": "Today",
+        "yesterday": "Yesterday",
+        "thisWeek": "This week",
+        "thisMonth": "This month",
+        "earlier": "Earlier"
+      },
+      "author": "by {name}",
+      "meta": {
+        "cabinet": "Room {name}",
+        "teeth": "Teeth: {list}",
+        "total": "Total: {amount}",
+        "number": "No. {value}",
+        "via": "Via {channel}",
+        "template": "Template: {key}",
+        "docType": "Type: {type}"
+      },
+      "categories": {
+        "all": "All",
+        "visit": "Visits",
+        "treatment": "Treatments",
+        "financial": "Financial",
+        "communication": "Communications",
+        "medical": "Medical history",
+        "document": "Documents",
+        "note": "Clinical notes"
+      }
+    },
+    "alerts": {
+      "title": "{count} alert | {count} alerts",
+      "label": "Clinical alerts"
+    },
+    "editDemographics": "Edit demographics",
+    "editEmergencyContact": "Edit emergency contact",
+    "editBilling": "Edit billing information",
+    "editMedicalHistory": "Edit medical history",
+    "medicalSnapshot": {
+      "title": "Medical information",
+      "allergiesLabel": "Allergies",
+      "allergiesEmpty": "No known allergies",
+      "allergiesNotReviewed": "Medical history not recorded",
+      "completeHistory": "Complete history",
+      "reviewedOn": "Reviewed on {date}",
+      "conditions": {
+        "pregnantWeek": "Pregnant · w. {week}",
+        "anticoagulantInr": "Anticoagulant · INR {inr}",
+        "smokerFreq": "Smoker · {freq}/day"
+      }
+    },
+    "visitSummary": {
+      "title": "Visit summary",
+      "lastVisit": "Last visit",
+      "nextAppointment": "Next appointment",
+      "noLastVisit": "No previous visits",
+      "noNextAppointment": "No appointment scheduled"
+    },
+    "personalInfo": {
+      "title": "Personal info",
+      "ageLabel": "{age} years",
+      "birthWithAge": "{date} ({age} years)"
+    },
+    "contactInfo": {
+      "title": "Contact",
+      "copyPhone": "Copy phone",
+      "copyEmail": "Copy email",
+      "address": "Address",
+      "addEmergency": "Add emergency contact",
+      "addGuardian": "Add legal guardian",
+      "guardianRequired": "Legal guardian required"
+    },
+    "administrative": {
+      "title": "Administrative"
+    },
+    "header": {
+      "ariaLabel": "Patient header"
+    },
+    "quickActions": {
+      "ariaLabel": "Patient quick actions"
+    }
+  },
+  "patientDetail": {
+    "tabs": {
+      "summary": "Summary",
+      "info": "Info",
+      "clinical": "Clinical",
+      "odontogram": "Dental Chart",
+      "administration": "Administration",
+      "history": "History",
+      "timeline": "Activity",
+      "appointments": "Appointments",
+      "budgets": "Budgets",
+      "billing": "Billing",
+      "payments": "Payments",
+      "documents": "Documents",
+      "gallery": "Gallery"
+    },
+    "historyPlaceholder": "Clinical notes available in future version",
+    "noAppointments": "This patient has no appointments",
+    "scheduleAppointment": "Schedule appointment",
+    "noBudgets": "This patient has no budgets",
+    "createBudget": "Create budget",
+    "viewAllBudgets": "View all budgets",
+    "activePlan": "Active plan",
+    "noActivePlan": "No active plan",
+    "viewPlan": "Open plan",
+    "createPlan": "Create plan",
+    "nextAppointment": "Next appointment",
+    "noUpcomingAppointments": "No upcoming appointments",
+    "openAppointment": "Open appointment",
+    "reschedule": "Reschedule",
+    "balance": "Balance",
+    "collect": "Collect",
+    "viewLedger": "Open ledger",
+    "noPayments": "No movements",
+    "diagnoses": "Diagnoses",
+    "pending": "untreated",
+    "noDiagnoses": "No pending findings",
+    "openOdontogram": "Open dental chart",
+    "medicalHistory": "Medical history",
+    "completeMedicalHistory": "No medical history. Complete it to record allergies, conditions and medication.",
+    "editMedicalHistory": "Edit medical history",
+    "quickActions": "Quick actions",
+    "edit": "Edit",
+    "editPatient": "Edit patient",
+    "noSummaryCards": "No modules registered in the summary.",
+    "actions": {
+      "label": "Actions",
+      "newAppointment": "Appointment",
+      "collect": "Collect",
+      "newNote": "Note",
+      "newBudget": "Budget",
+      "uploadDocument": "Document"
+    }
+  },
+  "patientBilling": {
+    "totalBudgeted": "Total budgeted",
+    "workInProgress": "Work in progress",
+    "workCompleted": "Work completed",
+    "totalInvoiced": "Total invoiced",
+    "totalPaid": "Total paid",
+    "balancePending": "Balance pending",
+    "invoices": "Invoices",
+    "createInvoice": "Create invoice",
+    "noInvoices": "This patient has no invoices",
+    "pending": "Pending"
+  },
+  "odontogram": {
+    "title": "Dental Chart",
+    "tooth": "Tooth",
+    "globals": {
+      "category": "Whole mouth",
+      "applied": "{name} added to plan",
+      "archPickerTitle": "Which arch for \"{name}\"?",
+      "upperArch": "Upper arch",
+      "lowerArch": "Lower arch"
+    },
+    "selectCondition": "Select Condition",
+    "readOnly": "View only",
+    "legend": "Legend",
+    "statusLegend": "Treatment status",
+    "toothPosition": "Tooth position",
+    "displaced": "Displaced",
+    "rotated": "Rotated",
+    "dentition": {
+      "permanent": "Permanent",
+      "deciduous": "Primary",
+      "toggle": "Toggle dentition"
+    },
+    "quadrants": {
+      "upper": "Upper Arch",
+      "lower": "Lower Arch",
+      "upperRight": "Upper Right",
+      "upperLeft": "Upper Left",
+      "lowerRight": "Lower Right",
+      "lowerLeft": "Lower Left"
+    },
+    "surfaces": {
+      "M": "Mesial",
+      "D": "Distal",
+      "O": "Occlusal",
+      "V": "Vestibular",
+      "L": "Lingual"
+    },
+    "conditions": {
+      "healthy": "Healthy",
+      "caries": "Caries",
+      "filling": "Filling",
+      "crown": "Crown",
+      "missing": "Missing",
+      "root_canal": "Root Canal",
+      "implant": "Implant",
+      "bridge_pontic": "Bridge Pontic",
+      "bridge_abutment": "Bridge Abutment",
+      "extraction_indicated": "Extraction Indicated",
+      "sealant": "Sealant",
+      "fracture": "Fracture"
+    },
+    "history": {
+      "title": "Change History",
+      "noChanges": "No changes recorded",
+      "changedBy": "Changed by",
+      "changeTypes": {
+        "created": "Created",
+        "general_condition": "General condition",
+        "surface_update": "Surface update",
+        "note": "Note"
+      }
+    },
+    "messages": {
+      "updated": "Dental chart updated",
+      "error": "Error updating dental chart",
+      "loadError": "Couldn't load the dental chart"
+    },
+    "actions": {
+      "save": "Save",
+      "reset": "Reset",
+      "print": "Print"
+    },
+    "status": {
+      "existing": "Existing",
+      "planned": "Planned"
+    },
+    "treatments": {
+      "title": "Treatments",
+      "addTreatment": "Add Treatment",
+      "selectStatus": "Select Status",
+      "noTreatments": "No treatments recorded",
+      "markPerformed": "Mark as Performed",
+      "categories": {
+        "common": "Common",
+        "restorative": "Restorative",
+        "diagnostic": "Diagnostic",
+        "orthodontic": "Orthodontics",
+        "periodontic": "Periodontics",
+        "position": "Position",
+        "other": "Other",
+        "diagnostico": "Diagnostic",
+        "restauradora": "Restorative",
+        "cirugia": "Surgery",
+        "endodoncia": "Endodontics",
+        "ortodoncia": "Orthodontics"
+      },
+      "types": {
+        "pulpitis": "Pulpitis",
+        "caries": "Caries",
+        "incipient_caries": "Incipient caries",
+        "pigmentation": "Pigmentation",
+        "fracture": "Fracture",
+        "missing": "Missing",
+        "periapical_small": "Periapical <2mm",
+        "periapical_medium": "Periapical 2-4mm",
+        "periapical_large": "Periapical >4mm",
+        "rotated": "Rotated",
+        "displaced": "Displaced",
+        "unerupted": "Unerupted",
+        "filling": "Filling",
+        "filling_composite": "Composite filling",
+        "filling_amalgam": "Amalgam filling",
+        "filling_temporary": "Temporary filling",
+        "sealant": "Sealant",
+        "veneer": "Veneer",
+        "inlay": "Inlay",
+        "overlay": "Overlay",
+        "crown": "Crown",
+        "crown_on_implant": "Crown on implant",
+        "provisional_crown_on_implant": "Provisional crown on implant",
+        "pontic": "Pontic",
+        "bridge_pontic": "Bridge Pontic",
+        "bridge_abutment": "Bridge Abutment",
+        "extraction": "Extraction",
+        "implant": "Implant",
+        "apicoectomy": "Apicoectomy",
+        "root_canal": "Root Canal",
+        "root_canal_full": "Full root canal",
+        "root_canal_two_thirds": "Root canal 2/3",
+        "root_canal_half": "Root canal 1/2",
+        "root_canal_overfill": "Overfilled root canal",
+        "post": "Post",
+        "bracket": "Bracket",
+        "tube": "Tube",
+        "band": "Band",
+        "attachment": "Attachment",
+        "retainer": "Retainer",
+        "rotate": "Rotated",
+        "displace": "Displaced",
+        "splint": "Splint",
+        "migrated": "General treatment"
+      },
+      "treatmentAdded": "Treatment added",
+      "treatmentPerformed": "Treatment marked as performed",
+      "treatmentDeleted": "Treatment deleted",
+      "status": {
+        "existing": "Existing",
+        "planned": "Planned"
+      }
+    },
+    "position": {
+      "displaced": "Displaced",
+      "rotated": "Rotated",
+      "normal": "Normal"
+    },
+    "views": {
+      "occlusal": "Occlusal View",
+      "lateral": "Lateral View",
+      "dual": "Dual View"
+    },
+    "selectSurfaces": "Select Surfaces",
+    "selectedSurfaces": "Selected surfaces",
+    "surfacesSelected": "surface(s) selected",
+    "instructions": {
+      "selectTreatment": "Select a treatment to apply",
+      "clickTooth": "Click on the tooth to apply"
+    },
+    "addToPlan": "Add to plan",
+    "noPlan": "No plan",
+    "createNewPlan": "Create new plan...",
+    "applyTo": "Apply to",
+    "oneTooth": "1 tooth",
+    "multipleTeeth": "Multiple teeth",
+    "surfacePricingHint": "Price by surface: {range}",
+    "toothNames": {
+      "centralIncisor": "Central incisor",
+      "lateralIncisor": "Lateral incisor",
+      "canine": "Canine",
+      "firstPremolar": "First premolar",
+      "secondPremolar": "Second premolar",
+      "firstMolar": "First molar",
+      "secondMolar": "Second molar",
+      "thirdMolar": "Third molar"
+    },
+    "positions": {
+      "upper": "upper",
+      "lower": "lower",
+      "left": "left",
+      "right": "right"
+    },
+    "tooltip": {
+      "clickToEdit": "Click to edit"
+    },
+    "planning": "Planning",
+    "diagnosisMode": "Diagnosis",
+    "treatmentList": {
+      "title": "Treatment List",
+      "noTreatments": "No treatments recorded"
+    },
+    "changeHistory": {
+      "title": "Change History",
+      "noChanges": "No changes recorded",
+      "treatmentAdded": "Treatment"
+    },
+    "timeline": {
+      "title": "Timeline",
+      "viewingDate": "Viewing: {date}",
+      "viewingHistory": "You are viewing the historical state of the dental chart",
+      "returnToNow": "Return to current state",
+      "noHistory": "No prior history"
+    },
+    "multiTooth": {
+      "bridge": {
+        "label": "Fixed bridge"
+      },
+      "splint": {
+        "label": "Splint"
+      },
+      "veneers": {
+        "label": "Multiple veneers"
+      },
+      "crowns": {
+        "label": "Multiple crowns"
+      },
+      "pillar": "pillar",
+      "pontic": "pontic",
+      "roleHint": "Click a tooth to toggle pillar / pontic.",
+      "needPillar": "Bridge requires at least one pillar tooth.",
+      "confirmHint": "You are about to create a treatment group with {n} teeth.",
+      "willBePlanned": "The group will be marked as planned.",
+      "willBeExisting": "The group will be recorded as existing.",
+      "hints": {
+        "range": "Click the first tooth, then the last tooth",
+        "free": "Click to add or remove teeth"
+      },
+      "errors": {
+        "tooFew": "At least {n} teeth required",
+        "tooMany": "Maximum {n} teeth allowed",
+        "sameArchRequired": "Teeth must be in the same dental arch"
+      },
+      "sectionLabel": "Multi-tooth treatments"
+    }
+  },
+  "clinical": {
+    "modes": {
+      "history": "History",
+      "diagnosis": "Diagnosis",
+      "plans": "Treatment plans",
+      "appointments": "Appointments"
+    },
+    "history": {
+      "stateAt": "State at",
+      "changesOnDate": "Changes on this date",
+      "noChanges": "No changes recorded"
+    },
+    "diagnosis": {
+      "registeredConditions": "Diagnosed conditions",
+      "registerConditions": "Register conditions",
+      "noConditions": "No conditions registered",
+      "startDiagnosis": "Select a tooth and add existing conditions",
+      "generalConditions": "General conditions",
+      "readyToCreatePlan": "Diagnosis complete?",
+      "createPlan": "Create Treatment Plan",
+      "continuePlan": "Continue Plan \"{name}\"",
+      "selectPlan": "Select plan",
+      "continue": "Continue",
+      "odontogramTab": "Odontogram"
+    },
+    "plans": {
+      "title": "Treatment Plans",
+      "create": "New Plan",
+      "backToList": "Back to plans",
+      "treatments": "Plan Treatments",
+      "addTreatment": "Add Treatment",
+      "total": "Total",
+      "activate": "Activate Plan",
+      "generateBudget": "Generate Budget",
+      "empty": "No treatment plans",
+      "emptyDescription": "Create a plan to organize the patient's treatments",
+      "createFirst": "Create first plan",
+      "active": "Active Plans",
+      "drafts": "Drafts",
+      "completed": "Completed",
+      "closed": "Closed",
+      "other": "Other",
+      "noItems": "No treatments in the plan",
+      "markComplete": "Mark as completed",
+      "removeItem": "Remove from plan",
+      "sessions": {
+        "progress": "{done}/{total} sessions",
+        "markDone": "Mark session done",
+        "cancel": "Cancel session",
+        "markedDone": "Session marked done",
+        "cancelled": "Session cancelled",
+        "untitled": "Session {n}"
+      },
+      "unknownTreatment": "Treatment",
+      "odontogram": "Odontogram",
+      "pending": "pending",
+      "dragToReorder": "Drag to reorder",
+      "reorderHint": "Use Alt + arrow keys to move",
+      "emptyDraft": {
+        "title": "Plan the treatments",
+        "step1": "Pick a treatment from the bar below",
+        "step2": "Click a tooth on the odontogram",
+        "step3": "Confirm the plan to generate quote and appointments"
+      },
+      "steps": {
+        "plan": "Plan",
+        "confirm": "Confirm",
+        "inProgress": "In progress"
+      },
+      "confirmCta": {
+        "titleWithItems": "Confirm plan",
+        "subtitleWithItems": "Confirming unlocks quote generation and appointment scheduling.",
+        "empty": "Add at least one treatment to confirm the plan"
+      },
+      "ghostHint": "Available after confirming the plan",
+      "addedToPlan": "Added to plan",
+      "addingToPlan": "Adding to this plan",
+      "cancelPlan": "Cancel plan",
+      "locked": {
+        "title": "Plan locked",
+        "subtitle": "Quote {number} has been issued. To edit treatments, use Reopen (if pending) or Renegotiate the quote.",
+        "viewBudget": "View quote"
+      }
+    },
+    "tooth": "Tooth"
+  },
+  "appointments": {
+    "title": "Schedule",
+    "create": "New appointment",
+    "edit": "Edit appointment",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "week": "Week",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "selectPatient": "Select patient",
+    "selectProfessional": "Select professional",
+    "openPatientFile": "Open patient file",
+    "patient": "Patient",
+    "professional": "Professional",
+    "cabinet": "Cabinet",
+    "date": "Date",
+    "time": "Time",
+    "startTime": "Start time",
+    "duration": "Duration",
+    "treatmentType": "Treatment type",
+    "treatments": "Treatments",
+    "addTreatment": "Add treatment",
+    "selectTreatment": "Select treatment",
+    "estimatedDuration": "Estimated duration",
+    "notes": "Notes",
+    "hasNotes": "Has notes",
+    "status": {
+      "label": "Status",
+      "scheduled": "Scheduled",
+      "confirmed": "Confirmed",
+      "checked_in": "In waiting room",
+      "in_treatment": "In chair",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "no_show": "No show"
+    },
+    "scheduled": "Scheduled",
+    "confirmed": "Confirmed",
+    "inProgress": "In progress",
+    "in_progress": "In progress",
+    "completed": "Completed",
+    "cancelled": "Cancelled",
+    "noShow": "No show",
+    "no_show": "No show",
+    "transitions": {
+      "confirmed": "Mark as confirmed",
+      "checked_in": "Mark arrival",
+      "in_treatment": "Move to chair",
+      "completed": "Finish appointment",
+      "cancelled": "Cancel appointment",
+      "no_show": "Mark no show"
+    },
+    "timer": {
+      "startsIn": "starts in {minutes} min",
+      "startsInOverdue": "{minutes} min late",
+      "waiting": "waiting {minutes} min",
+      "inTreatment": "{elapsed}/{planned} min",
+      "completedAt": "finished {time}",
+      "cancelledAt": "cancelled",
+      "noShowAt": "no show"
+    },
+    "confirmTransitionTitle": "Confirm status change",
+    "confirmCancelMessage": "Cancel this appointment? The change will be logged.",
+    "confirmNoShowMessage": "Mark this patient as no show? The change will be logged.",
+    "noteLabel": "Note (optional)",
+    "transitionFailed": "Could not change appointment status",
+    "when": "When",
+    "whereWho": "Cabinet and professional",
+    "followup": {
+      "title": "Post-appointment actions"
+    },
+    "created": "Appointment created",
+    "saved": "Appointment saved",
+    "updated": "Appointment updated",
+    "conflict": "This time slot is already taken",
+    "cancel": "Cancel appointment",
+    "markCompleted": "Mark as completed",
+    "markNoShow": "No show",
+    "dailyView": "Day",
+    "weeklyView": "Week",
+    "kanbanView": "Kanban",
+    "kanban": {
+      "upcoming": "Upcoming",
+      "waiting": "Waiting room",
+      "inChair": "In chair",
+      "done": "Completed",
+      "missed": "No show / Cancelled",
+      "free": "Free",
+      "inactive": "Inactive",
+      "empty": "No appointments",
+      "nextIn": "Next at {time}",
+      "subtitleCount": "{count} appointments",
+      "subtitleEmpty": "No appointments",
+      "subtitleWaiting": "{count} waiting · avg {avg} min",
+      "subtitleInChair": "{busy} busy · {free} free"
+    },
+    "cabinetAssignment": {
+      "assignLater": "Assign later",
+      "unassigned": "Unassigned",
+      "assign": "Assign cabinet",
+      "reassign": "Reassign cabinet",
+      "unassign": "Unassign cabinet",
+      "requiredForTreatment": "Assign a cabinet before moving to treatment"
+    },
+    "professionals": {
+      "strip": "Professionals",
+      "state": {
+        "free": "Free",
+        "in_treatment": "In chair",
+        "on_break": "On break",
+        "off": "Off"
+      }
+    },
+    "noProfessionals": "No professionals configured",
+    "overlapWarning": "Overlaps detected",
+    "overlapProfessional": "Professional has {count} appointment(s) at this time",
+    "overlapCabinet": "Cabinet has {count} appointment(s) at this time",
+    "selectDuration": "Select duration...",
+    "sendEmail": "Send email",
+    "sendConfirmationEmail": "Send confirmation",
+    "resendConfirmation": "Resend confirmation",
+    "sendReminderEmail": "Send reminder",
+    "emailSent": "Email sent successfully",
+    "automatic": "automatic",
+    "selectPatientFirst": "Select a patient to see pending treatments",
+    "noPendingTreatments": "No pending treatments",
+    "createPlanFirst": "Create a treatment plan for this patient",
+    "addTreatmentFromPlan": "Add treatment from plan",
+    "selectPendingTreatment": "Select pending treatment",
+    "emptyDay": "No appointments for this day",
+    "noPatient": "No patient",
+    "freeSlots": {
+      "byProfessional": "Professional",
+      "byCabinet": "Cabinet",
+      "freeSuffix": "free",
+      "freeShort": "free",
+      "noFreeTime": "No free time",
+      "tapToBook": "Tap to book",
+      "tapToBookAria": "Free slot of {duration} at {time}",
+      "nextFreeAt": "Next at {time}",
+      "gapsAtLeast": "{count} gaps ≥ {min} min",
+      "minDuration": "Minimum",
+      "noFreeSlots": "No free slots today",
+      "clinicClosed": "Clinic closed",
+      "professionalOff": "Off-duty",
+      "onBreak": "On break"
+    }
+  },
+  "dashboard": {
+    "greetings": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "welcome": "Welcome to DentalPin",
+    "welcomeMessage": "Start by creating your first patient.",
+    "quickActions": {
+      "newAppointment": "New appointment",
+      "newPatient": "New patient",
+      "search": "Search patient",
+      "searchPlaceholder": "Search by name, phone or email"
+    },
+    "timeline": {
+      "title": "Today",
+      "empty": "No appointments scheduled for today",
+      "now": "Now",
+      "openSchedule": "Open schedule"
+    },
+    "todayKpi": {
+      "title": "Appointments today",
+      "completed": "completed",
+      "inProgress": "in progress",
+      "upcoming": "upcoming",
+      "cancelled": "cancelled",
+      "noShow": "no-shows",
+      "empty": "No appointments today"
+    },
+    "inClinic": {
+      "title": "In clinic now",
+      "inTreatment": "{n} in chair",
+      "waiting": "{n} waiting",
+      "empty": "No one in clinic"
+    },
+    "unconfirmed": {
+      "title": "Unconfirmed for tomorrow",
+      "empty": "All tomorrow's appointments confirmed",
+      "confirm": "Confirm",
+      "confirmError": "Could not confirm"
+    },
+    "overdue": {
+      "title": "Overdue payments",
+      "daysOverdue": "{n} day overdue | {n} days overdue",
+      "viewAll": "View all",
+      "empty": "No overdue invoices"
+    },
+    "recent": {
+      "title": "Recent patients",
+      "empty": "No patients yet"
+    },
+    "weekGlance": {
+      "title": "Week at a glance",
+      "subtitle": "Last 7 days vs previous 7",
+      "appointments": "Appointments",
+      "completed": "Completed",
+      "invoiced": "Invoiced",
+      "empty": "No data this week"
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your clinic, team and modules.",
+    "allCategories": "All categories",
+    "navLabel": "Settings categories",
+    "attentionRequired": "Attention required",
+    "categories": {
+      "general": {
+        "label": "General",
+        "description": "Clinic profile, branding and timezone."
+      },
+      "workspace": {
+        "label": "Workspace",
+        "description": "Cabinets, opening hours and availability."
+      },
+      "people": {
+        "label": "People",
+        "description": "Users, roles and invitations."
+      },
+      "clinical": {
+        "label": "Clinical",
+        "description": "Catalog, treatment defaults and templates."
+      },
+      "billing": {
+        "label": "Billing & tax",
+        "description": "Invoice series, VAT and tax compliance."
+      },
+      "communications": {
+        "label": "Communications",
+        "description": "Notifications, SMTP and templates."
+      },
+      "integrations": {
+        "label": "Integrations",
+        "description": "External services and providers."
+      },
+      "modules": {
+        "label": "Modules",
+        "description": "Install, upgrade and uninstall modules."
+      },
+      "account": {
+        "label": "Account",
+        "description": "Your profile, password and language."
+      }
+    },
+    "search": {
+      "placeholder": "Search settings…",
+      "empty": "No matches for that search.",
+      "navigate": "navigate",
+      "open": "open"
+    },
+    "locked": {
+      "title": "You don't have access to this section",
+      "description": "Ask a clinic administrator to grant you the required permissions."
+    },
+    "emptyCategory": {
+      "title": "No options available",
+      "description": "When compatible modules are enabled, their settings will appear here."
+    },
+    "loadError": {
+      "description": "Couldn't load this editor. Try again in a few seconds."
+    },
+    "comingSoon": {
+      "title": "Coming soon",
+      "subtitle": "We're working on this section. In the meantime you can manage this via the API."
+    },
+    "onboarding": {
+      "title": "Finish setting up your clinic",
+      "subtitle": "You have {count} pending steps to complete initial setup.",
+      "dismiss": "Dismiss",
+      "items": {
+        "clinicInfo": {
+          "label": "Complete the clinic profile",
+          "description": "Name, tax ID and address show up on quotes and invoices."
+        },
+        "cabinets": {
+          "label": "Create at least one cabinet",
+          "description": "Without cabinets you can't schedule appointments."
+        }
+      }
+    },
+    "cabinetsDescription": "Rooms or boxes where patients are treated.",
+    "usersDescription": "Accounts with access to this clinic and their roles.",
+    "profileDescription": "Your personal information in this clinic.",
+    "clinic": "Clinic",
+    "profile": "Profile",
+    "clinicName": "Clinic name",
+    "clinicInfo": "Clinic Information",
+    "clinicInfoDescription": "This data will appear on quotes and documents",
+    "taxId": "Tax ID",
+    "legalName": "Legal name",
+    "legalNameHelp": "Legal name of the entity for invoicing. Leave blank to use the clinic name.",
+    "street": "Address",
+    "city": "City",
+    "postalCode": "Postal Code",
+    "country": "Country",
+    "countryPlaceholder": "Select a country",
+    "countrySearchPlaceholder": "Search country…",
+    "phone": "Phone",
+    "timezone": "Timezone",
+    "timezoneHelp": "All schedules and appointments are interpreted in this timezone.",
+    "currency": "Currency",
+    "currencyHelp": "Clinic-wide currency used in quotes, invoices and the catalog.",
+    "editClinicInfo": "Edit information",
+    "clinicUpdated": "Clinic information updated",
+    "clinicUpdateError": "Error updating information",
+    "cabinets": "Cabinets",
+    "language": "Language",
+    "languageDescription": "Select your preferred language",
+    "users": "Clinic Users",
+    "newUser": "New User",
+    "createUser": "Create User",
+    "editUser": "Edit User",
+    "deleteUser": "Delete User",
+    "deleteUserConfirm": "Are you sure you want to remove",
+    "deleteUserNote": "The user will lose access to this clinic but their account will not be deleted.",
+    "noUsers": "No users registered",
+    "youTag": "(you)",
+    "userActive": "User active",
+    "userInactiveNote": "(Cannot log in)",
+    "saveChanges": "Save Changes",
+    "noCabinets": "No cabinets configured",
+    "addCabinet": "Add",
+    "newCabinet": "New Cabinet",
+    "editCabinet": "Edit Cabinet",
+    "deleteCabinet": "Delete Cabinet",
+    "deleteCabinetConfirm": "Are you sure you want to delete the cabinet",
+    "deleteCabinetNote": "Existing appointments in this cabinet will not be affected.",
+    "createCabinet": "Create Cabinet",
+    "roles": {
+      "admin": "Administrator",
+      "dentist": "Dentist",
+      "hygienist": "Hygienist",
+      "assistant": "Assistant",
+      "receptionist": "Receptionist"
+    },
+    "errors": {
+      "loadUsers": "Error loading users",
+      "createUser": "Error creating user",
+      "updateUser": "Error updating user",
+      "deleteUser": "Error deleting user",
+      "emailExists": "Email already exists",
+      "userNotFound": "User not found",
+      "operationNotAllowed": "Operation not allowed",
+      "invalidData": "Invalid data"
+    },
+    "messages": {
+      "userCreated": "User created successfully",
+      "userUpdated": "User updated successfully",
+      "userDeleted": "User removed from clinic"
+    },
+    "modules": {
+      "title": "Modules",
+      "subtitle": "Install, uninstall and upgrade clinic modules.",
+      "description": "Manage which modules are active in your clinic.",
+      "deps": "Dependencies",
+      "noDeps": "No dependencies",
+      "state": {
+        "installed": "Installed",
+        "uninstalled": "Not installed",
+        "toInstall": "Pending install",
+        "toUpgrade": "Pending upgrade",
+        "toRemove": "Pending removal",
+        "disabled": "Disabled",
+        "error": "Error"
+      },
+      "category": {
+        "official": "Official",
+        "community": "Community"
+      },
+      "actions": {
+        "install": "Install",
+        "uninstall": "Uninstall",
+        "upgrade": "Upgrade",
+        "apply": "Apply changes",
+        "viewDetails": "Details",
+        "force": "Force uninstall"
+      },
+      "confirmInstall": {
+        "title": "Install {name}?",
+        "message": "The module will be scheduled for install and become active after applying changes.",
+        "scheduled": "These dependencies will also be installed:"
+      },
+      "confirmUninstall": {
+        "title": "Uninstall {name}?",
+        "warning": "The module tables will be removed. A pg_dump backup is created first so data can be recovered.",
+        "forceHint": "Ignores dependent modules. Only use this if you know what you're doing."
+      },
+      "confirmUpgrade": {
+        "title": "Upgrade {name}?",
+        "message": "The module will be upgraded to the on-disk manifest version when changes are applied."
+      },
+      "confirmApply": {
+        "title": "Apply changes",
+        "message": "The backend will restart. The session may be briefly interrupted while pending operations run."
+      },
+      "pending": {
+        "banner": "Pending changes:",
+        "apply": "Apply changes"
+      },
+      "doctor": {
+        "banner": "Issues detected in the module system.",
+        "orphans": "orphan modules",
+        "missingDeps": "missing dependencies",
+        "manifestErrors": "manifest errors",
+        "errored": "errored modules"
+      },
+      "detail": {
+        "state": "State",
+        "category": "Category",
+        "installedAt": "Installed at",
+        "lastChange": "Last change",
+        "baseRevision": "Base revision",
+        "appliedRevision": "Applied revision",
+        "manifest": "Full manifest",
+        "errorMessage": "Error message",
+        "operationLog": "Operation log",
+        "noOperations": "No operations recorded."
+      },
+      "restart": {
+        "inProgress": "Restarting backend…",
+        "done": "Changes applied",
+        "failed": "Failed to apply changes",
+        "timeout": "Timed out waiting for backend"
+      },
+      "toasts": {
+        "scheduled": "Operation scheduled. Apply changes to complete.",
+        "applied": "Changes applied successfully."
+      }
+    }
+  },
+  "selector": {
+    "recentPatients": "Recent patients",
+    "commonTreatments": "Common treatments",
+    "noRecentPatients": "No recent patients",
+    "noCommonTreatments": "No common treatments",
+    "noMatches": "No matches",
+    "typeToSearch": "Type to search..."
+  },
+  "density": {
+    "switchToCompact": "Compact view",
+    "switchToComfortable": "Comfortable view"
+  },
+  "patientSelector": {
+    "createOption": "Create patient \"{query}\"",
+    "createOptionEmpty": "Create new patient",
+    "newBadge": "New",
+    "duplicateWarning": "{name} already exists with this phone",
+    "useExisting": "Use this patient",
+    "createForm": {
+      "title": "New patient",
+      "back": "Back to search",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "phone": "Phone",
+      "phoneHint": "You can add it later on the patient record.",
+      "submit": "Create and select",
+      "cancel": "Cancel",
+      "errorGeneric": "Couldn't create the patient. Retry."
+    }
+  },
+  "common": {
+    "save": "Save",
+    "add": "Add",
+    "cancel": "Cancel",
+    "clear": "Clear",
+    "close": "Close",
+    "delete": "Delete",
+    "comingSoon": "Coming soon",
+    "edit": "Edit",
+    "change": "change | changes",
+    "back": "Back",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "completed": "Completed",
+    "retry": "Retry",
+    "refresh": "Refresh",
+    "hide": "Hide",
+    "forbidden": "Access denied",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "actions": "Actions",
+    "viewDetails": "View details",
+    "previous": "Previous",
+    "next": "Next",
+    "previousYear": "Previous year",
+    "nextYear": "Next year",
+    "undo": "Undo",
+    "undone": "Undone",
+    "added": "Added",
+    "removed": "Removed",
+    "page": "Page {current} of {total}",
+    "noData": "No data",
+    "noValue": "no value",
+    "noResults": "No results",
+    "search": "Search...",
+    "selectAll": "All",
+    "deselectAll": "None",
+    "all": "All",
+    "required": "This field is required",
+    "invalidEmail": "Invalid email",
+    "networkError": "Connection error",
+    "serverError": "Server error",
+    "notFound": "Not found",
+    "offline": "Offline — data may not be up to date",
+    "inactive": "Inactive",
+    "name": "Name",
+    "color": "Color",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "email": "Email",
+    "password": "Password",
+    "passwordPlaceholder": "Minimum 8 characters",
+    "role": "Role",
+    "readOnly": "Read only",
+    "createdBy": "Created by",
+    "date": "Date",
+    "upload": "Upload",
+    "uploading": "Uploading…",
+    "maxFileSize": "up to 10 MB",
+    "durationMinutes": "{value} min",
+    "days": {
+      "sunday": "Sunday",
+      "monday": "Monday",
+      "tuesday": "Tuesday",
+      "wednesday": "Wednesday",
+      "thursday": "Thursday",
+      "friday": "Friday",
+      "saturday": "Saturday"
+    },
+    "now": "Now",
+    "today": "Today",
+    "tomorrow": "Tomorrow",
+    "yesterday": "Yesterday",
+    "copied": "Copied to clipboard",
+    "copy": "Copy",
+    "copyFailed": "Could not copy"
+  },
+  "cabinet": {
+    "toast": {
+      "created": "Cabinet created",
+      "updated": "Cabinet updated",
+      "deleted": "Cabinet deleted",
+      "duplicateName": "A cabinet with this name already exists",
+      "notFound": "Cabinet not found",
+      "createFailed": "Failed to create cabinet",
+      "updateFailed": "Failed to update cabinet",
+      "deleteFailed": "Failed to delete cabinet"
+    }
+  },
+  "professionals": {
+    "toast": {
+      "loadFailed": "Failed to load professionals"
+    }
+  },
+  "lists": {
+    "empty": {
+      "title": "No results",
+      "description": "Adjust the filters or clear them to see all records."
+    },
+    "resultCount": "{shown} of {total}",
+    "filter": {
+      "title": "Filters",
+      "more": "Filters",
+      "moreCount": "Filters ({count})",
+      "clear": "Clear",
+      "apply": "Apply",
+      "date": "Dates",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "searchPlaceholder": "Search...",
+      "noResults": "No matches",
+      "all": "All"
+    },
+    "sort": {
+      "label": "Sort",
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
+    "datePreset": {
+      "today": "Today",
+      "last7": "Last 7 days",
+      "last30": "Last 30 days",
+      "thisMonth": "This month",
+      "thisQuarter": "Quarter",
+      "thisYear": "Year",
+      "custom": "Custom"
+    },
+    "truncatedWarning": "Results truncated (>1000). Refine the filters."
+  },
+  "shared": {
+    "totals": "Totals",
+    "info": "Details",
+    "moreActions": "More actions",
+    "criticalBanner": {
+      "dismiss": "Dismiss alert"
+    },
+    "collect": {
+      "amountLabel": "Amount to collect",
+      "methodLabel": "Payment method",
+      "dateLabel": "Payment date",
+      "today": "Today",
+      "quickFull": "Full",
+      "optionalDetails": "Add reference or notes (optional)",
+      "referenceLabel": "Reference",
+      "referencePlaceholder": "e.g. POS transaction number",
+      "notesLabel": "Internal notes",
+      "submit": "Collect",
+      "cancel": "Cancel"
+    }
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email",
+    "minLength": "Minimum {min} characters",
+    "maxLength": "Maximum {max} characters",
+    "phone": "Enter a valid phone number"
+  },
+  "time": {
+    "minutes": "{n} min",
+    "hours": "{n} hour | {n} hours"
+  },
+  "calendar": {
+    "today": "Today",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
+    "monday": "Monday",
+    "tuesday": "Tuesday",
+    "wednesday": "Wednesday",
+    "thursday": "Thursday",
+    "friday": "Friday",
+    "saturday": "Saturday",
+    "sunday": "Sunday"
+  },
+  "catalog": {
+    "title": "Treatment Catalog",
+    "description": "Manage treatments, pricing, and tax configuration",
+    "items": "Treatments",
+    "categories": "Categories",
+    "noItems": "No treatments in catalog",
+    "searchPlaceholder": "Search by code or name...",
+    "code": "Code",
+    "name": "Name",
+    "category": "Category",
+    "price": "Price",
+    "defaultPrice": "Base Price",
+    "costPrice": "Cost Price",
+    "currency": "Currency",
+    "vatType": "VAT Type",
+    "vatRate": "VAT %",
+    "duration": "Duration",
+    "system": "System",
+    "newItem": "New Treatment",
+    "editItem": "Edit Treatment",
+    "deleteItem": "Delete Treatment",
+    "deleteItemConfirm": "Are you sure you want to delete the treatment \"{name}\"?",
+    "deleteItemNote": "This action cannot be undone.",
+    "pricing": "Pricing",
+    "scheduling": "Scheduling",
+    "characteristics": "Characteristics",
+    "scope": "Scope",
+    "requiresAppointment": "Requires appointment",
+    "isDiagnostic": "Is diagnostic",
+    "requiresSurfaces": "Requires surfaces",
+    "materialNotes": "Material notes",
+    "materialNotesPlaceholder": "Required materials or supplies...",
+    "active": "Active",
+    "vatTypes": {
+      "exempt": "Exempt",
+      "reduced": "Reduced",
+      "standard": "Standard"
+    },
+    "scopeTypes": {
+      "tooth": "Tooth",
+      "multi_tooth": "Multi-tooth",
+      "global_mouth": "Whole mouth",
+      "global_arch": "Per arch"
+    },
+    "pricingStrategy": {
+      "label": "Pricing strategy",
+      "help": "How the treatment price is computed when applied",
+      "flat": "Flat (single price)",
+      "per_tooth": "Per tooth (× tooth count)",
+      "per_surface": "Per surface (tiered)",
+      "per_role": "Per role (bridge: pillar/pontic)"
+    },
+    "surfacePrices": {
+      "title": "Prices by surface count",
+      "help": "Define the price for 1–5 surfaces. When surfaces are picked on a tooth, the matching tier is used. Missing tiers fall back to the nearest lower populated tier.",
+      "tier": "{n} surf."
+    },
+    "sessions": {
+      "title": "Sessions (fractional billing)",
+      "help": "Define the named steps over which this treatment is delivered and billed (e.g. crown: 'Impressions' + 'Placement'). The sum must equal the base price.",
+      "label": "Label",
+      "labelPlaceholder": "e.g. Impressions",
+      "price": "Amount",
+      "add": "Add session",
+      "sumStatus": "Sum {sum} € · Total {total} €"
+    },
+    "categoryCreated": "Category created",
+    "categoryUpdated": "Category updated",
+    "categoryDeleted": "Category deleted",
+    "categoryKeyExists": "A category with this key already exists",
+    "categoryCreateFailed": "Error creating category",
+    "categoryUpdateFailed": "Error updating category",
+    "categoryDeleteFailed": "Error deleting category",
+    "cannotModifySystemCategory": "Cannot modify a system category",
+    "cannotDeleteSystemCategory": "Cannot delete a system category",
+    "itemCreated": "Treatment created",
+    "itemUpdated": "Treatment updated",
+    "itemDeleted": "Treatment deleted",
+    "itemCodeExists": "A treatment with this code already exists",
+    "categoryNotFound": "Category not found",
+    "itemCreateFailed": "Error creating treatment",
+    "itemUpdateFailed": "Error updating treatment",
+    "itemDeleteFailed": "Error deleting treatment",
+    "cannotModifySystemItem": "Cannot modify a system treatment",
+    "cannotDeleteSystemItem": "Cannot delete a system treatment",
+    "odontogramMapping": "Odontogram Visualization",
+    "odontogramMappingDescription": "Associate this treatment with an odontogram visualization type so it appears in the patient chart.",
+    "odontogramType": "Treatment type",
+    "clinicalCategory": "Clinical category",
+    "noOdontogramMapping": "No association",
+    "odontogramMappingHint": "Treatment characteristics will be automatically adjusted based on the selected type.",
+    "selectCategory": "Select category...",
+    "selectVatType": "Select VAT type...",
+    "selectScope": "Select scope...",
+    "selectOdontogramType": "Select type...",
+    "selectClinicalCategory": "Select category...",
+    "expandAll": "Expand all",
+    "collapseAll": "Collapse all",
+    "unnamed": "Untitled",
+    "activeHint": "Available for budgets and plans",
+    "tabs": {
+      "general": "General",
+      "pricing": "Pricing",
+      "scheduling": "Scheduling",
+      "clinical": "Clinical"
+    }
+  },
+  "placeholders": {
+    "selectRole": "Select role..."
+  },
+  "vatTypes": {
+    "title": "VAT Types",
+    "description": "Manage VAT types available for treatments",
+    "name": "Name",
+    "rate": "Rate",
+    "default": "Default",
+    "system": "System",
+    "active": "Active",
+    "new": "New VAT Type",
+    "edit": "Edit VAT Type",
+    "delete": "Delete VAT Type",
+    "setAsDefault": "Set as default",
+    "showInactive": "Show inactive",
+    "noItems": "No VAT types configured",
+    "namePlaceholder": "E.g.: Reduced (10%)",
+    "systemNote": "System VAT types can only have their default status changed.",
+    "deleteConfirm": "Are you sure you want to delete the VAT type",
+    "deleteNote": "Treatments using this VAT type will not be affected.",
+    "created": "VAT type created",
+    "updated": "VAT type updated",
+    "deleted": "VAT type deleted",
+    "loadError": "Error loading VAT types",
+    "createError": "Error creating VAT type",
+    "updateError": "Error updating VAT type",
+    "deleteError": "Error deleting VAT type"
+  },
+  "treatmentPlans": {
+    "title": "Treatment Plans",
+    "description": "Manage treatment plans for patients",
+    "new": "New plan",
+    "create": "Create treatment plan",
+    "edit": "Edit plan",
+    "view": "View plan",
+    "delete": "Delete plan",
+    "noItems": "This plan has no treatments",
+    "noPlans": "This patient has no treatment plans",
+    "noPlansHint": "Mark treatments on the dental chart and create a plan to organize them",
+    "createFirst": "Create first plan",
+    "empty": "No treatment plans registered",
+    "emptyAction": "Create first plan",
+    "searchPlaceholder": "Search by number, patient or title...",
+    "planNumber": "Number",
+    "patient": "Patient",
+    "untitled": "Untitled",
+    "untitledPlan": "Untitled plan",
+    "itemCount": "{count} treatment | {count} treatments",
+    "treatments": "treatments",
+    "progress": "Progress",
+    "pendingTreatments": "Pending treatments",
+    "completedTreatments": "Completed treatments",
+    "linkedBudget": "Linked quote",
+    "unknownTreatment": "Unknown treatment",
+    "globalTreatment": "General treatment",
+    "activePlan": "Active plan",
+    "otherPlans": "Other plans",
+    "viewAllPlans": "View plan history",
+    "activate": "Activate",
+    "generateBudget": "Generate quote",
+    "scheduleAppointment": "Schedule appointment",
+    "status": {
+      "draft": "Draft",
+      "pending": "Pending",
+      "active": "Active",
+      "completed": "Completed",
+      "closed": "Closed",
+      "archived": "Archived"
+    },
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "E.g.: Complete oral rehabilitation",
+      "assignedProfessional": "Assigned professional",
+      "selectProfessional": "Select professional",
+      "diagnosisNotes": "Diagnosis notes",
+      "diagnosisNotesPlaceholder": "Diagnosis and clinical observations...",
+      "internalNotes": "Internal notes",
+      "internalNotesPlaceholder": "Notes only visible to staff..."
+    },
+    "modal": {
+      "subtitle": "Organize patient treatments",
+      "titleHint": "Optional - helps identify the plan",
+      "additionalNotes": "Additional notes",
+      "quickTip": "After creating the plan you can add treatments from the odontogram or catalog.",
+      "createButton": "Create plan"
+    },
+    "actions": {
+      "activate": "Activate plan",
+      "confirm": "Confirm plan",
+      "complete": "Mark completed",
+      "generateBudget": "Generate quote",
+      "linkBudget": "Link quote",
+      "syncBudget": "Sync quote",
+      "cancelPlan": "Cancel plan",
+      "reopen": "Reopen",
+      "close": "Close plan",
+      "reactivate": "Reactivate plan",
+      "logContact": "Log contact"
+    },
+    "items": {
+      "title": "Treatments",
+      "add": "Add treatment",
+      "addSelected": "Add {count} treatment | Add {count} treatments",
+      "remove": "Remove treatment",
+      "empty": "No treatments in this plan",
+      "assignedProfessional": "Assigned dentist",
+      "assignedProfessionalAriaLabel": "Change assigned dentist for this treatment",
+      "useUsersPlanDoctor": "Use plan's dentist",
+      "noProfessional": "No dentist assigned",
+      "inactiveProfessional": "Inactive professional",
+      "cascadeReassign": {
+        "title": "Reassign pending treatments?",
+        "body": "You changed the plan dentist. {count} pending treatment(s) were assigned to {previousName}. Reassign them to the new dentist as well?",
+        "confirm": "Yes, reassign pending",
+        "cancel": "No, keep as they are"
+      }
+    },
+    "filters": {
+      "allStatuses": "All statuses"
+    },
+    "confirmations": {
+      "delete": "Delete this treatment plan?",
+      "completeItem": "Mark treatment as completed?",
+      "completeItemDescription": "This action cannot be undone.",
+      "activateTitle": "Confirm treatment plan?",
+      "activateDescription": "Confirming unlocks quote generation and appointment scheduling. You can keep adding or completing treatments afterwards.",
+      "unlockTitle": "Modify the plan?",
+      "unlockIntro": "This plan has quote {number} already issued. To modify it, the current quote must be cancelled.",
+      "unlockConsequence1": "Quote {number} will be cancelled and no longer valid for the patient.",
+      "unlockConsequence2": "You can add, edit or remove treatments from the plan.",
+      "unlockConsequence3": "You will need to generate a new quote when you are done with the changes.",
+      "unlockConsequence4": "The cancelled quote is kept in history for traceability.",
+      "cancelTitle": "Cancel the treatment plan?",
+      "cancelDescription": "The plan will move to cancelled state and any non-performed planned treatments will be removed from the odontogram. Plan history is kept."
+    },
+    "messages": {
+      "created": "Treatment plan created",
+      "updated": "Treatment plan updated",
+      "deleted": "Treatment plan deleted",
+      "itemsAdded": "Treatments added to plan"
+    },
+    "itemCompleted": "Treatment completed",
+    "budgetGenerated": "Budget generated",
+    "created": "Treatment plan created",
+    "updated": "Treatment plan updated",
+    "statusUpdated": "Plan status updated",
+    "deleted": "Treatment plan deleted",
+    "budgetLinked": "Budget linked to plan",
+    "budgetSynced": "Budget synced",
+    "errors": {
+      "load": "Error loading treatment plans",
+      "create": "Error creating treatment plan",
+      "update": "Error updating treatment plan",
+      "delete": "Error deleting treatment plan"
+    },
+    "notes": {
+      "title": "Clinical notes",
+      "empty": "No clinical notes yet",
+      "addNote": "Add note",
+      "edit": "Edit note",
+      "delete": "Delete note",
+      "attachments": "Attachments",
+      "author": "Author",
+      "createdAt": "Created",
+      "templatePicker": "Templates",
+      "bodyPlaceholder": "Write the clinical note…",
+      "saved": "Note saved",
+      "deleted": "Note deleted"
+    },
+    "completionNudge": {
+      "title": "Complete treatment",
+      "description": "Add a clinical note capturing what happened at this visit before marking it completed.",
+      "completeWithNote": "Complete with note",
+      "skip": "Skip note",
+      "skipConfirm": "Complete without a clinical note?"
+    },
+    "visitNote": {
+      "title": "Visit clinical note",
+      "save": "Save note",
+      "empty": "No visit note yet",
+      "saved": "Note saved"
+    },
+    "clinicalNotesTab": "Clinical notes",
+    "filterBy": {
+      "plan": "Plan",
+      "item": "Treatment",
+      "visit": "Visit",
+      "all": "All"
+    },
+    "byPlan": {
+      "empty": "This patient has no clinical notes in any treatment plan",
+      "planNotesLabel": "Plan notes",
+      "noNotesForTreatment": "No notes for this treatment",
+      "noNotesForPlan": "No notes in this plan"
+    },
+    "noteTemplates": {
+      "endo": {
+        "singleVisit": "Endodontics — single visit",
+        "multiVisit": "Endodontics — multi-visit"
+      },
+      "perio": {
+        "scaling": "Scaling / root planing"
+      },
+      "implant": {
+        "placement": "Implant placement"
+      },
+      "general": {
+        "followUp": "General follow-up"
+      }
+    },
+    "closureReason": {
+      "rejected_by_patient": "Rejected by patient",
+      "expired": "Expired",
+      "cancelled_by_clinic": "Cancelled by clinic",
+      "patient_abandoned": "Patient abandoned",
+      "other": "Other reason"
+    },
+    "confirmed": "Plan confirmed",
+    "reopened": "Plan reopened",
+    "closed": "Plan closed",
+    "reactivated": "Plan reactivated",
+    "contactLogged": "Contact logged",
+    "modals": {
+      "confirm": {
+        "title": "Confirm plan",
+        "description": "The plan will move to Pending and a draft quote will be auto-created. Treatments become read-only once confirmed.",
+        "submit": "Confirm plan"
+      },
+      "reopen": {
+        "title": "Reopen plan for editing",
+        "description": "This will cancel the current quote. The plan returns to Draft so you can edit treatments.",
+        "submit": "Reopen"
+      },
+      "close": {
+        "title": "Close plan",
+        "description": "Choose the closure reason. Pending treatments will be archived.",
+        "reasonLabel": "Reason",
+        "noteLabel": "Note (optional)",
+        "submit": "Close plan"
+      },
+      "reactivate": {
+        "title": "Reactivate closed plan",
+        "description": "This will reactivate a plan closed on {date} as «{reason}». Continue?",
+        "submit": "Reactivate"
+      },
+      "contactLog": {
+        "title": "Log contact",
+        "description": "Records the touchpoint without changing the plan status.",
+        "channelLabel": "Channel",
+        "noteLabel": "Note (optional)",
+        "submit": "Log"
+      }
+    }
+  },
+  "pipeline": {
+    "title": "Plans pipeline",
+    "description": "Manage the treatment pipeline.",
+    "tabs": {
+      "por_presupuestar": "To quote",
+      "esperando_paciente": "Awaiting patient",
+      "sin_cita": "No appointment",
+      "sin_proxima_cita": "No next appointment",
+      "cerrados": "Closed",
+      "listado": "List"
+    },
+    "row": {
+      "patient": "Patient",
+      "plan": "Plan",
+      "budget": "Quote",
+      "items": "Treatments",
+      "daysIn": "{n} days in status",
+      "nextAppt": "Next appt",
+      "noNextAppt": "No appointment",
+      "noBudget": "No quote"
+    },
+    "actions": {
+      "open": "Open",
+      "send": "Send",
+      "remind": "Resend",
+      "schedule": "Schedule",
+      "scheduleNext": "Schedule next",
+      "reactivate": "Reactivate",
+      "call": "Call",
+      "whatsapp": "WhatsApp",
+      "markContacted": "Mark contacted",
+      "acceptInClinic": "Accept in clinic"
+    },
+    "search": "Search by name or number…",
+    "empty": "No rows in this tab.",
+    "loading": "Loading…"
+  },
+  "budget": {
+    "title": "Quotes",
+    "description": "Manage treatment quotes for patients",
+    "new": "New quote",
+    "edit": "Edit quote",
+    "view": "View quote",
+    "delete": "Delete quote",
+    "duplicate": "Create new version",
+    "noItems": "No quotes",
+    "empty": "No quotes registered",
+    "emptyAction": "Create first quote",
+    "linkedToPlan": "Linked to plan",
+    "searchPlaceholder": "Search by number or patient...",
+    "budgetNumber": "Number",
+    "version": "Version",
+    "treatmentPlan": "Treatment plan",
+    "patient": "Patient",
+    "selectPatient": "Select patient",
+    "selectPatientHint": "Search and select the patient for this quote",
+    "professional": "Professional",
+    "validFrom": "Valid from",
+    "validUntil": "Valid until",
+    "validUntilHint": "Leave empty for quote without expiration date",
+    "noExpiry": "No expiration date",
+    "createAndAddItems": "Create and add treatments",
+    "subtotal": "Subtotal",
+    "totalDiscount": "Total discount",
+    "totalTax": "Total VAT",
+    "total": "Total",
+    "globalDiscount": "Global discount",
+    "discountType": "Discount type",
+    "discountValue": "Discount value",
+    "percentage": "Percentage",
+    "absolute": "Absolute",
+    "internalNotes": "Internal notes",
+    "internalNotesPlaceholder": "Notes only visible to staff...",
+    "patientNotes": "Patient notes",
+    "patientNotesPlaceholder": "Notes visible on the quote...",
+    "status": {
+      "title": "Status",
+      "draft": "Draft",
+      "sent": "Sent",
+      "partially_accepted": "Partially accepted",
+      "accepted": "Accepted",
+      "in_progress": "In progress",
+      "completed": "Completed",
+      "invoiced": "Invoiced",
+      "rejected": "Rejected",
+      "expired": "Expired",
+      "cancelled": "Cancelled"
+    },
+    "itemStatus": {
+      "pending": "Pending",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "in_progress": "In progress",
+      "completed": "Completed"
+    },
+    "actions": {
+      "send": "Send to patient",
+      "accept": "Accept quote",
+      "acceptPartial": "Accept selected",
+      "reject": "Reject",
+      "cancel": "Cancel quote",
+      "duplicate": "Create new version",
+      "downloadPdf": "Download PDF",
+      "previewPdf": "Preview PDF",
+      "startTreatment": "Start treatment",
+      "completeTreatment": "Complete treatment",
+      "renegotiate": "Renegotiate",
+      "acceptInClinic": "Accept in clinic",
+      "resend": "Resend",
+      "sendReminder": "Send reminder",
+      "setPublicCode": "Set access code",
+      "unlockPublic": "Unlock access"
+    },
+    "items": {
+      "title": "Treatments",
+      "add": "Add treatment",
+      "remove": "Remove treatment",
+      "edit": "Edit treatment",
+      "empty": "No treatments in this quote",
+      "singular": "treatment",
+      "plural": "treatments",
+      "addFromCatalog": "Add from catalog",
+      "addFromOdontogram": "Add from dental chart",
+      "treatment": "Treatment",
+      "searchCatalog": "Search in treatment catalog...",
+      "unitPrice": "Unit price",
+      "quantity": "Quantity",
+      "discount": "Discount",
+      "lineTotal": "Line total",
+      "tooth": "Tooth",
+      "toothNumber": "Tooth number",
+      "toothNumberPlaceholder": "E.g.: 11, 21, 36...",
+      "surfaces": "Surfaces",
+      "notes": "Notes",
+      "notesPlaceholder": "Notes about this treatment..."
+    },
+    "signature": {
+      "title": "Digital signature",
+      "viewAction": "View signature",
+      "signedBy": "Signed by",
+      "signedAt": "Signed on",
+      "methodLabel": "Method",
+      "relationshipLabel": "Relationship",
+      "documentHash": "Document hash (SHA-256)",
+      "hashHint": "Hash {short} — binds the signature to this exact PDF. Any change would invalidate it.",
+      "downloadSignedPdf": "Download signed PDF",
+      "downloadError": "Could not download the signed PDF.",
+      "notSigned": "No signature has been captured for this quote yet.",
+      "method": {
+        "drawn": "Hand-drawn signature",
+        "clickAccept": "Click-to-accept",
+        "external": "External provider"
+      },
+      "email": "Email",
+      "relationship": "Relationship to patient",
+      "patient": "Patient",
+      "guardian": "Legal guardian",
+      "representative": "Representative",
+      "accept": "I accept the terms of the quote",
+      "signHere": "Sign here",
+      "clear": "Clear signature"
+    },
+    "history": {
+      "title": "Change history",
+      "noChanges": "No changes recorded",
+      "actions": {
+        "created": "Quote created",
+        "updated": "Quote updated",
+        "status_changed": "Status changed",
+        "item_added": "Treatment added",
+        "item_removed": "Treatment removed",
+        "signed": "Quote signed",
+        "sent": "Quote sent",
+        "duplicated": "New version created",
+        "deleted": "Quote deleted",
+        "item_treatment_started": "Treatment started",
+        "item_treatment_completed": "Treatment completed"
+      }
+    },
+    "versions": {
+      "title": "Versions",
+      "current": "Current",
+      "viewVersion": "View version"
+    },
+    "confirmations": {
+      "send": "Send quote to patient?",
+      "sendDescription": "The quote will be marked as sent.",
+      "reject": "Reject quote?",
+      "rejectDescription": "This action cannot be undone.",
+      "cancel": "Cancel quote?",
+      "cancelDescription": "This action cannot be undone.",
+      "delete": "Delete quote?",
+      "deleteDescription": "This action cannot be undone."
+    },
+    "send": {
+      "description": "You can send the quote by email or mark it as manually sent (printed or handed over).",
+      "sendByEmail": "Send by email",
+      "willSendTo": "Will be sent to",
+      "noPatientEmail": "Patient has no registered email",
+      "customMessage": "Custom message (optional)",
+      "customMessagePlaceholder": "Add a message for the patient...",
+      "manualNote": "The quote will be marked as sent without sending any email.",
+      "sendEmail": "Send email",
+      "markAsSent": "Mark as sent"
+    },
+    "messages": {
+      "created": "Quote created",
+      "updated": "Quote updated",
+      "deleted": "Quote deleted",
+      "sent": "Quote sent",
+      "sentByEmail": "Quote sent by email",
+      "sentManually": "Quote marked as sent",
+      "accepted": "Quote accepted",
+      "rejected": "Quote rejected",
+      "cancelled": "Quote cancelled",
+      "duplicated": "New version created",
+      "itemAdded": "Treatment added",
+      "itemUpdated": "Treatment updated",
+      "itemRemoved": "Treatment removed",
+      "treatmentStarted": "Treatment started",
+      "treatmentCompleted": "Treatment completed"
+    },
+    "errors": {
+      "load": "Error loading quotes",
+      "create": "Error creating quote",
+      "update": "Error updating quote",
+      "delete": "Error deleting quote",
+      "send": "Error sending quote",
+      "accept": "Error accepting quote",
+      "reject": "Error rejecting quote",
+      "notFound": "Quote not found",
+      "onlyDraft": "Only draft quotes can be edited"
+    },
+    "filters": {
+      "allStatuses": "All statuses",
+      "status": "Status",
+      "paymentStatus": "Status",
+      "professional": "Professional",
+      "validity": "Validity",
+      "validityValid": "Valid",
+      "validityExpiringSoon": "Expires in 7 days",
+      "validityExpired": "Expired",
+      "dateFrom": "From",
+      "dateTo": "To",
+      "showExpired": "Show expired",
+      "advanced": "Advanced filters",
+      "clear": "Clear filters"
+    },
+    "sortFields": {
+      "createdAt": "Created",
+      "validUntil": "Valid until",
+      "total": "Total",
+      "status": "Status",
+      "budgetNumber": "Number"
+    },
+    "validity": {
+      "expired": "Expired",
+      "expiresIn": "Expires in {days}d"
+    },
+    "pdf": {
+      "generating": "Generating PDF...",
+      "downloadError": "Error downloading PDF"
+    },
+    "modals": {
+      "renegotiate": {
+        "title": "Renegotiate quote",
+        "description": "This will cancel the current quote and reopen the plan to Draft so you can adjust treatments.",
+        "submit": "Renegotiate"
+      },
+      "acceptInClinic": {
+        "title": "Accept quote in clinic",
+        "description": "Capture the patient acceptance. You can collect a tablet signature (optional).",
+        "signerLabel": "Signer full name",
+        "captureSignature": "Capture signature",
+        "submit": "Mark accepted"
+      },
+      "setPublicCode": {
+        "title": "Set access code",
+        "description": "This patient has neither phone nor date of birth on file. Set a 4-6 digit code and share it verbally with the patient. DO NOT include the code in the email.",
+        "codeLabel": "Code (4-6 digits)",
+        "submit": "Save code"
+      }
+    },
+    "publicLink": {
+      "action": "Share link",
+      "title": "Patient link",
+      "help": "Copy this link and share it with the patient via WhatsApp, SMS or email. They will be asked for one verification detail before viewing the quote.",
+      "copy": "Copy link",
+      "copied": "Copied!",
+      "whatsapp": "Send via WhatsApp",
+      "whatsappNoPhone": "The patient has no phone on file",
+      "whatsappGreeting": "Hi {name}, here's your quote:",
+      "whatsappGreetingFallback": "Hi, here's your quote:",
+      "preview": "Preview",
+      "statusSent": "Sent",
+      "statusAccepted": "Accepted",
+      "statusRejected": "Rejected",
+      "statusExpired": "Expired"
+    },
+    "public": {
+      "title": "Your quote",
+      "intro": "{clinic} has sent you this quote. Review the treatments and choose an option.",
+      "greeting": "Hello, {name}",
+      "subtitle": "Your personalised treatment plan",
+      "budgetNumber": "Quote",
+      "issuedOn": "Issued on {date}",
+      "items": "Treatments included",
+      "tooth": "Tooth {number}",
+      "subtotal": "Subtotal",
+      "discount": "Discount",
+      "tax": "VAT",
+      "total": "Total",
+      "validUntil": "Valid until {date}",
+      "trustSecure": "Secure connection",
+      "trustEncrypted": "Encrypted data",
+      "trustSignature": "Legally binding signature",
+      "needHelp": "Need help? Call the clinic",
+      "noteFromClinic": "Message from the clinic",
+      "callClinic": "Call the clinic",
+      "emailClinic": "Send email",
+      "cta_accept": "Accept and sign",
+      "cta_reject": "Not interested",
+      "expired": "This quote has expired. Please contact the clinic.",
+      "locked": "Access locked after too many attempts. Please call the clinic.",
+      "already_accepted": "You already accepted this quote. The clinic will contact you to schedule your first appointment.",
+      "already_rejected": "You rejected this quote. If you change your mind, please call the clinic.",
+      "download": {
+        "signedPdf": "Download signed PDF",
+        "notSigned": "This quote has no signature attached yet.",
+        "error": "Could not download the PDF. Please try again.",
+        "reauthIntro": "For security, please verify your identity again to download the signed PDF."
+      },
+      "verify": {
+        "title": "Verify your identity",
+        "intro": "To protect your information, confirm one detail before viewing your quote.",
+        "phone_last4_label": "Last 4 digits of your phone",
+        "dob_label": "Your date of birth",
+        "manual_code_label": "Code given to you by the clinic",
+        "submit": "Continue",
+        "invalid": "Incorrect detail. Please try again.",
+        "locked": "Access locked after too many attempts. Please call the clinic.",
+        "rate_limited": "Too many attempts. Wait 15 minutes."
+      },
+      "accept": {
+        "title": "Accept and sign",
+        "signerLabel": "Your full name",
+        "signatureLabel": "Sign here (optional)",
+        "signatureClear": "Clear",
+        "consent": "I accept this quote and authorise the described treatment.",
+        "submit": "Confirm acceptance",
+        "success": "Done! The clinic will contact you to schedule your first appointment."
+      },
+      "reject": {
+        "title": "Not interested",
+        "intro": "Why is this quote not for you?",
+        "reasonLabel": "Reason",
+        "noteLabel": "Comment (optional)",
+        "submit": "Confirm rejection",
+        "success": "We have notified the clinic.",
+        "reasons": {
+          "price": "Price",
+          "time": "Lack of time",
+          "second_opinion": "Second opinion",
+          "other": "Other reason"
+        }
+      }
+    },
+    "settings": {
+      "title": "Quote settings",
+      "description": "Configure expiry, reminders and public-link verification.",
+      "cards": {
+        "expiry": {
+          "title": "Expiry and auto-close",
+          "description": "How long a quote is valid before expiring and when to auto-close pending plans."
+        },
+        "reminders": {
+          "title": "Automatic reminders",
+          "description": "Toggle 7d / 14d email reminders to patients with no response."
+        },
+        "publicLink": {
+          "title": "Public link and verification",
+          "description": "Configure the protection of the patient-facing quote link."
+        }
+      },
+      "expiry": {
+        "validityDays": "Quote validity (days)",
+        "validityHelp": "After this many days without response the quote becomes Expired (range 7-180).",
+        "autoCloseDays": "Days before auto-closing the plan",
+        "autoCloseHelp": "Plans with an expired quote and no action for this many days move to Closed (range 7-180).",
+        "save": "Save"
+      },
+      "reminders": {
+        "enabled": "Send automatic reminders at 7d and 14d",
+        "enabledHelp": "When on, the system emails the patient about pending quotes. When off, reception follows up manually.",
+        "save": "Save"
+      },
+      "publicLink": {
+        "authDisabled": "Disable public link verification",
+        "authDisabledHelp": "When on, the patient sees the quote with the link only — no phone or DOB challenge. Accept the risk if the link is shared.",
+        "save": "Save"
+      },
+      "saved": "Settings saved"
+    }
+  },
+  "notifications": {
+    "communications": {
+      "language": {
+        "cardTitle": "Communications language",
+        "cardDescription": "Language used in the patient-facing quote view, emails and SMS.",
+        "title": "Patient communications language",
+        "label": "Language",
+        "help": "Applies to the patient-facing quote view and the automated email/SMS templates. Staff UI keeps each user's own language preference.",
+        "save": "Save",
+        "saved": "Language saved"
+      }
+    },
+    "title": "Notifications",
+    "description": "Configure clinic email notifications",
+    "pageDescription": "Configure which notifications are sent automatically and which require manual sending.",
+    "autoVsManual": "Automatic vs manual notifications",
+    "autoVsManualDescription": "Define which notifications are sent automatically when an event occurs and which require the user to send them manually.",
+    "notificationType": "Notification type",
+    "enabled": "Enabled",
+    "autoSend": "Auto send",
+    "options": "Options",
+    "hoursBefore": "h before",
+    "testConnection": "Test connection",
+    "testEmailTitle": "Send test email",
+    "testEmailDescription": "We will send a test email to verify the configuration works correctly.",
+    "sendTestEmail": "Send test",
+    "test_email_sent": "Test email sent successfully",
+    "settings_saved": "Settings saved",
+    "emailProvider": "Email provider",
+    "providerConfigured": "Email provider configured",
+    "providerNote": "Email server configuration is done in the server environment variables.",
+    "infoTitle": "Information",
+    "infoAutoSend": "Auto send: The notification is sent when the event occurs (e.g., when creating an appointment).",
+    "infoManualSend": "Manual send: A button will appear to send the notification when desired.",
+    "infoDisabled": "Disabled: The notification will not be sent and the send option will not appear.",
+    "types": {
+      "appointment_confirmation": "Appointment confirmation",
+      "appointment_confirmation_desc": "Confirmation email when an appointment is scheduled",
+      "appointment_cancelled": "Appointment cancellation",
+      "appointment_cancelled_desc": "Notification email when an appointment is cancelled",
+      "appointment_reminder": "Appointment reminder",
+      "appointment_reminder_desc": "Reminder email before the appointment",
+      "budget_sent": "Quote sending",
+      "budget_sent_desc": "Email with quote details",
+      "budget_accepted": "Quote accepted",
+      "budget_accepted_desc": "Confirmation email when a quote is accepted",
+      "welcome": "Welcome",
+      "welcome_desc": "Welcome email for new patients"
+    },
+    "sendConfirmation": "Send confirmation",
+    "sendReminder": "Send reminder",
+    "sendCancellation": "Send cancellation",
+    "sendBudget": "Send by email",
+    "sendAcceptance": "Send confirmation",
+    "sendWelcome": "Send welcome",
+    "sendEmail": "Send email",
+    "errors": {
+      "fetch_failed": "Error loading settings",
+      "save_failed": "Error saving settings",
+      "test_failed": "Error sending test email",
+      "send_failed": "Error sending notification"
+    },
+    "smtp": {
+      "title": "Email server configuration",
+      "description": "Configure the SMTP server to send emails from your clinic. Each clinic can have its own configuration.",
+      "configure": "Configure",
+      "provider": "Provider",
+      "host": "Server",
+      "port": "Port",
+      "username": "Username",
+      "password": "Password",
+      "passwordHint": "Leave empty to keep current password",
+      "useTls": "Use TLS",
+      "useSsl": "Use SSL",
+      "fromEmail": "From email",
+      "fromName": "From name",
+      "security": "Security",
+      "testConnection": "Test connection",
+      "testConnectionTitle": "Test configuration before saving",
+      "testEmailPlaceholder": "Test email address",
+      "test_success": "SMTP connection successful. Test email sent.",
+      "test_failed": "SMTP connection error",
+      "settings_saved": "SMTP settings saved",
+      "consoleNote": "In console mode, emails are displayed in the server console instead of being sent. Useful for development.",
+      "disabledNote": "With email disabled, no email notifications will be sent from this clinic.",
+      "status": {
+        "not_configured": "Not configured",
+        "verified": "Verified and working",
+        "not_verified": "Configured but not verified",
+        "disabled": "Email disabled",
+        "console": "Console mode (development)"
+      },
+      "errors": {
+        "fetch_failed": "Error loading SMTP settings",
+        "save_failed": "Error saving SMTP settings",
+        "test_failed": "Error testing SMTP connection"
+      }
+    }
+  },
+  "invoice": {
+    "title": "Invoices",
+    "description": "Manage invoices and billing",
+    "new": "New invoice",
+    "edit": "Edit invoice",
+    "view": "View invoice",
+    "delete": "Delete invoice",
+    "noItems": "No invoices",
+    "empty": "No invoices registered",
+    "emptyAction": "Create first invoice",
+    "searchPlaceholder": "Search by number or patient...",
+    "notFound": "Invoice not found",
+    "draftNoNumber": "Draft",
+    "details": "Details",
+    "invoiceNumber": "Invoice number",
+    "patient": "Patient",
+    "searchPatient": "Search patient",
+    "searchPatientPlaceholder": "Search by name...",
+    "professional": "Professional",
+    "billingData": "Billing data",
+    "billingName": "Billing name",
+    "taxId": "Tax ID",
+    "billingEmail": "Billing email",
+    "billingAddress": "Billing address",
+    "billingDataComplete": "Complete",
+    "billingDataIncomplete": "Incomplete",
+    "billingDataIncompleteHint": "The patient is missing some billing information.",
+    "editPatientBilling": "Edit patient data",
+    "fromPatient": "From patient",
+    "editInPatient": "Edit in profile",
+    "billingFromPatientHint": "This data comes from the patient's record. To modify it, edit the patient's billing information.",
+    "paymentTerms": "Payment terms",
+    "linkedToBudget": "Linked to budget",
+    "selectPatient": "Select patient",
+    "noBillingData": "No billing data",
+    "street": "Street",
+    "city": "City",
+    "postalCode": "Postal code",
+    "province": "Province",
+    "country": "Country",
+    "linkedBudget": "Linked quote",
+    "creditNoteFor": "Credit note for",
+    "paymentTermDays": "Payment term (days)",
+    "dueDate": "Due date",
+    "issueDate": "Issue date",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "totalDiscount": "Total discount",
+    "tax": "Tax",
+    "total": "Total",
+    "paid": "Paid",
+    "totalPaid": "Total paid",
+    "balance": "Balance",
+    "balanceDue": "Balance due",
+    "overdue": "Overdue",
+    "overdueDays": "Overdue {n}d",
+    "info": {
+      "issueDate": "Issue date",
+      "dueDate": "Due date",
+      "issuedBy": "Issued by",
+      "createdBy": "Created by",
+      "createdAt": "Created",
+      "budget": "Budget",
+      "creditNoteFor": "Credit note for"
+    },
+    "criticalBanner": {
+      "aeatRejected": {
+        "title": "AEAT rejected this invoice",
+        "cta": "Fix and resubmit"
+      },
+      "billingIncomplete": {
+        "title": "Billing data incomplete",
+        "cta": "Complete data"
+      }
+    },
+    "collect": {
+      "title": "Collect invoice",
+      "submit": "Collect",
+      "noteAppliedToInvoice": "applied to this invoice.",
+      "notePendingAfter": "Remaining balance",
+      "noteFullySettled": "This payment fully settles the invoice.",
+      "noteToInvoice": "applied to this invoice and",
+      "noteExcessToOnAccount": "credited to the patient on-account.",
+      "noteInvoiceSettled": "This invoice is already paid.",
+      "noteToOnAccount": "will be credited to the patient on-account."
+    },
+    "tooth": "Tooth",
+    "vat": "VAT",
+    "currency": "Currency",
+    "internalNotes": "Internal notes",
+    "internalNotesPlaceholder": "Notes only visible to staff...",
+    "publicNotes": "Public notes",
+    "publicNotesPlaceholder": "Notes visible on invoice...",
+    "items": "Items",
+    "addItem": "Add item",
+    "editItem": "Edit item",
+    "selectTreatment": "Treatment",
+    "searchCatalog": "Search treatment in catalog...",
+    "itemDescription": "Description",
+    "itemPrice": "Unit price",
+    "itemQuantity": "Quantity",
+    "selectVatType": "Select VAT type",
+    "summary": "Summary",
+    "createDraft": "Create draft",
+    "createFromBudget": "Create invoice from quote",
+    "notes": "Notes",
+    "status": {
+      "draft": "Draft",
+      "issued": "Issued",
+      "partial": "Partially paid",
+      "paid": "Paid",
+      "cancelled": "Cancelled",
+      "voided": "Voided"
+    },
+    "actions": {
+      "issue": "Issue invoice",
+      "void": "Void",
+      "recordPayment": "Record payment",
+      "createCreditNote": "Create credit note",
+      "downloadPdf": "Download PDF",
+      "previewPdf": "Preview PDF",
+      "sendEmail": "Send by email"
+    },
+    "recordPayment": "Record payment",
+    "paymentAmount": "Amount",
+    "paymentMethod": "Payment method",
+    "paymentDate": "Payment date",
+    "paymentReference": "Reference",
+    "paymentReferencePlaceholder": "Transaction number, receipt...",
+    "paymentNotes": "Payment notes",
+    "paymentVoided": "Payment voided",
+    "createCreditNote": "Create credit note",
+    "creditNoteReason": "Credit note reason",
+    "creditNoteReasonPlaceholder": "Describe the reason for the credit note...",
+    "creditNoteInfo": "A credit note will be created for the full invoice amount.",
+    "prompts": {
+      "voidPaymentReason": "Enter the reason for voiding this payment"
+    },
+    "payments": {
+      "title": "Payments",
+      "record": "Record payment",
+      "void": "Void payment",
+      "amount": "Amount",
+      "method": "Payment method",
+    "date": "Date",
+      "reference": "Reference",
+      "notes": "Notes",
+      "noPayments": "No payments recorded",
+      "recorded": "Payment recorded",
+      "voided": "Payment voided",
+      "voidReason": "Void reason",
+      "voidReasonPlaceholder": "Reason for voiding this payment...",
+      "methods": {
+        "cash": "Cash",
+        "card": "Card",
+        "bank_transfer": "Bank transfer",
+        "direct_debit": "Direct debit",
+        "insurance": "Insurance",
+        "other": "Other"
+      }
+    },
+    "creditNote": {
+      "title": "Credit note",
+      "create": "Create credit note",
+      "reason": "Reason",
+      "reasonPlaceholder": "Reason for the credit note...",
+      "selectItems": "Select items to rectify",
+      "fullCreditNote": "Full credit note (all items)",
+      "partialCreditNote": "Partial credit note (selected items)",
+      "originalInvoice": "Original invoice",
+      "created": "Credit note created"
+    },
+    "history": {
+      "title": "History",
+      "noChanges": "No changes recorded",
+      "actions": {
+        "created": "Invoice created",
+        "updated": "Invoice updated",
+        "issued": "Invoice issued",
+        "voided": "Invoice voided",
+        "payment_recorded": "Payment recorded",
+        "payment_voided": "Payment voided",
+        "credit_note_created": "Credit note created"
+      }
+    },
+    "fromBudget": "Create invoice from quote",
+    "selectItems": "Select items to invoice",
+    "selectItemsHint": "Select the quote items you want to invoice",
+    "availableQuantity": "Available",
+    "quantityToInvoice": "Qty to invoice",
+    "alreadyInvoiced": "Already invoiced",
+    "remaining": "Remaining",
+    "noItemsAvailable": "No items available to invoice",
+    "allItemsInvoiced": "All items have been invoiced",
+    "series": {
+      "title": "Invoice series",
+      "prefix": "Prefix",
+      "type": "Type",
+      "currentNumber": "Current number",
+      "resetYearly": "Reset yearly",
+      "default": "Default",
+      "active": "Active",
+      "invoice": "Invoice",
+      "credit_note": "Credit note"
+    },
+    "filters": {
+      "allStatuses": "Status",
+      "overdueOnly": "Overdue",
+      "dateFrom": "From",
+      "dateTo": "To"
+    },
+    "sortFields": {
+      "created": "Created",
+      "issueDate": "Issue date",
+      "dueDate": "Due date",
+      "total": "Total"
+    },
+    "overdueByDays": "Overdue {days}d",
+    "pdf": {
+      "generating": "Generating PDF...",
+      "downloadError": "Error downloading PDF"
+    },
+    "reports": {
+      "title": "Billing reports",
+      "summary": "Summary",
+      "overdue": "Overdue",
+      "overdueInvoices": "Overdue invoices",
+      "byPaymentMethod": "By payment method",
+      "byProfessional": "By professional",
+      "vatSummary": "VAT summary",
+      "gaps": "Numbering gaps",
+      "period": "Period",
+      "from": "From",
+      "to": "To",
+      "refresh": "Refresh",
+      "totalInvoiced": "Total invoiced",
+      "totalCollected": "Total collected",
+      "totalPaid": "Total paid",
+      "totalPending": "Total pending",
+      "pending": "Outstanding balance",
+      "invoices": "invoices",
+      "paid": "paid",
+      "payments": "payments",
+      "noGaps": "No gaps in numbering",
+      "gapsFound": "Found {count} gap(s) in numbering",
+      "gapsDetected": "Gaps detected in numbering",
+      "missingNumbers": "Missing numbers:",
+      "noData": "No data for selected period",
+      "noOverdue": "No overdue invoices",
+      "daysOverdue": "days overdue",
+      "vatType": "VAT type",
+      "base": "Base",
+      "tax": "Tax",
+      "thisMonth": "This month",
+      "thisQuarter": "This quarter",
+      "thisYear": "This year",
+      "lastMonth": "Last month",
+      "lastQuarter": "Last quarter",
+      "lastYear": "Last year"
+    },
+    "confirmations": {
+      "issue": "Issue invoice?",
+      "issueDescription": "Once issued, the invoice cannot be edited. Only payments can be recorded or credit notes created.",
+      "void": "Void invoice?",
+      "voidDescription": "This action cannot be undone.",
+      "delete": "Delete invoice?",
+      "deleteDescription": "This action cannot be undone."
+    },
+    "messages": {
+      "created": "Invoice created",
+      "updated": "Invoice updated",
+      "deleted": "Invoice deleted",
+      "issued": "Invoice issued",
+      "voided": "Invoice voided",
+      "itemAdded": "Item added",
+      "itemUpdated": "Item updated",
+      "sentByEmail": "Invoice sent by email",
+      "sentManually": "Invoice marked as sent"
+    },
+    "send": {
+      "title": "Send invoice",
+      "description": "You can send the invoice by email or mark it as sent manually (printed or delivered in person).",
+      "sendByEmail": "Send by email",
+      "willSendTo": "Will be sent to",
+      "noPatientEmail": "Patient has no email address",
+      "customMessage": "Custom message (optional)",
+      "customMessagePlaceholder": "Add a message for the patient...",
+      "manualNote": "The invoice will be marked as sent without sending any email.",
+      "sendEmail": "Send email",
+      "markAsSent": "Mark as sent"
+    },
+    "errors": {
+      "load": "Error loading invoices",
+      "create": "Error creating invoice",
+      "update": "Error updating invoice",
+      "delete": "Error deleting invoice",
+      "issue": "Error issuing invoice",
+      "void": "Error voiding invoice",
+      "recordPayment": "Error recording payment",
+      "voidPayment": "Error voiding payment",
+      "createCreditNote": "Error creating credit note",
+      "send": "Error sending invoice",
+      "creditNoteReasonRequired": "Credit note reason is required",
+      "notFound": "Invoice not found",
+      "onlyDraft": "Only draft invoices can be edited",
+      "canOnlyDeleteDraft": "Only draft invoices can be deleted",
+      "patientRequired": "Patient is required",
+      "itemsRequired": "At least one item is required",
+      "itemRequired": "Description and price are required",
+      "selectCatalogItem": "Please select a treatment from the catalog",
+      "cannotEdit": "Only draft invoices can be edited",
+      "billingIncomplete": "The invoice cannot be issued because billing data is incomplete. Please fill in the patient's billing information to continue."
+    },
+    "newItemsPending": "New items pending save"
+  },
+  "reports": {
+    "title": "Reports",
+    "subtitle": "Clinic analytics and statistics",
+    "viewReports": "View reports",
+    "noAccess": "You don't have access to any reports",
+    "dashboard": {
+      "title": "Dashboard",
+      "subtitle": "Your clinic at a glance",
+      "period": "Period",
+      "snapshotBadge": "Today",
+      "snapshotTooltip": "Not affected by the date range",
+      "vsPrev": "vs. previous period",
+      "empty": {
+        "noData": "No data in this range"
+      },
+      "drilldown": {
+        "title": "Drill down",
+        "payments": "Payments"
+      },
+      "kpi": {
+        "cashCollected": "Cash collected",
+        "cashCollectedHint": "{count} payments",
+        "patientAdvance": "Patient credit",
+        "patientAdvanceHint": "Unallocated advances",
+        "production": "Production",
+        "productionHint": "{count} treatments",
+        "byMethod": "By payment method",
+        "methodCount": "{count} payments",
+        "total": "Total",
+        "newPatients": "New patients",
+        "newPatientsHint": "{rate}% of total appointments",
+        "appointmentFunnel": "No-show rate",
+        "funnelHint": "{completed}% completed",
+        "avgCollectedTicket": "Avg collected ticket",
+        "avgTicketHint": "Over {count} payments",
+        "aging": "Aging receivables"
+      },
+      "charts": {
+        "cashOverTime": "Collections over time",
+        "productionByDoctor": "Production by doctor",
+        "refunded": "Refunds"
+      },
+      "production": {
+        "unassigned": "Unassigned",
+        "others": "Others",
+        "treatmentCount": "{count} treatments"
+      },
+      "aging": {
+        "bucket0_30": "0-30 days",
+        "bucket31_60": "31-60 days",
+        "bucket61_90": "61-90 days",
+        "bucket90plus": "90+ days",
+        "empty": "No outstanding receivables",
+        "patientCount": "{count} patients"
+      }
+    },
+    "billing": {
+      "title": "Billing",
+      "description": "Revenue, payments, VAT and overdue invoices",
+      "summary": "Summary",
+      "overdue": "Overdue",
+      "overdueInvoices": "Overdue invoices",
+      "byPaymentMethod": "By payment method",
+      "byProfessional": "By professional",
+      "vatSummary": "VAT summary",
+      "gaps": "Numbering gaps",
+      "period": "Period",
+      "from": "From",
+      "to": "To",
+      "refresh": "Refresh",
+      "totalInvoiced": "Total invoiced",
+      "totalCollected": "Total collected",
+      "pending": "Outstanding balance",
+      "invoices": "invoices",
+      "paid": "paid",
+      "payments": "payments",
+      "gapsDetected": "Gaps detected in numbering",
+      "missingNumbers": "Missing numbers:",
+      "noData": "No data for selected period",
+      "noOverdue": "No overdue invoices",
+      "daysOverdue": "days overdue",
+      "vatType": "VAT type",
+      "base": "Base",
+      "tax": "Tax",
+      "thisMonth": "This month",
+      "thisQuarter": "This quarter",
+      "thisYear": "This year",
+      "lastMonth": "Last month",
+      "lastQuarter": "Last quarter",
+      "lastYear": "Last year"
+    },
+    "budgets": {
+      "title": "Quotes",
+      "description": "Acceptance rates, professional analysis and treatments",
+      "comingSoonDescription": "Quote reports will be available soon. You'll be able to analyze acceptance rates, quotes by professional and most requested treatments.",
+      "features": {
+        "acceptanceRate": "Acceptance rate",
+        "acceptanceRateDesc": "Percentage of accepted vs rejected quotes",
+        "byProfessional": "By professional",
+        "byProfessionalDesc": "Quotes created by each professional",
+        "byTreatment": "By treatment",
+        "byTreatmentDesc": "Most quoted treatments",
+        "averageValue": "Average value",
+        "averageValueDesc": "Average quote amount"
+      },
+      "labels": {
+        "totalCreated": "Total created",
+        "accepted": "Accepted",
+        "rejected": "rejected",
+        "pending": "pending",
+        "completed": "Completed",
+        "acceptanceRate": "Acceptance rate",
+        "averageValue": "Average value",
+        "byStatus": "By status",
+        "topTreatments": "Most quoted treatments",
+        "treatment": "Treatment",
+        "occurrences": "Occurrences",
+        "quantity": "Quantity"
+      }
+    },
+    "scheduling": {
+      "title": "Schedule",
+      "description": "First visits, hours worked and occupancy",
+      "comingSoonDescription": "Schedule reports will be available soon. You'll be able to analyze first visits, hours by professional and cancellation rates.",
+      "features": {
+        "firstVisits": "First visits",
+        "firstVisitsDesc": "New patients per period",
+        "hoursWorked": "Hours worked",
+        "hoursWorkedDesc": "Time per professional",
+        "cancellations": "Cancellations",
+        "cancellationsDesc": "Cancellation and no-show rates",
+        "cabinetUtilization": "Cabinet occupancy",
+        "cabinetUtilizationDesc": "Usage of each cabinet"
+      },
+      "labels": {
+        "totalAppointments": "Total appointments",
+        "completionRate": "Completion rate",
+        "completed": "completed",
+        "cancellationRate": "Cancellation rate",
+        "cancelled": "cancelled",
+        "noShowRate": "No-show rate",
+        "noShows": "no-shows",
+        "newPatients": "new patients",
+        "firstVisitRate": "First visit rate",
+        "ofTotalAppointments": "of total appointments",
+        "appointmentsInPeriod": "Appointments in period",
+        "excludingCancelled": "excluding cancelled",
+        "appointments": "appointments",
+        "byDayOfWeek": "By day of week",
+        "statusBreakdown": "Status breakdown",
+        "pending": "pending"
+      },
+      "analytics": {
+        "funnel": "Status funnel",
+        "funnelDesc": "Distribution of appointments by status in the period",
+        "waitingTimes": "Waiting times",
+        "waitingTimesDesc": "Minutes between patient arrival and entering the chair",
+        "punctuality": "Patient punctuality",
+        "punctualityDesc": "Difference between scheduled time and actual arrival",
+        "durationVariance": "Planned vs actual duration",
+        "durationVarianceDesc": "Comparison between planned duration and actual chair time",
+        "samples": "Samples",
+        "average": "Average",
+        "median": "Median",
+        "p90": "P90",
+        "avgDelta": "Avg delta",
+        "medianDelta": "Median delta",
+        "onTime": "% on time",
+        "avgOverrun": "Avg overrun",
+        "overrunCount": "Overrun count",
+        "underCount": "Under time count",
+        "completionRate": "Completion",
+        "noShowRate": "No-show",
+        "cancellationRate": "Cancellation",
+        "punctuality_early": "Early (<-5)",
+        "punctuality_on_time": "On time (±5)",
+        "punctuality_late_short": "Late (5-15)",
+        "punctuality_late_long": "Late (>15)"
+      },
+      "tabs": {
+        "overview": "Overview",
+        "activity": "Activity",
+        "quality": "Quality"
+      },
+      "hero": {
+        "inPeriod": "in period"
+      },
+      "filters": {
+        "cabinet": "Cabinet",
+        "professional": "Professional",
+        "custom": "Custom range",
+        "all": "All",
+        "clear": "Clear filters"
+      },
+      "empty": {
+        "title": "No data for this period",
+        "desc": "Try a wider date range or remove filters."
+      }
+    }
+  },
+  "invoiceSeries": {
+    "title": "Invoice Series",
+    "description": "Configure invoice prefixes and numbering",
+    "regularInvoices": "Invoices",
+    "creditNotes": "Credit Notes",
+    "new": "New series",
+    "newTitle": "New {type} series",
+    "editTitle": "Edit series",
+    "prefix": "Prefix",
+    "prefixHint": "e.g. INV, CR. The year will be added automatically.",
+    "descriptionLabel": "Description",
+    "descriptionPlaceholder": "Optional series description...",
+    "nextNumber": "Next number",
+    "preview": "Preview",
+    "resetYearly": "Yearly reset",
+    "resetYearlyLabel": "Reset numbering every year",
+    "setAsDefault": "Set as default",
+    "activeLabel": "Active series",
+    "showInactive": "Show inactive",
+    "noItems": "No series configured",
+    "resetCounter": "Reset counter",
+    "currentNumber": "Current number",
+    "seriesPrefix": "Series prefix",
+    "newNumber": "New number",
+    "newNumberHint": "The number must be greater than the highest existing number in this series.",
+    "resetWarningTitle": "Warning",
+    "resetWarning": "This action will be recorded in the audit log and cannot be undone.",
+    "confirmReset": "Reset counter",
+    "created": "Series created successfully",
+    "saved": "Series updated successfully",
+    "resetSuccess": "Counter reset successfully"
+  },
+  "documents": {
+    "title": "Documents",
+    "add": "Add",
+    "edit": "Edit Document",
+    "upload": "Upload Document",
+    "uploading": "Uploading...",
+    "empty": "No documents yet",
+    "uploadFirst": "Upload first document",
+    "types": {
+      "consent": "Consent",
+      "id_scan": "ID Document",
+      "insurance": "Insurance",
+      "report": "Report",
+      "referral": "Referral",
+      "other": "Other"
+    },
+    "fields": {
+      "type": "Type",
+      "title": "Title",
+      "titlePlaceholder": "Document title",
+      "description": "Description",
+      "descriptionPlaceholder": "Optional notes"
+    },
+    "dropzone": {
+      "hint": "Drag and drop a file here, or click to select"
+    },
+    "filter": {
+      "allTypes": "All types"
+    },
+    "deleteConfirm": {
+      "title": "Delete Document",
+      "message": "Are you sure you want to delete this document? This action cannot be undone."
+    },
+    "fetchError": "Error loading documents",
+    "uploadSuccess": "Document uploaded successfully",
+    "uploadError": "Error uploading document",
+    "downloadError": "Error downloading document",
+    "deleteSuccess": "Document deleted",
+    "deleteError": "Error deleting document",
+    "updateSuccess": "Document updated",
+    "updateError": "Error updating document",
+    "viewer": {
+      "loading": "Loading document...",
+      "error": "Could not load document",
+      "downloadInstead": "Download instead",
+      "unsupported": "Preview not available for this file type",
+      "zoomOut": "Zoom out",
+      "zoomIn": "Zoom in",
+      "resetZoom": "Reset to 100%",
+      "zoomHint": "Ctrl + scroll to zoom"
+    },
+    "typeDesc": {
+      "consent": "Signed document",
+      "id_scan": "DNI / passport",
+      "insurance": "Policy or card",
+      "report": "Clinical report",
+      "referral": "Referral letter",
+      "other": "Unclassified"
+    },
+    "errors": {
+      "mime": "File type not allowed. Only PDF, JPG or PNG.",
+      "size": "File exceeds 10 MB."
+    },
+    "pdfPreviewHint": "Preview available after upload",
+    "uploadHelp": "Classify the file so it appears in the correct category."
+  },
+  "photoGallery": {
+    "title": "Patient gallery",
+    "add": "Add photo",
+    "empty": "No photos yet",
+    "uploadFirst": "Upload the first one",
+    "showingOf": "Showing {count} of {total}",
+    "upload": "Upload photo",
+    "uploadHelp": "Classify so it appears in the correct category",
+    "dropHere": "Drag a photo here or click",
+    "category": "Type",
+    "subtype": "View",
+    "titlePlaceholder": "Frontal intraoral — 02/05",
+    "capturedAt": "Date",
+    "exifHint": "Auto from EXIF",
+    "cat": {
+      "all": "All",
+      "intraoral": "Intraoral",
+      "extraoral": "Extraoral",
+      "xray": "X-ray",
+      "clinical": "Before/After",
+      "other": "Other"
+    },
+    "catDesc": {
+      "intraoral": "Inside the mouth",
+      "extraoral": "Face and profile",
+      "xray": "Radiological image",
+      "clinical": "Treatment comparison",
+      "other": "Unclassified"
+    },
+    "sub": {
+      "frontal": "Frontal",
+      "lateral_left": "Left lateral",
+      "lateral_right": "Right lateral",
+      "occlusal_upper": "Upper occlusal",
+      "occlusal_lower": "Lower occlusal",
+      "palatal": "Palatal",
+      "lingual": "Lingual",
+      "smile": "Smile",
+      "rest": "Rest",
+      "frontal_face": "Frontal",
+      "profile_left": "Left profile",
+      "profile_right": "Right profile",
+      "three_quarter_left": "3/4 left",
+      "three_quarter_right": "3/4 right",
+      "panoramic": "Panoramic",
+      "periapical": "Periapical",
+      "bitewing": "Bitewing",
+      "ceph_lat": "Ceph lateral",
+      "ceph_pa": "Ceph PA",
+      "cbct": "CBCT",
+      "occlusal_xray": "Occlusal X-ray",
+      "before": "Before",
+      "after": "After",
+      "progress": "Progress",
+      "reference": "Reference",
+      "portrait": "Portrait",
+      "document_scan": "Document",
+      "model_photo": "Model"
+    },
+    "compare": {
+      "before": "Before",
+      "after": "After"
+    },
+    "pair": {
+      "pickHint": "Choose the photo to pair:",
+      "noCandidates": "No photos available. Upload another first.",
+      "paired": "Paired",
+      "exitCompare": "Exit comparison",
+      "compare": "Compare",
+      "unpair": "Remove",
+      "pair": "Pair before/after"
+    }
+  },
+  "help": {
+    "label": "Help",
+    "openHelp": "Open help",
+    "drawerTitle": "Help for this page",
+    "unavailable": "No contextual help available for this page yet.",
+    "openFullManual": "Open full manual"
+  },
+  "charts": {
+    "trend": {
+      "ariaLabel": "Trend over {count} points"
+    },
+    "donut": {
+      "ariaLabel": "Donut chart, {count} segments"
+    }
+  }
+}
