@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Patient, BudgetCreate } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorMessage } from '~~/app/utils/error'
 
 const route = useRoute()
 const router = useRouter()
@@ -67,10 +68,10 @@ async function handleCreate() {
       ? `?from=patient&patientId=${route.query.patient_id}`
       : ''
     router.push(`/budgets/${budget.id}${queryParams}`)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.errors.create'),
+      description: errorMessage(e, t('budget.errors.create')),
       color: 'error'
     })
   } finally {

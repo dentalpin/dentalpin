@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ProfessionalHours, ProfessionalOverride, ProfessionalOverridePayload, WeekdayShifts } from '../../composables/useProfessionalHours'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorDetail } from '~~/app/utils/error'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -79,8 +80,8 @@ async function save() {
     hours.value = updated
     days.value = updated.days
     toast.add({ title: t('schedules.professionalHours.saved'), color: 'success' })
-  } catch {
-    toast.add({ title: t('common.error'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorDetail(e), color: 'error' })
   } finally {
     isSaving.value = false
   }

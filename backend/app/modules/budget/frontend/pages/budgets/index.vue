@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { BudgetListItem, BudgetStatus, ApiResponse, PaginatedResponse } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorMessage } from '~~/app/utils/error'
 
 /**
  * /budgets — list page.
@@ -278,10 +279,10 @@ async function handleDownloadPDF(b: BudgetListItem, ev: Event) {
   ev.stopPropagation()
   try {
     await downloadPDF(b.id, locale.value)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.pdf.downloadError'),
+      description: errorMessage(e, t('budget.pdf.downloadError')),
       color: 'error',
     })
   }
@@ -295,8 +296,8 @@ async function handleDelete(b: BudgetListItem, ev: Event) {
     await deleteBudget(b.id)
     toast.add({ title: t('common.success'), description: t('budget.messages.deleted'), color: 'success' })
     await refresh()
-  } catch {
-    toast.add({ title: t('common.error'), description: t('budget.errors.delete'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorMessage(e, t('budget.errors.delete')), color: 'error' })
   }
 }
 </script>

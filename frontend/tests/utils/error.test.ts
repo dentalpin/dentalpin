@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { errorMessage } from '~/utils/error'
+import { errorDetail, errorMessage } from '~/utils/error'
 
 describe('errorMessage', () => {
   it('surfaces the backend message from an ErrorResponse body', () => {
@@ -21,5 +21,20 @@ describe('errorMessage', () => {
   it('falls back for network errors and non-objects', () => {
     expect(errorMessage(new TypeError('Failed to fetch'), 'fallback')).toBe('Failed to fetch')
     expect(errorMessage(undefined, 'fallback')).toBe('fallback')
+  })
+})
+
+describe('errorDetail', () => {
+  it('returns the server message', () => {
+    expect(errorDetail({ data: { message: 'Cannot send empty budget' } })).toBe('Cannot send empty budget')
+    expect(errorDetail({ data: { detail: 'Patient has no email address' } })).toBe('Patient has no email address')
+  })
+
+  it('returns undefined when the failure carries no server message', () => {
+    // Used as a toast `description`, so undefined must stay undefined:
+    // an empty string would render a blank second line under the title.
+    expect(errorDetail(new TypeError('Failed to fetch'))).toBeUndefined()
+    expect(errorDetail({ statusCode: 422, data: { detail: [{ msg: 'field required' }] } })).toBeUndefined()
+    expect(errorDetail(undefined)).toBeUndefined()
   })
 })

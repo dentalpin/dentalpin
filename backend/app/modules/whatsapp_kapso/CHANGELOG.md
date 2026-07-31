@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(ui): surface the API error instead of a generic toast in the settings page (save, sync, map, test).
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
 - i18n: add Portuguese locale (`pt.json`) with full UI coverage.
 
 - i18n: add French locale (`fr.json`) with full UI coverage.

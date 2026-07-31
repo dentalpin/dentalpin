@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(ui): surface the API error instead of a generic toast in the VAT-type composable (load, create, update, delete).
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
 - i18n: add `pt` fallback to the agent-tool catalog name resolver so
   Portuguese-localized treatment names resolve.
 

@@ -2,11 +2,14 @@
 
 ## Unreleased
 
-- fix(ui): the budget detail page swallowed the API error and always
-  toasted a generic "Error" — every `catch {}` now surfaces the server's
-  message via `errorMessage()`. Reported by users who saw *Error* on
-  *Mark as sent* / *Send email* / *Accept quote* with no way to tell
-  that the real cause was an empty budget or a patient without email.
+- fix(ui): surface the API error instead of a generic toast, across the
+  detail page, the item modal, the new-budget page and the list (delete,
+  PDF). `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Reported by users who saw
+  *Error* on *Mark as sent* / *Send email* / *Accept quote* when the real
+  cause was an empty budget or a patient without email. `downloadPDFAt`
+  also stops throwing a hardcoded English string and reads the response
+  body instead.
 
 - refactor(scheduler): declare the budget cron jobs (`expire_budgets`,
   `send_budget_reminders`, `purge_budget_access_logs`) via

@@ -455,7 +455,10 @@ export function useInvoices() {
     )
 
     if (!response.ok) {
-      throw new Error('Failed to download PDF')
+      // Raw fetch (blob response) bypasses useApi's error shaping — read
+      // the server's message instead of a hardcoded English string.
+      const body = await response.json().catch(() => null)
+      throw new Error(body?.message || body?.detail || 'Failed to download PDF')
     }
 
     const blob = await response.blob()

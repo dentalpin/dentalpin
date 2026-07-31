@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useKapso } from '../composables/useKapso'
+import { errorDetail } from '~~/app/utils/error'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -55,8 +56,8 @@ async function onSave() {
     form.api_key = ''
     form.webhook_secret = ''
     toast.add({ title: t('whatsapp_kapso.saved'), color: 'success' })
-  } catch {
-    toast.add({ title: t('whatsapp_kapso.saveError'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('whatsapp_kapso.saveError'), description: errorDetail(e), color: 'error' })
   }
 }
 
@@ -64,8 +65,8 @@ async function onSync() {
   try {
     const list = await syncTemplates()
     toast.add({ title: t('whatsapp_kapso.synced', { n: list.length }), color: 'success' })
-  } catch {
-    toast.add({ title: t('whatsapp_kapso.syncError'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('whatsapp_kapso.syncError'), description: errorDetail(e), color: 'error' })
   }
 }
 
@@ -74,8 +75,8 @@ async function onMap() {
   try {
     await mapTemplate(mapping.notification_type, mapping.locale, mapping.template_name)
     toast.add({ title: t('whatsapp_kapso.mapped'), color: 'success' })
-  } catch {
-    toast.add({ title: t('whatsapp_kapso.mapError'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('whatsapp_kapso.mapError'), description: errorDetail(e), color: 'error' })
   }
 }
 
@@ -85,8 +86,8 @@ async function onTest() {
     const res = await testConnection(test.to_number, test.template_name, test.language)
     if (res.success) toast.add({ title: t('whatsapp_kapso.testOk'), color: 'success' })
     else toast.add({ title: t('whatsapp_kapso.testFail'), description: res.error ?? '', color: 'error' })
-  } catch {
-    toast.add({ title: t('whatsapp_kapso.testFail'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('whatsapp_kapso.testFail'), description: errorDetail(e), color: 'error' })
   }
 }
 

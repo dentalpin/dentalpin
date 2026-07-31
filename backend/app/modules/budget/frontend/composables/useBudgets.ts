@@ -343,7 +343,11 @@ export function useBudgets() {
     })
 
     if (!response.ok) {
-      throw new Error('Failed to download PDF')
+      // This path uses raw fetch (blob response), so it bypasses useApi
+      // and its error shaping. Read the server's message rather than
+      // throwing a hardcoded English string the UI would then show.
+      const body = await response.json().catch(() => null)
+      throw new Error(body?.message || body?.detail || 'Failed to download PDF')
     }
 
     const blob = await response.blob()

@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(ui): surface the API error instead of a generic toast in the invoice pages (issue, void, credit note, send, delete, edit, create) and both PDF downloads.
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
 - i18n: add `pt` fallback to invoice description resolution in
   service layer so Portuguese-localized treatment names appear on invoices.
 

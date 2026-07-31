@@ -1,4 +1,5 @@
 import type { ApiResponse } from '~~/app/types'
+import { errorDetail } from '~~/app/utils/error'
 
 export interface CommunicationsSettings {
   language: string
@@ -40,8 +41,8 @@ export function useCommunicationsSettings() {
         color: 'success',
       })
       return true
-    } catch {
-      toast.add({ title: t('errors.updateFailed'), color: 'error' })
+    } catch (e) {
+      toast.add({ title: t('errors.updateFailed'), description: errorDetail(e), color: 'error' })
       return false
     } finally {
       saving.value = false

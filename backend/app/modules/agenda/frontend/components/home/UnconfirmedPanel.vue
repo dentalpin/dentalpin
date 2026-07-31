@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Appointment } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorDetail } from '~~/app/utils/error'
 
 defineProps<{ ctx?: unknown }>()
 
@@ -34,9 +35,10 @@ async function confirm(a: Appointment) {
   try {
     await transition(a.id, 'confirmed')
     removeTomorrowUnconfirmed(a.id)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('dashboard.unconfirmed.confirmError'),
+      description: errorDetail(e),
       color: 'error'
     })
   } finally {
