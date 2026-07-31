@@ -218,6 +218,64 @@ async def test_list_professionals_without_auth(client: AsyncClient) -> None:
     assert response.status_code == 401
 
 
+@pytest.mark.asyncio
+async def test_admin_marked_professional_is_listed_and_schedulable(
+    client: AsyncClient,
+    auth_headers: dict[str, str],
+    clinic_with_professionals: dict,
+    db_session: AsyncSession,
+) -> None:
+    """An admin with ``is_professional`` appears in the list and can take appointments.
+
+    Professional-ness is a membership flag, not a role — a solo
+    admin-dentist must not need a second user account (Telegram
+    report, 2026-07-31).
+    """
+    from uuid import UUID as _UUID
+
+    from sqlalchemy import update
+
+    admin_id = clinic_with_professionals["admin_id"]
+    await db_session.execute(
+        update(ClinicMembership)
+        .where(
+            ClinicMembership.user_id == _UUID(admin_id),
+            ClinicMembership.clinic_id == _UUID(clinic_with_professionals["clinic_id"]),
+        )
+        .values(is_professional=True)
+    )
+    await db_session.commit()
+
+    # Listed, with the admin role intact.
+    response = await client.get("/api/v1/auth/professionals", headers=auth_headers)
+    assert response.status_code == 200
+    by_id = {p["id"]: p for p in response.json()["data"]}
+    assert admin_id in by_id
+    assert by_id[admin_id]["role"] == "admin"
+
+    # And accepted as the professional on an appointment.
+    patient_response = await client.post(
+        "/api/v1/patients",
+        headers=auth_headers,
+        json={"first_name": "Solo", "last_name": "Clinic"},
+    )
+    patient_id = patient_response.json()["data"]["id"]
+
+    response = await client.post(
+        "/api/v1/agenda/appointments",
+        headers=auth_headers,
+        json={
+            "patient_id": patient_id,
+            "professional_id": admin_id,
+            "cabinet": "Gabinete 1",
+            "start_time": "2026-05-02T10:00:00Z",
+            "end_time": "2026-05-02T10:30:00Z",
+        },
+    )
+    assert response.status_code == 201, response.text
+    assert response.json()["data"]["professional_id"] == admin_id
+
+
 # =============================================================================
 # Professional validation in appointments
 # =============================================================================

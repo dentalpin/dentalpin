@@ -791,7 +791,7 @@ class ImportJobService:
                 ClinicMembership.user_id.in_(clinical_users),
                 ClinicMembership.role == "assistant",
             )
-            .values(role="dentist")
+            .values(role="dentist", is_professional=True)
             .execution_options(synchronize_session=False)
         )
         await db.commit()

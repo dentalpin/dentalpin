@@ -19,7 +19,13 @@ from app.database import get_db
 
 from .dependencies import ClinicContext, get_clinic_context, get_current_user, require_permission
 from .models import Clinic, ClinicMembership, User
-from .permissions import CORE_PERMISSIONS, ROLES, expand_permissions, get_role_permissions
+from .permissions import (
+    CORE_PERMISSIONS,
+    PROFESSIONAL_ROLES,
+    ROLES,
+    expand_permissions,
+    get_role_permissions,
+)
 from .schemas import (
     AuthResponse,
     ClinicMetadataResponse,
@@ -335,6 +341,7 @@ async def list_users(
             last_name=m.user.last_name,
             is_active=m.user.is_active,
             role=m.role,
+            is_professional=m.is_professional,
             created_at=m.user.created_at.isoformat(),
         )
         for m in memberships
@@ -409,11 +416,17 @@ async def create_user(
     db.add(user)
     await db.flush()
 
-    # Create clinic membership
+    # Create clinic membership. Professional-ness defaults from the
+    # role but is an independent axis — an admin can also practise.
     membership = ClinicMembership(
         user_id=user.id,
         clinic_id=clinic_id,
         role=data.role,
+        is_professional=(
+            data.is_professional
+            if data.is_professional is not None
+            else data.role in PROFESSIONAL_ROLES
+        ),
     )
     db.add(membership)
     await db.commit()
@@ -486,6 +499,13 @@ async def update_user(
     if data.role is not None:
         membership.role = data.role
 
+    # Explicit flag wins; a role-only change re-derives it so switching
+    # someone to dentist keeps them schedulable without a second click.
+    if data.is_professional is not None:
+        membership.is_professional = data.is_professional
+    elif data.role is not None:
+        membership.is_professional = data.role in PROFESSIONAL_ROLES
+
     await db.commit()
     await db.refresh(user)
     await db.refresh(membership)
@@ -498,6 +518,7 @@ async def update_user(
             last_name=user.last_name,
             is_active=user.is_active,
             role=membership.role,
+            is_professional=membership.is_professional,
             created_at=user.created_at.isoformat(),
         )
     )
@@ -509,14 +530,16 @@ async def list_professionals(
     _: Annotated[None, Depends(require_permission("agenda.appointments.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> PaginatedApiResponse[ProfessionalResponse]:
-    """List professionals (dentists and hygienists) in the current clinic."""
-    # Fetch memberships with dentist/hygienist role and active users
+    """List professionals (members with ``is_professional``) in the current clinic."""
+    # Professional-ness is a membership flag, not a role — an admin who
+    # also practises shows up here too (defaults to true for
+    # dentist/hygienist).
     result = await db.execute(
         select(ClinicMembership)
         .options(selectinload(ClinicMembership.user))
         .where(
             ClinicMembership.clinic_id == ctx.clinic_id,
-            ClinicMembership.role.in_(["dentist", "hygienist"]),
+            ClinicMembership.is_professional.is_(True),
         )
     )
     memberships = result.scalars().all()

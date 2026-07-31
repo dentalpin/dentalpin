@@ -305,7 +305,7 @@ class AppointmentService:
             select(ClinicMembership.id).where(
                 ClinicMembership.user_id == professional_id,
                 ClinicMembership.clinic_id == clinic_id,
-                ClinicMembership.role.in_(["dentist", "hygienist"]),
+                ClinicMembership.is_professional.is_(True),
             )
         )
         return result.scalar_one_or_none() is not None

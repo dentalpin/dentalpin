@@ -12,6 +12,11 @@
   "Error" with no way to tell what went wrong. Now via
   `errorMessage()` / `errorDetail()`.
 
+- fix(professionals): professional-hours eligibility and analytics now
+  check `ClinicMembership.is_professional` instead of `role IN
+  (dentist, hygienist)` — an admin who also practises gets working
+  hours (core migration 0006).
+
 - i18n: add Portuguese locale (`pt.json`) with full UI coverage.
 
 - i18n: add French locale (`fr.json`) with full UI coverage.

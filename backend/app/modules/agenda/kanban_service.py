@@ -40,7 +40,7 @@ async def _fetch_professionals(db: AsyncSession, clinic_id: UUID) -> list[tuple[
         .join(ClinicMembership, ClinicMembership.user_id == User.id)
         .where(
             ClinicMembership.clinic_id == clinic_id,
-            ClinicMembership.role.in_(["dentist", "hygienist"]),
+            ClinicMembership.is_professional.is_(True),
             User.is_active.is_(True),
         )
     )

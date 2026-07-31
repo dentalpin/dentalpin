@@ -12,6 +12,12 @@
   "Error" with no way to tell what went wrong. Now via
   `errorMessage()` / `errorDetail()`.
 
+- fix(professionals): the professionals listing (kanban) and
+  `validate_professional_access` now check
+  `ClinicMembership.is_professional` instead of `role IN (dentist,
+  hygienist)`, so an admin who also practises can hold appointments
+  (core migration 0006; Telegram report, 2026-07-31).
+
 - feat(agents): two new copilot tools — `reschedule_appointment` (WRITE,
   wraps `AppointmentService.update_appointment`, surfaces `slot_conflict`
   as a structured error) and `update_appointment_status` (WRITE, wraps

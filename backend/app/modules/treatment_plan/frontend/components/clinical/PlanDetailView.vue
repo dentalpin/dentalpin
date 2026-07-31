@@ -172,7 +172,9 @@ async function createTreatmentNote(treatmentId: string, body: string) {
 const isLocked = computed(() => {
   if (!props.plan.budget_id) return false
   const status = props.plan.budget?.status
-  return status !== 'cancelled'
+  // Mirrors backend `_is_plan_locked`: a draft budget is not a contract
+  // yet — the plan stays editable and edits sync into the draft.
+  return status !== 'cancelled' && status !== 'draft'
 })
 
 const effectiveReadonly = computed(() => props.readonly || isLocked.value)

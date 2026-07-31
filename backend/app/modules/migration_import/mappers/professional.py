@@ -193,9 +193,9 @@ class ProfessionalMapper:
                 role = _ROLE_MAP.get((payload.get("role") or "").lower(), "assistant")
             else:
                 # Filtered rows never become dentist/hygienist — the
-                # agenda filter (auth/router.py) hides them on role
-                # alone, which is a defence-in-depth against future
-                # mistakes around is_active.
+                # agenda filter (auth/router.py) hides them via
+                # is_professional=False, which is a defence-in-depth
+                # against future mistakes around is_active.
                 role = "assistant"
             membership = ClinicMembership(
                 id=uuid4(),

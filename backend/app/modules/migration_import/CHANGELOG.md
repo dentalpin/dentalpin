@@ -7,6 +7,10 @@
   CI had never checked them. Mostly auto-fixed formatting; see the
   PR for the handful of manual fixes.
 
+- chore(professionals): the clinical-user promotion
+  (assistant → dentist) also sets `is_professional=true`; new
+  memberships derive the flag from the role at insert time.
+
 - i18n: add Portuguese locale (`pt.json`) with full UI coverage.
 
 - i18n: add French locale (`fr.json`) with full UI coverage.

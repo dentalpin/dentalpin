@@ -1081,6 +1081,8 @@
     "noUsers": "No hay usuarios registrados",
     "youTag": "(tú)",
     "userActive": "Usuario activo",
+    "isProfessional": "Ejerce como profesional",
+    "isProfessionalHelp": "Aparece en la agenda, tiene horario y se le pueden asignar tratamientos. Un administrador también puede ejercer.",
     "userInactiveNote": "(No podrá iniciar sesión)",
     "saveChanges": "Guardar Cambios",
     "noCabinets": "No hay gabinetes configurados",
