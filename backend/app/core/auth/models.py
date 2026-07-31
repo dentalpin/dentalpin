@@ -3,11 +3,13 @@
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import ForeignKey, String
+from sqlalchemy import ForeignKey, String, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base, TimestampMixin
+
+from .permissions import PROFESSIONAL_ROLES
 
 if TYPE_CHECKING:
     from app.modules.agenda.models import Appointment, Cabinet
@@ -74,6 +76,12 @@ class User(Base, TimestampMixin):
         return f"{self.first_name} {self.last_name}"
 
 
+def _derive_is_professional(context) -> bool:  # noqa: ANN001 — SQLAlchemy ExecutionContext
+    """Insert-time default: dentists/hygienists are professionals."""
+    params = context.get_current_parameters()
+    return params.get("role") in PROFESSIONAL_ROLES
+
+
 class ClinicMembership(Base, TimestampMixin):
     """Association between users and clinics with role."""
 
@@ -85,6 +93,15 @@ class ClinicMembership(Base, TimestampMixin):
     role: Mapped[str] = mapped_column(
         String(20)
     )  # admin, dentist, hygienist, assistant, receptionist
+    # Whether this member appears in the agenda, holds working hours and
+    # can be assigned treatments. Decoupled from ``role`` so an admin can
+    # also practise (solo clinics) — professional-ness is a fact about
+    # the person, the role is about permissions. When not set explicitly,
+    # it derives from the role at insert time, so plain
+    # ``ClinicMembership(role="dentist")`` keeps behaving as before.
+    is_professional: Mapped[bool] = mapped_column(
+        default=_derive_is_professional, server_default=text("false"), nullable=False
+    )
 
     # Relationships
     user: Mapped["User"] = relationship(back_populates="memberships")

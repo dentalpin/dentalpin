@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
+- fix(ui): surface the API error instead of a generic toast in the appointment modal and the kanban board (transition, cabinet assign) plus the unconfirmed panel.
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
+- fix(professionals): the professionals listing (kanban) and
+  `validate_professional_access` now check
+  `ClinicMembership.is_professional` instead of `role IN (dentist,
+  hygienist)`, so an admin who also practises can hold appointments
+  (core migration 0006; Telegram report, 2026-07-31).
+
 - feat(agents): two new copilot tools — `reschedule_appointment` (WRITE,
   wraps `AppointmentService.update_appointment`, surfaces `slot_conflict`
   as a structured error) and `update_appointment_status` (WRITE, wraps

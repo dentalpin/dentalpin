@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ProfessionalHours, ProfessionalOverride, ProfessionalOverridePayload, WeekdayShifts } from '../../composables/useProfessionalHours'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorDetail } from '~~/app/utils/error'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -79,8 +80,8 @@ async function save() {
     hours.value = updated
     days.value = updated.days
     toast.add({ title: t('schedules.professionalHours.saved'), color: 'success' })
-  } catch {
-    toast.add({ title: t('common.error'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorDetail(e), color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -171,7 +172,10 @@ onMounted(async () => {
 
 <template>
   <div>
-    <UCard v-if="isAdmin" class="mb-4">
+    <UCard
+      v-if="isAdmin"
+      class="mb-4"
+    >
       <UFormField :label="t('schedules.professionalHours.selectProfessional')">
         <USelect
           v-model="selectedProfessional"
@@ -181,9 +185,15 @@ onMounted(async () => {
       </UFormField>
     </UCard>
 
-    <USkeleton v-if="isLoading" class="h-40 w-full" />
+    <USkeleton
+      v-if="isLoading"
+      class="h-40 w-full"
+    />
 
-    <div v-else-if="selectedProfessional" class="space-y-6">
+    <div
+      v-else-if="selectedProfessional"
+      class="space-y-6"
+    >
       <UCard>
         <template #header>
           <h2 class="text-lg font-semibold">
@@ -191,7 +201,10 @@ onMounted(async () => {
           </h2>
         </template>
 
-        <WeeklyShiftGrid v-model="days" :disabled="!canWrite" />
+        <WeeklyShiftGrid
+          v-model="days"
+          :disabled="!canWrite"
+        />
 
         <template #footer>
           <div class="flex justify-end">
@@ -238,20 +251,36 @@ onMounted(async () => {
 
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <UFormField :label="t('schedules.overrides.startDate')">
-              <UInput v-model="overrideForm.start_date" type="date" />
+              <UInput
+                v-model="overrideForm.start_date"
+                type="date"
+              />
             </UFormField>
             <UFormField :label="t('schedules.overrides.endDate')">
-              <UInput v-model="overrideForm.end_date" type="date" />
+              <UInput
+                v-model="overrideForm.end_date"
+                type="date"
+              />
             </UFormField>
           </div>
 
           <UFormField :label="t('schedules.overrides.reason')">
-            <UInput v-model="overrideForm.reason" :placeholder="t('schedules.overrides.reasonPlaceholder')" />
+            <UInput
+              v-model="overrideForm.reason"
+              :placeholder="t('schedules.overrides.reasonPlaceholder')"
+            />
           </UFormField>
 
-          <div v-if="overrideForm.kind === 'custom_hours'" class="space-y-2">
+          <div
+            v-if="overrideForm.kind === 'custom_hours'"
+            class="space-y-2"
+          >
             <label class="text-sm font-medium">{{ t('schedules.weekday.addShift') }}</label>
-            <div v-for="(s, idx) in overrideForm.shifts" :key="idx" class="flex items-center gap-2">
+            <div
+              v-for="(s, idx) in overrideForm.shifts"
+              :key="idx"
+              class="flex items-center gap-2"
+            >
               <UInput
                 type="time"
                 :model-value="timeForInput(s.start_time)"
@@ -275,13 +304,21 @@ onMounted(async () => {
                 @click="removeShiftFromOverride(idx)"
               />
             </div>
-            <UButton size="xs" variant="soft" icon="i-lucide-plus" @click="addShiftToOverride">
+            <UButton
+              size="xs"
+              variant="soft"
+              icon="i-lucide-plus"
+              @click="addShiftToOverride"
+            >
               {{ t('schedules.weekday.addShift') }}
             </UButton>
           </div>
 
           <div class="flex justify-end gap-2 pt-2">
-            <UButton variant="ghost" @click="showOverrideModal = false">
+            <UButton
+              variant="ghost"
+              @click="showOverrideModal = false"
+            >
               {{ t('schedules.overrides.cancel') }}
             </UButton>
             <UButton @click="saveOverride">

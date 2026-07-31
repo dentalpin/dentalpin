@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BudgetItemCreate, TreatmentCatalogItem } from '~~/app/types'
+import { errorMessage } from '~~/app/utils/error'
 
 const props = defineProps<{
   open: boolean
@@ -93,10 +94,10 @@ async function handleSubmit() {
 
     emit('added')
     close()
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.errors.create'),
+      description: errorMessage(e, t('budget.errors.create')),
       color: 'error'
     })
   } finally {

@@ -10,7 +10,7 @@ interface Props {
   initialNote?: string
   initialPriority?: RecallPriority
   initialAssignedProfessionalId?: string | null
-  initialDueMonth?: string  // YYYY-MM-01
+  initialDueMonth?: string // YYYY-MM-01
   initialTreatmentId?: string | null
   initialTreatmentCategoryKey?: string | null
 }

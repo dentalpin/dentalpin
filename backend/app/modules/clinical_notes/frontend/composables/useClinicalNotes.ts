@@ -50,7 +50,7 @@ export function useClinicalNotes() {
 
   async function listRecentForPatient(
     patientId: string,
-    options: { types?: NoteType[]; limit?: number; before?: string } = {}
+    options: { types?: NoteType[], limit?: number, before?: string } = {}
   ): Promise<RecentNoteEntry[]> {
     const qs = new URLSearchParams()
     if (options.limit) qs.set('limit', String(options.limit))

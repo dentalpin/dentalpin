@@ -2,6 +2,20 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
+- fix(ui): surface the API error instead of a generic toast, across the
+  detail page, the item modal, the new-budget page and the list (delete,
+  PDF). `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Reported by users who saw
+  *Error* on *Mark as sent* / *Send email* / *Accept quote* when the real
+  cause was an empty budget or a patient without email. `downloadPDFAt`
+  also stops throwing a hardcoded English string and reads the response
+  body instead.
+
 - refactor(scheduler): declare the budget cron jobs (`expire_budgets`,
   `send_budget_reminders`, `purge_budget_access_logs`) via
   `get_scheduled_jobs()` instead of being imported by name in

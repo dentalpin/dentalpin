@@ -8,6 +8,7 @@ import type {
 } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { formatLocalDate, isoPartsToDateKey, parseIsoParts } from '../../utils/date'
+import { errorMessage } from '~~/app/utils/error'
 
 const props = defineProps<{
   open: boolean
@@ -491,7 +492,7 @@ async function handleSave() {
       const [fh, fm] = formData.startTime.split(':').map(Number)
       const formStart = (fh ?? 0) * 60 + (fm ?? 0)
       const formEnd = formStart + formData.duration
-      const conflict = availability.ranges.find(r => {
+      const conflict = availability.ranges.find((r) => {
         if (r.state === 'open') return false
         const sParts = parseIsoParts(r.start)
         const eParts = parseIsoParts(r.end)
@@ -589,10 +590,10 @@ async function handleCancel() {
     })
     emit('cancelled', props.appointment.id)
     emit('update:open', false)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('common.serverError'),
+      description: errorMessage(e, t('common.serverError')),
       color: 'error'
     })
   } finally {

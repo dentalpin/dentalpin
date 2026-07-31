@@ -9,7 +9,7 @@ const {
   retryRecord,
   retryAllRejected,
   listRecordAttempts,
-  processNow,
+  processNow
 } = useVerifactu()
 const { can } = usePermissions()
 const toast = useToast?.()
@@ -40,13 +40,13 @@ async function retry(item: VerifactuQueueItem) {
     await retryRecord(item.id)
     toast?.add({
       title: t('verifactu.queue.regeneratedToast'),
-      color: 'green',
+      color: 'green'
     })
     await refresh()
   } catch (e: unknown) {
     toast?.add({
       title: errorMessage(e, 'Error'),
-      color: 'red',
+      color: 'red'
     })
   } finally {
     retryingId.value = null
@@ -61,9 +61,9 @@ async function retryAll() {
     toast?.add({
       title: t('verifactu.queue.retryAllResult', {
         n: r.regenerated,
-        failed: r.failed.length,
+        failed: r.failed.length
       }),
-      color: r.failed.length === 0 ? 'green' : 'amber',
+      color: r.failed.length === 0 ? 'green' : 'amber'
     })
     await refresh()
   } finally {
@@ -135,8 +135,13 @@ onMounted(refresh)
   <div class="p-4 sm:p-6 max-w-4xl mx-auto space-y-4">
     <header class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <div>
-        <NuxtLink to="/settings/verifactu" class="text-sm text-gray-500">← Verifactu</NuxtLink>
-        <h1 class="text-2xl font-semibold mt-2">{{ t('verifactu.queue.title') }}</h1>
+        <NuxtLink
+          to="/settings/verifactu"
+          class="text-sm text-gray-500"
+        >← Verifactu</NuxtLink>
+        <h1 class="text-2xl font-semibold mt-2">
+          {{ t('verifactu.queue.title') }}
+        </h1>
       </div>
       <div class="flex flex-wrap gap-2">
         <UButton
@@ -172,20 +177,35 @@ onMounted(refresh)
       </button>
     </div>
 
-    <div v-if="loading" class="space-y-2">
-      <USkeleton v-for="i in 3" :key="i" class="h-16 w-full" />
+    <div
+      v-if="loading"
+      class="space-y-2"
+    >
+      <USkeleton
+        v-for="i in 3"
+        :key="i"
+        class="h-16 w-full"
+      />
     </div>
-    <p v-else-if="items.length === 0" class="text-sm text-gray-500">
+    <p
+      v-else-if="items.length === 0"
+      class="text-sm text-gray-500"
+    >
       {{ t('verifactu.queue.empty') }}
     </p>
-    <ul v-else class="divide-y">
+    <ul
+      v-else
+      class="divide-y"
+    >
       <li
         v-for="item in items"
         :key="item.id"
         class="py-3 flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between"
       >
         <div class="text-sm min-w-0 flex-1">
-          <div class="font-medium">{{ item.serie_numero }} · {{ item.importe_total }}€</div>
+          <div class="font-medium">
+            {{ item.serie_numero }} · {{ item.importe_total }}€
+          </div>
           <div
             v-if="item.aeat_descripcion_error_es || item.aeat_descripcion_error"
             class="text-red-600 break-words mt-1"
@@ -202,13 +222,15 @@ onMounted(refresh)
             {{ item.aeat_descripcion_error_es || item.aeat_descripcion_error }}
             <details
               v-if="
-                item.aeat_descripcion_error_es &&
-                item.aeat_descripcion_error &&
-                item.aeat_descripcion_error_es !== item.aeat_descripcion_error
+                item.aeat_descripcion_error_es
+                  && item.aeat_descripcion_error
+                  && item.aeat_descripcion_error_es !== item.aeat_descripcion_error
               "
               class="mt-1 text-xs text-gray-500"
             >
-              <summary class="cursor-pointer">{{ t('verifactu.queue.rawError') }}</summary>
+              <summary class="cursor-pointer">
+                {{ t('verifactu.queue.rawError') }}
+              </summary>
               <pre class="whitespace-pre-wrap break-words mt-1">{{ item.aeat_descripcion_error }}</pre>
             </details>
           </div>
@@ -226,7 +248,11 @@ onMounted(refresh)
           >
             {{ ctaLabel(item.aeat_error_cta) }}
           </UButton>
-          <UButton :to="`/invoices/${item.invoice_id}`" variant="soft" size="sm">
+          <UButton
+            :to="`/invoices/${item.invoice_id}`"
+            variant="soft"
+            size="sm"
+          >
             {{ t('verifactu.queue.viewInvoice') }}
           </UButton>
           <UButton
@@ -240,8 +266,8 @@ onMounted(refresh)
           </UButton>
           <UButton
             v-if="
-              can(PERMISSIONS.verifactu.queueManage) &&
-              ['rejected', 'failed_transient', 'failed_validation'].includes(item.state)
+              can(PERMISSIONS.verifactu.queueManage)
+                && ['rejected', 'failed_transient', 'failed_validation'].includes(item.state)
             "
             color="primary"
             size="sm"
@@ -261,18 +287,31 @@ onMounted(refresh)
       :title="`${t('verifactu.queue.history.title')} — ${historyTitle}`"
     >
       <template #body>
-        <p v-if="historyAttempts.length === 0" class="text-sm text-gray-500">
+        <p
+          v-if="historyAttempts.length === 0"
+          class="text-sm text-gray-500"
+        >
           {{ t('verifactu.queue.history.empty') }}
         </p>
-        <ul v-else class="divide-y text-sm">
-          <li v-for="a in historyAttempts" :key="a.id" class="py-2">
+        <ul
+          v-else
+          class="divide-y text-sm"
+        >
+          <li
+            v-for="a in historyAttempts"
+            :key="a.id"
+            class="py-2"
+          >
             <div class="font-medium">
               {{ t('verifactu.queue.history.attempt', { n: a.attempt_no }) }} · {{ a.state }}
             </div>
             <div class="text-xs text-gray-500 break-all">
               <span class="font-mono">{{ t('verifactu.queue.history.huella') }}:</span> {{ a.huella }}
             </div>
-            <div v-if="a.aeat_codigo_error" class="text-xs text-red-600 mt-1">
+            <div
+              v-if="a.aeat_codigo_error"
+              class="text-xs text-red-600 mt-1"
+            >
               {{ t('verifactu.queue.history.code') }} {{ a.aeat_codigo_error }} — {{ a.aeat_descripcion_error }}
             </div>
           </li>

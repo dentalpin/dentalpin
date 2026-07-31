@@ -116,10 +116,10 @@ async function performUpdate(reassignPending: boolean): Promise<void> {
 async function handleSubmit() {
   if (isEditing.value && props.plan) {
     const newProfId = form.value.assigned_professional_id || null
-    const doctorChanged =
-      originalProfessionalId.value !== null
-      && newProfId !== null
-      && originalProfessionalId.value !== newProfId
+    const doctorChanged
+      = originalProfessionalId.value !== null
+        && newProfId !== null
+        && originalProfessionalId.value !== newProfId
 
     if (doctorChanged) {
       const count = countMatchingPendingItems()

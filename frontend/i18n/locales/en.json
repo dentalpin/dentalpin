@@ -1083,6 +1083,8 @@
     "noUsers": "No users registered",
     "youTag": "(you)",
     "userActive": "User active",
+    "isProfessional": "Practises as a professional",
+    "isProfessionalHelp": "Appears in the agenda, has working hours and can be assigned treatments. An administrator can also practise.",
     "userInactiveNote": "(Cannot log in)",
     "saveChanges": "Save Changes",
     "noCabinets": "No cabinets configured",

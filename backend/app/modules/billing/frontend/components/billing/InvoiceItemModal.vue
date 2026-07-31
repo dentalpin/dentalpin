@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { InvoiceItem, InvoiceItemCreate, TreatmentCatalogItem, VatType } from '~~/app/types'
+import { errorMessage } from '~~/app/utils/error'
 
 const props = defineProps<{
   invoiceId: string
@@ -9,7 +10,7 @@ const props = defineProps<{
 const open = defineModel<boolean>('open', { default: false })
 
 const emit = defineEmits<{
-  'saved': [] // Emitted on both add and update
+  saved: [] // Emitted on both add and update
 }>()
 
 const { t, locale } = useI18n()
@@ -173,10 +174,10 @@ async function handleSubmit() {
     emit('saved')
     open.value = false
     resetForm()
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: isEditing.value ? t('invoice.errors.update') : t('invoice.errors.create'),
+      description: errorMessage(e, isEditing.value ? t('invoice.errors.update') : t('invoice.errors.create')),
       color: 'error'
     })
   } finally {

@@ -158,6 +158,11 @@ class UserCreate(BaseModel):
     clinic_id: UUID | None = Field(
         default=None, description="Clinic ID. If not provided, uses admin's current clinic"
     )
+    is_professional: bool | None = Field(
+        default=None,
+        description="Appears in the agenda / can be assigned treatments. "
+        "Defaults to true for dentist/hygienist, false otherwise.",
+    )
 
 
 class UserWithRoleResponse(BaseModel):
@@ -169,6 +174,7 @@ class UserWithRoleResponse(BaseModel):
     last_name: str
     is_active: bool
     role: str
+    is_professional: bool = False
     created_at: str
 
     model_config = ConfigDict(from_attributes=True)
@@ -184,6 +190,11 @@ class UserUpdate(BaseModel):
         default=None, description="Role: admin, dentist, hygienist, assistant, receptionist"
     )
     is_active: bool | None = None
+    is_professional: bool | None = Field(
+        default=None,
+        description="Appears in the agenda / can be assigned treatments. "
+        "When only `role` changes, the flag is re-derived from the new role.",
+    )
 
 
 class ProfessionalResponse(BaseModel):

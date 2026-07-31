@@ -1,4 +1,5 @@
 import type { ApiResponse } from '~~/app/types'
+import { errorDetail } from '~~/app/utils/error'
 
 export interface CommunicationsSettings {
   language: string
@@ -19,7 +20,7 @@ export function useCommunicationsSettings() {
     loading.value = true
     try {
       const response = await api.get<ApiResponse<CommunicationsSettings>>(
-        '/api/v1/auth/clinic/settings/communications',
+        '/api/v1/auth/clinic/settings/communications'
       )
       settings.value = response.data
     } finally {
@@ -32,16 +33,16 @@ export function useCommunicationsSettings() {
     try {
       const response = await api.patch<ApiResponse<CommunicationsSettings>>(
         '/api/v1/auth/clinic/settings/communications',
-        payload,
+        payload
       )
       settings.value = response.data
       toast.add({
         title: t('notifications.communications.language.saved'),
-        color: 'success',
+        color: 'success'
       })
       return true
-    } catch {
-      toast.add({ title: t('errors.updateFailed'), color: 'error' })
+    } catch (e) {
+      toast.add({ title: t('errors.updateFailed'), description: errorDetail(e), color: 'error' })
       return false
     } finally {
       saving.value = false

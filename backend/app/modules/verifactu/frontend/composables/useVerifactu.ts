@@ -84,23 +84,23 @@ export interface VerifactuRecordDetail extends VerifactuRecord {
   aeat_response_xml: string | null
 }
 
-export type VerifactuErrorField =
-  | 'emisor'
-  | 'destinatario'
-  | 'linea'
-  | 'cabecera'
-  | 'cadena'
-  | 'transporte'
-  | 'sistema'
-  | 'rectificativa'
+export type VerifactuErrorField
+  = | 'emisor'
+    | 'destinatario'
+    | 'linea'
+    | 'cabecera'
+    | 'cadena'
+    | 'transporte'
+    | 'sistema'
+    | 'rectificativa'
 
-export type VerifactuErrorCTA =
-  | 'edit_clinic'
-  | 'edit_billing_party'
-  | 'edit_lines'
-  | 'edit_producer'
-  | 'retry'
-  | 'contact_support'
+export type VerifactuErrorCTA
+  = | 'edit_clinic'
+    | 'edit_billing_party'
+    | 'edit_lines'
+    | 'edit_producer'
+    | 'retry'
+    | 'contact_support'
 
 export interface VerifactuQueueItem {
   id: string
@@ -135,7 +135,7 @@ export interface NifCheckResult {
 
 export interface RetryAllResult {
   regenerated: number
-  failed: { record_id: string; error: string }[]
+  failed: { record_id: string, error: string }[]
   remaining: number
 }
 
@@ -189,7 +189,7 @@ export const useVerifactu = () => {
       const r = await api.post<ApiResponse<VerifactuCertificate>>('/api/v1/verifactu/certificate', fd)
       return r.data
     },
-    async listRecords(params: { page?: number; page_size?: number; state?: string; tipo_factura?: string; invoice_id?: string } = {}) {
+    async listRecords(params: { page?: number, page_size?: number, state?: string, tipo_factura?: string, invoice_id?: string } = {}) {
       const qs = new URLSearchParams()
       for (const [k, v] of Object.entries(params)) {
         if (v !== undefined && v !== null) qs.set(k, String(v))
@@ -253,7 +253,7 @@ export const useVerifactu = () => {
     },
     async upsertVatMapping(
       vat_type_id: string,
-      body: { classification: string | null; exemption_cause?: string | null; notes?: string | null }
+      body: { classification: string | null, exemption_cause?: string | null, notes?: string | null }
     ) {
       const r = await api.put<ApiResponse<VatClassificationItem>>(
         `/api/v1/verifactu/vat-mapping/${vat_type_id}`,

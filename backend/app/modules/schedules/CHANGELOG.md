@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
+- fix(ui): surface the API error instead of a generic toast in the clinic-hours and professional-hours settings pages.
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
+- fix(professionals): professional-hours eligibility and analytics now
+  check `ClinicMembership.is_professional` instead of `role IN
+  (dentist, hygienist)` — an admin who also practises gets working
+  hours (core migration 0006).
+
 - i18n: add Portuguese locale (`pt.json`) with full UI coverage.
 
 - i18n: add French locale (`fr.json`) with full UI coverage.

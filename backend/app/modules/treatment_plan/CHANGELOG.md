@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
+- fix(ui): surface the API error instead of a generic toast in the plans list delete.
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
+- fix(lock): a **draft** budget no longer locks the plan — the lock now
+  starts at `sent` (`_is_plan_locked`), when the budget becomes a
+  patient-facing contract. `add_item` additionally accepts plans in
+  `pending` (terminal states still refused); edits keep syncing into
+  the draft budget via the existing `treatment_added`/`removed` events.
+  UI mirrors the rule (`PlanDetailView.isLocked`,
+  `TreatmentPlanDetail.canEditItems`). Users had to accept the quote
+  just to keep choosing treatments (Telegram report, 2026-07-31).
+- fix(professionals): professional validation now checks
+  `ClinicMembership.is_professional` instead of `role IN (dentist,
+  hygienist)` — see core migration 0006.
+
 - i18n: add `pt` fallback to plan item name resolution in service
   layer so Portuguese-localized treatment names display correctly.
 

@@ -171,7 +171,10 @@ const cardStyle = computed(() => ({
         </div>
         <div class="flex items-center gap-1 text-muted text-xs mt-0.5">
           <span>{{ startLabel }}–{{ endLabel }}</span>
-          <span v-if="appointment.treatment_type" class="truncate">· {{ appointment.treatment_type }}</span>
+          <span
+            v-if="appointment.treatment_type"
+            class="truncate"
+          >· {{ appointment.treatment_type }}</span>
         </div>
       </div>
       <div class="flex items-center gap-1 shrink-0">
@@ -203,8 +206,13 @@ const cardStyle = computed(() => ({
         variant="subtle"
         size="xs"
       />
-      <span class="text-xs" :class="timerClass">{{ timerLabel }}</span>
+      <span
+        class="text-xs"
+        :class="timerClass"
+      >{{ timerLabel }}</span>
     </div>
-    <div class="sr-only">{{ statusLabel(appointment.status) }}</div>
+    <div class="sr-only">
+      {{ statusLabel(appointment.status) }}
+    </div>
   </div>
 </template>

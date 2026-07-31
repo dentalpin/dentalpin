@@ -20,7 +20,7 @@ const props = defineProps<{
   noteType: NoteType
   body: string
   createdAt: string
-  author: ClinicalNoteAuthor | { id: string; full_name?: string | null }
+  author: ClinicalNoteAuthor | { id: string, full_name?: string | null }
   linked?: ClinicalNoteLinked | null
   attachments?: NoteAttachment[]
   /** When true, edit/delete actions are visible. Computed by parent. */
@@ -30,8 +30,8 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  edit: []
-  delete: []
+  'edit': []
+  'delete': []
   'open-linked': [linked: ClinicalNoteLinked]
 }>()
 
@@ -75,7 +75,7 @@ function formatAbsolute(iso: string): string {
 }
 
 const authorLabel = computed(() => {
-  const a = props.author as { full_name?: string | null; email?: string | null }
+  const a = props.author as { full_name?: string | null, email?: string | null }
   return a?.full_name || a?.email || t('clinicalNotes.author.unknown')
 })
 
@@ -157,7 +157,7 @@ async function loadThumb(att: NoteAttachment) {
 
 watch(
   imageAttachments,
-  list => { for (const a of list) loadThumb(a) },
+  (list) => { for (const a of list) loadThumb(a) },
   { immediate: true }
 )
 

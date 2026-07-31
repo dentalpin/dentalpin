@@ -13,8 +13,8 @@ function copyText(text: string) {
 
 const toolLabel = computed(() => {
   if (props.message.kind !== 'tool') return ''
-  const key =
-    props.message.status === 'running'
+  const key
+    = props.message.status === 'running'
       ? 'copilot.tool.running'
       : props.message.status === 'failed'
         ? 'copilot.tool.failed'
@@ -25,10 +25,10 @@ const toolLabel = computed(() => {
 // A finished tool with an object result gets an expandable rich card.
 const hasCard = computed(
   () =>
-    props.message.kind === 'tool' &&
-    props.message.status === 'done' &&
-    !!props.message.result &&
-    typeof props.message.result === 'object'
+    props.message.kind === 'tool'
+    && props.message.status === 'done'
+    && !!props.message.result
+    && typeof props.message.result === 'object'
 )
 
 function toggleCard() {

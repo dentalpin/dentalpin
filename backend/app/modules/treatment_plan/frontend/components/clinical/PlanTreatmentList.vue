@@ -63,7 +63,7 @@ function openConfirmModal(item: PlannedTreatmentItem) {
   showConfirmModal.value = true
 }
 
-function handleNudgeConfirm(payload: { itemId: string; noteBody: string | null }) {
+function handleNudgeConfirm(payload: { itemId: string, noteBody: string | null }) {
   emit('item-complete', payload.itemId, { noteBody: payload.noteBody })
   showConfirmModal.value = false
   itemToComplete.value = null
@@ -191,7 +191,7 @@ function isMultiSession(item: PlannedTreatmentItem): boolean {
   return (item.sessions?.length ?? 0) > 1
 }
 
-function sessionProgress(item: PlannedTreatmentItem): { done: number; total: number } {
+function sessionProgress(item: PlannedTreatmentItem): { done: number, total: number } {
   const sessions = item.sessions ?? []
   return {
     done: sessions.filter(s => s.status === 'completed').length,
@@ -334,35 +334,35 @@ const { format: formatCurrency } = useCurrency()
               >
                 {{ formatCurrency(getItemPrice(item)) }}
               </span>
-            <!-- Per-treatment note button (clinical_notes module). Stays
+              <!-- Per-treatment note button (clinical_notes module). Stays
                  mounted regardless of plan-item status so notes can be
                  added/read on every status (issue #60). -->
-            <ModuleSlot
-              name="odontogram.condition.actions"
-              :ctx="{
-                treatmentId: item.treatment_id,
-                toothNumber: itemTeeth(item)[0] ?? null,
-                status: item.status
-              }"
-            />
-            <UButton
-              v-if="completeEnabled"
-              size="xs"
-              variant="ghost"
-              color="success"
-              icon="i-lucide-check"
-              :title="t('clinical.plans.markComplete')"
-              @click.stop="openConfirmModal(item)"
-            />
-            <UButton
-              v-if="!readonly"
-              size="xs"
-              variant="ghost"
-              color="error"
-              icon="i-lucide-trash-2"
-              :title="t('clinical.plans.removeItem')"
-              @click.stop="emit('item-remove', item.id)"
-            />
+              <ModuleSlot
+                name="odontogram.condition.actions"
+                :ctx="{
+                  treatmentId: item.treatment_id,
+                  toothNumber: itemTeeth(item)[0] ?? null,
+                  status: item.status
+                }"
+              />
+              <UButton
+                v-if="completeEnabled"
+                size="xs"
+                variant="ghost"
+                color="success"
+                icon="i-lucide-check"
+                :title="t('clinical.plans.markComplete')"
+                @click.stop="openConfirmModal(item)"
+              />
+              <UButton
+                v-if="!readonly"
+                size="xs"
+                variant="ghost"
+                color="error"
+                icon="i-lucide-trash-2"
+                :title="t('clinical.plans.removeItem')"
+                @click.stop="emit('item-remove', item.id)"
+              />
             </div>
           </div>
         </div>

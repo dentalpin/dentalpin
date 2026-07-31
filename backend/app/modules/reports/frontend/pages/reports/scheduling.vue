@@ -246,7 +246,7 @@ const funnelRows = computed(() => {
     'no_show'
   ]
   const max = Math.max(...Object.values(funnel.value.counts_by_status), 1)
-  return order.map((stage) => ({
+  return order.map(stage => ({
     stage,
     labelKey: funnelStageLabels[stage] as string,
     count: funnel.value!.counts_by_status[stage] ?? 0,

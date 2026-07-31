@@ -2,6 +2,7 @@
 import type { InvoiceListItem, InvoiceStatus, PaginatedResponse } from '~~/app/types'
 import { INVOICE_STATUS_ROLE, roleToUiColor } from '~~/app/config/severity'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorMessage } from '~~/app/utils/error'
 
 /**
  * /invoices — list page.
@@ -49,7 +50,7 @@ const defaults: InvoiceListFilters = {
   compliance_severity: [],
   date_from: null,
   date_to: null,
-  is_credit_note: false,
+  is_credit_note: false
 }
 
 async function fetcher(q: {
@@ -71,7 +72,7 @@ async function fetcher(q: {
   if (q.sort) params.set('sort', q.sort)
 
   const response = await api.get<PaginatedResponse<InvoiceListItem>>(
-    `/api/v1/billing/invoices?${params.toString()}`,
+    `/api/v1/billing/invoices?${params.toString()}`
   )
   return { data: response.data, total: response.total }
 }
@@ -87,14 +88,14 @@ const {
   isLoading,
   error,
   setFilter,
-  resetFilters,
+  resetFilters
 } = useListQuery<InvoiceListFilters, InvoiceListItem>({
   defaults,
   pageSize: 20,
   sortable: ['issue_date', 'due_date', 'total', 'created_at', 'invoice_number'],
   defaultSort: 'created_at:desc',
   searchKey: 'q',
-  fetcher,
+  fetcher
 })
 
 const statusItems = computed(() => [
@@ -103,22 +104,22 @@ const statusItems = computed(() => [
   { label: t('invoice.status.partial'), value: 'partial' as InvoiceStatus },
   { label: t('invoice.status.paid'), value: 'paid' as InvoiceStatus },
   { label: t('invoice.status.cancelled'), value: 'cancelled' as InvoiceStatus },
-  { label: t('invoice.status.voided'), value: 'voided' as InvoiceStatus },
+  { label: t('invoice.status.voided'), value: 'voided' as InvoiceStatus }
 ])
 
 const sortOptions = computed(() => [
   { field: 'created_at', label: t('invoice.sortFields.created'), defaultDir: 'desc' as const },
   { field: 'issue_date', label: t('invoice.sortFields.issueDate'), defaultDir: 'desc' as const },
   { field: 'due_date', label: t('invoice.sortFields.dueDate'), defaultDir: 'asc' as const },
-  { field: 'total', label: t('invoice.sortFields.total'), defaultDir: 'desc' as const },
+  { field: 'total', label: t('invoice.sortFields.total'), defaultDir: 'desc' as const }
 ])
 
 const dateRange = computed({
   get: () => ({ from: filters.value.date_from, to: filters.value.date_to }),
-  set: (v: { from: string | null; to: string | null }) => {
+  set: (v: { from: string | null, to: string | null }) => {
     setFilter('date_from', v.from)
     setFilter('date_to', v.to)
-  },
+  }
 })
 
 function applyComplianceSeverity(next: string[]) {
@@ -168,7 +169,7 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
     toast.add({
       title: t('common.error'),
       description: t('invoice.errors.canOnlyDeleteDraft'),
-      color: 'error',
+      color: 'error'
     })
     return
   }
@@ -176,8 +177,8 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
   try {
     await deleteInvoice(inv.id)
     toast.add({ title: t('common.success'), description: t('invoice.messages.deleted'), color: 'success' })
-  } catch {
-    toast.add({ title: t('common.error'), description: t('invoice.errors.delete'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorMessage(e, t('invoice.errors.delete')), color: 'error' })
   }
 }
 </script>
@@ -243,7 +244,7 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
           :ctx="{
             severity: filters.compliance_severity,
             onChange: applyComplianceSeverity,
-            clinic: currentClinic,
+            clinic: currentClinic
           }"
         />
 

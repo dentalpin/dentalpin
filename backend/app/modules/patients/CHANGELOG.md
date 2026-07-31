@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
 - i18n: replace hardcoded strings in patient components with `$t()`
   calls; add French patient names/contacts to demo seed data.
 

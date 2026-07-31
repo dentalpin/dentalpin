@@ -150,73 +150,73 @@ async function handleTreatmentsChanged() {
       </div>
 
       <template v-else>
-      <!-- Odontogram with diagnosis mode -->
-      <UCard>
-        <template #header>
-          <div class="flex items-center gap-2">
-            <UIcon
-              name="i-lucide-stethoscope"
-              class="w-5 h-5 text-primary-accent"
-            />
-            <span class="font-medium">{{ t('clinical.diagnosis.registerConditions') }}</span>
-          </div>
-        </template>
-
-        <OdontogramChart
-          :patient-id="patientId"
-          mode="diagnosis"
-          :highlighted-teeth-prop="hoveredTeeth"
-          @tooth-hover="handleToothHover"
-          @treatments-changed="handleTreatmentsChanged"
-        />
-      </UCard>
-
-      <!-- Registered conditions list -->
-      <UCard>
-        <template #header>
-          <button
-            type="button"
-            class="w-full flex items-center justify-between gap-2 text-left"
-            :aria-expanded="!conditionsCollapsed"
-            @click="conditionsCollapsed = !conditionsCollapsed"
-          >
+        <!-- Odontogram with diagnosis mode -->
+        <UCard>
+          <template #header>
             <div class="flex items-center gap-2">
               <UIcon
-                :name="conditionsCollapsed ? 'i-lucide-chevron-right' : 'i-lucide-chevron-down'"
-                class="w-4 h-4 text-subtle transition-transform"
+                name="i-lucide-stethoscope"
+                class="w-5 h-5 text-primary-accent"
               />
-              <UIcon
-                name="i-lucide-clipboard-list"
-                class="w-5 h-5"
-              />
-              <span class="font-medium">{{ t('clinical.diagnosis.registeredConditions') }}</span>
+              <span class="font-medium">{{ t('clinical.diagnosis.registerConditions') }}</span>
             </div>
-            <UBadge
-              v-if="conditions.length > 0"
-              color="neutral"
-              variant="subtle"
+          </template>
+
+          <OdontogramChart
+            :patient-id="patientId"
+            mode="diagnosis"
+            :highlighted-teeth-prop="hoveredTeeth"
+            @tooth-hover="handleToothHover"
+            @treatments-changed="handleTreatmentsChanged"
+          />
+        </UCard>
+
+        <!-- Registered conditions list -->
+        <UCard>
+          <template #header>
+            <button
+              type="button"
+              class="w-full flex items-center justify-between gap-2 text-left"
+              :aria-expanded="!conditionsCollapsed"
+              @click="conditionsCollapsed = !conditionsCollapsed"
             >
-              {{ conditions.length }}
-            </UBadge>
-          </button>
-        </template>
+              <div class="flex items-center gap-2">
+                <UIcon
+                  :name="conditionsCollapsed ? 'i-lucide-chevron-right' : 'i-lucide-chevron-down'"
+                  class="w-4 h-4 text-subtle transition-transform"
+                />
+                <UIcon
+                  name="i-lucide-clipboard-list"
+                  class="w-5 h-5"
+                />
+                <span class="font-medium">{{ t('clinical.diagnosis.registeredConditions') }}</span>
+              </div>
+              <UBadge
+                v-if="conditions.length > 0"
+                color="neutral"
+                variant="subtle"
+              >
+                {{ conditions.length }}
+              </UBadge>
+            </button>
+          </template>
 
-        <ConditionsList
-          v-if="!conditionsCollapsed"
-          :conditions="conditions"
-          :patient-id="patientId"
-          :highlighted-teeth="hoveredTeeth"
-          @tooth-hover="handleConditionHover"
+          <ConditionsList
+            v-if="!conditionsCollapsed"
+            :conditions="conditions"
+            :patient-id="patientId"
+            :highlighted-teeth="hoveredTeeth"
+            @tooth-hover="handleConditionHover"
+          />
+        </UCard>
+
+        <!-- Contextual CTA -->
+        <DiagnosisCTA
+          v-if="!readonly && conditions.length > 0"
+          :draft-plans="draftPlans"
+          @create="emit('create-plan')"
+          @continue="emit('continue-plan', $event)"
         />
-      </UCard>
-
-      <!-- Contextual CTA -->
-      <DiagnosisCTA
-        v-if="!readonly && conditions.length > 0"
-        :draft-plans="draftPlans"
-        @create="emit('create-plan')"
-        @continue="emit('continue-plan', $event)"
-      />
       </template>
     </div>
 

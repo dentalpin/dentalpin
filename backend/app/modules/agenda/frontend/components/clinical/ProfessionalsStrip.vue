@@ -60,7 +60,9 @@ async function load() {
   }
 }
 
-watch(() => props.currentDate, () => { void load() }, { immediate: true })
+watch(() => props.currentDate, () => {
+  void load()
+}, { immediate: true })
 
 // Re-fetch every 30s to keep the strip reactive without adding a
 // websocket.
@@ -78,10 +80,10 @@ onBeforeUnmount(() => {
 defineExpose({ refresh: load })
 
 const stateColor: Record<ProfessionalState, string> = {
-  free: '#22C55E',         // green-500
+  free: '#22C55E', // green-500
   in_treatment: '#2563EB', // blue-600
-  on_break: '#F59E0B',     // amber-500
-  off: '#9CA3AF'           // gray-400
+  on_break: '#F59E0B', // amber-500
+  off: '#9CA3AF' // gray-400
 }
 
 function colorForPill(pill: StripPill): string {

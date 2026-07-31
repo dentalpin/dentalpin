@@ -16,8 +16,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: [payload: { itemId: string; noteBody: string | null }]
-  cancel: []
+  'confirm': [payload: { itemId: string, noteBody: string | null }]
+  'cancel': []
 }>()
 
 const { t } = useI18n()

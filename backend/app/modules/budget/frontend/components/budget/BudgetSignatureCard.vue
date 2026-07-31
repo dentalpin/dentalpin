@@ -79,25 +79,47 @@ function shortHash(hash: string | null): string {
   <UCard v-if="visible">
     <template #header>
       <div class="flex items-center gap-2">
-        <UIcon name="i-lucide-pen-tool" class="text-primary-accent" />
+        <UIcon
+          name="i-lucide-pen-tool"
+          class="text-primary-accent"
+        />
         <h3 class="text-h2 text-default">
           {{ t('budget.signature.title') }}
         </h3>
       </div>
     </template>
 
-    <div v-if="isLoading" class="flex items-center gap-2 text-sm text-subtle">
-      <UIcon name="i-lucide-loader-2" class="animate-spin" />
+    <div
+      v-if="isLoading"
+      class="flex items-center gap-2 text-sm text-subtle"
+    >
+      <UIcon
+        name="i-lucide-loader-2"
+        class="animate-spin"
+      />
       {{ t('common.loading') }}
     </div>
 
-    <div v-else-if="!signature" class="text-sm text-subtle">
+    <div
+      v-else-if="!signature"
+      class="text-sm text-subtle"
+    >
       {{ t('budget.signature.notSigned') }}
     </div>
 
-    <div v-else class="space-y-3 text-sm">
-      <div v-if="pngDataUrl" class="rounded-md border border-default p-2 bg-elevated">
-        <img :src="pngDataUrl" alt="signature" class="max-h-24 mx-auto" />
+    <div
+      v-else
+      class="space-y-3 text-sm"
+    >
+      <div
+        v-if="pngDataUrl"
+        class="rounded-md border border-default p-2 bg-elevated"
+      >
+        <img
+          :src="pngDataUrl"
+          alt="signature"
+          class="max-h-24 mx-auto"
+        >
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -125,7 +147,10 @@ function shortHash(hash: string | null): string {
             {{ t(`budget.signature.${signature.relationship_to_patient}`) }}
           </p>
         </div>
-        <div v-if="signature.document_hash" class="sm:col-span-2">
+        <div
+          v-if="signature.document_hash"
+          class="sm:col-span-2"
+        >
           <span class="text-subtle">{{ t('budget.signature.documentHash') }}</span>
           <p class="font-mono text-xs break-all">
             {{ signature.document_hash }}

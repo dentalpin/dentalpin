@@ -103,13 +103,15 @@ export interface MeResponse {
 
 export type UserRole = 'admin' | 'dentist' | 'hygienist' | 'assistant' | 'receptionist'
 
-// Professional type (dentists and hygienists)
+// Professional type — members with `is_professional` on their
+// membership. Usually dentists/hygienists, but any role qualifies
+// (e.g. an admin who also practises).
 export interface Professional {
   id: string
   email: string
   first_name: string
   last_name: string
-  role: 'dentist' | 'hygienist'
+  role: UserRole
 }
 
 export interface UserCreate {
@@ -119,6 +121,8 @@ export interface UserCreate {
   last_name: string
   role: UserRole
   clinic_id?: string
+  // Omitted → backend derives from role (true for dentist/hygienist)
+  is_professional?: boolean
 }
 
 export interface UserUpdate {
@@ -127,6 +131,7 @@ export interface UserUpdate {
   email?: string
   role?: UserRole
   is_active?: boolean
+  is_professional?: boolean
 }
 
 // Patient types

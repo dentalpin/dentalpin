@@ -84,15 +84,36 @@ const invoiceCols = ['numero', 'fecha_emision', 'cliente', 'nif', 'base', 'cuota
 
     <UCard>
       <div class="flex flex-col sm:flex-row sm:items-end gap-3 flex-wrap">
-        <UFormField :label="t('accountingExport.period')" class="w-full sm:w-auto">
-          <USelect v-model="selectedPreset" :items="presetOptions" class="w-full sm:w-56" />
+        <UFormField
+          :label="t('accountingExport.period')"
+          class="w-full sm:w-auto"
+        >
+          <USelect
+            v-model="selectedPreset"
+            :items="presetOptions"
+            class="w-full sm:w-56"
+          />
         </UFormField>
         <template v-if="isCustom">
-          <UFormField :label="t('accountingExport.from')" class="w-full sm:w-auto">
-            <input v-model="dateFrom" type="date" class="w-full sm:w-auto border rounded px-2 py-1.5">
+          <UFormField
+            :label="t('accountingExport.from')"
+            class="w-full sm:w-auto"
+          >
+            <input
+              v-model="dateFrom"
+              type="date"
+              class="w-full sm:w-auto border rounded px-2 py-1.5"
+            >
           </UFormField>
-          <UFormField :label="t('accountingExport.to')" class="w-full sm:w-auto">
-            <input v-model="dateTo" type="date" class="w-full sm:w-auto border rounded px-2 py-1.5">
+          <UFormField
+            :label="t('accountingExport.to')"
+            class="w-full sm:w-auto"
+          >
+            <input
+              v-model="dateTo"
+              type="date"
+              class="w-full sm:w-auto border rounded px-2 py-1.5"
+            >
           </UFormField>
         </template>
         <div class="flex gap-2 w-full sm:w-auto sm:ml-auto">
@@ -120,7 +141,10 @@ const invoiceCols = ['numero', 'fecha_emision', 'cliente', 'nif', 'base', 'cuota
       </div>
     </UCard>
 
-    <section v-if="preview" class="space-y-4">
+    <section
+      v-if="preview"
+      class="space-y-4"
+    >
       <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
         <UCard :ui="{ body: 'p-2' }">
           <div class="text-h2 tnum">
@@ -156,18 +180,33 @@ const invoiceCols = ['numero', 'fecha_emision', 'cliente', 'nif', 'base', 'cuota
         </UCard>
       </div>
 
-      <UCard v-if="preview.sample_invoices.length" :ui="{ body: 'p-0 overflow-x-auto' }">
+      <UCard
+        v-if="preview.sample_invoices.length"
+        :ui="{ body: 'p-0 overflow-x-auto' }"
+      >
         <table class="w-full text-sm">
           <thead>
             <tr class="text-left text-subtle">
-              <th v-for="c in invoiceCols" :key="c" class="px-2 py-1 whitespace-nowrap">
+              <th
+                v-for="c in invoiceCols"
+                :key="c"
+                class="px-2 py-1 whitespace-nowrap"
+              >
                 {{ t(`accountingExport.cols.${c}`) }}
               </th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(row, i) in preview.sample_invoices" :key="i" class="border-t">
-              <td v-for="c in invoiceCols" :key="c" class="px-2 py-1 whitespace-nowrap">
+            <tr
+              v-for="(row, i) in preview.sample_invoices"
+              :key="i"
+              class="border-t"
+            >
+              <td
+                v-for="c in invoiceCols"
+                :key="c"
+                class="px-2 py-1 whitespace-nowrap"
+              >
                 {{ row[c] }}
               </td>
             </tr>

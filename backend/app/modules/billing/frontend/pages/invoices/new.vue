@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type { InvoiceItemCreate, Patient, VatType } from '~~/app/types'
+import { errorMessage } from '~~/app/utils/error'
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const toast = useToast()
@@ -173,10 +174,10 @@ async function handleSubmit() {
       ? `?from=patient&patientId=${route.query.patient_id}`
       : ''
     router.push(`/invoices/${invoice.id}${queryParams}`)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('invoice.errors.create'),
+      description: errorMessage(e, t('invoice.errors.create')),
       color: 'error'
     })
   } finally {

@@ -34,7 +34,7 @@ async def _validate_professional_in_clinic(
         select(ClinicMembership.id).where(
             ClinicMembership.clinic_id == clinic_id,
             ClinicMembership.user_id == user_id,
-            ClinicMembership.role.in_(("dentist", "hygienist")),
+            ClinicMembership.is_professional.is_(True),
         )
     )
     if result.scalar_one_or_none() is None:
@@ -166,16 +166,23 @@ class PlanLockedError(ValueError):
 
 
 def _is_plan_locked(plan: TreatmentPlan) -> bool:
-    """A plan is locked once it has a non-cancelled budget attached.
+    """A plan is locked once its budget has been sent to the patient.
 
-    Rationale: generating/sending/accepting a budget turns the plan into a
-    contract with the patient. Any structural change would silently invalidate
-    that contract, so mutations must go through the explicit unlock flow
-    (which cancels the budget).
+    Rationale: a *sent* (or accepted/…) budget is a contract with the
+    patient — any structural change would silently invalidate it, so
+    mutations must go through the explicit unlock flow (which cancels
+    the budget).
+
+    A ``draft`` budget is NOT a contract: it never left the clinic, and
+    the budget module already mirrors plan edits into draft budgets via
+    the ``treatment_plan.treatment_added``/``treatment_removed`` events
+    (its handlers no-op on any non-draft status). Locking on draft froze
+    the plan before the patient had seen anything — users had to accept
+    the quote just to keep choosing treatments.
     """
     if not plan.budget_id or plan.budget is None:
         return False
-    return plan.budget.status != "cancelled"
+    return plan.budget.status not in ("cancelled", "draft")
 
 
 class TreatmentPlanService:
@@ -518,8 +525,11 @@ class TreatmentPlanService:
         if not plan:
             raise ValueError("Treatment plan not found")
 
-        if plan.status not in ("draft", "active"):
-            raise ValueError("Cannot add items to a completed/cancelled plan")
+        # Terminal states only — whether the plan is contractually frozen
+        # is the lock's job below, not the status's. `pending` with a
+        # draft budget stays editable and syncs into that budget.
+        if plan.status not in ("draft", "pending", "active"):
+            raise ValueError("Cannot add items to a completed/closed plan")
 
         if _is_plan_locked(plan):
             raise PlanLockedError("Plan is locked by an active budget")

@@ -38,12 +38,29 @@ const showCreate = ref(false)
 const isCreating = ref(false)
 const newUser = ref({ email: '', password: '', first_name: '', last_name: '' })
 const selectedRole = ref<UserRole>('receptionist')
+const newIsProfessional = ref(false)
 
 const showEdit = ref(false)
 const isUpdating = ref(false)
 const editing = ref<ClinicUser | null>(null)
 const editData = ref({ email: '', first_name: '', last_name: '', is_active: true })
 const editSelectedRole = ref<UserRole>('receptionist')
+const editIsProfessional = ref(false)
+
+// The checkbox follows the role (dentist/hygienist → professional) but
+// the user can override it afterwards — that's the whole point: an
+// admin who also practises ticks it manually.
+const PROFESSIONAL_ROLES: UserRole[] = ['dentist', 'hygienist']
+watch(selectedRole, (role) => {
+  newIsProfessional.value = PROFESSIONAL_ROLES.includes(role)
+})
+watch(editSelectedRole, (role) => {
+  // Only re-derive on an actual role change — not on the deferred
+  // firing caused by openEdit() loading the user into the form.
+  if (editing.value && role !== editing.value.role) {
+    editIsProfessional.value = PROFESSIONAL_ROLES.includes(role)
+  }
+})
 
 const showDelete = ref(false)
 const isDeleting = ref(false)
@@ -81,12 +98,17 @@ function getRoleLabel(role: UserRole): string {
 function openCreate() {
   newUser.value = { email: '', password: '', first_name: '', last_name: '' }
   selectedRole.value = 'receptionist'
+  newIsProfessional.value = false
   showCreate.value = true
 }
 
 async function handleCreate() {
   isCreating.value = true
-  const data: UserCreate = { ...newUser.value, role: selectedRole.value }
+  const data: UserCreate = {
+    ...newUser.value,
+    role: selectedRole.value,
+    is_professional: newIsProfessional.value
+  }
   const result = await createUser(data)
   isCreating.value = false
   if (result) showCreate.value = false
@@ -101,6 +123,7 @@ function openEdit(user: ClinicUser) {
     is_active: user.is_active
   }
   editSelectedRole.value = user.role
+  editIsProfessional.value = user.is_professional
   showEdit.value = true
 }
 
@@ -112,7 +135,8 @@ async function handleUpdate() {
     last_name: editData.value.last_name,
     email: editData.value.email,
     role: editSelectedRole.value,
-    is_active: editData.value.is_active
+    is_active: editData.value.is_active,
+    is_professional: editIsProfessional.value
   }
   const result = await updateUser(editing.value.id, data)
   isUpdating.value = false
@@ -206,6 +230,14 @@ async function handleDelete() {
             {{ getRoleLabel(user.role) }}
           </UBadge>
           <UBadge
+            v-if="user.is_professional && !PROFESSIONAL_ROLES.includes(user.role)"
+            color="info"
+            variant="subtle"
+            icon="i-lucide-stethoscope"
+          >
+            {{ t('settings.isProfessional') }}
+          </UBadge>
+          <UBadge
             v-if="!user.is_active"
             color="error"
             variant="subtle"
@@ -295,6 +327,13 @@ async function handleDelete() {
               />
             </UFormField>
 
+            <UFormField :help="t('settings.isProfessionalHelp')">
+              <div class="flex items-center gap-3">
+                <USwitch v-model="newIsProfessional" />
+                <span class="text-sm text-muted">{{ t('settings.isProfessional') }}</span>
+              </div>
+            </UFormField>
+
             <div class="flex justify-end gap-2 pt-4">
               <UButton
                 variant="ghost"
@@ -365,6 +404,13 @@ async function handleDelete() {
                 label-key="label"
                 :placeholder="t('placeholders.selectRole')"
               />
+            </UFormField>
+
+            <UFormField :help="t('settings.isProfessionalHelp')">
+              <div class="flex items-center gap-3">
+                <USwitch v-model="editIsProfessional" />
+                <span class="text-sm text-muted">{{ t('settings.isProfessional') }}</span>
+              </div>
             </UFormField>
 
             <div

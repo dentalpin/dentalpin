@@ -13,8 +13,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: []
-  cancel: []
+  'confirm': []
+  'cancel': []
 }>()
 
 const { t, locale } = useI18n()
@@ -25,7 +25,7 @@ const formattedDate = computed(() => {
     return new Date(props.closedAt).toLocaleDateString(locale.value, {
       day: '2-digit',
       month: 'short',
-      year: 'numeric',
+      year: 'numeric'
     })
   } catch {
     return props.closedAt
@@ -39,7 +39,10 @@ const reasonLabel = computed(() => {
 </script>
 
 <template>
-  <UModal :open="open" @update:open="(v) => emit('update:open', v)">
+  <UModal
+    :open="open"
+    @update:open="(v) => emit('update:open', v)"
+  >
     <template #content>
       <UCard>
         <template #header>
@@ -52,17 +55,26 @@ const reasonLabel = computed(() => {
           {{
             t('treatmentPlans.modals.reactivate.description', {
               date: formattedDate,
-              reason: reasonLabel,
+              reason: reasonLabel
             })
           }}
         </p>
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton color="neutral" variant="ghost" :disabled="loading" @click="emit('cancel')">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :disabled="loading"
+              @click="emit('cancel')"
+            >
               {{ t('common.cancel') }}
             </UButton>
-            <UButton color="primary" :loading="loading" @click="emit('confirm')">
+            <UButton
+              color="primary"
+              :loading="loading"
+              @click="emit('confirm')"
+            >
               {{ t('treatmentPlans.modals.reactivate.submit') }}
             </UButton>
           </div>

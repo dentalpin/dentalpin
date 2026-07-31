@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 4c419ba
 ---
 
 # Detalle del presupuesto
@@ -138,3 +138,10 @@ Desde aquí se mueve el presupuesto por todo su flujo
   instalado. La columna lateral muestra solo totales e info.
 - **El PDF firmado da 404.** El presupuesto no está aceptado todavía.
   El PDF firmado solo existe a partir del estado `accepted`.
+- **Una acción ha fallado.** El aviso de error muestra el motivo que
+  devuelve el servidor, no un mensaje genérico. Los habituales son
+  *Cannot send empty budget* (añade al menos una línea), *Patient has
+  no email address* (rellénalo en la ficha del paciente, o desmarca
+  *Enviar por email* y márcalo como entregado en mano) y *Cannot send
+  budget from status 'sent'* (ya se había enviado — recarga la
+  página).

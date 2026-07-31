@@ -62,13 +62,13 @@ export interface PublicBudget {
   items: PublicBudgetItem[]
 }
 
-export type VerifyError =
-  | 'locked'
-  | 'expired'
-  | 'rate_limited'
-  | 'method_mismatch'
-  | 'invalid'
-  | 'unknown'
+export type VerifyError
+  = | 'locked'
+    | 'expired'
+    | 'rate_limited'
+    | 'method_mismatch'
+    | 'invalid'
+    | 'unknown'
 
 function apiBase(): string {
   const config = useRuntimeConfig()
@@ -99,7 +99,7 @@ export function usePublicBudget(token: string) {
     lastError.value = null
     try {
       const res = await $fetch<{ data: PublicMeta }>(`${baseUrl.value}/meta`, {
-        credentials: 'include',
+        credentials: 'include'
       })
       meta.value = res.data
     } finally {
@@ -111,7 +111,7 @@ export function usePublicBudget(token: string) {
     loading.value = true
     try {
       const res = await $fetch<{ data: PublicBudget }>(baseUrl.value, {
-        credentials: 'include',
+        credentials: 'include'
       })
       budget.value = res.data
     } finally {
@@ -126,11 +126,11 @@ export function usePublicBudget(token: string) {
       await $fetch(`${baseUrl.value}/verify`, {
         method: 'POST',
         body: { method, value },
-        credentials: 'include',
+        credentials: 'include'
       })
       return true
     } catch (err) {
-      const e = err as { statusCode?: number; data?: { detail?: string } }
+      const e = err as { statusCode?: number, data?: { detail?: string } }
       const status = e.statusCode
       if (status === 401) {
         const detail = e.data?.detail
@@ -159,7 +159,7 @@ export function usePublicBudget(token: string) {
       await $fetch(`${baseUrl.value}/accept`, {
         method: 'POST',
         body: payload,
-        credentials: 'include',
+        credentials: 'include'
       })
       decided.value = 'accepted'
       if (meta.value) meta.value = { ...meta.value, already_decided: true, decided_status: 'accepted' }
@@ -174,7 +174,7 @@ export function usePublicBudget(token: string) {
   async function downloadSignedPdf(): Promise<'ok' | 'verification_required' | 'not_signed' | 'error'> {
     try {
       const response = await fetch(`${baseUrl.value}/pdf/signed`, {
-        credentials: 'include',
+        credentials: 'include'
       })
       if (response.status === 401) return 'verification_required'
       if (response.status === 404) return 'not_signed'
@@ -197,13 +197,13 @@ export function usePublicBudget(token: string) {
     }
   }
 
-  async function reject(payload: { reason: string; note?: string }): Promise<boolean> {
+  async function reject(payload: { reason: string, note?: string }): Promise<boolean> {
     submitting.value = true
     try {
       await $fetch(`${baseUrl.value}/reject`, {
         method: 'POST',
         body: payload,
-        credentials: 'include',
+        credentials: 'include'
       })
       decided.value = 'rejected'
       if (meta.value) meta.value = { ...meta.value, already_decided: true, decided_status: 'rejected' }
@@ -229,6 +229,6 @@ export function usePublicBudget(token: string) {
     verify,
     accept,
     reject,
-    downloadSignedPdf,
+    downloadSignedPdf
   }
 }

@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 4c419ba
 ---
 
 # Budget detail
@@ -131,3 +131,9 @@ signed, invoiced, or renegotiated.
   The sidebar shows only totals and info.
 - **Signed PDF returns 404.** The budget is not accepted yet — the
   signed PDF only exists from the `accepted` state on.
+- **An action failed.** The error toast shows the reason the server
+  gave, not a generic message. The common ones are *Cannot send
+  empty budget* (add at least one line first), *Patient has no email
+  address* (fill it in on the patient record, or untick *Send email*
+  and mark it as delivered by hand), and *Cannot send budget from
+  status 'sent'* (it was already sent — reload the page).

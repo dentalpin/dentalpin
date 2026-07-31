@@ -11,7 +11,7 @@
  * UI stays identical to the pre-slot world when no optional module is
  * installed. Preserves the uninstall promise.
  */
-import { computed, defineAsyncComponent, onMounted, ref, watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useModuleSlots } from '~~/app/composables/useModuleSlots'
 
 const props = defineProps<{
@@ -80,7 +80,10 @@ watch(activeKey, (value) => {
     @continue-plan="(planId) => emit('continue-plan', planId)"
   />
 
-  <div v-else class="space-y-3">
+  <div
+    v-else
+    class="space-y-3"
+  >
     <UTabs
       v-model="activeKey"
       :items="tabItems"

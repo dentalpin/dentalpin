@@ -5,7 +5,7 @@ import { PERMISSIONS } from '~~/app/config/permissions'
 
 definePageMeta({ middleware: ['auth'] })
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const route = useRoute()
 const router = useRouter()
 const recallsApi = useRecalls()
@@ -120,7 +120,7 @@ function onChanged(updated: Recall) {
   const idx = items.value.findIndex(r => r.id === updated.id)
   if (idx >= 0) items.value[idx] = { ...items.value[idx], ...updated }
   // Refresh stats on any state change.
-  recallsApi.dashboardStats().then(res => {
+  recallsApi.dashboardStats().then((res) => {
     stats.value = res.data
   }).catch(() => { /* ignore */ })
 }

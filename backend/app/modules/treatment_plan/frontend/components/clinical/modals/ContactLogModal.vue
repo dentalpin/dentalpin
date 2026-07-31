@@ -11,8 +11,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: [payload: { channel: string; note?: string }]
-  cancel: []
+  'confirm': [payload: { channel: string, note?: string }]
+  'cancel': []
 }>()
 
 const { t } = useI18n()
@@ -27,11 +27,11 @@ const channelLabels: Record<string, string> = {
   whatsapp: 'WhatsApp',
   email: 'Email',
   in_person: 'En clínica',
-  other: 'Otro',
+  other: 'Otro'
 }
 
 const channelOptions = computed(() =>
-  CHANNELS.map((c) => ({ value: c, label: channelLabels[c] || c }))
+  CHANNELS.map(c => ({ value: c, label: channelLabels[c] || c }))
 )
 
 function submit() {
@@ -52,7 +52,10 @@ watch(
 </script>
 
 <template>
-  <UModal :open="open" @update:open="(v) => emit('update:open', v)">
+  <UModal
+    :open="open"
+    @update:open="(v) => emit('update:open', v)"
+  >
     <template #content>
       <UCard>
         <template #header>
@@ -64,19 +67,36 @@ watch(
         <div class="space-y-4 text-sm">
           <p>{{ t('treatmentPlans.modals.contactLog.description') }}</p>
           <UFormField :label="t('treatmentPlans.modals.contactLog.channelLabel')">
-            <USelect v-model="channel" :items="channelOptions" class="w-full" />
+            <USelect
+              v-model="channel"
+              :items="channelOptions"
+              class="w-full"
+            />
           </UFormField>
           <UFormField :label="t('treatmentPlans.modals.contactLog.noteLabel')">
-            <UTextarea v-model="note" :rows="3" :maxlength="1000" />
+            <UTextarea
+              v-model="note"
+              :rows="3"
+              :maxlength="1000"
+            />
           </UFormField>
         </div>
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton color="neutral" variant="ghost" :disabled="loading" @click="emit('cancel')">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :disabled="loading"
+              @click="emit('cancel')"
+            >
               {{ t('common.cancel') }}
             </UButton>
-            <UButton color="primary" :loading="loading" @click="submit">
+            <UButton
+              color="primary"
+              :loading="loading"
+              @click="submit"
+            >
               {{ t('treatmentPlans.modals.contactLog.submit') }}
             </UButton>
           </div>

@@ -381,38 +381,67 @@ async def test_delete_plan_keeps_performed_treatments(
 # -----------------------------------------------------------------------------
 
 
+async def _send_plan_budget(client: AsyncClient, auth_headers: dict, plan_id: str) -> str:
+    """Fetch the plan's linked budget and mark it as sent (manual delivery)."""
+    r = await client.get(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}",
+        headers=auth_headers,
+    )
+    assert r.status_code == 200, r.text
+    budget_id = r.json()["data"]["budget_id"]
+    assert budget_id, "confirm should have created a draft budget"
+
+    r = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/send",
+        headers=auth_headers,
+        json={"send_email": False},
+    )
+    assert r.status_code == 200, r.text
+    return budget_id
+
+
 @pytest.mark.asyncio
-async def test_add_item_blocked_when_budget_generated(
+async def test_add_item_allowed_on_draft_budget_blocked_once_sent(
     client: AsyncClient, auth_headers: dict, setup: dict
 ) -> None:
-    """Generating a budget locks the plan — further items are rejected with 409."""
+    """A draft budget does not lock the plan; sending it does.
+
+    The draft never left the clinic, so the plan stays editable and the
+    budget module mirrors the edit into the draft. Once the budget is
+    sent it becomes a patient-facing contract — 409 from then on.
+    """
     plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
 
-    # Confirm the plan (auto-creates budget) and activate.
+    # Confirm the plan (auto-creates a draft budget).
     r = await client.post(
         f"/api/v1/treatment_plan/treatment-plans/{plan_id}/confirm",
         headers=auth_headers,
     )
     assert r.status_code == 200, r.text
-    r = await client.patch(
-        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/status",
-        headers=auth_headers,
-        json={"status": "active"},
-    )
-    assert r.status_code == 200, r.text
 
-    # Try to add another item — should be 409 locked.
+    # Draft budget → still editable (Telegram report: users had to
+    # accept the quote just to keep choosing treatments).
     new_treatment_id = await _create_treatment(client, auth_headers, setup, tooth_number=15)
     r = await client.post(
         f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
         headers=auth_headers,
         json={"treatment_id": new_treatment_id},
     )
+    assert r.status_code in (200, 201), r.text
+
+    # Sent budget → locked.
+    await _send_plan_budget(client, auth_headers, plan_id)
+    another_treatment_id = await _create_treatment(client, auth_headers, setup, tooth_number=14)
+    r = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
+        headers=auth_headers,
+        json={"treatment_id": another_treatment_id},
+    )
     assert r.status_code == 409, r.text
 
 
 @pytest.mark.asyncio
-async def test_remove_item_blocked_when_budget_generated(
+async def test_remove_item_allowed_on_draft_budget_blocked_once_sent(
     client: AsyncClient, auth_headers: dict, setup: dict
 ) -> None:
     plan_id, item_ids = await _create_plan_with_items(client, auth_headers, setup, [16, 15])
@@ -427,8 +456,17 @@ async def test_remove_item_blocked_when_budget_generated(
         headers=auth_headers,
     )
 
+    # Draft budget → removal allowed.
     r = await client.delete(
         f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}",
+        headers=auth_headers,
+    )
+    assert r.status_code in (200, 204), r.text
+
+    # Sent budget → locked.
+    await _send_plan_budget(client, auth_headers, plan_id)
+    r = await client.delete(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[1]}",
         headers=auth_headers,
     )
     assert r.status_code == 409, r.text
@@ -879,7 +917,8 @@ async def test_change_item_doctor_works_when_plan_is_locked(
     plan_id, item_ids = await _create_plan_with_items(client, auth_headers, setup, [16])
     item_id = item_ids[0]
 
-    # Confirm + activate → plan ends up locked by an active budget.
+    # Confirm + activate + send the budget → plan ends up locked.
+    # (A draft budget no longer locks — the contract starts at `sent`.)
     r = await client.post(
         f"/api/v1/treatment_plan/treatment-plans/{plan_id}/confirm",
         headers=auth_headers,
@@ -891,6 +930,7 @@ async def test_change_item_doctor_works_when_plan_is_locked(
         json={"status": "active"},
     )
     assert r.status_code == 200, r.text
+    await _send_plan_budget(client, auth_headers, plan_id)
 
     # Sanity: a structural change on the same item is still rejected.
     r = await client.put(

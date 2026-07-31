@@ -25,6 +25,12 @@ ROLES: Final[list[str]] = [
     "receptionist",
 ]
 
+# Roles that imply ``ClinicMembership.is_professional`` at creation.
+# The flag — not the role — is what agenda/schedules/treatment_plan
+# query, so a solo admin-dentist can be marked professional without
+# needing a second account (Telegram report, 2026-07-31).
+PROFESSIONAL_ROLES: Final[tuple[str, ...]] = ("dentist", "hygienist")
+
 # Core permissions (not from modules)
 CORE_PERMISSIONS: Final[list[str]] = [
     "admin.users.read",

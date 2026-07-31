@@ -76,7 +76,6 @@ const SECONDARY_METHODS: MethodOption[] = [
   { value: 'direct_debit', icon: 'i-lucide-repeat' },
   { value: 'other', icon: 'i-lucide-more-horizontal' }
 ]
-const ALL_METHODS = [...PRIMARY_METHODS, ...SECONDARY_METHODS]
 
 function buildInitialAllocations(): PaymentAllocationCreate[] {
   const amount = Number(props.defaultAmount ?? 0)

@@ -13,7 +13,7 @@ const toast = useToast?.()
 const {
   getActiveCertificate,
   getCertificateHistory,
-  uploadCertificate,
+  uploadCertificate
 } = useVerifactu()
 const { can } = usePermissions()
 
@@ -115,7 +115,7 @@ const expiryToneClass = computed(() => {
 })
 
 const canSubmit = computed(() =>
-  !!file.value && password.value.length > 0 && !uploading.value,
+  !!file.value && password.value.length > 0 && !uploading.value
 )
 
 onMounted(refresh)
@@ -124,9 +124,16 @@ onMounted(refresh)
 <template>
   <div class="p-4 sm:p-6 max-w-3xl mx-auto space-y-6">
     <header>
-      <NuxtLink to="/settings/verifactu" class="text-sm text-gray-500">← Verifactu</NuxtLink>
-      <h1 class="text-2xl font-semibold mt-2">{{ t('verifactu.certificate.title') }}</h1>
-      <p class="text-sm text-gray-500">{{ t('verifactu.certificate.description') }}</p>
+      <NuxtLink
+        to="/settings/verifactu"
+        class="text-sm text-gray-500"
+      >← Verifactu</NuxtLink>
+      <h1 class="text-2xl font-semibold mt-2">
+        {{ t('verifactu.certificate.title') }}
+      </h1>
+      <p class="text-sm text-gray-500">
+        {{ t('verifactu.certificate.description') }}
+      </p>
     </header>
 
     <!-- ─── ACTIVE CERTIFICATE STATUS ───────────────────────────── -->
@@ -144,26 +151,42 @@ onMounted(refresh)
         />
         <div class="flex-1 min-w-0">
           <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-            <h2 class="font-semibold">{{ active.subject_cn }}</h2>
-            <span v-if="expiryInfo" class="text-sm font-medium" :class="expiryToneClass.text">
+            <h2 class="font-semibold">
+              {{ active.subject_cn }}
+            </h2>
+            <span
+              v-if="expiryInfo"
+              class="text-sm font-medium"
+              :class="expiryToneClass.text"
+            >
               {{ expiryInfo.label }}
             </span>
           </div>
           <dl class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-2 text-sm">
             <div>
-              <dt class="text-gray-500 text-xs">{{ t('verifactu.certificate.issuer') }}</dt>
+              <dt class="text-gray-500 text-xs">
+                {{ t('verifactu.certificate.issuer') }}
+              </dt>
               <dd>{{ active.issuer_cn }}</dd>
             </div>
             <div>
-              <dt class="text-gray-500 text-xs">{{ t('verifactu.certificate.nif') }}</dt>
-              <dd class="font-mono">{{ active.nif_titular }}</dd>
+              <dt class="text-gray-500 text-xs">
+                {{ t('verifactu.certificate.nif') }}
+              </dt>
+              <dd class="font-mono">
+                {{ active.nif_titular }}
+              </dd>
             </div>
             <div>
-              <dt class="text-gray-500 text-xs">{{ t('verifactu.certificate.validFrom') }}</dt>
+              <dt class="text-gray-500 text-xs">
+                {{ t('verifactu.certificate.validFrom') }}
+              </dt>
               <dd>{{ active.valid_from ? new Date(active.valid_from).toLocaleDateString() : '—' }}</dd>
             </div>
             <div>
-              <dt class="text-gray-500 text-xs">{{ t('verifactu.certificate.validUntil') }}</dt>
+              <dt class="text-gray-500 text-xs">
+                {{ t('verifactu.certificate.validUntil') }}
+              </dt>
               <dd>{{ active.valid_until ? new Date(active.valid_until).toLocaleDateString() : '—' }}</dd>
             </div>
           </dl>
@@ -176,10 +199,17 @@ onMounted(refresh)
       class="rounded-lg border border-amber-300 bg-amber-50 p-5"
     >
       <div class="flex items-start gap-4">
-        <UIcon name="i-lucide-alert-triangle" class="text-3xl text-amber-600 shrink-0 mt-0.5" />
+        <UIcon
+          name="i-lucide-alert-triangle"
+          class="text-3xl text-amber-600 shrink-0 mt-0.5"
+        />
         <div>
-          <h2 class="font-semibold text-amber-900">{{ t('verifactu.certificate.noActive') }}</h2>
-          <p class="text-sm text-amber-800 mt-1">{{ t('verifactu.certificate.noActiveHint') }}</p>
+          <h2 class="font-semibold text-amber-900">
+            {{ t('verifactu.certificate.noActive') }}
+          </h2>
+          <p class="text-sm text-amber-800 mt-1">
+            {{ t('verifactu.certificate.noActiveHint') }}
+          </p>
         </div>
       </div>
     </section>
@@ -192,10 +222,15 @@ onMounted(refresh)
         </h2>
       </template>
 
-      <form class="space-y-5" @submit.prevent="submit">
+      <form
+        class="space-y-5"
+        @submit.prevent="submit"
+      >
         <!-- Drag & drop / browse zone -->
         <div>
-          <p class="text-sm font-medium mb-2">{{ t('verifactu.certificate.uploadFile') }}</p>
+          <p class="text-sm font-medium mb-2">
+            {{ t('verifactu.certificate.uploadFile') }}
+          </p>
           <div
             class="relative rounded-lg border-2 border-dashed transition-colors cursor-pointer p-6 sm:p-8 text-center"
             :class="[
@@ -203,7 +238,7 @@ onMounted(refresh)
                 ? 'border-primary-500 bg-primary-50'
                 : file
                   ? 'border-emerald-500 bg-emerald-50'
-                  : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50',
+                  : 'border-gray-300 hover:border-gray-400 hover:bg-gray-50'
             ]"
             @click="triggerFileInput"
             @dragover.prevent="dragOver = true"
@@ -217,20 +252,42 @@ onMounted(refresh)
               accept=".pfx,.p12"
               class="hidden"
               @change="onFileChange"
-            />
+            >
 
-            <div v-if="!file" class="space-y-1">
-              <UIcon name="i-lucide-upload-cloud" class="text-4xl text-gray-400 mx-auto block" />
-              <p class="font-medium text-sm">{{ t('verifactu.certificate.dropzoneTitle') }}</p>
-              <p class="text-xs text-gray-500">{{ t('verifactu.certificate.dropzoneSubtitle') }}</p>
-              <p class="text-xs text-gray-400 pt-1">{{ t('verifactu.certificate.dropzoneFormats') }}</p>
+            <div
+              v-if="!file"
+              class="space-y-1"
+            >
+              <UIcon
+                name="i-lucide-upload-cloud"
+                class="text-4xl text-gray-400 mx-auto block"
+              />
+              <p class="font-medium text-sm">
+                {{ t('verifactu.certificate.dropzoneTitle') }}
+              </p>
+              <p class="text-xs text-gray-500">
+                {{ t('verifactu.certificate.dropzoneSubtitle') }}
+              </p>
+              <p class="text-xs text-gray-400 pt-1">
+                {{ t('verifactu.certificate.dropzoneFormats') }}
+              </p>
             </div>
 
-            <div v-else class="flex items-center justify-center gap-3 text-left">
-              <UIcon name="i-lucide-file-check-2" class="text-3xl text-emerald-600 shrink-0" />
+            <div
+              v-else
+              class="flex items-center justify-center gap-3 text-left"
+            >
+              <UIcon
+                name="i-lucide-file-check-2"
+                class="text-3xl text-emerald-600 shrink-0"
+              />
               <div class="min-w-0">
-                <p class="font-medium text-sm truncate">{{ file.name }}</p>
-                <p class="text-xs text-gray-500">{{ formatSize(file.size) }}</p>
+                <p class="font-medium text-sm truncate">
+                  {{ file.name }}
+                </p>
+                <p class="text-xs text-gray-500">
+                  {{ formatSize(file.size) }}
+                </p>
               </div>
               <UButton
                 icon="i-lucide-x"
@@ -289,7 +346,10 @@ onMounted(refresh)
         </UButton>
 
         <p class="text-xs text-gray-500 leading-relaxed">
-          <UIcon name="i-lucide-lock" class="inline-block align-text-bottom mr-1" />
+          <UIcon
+            name="i-lucide-lock"
+            class="inline-block align-text-bottom mr-1"
+          />
           {{ t('verifactu.certificate.encryptionNote') }}
         </p>
       </form>
@@ -299,8 +359,13 @@ onMounted(refresh)
     <UCard>
       <template #header>
         <div class="flex items-center gap-2">
-          <UIcon name="i-lucide-help-circle" class="text-primary-500" />
-          <h2 class="font-semibold">{{ t('verifactu.certificate.helpTitle') }}</h2>
+          <UIcon
+            name="i-lucide-help-circle"
+            class="text-primary-500"
+          />
+          <h2 class="font-semibold">
+            {{ t('verifactu.certificate.helpTitle') }}
+          </h2>
         </div>
       </template>
       <div class="text-sm space-y-2 text-gray-700 dark:text-gray-300">
@@ -327,7 +392,9 @@ onMounted(refresh)
     <!-- ─── HISTORY ─────────────────────────────────────────────── -->
     <UCard v-if="history.length > 0">
       <template #header>
-        <h2 class="font-semibold">{{ t('verifactu.certificate.history') }}</h2>
+        <h2 class="font-semibold">
+          {{ t('verifactu.certificate.history') }}
+        </h2>
       </template>
       <ul class="divide-y divide-gray-200 dark:divide-gray-700">
         <li
@@ -335,11 +402,18 @@ onMounted(refresh)
           :key="c.id"
           class="py-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm"
         >
-          <UBadge :color="c.is_active ? 'green' : 'gray'" variant="subtle" size="sm">
+          <UBadge
+            :color="c.is_active ? 'green' : 'gray'"
+            variant="subtle"
+            size="sm"
+          >
             {{ c.is_active ? t('verifactu.certificate.active') : t('verifactu.status.disabled') }}
           </UBadge>
           <span class="font-medium">{{ c.subject_cn }}</span>
-          <span v-if="c.valid_until" class="text-gray-500 ml-auto text-xs">
+          <span
+            v-if="c.valid_until"
+            class="text-gray-500 ml-auto text-xs"
+          >
             {{ t('verifactu.certificate.validUntil') }}: {{ new Date(c.valid_until).toLocaleDateString() }}
           </span>
         </li>

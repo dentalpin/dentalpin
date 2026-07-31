@@ -2,6 +2,7 @@
 // Copilot settings: morning digest opt-in (+ redaction visibility).
 // Mounted at /settings/integrations/copilot via the settings registry.
 import type { ApiResponse } from '~~/app/types'
+import { errorDetail } from '~~/app/utils/error'
 
 interface CopilotSettings {
   provider: string
@@ -98,8 +99,8 @@ async function save() {
     })
     settings.value = res.data
     toast.add({ title: t('copilot.settings.saved'), color: 'success' })
-  } catch {
-    toast.add({ title: t('common.error'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorDetail(e), color: 'error' })
   } finally {
     isSaving.value = false
   }

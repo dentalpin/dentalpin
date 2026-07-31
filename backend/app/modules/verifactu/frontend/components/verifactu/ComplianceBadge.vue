@@ -3,9 +3,11 @@
 // the invoice detail header. Rendered via slots
 // `invoice.list.row.meta` and `invoice.detail.header.meta`.
 
+import type { ComplianceData } from '../../composables/useComplianceBadge'
+
 interface InvoiceCtx {
   invoice?: {
-    compliance_data?: Record<string, any> | null
+    compliance_data?: ComplianceData | null
   } | null
   clinic?: { country?: string | null } | null
 }
@@ -17,7 +19,10 @@ const badge = useComplianceBadge(compliance)
 </script>
 
 <template>
-  <UTooltip v-if="badge" :text="badge.tooltip">
+  <UTooltip
+    v-if="badge"
+    :text="badge.tooltip"
+  >
     <UBadge
       :color="badge.color"
       variant="subtle"

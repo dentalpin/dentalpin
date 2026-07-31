@@ -192,7 +192,9 @@ function selectOnFocus(e: FocusEvent) {
 <template>
   <section class="perio-arch-block rounded-lg border border-default bg-surface">
     <header class="flex items-center justify-between px-3 py-2">
-      <h4 class="text-xs font-semibold uppercase tracking-wide text-muted">{{ heading }}</h4>
+      <h4 class="text-xs font-semibold uppercase tracking-wide text-muted">
+        {{ heading }}
+      </h4>
       <span class="text-[10px] text-subtle">
         {{ t('periodontogram.arch.vestibular') }} (MV V DV) ↔ {{ innerFaceLabel }} (ML L DL)
       </span>
@@ -202,13 +204,17 @@ function selectOnFocus(e: FocusEvent) {
       class="perio-arch-table table-fixed border-collapse text-center font-mono text-[11px] leading-tight"
     >
       <colgroup>
-        <col style="width: 96px" />
-        <col v-for="tooth in orderedTeeth" :key="`col-${tooth.tooth_number}`" style="width: 60px" />
+        <col style="width: 96px">
+        <col
+          v-for="tooth in orderedTeeth"
+          :key="`col-${tooth.tooth_number}`"
+          style="width: 60px"
+        >
       </colgroup>
 
       <thead v-if="arch === 'upper'">
         <tr>
-          <th class="px-1 text-right font-medium text-muted"></th>
+          <th class="px-1 text-right font-medium text-muted" />
           <th
             v-for="tooth in orderedTeeth"
             :key="`fdi-${tooth.tooth_number}`"
@@ -220,11 +226,23 @@ function selectOnFocus(e: FocusEvent) {
       </thead>
 
       <!-- ============== UPPER ARCH ============== -->
-      <tbody v-if="arch === 'upper'" class="divide-y divide-gray-100 dark:divide-gray-800">
+      <tbody
+        v-if="arch === 'upper'"
+        class="divide-y divide-gray-100 dark:divide-gray-800"
+      >
         <!-- Implante (toggle ● / ·) -->
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.implant') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`imp-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.implant') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`imp-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :class="{ 'text-emerald-600 dark:text-emerald-400': tooth.is_implant }"
@@ -239,8 +257,17 @@ function selectOnFocus(e: FocusEvent) {
 
         <!-- Mobility (cycle 0..3 + null) -->
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.mobility') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`mob-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.mobility') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`mob-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :disabled="readonly || !tooth.is_present"
@@ -254,8 +281,17 @@ function selectOnFocus(e: FocusEvent) {
 
         <!-- Prognosis cycle -->
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.prognosis') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`pron-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.prognosis') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`pron-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :disabled="readonly || !tooth.is_present"
@@ -269,8 +305,17 @@ function selectOnFocus(e: FocusEvent) {
 
         <!-- Furca V / L cycles -->
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.furcaV') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`furv-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.furcaV') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`furv-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :disabled="readonly || !tooth.is_present"
@@ -282,8 +327,17 @@ function selectOnFocus(e: FocusEvent) {
           </td>
         </tr>
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.furcaLP') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`furl-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.furcaLP') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`furl-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :disabled="readonly || !tooth.is_present"
@@ -297,8 +351,17 @@ function selectOnFocus(e: FocusEvent) {
 
         <!-- Gingival width (numeric input) -->
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.gingivalWidth') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`kg-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.gingivalWidth') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`kg-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <input
               type="number"
               min="0"
@@ -308,23 +371,37 @@ function selectOnFocus(e: FocusEvent) {
               class="perio-cell-input"
               @focus="selectOnFocus"
               @change="(e) => onToothNumberInput(tooth.tooth_number, 'keratinized_gingiva_mm', e)"
-            />
+            >
           </td>
         </tr>
 
         <!-- Vestibular site metrics — amber tint, sits above the V tooth row -->
-        <tr v-for="row in [
-          { kind: 'site-pd', label: t('periodontogram.arch.probing') },
-          { kind: 'site-gm', label: t('periodontogram.arch.margin') },
-          { kind: 'site-plaque', label: t('periodontogram.arch.plaque') },
-          { kind: 'site-bop', label: t('periodontogram.arch.bleeding') }
-        ]" :key="`v-${row.kind}`" class="perio-row-vestibular">
-          <th scope="row" class="px-1 text-right font-medium text-amber-700 dark:text-amber-400">
+        <tr
+          v-for="row in [
+            { kind: 'site-pd', label: t('periodontogram.arch.probing') },
+            { kind: 'site-gm', label: t('periodontogram.arch.margin') },
+            { kind: 'site-plaque', label: t('periodontogram.arch.plaque') },
+            { kind: 'site-bop', label: t('periodontogram.arch.bleeding') }
+          ]"
+          :key="`v-${row.kind}`"
+          class="perio-row-vestibular"
+        >
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-amber-700 dark:text-amber-400"
+          >
             {{ row.label }} <span class="text-[9px] text-amber-500 dark:text-amber-300/80">V</span>
           </th>
-          <td v-for="tooth in orderedTeeth" :key="`v-${row.kind}-${tooth.tooth_number}`" class="px-1">
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`v-${row.kind}-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <div class="flex items-center justify-center gap-0.5 tabular-nums">
-              <template v-for="code in VESTIBULAR_SITES" :key="`v-${row.kind}-${tooth.tooth_number}-${code}`">
+              <template
+                v-for="code in VESTIBULAR_SITES"
+                :key="`v-${row.kind}-${tooth.tooth_number}-${code}`"
+              >
                 <input
                   v-if="row.kind === 'site-pd'"
                   type="number"
@@ -336,7 +413,7 @@ function selectOnFocus(e: FocusEvent) {
                   :title="t('periodontogram.arch.probingTitle', { code })"
                   @focus="selectOnFocus"
                   @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
-                />
+                >
                 <input
                   v-else-if="row.kind === 'site-gm'"
                   type="number"
@@ -348,7 +425,7 @@ function selectOnFocus(e: FocusEvent) {
                   :title="t('periodontogram.arch.marginTitle', { code })"
                   @focus="selectOnFocus"
                   @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
-                />
+                >
                 <button
                   v-else-if="row.kind === 'site-plaque'"
                   type="button"
@@ -383,7 +460,10 @@ function selectOnFocus(e: FocusEvent) {
             class="px-1 text-right text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 perio-row-anchor"
           >
             {{ t('periodontogram.arch.vestibular') }}
-            <div class="perio-profile-anchor perio-profile-anchor--top" :style="{ width: profileOverlayWidth }">
+            <div
+              class="perio-profile-anchor perio-profile-anchor--top"
+              :style="{ width: profileOverlayWidth }"
+            >
               <PerioProfileStrip
                 :teeth="orderedTeeth"
                 face="vestibular"
@@ -391,8 +471,16 @@ function selectOnFocus(e: FocusEvent) {
               />
             </div>
           </th>
-          <td v-for="tooth in orderedTeeth" :key="`v-tooth-${tooth.tooth_number}`" class="px-0 align-top">
-            <PerioToothLateral :tooth="tooth" face="vestibular" :readonly="readonly" />
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`v-tooth-${tooth.tooth_number}`"
+            class="px-0 align-top"
+          >
+            <PerioToothLateral
+              :tooth="tooth"
+              face="vestibular"
+              :readonly="readonly"
+            />
           </td>
         </tr>
 
@@ -404,7 +492,10 @@ function selectOnFocus(e: FocusEvent) {
             class="px-1 text-right text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400 perio-row-anchor"
           >
             {{ innerFaceLabel }}
-            <div class="perio-profile-anchor perio-profile-anchor--bottom" :style="{ width: profileOverlayWidth }">
+            <div
+              class="perio-profile-anchor perio-profile-anchor--bottom"
+              :style="{ width: profileOverlayWidth }"
+            >
               <PerioProfileStrip
                 :teeth="orderedTeeth"
                 :face="innerFace"
@@ -412,7 +503,11 @@ function selectOnFocus(e: FocusEvent) {
               />
             </div>
           </th>
-          <td v-for="tooth in orderedTeeth" :key="`p-tooth-${tooth.tooth_number}`" class="px-0 align-top">
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`p-tooth-${tooth.tooth_number}`"
+            class="px-0 align-top"
+          >
             <PerioToothLateral
               :tooth="tooth"
               :face="innerFace"
@@ -423,18 +518,32 @@ function selectOnFocus(e: FocusEvent) {
         </tr>
 
         <!-- Palatal site metrics — sky tint -->
-        <tr v-for="row in [
-          { kind: 'site-bop', label: t('periodontogram.arch.bleeding') },
-          { kind: 'site-plaque', label: t('periodontogram.arch.plaque') },
-          { kind: 'site-gm', label: t('periodontogram.arch.margin') },
-          { kind: 'site-pd', label: t('periodontogram.arch.probing') }
-        ]" :key="`p-${row.kind}`" class="perio-row-palatal">
-          <th scope="row" class="px-1 text-right font-medium text-sky-700 dark:text-sky-400">
+        <tr
+          v-for="row in [
+            { kind: 'site-bop', label: t('periodontogram.arch.bleeding') },
+            { kind: 'site-plaque', label: t('periodontogram.arch.plaque') },
+            { kind: 'site-gm', label: t('periodontogram.arch.margin') },
+            { kind: 'site-pd', label: t('periodontogram.arch.probing') }
+          ]"
+          :key="`p-${row.kind}`"
+          class="perio-row-palatal"
+        >
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-sky-700 dark:text-sky-400"
+          >
             {{ row.label }} <span class="text-[9px] text-sky-500 dark:text-sky-300/80">{{ innerFaceLabel.charAt(0) }}</span>
           </th>
-          <td v-for="tooth in orderedTeeth" :key="`p-${row.kind}-${tooth.tooth_number}`" class="px-1">
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`p-${row.kind}-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <div class="flex items-center justify-center gap-0.5 tabular-nums">
-              <template v-for="code in innerSites" :key="`p-${row.kind}-${tooth.tooth_number}-${code}`">
+              <template
+                v-for="code in innerSites"
+                :key="`p-${row.kind}-${tooth.tooth_number}-${code}`"
+              >
                 <input
                   v-if="row.kind === 'site-pd'"
                   type="number"
@@ -446,7 +555,7 @@ function selectOnFocus(e: FocusEvent) {
                   :title="t('periodontogram.arch.probingTitle', { code })"
                   @focus="selectOnFocus"
                   @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
-                />
+                >
                 <input
                   v-else-if="row.kind === 'site-gm'"
                   type="number"
@@ -458,7 +567,7 @@ function selectOnFocus(e: FocusEvent) {
                   :title="t('periodontogram.arch.marginTitle', { code })"
                   @focus="selectOnFocus"
                   @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
-                />
+                >
                 <button
                   v-else-if="row.kind === 'site-plaque'"
                   type="button"
@@ -484,20 +593,37 @@ function selectOnFocus(e: FocusEvent) {
       </tbody>
 
       <!-- ============== LOWER ARCH (mirror) ============== -->
-      <tbody v-else class="divide-y divide-gray-100 dark:divide-gray-800">
+      <tbody
+        v-else
+        class="divide-y divide-gray-100 dark:divide-gray-800"
+      >
         <!-- Lingual site metrics on top -->
-        <tr v-for="row in [
-          { kind: 'site-pd', label: t('periodontogram.arch.probing') },
-          { kind: 'site-gm', label: t('periodontogram.arch.margin') },
-          { kind: 'site-plaque', label: t('periodontogram.arch.plaque') },
-          { kind: 'site-bop', label: t('periodontogram.arch.bleeding') }
-        ]" :key="`l-${row.kind}`" class="perio-row-palatal">
-          <th scope="row" class="px-1 text-right font-medium text-sky-700 dark:text-sky-400">
+        <tr
+          v-for="row in [
+            { kind: 'site-pd', label: t('periodontogram.arch.probing') },
+            { kind: 'site-gm', label: t('periodontogram.arch.margin') },
+            { kind: 'site-plaque', label: t('periodontogram.arch.plaque') },
+            { kind: 'site-bop', label: t('periodontogram.arch.bleeding') }
+          ]"
+          :key="`l-${row.kind}`"
+          class="perio-row-palatal"
+        >
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-sky-700 dark:text-sky-400"
+          >
             {{ row.label }} <span class="text-[9px] text-sky-500 dark:text-sky-300/80">L</span>
           </th>
-          <td v-for="tooth in orderedTeeth" :key="`l-${row.kind}-${tooth.tooth_number}`" class="px-1">
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`l-${row.kind}-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <div class="flex items-center justify-center gap-0.5 tabular-nums">
-              <template v-for="code in innerSites" :key="`l-${row.kind}-${tooth.tooth_number}-${code}`">
+              <template
+                v-for="code in innerSites"
+                :key="`l-${row.kind}-${tooth.tooth_number}-${code}`"
+              >
                 <input
                   v-if="row.kind === 'site-pd'"
                   type="number"
@@ -509,7 +635,7 @@ function selectOnFocus(e: FocusEvent) {
                   :title="t('periodontogram.arch.probingTitle', { code })"
                   @focus="selectOnFocus"
                   @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
-                />
+                >
                 <input
                   v-else-if="row.kind === 'site-gm'"
                   type="number"
@@ -521,7 +647,7 @@ function selectOnFocus(e: FocusEvent) {
                   :title="t('periodontogram.arch.marginTitle', { code })"
                   @focus="selectOnFocus"
                   @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
-                />
+                >
                 <button
                   v-else-if="row.kind === 'site-plaque'"
                   type="button"
@@ -554,7 +680,10 @@ function selectOnFocus(e: FocusEvent) {
             class="px-1 text-right text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400 perio-row-anchor"
           >
             {{ innerFaceLabel }}
-            <div class="perio-profile-anchor perio-profile-anchor--top" :style="{ width: profileOverlayWidth }">
+            <div
+              class="perio-profile-anchor perio-profile-anchor--top"
+              :style="{ width: profileOverlayWidth }"
+            >
               <PerioProfileStrip
                 :teeth="orderedTeeth"
                 :face="innerFace"
@@ -562,8 +691,16 @@ function selectOnFocus(e: FocusEvent) {
               />
             </div>
           </th>
-          <td v-for="tooth in orderedTeeth" :key="`l-tooth-${tooth.tooth_number}`" class="px-0 align-bottom">
-            <PerioToothLateral :tooth="tooth" :face="innerFace" :readonly="readonly" />
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`l-tooth-${tooth.tooth_number}`"
+            class="px-0 align-bottom"
+          >
+            <PerioToothLateral
+              :tooth="tooth"
+              :face="innerFace"
+              :readonly="readonly"
+            />
           </td>
         </tr>
 
@@ -576,7 +713,10 @@ function selectOnFocus(e: FocusEvent) {
             class="px-1 text-right text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 perio-row-anchor"
           >
             {{ t('periodontogram.arch.vestibular') }}
-            <div class="perio-profile-anchor perio-profile-anchor--bottom" :style="{ width: profileOverlayWidth }">
+            <div
+              class="perio-profile-anchor perio-profile-anchor--bottom"
+              :style="{ width: profileOverlayWidth }"
+            >
               <PerioProfileStrip
                 :teeth="orderedTeeth"
                 face="vestibular"
@@ -584,7 +724,11 @@ function selectOnFocus(e: FocusEvent) {
               />
             </div>
           </th>
-          <td v-for="tooth in orderedTeeth" :key="`v-tooth-${tooth.tooth_number}`" class="px-0 align-top">
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`v-tooth-${tooth.tooth_number}`"
+            class="px-0 align-top"
+          >
             <PerioToothLateral
               :tooth="tooth"
               face="vestibular"
@@ -595,18 +739,32 @@ function selectOnFocus(e: FocusEvent) {
         </tr>
 
         <!-- Vestibular site metrics directly below the V tooth row -->
-        <tr v-for="row in [
-          { kind: 'site-bop', label: t('periodontogram.arch.bleeding') },
-          { kind: 'site-plaque', label: t('periodontogram.arch.plaque') },
-          { kind: 'site-gm', label: t('periodontogram.arch.margin') },
-          { kind: 'site-pd', label: t('periodontogram.arch.probing') }
-        ]" :key="`v-${row.kind}`" class="perio-row-vestibular">
-          <th scope="row" class="px-1 text-right font-medium text-amber-700 dark:text-amber-400">
+        <tr
+          v-for="row in [
+            { kind: 'site-bop', label: t('periodontogram.arch.bleeding') },
+            { kind: 'site-plaque', label: t('periodontogram.arch.plaque') },
+            { kind: 'site-gm', label: t('periodontogram.arch.margin') },
+            { kind: 'site-pd', label: t('periodontogram.arch.probing') }
+          ]"
+          :key="`v-${row.kind}`"
+          class="perio-row-vestibular"
+        >
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-amber-700 dark:text-amber-400"
+          >
             {{ row.label }} <span class="text-[9px] text-amber-500 dark:text-amber-300/80">V</span>
           </th>
-          <td v-for="tooth in orderedTeeth" :key="`v-${row.kind}-${tooth.tooth_number}`" class="px-1">
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`v-${row.kind}-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <div class="flex items-center justify-center gap-0.5 tabular-nums">
-              <template v-for="code in VESTIBULAR_SITES" :key="`v-${row.kind}-${tooth.tooth_number}-${code}`">
+              <template
+                v-for="code in VESTIBULAR_SITES"
+                :key="`v-${row.kind}-${tooth.tooth_number}-${code}`"
+              >
                 <input
                   v-if="row.kind === 'site-pd'"
                   type="number"
@@ -618,7 +776,7 @@ function selectOnFocus(e: FocusEvent) {
                   :title="t('periodontogram.arch.probingTitle', { code })"
                   @focus="selectOnFocus"
                   @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
-                />
+                >
                 <input
                   v-else-if="row.kind === 'site-gm'"
                   type="number"
@@ -630,7 +788,7 @@ function selectOnFocus(e: FocusEvent) {
                   :title="t('periodontogram.arch.marginTitle', { code })"
                   @focus="selectOnFocus"
                   @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
-                />
+                >
                 <button
                   v-else-if="row.kind === 'site-plaque'"
                   type="button"
@@ -656,8 +814,17 @@ function selectOnFocus(e: FocusEvent) {
 
         <!-- Per-tooth metrics (reversed — closest to vestibular row) -->
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.gingivalWidth') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`kg-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.gingivalWidth') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`kg-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <input
               type="number"
               min="0"
@@ -667,70 +834,125 @@ function selectOnFocus(e: FocusEvent) {
               class="perio-cell-input"
               @focus="selectOnFocus"
               @change="(e) => onToothNumberInput(tooth.tooth_number, 'keratinized_gingiva_mm', e)"
-            />
+            >
           </td>
         </tr>
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.furcaLP') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`furl-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.furcaLP') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`furl-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :disabled="readonly || !tooth.is_present"
               :title="t('periodontogram.arch.furcaLPTitle')"
               @click="onToothCycle(tooth, 'furcation_lingual')"
-            >{{ furcaGlyph(tooth.furcation_lingual) }}</button>
+            >
+              {{ furcaGlyph(tooth.furcation_lingual) }}
+            </button>
           </td>
         </tr>
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.furcaV') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`furv-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.furcaV') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`furv-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :disabled="readonly || !tooth.is_present"
               :title="t('periodontogram.arch.furcaVTitle')"
               @click="onToothCycle(tooth, 'furcation_buccal')"
-            >{{ furcaGlyph(tooth.furcation_buccal) }}</button>
+            >
+              {{ furcaGlyph(tooth.furcation_buccal) }}
+            </button>
           </td>
         </tr>
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.prognosis') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`pron-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.prognosis') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`pron-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :disabled="readonly || !tooth.is_present"
               :title="t('periodontogram.arch.prognosisTitle')"
               @click="onToothCycle(tooth, 'prognosis')"
-            >{{ prognosisGlyph(tooth.prognosis) }}</button>
+            >
+              {{ prognosisGlyph(tooth.prognosis) }}
+            </button>
           </td>
         </tr>
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.mobility') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`mob-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.mobility') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`mob-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :disabled="readonly || !tooth.is_present"
               :title="t('periodontogram.arch.mobilityTitle')"
               @click="onToothCycle(tooth, 'mobility')"
-            >{{ mobilityGlyph(tooth.mobility) }}</button>
+            >
+              {{ mobilityGlyph(tooth.mobility) }}
+            </button>
           </td>
         </tr>
         <tr>
-          <th scope="row" class="px-1 text-right font-medium text-muted">{{ t('periodontogram.arch.implant') }}</th>
-          <td v-for="tooth in orderedTeeth" :key="`imp-${tooth.tooth_number}`" class="px-1">
+          <th
+            scope="row"
+            class="px-1 text-right font-medium text-muted"
+          >
+            {{ t('periodontogram.arch.implant') }}
+          </th>
+          <td
+            v-for="tooth in orderedTeeth"
+            :key="`imp-${tooth.tooth_number}`"
+            class="px-1"
+          >
             <button
               class="perio-cell-cycle"
               :class="{ 'text-emerald-600 dark:text-emerald-400': tooth.is_implant }"
               :disabled="readonly"
               :title="tooth.is_implant ? t('periodontogram.arch.implantToggleOn') : t('periodontogram.arch.implantToggleOff')"
               @click="onImplantToggle(tooth)"
-            >{{ tooth.is_implant ? '●' : '·' }}</button>
+            >
+              {{ tooth.is_implant ? '●' : '·' }}
+            </button>
           </td>
         </tr>
       </tbody>
 
       <tfoot v-if="arch === 'lower'">
         <tr>
-          <th class="px-1 text-right font-medium text-muted"></th>
+          <th class="px-1 text-right font-medium text-muted" />
           <th
             v-for="tooth in orderedTeeth"
             :key="`fdi-${tooth.tooth_number}`"

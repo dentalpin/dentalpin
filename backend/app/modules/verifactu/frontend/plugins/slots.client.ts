@@ -3,7 +3,7 @@ import { registerSlot } from '~~/app/composables/useModuleSlots'
 
 interface InvoiceCtx {
   invoice?: { compliance_data?: Record<string, unknown> | null } | null
-  clinic?: { country?: string | null; settings?: { country?: string | null } | null } | null
+  clinic?: { country?: string | null, settings?: { country?: string | null } | null } | null
 }
 
 export default defineNuxtPlugin(() => {
@@ -83,7 +83,7 @@ export default defineNuxtPlugin(() => {
     ),
     order: 10,
     condition: (raw) => {
-      const ctx = (raw ?? {}) as { clinic?: { country?: string | null; settings?: { country?: string | null } | null } }
+      const ctx = (raw ?? {}) as { clinic?: { country?: string | null, settings?: { country?: string | null } | null } }
       const country = ctx.clinic?.country ?? ctx.clinic?.settings?.country ?? null
       return country === 'ES'
     }

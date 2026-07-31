@@ -1,5 +1,5 @@
 <script setup lang="ts" generic="T extends { id: string, start_date: string, end_date: string, kind: string, reason: string | null }">
-const props = defineProps<{
+defineProps<{
   overrides: T[]
   canWrite: boolean
   kindLabels: Record<string, string>
@@ -30,17 +30,26 @@ const { t } = useI18n()
       </UButton>
     </div>
 
-    <div v-if="overrides.length === 0" class="text-sm text-gray-400 italic text-center py-6 border border-dashed rounded-lg">
+    <div
+      v-if="overrides.length === 0"
+      class="text-sm text-gray-400 italic text-center py-6 border border-dashed rounded-lg"
+    >
       {{ t('schedules.overrides.noOverrides') }}
     </div>
 
-    <div v-else class="space-y-2">
+    <div
+      v-else
+      class="space-y-2"
+    >
       <div
         v-for="o in overrides"
         :key="o.id"
         class="flex items-center gap-3 p-3 rounded-lg border border-gray-200 dark:border-gray-800"
       >
-        <UBadge :color="o.kind === 'closed' || o.kind === 'unavailable' ? 'error' : 'warning'" variant="subtle">
+        <UBadge
+          :color="o.kind === 'closed' || o.kind === 'unavailable' ? 'error' : 'warning'"
+          variant="subtle"
+        >
           {{ kindLabels[o.kind] ?? o.kind }}
         </UBadge>
         <div class="flex-1 min-w-0">

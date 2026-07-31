@@ -29,9 +29,15 @@ const emit = defineEmits<{
 const { t, locale } = useI18n()
 const notesIndicator = useAppointmentNotesIndicator()
 
-function isFree(e: TimelineEntry): e is FreeSlotEntry { return e.type === 'free' }
-function isBusy(e: TimelineEntry): e is BusyEntry { return e.type === 'busy' }
-function isBlocked(e: TimelineEntry): e is BlockedEntry { return e.type === 'blocked' }
+function isFree(e: TimelineEntry): e is FreeSlotEntry {
+  return e.type === 'free'
+}
+function isBusy(e: TimelineEntry): e is BusyEntry {
+  return e.type === 'busy'
+}
+function isBlocked(e: TimelineEntry): e is BlockedEntry {
+  return e.type === 'blocked'
+}
 
 function formatTime(d: Date): string {
   return d.toLocaleTimeString(locale.value, { hour: '2-digit', minute: '2-digit', hour12: false })
@@ -153,7 +159,10 @@ function entryKey(e: TimelineEntry, i: number): string {
               v-if="entry.appointment.cabinet"
               class="inline-flex items-center gap-1"
             >
-              <UIcon name="i-lucide-door-open" class="w-3 h-3" />
+              <UIcon
+                name="i-lucide-door-open"
+                class="w-3 h-3"
+              />
               {{ entry.appointment.cabinet }}
             </span>
           </div>
@@ -220,7 +229,10 @@ function entryKey(e: TimelineEntry, i: number): string {
           {{ formatDuration(entry.durationMin) }}
           {{ t('appointments.freeSlots.freeSuffix', 'libre') }}
         </span>
-        <UIcon name="i-lucide-plus" class="w-4 h-4 text-subtle" />
+        <UIcon
+          name="i-lucide-plus"
+          class="w-4 h-4 text-subtle"
+        />
       </button>
 
       <!-- Blocked range -->

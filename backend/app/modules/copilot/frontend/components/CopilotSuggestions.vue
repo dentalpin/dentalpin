@@ -35,10 +35,10 @@ const ITEMS: Suggestion[] = [
 const CATEGORIES: Category[] = ['workflows', 'patients', 'agenda', 'recalls', 'money', 'reports']
 
 const groups = computed(() =>
-  CATEGORIES.map((cat) => ({
+  CATEGORIES.map(cat => ({
     cat,
-    items: ITEMS.filter((s) => s.cat === cat && can(s.permission))
-  })).filter((g) => g.items.length > 0)
+    items: ITEMS.filter(s => s.cat === cat && can(s.permission))
+  })).filter(g => g.items.length > 0)
 )
 </script>
 

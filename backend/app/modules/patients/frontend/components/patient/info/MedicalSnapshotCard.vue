@@ -9,7 +9,7 @@ import {
   hasCriticalAlert,
   severityColor,
   severityIcon,
-  severityVariant,
+  severityVariant
 } from '../../../utils/medicalSnapshot'
 
 interface Props {
@@ -19,7 +19,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  activeAlerts: () => [],
+  activeAlerts: () => []
 })
 
 const emit = defineEmits<{
@@ -40,7 +40,7 @@ const showCriticalBorder = computed(() => hasCriticalAlert(props.activeAlerts))
 const reviewedDate = computed(() =>
   props.medicalHistory?.last_updated_at
     ? formatPatientDate(props.medicalHistory.last_updated_at)
-    : null,
+    : null
 )
 
 function allergyTooltip(a: AllergyEntry): string {

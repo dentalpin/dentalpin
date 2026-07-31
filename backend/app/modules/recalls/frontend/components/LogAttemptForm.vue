@@ -5,6 +5,7 @@ import type {
   RecallOutcome,
   RecallContactAttempt
 } from '../composables/useRecalls'
+import { errorDetail } from '~~/app/utils/error'
 
 interface Props {
   recallId: string
@@ -55,8 +56,8 @@ async function submit() {
       note: note.value || null
     })
     emit('logged', res.data)
-  } catch {
-    toast.add({ title: t('common.error'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorDetail(e), color: 'error' })
   } finally {
     isSubmitting.value = false
   }

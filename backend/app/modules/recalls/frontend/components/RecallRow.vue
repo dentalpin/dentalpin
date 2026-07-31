@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import type { Recall } from '../composables/useRecalls'
+import { errorDetail } from '~~/app/utils/error'
 
 interface Props { recall: Recall }
 const props = defineProps<Props>()
@@ -23,9 +24,9 @@ const patient = computed(() => props.recall.patient ?? null)
 
 const callable = computed(
   () =>
-    !!patient.value?.phone &&
-    !patient.value?.do_not_contact &&
-    patient.value?.status !== 'archived'
+    !!patient.value?.phone
+    && !patient.value?.do_not_contact
+    && patient.value?.status !== 'archived'
 )
 
 const phoneHref = computed(() =>
@@ -50,8 +51,8 @@ async function quickNoAnswer() {
     })
     const updated = await recallsApi.get(props.recall.id)
     emit('changed', updated.data)
-  } catch {
-    toast.add({ title: t('common.error'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorDetail(e), color: 'error' })
   } finally {
     isBusy.value = false
   }
@@ -70,8 +71,8 @@ async function snooze() {
     const res = await recallsApi.snooze(props.recall.id, snoozeMonths.value)
     snoozeOpen.value = false
     emit('changed', res.data)
-  } catch {
-    toast.add({ title: t('common.error'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorDetail(e), color: 'error' })
   } finally {
     isBusy.value = false
   }

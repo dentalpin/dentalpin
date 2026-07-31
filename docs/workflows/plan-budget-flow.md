@@ -25,7 +25,7 @@ Tres actores:
 | Estado | Qué significa | Quién puede editar |
 |---|---|---|
 | **Borrador** | Diseño clínico en curso. El doctor está añadiendo y ajustando tratamientos. | Doctor |
-| **Pendiente** | El plan está cerrado clínicamente. El presupuesto se está preparando o ya fue enviado al paciente. | Nadie (bloqueado) |
+| **Pendiente** | El plan está confirmado. Mientras el presupuesto siga en `Borrador` el plan sigue siendo editable (los cambios se reflejan en el presupuesto); en cuanto se **envía** al paciente, queda bloqueado. | Doctor/Recepción (hasta enviar) |
 | **Activo** | Paciente aceptó el presupuesto. Listo para agendar citas y ejecutar tratamientos. | Nadie |
 | **Completado** | Todos los tratamientos del plan están hechos. | Nadie |
 | **Cerrado** | Plan terminado sin completarse. Lleva motivo (`closure_reason`). Reabrible. | Nadie |
@@ -72,9 +72,14 @@ Resultado:
 
 - Plan: `Borrador` → **`Pendiente`**.
 - Presupuesto borrador autogenerado a partir de los items del plan.
-- El plan queda bloqueado para edición clínica.
+- El plan **sigue siendo editable** mientras el presupuesto esté en
+  `Borrador`: añadir o quitar tratamientos se refleja automáticamente
+  en las líneas del presupuesto. El bloqueo llega al **enviar** el
+  presupuesto al paciente — a partir de ahí es un contrato.
 
-> Si el doctor olvidó algo, puede pulsar **Reabrir para editar** desde la ficha del plan: vuelve a `Borrador` y el presupuesto borrador se cancela.
+> Si el doctor quiere descartar el presupuesto borrador por completo,
+> puede pulsar **Reabrir para editar**: el plan vuelve a `Borrador` y
+> el presupuesto se cancela.
 
 ### Paso 3 — Recepción prepara el presupuesto
 
@@ -310,7 +315,11 @@ No hay aceptación parcial directa. Recepción **renegocia**: cancela el presupu
 Sí. Cada plan tiene su propio ciclo. La bandeja los muestra como filas independientes.
 
 **¿Se puede editar un plan en `Pendiente`?**
-No. Hay que **Reabrir** (vuelve a `Borrador`) o **Renegociar** desde el presupuesto, según quién haga la edición y el motivo.
+Depende del presupuesto. Si sigue en `Borrador` (aún no enviado), sí —
+los cambios se sincronizan con el presupuesto. Si ya fue **enviado** al
+paciente, no: hay que **Reabrir** (vuelve a `Borrador`, cancela el
+presupuesto) o **Renegociar** desde el presupuesto, según quién haga la
+edición y el motivo.
 
 **¿Qué pasa con los items completados al cerrar un plan activo?**
 Se archivan pero quedan registrados en el historial clínico del paciente y en el odontograma.

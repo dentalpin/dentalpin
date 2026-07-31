@@ -107,7 +107,10 @@ const visualOpacity = computed(() => (props.tooth.is_present ? 1 : 0.35))
     <!-- Three site markers — rendered above the tooth on inner rows
          (palatal in upper arch, vestibular in lower arch) so both
          arches' markers cluster between the two tooth rows. -->
-    <div v-if="markersPosition === 'above'" class="flex items-center gap-0.5">
+    <div
+      v-if="markersPosition === 'above'"
+      class="flex items-center gap-0.5"
+    >
       <PerioSiteMarker
         v-for="code in visibleSites"
         :key="`above-${code}`"
@@ -117,7 +120,10 @@ const visualOpacity = computed(() => (props.tooth.is_present ? 1 : 0.35))
       />
     </div>
 
-    <div class="perio-tooth-lateral__svg-wrapper relative" :style="{ opacity: visualOpacity }">
+    <div
+      class="perio-tooth-lateral__svg-wrapper relative"
+      :style="{ opacity: visualOpacity }"
+    >
       <svg
         :viewBox="alignedViewBox"
         class="h-28 w-[60px]"
@@ -136,9 +142,16 @@ const visualOpacity = computed(() => (props.tooth.is_present ? 1 : 0.35))
           stroke-width="1.5"
           stroke-linejoin="round"
         >
-          <path v-if="lateralPaths.root" :d="lateralPaths.root" />
+          <path
+            v-if="lateralPaths.root"
+            :d="lateralPaths.root"
+          />
           <template v-else-if="lateralPaths.roots">
-            <path v-for="(d, idx) in lateralPaths.roots" :key="idx" :d="d" />
+            <path
+              v-for="(d, idx) in lateralPaths.roots"
+              :key="idx"
+              :d="d"
+            />
           </template>
         </g>
 
@@ -183,7 +196,10 @@ const visualOpacity = computed(() => (props.tooth.is_present ? 1 : 0.35))
 
     <!-- Three site markers — rendered below by default (outer rows:
          vestibular in upper, lingual in lower). -->
-    <div v-if="markersPosition !== 'above'" class="flex items-center gap-0.5">
+    <div
+      v-if="markersPosition !== 'above'"
+      class="flex items-center gap-0.5"
+    >
       <PerioSiteMarker
         v-for="code in visibleSites"
         :key="`below-${code}`"

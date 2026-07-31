@@ -22,7 +22,7 @@ const initials = computed(() => {
 })
 
 const statusColor = computed<'success' | 'neutral'>(() =>
-  props.patient.status === 'active' ? 'success' : 'neutral',
+  props.patient.status === 'active' ? 'success' : 'neutral'
 )
 
 const birthDisplay = computed(() => {
@@ -39,7 +39,7 @@ const documentDisplay = computed(() => {
 })
 
 const genderLabel = computed(() =>
-  props.patient.gender ? t(`patients.gender.${props.patient.gender}`) : null,
+  props.patient.gender ? t(`patients.gender.${props.patient.gender}`) : null
 )
 </script>
 

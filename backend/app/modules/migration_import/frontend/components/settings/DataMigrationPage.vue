@@ -11,14 +11,14 @@ const { t } = useI18n()
 const api = useApi()
 const { can } = usePermissions()
 
-type JobStatus =
-  | 'uploaded'
-  | 'validating'
-  | 'validated'
-  | 'previewing'
-  | 'executing'
-  | 'completed'
-  | 'failed'
+type JobStatus
+  = | 'uploaded'
+    | 'validating'
+    | 'validated'
+    | 'previewing'
+    | 'executing'
+    | 'completed'
+    | 'failed'
 
 interface ImportJob {
   id: string
@@ -44,15 +44,15 @@ interface ProfessionalPreviewBreakdown {
 interface EntityPreview {
   entity_type: string
   declared_count: number
-  samples: Array<{ canonical_uuid: string; source_id: string; payload: Record<string, unknown> }>
+  samples: Array<{ canonical_uuid: string, source_id: string, payload: Record<string, unknown> }>
   professional_breakdown?: ProfessionalPreviewBreakdown | null
 }
 
 interface PreviewResponse {
   job: ImportJob
   entities: EntityPreview[]
-  warnings: Array<{ severity: string; code: string; message: string; entity_type: string | null }>
-  files: { total: number; with_sha256: number; without_sha256: number }
+  warnings: Array<{ severity: string, code: string, message: string, entity_type: string | null }>
+  files: { total: number, with_sha256: number, without_sha256: number }
   verifactu_data_detected: boolean
   verifactu_module_installed: boolean
 }
@@ -93,12 +93,12 @@ const excludeNonClinicalRoles = ref(false)
 let pollHandle: ReturnType<typeof setInterval> | null = null
 
 const professionalBreakdown = computed<ProfessionalPreviewBreakdown | null>(() => {
-  const ep = preview.value?.entities.find((e) => e.entity_type === 'professional')
+  const ep = preview.value?.entities.find(e => e.entity_type === 'professional')
   return ep?.professional_breakdown ?? null
 })
 
 const professionalTotal = computed<number>(() => {
-  const ep = preview.value?.entities.find((e) => e.entity_type === 'professional')
+  const ep = preview.value?.entities.find(e => e.entity_type === 'professional')
   return ep?.declared_count ?? 0
 })
 
@@ -264,21 +264,44 @@ onUnmounted(() => {
 <template>
   <div class="space-y-6">
     <header>
-      <h2 class="text-xl font-semibold">{{ t('migrationImport.page.title') }}</h2>
-      <p class="text-sm text-gray-500">{{ t('migrationImport.page.subtitle') }}</p>
+      <h2 class="text-xl font-semibold">
+        {{ t('migrationImport.page.title') }}
+      </h2>
+      <p class="text-sm text-gray-500">
+        {{ t('migrationImport.page.subtitle') }}
+      </p>
     </header>
 
     <!-- Upload step -->
     <UCard v-if="!job">
       <div class="space-y-4">
         <UFormField :label="t('migrationImport.upload.dropFile')">
-          <UInput type="file" accept=".dpm,.zst,.enc" @change="onFileChange" />
+          <UInput
+            type="file"
+            accept=".dpm,.zst,.enc"
+            @change="onFileChange"
+          />
         </UFormField>
-        <UFormField :label="t('migrationImport.upload.passphrase')" :help="t('migrationImport.upload.passphraseHelp')">
-          <UInput v-model="passphrase" type="password" />
+        <UFormField
+          :label="t('migrationImport.upload.passphrase')"
+          :help="t('migrationImport.upload.passphraseHelp')"
+        >
+          <UInput
+            v-model="passphrase"
+            type="password"
+          />
         </UFormField>
-        <UAlert v-if="uploadError" color="red" :title="t('migrationImport.upload.error')" :description="uploadError" />
-        <UButton :loading="uploading" :disabled="!file" @click="startUpload">
+        <UAlert
+          v-if="uploadError"
+          color="red"
+          :title="t('migrationImport.upload.error')"
+          :description="uploadError"
+        />
+        <UButton
+          :loading="uploading"
+          :disabled="!file"
+          @click="startUpload"
+        >
           {{ t('migrationImport.upload.submit') }}
         </UButton>
       </div>
@@ -289,7 +312,9 @@ onUnmounted(() => {
       <div class="space-y-3">
         <div class="flex items-center justify-between">
           <div>
-            <p class="font-medium">{{ job.original_filename }}</p>
+            <p class="font-medium">
+              {{ job.original_filename }}
+            </p>
             <p class="text-xs text-gray-500">
               {{ job.source_system ?? '—' }} · {{ job.format_version ?? '—' }} ·
               {{ (job.file_size / 1024 / 1024).toFixed(1) }} MB
@@ -299,15 +324,28 @@ onUnmounted(() => {
             {{ t(`migrationImport.status.${job.status}`) }}
           </UBadge>
         </div>
-        <UAlert v-if="job.error" color="red" :description="job.error" />
+        <UAlert
+          v-if="job.error"
+          color="red"
+          :description="job.error"
+        />
       </div>
 
       <!-- Preview -->
-      <div v-if="preview" class="mt-6 space-y-4">
+      <div
+        v-if="preview"
+        class="mt-6 space-y-4"
+      >
         <div>
-          <h3 class="font-semibold">{{ t('migrationImport.preview.entities') }}</h3>
+          <h3 class="font-semibold">
+            {{ t('migrationImport.preview.entities') }}
+          </h3>
           <ul class="mt-2 text-sm">
-            <li v-for="ent in preview.entities" :key="ent.entity_type" class="flex justify-between border-b py-1">
+            <li
+              v-for="ent in preview.entities"
+              :key="ent.entity_type"
+              class="flex justify-between border-b py-1"
+            >
               <span>{{ ent.entity_type }}</span>
               <span class="font-mono">{{ ent.declared_count }}</span>
             </li>
@@ -315,7 +353,9 @@ onUnmounted(() => {
         </div>
 
         <div>
-          <h3 class="font-semibold">{{ t('migrationImport.preview.files') }}</h3>
+          <h3 class="font-semibold">
+            {{ t('migrationImport.preview.files') }}
+          </h3>
           <p class="text-sm">
             {{ t('migrationImport.preview.filesTotal') }}: {{ preview.files.total }} ·
             {{ t('migrationImport.preview.filesWithSha') }}: {{ preview.files.with_sha256 }} ·
@@ -324,9 +364,15 @@ onUnmounted(() => {
         </div>
 
         <div v-if="preview.warnings.length">
-          <h3 class="font-semibold">{{ t('migrationImport.preview.warnings') }} ({{ preview.warnings.length }})</h3>
+          <h3 class="font-semibold">
+            {{ t('migrationImport.preview.warnings') }} ({{ preview.warnings.length }})
+          </h3>
           <ul class="mt-2 max-h-48 overflow-y-auto text-xs">
-            <li v-for="(w, i) in preview.warnings" :key="i" class="border-b py-1">
+            <li
+              v-for="(w, i) in preview.warnings"
+              :key="i"
+              class="border-b py-1"
+            >
               [{{ w.severity }}] {{ w.code }} — {{ w.message }}
             </li>
           </ul>
@@ -334,8 +380,12 @@ onUnmounted(() => {
 
         <!-- Catalog mapping proposals -->
         <div class="mt-2 rounded border border-amber-200 bg-amber-50 p-4">
-          <h3 class="font-semibold">{{ t('migrationImport.proposals.title') }}</h3>
-          <p class="text-sm text-gray-700">{{ t('migrationImport.proposals.subtitle') }}</p>
+          <h3 class="font-semibold">
+            {{ t('migrationImport.proposals.title') }}
+          </h3>
+          <p class="text-sm text-gray-700">
+            {{ t('migrationImport.proposals.subtitle') }}
+          </p>
           <div class="mt-3 flex gap-2">
             <UButton
               :loading="proposalsBuilding"
@@ -354,8 +404,16 @@ onUnmounted(() => {
               {{ t('migrationImport.proposals.bulkAccept') }}
             </UButton>
           </div>
-          <UAlert v-if="proposalsError" color="red" :description="proposalsError" class="mt-2" />
-          <p v-if="proposalSummary" class="mt-2 text-xs text-gray-600">
+          <UAlert
+            v-if="proposalsError"
+            color="red"
+            :description="proposalsError"
+            class="mt-2"
+          />
+          <p
+            v-if="proposalSummary"
+            class="mt-2 text-xs text-gray-600"
+          >
             {{
               t('migrationImport.proposals.summary', {
                 total: proposalSummary.total,
@@ -365,7 +423,10 @@ onUnmounted(() => {
               })
             }}
           </p>
-          <p v-if="bulkAcceptedNotice !== null" class="text-xs text-green-700">
+          <p
+            v-if="bulkAcceptedNotice !== null"
+            class="text-xs text-green-700"
+          >
             {{ t('migrationImport.proposals.accepted', { n: bulkAcceptedNotice }) }}
           </p>
 
@@ -377,25 +438,45 @@ onUnmounted(() => {
             <table class="w-full text-xs">
               <thead class="sticky top-0 bg-gray-100">
                 <tr>
-                  <th class="px-2 py-1 text-left">{{ t('migrationImport.proposals.columnSource') }}</th>
-                  <th class="px-2 py-1 text-left">{{ t('migrationImport.proposals.columnProposed') }}</th>
-                  <th class="px-2 py-1 text-left">{{ t('migrationImport.proposals.columnStatus') }}</th>
-                  <th class="px-2 py-1 text-left">{{ t('migrationImport.proposals.columnAction') }}</th>
+                  <th class="px-2 py-1 text-left">
+                    {{ t('migrationImport.proposals.columnSource') }}
+                  </th>
+                  <th class="px-2 py-1 text-left">
+                    {{ t('migrationImport.proposals.columnProposed') }}
+                  </th>
+                  <th class="px-2 py-1 text-left">
+                    {{ t('migrationImport.proposals.columnStatus') }}
+                  </th>
+                  <th class="px-2 py-1 text-left">
+                    {{ t('migrationImport.proposals.columnAction') }}
+                  </th>
                 </tr>
               </thead>
               <tbody>
-                <tr v-for="p in proposals" :key="p.id" class="border-t">
+                <tr
+                  v-for="p in proposals"
+                  :key="p.id"
+                  class="border-t"
+                >
                   <td class="px-2 py-1">
-                    <div class="font-medium">{{ p.source_label }}</div>
+                    <div class="font-medium">
+                      {{ p.source_label }}
+                    </div>
                     <div class="text-[10px] text-gray-500">
                       <span v-if="p.source_code">{{ p.source_code }} · </span>
                       <span v-if="p.source_tipo_odg">IdTipoODG={{ p.source_tipo_odg }}</span>
                     </div>
                   </td>
                   <td class="px-2 py-1">
-                    <div v-if="p.proposed_action === 'create'" class="italic text-gray-600">
+                    <div
+                      v-if="p.proposed_action === 'create'"
+                      class="italic text-gray-600"
+                    >
                       {{ t('migrationImport.proposals.actionCreate') }}
-                      <span v-if="p.proposed_target_category_key" class="text-[10px]">
+                      <span
+                        v-if="p.proposed_target_category_key"
+                        class="text-[10px]"
+                      >
                         → {{ p.proposed_target_category_key }}
                       </span>
                     </div>
@@ -411,7 +492,10 @@ onUnmounted(() => {
                     </div>
                   </td>
                   <td class="px-2 py-1">
-                    <UBadge size="xs" :color="p.operator_action === 'pending' ? 'gray' : 'green'">
+                    <UBadge
+                      size="xs"
+                      :color="p.operator_action === 'pending' ? 'gray' : 'green'"
+                    >
                       {{ t(operatorStatusKey(p.operator_action)) }}
                     </UBadge>
                   </td>
@@ -442,8 +526,14 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <UFormField v-if="verifactuOptInVisible" :help="t('migrationImport.preview.verifactuHelp')">
-          <UCheckbox v-model="importFiscal" :label="t('migrationImport.preview.verifactuCheckbox')" />
+        <UFormField
+          v-if="verifactuOptInVisible"
+          :help="t('migrationImport.preview.verifactuHelp')"
+        >
+          <UCheckbox
+            v-model="importFiscal"
+            :label="t('migrationImport.preview.verifactuCheckbox')"
+          />
         </UFormField>
 
         <div
@@ -459,7 +549,10 @@ onUnmounted(() => {
             </p>
           </div>
 
-          <div v-if="professionalBreakdown" class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+          <div
+            v-if="professionalBreakdown"
+            class="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs"
+          >
             <div>
               <span class="text-(--ui-text-muted)">{{ t('migrationImport.filters.totalLabel') }}</span>
               <span class="ml-1 font-medium">{{ professionalTotal }}</span>
@@ -478,18 +571,40 @@ onUnmounted(() => {
             </div>
           </div>
 
-          <UFormField :label="t('migrationImport.filters.minActivityLabel')" :help="t('migrationImport.filters.minActivityHelp')">
-            <UInput v-model.number="minActivityMonths" type="number" :min="0" :max="120" :step="1" class="w-32" />
+          <UFormField
+            :label="t('migrationImport.filters.minActivityLabel')"
+            :help="t('migrationImport.filters.minActivityHelp')"
+          >
+            <UInput
+              v-model.number="minActivityMonths"
+              type="number"
+              :min="0"
+              :max="120"
+              :step="1"
+              class="w-32"
+            />
           </UFormField>
 
           <div class="space-y-2">
-            <UCheckbox v-model="excludeAgendaOrphans" :label="t('migrationImport.filters.excludeOrphans')" />
-            <UCheckbox v-model="excludeInactiveInSource" :label="t('migrationImport.filters.excludeInactive')" />
-            <UCheckbox v-model="excludeNonClinicalRoles" :label="t('migrationImport.filters.excludeNonClinical')" />
+            <UCheckbox
+              v-model="excludeAgendaOrphans"
+              :label="t('migrationImport.filters.excludeOrphans')"
+            />
+            <UCheckbox
+              v-model="excludeInactiveInSource"
+              :label="t('migrationImport.filters.excludeInactive')"
+            />
+            <UCheckbox
+              v-model="excludeNonClinicalRoles"
+              :label="t('migrationImport.filters.excludeNonClinical')"
+            />
           </div>
         </div>
 
-        <UAlert color="amber" :description="t('migrationImport.preview.warning')" />
+        <UAlert
+          color="amber"
+          :description="t('migrationImport.preview.warning')"
+        />
 
         <UButton
           color="primary"
@@ -501,7 +616,10 @@ onUnmounted(() => {
       </div>
 
       <!-- Progress -->
-      <div v-if="job.status === 'executing'" class="mt-6">
+      <div
+        v-if="job.status === 'executing'"
+        class="mt-6"
+      >
         <p class="text-sm">
           {{ t('migrationImport.execute.progress', { processed: job.processed_entities, total: job.total_entities }) }}
         </p>

@@ -36,7 +36,11 @@ function formatDate(iso: string): string {
       <UIcon name="i-lucide-history" />
       <span>{{ t('periodontogram.history.viewingSession', { date: formatDate(date) }) }}</span>
     </div>
-    <UButton variant="outline" size="xs" @click="emit('returnToCurrent')">
+    <UButton
+      variant="outline"
+      size="xs"
+      @click="emit('returnToCurrent')"
+    >
       {{ t('periodontogram.history.returnToCurrent') }}
     </UButton>
   </div>

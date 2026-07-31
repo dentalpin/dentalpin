@@ -112,18 +112,32 @@ const confirmMessage = computed(() => {
   >
     <template #body>
       <div class="space-y-3 p-4">
-        <p class="text-sm text-default">{{ confirmMessage }}</p>
+        <p class="text-sm text-default">
+          {{ confirmMessage }}
+        </p>
         <UFormField :label="t('appointments.noteLabel')">
-          <UTextarea v-model="pendingNote" :rows="2" :maxlength="500" />
+          <UTextarea
+            v-model="pendingNote"
+            :rows="2"
+            :maxlength="500"
+          />
         </UFormField>
       </div>
     </template>
     <template #footer>
       <div class="flex justify-end gap-2 p-2">
-        <UButton color="neutral" variant="ghost" @click="cancelPending">
+        <UButton
+          color="neutral"
+          variant="ghost"
+          @click="cancelPending"
+        >
           {{ t('actions.cancel') }}
         </UButton>
-        <UButton color="error" :loading="isBusy" @click="confirmPending">
+        <UButton
+          color="error"
+          :loading="isBusy"
+          @click="confirmPending"
+        >
           {{ pendingDescriptor ? t(pendingDescriptor.labelKey) : '' }}
         </UButton>
       </div>

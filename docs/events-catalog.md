@@ -720,7 +720,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_BUDGET_SYNC_REQUESTED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1260`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1270`
 - **Subscribers:**
   - `budget`
 
@@ -728,7 +728,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_CLOSED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1691`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1701`
 - **Subscribers:**
   - `patient_timeline`
 
@@ -736,7 +736,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_CONFIRMED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1598`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1608`
 - **Subscribers:**
   - `patient_timeline`
 
@@ -744,7 +744,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_CREATED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:332`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:339`
 - **Subscribers:**
   - `patient_timeline`
 
@@ -752,7 +752,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_ITEM_COMPLETED_WITHOUT_NOTE`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:970`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:980`
 - **Subscribers:**
   - `patient_timeline`
 
@@ -760,7 +760,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_ITEM_SESSION_COMPLETED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:874`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:884`
 - **Subscribers:**
   - `payments`
 
@@ -768,14 +768,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_ITEMS_REORDERED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:741`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:751`
 - **Subscribers:** —
 
 ### `treatment_plan.reactivated`
 
 - **Constant:** `EventType.TREATMENT_PLAN_REACTIVATED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1737`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1747`
 - **Subscribers:**
   - `patient_timeline`
 
@@ -783,14 +783,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_STATUS_CHANGED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:427`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:434`
 - **Subscribers:** —
 
 ### `treatment_plan.treatment_added`
 
 - **Constant:** `EventType.TREATMENT_PLAN_TREATMENT_ADDED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:605`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:615`
 - **Subscribers:**
   - `budget`
 
@@ -799,7 +799,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.TREATMENT_PLAN_TREATMENT_COMPLETED`
 - **Publishers:**
   - `treatment_plan` — `backend/app/modules/treatment_plan/events.py:87`
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:955`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:965`
 - **Subscribers:**
   - `patient_timeline`
   - `recalls`
@@ -808,7 +808,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.TREATMENT_PLAN_TREATMENT_REMOVED`
 - **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:805`
+  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:815`
 - **Subscribers:**
   - `budget`
 

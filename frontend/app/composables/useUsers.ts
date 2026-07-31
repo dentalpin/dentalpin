@@ -7,6 +7,7 @@ export interface ClinicUser {
   last_name: string
   is_active: boolean
   role: UserRole
+  is_professional: boolean
   created_at: string
 }
 

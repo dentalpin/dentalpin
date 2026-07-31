@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { InvoiceItem, Patient } from '~~/app/types'
+import { errorMessage } from '~~/app/utils/error'
 
 const route = useRoute()
 const router = useRouter()
@@ -192,10 +193,10 @@ async function handleSave() {
     })
 
     router.push(`/invoices/${invoiceId.value}`)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('invoice.errors.update'),
+      description: errorMessage(e, t('invoice.errors.update')),
       color: 'error'
     })
   } finally {

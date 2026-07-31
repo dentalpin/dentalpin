@@ -50,7 +50,7 @@ const defaults: PatientListFilters = {
   status: ['active'],
   city: '',
   do_not_contact: null,
-  with_debt: false,
+  with_debt: false
 }
 
 // Map of patient_id → payment summary; filled after each page load and
@@ -69,8 +69,8 @@ async function fetcher(q: {
   let patientIdsIntersect: string[] | undefined
   if (q.filters.with_debt) {
     try {
-      const res = await api.get<ApiResponse<{ patient_ids: string[]; truncated: boolean }>>(
-        '/api/v1/payments/filters/patients-with-debt?min_debt=0.01',
+      const res = await api.get<ApiResponse<{ patient_ids: string[], truncated: boolean }>>(
+        '/api/v1/payments/filters/patients-with-debt?min_debt=0.01'
       )
       patientIdsIntersect = res.data.patient_ids ?? []
       if (res.data.truncated) {
@@ -110,7 +110,7 @@ async function fetcher(q: {
     try {
       const summaryRes = await api.post<ApiResponse<{ summaries: Record<string, PatientDebtSummary> }>>(
         '/api/v1/payments/summary/by-patients',
-        { patient_ids: response.data.map((x) => x.id) },
+        { patient_ids: response.data.map(x => x.id) }
       )
       debtSummaries.value = summaryRes.data.summaries
     } catch {
@@ -135,19 +135,19 @@ const {
   error,
   setFilter,
   resetFilters,
-  refresh,
+  refresh
 } = useListQuery<PatientListFilters, Patient>({
   defaults,
   pageSize: 20,
   sortable: ['last_visit', 'last_name', 'first_name', 'created_at', 'updated_at'],
   defaultSort: 'last_visit:desc',
   searchKey: 'q',
-  fetcher,
+  fetcher
 })
 
 const statusItems = computed(() => [
   { label: t('patients.status.active'), value: 'active' },
-  { label: t('patients.status.archived'), value: 'archived' },
+  { label: t('patients.status.archived'), value: 'archived' }
 ])
 
 const sortOptions = computed(() => [
@@ -155,7 +155,7 @@ const sortOptions = computed(() => [
   { field: 'last_name', label: t('patients.sort.lastName'), defaultDir: 'asc' as const },
   { field: 'first_name', label: t('patients.sort.firstName'), defaultDir: 'asc' as const },
   { field: 'created_at', label: t('patients.sort.createdAt'), defaultDir: 'desc' as const },
-  { field: 'updated_at', label: t('patients.sort.updatedAt'), defaultDir: 'desc' as const },
+  { field: 'updated_at', label: t('patients.sort.updatedAt'), defaultDir: 'desc' as const }
 ])
 
 const activeFilterCount = computed(() => {
@@ -170,7 +170,7 @@ const activeFilterCount = computed(() => {
 function debtFilterCtx() {
   return {
     value: filters.value.with_debt,
-    onChange: (v: boolean | null) => setFilter('with_debt', Boolean(v)),
+    onChange: (v: boolean | null) => setFilter('with_debt', Boolean(v))
   }
 }
 
@@ -183,7 +183,7 @@ const newPatient = reactive<PatientCreate>({
   phone: '',
   email: '',
   date_of_birth: '',
-  notes: '',
+  notes: ''
 })
 
 onMounted(() => {
@@ -200,7 +200,7 @@ function resetForm() {
     phone: '',
     email: '',
     date_of_birth: '',
-    notes: '',
+    notes: ''
   })
 }
 
@@ -213,23 +213,23 @@ async function createPatient() {
       phone: newPatient.phone || null,
       email: newPatient.email || null,
       date_of_birth: newPatient.date_of_birth || null,
-      notes: newPatient.notes || null,
+      notes: newPatient.notes || null
     })
     toast.add({
       title: t('common.success'),
       description: t('patients.created'),
-      color: 'success',
+      color: 'success'
     })
     isCreateModalOpen.value = false
     resetForm()
     await refresh()
     await router.push(`/patients/${response.data.id}`)
   } catch (e: unknown) {
-    const fetchError = e as { statusCode?: number; data?: { message?: string } }
+    const fetchError = e as { statusCode?: number, data?: { message?: string } }
     toast.add({
       title: t('common.error'),
       description: fetchError.data?.message || t('common.serverError'),
-      color: 'error',
+      color: 'error'
     })
   } finally {
     isSubmitting.value = false

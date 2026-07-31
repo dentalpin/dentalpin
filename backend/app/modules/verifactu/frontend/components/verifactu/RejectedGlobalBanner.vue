@@ -44,8 +44,14 @@ onBeforeUnmount(() => {
     class="mb-4"
   >
     <template #description>
-      <p class="mb-2">{{ t('verifactu.globalBanner.description') }}</p>
-      <UButton to="/settings/verifactu/queue" color="primary" size="sm">
+      <p class="mb-2">
+        {{ t('verifactu.globalBanner.description') }}
+      </p>
+      <UButton
+        to="/settings/verifactu/queue"
+        color="primary"
+        size="sm"
+      >
         {{ t('verifactu.globalBanner.cta') }}
       </UButton>
     </template>

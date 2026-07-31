@@ -17,6 +17,17 @@ const emit = defineEmits<{
 const { t, d } = useI18n()
 const { format: formatMoney } = useCurrency()
 
+// Mirrors backend `_is_plan_locked` + the add_item status guard: items
+// are editable in any non-terminal state unless a sent/accepted budget
+// has turned the plan into a patient-facing contract. A draft budget
+// doesn't lock — edits sync into it.
+const canEditItems = computed(() => {
+  if (!['draft', 'pending', 'active'].includes(props.plan.status)) return false
+  if (!props.plan.budget_id) return true
+  const budgetStatus = props.plan.budget?.status
+  return budgetStatus === 'cancelled' || budgetStatus === 'draft'
+})
+
 // Collapsible state for completed items
 const showCompleted = ref(false)
 
@@ -265,7 +276,7 @@ function getBudgetStatusColor(status: string): string {
             <span class="text-muted font-normal">({{ pendingItems.length }})</span>
           </h3>
           <UButton
-            v-if="plan.status === 'draft'"
+            v-if="canEditItems"
             color="primary"
             variant="soft"
             size="xs"
@@ -403,7 +414,7 @@ function getBudgetStatusColor(status: string): string {
           {{ t('treatmentPlans.noItems') }}
         </p>
         <UButton
-          v-if="plan.status === 'draft'"
+          v-if="canEditItems"
           class="mt-4"
           color="primary"
           variant="soft"

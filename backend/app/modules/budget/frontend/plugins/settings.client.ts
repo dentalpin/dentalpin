@@ -20,7 +20,7 @@ export default defineNuxtPlugin(() => {
     permission: 'admin.clinic.write',
     component: () => import('../components/settings/BudgetExpiryPage.vue'),
     searchKeywords: ['budget', 'presupuesto', 'expiry', 'caducidad', 'auto-close', 'cierre'],
-    order: 50,
+    order: 50
   })
 
   registerSettingsPage({
@@ -32,7 +32,7 @@ export default defineNuxtPlugin(() => {
     permission: 'admin.clinic.write',
     component: () => import('../components/settings/BudgetRemindersPage.vue'),
     searchKeywords: ['budget', 'presupuesto', 'recordatorio', 'reminder', 'email'],
-    order: 51,
+    order: 51
   })
 
   registerSettingsPage({
@@ -44,6 +44,6 @@ export default defineNuxtPlugin(() => {
     permission: 'admin.clinic.write',
     component: () => import('../components/settings/BudgetPublicLinkPage.vue'),
     searchKeywords: ['budget', 'presupuesto', 'public', 'link', 'auth', 'verificacion', 'security'],
-    order: 52,
+    order: 52
   })
 })

@@ -11,7 +11,7 @@ interface Props {
 const props = withDefaults(defineProps<Props>(), {
   value: null,
   href: undefined,
-  placeholder: '—',
+  placeholder: '—'
 })
 
 const { t } = useI18n()
@@ -26,10 +26,9 @@ async function copyValue() {
     toast.add({
       title: t('common.copied'),
       color: 'success',
-      icon: 'i-lucide-check',
+      icon: 'i-lucide-check'
     })
-  }
-  catch {
+  } catch {
     /* clipboard not available; silently ignore */
   }
 }

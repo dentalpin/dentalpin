@@ -92,7 +92,7 @@ class AnalyticsService:
             select(ClinicMembership.user_id)
             .where(
                 ClinicMembership.clinic_id == clinic_id,
-                ClinicMembership.role.in_(["dentist", "hygienist"]),
+                ClinicMembership.is_professional.is_(True),
             )
             .subquery()
         )

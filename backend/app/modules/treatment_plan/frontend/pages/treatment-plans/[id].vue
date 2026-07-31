@@ -8,7 +8,7 @@ const {
   currentPlan,
   loading,
   fetchPlan,
-  generateBudget,
+  generateBudget
 } = useTreatmentPlans()
 
 const planId = computed(() => route.params.id as string)

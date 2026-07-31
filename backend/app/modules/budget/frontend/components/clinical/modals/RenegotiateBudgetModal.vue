@@ -11,15 +11,18 @@ defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: []
-  cancel: []
+  'confirm': []
+  'cancel': []
 }>()
 
 const { t } = useI18n()
 </script>
 
 <template>
-  <UModal :open="open" @update:open="(v) => emit('update:open', v)">
+  <UModal
+    :open="open"
+    @update:open="(v) => emit('update:open', v)"
+  >
     <template #content>
       <UCard>
         <template #header>
@@ -28,14 +31,25 @@ const { t } = useI18n()
           </h2>
         </template>
 
-        <p class="text-sm">{{ t('budget.modals.renegotiate.description') }}</p>
+        <p class="text-sm">
+          {{ t('budget.modals.renegotiate.description') }}
+        </p>
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton color="neutral" variant="ghost" :disabled="loading" @click="emit('cancel')">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :disabled="loading"
+              @click="emit('cancel')"
+            >
               {{ t('common.cancel') }}
             </UButton>
-            <UButton color="warning" :loading="loading" @click="emit('confirm')">
+            <UButton
+              color="warning"
+              :loading="loading"
+              @click="emit('confirm')"
+            >
               {{ t('budget.modals.renegotiate.submit') }}
             </UButton>
           </div>

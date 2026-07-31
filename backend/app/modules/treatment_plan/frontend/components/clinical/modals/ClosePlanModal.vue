@@ -10,8 +10,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: [payload: { closure_reason: string; closure_note?: string }]
-  cancel: []
+  'confirm': [payload: { closure_reason: string, closure_note?: string }]
+  'cancel': []
 }>()
 
 const { t } = useI18n()
@@ -21,23 +21,23 @@ const REASONS = [
   'expired',
   'cancelled_by_clinic',
   'patient_abandoned',
-  'other',
+  'other'
 ] as const
 
 const reason = ref<string>('cancelled_by_clinic')
 const note = ref('')
 
 const reasonOptions = computed(() =>
-  REASONS.map((r) => ({
+  REASONS.map(r => ({
     value: r,
-    label: t(`treatmentPlans.closureReason.${r}`),
+    label: t(`treatmentPlans.closureReason.${r}`)
   }))
 )
 
 function submit() {
   emit('confirm', {
     closure_reason: reason.value,
-    closure_note: note.value.trim() || undefined,
+    closure_note: note.value.trim() || undefined
   })
 }
 
@@ -55,7 +55,10 @@ watch(
 </script>
 
 <template>
-  <UModal :open="open" @update:open="(v) => emit('update:open', v)">
+  <UModal
+    :open="open"
+    @update:open="(v) => emit('update:open', v)"
+  >
     <template #content>
       <UCard>
         <template #header>
@@ -66,20 +69,40 @@ watch(
 
         <div class="space-y-4 text-sm">
           <p>{{ t('treatmentPlans.modals.close.description') }}</p>
-          <UFormField :label="t('treatmentPlans.modals.close.reasonLabel')" required>
-            <USelect v-model="reason" :items="reasonOptions" class="w-full" />
+          <UFormField
+            :label="t('treatmentPlans.modals.close.reasonLabel')"
+            required
+          >
+            <USelect
+              v-model="reason"
+              :items="reasonOptions"
+              class="w-full"
+            />
           </UFormField>
           <UFormField :label="t('treatmentPlans.modals.close.noteLabel')">
-            <UTextarea v-model="note" :rows="3" :maxlength="2000" />
+            <UTextarea
+              v-model="note"
+              :rows="3"
+              :maxlength="2000"
+            />
           </UFormField>
         </div>
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton color="neutral" variant="ghost" :disabled="loading" @click="emit('cancel')">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :disabled="loading"
+              @click="emit('cancel')"
+            >
               {{ t('common.cancel') }}
             </UButton>
-            <UButton color="error" :loading="loading" @click="submit">
+            <UButton
+              color="error"
+              :loading="loading"
+              @click="submit"
+            >
               {{ t('treatmentPlans.modals.close.submit') }}
             </UButton>
           </div>

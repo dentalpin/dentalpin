@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue'
 import type { RecallSettings } from '../composables/useRecalls'
+import { errorDetail } from '~~/app/utils/error'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -47,8 +48,8 @@ async function save() {
     })
     settings.value = res.data
     toast.add({ title: t('recalls.settings.saved'), color: 'success' })
-  } catch {
-    toast.add({ title: t('common.error'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorDetail(e), color: 'error' })
   } finally {
     isSaving.value = false
   }
@@ -85,8 +86,7 @@ function addCategory() {
 
 function removeCategory(key: string) {
   if (!settings.value) return
-  const next = { ...settings.value.category_to_reason }
-  delete next[key]
+  const { [key]: _removed, ...next } = settings.value.category_to_reason
   settings.value.category_to_reason = next
 }
 </script>

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { BudgetListItem, BudgetStatus, ApiResponse, PaginatedResponse } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorMessage } from '~~/app/utils/error'
 
 /**
  * /budgets — list page.
@@ -57,7 +58,7 @@ const defaults: BudgetListFilters = {
   assigned_professional_id: null,
   validity: '',
   date_from: null,
-  date_to: null,
+  date_to: null
 }
 
 const summaries = ref<Record<string, BudgetPaymentSummary | null>>({})
@@ -84,8 +85,8 @@ async function fetcher(q: {
     try {
       const search = new URLSearchParams()
       for (const s of q.filters.payment_status) search.append('status', s)
-      const res = await api.get<ApiResponse<{ budget_ids: string[]; truncated: boolean }>>(
-        `/api/v1/payments/filters/budgets-by-status?${search.toString()}`,
+      const res = await api.get<ApiResponse<{ budget_ids: string[], truncated: boolean }>>(
+        `/api/v1/payments/filters/budgets-by-status?${search.toString()}`
       )
       budgetIdsIntersect = res.data.budget_ids ?? []
       if (res.data.truncated) {
@@ -125,7 +126,7 @@ async function fetcher(q: {
   if (q.sort) params.set('sort', q.sort)
 
   const response = await api.get<PaginatedResponse<BudgetListItem>>(
-    `/api/v1/budget/budgets?${params.toString()}`,
+    `/api/v1/budget/budgets?${params.toString()}`
   )
 
   // Step 3: bulk summaries enrichment.
@@ -133,7 +134,7 @@ async function fetcher(q: {
     try {
       const summaryRes = await api.post<ApiResponse<{ summaries: Record<string, BudgetPaymentSummary> }>>(
         '/api/v1/payments/summary/by-budgets',
-        { budget_ids: response.data.map((b) => b.id) },
+        { budget_ids: response.data.map(b => b.id) }
       )
       summaries.value = summaryRes.data.summaries
     } catch {
@@ -158,14 +159,14 @@ const {
   error,
   setFilter,
   resetFilters,
-  refresh,
+  refresh
 } = useListQuery<BudgetListFilters, BudgetListItem>({
   defaults,
   pageSize: 20,
   sortable: ['created_at', 'valid_until', 'total', 'status', 'budget_number'],
   defaultSort: 'created_at:desc',
   searchKey: 'q',
-  fetcher,
+  fetcher
 })
 
 // --- Filter UI options ---------------------------------------------------
@@ -175,34 +176,34 @@ const statusItems = computed(() => [
   { label: t('budget.status.accepted'), value: 'accepted' as BudgetStatus },
   { label: t('budget.status.rejected'), value: 'rejected' as BudgetStatus },
   { label: t('budget.status.expired'), value: 'expired' as BudgetStatus },
-  { label: t('budget.status.cancelled'), value: 'cancelled' as BudgetStatus },
+  { label: t('budget.status.cancelled'), value: 'cancelled' as BudgetStatus }
 ])
 
 const validityItems = computed(() => [
   { label: t('budget.filters.validityValid'), value: 'valid' },
   { label: t('budget.filters.validityExpiringSoon'), value: 'expiring' },
-  { label: t('budget.filters.validityExpired'), value: 'expired' },
+  { label: t('budget.filters.validityExpired'), value: 'expired' }
 ])
 
 const sortOptions = computed(() => [
   { field: 'created_at', label: t('budget.sortFields.createdAt'), defaultDir: 'desc' as const },
   { field: 'valid_until', label: t('budget.sortFields.validUntil'), defaultDir: 'asc' as const },
   { field: 'total', label: t('budget.sortFields.total'), defaultDir: 'desc' as const },
-  { field: 'status', label: t('budget.sortFields.status'), defaultDir: 'asc' as const },
+  { field: 'status', label: t('budget.sortFields.status'), defaultDir: 'asc' as const }
 ])
 
 // Validity is single-select. Translate to/from the toggle list.
 const validityList = computed({
   get: () => (filters.value.validity ? [filters.value.validity] : []),
-  set: (v: string[]) => setFilter('validity', (v[0] ?? '') as BudgetListFilters['validity']),
+  set: (v: string[]) => setFilter('validity', (v[0] ?? '') as BudgetListFilters['validity'])
 })
 
 const dateRange = computed({
   get: () => ({ from: filters.value.date_from, to: filters.value.date_to }),
-  set: (v: { from: string | null; to: string | null }) => {
+  set: (v: { from: string | null, to: string | null }) => {
     setFilter('date_from', v.from)
     setFilter('date_to', v.to)
-  },
+  }
 })
 
 const activeFilterCount = computed(() => {
@@ -218,30 +219,30 @@ const activeFilterCount = computed(() => {
 function paymentStatusFilterCtx() {
   return {
     value: filters.value.payment_status,
-    onChange: (v: string[]) => setFilter('payment_status', v),
+    onChange: (v: string[]) => setFilter('payment_status', v)
   }
 }
 
 async function professionalFetcher(query: string) {
   // Cheap: hits /api/v1/auth/professionals which is already paginated.
-  const res = await api.get<{ data: Array<{ id: string; first_name: string; last_name: string; email?: string }> }>(
-    `/api/v1/auth/professionals${query ? `?q=${encodeURIComponent(query)}` : ''}`,
+  const res = await api.get<{ data: Array<{ id: string, first_name: string, last_name: string, email?: string }> }>(
+    `/api/v1/auth/professionals${query ? `?q=${encodeURIComponent(query)}` : ''}`
   )
-  return res.data.map((p) => ({
+  return res.data.map(p => ({
     id: p.id,
     label: `${p.first_name} ${p.last_name}`.trim(),
-    sublabel: p.email ?? undefined,
+    sublabel: p.email ?? undefined
   }))
 }
 
 async function professionalResolver(id: string) {
   try {
-    const res = await api.get<{ data: { id: string; first_name: string; last_name: string } }>(
-      `/api/v1/auth/users/${id}`,
+    const res = await api.get<{ data: { id: string, first_name: string, last_name: string } }>(
+      `/api/v1/auth/users/${id}`
     )
     return {
       id: res.data.id,
-      label: `${res.data.first_name} ${res.data.last_name}`.trim(),
+      label: `${res.data.first_name} ${res.data.last_name}`.trim()
     }
   } catch {
     return null
@@ -259,7 +260,7 @@ function patientName(p: PatientBrief | undefined): string {
   return `${p.last_name}, ${p.first_name}`
 }
 
-function validityBadge(b: BudgetListItem): { label: string; color: 'success' | 'warning' | 'error' | 'neutral' } | null {
+function validityBadge(b: BudgetListItem): { label: string, color: 'success' | 'warning' | 'error' | 'neutral' } | null {
   if (!b.valid_until) return null
   const today = new Date()
   const until = new Date(b.valid_until)
@@ -278,11 +279,11 @@ async function handleDownloadPDF(b: BudgetListItem, ev: Event) {
   ev.stopPropagation()
   try {
     await downloadPDF(b.id, locale.value)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.pdf.downloadError'),
-      color: 'error',
+      description: errorMessage(e, t('budget.pdf.downloadError')),
+      color: 'error'
     })
   }
 }
@@ -295,8 +296,8 @@ async function handleDelete(b: BudgetListItem, ev: Event) {
     await deleteBudget(b.id)
     toast.add({ title: t('common.success'), description: t('budget.messages.deleted'), color: 'success' })
     await refresh()
-  } catch {
-    toast.add({ title: t('common.error'), description: t('budget.errors.delete'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorMessage(e, t('budget.errors.delete')), color: 'error' })
   }
 }
 </script>

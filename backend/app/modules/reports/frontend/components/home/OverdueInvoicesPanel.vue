@@ -1,7 +1,7 @@
 <script setup lang="ts">
 defineProps<{ ctx?: unknown }>()
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const { overdue, overdueLoaded, loadOverdue } = useHomeReports()
 
 const pending = computed(() => !overdueLoaded.value)

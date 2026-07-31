@@ -23,9 +23,9 @@ export default defineNuxtPlugin(() => {
       'comunicaciones',
       'communications',
       'patient',
-      'paciente',
+      'paciente'
     ],
-    order: 10,
+    order: 10
   })
 
   // Phase 7: template management UI — previously templates could only be

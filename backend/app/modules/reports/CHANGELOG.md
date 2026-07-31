@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
 - feat(agents): expose `tools.py` — `billing_report`,
   `top_clients_by_billing`, `scheduling_report` (all READ). Off-books:
   the billing tools are **invoice-axis only** (gross invoiced; never

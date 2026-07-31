@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
+- fix(ui): surface the API error instead of a generic toast in the invoice pages (issue, void, credit note, send, delete, edit, create) and both PDF downloads.
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
 - i18n: add `pt` fallback to invoice description resolution in
   service layer so Portuguese-localized treatment names appear on invoices.
 

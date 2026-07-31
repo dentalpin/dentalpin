@@ -8,10 +8,16 @@ const canRead = computed(() => can(PERMISSIONS.verifactu.settingsRead))
 </script>
 
 <template>
-  <div v-if="canRead" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+  <div
+    v-if="canRead"
+    class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6"
+  >
     <UCard class="hover:shadow-md transition">
       <div class="flex items-start gap-4">
-        <UIcon name="i-lucide-receipt-text" class="text-primary-500 text-3xl" />
+        <UIcon
+          name="i-lucide-receipt-text"
+          class="text-primary-500 text-3xl"
+        />
         <div class="flex-1">
           <h3 class="text-lg font-semibold mb-1">
             {{ t('verifactu.settingsCards.title') }}
