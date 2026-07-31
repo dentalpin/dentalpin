@@ -320,10 +320,10 @@ async function handleDownloadPDF() {
 
   try {
     await downloadPDF(currentBudget.value.id, locale.value)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.pdf.downloadError'),
+      description: errorMessage(e, t('budget.pdf.downloadError')),
       color: 'error'
     })
   }

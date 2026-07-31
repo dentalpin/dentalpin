@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(ui): surface the API error instead of a generic toast in the appointment modal and the kanban board (transition, cabinet assign) plus the unconfirmed panel.
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
 - feat(agents): two new copilot tools — `reschedule_appointment` (WRITE,
   wraps `AppointmentService.update_appointment`, surfaces `slot_conflict`
   as a structured error) and `update_appointment_status` (WRITE, wraps

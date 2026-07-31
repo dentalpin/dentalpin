@@ -4,6 +4,7 @@
  * Handles CRUD operations for VAT types and provides computed helpers.
  */
 import type { VatType, VatTypeCreate, VatTypeUpdate, ApiResponse } from '~~/app/types'
+import { errorMessage } from '~~/app/utils/error'
 
 export function useVatTypes() {
   const api = useApi()
@@ -49,10 +50,10 @@ export function useVatTypes() {
       const params = includeInactive ? '?include_inactive=true' : ''
       const response = await api.get<ApiResponse<VatType[]>>(`/api/v1/catalog/vat-types${params}`)
       vatTypes.value = response.data
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('vatTypes.loadError'),
+        description: errorMessage(e, t('vatTypes.loadError')),
         color: 'red'
       })
     } finally {
@@ -75,10 +76,10 @@ export function useVatTypes() {
         color: 'green'
       })
       return response.data
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('vatTypes.createError'),
+        description: errorMessage(e, t('vatTypes.createError')),
         color: 'red'
       })
       return null
@@ -107,10 +108,10 @@ export function useVatTypes() {
         color: 'green'
       })
       return response.data
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('vatTypes.updateError'),
+        description: errorMessage(e, t('vatTypes.updateError')),
         color: 'red'
       })
       return null
@@ -132,10 +133,10 @@ export function useVatTypes() {
         color: 'green'
       })
       return true
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('vatTypes.deleteError'),
+        description: errorMessage(e, t('vatTypes.deleteError')),
         color: 'red'
       })
       return false

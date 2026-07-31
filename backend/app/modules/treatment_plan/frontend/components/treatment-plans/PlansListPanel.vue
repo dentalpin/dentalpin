@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { TreatmentPlan, TreatmentPlanStatus } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorMessage } from '~~/app/utils/error'
 
 const props = defineProps<{
   q: string
@@ -73,10 +74,10 @@ async function handleDelete(plan: TreatmentPlan, event: Event) {
       description: t('treatmentPlans.messages.deleted'),
       color: 'success',
     })
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('treatmentPlans.errors.delete'),
+      description: errorMessage(e, t('treatmentPlans.errors.delete')),
       color: 'error',
     })
   }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { BudgetDetail, BudgetItem, InvoiceItemFromBudget, VatType } from '~~/app/types'
+import { errorMessage } from '~~/app/utils/error'
 
 const { t, locale } = useI18n()
 const route = useRoute()
@@ -195,10 +196,10 @@ async function handleSubmit() {
     })
 
     router.push(`/invoices/${invoice.id}`)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('invoice.errors.create'),
+      description: errorMessage(e, t('invoice.errors.create')),
       color: 'error'
     })
   } finally {

@@ -5,6 +5,7 @@
  */
 
 import type { ApiResponse, ManualSendResponse } from '~~/app/types'
+import { errorMessage } from '~~/app/utils/error'
 
 export type AppointmentNotificationType
   = 'appointment_confirmation'
@@ -51,10 +52,10 @@ export function useNotificationSend() {
         })
         return false
       }
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('notifications.errors.send_failed'),
+        description: errorMessage(e, t('notifications.errors.send_failed')),
         color: 'error'
       })
       return false

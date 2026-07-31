@@ -169,10 +169,10 @@ async function handleVoid() {
       color: 'success'
     })
     await fetchInvoice(invoiceId.value)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('invoice.errors.void'),
+      description: errorMessage(e, t('invoice.errors.void')),
       color: 'error'
     })
   } finally {
@@ -222,10 +222,10 @@ async function handleCreateCreditNote() {
     showCreditNoteModal.value = false
     // Navigate to the new credit note
     router.push(`/invoices/${creditNote.id}`)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('invoice.errors.createCreditNote'),
+      description: errorMessage(e, t('invoice.errors.createCreditNote')),
       color: 'error'
     })
   } finally {
@@ -261,10 +261,10 @@ async function handleSend() {
       color: 'success'
     })
     showSendModal.value = false
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('invoice.errors.send'),
+      description: errorMessage(e, t('invoice.errors.send')),
       color: 'error'
     })
   } finally {
@@ -278,10 +278,10 @@ async function handleDownloadPDF() {
   isDownloadingPdf.value = true
   try {
     await downloadPDF(invoiceId.value, locale.value)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('invoice.pdf.downloadError'),
+      description: errorMessage(e, t('invoice.pdf.downloadError')),
       color: 'error'
     })
   } finally {

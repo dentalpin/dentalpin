@@ -2,6 +2,7 @@
 import type { InvoiceListItem, InvoiceStatus, PaginatedResponse } from '~~/app/types'
 import { INVOICE_STATUS_ROLE, roleToUiColor } from '~~/app/config/severity'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorMessage } from '~~/app/utils/error'
 
 /**
  * /invoices — list page.
@@ -176,8 +177,8 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
   try {
     await deleteInvoice(inv.id)
     toast.add({ title: t('common.success'), description: t('invoice.messages.deleted'), color: 'success' })
-  } catch {
-    toast.add({ title: t('common.error'), description: t('invoice.errors.delete'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('common.error'), description: errorMessage(e, t('invoice.errors.delete')), color: 'error' })
   }
 }
 </script>

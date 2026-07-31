@@ -4,6 +4,7 @@
  * Provides methods to fetch, update, and test notification configuration.
  */
 
+import { errorMessage } from '~~/app/utils/error'
 import type {
   ApiResponse,
   ClinicNotificationSettings,
@@ -82,10 +83,10 @@ export function useNotificationSettings() {
         '/api/v1/notifications/settings'
       )
       settings.value = response.data
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('notifications.errors.fetch_failed'),
+        description: errorMessage(e, t('notifications.errors.fetch_failed')),
         color: 'error'
       })
     } finally {
@@ -110,10 +111,10 @@ export function useNotificationSettings() {
         color: 'success'
       })
       return true
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('notifications.errors.save_failed'),
+        description: errorMessage(e, t('notifications.errors.save_failed')),
         color: 'error'
       })
       return false
@@ -147,10 +148,10 @@ export function useNotificationSettings() {
         })
         return false
       }
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('notifications.errors.test_failed'),
+        description: errorMessage(e, t('notifications.errors.test_failed')),
         color: 'error'
       })
       return false
@@ -183,10 +184,10 @@ export function useNotificationSettings() {
         })
         return false
       }
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('notifications.errors.send_failed'),
+        description: errorMessage(e, t('notifications.errors.send_failed')),
         color: 'error'
       })
       return false
@@ -257,10 +258,10 @@ export function useNotificationSettings() {
         '/api/v1/notifications/smtp-settings'
       )
       smtpSettings.value = response.data
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('notifications.smtp.errors.fetch_failed'),
+        description: errorMessage(e, t('notifications.smtp.errors.fetch_failed')),
         color: 'error'
       })
     } finally {
@@ -285,10 +286,10 @@ export function useNotificationSettings() {
         color: 'success'
       })
       return true
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('notifications.smtp.errors.save_failed'),
+        description: errorMessage(e, t('notifications.smtp.errors.save_failed')),
         color: 'error'
       })
       return false
@@ -324,10 +325,10 @@ export function useNotificationSettings() {
         })
         return false
       }
-    } catch {
+    } catch (e) {
       toast.add({
         title: t('common.error'),
-        description: t('notifications.smtp.errors.test_failed'),
+        description: errorMessage(e, t('notifications.smtp.errors.test_failed')),
         color: 'error'
       })
       return false

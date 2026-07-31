@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(ui): surface the API error instead of a generic toast in the recall row (no-answer, snooze), the settings panel and the attempt form.
+  `catch {}` discarded the server's message, so any failure read as
+  "Error" with no way to tell what went wrong. Now via
+  `errorMessage()` / `errorDetail()`.
+
 - i18n: add Portuguese locale (`pt.json`) with full UI coverage.
 
 - i18n: correct French wording in seed note (Contrôle mensuel).

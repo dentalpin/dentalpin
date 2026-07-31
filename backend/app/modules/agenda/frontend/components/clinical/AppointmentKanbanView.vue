@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Appointment, AppointmentStatus } from '~~/app/types'
+import { errorDetail } from '~~/app/utils/error'
 
 interface Cabinet {
   id?: string
@@ -297,16 +298,16 @@ async function onDrop(col: ColumnDef, e: DragEvent, cabinetName?: string) {
     if (target === 'completed') {
       completionFollowup.trigger(apt)
     }
-  } catch {
-    toast.add({ title: t('appointments.transitionFailed'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('appointments.transitionFailed'), description: errorDetail(e), color: 'error' })
   }
 }
 
 async function safeAssign(aptId: string, cabinetId: string | null) {
   try {
     await assignCabinet(aptId, cabinetId)
-  } catch {
-    toast.add({ title: t('appointments.conflict'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('appointments.conflict'), description: errorDetail(e), color: 'error' })
     throw new Error('cabinet_assign_failed')
   }
 }

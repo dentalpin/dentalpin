@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { ClinicHours, ClinicOverride, ClinicOverridePayload, WeekdayShifts } from '../../composables/useClinicHours'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorDetail } from '~~/app/utils/error'
 
 const { t } = useI18n()
 const toast = useToast()
@@ -60,8 +61,8 @@ async function save() {
     hours.value = updated
     days.value = updated.days
     toast.add({ title: t('schedules.clinicHours.saved'), color: 'success' })
-  } catch {
-    toast.add({ title: t('schedules.clinicHours.savedError'), color: 'error' })
+  } catch (e) {
+    toast.add({ title: t('schedules.clinicHours.savedError'), description: errorDetail(e), color: 'error' })
   } finally {
     isSaving.value = false
   }
