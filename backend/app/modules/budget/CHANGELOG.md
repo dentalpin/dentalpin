@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- fix(ui): the budget detail page swallowed the API error and always
+  toasted a generic "Error" — every `catch {}` now surfaces the server's
+  message via `errorMessage()`. Reported by users who saw *Error* on
+  *Mark as sent* / *Send email* / *Accept quote* with no way to tell
+  that the real cause was an empty budget or a patient without email.
+
 - refactor(scheduler): declare the budget cron jobs (`expire_budgets`,
   `send_budget_reminders`, `purge_budget_access_logs`) via
   `get_scheduled_jobs()` instead of being imported by name in

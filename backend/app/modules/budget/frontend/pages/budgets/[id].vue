@@ -6,6 +6,7 @@ import type { EntityChip } from '~~/app/components/shared/EntityStatusChips.vue'
 import type { EntityAction } from '~~/app/components/shared/EntityActionBar.vue'
 import type { TotalLine } from '~~/app/components/shared/EntityTotalsCard.vue'
 import type { InfoItem } from '~~/app/components/shared/EntityInfoCard.vue'
+import { errorMessage } from '~~/app/utils/error'
 import PublicBudgetLinkCard from '../../components/budget/PublicBudgetLinkCard.vue'
 import BudgetSignatureCard from '../../components/budget/BudgetSignatureCard.vue'
 
@@ -149,10 +150,10 @@ async function saveEdits() {
       color: 'success'
     })
     isEditing.value = false
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.errors.update'),
+      description: errorMessage(e, t('budget.errors.update')),
       color: 'error'
     })
   }
@@ -175,10 +176,10 @@ async function handleRemoveItem(item: BudgetItem) {
       description: t('budget.messages.itemRemoved'),
       color: 'success'
     })
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.errors.delete'),
+      description: errorMessage(e, t('budget.errors.delete')),
       color: 'error'
     })
   }
@@ -220,12 +221,12 @@ async function handleSignatureSubmit() {
     isSignatureModalOpen.value = false
     resetSignatureForm()
     await loadBudget()
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: signatureAction.value === 'accept'
+      description: errorMessage(e, signatureAction.value === 'accept'
         ? t('budget.errors.accept')
-        : t('budget.errors.reject'),
+        : t('budget.errors.reject')),
       color: 'error'
     })
   }
@@ -249,10 +250,10 @@ async function handleCancel() {
       color: 'success'
     })
     await loadBudget()
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.errors.update'),
+      description: errorMessage(e, t('budget.errors.update')),
       color: 'error'
     })
   }
@@ -280,10 +281,10 @@ async function handleSend() {
     isSendModalOpen.value = false
     resetSendForm()
     await loadBudget()
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.errors.send'),
+      description: errorMessage(e, t('budget.errors.send')),
       color: 'error'
     })
   }
@@ -305,10 +306,10 @@ async function handleDuplicate() {
       color: 'success'
     })
     router.push(`/budgets/${newBudget.id}`)
-  } catch {
+  } catch (e) {
     toast.add({
       title: t('common.error'),
-      description: t('budget.errors.create'),
+      description: errorMessage(e, t('budget.errors.create')),
       color: 'error'
     })
   }

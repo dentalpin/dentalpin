@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type { ClinicAddress, ClinicUpdate } from '~/types'
-import { SUPPORTED_CURRENCIES } from '~/constants/currencies'
 import { PERMISSIONS } from '~/config/permissions'
 
 const { t } = useI18n()
@@ -74,7 +73,10 @@ const currencyOptions = computed(() => {
     displayNames = null
   }
   const collator = new Intl.Collator(currentLocale.value, { sensitivity: 'base' })
-  return SUPPORTED_CURRENCIES.map(code => ({
+  // Full ISO 4217 list from the runtime, same reasoning as timezones below —
+  // the previous curated list was EUR + Americas only (reported by a user in
+  // Vietnam, no VND). The backend accepts any `^[A-Z]{3}$`.
+  return Intl.supportedValuesOf('currency').map(code => ({
     value: code,
     label: displayNames?.of(code) ? `${code} — ${displayNames.of(code)}` : code
   })).sort((a, b) => collator.compare(a.label, b.label))
@@ -313,11 +315,13 @@ function formatAddress(address?: Record<string, string>): string {
           :label="t('settings.currency')"
           :help="t('settings.currencyHelp')"
         >
-          <USelect
+          <USelectMenu
             v-model="form.currency"
             :items="currencyOptions"
             value-key="value"
             label-key="label"
+            searchable
+            class="w-full"
           />
         </UFormField>
       </div>
