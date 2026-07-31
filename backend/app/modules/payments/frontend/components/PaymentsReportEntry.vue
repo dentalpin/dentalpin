@@ -18,7 +18,10 @@ const { t } = useI18n()
   >
     <div class="flex flex-col items-center text-center space-y-4 py-4">
       <div class="p-4 rounded-full bg-surface-muted">
-        <UIcon name="i-lucide-wallet" class="h-8 w-8 text-amber-600" />
+        <UIcon
+          name="i-lucide-wallet"
+          class="h-8 w-8 text-amber-600"
+        />
       </div>
 
       <div>

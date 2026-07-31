@@ -66,7 +66,6 @@ const genderLabel = computed(() => {
   return map[g] ?? null
 })
 
-const statusColor = computed(() => props.patient.status === 'active' ? 'success' : 'neutral')
 const isArchived = computed(() => props.patient.status === 'archived')
 
 const actionItems = computed(() => [

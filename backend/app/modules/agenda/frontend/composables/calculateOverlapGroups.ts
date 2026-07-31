@@ -13,7 +13,7 @@ import type { Appointment } from '~~/app/types'
  * group-merge pass.
  */
 export function calculateOverlapGroups(
-  profAppointments: Appointment[],
+  profAppointments: Appointment[]
 ): Map<string, { index: number, total: number }> {
   const result = new Map<string, { index: number, total: number }>()
   if (profAppointments.length === 0) return result
@@ -21,7 +21,7 @@ export function calculateOverlapGroups(
   const items = profAppointments.map(apt => ({
     apt,
     start: new Date(apt.start_time).getTime(),
-    end: new Date(apt.end_time).getTime(),
+    end: new Date(apt.end_time).getTime()
   }))
   items.sort((a, b) => a.start - b.start || a.end - b.end)
 
@@ -41,7 +41,10 @@ export function calculateOverlapGroups(
     if (ra === rb) return
     if (rank[ra]! < rank[rb]!) parent[ra] = rb
     else if (rank[ra]! > rank[rb]!) parent[rb] = ra
-    else { parent[rb] = ra; rank[ra]!++ }
+    else {
+      parent[rb] = ra
+      rank[ra]!++
+    }
   }
 
   // Active = items whose interval ends after the current item's start.
@@ -61,7 +64,10 @@ export function calculateOverlapGroups(
   for (let i = 0; i < items.length; i++) {
     const root = find(i)
     let g = groups.get(root)
-    if (!g) { g = []; groups.set(root, g) }
+    if (!g) {
+      g = []
+      groups.set(root, g)
+    }
     g.push(i)
   }
   for (const g of groups.values()) {

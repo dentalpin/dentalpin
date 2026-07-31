@@ -2,7 +2,7 @@ import type {
   AllergyEntry,
   MedicalHistory,
   PatientAlert,
-  SystemicDiseaseEntry,
+  SystemicDiseaseEntry
 } from '~~/app/types'
 
 export type Severity = AllergyEntry['severity']
@@ -41,7 +41,7 @@ type Translator = (key: string, params?: Record<string, unknown>) => string
 
 export function buildConditionChips(
   mh: MedicalHistory | null | undefined,
-  t: Translator,
+  t: Translator
 ): ConditionChip[] {
   if (!mh) return []
   const chips: ConditionChip[] = []
@@ -52,7 +52,7 @@ export function buildConditionChips(
         ? t('patients.medicalSnapshot.conditions.pregnantWeek', { week: mh.pregnancy_week })
         : t('patients.medicalHistory.pregnant'),
       icon: 'i-lucide-baby',
-      color: 'warning',
+      color: 'warning'
     })
   }
   if (mh.is_lactating) {
@@ -60,7 +60,7 @@ export function buildConditionChips(
       key: 'lactating',
       label: t('patients.medicalHistory.lactating'),
       icon: 'i-lucide-baby',
-      color: 'info',
+      color: 'info'
     })
   }
   if (mh.is_on_anticoagulants) {
@@ -70,7 +70,7 @@ export function buildConditionChips(
         ? t('patients.medicalSnapshot.conditions.anticoagulantInr', { inr: mh.inr_value })
         : t('patients.medicalHistory.anticoagulants'),
       icon: 'i-lucide-droplet',
-      color: 'warning',
+      color: 'warning'
     })
   }
   if (mh.adverse_reactions_to_anesthesia) {
@@ -78,7 +78,7 @@ export function buildConditionChips(
       key: 'anesthesia',
       label: t('patients.medicalHistory.anesthesiaReaction'),
       icon: 'i-lucide-syringe',
-      color: 'error',
+      color: 'error'
     })
   }
   if (mh.bruxism) {
@@ -86,7 +86,7 @@ export function buildConditionChips(
       key: 'bruxism',
       label: t('patients.medicalHistory.bruxism'),
       icon: 'i-lucide-smile',
-      color: 'neutral',
+      color: 'neutral'
     })
   }
   if (mh.is_smoker) {
@@ -96,7 +96,7 @@ export function buildConditionChips(
         ? t('patients.medicalSnapshot.conditions.smokerFreq', { freq: mh.smoking_frequency })
         : t('patients.medicalHistory.smoker'),
       icon: 'i-lucide-cigarette',
-      color: 'neutral',
+      color: 'neutral'
     })
   }
   return chips
@@ -112,13 +112,13 @@ export function buildMedicationItems(mh: MedicalHistory | null | undefined): Med
   if (!mh) return []
   const items: MedicationItem[] = mh.medications.map(m => ({
     name: m.name,
-    detail: [m.dosage, m.frequency].filter(Boolean).join(' · ') || null,
+    detail: [m.dosage, m.frequency].filter(Boolean).join(' · ') || null
   }))
   if (mh.is_on_anticoagulants && mh.anticoagulant_medication) {
     items.unshift({
       name: mh.anticoagulant_medication,
       detail: mh.inr_value !== undefined && mh.inr_value !== null ? `INR ${mh.inr_value}` : null,
-      highlight: true,
+      highlight: true
     })
   }
   return items
@@ -142,7 +142,7 @@ export function hasAnyMedicalData(mh: MedicalHistory | null | undefined): boolea
     || mh.is_on_anticoagulants
     || mh.adverse_reactions_to_anesthesia
     || mh.bruxism
-    || mh.is_smoker,
+    || mh.is_smoker
   )
 }
 
@@ -170,7 +170,7 @@ export function formatPatientDate(dateStr: string | null | undefined, locale = '
 
 export function nextAppointmentProximity(
   startTime: string | undefined,
-  t: Translator,
+  t: Translator
 ): { label: string, color: BadgeColor } | null {
   if (!startTime) return null
   const start = new Date(startTime)

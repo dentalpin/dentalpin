@@ -53,26 +53,26 @@ const setupItems = computed<SetupItem[]>(() => {
       key: 'clinicNif',
       done: !!s.nif_emisor,
       to: '/settings',
-      ctaKey: 'verifactu.setup.clinicNifCta',
+      ctaKey: 'verifactu.setup.clinicNifCta'
     },
     {
       key: 'producer',
       done: !!s.producer_nif && !!s.producer_name,
       to: '/settings/verifactu/producer',
-      ctaKey: 'verifactu.setup.producerCta',
+      ctaKey: 'verifactu.setup.producerCta'
     },
     {
       key: 'declaration',
       done: !!s.declaracion_responsable_signed_at,
       to: '/settings/verifactu/producer',
-      ctaKey: 'verifactu.setup.declarationCta',
+      ctaKey: 'verifactu.setup.declarationCta'
     },
     {
       key: 'certificate',
       done: sm.has_certificate,
       to: '/settings/verifactu/certificate',
-      ctaKey: 'verifactu.setup.certificateCta',
-    },
+      ctaKey: 'verifactu.setup.certificateCta'
+    }
   ]
 })
 
@@ -179,8 +179,12 @@ onMounted(refresh)
 <template>
   <div class="p-4 sm:p-6 max-w-5xl mx-auto space-y-6">
     <header>
-      <h1 class="text-2xl font-semibold">{{ t('verifactu.title') }}</h1>
-      <p class="text-sm text-gray-500">{{ t('verifactu.subtitle') }}</p>
+      <h1 class="text-2xl font-semibold">
+        {{ t('verifactu.title') }}
+      </h1>
+      <p class="text-sm text-gray-500">
+        {{ t('verifactu.subtitle') }}
+      </p>
     </header>
 
     <UAlert
@@ -190,7 +194,10 @@ onMounted(refresh)
       :title="certWarning.message"
     />
 
-    <USkeleton v-if="loading" class="h-44 w-full" />
+    <USkeleton
+      v-if="loading"
+      class="h-44 w-full"
+    />
 
     <!-- ─── HERO STATUS ─────────────────────────────────────────── -->
     <section
@@ -199,16 +206,25 @@ onMounted(refresh)
       :class="heroPalette.wrap"
     >
       <div class="flex items-start gap-4">
-        <UIcon :name="heroIcon" class="text-3xl shrink-0 mt-0.5" :class="heroPalette.icon" />
+        <UIcon
+          :name="heroIcon"
+          class="text-3xl shrink-0 mt-0.5"
+          :class="heroPalette.icon"
+        />
 
         <div class="flex-1 min-w-0">
-          <h2 class="text-lg font-semibold">{{ t(`verifactu.hero.${heroState}.title`) }}</h2>
+          <h2 class="text-lg font-semibold">
+            {{ t(`verifactu.hero.${heroState}.title`) }}
+          </h2>
           <p class="text-sm text-gray-600 dark:text-gray-300 mt-0.5">
             {{ t(`verifactu.hero.${heroState}.description`) }}
           </p>
 
           <!-- ─── SETUP CHECKLIST ─────────────────────────────── -->
-          <ul v-if="heroState === 'setup'" class="mt-4 space-y-2">
+          <ul
+            v-if="heroState === 'setup'"
+            class="mt-4 space-y-2"
+          >
             <li
               v-for="item in setupItems"
               :key="item.key"
@@ -295,13 +311,21 @@ onMounted(refresh)
     </section>
 
     <!-- ─── CONFIGURATION CARDS ─────────────────────────────────── -->
-    <div v-if="!loading" class="grid gap-4 grid-cols-1 sm:grid-cols-2">
+    <div
+      v-if="!loading"
+      class="grid gap-4 grid-cols-1 sm:grid-cols-2"
+    >
       <!-- Datos del emisor (read-only, edited from clinic settings) -->
       <UCard>
         <template #header>
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-building-2" class="text-primary-500" />
-            <h2 class="font-semibold">{{ t('verifactu.cards.emisor.title') }}</h2>
+            <UIcon
+              name="i-lucide-building-2"
+              class="text-primary-500"
+            />
+            <h2 class="font-semibold">
+              {{ t('verifactu.cards.emisor.title') }}
+            </h2>
           </div>
         </template>
         <div class="space-y-3 text-sm">
@@ -331,21 +355,38 @@ onMounted(refresh)
       <UCard>
         <template #header>
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-key-round" class="text-primary-500" />
-            <h2 class="font-semibold">{{ t('verifactu.certificate.title') }}</h2>
+            <UIcon
+              name="i-lucide-key-round"
+              class="text-primary-500"
+            />
+            <h2 class="font-semibold">
+              {{ t('verifactu.certificate.title') }}
+            </h2>
           </div>
         </template>
         <div class="space-y-3 text-sm">
-          <div v-if="summary?.has_certificate" class="space-y-1">
+          <div
+            v-if="summary?.has_certificate"
+            class="space-y-1"
+          >
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-check-circle-2" class="text-emerald-600" />
+              <UIcon
+                name="i-lucide-check-circle-2"
+                class="text-emerald-600"
+              />
               <span>{{ t('verifactu.certificate.active') }}</span>
             </div>
-            <p v-if="certValidUntilFormatted" class="text-gray-500 text-xs">
+            <p
+              v-if="certValidUntilFormatted"
+              class="text-gray-500 text-xs"
+            >
               {{ t('verifactu.certificate.validUntil') }}: {{ certValidUntilFormatted }}
             </p>
           </div>
-          <div v-else class="flex items-center gap-2 text-amber-700">
+          <div
+            v-else
+            class="flex items-center gap-2 text-amber-700"
+          >
             <UIcon name="i-lucide-alert-triangle" />
             <span>{{ t('verifactu.certificate.noActive') }}</span>
           </div>
@@ -364,24 +405,45 @@ onMounted(refresh)
       <UCard>
         <template #header>
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-file-signature" class="text-primary-500" />
-            <h2 class="font-semibold">{{ t('verifactu.producer.title') }}</h2>
+            <UIcon
+              name="i-lucide-file-signature"
+              class="text-primary-500"
+            />
+            <h2 class="font-semibold">
+              {{ t('verifactu.producer.title') }}
+            </h2>
           </div>
         </template>
         <div class="space-y-3 text-sm">
-          <div v-if="settings?.producer_name" class="space-y-1">
-            <p class="font-medium">{{ settings.producer_name }}</p>
-            <p class="text-gray-500 font-mono text-xs">{{ settings.producer_nif }}</p>
-            <div v-if="settings.declaracion_responsable_signed_at" class="flex items-center gap-2 text-emerald-700 text-xs pt-1">
+          <div
+            v-if="settings?.producer_name"
+            class="space-y-1"
+          >
+            <p class="font-medium">
+              {{ settings.producer_name }}
+            </p>
+            <p class="text-gray-500 font-mono text-xs">
+              {{ settings.producer_nif }}
+            </p>
+            <div
+              v-if="settings.declaracion_responsable_signed_at"
+              class="flex items-center gap-2 text-emerald-700 text-xs pt-1"
+            >
               <UIcon name="i-lucide-check-circle-2" />
               <span>{{ t('verifactu.producer.alreadySigned') }}</span>
             </div>
-            <div v-else class="flex items-center gap-2 text-amber-700 text-xs pt-1">
+            <div
+              v-else
+              class="flex items-center gap-2 text-amber-700 text-xs pt-1"
+            >
               <UIcon name="i-lucide-alert-triangle" />
               <span>{{ t('verifactu.producer.statusUnsigned') }}</span>
             </div>
           </div>
-          <p v-else class="text-amber-700 text-xs">
+          <p
+            v-else
+            class="text-amber-700 text-xs"
+          >
             {{ t('verifactu.cards.producer.empty') }}
           </p>
           <UButton
@@ -399,8 +461,13 @@ onMounted(refresh)
       <UCard>
         <template #header>
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-percent" class="text-primary-500" />
-            <h2 class="font-semibold">{{ t('verifactu.cards.vatMapping.title') }}</h2>
+            <UIcon
+              name="i-lucide-percent"
+              class="text-primary-500"
+            />
+            <h2 class="font-semibold">
+              {{ t('verifactu.cards.vatMapping.title') }}
+            </h2>
           </div>
         </template>
         <div class="space-y-3 text-sm">
@@ -422,19 +489,33 @@ onMounted(refresh)
       <UCard>
         <template #header>
           <div class="flex items-center gap-2">
-            <UIcon name="i-lucide-activity" class="text-primary-500" />
-            <h2 class="font-semibold">{{ t('verifactu.cards.activity.title') }}</h2>
+            <UIcon
+              name="i-lucide-activity"
+              class="text-primary-500"
+            />
+            <h2 class="font-semibold">
+              {{ t('verifactu.cards.activity.title') }}
+            </h2>
           </div>
         </template>
         <div class="space-y-3 text-sm">
           <div class="grid grid-cols-2 gap-3">
             <div>
-              <p class="text-gray-500 text-xs">{{ t('verifactu.queue.tabs.pending') }}</p>
-              <p class="text-xl font-semibold">{{ summary?.pending_count ?? 0 }}</p>
+              <p class="text-gray-500 text-xs">
+                {{ t('verifactu.queue.tabs.pending') }}
+              </p>
+              <p class="text-xl font-semibold">
+                {{ summary?.pending_count ?? 0 }}
+              </p>
             </div>
             <div>
-              <p class="text-gray-500 text-xs">{{ t('verifactu.queue.tabs.rejected') }}</p>
-              <p class="text-xl font-semibold" :class="(summary?.rejected_count ?? 0) > 0 ? 'text-red-600' : ''">
+              <p class="text-gray-500 text-xs">
+                {{ t('verifactu.queue.tabs.rejected') }}
+              </p>
+              <p
+                class="text-xl font-semibold"
+                :class="(summary?.rejected_count ?? 0) > 0 ? 'text-red-600' : ''"
+              >
                 {{ summary?.rejected_count ?? 0 }}
               </p>
             </div>
@@ -467,17 +548,31 @@ onMounted(refresh)
         <UCard>
           <template #header>
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-alert-triangle" class="text-red-600 text-xl" />
-              <h3 class="font-semibold">{{ t('verifactu.modal.confirmProdTitle') }}</h3>
+              <UIcon
+                name="i-lucide-alert-triangle"
+                class="text-red-600 text-xl"
+              />
+              <h3 class="font-semibold">
+                {{ t('verifactu.modal.confirmProdTitle') }}
+              </h3>
             </div>
           </template>
-          <p class="text-sm">{{ t('verifactu.environment.warningProd') }}</p>
+          <p class="text-sm">
+            {{ t('verifactu.environment.warningProd') }}
+          </p>
           <template #footer>
             <div class="flex gap-2 justify-end">
-              <UButton variant="ghost" @click="showProdConfirm = false">
+              <UButton
+                variant="ghost"
+                @click="showProdConfirm = false"
+              >
                 {{ t('common.cancel') }}
               </UButton>
-              <UButton color="red" :loading="switchingEnv" @click="confirmProd">
+              <UButton
+                color="red"
+                :loading="switchingEnv"
+                @click="confirmProd"
+              >
                 {{ t('verifactu.modal.confirmProdAction') }}
               </UButton>
             </div>

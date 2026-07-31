@@ -28,7 +28,6 @@ const {
   canVoid,
   canCreateCreditNote,
   canSend,
-  getPaymentMethodLabel,
   formatCurrency
 } = useInvoices()
 

@@ -30,14 +30,14 @@ const CLASSIFICATIONS = [
   { value: 'E5', label: 'E5 — Exento (art. 25 — entregas intracomunitarias)' },
   { value: 'E6', label: 'E6 — Exento (otros)' },
   { value: 'N1', label: 'N1 — No sujeta (art. 7, 14, otros — por reglas localización)' },
-  { value: 'N2', label: 'N2 — No sujeta (por reglas de localización)' },
+  { value: 'N2', label: 'N2 — No sujeta (por reglas de localización)' }
 ] as const
 
 const AUTO_VALUE = '__auto__'
 
 interface Row {
   data: VatClassificationItem
-  selected: string  // override classification or AUTO_VALUE
+  selected: string // override classification or AUTO_VALUE
   notes: string
   dirty: boolean
 }
@@ -49,7 +49,7 @@ function rowFromItem(it: VatClassificationItem): Row {
     data: it,
     selected: it.override_classification || AUTO_VALUE,
     notes: it.override_notes || '',
-    dirty: false,
+    dirty: false
   }
 }
 
@@ -85,7 +85,7 @@ async function save(row: Row) {
   try {
     if (row.selected === AUTO_VALUE) {
       const updated = await upsertVatMapping(row.data.vat_type_id, {
-        classification: null,
+        classification: null
       })
       row.data = updated
       row.notes = ''
@@ -94,7 +94,7 @@ async function save(row: Row) {
       const updated = await upsertVatMapping(row.data.vat_type_id, {
         classification: row.selected,
         exemption_cause: cause,
-        notes: row.notes || null,
+        notes: row.notes || null
       })
       row.data = updated
     }
@@ -117,9 +117,16 @@ onMounted(refresh)
 <template>
   <div class="p-4 sm:p-6 max-w-5xl mx-auto space-y-6">
     <header>
-      <NuxtLink to="/settings/verifactu" class="text-sm text-gray-500">← Verifactu</NuxtLink>
-      <h1 class="text-2xl font-semibold mt-2">{{ t('verifactu.vatMapping.title') }}</h1>
-      <p class="text-sm text-gray-500">{{ t('verifactu.vatMapping.subtitle') }}</p>
+      <NuxtLink
+        to="/settings/verifactu"
+        class="text-sm text-gray-500"
+      >← Verifactu</NuxtLink>
+      <h1 class="text-2xl font-semibold mt-2">
+        {{ t('verifactu.vatMapping.title') }}
+      </h1>
+      <p class="text-sm text-gray-500">
+        {{ t('verifactu.vatMapping.subtitle') }}
+      </p>
     </header>
 
     <UAlert
@@ -130,9 +137,15 @@ onMounted(refresh)
       :description="t('verifactu.vatMapping.legalIntro')"
     />
 
-    <USkeleton v-if="loading" class="h-64 w-full" />
+    <USkeleton
+      v-if="loading"
+      class="h-64 w-full"
+    />
 
-    <div v-else-if="rows.length === 0" class="text-center text-sm text-gray-500 py-12">
+    <div
+      v-else-if="rows.length === 0"
+      class="text-center text-sm text-gray-500 py-12"
+    >
       {{ t('verifactu.vatMapping.empty') }}
     </div>
 
@@ -145,10 +158,15 @@ onMounted(refresh)
         >
           <!-- Identity -->
           <div class="lg:col-span-3">
-            <p class="font-medium">{{ row.data.label }}</p>
+            <p class="font-medium">
+              {{ row.data.label }}
+            </p>
             <p class="text-xs text-gray-500">
               {{ t('verifactu.vatMapping.rate') }}: {{ row.data.rate }}%
-              <span v-if="row.data.is_default" class="ml-1">· {{ t('verifactu.vatMapping.defaultBadge') }}</span>
+              <span
+                v-if="row.data.is_default"
+                class="ml-1"
+              >· {{ t('verifactu.vatMapping.defaultBadge') }}</span>
             </p>
           </div>
 
@@ -173,7 +191,7 @@ onMounted(refresh)
               v-model="row.selected"
               :items="[
                 { value: AUTO_VALUE, label: t('verifactu.vatMapping.autoOption', { code: row.data.inferred_classification }) },
-                ...CLASSIFICATIONS,
+                ...CLASSIFICATIONS
               ]"
               value-key="value"
               label-key="label"

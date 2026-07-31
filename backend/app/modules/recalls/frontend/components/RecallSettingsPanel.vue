@@ -86,8 +86,7 @@ function addCategory() {
 
 function removeCategory(key: string) {
   if (!settings.value) return
-  const next = { ...settings.value.category_to_reason }
-  delete next[key]
+  const { [key]: _removed, ...next } = settings.value.category_to_reason
   settings.value.category_to_reason = next
 }
 </script>

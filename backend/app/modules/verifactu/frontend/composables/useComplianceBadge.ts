@@ -20,14 +20,14 @@ const SEVERITY_TO_COLOR: Record<ComplianceSeverity, ComplianceBadgeData['color']
   ok: 'success',
   warning: 'warning',
   pending: 'info',
-  error: 'error',
+  error: 'error'
 }
 
 const SEVERITY_TO_ICON: Record<ComplianceSeverity, string> = {
   ok: 'i-lucide-check',
   warning: 'i-lucide-alert-triangle',
   pending: 'i-lucide-clock-3',
-  error: 'i-lucide-x',
+  error: 'i-lucide-x'
 }
 
 // Mirrors backend ``services/severity.py``. Used as a fallback when
@@ -44,21 +44,33 @@ function deriveSeverity(state: string | null, errorCode: number | null): Complia
   return 'pending'
 }
 
+// Per-country entry inside ``invoice.compliance_data`` (JSONB — keep
+// the shape loose beyond the fields the badge reads).
+export interface ComplianceCountryEntry {
+  state?: string | null
+  error_code?: number | null
+  error_message?: string | null
+  severity?: ComplianceSeverity | null
+  [key: string]: unknown
+}
+
+export type ComplianceData = Record<string, ComplianceCountryEntry | undefined>
+
 export function useComplianceBadge(
-  complianceData: Ref<Record<string, any> | null | undefined> | ComputedRef<Record<string, any> | null | undefined>
+  complianceData: Ref<ComplianceData | null | undefined> | ComputedRef<ComplianceData | null | undefined>
 ): ComputedRef<ComplianceBadgeData | null> {
   const { t } = useI18n()
 
   return computed(() => {
     const cd = unref(complianceData)
-    const es = (cd as Record<string, any> | null | undefined)?.ES
+    const es = cd?.ES
     if (!es) return null
 
     const state = (es.state as string | null | undefined) ?? null
     const errorCode = (es.error_code as number | null | undefined) ?? null
     const errorMessage = (es.error_message as string | null | undefined) ?? null
-    const severity: ComplianceSeverity =
-      (es.severity as ComplianceSeverity | undefined) || deriveSeverity(state, errorCode)
+    const severity: ComplianceSeverity
+      = (es.severity as ComplianceSeverity | undefined) || deriveSeverity(state, errorCode)
 
     const tooltipBase = t(`verifactu.badge.tooltip.${severity}`)
     const tooltip = errorMessage && severity === 'error'
@@ -73,7 +85,7 @@ export function useComplianceBadge(
       tooltip,
       errorMessage,
       state,
-      errorCode,
+      errorCode
     }
   })
 }

@@ -100,11 +100,18 @@ function copyWebhook() {
 <template>
   <div class="space-y-6 max-w-2xl">
     <div>
-      <h2 class="text-lg font-semibold">{{ t('whatsapp_kapso.settings.title') }}</h2>
-      <p class="text-sm text-gray-500">{{ t('whatsapp_kapso.settings.description') }}</p>
+      <h2 class="text-lg font-semibold">
+        {{ t('whatsapp_kapso.settings.title') }}
+      </h2>
+      <p class="text-sm text-gray-500">
+        {{ t('whatsapp_kapso.settings.description') }}
+      </p>
     </div>
 
-    <USkeleton v-if="loading" class="h-40 w-full" />
+    <USkeleton
+      v-if="loading"
+      class="h-40 w-full"
+    />
 
     <template v-else>
       <!-- Connection -->
@@ -112,40 +119,92 @@ function copyWebhook() {
         <template #header>
           <div class="flex items-center justify-between">
             <span class="font-medium">{{ t('whatsapp_kapso.connection') }}</span>
-            <UBadge v-if="settings?.is_verified" color="success" variant="subtle">
+            <UBadge
+              v-if="settings?.is_verified"
+              color="success"
+              variant="subtle"
+            >
               {{ t('whatsapp_kapso.verified') }}
             </UBadge>
-            <UBadge v-else color="neutral" variant="subtle">{{ t('whatsapp_kapso.notVerified') }}</UBadge>
+            <UBadge
+              v-else
+              color="neutral"
+              variant="subtle"
+            >
+              {{ t('whatsapp_kapso.notVerified') }}
+            </UBadge>
           </div>
         </template>
 
         <div class="space-y-3">
-          <UFormField :label="t('whatsapp_kapso.apiKey')" :help="settings?.has_api_key ? t('whatsapp_kapso.secretStored') : ''">
-            <UInput v-model="form.api_key" type="password" :placeholder="settings?.has_api_key ? '••••••••' : ''" autocomplete="off" />
+          <UFormField
+            :label="t('whatsapp_kapso.apiKey')"
+            :help="settings?.has_api_key ? t('whatsapp_kapso.secretStored') : ''"
+          >
+            <UInput
+              v-model="form.api_key"
+              type="password"
+              :placeholder="settings?.has_api_key ? '••••••••' : ''"
+              autocomplete="off"
+            />
           </UFormField>
           <UFormField :label="t('whatsapp_kapso.phoneNumberId')">
             <UInput v-model="form.phone_number_id" />
           </UFormField>
-          <UFormField :label="t('whatsapp_kapso.businessAccountId')" :help="t('whatsapp_kapso.businessAccountHelp')">
+          <UFormField
+            :label="t('whatsapp_kapso.businessAccountId')"
+            :help="t('whatsapp_kapso.businessAccountHelp')"
+          >
             <UInput v-model="form.business_account_id" />
           </UFormField>
           <UFormField :label="t('whatsapp_kapso.displayPhone')">
-            <UInput v-model="form.display_phone_number" placeholder="+34 600 11 22 33" />
+            <UInput
+              v-model="form.display_phone_number"
+              placeholder="+34 600 11 22 33"
+            />
           </UFormField>
-          <UFormField :label="t('whatsapp_kapso.webhookSecret')" :help="settings?.has_webhook_secret ? t('whatsapp_kapso.secretStored') : ''">
-            <UInput v-model="form.webhook_secret" type="password" :placeholder="settings?.has_webhook_secret ? '••••••••' : ''" autocomplete="off" />
+          <UFormField
+            :label="t('whatsapp_kapso.webhookSecret')"
+            :help="settings?.has_webhook_secret ? t('whatsapp_kapso.secretStored') : ''"
+          >
+            <UInput
+              v-model="form.webhook_secret"
+              type="password"
+              :placeholder="settings?.has_webhook_secret ? '••••••••' : ''"
+              autocomplete="off"
+            />
           </UFormField>
-          <UButton :loading="saving" icon="i-lucide-save" @click="onSave">{{ t('common.save') }}</UButton>
+          <UButton
+            :loading="saving"
+            icon="i-lucide-save"
+            @click="onSave"
+          >
+            {{ t('common.save') }}
+          </UButton>
         </div>
       </UCard>
 
       <!-- Webhook URL -->
       <UCard>
-        <template #header><span class="font-medium">{{ t('whatsapp_kapso.webhook') }}</span></template>
-        <p class="text-sm text-gray-500 mb-2">{{ t('whatsapp_kapso.webhookHelp') }}</p>
+        <template #header>
+          <span class="font-medium">{{ t('whatsapp_kapso.webhook') }}</span>
+        </template>
+        <p class="text-sm text-gray-500 mb-2">
+          {{ t('whatsapp_kapso.webhookHelp') }}
+        </p>
         <div class="flex gap-2 items-center">
-          <UInput :model-value="webhookUrl" readonly class="flex-1" />
-          <UButton icon="i-lucide-copy" variant="outline" @click="copyWebhook">{{ t('whatsapp_kapso.copy') }}</UButton>
+          <UInput
+            :model-value="webhookUrl"
+            readonly
+            class="flex-1"
+          />
+          <UButton
+            icon="i-lucide-copy"
+            variant="outline"
+            @click="copyWebhook"
+          >
+            {{ t('whatsapp_kapso.copy') }}
+          </UButton>
         </div>
       </UCard>
 
@@ -154,30 +213,71 @@ function copyWebhook() {
         <template #header>
           <div class="flex items-center justify-between">
             <span class="font-medium">{{ t('whatsapp_kapso.templates') }}</span>
-            <UButton :loading="syncing" icon="i-lucide-refresh-cw" size="sm" variant="outline" @click="onSync">
+            <UButton
+              :loading="syncing"
+              icon="i-lucide-refresh-cw"
+              size="sm"
+              variant="outline"
+              @click="onSync"
+            >
               {{ t('whatsapp_kapso.sync') }}
             </UButton>
           </div>
         </template>
 
-        <p v-if="!approvedTemplates.length" class="text-sm text-gray-500">{{ t('whatsapp_kapso.noTemplates') }}</p>
+        <p
+          v-if="!approvedTemplates.length"
+          class="text-sm text-gray-500"
+        >
+          {{ t('whatsapp_kapso.noTemplates') }}
+        </p>
 
-        <div v-else class="space-y-3">
+        <div
+          v-else
+          class="space-y-3"
+        >
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <USelect v-model="mapping.notification_type" :items="NOTIFICATION_TYPES" :placeholder="t('whatsapp_kapso.notificationType')" />
-            <USelect v-model="mapping.template_name" :items="approvedTemplates.map(tpl => ({ label: `${tpl.name} (${tpl.language})`, value: tpl.name }))" :placeholder="t('whatsapp_kapso.template')" />
-            <UButton icon="i-lucide-link" :disabled="!mapping.template_name" @click="onMap">{{ t('whatsapp_kapso.map') }}</UButton>
+            <USelect
+              v-model="mapping.notification_type"
+              :items="NOTIFICATION_TYPES"
+              :placeholder="t('whatsapp_kapso.notificationType')"
+            />
+            <USelect
+              v-model="mapping.template_name"
+              :items="approvedTemplates.map(tpl => ({ label: `${tpl.name} (${tpl.language})`, value: tpl.name }))"
+              :placeholder="t('whatsapp_kapso.template')"
+            />
+            <UButton
+              icon="i-lucide-link"
+              :disabled="!mapping.template_name"
+              @click="onMap"
+            >
+              {{ t('whatsapp_kapso.map') }}
+            </UButton>
           </div>
         </div>
       </UCard>
 
       <!-- Test -->
       <UCard>
-        <template #header><span class="font-medium">{{ t('whatsapp_kapso.test') }}</span></template>
+        <template #header>
+          <span class="font-medium">{{ t('whatsapp_kapso.test') }}</span>
+        </template>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-          <UInput v-model="test.to_number" placeholder="+34600112233" />
-          <USelect v-model="test.template_name" :items="approvedTemplates.map(tpl => ({ label: tpl.name, value: tpl.name }))" :placeholder="t('whatsapp_kapso.template')" />
-          <UButton icon="i-lucide-send" :disabled="!test.to_number || !test.template_name" @click="onTest">
+          <UInput
+            v-model="test.to_number"
+            placeholder="+34600112233"
+          />
+          <USelect
+            v-model="test.template_name"
+            :items="approvedTemplates.map(tpl => ({ label: tpl.name, value: tpl.name }))"
+            :placeholder="t('whatsapp_kapso.template')"
+          />
+          <UButton
+            icon="i-lucide-send"
+            :disabled="!test.to_number || !test.template_name"
+            @click="onTest"
+          >
             {{ t('whatsapp_kapso.sendTest') }}
           </UButton>
         </div>

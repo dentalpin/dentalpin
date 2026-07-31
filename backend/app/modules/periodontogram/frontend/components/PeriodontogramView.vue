@@ -94,7 +94,10 @@ async function handleDiscarded() {
       v-if="isLoading && !currentSnapshot"
       class="flex items-center gap-2 text-sm text-muted"
     >
-      <UIcon name="i-lucide-loader-2" class="animate-spin" />
+      <UIcon
+        name="i-lucide-loader-2"
+        class="animate-spin"
+      />
       <span>{{ t('periodontogram.loading') }}</span>
     </div>
 

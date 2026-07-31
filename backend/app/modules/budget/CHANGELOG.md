@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
 - fix(ui): surface the API error instead of a generic toast, across the
   detail page, the item modal, the new-budget page and the list (delete,
   PDF). `catch {}` discarded the server's message, so any failure read as

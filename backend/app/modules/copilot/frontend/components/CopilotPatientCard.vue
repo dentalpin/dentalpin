@@ -41,9 +41,15 @@ const statusLabel = computed(() =>
         v-if="patient.phone || patient.email"
         class="truncate text-xs text-muted"
       >
-        <template v-if="patient.phone">{{ patient.phone }}</template>
-        <template v-if="patient.phone && patient.email"> · </template>
-        <template v-if="patient.email">{{ patient.email }}</template>
+        <template v-if="patient.phone">
+          {{ patient.phone }}
+        </template>
+        <template v-if="patient.phone && patient.email">
+          ·
+        </template>
+        <template v-if="patient.email">
+          {{ patient.email }}
+        </template>
       </p>
     </div>
     <UButton

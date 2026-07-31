@@ -7,6 +7,8 @@
  * writes stay inside the module that owns the underlying row.
  */
 
+import { PERMISSIONS } from '~~/app/config/permissions'
+
 const props = defineProps<{
   appointmentTreatmentId: string
   initialNotes: string | null
@@ -16,8 +18,6 @@ const props = defineProps<{
 const emit = defineEmits<{
   saved: [notes: string]
 }>()
-
-import { PERMISSIONS } from '~~/app/config/permissions'
 
 const { t } = useI18n()
 const { can } = usePermissions()

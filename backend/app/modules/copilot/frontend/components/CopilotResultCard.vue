@@ -5,7 +5,7 @@ import type { PatientResult } from './CopilotPatientCard.vue'
 import type { AppointmentResult } from './CopilotAppointmentCard.vue'
 import type { SlotResult } from './CopilotSlotCard.vue'
 
-const props = defineProps<{ name: string; result: unknown }>()
+const props = defineProps<{ name: string, result: unknown }>()
 const { t } = useI18n()
 const { money } = useCopilotFormat()
 
@@ -51,7 +51,7 @@ const MONEY_HINT = /total|collected|invoiced|net|refunded|amount|balance/i
 // Shallow flatten of the result for the generic fallback.
 const genericRows = computed(() => {
   const currency = typeof obj.value.currency === 'string' ? obj.value.currency : 'EUR'
-  const rows: { label: string; value: string }[] = []
+  const rows: { label: string, value: string }[] = []
   for (const [key, value] of Object.entries(obj.value)) {
     if (value === null || value === undefined || Array.isArray(value) || typeof value === 'object') continue
     let display = String(value)
@@ -62,13 +62,13 @@ const genericRows = computed(() => {
 })
 
 const genericLists = computed(() => {
-  const lists: { label: string; items: string[] }[] = []
+  const lists: { label: string, items: string[] }[] = []
   for (const [key, value] of Object.entries(obj.value)) {
     if (!Array.isArray(value) || value.length === 0) continue
     const items = value.slice(0, 8).map((it) => {
       if (it && typeof it === 'object') {
         return Object.values(it as Obj)
-          .filter((v) => v !== null && typeof v !== 'object')
+          .filter(v => v !== null && typeof v !== 'object')
           .join(' · ')
       }
       return String(it)
@@ -80,9 +80,9 @@ const genericLists = computed(() => {
 
 const isEmpty = computed(
   () =>
-    (mode.value === 'patients' && patients.value.length === 0) ||
-    (mode.value === 'appointments' && appointments.value.length === 0) ||
-    (mode.value === 'slots' && slots.value.length === 0)
+    (mode.value === 'patients' && patients.value.length === 0)
+    || (mode.value === 'appointments' && appointments.value.length === 0)
+    || (mode.value === 'slots' && slots.value.length === 0)
 )
 </script>
 
@@ -141,8 +141,12 @@ const isEmpty = computed(
         v-for="row in genericRows"
         :key="row.label"
       >
-        <dt class="capitalize text-muted">{{ row.label }}</dt>
-        <dd class="text-right font-medium tabular-nums">{{ row.value }}</dd>
+        <dt class="capitalize text-muted">
+          {{ row.label }}
+        </dt>
+        <dd class="text-right font-medium tabular-nums">
+          {{ row.value }}
+        </dd>
       </template>
     </dl>
     <div
@@ -150,7 +154,9 @@ const isEmpty = computed(
       :key="list.label"
       class="mt-2"
     >
-      <p class="mb-1 capitalize text-muted">{{ list.label }}</p>
+      <p class="mb-1 capitalize text-muted">
+        {{ list.label }}
+      </p>
       <ul class="space-y-0.5">
         <li
           v-for="(item, i) in list.items"

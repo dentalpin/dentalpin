@@ -39,12 +39,21 @@ function label(m: { body_text: string | null, subject: string | null, template_k
       <span class="font-medium">{{ t('notifications.conversation.title') }}</span>
     </template>
 
-    <USkeleton v-if="conv.loading.value" class="h-24 w-full" />
+    <USkeleton
+      v-if="conv.loading.value"
+      class="h-24 w-full"
+    />
     <div v-else>
-      <p v-if="!conv.messages.value.length" class="text-sm text-gray-500">
+      <p
+        v-if="!conv.messages.value.length"
+        class="text-sm text-gray-500"
+      >
         {{ t('notifications.conversation.empty') }}
       </p>
-      <ul v-else class="space-y-2 max-h-72 overflow-y-auto">
+      <ul
+        v-else
+        class="space-y-2 max-h-72 overflow-y-auto"
+      >
         <li
           v-for="m in conv.messages.value"
           :key="m.id"

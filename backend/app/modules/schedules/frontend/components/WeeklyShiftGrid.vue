@@ -95,7 +95,10 @@ function timeForInput(value: string | undefined): string {
             @click="removeShift(weekday - 1, idx)"
           />
         </div>
-        <div v-if="shiftsForDay(weekday - 1).length === 0" class="text-sm text-gray-400 italic">
+        <div
+          v-if="shiftsForDay(weekday - 1).length === 0"
+          class="text-sm text-gray-400 italic"
+        >
           {{ t('schedules.weekday.closed') }}
         </div>
         <UButton

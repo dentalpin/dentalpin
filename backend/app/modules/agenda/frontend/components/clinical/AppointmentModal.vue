@@ -492,7 +492,7 @@ async function handleSave() {
       const [fh, fm] = formData.startTime.split(':').map(Number)
       const formStart = (fh ?? 0) * 60 + (fm ?? 0)
       const formEnd = formStart + formData.duration
-      const conflict = availability.ranges.find(r => {
+      const conflict = availability.ranges.find((r) => {
         if (r.state === 'open') return false
         const sParts = parseIsoParts(r.start)
         const eParts = parseIsoParts(r.end)

@@ -6,14 +6,14 @@
  * data ready for the table / cards.
  */
 
-import type { ApiResponse, PaginatedResponse } from '~~/app/types'
+import type { PaginatedResponse } from '~~/app/types'
 
-export type PipelineTab =
-  | 'por_presupuestar'
-  | 'esperando_paciente'
-  | 'sin_cita'
-  | 'sin_proxima_cita'
-  | 'cerrados'
+export type PipelineTab
+  = | 'por_presupuestar'
+    | 'esperando_paciente'
+    | 'sin_cita'
+    | 'sin_proxima_cita'
+    | 'cerrados'
 
 export interface PipelinePatientBrief {
   id: string
@@ -132,6 +132,6 @@ export function usePipeline() {
     // Actions
     fetchPipeline,
     setTab,
-    refresh,
+    refresh
   }
 }

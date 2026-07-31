@@ -78,7 +78,10 @@ function minDurationLabel(value: number): string {
           : 'text-muted hover:bg-surface-muted/60'"
         @click="selectKind('professional')"
       >
-        <UIcon name="i-lucide-user-round" class="w-4 h-4 inline-block align-text-bottom mr-1" />
+        <UIcon
+          name="i-lucide-user-round"
+          class="w-4 h-4 inline-block align-text-bottom mr-1"
+        />
         {{ t('appointments.freeSlots.byProfessional', 'Profesional') }}
       </button>
       <button
@@ -89,7 +92,10 @@ function minDurationLabel(value: number): string {
           : 'text-muted hover:bg-surface-muted/60'"
         @click="selectKind('cabinet')"
       >
-        <UIcon name="i-lucide-door-open" class="w-4 h-4 inline-block align-text-bottom mr-1" />
+        <UIcon
+          name="i-lucide-door-open"
+          class="w-4 h-4 inline-block align-text-bottom mr-1"
+        />
         {{ t('appointments.freeSlots.byCabinet', 'Gabinete') }}
       </button>
     </div>
@@ -142,7 +148,10 @@ function minDurationLabel(value: number): string {
       <div
         class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-token-sm bg-[var(--color-primary-soft)]/50 text-[var(--color-primary-soft-text)]"
       >
-        <UIcon name="i-lucide-clock" class="w-3.5 h-3.5" />
+        <UIcon
+          name="i-lucide-clock"
+          class="w-3.5 h-3.5"
+        />
         <span class="tnum">
           {{ summary.totalFreeMin > 0
             ? formatDuration(summary.totalFreeMin)
@@ -156,7 +165,10 @@ function minDurationLabel(value: number): string {
         v-if="summary.nextFreeStart && summary.nextFreeDurationMin"
         class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-token-sm bg-surface-muted text-default"
       >
-        <UIcon name="i-lucide-arrow-right-circle" class="w-3.5 h-3.5" />
+        <UIcon
+          name="i-lucide-arrow-right-circle"
+          class="w-3.5 h-3.5"
+        />
         <span class="tnum">
           {{ t('appointments.freeSlots.nextFreeAt', 'Próximo {time}', {
             time: formatNextFreeTime(summary.nextFreeStart)
@@ -169,7 +181,10 @@ function minDurationLabel(value: number): string {
       <div
         class="shrink-0 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-token-sm bg-surface-muted text-muted"
       >
-        <UIcon name="i-lucide-list" class="w-3.5 h-3.5" />
+        <UIcon
+          name="i-lucide-list"
+          class="w-3.5 h-3.5"
+        />
         <span class="tnum">
           {{ t('appointments.freeSlots.gapsAtLeast', '{count} huecos ≥ {min} min', {
             count: summary.qualifyingGapsCount,

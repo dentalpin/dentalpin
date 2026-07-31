@@ -3,34 +3,34 @@ import type { Ref } from 'vue'
 // Mirror of the backend literal types — kept narrow so the call-list
 // UI stays type-safe even though the host has no shared types file
 // for the recalls module.
-export type RecallReason =
-  | 'hygiene'
-  | 'checkup'
-  | 'ortho_review'
-  | 'implant_review'
-  | 'post_op'
-  | 'treatment_followup'
-  | 'other'
+export type RecallReason
+  = | 'hygiene'
+    | 'checkup'
+    | 'ortho_review'
+    | 'implant_review'
+    | 'post_op'
+    | 'treatment_followup'
+    | 'other'
 
-export type RecallStatus =
-  | 'pending'
-  | 'contacted_no_answer'
-  | 'contacted_scheduled'
-  | 'contacted_declined'
-  | 'done'
-  | 'cancelled'
-  | 'needs_review'
+export type RecallStatus
+  = | 'pending'
+    | 'contacted_no_answer'
+    | 'contacted_scheduled'
+    | 'contacted_declined'
+    | 'done'
+    | 'cancelled'
+    | 'needs_review'
 
 export type RecallPriority = 'low' | 'normal' | 'high'
 
 export type RecallChannel = 'phone' | 'whatsapp' | 'sms' | 'email'
 
-export type RecallOutcome =
-  | 'no_answer'
-  | 'voicemail'
-  | 'scheduled'
-  | 'declined'
-  | 'wrong_number'
+export type RecallOutcome
+  = | 'no_answer'
+    | 'voicemail'
+    | 'scheduled'
+    | 'declined'
+    | 'wrong_number'
 
 export interface PatientBriefForRecall {
   id: string
@@ -56,7 +56,7 @@ export interface Recall {
   id: string
   clinic_id: string
   patient_id: string
-  due_month: string  // ISO date (day-1)
+  due_month: string // ISO date (day-1)
   due_date?: string | null
   reason: RecallReason
   reason_note?: string | null
@@ -78,7 +78,7 @@ export interface Recall {
 
 export interface RecallCreatePayload {
   patient_id: string
-  due_month: string  // YYYY-MM-01
+  due_month: string // YYYY-MM-01
   due_date?: string | null
   reason: RecallReason
   reason_note?: string | null
@@ -133,10 +133,10 @@ export interface RecallSuggestion {
 }
 
 interface ApiOk<T> { data: T }
-interface ApiPaged<T> { data: T[]; total: number; page: number; page_size: number }
+interface ApiPaged<T> { data: T[], total: number, page: number, page_size: number }
 
 export interface RecallListFilters {
-  month?: string  // ISO date (any day)
+  month?: string // ISO date (any day)
   reason?: RecallReason
   professional_id?: string
   status?: RecallStatus

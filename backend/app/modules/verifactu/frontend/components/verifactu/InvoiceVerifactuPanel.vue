@@ -32,10 +32,15 @@ const stateColor = computed(() => {
     </template>
     <div class="text-sm space-y-2">
       <div class="flex items-center gap-2">
-        <UBadge :color="stateColor" variant="subtle">
+        <UBadge
+          :color="stateColor"
+          variant="subtle"
+        >
           {{ t(`verifactu.recordState.${data.state ?? 'pending'}`) }}
         </UBadge>
-        <UBadge variant="subtle">{{ data.tipo_factura }}</UBadge>
+        <UBadge variant="subtle">
+          {{ data.tipo_factura }}
+        </UBadge>
       </div>
       <div v-if="data.csv">
         <span class="text-gray-500">{{ t('verifactu.panel.csv') }}:</span>

@@ -8,7 +8,7 @@ interface StreamHandlers {
   onError?: (message: string) => void
 }
 
-function parseFrame(frame: string): { event: string; data: Record<string, unknown> } | null {
+function parseFrame(frame: string): { event: string, data: Record<string, unknown> } | null {
   let event = 'message'
   let data = ''
   for (const line of frame.split('\n')) {
@@ -33,7 +33,7 @@ export function useCopilotStream() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${accessToken.value}`
+          'Authorization': `Bearer ${accessToken.value}`
         },
         body: JSON.stringify(body)
       })

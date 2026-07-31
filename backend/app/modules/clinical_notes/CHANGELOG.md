@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
 - i18n: extend the catalog label fallback chain to `es → en → fr → pt`.
 
 - i18n: add Portuguese locale (`pt.json`) with full UI coverage.

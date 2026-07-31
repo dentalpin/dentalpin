@@ -4,7 +4,7 @@ import type { BillingSummary } from '~~/app/types'
 
 defineProps<{ ctx?: unknown }>()
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 const { fetchSchedulingSummary, fetchBillingSummary } = useReports()
 
 const pending = ref(true)

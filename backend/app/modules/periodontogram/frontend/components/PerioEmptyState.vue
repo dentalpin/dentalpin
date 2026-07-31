@@ -23,7 +23,10 @@ const { t } = useI18n()
       <div
         class="flex h-14 w-14 items-center justify-center rounded-full bg-primary-50 text-primary-600 dark:bg-primary-950/40 dark:text-primary-300"
       >
-        <UIcon name="i-lucide-activity" class="text-2xl" />
+        <UIcon
+          name="i-lucide-activity"
+          class="text-2xl"
+        />
       </div>
       <h3 class="text-lg font-semibold text-default">
         {{ t('periodontogram.empty.title') }}

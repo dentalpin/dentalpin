@@ -127,7 +127,7 @@ function startEdit(entry: RecentNoteEntry) {
 }
 
 async function handleSubmit(
-  payload: { body: string; toothNumber: number | null; attachmentDocumentIds: string[] }
+  payload: { body: string, toothNumber: number | null, attachmentDocumentIds: string[] }
 ) {
   if (!patientId.value) return
   saving.value = true

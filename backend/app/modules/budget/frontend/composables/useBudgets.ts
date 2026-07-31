@@ -136,7 +136,7 @@ export function useBudgets() {
       total: b.total,
       created_at: b.created_at,
       patient: b.patient,
-      creator: b.creator,
+      creator: b.creator
     }
   }
 
@@ -281,7 +281,6 @@ export function useBudgets() {
     return response.data
   }
 
-
   async function duplicateBudget(id: string): Promise<BudgetDetail> {
     const response = await api.post<ApiResponse<BudgetDetail>>(
       `/api/v1/budget/budgets/${id}/duplicate`,
@@ -381,8 +380,8 @@ export function useBudgets() {
       )
       return response.data
     } catch (e: unknown) {
-      const status = (e as { statusCode?: number; status?: number })?.statusCode
-        ?? (e as { statusCode?: number; status?: number })?.status
+      const status = (e as { statusCode?: number, status?: number })?.statusCode
+        ?? (e as { statusCode?: number, status?: number })?.status
       if (status === 404) return null
       console.error('Failed to fetch budget signature:', e)
       return null

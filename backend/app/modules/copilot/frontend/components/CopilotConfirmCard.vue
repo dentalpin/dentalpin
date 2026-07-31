@@ -69,8 +69,12 @@ const rows = computed(() =>
         v-for="row in rows"
         :key="row.key"
       >
-        <dt class="capitalize text-muted">{{ row.label }}</dt>
-        <dd class="text-right font-medium">{{ row.value }}</dd>
+        <dt class="capitalize text-muted">
+          {{ row.label }}
+        </dt>
+        <dd class="text-right font-medium">
+          {{ row.value }}
+        </dd>
       </template>
     </dl>
 

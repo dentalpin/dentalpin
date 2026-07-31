@@ -22,21 +22,21 @@ interface Option {
 }
 
 const options = computed<Option[]>(() => [
-  { value: 'ok',      label: t('verifactu.filter.options.ok'),      icon: 'i-lucide-check' },
+  { value: 'ok', label: t('verifactu.filter.options.ok'), icon: 'i-lucide-check' },
   { value: 'warning', label: t('verifactu.filter.options.warning'), icon: 'i-lucide-alert-triangle' },
   { value: 'pending', label: t('verifactu.filter.options.pending'), icon: 'i-lucide-clock-3' },
-  { value: 'error',   label: t('verifactu.filter.options.error'),   icon: 'i-lucide-x' },
+  { value: 'error', label: t('verifactu.filter.options.error'), icon: 'i-lucide-x' }
 ])
 
 const selected = computed<Severity[]>({
   get: () => (props.ctx.severity ?? []) as Severity[],
-  set: (next) => props.ctx.onChange(next),
+  set: next => props.ctx.onChange(next)
 })
 
 const PROBLEM_SET: Severity[] = ['error', 'warning']
 const onlyProblems = computed(() =>
-  PROBLEM_SET.every((s) => selected.value.includes(s)) &&
-  selected.value.every((s) => PROBLEM_SET.includes(s))
+  PROBLEM_SET.every(s => selected.value.includes(s))
+  && selected.value.every(s => PROBLEM_SET.includes(s))
 )
 
 function toggleOnlyProblems() {

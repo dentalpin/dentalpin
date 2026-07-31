@@ -14,15 +14,18 @@ defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: []
-  cancel: []
+  'confirm': []
+  'cancel': []
 }>()
 
 const { t } = useI18n()
 </script>
 
 <template>
-  <UModal :open="open" @update:open="(v) => emit('update:open', v)">
+  <UModal
+    :open="open"
+    @update:open="(v) => emit('update:open', v)"
+  >
     <template #content>
       <UCard>
         <template #header>
@@ -33,9 +36,16 @@ const { t } = useI18n()
 
         <div class="space-y-4 text-sm">
           <p>{{ t('treatmentPlans.modals.confirm.description') }}</p>
-          <div v-if="planNumber || itemCount || totalEstimated" class="rounded-md bg-[var(--ui-bg-elevated)] p-3 space-y-1">
-            <div v-if="planNumber"><strong>{{ planNumber }}</strong></div>
-            <div v-if="itemCount !== undefined">{{ t('treatmentPlans.itemCount', { count: itemCount }, itemCount) }}</div>
+          <div
+            v-if="planNumber || itemCount || totalEstimated"
+            class="rounded-md bg-[var(--ui-bg-elevated)] p-3 space-y-1"
+          >
+            <div v-if="planNumber">
+              <strong>{{ planNumber }}</strong>
+            </div>
+            <div v-if="itemCount !== undefined">
+              {{ t('treatmentPlans.itemCount', { count: itemCount }, itemCount) }}
+            </div>
             <div v-if="totalEstimated !== null && totalEstimated !== undefined">
               {{ totalEstimated.toFixed(2) }} €
             </div>
@@ -44,10 +54,19 @@ const { t } = useI18n()
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton color="neutral" variant="ghost" :disabled="loading" @click="emit('cancel')">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :disabled="loading"
+              @click="emit('cancel')"
+            >
               {{ t('common.cancel') }}
             </UButton>
-            <UButton color="primary" :loading="loading" @click="emit('confirm')">
+            <UButton
+              color="primary"
+              :loading="loading"
+              @click="emit('confirm')"
+            >
               {{ t('treatmentPlans.modals.confirm.submit') }}
             </UButton>
           </div>

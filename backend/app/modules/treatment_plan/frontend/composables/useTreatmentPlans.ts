@@ -366,7 +366,7 @@ export function useTreatmentPlans() {
     planId: string,
     itemId: string,
     sessionId: string,
-    payload: { notes?: string; completed_without_appointment?: boolean } = {}
+    payload: { notes?: string, completed_without_appointment?: boolean } = {}
   ) {
     loading.value = true
     try {
@@ -546,7 +546,7 @@ export function useTreatmentPlans() {
 
   async function closePlan(
     planId: string,
-    payload: { closure_reason: string; closure_note?: string }
+    payload: { closure_reason: string, closure_note?: string }
   ) {
     loading.value = true
     try {
@@ -584,7 +584,7 @@ export function useTreatmentPlans() {
 
   async function logContact(
     planId: string,
-    payload: { channel: string; note?: string }
+    payload: { channel: string, note?: string }
   ) {
     try {
       await api.post(

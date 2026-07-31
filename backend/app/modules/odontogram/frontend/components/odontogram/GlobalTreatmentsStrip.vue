@@ -25,7 +25,7 @@ const emit = defineEmits<{
 const { t, locale } = useI18n()
 
 const globals = computed(() =>
-  props.treatments.filter(t => t.scope === 'global_mouth' || t.scope === 'global_arch'),
+  props.treatments.filter(t => t.scope === 'global_mouth' || t.scope === 'global_arch')
 )
 
 function labelFor(tr: Treatment): string {

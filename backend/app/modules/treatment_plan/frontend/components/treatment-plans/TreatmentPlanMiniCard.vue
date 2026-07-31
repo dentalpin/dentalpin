@@ -13,7 +13,7 @@ const emit = defineEmits<{
   'generate-budget': [plan: TreatmentPlan]
 }>()
 
-const { t, locale } = useI18n()
+const { t } = useI18n()
 
 // Progress calculations
 const totalCount = computed(() => props.plan.item_count || 0)

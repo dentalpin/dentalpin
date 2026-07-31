@@ -24,9 +24,9 @@ const patient = computed(() => props.recall.patient ?? null)
 
 const callable = computed(
   () =>
-    !!patient.value?.phone &&
-    !patient.value?.do_not_contact &&
-    patient.value?.status !== 'archived'
+    !!patient.value?.phone
+    && !patient.value?.do_not_contact
+    && patient.value?.status !== 'archived'
 )
 
 const phoneHref = computed(() =>

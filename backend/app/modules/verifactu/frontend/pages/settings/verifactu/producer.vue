@@ -31,7 +31,7 @@ const form = ref<ProducerInfoUpdate>({
   producer_name: '',
   producer_id_sistema: 'DP',
   producer_version: '0.1.0',
-  sign_declaracion: false,
+  sign_declaracion: false
 })
 
 async function refresh() {
@@ -45,7 +45,7 @@ async function refresh() {
       producer_name: s.producer_name ?? d.name,
       producer_id_sistema: s.producer_id_sistema ?? d.id_sistema,
       producer_version: s.producer_version ?? d.version,
-      sign_declaracion: false,
+      sign_declaracion: false
     }
   } finally {
     loading.value = false
@@ -60,18 +60,18 @@ const signedAtFormatted = computed(() => {
 })
 
 const formFilled = computed(() =>
-  form.value.producer_nif.trim().length >= 8 &&
-  form.value.producer_name.trim().length >= 2 &&
-  form.value.producer_id_sistema.trim().length >= 1 &&
-  form.value.producer_version.trim().length >= 1,
+  form.value.producer_nif.trim().length >= 8
+  && form.value.producer_name.trim().length >= 2
+  && form.value.producer_id_sistema.trim().length >= 1
+  && form.value.producer_version.trim().length >= 1
 )
 
 const canSaveDraft = computed(() =>
-  canManage.value && formFilled.value && !alreadySigned.value && !saving.value,
+  canManage.value && formFilled.value && !alreadySigned.value && !saving.value
 )
 
 const canSign = computed(() =>
-  canManage.value && formFilled.value && acceptedDeclaration.value && !alreadySigned.value && !saving.value,
+  canManage.value && formFilled.value && acceptedDeclaration.value && !alreadySigned.value && !saving.value
 )
 
 async function saveDraft() {
@@ -191,9 +191,16 @@ onMounted(refresh)
 <template>
   <div class="p-4 sm:p-6 max-w-3xl mx-auto space-y-6">
     <header>
-      <NuxtLink to="/settings/verifactu" class="text-sm text-gray-500">← Verifactu</NuxtLink>
-      <h1 class="text-2xl font-semibold mt-2">{{ t('verifactu.producer.title') }}</h1>
-      <p class="text-sm text-gray-500">{{ t('verifactu.producer.subtitle') }}</p>
+      <NuxtLink
+        to="/settings/verifactu"
+        class="text-sm text-gray-500"
+      >← Verifactu</NuxtLink>
+      <h1 class="text-2xl font-semibold mt-2">
+        {{ t('verifactu.producer.title') }}
+      </h1>
+      <p class="text-sm text-gray-500">
+        {{ t('verifactu.producer.subtitle') }}
+      </p>
     </header>
 
     <!-- 3-step process explainer. Always visible so the user has the
@@ -215,7 +222,10 @@ onMounted(refresh)
       </template>
     </UAlert>
 
-    <USkeleton v-if="loading" class="h-64 w-full" />
+    <USkeleton
+      v-if="loading"
+      class="h-64 w-full"
+    />
 
     <template v-else>
       <!-- ─── STEP 1 — Producer identity ─────────────────────────── -->
@@ -223,7 +233,9 @@ onMounted(refresh)
         <template #header>
           <div class="flex items-center gap-3">
             <span class="flex items-center justify-center w-7 h-7 rounded-full bg-primary-100 text-primary-700 font-semibold text-sm">1</span>
-            <h2 class="font-semibold">{{ t('verifactu.producer.step1.title') }}</h2>
+            <h2 class="font-semibold">
+              {{ t('verifactu.producer.step1.title') }}
+            </h2>
           </div>
         </template>
 
@@ -254,19 +266,49 @@ onMounted(refresh)
           </template>
         </UAlert>
 
-        <form class="space-y-4" @submit.prevent="saveDraft">
-          <UFormField :label="t('verifactu.producer.fields.name')" :hint="t('verifactu.producer.fields.nameHint')">
-            <UInput v-model="form.producer_name" :placeholder="defaults?.name" :disabled="alreadySigned" />
+        <form
+          class="space-y-4"
+          @submit.prevent="saveDraft"
+        >
+          <UFormField
+            :label="t('verifactu.producer.fields.name')"
+            :hint="t('verifactu.producer.fields.nameHint')"
+          >
+            <UInput
+              v-model="form.producer_name"
+              :placeholder="defaults?.name"
+              :disabled="alreadySigned"
+            />
           </UFormField>
-          <UFormField :label="t('verifactu.producer.fields.nif')" :hint="t('verifactu.producer.fields.nifHint')">
-            <UInput v-model="form.producer_nif" :placeholder="defaults?.nif" :disabled="alreadySigned" />
+          <UFormField
+            :label="t('verifactu.producer.fields.nif')"
+            :hint="t('verifactu.producer.fields.nifHint')"
+          >
+            <UInput
+              v-model="form.producer_nif"
+              :placeholder="defaults?.nif"
+              :disabled="alreadySigned"
+            />
           </UFormField>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <UFormField :label="t('verifactu.producer.fields.idSistema')" :hint="t('verifactu.producer.fields.idSistemaHint')">
-              <UInput v-model="form.producer_id_sistema" maxlength="2" :disabled="alreadySigned" />
+            <UFormField
+              :label="t('verifactu.producer.fields.idSistema')"
+              :hint="t('verifactu.producer.fields.idSistemaHint')"
+            >
+              <UInput
+                v-model="form.producer_id_sistema"
+                maxlength="2"
+                :disabled="alreadySigned"
+              />
             </UFormField>
-            <UFormField :label="t('verifactu.producer.fields.version')" :hint="t('verifactu.producer.fields.versionHint')">
-              <UInput v-model="form.producer_version" :disabled="alreadySigned" />
+            <UFormField
+              :label="t('verifactu.producer.fields.version')"
+              :hint="t('verifactu.producer.fields.versionHint')"
+            >
+              <UInput
+                v-model="form.producer_version"
+                :disabled="alreadySigned"
+              />
             </UFormField>
           </div>
 
@@ -288,7 +330,9 @@ onMounted(refresh)
           <div class="flex items-center justify-between gap-3 flex-wrap">
             <div class="flex items-center gap-3">
               <span class="flex items-center justify-center w-7 h-7 rounded-full bg-primary-100 text-primary-700 font-semibold text-sm">2</span>
-              <h2 class="font-semibold">{{ t('verifactu.producer.step2.title') }}</h2>
+              <h2 class="font-semibold">
+                {{ t('verifactu.producer.step2.title') }}
+              </h2>
             </div>
             <UBadge
               :color="alreadySigned ? 'green' : 'amber'"
@@ -308,17 +352,23 @@ onMounted(refresh)
              interpolated. Lets the user verify exactly what they're
              about to sign. Same content as the downloadable PDF. -->
         <div class="border border-gray-200 dark:border-gray-700 rounded-md p-4 bg-gray-50 dark:bg-gray-900 text-sm leading-relaxed max-h-80 overflow-y-auto">
-          <p class="font-semibold mb-2">{{ t('verifactu.producer.declaration.heading') }}</p>
-          <p class="text-xs text-gray-500 mb-3">{{ t('verifactu.producer.declaration.legalRef') }}</p>
+          <p class="font-semibold mb-2">
+            {{ t('verifactu.producer.declaration.heading') }}
+          </p>
+          <p class="text-xs text-gray-500 mb-3">
+            {{ t('verifactu.producer.declaration.legalRef') }}
+          </p>
 
-          <p class="mb-3">{{ t('verifactu.producer.declaration.preamble') }}</p>
+          <p class="mb-3">
+            {{ t('verifactu.producer.declaration.preamble') }}
+          </p>
 
           <p class="mb-3">
             {{ t('verifactu.producer.declaration.identity', {
               name: form.producer_name || '—',
               nif: form.producer_nif || '—',
               idSistema: form.producer_id_sistema || '—',
-              version: form.producer_version || '—',
+              version: form.producer_version || '—'
             }) }}
           </p>
 
@@ -331,13 +381,21 @@ onMounted(refresh)
         </div>
 
         <!-- Pre-sign: checkbox + sign button. -->
-        <div v-if="!alreadySigned" class="mt-5 space-y-4">
+        <div
+          v-if="!alreadySigned"
+          class="mt-5 space-y-4"
+        >
           <UCheckbox
             v-model="acceptedDeclaration"
             :label="t('verifactu.producer.readAndAccept')"
           />
 
-          <UAlert v-if="error" color="red" variant="soft" :title="error" />
+          <UAlert
+            v-if="error"
+            color="red"
+            variant="soft"
+            :title="error"
+          />
 
           <div class="flex flex-wrap gap-2">
             <UButton
@@ -355,9 +413,15 @@ onMounted(refresh)
         </div>
 
         <!-- Post-sign: confirmation + sealed notice. -->
-        <div v-else class="mt-5">
+        <div
+          v-else
+          class="mt-5"
+        >
           <div class="flex items-start gap-3 p-4 rounded-md bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-900">
-            <UIcon name="i-lucide-shield-check" class="text-green-700 text-xl mt-0.5" />
+            <UIcon
+              name="i-lucide-shield-check"
+              class="text-green-700 text-xl mt-0.5"
+            />
             <div class="text-sm">
               <p class="font-medium text-green-900 dark:text-green-200">
                 {{ t('verifactu.producer.signedAt', { at: signedAtFormatted }) }}
@@ -375,7 +439,9 @@ onMounted(refresh)
         <template #header>
           <div class="flex items-center gap-3">
             <span class="flex items-center justify-center w-7 h-7 rounded-full bg-primary-100 text-primary-700 font-semibold text-sm">3</span>
-            <h2 class="font-semibold">{{ t('verifactu.producer.step3.title') }}</h2>
+            <h2 class="font-semibold">
+              {{ t('verifactu.producer.step3.title') }}
+            </h2>
           </div>
         </template>
 
@@ -392,7 +458,10 @@ onMounted(refresh)
           {{ t('verifactu.producer.downloadPdf') }}
         </UButton>
 
-        <p v-if="!alreadySigned" class="text-xs text-gray-500 mt-2">
+        <p
+          v-if="!alreadySigned"
+          class="text-xs text-gray-500 mt-2"
+        >
           {{ t('verifactu.producer.step3.lockedHint') }}
         </p>
       </UCard>
@@ -404,11 +473,18 @@ onMounted(refresh)
         <UCard>
           <template #header>
             <div class="flex items-center gap-2">
-              <UIcon name="i-lucide-alert-triangle" class="text-amber-600 text-xl" />
-              <h3 class="font-semibold">{{ t('verifactu.producer.revokeTitle') }}</h3>
+              <UIcon
+                name="i-lucide-alert-triangle"
+                class="text-amber-600 text-xl"
+              />
+              <h3 class="font-semibold">
+                {{ t('verifactu.producer.revokeTitle') }}
+              </h3>
             </div>
           </template>
-          <p class="text-sm">{{ t('verifactu.producer.revokeBody') }}</p>
+          <p class="text-sm">
+            {{ t('verifactu.producer.revokeBody') }}
+          </p>
           <ul class="text-sm list-disc pl-5 mt-3 space-y-1 text-gray-600 dark:text-gray-300">
             <li>{{ t('verifactu.producer.revokeBullet1') }}</li>
             <li>{{ t('verifactu.producer.revokeBullet2') }}</li>
@@ -416,10 +492,18 @@ onMounted(refresh)
           </ul>
           <template #footer>
             <div class="flex gap-2 justify-end">
-              <UButton variant="ghost" @click="showRevokeConfirm = false">
+              <UButton
+                variant="ghost"
+                @click="showRevokeConfirm = false"
+              >
                 {{ t('common.cancel') }}
               </UButton>
-              <UButton color="amber" :loading="revoking" icon="i-lucide-unlock" @click="revokeNow">
+              <UButton
+                color="amber"
+                :loading="revoking"
+                icon="i-lucide-unlock"
+                @click="revokeNow"
+              >
                 {{ t('verifactu.producer.revokeConfirm') }}
               </UButton>
             </div>

@@ -20,7 +20,7 @@ export function useCommunicationsSettings() {
     loading.value = true
     try {
       const response = await api.get<ApiResponse<CommunicationsSettings>>(
-        '/api/v1/auth/clinic/settings/communications',
+        '/api/v1/auth/clinic/settings/communications'
       )
       settings.value = response.data
     } finally {
@@ -33,12 +33,12 @@ export function useCommunicationsSettings() {
     try {
       const response = await api.patch<ApiResponse<CommunicationsSettings>>(
         '/api/v1/auth/clinic/settings/communications',
-        payload,
+        payload
       )
       settings.value = response.data
       toast.add({
         title: t('notifications.communications.language.saved'),
-        color: 'success',
+        color: 'success'
       })
       return true
     } catch (e) {

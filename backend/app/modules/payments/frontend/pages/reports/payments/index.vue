@@ -153,7 +153,7 @@ const agingTotal = computed(() => {
 
 const agingMaxBucket = computed(() => {
   if (!agingData.value) return 0
-  return Math.max(1, ...agingData.value.buckets.map((b) => Number(b.total || 0)))
+  return Math.max(1, ...agingData.value.buckets.map(b => Number(b.total || 0)))
 })
 
 function agingToneFor(label: string): 'success' | 'info' | 'warning' | 'danger' {
@@ -163,7 +163,6 @@ function agingToneFor(label: string): 'success' | 'info' | 'warning' | 'danger' 
   if (label.startsWith('61')) return 'warning'
   return 'danger'
 }
-
 
 // --- Method palette -----------------------------------------------------
 //
@@ -178,7 +177,7 @@ const METHOD_TONE: Record<string, 'primary' | 'success' | 'info' | 'warning' | '
 }
 
 const methodSlices = computed(() =>
-  methodsData.value.map((m) => ({
+  methodsData.value.map(m => ({
     key: m.method,
     label: t(`payments.methods.${m.method}`),
     value: Number(m.total || 0),
@@ -192,33 +191,33 @@ const methodSlices = computed(() =>
 const topProfessionals = computed(() => profData.value.slice(0, 8))
 
 const professionalMax = computed(() =>
-  Math.max(1, ...topProfessionals.value.map((p) => Number(p.total_earned || 0)))
+  Math.max(1, ...topProfessionals.value.map(p => Number(p.total_earned || 0)))
 )
 
 const refundMax = computed(() => {
   if (!refundsData.value) return 0
-  return Math.max(1, ...refundsData.value.by_reason.map((r) => Number(r.total || 0)))
+  return Math.max(1, ...refundsData.value.by_reason.map(r => Number(r.total || 0)))
 })
 
 // --- Trends derivation --------------------------------------------------
 
 const trendSeries = computed(() => {
   if (!trendsData.value) return []
-  return trendsData.value.points.map((p) => ({ x: p.bucket_start, y: Number(p.net || 0) }))
+  return trendsData.value.points.map(p => ({ x: p.bucket_start, y: Number(p.net || 0) }))
 })
 
 const trendRefundsSeries = computed(() => {
   if (!trendsData.value) return []
-  return trendsData.value.points.map((p) => ({ x: p.bucket_start, y: Number(p.refunded || 0) }))
+  return trendsData.value.points.map(p => ({ x: p.bucket_start, y: Number(p.refunded || 0) }))
 })
 
-const heroSparkline = computed(() => trendSeries.value.map((p) => p.y))
+const heroSparkline = computed(() => trendSeries.value.map(p => p.y))
 
 function formatBucketLabel(iso: string): string {
   const d = new Date(iso)
   if (Number.isNaN(d.getTime())) return iso
-  const opts: Intl.DateTimeFormatOptions =
-    granularity.value === 'day'
+  const opts: Intl.DateTimeFormatOptions
+    = granularity.value === 'day'
       ? { day: '2-digit', month: 'short' }
       : granularity.value === 'week'
         ? { day: '2-digit', month: 'short' }
@@ -264,11 +263,11 @@ const allReportsEmpty = computed(() => {
   if (loadingPrimary.value) return false
   if (!summaryData.value) return true
   return (
-    Number(summaryData.value.total_collected || 0) === 0 &&
-    Number(summaryData.value.total_refunded || 0) === 0 &&
-    !methodsData.value.length &&
-    !profData.value.length &&
-    (!refundsData.value || !refundsData.value.by_reason.length)
+    Number(summaryData.value.total_collected || 0) === 0
+    && Number(summaryData.value.total_refunded || 0) === 0
+    && !methodsData.value.length
+    && !profData.value.length
+    && (!refundsData.value || !refundsData.value.by_reason.length)
   )
 })
 </script>
@@ -392,7 +391,9 @@ const allReportsEmpty = computed(() => {
               :aria-label="t('payments.reports.drilldown.viewPatients')"
               @click="goToPatientsWithDebt()"
             >
-              <div class="text-caption text-muted">{{ t('payments.reports.bucket', { range: b.label }) }}</div>
+              <div class="text-caption text-muted">
+                {{ t('payments.reports.bucket', { range: b.label }) }}
+              </div>
               <div class="text-ui font-medium text-default tnum mt-0.5">
                 {{ formatMoney(b.total) }}
               </div>
@@ -449,7 +450,9 @@ const allReportsEmpty = computed(() => {
           class="text-left rounded-token-md bg-surface border border-default p-3 hover:border-[var(--color-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition-colors"
           @click="goToPaymentsList()"
         >
-          <div class="text-caption text-muted">{{ t('payments.reports.collected') }}</div>
+          <div class="text-caption text-muted">
+            {{ t('payments.reports.collected') }}
+          </div>
           <Money
             :value="summaryData?.total_collected"
             strong
@@ -469,7 +472,9 @@ const allReportsEmpty = computed(() => {
           class="text-left rounded-token-md bg-surface border border-default p-3 hover:border-[var(--color-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition-colors"
           @click="goToPaymentsList({ has_refunds: 'true' })"
         >
-          <div class="text-caption text-muted">{{ t('payments.reports.refunded') }}</div>
+          <div class="text-caption text-muted">
+            {{ t('payments.reports.refunded') }}
+          </div>
           <Money
             :value="summaryData?.total_refunded"
             strong
@@ -485,7 +490,9 @@ const allReportsEmpty = computed(() => {
         </button>
 
         <div class="rounded-token-md bg-surface border border-default p-3">
-          <div class="text-caption text-muted">{{ t('payments.reports.patientCredit') }}</div>
+          <div class="text-caption text-muted">
+            {{ t('payments.reports.patientCredit') }}
+          </div>
           <Money
             :value="summaryData?.patient_credit_total"
             strong
@@ -497,7 +504,9 @@ const allReportsEmpty = computed(() => {
         </div>
 
         <div class="rounded-token-md bg-surface border border-default p-3">
-          <div class="text-caption text-muted">{{ t('payments.reports.refundRatio') }}</div>
+          <div class="text-caption text-muted">
+            {{ t('payments.reports.refundRatio') }}
+          </div>
           <div class="text-h2 font-semibold text-default tnum">
             {{ ((summaryData?.refund_ratio ?? 0) * 100).toFixed(1) }}%
           </div>

@@ -10,7 +10,7 @@ const props = defineProps<{
 const open = defineModel<boolean>('open', { default: false })
 
 const emit = defineEmits<{
-  'saved': [] // Emitted on both add and update
+  saved: [] // Emitted on both add and update
 }>()
 
 const { t, locale } = useI18n()

@@ -26,7 +26,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  updated: []
+  'updated': []
   /**
    * Mirrors PlanTreatmentList's ``item-hover`` so the host can pulse
    * the matching tooth/arch on the odontogram when the user hovers a
@@ -232,8 +232,8 @@ function handleEntryLeave() {
 
 function entryTreatmentName(entry: ClinicalNoteEntry): string | null {
   if (entry.source === 'plan') return null
-  const item =
-    entry.source === 'treatment'
+  const item
+    = entry.source === 'treatment'
       ? itemByTreatmentId.value.get(entry.owner_id)
       : entry.plan_item_id
         ? itemByPlanItemId.value.get(entry.plan_item_id)

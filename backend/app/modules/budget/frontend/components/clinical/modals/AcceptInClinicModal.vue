@@ -11,8 +11,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: [payload: { signer_name: string; signature_data?: { png?: string } }]
-  cancel: []
+  'confirm': [payload: { signer_name: string, signature_data?: { png?: string } }]
+  'cancel': []
 }>()
 
 const { t } = useI18n()
@@ -70,8 +70,8 @@ function clearCanvas() {
 
 function submit() {
   if (!signerName.value.trim()) return
-  const payload: { signer_name: string; signature_data?: { png?: string } } = {
-    signer_name: signerName.value.trim(),
+  const payload: { signer_name: string, signature_data?: { png?: string } } = {
+    signer_name: signerName.value.trim()
   }
   if (signaturePng.value) {
     payload.signature_data = { png: signaturePng.value }
@@ -94,7 +94,10 @@ watch(
 </script>
 
 <template>
-  <UModal :open="open" @update:open="(v) => emit('update:open', v)">
+  <UModal
+    :open="open"
+    @update:open="(v) => emit('update:open', v)"
+  >
     <template #content>
       <UCard>
         <template #header>
@@ -105,8 +108,14 @@ watch(
 
         <div class="space-y-4 text-sm">
           <p>{{ t('budget.modals.acceptInClinic.description') }}</p>
-          <UFormField :label="t('budget.modals.acceptInClinic.signerLabel')" required>
-            <UInput v-model="signerName" :placeholder="t('budget.modals.acceptInClinic.signerLabel')" />
+          <UFormField
+            :label="t('budget.modals.acceptInClinic.signerLabel')"
+            required
+          >
+            <UInput
+              v-model="signerName"
+              :placeholder="t('budget.modals.acceptInClinic.signerLabel')"
+            />
           </UFormField>
 
           <div>
@@ -125,7 +134,13 @@ watch(
                 @pointerleave="endDraw"
               />
             </div>
-            <UButton color="neutral" variant="ghost" size="xs" class="mt-2" @click="clearCanvas">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              size="xs"
+              class="mt-2"
+              @click="clearCanvas"
+            >
               {{ t('common.clear') }}
             </UButton>
           </div>
@@ -133,7 +148,12 @@ watch(
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton color="neutral" variant="ghost" :disabled="loading" @click="emit('cancel')">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :disabled="loading"
+              @click="emit('cancel')"
+            >
               {{ t('common.cancel') }}
             </UButton>
             <UButton

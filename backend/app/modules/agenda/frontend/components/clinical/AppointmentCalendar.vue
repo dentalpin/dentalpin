@@ -815,7 +815,10 @@ const allAppointmentsWithDayIndex = computed(() => {
                       @click.stop
                       @mousedown.stop
                     >
-                      <AppointmentQuickActions :appointment="appointment" dense />
+                      <AppointmentQuickActions
+                        :appointment="appointment"
+                        dense
+                      />
                     </div>
                     <div class="flex items-center gap-1 min-h-[18px] pr-5 pl-5">
                       <UIcon

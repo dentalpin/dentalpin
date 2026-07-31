@@ -54,6 +54,6 @@ export function useBudgetSettings() {
     loading,
     saving,
     fetch,
-    update,
+    update
   }
 }

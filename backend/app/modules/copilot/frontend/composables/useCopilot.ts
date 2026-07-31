@@ -85,14 +85,14 @@ export function useCopilot() {
     const rows = (key: string): Record<string, unknown>[] =>
       Array.isArray(r[key]) ? (r[key] as Record<string, unknown>[]) : []
 
-    if (short === 'search_patients') rows('patients').forEach((p) => put(p.id, p.full_name))
+    if (short === 'search_patients') rows('patients').forEach(p => put(p.id, p.full_name))
     else if (short === 'get_patient') put(r.id, r.full_name)
     else if (short === 'get_day_overview')
-      rows('appointments').forEach((a) => put(a.patient_id, a.patient_name))
+      rows('appointments').forEach(a => put(a.patient_id, a.patient_name))
     else if (short === 'get_appointment') put(r.patient_id, r.patient_name)
     else if (short === 'list_professionals')
-      rows('professionals').forEach((p) => put(p.id, p.professional_name))
-    else if (short === 'list_cabinets') rows('cabinets').forEach((c) => put(c.id, c.name))
+      rows('professionals').forEach(p => put(p.id, p.professional_name))
+    else if (short === 'list_cabinets') rows('cabinets').forEach(c => put(c.id, c.name))
   }
 
   function lastStreamingAssistant(): TextUiMessage | null {
@@ -153,7 +153,7 @@ export function useCopilot() {
     await stream(
       `/api/v1/copilot/sessions/${conversationId.value}/messages`,
       { content: text },
-      { onEvent: handle, onError: (m) => handle('error', { detail: m }) }
+      { onEvent: handle, onError: m => handle('error', { detail: m }) }
     )
     busy.value = false
     phase.value = null
@@ -170,7 +170,7 @@ export function useCopilot() {
     await stream(
       `/api/v1/copilot/sessions/${conversationId.value}/confirmations/${callId}`,
       { decision },
-      { onEvent: handle, onError: (m) => handle('error', { detail: m }) }
+      { onEvent: handle, onError: m => handle('error', { detail: m }) }
     )
     busy.value = false
     phase.value = null

@@ -305,9 +305,9 @@ const generalHasError = computed(() =>
 )
 const pricingHasError = computed(() =>
   sessionsEnabled.value && (
-    sessions.value.length === 0 ||
-    sessions.value.some(s => !s.label || s.default_price < 0) ||
-    !sessionsSumMatches.value
+    sessions.value.length === 0
+    || sessions.value.some(s => !s.label || s.default_price < 0)
+    || !sessionsSumMatches.value
   )
 )
 

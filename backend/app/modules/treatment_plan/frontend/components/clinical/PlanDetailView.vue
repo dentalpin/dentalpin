@@ -51,7 +51,7 @@ const {
   reopenPlan,
   closePlan,
   reactivatePlan,
-  logContact,
+  logContact
 } = useTreatmentPlans()
 
 // ============================================================================
@@ -75,7 +75,7 @@ const planSummary = computed(() => {
   return {
     number: props.plan.plan_number,
     count: props.plan.items.length,
-    total,
+    total
   }
 })
 
@@ -111,7 +111,7 @@ async function onReopenPlan() {
   }
 }
 
-async function onClosePlanSubmit(payload: { closure_reason: string; closure_note?: string }) {
+async function onClosePlanSubmit(payload: { closure_reason: string, closure_note?: string }) {
   transitioning.value = true
   try {
     const result = await closePlan(props.plan.id, payload)
@@ -138,7 +138,7 @@ async function onReactivatePlan() {
   }
 }
 
-async function onLogContact(payload: { channel: string; note?: string }) {
+async function onLogContact(payload: { channel: string, note?: string }) {
   transitioning.value = true
   try {
     const ok = await logContact(props.plan.id, payload)
@@ -319,7 +319,7 @@ const steps = computed<Step[]>(() => {
       key: 'plan',
       label: t('clinical.plans.steps.plan'),
       icon: 'i-lucide-clipboard-list',
-      state: isDraft ? 'current' : 'complete',
+      state: isDraft ? 'current' : 'complete'
     },
     {
       key: 'confirm',
@@ -327,7 +327,7 @@ const steps = computed<Step[]>(() => {
       icon: 'i-lucide-check-circle-2',
       state: isDraft
         ? 'upcoming'
-        : (isPending ? 'current' : 'complete'),
+        : (isPending ? 'current' : 'complete')
     },
     {
       key: 'inProgress',
@@ -335,8 +335,8 @@ const steps = computed<Step[]>(() => {
       icon: 'i-lucide-stethoscope',
       state: isActive
         ? 'current'
-        : (isCompleted ? 'complete' : 'upcoming'),
-    },
+        : (isCompleted ? 'complete' : 'upcoming')
+    }
   ]
 })
 
@@ -767,7 +767,6 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
       @confirm="onLogContact"
       @cancel="showContactLogModal = false"
     />
-
   </div>
 </template>
 
@@ -981,5 +980,4 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
   font-size: 12px;
   opacity: 0.85;
 }
-
 </style>

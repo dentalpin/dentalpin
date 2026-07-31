@@ -23,8 +23,8 @@ export default defineNuxtPlugin(() => {
       'comunicaciones',
       'communications',
       'patient',
-      'paciente',
+      'paciente'
     ],
-    order: 10,
+    order: 10
   })
 })

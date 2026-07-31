@@ -55,7 +55,7 @@ async function copyUrl() {
   toast.add({
     title: t('budget.publicLink.copied'),
     color: 'success',
-    icon: 'i-lucide-check-circle-2',
+    icon: 'i-lucide-check-circle-2'
   })
   if (copyResetTimer) clearTimeout(copyResetTimer)
   copyResetTimer = setTimeout(() => {
@@ -83,21 +83,33 @@ const statusLabel = computed(() => {
   <UCard class="public-link-card">
     <div class="flex items-start gap-3">
       <div class="icon-wrap">
-        <UIcon name="i-lucide-link-2" class="w-5 h-5" />
+        <UIcon
+          name="i-lucide-link-2"
+          class="w-5 h-5"
+        />
       </div>
       <div class="min-w-0 flex-1 space-y-3">
         <div class="flex items-center gap-2 flex-wrap">
           <h2 class="text-base font-semibold">
             {{ t('budget.publicLink.title') }}
           </h2>
-          <UBadge color="neutral" variant="soft" size="xs">{{ statusLabel }}</UBadge>
+          <UBadge
+            color="neutral"
+            variant="soft"
+            size="xs"
+          >
+            {{ statusLabel }}
+          </UBadge>
         </div>
         <p class="text-sm text-[var(--ui-text-muted)]">
           {{ t('budget.publicLink.help') }}
         </p>
 
         <div class="url-box">
-          <span class="url-text" :title="url">{{ url }}</span>
+          <span
+            class="url-text"
+            :title="url"
+          >{{ url }}</span>
           <UButton
             :color="copyState === 'copied' ? 'success' : 'primary'"
             variant="solid"

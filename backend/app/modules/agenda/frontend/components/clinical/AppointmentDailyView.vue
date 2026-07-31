@@ -415,7 +415,10 @@ const appointmentsByProfId = computed(() => {
     const profId = apt.professional_id
     if (!profId) continue
     let bucket = map.get(profId)
-    if (!bucket) { bucket = []; map.set(profId, bucket) }
+    if (!bucket) {
+      bucket = []
+      map.set(profId, bucket)
+    }
     bucket.push(apt)
   }
   return map
@@ -639,15 +642,6 @@ const appointmentsByProfIndex = computed(() => {
                 <div
                   v-for="appointment in (appointmentsByProfIndex.get(profIndex) ?? [])"
                   :key="appointment.id"
-                  v-memo="[
-                    appointment.id,
-                    appointment.start_time,
-                    appointment.end_time,
-                    appointment.status,
-                    dragState?.appointmentId === appointment.id,
-                    highlightedAppointmentId === appointment.id,
-                    prof.color
-                  ]"
                   class="group absolute rounded overflow-hidden pointer-events-auto select-none shadow-sm border-l-4"
                   :class="[
                     getStatusClass(appointment.status),
@@ -670,7 +664,10 @@ const appointmentsByProfIndex = computed(() => {
                       @click.stop
                       @mousedown.stop
                     >
-                      <AppointmentQuickActions :appointment="appointment" dense />
+                      <AppointmentQuickActions
+                        :appointment="appointment"
+                        dense
+                      />
                     </div>
                     <div class="flex items-center gap-1 min-h-[18px] pr-6">
                       <UIcon

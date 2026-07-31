@@ -12,8 +12,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  confirm: [payload: { code: string }]
-  cancel: []
+  'confirm': [payload: { code: string }]
+  'cancel': []
 }>()
 
 const { t } = useI18n()
@@ -38,7 +38,10 @@ watch(
 </script>
 
 <template>
-  <UModal :open="open" @update:open="(v) => emit('update:open', v)">
+  <UModal
+    :open="open"
+    @update:open="(v) => emit('update:open', v)"
+  >
     <template #content>
       <UCard>
         <template #header>
@@ -54,7 +57,10 @@ watch(
             :description="t('budget.modals.setPublicCode.description')"
             icon="i-lucide-shield-alert"
           />
-          <UFormField :label="t('budget.modals.setPublicCode.codeLabel')" required>
+          <UFormField
+            :label="t('budget.modals.setPublicCode.codeLabel')"
+            required
+          >
             <UInput
               v-model="code"
               type="text"
@@ -68,10 +74,20 @@ watch(
 
         <template #footer>
           <div class="flex justify-end gap-2">
-            <UButton color="neutral" variant="ghost" :disabled="loading" @click="emit('cancel')">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :disabled="loading"
+              @click="emit('cancel')"
+            >
               {{ t('common.cancel') }}
             </UButton>
-            <UButton color="primary" :loading="loading" :disabled="!isValid" @click="submit">
+            <UButton
+              color="primary"
+              :loading="loading"
+              :disabled="!isValid"
+              @click="submit"
+            >
               {{ t('budget.modals.setPublicCode.submit') }}
             </UButton>
           </div>

@@ -33,8 +33,8 @@ const complianceData = computed(() => invoice.value?.compliance_data ?? null)
 const es = computed(
   () =>
     ((complianceData.value as Record<string, unknown> | null)?.ES ?? null) as
-      | Record<string, string | number | null>
-      | null
+    | Record<string, string | number | null>
+    | null
 )
 
 // Live record state from the backend — overrides compliance_data when
@@ -57,7 +57,7 @@ async function fetchLiveRecord() {
         state: r.state,
         aeat_codigo_error: r.aeat_codigo_error,
         aeat_descripcion_error: r.aeat_descripcion_error,
-        id: r.id,
+        id: r.id
       }
     }
   } catch {
@@ -73,9 +73,9 @@ const state = computed(
 )
 const errorMessage = computed(
   () =>
-    liveRecord.value?.aeat_descripcion_error ??
-    (es.value?.error_message as string | undefined) ??
-    null
+    liveRecord.value?.aeat_descripcion_error
+    ?? (es.value?.error_message as string | undefined)
+    ?? null
 )
 
 const errorCode = computed(() => liveRecord.value?.aeat_codigo_error ?? null)
@@ -131,7 +131,7 @@ async function save() {
       billing_name: editName.value || null,
       billing_tax_id: editTaxId.value || null,
       billing_address: editAddress.value,
-      expected_updated_at: invoice.value.updated_at ?? null,
+      expected_updated_at: invoice.value.updated_at ?? null
     })
     toast?.add({ title: t('verifactu.billingParty.saved'), color: 'green' })
     editOpen.value = false
@@ -148,8 +148,8 @@ async function save() {
 }
 
 async function regenerate() {
-  const recordId =
-    liveRecord.value?.id ?? (es.value?.record_id as string | undefined)
+  const recordId
+    = liveRecord.value?.id ?? (es.value?.record_id as string | undefined)
   if (!recordId) return
   regenerating.value = true
   try {
@@ -179,12 +179,24 @@ function goToClinic() {
       :title="t('verifactu.invoiceBanner.rejectedTitle')"
     >
       <template #description>
-        <p class="mb-2">{{ errorMessage || t('verifactu.invoiceBanner.rejectedBody') }}</p>
+        <p class="mb-2">
+          {{ errorMessage || t('verifactu.invoiceBanner.rejectedBody') }}
+        </p>
         <div class="flex flex-wrap gap-2">
-          <UButton color="primary" size="sm" icon="i-lucide-user-pen" @click="openEdit">
+          <UButton
+            color="primary"
+            size="sm"
+            icon="i-lucide-user-pen"
+            @click="openEdit"
+          >
             {{ t('verifactu.queue.ctas.edit_billing_party') }}
           </UButton>
-          <UButton variant="soft" size="sm" icon="i-lucide-building-2" @click="goToClinic">
+          <UButton
+            variant="soft"
+            size="sm"
+            icon="i-lucide-building-2"
+            @click="goToClinic"
+          >
             {{ t('verifactu.queue.ctas.edit_clinic') }}
           </UButton>
           <UButton
@@ -208,8 +220,14 @@ function goToClinic() {
       :title="t('verifactu.invoiceBanner.pdfStaleTitle')"
     >
       <template #description>
-        <p class="mb-2">{{ t('verifactu.invoiceBanner.pdfStaleBody') }}</p>
-        <UButton :to="`/api/v1/billing/invoices/${invoice.id}/pdf`" target="_blank" size="sm">
+        <p class="mb-2">
+          {{ t('verifactu.invoiceBanner.pdfStaleBody') }}
+        </p>
+        <UButton
+          :to="`/api/v1/billing/invoices/${invoice.id}/pdf`"
+          target="_blank"
+          size="sm"
+        >
           {{ t('verifactu.invoiceBanner.downloadAgain') }}
         </UButton>
       </template>
@@ -217,26 +235,47 @@ function goToClinic() {
 
     <InvoiceVerifactuPanel :compliance-data="complianceData" />
 
-    <UModal v-model:open="editOpen" :title="t('verifactu.billingParty.modalTitle')">
+    <UModal
+      v-model:open="editOpen"
+      :title="t('verifactu.billingParty.modalTitle')"
+    >
       <template #body>
-        <p class="text-sm text-gray-600 mb-3">{{ t('verifactu.billingParty.intro') }}</p>
+        <p class="text-sm text-gray-600 mb-3">
+          {{ t('verifactu.billingParty.intro') }}
+        </p>
         <div class="space-y-3">
           <UFormField :label="t('verifactu.billingParty.fields.name')">
-            <UInput v-model="editName" class="w-full" />
+            <UInput
+              v-model="editName"
+              class="w-full"
+            />
           </UFormField>
           <UFormField
             :label="t('verifactu.billingParty.fields.taxId')"
             :hint="nifWarning || undefined"
             :color="nifWarning ? 'warning' : undefined"
           >
-            <UInput v-model="editTaxId" class="w-full" @blur="onNifBlur" />
+            <UInput
+              v-model="editTaxId"
+              class="w-full"
+              @blur="onNifBlur"
+            />
           </UFormField>
         </div>
       </template>
       <template #footer>
         <div class="flex justify-end gap-2 w-full">
-          <UButton variant="ghost" @click="editOpen = false">{{ t('actions.cancel') }}</UButton>
-          <UButton color="primary" :loading="saving" @click="save">
+          <UButton
+            variant="ghost"
+            @click="editOpen = false"
+          >
+            {{ t('actions.cancel') }}
+          </UButton>
+          <UButton
+            color="primary"
+            :loading="saving"
+            @click="save"
+          >
             {{ t('verifactu.billingParty.save') }}
           </UButton>
         </div>

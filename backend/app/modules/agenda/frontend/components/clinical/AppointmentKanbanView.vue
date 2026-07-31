@@ -136,13 +136,13 @@ function appointmentsForColumn(col: ColumnDef): Appointment[] {
     // Longest-waiting first — most urgent in the chair.
     return [...list].sort((a, b) =>
       new Date(a.current_status_since).getTime()
-      - new Date(b.current_status_since).getTime()
+        - new Date(b.current_status_since).getTime()
     )
   }
   if (col.id === 'done') {
     return [...list].sort((a, b) =>
       new Date(b.current_status_since).getTime()
-      - new Date(a.current_status_since).getTime()
+        - new Date(a.current_status_since).getTime()
     )
   }
   return [...list].sort((a, b) =>
@@ -343,8 +343,10 @@ function stopPolling() {
   }
 }
 async function refreshDay() {
-  const start = new Date(props.currentDate); start.setHours(0, 0, 0, 0)
-  const end = new Date(props.currentDate); end.setHours(23, 59, 59, 999)
+  const start = new Date(props.currentDate)
+  start.setHours(0, 0, 0, 0)
+  const end = new Date(props.currentDate)
+  end.setHours(23, 59, 59, 999)
   await fetchAppointments(start, end)
 }
 
@@ -445,13 +447,29 @@ function isInvalidHint(col: ColumnDef): boolean {
     <!-- Date nav -->
     <div class="flex items-center justify-between mb-4 flex-shrink-0 min-w-0">
       <div class="flex items-center gap-2">
-        <UButton variant="outline" color="neutral" icon="i-lucide-chevron-left" @click="prevDay" />
-        <UButton variant="outline" color="neutral" @click="goToday">
+        <UButton
+          variant="outline"
+          color="neutral"
+          icon="i-lucide-chevron-left"
+          @click="prevDay"
+        />
+        <UButton
+          variant="outline"
+          color="neutral"
+          @click="goToday"
+        >
           {{ t('appointments.today') }}
         </UButton>
-        <UButton variant="outline" color="neutral" icon="i-lucide-chevron-right" @click="nextDay" />
+        <UButton
+          variant="outline"
+          color="neutral"
+          icon="i-lucide-chevron-right"
+          @click="nextDay"
+        />
       </div>
-      <h2 class="text-h2 text-default capitalize truncate ml-4">{{ formattedDate() }}</h2>
+      <h2 class="text-h2 text-default capitalize truncate ml-4">
+        {{ formattedDate() }}
+      </h2>
     </div>
 
     <!-- Professionals strip (#51): one pill per working pro today, live
@@ -465,8 +483,15 @@ function isInvalidHint(col: ColumnDef): boolean {
     />
 
     <!-- Loading -->
-    <div v-if="isLoading" class="flex items-center justify-center py-12">
-      <UIcon name="i-lucide-loader-2" class="w-8 h-8 animate-spin" :style="{ color: 'var(--color-primary)' }" />
+    <div
+      v-if="isLoading"
+      class="flex items-center justify-center py-12"
+    >
+      <UIcon
+        name="i-lucide-loader-2"
+        class="w-8 h-8 animate-spin"
+        :style="{ color: 'var(--color-primary)' }"
+      />
     </div>
 
     <!-- Kanban scroll container: horizontal scroll lives HERE so the
@@ -482,109 +507,123 @@ function isInvalidHint(col: ColumnDef): boolean {
           minWidth: '1320px'
         }"
       >
-      <div
-        v-for="col in COLUMNS"
-        :key="col.id"
-        class="flex flex-col rounded-lg ring-1 ring-[var(--color-border)] bg-surface-muted min-h-0"
-        :class="{
-          'ring-2 ring-[var(--color-primary)]': drag && isDropHint(col),
-          'opacity-60 ring-dashed ring-red-300': drag && isInvalidHint(col)
-        }"
-        @dragover="onDragOverColumn(col, $event)"
-        @dragleave="onDragLeaveColumn(col)"
-        @drop="onDrop(col, $event)"
-      >
-        <!-- Header -->
         <div
-          class="flex items-center justify-between px-3 py-2 border-b border-default bg-surface rounded-t-lg cursor-pointer select-none"
-          @click="toggleCollapsed(col.id)"
+          v-for="col in COLUMNS"
+          :key="col.id"
+          class="flex flex-col rounded-lg ring-1 ring-[var(--color-border)] bg-surface-muted min-h-0"
+          :class="{
+            'ring-2 ring-[var(--color-primary)]': drag && isDropHint(col),
+            'opacity-60 ring-dashed ring-red-300': drag && isInvalidHint(col)
+          }"
+          @dragover="onDragOverColumn(col, $event)"
+          @dragleave="onDragLeaveColumn(col)"
+          @drop="onDrop(col, $event)"
         >
-          <div class="flex items-center gap-2 min-w-0">
-            <UIcon :name="col.icon" class="w-4 h-4 shrink-0" :style="{ color: statusColour(col.dropPrimary) }" />
-            <div class="min-w-0">
-              <div class="text-ui text-default truncate">{{ t(col.labelKey) }}</div>
-              <div class="text-caption text-subtle truncate">{{ headerSubtitle(col) }}</div>
-            </div>
-          </div>
-          <UIcon
-            :name="collapsedColumns.has(col.id) ? 'i-lucide-chevron-down' : 'i-lucide-chevron-up'"
-            class="w-4 h-4 text-subtle"
-          />
-        </div>
-
-        <!-- Body -->
-        <div v-if="!collapsedColumns.has(col.id)" class="flex-1 overflow-auto p-2 space-y-2">
-          <!-- Sub-grouping by cabinet inside "in chair" -->
-          <template v-if="col.id === 'in_chair'">
-            <div
-              v-for="entry in inChairByCabinet"
-              :key="entry.cabinet.name"
-              class="rounded-md ring-1 ring-[var(--color-border)] bg-surface p-2 border-l-4 transition-shadow"
-              :style="{ borderLeftColor: CABINET_STATE_ACCENT[entry.state] }"
-              :class="{ 'ring-2 ring-[var(--color-primary)]': drag && isDropHint(col, entry.cabinet.name) }"
-              @dragover.stop="onDragOverColumn(col, $event, entry.cabinet.name)"
-              @drop.stop="onDrop(col, $event, entry.cabinet.name)"
-            >
-              <div class="flex items-center gap-2 mb-1.5">
-                <span class="w-2.5 h-2.5 rounded-full" :style="{ backgroundColor: entry.cabinet.color }" />
-                <span class="text-ui text-default truncate">{{ entry.cabinet.name }}</span>
-                <span
-                  v-if="!entry.appointment"
-                  class="ml-auto text-caption text-subtle italic"
-                >{{ entry.state === 'inactive' ? t('appointments.kanban.inactive') : t('appointments.kanban.free') }}</span>
+          <!-- Header -->
+          <div
+            class="flex items-center justify-between px-3 py-2 border-b border-default bg-surface rounded-t-lg cursor-pointer select-none"
+            @click="toggleCollapsed(col.id)"
+          >
+            <div class="flex items-center gap-2 min-w-0">
+              <UIcon
+                :name="col.icon"
+                class="w-4 h-4 shrink-0"
+                :style="{ color: statusColour(col.dropPrimary) }"
+              />
+              <div class="min-w-0">
+                <div class="text-ui text-default truncate">
+                  {{ t(col.labelKey) }}
+                </div>
+                <div class="text-caption text-subtle truncate">
+                  {{ headerSubtitle(col) }}
+                </div>
               </div>
+            </div>
+            <UIcon
+              :name="collapsedColumns.has(col.id) ? 'i-lucide-chevron-down' : 'i-lucide-chevron-up'"
+              class="w-4 h-4 text-subtle"
+            />
+          </div>
+
+          <!-- Body -->
+          <div
+            v-if="!collapsedColumns.has(col.id)"
+            class="flex-1 overflow-auto p-2 space-y-2"
+          >
+            <!-- Sub-grouping by cabinet inside "in chair" -->
+            <template v-if="col.id === 'in_chair'">
+              <div
+                v-for="entry in inChairByCabinet"
+                :key="entry.cabinet.name"
+                class="rounded-md ring-1 ring-[var(--color-border)] bg-surface p-2 border-l-4 transition-shadow"
+                :style="{ borderLeftColor: CABINET_STATE_ACCENT[entry.state] }"
+                :class="{ 'ring-2 ring-[var(--color-primary)]': drag && isDropHint(col, entry.cabinet.name) }"
+                @dragover.stop="onDragOverColumn(col, $event, entry.cabinet.name)"
+                @drop.stop="onDrop(col, $event, entry.cabinet.name)"
+              >
+                <div class="flex items-center gap-2 mb-1.5">
+                  <span
+                    class="w-2.5 h-2.5 rounded-full"
+                    :style="{ backgroundColor: entry.cabinet.color }"
+                  />
+                  <span class="text-ui text-default truncate">{{ entry.cabinet.name }}</span>
+                  <span
+                    v-if="!entry.appointment"
+                    class="ml-auto text-caption text-subtle italic"
+                  >{{ entry.state === 'inactive' ? t('appointments.kanban.inactive') : t('appointments.kanban.free') }}</span>
+                </div>
+                <AppointmentCard
+                  v-if="entry.appointment"
+                  :appointment="entry.appointment"
+                  :cabinets="cabinets"
+                  :professionals="professionals"
+                  draggable="true"
+                  @click="emit('appointment-click', entry.appointment as Appointment)"
+                  @dragstart="onDragStart(entry.appointment as Appointment, $event)"
+                  @dragend="onDragEnd"
+                />
+                <div
+                  v-else-if="nextForCabinet(entry.cabinet.name)"
+                  class="text-caption text-subtle italic px-1"
+                >
+                  {{ t('appointments.kanban.nextIn', {
+                    time: new Date(nextForCabinet(entry.cabinet.name)!.start_time)
+                      .toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
+                  }) }}
+                </div>
+              </div>
+            </template>
+
+            <!-- Flat card list for every other column -->
+            <template v-else>
               <AppointmentCard
-                v-if="entry.appointment"
-                :appointment="entry.appointment"
+                v-for="apt in appointmentsForColumn(col)"
+                :key="apt.id"
+                :appointment="apt"
                 :cabinets="cabinets"
                 :professionals="professionals"
                 draggable="true"
-                @click="emit('appointment-click', entry.appointment as Appointment)"
-                @dragstart="onDragStart(entry.appointment as Appointment, $event)"
+                @click="emit('appointment-click', apt)"
+                @dragstart="onDragStart(apt, $event)"
                 @dragend="onDragEnd"
               />
               <div
-                v-else-if="nextForCabinet(entry.cabinet.name)"
-                class="text-caption text-subtle italic px-1"
+                v-if="appointmentsForColumn(col).length === 0"
+                class="text-center text-subtle text-sm py-6"
               >
-                {{ t('appointments.kanban.nextIn', {
-                  time: new Date(nextForCabinet(entry.cabinet.name)!.start_time)
-                    .toLocaleTimeString(locale, { hour: '2-digit', minute: '2-digit' })
-                }) }}
+                {{ t('appointments.kanban.empty') }}
               </div>
-            </div>
-          </template>
+            </template>
+          </div>
 
-          <!-- Flat card list for every other column -->
-          <template v-else>
-            <AppointmentCard
-              v-for="apt in appointmentsForColumn(col)"
-              :key="apt.id"
-              :appointment="apt"
-              :cabinets="cabinets"
-              :professionals="professionals"
-              draggable="true"
-              @click="emit('appointment-click', apt)"
-              @dragstart="onDragStart(apt, $event)"
-              @dragend="onDragEnd"
-            />
-            <div
-              v-if="appointmentsForColumn(col).length === 0"
-              class="text-center text-subtle text-sm py-6"
-            >
-              {{ t('appointments.kanban.empty') }}
-            </div>
-          </template>
+          <!-- Collapsed footer -->
+          <div
+            v-else
+            class="px-3 py-2 text-caption text-subtle"
+          >
+            {{ statusLabel(col.dropPrimary) }}
+          </div>
         </div>
-
-        <!-- Collapsed footer -->
-        <div
-          v-else
-          class="px-3 py-2 text-caption text-subtle"
-        >
-          {{ statusLabel(col.dropPrimary) }}
-        </div>
-      </div>
       </div>
     </div>
   </div>

@@ -201,7 +201,7 @@ export function usePayments() {
 
   async function fetchBudgetIdsByPaymentStatus(
     statuses: Array<'unpaid' | 'partial' | 'paid'>,
-    opts: { patient_id?: string; assigned_professional_id?: string } = {}
+    opts: { patient_id?: string, assigned_professional_id?: string } = {}
   ): Promise<FilterIdsResult> {
     if (!statuses.length) return { budget_ids: [], truncated: false }
     const search = new URLSearchParams()

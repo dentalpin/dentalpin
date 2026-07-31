@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- style(lint): first ESLint pass over this module's frontend layer —
+  module layers were outside the linter's base path until now, so
+  CI had never checked them. Mostly auto-fixed formatting; see the
+  PR for the handful of manual fixes.
+
 - fix(frontend): render an error state with retry when the odontogram
   fetch fails, instead of falling through to a fabricated all-healthy
   32-tooth chart (audit S5, #95). Adds `odontogram.messages.loadError`.

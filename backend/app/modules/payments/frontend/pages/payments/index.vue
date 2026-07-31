@@ -18,7 +18,6 @@ definePageMeta({ middleware: 'auth' })
 const { t, locale } = useI18n()
 const api = useApi()
 const { can } = usePermissions()
-const { refund } = usePayments()
 
 interface PatientBrief {
   id: string
@@ -43,7 +42,7 @@ const defaults: PaymentListFilters = {
   has_refunds: false,
   has_unallocated: false,
   date_from: null,
-  date_to: null,
+  date_to: null
 }
 
 async function fetcher(q: {
@@ -69,7 +68,7 @@ async function fetcher(q: {
   // Client-side multi-method filter (until backend accepts list).
   let data = response.data
   if (q.filters.method.length > 1) {
-    data = data.filter((p) => q.filters.method.includes(p.method))
+    data = data.filter(p => q.filters.method.includes(p.method))
   }
   // Search filter (client-side, since /payments doesn't expose ?search yet).
   if (q.filters.q) {
@@ -94,33 +93,33 @@ const {
   error,
   setFilter,
   resetFilters,
-  refresh,
+  refresh
 } = useListQuery<PaymentListFilters, PaymentRecord>({
   defaults,
   pageSize: 20,
   sortable: ['payment_date', 'amount', 'created_at'],
   defaultSort: 'payment_date:desc',
   searchKey: 'q',
-  fetcher,
+  fetcher
 })
 
 const PAYMENT_METHODS: PaymentMethod[] = ['cash', 'card', 'bank_transfer', 'direct_debit', 'insurance', 'other']
 
 const methodItems = computed(() =>
-  PAYMENT_METHODS.map((m) => ({ label: t(`payments.methods.${m}`), value: m })),
+  PAYMENT_METHODS.map(m => ({ label: t(`payments.methods.${m}`), value: m }))
 )
 
 const sortOptions = computed(() => [
   { field: 'payment_date', label: t('payments.list.sort.paymentDate'), defaultDir: 'desc' as const },
-  { field: 'amount', label: t('payments.list.sort.amount'), defaultDir: 'desc' as const },
+  { field: 'amount', label: t('payments.list.sort.amount'), defaultDir: 'desc' as const }
 ])
 
 const dateRange = computed({
   get: () => ({ from: filters.value.date_from, to: filters.value.date_to }),
-  set: (v: { from: string | null; to: string | null }) => {
+  set: (v: { from: string | null, to: string | null }) => {
     setFilter('date_from', v.from)
     setFilter('date_to', v.to)
-  },
+  }
 })
 
 const activeFilterCount = computed(() => {
@@ -138,12 +137,12 @@ async function patientFetcher(q: string) {
   params.set('page_size', '20')
   if (q) params.set('search', q)
   const res = await api.get<PaginatedResponse<PatientBrief & { phone?: string }>>(
-    `/api/v1/patients?${params.toString()}`,
+    `/api/v1/patients?${params.toString()}`
   )
-  return res.data.map((p) => ({
+  return res.data.map(p => ({
     id: p.id,
     label: `${p.last_name}, ${p.first_name}`,
-    sublabel: p.phone ?? undefined,
+    sublabel: p.phone ?? undefined
   }))
 }
 
@@ -201,8 +200,8 @@ function patientName(p: PatientBrief | undefined | null): string {
   return `${p.last_name}, ${p.first_name}`
 }
 
-function allocationBreakdown(p: PaymentRecord): Array<{ label: string; amount: string }> {
-  const out: Array<{ label: string; amount: string }> = []
+function allocationBreakdown(p: PaymentRecord): Array<{ label: string, amount: string }> {
+  const out: Array<{ label: string, amount: string }> = []
   let toBudget = 0
   let onAccount = 0
   for (const a of p.allocations ?? []) {

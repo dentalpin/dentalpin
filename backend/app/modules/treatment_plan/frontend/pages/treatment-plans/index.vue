@@ -9,7 +9,7 @@ const PIPELINE_TABS: PipelineTab[] = [
   'esperando_paciente',
   'sin_cita',
   'sin_proxima_cita',
-  'cerrados',
+  'cerrados'
 ]
 
 const ALL_TABS: ActiveTab[] = [...PIPELINE_TABS, 'listado']
@@ -44,14 +44,14 @@ watch(activeTab, async (next) => {
 })
 
 const tabItems = computed(() => [
-  ...PIPELINE_TABS.map((id) => ({
+  ...PIPELINE_TABS.map(id => ({
     label: t(`pipeline.tabs.${id}`),
-    value: id,
+    value: id
   })),
   {
     label: t('pipeline.tabs.listado'),
-    value: 'listado' as const,
-  },
+    value: 'listado' as const
+  }
 ])
 
 function createPlan() {

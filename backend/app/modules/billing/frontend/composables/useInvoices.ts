@@ -179,7 +179,7 @@ export function useInvoices() {
       balance_due: inv.balance_due,
       created_at: inv.created_at,
       patient: inv.patient,
-      creator: inv.creator,
+      creator: inv.creator
     }
   }
 

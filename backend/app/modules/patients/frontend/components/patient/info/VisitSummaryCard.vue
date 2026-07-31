@@ -21,7 +21,7 @@ function appointmentTime(a: Appointment): string | null {
   if (Number.isNaN(d.getTime())) return null
   return d.toLocaleTimeString(locale.value === 'en' ? 'en-US' : 'es-ES', {
     hour: '2-digit',
-    minute: '2-digit',
+    minute: '2-digit'
   })
 }
 

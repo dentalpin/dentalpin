@@ -27,7 +27,7 @@ const props = defineProps<{
 }>()
 
 const emit = defineEmits<{
-  submit: [{ body: string; toothNumber: number | null; attachmentDocumentIds: string[] }]
+  submit: [{ body: string, toothNumber: number | null, attachmentDocumentIds: string[] }]
   cancel: []
 }>()
 
