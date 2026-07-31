@@ -1,7 +1,11 @@
 {
   "payroll": {
     "title": "Payroll",
-    "tabs": { "employees": "Employees", "periods": "Payroll Runs", "reports": "Reports" },
+    "tabs": {
+      "employees": "Employees",
+      "periods": "Payroll Runs",
+      "reports": "Reports"
+    },
     "staff": {
       "add": "Add employee",
       "edit": "Edit payroll profile",
@@ -15,15 +19,20 @@
       "status": "Status",
       "active": "Active",
       "inactive": "Inactive",
-      "userIdPlaceholder": "User ID (UUID)",
       "bankAccountPlaceholder": "Bank account (leave blank to keep unchanged)",
-      "taxIdPlaceholder": "Tax ID (leave blank to keep unchanged)"
+      "taxIdPlaceholder": "Tax ID (leave blank to keep unchanged)",
+      "selectUser": "Select employee",
+      "selectUserPlaceholder": "Choose a staff member"
     },
     "periods": {
       "add": "New payroll period",
       "period": "Period",
       "status": "Status",
-      "statusValues": { "draft": "Draft", "processed": "Processed", "paid": "Paid" }
+      "statusValues": {
+        "draft": "Draft",
+        "processed": "Processed",
+        "paid": "Paid"
+      }
     },
     "entries": {
       "title": "Entries",

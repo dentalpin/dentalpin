@@ -1,7 +1,11 @@
 {
   "payroll": {
     "title": "Paie",
-    "tabs": { "employees": "Employés", "periods": "Cycles de paie", "reports": "Rapports" },
+    "tabs": {
+      "employees": "Employés",
+      "periods": "Cycles de paie",
+      "reports": "Rapports"
+    },
     "staff": {
       "add": "Ajouter un employé",
       "edit": "Modifier le profil de paie",
@@ -15,15 +19,20 @@
       "status": "Statut",
       "active": "Actif",
       "inactive": "Inactif",
-      "userIdPlaceholder": "ID utilisateur (UUID)",
       "bankAccountPlaceholder": "Compte bancaire (laisser vide pour ne pas changer)",
-      "taxIdPlaceholder": "Numéro fiscal (laisser vide pour ne pas changer)"
+      "taxIdPlaceholder": "Numéro fiscal (laisser vide pour ne pas changer)",
+      "selectUser": "Sélectionner un employé",
+      "selectUserPlaceholder": "Choisissez un membre du personnel"
     },
     "periods": {
       "add": "Nouveau cycle de paie",
       "period": "Période",
       "status": "Statut",
-      "statusValues": { "draft": "Brouillon", "processed": "Traité", "paid": "Payé" }
+      "statusValues": {
+        "draft": "Brouillon",
+        "processed": "Traité",
+        "paid": "Payé"
+      }
     },
     "entries": {
       "title": "Entrées",

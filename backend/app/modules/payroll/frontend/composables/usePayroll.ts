@@ -72,8 +72,24 @@ export interface AnnualSummary {
   months_processed: number
 }
 
+export interface ClinicUser {
+  id: string
+  email: string
+  first_name: string
+  last_name: string
+  is_active: boolean
+  role: string
+  created_at: string
+}
+
 export const usePayroll = () => {
   const api = useApi()
+
+  // Confirmed real endpoint (backend/app/core/auth/router.py) — admin-only,
+  // lists ALL clinic staff regardless of role (dentist/hygienist/assistant/
+  // receptionist/admin), unlike /api/v1/auth/professionals which only
+  // covers dentist+hygienist. Used to populate the "add employee" picker.
+  const listClinicUsers = () => api.get<PaginatedResponse<ClinicUser>>('/api/v1/auth/users')
 
   const listStaff = () => api.get<PaginatedResponse<StaffPayrollProfile>>('/api/v1/payroll/staff')
   const createStaff = async (data: StaffPayrollProfileInput) => {
@@ -134,6 +150,7 @@ export const usePayroll = () => {
 
   return {
     listStaff,
+    listClinicUsers,
     createStaff,
     updateStaff,
     listPeriods,

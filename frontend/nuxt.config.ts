@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 /**
@@ -26,6 +26,12 @@ function loadModuleLayers(): string[] {
 
 const moduleLayers = loadModuleLayers()
 const modulesJsonPath = resolve(__dirname, 'modules.json')
+writeFileSync('/tmp/debug-layers.json', JSON.stringify({
+  layers: moduleLayers,
+  modulesJsonPath,
+  cwd: process.cwd(),
+  dirname: __dirname
+}, null, 2))
 
 export default defineNuxtConfig({
 
@@ -34,7 +40,29 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@nuxtjs/i18n'
+    '@nuxtjs/i18n',
+    // TEMPORARY DEBUG MODULE — inline module gets `nuxt` reliably as its
+    // 2nd arg (unlike the config-level `hooks` key, which passed undefined
+    // for 'modules:done' in this Nuxt version). Remove this whole entry
+    // once the payroll layer-resolution issue is diagnosed.
+    (_options: unknown, nuxt: any) => {
+      nuxt.hook('modules:done', () => {
+        try {
+          writeFileSync('/tmp/debug-resolved-layers.json', JSON.stringify({
+            resolvedLayerCwds: nuxt.options._layers?.map((l: any) => l.cwd) ?? 'NO _layers FOUND',
+            resolvedLayerSrcDirs: nuxt.options._layers?.map((l: any) => l.config?.srcDir ?? null) ?? null,
+            resolvedLayerPagesDir: nuxt.options._layers?.map((l: any) => l.config?.dir?.pages ?? null) ?? null,
+            resolvedLayerConfigNames: nuxt.options._layers?.map((l: any) => l.config?.name ?? null) ?? null,
+            totalResolvedLayers: nuxt.options._layers?.length ?? -1
+          }, null, 2))
+        } catch (hookErr: unknown) {
+          writeFileSync('/tmp/debug-resolved-layers-error.json', JSON.stringify({
+            error: String(hookErr),
+            stack: hookErr instanceof Error ? hookErr.stack : null
+          }, null, 2))
+        }
+      })
+    }
   ],
 
   components: [

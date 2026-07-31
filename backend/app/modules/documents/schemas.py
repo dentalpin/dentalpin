@@ -124,8 +124,3 @@ class GeneratedDocumentRead(BaseModel):
     payload: dict
     file_path: str | None = None
     created_at: datetime
-
-
-class GeneratedDocumentList(BaseModel):
-    items: list[GeneratedDocumentRead]
-    total: int

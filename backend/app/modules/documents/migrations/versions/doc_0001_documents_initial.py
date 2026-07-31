@@ -1,7 +1,7 @@
 """documents module — initial tables (letterhead, generated documents)
 
 Revision ID: doc_0001
-Revises: Pat-0003
+Revises: pat_0003
 Create Date: 2026-07-25
 
 IMPORTANT: replace `down_revision` below with whatever the current
