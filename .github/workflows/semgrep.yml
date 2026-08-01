@@ -1,0 +1,19 @@
+name: Semgrep
+
+on:
+  push:
+    branches: [ my-version ]
+
+  pull_request:
+    branches: [ my-version ]
+
+jobs:
+  semgrep:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: semgrep/semgrep-action@v1
+        with:
+          config: auto
