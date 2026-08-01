@@ -3,41 +3,41 @@
     "/module_layers/patients/frontend",
     "/module_layers/catalog/frontend",
     "/module_layers/odontogram/frontend",
-    "/module_layers/agenda/frontend",
     "/module_layers/budget/frontend",
     "/module_layers/payments/frontend",
     "/module_layers/billing/frontend",
+    "/module_layers/accounting_export/frontend",
+    "/module_layers/agenda/frontend",
+    "/module_layers/media/frontend",
+    "/module_layers/treatment_plan/frontend",
+    "/module_layers/clinical_notes/frontend",
     "/module_layers/contacts/frontend",
     "/module_layers/copilot/frontend",
     "/module_layers/documents/frontend",
     "/module_layers/expenses/frontend",
     "/module_layers/inventory/frontend",
-    "/module_layers/lab_orders/frontend",
-    "/module_layers/media/frontend",
-    "/module_layers/medications/frontend",
-    "/module_layers/patients_clinical/frontend",
-    "/module_layers/treatment_plan/frontend",
-    "/module_layers/clinical_notes/frontend",
-    "/module_layers/schedules/frontend",
-    "/module_layers/recalls/frontend",
-    "/module_layers/notifications/frontend",
-    "/module_layers/patient_timeline/frontend",
-    "/module_layers/payroll/frontend",
-    "/module_layers/recall_reminders/frontend",
-    "/module_layers/reports/frontend",
-    "/module_layers/sms_gateway/frontend",
-    "/module_layers/staff_activity/frontend",
-    "/module_layers/tasks/frontend",
     "/module_layers/treatment_consumables/frontend",
-    "/module_layers/accounting_export/frontend",
     "/module_layers/suppliers/frontend",
     "/module_layers/supplier_items/frontend",
     "/module_layers/purchase_orders/frontend",
     "/module_layers/inventory_reorder/frontend",
+    "/module_layers/lab_orders/frontend",
+    "/module_layers/patients_clinical/frontend",
     "/module_layers/medical_reference/frontend",
+    "/module_layers/medications/frontend",
+    "/module_layers/schedules/frontend",
+    "/module_layers/recalls/frontend",
+    "/module_layers/notifications/frontend",
     "/module_layers/patient_admin/frontend",
+    "/module_layers/patient_timeline/frontend",
+    "/module_layers/payroll/frontend",
     "/module_layers/periodontogram/frontend",
-    "/module_layers/supplier_ratings/frontend"
+    "/module_layers/recall_reminders/frontend",
+    "/module_layers/reports/frontend",
+    "/module_layers/sms_gateway/frontend",
+    "/module_layers/staff_activity/frontend",
+    "/module_layers/supplier_ratings/frontend",
+    "/module_layers/tasks/frontend"
   ],
   "modules": [
     {
@@ -53,10 +53,6 @@
       "path": "/module_layers/odontogram/frontend"
     },
     {
-      "name": "agenda",
-      "path": "/module_layers/agenda/frontend"
-    },
-    {
       "name": "budget",
       "path": "/module_layers/budget/frontend"
     },
@@ -67,6 +63,26 @@
     {
       "name": "billing",
       "path": "/module_layers/billing/frontend"
+    },
+    {
+      "name": "accounting_export",
+      "path": "/module_layers/accounting_export/frontend"
+    },
+    {
+      "name": "agenda",
+      "path": "/module_layers/agenda/frontend"
+    },
+    {
+      "name": "media",
+      "path": "/module_layers/media/frontend"
+    },
+    {
+      "name": "treatment_plan",
+      "path": "/module_layers/treatment_plan/frontend"
+    },
+    {
+      "name": "clinical_notes",
+      "path": "/module_layers/clinical_notes/frontend"
     },
     {
       "name": "contacts",
@@ -89,76 +105,8 @@
       "path": "/module_layers/inventory/frontend"
     },
     {
-      "name": "lab_orders",
-      "path": "/module_layers/lab_orders/frontend"
-    },
-    {
-      "name": "media",
-      "path": "/module_layers/media/frontend"
-    },
-    {
-      "name": "medications",
-      "path": "/module_layers/medications/frontend"
-    },
-    {
-      "name": "patients_clinical",
-      "path": "/module_layers/patients_clinical/frontend"
-    },
-    {
-      "name": "treatment_plan",
-      "path": "/module_layers/treatment_plan/frontend"
-    },
-    {
-      "name": "clinical_notes",
-      "path": "/module_layers/clinical_notes/frontend"
-    },
-    {
-      "name": "schedules",
-      "path": "/module_layers/schedules/frontend"
-    },
-    {
-      "name": "recalls",
-      "path": "/module_layers/recalls/frontend"
-    },
-    {
-      "name": "notifications",
-      "path": "/module_layers/notifications/frontend"
-    },
-    {
-      "name": "patient_timeline",
-      "path": "/module_layers/patient_timeline/frontend"
-    },
-    {
-      "name": "payroll",
-      "path": "/module_layers/payroll/frontend"
-    },
-    {
-      "name": "recall_reminders",
-      "path": "/module_layers/recall_reminders/frontend"
-    },
-    {
-      "name": "reports",
-      "path": "/module_layers/reports/frontend"
-    },
-    {
-      "name": "sms_gateway",
-      "path": "/module_layers/sms_gateway/frontend"
-    },
-    {
-      "name": "staff_activity",
-      "path": "/module_layers/staff_activity/frontend"
-    },
-    {
-      "name": "tasks",
-      "path": "/module_layers/tasks/frontend"
-    },
-    {
       "name": "treatment_consumables",
       "path": "/module_layers/treatment_consumables/frontend"
-    },
-    {
-      "name": "accounting_export",
-      "path": "/module_layers/accounting_export/frontend"
     },
     {
       "name": "suppliers",
@@ -177,20 +125,72 @@
       "path": "/module_layers/inventory_reorder/frontend"
     },
     {
+      "name": "lab_orders",
+      "path": "/module_layers/lab_orders/frontend"
+    },
+    {
+      "name": "patients_clinical",
+      "path": "/module_layers/patients_clinical/frontend"
+    },
+    {
       "name": "medical_reference",
       "path": "/module_layers/medical_reference/frontend"
+    },
+    {
+      "name": "medications",
+      "path": "/module_layers/medications/frontend"
+    },
+    {
+      "name": "schedules",
+      "path": "/module_layers/schedules/frontend"
+    },
+    {
+      "name": "recalls",
+      "path": "/module_layers/recalls/frontend"
+    },
+    {
+      "name": "notifications",
+      "path": "/module_layers/notifications/frontend"
     },
     {
       "name": "patient_admin",
       "path": "/module_layers/patient_admin/frontend"
     },
     {
+      "name": "patient_timeline",
+      "path": "/module_layers/patient_timeline/frontend"
+    },
+    {
+      "name": "payroll",
+      "path": "/module_layers/payroll/frontend"
+    },
+    {
       "name": "periodontogram",
       "path": "/module_layers/periodontogram/frontend"
     },
     {
+      "name": "recall_reminders",
+      "path": "/module_layers/recall_reminders/frontend"
+    },
+    {
+      "name": "reports",
+      "path": "/module_layers/reports/frontend"
+    },
+    {
+      "name": "sms_gateway",
+      "path": "/module_layers/sms_gateway/frontend"
+    },
+    {
+      "name": "staff_activity",
+      "path": "/module_layers/staff_activity/frontend"
+    },
+    {
       "name": "supplier_ratings",
       "path": "/module_layers/supplier_ratings/frontend"
+    },
+    {
+      "name": "tasks",
+      "path": "/module_layers/tasks/frontend"
     }
   ],
   "version": 1
