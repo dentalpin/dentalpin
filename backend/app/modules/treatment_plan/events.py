@@ -7,13 +7,13 @@ import logging
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import event_bus
 from app.database import async_session_maker
 
-from .models import PlannedTreatmentItem
+from .models import PlannedTreatmentItem, PlannedTreatmentItemSession
 
 logger = logging.getLogger(__name__)
 
@@ -235,6 +235,19 @@ async def on_treatment_performed(data: dict[str, Any]) -> None:
             if item:
                 item.status = "completed"
                 item.completed_without_appointment = True
+
+                # The odontogram-performed event already carried the full
+                # price to the payments earned ledger. Cancel the item's
+                # pending sessions (no session events) so they can't be
+                # completed later and book the same money a second time.
+                await db.execute(
+                    update(PlannedTreatmentItemSession)
+                    .where(
+                        PlannedTreatmentItemSession.plan_item_id == item.id,
+                        PlannedTreatmentItemSession.status == "pending",
+                    )
+                    .values(status="cancelled")
+                )
 
                 category_key = await _resolve_treatment_category_key(db, item.treatment_id)
                 await event_bus.publish(

@@ -114,6 +114,14 @@ Clinical-note created events (`clinical_notes.{administrative,diagnosis,treatmen
   is in a terminal state and at least one is `completed`. Editing a
   completed session is refused — its amount is the snapshot that
   payments already booked.
+- **A treatment's price is booked exactly once** — by sessions or by
+  the odontogram, never both. Finalization calls
+  `TreatmentService.perform(publish_price=False)` so the performed
+  event carries `unit_price: null` (sessions already booked the money);
+  conversely, `on_treatment_performed` (odontogram-first) cancels the
+  item's pending sessions so they can't book on top of the full-price
+  row payments just wrote. Breaking either side double-charges the
+  patient.
 - **Completion still emits an audit event.** `treatment_plan.item_completed_without_note`
   fires whenever an item is completed; the timeline reconciles it with a
   follow-up `clinical_notes.treatment_created` event when the client

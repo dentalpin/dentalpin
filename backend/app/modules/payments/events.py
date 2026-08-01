@@ -9,9 +9,16 @@ Earned entries are keyed on ``(treatment_id, source_session_id)``:
   session — multi-session treatments thus produce N rows whose
   amounts add up to the treatment price.
 
-The composite unique constraint makes every path idempotent: replaying
-the same event is a no-op; for the same treatment, single-session and
-multi-session paths cannot collide because their session_id differs.
+Idempotency: the composite unique constraint dedupes session rows and
+the partial index ``uq_earned_treatment_null_session`` dedupes the
+NULL-session row (plain unique constraints treat NULLs as distinct).
+
+Exclusivity between the two paths is the *publishers'* responsibility,
+not reconciled here: when treatment_plan finalizes a sessioned item it
+calls ``perform(publish_price=False)`` so the performed event carries
+``unit_price: None`` (skipped below); when the odontogram performs
+first, treatment_plan cancels the item's pending sessions so session
+events can never fire on top of the NULL row.
 """
 
 from __future__ import annotations
@@ -118,7 +125,9 @@ async def _upsert_earned_entry(
                     professional_id=professional_id,
                     source_event=source_event,
                 )
-                .on_conflict_do_nothing(constraint="uq_earned_treatment_session")
+                # Bare form: swallows conflicts on the composite constraint
+                # AND the partial NULL-session index alike.
+                .on_conflict_do_nothing()
             )
             await db.execute(stmt)
             await db.commit()

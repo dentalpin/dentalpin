@@ -949,6 +949,10 @@ class TreatmentPlanService:
             treatment_id=item.treatment_id,
             user_id=user_id,
             notes=notes,
+            # The sessions already booked the money (item_session_completed
+            # → payments earned rows); publishing the full price here would
+            # double-charge the patient.
+            publish_price=False,
         )
 
         item_name: str | None = None

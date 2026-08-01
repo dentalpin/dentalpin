@@ -9,7 +9,7 @@ architecture: the monolithic `clinical` module is gone, replaced by
 four purpose-built modules, and every official module now ships its
 frontend as a Nuxt layer under its own Python package.
 
-## [Unreleased]
+## [2.2.0] - 2026-08-01
 
 ### Added
 
@@ -32,6 +32,17 @@ frontend as a Nuxt layer under its own Python package.
   `es/en/fr`, matching how French shipped.
 
 ### Fixed
+
+- **Multi-session treatments were charged double.** Completing the last
+  step of a multi-session treatment (e.g. an implant with surgery,
+  abutment and crown steps) re-recorded the full parent price on top of
+  the amounts already charged per session, so a 1,100 € treatment showed
+  as 2,200 € owed. Each session now books only its own amount and the
+  total always equals the sum of the sessions. The reverse flow is also
+  covered: marking the treatment performed from the odontogram charges
+  it once in full and auto-cancels its pending sessions. **Upgrading
+  repairs affected ledgers automatically** — the migration removes the
+  duplicate charges this bug created; no manual action needed.
 
 - Published images were `amd64` only, so `docker compose up` failed at the
   very first command on Apple Silicon and on ARM VPS instances (Hetzner's

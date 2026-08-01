@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- feat(events): `TreatmentService.perform` accepts `publish_price=False`
+  to emit `odontogram.treatment.performed` with `unit_price: null` —
+  the caller declares the revenue already attributed elsewhere
+  (treatment_plan per-session billing). Default behaviour unchanged.
+
 - style(lint): first ESLint pass over this module's frontend layer —
   module layers were outside the linter's base path until now, so
   CI had never checked them. Mostly auto-fixed formatting; see the

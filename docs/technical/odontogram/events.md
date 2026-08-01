@@ -27,7 +27,12 @@ the legacy surface/tooth update path).
 
 `odontogram.treatment.performed` feeds the payments earned ledger — its
 payload carries the `unit_price`/`price_snapshot` the payments handler
-needs. See the module `CLAUDE.md` for the full payload contract.
+needs. **`unit_price: null` means "revenue already attributed
+elsewhere"**: `TreatmentService.perform(publish_price=False)` is how
+treatment_plan finalizes a sessioned item whose amounts were already
+booked per-session (`treatment_plan.item_session_completed`);
+subscribers must not book revenue for a null price. See the module
+`CLAUDE.md` for the full payload contract.
 
 ## Subscribed
 

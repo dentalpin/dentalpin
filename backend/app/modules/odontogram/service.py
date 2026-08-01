@@ -811,6 +811,7 @@ class TreatmentService:
         treatment_id: UUID,
         user_id: UUID,
         notes: str | None = None,
+        publish_price: bool = True,
     ) -> Treatment | None:
         treatment = await TreatmentService.get_treatment(db, clinic_id, treatment_id)
         if not treatment:
@@ -852,10 +853,13 @@ class TreatmentService:
                 # odontogram models. `Treatment.price_snapshot` is the
                 # frozen catalog price captured at treatment creation;
                 # multiply by tooth count for multi-tooth headers.
+                # ``None`` means "revenue already attributed elsewhere"
+                # (``publish_price=False``): treatment_plan finalizes a
+                # sessioned item whose amounts were booked per-session.
                 "unit_price": str(
                     (treatment.price_snapshot or Decimal("0")) * (len(treatment.teeth) or 1)
                 )
-                if treatment.price_snapshot is not None
+                if publish_price and treatment.price_snapshot is not None
                 else None,
             },
         )

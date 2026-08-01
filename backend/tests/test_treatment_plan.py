@@ -1262,3 +1262,113 @@ async def test_edit_completed_session_rejected(
         json={"label": "Cambio", "amount": 250.00},
     )
     assert r.status_code == 400
+
+
+@pytest.mark.asyncio
+async def test_finalize_suppresses_performed_price(
+    client: AsyncClient, auth_headers: dict, setup_multi_session: dict
+):
+    """Regression: finalizing a sessioned item must NOT re-publish the full price.
+
+    Each session already booked its amount via ``item_session_completed``;
+    a ``unit_price`` on the finalizing ``odontogram.treatment.performed``
+    event would double-charge the patient (2× the treatment price).
+    """
+    from app.core.events import event_bus
+
+    performed_events: list[dict] = []
+    session_events: list[dict] = []
+
+    async def _capture_performed(payload: dict) -> None:
+        performed_events.append(payload)
+
+    async def _capture_session(payload: dict) -> None:
+        session_events.append(payload)
+
+    event_bus.subscribe("odontogram.treatment.performed", _capture_performed)
+    event_bus.subscribe("treatment_plan.item_session_completed", _capture_session)
+    try:
+        plan_id, item_id, sessions = await _add_multi_session_item(
+            client, auth_headers, setup_multi_session
+        )
+        for s in sessions:
+            r = await client.patch(
+                f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}/sessions/{s['id']}/complete",
+                headers=auth_headers,
+                json={},
+            )
+            assert r.status_code == 200, r.text
+        # The sessions carried the money: 200 + 600 = full price.
+        assert [e["amount"] for e in session_events] == ["200.00", "600.00"]
+        # Finalization fired performed exactly once, with the price suppressed.
+        assert len(performed_events) == 1
+        assert performed_events[0]["unit_price"] is None
+    finally:
+        # unsubscribe (not _handlers.pop) — pop would also remove the
+        # module handlers registered at startup and poison later tests.
+        event_bus.unsubscribe("odontogram.treatment.performed", _capture_performed)
+        event_bus.unsubscribe("treatment_plan.item_session_completed", _capture_session)
+
+
+@pytest.mark.asyncio
+async def test_odontogram_perform_first_cancels_pending_sessions(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """Odontogram-first completion books the full price once and closes the session path.
+
+    Performing the treatment directly on the odontogram publishes the
+    full ``unit_price`` (NULL-session earned row). The plan item's
+    pending sessions must flip to cancelled — completing one later
+    would book the same money a second time.
+    """
+    from app.core.events import event_bus
+
+    performed_events: list[dict] = []
+
+    async def _capture(payload: dict) -> None:
+        performed_events.append(payload)
+
+    event_bus.subscribe("odontogram.treatment.performed", _capture)
+    try:
+        plan_id, item_id, sessions = await _add_multi_session_item(
+            client, auth_headers, setup_multi_session
+        )
+        item_resp = await client.get(
+            f"/api/v1/treatment_plan/treatment-plans/{plan_id}",
+            headers=auth_headers,
+        )
+        treatment_id = next(
+            i["treatment_id"] for i in item_resp.json()["data"]["items"] if i["id"] == item_id
+        )
+        # The handler opens its own DB connection — commit the shared test
+        # session so the planned item is visible to it.
+        await db_session.commit()
+        r = await client.patch(
+            f"/api/v1/odontogram/treatments/{treatment_id}/perform",
+            headers=auth_headers,
+            json={},
+        )
+        assert r.status_code == 200, r.text
+        # Direct odontogram completion keeps the price on the event.
+        assert len(performed_events) == 1
+        assert performed_events[0]["unit_price"] == "800.00"
+        # The plan item completed and its pending sessions were cancelled.
+        plan = await client.get(
+            f"/api/v1/treatment_plan/treatment-plans/{plan_id}",
+            headers=auth_headers,
+        )
+        item = next(i for i in plan.json()["data"]["items"] if i["id"] == item_id)
+        assert item["status"] == "completed"
+        assert all(s["status"] == "cancelled" for s in item["sessions"])
+        # A late session-complete attempt is refused.
+        late = await client.patch(
+            f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}/sessions/{sessions[0]['id']}/complete",
+            headers=auth_headers,
+            json={},
+        )
+        assert late.status_code == 400
+    finally:
+        event_bus.unsubscribe("odontogram.treatment.performed", _capture)

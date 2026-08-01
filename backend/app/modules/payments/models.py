@@ -15,6 +15,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -192,10 +193,13 @@ class PatientEarnedEntry(Base, TimestampMixin):
     """Denormalized ledger of treatments performed on a patient.
 
     Populated by event handlers reacting to
-    ``odontogram.treatment.performed`` and
-    ``treatment_plan.treatment_completed``. The unique ``treatment_id``
-    constraint makes the upsert idempotent regardless of which event
-    fires first — the two paths converge on the same row.
+    ``odontogram.treatment.performed`` (one row, ``source_session_id``
+    NULL) and ``treatment_plan.item_session_completed`` (one row per
+    session). A treatment is booked by exactly one of the two paths:
+    the composite unique constraint plus the partial NULL index make
+    every insert idempotent, and the publishers guarantee exclusivity
+    (plan finalization suppresses ``unit_price``; odontogram-first
+    completion cancels the item's pending sessions).
 
     No FK to ``treatments`` or ``catalog_items`` — payments must not
     depend on those modules. Values are snapshots from the event
@@ -235,6 +239,15 @@ class PatientEarnedEntry(Base, TimestampMixin):
         # ledger reconciles with the source. Event-driven publishers
         # still emit positive amounts in normal flow.
         UniqueConstraint("treatment_id", "source_session_id", name="uq_earned_treatment_session"),
+        # Postgres treats NULLs as distinct in a plain unique constraint,
+        # so the legacy single-session path (source_session_id IS NULL)
+        # needs its own partial index to stay idempotent.
+        Index(
+            "uq_earned_treatment_null_session",
+            "treatment_id",
+            unique=True,
+            postgresql_where=text("source_session_id IS NULL"),
+        ),
         Index("idx_earned_clinic_patient", "clinic_id", "patient_id"),
         Index("idx_earned_clinic_performed", "clinic_id", "performed_at"),
     )

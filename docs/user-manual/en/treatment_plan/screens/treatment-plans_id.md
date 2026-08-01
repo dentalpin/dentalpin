@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 9d3fac6
 ---
 
 # Treatment plan detail
@@ -113,6 +113,10 @@ added to a plan, one session is created per step.
   is completed (the legacy completion flow runs at that point).
 - Cancel a session if it was not delivered — no earned entry is
   generated.
+- If the treatment is marked performed from the **odontogram**, the
+  full price is charged through that path and the item's pending
+  sessions are cancelled automatically — the total is never charged
+  twice.
 
 ## Change the plan's doctor
 

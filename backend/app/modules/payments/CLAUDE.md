@@ -80,7 +80,15 @@ returning. Enforced by tests in `tests/test_module_tools.py`.
 
 Both handlers require `unit_price`/`price_snapshot` in the payload. If
 the publisher omits it, the entry is skipped with a warning — see
-gotchas below.
+gotchas below. **A null price is deliberate, not an error**: when
+treatment_plan finalizes a sessioned item it publishes
+`odontogram.treatment.performed` with `unit_price: null` because the
+sessions already booked the money per-session. Exclusivity between the
+two earned paths is the publishers' responsibility
+(`docs/technical/payments/events.md`); this module stays a dumb ledger.
+Idempotency is DB-level: `uq_earned_treatment_session` (session rows) +
+partial index `uq_earned_treatment_null_session` (NULL rows, `pay_0004`
+— plain unique constraints treat NULLs as distinct).
 
 ## Frontend slots consumed
 

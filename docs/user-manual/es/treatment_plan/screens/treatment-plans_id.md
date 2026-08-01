@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 9d3fac6
 ---
 
 # Detalle del plan de tratamiento
@@ -112,6 +112,10 @@ añadirlos al plan se crea automáticamente una sesión por cada paso.
 - El item se finaliza automáticamente al completar la última sesión
   pendiente (entonces se ejecuta el flujo legacy de cierre).
 - Cancela una sesión si no llegó a hacerse: no genera cobro.
+- Si el tratamiento se marca realizado desde el **odontograma**, el
+  cargo se registra completo por esa vía y las sesiones pendientes del
+  item pasan a canceladas automáticamente — el total nunca se cobra
+  dos veces.
 
 ## Cambiar el doctor del plan
 

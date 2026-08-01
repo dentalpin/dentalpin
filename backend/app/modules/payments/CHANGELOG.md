@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- fix(earned): repair + guard against double-booked treatments
+  (`pay_0004`). Deletes NULL-session earned rows duplicating
+  per-session rows (the multi-session double charge), dedupes replayed
+  NULL rows, and adds partial unique index
+  `uq_earned_treatment_null_session` — plain unique constraints treat
+  NULLs as distinct, so the NULL path was never idempotent. The upsert
+  now uses bare `ON CONFLICT DO NOTHING` to cover both keys.
+
 - style(lint): first ESLint pass over this module's frontend layer —
   module layers were outside the linter's base path until now, so
   CI had never checked them. Mostly auto-fixed formatting; see the

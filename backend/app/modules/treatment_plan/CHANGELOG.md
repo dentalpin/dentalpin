@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- fix(billing): multi-session items no longer double-charge on finalization.
+  Completing the last session called `TreatmentService.perform`, whose
+  `odontogram.treatment.performed` event carried the full item price —
+  payments booked it on top of the per-session rows (2× the price).
+  Finalization now calls `perform(publish_price=False)`. Symmetrically,
+  `on_treatment_performed` (odontogram-first completion) now cancels the
+  item's pending sessions so a late session-complete can't book on top
+  of the full-price row.
+
 - style(lint): first ESLint pass over this module's frontend layer —
   module layers were outside the linter's base path until now, so
   CI had never checked them. Mostly auto-fixed formatting; see the

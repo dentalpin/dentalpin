@@ -136,6 +136,44 @@ async def test_unique_constraint_per_treatment_session(
 
 
 @pytest.mark.asyncio
+async def test_null_session_row_is_unique_per_treatment(
+    db_session: AsyncSession, auth_headers: dict, client: AsyncClient
+):
+    """Regression: two NULL-session rows for one treatment must be rejected.
+
+    A plain unique constraint treats NULLs as distinct, so replayed
+    ``odontogram.treatment.performed`` events used to insert freely —
+    the partial index ``uq_earned_treatment_null_session`` closes that.
+    """
+    from sqlalchemy.exc import IntegrityError
+
+    ctx = await _setup_clinic(db_session, auth_headers, client)
+    treatment_id = str(uuid4())
+
+    await _add_earned(
+        db_session,
+        clinic_id=ctx["clinic_id"],
+        patient_id=ctx["patient_id"],
+        treatment_id=treatment_id,
+        session_id=None,
+        amount="800.00",
+        description="Corona",
+        performed_at=datetime(2026, 5, 1, 10, 0, tzinfo=UTC),
+    )
+    with pytest.raises(IntegrityError):
+        await _add_earned(
+            db_session,
+            clinic_id=ctx["clinic_id"],
+            patient_id=ctx["patient_id"],
+            treatment_id=treatment_id,
+            session_id=None,
+            amount="800.00",
+            description="Corona replay",
+            performed_at=datetime(2026, 5, 1, 10, 0, tzinfo=UTC),
+        )
+
+
+@pytest.mark.asyncio
 async def test_pending_charges_fifo_partial(
     db_session: AsyncSession, auth_headers: dict, client: AsyncClient
 ):
