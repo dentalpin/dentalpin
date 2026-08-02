@@ -1,5 +1,5 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 ARG API_BASE_URL=http://localhost:8000
@@ -19,7 +19,7 @@ ENV NODE_OPTIONS=--max-old-space-size=4096
 
 RUN npm run build
 # Production stage
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
