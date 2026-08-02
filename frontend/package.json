@@ -20,7 +20,7 @@
     "@fontsource-variable/inter": "^5.2.8",
     "@iconify-json/lucide": "^1.2.98",
     "@nuxt/ui": "^4.5.1",
-    "@nuxtjs/i18n": "^9.5.0",
+    "@nuxtjs/i18n": "^10.6.0",
     "@types/nprogress": "^0.2.3",
     "isomorphic-dompurify": "^3.16.0",
     "marked": "^18.0.5",
