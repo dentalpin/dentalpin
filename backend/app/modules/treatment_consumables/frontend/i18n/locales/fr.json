@@ -17,6 +17,10 @@
     "cancel": "Annuler",
     "addLink": "Ajouter un lien",
     "allLinks": "Tous les consommables liés",
-    "empty": "Aucun consommable lié pour le moment."
+    "empty": "Aucun consommable lié pour le moment.",
+    "settings": {
+  "title": "Consommables de traitement",
+  "description": "Définissez les consommables utilisés par chaque traitement et les quantités nécessaires."
+}
   }
 }

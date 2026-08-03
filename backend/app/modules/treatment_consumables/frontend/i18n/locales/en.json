@@ -17,6 +17,10 @@
     "cancel": "Cancel",
     "addLink": "Add a link",
     "allLinks": "All linked consumables",
-    "empty": "No consumables linked yet."
+    "empty": "No consumables linked yet.",
+    "settings": {
+      "title": "Treatment consumables",
+      "description": "Define which consumables each treatment uses and how much."
+}
   }
 }

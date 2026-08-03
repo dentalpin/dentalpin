@@ -42,7 +42,8 @@
       "lab": "Laboratorio",
       "medications": "Medicamentos",
       "staffActivity": "Registro de actividad",
-      "treatmentConsumables": "Consumibles por tratamiento"
+      "treatmentConsumables": "Consumibles por tratamiento",
+      "inventorySupply": "Inventario y suministro"
     },
     "purchaseOrders": "Órdenes de Compra",
     "reorderSuggestions": "Sugerencias de Reposición",
@@ -991,6 +992,13 @@
     "title": "Configuración",
     "subtitle": "Gestiona los ajustes de tu clínica, equipo y módulos.",
     "allCategories": "Todas las categorías",
+    "superGroups": {
+           "clinicSetup": "Configuración de la clínica",
+           "clinicalConfig": "Configuración clínica",
+           "financialConfig": "Configuración financiera",
+           "systemAddons": "Sistema y complementos",
+          "myPreferences": "Mis preferencias"
+     },
     "categories": {
       "general": {
         "label": "General",

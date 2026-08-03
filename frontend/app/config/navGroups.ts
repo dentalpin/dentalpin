@@ -28,34 +28,46 @@ export interface NavGroupAssignment {
 
 export const NAV_GROUPS: NavGroupDef[] = [
   { id: 'clinical', labelKey: 'nav.groups.clinical', order: 1 },
-  { id: 'financials', labelKey: 'nav.groups.financials', order: 2 },
-  { id: 'practiceManagement', labelKey: 'nav.groups.practiceManagement', order: 3 }
+  { id: 'lab', labelKey: 'nav.groups.lab', order: 2 },
+  { id: 'financials', labelKey: 'nav.groups.financials', order: 3 },
+  { id: 'inventorySupply', labelKey: 'nav.groups.inventorySupply', order: 4 },
+  { id: 'practiceManagement', labelKey: 'nav.groups.practiceManagement', order: 5 }
 ]
 
-export const NAV_SUBGROUPS: Record<string, NavSubgroupDef> = {
-  lab: { labelKey: 'nav.groups.lab', order: 1 }
-}
+// Lab was previously a subgroup nested inside Practice Management; it's
+// now its own top-level group (see NAV_GROUPS above), so its items are
+// direct items of that group and no subgroup mapping is needed anymore.
+// Left as an empty record (not removed) so SidebarNav.vue's subgroup
+// rendering path stays available for any future group that needs it.
+export const NAV_SUBGROUPS: Record<string, NavSubgroupDef> = {}
 
 export const NAV_GROUP_MAP: Record<string, NavGroupAssignment> = {
   '/patients': { group: 'clinical' },
   '/treatment-plans': { group: 'clinical' },
   '/recalls': { group: 'clinical' },
+  '/documents': { group: 'clinical' },
+
+  '/lab-orders/new': { group: 'lab' },
+  '/lab-orders': { group: 'lab' },
 
   '/budgets': { group: 'financials' },
   '/invoices': { group: 'financials' },
   '/payments': { group: 'financials' },
   '/expenses': { group: 'financials' },
+  '/payroll': { group: 'financials' },
   '/accounting-export': { group: 'financials' },
 
-  '/inventory': { group: 'practiceManagement' },
-  '/lab-orders/new': { group: 'practiceManagement', subgroup: 'lab' },
-  '/lab-orders': { group: 'practiceManagement', subgroup: 'lab' },
-  '/contacts': { group: 'practiceManagement' },
+  '/inventory': { group: 'inventorySupply' },
+  '/reorder-suggestions': { group: 'inventorySupply' },
+  '/purchase-orders': { group: 'inventorySupply' },
+  '/contacts': { group: 'inventorySupply' },
+
   '/reports': { group: 'practiceManagement' },
+  '/staff-activity': { group: 'practiceManagement' },
   '/tasks': { group: 'practiceManagement' }
 }
 
-// Deliberately NOT mapped yet (would-be dead-link phases): inventory's
-// "New Order (from low stock)" sub-item (Phase 13), Staff Activity
-// (Phase 10), Documents sub-items (Phase 14), Medication List (Phase 9).
-// Add their `to` paths here once those pages actually exist.
+// `/treatment-consumables` is deliberately NOT mapped here — it moved
+// into Settings → Clinical Configuration and no longer has a sidebar
+// entry at all (its module manifest's `navigation` array was emptied
+// to match).

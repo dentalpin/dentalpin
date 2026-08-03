@@ -17,6 +17,10 @@
     "cancel": "Cancelar",
     "addLink": "Añadir un vínculo",
     "allLinks": "Todos los consumibles vinculados",
-    "empty": "Aún no hay consumibles vinculados."
+    "empty": "Aún no hay consumibles vinculados.",
+    "settings": {
+  "title": "Consumibles de tratamiento",
+  "description": "Define qué consumibles utiliza cada tratamiento y en qué cantidad."
+}
   }
 }

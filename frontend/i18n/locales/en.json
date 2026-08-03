@@ -42,7 +42,8 @@
       "lab": "Lab",
       "medications": "Medications",
       "staffActivity": "Staff Activity",
-      "treatmentConsumables": "Treatment Consumables"
+      "treatmentConsumables": "Treatment Consumables",
+      "inventorySupply": "Inventory & Supply"
     },
     "purchaseOrders": "Purchase Orders",
     "reorderSuggestions": "Reorder Suggestions",
@@ -971,6 +972,13 @@
     "allCategories": "All categories",
     "navLabel": "Settings categories",
     "attentionRequired": "Attention required",
+    "superGroups": {
+          "clinicSetup": "Clinic Setup",
+          "clinicalConfig": "Clinical Configuration",
+          "financialConfig": "Financial Configuration",
+          "systemAddons": "System & Add-ons",
+          "myPreferences": "My Preferences"
+     },
     "categories": {
       "general": {
         "label": "General",

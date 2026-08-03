@@ -18,18 +18,10 @@ class TreatmentConsumablesModule(BaseModule):
         "role_permissions": {"admin": ["*"]},
         "frontend": {
             "layer_path": "frontend",
-            "navigation": [
-                {
-                    "label": "nav.treatmentConsumables",
-                    "to": "/treatment-consumables",
-                    "icon": "i-lucide-link",
-                    # Single-prefixed: loader prefixes get_permissions()'s
-                    # bare "read" -> "treatment_consumables.read". Do not
-                    # double-prefix here (see Phase 10 postmortem).
-                    "permission": "treatment_consumables.read",
-                    "order": 96,
-                }
-            ],
+            # Moved out of the main sidebar and into Settings → Clinical
+            # Configuration (see frontend/plugins/settings.client.ts in
+            # this module) — this list is intentionally empty now.
+            "navigation": [],
         },
     }
 
