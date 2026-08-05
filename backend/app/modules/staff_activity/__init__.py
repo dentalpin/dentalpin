@@ -22,7 +22,7 @@ class StaffActivityModule(BaseModule):
                 {
                     "label": "nav.staffActivity",
                     "to": "/staff-activity",
-		            "icon": "i-lucide-clipboard-list",
+                    "icon": "i-lucide-clipboard-list",
                     "permission": "staff_activity.view",
                     "order": 95,
                 }
