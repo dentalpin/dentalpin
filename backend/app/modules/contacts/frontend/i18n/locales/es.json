@@ -1,0 +1,21 @@
+{
+  "contacts": {
+    "title": "Contactos",
+    "add": "Añadir contacto",
+    "edit": "Editar contacto",
+    "name": "Nombre",
+    "type": "Tipo",
+    "phone": "Teléfono",
+    "email": "Correo electrónico",
+    "address": "Dirección",
+    "notes": "Notas",
+    "search": "Buscar contactos",
+    "filterByType": "Filtrar por tipo",
+    "types": {
+      "lab": "Laboratorio",
+      "supplier": "Proveedor",
+      "other": "Otro",
+      "delegate": "Delegado"
+    }
+  }
+}

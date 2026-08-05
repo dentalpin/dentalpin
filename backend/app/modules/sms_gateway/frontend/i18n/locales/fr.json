@@ -1,0 +1,18 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "SMS",
+      "description": "Envoyez des rappels par SMS aux patients via un fournisseur connectable.",
+      "placeholderNotice": "Aucun fournisseur SMS réel n'est encore configuré — les messages sont enregistrés ici mais ne sont pas réellement envoyés. Choisissez un fournisseur ci-dessous une fois décidé.",
+      "provider": "Fournisseur",
+      "apiKey": "Clé API",
+      "apiKeySet": "Clé API définie (laissez vide pour la conserver)",
+      "senderId": "ID expéditeur / numéro",
+      "baseUrl": "URL de base de l'API (seulement si votre fournisseur en a besoin)",
+      "active": "Actif",
+      "saved": "Paramètres SMS enregistrés",
+      "recentActivity": "Activité récente",
+      "noActivity": "Rien n'a encore été envoyé."
+    }
+  }
+}

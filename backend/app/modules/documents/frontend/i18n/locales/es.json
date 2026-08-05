@@ -1,0 +1,119 @@
+{
+  "documents": {
+    "title": "Documentos",
+    "filter": {
+      "all": "Todos los tipos"
+    },
+    "types": {
+      "prescription": "Receta",
+      "certificate": "Certificado",
+      "referral": "Carta de derivación",
+      "radiology_request": "Solicitud de radiología"
+    },
+    "new": {
+      "prescription": "Nueva receta",
+      "certificate": "Nuevo certificado",
+      "referral": "Nueva carta de derivación",
+      "radiology_request": "Nueva solicitud de radiología"
+    },
+    "table": {
+      "type": "Tipo",
+      "title": "Título",
+      "created_at": "Creado",
+      "download": "Descargar PDF",
+      "loading": "Cargando documentos…",
+      "empty": "Aún no hay documentos."
+    },
+    "form": {
+      "patient": "Paciente",
+      "drug_name": "Medicamento",
+      "dosage": "Dosis",
+      "instructions": "Instrucciones",
+      "quantity": "Cantidad",
+      "add_item": "Añadir medicamento",
+      "remove": "Eliminar",
+      "notes": "Notas",
+      "reason": "Motivo",
+      "specialist_name": "Nombre del especialista",
+      "specialty": "Especialidad",
+      "clinical_history": "Historial clínico relevante",
+      "routine": "Rutinario",
+      "urgent": "Urgente",
+      "exam_type": "Examen solicitado",
+      "tooth_reference": "Referencia dental",
+      "clinical_indication": "Indicación clínica",
+      "generate": "Generar PDF",
+      "saving": "Generando…",
+      "errors": {
+        "patient_required": "Por favor seleccione un paciente.",
+        "generic": "Ocurrió un error al generar el documento."
+      },
+      "back": "Volver",
+      "other": "Otro (especificar)",
+      "manualEntry": "Entrada manual (escribir abajo)",
+      "selectFromCatalog": "Seleccionar del catálogo de medicamentos",
+      "perDay": "día",
+      "medForm": {
+        "tablet": "comprimido",
+        "capsule": "cápsula",
+        "syrup": "jarabe",
+        "gel": "gel",
+        "mouthwash": "enjuague",
+        "injection": "inyección",
+        "cream": "crema",
+        "other": "otro"
+      }
+    },
+    "certificate": {
+      "work_absence": "Ausencia laboral",
+      "school_absence": "Ausencia escolar",
+      "fitness_for_work": "Aptitud laboral"
+    },
+    "letterhead": {
+      "title": "Membrete",
+      "practice_name": "Nombre de la clínica",
+      "legal_name": "Razón social",
+      "address": "Dirección",
+      "phone": "Teléfono",
+      "email": "Correo electrónico",
+      "logo_url": "URL del logo",
+      "registration_number": "Número de colegiado",
+      "footer_text": "Texto de pie de página",
+      "save": "Guardar",
+      "saving": "Guardando…",
+      "saved": "Guardado.",
+      "settingsDescription": "Nombre de la clínica, dirección y logo usados en recetas, certificados y derivaciones generados."
+    },
+    "nav": "Documentos",
+    "specialties": {
+      "orthodontics": "Ortodoncia",
+      "endodontics": "Endodoncia",
+      "periodontics": "Periodoncia",
+      "oral_maxillofacial_surgery": "Cirugía Oral y Maxilofacial",
+      "pediatric_dentistry": "Odontopediatría",
+      "prosthodontics": "Prostodoncia",
+      "oral_pathology": "Patología Oral",
+      "oral_medicine": "Medicina Oral",
+      "implantology": "Implantología",
+      "cardiology": "Cardiología",
+      "endocrinology_diabetes": "Endocrinología / Diabetes",
+      "rheumatology": "Reumatología",
+      "ent": "Otorrinolaringología",
+      "internal_medicine": "Medicina Interna",
+      "hematology": "Hematología",
+      "allergy_immunology": "Alergología e Inmunología",
+      "psychiatry": "Psiquiatría",
+      "anesthesiology": "Anestesiología",
+      "pediatrics": "Pediatría"
+    },
+    "examTypes": {
+      "panoramic": "Panorámica (Ortopantomografía)",
+      "periapical": "Periapical",
+      "bitewing": "Aleta de mordida",
+      "occlusal": "Oclusal",
+      "cephalometric": "Cefalométrica",
+      "cbct": "CBCT (Tomografía de Haz Cónico)",
+      "tmj_view": "Proyección de ATM"
+    }
+  }
+}

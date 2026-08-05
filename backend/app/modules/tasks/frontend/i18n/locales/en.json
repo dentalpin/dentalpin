@@ -1,0 +1,26 @@
+{
+  "tasks": {
+    "title": "Handoff board",
+    "add": "New task",
+    "open": "Open",
+    "done": "Done",
+    "loading": "Loading tasks…",
+    "empty": "Nothing here.",
+    "taskTitle": "Task",
+    "description": "Description",
+    "assignTo": "Assign to",
+    "assignedTo": "Assigned to",
+    "due": "Due",
+    "createdBy": "From",
+    "priorities": {
+      "low": "Low",
+      "normal": "Normal",
+      "high": "High"
+    },
+    "dashboard": {
+      "title": "Handoff tasks",
+      "open": "Open",
+      "viewAll": "View all"
+    }
+  }
+}

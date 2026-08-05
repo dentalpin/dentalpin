@@ -1,0 +1,18 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "SMS",
+      "description": "Send SMS reminders to patients via a pluggable provider.",
+      "placeholderNotice": "No real SMS provider is configured yet — messages are logged here but not actually sent. Pick a provider below once you've chosen one.",
+      "provider": "Provider",
+      "apiKey": "API key",
+      "apiKeySet": "API key set (leave blank to keep it)",
+      "senderId": "Sender ID / from number",
+      "baseUrl": "API base URL (only if your provider needs one)",
+      "active": "Active",
+      "saved": "SMS settings saved",
+      "recentActivity": "Recent activity",
+      "noActivity": "Nothing sent yet."
+    }
+  }
+}

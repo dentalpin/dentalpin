@@ -1,0 +1,21 @@
+{
+  "expenses": {
+    "title": "Gastos",
+    "add": "Añadir gasto",
+    "date": "Fecha",
+    "category": "Categoría",
+    "amount": "Importe",
+    "description": "Descripción",
+    "filterByCategory": "Filtrar por categoría",
+    "categories": {
+      "rent": "Alquiler",
+      "utilities": "Suministros",
+      "salaries": "Salarios",
+      "supplies": "Material",
+      "equipment": "Equipamiento",
+      "insurance": "Seguro",
+      "maintenance": "Mantenimiento",
+      "other": "Otro"
+    }
+  }
+}
