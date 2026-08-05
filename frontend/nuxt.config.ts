@@ -1,5 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { readFileSync } from 'node:fs'
+import { readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 
 /**
@@ -27,6 +27,7 @@ function loadModuleLayers(): string[] {
 const moduleLayers = loadModuleLayers()
 const modulesJsonPath = resolve(__dirname, 'modules.json')
 
+
 export default defineNuxtConfig({
 
   extends: moduleLayers,
@@ -34,7 +35,7 @@ export default defineNuxtConfig({
   modules: [
     '@nuxt/eslint',
     '@nuxt/ui',
-    '@nuxtjs/i18n'
+    '@nuxtjs/i18n',
   ],
 
   components: [
