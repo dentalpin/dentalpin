@@ -1817,6 +1817,7 @@ export interface AllergyEntry {
   severity: 'low' | 'medium' | 'high' | 'critical'
   reaction?: string
   notes?: string
+  reference_id?: string | null // links to medical_reference.ReferenceAllergy, if picked from the list
 }
 
 export interface MedicationEntry {
@@ -1825,6 +1826,7 @@ export interface MedicationEntry {
   frequency?: string
   start_date?: string
   notes?: string
+  reference_id?: string | null
 }
 
 export interface SystemicDiseaseEntry {
@@ -1835,6 +1837,7 @@ export interface SystemicDiseaseEntry {
   is_critical: boolean
   medications?: string
   notes?: string
+  reference_id?: string | null // links to medical_reference.ReferenceDisease — used for the APCI check
 }
 
 export interface SurgicalHistoryEntry {
@@ -1842,6 +1845,7 @@ export interface SurgicalHistoryEntry {
   surgery_date?: string
   complications?: string
   notes?: string
+  reference_id?: string | null
 }
 
 // Full Medical History

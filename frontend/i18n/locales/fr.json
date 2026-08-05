@@ -27,7 +27,28 @@
     "menu": "Menu",
     "openMenu": "Ouvrir le menu",
     "close": "Fermer",
-    "toggleSidebar": "Basculer la barre latérale"
+    "toggleSidebar": "Basculer la barre latérale",
+    "expenses": "Dépenses",
+    "contacts": "Contacts",
+    "labOrders": "Commandes Labo",
+    "inventory": "Inventaire",
+    "tasks": "Tâches",
+    "labOrdersForm": "Formulaire de Commande",
+    "labOrdersStatus": "Statut des Commandes",
+    "groups": {
+      "clinical": "Clinique",
+      "financials": "Finances",
+      "practiceManagement": "Gestion du Cabinet",
+      "lab": "Labo",
+      "medications": "Médicaments",
+      "staffActivity": "Journal d'activité",
+      "treatmentConsumables": "Consommables par traitement",
+      "inventorySupply": "Inventaire et approvisionnement"
+    },
+    "purchaseOrders": "Bons de Commande",
+    "reorderSuggestions": "Suggestions de Réapprovisionnement",
+	"documents": "Documents",
+	"payroll": "Paie"
   },
   "auth": {
     "login": "Connexion",
@@ -253,7 +274,8 @@
         "heavy": "Importante"
       },
       "surgicalHistory": "Antécédents chirurgicaux",
-      "procedure": "Acte"
+      "procedure": "Acte",
+      "warningsTitle": "Alerte d'interaction / contre-indication"
     },
     "timeline": {
       "empty": "Aucune activité enregistrée pour le moment",
@@ -950,6 +972,13 @@
     "allCategories": "Toutes les catégories",
     "navLabel": "Catégories des paramètres",
     "attentionRequired": "Attention requise",
+    "superGroups": {
+           "clinicSetup": "Configuration de la clinique",
+           "clinicalConfig": "Configuration clinique",
+           "financialConfig": "Configuration financière",
+           "systemAddons": "Système & modules complémentaires",
+           "myPreferences": "Mes préférences"
+    },
     "categories": {
       "general": {
         "label": "Général",
@@ -2946,5 +2975,153 @@
     "donut": {
       "ariaLabel": "Diagramme circulaire, {count} segments"
     }
+  },
+  "inventory": {
+    "edit": "Modifier l'article",
+    "unitCost": "Coût unitaire",
+    "averageCost": "Coût moyen",
+    "movements": {
+      "title": "Historique des mouvements",
+      "add": "Enregistrer un mouvement",
+      "quantityDelta": "Quantité",
+      "quantityAfter": "Qté après",
+      "reference": "Référence",
+      "date": "Date",
+      "reason": "Motif",
+      "filterByReason": "Filtrer par motif",
+      "export": "Exporter CSV",
+      "total": "mouvements",
+      "reasons": {
+        "purchase": "Achat",
+        "return": "Retour",
+        "donation": "Don",
+        "adjustment": "Ajustement",
+        "damaged": "Endommagé",
+        "expired": "Périmé",
+        "lost": "Perdu",
+        "used": "Utilisé"
+      }
+    },
+    "suppliers": {
+      "title": "Fournisseurs",
+      "supplier": "Fournisseur",
+      "sku": "Réf. fournisseur",
+      "price": "Prix",
+      "leadTime": "Délai de livraison",
+      "preferred": "Préféré",
+      "add": "Lier un fournisseur",
+      "pickSupplier": "Choisir un fournisseur",
+      "empty": "Aucun fournisseur lié pour le moment."
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "add": "Nouveau contact",
+    "edit": "Modifier le contact",
+    "search": "Rechercher des contacts...",
+    "filterByType": "Filtrer par type",
+    "name": "Nom",
+    "type": "Type",
+    "phone": "Téléphone",
+    "email": "E-mail",
+    "address": "Adresse",
+    "notes": "Notes",
+    "types": {
+      "lab": "Laboratoire",
+      "supplier": "Fournisseur",
+      "delegate": "Délégué",
+      "other": "Autre"
+    },
+    "supplier": {
+      "sectionTitle": "Détails du fournisseur",
+      "website": "Site web",
+      "paymentTerms": "Conditions de paiement",
+      "leadTimeDays": "Délai de livraison (jours)",
+      "preferred": "Fournisseur préféré"
+    }
+  },
+  "purchaseOrders": {
+    "title": "Bons de Commande",
+    "create": "Nouveau bon de commande",
+    "search": "Rechercher par n° de BC ou fournisseur",
+    "filterByStatus": "Filtrer par statut",
+    "pickSupplier": "Choisir un fournisseur",
+    "pickItem": "Choisir un article",
+    "number": "N° BC",
+    "supplier": "Fournisseur",
+    "status": "Statut",
+    "orderDate": "Date de commande",
+    "expectedDelivery": "Livraison prévue",
+    "shipping": "Livraison",
+    "tax": "Taxe",
+    "subtotal": "Sous-total",
+    "total": "Total",
+    "notes": "Notes",
+    "item": "Article",
+    "qty": "Qté",
+    "unitPrice": "Prix unitaire",
+    "lineTotal": "Total ligne",
+    "addItem": "Ajouter un article",
+    "send": "Envoyer au fournisseur",
+    "markSentNoEmail": "Marquer comme envoyé (sans e-mail)",
+    "confirm": "Confirmer",
+    "cancel": "Annuler la commande",
+    "cancelReason": "Motif de l'annulation",
+    "confirmCancel": "Confirmer l'annulation",
+    "cancelledNote": "Annulée",
+    "viewPdf": "Voir le PDF",
+    "statuses": {
+      "draft": "Brouillon",
+      "sent": "Envoyée",
+      "confirmed": "Confirmée",
+      "partially_received": "Partiellement reçue",
+      "fully_received": "Entièrement reçue",
+      "cancelled": "Annulée"
+    },
+    "receiving": {
+      "title": "Réceptionner la Livraison",
+      "button": "Réceptionner la livraison",
+      "remaining": "Restant",
+      "receivedNow": "Réception en cours",
+      "qualityLabel": "Qualité",
+      "quality": {
+        "good": "Bon",
+        "damaged": "Endommagé",
+        "expired": "Périmé",
+        "wrongItem": "Article erroné"
+      },
+      "qualityHint": "Seules les quantités \"Bon\" sont ajoutées au stock. Les quantités endommagées/périmées/erronées sont enregistrées mais non ajoutées à l'inventaire.",
+      "nothingOwed": "Il ne reste rien à recevoir sur cette commande.",
+      "confirm": "Enregistrer la réception",
+      "history": "Historique des livraisons"
+    }
+  },
+  "reorder": {
+    "title": "Suggestions de Réapprovisionnement",
+    "explanation": "Basé sur la consommation moyenne des 90 derniers jours et le délai de livraison du fournisseur de chaque article. À vérifier avant de générer des commandes — ce sont des points de départ, pas des garanties.",
+    "item": "Article",
+    "onHand": "En stock",
+    "avgDailyUsage": "Conso. moy. quotidienne",
+    "leadTime": "Délai de livraison",
+    "suggestedQty": "Qté suggérée",
+    "supplier": "Fournisseur",
+    "unitPrice": "Prix unitaire",
+    "estimatedCost": "Coût estimé",
+    "lowConfidence": "confiance faible",
+    "noSupplierLinked": "Aucun fournisseur lié",
+    "generatePOs": "Générer le(s) bon(s) de commande",
+    "empty": "Aucun article n'est actuellement en stock bas."
+  },
+  "supplierRatings": {
+    "title": "Performance du Fournisseur",
+    "onTimeDelivery": "Livraison à temps",
+    "ordersCompleted": "commandes complétées",
+    "qualityGoodRate": "Qualité (taux de bon état)",
+    "linesReceived": "lignes reçues",
+    "avgUnitPrice": "Prix unitaire moyen payé",
+    "communication": "Communication",
+    "addRating": "Ajouter une évaluation",
+    "notesPlaceholder": "Notes (facultatif)",
+    "history": "Historique des évaluations"
   }
 }

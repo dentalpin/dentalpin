@@ -6,6 +6,25 @@
       "placeholder": "Escribe una respuesta…",
       "replyError": "No se pudo enviar la respuesta",
       "windowClosed": "La ventana de 24h está cerrada. Usa una plantilla para reabrir la conversación."
+    },
+    "templatesPage": {
+      "cardTitle": "Plantillas de notificación",
+      "cardDescription": "Gestiona las plantillas de mensajes usadas en recordatorios y otras notificaciones.",
+      "title": "Plantillas de notificación",
+      "description": "Crea y edita las plantillas usadas al enviar correos, SMS o mensajes de WhatsApp.",
+      "add": "Nueva plantilla",
+      "edit": "Editar plantilla",
+      "key": "Clave",
+      "channel": "Canal",
+      "locale": "Idioma",
+      "subject": "Asunto",
+      "body": "Cuerpo",
+      "active": "Activa",
+      "inactive": "Inactiva",
+      "system": "Integrada",
+      "systemLocked": "Integrada — no editable",
+      "notesPlaceholder": "Descripción (opcional)",
+      "saved": "Plantilla guardada"
     }
   }
 }

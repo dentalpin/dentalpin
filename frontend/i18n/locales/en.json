@@ -27,7 +27,28 @@
     "menu": "Menu",
     "openMenu": "Open menu",
     "close": "Close",
-    "toggleSidebar": "Toggle sidebar"
+    "toggleSidebar": "Toggle sidebar",
+    "expenses": "Expenses",
+    "contacts": "Contacts",
+    "labOrders": "Lab Orders",
+    "inventory": "Inventory",
+    "tasks": "Tasks",
+    "labOrdersForm": "Order Form",
+    "labOrdersStatus": "Order Status",
+    "groups": {
+      "clinical": "Clinical",
+      "financials": "Financials",
+      "practiceManagement": "Practice Management",
+      "lab": "Lab",
+      "medications": "Medications",
+      "staffActivity": "Staff Activity",
+      "treatmentConsumables": "Treatment Consumables",
+      "inventorySupply": "Inventory & Supply"
+    },
+    "purchaseOrders": "Purchase Orders",
+    "reorderSuggestions": "Reorder Suggestions",
+	"documents": "Documents",
+	"payroll": "Payroll"
   },
   "auth": {
     "login": "Log in",
@@ -253,7 +274,8 @@
         "heavy": "Heavy"
       },
       "surgicalHistory": "Surgical history",
-      "procedure": "Procedure"
+      "procedure": "Procedure",
+      "warningsTitle": "Interaction / contraindication warning"
     },
     "timeline": {
       "empty": "No activity recorded yet",
@@ -950,6 +972,13 @@
     "allCategories": "All categories",
     "navLabel": "Settings categories",
     "attentionRequired": "Attention required",
+    "superGroups": {
+          "clinicSetup": "Clinic Setup",
+          "clinicalConfig": "Clinical Configuration",
+          "financialConfig": "Financial Configuration",
+          "systemAddons": "System & Add-ons",
+          "myPreferences": "My Preferences"
+     },
     "categories": {
       "general": {
         "label": "General",
@@ -2946,5 +2975,153 @@
     "donut": {
       "ariaLabel": "Donut chart, {count} segments"
     }
+  },
+  "inventory": {
+    "edit": "Edit item",
+    "unitCost": "Unit cost",
+    "averageCost": "Average cost",
+    "movements": {
+      "title": "Movement history",
+      "add": "Record a movement",
+      "quantityDelta": "Quantity",
+      "quantityAfter": "Qty after",
+      "reference": "Reference",
+      "date": "Date",
+      "reason": "Reason",
+      "filterByReason": "Filter by reason",
+      "export": "Export CSV",
+      "total": "movements",
+      "reasons": {
+        "purchase": "Purchase",
+        "return": "Return",
+        "donation": "Donation",
+        "adjustment": "Adjustment",
+        "damaged": "Damaged",
+        "expired": "Expired",
+        "lost": "Lost",
+        "used": "Used"
+      }
+    },
+    "suppliers": {
+      "title": "Suppliers",
+      "supplier": "Supplier",
+      "sku": "SKU",
+      "price": "Price",
+      "leadTime": "Lead time",
+      "preferred": "Preferred",
+      "add": "Link a supplier",
+      "pickSupplier": "Choose supplier",
+      "empty": "No suppliers linked yet."
+    }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "add": "New contact",
+    "edit": "Edit contact",
+    "search": "Search contacts...",
+    "filterByType": "Filter by type",
+    "name": "Name",
+    "type": "Type",
+    "phone": "Phone",
+    "email": "Email",
+    "address": "Address",
+    "notes": "Notes",
+    "types": {
+      "lab": "Lab",
+      "supplier": "Supplier",
+      "delegate": "Delegate",
+      "other": "Other"
+    },
+    "supplier": {
+      "sectionTitle": "Supplier details",
+      "website": "Website",
+      "paymentTerms": "Payment terms",
+      "leadTimeDays": "Lead time (days)",
+      "preferred": "Preferred supplier"
+    }
+  },
+  "purchaseOrders": {
+    "title": "Purchase Orders",
+    "create": "New purchase order",
+    "search": "Search PO number or supplier",
+    "filterByStatus": "Filter by status",
+    "pickSupplier": "Choose supplier",
+    "pickItem": "Choose item",
+    "number": "PO #",
+    "supplier": "Supplier",
+    "status": "Status",
+    "orderDate": "Order date",
+    "expectedDelivery": "Expected delivery",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "subtotal": "Subtotal",
+    "total": "Total",
+    "notes": "Notes",
+    "item": "Item",
+    "qty": "Qty",
+    "unitPrice": "Unit price",
+    "lineTotal": "Line total",
+    "addItem": "Add item",
+    "send": "Send to supplier",
+    "markSentNoEmail": "Mark sent (no email)",
+    "confirm": "Confirm",
+    "cancel": "Cancel order",
+    "cancelReason": "Reason for cancellation",
+    "confirmCancel": "Confirm cancellation",
+    "cancelledNote": "Cancelled",
+    "viewPdf": "View PDF",
+    "statuses": {
+      "draft": "Draft",
+      "sent": "Sent",
+      "confirmed": "Confirmed",
+      "partially_received": "Partially received",
+      "fully_received": "Fully received",
+      "cancelled": "Cancelled"
+    },
+    "receiving": {
+      "title": "Receive Delivery",
+      "button": "Receive delivery",
+      "remaining": "Remaining",
+      "receivedNow": "Receiving now",
+      "qualityLabel": "Quality",
+      "quality": {
+        "good": "Good",
+        "damaged": "Damaged",
+        "expired": "Expired",
+        "wrongItem": "Wrong item"
+      },
+      "qualityHint": "Only \"Good\" quantities are added to stock. Damaged/expired/wrong-item quantities are logged but not added to inventory.",
+      "nothingOwed": "Nothing left to receive on this order.",
+      "confirm": "Record receipt",
+      "history": "Delivery history"
+    }
+  },
+  "reorder": {
+    "title": "Reorder Suggestions",
+    "explanation": "Based on average usage over the last 90 days and each item's supplier lead time. Review before generating orders — these are starting points, not guarantees.",
+    "item": "Item",
+    "onHand": "On hand",
+    "avgDailyUsage": "Avg daily use",
+    "leadTime": "Lead time",
+    "suggestedQty": "Suggested qty",
+    "supplier": "Supplier",
+    "unitPrice": "Unit price",
+    "estimatedCost": "Est. cost",
+    "lowConfidence": "low confidence",
+    "noSupplierLinked": "No supplier linked",
+    "generatePOs": "Generate purchase order(s)",
+    "empty": "No items are currently low on stock."
+  },
+  "supplierRatings": {
+    "title": "Supplier Performance",
+    "onTimeDelivery": "On-time delivery",
+    "ordersCompleted": "orders completed",
+    "qualityGoodRate": "Quality (good rate)",
+    "linesReceived": "lines received",
+    "avgUnitPrice": "Avg. unit price paid",
+    "communication": "Communication",
+    "addRating": "Add a rating",
+    "notesPlaceholder": "Notes (optional)",
+    "history": "Rating history"
   }
 }

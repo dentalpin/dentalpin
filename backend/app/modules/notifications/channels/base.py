@@ -28,7 +28,8 @@ class Channel(StrEnum):
 
     EMAIL = "email"
     WHATSAPP = "whatsapp"
-    # SMS and others land here as adapters appear.
+    SMS = "sms"
+    # Others land here as adapters appear.
 
 
 class SendStatus(StrEnum):

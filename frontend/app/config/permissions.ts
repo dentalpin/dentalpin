@@ -66,8 +66,8 @@ export const PERMISSIONS = {
     schedulingRead: 'reports.scheduling.read'
   },
   documents: {
-    read: 'media.documents.read',
-    write: 'media.documents.write'
+    read: 'documents.read',
+    write: 'documents.write'
   },
   attachments: {
     read: 'media.attachments.read',
@@ -144,5 +144,60 @@ export const PERMISSIONS = {
   accountingExport: {
     read: 'accounting_export.export.read',
     run: 'accounting_export.export.run'
+  },
+  expenses: {
+    read: 'expenses.read',
+    write: 'expenses.write'
+  },
+  contacts: {
+    read: 'contacts.read',
+    write: 'contacts.write'
+  },
+  labOrders: {
+    read: 'lab_orders.read',
+    write: 'lab_orders.write'
+  },
+  inventory: {
+    read: 'inventory.read',
+    write: 'inventory.write'
+  },
+   tasks: {
+    read: 'tasks.read',
+    write: 'tasks.write'
+  },
+  smsGateway: {
+    read: 'sms_gateway.settings.read',
+    write: 'sms_gateway.settings.write'
+  },
+  medications: {
+    read: 'medications.read',
+    write: 'medications.write'
+  },
+  staffActivity: {
+    read: 'staff_activity.view'
+  },
+  treatmentConsumables: {
+    read: 'treatment_consumables.read',
+    write: 'treatment_consumables.write'
+  },
+  supplierItems: {
+    read: 'supplier_items.read',
+    write: 'supplier_items.write'
+  }, 
+  purchaseOrders: {
+    read: 'purchase_orders.read', 
+	write: 'purchase_orders.write' 
+  }, 
+  inventoryReorder: {
+    read: 'inventory_reorder.read', 
+	write: 'inventory_reorder.write'
+  },  
+  supplierRatings: {
+    read: 'supplier_ratings.read', 
+	write: 'supplier_ratings.write' 
+  },
+  payroll: {
+    read: 'payroll.read',
+    write: 'payroll.write'
   }
 } as const

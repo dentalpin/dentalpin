@@ -118,7 +118,18 @@ function isActive(to: string): boolean {
       </div>
 
       <!-- Navigation -->
-      <nav class="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
+      <SidebarNav
+        v-if="!isSidebarCollapsed"
+        :items="mainNavItems"
+        :is-active="isActive"
+        variant="desktop"
+      />
+      <!-- Collapsed: icons only, grouping headers add no value at this
+           width, so fall back to the original flat icon rail. -->
+      <nav
+        v-else
+        class="flex-1 px-2 py-2 space-y-1 overflow-y-auto"
+      >
         <NuxtLink
           v-for="item in mainNavItems"
           :key="item.to"
@@ -134,12 +145,6 @@ function isActive(to: string): boolean {
             :name="item.icon"
             class="w-[18px] h-[18px] shrink-0"
           />
-          <span
-            v-if="!isSidebarCollapsed"
-            class="truncate"
-          >
-            {{ item.label }}
-          </span>
         </NuxtLink>
       </nav>
 
@@ -224,25 +229,12 @@ function isActive(to: string): boolean {
           </div>
 
           <!-- Navigation -->
-          <nav class="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
-            <NuxtLink
-              v-for="item in mainNavItems"
-              :key="item.to"
-              :to="item.to"
-              class="group flex items-center gap-3 px-3 py-3 rounded-token-md text-ui transition-colors"
-              :class="[
-                isActive(item.to)
-                  ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
-                  : 'text-muted hover:bg-surface hover:text-default'
-              ]"
-            >
-              <UIcon
-                :name="item.icon"
-                class="w-5 h-5 shrink-0"
-              />
-              <span class="truncate">{{ item.label }}</span>
-            </NuxtLink>
-          </nav>
+          <SidebarNav
+            :items="mainNavItems"
+            :is-active="isActive"
+            variant="mobile"
+            @navigate="mobileNavOpen = false"
+          />
 
           <!-- User section -->
           <div class="px-3 py-3 border-t border-subtle">

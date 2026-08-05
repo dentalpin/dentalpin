@@ -118,6 +118,9 @@ class NotificationPreference(Base, TimestampMixin):
     )
     # Last inbound message timestamp — opens the 24h free-form session window.
     last_inbound_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
+    # SMS uses patients.phone as the number, same as WhatsApp; this flag is
+    # the opt-in. No session-window concept — SMS has no 24h free-form rule.
+    sms_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Per-type preferences (channel-agnostic opt-in)
     preferences: Mapped[dict] = mapped_column(

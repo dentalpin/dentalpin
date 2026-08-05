@@ -6,6 +6,25 @@
       "placeholder": "Type a reply…",
       "replyError": "Could not send the reply",
       "windowClosed": "The 24h window is closed. Use a template to reopen the conversation."
+    },
+    "templatesPage": {
+      "cardTitle": "Notification templates",
+      "cardDescription": "Manage the message templates used for reminders and other notifications.",
+      "title": "Notification templates",
+      "description": "Create and edit the templates used when the app sends emails, SMS, or WhatsApp messages.",
+      "add": "New template",
+      "edit": "Edit template",
+      "key": "Key",
+      "channel": "Channel",
+      "locale": "Locale",
+      "subject": "Subject",
+      "body": "Body",
+      "active": "Active",
+      "inactive": "Inactive",
+      "system": "Built-in",
+      "systemLocked": "Built-in — not editable",
+      "notesPlaceholder": "Description (optional)",
+      "saved": "Template saved"
     }
   }
 }

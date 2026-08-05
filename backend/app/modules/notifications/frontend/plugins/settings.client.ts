@@ -27,4 +27,26 @@ export default defineNuxtPlugin(() => {
     ],
     order: 10
   })
+
+  // Phase 7: template management UI — previously templates could only be
+  // created via the raw API (no frontend existed for this at all).
+  registerSettingsPage({
+    path: 'templates',
+    category: 'communications',
+    labelKey: 'notifications.templatesPage.cardTitle',
+    descriptionKey: 'notifications.templatesPage.cardDescription',
+    icon: 'i-lucide-file-text',
+    permission: 'notifications.templates.write',
+    component: () => import('../components/settings/TemplatesSettingsPage.vue'),
+    searchKeywords: [
+      'template',
+      'plantilla',
+      'modèle',
+      'recall_reminder',
+      'email',
+      'sms',
+      'whatsapp',
+    ],
+    order: 11,
+  })
 })
