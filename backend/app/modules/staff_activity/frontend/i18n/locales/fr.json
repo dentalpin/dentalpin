@@ -1,0 +1,16 @@
+{
+  "nav": {
+    "staffActivity": "Journal d'activité"
+  },
+  "staffActivity": {
+    "title": "Journal d'activité",
+    "filters": {
+      "staff": "Personnel",
+      "actionType": "Type d'action",
+      "dateFrom": "Du",
+      "dateTo": "Au",
+      "search": "Rechercher",
+      "apply": "Filtrer"
+    }
+  }
+}

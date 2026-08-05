@@ -1,0 +1,61 @@
+{
+  "payroll": {
+    "title": "Paie",
+    "tabs": {
+      "employees": "Employés",
+      "periods": "Cycles de paie",
+      "reports": "Rapports"
+    },
+    "staff": {
+      "add": "Ajouter un employé",
+      "edit": "Modifier le profil de paie",
+      "user": "Utilisateur",
+      "baseSalary": "Salaire de base",
+      "hourlyRate": "Taux horaire",
+      "taxRegime": "Régime fiscal",
+      "bankTax": "Banque/Fiscal",
+      "bank": "Compte bancaire enregistré",
+      "tax": "Numéro fiscal enregistré",
+      "status": "Statut",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "userIdPlaceholder": "ID utilisateur (UUID)",
+      "bankAccountPlaceholder": "Compte bancaire (laisser vide pour ne pas changer)",
+      "taxIdPlaceholder": "Numéro fiscal (laisser vide pour ne pas changer)",
+      "selectUser": "Sélectionner un membre du personnel…"
+    },
+    "periods": {
+      "add": "Nouveau cycle de paie",
+      "period": "Période",
+      "status": "Statut",
+      "statusValues": {
+        "draft": "Brouillon",
+        "processed": "Traité",
+        "paid": "Payé"
+      }
+    },
+    "entries": {
+      "title": "Entrées",
+      "staff": "Employé",
+      "gross": "Brut",
+      "deductions": "Déductions",
+      "net": "Net",
+      "paid": "Payé",
+      "paidYes": "Payé",
+      "paidNo": "Non payé",
+      "edit": "Modifier l'entrée"
+    },
+    "reports": {
+      "monthly": "Résumé mensuel",
+      "annual": "Résumé annuel",
+      "month": "Mois",
+      "year": "Année",
+      "run": "Calculer",
+      "gross": "Brut",
+      "deductions": "Déductions",
+      "net": "Net",
+      "employees": "Employés",
+      "monthsProcessed": "Mois traités"
+    }
+  }
+}
