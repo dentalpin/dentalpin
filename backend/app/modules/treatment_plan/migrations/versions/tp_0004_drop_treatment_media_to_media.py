@@ -33,7 +33,7 @@ from alembic import op
 revision: str = "tp_0004"
 down_revision: str | None = "tp_0003"
 branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = ("med_0002",)
+depends_on: str | Sequence[str] | None = ("meds_0001",)
 
 
 def upgrade() -> None:

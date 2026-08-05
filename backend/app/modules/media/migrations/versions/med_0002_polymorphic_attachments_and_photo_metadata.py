@@ -11,9 +11,9 @@ and extends ``documents`` with photo-aware columns:
 - ``tags``              — free-form labels (JSONB array)
 
 The companion legacy-drop migrations (``cn_0002``, ``tp_0004``) declare
-``depends_on=("med_0002",)`` so they always run after this one.
+``depends_on=("meds_0001",)`` so they always run after this one.
 
-Revision ID: med_0002
+Revision ID: meds_0001
 Revises: med_0001
 Create Date: 2026-05-02
 
@@ -26,7 +26,7 @@ from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
-revision: str = "med_0002"
+revision: str = "meds_0001"
 down_revision: str | None = "med_0001"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None

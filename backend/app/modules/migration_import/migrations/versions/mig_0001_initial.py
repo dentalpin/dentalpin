@@ -8,7 +8,7 @@ Five tables on the dedicated ``migration_import`` Alembic branch:
 - ``migration_import_warnings``        — DPMF warnings + ours
 - ``migration_import_raw_entities``    — forward-compat catch-all
 
-``depends_on=("med_0002",)`` because ``file_stagings.resolved_document_id``
+``depends_on=("meds_0001",)`` because ``file_stagings.resolved_document_id``
 points at ``media.documents`` and that table must exist before us.
 
 Revision ID: mig_0001
@@ -26,7 +26,7 @@ from alembic import op
 revision: str = "mig_0001"
 down_revision: str | None = "0001"
 branch_labels: str | Sequence[str] | None = ("migration_import",)
-depends_on: str | Sequence[str] | None = ("med_0002",)
+depends_on: str | Sequence[str] | None = ("meds_0001",)
 
 
 def upgrade() -> None:

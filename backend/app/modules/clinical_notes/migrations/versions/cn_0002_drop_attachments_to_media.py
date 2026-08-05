@@ -15,7 +15,7 @@ is best-effort (recreates an empty table — historical rows can be
 recovered from media_attachments by inverting the backfill).
 
 Sits on the ``clinical_notes`` branch and declares ``depends_on=
-("med_0002",)`` so ``media_attachments`` exists before we INSERT into
+("meds_0001",)`` so ``media_attachments`` exists before we INSERT into
 it.
 
 Revision ID: cn_0002
@@ -31,7 +31,7 @@ from alembic import op
 revision: str = "cn_0002"
 down_revision: str | None = "cn_0001"
 branch_labels: str | Sequence[str] | None = None
-depends_on: str | Sequence[str] | None = ("med_0002",)
+depends_on: str | Sequence[str] | None = ("meds_0001",)
 
 
 def upgrade() -> None:
