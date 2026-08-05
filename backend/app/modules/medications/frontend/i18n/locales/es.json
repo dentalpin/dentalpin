@@ -1,0 +1,59 @@
+{
+  "medications": {
+    "title": "Medicamentos",
+    "search": "Buscar por nombre",
+    "filters": {
+      "form": "Forma",
+      "active": "Estado",
+      "all": "Todos"
+    },
+    "table": {
+      "name": "Nombre",
+      "dose": "Dosis",
+      "form": "Forma",
+      "regimen": "Pauta",
+      "status": "Estado",
+      "actions": "Acciones"
+    },
+    "status": {
+      "active": "Activo",
+      "inactive": "Inactivo"
+    },
+    "form": {
+      "tablet": "Comprimido",
+      "capsule": "Cápsula",
+      "syrup": "Jarabe",
+      "gel": "Gel",
+      "mouthwash": "Enjuague bucal",
+      "injection": "Inyección",
+      "cream": "Crema",
+      "other": "Otro"
+    },
+    "unit": {
+      "mg": "mg",
+      "g": "g",
+      "ml": "ml",
+      "UI": "UI",
+      "%": "%",
+      "other": "Otro"
+    },
+    "actions": {
+      "add": "Añadir medicamento",
+      "edit": "Editar medicamento",
+      "delete": "Eliminar",
+      "save": "Guardar",
+      "cancel": "Cancelar"
+    },
+    "fields": {
+      "name": "Nombre del fármaco",
+      "dose": "Dosis",
+      "unit": "Unidad",
+      "form": "Forma",
+      "timesPerDay": "Veces al día",
+      "instructions": "Instrucciones",
+      "isPrescribed": "Prescrito / activo"
+    },
+    "empty": "No se encontraron medicamentos",
+    "confirmDelete": "¿Eliminar este medicamento? Esta acción no se puede deshacer."
+  }
+}

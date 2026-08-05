@@ -1,0 +1,22 @@
+{
+  "patientAdmin": {
+    "title": "Family",
+    "emptyHint": "No family links on file.",
+    "relationships": {
+      "title": "Family relationships",
+      "searchPatient": "Search patient to link…",
+      "addSuccess": "Relationship added",
+      "addError": "Could not add relationship",
+      "removeError": "Could not remove relationship",
+      "types": {
+        "parent": "Parent",
+        "child": "Child",
+        "spouse": "Spouse",
+        "sibling": "Sibling",
+        "guardian": "Guardian",
+        "ward": "Ward",
+        "other": "Other"
+      }
+    }
+  }
+}

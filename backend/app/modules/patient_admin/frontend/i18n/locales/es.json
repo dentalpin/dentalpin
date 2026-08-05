@@ -1,0 +1,22 @@
+{
+  "patientAdmin": {
+    "title": "Familia",
+    "emptyHint": "Sin vínculos familiares registrados.",
+    "relationships": {
+      "title": "Vínculos familiares",
+      "searchPatient": "Buscar paciente para vincular…",
+      "addSuccess": "Vínculo añadido",
+      "addError": "No se pudo añadir el vínculo",
+      "removeError": "No se pudo eliminar el vínculo",
+      "types": {
+        "parent": "Padre/Madre",
+        "child": "Hijo/a",
+        "spouse": "Cónyuge",
+        "sibling": "Hermano/a",
+        "guardian": "Tutor/a",
+        "ward": "Tutelado/a",
+        "other": "Otro"
+      }
+    }
+  }
+}

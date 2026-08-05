@@ -1,0 +1,59 @@
+{
+  "medications": {
+    "title": "Médicaments",
+    "search": "Rechercher par nom",
+    "filters": {
+      "form": "Forme",
+      "active": "Statut",
+      "all": "Tous"
+    },
+    "table": {
+      "name": "Nom",
+      "dose": "Dose",
+      "form": "Forme",
+      "regimen": "Posologie",
+      "status": "Statut",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Actif",
+      "inactive": "Inactif"
+    },
+    "form": {
+      "tablet": "Comprimé",
+      "capsule": "Gélule",
+      "syrup": "Sirop",
+      "gel": "Gel",
+      "mouthwash": "Bain de bouche",
+      "injection": "Injection",
+      "cream": "Crème",
+      "other": "Autre"
+    },
+    "unit": {
+      "mg": "mg",
+      "g": "g",
+      "ml": "ml",
+      "UI": "UI",
+      "%": "%",
+      "other": "Autre"
+    },
+    "actions": {
+      "add": "Ajouter un médicament",
+      "edit": "Modifier le médicament",
+      "delete": "Supprimer",
+      "save": "Enregistrer",
+      "cancel": "Annuler"
+    },
+    "fields": {
+      "name": "Nom du médicament",
+      "dose": "Dose",
+      "unit": "Unité",
+      "form": "Forme",
+      "timesPerDay": "Fois par jour",
+      "instructions": "Instructions",
+      "isPrescribed": "Prescrit / actif"
+    },
+    "empty": "Aucun médicament trouvé",
+    "confirmDelete": "Supprimer ce médicament ? Cette action est irréversible."
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "medicalReference": {
+    "settingsLabel": "Listas de Referencia Médica",
+    "settingsDescription": "Gestiona las listas de alergias, medicamentos y enfermedades usadas en el historial de pacientes.",
+    "title": "Listas de Referencia Médica",
+    "description": "Estas listas alimentan los desplegables de búsqueda del historial médico. Desactivar un elemento lo quita de futuras búsquedas sin afectar los registros de pacientes existentes.",
+    "tabs": {
+      "allergies": "Alergias",
+      "medications": "Medicamentos",
+      "diseases": "Enfermedades",
+      "surgeries": "Cirugías",
+      "interactions": "Interacciones",
+      "contraindications": "Contraindicaciones"
+    },
+    "name": "Nombre",
+    "status": "Estado",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "showInactive": "Mostrar inactivos",
+    "newItemPlaceholder": "Nombre del nuevo elemento…",
+    "addSuccess": "Añadido",
+    "addError": "No se pudo añadir el elemento",
+    "updateError": "No se pudo actualizar el elemento",
+    "deactivateError": "No se pudo desactivar el elemento",
+    "itemCount": "{count} elementos",
+    "medicationA": "Medicamento A",
+    "medicationB": "Medicamento B",
+    "riskNote": "Riesgo",
+    "riskNotePlaceholder": "Describe el riesgo…"
+  }
+}

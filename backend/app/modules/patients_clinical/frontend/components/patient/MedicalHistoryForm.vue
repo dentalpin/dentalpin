@@ -3,6 +3,7 @@ import type { AllergyEntry, MedicationEntry, MedicalHistory, SurgicalHistoryEntr
 
 interface Props {
   modelValue: MedicalHistory
+  patientId?: string
   readonly?: boolean
   hideActions?: boolean
 }
@@ -18,6 +19,24 @@ const emit = defineEmits<{
 }>()
 
 const { t } = useI18n()
+const { search: searchMedicalReference, fetchPatientFlags } = useMedicalReference()
+
+// Active interaction/contraindication warnings for this patient — computed
+// server-side from whichever of their medications/diseases have a
+// reference_id (free-text-only legacy entries can't be reliably matched,
+// see MedicalReferenceService.get_patient_flags).
+const flags = ref<{ type: string, risk_note: string, involved: string[] }[]>([])
+async function loadFlags() {
+  if (!props.patientId) return
+  flags.value = await fetchPatientFlags(props.patientId)
+}
+onMounted(loadFlags)
+// Re-check whenever the medication or disease list changes — covers both
+// adding a new entry and removing one that was causing a flag.
+watch(
+  () => [props.modelValue.medications.length, props.modelValue.systemic_diseases.length],
+  loadFlags
+)
 
 // Local copy for editing
 const localData = computed({
@@ -25,13 +44,28 @@ const localData = computed({
   set: value => emit('update:modelValue', value)
 })
 
+// APCI check — fetched once, matched against a disease row's reference_id
+// first, falling back to a case-insensitive name match for legacy
+// free-text entries that predate this column.
+const apciDiseases = ref<{ id: string, name: string }[]>([])
+onMounted(async () => {
+  apciDiseases.value = (await searchMedicalReference('diseases', '')).filter(d => d.is_apci)
+})
+const apciIds = computed(() => new Set(apciDiseases.value.map(d => d.id)))
+const apciNames = computed(() => new Set(apciDiseases.value.map(d => d.name.toLowerCase())))
+function isApci(disease: SystemicDiseaseEntry): boolean {
+  if (disease.reference_id) return apciIds.value.has(disease.reference_id)
+  return apciNames.value.has(disease.name.toLowerCase())
+}
+
 // Allergy form state
 const newAllergy = ref<AllergyEntry>({
   name: '',
   type: undefined,
   severity: 'medium',
   reaction: undefined,
-  notes: undefined
+  notes: undefined,
+  reference_id: undefined
 })
 
 const allergyTypes = computed(() => [
@@ -51,7 +85,7 @@ const severityOptions = computed(() => [
 function addAllergy() {
   if (!newAllergy.value.name.trim()) return
   localData.value.allergies.push({ ...newAllergy.value })
-  newAllergy.value = { name: '', type: undefined, severity: 'medium', reaction: undefined, notes: undefined }
+  newAllergy.value = { name: '', type: undefined, severity: 'medium', reaction: undefined, notes: undefined, reference_id: undefined }
 }
 
 function removeAllergy(index: number) {
@@ -64,13 +98,14 @@ const newMedication = ref<MedicationEntry>({
   dosage: undefined,
   frequency: undefined,
   start_date: undefined,
-  notes: undefined
+  notes: undefined,
+  reference_id: undefined
 })
 
 function addMedication() {
   if (!newMedication.value.name.trim()) return
   localData.value.medications.push({ ...newMedication.value })
-  newMedication.value = { name: '', dosage: undefined, frequency: undefined, start_date: undefined, notes: undefined }
+  newMedication.value = { name: '', dosage: undefined, frequency: undefined, start_date: undefined, notes: undefined, reference_id: undefined }
 }
 
 function removeMedication(index: number) {
@@ -85,7 +120,8 @@ const newDisease = ref<SystemicDiseaseEntry>({
   is_controlled: true,
   is_critical: false,
   medications: undefined,
-  notes: undefined
+  notes: undefined,
+  reference_id: undefined
 })
 
 const diseaseTypes = computed(() => [
@@ -100,7 +136,7 @@ const diseaseTypes = computed(() => [
 function addDisease() {
   if (!newDisease.value.name.trim()) return
   localData.value.systemic_diseases.push({ ...newDisease.value })
-  newDisease.value = { name: '', type: undefined, diagnosis_date: undefined, is_controlled: true, is_critical: false, medications: undefined, notes: undefined }
+  newDisease.value = { name: '', type: undefined, diagnosis_date: undefined, is_controlled: true, is_critical: false, medications: undefined, notes: undefined, reference_id: undefined }
 }
 
 function removeDisease(index: number) {
@@ -112,13 +148,14 @@ const newSurgery = ref<SurgicalHistoryEntry>({
   procedure: '',
   surgery_date: undefined,
   complications: undefined,
-  notes: undefined
+  notes: undefined,
+  reference_id: undefined
 })
 
 function addSurgery() {
   if (!newSurgery.value.procedure.trim()) return
   localData.value.surgical_history.push({ ...newSurgery.value })
-  newSurgery.value = { procedure: '', surgery_date: undefined, complications: undefined, notes: undefined }
+  newSurgery.value = { procedure: '', surgery_date: undefined, complications: undefined, notes: undefined, reference_id: undefined }
 }
 
 function removeSurgery(index: number) {
@@ -140,6 +177,27 @@ function handleSave() {
 
 <template>
   <div class="medical-history-form space-y-6">
+    <!-- Active interaction/contraindication warnings -->
+    <UAlert
+      v-if="flags.length > 0"
+      color="error"
+      variant="subtle"
+      icon="i-lucide-alert-octagon"
+      :title="t('patients.medicalHistory.warningsTitle')"
+    >
+      <template #description>
+        <ul class="space-y-1 mt-1">
+          <li
+            v-for="(flag, i) in flags"
+            :key="i"
+          >
+            <span class="font-medium">{{ flag.involved.join(' + ') }}</span>
+            — {{ flag.risk_note }}
+          </li>
+        </ul>
+      </template>
+    </UAlert>
+
     <!-- Allergies Section -->
     <UAccordion
       :items="[{ label: t('patients.medicalHistory.allergies'), icon: 'i-lucide-alert-triangle', defaultOpen: true, slot: 'allergies' }]"
@@ -179,8 +237,10 @@ function handleSave() {
             v-if="!readonly"
             class="grid grid-cols-1 md:grid-cols-4 gap-2"
           >
-            <UInput
+            <ReferenceSearchInput
               v-model="newAllergy.name"
+              v-model:reference-id="newAllergy.reference_id"
+              kind="allergies"
               :placeholder="t('patients.medicalHistory.allergyName')"
             />
             <USelect
@@ -242,8 +302,10 @@ function handleSave() {
             v-if="!readonly"
             class="grid grid-cols-1 md:grid-cols-4 gap-2"
           >
-            <UInput
+            <ReferenceSearchInput
               v-model="newMedication.name"
+              v-model:reference-id="newMedication.reference_id"
+              kind="medications"
               :placeholder="t('patients.medicalHistory.medicationName')"
             />
             <UInput
@@ -284,6 +346,13 @@ function handleSave() {
             >
               {{ t('patients.medicalHistory.critical') }}
             </UBadge>
+            <UBadge
+              v-if="isApci(disease)"
+              color="info"
+              size="xs"
+            >
+              APCI
+            </UBadge>
             <span class="flex-1 font-medium">{{ disease.name }}</span>
             <UBadge
               :color="disease.is_controlled ? 'success' : 'warning'"
@@ -305,8 +374,10 @@ function handleSave() {
             v-if="!readonly"
             class="grid grid-cols-1 md:grid-cols-3 gap-2"
           >
-            <UInput
+            <ReferenceSearchInput
               v-model="newDisease.name"
+              v-model:reference-id="newDisease.reference_id"
+              kind="diseases"
               :placeholder="t('patients.medicalHistory.diseaseName')"
             />
             <USelect
@@ -491,8 +562,10 @@ function handleSave() {
             v-if="!readonly"
             class="grid grid-cols-1 md:grid-cols-3 gap-2"
           >
-            <UInput
+            <ReferenceSearchInput
               v-model="newSurgery.procedure"
+              v-model:reference-id="newSurgery.reference_id"
+              kind="surgeries"
               :placeholder="t('patients.medicalHistory.procedure')"
             />
             <UInput
