@@ -229,3 +229,19 @@ class EventType:
     COPILOT_TOOL_INVOKED = "copilot.tool.invoked"
     COPILOT_BUDGET_THRESHOLD_REACHED = "copilot.budget.threshold_reached"
     COPILOT_DIGEST_SENT = "copilot.digest.sent"
+    
+    # Inventory events (inventory module — Phase 12 cost & movement tracking)
+    INVENTORY_MOVEMENT_RECORDED = "inventory.movement_recorded"
+    # Purchase order events (purchase_orders module — Phase 13c/13d)
+    PURCHASE_ORDER_CREATED = "purchase_order.created"
+    PURCHASE_ORDER_SENT = "purchase_order.sent"
+    PURCHASE_ORDER_CONFIRMED = "purchase_order.confirmed"
+    PURCHASE_ORDER_CANCELLED = "purchase_order.cancelled"
+    PURCHASE_ORDER_RECEIVED = "purchase_order.received"
+    
+    #Generate Documents (phase 14)
+    DOCUMENT_GENERATED = "document.generated"
+
+    # Payroll events (payroll module -- Phase 15)
+    PAYROLL_PERIOD_PROCESSED = "payroll.period_processed"
+    PAYROLL_PAYMENT_MADE = "payroll.payment_made"

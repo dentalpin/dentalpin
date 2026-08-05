@@ -76,6 +76,35 @@ recalls = "app.modules.recalls:RecallsModule"
 verifactu = "app.modules.verifactu:VerifactuModule"
 migration_import = "app.modules.migration_import:MigrationImportModule"
 copilot = "app.modules.copilot:CopilotModule"
+expenses = "app.modules.expenses:ExpensesModule"
+contacts = "app.modules.contacts:ContactsModule"
+lab_orders = "app.modules.lab_orders:LabOrdersModule"
+inventory = "app.modules.inventory:InventoryModule"
+tasks = "app.modules.tasks:TasksModule"
+sms_gateway = "app.modules.sms_gateway:SmsGatewayModule"
+recall_reminders = "app.modules.recall_reminders:RecallRemindersModule"
+medications = "app.modules.medications:MedicationsModule"
+staff_activity = "app.modules.staff_activity:StaffActivityModule"
+treatment_consumables = "app.modules.treatment_consumables:TreatmentConsumablesModule"
+documents = "app.modules.documents:DocumentsModule"
+payroll = "app.modules.payroll:PayrollModule"
+payments = "app.modules.payments:PaymentsModule"
+periodontogram = "app.modules.periodontogram:PeriodontogramModule"
+accounting_export = "app.modules.accounting_export:AccountingExportModule"
+whatsapp_kapso = "app.modules.whatsapp_kapso:WhatsappKapsoModule"
+clinical_notes = "app.modules.clinical_notes:ClinicalNotesModule"
+patient_admin = "app.modules.patient_admin:PatientAdminModule"
+medical_reference = "app.modules.medical_reference:MedicalReferenceModule"
+inventory_consumption = "app.modules.inventory_consumption:InventoryConsumptionModule"
+suppliers = "app.modules.suppliers:SuppliersModule"
+supplier_items = "app.modules.supplier_items:SupplierItemsModule"
+purchase_orders = "app.modules.purchase_orders:PurchaseOrdersModule"
+inventory_reorder = "app.modules.inventory_reorder:InventoryReorderModule"
+supplier_ratings = "app.modules.supplier_ratings:SupplierRatingsModule"
+
+
+
+
 
 [tool.setuptools.packages.find]
 where = ["."]

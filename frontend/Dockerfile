@@ -1,26 +1,25 @@
 # Build stage
-FROM node:20-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
-
-# Build argument for API URL
 ARG API_BASE_URL=http://localhost:8000
 ENV API_BASE_URL=$API_BASE_URL
 
-# Copy package files
-COPY package*.json ./
-
-# Install dependencies
+# Copy package files from the frontend directory
+COPY frontend/package*.json ./
 RUN npm install
 
-# Copy source code
-COPY . .
+# Copy the entire modules tree so Nuxt can discover them at build time
+COPY backend/app/modules /module_layers
 
-# Build the application
+# Copy the frontend source code
+COPY frontend/ .
+
+ENV NODE_OPTIONS=--max-old-space-size=4096
+
 RUN npm run build
-
 # Production stage
-FROM node:20-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 

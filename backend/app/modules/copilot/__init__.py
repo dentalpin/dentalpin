@@ -40,15 +40,12 @@ class CopilotModule(BaseModule):
         },
         "frontend": {
             "layer_path": "frontend",
-            "navigation": [
-                {
-                    "label": "nav.copilot",
-                    "icon": "i-lucide-sparkles",
-                    "to": "/copilot",
-                    "permission": "copilot.chat",
-                    "order": 90,
-                },
-            ],
+            # No sidebar entry — CopilotMount.vue (fixed bottom-right FAB,
+            # Cmd/Ctrl+K) is the only entry point now. It's a fully
+            # independent floating component, unaffected by this — the
+            # /copilot route and its layer are still registered via
+            # layer_path above, just not linked from the sidebar.
+            "navigation": [],
         },
     }
 

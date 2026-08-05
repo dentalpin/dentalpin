@@ -51,8 +51,8 @@ services:
 
   frontend:
     build:
-      context: ./frontend
-      target: builder
+      context: .
+      dockerfile: frontend/Dockerfile
       args:
         # The browser resolves this URL, so it must be reachable from the
         # device running it. Set API_BASE_URL=http://<host-lan-ip>:8000 in
@@ -65,18 +65,18 @@ services:
       NUXT_PUBLIC_API_BASE_URL: ${API_BASE_URL:-http://localhost:8000}
       NODE_OPTIONS: --max-old-space-size=4096
     ports:
-      - "3000:3000"
+      - "8080:3000"
     depends_on:
       backend:
         condition: service_started
     volumes:
-      - ./frontend:/app
+      #- ./frontend:/app
       # Mount backend module packages read-only so Nuxt can `extends`
       # each module's layer (declared via `manifest.frontend.layer_path`).
       # The backend writes absolute paths under this mount into
       # `frontend/modules.json`.
       - ./backend/app/modules:/module_layers:ro
-      - /app/node_modules
+      - frontend_node_modules:/app/node_modules
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/ || exit 1"]
       interval: 30s
@@ -84,8 +84,9 @@ services:
       retries: 3
       start_period: 60s
     restart: unless-stopped
-    command: npm run dev
+    #command: npm run dev
 
 volumes:
   pgdata:
   storage_data:
+  frontend_node_modules:
