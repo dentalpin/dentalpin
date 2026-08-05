@@ -1,0 +1,28 @@
+{
+  "inventory": {
+    "title": "Inventario",
+    "add": "Añadir artículo",
+    "name": "Artículo",
+    "category": "Categoría",
+    "quantity": "Cantidad",
+    "unit": "Unidad (ej. cajas, uds, ml)",
+    "lowStockThreshold": "Alerta de stock bajo por debajo de",
+    "notes": "Notas",
+    "search": "Buscar en inventario",
+    "filterByCategory": "Filtrar por categoría",
+    "lowStockOnly": "Solo stock bajo",
+    "lowStock": "Stock bajo",
+    "categories": {
+      "consumables": "Consumibles",
+      "ppe": "EPI",
+      "materials": "Materiales",
+      "medication": "Medicación",
+      "other": "Otro"
+    },
+    "dashboard": {
+      "title": "Alertas de stock",
+      "lowStock": "Artículos con stock bajo",
+      "viewAll": "Ver todo"
+    }
+  }
+}

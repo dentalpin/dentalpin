@@ -1,0 +1,28 @@
+{
+  "inventory": {
+    "title": "Inventory",
+    "add": "Add item",
+    "name": "Item",
+    "category": "Category",
+    "quantity": "Quantity",
+    "unit": "Unit (e.g. boxes, pcs, ml)",
+    "lowStockThreshold": "Low-stock alert below",
+    "notes": "Notes",
+    "search": "Search inventory",
+    "filterByCategory": "Filter by category",
+    "lowStockOnly": "Low stock only",
+    "lowStock": "Low stock",
+    "categories": {
+      "consumables": "Consumables",
+      "ppe": "PPE",
+      "materials": "Materials",
+      "medication": "Medication",
+      "other": "Other"
+    },
+    "dashboard": {
+      "title": "Stock alerts",
+      "lowStock": "Items low on stock",
+      "viewAll": "View all"
+    }
+  }
+}
