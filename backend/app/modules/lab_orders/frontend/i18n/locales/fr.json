@@ -1,0 +1,48 @@
+{
+  "labOrders": {
+    "title": "Commandes de laboratoire",
+    "add": "Nouvelle commande",
+    "sentDate": "Envoyée",
+    "patient": "Patient",
+    "lab": "Laboratoire",
+    "workType": "Type de travail",
+    "tooth": "Dent",
+    "status": "Statut",
+    "expectedDate": "Date prévue",
+    "notes": "Notes",
+    "filterByStatus": "Filtrer par statut",
+    "selectPatient": "Sélectionner un patient",
+    "selectLab": "Sélectionner un laboratoire",
+    "noLabsHint": "Ajoutez d'abord un laboratoire dans Contacts avant de créer une commande.",
+    "workTypes": {
+      "crown": "Couronne",
+      "bridge": "Bridge",
+      "denture": "Prothèse",
+      "implant": "Implant",
+      "veneer": "Facette",
+      "orthodontic": "Appareil orthodontique",
+      "other": "Autre",
+      "repair": "Réparation"
+    },
+    "statuses": {
+      "sent": "Envoyée",
+      "in_progress": "En cours",
+      "ready": "Prête",
+      "received": "Reçue",
+      "cancelled": "Annulée"
+    },
+    "dashboard": {
+      "title": "Travaux de laboratoire en attente",
+      "viewAll": "Voir tout"
+    },
+    "impressionType": "Type d'empreinte",
+    "antagonistInfo": "Info antagoniste",
+    "shade": "Teinte (Vita Classical)",
+    "impressionTypes": {
+      "alginate": "Alginate",
+      "pvs_silicone": "PVS / Silicone",
+      "digital_scan": "Empreinte numérique",
+      "other": "Autre"
+    }
+  }
+}

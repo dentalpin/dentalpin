@@ -1,0 +1,48 @@
+{
+  "labOrders": {
+    "title": "Lab orders",
+    "add": "New lab order",
+    "sentDate": "Sent",
+    "patient": "Patient",
+    "lab": "Lab",
+    "workType": "Work type",
+    "tooth": "Tooth",
+    "status": "Status",
+    "expectedDate": "Expected date",
+    "notes": "Notes",
+    "filterByStatus": "Filter by status",
+    "selectPatient": "Select patient",
+    "selectLab": "Select lab",
+    "noLabsHint": "Add a lab under Contacts first before creating an order.",
+    "workTypes": {
+      "crown": "Crown",
+      "bridge": "Bridge",
+      "denture": "Denture",
+      "implant": "Implant",
+      "veneer": "Veneer",
+      "orthodontic": "Orthodontic appliance",
+      "other": "Other",
+      "repair": "Repair"
+    },
+    "statuses": {
+      "sent": "Sent",
+      "in_progress": "In progress",
+      "ready": "Ready",
+      "received": "Received",
+      "cancelled": "Cancelled"
+    },
+    "dashboard": {
+      "title": "Pending lab work",
+      "viewAll": "View all"
+    },
+    "impressionType": "Impression type",
+    "antagonistInfo": "Antagonist info",
+    "shade": "Shade (Vita Classical)",
+    "impressionTypes": {
+      "alginate": "Alginate",
+      "pvs_silicone": "PVS / Silicone",
+      "digital_scan": "Digital scan",
+      "other": "Other"
+    }
+  }
+}
