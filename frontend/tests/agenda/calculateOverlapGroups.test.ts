@@ -1,9 +1,9 @@
 import { describe, expect, it } from 'vitest'
 import type { Appointment } from '~~/app/types'
-// Import directly from the agenda module's frontend layer. Nuxt aliases
-// would require the full Nuxt env, so we use a relative path that works
-// both locally and in CI (the /module_layers/ symlink only exists in Docker).
-import { calculateOverlapGroups } from '../../../backend/app/modules/agenda/frontend/composables/calculateOverlapGroups'
+// Import directly from the agenda module's frontend layer via the
+// @backend-modules alias (see vitest.config.ts) which resolves to
+// /module_layers in Docker and ../backend/app/modules locally.
+import { calculateOverlapGroups } from '@backend-modules/agenda/frontend/composables/calculateOverlapGroups'
 
 function apt(id: string, start: string, end: string): Appointment {
   return {
