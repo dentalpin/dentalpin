@@ -1956,6 +1956,7 @@
       "rejectDescription": "Esta acción no se puede deshacer.",
       "cancel": "¿Cancelar presupuesto?",
       "cancelDescription": "Esta acción no se puede deshacer.",
+      "resend": "¿Crear una nueva versión de este presupuesto? El plan de tratamiento vinculado pasará a la nueva versión.",
       "delete": "¿Eliminar presupuesto?",
       "deleteDescription": "Esta acción no se puede deshacer."
     },
@@ -1981,6 +1982,7 @@
       "rejected": "Presupuesto rechazado",
       "cancelled": "Presupuesto cancelado",
       "duplicated": "Nueva versión creada",
+      "resent": "Nueva versión creada a partir del presupuesto anterior",
       "itemAdded": "Tratamiento añadido",
       "itemUpdated": "Tratamiento actualizado",
       "itemRemoved": "Tratamiento eliminado",

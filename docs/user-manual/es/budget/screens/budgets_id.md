@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: 4c419ba
+last_verified_commit: 2a05d7a
 ---
 
 # Detalle del presupuesto
@@ -114,12 +114,25 @@ Desde aquí se mueve el presupuesto por todo su flujo
    actual; la antigua queda como histórica.
 2. Edita ítems y guarda. Publica `budget.renegotiated`.
 
+## Reenviar (nueva versión de un presupuesto finalizado)
+
+> Requiere `budget.write`. Solo visible con el presupuesto en estado
+> *rechazado*, *caducado* o *cancelado*.
+
+1. Pulsa **Reenviar**. Se crea un borrador nuevo (versión +1) con las
+   mismas líneas y un enlace público nuevo, y la pantalla navega a él.
+2. El plan de tratamiento vinculado pasa automáticamente a la nueva
+   versión (evento `budget.superseded`); su estado no cambia.
+3. Edita el borrador si hace falta y envíalo al paciente. Si el plan
+   estaba *cerrado por rechazo del paciente* y el paciente acepta esta
+   nueva versión, el plan se reactiva solo a *En curso*.
+
 ## Permisos
 
 | Lo que ves / puedes hacer | Permiso |
 |---------------------------|---------|
 | Ver detalle, líneas, historial de versiones, descargar PDF | `budget.read` |
-| Editar líneas, enviar, aceptar online, rechazar, cancelar, duplicar | `budget.write` |
+| Editar líneas, enviar, aceptar online, rechazar, cancelar, duplicar, reenviar | `budget.write` |
 | Aceptar firmando en clínica | `budget.accept_in_clinic` |
 | Renegociar (crear nueva versión) | `budget.renegotiate` |
 | Borrar | `budget.admin` |

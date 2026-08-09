@@ -1934,6 +1934,7 @@
       "rejectDescription": "Esta ação não pode ser anulada.",
       "cancel": "Anular o orçamento?",
       "cancelDescription": "Esta ação não pode ser anulada.",
+      "resend": "Criar uma nova versão deste orçamento? O plano de tratamento associado passará para a nova versão.",
       "delete": "Eliminar o orçamento?",
       "deleteDescription": "Esta ação não pode ser anulada."
     },
@@ -1959,6 +1960,7 @@
       "rejected": "Orçamento recusado",
       "cancelled": "Orçamento anulado",
       "duplicated": "Nova versão criada",
+      "resent": "Nova versão criada a partir do orçamento anterior",
       "itemAdded": "Tratamento adicionado",
       "itemUpdated": "Tratamento atualizado",
       "itemRemoved": "Tratamento removido",

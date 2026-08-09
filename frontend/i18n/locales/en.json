@@ -1934,6 +1934,7 @@
       "rejectDescription": "This action cannot be undone.",
       "cancel": "Cancel quote?",
       "cancelDescription": "This action cannot be undone.",
+      "resend": "Create a new version of this quote? The linked treatment plan will follow the new version.",
       "delete": "Delete quote?",
       "deleteDescription": "This action cannot be undone."
     },
@@ -1959,6 +1960,7 @@
       "rejected": "Quote rejected",
       "cancelled": "Quote cancelled",
       "duplicated": "New version created",
+      "resent": "New version created from the previous quote",
       "itemAdded": "Treatment added",
       "itemUpdated": "Treatment updated",
       "itemRemoved": "Treatment removed",

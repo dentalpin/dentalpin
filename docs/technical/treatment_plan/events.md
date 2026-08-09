@@ -1,6 +1,6 @@
 ---
 module: treatment_plan
-last_verified_commit: 9d3fac6
+last_verified_commit: 2a05d7a
 ---
 
 # Treatment Plan — events
@@ -34,9 +34,11 @@ resulting `odontogram.treatment.performed` carries `unit_price: null`
 | Event | Handler | Effect |
 |-------|---------|--------|
 | `appointment.completed` | `events.py::on_appointment_completed` | Mark planned items as performed if linked. |
-| `budget.accepted` | `events.py::on_budget_accepted` | pending → active (idempotent). |
+| `budget.accepted` | `events.py::on_budget_accepted` | pending → active; also closed(`rejected_by_patient`) → active when the patient accepts a resent version (issue #162). Idempotent. |
 | `budget.rejected` | `events.py::on_budget_rejected` | pending → closed (`closure_reason=rejected_by_patient`). |
-| `budget.renegotiated` | `events.py::on_budget_renegotiated` | pending → draft (budget already cancelled by publisher). |
+| `budget.renegotiated` | `events.py::on_budget_renegotiated` | pending → draft via `reopen_from_budget` (never writes the budget row — the publisher's open transaction holds it locked). |
+| `budget.cancelled` | `events.py::on_budget_cancelled` | pending → draft via `reopen_from_budget` (issue #162). No-op without `plan_id` (standalone budget). |
+| `budget.superseded` | `events.py::on_budget_superseded` | Repoint `plan.budget_id` to the resent version — only while the plan still points at the superseded budget (idempotent). Status untouched. |
 | `odontogram.treatment.performed` | `events.py::on_treatment_performed` | Mark the matching pending item completed **and cancel its pending sessions** (no session events) — the performed event already carried the full price to payments; a later session completion would book the same money twice. |
 
 ## Adding a new event

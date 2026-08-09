@@ -1934,6 +1934,7 @@
       "rejectDescription": "Cette action est irréversible.",
       "cancel": "Annuler le devis ?",
       "cancelDescription": "Cette action est irréversible.",
+      "resend": "Créer une nouvelle version de ce devis ? Le plan de traitement lié suivra la nouvelle version.",
       "delete": "Supprimer le devis ?",
       "deleteDescription": "Cette action est irréversible."
     },
@@ -1959,6 +1960,7 @@
       "rejected": "Devis refusé",
       "cancelled": "Devis annulé",
       "duplicated": "Nouvelle version créée",
+      "resent": "Nouvelle version créée à partir du devis précédent",
       "itemAdded": "Traitement ajouté",
       "itemUpdated": "Traitement mis à jour",
       "itemRemoved": "Traitement retiré",

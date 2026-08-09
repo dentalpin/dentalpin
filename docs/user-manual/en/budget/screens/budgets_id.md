@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: 4c419ba
+last_verified_commit: 2a05d7a
 ---
 
 # Budget detail
@@ -108,12 +108,25 @@ signed, invoiced, or renegotiated.
    current one; the previous becomes historical.
 2. Edit items and save. Publishes `budget.renegotiated`.
 
+## Resend (new version of a finished quote)
+
+> Requires `budget.write`. Only visible while the quote is
+> *rejected*, *expired* or *cancelled*.
+
+1. Click **Resend**. A new draft (version +1) is created with the
+   same lines and a fresh public link, and the screen navigates to it.
+2. The linked treatment plan automatically follows the new version
+   (`budget.superseded` event); its status is untouched.
+3. Edit the draft if needed and send it to the patient. If the plan
+   was *closed as rejected by the patient* and the patient accepts
+   this new version, the plan auto-reactivates to *In progress*.
+
 ## Permissions
 
 | What you see / can do | Permission |
 |-----------------------|------------|
 | View detail, lines, version history, download PDF | `budget.read` |
-| Edit lines, send, accept online, reject, cancel, duplicate | `budget.write` |
+| Edit lines, send, accept online, reject, cancel, duplicate, resend | `budget.write` |
 | Accept by signing in-clinic | `budget.accept_in_clinic` |
 | Renegotiate (create a new version) | `budget.renegotiate` |
 | Delete | `budget.admin` |

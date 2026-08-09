@@ -198,9 +198,24 @@ El paciente no respondió en 30 días. Sistema marcó presupuesto como `Caducado
 3. Modal: confirmar que se quiere clonar el presupuesto a un nuevo borrador con la misma información.
 4. Pulsa **Confirmar**.
 
-Resultado: nuevo presupuesto `Borrador` (versión n+1), el caducado queda en historial. Recepción ajusta si hace falta y envía.
+Resultado: nuevo presupuesto `Borrador` (versión n+1), el caducado queda en historial. **El plan vinculado pasa automáticamente a la nueva versión** — su estado no cambia. Recepción ajusta si hace falta y envía.
+
+> Si el plan estaba `Cerrado (rechazado por paciente)` — p. ej. rechazó la v1 y recepción reenvía — al **aceptar** la nueva versión el plan se reactiva solo a `Activo`, sin pasar por borrador. Planes cerrados por otros motivos (abandono, cancelado por clínica) nunca se reactivan solos.
 
 > Si pasan otros 30 días sin acción tras la caducidad, el plan pasa a `Cerrado` con `closure_reason=expired` y se mueve al tab **Cerrados**.
+
+### 🟡 Cancelar presupuesto directamente
+
+Recepción se equivocó al emitir el presupuesto (o el paciente pide rehacerlo desde cero).
+
+1. Abre el presupuesto en el módulo de presupuestos.
+2. Pulsa **Cancelar** en el menú de acciones y confirma.
+
+Resultado:
+
+- Presupuesto: → `Cancelado` (queda en historial).
+- Plan vinculado en `Pendiente`: → `Borrador` automáticamente (evento `budget.cancelled`), listo para editar y re-confirmar.
+- Un presupuesto sin plan vinculado simplemente se cancela.
 
 ### 🔴 Cerrar un plan activo (paciente abandonó)
 
@@ -226,8 +241,8 @@ El paciente que rechazó hace 6 meses vuelve y quiere retomar.
 Resultado:
 
 - Plan: `Cerrado` → `Borrador`. Items recuperados con su estado original.
-- Presupuesto previo se queda en historial.
-- Doctor puede ajustar el plan; recepción genera nuevo presupuesto al confirmar.
+- Presupuesto previo se queda en historial (rechazado/caducado ya no bloquea el plan).
+- Doctor puede ajustar el plan; al **Confirmar** se genera un presupuesto nuevo y el plan queda enlazado a él.
 
 ### 🟡 Paciente quiere ver el presupuesto otra vez (perdió el correo)
 

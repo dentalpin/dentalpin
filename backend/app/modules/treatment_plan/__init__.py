@@ -120,15 +120,19 @@ class TreatmentPlanModule(BaseModule):
         from .events import (
             on_appointment_completed,
             on_budget_accepted,
+            on_budget_cancelled,
             on_budget_rejected,
             on_budget_renegotiated,
+            on_budget_superseded,
             on_treatment_performed,
         )
 
         return {
             EventType.APPOINTMENT_COMPLETED: on_appointment_completed,
             EventType.BUDGET_ACCEPTED: on_budget_accepted,
+            EventType.BUDGET_CANCELLED: on_budget_cancelled,
             EventType.BUDGET_REJECTED: on_budget_rejected,
             EventType.BUDGET_RENEGOTIATED: on_budget_renegotiated,
+            EventType.BUDGET_SUPERSEDED: on_budget_superseded,
             EventType.ODONTOGRAM_TREATMENT_PERFORMED: on_treatment_performed,
         }

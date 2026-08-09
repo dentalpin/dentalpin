@@ -19,6 +19,12 @@ draft ──confirm──► pending ──accept──► active ──complete
 cancelled_by_clinic, patient_abandoned, other}`. See ADR 0006 and
 `docs/workflows/plan-budget-flow.md` (staff manual).
 
+One extra edge (issue #162): a plan closed as `rejected_by_patient`
+jumps straight back to `active` when the patient accepts a **resent**
+budget version (`budget.accepted` on the new version) — the doctor's
+original confirmation stands, so it skips draft/pending and keeps
+`confirmed_at`. Other closure reasons never auto-revive.
+
 ## Public API
 
 Routes mounted at `/api/v1/treatment-plans/`.
@@ -81,9 +87,11 @@ Clinical-note created events (`clinical_notes.{administrative,diagnosis,treatmen
 | Event | Handler | Effect |
 |---|---|---|
 | `appointment.completed`         | `on_appointment_completed`  | mark planned items as performed if linked |
-| `budget.accepted`               | `on_budget_accepted`        | pending → active (idempotent) |
+| `budget.accepted`               | `on_budget_accepted`        | pending → active; also closed(rejected_by_patient) → active on a resent version (idempotent) |
 | `budget.rejected`               | `on_budget_rejected`        | pending → closed (closure_reason=rejected_by_patient) |
-| `budget.renegotiated`           | `on_budget_renegotiated`    | pending → draft (budget already cancelled by publisher) |
+| `budget.renegotiated`           | `on_budget_renegotiated`    | pending → draft via `reopen_from_budget` (never writes the budget row) |
+| `budget.cancelled`              | `on_budget_cancelled`       | pending → draft via `reopen_from_budget`; no-op without `plan_id` |
+| `budget.superseded`             | `on_budget_superseded`      | repoint `budget_id` to the resent version (only while still pointing at the old one) |
 | `odontogram.treatment.performed` | `on_treatment_performed`   | mark planned item completed when its tooth treatment is performed |
 
 ## Lifecycle
@@ -99,6 +107,21 @@ Clinical-note created events (`clinical_notes.{administrative,diagnosis,treatmen
   Allowed because `budget` is in `manifest.depends`. Item-level
   add/remove sync remains event-driven (the snapshot payloads carry
   enough data so `budget` doesn't import treatment_plan).
+- **`confirm()` relinks `budget_id` whenever the provisioned budget
+  differs.** A reactivated or renegotiated plan still points at its
+  terminal budget; the idempotency check in
+  `BudgetService.create_from_plan_snapshot` treats
+  cancelled/rejected/expired as terminal and provisions a fresh draft
+  (issue #162). Don't revert the link condition to `budget_id is None`.
+- **A plan is locked only while its budget is `sent`/`accepted`.**
+  Terminal budgets (cancelled/rejected/expired) are dead paper and do
+  not freeze the plan. Mirrored in `PlanDetailView.vue` and
+  `TreatmentPlanDetail.vue` — keep the three predicates in sync.
+- **Budget-side reopens go through `reopen_from_budget`,** which never
+  writes the budget row: the publisher's open transaction holds it
+  locked and the bus awaits handlers inline — calling `reopen()` from a
+  handler would hang. `reopen()` itself cancels the linked budget with
+  `publish_event=False` for the symmetric reason.
 - **Plan ↔ budget item sync goes through events**, not direct calls.
   Adding a treatment to a plan publishes
   `treatment_plan.treatment_added` with a denormalized snapshot

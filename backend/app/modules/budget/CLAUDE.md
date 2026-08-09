@@ -9,6 +9,8 @@ Routes mounted at `/api/v1/budget/`. Authenticated subset:
 - CRUD + version + signature workflow (legacy).
 - `POST /budgets/{id}/{renegotiate,accept-in-clinic,resend,
   send-reminder,set-public-code,unlock-public}` (workflow rework).
+  `/resend` only accepts terminal budgets (rejected/expired/cancelled)
+  and republishes the plan link via `budget.superseded`.
 - `GET  /budgets/{id}/pdf` — unsigned PDF.
 - `GET  /budgets/{id}/pdf/signed` — signed PDF (404 if not signed).
 - `GET  /budgets/{id}/signature` — signature metadata (no raw PNG).
@@ -57,6 +59,12 @@ only — never combined with payments data.
   `plan_id`).
 - `budget.expired` (snapshot payload with `days_overdue`, `plan_id`).
 - `budget.renegotiated` (snapshot payload with `plan_id`).
+- `budget.cancelled` (direct staff cancel; payload with `plan_id`,
+  `reason`. Suppressed with `publish_event=False` when the cancel is
+  initiated by `treatment_plan.reopen()` — see gotchas).
+- `budget.superseded` (resend cloned a terminal budget to a new draft
+  version; payload with old `budget_id`, `new_budget_id`, `plan_id`.
+  Published **after** commit — see gotchas).
 - `budget.viewed` (idempotent first-open, snapshot payload).
 - `budget.reminder_sent` (snapshot payload with `milestone_days`).
 
@@ -91,9 +99,23 @@ contract.
   friends consume the data carried in the payload (catalog_item_id,
   tooth, surfaces, unit_price, budget_id) — no fetches against the
   publisher's tables.
-- **Plan reverse-lookup uses raw SQL** (`_lookup_plan_id`) instead of
-  importing the `TreatmentPlan` model, so event payloads can carry
-  `plan_id` without violating ADR 0003.
+- **Plan reverse-lookup uses raw SQL** (`_lookup_plan` /
+  `_lookup_plan_id`) instead of importing the `TreatmentPlan` model, so
+  event payloads can carry `plan_id` without violating ADR 0003. It
+  deliberately does NOT walk the `parent_budget_id` chain — a stale old
+  version must resolve to no plan once the link moved on.
+- **`budget.superseded` publishes AFTER commit** (in the `/resend`
+  router) — the sole deviation from the publish-before-commit pattern.
+  The treatment_plan handler points `treatment_plans.budget_id` (an FK)
+  at the new budget row from its own session; pre-commit that row is
+  invisible → FK violation the bus swallows → relink silently lost. Do
+  not "normalize" this back.
+- **`cancel_budget(publish_event=False)` is for plan-initiated
+  cancels.** `treatment_plan.reopen()` cancels the budget inside its
+  own transaction; an echoed `budget.cancelled` there would make the
+  handler write the plan row the publisher holds locked (the bus awaits
+  handlers inline) → hang. Direct staff cancels keep the default and
+  publish.
 - **Budget versioning** keeps every prior version — never overwrite.
 - **Public-link sessions are per-token** (cookie path scoped to
   `/api/v1/public/budgets/{token}`) so a stolen cookie from one

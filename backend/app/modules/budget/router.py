@@ -1,6 +1,6 @@
 """Budget module API router."""
 
-from datetime import date
+from datetime import UTC, date, datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -10,6 +10,8 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.events import event_bus
+from app.core.events.types import EventType
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
@@ -542,14 +544,43 @@ async def resend_budget(
     _: Annotated[None, Depends(require_permission("budget.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[BudgetResponse]:
-    """Clone a finished (rejected/expired/cancelled/locked) budget to a
+    """Clone a finished (rejected/expired/cancelled) budget to a
     fresh draft (version+1) with a brand-new public token. Reception
-    can then edit and send the new draft."""
+    can then edit and send the new draft. The linked plan's
+    ``budget_id`` follows the new version via ``budget.superseded``."""
     budget = await BudgetService.get_budget(db, ctx.clinic_id, budget_id, include_items=True)
     if not budget:
         raise HTTPException(status_code=404, detail="Budget not found")
+    if budget.status not in ("rejected", "expired", "cancelled"):
+        raise HTTPException(
+            status_code=400,
+            detail="Only rejected, expired or cancelled budgets can be resent",
+        )
     new_budget = await BudgetWorkflowService.clone_to_new_draft(db, budget, ctx.user_id)
-    return ApiResponse(data=BudgetResponse.model_validate(new_budget))
+    plan_ref = await BudgetWorkflowService._lookup_plan(db, budget.id)
+    response = ApiResponse(data=BudgetResponse.model_validate(new_budget))
+
+    # Sole deviation from the publish-before-commit pattern: the
+    # treatment_plan handler must point an FK at the new budget row from
+    # its own session. Published pre-commit, that row is invisible → FK
+    # violation the bus would swallow → relink silently lost. Commit
+    # first (get_db's trailing commit becomes a no-op), then publish.
+    await db.commit()
+    if plan_ref is not None:
+        await event_bus.publish(
+            EventType.BUDGET_SUPERSEDED,
+            {
+                "clinic_id": str(budget.clinic_id),
+                "budget_id": str(budget.id),
+                "new_budget_id": str(new_budget.id),
+                "patient_id": str(budget.patient_id),
+                "plan_id": str(plan_ref.id),
+                "version": new_budget.version,
+                "resent_by": str(ctx.user_id),
+                "occurred_at": datetime.now(UTC).isoformat(),
+            },
+        )
+    return response
 
 
 @router.post(

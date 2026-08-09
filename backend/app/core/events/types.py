@@ -56,6 +56,23 @@ class EventType:
     # plan is unlocked back to ``draft``. Payload carries
     # (budget_id, plan_id, patient_id, version, cancelled_at).
     BUDGET_RENEGOTIATED = "budget.renegotiated"
+    # Staff cancelled a budget directly (POST /budgets/{id}/cancel). The
+    # companion pending plan reopens to ``draft``. Payload carries
+    # (clinic_id, budget_id, patient_id, budget_number, plan_id, reason,
+    # cancelled_by, occurred_at). NOT published when the cancellation is
+    # initiated by ``treatment_plan.reopen()`` — the plan module already
+    # owns that transition (``publish_event=False``); an echo here would
+    # deadlock against the publisher's open transaction.
+    BUDGET_CANCELLED = "budget.cancelled"
+    # A terminal budget (rejected/expired/cancelled) was cloned to a new
+    # draft version ("Resend"). The plan's ``budget_id`` link must follow
+    # the new version; plan status is untouched. Published AFTER the
+    # request transaction commits (sole deviation from the pre-commit
+    # pattern) so the treatment_plan handler can repoint an FK at the new
+    # row from its own session. Payload carries (clinic_id, budget_id
+    # [old], new_budget_id, patient_id, plan_id, version [new],
+    # resent_by, occurred_at).
+    BUDGET_SUPERSEDED = "budget.superseded"
     # Patient opened the public link (first time). Payload carries
     # (budget_id, plan_id, patient_id, viewed_at, ip_hash). Idempotent.
     BUDGET_VIEWED = "budget.viewed"

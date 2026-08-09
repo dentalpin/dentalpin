@@ -13,7 +13,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `accounting_export` | 0.1.0 | official | billing, payments | manual | yes | 2 | 0 | 0 | yes |
 | `agenda` | 0.4.0 | official | patients, catalog, odontogram | auto | no | 4 | 11 | 0 | yes |
 | `billing` | 0.1.0 | official | patients, catalog, budget, payments | auto | no | 3 | 3 | 1 | yes |
-| `budget` | 0.1.0 | official | patients, catalog, odontogram | auto | no | 5 | 7 | 4 | yes |
+| `budget` | 0.1.0 | official | patients, catalog, odontogram | auto | no | 5 | 9 | 4 | yes |
 | `catalog` | 0.1.0 | official | — | auto | no | 3 | 0 | 0 | yes |
 | `clinical_notes` | 0.2.0 | official | patients, odontogram, treatment_plan, media, agenda | auto | no | 2 | 6 | 0 | yes |
 | `copilot` | 0.1.0 | official | — | auto | yes | 5 | 3 | 1 | yes |
@@ -29,7 +29,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `recalls` | 0.1.0 | official | patients, agenda | auto | yes | 3 | 4 | 5 | yes |
 | `reports` | 0.1.0 | official | patients, agenda, catalog, budget, billing, payments | auto | no | 3 | 0 | 0 | yes |
 | `schedules` | 0.1.0 | official | agenda | auto | yes | 8 | 0 | 3 | yes |
-| `treatment_plan` | 0.1.0 | official | patients, agenda, odontogram, catalog, budget, media | auto | no | 5 | 13 | 5 | yes |
+| `treatment_plan` | 0.1.0 | official | patients, agenda, odontogram, catalog, budget, media | auto | no | 5 | 13 | 7 | yes |
 | `verifactu` | 0.1.0 | official | billing, catalog | manual | yes | 5 | 1 | 1 | yes |
 | `whatsapp_kapso` | 0.1.0 | community | notifications, patients | manual | yes | 2 | 0 | 0 | yes |
 
@@ -122,11 +122,13 @@ Dental treatment quotes, versioning, signatures.
   - `budget.write`
 - **Events emitted:**
   - `budget.accepted`
+  - `budget.cancelled`
   - `budget.expired`
   - `budget.rejected`
   - `budget.reminder_sent`
   - `budget.renegotiated`
   - `budget.sent`
+  - `budget.superseded`
   - `budget.viewed`
 - **Events consumed:**
   - `odontogram.treatment.performed`
@@ -551,8 +553,10 @@ Patient treatment plans with budget + odontogram sync.
 - **Events consumed:**
   - `appointment.completed`
   - `budget.accepted`
+  - `budget.cancelled`
   - `budget.rejected`
   - `budget.renegotiated`
+  - `budget.superseded`
   - `odontogram.treatment.performed`
 - **Module CLAUDE.md:** [`backend/app/modules/treatment_plan/CLAUDE.md`](../backend/app/modules/treatment_plan/CLAUDE.md)
 

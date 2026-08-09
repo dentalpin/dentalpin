@@ -28,11 +28,13 @@ const {
   rejectBudget,
   cancelBudget,
   duplicateBudget,
+  resendBudget,
   downloadPDF,
   canEdit,
   canSend,
   canAccept,
-  canCancel
+  canCancel,
+  canResend
 } = useBudgets()
 
 const hasActiveInvoice = ref(false)
@@ -295,6 +297,27 @@ function resetSendForm() {
   sendForm.custom_message = ''
 }
 
+async function handleResend() {
+  if (!currentBudget.value) return
+  if (!confirm(t('budget.confirmations.resend'))) return
+
+  try {
+    const newBudget = await resendBudget(currentBudget.value.id)
+    toast.add({
+      title: t('common.success'),
+      description: t('budget.messages.resent'),
+      color: 'success'
+    })
+    router.push(`/budgets/${newBudget.id}`)
+  } catch (e) {
+    toast.add({
+      title: t('common.error'),
+      description: errorMessage(e, t('budget.errors.create')),
+      color: 'error'
+    })
+  }
+}
+
 async function handleDuplicate() {
   if (!currentBudget.value) return
 
@@ -359,6 +382,17 @@ const primaryActions = computed<EntityAction[]>(() => {
       label: t('budget.actions.send'),
       icon: 'i-lucide-send',
       onClick: () => { isSendModalOpen.value = true }
+    })
+  }
+
+  // Resend is THE call-to-action on a terminal budget: clone to a new
+  // draft version the linked plan follows (issue #162).
+  if (canResend(budget) && can(PERMISSIONS.budget.write)) {
+    actions.push({
+      key: 'resend',
+      label: t('budget.actions.resend'),
+      icon: 'i-lucide-refresh-cw',
+      onClick: handleResend
     })
   }
 

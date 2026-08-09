@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: 9d3fac6
+last_verified_commit: 2a05d7a
 ---
 
 # Detalle del plan de tratamiento
@@ -140,7 +140,12 @@ añadirlos al plan se crea automáticamente una sesión por cada paso.
    abandono u *otro*. Publica `treatment_plan.closed` con
    `closure_reason`.
 2. **Reactivar** — vuelve al estado `draft`. Publica
-   `treatment_plan.reactivated`.
+   `treatment_plan.reactivated`. Al **volver a confirmar** se genera
+   un presupuesto nuevo (el rechazado/caducado anterior queda como
+   histórico y deja de bloquear el plan).
+3. **Reactivación automática** — un plan cerrado por *rechazo del
+   paciente* vuelve solo a *En curso* si el paciente acepta una nueva
+   versión del presupuesto (botón *Reenviar* en el presupuesto).
 
 ## Permisos
 
@@ -154,10 +159,16 @@ añadirlos al plan se crea automáticamente una sesión por cada paso.
 
 ## Resolución de problemas
 
-- **Confirmé el plan pero el presupuesto no aparece.** Pulsa
-  **Generar presupuesto** o **Enlazar con presupuesto existente**.
-  Confirmar no crea automáticamente el presupuesto a menos que se
-  use *Generar* después.
+- **Confirmé el plan pero el presupuesto no aparece.** Confirmar crea
+  el borrador de presupuesto automáticamente; recarga la página. Si el
+  plan ya tenía un borrador vivo, se reutiliza en vez de crear otro.
+- **El plan aparece bloqueado.** Solo bloquean los presupuestos
+  *enviados* o *aceptados* (son un contrato con el paciente). Un
+  presupuesto cancelado, rechazado o caducado no bloquea: puedes
+  seguir editando el plan.
+- **Cancelé el presupuesto desde el módulo de presupuestos.** El plan
+  vinculado en *pendiente* vuelve solo a *borrador* para que puedas
+  editarlo y re-confirmarlo.
 - **El paciente aceptó el presupuesto pero el plan sigue en
   pendiente.** Comprueba que el evento `budget.accepted` está
   fluyendo (el módulo `budget` ha de estar instalado y el

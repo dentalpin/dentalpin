@@ -179,10 +179,14 @@ def _is_plan_locked(plan: TreatmentPlan) -> bool:
     (its handlers no-op on any non-draft status). Locking on draft froze
     the plan before the patient had seen anything — users had to accept
     the quote just to keep choosing treatments.
+
+    Terminal budgets (``cancelled``/``rejected``/``expired``) are dead
+    paper, not contracts either — a reactivated plan keeps its link to
+    the rejected quote for history, and must stay editable (issue #162).
     """
     if not plan.budget_id or plan.budget is None:
         return False
-    return plan.budget.status not in ("cancelled", "draft")
+    return plan.budget.status in ("sent", "accepted")
 
 
 class TreatmentPlanService:
@@ -1604,7 +1608,11 @@ class TreatmentPlanService:
             user_id=user_id,
             snapshot=snapshot,
         )
-        if budget is not None and plan.budget_id is None:
+        # Relink whenever the returned budget differs: a reactivated or
+        # renegotiated plan still points at its terminal (rejected/
+        # cancelled/expired) budget, and the fresh draft must take over
+        # (issue #162). Single-row repoint — no unique-index conflict.
+        if budget is not None and plan.budget_id != budget.id:
             plan.budget_id = budget.id
 
         await db.flush()
@@ -1642,16 +1650,63 @@ class TreatmentPlanService:
 
         # Cancel linked budget if one exists. The plan ↔ budget unlock
         # is the established carve-out (treatment_plan depends on
-        # budget) — see ADR 0003.
-        if plan.budget_id and plan.budget is not None and plan.budget.status != "cancelled":
+        # budget) — see ADR 0003. Guarded by can_transition so a
+        # terminal budget (expired/rejected/cancelled) is left alone
+        # instead of raising. publish_event=False: we own the plan
+        # transition here — an echoed budget.cancelled would try to
+        # write the plan row this transaction holds locked.
+        if plan.budget_id and plan.budget is not None:
             from app.modules.budget.workflow import BudgetWorkflowService
 
-            await BudgetWorkflowService.cancel_budget(
-                db,
-                plan.budget,
-                user_id,
-                reason="Plan reopened for editing",
+            if BudgetWorkflowService.can_transition(plan.budget.status, "cancelled"):
+                await BudgetWorkflowService.cancel_budget(
+                    db,
+                    plan.budget,
+                    user_id,
+                    reason="Plan reopened for editing",
+                    publish_event=False,
+                )
+
+        plan.status = "draft"
+        plan.confirmed_at = None
+        await db.flush()
+
+        await event_bus.publish(
+            EventType.TREATMENT_PLAN_STATUS_CHANGED,
+            {
+                "plan_id": str(plan.id),
+                "old_status": "pending",
+                "new_status": "draft",
+                "clinic_id": str(clinic_id),
+            },
+        )
+        return plan
+
+    @staticmethod
+    async def reopen_from_budget(
+        db: AsyncSession,
+        clinic_id: UUID,
+        plan_id: UUID,
+    ) -> TreatmentPlan | None:
+        """``pending`` → ``draft`` triggered by a budget-side event
+        (``budget.cancelled`` / ``budget.renegotiated``).
+
+        Unlike ``reopen()``, this never touches the budget — the
+        publisher already terminalized it, and writing the budget row
+        here would block on the publisher's open transaction (the bus
+        awaits handlers inline, pre-commit). Idempotent: any status
+        other than ``pending`` is a warn + no-op.
+        """
+        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        if not plan:
+            return None
+        if plan.status != "pending":
+            logger.warning(
+                "Ignoring budget-side reopen for plan %s in status '%s'",
+                plan_id,
+                plan.status,
             )
+            return plan
 
         plan.status = "draft"
         plan.confirmed_at = None
@@ -1778,14 +1833,55 @@ class TreatmentPlanService:
     ) -> TreatmentPlan | None:
         """``pending`` → ``active`` triggered by ``budget.accepted``.
 
-        Idempotent: if the plan is already active or closed, returns the
-        current plan without raising.
+        Also revives a plan closed as ``rejected_by_patient`` — the
+        renegotiation flow: the patient rejected V1 (closing the plan),
+        reception resent a new version, and the patient accepted it
+        (issue #162). Plans closed for any other reason stay closed —
+        the clinic ended those on purpose.
+
+        Idempotent: if the plan is already active, returns the current
+        plan without raising.
         """
         plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
         if not plan:
             return None
         if plan.status == "active":
             return plan
+
+        if plan.status == "closed" and plan.closure_reason == "rejected_by_patient":
+            previous_reason = plan.closure_reason
+            plan.status = "active"
+            plan.closure_reason = None
+            plan.closure_note = None
+            plan.closed_at = None
+            # confirmed_at is intentionally KEPT: the doctor's original
+            # confirmation still stands — the plan skips draft/pending.
+            # reactivate() clears it only because that path returns to
+            # draft and demands a re-confirmation.
+            await db.flush()
+
+            await event_bus.publish(
+                EventType.TREATMENT_PLAN_REACTIVATED,
+                {
+                    "plan_id": str(plan.id),
+                    "clinic_id": str(clinic_id),
+                    "patient_id": str(plan.patient_id),
+                    "previous_closure_reason": previous_reason,
+                    "reactivated_at": datetime.now(UTC).isoformat(),
+                    "reactivated_by_user_id": None,  # patient acceptance, not staff
+                },
+            )
+            await event_bus.publish(
+                EventType.TREATMENT_PLAN_STATUS_CHANGED,
+                {
+                    "plan_id": str(plan.id),
+                    "old_status": "closed",
+                    "new_status": "active",
+                    "clinic_id": str(clinic_id),
+                },
+            )
+            return plan
+
         if plan.status != "pending":
             logger.warning(
                 "Ignoring budget.accepted for plan %s in status '%s'",

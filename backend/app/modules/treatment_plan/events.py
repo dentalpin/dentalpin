@@ -170,9 +170,12 @@ async def on_budget_rejected(data: dict[str, Any]) -> None:
 
 async def on_budget_renegotiated(data: dict[str, Any]) -> None:
     """Reopen the linked plan back to ``draft`` when reception
-    cancels a sent budget for renegotiation. The budget itself is
-    already cancelled by the publisher; this handler skips the cancel
-    branch in ``reopen``.
+    cancels a sent budget for renegotiation.
+
+    Uses ``reopen_from_budget``, which never writes the budget row:
+    the publisher's still-open transaction holds a lock on it, and the
+    bus awaits handlers inline — calling ``reopen()`` here (which
+    cancels the budget) would hang on that lock.
     """
     clinic_id = data.get("clinic_id")
     plan_id = data.get("plan_id")
@@ -184,14 +187,64 @@ async def on_budget_renegotiated(data: dict[str, Any]) -> None:
 
     async with async_session_maker() as db:
         try:
-            plan = await TreatmentPlanService.get(db, UUID(clinic_id), UUID(plan_id))
-            if plan and plan.status == "pending":
-                await TreatmentPlanService.reopen(
-                    db, UUID(clinic_id), UUID(plan_id), plan.created_by
-                )
-                await db.commit()
+            await TreatmentPlanService.reopen_from_budget(db, UUID(clinic_id), UUID(plan_id))
+            await db.commit()
         except Exception as e:
             logger.error(f"Error processing budget renegotiation: {e}", exc_info=True)
+            await db.rollback()
+
+
+async def on_budget_cancelled(data: dict[str, Any]) -> None:
+    """Reopen the linked pending plan to ``draft`` when staff cancels
+    its budget directly from the budgets module (issue #162).
+
+    Idempotent: non-pending plans are a warn + no-op inside
+    ``reopen_from_budget``. Standalone budgets carry no ``plan_id``.
+    """
+    clinic_id = data.get("clinic_id")
+    plan_id = data.get("plan_id")
+
+    if not clinic_id or not plan_id:
+        return
+
+    from .service import TreatmentPlanService
+
+    async with async_session_maker() as db:
+        try:
+            await TreatmentPlanService.reopen_from_budget(db, UUID(clinic_id), UUID(plan_id))
+            await db.commit()
+        except Exception as e:
+            logger.error(f"Error processing budget cancellation: {e}", exc_info=True)
+            await db.rollback()
+
+
+async def on_budget_superseded(data: dict[str, Any]) -> None:
+    """Repoint the plan's budget link when a terminal budget is cloned
+    to a new draft version ("Resend", issue #162).
+
+    Relinks only while the plan still points at the superseded budget —
+    idempotent on redelivery, and a no-op if the plan already moved on
+    (e.g. it was reactivated and re-confirmed onto a fresh budget).
+    Plan status is deliberately untouched.
+    """
+    clinic_id = data.get("clinic_id")
+    plan_id = data.get("plan_id")
+    old_budget_id = data.get("budget_id")
+    new_budget_id = data.get("new_budget_id")
+
+    if not clinic_id or not plan_id or not old_budget_id or not new_budget_id:
+        return
+
+    from .service import TreatmentPlanService
+
+    async with async_session_maker() as db:
+        try:
+            plan = await TreatmentPlanService.get(db, UUID(clinic_id), UUID(plan_id))
+            if plan and str(plan.budget_id) == old_budget_id:
+                plan.budget_id = UUID(new_budget_id)
+                await db.commit()
+        except Exception as e:
+            logger.error(f"Error processing budget supersede: {e}", exc_info=True)
             await db.rollback()
 
 

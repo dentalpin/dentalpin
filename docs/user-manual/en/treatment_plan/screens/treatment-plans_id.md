@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: 9d3fac6
+last_verified_commit: 2a05d7a
 ---
 
 # Treatment plan detail
@@ -141,7 +141,12 @@ added to a plan, one session is created per step.
    abandoned, or *other*. Publishes `treatment_plan.closed` with
    `closure_reason`.
 2. **Reactivate** — back to `draft`. Publishes
-   `treatment_plan.reactivated`.
+   `treatment_plan.reactivated`. **Re-confirming** generates a fresh
+   quote (the previously rejected/expired one becomes history and no
+   longer locks the plan).
+3. **Automatic reactivation** — a plan closed as *rejected by the
+   patient* returns to *In progress* on its own if the patient accepts
+   a new version of the quote (*Resend* button on the quote).
 
 ## Permissions
 
@@ -155,9 +160,15 @@ added to a plan, one session is created per step.
 
 ## Troubleshooting
 
-- **Confirmed the plan but no budget appears.** Click **Generate
-  budget** or **Link to existing budget**. Confirming does not
-  auto-create a budget unless you use *Generate* afterwards.
+- **Confirmed the plan but no budget appears.** Confirming
+  auto-creates the draft budget; reload the page. If the plan already
+  had a live draft, it is reused instead of creating another.
+- **The plan shows as locked.** Only *sent* or *accepted* budgets lock
+  (they are a contract with the patient). A cancelled, rejected or
+  expired budget does not lock: you can keep editing the plan.
+- **I cancelled the quote from the budgets module.** The linked
+  *pending* plan returns to *draft* on its own so you can edit and
+  re-confirm it.
 - **Patient accepted the budget but the plan is still pending.**
   Check that `budget.accepted` is flowing (the `budget` module must
   be installed and the budget actually accepted). The

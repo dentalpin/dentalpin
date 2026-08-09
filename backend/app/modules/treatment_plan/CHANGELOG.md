@@ -2,6 +2,22 @@
 
 ## Unreleased
 
+- fix(workflow): plan ↔ budget lifecycle desync (issue #162).
+  `confirm` now relinks `budget_id` whenever the provisioned budget
+  differs — a reactivated (or renegotiated) plan gets a fresh quote
+  instead of staying tied to the rejected one. New handlers: consume
+  `budget.cancelled` (pending → draft via the new `reopen_from_budget`)
+  and `budget.superseded` (repoint `budget_id` to the resent version).
+  `accept_from_budget` also revives a plan closed as
+  `rejected_by_patient` (closed → active, publishing
+  `treatment_plan.reactivated`) when the patient accepts the new quote
+  version. `on_budget_renegotiated` now uses `reopen_from_budget` too,
+  removing a latent deadlock (the old path cancelled the budget row the
+  publisher's open transaction held locked). `reopen()` no longer 500s
+  when the linked budget is expired, and the plan-lock rule is now
+  "locked only while the budget is sent/accepted" — terminal budgets
+  (cancelled/rejected/expired) no longer freeze the plan.
+
 - fix(billing): multi-session items no longer double-charge on finalization.
   Completing the last session called `TreatmentService.perform`, whose
   `odontogram.treatment.performed` event carried the full item price —

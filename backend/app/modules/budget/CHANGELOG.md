@@ -2,6 +2,21 @@
 
 ## Unreleased
 
+- fix(workflow): plan ↔ budget lifecycle desync (issue #162).
+  `cancel_budget` now publishes `budget.cancelled` (with `plan_id`) so a
+  directly-cancelled quote reopens its pending plan instead of leaving it
+  stranded; `POST /budgets/{id}/resend` now publishes `budget.superseded`
+  (after commit — see gotcha in CLAUDE.md) so the plan's `budget_id`
+  follows the new version, refreshes `plan_status_snapshot` from the live
+  plan, and rejects non-terminal budgets with 400. The
+  `create_from_plan_snapshot` idempotency check now treats rejected and
+  expired budgets as terminal (not just cancelled), so re-confirming a
+  reactivated plan produces a fresh quote.
+
+- feat(ui): "Resend" button on the budget detail page — clones a
+  rejected/expired/cancelled budget to a new draft version and navigates
+  to it. Removed the orphan `RenegotiateBudgetModal.vue` (never imported).
+
 - style(lint): first ESLint pass over this module's frontend layer —
   module layers were outside the linter's base path until now, so
   CI had never checked them. Mostly auto-fixed formatting; see the

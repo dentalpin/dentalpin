@@ -290,6 +290,15 @@ export function useBudgets() {
     return response.data
   }
 
+  async function resendBudget(id: string): Promise<BudgetDetail> {
+    const response = await api.post<ApiResponse<BudgetDetail>>(
+      `/api/v1/budget/budgets/${id}/resend`,
+      {}
+    )
+    budgets.value = [toListItem(response.data), ...budgets.value]
+    return response.data
+  }
+
   // ============================================================================
   // Versions and History
   // ============================================================================
@@ -420,6 +429,11 @@ export function useBudgets() {
     return true // Can always create a new version
   }
 
+  function canResend(budget: Budget | BudgetDetail | BudgetListItem): boolean {
+    // Mirrors the backend guard on POST /resend: only terminal budgets.
+    return ['rejected', 'expired', 'cancelled'].includes(budget.status)
+  }
+
   // Internal helper to update status in local state
   function updateBudgetStatus(id: string, status: BudgetStatus): void {
     budgets.value = budgets.value.map(b =>
@@ -456,6 +470,7 @@ export function useBudgets() {
     rejectBudget,
     cancelBudget,
     duplicateBudget,
+    resendBudget,
 
     // Versions and history
     fetchVersions,
@@ -476,6 +491,7 @@ export function useBudgets() {
     canAccept,
     canReject,
     canCancel,
-    canDuplicate
+    canDuplicate,
+    canResend
   }
 }

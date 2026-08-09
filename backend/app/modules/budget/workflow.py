@@ -394,8 +394,17 @@ class BudgetWorkflowService:
         budget: Budget,
         cancelled_by: UUID,
         reason: str | None = None,
+        publish_event: bool = True,
     ) -> Budget:
-        """Cancel a budget."""
+        """Cancel a budget.
+
+        Publishes ``budget.cancelled`` so the companion pending plan can
+        reopen to ``draft`` (issue #162). ``publish_event=False`` is for
+        callers that already own the plan transition — namely
+        ``TreatmentPlanService.reopen()``, which cancels the budget from
+        inside its own transaction: an echo event there would make the
+        handler write the plan row the publisher holds locked → hang.
+        """
         if not BudgetWorkflowService.can_transition(budget.status, "cancelled"):
             raise BudgetWorkflowError(f"Cannot cancel budget from status '{budget.status}'")
 
@@ -414,6 +423,25 @@ class BudgetWorkflowService:
         )
 
         await db.flush()
+
+        if publish_event:
+            # Safe pre-commit publish: our transaction only holds locks
+            # on budgets/budget_history; the handler writes only the
+            # (long-committed) treatment_plans row.
+            plan_id = await BudgetWorkflowService._lookup_plan_id(db, budget.id)
+            await event_bus.publish(
+                EventType.BUDGET_CANCELLED,
+                {
+                    "clinic_id": str(budget.clinic_id),
+                    "budget_id": str(budget.id),
+                    "patient_id": str(budget.patient_id),
+                    "budget_number": budget.budget_number,
+                    "plan_id": str(plan_id) if plan_id else None,
+                    "reason": reason,
+                    "cancelled_by": str(cancelled_by),
+                    "occurred_at": datetime.now(UTC).isoformat(),
+                },
+            )
 
         return budget
 
@@ -490,22 +518,32 @@ class BudgetWorkflowService:
     # ---------------------------------------------------------------------
 
     @staticmethod
-    async def _lookup_plan_id(db: AsyncSession, budget_id: UUID) -> UUID | None:
-        """Reverse-lookup the plan that references a budget.
+    async def _lookup_plan(db: AsyncSession, budget_id: UUID):
+        """Reverse-lookup the plan (id, status) that references a budget.
 
         Implemented with raw SQL to avoid importing the
         ``treatment_plan`` ORM model from this module (ADR 0003).
+        Deliberately does NOT walk the ``parent_budget_id`` chain: a
+        stale old version must keep resolving to no plan once the link
+        has moved on, or e.g. rejecting V1 could close a plan living
+        on V2.
         """
         row = (
             await db.execute(
                 text(
-                    "SELECT id FROM treatment_plans "
+                    "SELECT id, status FROM treatment_plans "
                     "WHERE budget_id = :bid AND deleted_at IS NULL "
                     "LIMIT 1"
                 ),
                 {"bid": budget_id},
             )
         ).first()
+        return row
+
+    @staticmethod
+    async def _lookup_plan_id(db: AsyncSession, budget_id: UUID) -> UUID | None:
+        """Reverse-lookup the id of the plan that references a budget."""
+        row = await BudgetWorkflowService._lookup_plan(db, budget_id)
         return row.id if row else None
 
     @staticmethod
@@ -795,6 +833,10 @@ class BudgetWorkflowService:
         """
         from .service import BudgetItemService, BudgetService
 
+        # Refresh the plan-status snapshot from the live plan (the one
+        # copied from a terminal budget is stale by definition).
+        plan_ref = await BudgetWorkflowService._lookup_plan(db, budget.id)
+
         new_budget = Budget(
             clinic_id=budget.clinic_id,
             patient_id=budget.patient_id,
@@ -809,7 +851,7 @@ class BudgetWorkflowService:
             global_discount_type=budget.global_discount_type,
             global_discount_value=budget.global_discount_value,
             plan_number_snapshot=budget.plan_number_snapshot,
-            plan_status_snapshot=budget.plan_status_snapshot,
+            plan_status_snapshot=plan_ref.status if plan_ref else budget.plan_status_snapshot,
         )
         # Resolve public auth method against current patient record.
         new_budget.public_auth_method = await BudgetWorkflowService.resolve_public_auth_method(

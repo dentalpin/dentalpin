@@ -162,7 +162,7 @@ async function createTreatmentNote(treatmentId: string, body: string) {
 }
 
 // ============================================================================
-// Lock state — a plan with a non-cancelled budget is locked for editing.
+// Lock state — a plan with a sent/accepted budget is locked for editing.
 // Mutations require explicit transitions: ``Reabrir`` (pending → draft) for
 // pre-acceptance edits, or ``Renegociar`` from the budget UI for an
 // already-accepted budget. The ``isLocked`` flag drives the read-only banner
@@ -172,9 +172,10 @@ async function createTreatmentNote(treatmentId: string, body: string) {
 const isLocked = computed(() => {
   if (!props.plan.budget_id) return false
   const status = props.plan.budget?.status
-  // Mirrors backend `_is_plan_locked`: a draft budget is not a contract
-  // yet — the plan stays editable and edits sync into the draft.
-  return status !== 'cancelled' && status !== 'draft'
+  // Mirrors backend `_is_plan_locked`: only a sent/accepted budget is a
+  // patient-facing contract. Draft never left the clinic; terminal
+  // budgets (cancelled/rejected/expired) are dead paper (issue #162).
+  return status === 'sent' || status === 'accepted'
 })
 
 const effectiveReadonly = computed(() => props.readonly || isLocked.value)
@@ -283,10 +284,13 @@ const pendingCount = computed(() =>
   props.plan.items.filter(i => i.status === 'pending').length
 )
 
-// Can create budget: active or completed plan, without active budget
+// Can create budget: active or completed plan, without a live budget
+// (terminal statuses — cancelled/rejected/expired — don't count).
 const canGenerateBudget = computed(() => {
   const validStatus = ['active', 'completed'].includes(props.plan.status)
-  const noActiveBudget = !props.plan.budget_id || props.plan.budget?.status === 'cancelled'
+  const budgetStatus = props.plan.budget?.status
+  const noActiveBudget = !props.plan.budget_id
+    || ['cancelled', 'rejected', 'expired'].includes(budgetStatus ?? '')
   return validStatus && noActiveBudget
 })
 

@@ -435,10 +435,11 @@ class BudgetService:
         """Create the draft budget that mirrors a confirmed treatment plan.
 
         Called synchronously from ``TreatmentPlanService.confirm`` to
-        guarantee atomicity. Idempotent: if a non-cancelled budget
+        guarantee atomicity. Idempotent: if a non-terminal budget
         already exists for the plan (looked up by ``plan_id`` in the
-        snapshot), returns ``None`` so the caller leaves the existing
-        link alone.
+        snapshot), returns it so the caller can keep/relink to it. A
+        terminal budget (cancelled/rejected/expired) is dead paper —
+        re-confirming the plan must produce a fresh quote (issue #162).
 
         Snapshot shape: see
         ``TreatmentPlanService._build_plan_snapshot``.
@@ -457,7 +458,7 @@ class BudgetService:
         if not plan_id_raw or not patient_id_raw:
             return None
 
-        # Idempotency: check whether a non-cancelled budget already
+        # Idempotency: check whether a non-terminal budget already
         # exists for this plan. We reverse-lookup via the
         # treatment_plans table to keep the dependency one-way.
         existing_row = (
@@ -467,7 +468,7 @@ class BudgetService:
                     "JOIN treatment_plans tp ON tp.budget_id = b.id "
                     "WHERE tp.id = :plan_id "
                     "  AND tp.clinic_id = :clinic_id "
-                    "  AND b.status != 'cancelled' "
+                    "  AND b.status NOT IN ('cancelled', 'rejected', 'expired') "
                     "LIMIT 1"
                 ),
                 {"plan_id": plan_id_raw, "clinic_id": clinic_id},

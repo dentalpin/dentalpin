@@ -268,6 +268,9 @@ BUDGET_EXPIRED = "budget.expired"
 BUDGET_RENEGOTIATED = "budget.renegotiated"
 BUDGET_VIEWED = "budget.viewed"
 BUDGET_REMINDER_SENT = "budget.reminder_sent"
+# Añadidos con issue #162:
+BUDGET_CANCELLED = "budget.cancelled"
+BUDGET_SUPERSEDED = "budget.superseded"
 ```
 
 Re-correr `python backend/scripts/generate_catalogs.py` (regla de CLAUDE.md raíz).
@@ -277,10 +280,12 @@ Re-correr `python backend/scripts/generate_catalogs.py` (regla de CLAUDE.md raí
 | Evento | Suscriptor | Acción |
 |---|---|---|
 | `treatment_plan.confirmed` | `budget` | Crea budget draft con líneas del plan. |
-| `budget.accepted` | `treatment_plan` | `pending → active` (cambia handler actual que asumía `draft → active`). |
+| `budget.accepted` | `treatment_plan` | `pending → active`; desde #162 también `closed(rejected_by_patient) → active` al aceptar una versión reenviada. |
 | `budget.rejected` | `treatment_plan` | `pending → closed` con `closure_reason=rejected_by_patient`. |
 | `budget.expired` | `treatment_plan` | NO cambia estado inmediato. Solo log timeline. Cron separado auto-cierra tras N días. |
 | `budget.renegotiated` | `treatment_plan` | `pending → draft`. |
+| `budget.cancelled` (#162) | `treatment_plan` | `pending → draft` (cancelación directa desde el módulo de presupuestos). No se publica cuando el cancel lo inicia `reopen()` del propio plan. |
+| `budget.superseded` (#162) | `treatment_plan` | Re-apunta `plan.budget_id` a la nueva versión creada por `/resend`. Publicado tras el commit (el suscriptor apunta una FK a la fila nueva). |
 | `treatment_plan.confirmed/closed/reactivated` | `patient_timeline` | Inserta entrada en timeline. |
 | `budget.expired/reminder_sent/viewed` | `patient_timeline` | Inserta entrada en timeline. |
 

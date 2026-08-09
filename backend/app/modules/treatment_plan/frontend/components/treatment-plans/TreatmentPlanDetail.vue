@@ -19,13 +19,14 @@ const { format: formatMoney } = useCurrency()
 
 // Mirrors backend `_is_plan_locked` + the add_item status guard: items
 // are editable in any non-terminal state unless a sent/accepted budget
-// has turned the plan into a patient-facing contract. A draft budget
-// doesn't lock — edits sync into it.
+// has turned the plan into a patient-facing contract. Draft budgets
+// don't lock (edits sync into them); terminal budgets
+// (cancelled/rejected/expired) are dead paper (issue #162).
 const canEditItems = computed(() => {
   if (!['draft', 'pending', 'active'].includes(props.plan.status)) return false
   if (!props.plan.budget_id) return true
   const budgetStatus = props.plan.budget?.status
-  return budgetStatus === 'cancelled' || budgetStatus === 'draft'
+  return budgetStatus !== 'sent' && budgetStatus !== 'accepted'
 })
 
 // Collapsible state for completed items
@@ -143,7 +144,7 @@ function getBudgetStatusColor(status: string): string {
           </UButton>
 
           <UButton
-            v-if="(!plan.budget_id || plan.budget?.status === 'cancelled') && plan.items.length > 0"
+            v-if="(!plan.budget_id || ['cancelled', 'rejected', 'expired'].includes(plan.budget?.status ?? '')) && plan.items.length > 0"
             color="primary"
             variant="soft"
             icon="i-lucide-file-text"
