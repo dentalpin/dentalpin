@@ -1,19 +1,6 @@
-import { existsSync } from 'fs'
-import { resolve } from 'path'
 import { defineVitestConfig } from '@nuxt/test-utils/config'
 
-// In Docker the backend modules are mounted at /module_layers (read-only).
-// Locally they live at ../backend/app/modules relative to the frontend root.
-const backendModules = existsSync('/module_layers')
-  ? '/module_layers'
-  : resolve(__dirname, '../backend/app/modules')
-
 export default defineVitestConfig({
-  resolve: {
-    alias: {
-      '@backend-modules': backendModules
-    }
-  },
   test: {
     environment: 'nuxt',
     globals: true,
