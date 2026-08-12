@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+
+{% block title %}சிகிச்சை மதிப்பீடு - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+
+{% block content %}
+<h2>சிகிச்சை மதிப்பீடு</h2>
+
+
+<p>வணக்கம் {{ patient_name }},</p>
+
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட சிகிச்சை மதிப்பீடு <strong>#{{ budget_number }}</strong> கீழே கொடுக்கப்பட்டுள்ளது:</p>
+
+
+{% if treatments %}
+<div class="info-box">
+    {% for t in treatments %}
+    <div class="info-row">
+        <div style="flex: 2;">
+            <div class="label">{{ t.name }}{% if t.tooth %} — பல் எண் {{ t.tooth }}{% endif %}</div>
+        </div>
+        <div style="flex: 1; text-align: right;">
+            <div class="value">{{ t.price }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+
+<div class="info-box">
+    {% if discount_amount %}
+    <div class="info-row">
+        <div class="label">இடைத் தொகை</div>
+        <div class="value">{{ subtotal }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">தள்ளுபடி</div>
+        <div class="value">-{{ discount_amount }}</div>
+    </div>
+    {% endif %}
+    <div class="info-row">
+        <div class="label">மொத்தத் தொகை</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+    {% if validity_days %}
+    <div class="info-row">
+        <div class="label">செல்லுபடியாகும் காலம்</div>
+        <div class="value">{{ validity_days }} நாட்கள்</div>
+    </div>
+    {% endif %}
+</div>
+
+
+{% if notes %}
+<p><strong>குறிப்புகள்:</strong> {{ notes }}</p>
+{% endif %}
+
+
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+
+<p>இந்த மதிப்பீடு குறித்து ஏதேனும் கேள்விகள் இருந்தால், எங்களைத் தொடர்பு கொள்ளவும்.</p>
+{% endblock %}

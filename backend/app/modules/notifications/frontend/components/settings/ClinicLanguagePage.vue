@@ -2,9 +2,9 @@
 const { t } = useI18n()
 const { settings, loading, saving, fetch, update } = useCommunicationsSettings()
 
-const language = ref<'es' | 'en' | 'fr' | 'pt'>('es')
+const language = ref<'es' | 'en' | 'fr' | 'pt' | 'ta'>('es')
 
-const SUPPORTED = ['en', 'fr', 'pt'] as const
+const SUPPORTED = ['en', 'fr', 'pt', 'ta'] as const
 
 watch(settings, (s) => {
   if (s) language.value = (SUPPORTED.includes(s.language as typeof SUPPORTED[number]) ? s.language as typeof language.value : 'es')
@@ -16,7 +16,8 @@ const options = [
   { value: 'es', label: 'Español' },
   { value: 'en', label: 'English' },
   { value: 'fr', label: 'Français' },
-  { value: 'pt', label: 'Português' }
+  { value: 'pt', label: 'Português' },
+  { value: 'ta', label: 'தமிழ்' }
 ]
 
 async function save() {

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+
+{% block title %}Verifactu சான்றிதழ் காலாவதி - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+
+{% block content %}
+<h2>Verifactu சான்றிதழ்</h2>
+
+
+<p>வணக்கம் {{ admin_name }},</p>
+
+
+{% if is_expired %}
+<div class="alert alert-error">
+    <strong>உங்கள் Verifactu சான்றிதழ் காலாவதியாகிவிட்டது.</strong> ஸ்பானிய வரி விதிமுறைகளுக்கு இணங்கும் விலைப்பட்டியல்களைத் தொடர்ந்து வழங்க, இந்தச் சான்றிதழைப் பயன்படுத்தக்கூடிய விரைவில் புதுப்பிக்க வேண்டும்.
+</div>
+{% else %}
+<div class="alert alert-warning">
+    <strong>உங்கள் Verifactu சான்றிதழ் இன்னும் {{ days_left }} நாட்களில் காலாவதியாகும்.</strong> சேவைத் தடைகளைத் தவிர்க்க, காலாவதி தேதிக்கு முன் சான்றிதழைப் புதுப்பிக்கவும்.
+</div>
+{% endif %}
+
+
+<div class="info-box">
+    {% if subject_cn %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">சான்றிதழ் விவரம்</div>
+            <div class="value">{{ subject_cn }}</div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">காலாவதி தேதி</div>
+            <div class="value">{{ valid_until }}</div>
+        </div>
+    </div>
+</div>
+
+
+<p>உங்கள் கிளினிக்கின் Verifactu அமைப்புகளில் சான்றிதழை நிர்வகிக்கலாம்.</p>
+{% endblock %}

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add Tamil locale (`ta.json`) with full UI coverage.
+
 - fix(earned): repair + guard against double-booked treatments
   (`pay_0004`). Deletes NULL-session earned rows duplicating
   per-session rows (the multi-session double charge), dedupes replayed

@@ -57,6 +57,7 @@ _SCENARIOS = (
             "es": "Recordatorio de higiene anual.",
             "en": "Annual hygiene reminder.",
             "fr": "Rappel d'hygiène annuel.",
+            "ta": "வருடாந்திர வாய்ச் சுகாதார நினைவூட்டல்.",
         },
     },
     {
@@ -70,6 +71,7 @@ _SCENARIOS = (
             "es": "Revisión anual; no contesta al teléfono fijo.",
             "en": "Annual checkup; no answer on landline.",
             "fr": "Contrôle annuel ; pas de réponse au téléphone fixe.",
+            "ta": "வருடாந்திர பரிசோதனை; நிலைத்தொலைபேசியில் பதில் இல்லை.",
         },
     },
     {
@@ -83,6 +85,7 @@ _SCENARIOS = (
             "es": "Postoperatorio de cirugía 36; cita confirmada.",
             "en": "Post-op surgery 36; appointment confirmed.",
             "fr": "Post-opératoire chirurgie 36 ; rendez-vous confirmé.",
+            "ta": "36-ஆம் பல் அறுவைச் சிகிச்சைக்குப் பிந்தைய பரிசோதனை; சந்திப்பு உறுதிசெய்யப்பட்டது.",
         },
     },
     {
@@ -96,6 +99,7 @@ _SCENARIOS = (
             "es": "Higiene completada en visita previa.",
             "en": "Hygiene completed at previous visit.",
             "fr": "Hygiène complétée lors de la visite précédente.",
+            "ta": "முந்தைய வருகையில் வாய்ச் சுகாதார சிகிச்சை முடிக்கப்பட்டது.",
         },
     },
     {
@@ -109,6 +113,7 @@ _SCENARIOS = (
             "es": "Revisión mensual de ortodoncia.",
             "en": "Monthly orthodontic review.",
             "fr": "Contrôle mensuel d'orthodontie.",
+            "ta": "மாதாந்திர பற்சீரமைப்பு பரிசீலனை.",
         },
     },
     {
@@ -122,6 +127,7 @@ _SCENARIOS = (
             "es": "Revisión de implante 46; revisar contacto.",
             "en": "Implant 46 review; check contact.",
             "fr": "Révision implant 46 ; vérifier le contact.",
+            "ta": "46-ஆம் பல் உள்வைப்பு பரிசீலனை; பல் தொடர்பைச் சரிபார்க்கவும்.",
         },
     },
     {
@@ -135,6 +141,7 @@ _SCENARIOS = (
             "es": "Paciente declina seguimiento.",
             "en": "Patient declines follow-up.",
             "fr": "Patient décline le suivi.",
+            "ta": "நோயாளர் தொடர்ச்சிப் பரிசோதனையை மறுக்கிறார்.",
         },
     },
     {
@@ -148,6 +155,7 @@ _SCENARIOS = (
             "es": "Control de implante a los 3 meses.",
             "en": "Implant check at 3 months.",
             "fr": "Contrôle d'implant à 3 mois.",
+            "ta": "3 மாதங்களில் பல் உள்வைப்பு பரிசோதனை.",
         },
     },
 )
@@ -158,21 +166,25 @@ _ATTEMPT_NOTES = (
         "es": "Llamada al móvil sin respuesta.",
         "en": "Called mobile, no answer.",
         "fr": "Appel mobile sans réponse.",
+        "ta": "கைபேசிக்கு அழைத்தும் பதில் இல்லை.",
     },
     {
         "es": "Buzón de voz; mensaje dejado.",
         "en": "Voicemail; message left.",
         "fr": "Messagerie ; message laissé.",
+        "ta": "குரல் அஞ்சல்; செய்தி விடப்பட்டது.",
     },
     {
         "es": "Indica que llamemos la próxima semana.",
         "en": "Asks us to call next week.",
         "fr": "Demande de rappeler la semaine prochaine.",
+        "ta": "அடுத்த வாரம் அழைக்குமாறு கேட்டுக்கொண்டார்.",
     },
     {
         "es": "Acuerda agendar tras revisar agenda laboral.",
         "en": "Agrees to schedule after checking work calendar.",
         "fr": "Accepte de planifier après vérification de l'agenda.",
+        "ta": "பணிக்கால அட்டவணையைச் சரிபார்த்த பிறகு சந்திப்பைத் திட்டமிட ஒப்புக்கொண்டார்.",
     },
 )
 

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+
+{% block title %}மதிப்பீடு ஏற்கப்பட்டது - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+
+{% block content %}
+<h2>மதிப்பீடு ஏற்கப்பட்டது</h2>
+
+
+<p>வணக்கம் {{ patient_name }},</p>
+
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட உங்கள் மதிப்பீடு <strong>#{{ budget_number }}</strong> ஏற்கப்பட்டுள்ளது.</p>
+
+
+<div class="info-box">
+    <div class="info-row">
+        <div class="label">மதிப்பீடு</div>
+        <div class="value">#{{ budget_number }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">ஏற்கப்பட்ட தேதி</div>
+        <div class="value">{{ accepted_date }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">மொத்தத் தொகை</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+</div>
+
+
+<p>தொடர்புடைய சந்திப்புகளைத் திட்டமிடுவதற்காக விரைவில் உங்களைத் தொடர்பு கொள்வோம்.</p>
+{% endblock %}

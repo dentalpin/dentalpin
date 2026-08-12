@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block title %}சந்திப்பு உறுதிப்படுத்தல் - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+
+{% block content %}
+<h2>சந்திப்பு உறுதிப்படுத்தல்</h2>
+
+
+<p>வணக்கம் {{ patient_name }},</p>
+
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கில் உங்களுக்கான சந்திப்பு உறுதிப்படுத்தப்பட்டுள்ளது:</p>
+
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">தேதி</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">நேரம்</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">நிபுணர்</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+<p>நேரத்தை மாற்ற அல்லது சந்திப்பை ரத்து செய்ய வேண்டுமெனில், முடிந்தவரை விரைவாக எங்களைத் தொடர்பு கொள்ளவும்.</p>
+{% endblock %}

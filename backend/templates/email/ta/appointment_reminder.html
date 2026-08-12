@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+
+{% block title %}சந்திப்பு நினைவூட்டல் - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+
+{% block content %}
+<h2>சந்திப்பு நினைவூட்டல்</h2>
+
+
+<p>வணக்கம் {{ patient_name }},</p>
+
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கில் விரைவில் நடைபெறவுள்ள உங்கள் சந்திப்பை நினைவூட்டுவதற்காக இந்தச் செய்தி அனுப்பப்படுகிறது:</p>
+
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">தேதி</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">நேரம்</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">நிபுணர்</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+<p>தயவுசெய்து சில நிமிடங்களுக்கு முன்பாகவே வந்து சேரவும். நேரத்தை மாற்ற வேண்டுமெனில், முடிந்தவரை விரைவாக எங்களைத் தொடர்பு கொள்ளவும்.</p>
+{% endblock %}

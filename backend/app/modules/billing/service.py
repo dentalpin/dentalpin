@@ -1086,6 +1086,7 @@ class InvoiceService:
                     or names.get("en")
                     or names.get("fr")
                     or names.get("pt")
+                    or names.get("ta")
                     or description
                 )
                 internal_code = budget_item.catalog_item.internal_code

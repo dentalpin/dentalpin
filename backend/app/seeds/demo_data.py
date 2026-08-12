@@ -15,7 +15,7 @@ from uuid import UUID, uuid4
 # Language Configuration
 # =============================================================================
 
-SupportedLang = Literal["es", "en", "fr"]
+SupportedLang = Literal["es", "en", "fr", "ta"]
 LANG: SupportedLang = "en"  # Default language
 
 
@@ -86,21 +86,22 @@ def get_clinic_data() -> dict:
                 "es": "Clínica Dental Demo",
                 "en": "Demo Dental Clinic",
                 "fr": "Clinique Dentaire Démo",
+                "ta": "டெமோ பல் மருத்துவ கிளினிக்",
             }
         ),
-        "tax_id": t({"es": "B12345678", "en": "12-3456789", "fr": "12-3456789"}),
+        "tax_id": t({"es": "B12345678", "en": "12-3456789", "fr": "12-3456789", "ta": "33-1234567",}),
         "address": {
             "street": t(
-                {"es": "Calle Gran Vía 123", "en": "123 Main Street", "fr": "123 Rue Principale"}
+                {"es": "Calle Gran Vía 123", "en": "123 Main Street", "fr": "123 Rue Principale", "ta": "123 மெயின் தெரு",}
             ),
-            "city": t({"es": "Madrid", "en": "New York", "fr": "Paris"}),
-            "postal_code": t({"es": "28013", "en": "10001", "fr": "75001"}),
-            "country": t({"es": "España", "en": "USA", "fr": "France"}),
+            "city": t({"es": "Madrid", "en": "New York", "fr": "Paris", "ta": "சென்னை"}),
+            "postal_code": t({"es": "28013", "en": "10001", "fr": "75001", "ta": "600001"}),
+            "country": t({"es": "España", "en": "USA", "fr": "France", "ta": "இந்தியா"}),
         },
-        "phone": t({"es": "+34 912 345 678", "en": "+1 (212) 555-0100", "fr": "+33 1 23 45 67 89"}),
+        "phone": t({"es": "+34 912 345 678", "en": "+1 (212) 555-0100", "fr": "+33 1 23 45 67 89", "ta": "+91 98401 23456"}),
         "email": "info@demo.clinic",
-        "currency": t({"es": "EUR", "en": "USD", "fr": "EUR"}),
-        "timezone": t({"es": "Europe/Madrid", "en": "America/New_York", "fr": "Europe/Paris"}),
+        "currency": t({"es": "EUR", "en": "USD", "fr": "EUR", "ta": "INR"}),
+        "timezone": t({"es": "Europe/Madrid", "en": "America/New_York", "fr": "Europe/Paris", "ta": "Asia/Kolkata"}),
         "settings": {
             "slot_duration_min": 30,
             "working_hours": {
@@ -113,11 +114,11 @@ def get_clinic_data() -> dict:
         },
         "cabinets": [
             {
-                "name": t({"es": "Gabinete 1", "en": "Room 1", "fr": "Cabinet 1"}),
+                "name": t({"es": "Gabinete 1", "en": "Room 1", "fr": "Cabinet 1", "ta": "அறை 1"}),
                 "color": "#3B82F6",
             },
             {
-                "name": t({"es": "Gabinete 2", "en": "Room 2", "fr": "Cabinet 2"}),
+                "name": t({"es": "Gabinete 2", "en": "Room 2", "fr": "Cabinet 2", "ta": "அறை 2"}),
                 "color": "#10B981",
             },
         ],
@@ -125,31 +126,37 @@ def get_clinic_data() -> dict:
 
 
 # User names by language
+
 USERS_I18N = {
     "admin": {
         "es": {"first_name": "Admin", "last_name": "Demo"},
         "en": {"first_name": "Admin", "last_name": "Demo"},
         "fr": {"first_name": "Admin", "last_name": "Démo"},
+        "ta": {"first_name": "நிர்வாகி", "last_name": "டெமோ"},
     },
     "dentist": {
         "es": {"first_name": "María", "last_name": "García López"},
         "en": {"first_name": "Sarah", "last_name": "Johnson"},
         "fr": {"first_name": "Marie", "last_name": "Dubois Laurent"},
+        "ta": {"first_name": "மீனா", "last_name": "குமார்"},
     },
     "hygienist": {
         "es": {"first_name": "Carlos", "last_name": "López Martínez"},
         "en": {"first_name": "Michael", "last_name": "Williams"},
         "fr": {"first_name": "Thomas", "last_name": "Moreau"},
+        "ta": {"first_name": "அருண்", "last_name": "ரவி"},
     },
     "assistant": {
         "es": {"first_name": "Ana", "last_name": "Martínez Ruiz"},
         "en": {"first_name": "Emily", "last_name": "Davis"},
         "fr": {"first_name": "Camille", "last_name": "Petit"},
+        "ta": {"first_name": "அனிதா", "last_name": "முருகன்"},
     },
     "receptionist": {
         "es": {"first_name": "Laura", "last_name": "Sánchez Pérez"},
         "en": {"first_name": "Jessica", "last_name": "Brown"},
         "fr": {"first_name": "Julie", "last_name": "Bernard"},
+        "ta": {"first_name": "லதா", "last_name": "செல்வி"},
     },
 }
 
@@ -227,7 +234,12 @@ PATIENTS_I18N = [
             "last_name": "Morel",
             "notes": "Patient pédiatrique. Première visite pour contrôle.",
         },
-        "phone": {"es": "+34 612 345 001", "en": "+1 (212) 555-0001", "fr": "+33 6 12 34 56 01"},
+        "ta": {
+            "first_name": "லூசியா",
+            "last_name": "ரோட்ரிக்ஸ் சான்செஸ்",
+            "notes": "பற்சீரமைப்பு சிகிச்சை நடைபெற்று வருகிறது.",
+        },
+        "phone": {"es": "+34 612 345 001", "en": "+1 (212) 555-0001", "fr": "+33 6 12 34 56 01", "ta": "+91 44 6123 4001"},
         "email": None,
         "date_of_birth": date(2016, 3, 15),
         "emergency_contact": {
@@ -252,6 +264,13 @@ PATIENTS_I18N = [
                 "email": "marc.morel@email.com",
                 "is_legal_guardian": True,
             },
+            "ta": {
+                "name": "கார்லோஸ் பெர்னாண்டஸ்",
+                "relationship": "தந்தை",
+                "phone": "+91 44 6123 4100",
+                "email": "carlos.fernandez@email.com",
+                "is_legal_guardian": True,
+            }
         },
         "medical_history": {
             "allergies": [],
@@ -275,7 +294,12 @@ PATIENTS_I18N = [
             "last_name": "Laurent",
             "notes": "Traitement d'orthodontie en cours.",
         },
-        "phone": {"es": "+34 612 345 002", "en": "+1 (212) 555-0002", "fr": "+33 6 12 34 56 02"},
+        "ta": {
+            "first_name": "ஓலிவியா",
+            "last_name": "வில்சன்",
+            "notes": "ஒர்த்தோடான்டிக் சிகிச்சை நடைபெற்று வருகிறது.",
+        },
+        "phone": {"es": "+34 612 345 002", "en": "+1 (212) 555-0002", "fr": "+33 6 12 34 56 02", "ta": "+91 44 6123 4002"},
         "email": {
             "es": "lucia.rodriguez@email.com",
             "en": "olivia.wilson@email.com",
@@ -304,6 +328,13 @@ PATIENTS_I18N = [
                 "email": "isabelle.laurent@email.com",
                 "is_legal_guardian": True,
             },
+            "ta": {
+                "name": "சரா வில்சன்",
+                "relationship": "தாய்",
+                "phone": "+91 44 6123 4101",
+                "email": "sarah.wilson@email.com",
+                "is_legal_guardian": True,
+            }
         },
         "medical_history": {
             "allergies": [],
@@ -316,11 +347,13 @@ PATIENTS_I18N = [
         "es": {"first_name": "Miguel", "last_name": "González Torres", "notes": None},
         "en": {"first_name": "James", "last_name": "Anderson", "notes": None},
         "fr": {"first_name": "Lucas", "last_name": "Rousseau", "notes": None},
-        "phone": {"es": "+34 612 345 003", "en": "+1 (212) 555-0003", "fr": "+33 6 12 34 56 03"},
+        "ta": {"first_name": "ஜேம்ஸ்", "last_name": "ஆண்டர்சன்", "notes": None},
+        "phone": {"es": "+34 612 345 003", "en": "+1 (212) 555-0003", "fr": "+33 6 12 34 56 03", "ta": "+91 44 6123 4003"},
         "email": {
             "es": "miguel.gonzalez@email.com",
             "en": "james.anderson@email.com",
             "fr": "lucas.rousseau@email.com",
+            "ta": "james.anderson@email.com",
         },
         "date_of_birth": date(1998, 11, 8),
         "emergency_contact": {
@@ -345,6 +378,13 @@ PATIENTS_I18N = [
                 "email": None,
                 "is_legal_guardian": False,
             },
+            "ta": {
+                "name": "லௌரா ஆண்டர்சன்",
+                "relationship": "சகோதரி",
+                "phone": "+91 44 6123 4102",
+                "email": None,
+                "is_legal_guardian": False,
+            }
         },
         "medical_history": {
             "allergies": [],
@@ -368,11 +408,17 @@ PATIENTS_I18N = [
             "last_name": "Bertrand",
             "notes": "Sensibilité dentaire. Utiliser l'anesthésie avec précaution.",
         },
-        "phone": {"es": "+34 612 345 004", "en": "+1 (212) 555-0004", "fr": "+33 6 12 34 56 04"},
+        "ta": {
+            "first_name": "எம்மா",
+            "last_name": "டேலர்",
+            "notes": "தோல்கள் உணர்வு. மெதுவாக மெதுவாக பயன்படுத்தவும்.",
+        },
+        "phone": {"es": "+34 612 345 004", "en": "+1 (212) 555-0004", "fr": "+33 6 12 34 56 04", "ta": "+91 44 6123 4004"},
         "email": {
             "es": "carmen.diaz@email.com",
             "en": "emma.taylor@email.com",
             "fr": "chloe.bertrand@email.com",
+            "ta": "emma.taylor@email.com",
         },
         "date_of_birth": date(1995, 5, 30),
         "emergency_contact": {
@@ -395,6 +441,13 @@ PATIENTS_I18N = [
                 "relationship": "Mari",
                 "phone": "+33 6 12 34 56 54",
                 "email": "jean-pierre.bertrand@email.com",
+                "is_legal_guardian": False,
+            },
+            "ta": {
+                "name": "பீட்டர் டேலர்",
+                "relationship": "மனைவி",
+                "phone": "+91 44 6123 4103",
+                "email": "peter.taylor@email.com",
                 "is_legal_guardian": False,
             },
         },
@@ -424,7 +477,8 @@ PATIENTS_I18N = [
         "es": {"first_name": "David", "last_name": "Martín López", "notes": None},
         "en": {"first_name": "William", "last_name": "Thomas", "notes": None},
         "fr": {"first_name": "Alexandre", "last_name": "Moreau", "notes": None},
-        "phone": {"es": "+34 612 345 005", "en": "+1 (212) 555-0005", "fr": "+33 6 12 34 56 05"},
+        "ta": {"first_name": "வில்லியம்", "last_name": "தாமஸ்", "notes": None},
+        "phone": {"es": "+34 612 345 005", "en": "+1 (212) 555-0005", "fr": "+33 6 12 34 56 05", "ta": "+91 44 6123 4005"},
         "email": None,
         "date_of_birth": date(1992, 2, 14),
         "emergency_contact": None,
@@ -451,11 +505,17 @@ PATIENTS_I18N = [
             "last_name": "Lefebvre",
             "notes": "Enceinte (troisième trimestre). Éviter les radiographies.",
         },
-        "phone": {"es": "+34 612 345 006", "en": "+1 (212) 555-0006", "fr": "+33 6 12 34 56 06"},
+        "ta": {
+            "first_name": "சோபியா",
+            "last_name": "மார்டினேஸ்",
+            "notes": "கர்ப்பம் (மூன்றாம் காலம்). எக்ஸ்-ரேகளைத் தவிர்க்கவும்.",
+        },
+        "phone": {"es": "+34 612 345 006", "en": "+1 (212) 555-0006", "fr": "+33 6 12 34 56 06", "ta": "+91 44 6123 4006"},
         "email": {
             "es": "elena.ruiz@email.com",
             "en": "sophia.martinez@email.com",
             "fr": "manon.lefebvre@email.com",
+            "ta": "sophia.martinez@email.com",
         },
         "date_of_birth": date(1985, 9, 3),
         "emergency_contact": {
@@ -478,6 +538,13 @@ PATIENTS_I18N = [
                 "relationship": "Mari",
                 "phone": "+33 6 12 34 56 55",
                 "email": "antoine.lefebvre@email.com",
+                "is_legal_guardian": False,
+            },
+            "ta": {
+                "name": "அந்திரூ மார்டினேஸ்",
+                "relationship": "மனைவி",
+                "phone": "+91 44 6123 4104",
+                "email": "andrew.martinez@email.com",
                 "is_legal_guardian": False,
             },
         },
@@ -505,11 +572,17 @@ PATIENTS_I18N = [
             "last_name": "Simon",
             "notes": "Diabétique de type 2. Surveillance de la cicatrisation.",
         },
-        "phone": {"es": "+34 612 345 007", "en": "+1 (212) 555-0007", "fr": "+33 6 12 34 56 07"},
+        "ta": {
+            "first_name": "டானியல்",
+            "last_name": "கார்க்கி",
+            "notes": "டைப்பு 2 பிச்சை. சிகிச்சையை கண்காணிக்கவும்.",
+        },
+        "phone": {"es": "+34 612 345 007", "en": "+1 (212) 555-0007", "fr": "+33 6 12 34 56 07", "ta": "+91 44 6123 4007"},
         "email": {
             "es": "javier.sanchez@email.com",
             "en": "daniel.garcia@email.com",
             "fr": "nicolas.simon@email.com",
+            "ta": "daniel.garcia@email.com",
         },
         "date_of_birth": date(1980, 12, 25),
         "emergency_contact": {
@@ -534,6 +607,13 @@ PATIENTS_I18N = [
                 "email": "nathalie.simon@email.com",
                 "is_legal_guardian": False,
             },
+            "ta": {
+                "name": "அன்னா கார்க்கி",
+                "relationship": "மனைவி",
+                "phone": "+91 44 6123 4105",
+                "email": "anna.garcia@email.com",
+                "is_legal_guardian": False,
+            },
         },
         "medical_history": {
             "allergies": [],
@@ -543,12 +623,14 @@ PATIENTS_I18N = [
                         "es": "Diabetes Mellitus Tipo 2",
                         "en": "Type 2 Diabetes Mellitus",
                         "fr": "Diabète de type 2",
+                        "ta": "வகை 2 நீரிழிவு நோய்",
                     },
                     "is_critical": True,
                     "notes": {
                         "es": "Controlada con metformina. HbA1c: 7.2%",
                         "en": "Controlled with metformin. HbA1c: 7.2%",
                         "fr": "Contrôlé avec metformine. HbA1c : 7,2%",
+                        "ta": "மெத்த்போர்மின் மூலம் கட்டுப்பாடு செய்யப்பட்டது. HbA1c: 7.2%",
                     },
                 },
             ],
@@ -559,7 +641,8 @@ PATIENTS_I18N = [
         "es": {"first_name": "Isabel", "last_name": "López Navarro", "notes": None},
         "en": {"first_name": "Mia", "last_name": "Robinson", "notes": None},
         "fr": {"first_name": "Clémentine", "last_name": "Michel", "notes": None},
-        "phone": {"es": "+34 612 345 008", "en": "+1 (212) 555-0008", "fr": "+33 6 12 34 56 08"},
+        "ta": {"first_name": "மியா", "last_name": "ராபின்ஸன்", "notes": None},
+        "phone": {"es": "+34 612 345 008", "en": "+1 (212) 555-0008", "fr": "+33 6 12 34 56 08", "ta": "+91 44 2432 1348"},
         "email": None,
         "date_of_birth": date(1978, 6, 17),
         "emergency_contact": {
@@ -581,6 +664,13 @@ PATIENTS_I18N = [
                 "name": "Philippe Michel",
                 "relationship": "Frère",
                 "phone": "+33 6 12 34 56 57",
+                "email": None,
+                "is_legal_guardian": False,
+            },
+            "ta": {
+                "name": "ராபர்ட் ராபின்ஸன்",
+                "relationship": "சகோதரர்",
+                "phone": "+91 44 2432 1348",
                 "email": None,
                 "is_legal_guardian": False,
             },
@@ -608,11 +698,17 @@ PATIENTS_I18N = [
             "last_name": "Laurent",
             "notes": "Allergique à la pénicilline.",
         },
+        "ta": {
+            "first_name": "அலெக்சாண்டர்",
+            "last_name": "கிளார்க்",
+            "notes": "பெனிசிலினுக்கு அலர்ஜி.",
+        },
         "phone": {"es": "+34 612 345 009", "en": "+1 (212) 555-0009", "fr": "+33 6 12 34 56 09"},
         "email": {
             "es": "francisco.garcia@email.com",
             "en": "alexander.clark@email.com",
             "fr": "guillaume.laurent@email.com",
+            "ta": "alexander.clark@email.com",
         },
         "date_of_birth": date(1975, 4, 9),
         "emergency_contact": {
@@ -637,21 +733,29 @@ PATIENTS_I18N = [
                 "email": "catherine.laurent@email.com",
                 "is_legal_guardian": False,
             },
+            "ta": {
+                "name": "கேத்தரின் லாரென்ட்",
+                "relationship": "மனைவி",
+                "phone": "+91 98765 43210",
+                "email": "கேத்தரின்.லாரென்ட்@email.com",
+                "is_legal_guardian": False,
+            }
         },
         "medical_history": {
             "allergies": [
                 {
-                    "name": {"es": "Penicilina", "en": "Penicillin", "fr": "Pénicilline"},
+                    "name": {"es": "Penicilina", "en": "Penicillin", "fr": "Pénicilline", "ta": "பெனிசிலின்",},
                     "severity": "critical",
-                    "reaction": {"es": "Anafilaxia", "en": "Anaphylaxis", "fr": "Anaphylaxie"},
+                    "reaction": {"es": "Anafilaxia", "en": "Anaphylaxis", "fr": "Anaphylaxie",  "ta": "அனாபிலாக்சிஸ்"},
                 },
                 {
-                    "name": {"es": "Amoxicilina", "en": "Amoxicillin", "fr": "Amoxicilline"},
+                    "name": {"es": "Amoxicilina", "en": "Amoxicillin", "fr": "Amoxicilline", "ta": "அமோக்சிலின்"},
                     "severity": "high",
                     "reaction": {
                         "es": "Urticaria severa",
                         "en": "Severe urticaria",
                         "fr": "Urticaire sévère",
+                        "ta": "கடுமையான அர்டிகேரியா",
                     },
                 },
             ],
@@ -675,11 +779,17 @@ PATIENTS_I18N = [
             "last_name": "Garnier",
             "notes": "Hypertendue. Vérifier la tension avant les soins.",
         },
-        "phone": {"es": "+34 612 345 010", "en": "+1 (212) 555-0010", "fr": "+33 6 12 34 56 10"},
+        "ta": {
+            "first_name": "ரோசா",
+            "last_name": "மார்டினேஸ் ஜிமீனேஸ்",
+            "notes": "இரத்த அழுத்தம் உயர்ந்தது. செயல்பாடுகளுக்கு முன் இரத்த அழுத்தத்தை சரிபார்க்கவும்.",
+        },
+        "phone": {"es": "+34 612 345 010", "en": "+1 (212) 555-0010", "fr": "+33 6 12 34 56 10", "ta": "+91 44 2342 2345"},
         "email": {
             "es": "rosa.martinez@email.com",
             "en": "charlotte.lewis@email.com",
             "fr": "sophie.garnier@email.com",
+            "ta": "charlotte.lewis@email.com",
         },
         "date_of_birth": date(1970, 8, 21),
         "emergency_contact": {
@@ -704,6 +814,13 @@ PATIENTS_I18N = [
                 "email": None,
                 "is_legal_guardian": False,
             },
+            "ta": {
+                "name": "Patrick Garnier",
+                "relationship": "மனைவி",
+                "phone": "+91 44 2342 2345",
+                "email": None,
+                "is_legal_guardian": False,
+            },
         },
         "medical_history": {
             "allergies": [],
@@ -713,12 +830,14 @@ PATIENTS_I18N = [
                         "es": "Hipertensión Arterial",
                         "en": "Arterial Hypertension",
                         "fr": "Hypertension artérielle",
+                        "ta": "தமனி உயர் இரத்த அழுத்தம்",
                     },
                     "is_critical": True,
                     "notes": {
                         "es": "Tratamiento con enalapril 10mg/día. PA habitual: 130/85",
                         "en": "Treatment with enalapril 10mg/day. Usual BP: 130/85",
                         "fr": "Traitement par énalapril 10mg/j. PA habituelle : 130/85",
+                        "ta": "எனலாப்ரில் 10 மி.கி./நாள் சிகிச்சை. வழக்கமான இரத்த அழுத்தம்: 130/85",
                     },
                 },
             ],
@@ -742,7 +861,12 @@ PATIENTS_I18N = [
             "last_name": "David",
             "notes": "Prothèse partielle supérieure.",
         },
-        "phone": {"es": "+34 612 345 011", "en": "+1 (212) 555-0011", "fr": "+33 6 12 34 56 11"},
+        "ta": {
+            "first_name": "ஆண்டோனியோ",
+            "last_name": "ஹெர்னாண்டேஸ் காஸ்ட்ரோ",
+            "notes": "மேல் பகுதி போட்டி.",
+        },
+        "phone": {"es": "+34 612 345 011", "en": "+1 (212) 555-0011", "fr": "+33 6 12 34 56 11", "ta": "+91 44 2342 2346"},
         "email": None,
         "date_of_birth": date(1960, 1, 5),
         "emergency_contact": {
@@ -767,27 +891,46 @@ PATIENTS_I18N = [
                 "email": "marie-anne.david@email.com",
                 "is_legal_guardian": False,
             },
+            "ta": {
+                "name": "மரியா-அன் டேவிட்",
+                "relationship": "மகள்",
+                "phone": "+91 44 2342 2346",
+                "email": "marie-anne.david@email.com",
+                "is_legal_guardian": False,
+            },
         },
         "medical_history": {
             "allergies": [
                 {
-                    "name": {"es": "Yodo", "en": "Iodine", "fr": "Iode"},
+                    "name": {
+                        "es": "Yodo",
+                        "en": "Iodine",
+                        "fr": "Iode",
+                        "ta": "அயோடின்",
+                    },
                     "severity": "medium",
                     "reaction": {
                         "es": "Erupción cutánea",
                         "en": "Skin rash",
                         "fr": "Éruption cutanée",
+                        "ta": "தோல் தடிப்பு",
                     },
                 },
             ],
             "systemic_diseases": [
                 {
-                    "name": {"es": "Artrosis", "en": "Osteoarthritis", "fr": "Arthrose"},
+                    "name": {
+                        "es": "Artrosis",
+                        "en": "Osteoarthritis",
+                        "fr": "Arthrose",
+                        "ta": "எலும்பு மூட்டு தேய்மானம்",
+                    },
                     "is_critical": False,
                     "notes": {
                         "es": "Afecta movilidad cervical",
                         "en": "Affects cervical mobility",
                         "fr": "Affecte la mobilité cervicale",
+                        "ta": "கழுத்துப் பகுதியின் அசைவுத்திறனைப் பாதிக்கிறது",
                     },
                 },
             ],
@@ -810,7 +953,12 @@ PATIENTS_I18N = [
             "last_name": "Bertrand",
             "notes": "Patiente avec implants. Révision périodique.",
         },
-        "phone": {"es": "+34 612 345 012", "en": "+1 (212) 555-0012", "fr": "+33 6 12 34 56 12"},
+        "ta": {
+            "first_name": "மரியா தெரேசா",
+            "last_name": "ரோமேரோ வேகா",
+            "notes": "இம்பில்ட்டுகளுடன் போதனை. காலநிலை சோதனை.",
+        },
+        "phone": {"es": "+34 612 345 012", "en": "+1 (212) 555-0012", "fr": "+33 6 12 34 56 12", "ta": "+91 44 2342 2347"},
         "email": None,
         "date_of_birth": date(1955, 10, 12),
         "emergency_contact": {
@@ -835,17 +983,25 @@ PATIENTS_I18N = [
                 "email": "laurent.bertrand@email.com",
                 "is_legal_guardian": False,
             },
+            "ta": {
+                "name": "லாரன்ட் பெர்ட்ரான்",
+                "relationship": "மகன்",
+                "phone": "+91 44 2342 2347",
+                "email": "laurent.bertrand@email.com",
+                "is_legal_guardian": False,
+            },
         },
         "medical_history": {
             "allergies": [],
             "systemic_diseases": [
                 {
-                    "name": {"es": "Osteoporosis", "en": "Osteoporosis", "fr": "Ostéoporose"},
+                    "name": {"es": "Osteoporosis", "en": "Osteoporosis", "fr": "Ostéoporose", "ta": "ஆஸ்டியோபோரோசிஸ்"},
                     "is_critical": False,
                     "notes": {
                         "es": "Tratamiento con bisfosfonatos. Precaución con extracciones.",
                         "en": "Treatment with bisphosphonates. Caution with extractions.",
                         "fr": "Traitement par bisphosphonates. Prudence avec les extractions.",
+                        "ta": "பிஸ்பாஸ்போனேட் சிகிச்சை. பல் அகற்றும் சிகிச்சையில் கவனம் தேவை.",
                     },
                 },
             ],
@@ -868,11 +1024,17 @@ PATIENTS_I18N = [
             "last_name": "Roux",
             "notes": "Prend des anticoagulants. Coordonné avec le médecin avant extractions.",
         },
-        "phone": {"es": "+34 612 345 013", "en": "+1 (212) 555-0013", "fr": "+33 6 12 34 56 13"},
+        "ta": {
+            "first_name": "ஜோசப் லூயிஸ்",
+            "last_name": "முன்யோஸ் பிளாங்கோ",
+            "notes": "இரத்தம் உறைவதைத் தடுக்கும் மருந்துகளை எடுத்துக்கொள்கிறார். பல் அகற்றும் சிகிச்சைக்கு முன் மருத்துவருடன் ஒருங்கிணைக்கவும்.",
+        },
+        "phone": {"es": "+34 612 345 013", "en": "+1 (212) 555-0013", "fr": "+33 6 12 34 56 13", "ta": "+91 44 2341 2342"},
         "email": {
             "es": "joseluis.munoz@email.com",
             "en": "richard.allen@email.com",
             "fr": "pierre.roux@email.com",
+            "ta": "richard.allen@email.com"
         },
         "date_of_birth": date(1950, 3, 28),
         "emergency_contact": {
@@ -897,6 +1059,13 @@ PATIENTS_I18N = [
                 "email": None,
                 "is_legal_guardian": False,
             },
+            "ta": {
+                "name": "பாட்ரிஷியா ஏலன்",
+                "relationship": "மனைவி",
+                "phone": "+91 44 2341 2341",
+                "email": None,
+                "is_legal_guardian": False,
+            }
         },
         "medical_history": {
             "allergies": [],
@@ -909,12 +1078,14 @@ PATIENTS_I18N = [
                         "es": "Fibrilación Auricular",
                         "en": "Atrial Fibrillation",
                         "fr": "Fibrillation auriculaire",
+                        "ta": "ஏட்ரியல் ஃபைப்ரிலேஷன்",
                     },
                     "is_critical": True,
                     "notes": {
                         "es": "Anticoagulado. Requiere control INR antes de procedimientos.",
                         "en": "Anticoagulated. Requires INR control before procedures.",
                         "fr": "Anticoagulé. Contrôle INR requis avant les soins.",
+                        "ta": "இரத்த உறைதலைத் தடுக்கும் மருந்து சிகிச்சையில் உள்ளார். சிகிச்சைக்கு முன் INR பரிசோதனை தேவை.",
                     },
                 },
             ],
@@ -925,7 +1096,8 @@ PATIENTS_I18N = [
         "es": {"first_name": "Dolores", "last_name": "Vega Ortiz", "notes": None},
         "en": {"first_name": "Barbara", "last_name": "Young", "notes": None},
         "fr": {"first_name": "Catherine", "last_name": "Duval", "notes": None},
-        "phone": {"es": "+34 612 345 014", "en": "+1 (212) 555-0014", "fr": "+33 6 12 34 56 14"},
+        "ta": {"first_name": "பாலா", "last_name": "யாங்", "notes": None},
+        "phone": {"es": "+34 612 345 014", "en": "+1 (212) 555-0014", "fr": "+33 6 12 34 56 14", "ta": "+91 44 2341 2341"},
         "email": None,
         "date_of_birth": date(1948, 7, 7),
         "emergency_contact": {
@@ -948,6 +1120,13 @@ PATIENTS_I18N = [
                 "relationship": "Fils",
                 "phone": "+33 6 12 34 56 63",
                 "email": "bernard.duval@email.com",
+                "is_legal_guardian": False,
+            },
+            "ta": {
+                "name": "ஜார்ஜ் யாங்",
+                "relationship": "மகன்",
+                "phone": "+91 44 2341 2341",
+                "email": "george.young@email.com",
                 "is_legal_guardian": False,
             },
         },
@@ -973,7 +1152,12 @@ PATIENTS_I18N = [
             "last_name": "Lambert",
             "notes": "Prothèse complète. Nécessite des ajustements fréquents.",
         },
-        "phone": {"es": "+34 612 345 015", "en": "+1 (212) 555-0015", "fr": "+33 6 12 34 56 15"},
+        "ta": {
+            "first_name": "சார்லஸ்",
+            "last_name": "கிங்",
+            "notes": "முழு மூத்து மாற்றம். அதிக சமயம் மாற்றம் தேவை.",
+        },
+        "phone": {"es": "+34 612 345 015", "en": "+1 (212) 555-0015", "fr": "+33 6 12 34 56 15", "ta": "+91 44 2341 2341"},
         "email": None,
         "date_of_birth": date(1945, 11, 19),
         "emergency_contact": {
@@ -998,16 +1182,24 @@ PATIENTS_I18N = [
                 "email": "sylvie.lambert@email.com",
                 "is_legal_guardian": False,
             },
+            "ta": {
+                "name": "சில்விய் லம்பெர்ட்",
+                "relationship": "மகள்",
+                "phone": "+91 44 2341 2341",
+                "email": "sylvie.lambert@email.com",
+                "is_legal_guardian": False,
+            },
         },
         "medical_history": {
             "allergies": [
                 {
-                    "name": {"es": "AINEs", "en": "NSAIDs", "fr": "AINS"},
+                    "name": {"es": "AINEs", "en": "NSAIDs", "fr": "AINS", "ta": "NSAID மருந்துகள்",},
                     "severity": "high",
                     "reaction": {
                         "es": "Problemas gástricos severos",
                         "en": "Severe gastric problems",
                         "fr": "Problèmes gastriques sévères",
+                        "ta": "கடுமையான வயிற்றுப் பிரச்சினைகள்",
                     },
                 },
             ],
@@ -1017,12 +1209,14 @@ PATIENTS_I18N = [
                         "es": "Insuficiencia Renal Crónica",
                         "en": "Chronic Kidney Disease",
                         "fr": "Insuffisance rénale chronique",
+                        "ta": "நாள்பட்ட சிறுநீரக நோய்",
                     },
                     "is_critical": True,
                     "notes": {
                         "es": "Estadio 3. Ajustar dosis de medicamentos.",
                         "en": "Stage 3. Adjust medication doses.",
                         "fr": "Stade 3. Ajuster les doses de médicaments.",
+                        "ta": "நிலை 3. மருந்துகளின் அளவைச் சரிசெய்யவும்.",
                     },
                 },
                 {
@@ -1030,12 +1224,14 @@ PATIENTS_I18N = [
                         "es": "Diabetes Mellitus Tipo 2",
                         "en": "Type 2 Diabetes Mellitus",
                         "fr": "Diabète de type 2",
+                        "ta": "வகை 2 நீரிழிவு நோய்",
                     },
                     "is_critical": True,
                     "notes": {
                         "es": "Insulinodependiente",
                         "en": "Insulin-dependent",
                         "fr": "Insulino-dépendant",
+                        "ta": "இன்சுலின் சார்ந்தது"
                     },
                 },
             ],
@@ -1549,7 +1745,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "DX-VISIT",
         {
-            "name": {"es": "Revisión", "en": "Checkup", "fr": "Contrôle"},
+            "name": {"es": "Revisión", "en": "Checkup", "fr": "Contrôle", "ta": "பரிசோதனை"},
             "duration": 30,
             "color": "#3B82F6",
         },
@@ -1557,7 +1753,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "DX-RX",
         {
-            "name": {"es": "Radiografía", "en": "X-ray", "fr": "Radiographie"},
+            "name": {"es": "Radiografía", "en": "X-ray", "fr": "Radiographie", "ta": "எக்ஸ்-ரே"},
             "duration": 30,
             "color": "#60A5FA",
         },
@@ -1565,7 +1761,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "DX",
         {
-            "name": {"es": "Diagnóstico", "en": "Diagnosis", "fr": "Diagnostic"},
+            "name": {"es": "Diagnóstico", "en": "Diagnosis", "fr": "Diagnostic", "ta": "நோயறிதல்",},
             "duration": 30,
             "color": "#3B82F6",
         },
@@ -1573,7 +1769,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "PREV",
         {
-            "name": {"es": "Limpieza dental", "en": "Dental cleaning", "fr": "Détartrage"},
+            "name": {"es": "Limpieza dental", "en": "Dental cleaning", "fr": "Détartrage", "ta": "பல் சுத்தம்"},
             "duration": 45,
             "color": "#10B981",
         },
@@ -1581,7 +1777,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "REST-CROWN",
         {
-            "name": {"es": "Corona", "en": "Crown", "fr": "Couronne"},
+            "name": {"es": "Corona", "en": "Crown", "fr": "Couronne","ta": "பல் கிரீடம்",},
             "duration": 60,
             "color": "#A855F7",
         },
@@ -1589,7 +1785,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "REST-VEN",
         {
-            "name": {"es": "Carilla", "en": "Veneer", "fr": "Facette"},
+            "name": {"es": "Carilla", "en": "Veneer", "fr": "Facette", "ta": "பல் முகப்பு",},
             "duration": 60,
             "color": "#F472B6",
         },
@@ -1597,7 +1793,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "REST-COMP",
         {
-            "name": {"es": "Empaste", "en": "Filling", "fr": "Plombage"},
+            "name": {"es": "Empaste", "en": "Filling", "fr": "Plombage", "ta": "பல் நிரப்பு"},
             "duration": 45,
             "color": "#F59E0B",
         },
@@ -1605,7 +1801,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "REST",
         {
-            "name": {"es": "Restauración", "en": "Restoration", "fr": "Restauration"},
+            "name": {"es": "Restauración", "en": "Restoration", "fr": "Restauration","ta": "பல் மறுசீரமைப்பு", },
             "duration": 45,
             "color": "#F59E0B",
         },
@@ -1613,7 +1809,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "SURG-EXT",
         {
-            "name": {"es": "Extracción", "en": "Extraction", "fr": "Extraction"},
+            "name": {"es": "Extracción", "en": "Extraction", "fr": "Extraction",  "ta": "பல் அகற்றுதல்"},
             "duration": 60,
             "color": "#EF4444",
         },
@@ -1621,7 +1817,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "SURG",
         {
-            "name": {"es": "Cirugía", "en": "Surgery", "fr": "Chirurgie"},
+            "name": {"es": "Cirugía", "en": "Surgery", "fr": "Chirurgie", "ta": "அறுவைச் சிகிச்சை",},
             "duration": 60,
             "color": "#DC2626",
         },
@@ -1633,6 +1829,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
                 "es": "Endodoncia multirradicular",
                 "en": "Multi-root canal",
                 "fr": "Endodontie multiradiculaire",
+                "ta": "பல வேர் கால்வாய் சிகிச்சை",
             },
             "duration": 90,
             "color": "#8B5CF6",
@@ -1641,7 +1838,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "ENDO",
         {
-            "name": {"es": "Endodoncia", "en": "Root canal", "fr": "Endodontie"},
+            "name": {"es": "Endodoncia", "en": "Root canal", "fr": "Endodontie", "ta": "வேர் கால்வாய் சிகிச்சை",},
             "duration": 75,
             "color": "#8B5CF6",
         },
@@ -1649,7 +1846,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "PERIO",
         {
-            "name": {"es": "Periodoncia", "en": "Periodontics", "fr": "Parodontie"},
+            "name": {"es": "Periodoncia", "en": "Periodontics", "fr": "Parodontie", "ta": "பல் சுற்றுத்திசு சிகிச்சை",},
             "duration": 60,
             "color": "#14B8A6",
         },
@@ -1657,7 +1854,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "EST-BLAN",
         {
-            "name": {"es": "Blanqueamiento", "en": "Whitening", "fr": "Blanchiment"},
+            "name": {"es": "Blanqueamiento", "en": "Whitening", "fr": "Blanchiment", "ta": "பற்கள் வெண்மையாக்குதல்",},
             "duration": 60,
             "color": "#06B6D4",
         },
@@ -1665,7 +1862,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "EST",
         {
-            "name": {"es": "Estética", "en": "Aesthetics", "fr": "Esthétique"},
+            "name": {"es": "Estética", "en": "Aesthetics", "fr": "Esthétique", "ta": "பல் அழகியல்",},
             "duration": 45,
             "color": "#06B6D4",
         },
@@ -1673,7 +1870,7 @@ _APPT_LOOK_BY_PREFIX: list[tuple[str, dict]] = [
     (
         "PROT",
         {
-            "name": {"es": "Prótesis", "en": "Prosthesis", "fr": "Prothèse"},
+            "name": {"es": "Prótesis", "en": "Prosthesis", "fr": "Prothèse", "ta": "செயற்கைப் பல்"},
             "duration": 90,
             "color": "#84CC16",
         },
@@ -1687,7 +1884,7 @@ def _appt_look_for(code: str) -> dict:
         if code.startswith(prefix):
             return meta
     return {
-        "name": {"es": "Tratamiento", "en": "Treatment", "fr": "Traitement"},
+        "name": {"es": "Tratamiento", "en": "Treatment", "fr": "Traitement",  "ta": "சிகிச்சை"},
         "duration": 45,
         "color": "#64748B",
     }
@@ -1716,11 +1913,13 @@ PATIENT_JOURNEYS = [
                 "es": "Plan preventivo infantil",
                 "en": "Pediatric preventive plan",
                 "fr": "Plan préventif pédiatrique",
+                "ta": "குழந்தைகளுக்கான தடுப்பு சிகிச்சைத் திட்டம்",
             },
             "diagnosis_notes": {
                 "es": "Primera visita. Revisión pediátrica.",
                 "en": "First visit. Pediatric checkup.",
                 "fr": "Première visite. Contrôle pédiatrique.",
+                "ta": "முதல் வருகை. குழந்தைகளுக்கான பல் பரிசோதனை.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True},
@@ -1744,11 +1943,13 @@ PATIENT_JOURNEYS = [
                 "es": "Tratamiento conservador",
                 "en": "Conservative treatment",
                 "fr": "Traitement conservateur",
+                "ta": "பாதுகாப்பு சிகிச்சை",
             },
             "diagnosis_notes": {
                 "es": "Caries en molares inferiores deciduos.",
                 "en": "Caries on lower deciduous molars.",
                 "fr": "Caries sur les molaires inférieures temporaires.",
+                "ta": "கீழ்த் தாடையின் பால் கடைவாய்ப் பற்களில் பல் சொத்தை.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True},
@@ -1773,11 +1974,13 @@ PATIENT_JOURNEYS = [
                 "es": "Revisión y limpieza",
                 "en": "Checkup and cleaning",
                 "fr": "Contrôle et détartrage",
+                "ta": "பரிசோதனை மற்றும் பல் சுத்தம்",
             },
             "diagnosis_notes": {
                 "es": "Paciente joven, buen estado general.",
                 "en": "Young patient, good general condition.",
                 "fr": "Patient jeune, bon état général.",
+                "ta": "இளம் நோயாளர், நல்ல பொது உடல்நிலை.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True},
@@ -1793,6 +1996,7 @@ PATIENT_JOURNEYS = [
                 "es": "Borrador pendiente de revisión",
                 "en": "Draft pending review",
                 "fr": "Brouillon en attente de révision",
+                "ta": "மதிப்பாய்வுக்காக நிலுவையில் உள்ள வரைவு",
             },
         },
         "appointments": [],
@@ -1805,6 +2009,7 @@ PATIENT_JOURNEYS = [
                 "es": "Borrador - pendiente de emitir",
                 "en": "Draft - pending issuance",
                 "fr": "Brouillon - en attente d'émission",
+                "ta": "வரைவு - வழங்குவதற்காக நிலுவையில் உள்ளது",
             },
         },
     },
@@ -1819,11 +2024,13 @@ PATIENT_JOURNEYS = [
                 "es": "Plan de tratamiento inicial",
                 "en": "Initial treatment plan",
                 "fr": "Plan de traitement initial",
+                "ta": "ஆரம்ப சிகிச்சைத் திட்டம்",
             },
             "diagnosis_notes": {
                 "es": "Paciente con sensibilidad dental. Requiere empaste en molar.",
                 "en": "Patient with dental sensitivity. Requires filling on molar.",
                 "fr": "Patiente avec sensibilité dentaire. Nécessite un plombage sur la molaire.",
+                "ta": "பல் உணர்திறன் உள்ள நோயாளர். கடைவாய்ப் பல்லில் நிரப்பு சிகிச்சை தேவை.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True},
@@ -1840,6 +2047,7 @@ PATIENT_JOURNEYS = [
                 "es": "Presupuesto enviado, esperando respuesta",
                 "en": "Quote sent, awaiting response",
                 "fr": "Devis envoyé, en attente de réponse",
+                "ta": "மதிப்பீடு அனுப்பப்பட்டது, பதிலுக்காகக் காத்திருக்கிறது",
             },
         },
         "appointments": [],
@@ -1851,11 +2059,12 @@ PATIENT_JOURNEYS = [
         "plan": {
             "id_idx": 4,
             "status": "active",
-            "title": {"es": "Plan estético", "en": "Aesthetic plan", "fr": "Plan esthétique"},
+            "title": {"es": "Plan estético", "en": "Aesthetic plan", "fr": "Plan esthétique", "ta": "பல் அழகியல் சிகிச்சைத் திட்டம்"},
             "diagnosis_notes": {
                 "es": "Paciente interesado en blanqueamiento.",
                 "en": "Patient interested in whitening.",
                 "fr": "Patient intéressé par le blanchiment.",
+                "ta": "நோயாளர் பற்களை வெண்மையாக்கும் சிகிச்சையில் ஆர்வமாக உள்ளார்.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -1872,6 +2081,7 @@ PATIENT_JOURNEYS = [
                 "es": "Aceptado, pendiente de agendar",
                 "en": "Accepted, pending scheduling",
                 "fr": "Accepté, en attente de planification",
+                "ta": "ஏற்றுக்கொள்ளப்பட்டது, சந்திப்பு திட்டமிடப்பட வேண்டியுள்ளது",
             },
         },
         # No appointments — surfaces in bandeja tab "Sin cita".
@@ -1887,11 +2097,13 @@ PATIENT_JOURNEYS = [
                 "es": "Diagnóstico y restauración",
                 "en": "Diagnosis and restoration",
                 "fr": "Diagnostic et restauration",
+                "ta": "நோயறிதல் மற்றும் பல் மறுசீரமைப்பு",
             },
             "diagnosis_notes": {
                 "es": "Embarazada. Evitar radiografías no esenciales.",
                 "en": "Pregnant. Avoid non-essential x-rays.",
                 "fr": "Enceinte. Éviter les radiographies non essentielles.",
+                "ta": "கர்ப்பிணி. அவசியமற்ற எக்ஸ்-ரே பரிசோதனைகளைத் தவிர்க்கவும்.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -1908,6 +2120,7 @@ PATIENT_JOURNEYS = [
                 "es": "Paciente embarazada - tratamiento en curso",
                 "en": "Pregnant patient - treatment in progress",
                 "fr": "Patiente enceinte - traitement en cours",
+                "ta": "கர்ப்பிணி நோயாளர் - சிகிச்சை நடைபெற்று வருகிறது",
             },
         },
         "appointments": [
@@ -1923,6 +2136,7 @@ PATIENT_JOURNEYS = [
                 "es": "Pago parcial recibido",
                 "en": "Partial payment received",
                 "fr": "Paiement partiel reçu",
+                "ta": "பகுதி பணப்பரிவர்த்தனை பெறப்பட்டது",
             },
         },
     },
@@ -1936,11 +2150,13 @@ PATIENT_JOURNEYS = [
                 "es": "Endodoncia y corona",
                 "en": "Root canal and crown",
                 "fr": "Endodontie et couronne",
+                "ta": "வேர் கால்வாய் சிகிச்சை மற்றும் பல் கிரீடம்",
             },
             "diagnosis_notes": {
                 "es": "Paciente diabético. Control especial de cicatrización.",
                 "en": "Diabetic patient. Special healing monitoring.",
                 "fr": "Patient diabétique. Surveillance spéciale de la cicatrisation.",
+                "ta": "நீரிழிவு நோயாளர். காயம் ஆறும் நிலையை சிறப்பாகக் கண்காணிக்க வேண்டும்.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -1957,6 +2173,7 @@ PATIENT_JOURNEYS = [
                 "es": "Paciente diabético - control especial",
                 "en": "Diabetic patient - special care",
                 "fr": "Patient diabétique - soins spéciaux",
+                "ta": "நீரிழிவு நோயாளர் - சிறப்பு கவனிப்பு",
             },
         },
         # Past appointments only — surfaces in bandeja tab "Sin próxima cita".
@@ -1973,6 +2190,7 @@ PATIENT_JOURNEYS = [
                 "es": "Pagado por transferencia",
                 "en": "Paid by bank transfer",
                 "fr": "Payé par virement",
+                "ta": "வங்கி பரிமாற்றம் மூலம் செலுத்தப்பட்டது",
             },
         },
     },
@@ -1987,16 +2205,19 @@ PATIENT_JOURNEYS = [
                 "es": "Paciente rechazó carillas estéticas por precio.",
                 "en": "Patient rejected aesthetic veneers due to pricing.",
                 "fr": "Patiente a rejeté les facettes esthétiques en raison du prix.",
+                "ta": "விலை காரணமாக நோயாளர் பல் அழகியல் முகப்புகளை நிராகரித்தார்.",
             },
             "title": {
                 "es": "Plan estético rechazado",
                 "en": "Rejected aesthetic plan",
                 "fr": "Plan esthétique rejeté",
+                "ta": "நிராகரிக்கப்பட்ட பல் அழகியல் சிகிச்சைத் திட்டம்",
             },
             "diagnosis_notes": {
                 "es": "Control semestral. Paciente rechazó carillas estéticas.",
                 "en": "Bi-annual checkup. Patient rejected aesthetic veneers.",
                 "fr": "Contrôle semestriel. Patiente a rejeté les facettes esthétiques.",
+                "ta": "ஆறு மாதப் பரிசோதனை. நோயாளர் பல் அழகியல் முகப்புகளை நிராகரித்தார்.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -2012,6 +2233,7 @@ PATIENT_JOURNEYS = [
                 "es": "Precio de carillas demasiado alto",
                 "en": "Veneer pricing too high",
                 "fr": "Prix des facettes trop élevé",
+                "ta": "பல் முகப்புகளுக்கான விலை மிகவும் அதிகம்",
             },
             "global_discount": None,
             "signature": False,
@@ -2019,6 +2241,7 @@ PATIENT_JOURNEYS = [
                 "es": "Rechazado por precio de carillas",
                 "en": "Rejected due to veneer pricing",
                 "fr": "Rejeté en raison du prix des facettes",
+                "ta": "பல் முகப்புகளின் விலை காரணமாக நிராகரிக்கப்பட்டது",
             },
         },
         "appointments": [
@@ -2035,11 +2258,13 @@ PATIENT_JOURNEYS = [
                 "es": "Tratamiento periodontal",
                 "en": "Periodontal treatment",
                 "fr": "Traitement parodontal",
+                "ta": "பல் சுற்றுத்திசு சிகிச்சை",
             },
             "diagnosis_notes": {
                 "es": "ALÉRGICO A PENICILINA. Usar alternativas.",
                 "en": "ALLERGIC TO PENICILLIN. Use alternatives.",
                 "fr": "ALLERGIQUE À LA PÉNICILLINE. Utiliser des alternatives.",
+                "ta": "பெனிசிலினுக்கு ஒவ்வாமை உள்ளது. மாற்று மருந்துகளைப் பயன்படுத்தவும்.",
             },
             "items": [
                 {"catalog_code": "PERIO-RAR", "is_global": True, "completed": True},
@@ -2056,6 +2281,7 @@ PATIENT_JOURNEYS = [
                 "es": "Alérgico a penicilina",
                 "en": "Allergic to penicillin",
                 "fr": "Allergique à la pénicilline",
+                "ta": "பெனிசிலினுக்கு ஒவ்வாமை உள்ளது",
             },
         },
         "appointments": [
@@ -2075,6 +2301,7 @@ PATIENT_JOURNEYS = [
                 "es": "Pagado en dos plazos",
                 "en": "Paid in two installments",
                 "fr": "Payé en deux tranches",
+                "ta": "இரண்டு தவணைகளில் செலுத்தப்பட்டது",
             },
         },
     },
@@ -2088,11 +2315,13 @@ PATIENT_JOURNEYS = [
                 "es": "Rehabilitación oral",
                 "en": "Oral rehabilitation",
                 "fr": "Réhabilitation bucco-dentaire",
+                "ta": "வாய்வழி பல் மறுசீரமைப்பு",
             },
             "diagnosis_notes": {
                 "es": "Hipertensa - verificar presión antes de procedimientos.",
                 "en": "Hypertensive - check blood pressure before procedures.",
                 "fr": "Hypertendue - vérifier la tension avant les soins.",
+                "ta": "உயர் இரத்த அழுத்தம் உள்ளது - சிகிச்சைக்கு முன் இரத்த அழுத்தத்தைச் சரிபார்க்கவும்.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -2115,6 +2344,7 @@ PATIENT_JOURNEYS = [
                 "es": "Tratamiento en curso",
                 "en": "Treatment in progress",
                 "fr": "Traitement en cours",
+                "ta": "சிகிச்சை நடைபெற்று வருகிறது",
             },
         },
         "appointments": [
@@ -2131,6 +2361,7 @@ PATIENT_JOURNEYS = [
                 "es": "Primera fase facturada",
                 "en": "First phase billed",
                 "fr": "Première phase facturée",
+                "ta": "முதல் கட்டத்திற்கான விலைப்பட்டியல் வழங்கப்பட்டது",
             },
         },
     },
@@ -2144,11 +2375,13 @@ PATIENT_JOURNEYS = [
                 "es": "Prótesis parcial superior",
                 "en": "Upper partial denture",
                 "fr": "Prothèse partielle supérieure",
+                "ta": "மேல் தாடைக்கான பகுதி செயற்கைப் பல்",
             },
             "diagnosis_notes": {
                 "es": "Prótesis parcial superior entregada y ajustada.",
                 "en": "Upper partial denture delivered and adjusted.",
                 "fr": "Prothèse partielle supérieure livrée et ajustée.",
+                "ta": "மேல் தாடைக்கான பகுதி செயற்கைப் பல் வழங்கப்பட்டு பொருத்தம் சரிசெய்யப்பட்டது.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -2164,6 +2397,7 @@ PATIENT_JOURNEYS = [
                 "es": "Prótesis parcial entregada",
                 "en": "Partial denture delivered",
                 "fr": "Prothèse partielle livrée",
+                "ta": "பகுதி செயற்கைப் பல் வழங்கப்பட்டது",
             },
         },
         "appointments": [
@@ -2192,11 +2426,13 @@ PATIENT_JOURNEYS = [
                 "es": "Corona en dos sesiones",
                 "en": "Two-session crown",
                 "fr": "Couronne en deux séances",
+                "ta": "இரண்டு அமர்வுகளில் பல் கிரீடம்",
             },
             "diagnosis_notes": {
                 "es": "Corona metal-cerámica en 36 — cobro fraccionado por sesión.",
                 "en": "Metal-ceramic crown on tooth 36 — billed per session.",
                 "fr": "Couronne métal-céramique sur 36 - facturation par séance.",
+                "ta": "36-ஆம் பல்லில் உலோகம்-செராமிக் கிரீடம் — ஒவ்வொரு அமர்விற்கும் தனித்தனியாகக் கட்டணம் வசூலிக்கப்படும்.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -2224,11 +2460,13 @@ PATIENT_JOURNEYS = [
                 "es": "Endodoncia urgente",
                 "en": "Urgent root canal",
                 "fr": "Endodontie urgente",
+                "ta": "அவசர வேர் கால்வாய் சிகிச்சை",
             },
             "diagnosis_notes": {
                 "es": "Endodoncia urgente por absceso. Paciente anticoagulado.",
                 "en": "Urgent root canal due to abscess. Anticoagulated patient.",
                 "fr": "Endodontie urgente pour abcès. Patient anticoagulé.",
+                "ta": "பல் சீழ்க்கட்டியின் காரணமாக அவசர வேர் கால்வாய் சிகிச்சை. இரத்த உறைதலைத் தடுக்கும் மருந்து சிகிச்சையில் உள்ள நோயாளர்.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -2244,6 +2482,7 @@ PATIENT_JOURNEYS = [
                 "es": "Anticoagulado - cuidado post-operatorio",
                 "en": "Anticoagulated - post-op care",
                 "fr": "Anticoagulé - soins post-opératoires",
+                "ta": "இரத்த உறைதலைத் தடுக்கும் மருந்து சிகிச்சையில் உள்ளார் - அறுவைச் சிகிச்சைக்குப் பிந்தைய கவனிப்பு",
             },
         },
         "appointments": [
@@ -2256,7 +2495,7 @@ PATIENT_JOURNEYS = [
             "overdue": True,
             "payments": [],
             "covers": [0, 1],
-            "notes": {"es": "Factura vencida", "en": "Overdue invoice", "fr": "Facture échue"},
+            "notes": {"es": "Factura vencida", "en": "Overdue invoice", "fr": "Facture échue", "ta": "காலக்கெடு கடந்த விலைப்பட்டியல்",},
         },
     },
     # Patient 13 — Dolores / Barbara (evaluation; no budget)
@@ -2269,11 +2508,13 @@ PATIENT_JOURNEYS = [
                 "es": "Evaluación y limpieza",
                 "en": "Evaluation and cleaning",
                 "fr": "Évaluation et détartrage",
+                "ta": "மதிப்பீடு மற்றும் பல் சுத்தம்",
             },
             "diagnosis_notes": {
                 "es": "Evaluación periódica.",
                 "en": "Periodic evaluation.",
                 "fr": "Évaluation périodique.",
+                "ta": "வழக்கமான மதிப்பீடு.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True},
@@ -2296,11 +2537,13 @@ PATIENT_JOURNEYS = [
                 "es": "Mantenimiento protésico",
                 "en": "Prosthetic maintenance",
                 "fr": "Entretien prothétique",
+                "ta": "செயற்கைப் பல் பராமரிப்பு",
             },
             "diagnosis_notes": {
                 "es": "Ajustes periódicos de prótesis completa.",
                 "en": "Periodic complete denture adjustments.",
                 "fr": "Ajustements périodiques de prothèse complète.",
+                "ta": "முழுமையான செயற்கைப் பல்லுக்கான வழக்கமான பொருத்தச் சரிசெய்தல்கள்.",
             },
             "items": [
                 {"catalog_code": "DX-VISIT", "is_global": True, "completed": True},
@@ -2937,6 +3180,7 @@ def generate_invoice_series_data() -> list[dict]:
                     "es": "Serie principal de facturas",
                     "en": "Main invoice series",
                     "fr": "Série principale de factures",
+                    "ta": "முதன்மை விலைப்பட்டியல் தொடர்",
                 }
             ),
             "current_number": num_invoices + 1,
@@ -2947,7 +3191,7 @@ def generate_invoice_series_data() -> list[dict]:
             "prefix": "RECT",
             "series_type": "credit_note",
             "description": t(
-                {"es": "Notas de crédito", "en": "Credit notes", "fr": "Notes de crédit"}
+                {"es": "Notas de crédito", "en": "Credit notes", "fr": "Notes de crédit", "ta": "கடன் குறிப்புகள்",}
             ),
             "current_number": 1,
             "is_default": True,

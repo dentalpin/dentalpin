@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- i18n: add Tamil locale (`ta.json`); add Tamil translations to seed
+  data; add `body_i18n_key` to template responses so template bodies
+  resolve in the active locale. Labels now resolve via
+  `es → en → fr → ta` catalog-name fallback (still falling back to
+  `treatment.clinical_type` when no catalog item). Date formatting in
+  NoteCard, PlanNotesTimeline, and PatientClinicalNotesByPlan uses
+  locale-aware `toLocaleString(locale)`.
+
 - style(lint): first ESLint pass over this module's frontend layer —
   module layers were outside the linter's base path until now, so
   CI had never checked them. Mostly auto-fixed formatting; see the

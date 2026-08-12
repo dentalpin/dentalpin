@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add Tamil translations for patient components and demo seed data
+
 - style(lint): first ESLint pass over this module's frontend layer —
   module layers were outside the linter's base path until now, so
   CI had never checked them. Mostly auto-fixed formatting; see the

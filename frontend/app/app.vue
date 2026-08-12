@@ -3,7 +3,9 @@ import { fr, es, en, pt } from '@nuxt/ui/locale'
 
 const { t, locale } = useI18n()
 
-const nuxtUILocales: Record<string, typeof en> = { en, fr, es, pt }
+// @nuxt/ui does not ship a Tamil locale yet; fall back to English for
+// built-in UI labels while vue-i18n still serves the app's ta messages.
+const nuxtUILocales: Record<string, typeof en> = { en, fr, es, pt, ta: en }
 const nuxtUILocale = computed(() => nuxtUILocales[locale.value] || en)
 
 useHead(() => ({

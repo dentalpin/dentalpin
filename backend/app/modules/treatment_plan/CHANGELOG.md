@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `ta` fallback to plan item name resolution in service
+  layer so Tamil-localized treatment names display correctly.
+  
 - fix(workflow): plan ↔ budget lifecycle desync (issue #162).
   `confirm` now relinks `budget_id` whenever the provisioned budget
   differs — a reactivated (or renegotiated) plan gets a fresh quote

@@ -40,6 +40,7 @@ def _name(names: dict | None) -> str | None:
         or names.get("en")
         or names.get("fr")
         or names.get("pt")
+        or names.get("ta")
         or next(iter(names.values()), None)
     )
 

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+
+{% block title %}தினசரி சுருக்கம் - {{ clinic_name }}{% endblock %}
+
+
+{% block content %}
+<h2>{{ today }}க்கான சுருக்கம்</h2>
+
+
+{% if appointments is not none %}
+<h3>இன்றைய சந்திப்புகள் ({{ appointments | length }})</h3>
+{% if appointments %}
+<div class="info-box">
+    {% for a in appointments %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ a.start_time[11:16] if a.start_time else '' }}</div>
+            <div class="value">{{ a.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">நிலை</div>
+            <div class="value">{{ a.status }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>இன்று எந்தச் சந்திப்புகளும் திட்டமிடப்படவில்லை.</p>
+{% endif %}
+{% endif %}
+
+
+{% if recalls is not none %}
+<h3>தாமதமான நினைவூட்டல்கள் ({{ recalls | length }})</h3>
+{% if recalls %}
+<div class="info-box">
+    {% for r in recalls %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ r.reason }}</div>
+            <div class="value">{{ r.patient_name or '—' }}{% if r.phone %} · {{ r.phone }}{% endif %}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">முன்னுரிமை</div>
+            <div class="value">{{ r.priority }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>தாமதமான நினைவூட்டல்கள் எதுவும் இல்லை.</p>
+{% endif %}
+{% endif %}
+
+
+{% if budgets is not none %}
+<h3>பதிலளிக்கப்படாத மதிப்பீடுகள் ({{ budgets | length }})</h3>
+{% if budgets %}
+<div class="info-box">
+    {% for b in budgets %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ b.number }}</div>
+            <div class="value">{{ b.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">தொகை</div>
+            <div class="value">{{ b.total }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>பதிலுக்காகக் காத்திருக்கும் மதிப்பீடுகள் எதுவும் இல்லை.</p>
+{% endif %}
+{% endif %}
+
+
+<p style="color: #71717a; font-size: 14px;">
+    இந்தத் தானியங்கி சுருக்கம் DentalPin Copilot மூலம் உருவாக்கப்பட்டது. இதை
+    முடக்கவோ நேரத்தை மாற்றவோ அமைப்புகள் → Copilot பகுதிக்குச் செல்லவும்.
+</p>
+{% endblock %}

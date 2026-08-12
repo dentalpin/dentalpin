@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `ta` fallback to the agent-tool catalog name resolver so
+  Tamil-localized treatment names resolve.
+
 - style(lint): first ESLint pass over this module's frontend layer —
   module layers were outside the linter's base path until now, so
   CI had never checked them. Mostly auto-fixed formatting; see the

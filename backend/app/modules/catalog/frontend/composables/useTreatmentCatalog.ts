@@ -97,7 +97,7 @@ export function useTreatmentCatalog() {
         },
         clinical_category: category.key,
         category_key: category.key,
-        category_names: { es: category.labelKey, en: category.labelKey, fr: category.labelKey }
+        category_names: { es: category.labelKey, en: category.labelKey, fr: category.labelKey, ta: category.labelKey }
       }))
     }
     return grouped
@@ -163,7 +163,7 @@ export function useTreatmentCatalog() {
         },
         clinical_category: categoryKey,
         category_key: categoryKey,
-        category_names: { es: constantCategory.labelKey, en: constantCategory.labelKey, fr: constantCategory.labelKey }
+        category_names: { es: constantCategory.labelKey, en: constantCategory.labelKey, fr: constantCategory.labelKey, ta: constantCategory.labelKey }
       }))
     }
 
@@ -200,7 +200,7 @@ export function useTreatmentCatalog() {
           },
           clinical_category: category.key,
           category_key: category.key,
-          category_names: { es: category.labelKey, en: category.labelKey, fr: category.labelKey }
+          category_names: { es: category.labelKey, en: category.labelKey, fr: category.labelKey, ta: category.labelKey }
         }
       }
     }

@@ -3,6 +3,7 @@
 [![en](https://img.shields.io/badge/lang-en-red.svg)](./README.md)
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](./README.es.md)
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](./README.fr.md)
+[![ta](https://img.shields.io/badge/lang-ta-green.svg)](./README.ta.md)
 
 **Open source dental clinic management software.** Patients, odontogram, scheduling,
 treatment plans, billing and a built-in AI copilot — modular, self-hosted, API-first.
