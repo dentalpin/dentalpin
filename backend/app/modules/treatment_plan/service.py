@@ -966,7 +966,13 @@ class TreatmentPlanService:
             patient_id_str = str(item.treatment.patient_id)
             if item.treatment.catalog_item:
                 names = item.treatment.catalog_item.names or {}
-                item_name = names.get("es") or names.get("en") or names.get("fr") or names.get("pt") or names.get("ta")
+                item_name = (
+                    names.get("es")
+                    or names.get("en")
+                    or names.get("fr")
+                    or names.get("pt")
+                    or names.get("ta")
+                )
                 if item.treatment.catalog_item.category:
                     treatment_category_key = item.treatment.catalog_item.category.key
 

@@ -51,19 +51,34 @@ def validate_session_template(
 # Default VAT types to seed for new clinics
 DEFAULT_VAT_TYPES = [
     {
-        "names": {"es": "Exento", "en": "Exempt", "fr": "Exonéré", "ta": "வரி விலக்கு",},
+        "names": {
+            "es": "Exento",
+            "en": "Exempt",
+            "fr": "Exonéré",
+            "ta": "வரி விலக்கு",
+        },
         "rate": 0.0,
         "is_default": True,
         "is_system": True,
     },
     {
-        "names": {"es": "Reducido (10%)", "en": "Reduced (10%)", "fr": "Réduit (10%)", "ta": "குறைக்கப்பட்ட விகிதம் (10%)",},
+        "names": {
+            "es": "Reducido (10%)",
+            "en": "Reduced (10%)",
+            "fr": "Réduit (10%)",
+            "ta": "குறைக்கப்பட்ட விகிதம் (10%)",
+        },
         "rate": 10.0,
         "is_default": False,
         "is_system": True,
     },
     {
-        "names": {"es": "General (21%)", "en": "Standard (21%)", "fr": "Général (21%)", "ta": "பொதுவான விகிதம் (21%)"},
+        "names": {
+            "es": "General (21%)",
+            "en": "Standard (21%)",
+            "fr": "Général (21%)",
+            "ta": "பொதுவான விகிதம் (21%)",
+        },
         "rate": 21.0,
         "is_default": False,
         "is_system": True,

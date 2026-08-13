@@ -72,21 +72,39 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                     "es": "Cita completada",
                     "en": "Completed appointment",
                     "fr": "Rendez-vous terminé",
-                     "ta": "முடிக்கப்பட்ட சந்திப்பு",
+                    "ta": "முடிக்கப்பட்ட சந்திப்பு",
                 }
             ),
             "cancelled": t(
-                {"es": "Cita cancelada", "en": "Cancelled appointment", "fr": "Rendez-vous annulé","ta": "ரத்து செய்யப்பட்ட சந்திப்பு",}
+                {
+                    "es": "Cita cancelada",
+                    "en": "Cancelled appointment",
+                    "fr": "Rendez-vous annulé",
+                    "ta": "ரத்து செய்யப்பட்ட சந்திப்பு",
+                }
             ),
             "no_show": t(
-                {"es": "Paciente no asistió", "en": "Patient no-show", "fr": "Patient absent", "ta": "நோயாளர் வரவில்லை",}
+                {
+                    "es": "Paciente no asistió",
+                    "en": "Patient no-show",
+                    "fr": "Patient absent",
+                    "ta": "நோயாளர் வரவில்லை",
+                }
             ),
         }
         title_es = title_map.get(
-            appt.status, t({"es": "Cita", "en": "Appointment", "fr": "Rendez-vous", "ta": "சந்திப்பு",})
+            appt.status,
+            t(
+                {
+                    "es": "Cita",
+                    "en": "Appointment",
+                    "fr": "Rendez-vous",
+                    "ta": "சந்திப்பு",
+                }
+            ),
         )
         treatment_label = appt.treatment_type or t(
-            {"es": "Consulta", "en": "Consultation", "fr": "Consultation",  "ta": "ஆலோசனை"}
+            {"es": "Consulta", "en": "Consultation", "fr": "Consultation", "ta": "ஆலோசனை"}
         )
         occurred = appt.end_time if appt.status == "completed" else appt.start_time
 
@@ -233,7 +251,7 @@ async def seed_timeline_demo(db: AsyncSession, clinic_id: UUID) -> dict[str, int
                     event_category="financial",
                     source_table="budgets",
                     source_id=budget.id,
-                    title=f"{t({'es': 'Presupuesto enviado', 'en': 'Budget sent', 'fr': 'Devis envoyé', 'ta': 'மதிப்பீடு அனுப்பப்பட்டது',})}: {budget.budget_number}",
+                    title=f"{t({'es': 'Presupuesto enviado', 'en': 'Budget sent', 'fr': 'Devis envoyé', 'ta': 'மதிப்பீடு அனுப்பப்பட்டது'})}: {budget.budget_number}",
                     event_data={
                         "budget_number": budget.budget_number,
                         "total": str(budget.total),

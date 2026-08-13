@@ -44,13 +44,23 @@ VAT_TYPES: list[dict[str, Any]] = [
     },
     {
         "key": "reduced",
-        "names": {"es": "Reducido (10%)", "en": "Reduced (10%)", "fr": "Réduit (10%)", "ta": "குறைக்கப்பட்டது (10%)"},
+        "names": {
+            "es": "Reducido (10%)",
+            "en": "Reduced (10%)",
+            "fr": "Réduit (10%)",
+            "ta": "குறைக்கப்பட்டது (10%)",
+        },
         "rate": 10.0,
         "is_default": False,
     },
     {
         "key": "standard",
-        "names": {"es": "General (21%)", "en": "Standard (21%)", "fr": "Général (21%)" , "ta": "பொதுவானது (21%)"},
+        "names": {
+            "es": "General (21%)",
+            "en": "Standard (21%)",
+            "fr": "Général (21%)",
+            "ta": "பொதுவானது (21%)",
+        },
         "rate": 21.0,
         "is_default": False,
     },
@@ -87,19 +97,29 @@ CATEGORIES: list[dict[str, Any]] = [
     },
     {
         "key": "restauradora",
-        "names": {"es": "Restauradora", "en": "Restorative", "fr": "Restauration", "ta": "பல் மறுசீரமைப்பு"},
+        "names": {
+            "es": "Restauradora",
+            "en": "Restorative",
+            "fr": "Restauration",
+            "ta": "பல் மறுசீரமைப்பு",
+        },
         "descriptions": {
             "es": "Restauración dental",
             "en": "Dental restoration",
             "fr": "Restauration dentaire",
-            "ta": "பல் மறுசீரமைப்பு"
+            "ta": "பல் மறுசீரமைப்பு",
         },
         "display_order": 3,
         "icon": "i-lucide-brush",
     },
     {
         "key": "endodoncia",
-        "names": {"es": "Endodoncia", "en": "Endodontics", "fr": "Endodontie", "ta": "பல்லுட்புறச் சிகிச்சை"},
+        "names": {
+            "es": "Endodoncia",
+            "en": "Endodontics",
+            "fr": "Endodontie",
+            "ta": "பல்லுட்புறச் சிகிச்சை",
+        },
         "descriptions": {
             "es": "Tratamientos de conducto radicular",
             "en": "Root canal treatments",
@@ -111,12 +131,17 @@ CATEGORIES: list[dict[str, Any]] = [
     },
     {
         "key": "periodoncia",
-        "names": {"es": "Periodoncia", "en": "Periodontics", "fr": "Parodontie", "ta": "பல்லைச் சுற்றிய திசு மருத்துவம்"},
+        "names": {
+            "es": "Periodoncia",
+            "en": "Periodontics",
+            "fr": "Parodontie",
+            "ta": "பல்லைச் சுற்றிய திசு மருத்துவம்",
+        },
         "descriptions": {
             "es": "Encías y tejidos de soporte",
             "en": "Gums and supporting tissues",
             "fr": "Gencives et tissus de soutien",
-            "ta": "ஈறுகள் மற்றும் பற்களைத் தாங்கும் திசுக்கள்"
+            "ta": "ஈறுகள் மற்றும் பற்களைத் தாங்கும் திசுக்கள்",
         },
         "display_order": 5,
         "icon": "i-lucide-heart-pulse",
@@ -128,19 +153,19 @@ CATEGORIES: list[dict[str, Any]] = [
             "es": "Procedimientos quirúrgicos dentales",
             "en": "Dental surgical procedures",
             "fr": "Procédures chirurgicales dentaires",
-            "ta": "பல் அறுவைச் சிகிச்சை நடைமுறைகள்"
+            "ta": "பல் அறுவைச் சிகிச்சை நடைமுறைகள்",
         },
         "display_order": 6,
         "icon": "i-lucide-scissors",
     },
     {
         "key": "ortodoncia",
-        "names": {"es": "Ortodoncia", "en": "Orthodontics", "fr": "Orthodontie",  "ta": "பற்சீரமைப்பு"},
+        "names": {"es": "Ortodoncia", "en": "Orthodontics", "fr": "Orthodontie", "ta": "பற்சீரமைப்பு"},
         "descriptions": {
             "es": "Ortodoncia y alineación",
             "en": "Orthodontics and alignment",
             "fr": "Orthodontie et alignement",
-            "ta": "பற்சீரமைப்பு மற்றும் பற்கள் சீரமைத்தல்"
+            "ta": "பற்சீரமைப்பு மற்றும் பற்கள் சீரமைத்தல்",
         },
         "display_order": 7,
         "icon": "i-lucide-align-center",
@@ -152,7 +177,7 @@ CATEGORIES: list[dict[str, Any]] = [
             "es": "Estética dental",
             "en": "Cosmetic dentistry",
             "fr": "Esthétique dentaire",
-            "ta": "அழகியல் பல் மருத்துவம்"
+            "ta": "அழகியல் பல் மருத்துவம்",
         },
         "display_order": 8,
         "icon": "i-lucide-sparkles",
@@ -164,19 +189,24 @@ CATEGORIES: list[dict[str, Any]] = [
             "es": "Prótesis y férulas",
             "en": "Prosthetics and splints",
             "fr": "Prothèses et gouttières",
-            "ta": "செயற்கைப் பற்கள் மற்றும் பல் நிலைப்படுத்தும் கருவிகள்"
+            "ta": "செயற்கைப் பற்கள் மற்றும் பல் நிலைப்படுத்தும் கருவிகள்",
         },
         "display_order": 9,
         "icon": "i-lucide-puzzle",
     },
     {
         "key": "pediatrica",
-        "names": {"es": "Odontopediatría", "en": "Pediatric", "fr": "Odontologie pédiatrique", "ta": "குழந்தைகள் பல் மருத்துவம்"},
+        "names": {
+            "es": "Odontopediatría",
+            "en": "Pediatric",
+            "fr": "Odontologie pédiatrique",
+            "ta": "குழந்தைகள் பல் மருத்துவம்",
+        },
         "descriptions": {
             "es": "Tratamientos para niños",
             "en": "Treatments for children",
             "fr": "Traitements pour enfants",
-            "ta": "குழந்தைகளுக்கான மருத்துவ சிகிச்சைகள்"
+            "ta": "குழந்தைகளுக்கான மருத்துவ சிகிச்சைகள்",
         },
         "display_order": 10,
         "icon": "i-lucide-baby",
@@ -220,7 +250,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "diagnostico": [
         {
             "internal_code": "DX-VISIT",
-            "names": {"es": "Primera Visita", "en": "First Visit", "fr": "Première visite", "ta": "முதல் வருகை",},
+            "names": {
+                "es": "Primera Visita",
+                "en": "First Visit",
+                "fr": "Première visite",
+                "ta": "முதல் வருகை",
+            },
             "descriptions": {
                 "es": "Consulta inicial con exploración y diagnóstico",
                 "en": "Initial consultation with examination and diagnosis",
@@ -250,7 +285,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Radiografía Periapical",
                 "en": "Periapical X-Ray",
                 "fr": "Radiographie périapicale",
-                "ta":  "பல் வேர் முனைப்பகுதி எக்ஸ்ரே",
+                "ta": "பல் வேர் முனைப்பகுதி எக்ஸ்ரே",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("15.00"),
@@ -330,7 +365,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "DX-2ND-OPINION",
-            "names": {"es": "Segunda opinión", "en": "Second opinion", "fr": "Deuxième avis", "ta": "இரண்டாவது மருத்துவக் கருத்து"},
+            "names": {
+                "es": "Segunda opinión",
+                "en": "Second opinion",
+                "fr": "Deuxième avis",
+                "ta": "இரண்டாவது மருத்துவக் கருத்து",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("50.00"),
             "default_duration_minutes": 30,
@@ -356,7 +396,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
     "preventivo": [
         {
             "internal_code": "PREV-CLEAN",
-            "names": {"es": "Limpieza dental", "en": "Dental Cleaning", "fr": "Détartrage", "ta": "பல் சுத்தம்",},
+            "names": {
+                "es": "Limpieza dental",
+                "en": "Dental Cleaning",
+                "fr": "Détartrage",
+                "ta": "பல் சுத்தம்",
+            },
             "descriptions": {
                 "es": "Tartrectomía y pulido",
                 "en": "Scaling and polishing",
@@ -371,7 +416,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PREV-FLUOR",
-            "names": {"es": "Fluorización", "en": "Fluoride Application", "fr": "Fluoration", "ta": "ஃப்ளூரைடு சிகிச்சை"},
+            "names": {
+                "es": "Fluorización",
+                "en": "Fluoride Application",
+                "fr": "Fluoration",
+                "ta": "ஃப்ளூரைடு சிகிச்சை",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("25.00"),
             "default_duration_minutes": 15,
@@ -380,7 +430,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PREV-CHECKUP",
-            "names": {"es": "Revisión", "en": "Checkup", "fr": "Contrôle", "ta": "பரிசோதனை",},
+            "names": {
+                "es": "Revisión",
+                "en": "Checkup",
+                "fr": "Contrôle",
+                "ta": "பரிசோதனை",
+            },
             "descriptions": {
                 "es": "Revisión general",
                 "en": "General checkup",
@@ -465,7 +520,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Obturación composite",
                 "en": "Composite filling",
                 "fr": "Obturation composite",
-                "ta": "காம்பசிட் பல் நிரப்புதல்"
+                "ta": "காம்பசிட் பல் நிரப்புதல்",
             },
             "treatment_scope": "tooth",
             "requires_surfaces": True,
@@ -490,7 +545,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Obturación amalgama",
                 "en": "Amalgam filling",
                 "fr": "Obturation amalgame",
-                "name": "அமல்கம் பல் நிரப்புதல்"
+                "name": "அமல்கம் பல் நிரப்புதல்",
             },
             "treatment_scope": "tooth",
             "requires_surfaces": True,
@@ -530,7 +585,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         # Incrustaciones
         {
             "internal_code": "REST-INLAY-COMP",
-            "names": {"es": "Inlay composite", "en": "Composite inlay", "fr": "Inlay composite", "ta": "காம்பசிட் இன்லே"},
+            "names": {
+                "es": "Inlay composite",
+                "en": "Composite inlay",
+                "fr": "Inlay composite",
+                "ta": "காம்பசிட் இன்லே",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 60,
@@ -542,7 +602,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-INLAY-CER",
-            "names": {"es": "Inlay cerámico", "en": "Ceramic inlay", "fr": "Inlay céramique", "ta": "செராமிக் இன்லே"},
+            "names": {
+                "es": "Inlay cerámico",
+                "en": "Ceramic inlay",
+                "fr": "Inlay céramique",
+                "ta": "செராமிக் இன்லே",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("350.00"),
             "default_duration_minutes": 60,
@@ -558,7 +623,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Overlay composite",
                 "en": "Composite overlay",
                 "fr": "Overlay composite",
-                "ta": "காம்பசிட் ஓவர்லே"
+                "ta": "காம்பசிட் ஓவர்லே",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("240.00"),
@@ -571,7 +636,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-OVER-CER",
-            "names": {"es": "Overlay cerámico", "en": "Ceramic overlay", "fr": "Overlay céramique", "ta": "செராமிக் ஓவர்லே" },
+            "names": {
+                "es": "Overlay cerámico",
+                "en": "Ceramic overlay",
+                "fr": "Overlay céramique",
+                "ta": "செராமிக் ஓவர்லே",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("450.00"),
             "default_duration_minutes": 75,
@@ -588,7 +658,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Carilla composite",
                 "en": "Composite veneer",
                 "fr": "Facette composite",
-                "ta": "காம்பசிட் பல் வெனீர்"
+                "ta": "காம்பசிட் பல் வெனீர்",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("280.00"),
@@ -605,7 +675,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Carilla porcelana",
                 "en": "Porcelain veneer",
                 "fr": "Facette céramique",
-                "ta": "பீங்கான் பல் வெனீர்"
+                "ta": "பீங்கான் பல் வெனீர்",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("480.00"),
@@ -618,7 +688,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-VEN-ZIR",
-            "names": {"es": "Carilla zirconio", "en": "Zirconia veneer", "fr": "Facette zircone", "ta": "சிர்கோனியா பல் வெனீர்"},
+            "names": {
+                "es": "Carilla zirconio",
+                "en": "Zirconia veneer",
+                "fr": "Facette zircone",
+                "ta": "சிர்கோனியா பல் வெனீர்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("550.00"),
             "default_duration_minutes": 90,
@@ -656,14 +731,24 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                     "default_price": Decimal("150.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose", "ta" : "பொருத்துதல்"},
+                    "labels": {
+                        "es": "Colocación",
+                        "en": "Placement",
+                        "fr": "Pose",
+                        "ta": "பொருத்துதல்",
+                    },
                     "default_price": Decimal("250.00"),
                 },
             ],
         },
         {
             "internal_code": "REST-CROWN-ZIR",
-            "names": {"es": "Corona zirconio", "en": "Zirconia crown", "fr": "Couronne zircone", "ta": "சிர்கோனியா பல் கிரீடம்"},
+            "names": {
+                "es": "Corona zirconio",
+                "en": "Zirconia crown",
+                "fr": "Couronne zircone",
+                "ta": "சிர்கோனியா பல் கிரீடம்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("550.00"),
             "default_duration_minutes": 90,
@@ -683,7 +768,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                     "default_price": Decimal("200.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose", "ta": "பொருத்துதல்"},
+                    "labels": {
+                        "es": "Colocación",
+                        "en": "Placement",
+                        "fr": "Pose",
+                        "ta": "பொருத்துதல்",
+                    },
                     "default_price": Decimal("350.00"),
                 },
             ],
@@ -715,14 +805,24 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                     "default_price": Decimal("250.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose", "ta": "பொருத்துதல்"},
+                    "labels": {
+                        "es": "Colocación",
+                        "en": "Placement",
+                        "fr": "Pose",
+                        "ta": "பொருத்துதல்",
+                    },
                     "default_price": Decimal("400.00"),
                 },
             ],
         },
         {
             "internal_code": "REST-CROWN-METAL",
-            "names": {"es": "Corona metal", "en": "Metal crown", "fr": "Couronne métallique", "ta": "உலோக பல் கிரீடம்" },
+            "names": {
+                "es": "Corona metal",
+                "en": "Metal crown",
+                "fr": "Couronne métallique",
+                "ta": "உலோக பல் கிரீடம்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("350.00"),
             "default_duration_minutes": 90,
@@ -779,7 +879,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                     "default_price": Decimal("200.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose", "ta": "பொருத்துதல்"},
+                    "labels": {
+                        "es": "Colocación",
+                        "en": "Placement",
+                        "fr": "Pose",
+                        "ta": "பொருத்துதல்",
+                    },
                     "default_price": Decimal("400.00"),
                 },
             ],
@@ -811,7 +916,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                     "default_price": Decimal("250.00"),
                 },
                 {
-                    "labels": {"es": "Colocación", "en": "Placement", "fr": "Pose", "ta": "பொருத்துதல்"},
+                    "labels": {
+                        "es": "Colocación",
+                        "en": "Placement",
+                        "fr": "Pose",
+                        "ta": "பொருத்துதல்",
+                    },
                     "default_price": Decimal("500.00"),
                 },
             ],
@@ -822,7 +932,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Corona provisional sobre implante",
                 "en": "Provisional crown on implant",
                 "fr": "Couronne provisoire sur implant",
-                "ta": "உள்வைப்பின் மீது தற்காலிக பல் கிரீடம்"
+                "ta": "உள்வைப்பின் மீது தற்காலிக பல் கிரீடம்",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
@@ -840,7 +950,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Puente metal-cerámica",
                 "en": "Metal-ceramic bridge",
                 "fr": "Pont métal-céramique",
-                "ta": "உலோகம்-செராமிக் பல் பாலம்"
+                "ta": "உலோகம்-செராமிக் பல் பாலம்",
             },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("400.00"),
@@ -854,7 +964,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-BRIDGE-ZIR",
-            "names": {"es": "Puente zirconio", "en": "Zirconia bridge", "fr": "Pont zircone", "ta": "சிர்கோனியா பல் பாலம்"},
+            "names": {
+                "es": "Puente zirconio",
+                "en": "Zirconia bridge",
+                "fr": "Pont zircone",
+                "ta": "சிர்கோனியா பல் பாலம்",
+            },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("500.00"),
             "default_duration_minutes": 120,
@@ -867,7 +982,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "REST-BRIDGE-MARY",
-            "names": {"es": "Puente Maryland", "en": "Maryland bridge", "fr": "Pont du Maryland", "ta": "மேரிலாண்ட் பல் பாலம்"},
+            "names": {
+                "es": "Puente Maryland",
+                "en": "Maryland bridge",
+                "fr": "Pont du Maryland",
+                "ta": "மேரிலாண்ட் பல் பாலம்",
+            },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("350.00"),
             "default_duration_minutes": 90,
@@ -885,7 +1005,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Férula de descarga",
                 "en": "Occlusal splint",
                 "fr": "Gouttière d'occlusion",
-                "ta": "கடிப்பு அழுத்தத் தடுப்பு ஸ்ப்ளிண்ட்"
+                "ta": "கடிப்பு அழுத்தத் தடுப்பு ஸ்ப்ளிண்ட்",
             },
             "treatment_scope": "global_arch",
             "default_price": Decimal("220.00"),
@@ -902,7 +1022,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Férula periodontal de contención",
                 "en": "Periodontal retention splint",
                 "fr": "Gouttière de contention parodontale",
-                "ta": "பல் சுற்றுத்திசு நிலைப்படுத்தும் ஸ்ப்ளிண்ட்"
+                "ta": "பல் சுற்றுத்திசு நிலைப்படுத்தும் ஸ்ப்ளிண்ட்",
             },
             "treatment_scope": "multi_tooth",
             "default_price": Decimal("80.00"),
@@ -919,7 +1039,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Reconstrucción amplia con composite",
                 "en": "Large composite reconstruction",
                 "fr": "Reconstruction extensive en composite",
-                "ta": "காம்பசிட் மூலம் விரிவான பல் மறுசீரமைப்பு"
+                "ta": "காம்பசிட் மூலம் விரிவான பல் மறுசீரமைப்பு",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("160.00"),
@@ -936,7 +1056,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Reparación de obturación",
                 "en": "Filling repair",
                 "fr": "Réparation d'obturation",
-                "ta": "பல் நிரப்புதல் பழுது சரிசெய்தல்"
+                "ta": "பல் நிரப்புதல் பழுது சரிசெய்தல்",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("55.00"),
@@ -953,7 +1073,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Recementado de corona",
                 "en": "Crown recementation",
                 "fr": "Recimentation de couronne",
-                "ta": "பல் கிரீடத்தை மீண்டும் பொருத்துதல்"
+                "ta": "பல் கிரீடத்தை மீண்டும் பொருத்துதல்",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("60.00"),
@@ -970,7 +1090,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Corona sobre diente endodonciado",
                 "en": "Crown over endodontically treated tooth",
                 "fr": "Couronne sur dent dévitalisée",
-                "ta": "வேர் சிகிச்சை செய்யப்பட்ட பல்லின் மீது பல் கிரீடம்"
+                "ta": "வேர் சிகிச்சை செய்யப்பட்ட பல்லின் மீது பல் கிரீடம்",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("450.00"),
@@ -987,7 +1107,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                 "es": "Pilar de cicatrización",
                 "en": "Healing abutment",
                 "fr": "Pilier de cicatrisation",
-                "ta": "குணமடைதல் அபட்மென்ட்"
+                "ta": "குணமடைதல் அபட்மென்ட்",
             },
             "treatment_scope": "tooth",
             "default_price": Decimal("150.00"),
@@ -1088,7 +1208,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                     "default_price": Decimal("130.00"),
                 },
                 {
-                    "labels": {"es": "Obturación", "en": "Obturation", "fr": "Obturation", "ta": "வேர் கால்வாய் நிரப்புதல்",},
+                    "labels": {
+                        "es": "Obturación",
+                        "en": "Obturation",
+                        "fr": "Obturation",
+                        "ta": "வேர் கால்வாய் நிரப்புதல்",
+                    },
                     "default_price": Decimal("120.00"),
                 },
             ],
@@ -1112,7 +1237,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-POST-FIBER",
-            "names": {"es": "Perno de fibra", "en": "Fiber post", "fr": "Pivot en fibre", "ta": "நார் போஸ்ட்",},
+            "names": {
+                "es": "Perno de fibra",
+                "en": "Fiber post",
+                "fr": "Pivot en fibre",
+                "ta": "நார் போஸ்ட்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("120.00"),
             "default_duration_minutes": 45,
@@ -1124,7 +1254,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-POST-METAL",
-            "names": {"es": "Perno colado", "en": "Cast post", "fr": "Pivot coulé", "ta": "வார்ப்புப் போஸ்ட்",},
+            "names": {
+                "es": "Perno colado",
+                "en": "Cast post",
+                "fr": "Pivot coulé",
+                "ta": "வார்ப்புப் போஸ்ட்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 60,
@@ -1170,7 +1305,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ENDO-APICOFORM",
-            "names": {"es": "Apicoformación", "en": "Apexification", "fr": "Apexification", "ta": "வேர் முனை உருவாக்கச் சிகிச்சை",},
+            "names": {
+                "es": "Apicoformación",
+                "en": "Apexification",
+                "fr": "Apexification",
+                "ta": "வேர் முனை உருவாக்கச் சிகிச்சை",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("280.00"),
             "default_duration_minutes": 75,
@@ -1244,7 +1384,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-GRAFT",
-            "names": {"es": "Injerto gingival", "en": "Gingival graft", "fr": "Greffe gingivale", "ta": "ஈறு திசு ஒட்டுதல்"},
+            "names": {
+                "es": "Injerto gingival",
+                "en": "Gingival graft",
+                "fr": "Greffe gingivale",
+                "ta": "ஈறு திசு ஒட்டுதல்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("380.00"),
             "default_duration_minutes": 75,
@@ -1326,7 +1471,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PERIO-GINGIV",
-            "names": {"es": "Gingivectomía", "en": "Gingivectomy", "fr": "Gingivectomie", "ta": "ஈறு அகற்றுச் சிகிச்சை"},
+            "names": {
+                "es": "Gingivectomía",
+                "en": "Gingivectomy",
+                "fr": "Gingivectomie",
+                "ta": "ஈறு அகற்றுச் சிகிச்சை",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 45,
@@ -1454,7 +1604,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
                         "es": "Cirugía de implante",
                         "en": "Implant surgery",
                         "fr": "Chirurgie implantaire",
-                        "ta": "பல் உள்வைப்பு அறுவைச் சிகிச்சை",        
+                        "ta": "பல் உள்வைப்பு அறுவைச் சிகிச்சை",
                     },
                     "default_price": Decimal("700.00"),
                 },
@@ -1497,7 +1647,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-SINUS",
-            "names": {"es": "Elevación de seno", "en": "Sinus lift", "fr": "Élévation sinusienne", "ta": "சைனஸ் உயர்த்துதல் சிகிச்சை",},
+            "names": {
+                "es": "Elevación de seno",
+                "en": "Sinus lift",
+                "fr": "Élévation sinusienne",
+                "ta": "சைனஸ் உயர்த்துதல் சிகிச்சை",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("800.00"),
             "default_duration_minutes": 90,
@@ -1506,7 +1661,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-BONE-GRAFT",
-            "names": {"es": "Injerto óseo", "en": "Bone graft", "fr": "Greffe osseuse", "ta": "எலும்பு ஒட்டுதல்"},
+            "names": {
+                "es": "Injerto óseo",
+                "en": "Bone graft",
+                "fr": "Greffe osseuse",
+                "ta": "எலும்பு ஒட்டுதல்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("450.00"),
             "default_duration_minutes": 75,
@@ -1515,7 +1675,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-APEC",
-            "names": {"es": "Apicectomía", "en": "Apicoectomy", "fr": "Apicectomie", "ta": "வேர் முனை அறுவைச் சிகிச்சை"},
+            "names": {
+                "es": "Apicectomía",
+                "en": "Apicoectomy",
+                "fr": "Apicectomie",
+                "ta": "வேர் முனை அறுவைச் சிகிச்சை",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("320.00"),
             "default_duration_minutes": 75,
@@ -1527,7 +1692,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-FREN",
-            "names": {"es": "Frenectomía", "en": "Frenectomy", "fr": "Frénectomie", "ta": "தசை இணைப்புத் திசு அகற்றுச் சிகிச்சை"},
+            "names": {
+                "es": "Frenectomía",
+                "en": "Frenectomy",
+                "fr": "Frénectomie",
+                "ta": "தசை இணைப்புத் திசு அகற்றுச் சிகிச்சை",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 30,
@@ -1536,7 +1706,7 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-BIOPSY",
-            "names": {"es": "Biopsia", "en": "Biopsy", "fr": "Biopsie",  "ta": "திசுப் பரிசோதனை"},
+            "names": {"es": "Biopsia", "en": "Biopsy", "fr": "Biopsie", "ta": "திசுப் பரிசோதனை"},
             "treatment_scope": "tooth",
             "default_price": Decimal("220.00"),
             "default_duration_minutes": 45,
@@ -1573,7 +1743,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "SURG-CYST",
-            "names": {"es": "Exéresis de quiste", "en": "Cyst removal", "fr": "Exérèse de kyste", "ta": "நீர்க்கட்டி அகற்றுதல்"},
+            "names": {
+                "es": "Exéresis de quiste",
+                "en": "Cyst removal",
+                "fr": "Exérèse de kyste",
+                "ta": "நீர்க்கட்டி அகற்றுதல்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("550.00"),
             "default_duration_minutes": 90,
@@ -1717,7 +1892,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-LINGUAL",
-            "names": {"es": "Ortodoncia lingual", "en": "Lingual braces", "fr": "Bagues linguales", "ta": "நாக்குப்புற பற்சீரமைப்பு பிரேஸ்கள்",},
+            "names": {
+                "es": "Ortodoncia lingual",
+                "en": "Lingual braces",
+                "fr": "Bagues linguales",
+                "ta": "நாக்குப்புற பற்சீரமைப்பு பிரேஸ்கள்",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("5500.00"),
             "default_duration_minutes": 60,
@@ -1726,7 +1906,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-INV-LITE",
-            "names": {"es": "Invisalign Lite", "en": "Invisalign Lite", "fr": "Invisalign Lite", "ta": "Invisalign Lite"},
+            "names": {
+                "es": "Invisalign Lite",
+                "en": "Invisalign Lite",
+                "fr": "Invisalign Lite",
+                "ta": "Invisalign Lite",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("2900.00"),
             "default_duration_minutes": 45,
@@ -1735,7 +1920,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-INV-FULL",
-            "names": {"es": "Invisalign Full", "en": "Invisalign Full", "fr": "Invisalign Full", "ta": "Invisalign Full"},
+            "names": {
+                "es": "Invisalign Full",
+                "en": "Invisalign Full",
+                "fr": "Invisalign Full",
+                "ta": "Invisalign Full",
+            },
             "treatment_scope": "global_mouth",
             "default_price": Decimal("4500.00"),
             "default_duration_minutes": 45,
@@ -1775,7 +1965,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "ORTO-RET-FIX",
-            "names": {"es": "Retenedor fijo", "en": "Fixed retainer", "fr": "Contention fixe", "ta": "நிலையான பற்சீரமைப்பு ரிடெய்னர்"},
+            "names": {
+                "es": "Retenedor fijo",
+                "en": "Fixed retainer",
+                "fr": "Contention fixe",
+                "ta": "நிலையான பற்சீரமைப்பு ரிடெய்னர்",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("180.00"),
             "default_duration_minutes": 45,
@@ -1936,7 +2131,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "EST-MICROAB",
-            "names": {"es": "Microabrasión", "en": "Microabrasion", "fr": "Microabrasion", "ta": "நுண் உராய்வு சிகிச்சை"},
+            "names": {
+                "es": "Microabrasión",
+                "en": "Microabrasion",
+                "fr": "Microabrasion",
+                "ta": "நுண் உராய்வு சிகிச்சை",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("120.00"),
             "default_duration_minutes": 45,
@@ -2151,7 +2351,12 @@ TREATMENTS: dict[str, list[dict[str, Any]]] = {
         },
         {
             "internal_code": "PED-PULPOTOMY",
-            "names": {"es": "Pulpotomía", "en": "Pulpotomy", "fr": "Pulpotomie", "ta": "குழந்தைகளுக்கான பற்கூழ் பகுதி அகற்றுச் சிகிச்சை"},
+            "names": {
+                "es": "Pulpotomía",
+                "en": "Pulpotomy",
+                "fr": "Pulpotomie",
+                "ta": "குழந்தைகளுக்கான பற்கூழ் பகுதி அகற்றுச் சிகிச்சை",
+            },
             "treatment_scope": "tooth",
             "default_price": Decimal("150.00"),
             "default_duration_minutes": 45,
