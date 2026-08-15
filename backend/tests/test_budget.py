@@ -391,6 +391,49 @@ async def test_item_with_discount(
     assert float(data["line_total"]) == 90.00
 
 
+@pytest.mark.asyncio
+async def test_update_item_explicit_null_clears_discount(
+    client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict
+):
+    """PUT with ``discount_*: null`` clears the line discount and totals follow;
+    ``null`` on a NOT NULL field (quantity) is ignored, not applied."""
+    create_response = await client.post(
+        "/api/v1/budget/budgets",
+        json={"patient_id": budget_clinic_setup["patient_id"], "valid_from": "2024-01-01"},
+        headers=auth_headers,
+    )
+    budget_id = create_response.json()["data"]["id"]
+    item = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/items",
+        json={
+            "catalog_item_id": budget_clinic_setup["catalog_item_id"],
+            "quantity": 1,
+            "discount_type": "percentage",
+            "discount_value": 10,
+            "notes": "keep me",
+        },
+        headers=auth_headers,
+    )
+    item_id = item.json()["data"]["id"]
+
+    r = await client.put(
+        f"/api/v1/budget/budgets/{budget_id}/items/{item_id}",
+        json={"discount_type": None, "discount_value": None, "quantity": None},
+        headers=auth_headers,
+    )
+    assert r.status_code == 200, r.text
+    data = r.json()["data"]
+    assert data["discount_type"] is None
+    assert data["discount_value"] is None
+    assert float(data["line_discount"]) == 0.00
+    assert float(data["line_total"]) == 100.00
+    assert data["quantity"] == 1  # null on NOT NULL field ignored
+    assert data["notes"] == "keep me"  # omitted field untouched
+
+    budget = await client.get(f"/api/v1/budget/budgets/{budget_id}", headers=auth_headers)
+    assert float(budget.json()["data"]["total"]) == 100.00
+
+
 # ============================================================================
 # Workflow Tests
 # ============================================================================

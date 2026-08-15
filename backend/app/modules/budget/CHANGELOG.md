@@ -9,6 +9,12 @@
   `net_line_amount` are the single proration formula; `BudgetDetailResponse`
   exposes `items[].global_discount_share` for the invoice wizard.
 
+- fix(items): `PUT /budgets/{id}/items/{item_id}` now honours an explicit
+  `null` on nullable fields (`discount_type`, `discount_value`,
+  `tooth_number`, `surfaces`, `notes`) — clearing a line discount was
+  silently ignored and totals stayed wrong. `null` on NOT NULL fields is
+  still ignored.
+
 - fix(workflow): plan ↔ budget lifecycle desync (issue #162).
   `cancel_budget` now publishes `budget.cancelled` (with `plan_id`) so a
   directly-cancelled quote reopens its pending plan instead of leaving it

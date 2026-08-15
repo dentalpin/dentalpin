@@ -85,6 +85,12 @@ class BudgetNumberService:
         return f"{year_prefix}{sequence:04d}"
 
 
+# BudgetItem columns that may be cleared with an explicit ``null`` on update.
+_CLEARABLE_ITEM_FIELDS = frozenset(
+    {"discount_type", "discount_value", "tooth_number", "surfaces", "notes"}
+)
+
+
 class BudgetItemService:
     """Service for budget item operations."""
 
@@ -150,10 +156,19 @@ class BudgetItemService:
         item: BudgetItem,
         data: dict,
     ) -> BudgetItem:
-        """Update a budget item."""
+        """Update a budget item.
+
+        ``data`` comes from ``model_dump(exclude_unset=True)``: a key present
+        with ``None`` is an explicit clear. Honoured only for nullable
+        columns — ``None`` on a NOT NULL field (quantity, unit_price,
+        display_order) is ignored rather than turned into a DB error.
+        """
         for key, value in data.items():
-            if value is not None and hasattr(item, key):
-                setattr(item, key, value)
+            if not hasattr(item, key):
+                continue
+            if value is None and key not in _CLEARABLE_ITEM_FIELDS:
+                continue
+            setattr(item, key, value)
 
         # Recalculate line totals
         BudgetItemService._calculate_line_totals(item)
