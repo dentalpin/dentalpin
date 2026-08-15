@@ -493,15 +493,18 @@ async def complete_plan_item(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[PlannedTreatmentItemResponse]:
     """Mark a treatment item as completed."""
-    item = await TreatmentPlanService.complete_item(
-        db,
-        ctx.clinic_id,
-        plan_id,
-        item_id,
-        ctx.user_id,
-        data.completed_without_appointment,
-        data.notes,
-    )
+    try:
+        item = await TreatmentPlanService.complete_item(
+            db,
+            ctx.clinic_id,
+            plan_id,
+            item_id,
+            ctx.user_id,
+            data.completed_without_appointment,
+            data.notes,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
     if not item:
         raise HTTPException(status_code=404, detail="Treatment item not found")
     return ApiResponse(data=PlannedTreatmentItemResponse.model_validate(item))

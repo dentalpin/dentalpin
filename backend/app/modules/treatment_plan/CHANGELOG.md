@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- fix(sessions): accepting a quote now reprices the plan's pending
+  sessions to the accepted line amounts (line + global discount, ex-tax),
+  so `item_session_completed` — and the payments earned ledger — book the
+  discounted price instead of the catalog price (issue #167).
+- fix(workflow): completing a session/item now requires the plan to be
+  `active` (400 otherwise); the UI hides the action until the quote is
+  accepted. Plan lists show the catalog price struck through next to the
+  effective (session-sum) price when the quote discounted it.
+- chore(ui): removed the unused `TreatmentPlanDetail.vue` component.
+
 - i18n: add `ta` fallback to plan item name resolution in service
   layer so Tamil-localized treatment names display correctly.
   

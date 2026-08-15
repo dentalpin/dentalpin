@@ -576,7 +576,7 @@ class InvoiceService:
             if item.discount_type == "percentage":
                 item.line_discount = item.line_subtotal * item.discount_value / Decimal("100")
             else:  # absolute
-                item.line_discount = item.discount_value
+                item.line_discount = min(item.discount_value, item.line_subtotal)
 
         # Subtotal after discount
         taxable_amount = item.line_subtotal - item.line_discount
@@ -1014,6 +1014,7 @@ class InvoiceService:
             Created invoice (draft, billing data from patient)
         """
         from app.modules.budget.models import Budget, BudgetItem
+        from app.modules.budget.pricing import allocate_global_discount
 
         # Get budget
         result = await db.execute(
@@ -1048,8 +1049,22 @@ class InvoiceService:
         # Link to budget
         invoice.budget_id = budget_id
 
-        # Create invoice items from budget items
+        # Create invoice items from budget items. The quote's global
+        # discount is prorated into each line (ex-tax) — Verifactu derives
+        # BaseImponible per line, so an invoice-level discount is not an
+        # option. Result: absolute when any global share or absolute line
+        # discount is involved (prorated by invoiced quantity), percentage
+        # kept only when it is the sole, quantity-independent discount.
         budget_items_map = {str(bi.id): bi for bi in budget.items}
+        global_shares = dict(
+            zip(
+                (str(bi.id) for bi in budget.items),
+                allocate_global_discount(
+                    budget.global_discount_type, budget.global_discount_value, budget.items
+                ),
+                strict=True,
+            )
+        )
 
         for item_spec in items:
             budget_item_id = str(item_spec["budget_item_id"])
@@ -1091,6 +1106,17 @@ class InvoiceService:
                 )
                 internal_code = budget_item.catalog_item.internal_code
 
+            global_share = global_shares[budget_item_id]
+            line_discount = Decimal(str(budget_item.line_discount or 0)) + global_share
+            if global_share == 0 and budget_item.discount_type == "percentage":
+                discount_type, discount_value = "percentage", budget_item.discount_value
+            elif line_discount > 0:
+                ratio = Decimal(quantity) / Decimal(budget_item.quantity)
+                discount_type = "absolute"
+                discount_value = (line_discount * ratio).quantize(Decimal("0.01"))
+            else:
+                discount_type, discount_value = None, None
+
             # Create invoice item
             invoice_item = InvoiceItem(
                 clinic_id=clinic_id,
@@ -1101,8 +1127,8 @@ class InvoiceService:
                 internal_code=internal_code,
                 unit_price=budget_item.unit_price,
                 quantity=quantity,
-                discount_type=budget_item.discount_type,
-                discount_value=budget_item.discount_value,
+                discount_type=discount_type,
+                discount_value=discount_value,
                 vat_type_id=budget_item.vat_type_id,
                 vat_rate=budget_item.vat_rate,
                 tooth_number=budget_item.tooth_number,

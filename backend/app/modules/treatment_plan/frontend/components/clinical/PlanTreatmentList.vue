@@ -14,6 +14,7 @@ import { VueDraggable } from 'vue-draggable-plus'
 import CompletionNudgeModal from './notes/CompletionNudgeModal.vue'
 import PlanItemDoctorChip from './PlanItemDoctorChip.vue'
 import PlanItemSessionRow from '../treatment-plans/PlanItemSessionRow.vue'
+import { itemCatalogPrice, itemEffectivePrice } from '~/composables/useTreatmentPlans'
 
 const props = defineProps<{
   items: PlannedTreatmentItem[]
@@ -31,7 +32,11 @@ const props = defineProps<{
   planProfessionalId?: string | null
 }>()
 
-const completeEnabled = computed(() => !props.readonly || props.allowComplete)
+// Completion books money (earned ledger), so it is only offered once the
+// quote is accepted (plan `active`) — mirrors the backend gate.
+const completeEnabled = computed(
+  () => props.planStatus === 'active' && (!props.readonly || props.allowComplete)
+)
 
 const emit = defineEmits<{
   'item-hover': [itemId: string | null]
@@ -180,11 +185,12 @@ function hasToothInfo(item: PlannedTreatmentItem): boolean {
   return itemTeeth(item).length > 0
 }
 
-function getItemPrice(item: PlannedTreatmentItem): number | undefined {
-  const snap = item.treatment?.price_snapshot
-  if (!snap) return undefined
-  const parsed = Number(snap)
-  return Number.isFinite(parsed) ? parsed : undefined
+/** Catalog price to strike through when the accepted quote lowered it. */
+function discountedFrom(item: PlannedTreatmentItem): number | undefined {
+  const catalog = itemCatalogPrice(item)
+  const effective = itemEffectivePrice(item)
+  if (catalog === undefined || effective === undefined) return undefined
+  return effective < catalog - 0.005 ? catalog : undefined
 }
 
 function isMultiSession(item: PlannedTreatmentItem): boolean {
@@ -329,10 +335,16 @@ const { format: formatCurrency } = useCurrency()
             </div>
             <div class="flex items-center gap-2 shrink-0">
               <span
-                v-if="getItemPrice(item) !== undefined"
+                v-if="discountedFrom(item) !== undefined"
+                class="text-xs text-muted line-through"
+              >
+                {{ formatCurrency(discountedFrom(item)) }}
+              </span>
+              <span
+                v-if="itemEffectivePrice(item) !== undefined"
                 class="font-medium text-sm"
               >
-                {{ formatCurrency(getItemPrice(item)) }}
+                {{ formatCurrency(itemEffectivePrice(item)) }}
               </span>
               <!-- Per-treatment note button (clinical_notes module). Stays
                  mounted regardless of plan-item status so notes can be

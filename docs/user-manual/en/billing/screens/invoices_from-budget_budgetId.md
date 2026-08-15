@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/from-budget/[budgetId].vue
   - backend/app/modules/billing/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 6c91240
 ---
 
 # Invoice from budget
@@ -34,6 +34,12 @@ include.
 - **Price snapshot.** Lines are copied from the budget with their
   current price and VAT — so the invoice isn't affected by later
   catalog changes.
+- **Discounts travel with the lines.** The quote's line discount
+  **and** its global discount (spread across the lines, ex-tax) are
+  written on each invoice line — the invoice totals what the patient
+  signed. On partial invoicing the discount is prorated by the
+  invoiced quantity. The preview shows the same figures the invoice
+  will have.
 - **Receiver.** Defaults to the patient. You can switch to a
   different payer (company, insurer, family member) before issuing.
 

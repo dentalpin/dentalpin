@@ -1,5 +1,7 @@
 """Tests for the budget module."""
 
+from decimal import Decimal
+from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
@@ -7,6 +9,7 @@ from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership
+from app.modules.budget.pricing import allocate_global_discount, net_line_amount
 from app.modules.catalog.models import TreatmentCatalogItem, TreatmentCategory, VatType
 from app.modules.patients.models import Patient
 
@@ -344,12 +347,15 @@ async def test_remove_budget_item(
     )
     assert response.status_code == 204
 
-    # Verify budget has no items
+    # Verify budget has no items and totals no longer count the removed line
     budget_response = await client.get(
         f"/api/v1/budget/budgets/{budget_id}",
         headers=auth_headers,
     )
-    assert len(budget_response.json()["data"]["items"]) == 0
+    data = budget_response.json()["data"]
+    assert len(data["items"]) == 0
+    assert float(data["subtotal"]) == 0.0
+    assert float(data["total"]) == 0.0
 
 
 @pytest.mark.asyncio
@@ -871,3 +877,98 @@ async def test_global_discount_applied(
     assert float(data["subtotal"]) == 100.00
     assert float(data["total_discount"]) == 10.00  # 10% of 100
     assert float(data["total"]) == 90.00
+    # Per-line share of the global discount, ex-tax (issue #167)
+    assert float(data["items"][0]["global_discount_share"]) == 10.00
+
+
+# ---------------------------------------------------------------------------
+# Issue #167 — global discount proration (pure) + budget.accepted line snapshot
+# ---------------------------------------------------------------------------
+
+
+def _line(subtotal: str, discount: str, vat: float) -> SimpleNamespace:
+    sub, disc = Decimal(subtotal), Decimal(discount)
+    taxable = sub - disc
+    tax = taxable * Decimal(str(vat)) / 100
+    return SimpleNamespace(
+        line_subtotal=sub, line_discount=disc, line_tax=tax, line_total=taxable + tax, vat_rate=vat
+    )
+
+
+def test_allocate_global_discount_percentage() -> None:
+    items = [_line("100", "20", 0), _line("50", "0", 21)]
+    assert allocate_global_discount("percentage", Decimal("10"), items) == [
+        Decimal("8.00"),
+        Decimal("5.00"),
+    ]
+
+
+def test_allocate_global_discount_absolute_matches_gross() -> None:
+    """Σ share_i * (1 + vat_i) == D, so the invoice gross equals the quote gross."""
+    items = [_line("100", "0", 0), _line("100", "0", 21)]
+    shares = allocate_global_discount("absolute", Decimal("30"), items)
+    gross = sum(
+        (s * (1 + Decimal(str(i.vat_rate)) / 100) for s, i in zip(shares, items, strict=True)),
+        Decimal("0"),
+    )
+    assert gross.quantize(Decimal("0.01")) == Decimal("30.00")
+    assert all(s > 0 for s in shares)
+
+
+def test_allocate_global_discount_absolute_clamped_and_zero_cases() -> None:
+    items = [_line("40", "0", 0), _line("60", "0", 0)]
+    assert allocate_global_discount("absolute", Decimal("500"), items) == [
+        Decimal("40.00"),
+        Decimal("60.00"),
+    ]
+    assert allocate_global_discount(None, None, items) == [Decimal("0.00"), Decimal("0.00")]
+    assert allocate_global_discount("percentage", Decimal("10"), []) == []
+    assert net_line_amount(items[0], Decimal("10")) == Decimal("30.00")
+
+
+@pytest.mark.asyncio
+async def test_budget_accepted_payload_carries_net_line_amounts(
+    client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict
+):
+    """budget.accepted snapshots each line's ex-tax net amount (line + global discount)."""
+    from app.core.events import event_bus
+
+    create_response = await client.post(
+        "/api/v1/budget/budgets",
+        json={
+            "patient_id": budget_clinic_setup["patient_id"],
+            "valid_from": "2024-01-01",
+            "global_discount_type": "percentage",
+            "global_discount_value": 10,
+        },
+        headers=auth_headers,
+    )
+    budget_id = create_response.json()["data"]["id"]
+    await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/items",
+        json={
+            "catalog_item_id": budget_clinic_setup["catalog_item_id"],
+            "quantity": 1,
+            "discount_type": "percentage",
+            "discount_value": 20,
+        },
+        headers=auth_headers,
+    )
+
+    captured: list[dict] = []
+    event_bus.subscribe("budget.accepted", captured.append)
+    try:
+        r = await client.post(
+            f"/api/v1/budget/budgets/{budget_id}/accept",
+            headers=auth_headers,
+            json={"signature": {"signed_by_name": "Test", "relationship_to_patient": "patient"}},
+        )
+        assert r.status_code == 200, r.text
+    finally:
+        event_bus.unsubscribe("budget.accepted", captured.append)
+
+    assert len(captured) == 1
+    items = captured[0]["items"]
+    assert len(items) == 1
+    assert items[0]["net_amount"] == "72.00"  # 100 → 80 (line 20%) → 72 (global 10%)
+    assert items[0]["quantity"] == 1

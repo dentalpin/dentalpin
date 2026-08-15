@@ -55,6 +55,16 @@ by tests in `tests/test_module_tools.py`.
   billing — the relation is via hooks + events.
 - **PDF generation uses WeasyPrint** (`pdf.py`). Requires the system
   fonts present in the production image.
+- **Quote discounts are always folded into invoice lines.**
+  `create_from_budget` stores the line discount + the prorated global
+  discount share (`budget.pricing.allocate_global_discount`) on each
+  `InvoiceItem` — absolute (prorated by invoiced quantity) unless a
+  percentage line discount is the only discount. Never add an
+  invoice-level discount: Verifactu derives `BaseImponible` per line
+  from `line_subtotal - line_discount` and `ImporteTotal` from
+  `invoice.total`; a header discount would desync the AEAT record
+  (issue #167). The from-budget wizard mirrors this via
+  `items[].global_discount_share` from the budget API.
 - **Credit notes** are issued via the same workflow as invoices,
   flagged via the document type. Don't introduce a parallel pipeline.
 

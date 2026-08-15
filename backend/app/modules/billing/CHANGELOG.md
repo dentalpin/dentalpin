@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- fix(from-budget): invoices created from a quote now carry the quote's
+  global discount (prorated per line, ex-tax) on top of the line
+  discount; absolute line discounts are prorated by invoiced quantity
+  (no more double-charging on partial invoicing); absolute discounts are
+  clamped to the line subtotal. The wizard preview uses the budget API's
+  `global_discount_share` so it matches the persisted invoice (issue #167).
+
 - i18n: add `ta` fallback to invoice description resolution in
   service layer so Tamil-localized treatment names appear on invoices.
 

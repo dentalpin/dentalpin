@@ -1,6 +1,6 @@
 ---
 module: budget
-last_verified_commit: 2a05d7a
+last_verified_commit: 6c91240
 ---
 
 # Budget — events
@@ -13,7 +13,7 @@ Per-module slice of [`docs/events-catalog.md`](../../events-catalog.md)
 | Event | When | Payload |
 |-------|------|---------|
 | `budget.sent` | Budget marked as sent (email or manual delivery). | `budget_id`, `clinic_id`, `patient_id`, `budget_number`, `plan_id` (nullable), delivery metadata. |
-| `budget.accepted` | Patient (public link) or staff (in-clinic) accepts and signs. | Snapshot incl. `accepted_via`, `total`, `plan_id` (nullable). Subscribers: `treatment_plan` (pending → active; closed-as-rejected → active), `patient_timeline`, `notifications`. |
+| `budget.accepted` | Patient (public link) or staff (in-clinic) accepts and signs. | Snapshot incl. `accepted_via`, `total`, `plan_id` (nullable) and `items[]` — one entry per line: `budget_item_id`, `treatment_id` (nullable), `catalog_item_id`, `quantity`, `net_amount` (ex-tax, after line discount + prorated global discount via `pricing.allocate_global_discount`; issue #167). Subscribers: `treatment_plan` (pending → active; closed-as-rejected → active; reprices pending sessions from `items[].net_amount`), `patient_timeline`, `notifications`. |
 | `budget.rejected` | Patient or staff rejects. | Snapshot incl. `rejection_reason`, `plan_id` (nullable). Subscriber: `treatment_plan` (pending → closed). |
 | `budget.expired` | Daily cron, `valid_until < today` while draft/sent. | Snapshot incl. `days_overdue`, `plan_id`. |
 | `budget.renegotiated` | `POST /budgets/{id}/renegotiate` cancels a sent budget for renegotiation. | `budget_id`, `plan_id` (nullable), `patient_id`, `version`, `cancelled_at`, `cancelled_by`. Subscriber: `treatment_plan` (pending → draft). |

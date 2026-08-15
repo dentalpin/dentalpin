@@ -5,7 +5,9 @@ from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from .pricing import allocate_global_discount
 
 # ============================================================================
 # Budget Status Types (Simplified)
@@ -162,6 +164,10 @@ class BudgetItemResponse(BaseModel):
     line_discount: Decimal
     line_tax: Decimal
     line_total: Decimal
+    # Ex-tax share of the budget's global discount for this line. Only
+    # populated inside ``BudgetDetailResponse`` (needs the sibling lines);
+    # standalone item responses report 0.
+    global_discount_share: Decimal = Decimal("0.00")
 
     # Dental specifics
     tooth_number: int | None
@@ -396,6 +402,15 @@ class BudgetDetailResponse(BudgetResponse):
     treatment_plan: TreatmentPlanBrief | None = None
 
     model_config = ConfigDict(from_attributes=True)
+
+    @model_validator(mode="after")
+    def _fill_global_discount_shares(self) -> "BudgetDetailResponse":
+        shares = allocate_global_discount(
+            self.global_discount_type, self.global_discount_value, self.items
+        )
+        for item, share in zip(self.items, shares, strict=True):
+            item.global_discount_share = share
+        return self
 
 
 class BudgetListResponse(BaseModel):

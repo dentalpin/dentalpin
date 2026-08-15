@@ -1,6 +1,6 @@
 ---
 module: treatment_plan
-last_verified_commit: 2a05d7a
+last_verified_commit: 6c91240
 ---
 
 # Treatment Plan — events
@@ -34,7 +34,7 @@ resulting `odontogram.treatment.performed` carries `unit_price: null`
 | Event | Handler | Effect |
 |-------|---------|--------|
 | `appointment.completed` | `events.py::on_appointment_completed` | Mark planned items as performed if linked. |
-| `budget.accepted` | `events.py::on_budget_accepted` | pending → active; also closed(`rejected_by_patient`) → active when the patient accepts a resent version (issue #162). Idempotent. |
+| `budget.accepted` | `events.py::on_budget_accepted` | pending → active; also closed(`rejected_by_patient`) → active when the patient accepts a resent version (issue #162). On either transition the item's **pending** sessions are rescaled to the payload's `items[].net_amount` (matched by `treatment_id`) so the earned ledger books the discounted price the patient signed (issue #167). Idempotent (already-active plans are left untouched). |
 | `budget.rejected` | `events.py::on_budget_rejected` | pending → closed (`closure_reason=rejected_by_patient`). |
 | `budget.renegotiated` | `events.py::on_budget_renegotiated` | pending → draft via `reopen_from_budget` (never writes the budget row — the publisher's open transaction holds it locked). |
 | `budget.cancelled` | `events.py::on_budget_cancelled` | pending → draft via `reopen_from_budget` (issue #162). No-op without `plan_id` (standalone budget). |

@@ -87,7 +87,7 @@ Clinical-note created events (`clinical_notes.{administrative,diagnosis,treatmen
 | Event | Handler | Effect |
 |---|---|---|
 | `appointment.completed`         | `on_appointment_completed`  | mark planned items as performed if linked |
-| `budget.accepted`               | `on_budget_accepted`        | pending → active; also closed(rejected_by_patient) → active on a resent version (idempotent) |
+| `budget.accepted`               | `on_budget_accepted`        | pending → active; also closed(rejected_by_patient) → active on a resent version (idempotent). Reprices pending sessions from the payload's `items[].net_amount` (issue #167) |
 | `budget.rejected`               | `on_budget_rejected`        | pending → closed (closure_reason=rejected_by_patient) |
 | `budget.renegotiated`           | `on_budget_renegotiated`    | pending → draft via `reopen_from_budget` (never writes the budget row) |
 | `budget.cancelled`              | `on_budget_cancelled`       | pending → draft via `reopen_from_budget`; no-op without `plan_id` |
@@ -116,7 +116,8 @@ Clinical-note created events (`clinical_notes.{administrative,diagnosis,treatmen
 - **A plan is locked only while its budget is `sent`/`accepted`.**
   Terminal budgets (cancelled/rejected/expired) are dead paper and do
   not freeze the plan. Mirrored in `PlanDetailView.vue` and
-  `TreatmentPlanDetail.vue` — keep the three predicates in sync.
+  keep the two predicates in sync. (`TreatmentPlanDetail.vue` was
+  dead code and was removed in #167.)
 - **Budget-side reopens go through `reopen_from_budget`,** which never
   writes the budget row: the publisher's open transaction holds it
   locked and the bus awaits handlers inline — calling `reopen()` from a
@@ -137,6 +138,20 @@ Clinical-note created events (`clinical_notes.{administrative,diagnosis,treatmen
   is in a terminal state and at least one is `completed`. Editing a
   completed session is refused — its amount is the snapshot that
   payments already booked.
+- **Completing a session/item requires the plan to be `active`.**
+  `complete_session` (and the `complete_item` shim) raise `ValueError`
+  → 400 otherwise, and `PlanTreatmentList` hides the action until then.
+  Money is booked on completion and sessions are repriced to the
+  accepted quote only at acceptance, so completing earlier would book
+  catalog prices (issue #167). The odontogram-first
+  (`on_treatment_performed`) and appointment paths are deliberately
+  **not** gated — they record a clinical fact that already happened.
+- **Sessions are repriced at acceptance, pending ones only.**
+  `_reprice_sessions` scales an item's pending sessions so that
+  Σ(all sessions) == the accepted line's `net_amount` (ex-tax, line +
+  prorated global discount), matched by `treatment_id`. Completed
+  sessions keep their amount (payments already booked it); cancelled
+  ones are inert. Cent drift lands on the last pending session.
 - **A treatment's price is booked exactly once** — by sessions or by
   the odontogram, never both. Finalization calls
   `TreatmentService.perform(publish_price=False)` so the performed

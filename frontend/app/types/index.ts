@@ -841,6 +841,8 @@ export interface BudgetItem {
   line_discount: number
   line_tax: number
   line_total: number
+  /** Ex-tax share of the budget's global discount (populated in budget detail only). */
+  global_discount_share: number
   // Dental specifics
   tooth_number?: number
   surfaces?: string[]

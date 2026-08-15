@@ -14,6 +14,28 @@ import type {
   TreatmentPlanUpdate
 } from '~~/app/types'
 
+/**
+ * Price the patient actually pays for a plan item: the sum of its
+ * non-cancelled sessions (sessions are repriced to the accepted quote,
+ * see backend `TreatmentPlanService._reprice_sessions`). Falls back to
+ * the catalog snapshot when the item has no live sessions.
+ */
+export function itemEffectivePrice(item: PlannedTreatmentItem): number | undefined {
+  const live = (item.sessions ?? []).filter(s => s.status !== 'cancelled')
+  if (live.length > 0) {
+    return live.reduce((acc, s) => acc + (Number(s.amount) || 0), 0)
+  }
+  return itemCatalogPrice(item)
+}
+
+/** Catalog price at planning time; shown struck through when the quote discounted it. */
+export function itemCatalogPrice(item: PlannedTreatmentItem): number | undefined {
+  const snap = item.treatment?.price_snapshot
+  if (snap == null || snap === '') return undefined
+  const parsed = Number(snap)
+  return Number.isFinite(parsed) ? parsed : undefined
+}
+
 export function useTreatmentPlans() {
   const api = useApi()
   const toast = useToast()

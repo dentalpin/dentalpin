@@ -54,7 +54,9 @@ only — never combined with payments data.
 
 - `budget.sent`
 - `budget.accepted` (snapshot payload includes `accepted_via`,
-  `plan_id`).
+  `plan_id`, and `items[]` with per-line `net_amount` — ex-tax, after
+  line + prorated global discount — so `treatment_plan` can reprice
+  sessions without reading budget rows; issue #167).
 - `budget.rejected` (snapshot payload with `rejection_reason`,
   `plan_id`).
 - `budget.expired` (snapshot payload with `days_overdue`, `plan_id`).
@@ -116,6 +118,13 @@ contract.
   handler write the plan row the publisher holds locked (the bus awaits
   handlers inline) → hang. Direct staff cancels keep the default and
   publish.
+- **`pricing.allocate_global_discount` is the only proration formula.**
+  The global discount is applied to the VAT-inclusive items total in
+  `_recalculate_totals`; every per-line consumer (the `budget.accepted`
+  payload, `BudgetDetailResponse.items[].global_discount_share`,
+  `billing.create_from_budget`) goes through that helper. Don't
+  re-derive it — the invoice wizard and the plan sessions must land on
+  the same cents.
 - **Budget versioning** keeps every prior version — never overwrite.
 - **Public-link sessions are per-token** (cookie path scoped to
   `/api/v1/public/budgets/{token}`) so a stolen cookie from one

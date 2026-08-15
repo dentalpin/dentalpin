@@ -17,6 +17,7 @@ import ReopenPlanModal from './modals/ReopenPlanModal.vue'
 import ClosePlanModal from './modals/ClosePlanModal.vue'
 import ReactivatePlanModal from './modals/ReactivatePlanModal.vue'
 import ContactLogModal from './modals/ContactLogModal.vue'
+import { itemEffectivePrice } from '~/composables/useTreatmentPlans'
 
 const props = withDefaults(defineProps<{
   plan: TreatmentPlanDetail
@@ -68,10 +69,7 @@ const showContactLogModal = ref(false)
 const transitioning = ref(false)
 
 const planSummary = computed(() => {
-  const total = props.plan.items.reduce((acc, item) => {
-    const price = item.treatment?.price_snapshot
-    return acc + (typeof price === 'number' ? price : Number(price) || 0)
-  }, 0)
+  const total = props.plan.items.reduce((acc, item) => acc + (itemEffectivePrice(item) ?? 0), 0)
   return {
     number: props.plan.plan_number,
     count: props.plan.items.length,

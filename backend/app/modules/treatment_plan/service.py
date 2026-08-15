@@ -867,6 +867,13 @@ class TreatmentPlanService:
         if not item:
             return None
 
+        # Money is booked on completion, so the plan must be past quote
+        # acceptance: sessions are repriced to the accepted budget only
+        # then. Odontogram-first / appointment paths are not gated here.
+        plan = await db.get(TreatmentPlan, plan_id)
+        if not plan or plan.status != "active":
+            raise ValueError("Plan must be active to complete treatments")
+
         session = next((s for s in item.sessions if s.id == session_id), None)
         if not session:
             raise ValueError("Session not found")
@@ -1832,10 +1839,47 @@ class TreatmentPlanService:
         return plan
 
     @staticmethod
+    def _reprice_sessions(plan: TreatmentPlan, line_amounts: dict[UUID, Decimal]) -> None:
+        """Rescale pending session amounts to what the accepted budget says.
+
+        ``line_amounts`` maps ``treatment_id`` → ex-tax net line amount
+        (after line + prorated global discount, from the ``budget.accepted``
+        payload). Completed sessions keep their amount (payments already
+        booked it) and cancelled ones are inert; the pending remainder is
+        distributed proportionally, last pending session absorbing cent
+        drift — same pattern as ``_snapshot_sessions_from_catalog``.
+        """
+        for item in plan.items:
+            target = line_amounts.get(item.treatment_id)
+            if target is None:
+                continue
+            pending = [s for s in item.sessions if s.status == "pending"]
+            if not pending:
+                continue
+            booked = sum(
+                (Decimal(str(s.amount)) for s in item.sessions if s.status == "completed"),
+                Decimal("0"),
+            )
+            remaining = max(target - booked, Decimal("0"))
+            current = [Decimal(str(s.amount)) for s in pending]
+            current_total = sum(current, Decimal("0"))
+            if current_total > 0:
+                scaled = [
+                    (a * remaining / current_total).quantize(Decimal("0.01")) for a in current
+                ]
+            else:
+                even = (remaining / len(pending)).quantize(Decimal("0.01"))
+                scaled = [even] * len(pending)
+            scaled[-1] = scaled[-1] + (remaining - sum(scaled, Decimal("0")))
+            for session, amount in zip(pending, scaled, strict=True):
+                session.amount = amount
+
+    @staticmethod
     async def accept_from_budget(
         db: AsyncSession,
         clinic_id: UUID,
         plan_id: UUID,
+        line_amounts: dict[UUID, Decimal] | None = None,
     ) -> TreatmentPlan | None:
         """``pending`` → ``active`` triggered by ``budget.accepted``.
 
@@ -1844,6 +1888,10 @@ class TreatmentPlanService:
         reception resent a new version, and the patient accepted it
         (issue #162). Plans closed for any other reason stay closed —
         the clinic ended those on purpose.
+
+        On either transition the pending sessions are repriced from
+        ``line_amounts`` (see ``_reprice_sessions``) so the earned ledger
+        books the discounted price the patient signed, not the catalog one.
 
         Idempotent: if the plan is already active, returns the current
         plan without raising.
@@ -1864,6 +1912,7 @@ class TreatmentPlanService:
             # confirmation still stands — the plan skips draft/pending.
             # reactivate() clears it only because that path returns to
             # draft and demands a re-confirmation.
+            TreatmentPlanService._reprice_sessions(plan, line_amounts or {})
             await db.flush()
 
             await event_bus.publish(
@@ -1897,6 +1946,7 @@ class TreatmentPlanService:
             return plan
 
         plan.status = "active"
+        TreatmentPlanService._reprice_sessions(plan, line_amounts or {})
         await db.flush()
 
         await event_bus.publish(

@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- feat(events): `budget.accepted` payload now carries `items[]` with a
+  per-line ex-tax `net_amount` (line discount + prorated global
+  discount) so `treatment_plan` can reprice sessions from the snapshot
+  (issue #167). New `pricing.allocate_global_discount` /
+  `net_line_amount` are the single proration formula; `BudgetDetailResponse`
+  exposes `items[].global_discount_share` for the invoice wizard.
+
 - fix(workflow): plan ↔ budget lifecycle desync (issue #162).
   `cancel_budget` now publishes `budget.cancelled` (with `plan_id`) so a
   directly-cancelled quote reopens its pending plan instead of leaving it

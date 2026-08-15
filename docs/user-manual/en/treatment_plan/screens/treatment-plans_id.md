@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: 2a05d7a
+last_verified_commit: 6c91240
 ---
 
 # Treatment plan detail
@@ -111,6 +111,14 @@ added to a plan, one session is created per step.
   "earned" entry for that amount.
 - The item is finalized automatically when the last pending session
   is completed (the legacy completion flow runs at that point).
+- **Sessions can only be completed once the plan is *In progress***
+  (quote accepted). On draft/pending plans the check is hidden and the
+  API answers 400 — nothing is charged before the patient signs.
+- **Quote discounts flow to the sessions.** When the patient accepts a
+  quote with a line or global discount, the pending sessions are
+  rescaled to the discounted amount (ex-tax) and the item shows the
+  catalog price ~~struck through~~ next to the effective price. What
+  gets charged is what was signed.
 - Cancel a session if it was not delivered — no earned entry is
   generated.
 - If the treatment is marked performed from the **odontogram**, the
@@ -176,4 +184,5 @@ added to a plan, one session is created per step.
 - **Cannot delete an item.** The item is already marked as done.
   Completed items remain as history.
 - **Cannot complete an item.** Your role lacks
-  `treatment_plan.plans.write`.
+  `treatment_plan.plans.write` — or the plan is not *In progress* yet
+  (the quote must be accepted first).

@@ -112,16 +112,18 @@ function getVatType(vatTypeId?: string): VatType | undefined {
   return vatTypes.value.find(v => v.id === vatTypeId)
 }
 
+// Ex-tax discount for `quantity` units: the quote's line discount plus its
+// prorated global-discount share (both come computed from the API), scaled by
+// the invoiced fraction — mirrors InvoiceService.create_from_budget.
+function lineDiscountFor(item: BudgetItem, quantity: number): number {
+  const share = Number(item.global_discount_share || 0)
+  return (Number(item.line_discount || 0) + share) * (quantity / item.quantity)
+}
+
 // Calculate item line total (for preview)
 function calculateItemTotal(item: BudgetItem, quantity: number): number {
   const subtotal = item.unit_price * quantity
-  let discount = 0
-  if (item.discount_value) {
-    discount = item.discount_type === 'percentage'
-      ? subtotal * (item.discount_value / 100)
-      : item.discount_value
-  }
-  const taxableAmount = subtotal - discount
+  const taxableAmount = subtotal - lineDiscountFor(item, quantity)
   const tax = taxableAmount * (item.vat_rate / 100)
   return taxableAmount + tax
 }
@@ -137,12 +139,7 @@ const totals = computed(() => {
     if (!item) return
 
     const lineSubtotal = item.unit_price * quantity
-    let lineDiscount = 0
-    if (item.discount_value) {
-      lineDiscount = item.discount_type === 'percentage'
-        ? lineSubtotal * (item.discount_value / 100)
-        : item.discount_value * (quantity / item.quantity) // Prorate absolute discount
-    }
+    const lineDiscount = lineDiscountFor(item, quantity)
     const lineTaxable = lineSubtotal - lineDiscount
     const lineTax = lineTaxable * (item.vat_rate / 100)
 
@@ -318,8 +315,8 @@ function goBack() {
 
                   <div class="mt-1 flex flex-wrap items-center gap-4 text-caption text-subtle">
                     <span>{{ formatCurrency(item.unit_price) }} x {{ item.quantity }}</span>
-                    <span v-if="item.discount_value">
-                      {{ t('invoice.discount') }}: {{ item.discount_type === 'percentage' ? `${item.discount_value}%` : formatCurrency(item.discount_value) }}
+                    <span v-if="lineDiscountFor(item, item.quantity) > 0">
+                      {{ t('invoice.discount') }}: -{{ formatCurrency(lineDiscountFor(item, item.quantity)) }}
                     </span>
                     <span>{{ getVatType(item.vat_type_id)?.names[locale] || 'IVA' }} {{ item.vat_rate }}%</span>
                   </div>

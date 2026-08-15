@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: 2a05d7a
+last_verified_commit: 6c91240
 ---
 
 # Detalle del plan de tratamiento
@@ -111,6 +111,14 @@ añadirlos al plan se crea automáticamente una sesión por cada paso.
   entrada de "trabajo realizado" por ese importe.
 - El item se finaliza automáticamente al completar la última sesión
   pendiente (entonces se ejecuta el flujo legacy de cierre).
+- **Solo se pueden completar sesiones con el plan *En curso*** (presupuesto
+  aceptado). En planes borrador/pendientes el check no aparece y la API
+  responde 400 — no se cobra nada antes de que el paciente firme.
+- **Los descuentos del presupuesto llegan a las sesiones.** Al aceptar
+  un presupuesto con descuento por línea o global, las sesiones
+  pendientes se reescalan al importe con descuento (sin IVA) y el item
+  muestra el precio de catálogo ~~tachado~~ junto al efectivo. Se cobra
+  lo que se firmó.
 - Cancela una sesión si no llegó a hacerse: no genera cobro.
 - Si el tratamiento se marca realizado desde el **odontograma**, el
   cargo se registra completo por esa vía y las sesiones pendientes del
@@ -177,4 +185,5 @@ añadirlos al plan se crea automáticamente una sesión por cada paso.
 - **No puedo borrar un ítem.** El ítem ya está marcado como hecho.
   Los ítems completados quedan como histórico.
 - **No me deja completar un ítem.** Tu rol no tiene
-  `treatment_plan.plans.write`.
+  `treatment_plan.plans.write` — o el plan aún no está *En curso*
+  (primero hay que aceptar el presupuesto).

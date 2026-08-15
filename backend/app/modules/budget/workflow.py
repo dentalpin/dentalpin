@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.events import EventType, event_bus
 
 from .models import Budget, BudgetAccessLog, BudgetSignature
+from .pricing import allocate_global_discount, net_line_amount
 from .service import BudgetHistoryService
 
 logger = logging.getLogger(__name__)
@@ -295,6 +296,23 @@ class BudgetWorkflowService:
             )
 
         plan_id = await BudgetWorkflowService._lookup_plan_id(db, budget.id)
+        # Per-line snapshot so subscribers (treatment_plan) can reprice
+        # what the patient actually agreed to pay without reading budget
+        # rows: net_amount is ex-tax, after line discount + prorated
+        # global discount (see pricing.allocate_global_discount).
+        shares = allocate_global_discount(
+            budget.global_discount_type, budget.global_discount_value, budget.items
+        )
+        items_snapshot = [
+            {
+                "budget_item_id": str(item.id),
+                "treatment_id": str(item.treatment_id) if item.treatment_id else None,
+                "catalog_item_id": str(item.catalog_item_id),
+                "quantity": item.quantity,
+                "net_amount": str(net_line_amount(item, share)),
+            }
+            for item, share in zip(budget.items, shares, strict=True)
+        ]
         await event_bus.publish(
             EventType.BUDGET_ACCEPTED,
             {
@@ -306,6 +324,7 @@ class BudgetWorkflowService:
                 "accepted_by": str(accepted_by),
                 "accepted_via": accepted_via,
                 "plan_id": str(plan_id) if plan_id else None,
+                "items": items_snapshot,
                 "occurred_at": datetime.now(UTC).isoformat(),
             },
         )

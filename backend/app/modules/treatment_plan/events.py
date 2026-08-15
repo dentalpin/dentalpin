@@ -4,6 +4,7 @@ Listens to events from other modules and reacts accordingly.
 """
 
 import logging
+from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
@@ -135,9 +136,18 @@ async def on_budget_accepted(data: dict[str, Any]) -> None:
 
     from .service import TreatmentPlanService
 
+    # Snapshot of the accepted lines: ex-tax net amount per treatment.
+    line_amounts = {
+        UUID(i["treatment_id"]): Decimal(i["net_amount"])
+        for i in data.get("items") or []
+        if i.get("treatment_id") and i.get("net_amount") is not None
+    }
+
     async with async_session_maker() as db:
         try:
-            await TreatmentPlanService.accept_from_budget(db, UUID(clinic_id), UUID(plan_id))
+            await TreatmentPlanService.accept_from_budget(
+                db, UUID(clinic_id), UUID(plan_id), line_amounts
+            )
             await db.commit()
         except Exception as e:
             logger.error(f"Error processing budget acceptance: {e}", exc_info=True)
