@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add German locale (`de.json`) with full UI coverage.
+
 - i18n: add Tamil locale (`ta.json`); add Tamil translations to seed
   data; add `body_i18n_key` to template responses so template bodies
   resolve in the active locale. Labels now resolve via

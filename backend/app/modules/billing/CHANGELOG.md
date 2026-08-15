@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- i18n: add `de` fallback to invoice description resolution in
+  service layer so German-localized treatment names appear on invoices.
+
 - i18n: add `ta` fallback to invoice description resolution in
   service layer so Tamil-localized treatment names appear on invoices.
 
