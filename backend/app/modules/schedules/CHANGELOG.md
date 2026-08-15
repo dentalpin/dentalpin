@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- i18n: add Polish locale (`pl.json`) with full UI coverage.leased
+
 - i18n: add Tamil locale (`ta.json`) with full UI coverage.
 
 - style(lint): first ESLint pass over this module's frontend layer —
