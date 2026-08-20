@@ -14,7 +14,7 @@ import { APP_NAME } from '~/constants/branding'
           name="i-lucide-tooth"
           class="w-6 h-6 text-[var(--ui-primary)]"
         />
-        <span class="font-semibold tracking-tight">{{ APP_NAME }}</span>
+        <span class="font-heading font-semibold tracking-tight">{{ APP_NAME }}</span>
       </div>
     </header>
     <main class="flex-1">

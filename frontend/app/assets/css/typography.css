@@ -1,10 +1,15 @@
 /* ============================================================================
-   DentalPin Typography Scale
-   Source of truth: /docs/technical/design-system.md §3
+   DENPLANT Typography Scale
+   Source of truth: /docs/technical/design-system.md §3 + .brand-reference/DENPLANT_Brand_Kit
+   Headings/buttons/nav: Montserrat 600/700 (--font-heading). Body/forms/
+   tables/clinical data: Inter (--font-sans, set as the document default).
+   Sizes stay the app's own density-tuned scale, not the kit's raw px
+   values — this is a high-density clinical app (brand kit §3).
    ============================================================================ */
 
 @layer utilities {
   .text-display {
+    font-family: var(--font-heading);
     font-size: 28px;
     line-height: 1.15;
     letter-spacing: -0.4px;
@@ -12,6 +17,7 @@
   }
 
   .text-h1 {
+    font-family: var(--font-heading);
     font-size: 22px;
     line-height: 1.25;
     letter-spacing: -0.25px;
@@ -19,6 +25,7 @@
   }
 
   .text-h2 {
+    font-family: var(--font-heading);
     font-size: 18px;
     line-height: 1.30;
     letter-spacing: -0.15px;
@@ -26,6 +33,7 @@
   }
 
   .text-h3 {
+    font-family: var(--font-heading);
     font-size: 15px;
     line-height: 1.35;
     font-weight: 600;
@@ -50,6 +58,7 @@
   }
 
   .text-button {
+    font-family: var(--font-heading);
     font-size: 14px;
     line-height: 1.20;
     font-weight: 600;

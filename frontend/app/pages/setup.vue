@@ -200,22 +200,26 @@ async function onSubmit() {
 
 <template>
   <div class="w-full max-w-[480px] p-4 sm:p-6">
-    <div class="flex items-start justify-between gap-3 mb-6">
-      <div class="flex items-center gap-3">
+    <!-- Brand — official logo on a white plate (kit §6), stacked above
+         the title row so it doesn't compete with the locale select for
+         horizontal space. -->
+    <div class="text-center mb-4">
+      <span class="inline-flex items-center justify-center bg-white rounded-token-lg shadow-token-sm px-4 py-3">
         <img
-          src="/logo-icon.svg"
+          src="/brand/denplant-logo-original.png"
           :alt="APP_NAME"
-          width="44"
-          height="44"
+          class="w-[180px] max-w-full h-auto object-contain"
         >
-        <div>
-          <h1 class="text-h2 text-default">
-            {{ t('setup.title') }}
-          </h1>
-          <p class="text-caption text-muted">
-            {{ t('setup.subtitle') }}
-          </p>
-        </div>
+      </span>
+    </div>
+    <div class="flex items-start justify-between gap-3 mb-6">
+      <div>
+        <h1 class="text-h2 text-default">
+          {{ t('setup.title') }}
+        </h1>
+        <p class="text-caption text-muted">
+          {{ t('setup.subtitle') }}
+        </p>
       </div>
       <USelect
         :model-value="currentLocale"

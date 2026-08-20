@@ -1,36 +1,58 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/montserrat";
 @import "./typography.css";
 
 @theme static {
   --font-sans: 'Inter Variable', 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-heading: 'Montserrat Variable', 'Montserrat', Arial, sans-serif;
+
+  /* DENPLANT brand ramp — anchors at 200/300/400/500/950 are the kit's
+     official Light/Accent/Primary/Primary-Accessible/Dark hexes; 600 is
+     the kit's given CTA hover; 50/100/700/800/900 are interpolated fill
+     so Nuxt UI has a full 11-stop scale (see .brand-reference/DENPLANT_Brand_Kit). */
+  --color-denplant-50: #EFFBFC;
+  --color-denplant-100: #D9F4F8;
+  --color-denplant-200: #AFEFF8;
+  --color-denplant-300: #35C9D7;
+  --color-denplant-400: #1C8FAF;
+  --color-denplant-500: #147C99;
+  --color-denplant-600: #116E87;
+  --color-denplant-700: #0E5A70;
+  --color-denplant-800: #0B4658;
+  --color-denplant-900: #0A3A49;
+  --color-denplant-950: #202D35;
 }
 
 /* ============================================================================
-   DentalPin Design Tokens
-   Source of truth: /docs/technical/design-system.md
+   DENPLANT Design Tokens
+   Source of truth: /docs/technical/design-system.md + .brand-reference/DENPLANT_Brand_Kit
    ============================================================================ */
 
 :root {
   /* Surfaces & text — light */
-  --color-canvas: #FBFAF8;
+  --color-canvas: #F7FAFB;
   --color-surface: #FFFFFF;
-  --color-surface-muted: #F4F2EF;
-  --color-surface-sunken: #EFEDE9;
-  --color-border-subtle: rgba(15, 17, 22, 0.06);
-  --color-border: rgba(15, 17, 22, 0.10);
-  --color-border-strong: rgba(15, 17, 22, 0.16);
-  --color-text: rgba(15, 17, 22, 0.92);
-  --color-text-muted: #615D59;
-  --color-text-subtle: #94908A;
-  --color-text-disabled: #BAB6B0;
+  --color-surface-muted: #F1F5F6;
+  --color-surface-sunken: #EAF0F1;
+  --color-border-subtle: rgba(32, 45, 53, 0.06);
+  --color-border: #DCE5E8;
+  --color-border-strong: rgba(32, 45, 53, 0.18);
+  --color-text: #202D35;
+  --color-text-muted: #64757D;
+  --color-text-subtle: #8B99A0;
+  --color-text-disabled: #B7C1C5;
 
-  /* Primary */
-  --color-primary: #0EA5E9;
-  --color-primary-hover: #0284C7;
-  --color-primary-soft: #E0F2FE;
-  --color-primary-soft-text: #0369A1;
+  /* Primary — DENPLANT brand teal */
+  --color-primary: #1C8FAF;
+  --color-primary-hover: #147C99;
+  --color-primary-soft: #AFEFF8;
+  --color-primary-soft-text: #147C99;
+
+  /* Brand-specific shadow/focus (kit §4/§5) */
+  --shadow-card: 0 8px 24px rgba(32, 45, 53, 0.08);
+  --shadow-focus: 0 0 0 3px rgba(28, 143, 175, 0.22);
 
   /* Semantics — accent / soft bg / text */
   --color-success-accent: #0F9D58;
@@ -80,11 +102,11 @@
   --color-text-subtle: #787570;
   --color-text-disabled: #525049;
 
-  /* Primary — sky-400 for better punch on dark */
-  --color-primary: #38BDF8;
-  --color-primary-hover: #7DD3FC;
-  --color-primary-soft: rgba(56, 189, 248, 0.12);
-  --color-primary-soft-text: #7DD3FC;
+  /* Primary — DENPLANT accent (Accent/Light) for better punch on dark */
+  --color-primary: #35C9D7;
+  --color-primary-hover: #AFEFF8;
+  --color-primary-soft: rgba(53, 201, 215, 0.12);
+  --color-primary-soft-text: #AFEFF8;
 
   /* Semantics — dark */
   --color-success-accent: #34D399;

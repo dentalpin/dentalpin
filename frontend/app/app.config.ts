@@ -1,7 +1,7 @@
 export default defineAppConfig({
   ui: {
     colors: {
-      primary: 'sky',
+      primary: 'denplant',
       neutral: 'stone',
       success: 'green',
       info: 'sky',
@@ -9,6 +9,9 @@ export default defineAppConfig({
       error: 'red'
     },
     button: {
+      slots: {
+        base: 'font-heading'
+      },
       defaultVariants: {
         size: 'sm',
         color: 'neutral',
@@ -23,7 +26,7 @@ export default defineAppConfig({
     },
     card: {
       slots: {
-        root: 'bg-[var(--color-surface)] ring-1 ring-[var(--color-border)] shadow-[var(--shadow-sm)] rounded-[var(--radius-lg)]',
+        root: 'bg-[var(--color-surface)] ring-1 ring-[var(--color-border)] shadow-[var(--shadow-card)] rounded-[var(--radius-xl)]',
         header: 'px-4 py-3 sm:px-5 sm:py-4 border-b border-[var(--color-border-subtle)]',
         body: 'p-4 sm:p-5',
         footer: 'px-4 py-3 sm:px-5 sm:py-4 border-t border-[var(--color-border-subtle)]'

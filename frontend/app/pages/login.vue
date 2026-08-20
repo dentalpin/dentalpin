@@ -105,18 +105,17 @@ watch(() => formState.password, () => {
 
 <template>
   <div class="w-full max-w-[400px] p-6">
-    <!-- Brand -->
+    <!-- Brand — official logo on a white plate (kit §6: not transparent,
+         shown "preferentemente sobre superficies blancas"; the canvas
+         behind it can be dark in dark mode). -->
     <div class="text-center mb-6">
-      <img
-        src="/logo-icon.svg"
-        :alt="APP_NAME"
-        width="56"
-        height="56"
-        class="mx-auto mb-3"
-      >
-      <h1 class="text-h1 text-default">
-        {{ APP_NAME }}
-      </h1>
+      <span class="inline-flex items-center justify-center bg-white rounded-token-lg shadow-token-sm px-5 py-4 mb-3">
+        <img
+          src="/brand/denplant-logo-original.png"
+          :alt="APP_NAME"
+          class="w-[220px] max-w-full h-auto object-contain"
+        >
+      </span>
       <p class="text-caption text-muted mt-1">
         {{ t('app.tagline') }}
       </p>

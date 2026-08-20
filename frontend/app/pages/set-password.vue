@@ -55,14 +55,16 @@ async function onSubmit() {
 
 <template>
   <div class="w-full max-w-[440px] p-4 sm:p-6">
+    <!-- Brand — official logo on a white plate (kit §6: not transparent,
+         shown "preferentemente sobre superficies blancas"). -->
     <div class="text-center mb-6">
-      <img
-        src="/logo-icon.svg"
-        :alt="APP_NAME"
-        width="56"
-        height="56"
-        class="mx-auto mb-3"
-      >
+      <span class="inline-flex items-center justify-center bg-white rounded-token-lg shadow-token-sm px-4 py-3 mb-3">
+        <img
+          src="/brand/denplant-logo-original.png"
+          :alt="APP_NAME"
+          class="w-[200px] max-w-full h-auto object-contain"
+        >
+      </span>
       <h1 class="text-h1 text-default">
         {{ t('settings.invite.setPasswordTitle') }}
       </h1>
