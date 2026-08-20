@@ -3,6 +3,8 @@
  * Invite landing: consume the one-time token from the URL, set a password
  * and sign in. Public route (guest layout).
  */
+import { APP_NAME } from '~/constants/branding'
+
 definePageMeta({
   layout: 'guest'
 })
@@ -56,7 +58,7 @@ async function onSubmit() {
     <div class="text-center mb-6">
       <img
         src="/logo-icon.svg"
-        alt="DentalPin"
+        :alt="APP_NAME"
         width="56"
         height="56"
         class="mx-auto mb-3"

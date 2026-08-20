@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Appointment reminder - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}Appointment reminder - {{ clinic_name | default('Denplant') }}{% endblock %}
 
 {% block content %}
 <h2>Appointment reminder</h2>
 
 <p>Hello {{ patient_name }},</p>
 
-<p>This is a friendly reminder of your upcoming appointment at <strong>{{ clinic_name | default('DentalPin') }}</strong>:</p>
+<p>This is a friendly reminder of your upcoming appointment at <strong>{{ clinic_name | default('Denplant') }}</strong>:</p>
 
 <div class="info-box">
     <div class="info-row">

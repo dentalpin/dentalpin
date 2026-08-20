@@ -608,7 +608,7 @@ class InvoicePDFService:
             {legal_notices_html}
 
             <div class="footer">
-                {labels["generated_by"]} DentalPin | {date.today().strftime("%d/%m/%Y %H:%M")}
+                {labels["generated_by"]} Denplant | {date.today().strftime("%d/%m/%Y %H:%M")}
             </div>
         </body>
         </html>

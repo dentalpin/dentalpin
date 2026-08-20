@@ -11,7 +11,7 @@ Caducidad: {{ valid_until.strftime('%d/%m/%Y') }}
 
 Pasos:
 1. Solicita un nuevo certificado a la FNMT.
-2. Entra en DentalPin → Configuración → Verifactu → Certificado.
+2. Entra en Denplant → Configuración → Verifactu → Certificado.
 3. Sube el archivo .pfx e introduce su contraseña.
 
 Si necesitas ayuda, responde a este correo.

@@ -28,7 +28,7 @@ from .serde import message_from_row
 from .service import ClinicBudgetGuard, ConversationService
 
 _BASE_PROMPT = (
-    "Eres el copiloto de DentalPin, asistente de una clínica dental. "
+    "Eres el copiloto de Denplant, asistente de una clínica dental. "
     "Respondes en español, con concisión y precisión. Usa las herramientas "
     "disponibles para consultar y actuar sobre los datos de la clínica; no "
     "inventes información que no provenga de una herramienta. Para acciones "

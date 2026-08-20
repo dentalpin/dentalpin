@@ -153,7 +153,7 @@ class EmailService:
                 use_tls=settings.use_tls,
                 use_ssl=settings.use_ssl,
                 default_from_email=settings.from_email or "",
-                default_from_name=settings.from_name or "DentalPin",
+                default_from_name=settings.from_name or "Denplant",
             )
 
         # Fallback to global

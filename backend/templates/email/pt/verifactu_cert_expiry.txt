@@ -11,7 +11,7 @@ Expiração: {{ valid_until.strftime('%d/%m/%Y') }}
 
 Passos:
 1. Solicite um novo certificado à FNMT.
-2. Inicie sessão no DentalPin → Definições → Verifactu → Certificado.
+2. Inicie sessão no Denplant → Definições → Verifactu → Certificado.
 3. Carregue o ficheiro .pfx e introduza a respetiva palavra-passe.
 
 Se precisar de ajuda, responda a este email.

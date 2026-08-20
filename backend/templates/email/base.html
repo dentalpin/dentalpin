@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{{ subject | default('DentalPin') }}{% endblock %}</title>
+    <title>{% block title %}{{ subject | default('Denplant') }}{% endblock %}</title>
     <style>
         /* Reset styles */
         body, table, td, p, a, li {
@@ -227,7 +227,7 @@
         <div class="email-card">
             <!-- Header -->
             <div class="email-header">
-                <span class="logo">{{ clinic_name | default('DentalPin') }}</span>
+                <span class="logo">{{ clinic_name | default('Denplant') }}</span>
             </div>
 
             <!-- Body -->
@@ -238,7 +238,7 @@
             <!-- Footer -->
             <div class="email-footer">
                 {% block footer %}
-                <p>{{ footer_sent_by | default('Este email fue enviado por ' ~ (clinic_name | default('DentalPin'))) }}</p>
+                <p>{{ footer_sent_by | default('Este email fue enviado por ' ~ (clinic_name | default('Denplant'))) }}</p>
                 {% if clinic_phone %}
                 <p>Tel: {{ clinic_phone }}</p>
                 {% endif %}
@@ -250,7 +250,7 @@
         </div>
 
         <p style="text-align: center; margin-top: 20px; font-size: 12px; color: #a1a1aa;">
-            Powered by <a href="https://dentalpin.com" style="color: #3b82f6; text-decoration: none;">DentalPin</a>
+            Powered by <a href="https://dentalpin.com" style="color: #3b82f6; text-decoration: none;">Denplant</a>
         </p>
     </div>
 </body>

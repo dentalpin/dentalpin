@@ -480,13 +480,13 @@ class NotificationService:
             use_tls=use_tls,
             use_ssl=use_ssl,
             default_from_email=from_email,
-            default_from_name="DentalPin",
+            default_from_name="Denplant",
         )
 
         # Send test email
         message = EmailMessage(
             to_email=to_email,
-            subject="DentalPin - Test de conexión SMTP",
+            subject="Denplant - Test de conexión SMTP",
             body_html="""
             <html>
             <body style="font-family: sans-serif; padding: 20px;">
@@ -495,7 +495,7 @@ class NotificationService:
                 <p>Si has recibido este mensaje, la configuración está funcionando correctamente.</p>
                 <hr>
                 <p style="color: #666; font-size: 12px;">
-                    Enviado desde DentalPin
+                    Enviado desde Denplant
                 </p>
             </body>
             </html>
@@ -631,21 +631,21 @@ class NotificationService:
 
         message = EmailMessage(
             to_email=to_email,
-            subject="DentalPin - Test de conexión de email",
+            subject="Denplant - Test de conexión de email",
             body_html="""
             <html>
             <body style="font-family: sans-serif; padding: 20px;">
                 <h2>¡Conexión exitosa!</h2>
-                <p>Este es un email de prueba de DentalPin.</p>
+                <p>Este es un email de prueba de Denplant.</p>
                 <p>Si has recibido este mensaje, la configuración de email está funcionando correctamente.</p>
                 <hr>
                 <p style="color: #666; font-size: 12px;">
-                    Enviado desde DentalPin
+                    Enviado desde Denplant
                 </p>
             </body>
             </html>
             """,
-            body_text="¡Conexión exitosa! Este es un email de prueba de DentalPin.",
+            body_text="¡Conexión exitosa! Este es un email de prueba de Denplant.",
         )
 
         return await email_service.send(message)

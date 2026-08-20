@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "DentalPin",
+    "name": "Denplant",
     "tagline": "Gestion de clinique dentaire"
   },
   "demo": {
@@ -63,7 +63,7 @@
     "next": "Suivant",
     "back": "Retour",
     "submit": "Créer mon cabinet",
-    "success": "Tout est prêt ! Bienvenue sur DentalPin",
+    "success": "Tout est prêt ! Bienvenue sur Denplant",
     "firstNameRequired": "Saisissez le prénom",
     "lastNameRequired": "Saisissez le nom",
     "emailRequired": "Saisissez l'email",
@@ -935,7 +935,7 @@
       "afternoon": "Bon après-midi",
       "evening": "Bonsoir"
     },
-    "welcome": "Bienvenue sur DentalPin",
+    "welcome": "Bienvenue sur Denplant",
     "welcomeMessage": "Commencez par créer votre premier patient.",
     "quickActions": {
       "newAppointment": "Nouveau rendez-vous",
@@ -1227,14 +1227,14 @@
       "copy": "Copier le lien",
       "copied": "Lien copié",
       "whatsapp": "Envoyer par WhatsApp",
-      "shareText": "Bonjour {name}, voici votre accès à DentalPin. Ouvrez-le et choisissez votre mot de passe : {url}",
+      "shareText": "Bonjour {name}, voici votre accès à Denplant. Ouvrez-le et choisissez votre mot de passe : {url}",
       "secretNote": "À traiter comme un mot de passe : toute personne ayant le lien peut se connecter à ce compte.",
       "passwordOptionalHelp": "Laissez vide pour générer un lien d'accès à envoyer par WhatsApp ou e-mail.",
       "passwordOptionalPlaceholder": "Facultatif",
       "createAndLink": "Créer et générer le lien",
       "rowAction": "Lien d'accès",
       "setPasswordTitle": "Choisissez votre mot de passe",
-      "setPasswordSubtitle": "Vous êtes invité sur DentalPin. Créez votre mot de passe pour vous connecter.",
+      "setPasswordSubtitle": "Vous êtes invité sur Denplant. Créez votre mot de passe pour vous connecter.",
       "setPasswordSubmit": "Enregistrer et se connecter",
       "invalidToken": "Ce lien est invalide ou déjà utilisé. Demandez-en un nouveau à l'administrateur de votre cabinet."
     }

@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { APP_NAME } from '~/constants/branding'
+
 const { t } = useI18n()
 const auth = useAuth()
 const clinic = useClinic()
@@ -99,7 +101,7 @@ function isActive(to: string): boolean {
         <NuxtLink
           to="/"
           class="flex items-center gap-2 overflow-hidden"
-          aria-label="DentalPin"
+          :aria-label="APP_NAME"
         >
           <img
             src="/logo-icon.svg"
@@ -112,7 +114,7 @@ function isActive(to: string): boolean {
             v-if="!isSidebarCollapsed"
             class="text-h2 text-default truncate"
           >
-            DentalPin
+            {{ APP_NAME }}
           </span>
         </NuxtLink>
       </div>
@@ -201,7 +203,7 @@ function isActive(to: string): boolean {
             <NuxtLink
               to="/"
               class="flex items-center gap-2 overflow-hidden"
-              aria-label="DentalPin"
+              :aria-label="APP_NAME"
               @click="mobileNavOpen = false"
             >
               <img
@@ -211,7 +213,7 @@ function isActive(to: string): boolean {
                 height="32"
                 class="shrink-0"
               >
-              <span class="text-h2 text-default truncate">DentalPin</span>
+              <span class="text-h2 text-default truncate">{{ APP_NAME }}</span>
             </NuxtLink>
             <UButton
               variant="ghost"

@@ -1,6 +1,6 @@
 {
   "app": {
-    "name": "DentalPin",
+    "name": "Denplant",
     "tagline": "Dental clinic management"
   },
   "demo": {
@@ -63,7 +63,7 @@
     "next": "Next",
     "back": "Back",
     "submit": "Create my clinic",
-    "success": "All set! Welcome to DentalPin",
+    "success": "All set! Welcome to Denplant",
     "firstNameRequired": "Enter the first name",
     "lastNameRequired": "Enter the last name",
     "emailRequired": "Enter the email",
@@ -935,7 +935,7 @@
       "afternoon": "Good afternoon",
       "evening": "Good evening"
     },
-    "welcome": "Welcome to DentalPin",
+    "welcome": "Welcome to Denplant",
     "welcomeMessage": "Start by creating your first patient.",
     "quickActions": {
       "newAppointment": "New appointment",
@@ -1227,14 +1227,14 @@
       "copy": "Copy link",
       "copied": "Link copied",
       "whatsapp": "Send via WhatsApp",
-      "shareText": "Hi {name}, here is your DentalPin access. Open it and choose your password: {url}",
+      "shareText": "Hi {name}, here is your Denplant access. Open it and choose your password: {url}",
       "secretNote": "Treat it like a password: anyone with the link can sign in to this account.",
       "passwordOptionalHelp": "Leave empty to generate an access link you can send by WhatsApp or email.",
       "passwordOptionalPlaceholder": "Optional",
       "createAndLink": "Create and generate link",
       "rowAction": "Access link",
       "setPasswordTitle": "Choose your password",
-      "setPasswordSubtitle": "You've been invited to DentalPin. Create your password to sign in.",
+      "setPasswordSubtitle": "You've been invited to Denplant. Create your password to sign in.",
       "setPasswordSubmit": "Save and sign in",
       "invalidToken": "This link is invalid or already used. Ask your clinic administrator for a new one."
     }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { fr, es, en, pt } from '@nuxt/ui/locale'
+import { APP_NAME } from '~/constants/branding'
 
 const { t, locale } = useI18n()
 
@@ -21,7 +22,7 @@ useHead(() => ({
 }))
 
 useSeoMeta({
-  title: 'DentalPin',
+  title: APP_NAME,
   description: t('app.tagline')
 })
 </script>

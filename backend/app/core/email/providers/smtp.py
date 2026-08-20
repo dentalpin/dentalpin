@@ -44,7 +44,7 @@ class SMTPProvider(EmailProvider):
         use_ssl: bool = False,
         timeout: int = 30,
         default_from_email: str = "noreply@example.com",
-        default_from_name: str = "DentalPin",
+        default_from_name: str = "Denplant",
     ):
         """Initialize the SMTP provider.
 

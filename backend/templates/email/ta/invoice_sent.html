@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 
-{% block title %}விலைப்பட்டியல் - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}விலைப்பட்டியல் - {{ clinic_name | default('Denplant') }}{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
 <p>வணக்கம் {{ patient_name }},</p>
 
 
-<p><strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட <strong>#{{ invoice_number }}</strong> விலைப்பட்டியலின் விவரங்கள் கீழே கொடுக்கப்பட்டுள்ளன:</p>
+<p><strong>{{ clinic_name | default('Denplant') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட <strong>#{{ invoice_number }}</strong> விலைப்பட்டியலின் விவரங்கள் கீழே கொடுக்கப்பட்டுள்ளன:</p>
 
 
 <div class="info-box">

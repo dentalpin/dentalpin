@@ -6,6 +6,9 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings loaded from environment variables."""
 
+    # Branding — visible product name shown in API metadata.
+    APP_NAME: str = "Denplant"
+
     # Database
     DATABASE_URL: str
 
@@ -78,7 +81,7 @@ class Settings(BaseSettings):
 
     # Default sender
     EMAIL_FROM_ADDRESS: str = "noreply@dentalpin.com"
-    EMAIL_FROM_NAME: str = "DentalPin"
+    EMAIL_FROM_NAME: str = "Denplant"
 
     # Copilot / agentic layer (app/core/llm/). OpenAI is the only live
     # provider in v1; per-clinic `copilot_settings` overrides provider +

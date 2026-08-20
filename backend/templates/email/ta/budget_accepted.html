@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 
-{% block title %}மதிப்பீடு ஏற்கப்பட்டது - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}மதிப்பீடு ஏற்கப்பட்டது - {{ clinic_name | default('Denplant') }}{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
 <p>வணக்கம் {{ patient_name }},</p>
 
 
-<p><strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட உங்கள் மதிப்பீடு <strong>#{{ budget_number }}</strong> ஏற்கப்பட்டுள்ளது.</p>
+<p><strong>{{ clinic_name | default('Denplant') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட உங்கள் மதிப்பீடு <strong>#{{ budget_number }}</strong> ஏற்கப்பட்டுள்ளது.</p>
 
 
 <div class="info-box">

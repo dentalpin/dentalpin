@@ -1,6 +1,7 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { readFileSync } from 'node:fs'
 import { isAbsolute, join, resolve } from 'node:path'
+import { APP_NAME } from './app/constants/branding'
 
 /**
  * Load Nuxt Layer paths from `modules.json`.
@@ -59,7 +60,7 @@ export default defineNuxtConfig({
   },
   app: {
     head: {
-      title: 'DentalPin',
+      title: APP_NAME,
       link: [
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' }
       ]
