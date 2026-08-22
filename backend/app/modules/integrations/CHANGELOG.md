@@ -6,6 +6,14 @@
   Ramón 2026-08-21): webhook subscription CRUD, outbox-backed delivery
   with retry/backoff/auto-disable, Stripe-style HMAC-SHA256 signing,
   and one working trigger (`patient.created`).
+- Added second Phase 1 trigger `appointment.completed`, per Ramón's
+  2026-08-21 email (supersedes the single-trigger PR #246 slice).
+  `manifest.depends` now includes `agenda`.
+- Added `ApiToken` model + admin CRUD (`GET/POST /tokens`, `POST
+  /tokens/{id}/revoke`), also per that email. Server-side generated
+  (`secrets.token_urlsafe(32)`), shown once, SHA-256-hashed at rest
+  (not Fernet/bcrypt — see `models.ApiToken` docstring). No consumer
+  endpoint yet — the public data-read API is a follow-up PR.
 - SSRF guard on `target_url` (`url_safety.py`) — not in the original
   issue scoping. Validated at subscription create/update and again
   immediately before every dispatch (a hostname can be repointed after

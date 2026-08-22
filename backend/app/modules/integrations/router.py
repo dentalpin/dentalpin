@@ -1,8 +1,10 @@
 """integrations HTTP surface — mounted at ``/api/v1/integrations/``.
 
-Admin CRUD for webhook subscriptions, staff-authenticated
-(``integrations.subscriptions.*``). Public data-read endpoints and
-API-token auth (issue #65 §2, §11) are follow-up scope — see
+Admin CRUD for webhook subscriptions and API tokens, staff-
+authenticated (``integrations.subscriptions.*``, ``integrations.
+tokens.*``). Tokens are issued/revoked here but have no consumer
+endpoint yet — the public data-read API (issue #65 §2, §11) that
+would authenticate with them is follow-up scope — see
 notes/dentalpin/65-integrations-api.md "Scope reality check".
 """
 
@@ -19,6 +21,9 @@ from app.core.schemas import ApiResponse
 from app.database import get_db
 
 from .schemas import (
+    ApiTokenCreate,
+    ApiTokenCreated,
+    ApiTokenResponse,
     WebhookSubscriptionCreate,
     WebhookSubscriptionCreated,
     WebhookSubscriptionResponse,
@@ -34,6 +39,13 @@ async def _get_owned_subscription(db: AsyncSession, clinic_id: UUID, subscriptio
     if subscription is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Subscription not found")
     return subscription
+
+
+async def _get_owned_token(db: AsyncSession, clinic_id: UUID, token_id: UUID):
+    token = await IntegrationsService.get_token(db, clinic_id, token_id)
+    if token is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Token not found")
+    return token
 
 
 @router.get(
@@ -99,3 +111,49 @@ async def delete_subscription(
 ) -> None:
     subscription = await _get_owned_subscription(db, ctx.clinic_id, subscription_id)
     await IntegrationsService.delete_subscription(db, subscription)
+
+
+@router.get("/tokens", response_model=ApiResponse[list[ApiTokenResponse]])
+async def list_tokens(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("integrations.tokens.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[list[ApiTokenResponse]]:
+    tokens = await IntegrationsService.list_tokens(db, ctx.clinic_id)
+    return ApiResponse(data=[ApiTokenResponse.model_validate(t) for t in tokens])
+
+
+@router.post(
+    "/tokens",
+    response_model=ApiResponse[ApiTokenCreated],
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_token(
+    data: ApiTokenCreate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("integrations.tokens.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[ApiTokenCreated]:
+    token, plaintext = await IntegrationsService.create_token(db, ctx.clinic_id, data.model_dump())
+    response = ApiTokenCreated(
+        **ApiTokenResponse.model_validate(token).model_dump(),
+        token=plaintext,
+    )
+    return ApiResponse(
+        data=response,
+        message="Store the token now — it will not be shown again.",
+    )
+
+
+@router.post("/tokens/{token_id}/revoke", response_model=ApiResponse[ApiTokenResponse])
+async def revoke_token(
+    token_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("integrations.tokens.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[ApiTokenResponse]:
+    token = await _get_owned_token(db, ctx.clinic_id, token_id)
+    if token.revoked_at is not None:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Token already revoked")
+    token = await IntegrationsService.revoke_token(db, token)
+    return ApiResponse(data=ApiTokenResponse.model_validate(token))

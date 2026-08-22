@@ -91,3 +91,26 @@ class WebhookSubscriptionCreated(WebhookSubscriptionResponse):
     """Create response only — carries the plaintext secret exactly once."""
 
     secret: str = Field(description="Shown once. Store it now; it cannot be retrieved again.")
+
+
+class ApiTokenCreate(BaseModel):
+    name: str = Field(max_length=255)
+    scopes: list[str] = Field(default_factory=list)
+
+
+class ApiTokenResponse(BaseModel):
+    id: UUID
+    name: str
+    scopes: list[str]
+    last_used_at: datetime | None
+    revoked_at: datetime | None
+    revoked_reason: str | None
+    created_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class ApiTokenCreated(ApiTokenResponse):
+    """Create response only — carries the plaintext token exactly once."""
+
+    token: str = Field(description="Shown once. Store it now; it cannot be retrieved again.")

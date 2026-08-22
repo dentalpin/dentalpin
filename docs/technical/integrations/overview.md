@@ -6,22 +6,29 @@ last_verified_commit: d426572
 # integrations — overview
 
 Webhook subscriptions (REST Hooks) for third-party automations —
-issue #65 Phase 1. Public data-read API, API-token auth, the full
-trigger catalog, and Zapier/Make/n8n integrations are follow-up
-scope, not in this module yet.
+issue #65 Phase 1. The public data-read API that will authenticate
+with the API tokens issued here, the full trigger catalog, and
+Zapier/Make/n8n integrations are follow-up scope, not in this module
+yet.
 
 ## What it is
 
 Admin-authenticated CRUD under `/api/v1/integrations/webhooks/
-subscriptions`. A clinic subscribes to one or more event types with a
-target URL; the module signs and delivers a JSON payload to that URL
-whenever a subscribed event fires. Phase 1 wires exactly one trigger,
-`patient.created`.
+subscriptions` and `/api/v1/integrations/tokens`. A clinic subscribes
+to one or more event types with a target URL; the module signs and
+delivers a JSON payload to that URL whenever a subscribed event
+fires. Phase 1 wires two triggers, `patient.created` and
+`appointment.completed`. A clinic can also issue bearer API tokens
+(name + scopes), shown once on creation, revocable — no endpoint
+consumes them yet.
 
 - `GET /api/v1/integrations/webhooks/subscriptions`
 - `POST /api/v1/integrations/webhooks/subscriptions`
 - `PATCH /api/v1/integrations/webhooks/subscriptions/{subscription_id}`
 - `DELETE /api/v1/integrations/webhooks/subscriptions/{subscription_id}`
+- `GET /api/v1/integrations/tokens`
+- `POST /api/v1/integrations/tokens`
+- `POST /api/v1/integrations/tokens/{token_id}/revoke`
 
 ## Data model
 
@@ -30,6 +37,10 @@ types, encrypted signing secret, auto-disable state).
 `webhook_deliveries` — both the outbox queue row and the audit record
 for one delivery attempt, same split as
 `notifications.models.CommunicationMessage`.
+`api_tokens` — clinic-owned bearer token (name, scopes, SHA-256
+`token_hash`, `revoked_at`/`revoked_reason`). Never Fernet-encrypted
+like the webhook secret — the plaintext is never read back, only
+looked up by hash.
 
 ## Delivery
 

@@ -1,21 +1,26 @@
 # integrations module
 
 Webhook subscriptions (REST Hooks) for third-party automations — issue
-#65. Phase 1 (narrow first slice, approved by Ramón 2026-08-21, see
+#65. Phase 1 (per Ramón's 2026-08-21 email, see
 `notes/dentalpin/65-integrations-api.md` in the contributor's own
-notes repo): subscription CRUD, outbox-backed delivery with retry/
-backoff/auto-disable, Stripe-style HMAC signing, and exactly one
-working trigger (`patient.created`). Public data-read API, API-token
-auth, the full trigger catalog, and the Zapier/Make/n8n integrations
-are follow-up PRs, not in this module yet.
+notes repo — supersedes the original PR #246 slice): subscription
+CRUD, outbox-backed delivery with retry/backoff/auto-disable,
+Stripe-style HMAC signing, two working triggers (`patient.created`,
+`appointment.completed`), and API tokens. The public data-read API
+that will authenticate with those tokens, the full trigger catalog,
+and the Zapier/Make/n8n integrations are follow-up PRs, not in this
+module yet.
 
 ## What it does
 
 Admin-authenticated CRUD under `/api/v1/integrations/webhooks/
-subscriptions` (JWT + `require_permission`, gated behind
-`integrations.subscriptions.read`/`.write`). A clinic subscribes to
-one or more event types with a target URL; the module signs and
+subscriptions` and `/api/v1/integrations/tokens` (JWT +
+`require_permission`, gated behind `integrations.subscriptions.read`/
+`.write` and `integrations.tokens.read`/`.write`). A clinic subscribes
+to one or more event types with a target URL; the module signs and
 delivers a JSON payload to that URL whenever a subscribed event fires.
+A clinic can also issue bearer API tokens (name + scopes), shown once
+on creation, revocable — no endpoint consumes them yet.
 
 ## Outbox
 
@@ -79,10 +84,25 @@ Every `WebhookSubscription`/`WebhookDelivery` query filters on
 403s on a cross-clinic subscription id, same as the rest of the repo's
 convention for not confirming another clinic's row exists.
 
+## API tokens
+
+`ApiToken.token_hash` is SHA-256 of the plaintext (fixed 64 hex
+chars), not the `Fernet`/`bcrypt` scheme used elsewhere in this
+module/repo — deliberate, not an inconsistency. It's never decrypted
+back out (unlike the webhook signing secret), so Fernet is wrong; it's
+never interactively typed by a human, so it doesn't need bcrypt's slow
+salted hash either — it needs a fast, indexable lookup by hash. Same
+generator/length as the webhook secret (`secrets.token_urlsafe(32)`),
+shown once on creation, never stored/returned again. Revocation
+mirrors `WebhookSubscription`'s own `disabled_at`/`disabled_reason`
+shape (`revoked_at`/`revoked_reason`, soft, not delete). No consumer
+endpoint exists yet — `scopes` (e.g. `patients:read`) is stored but
+unenforced until the public data-read API lands.
+
 ## Dependencies
 
-`manifest.depends = ["patients"]` — the one Phase 1 trigger is
-`patient.created`.
+`manifest.depends = ["patients", "agenda"]` — the two Phase 1 triggers
+are `patient.created` and `appointment.completed`.
 
 ## Lifecycle
 
@@ -90,7 +110,7 @@ convention for not confirming another clinic's row exists.
   modules), `removable=True`.
 - Own Alembic branch (`integrations`), rooted on core `"0001"` —
   `int_0001` (initial schema: `webhook_subscriptions`,
-  `webhook_deliveries`).
+  `webhook_deliveries`), `int_0002` (adds `api_tokens`).
 
 ## CHANGELOG
 

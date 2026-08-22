@@ -14,6 +14,8 @@ Admin-only in Phase 1 — every other role gets `[]` in
 |------------|--------|-------------|
 | `integrations.subscriptions.read` | List a clinic's webhook subscriptions | `GET /api/v1/integrations/webhooks/subscriptions` |
 | `integrations.subscriptions.write` | Create, update, or delete a webhook subscription | `POST`/`PATCH`/`DELETE /api/v1/integrations/webhooks/subscriptions[/{id}]` |
+| `integrations.tokens.read` | List a clinic's API tokens | `GET /api/v1/integrations/tokens` |
+| `integrations.tokens.write` | Create or revoke an API token | `POST /api/v1/integrations/tokens`, `POST /api/v1/integrations/tokens/{id}/revoke` |
 
 ## Role assignment
 

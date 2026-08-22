@@ -1,10 +1,11 @@
 """Integrations module - webhook subscriptions for third-party automations.
 
-Phase 1 (issue #65, narrow first slice approved by Ramón 2026-08-21):
-outbox infra + one working trigger (patient.created) + Stripe-style HMAC
-signing + subscription CRUD. Public data-read API, API tokens, the
-full trigger catalog, Zapier/Make apps, and admin UI are follow-up PRs
-— see notes/dentalpin/65-integrations-api.md.
+Phase 1 (issue #65, per Ramón's 2026-08-21 email — supersedes the
+original PR #246 slice): outbox infra + two working triggers
+(patient.created, appointment.completed) + Stripe-style HMAC signing +
+subscription CRUD + API tokens. Public data-read API, the full trigger
+catalog, Zapier/Make apps, and admin UI are follow-up PRs — see
+notes/dentalpin/65-integrations-api.md.
 """
 
 from fastapi import APIRouter
@@ -13,7 +14,7 @@ from app.core.events.types import EventType
 from app.core.plugins import BaseModule
 from app.core.scheduling import ScheduledJob
 
-from .models import WebhookDelivery, WebhookSubscription
+from .models import ApiToken, WebhookDelivery, WebhookSubscription
 from .router import router
 
 
@@ -25,7 +26,9 @@ class IntegrationsModule(BaseModule):
     - Outbox-backed delivery with retry/backoff, auto-disable on repeated
       failure
     - Stripe-style HMAC-SHA256 delivery signing
-    - One working trigger: patient.created
+    - Two working triggers: patient.created, appointment.completed
+    - API tokens (issued, hashed, revocable) — no consumer endpoint yet;
+      the public data-read API is a follow-up PR
     """
 
     manifest = {
@@ -35,7 +38,7 @@ class IntegrationsModule(BaseModule):
         "author": "DentalPin Core Team",
         "license": "BSL-1.1",
         "category": "official",
-        "depends": ["patients"],
+        "depends": ["patients", "agenda"],
         "installable": True,
         "auto_install": False,
         "removable": True,
@@ -49,7 +52,7 @@ class IntegrationsModule(BaseModule):
     }
 
     def get_models(self) -> list:
-        return [WebhookSubscription, WebhookDelivery]
+        return [WebhookSubscription, WebhookDelivery, ApiToken]
 
     def get_router(self) -> APIRouter:
         return router
@@ -71,6 +74,8 @@ class IntegrationsModule(BaseModule):
         return [
             "subscriptions.read",
             "subscriptions.write",
+            "tokens.read",
+            "tokens.write",
         ]
 
     def get_event_handlers(self) -> dict:
@@ -78,4 +83,5 @@ class IntegrationsModule(BaseModule):
 
         return {
             EventType.PATIENT_CREATED: IntegrationsHandlers.on_patient_created,
+            EventType.APPOINTMENT_COMPLETED: IntegrationsHandlers.on_appointment_completed,
         }

@@ -17,6 +17,7 @@ _This module does not publish any events._
 | Event | Handler | Effect |
 |-------|---------|--------|
 | `patient.created` | `integrations.handlers.IntegrationsHandlers.on_patient_created` | Transactional — queues one `WebhookDelivery` row per active subscription listing this event, on the publisher's own session. No network I/O; the scheduled `dispatch_outbox` tick sends it. |
+| `appointment.completed` | `integrations.handlers.IntegrationsHandlers.on_appointment_completed` | Same shape as `on_patient_created` — queues one `WebhookDelivery` row per active subscription listing this event. |
 
 ## Adding a new event
 

@@ -14,7 +14,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `appointment.cabinet_changed` | `EventType.APPOINTMENT_CABINET_CHANGED` | `agenda` | — |
 | `appointment.cancelled` | `EventType.APPOINTMENT_CANCELLED` | `agenda` | `copilot`, `notifications`, `patient_timeline`, `recalls`, `schedules` |
 | `appointment.checked_in` | `EventType.APPOINTMENT_CHECKED_IN` | `agenda` | `patient_timeline` |
-| `appointment.completed` | `EventType.APPOINTMENT_COMPLETED` | `agenda` | `patient_timeline`, `recalls`, `treatment_plan` |
+| `appointment.completed` | `EventType.APPOINTMENT_COMPLETED` | `agenda` | `integrations`, `patient_timeline`, `recalls`, `treatment_plan` |
 | `appointment.confirmed` | `EventType.APPOINTMENT_CONFIRMED` | `agenda` | `patient_timeline` |
 | `appointment.in_treatment` | `EventType.APPOINTMENT_IN_TREATMENT` | `agenda` | `patient_timeline` |
 | `appointment.no_show` | `EventType.APPOINTMENT_NO_SHOW` | `agenda` | `patient_timeline` |
@@ -151,6 +151,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Publishers:**
   - `agenda` — `backend/app/modules/agenda/service.py:734`
 - **Subscribers:**
+  - `integrations`
   - `patient_timeline`
   - `recalls`
   - `treatment_plan`

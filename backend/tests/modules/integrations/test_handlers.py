@@ -82,3 +82,62 @@ async def test_rollback_of_outer_transaction_discards_queued_delivery(
 
     rows = (await db_session.execute(select(WebhookDelivery))).scalars().all()
     assert rows == []
+
+
+APPOINTMENT_EVENT = "appointment.completed"
+
+
+@pytest.mark.asyncio
+async def test_on_appointment_completed_enqueues_delivery(db_session: AsyncSession, test_clinic):
+    await _subscription(db_session, test_clinic.id, event_types=(APPOINTMENT_EVENT,))
+
+    await IntegrationsHandlers.on_appointment_completed(
+        {"clinic_id": str(test_clinic.id), "appointment_id": "a1"}, db=db_session
+    )
+    await db_session.commit()
+
+    rows = (await db_session.execute(select(WebhookDelivery))).scalars().all()
+    assert len(rows) == 1
+    assert rows[0].event_type == APPOINTMENT_EVENT
+    assert rows[0].payload == {"clinic_id": str(test_clinic.id), "appointment_id": "a1"}
+
+
+@pytest.mark.asyncio
+async def test_on_appointment_completed_no_subscription_no_delivery(
+    db_session: AsyncSession, test_clinic
+):
+    await IntegrationsHandlers.on_appointment_completed(
+        {"clinic_id": str(test_clinic.id), "appointment_id": "a1"}, db=db_session
+    )
+    await db_session.commit()
+
+    rows = (await db_session.execute(select(WebhookDelivery))).scalars().all()
+    assert rows == []
+
+
+@pytest.mark.asyncio
+async def test_on_appointment_completed_malformed_payload_does_not_raise(
+    db_session: AsyncSession, test_clinic
+):
+    await IntegrationsHandlers.on_appointment_completed({"appointment_id": "a1"}, db=db_session)
+
+    rows = (await db_session.execute(select(WebhookDelivery))).scalars().all()
+    assert rows == []
+
+
+@pytest.mark.asyncio
+async def test_on_appointment_completed_does_not_cross_deliver_to_patient_created_sub(
+    db_session: AsyncSession, test_clinic
+):
+    """A subscription for patient.created only must not receive an
+    appointment.completed delivery — event-type filtering, not just
+    clinic filtering."""
+    await _subscription(db_session, test_clinic.id, event_types=(EVENT,))
+
+    await IntegrationsHandlers.on_appointment_completed(
+        {"clinic_id": str(test_clinic.id), "appointment_id": "a1"}, db=db_session
+    )
+    await db_session.commit()
+
+    rows = (await db_session.execute(select(WebhookDelivery))).scalars().all()
+    assert rows == []

@@ -98,3 +98,41 @@ class WebhookDelivery(Base, TimestampMixin):
 
     subscription: Mapped["WebhookSubscription"] = relationship(foreign_keys=[subscription_id])
     clinic: Mapped["Clinic"] = relationship(foreign_keys=[clinic_id])
+
+
+class ApiToken(Base, TimestampMixin):
+    """A bearer token issued to a clinic for third-party automations.
+
+    ``token_hash`` is SHA-256 of the plaintext, not bcrypt: the token is
+    a high-entropy ``secrets.token_urlsafe(32)`` value (same generator
+    as ``WebhookSubscription``'s signing secret), never a human-chosen
+    password, so it needs no slow/salted hash — only a fast, indexable
+    lookup by hash, which bcrypt's per-hash random salt can't give.
+    Plaintext is shown once, at creation, and never stored or returned
+    again.
+
+    Revocation mirrors ``WebhookSubscription``'s own
+    ``disabled_at``/``disabled_reason`` shape (soft revoke, not delete)
+    rather than a new pattern.
+
+    No endpoint depends on this yet (issue #65, Phase 1 per Ramón's
+    2026-08-21 email) — the public data-read API that will consume it
+    is a follow-up PR.
+    """
+
+    __tablename__ = "api_tokens"
+
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"), index=True)
+
+    name: Mapped[str] = mapped_column(String(255))
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    # Ordered list of scope strings, e.g. "patients:read" (issue #65 §2/§11).
+    # Not yet enforced anywhere — no consumer endpoint exists in Phase 1.
+    scopes: Mapped[list[str]] = mapped_column(JSONB)
+
+    last_used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
+    revoked_reason: Mapped[str | None] = mapped_column(String(255), default=None)
+
+    clinic: Mapped["Clinic"] = relationship(foreign_keys=[clinic_id])
