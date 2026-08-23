@@ -81,6 +81,7 @@ patient_relationships = "app.modules.patient_relationships:PatientRelationshipsM
 recall_reminders = "app.modules.recall_reminders:RecallRemindersModule"
 contacts = "app.modules.contacts:ContactsModule"
 integrations = "app.modules.integrations:IntegrationsModule"
+inventory = "app.modules.inventory:InventoryModule"
 
 [tool.setuptools.packages.find]
 where = ["."]
