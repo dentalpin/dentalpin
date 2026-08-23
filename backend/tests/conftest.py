@@ -52,6 +52,10 @@ from app.modules.india_gst.models import (  # noqa: F401
     IndiaGstInvoiceItem,
     IndiaGstSettings,
 )
+from app.modules.inventory.models import (  # noqa: F401
+    InventoryCategory,
+    InventoryItem,
+)
 from app.modules.media.models import Document, MediaAttachment  # noqa: F401
 from app.modules.odontogram.models import (  # noqa: F401
     OdontogramHistory,

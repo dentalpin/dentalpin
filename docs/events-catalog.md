@@ -10,126 +10,123 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 | Event | Constant | Publishers | Subscribers |
 |-------|----------|------------|-------------|
-| `agenda.visit_note_updated` | `EventType.AGENDA_VISIT_NOTE_UPDATED` | `agenda` | `patient_timeline` |
-| `appointment.cabinet_changed` | `EventType.APPOINTMENT_CABINET_CHANGED` | `agenda` | — |
-| `appointment.cancelled` | `EventType.APPOINTMENT_CANCELLED` | `agenda` | `copilot`, `notifications`, `patient_timeline`, `recalls`, `schedules` |
-| `appointment.checked_in` | `EventType.APPOINTMENT_CHECKED_IN` | `agenda` | `patient_timeline` |
-| `appointment.completed` | `EventType.APPOINTMENT_COMPLETED` | `agenda` | `integrations`, `patient_timeline`, `recalls`, `treatment_plan` |
-| `appointment.confirmed` | `EventType.APPOINTMENT_CONFIRMED` | `agenda` | `patient_timeline` |
-| `appointment.in_treatment` | `EventType.APPOINTMENT_IN_TREATMENT` | `agenda` | `patient_timeline` |
-| `appointment.no_show` | `EventType.APPOINTMENT_NO_SHOW` | `agenda` | `patient_timeline` |
-| `appointment.scheduled` | `EventType.APPOINTMENT_SCHEDULED` | `agenda` | `notifications`, `patient_timeline`, `recalls`, `schedules` |
-| `appointment.status_changed` | `EventType.APPOINTMENT_STATUS_CHANGED` | `agenda` | — |
-| `appointment.updated` | `EventType.APPOINTMENT_UPDATED` | `agenda` | `schedules` |
-| `budget.accepted` | `EventType.BUDGET_ACCEPTED` | `budget` | `notifications`, `patient_timeline`, `treatment_plan` |
-| `budget.cancelled` | `EventType.BUDGET_CANCELLED` | `budget` | `treatment_plan` |
+| `agenda.visit_note_updated` | `EventType.AGENDA_VISIT_NOTE_UPDATED` | — | `patient_timeline` |
+| `appointment.cabinet_changed` | `EventType.APPOINTMENT_CABINET_CHANGED` | — | — |
+| `appointment.cancelled` | `EventType.APPOINTMENT_CANCELLED` | — | `copilot`, `notifications`, `patient_timeline`, `recalls`, `schedules` |
+| `appointment.checked_in` | `EventType.APPOINTMENT_CHECKED_IN` | — | `patient_timeline` |
+| `appointment.completed` | `EventType.APPOINTMENT_COMPLETED` | — | `integrations`, `patient_timeline`, `recalls`, `treatment_plan` |
+| `appointment.confirmed` | `EventType.APPOINTMENT_CONFIRMED` | — | `patient_timeline` |
+| `appointment.in_treatment` | `EventType.APPOINTMENT_IN_TREATMENT` | — | `patient_timeline` |
+| `appointment.no_show` | `EventType.APPOINTMENT_NO_SHOW` | — | `patient_timeline` |
+| `appointment.scheduled` | `EventType.APPOINTMENT_SCHEDULED` | — | `notifications`, `patient_timeline`, `recalls`, `schedules` |
+| `appointment.status_changed` | `EventType.APPOINTMENT_STATUS_CHANGED` | — | — |
+| `appointment.updated` | `EventType.APPOINTMENT_UPDATED` | — | `schedules` |
+| `budget.accepted` | `EventType.BUDGET_ACCEPTED` | — | `notifications`, `patient_timeline`, `treatment_plan` |
+| `budget.cancelled` | `EventType.BUDGET_CANCELLED` | — | `treatment_plan` |
 | `budget.created` | `EventType.BUDGET_CREATED` | — | — |
-| `budget.expired` | `EventType.BUDGET_EXPIRED` | `budget` | `patient_timeline` |
-| `budget.rejected` | `EventType.BUDGET_REJECTED` | `budget` | `patient_timeline`, `treatment_plan` |
-| `budget.reminder_sent` | `EventType.BUDGET_REMINDER_SENT` | `budget` | `patient_timeline` |
-| `budget.renegotiated` | `EventType.BUDGET_RENEGOTIATED` | `budget` | `patient_timeline`, `treatment_plan` |
-| `budget.sent` | `EventType.BUDGET_SENT` | `budget` | `notifications`, `patient_timeline` |
-| `budget.superseded` | `EventType.BUDGET_SUPERSEDED` | `budget` | `treatment_plan` |
-| `budget.viewed` | `EventType.BUDGET_VIEWED` | `budget` | `patient_timeline` |
-| `clinic.created` | `EventType.CLINIC_CREATED` | `core:core` | `agenda`, `billing`, `catalog`, `schedules` |
-| `clinical_notes.administrative_created` | `EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED` | `clinical_notes` | `patient_timeline` |
-| `clinical_notes.appointment_administrative_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED` | `clinical_notes` | — |
-| `clinical_notes.appointment_clinical_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED` | `clinical_notes` | — |
-| `clinical_notes.diagnosis_created` | `EventType.CLINICAL_NOTE_DIAGNOSIS_CREATED` | `clinical_notes` | `patient_timeline` |
-| `clinical_notes.plan_created` | `EventType.CLINICAL_NOTE_PLAN_CREATED` | `clinical_notes` | `patient_timeline` |
-| `clinical_notes.treatment_created` | `EventType.CLINICAL_NOTE_TREATMENT_CREATED` | `clinical_notes` | `patient_timeline` |
+| `budget.expired` | `EventType.BUDGET_EXPIRED` | — | `patient_timeline` |
+| `budget.rejected` | `EventType.BUDGET_REJECTED` | — | `patient_timeline`, `treatment_plan` |
+| `budget.reminder_sent` | `EventType.BUDGET_REMINDER_SENT` | — | `patient_timeline` |
+| `budget.renegotiated` | `EventType.BUDGET_RENEGOTIATED` | — | `patient_timeline`, `treatment_plan` |
+| `budget.sent` | `EventType.BUDGET_SENT` | — | `notifications`, `patient_timeline` |
+| `budget.superseded` | `EventType.BUDGET_SUPERSEDED` | — | `treatment_plan` |
+| `budget.viewed` | `EventType.BUDGET_VIEWED` | — | `patient_timeline` |
+| `clinic.created` | `EventType.CLINIC_CREATED` | — | `agenda`, `billing`, `catalog`, `schedules` |
+| `clinical_notes.administrative_created` | `EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED` | — | `patient_timeline` |
+| `clinical_notes.appointment_administrative_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED` | — | — |
+| `clinical_notes.appointment_clinical_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED` | — | — |
+| `clinical_notes.diagnosis_created` | `EventType.CLINICAL_NOTE_DIAGNOSIS_CREATED` | — | `patient_timeline` |
+| `clinical_notes.plan_created` | `EventType.CLINICAL_NOTE_PLAN_CREATED` | — | `patient_timeline` |
+| `clinical_notes.treatment_created` | `EventType.CLINICAL_NOTE_TREATMENT_CREATED` | — | `patient_timeline` |
 | `copilot.budget.threshold_reached` | `EventType.COPILOT_BUDGET_THRESHOLD_REACHED` | — | — |
-| `copilot.digest.sent` | `EventType.COPILOT_DIGEST_SENT` | `copilot` | — |
-| `copilot.session.ended` | `EventType.COPILOT_SESSION_ENDED` | `copilot` | — |
-| `copilot.session.started` | `EventType.COPILOT_SESSION_STARTED` | `copilot` | — |
+| `copilot.digest.sent` | `EventType.COPILOT_DIGEST_SENT` | — | — |
+| `copilot.session.ended` | `EventType.COPILOT_SESSION_ENDED` | — | — |
+| `copilot.session.started` | `EventType.COPILOT_SESSION_STARTED` | — | — |
 | `copilot.tool.invoked` | `EventType.COPILOT_TOOL_INVOKED` | — | — |
 | `credit_note.issued` | `EventType.CREDIT_NOTE_ISSUED` | — | — |
 | `document.archived` | `EventType.DOCUMENT_ARCHIVED` | — | — |
-| `document.deleted` | `EventType.DOCUMENT_DELETED` | `media` | — |
-| `document.uploaded` | `EventType.DOCUMENT_UPLOADED` | `media` | `patient_timeline` |
-| `email.failed` | `EventType.EMAIL_FAILED` | `notifications` | `patient_timeline` |
-| `email.sent` | `EventType.EMAIL_SENT` | `notifications` | `patient_timeline` |
+| `document.deleted` | `EventType.DOCUMENT_DELETED` | — | — |
+| `document.uploaded` | `EventType.DOCUMENT_UPLOADED` | — | `patient_timeline` |
+| `email.failed` | `EventType.EMAIL_FAILED` | — | `patient_timeline` |
+| `email.sent` | `EventType.EMAIL_SENT` | — | `patient_timeline` |
 | `invoice.cancelled` | `EventType.INVOICE_CANCELLED` | — | — |
 | `invoice.created` | `EventType.INVOICE_CREATED` | — | — |
-| `invoice.issued` | `EventType.INVOICE_ISSUED` | `billing` | `patient_timeline` |
-| `invoice.paid` | `EventType.INVOICE_PAID` | `billing` | `patient_timeline`, `verifactu` |
+| `invoice.issued` | `EventType.INVOICE_ISSUED` | — | `patient_timeline` |
+| `invoice.paid` | `EventType.INVOICE_PAID` | — | `patient_timeline`, `verifactu` |
 | `invoice.partial_paid` | `EventType.INVOICE_PARTIAL_PAID` | — | — |
-| `invoice.sent` | `EventType.INVOICE_SENT` | `billing` | `notifications` |
+| `invoice.sent` | `EventType.INVOICE_SENT` | — | `notifications` |
 | `invoice.voided` | `EventType.INVOICE_VOIDED` | — | — |
-| `media.attachment_linked` | `EventType.ATTACHMENT_LINKED` | `media` | — |
-| `media.attachment_unlinked` | `EventType.ATTACHMENT_UNLINKED` | `media` | — |
-| `media.pair_created` | `EventType.PAIR_CREATED` | `media` | `patient_timeline` |
-| `media.pair_removed` | `EventType.PAIR_REMOVED` | `media` | — |
-| `media.photo_uploaded` | `EventType.PHOTO_UPLOADED` | `media` | `patient_timeline` |
-| `migration.binary.resolved` | `EventType.MIGRATION_BINARY_RESOLVED` | `migration_import` | — |
-| `migration.entity.persisted` | `EventType.MIGRATION_ENTITY_PERSISTED` | `migration_import` | — |
-| `migration.job.completed` | `EventType.MIGRATION_JOB_COMPLETED` | `migration_import` | — |
-| `migration.job.failed` | `EventType.MIGRATION_JOB_FAILED` | `migration_import` | — |
-| `migration.job.started` | `EventType.MIGRATION_JOB_STARTED` | `migration_import` | — |
-| `notification.delivered` | `EventType.NOTIFICATION_DELIVERED` | `notifications` | — |
-| `notification.failed` | `EventType.NOTIFICATION_FAILED` | `notifications` | — |
-| `notification.queued` | `EventType.NOTIFICATION_QUEUED` | `notifications` | — |
-| `notification.reply_received` | `EventType.NOTIFICATION_REPLY_RECEIVED` | `notifications` | `patient_timeline` |
-| `notification.sent` | `EventType.NOTIFICATION_SENT` | `notifications` | — |
-| `odontogram.condition.changed` | `EventType.ODONTOGRAM_CONDITION_CHANGED` | `odontogram` | — |
-| `odontogram.surface.updated` | `EventType.ODONTOGRAM_SURFACE_UPDATED` | `odontogram` | — |
-| `odontogram.tooth.updated` | `EventType.ODONTOGRAM_TOOTH_UPDATED` | `odontogram` | — |
-| `odontogram.treatment.added` | `EventType.ODONTOGRAM_TREATMENT_ADDED` | `odontogram` | — |
-| `odontogram.treatment.deleted` | `EventType.ODONTOGRAM_TREATMENT_DELETED` | `odontogram` | — |
-| `odontogram.treatment.performed` | `EventType.ODONTOGRAM_TREATMENT_PERFORMED` | `odontogram` | `patient_timeline`, `payments`, `periodontogram`, `treatment_plan` |
-| `odontogram.treatment.status_changed` | `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED` | `odontogram` | — |
-| `patient.archived` | `EventType.PATIENT_ARCHIVED` | `patients` | `media`, `periodontogram`, `recalls` |
-| `patient.created` | `EventType.PATIENT_CREATED` | `patients` | `integrations`, `notifications` |
-| `patient.medical_updated` | `EventType.PATIENT_MEDICAL_UPDATED` | `patients_clinical` | `patient_timeline` |
-| `patient.updated` | `EventType.PATIENT_UPDATED` | `patients` | — |
-| `payment.allocated` | `EventType.PAYMENT_ALLOCATED` | `payments` | `billing` |
-| `payment.recorded` | `EventType.PAYMENT_RECORDED` | `payments` | — |
-| `payment.refunded` | `EventType.PAYMENT_REFUNDED` | `payments` | `billing` |
+| `media.attachment_linked` | `EventType.ATTACHMENT_LINKED` | — | — |
+| `media.attachment_unlinked` | `EventType.ATTACHMENT_UNLINKED` | — | — |
+| `media.pair_created` | `EventType.PAIR_CREATED` | — | `patient_timeline` |
+| `media.pair_removed` | `EventType.PAIR_REMOVED` | — | — |
+| `media.photo_uploaded` | `EventType.PHOTO_UPLOADED` | — | `patient_timeline` |
+| `migration.binary.resolved` | `EventType.MIGRATION_BINARY_RESOLVED` | — | — |
+| `migration.entity.persisted` | `EventType.MIGRATION_ENTITY_PERSISTED` | — | — |
+| `migration.job.completed` | `EventType.MIGRATION_JOB_COMPLETED` | — | — |
+| `migration.job.failed` | `EventType.MIGRATION_JOB_FAILED` | — | — |
+| `migration.job.started` | `EventType.MIGRATION_JOB_STARTED` | — | — |
+| `notification.delivered` | `EventType.NOTIFICATION_DELIVERED` | — | — |
+| `notification.failed` | `EventType.NOTIFICATION_FAILED` | — | — |
+| `notification.queued` | `EventType.NOTIFICATION_QUEUED` | — | — |
+| `notification.reply_received` | `EventType.NOTIFICATION_REPLY_RECEIVED` | — | `patient_timeline` |
+| `notification.sent` | `EventType.NOTIFICATION_SENT` | — | — |
+| `odontogram.condition.changed` | `EventType.ODONTOGRAM_CONDITION_CHANGED` | — | — |
+| `odontogram.surface.updated` | `EventType.ODONTOGRAM_SURFACE_UPDATED` | — | — |
+| `odontogram.tooth.updated` | `EventType.ODONTOGRAM_TOOTH_UPDATED` | — | — |
+| `odontogram.treatment.added` | `EventType.ODONTOGRAM_TREATMENT_ADDED` | — | — |
+| `odontogram.treatment.deleted` | `EventType.ODONTOGRAM_TREATMENT_DELETED` | — | — |
+| `odontogram.treatment.performed` | `EventType.ODONTOGRAM_TREATMENT_PERFORMED` | — | `patient_timeline`, `payments`, `periodontogram`, `treatment_plan` |
+| `odontogram.treatment.status_changed` | `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED` | — | — |
+| `patient.archived` | `EventType.PATIENT_ARCHIVED` | — | `media`, `periodontogram`, `recalls` |
+| `patient.created` | `EventType.PATIENT_CREATED` | — | `integrations`, `notifications` |
+| `patient.medical_updated` | `EventType.PATIENT_MEDICAL_UPDATED` | — | `patient_timeline` |
+| `patient.updated` | `EventType.PATIENT_UPDATED` | — | — |
+| `payment.allocated` | `EventType.PAYMENT_ALLOCATED` | — | `billing` |
+| `payment.recorded` | `EventType.PAYMENT_RECORDED` | — | — |
+| `payment.refunded` | `EventType.PAYMENT_REFUNDED` | — | `billing` |
 | `payment.voided` | `EventType.PAYMENT_VOIDED` | — | — |
-| `periodontogram.snapshot.closed` | `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED` | `periodontogram` | — |
-| `recall.cancelled` | `EventType.RECALL_CANCELLED` | `recalls` | — |
-| `recall.completed` | `EventType.RECALL_COMPLETED` | `recalls` | — |
-| `recall.created` | `EventType.RECALL_CREATED` | `recalls` | `recall_reminders` |
+| `periodontogram.snapshot.closed` | `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED` | — | — |
+| `recall.cancelled` | `EventType.RECALL_CANCELLED` | — | — |
+| `recall.completed` | `EventType.RECALL_COMPLETED` | — | — |
+| `recall.created` | `EventType.RECALL_CREATED` | — | `recall_reminders` |
 | `recall.due` | `EventType.RECALL_DUE` | — | — |
-| `recall.snoozed` | `EventType.RECALL_SNOOZED` | `recalls` | — |
+| `recall.snoozed` | `EventType.RECALL_SNOOZED` | — | — |
 | `tenant.resolved` | `EventType.TENANT_RESOLVED` | — | — |
 | `treatment.completed` | `EventType.TREATMENT_COMPLETED` | — | — |
-| `treatment_plan.budget_sync_requested` | `EventType.TREATMENT_PLAN_BUDGET_SYNC_REQUESTED` | `treatment_plan` | `budget` |
-| `treatment_plan.closed` | `EventType.TREATMENT_PLAN_CLOSED` | `treatment_plan` | `patient_timeline` |
-| `treatment_plan.confirmed` | `EventType.TREATMENT_PLAN_CONFIRMED` | `treatment_plan` | `patient_timeline` |
-| `treatment_plan.created` | `EventType.TREATMENT_PLAN_CREATED` | `treatment_plan` | `patient_timeline` |
-| `treatment_plan.item_completed_without_note` | `EventType.TREATMENT_PLAN_ITEM_COMPLETED_WITHOUT_NOTE` | `treatment_plan` | `patient_timeline` |
-| `treatment_plan.item_session_completed` | `EventType.TREATMENT_PLAN_ITEM_SESSION_COMPLETED` | `treatment_plan` | `payments` |
-| `treatment_plan.items_reordered` | `EventType.TREATMENT_PLAN_ITEMS_REORDERED` | `treatment_plan` | — |
-| `treatment_plan.reactivated` | `EventType.TREATMENT_PLAN_REACTIVATED` | `treatment_plan` | `patient_timeline` |
-| `treatment_plan.status_changed` | `EventType.TREATMENT_PLAN_STATUS_CHANGED` | `treatment_plan` | — |
-| `treatment_plan.treatment_added` | `EventType.TREATMENT_PLAN_TREATMENT_ADDED` | `treatment_plan` | `budget` |
-| `treatment_plan.treatment_completed` | `EventType.TREATMENT_PLAN_TREATMENT_COMPLETED` | `treatment_plan` | `patient_timeline`, `recalls` |
-| `treatment_plan.treatment_removed` | `EventType.TREATMENT_PLAN_TREATMENT_REMOVED` | `treatment_plan` | `budget` |
-| `verifactu.record.rejected` | `EventType.VERIFACTU_RECORD_REJECTED` | `verifactu` | `verifactu` |
+| `treatment_plan.budget_sync_requested` | `EventType.TREATMENT_PLAN_BUDGET_SYNC_REQUESTED` | — | `budget` |
+| `treatment_plan.closed` | `EventType.TREATMENT_PLAN_CLOSED` | — | `patient_timeline` |
+| `treatment_plan.confirmed` | `EventType.TREATMENT_PLAN_CONFIRMED` | — | `patient_timeline` |
+| `treatment_plan.created` | `EventType.TREATMENT_PLAN_CREATED` | — | `patient_timeline` |
+| `treatment_plan.item_completed_without_note` | `EventType.TREATMENT_PLAN_ITEM_COMPLETED_WITHOUT_NOTE` | — | `patient_timeline` |
+| `treatment_plan.item_session_completed` | `EventType.TREATMENT_PLAN_ITEM_SESSION_COMPLETED` | — | `payments` |
+| `treatment_plan.items_reordered` | `EventType.TREATMENT_PLAN_ITEMS_REORDERED` | — | — |
+| `treatment_plan.reactivated` | `EventType.TREATMENT_PLAN_REACTIVATED` | — | `patient_timeline` |
+| `treatment_plan.status_changed` | `EventType.TREATMENT_PLAN_STATUS_CHANGED` | — | — |
+| `treatment_plan.treatment_added` | `EventType.TREATMENT_PLAN_TREATMENT_ADDED` | — | `budget` |
+| `treatment_plan.treatment_completed` | `EventType.TREATMENT_PLAN_TREATMENT_COMPLETED` | — | `patient_timeline`, `recalls` |
+| `treatment_plan.treatment_removed` | `EventType.TREATMENT_PLAN_TREATMENT_REMOVED` | — | `budget` |
+| `verifactu.record.rejected` | `EventType.VERIFACTU_RECORD_REJECTED` | — | `verifactu` |
 
 ## Detail
 
 ### `agenda.visit_note_updated`
 
 - **Constant:** `EventType.AGENDA_VISIT_NOTE_UPDATED`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:865`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `appointment.cabinet_changed`
 
 - **Constant:** `EventType.APPOINTMENT_CABINET_CHANGED`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:802`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `appointment.cancelled`
 
 - **Constant:** `EventType.APPOINTMENT_CANCELLED`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:740`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `copilot`
   - `notifications`
@@ -140,16 +137,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `appointment.checked_in`
 
 - **Constant:** `EventType.APPOINTMENT_CHECKED_IN`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:737`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `appointment.completed`
 
 - **Constant:** `EventType.APPOINTMENT_COMPLETED`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:739`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `integrations`
   - `patient_timeline`
@@ -159,32 +154,28 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `appointment.confirmed`
 
 - **Constant:** `EventType.APPOINTMENT_CONFIRMED`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:736`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `appointment.in_treatment`
 
 - **Constant:** `EventType.APPOINTMENT_IN_TREATMENT`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:738`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `appointment.no_show`
 
 - **Constant:** `EventType.APPOINTMENT_NO_SHOW`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:741`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `appointment.scheduled`
 
 - **Constant:** `EventType.APPOINTMENT_SCHEDULED`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:504`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `notifications`
   - `patient_timeline`
@@ -194,23 +185,20 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `appointment.status_changed`
 
 - **Constant:** `EventType.APPOINTMENT_STATUS_CHANGED`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:731`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `appointment.updated`
 
 - **Constant:** `EventType.APPOINTMENT_UPDATED`
-- **Publishers:**
-  - `agenda` — `backend/app/modules/agenda/service.py:632`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `schedules`
 
 ### `budget.accepted`
 
 - **Constant:** `EventType.BUDGET_ACCEPTED`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/workflow.py:317`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `notifications`
   - `patient_timeline`
@@ -219,8 +207,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `budget.cancelled`
 
 - **Constant:** `EventType.BUDGET_CANCELLED`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/workflow.py:451`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `treatment_plan`
 
@@ -233,16 +220,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `budget.expired`
 
 - **Constant:** `EventType.BUDGET_EXPIRED`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/workflow.py:520`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `budget.rejected`
 
 - **Constant:** `EventType.BUDGET_REJECTED`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/workflow.py:396`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
   - `treatment_plan`
@@ -250,16 +235,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `budget.reminder_sent`
 
 - **Constant:** `EventType.BUDGET_REMINDER_SENT`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/workflow.py:641`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `budget.renegotiated`
 
 - **Constant:** `EventType.BUDGET_RENEGOTIATED`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/workflow.py:585`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
   - `treatment_plan`
@@ -267,8 +250,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `budget.sent`
 
 - **Constant:** `EventType.BUDGET_SENT`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/workflow.py:161`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `notifications`
   - `patient_timeline`
@@ -276,24 +258,21 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `budget.superseded`
 
 - **Constant:** `EventType.BUDGET_SUPERSEDED`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/router.py:544`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `treatment_plan`
 
 ### `budget.viewed`
 
 - **Constant:** `EventType.BUDGET_VIEWED`
-- **Publishers:**
-  - `budget` — `backend/app/modules/budget/workflow.py:614`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `clinic.created`
 
 - **Constant:** `EventType.CLINIC_CREATED`
-- **Publishers:**
-  - `core:core` — `backend/app/core/auth/router.py:189`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `agenda`
   - `billing`
@@ -303,46 +282,40 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `clinical_notes.administrative_created`
 
 - **Constant:** `EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED`
-- **Publishers:**
-  - `clinical_notes` — `backend/app/modules/clinical_notes/service.py:81`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `clinical_notes.appointment_administrative_created`
 
 - **Constant:** `EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED`
-- **Publishers:**
-  - `clinical_notes` — `backend/app/modules/clinical_notes/service.py:87`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `clinical_notes.appointment_clinical_created`
 
 - **Constant:** `EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED`
-- **Publishers:**
-  - `clinical_notes` — `backend/app/modules/clinical_notes/service.py:85`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `clinical_notes.diagnosis_created`
 
 - **Constant:** `EventType.CLINICAL_NOTE_DIAGNOSIS_CREATED`
-- **Publishers:**
-  - `clinical_notes` — `backend/app/modules/clinical_notes/service.py:82`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `clinical_notes.plan_created`
 
 - **Constant:** `EventType.CLINICAL_NOTE_PLAN_CREATED`
-- **Publishers:**
-  - `clinical_notes` — `backend/app/modules/clinical_notes/service.py:84`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `clinical_notes.treatment_created`
 
 - **Constant:** `EventType.CLINICAL_NOTE_TREATMENT_CREATED`
-- **Publishers:**
-  - `clinical_notes` — `backend/app/modules/clinical_notes/service.py:83`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
@@ -355,22 +328,19 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `copilot.digest.sent`
 
 - **Constant:** `EventType.COPILOT_DIGEST_SENT`
-- **Publishers:**
-  - `copilot` — `backend/app/modules/copilot/tasks.py:174`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `copilot.session.ended`
 
 - **Constant:** `EventType.COPILOT_SESSION_ENDED`
-- **Publishers:**
-  - `copilot` — `backend/app/modules/copilot/router.py:194`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `copilot.session.started`
 
 - **Constant:** `EventType.COPILOT_SESSION_STARTED`
-- **Publishers:**
-  - `copilot` — `backend/app/modules/copilot/router.py:134`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `copilot.tool.invoked`
@@ -394,31 +364,27 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `document.deleted`
 
 - **Constant:** `EventType.DOCUMENT_DELETED`
-- **Publishers:**
-  - `media` — `backend/app/modules/media/service.py:218`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `document.uploaded`
 
 - **Constant:** `EventType.DOCUMENT_UPLOADED`
-- **Publishers:**
-  - `media` — `backend/app/modules/media/service.py:167`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `email.failed`
 
 - **Constant:** `EventType.EMAIL_FAILED`
-- **Publishers:**
-  - `notifications` — `backend/app/modules/notifications/gateway.py:565`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `email.sent`
 
 - **Constant:** `EventType.EMAIL_SENT`
-- **Publishers:**
-  - `notifications` — `backend/app/modules/notifications/gateway.py:563`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
@@ -437,16 +403,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `invoice.issued`
 
 - **Constant:** `EventType.INVOICE_ISSUED`
-- **Publishers:**
-  - `billing` — `backend/app/modules/billing/workflow.py:275`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `invoice.paid`
 
 - **Constant:** `EventType.INVOICE_PAID`
-- **Publishers:**
-  - `billing` — `backend/app/modules/billing/workflow.py:467`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
   - `verifactu`
@@ -460,8 +424,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `invoice.sent`
 
 - **Constant:** `EventType.INVOICE_SENT`
-- **Publishers:**
-  - `billing` — `backend/app/modules/billing/router.py:702`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `notifications`
 
@@ -474,151 +437,130 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `media.attachment_linked`
 
 - **Constant:** `EventType.ATTACHMENT_LINKED`
-- **Publishers:**
-  - `media` — `backend/app/modules/media/service.py:510`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `media.attachment_unlinked`
 
 - **Constant:** `EventType.ATTACHMENT_UNLINKED`
-- **Publishers:**
-  - `media` — `backend/app/modules/media/service.py:546`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `media.pair_created`
 
 - **Constant:** `EventType.PAIR_CREATED`
-- **Publishers:**
-  - `media` — `backend/app/modules/media/service.py:382`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `media.pair_removed`
 
 - **Constant:** `EventType.PAIR_REMOVED`
-- **Publishers:**
-  - `media` — `backend/app/modules/media/service.py:406`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `media.photo_uploaded`
 
 - **Constant:** `EventType.PHOTO_UPLOADED`
-- **Publishers:**
-  - `media` — `backend/app/modules/media/service.py:181`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `migration.binary.resolved`
 
 - **Constant:** `EventType.MIGRATION_BINARY_RESOLVED`
-- **Publishers:**
-  - `migration_import` — `backend/app/modules/migration_import/events.py:54`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `migration.entity.persisted`
 
 - **Constant:** `EventType.MIGRATION_ENTITY_PERSISTED`
-- **Publishers:**
-  - `migration_import` — `backend/app/modules/migration_import/events.py:65`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `migration.job.completed`
 
 - **Constant:** `EventType.MIGRATION_JOB_COMPLETED`
-- **Publishers:**
-  - `migration_import` — `backend/app/modules/migration_import/events.py:35`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `migration.job.failed`
 
 - **Constant:** `EventType.MIGRATION_JOB_FAILED`
-- **Publishers:**
-  - `migration_import` — `backend/app/modules/migration_import/events.py:47`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `migration.job.started`
 
 - **Constant:** `EventType.MIGRATION_JOB_STARTED`
-- **Publishers:**
-  - `migration_import` — `backend/app/modules/migration_import/events.py:26`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `notification.delivered`
 
 - **Constant:** `EventType.NOTIFICATION_DELIVERED`
-- **Publishers:**
-  - `notifications` — `backend/app/modules/notifications/gateway.py:326`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `notification.failed`
 
 - **Constant:** `EventType.NOTIFICATION_FAILED`
-- **Publishers:**
-  - `notifications` — `backend/app/modules/notifications/gateway.py:296`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `notification.queued`
 
 - **Constant:** `EventType.NOTIFICATION_QUEUED`
-- **Publishers:**
-  - `notifications` — `backend/app/modules/notifications/gateway.py:195`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `notification.reply_received`
 
 - **Constant:** `EventType.NOTIFICATION_REPLY_RECEIVED`
-- **Publishers:**
-  - `notifications` — `backend/app/modules/notifications/gateway.py:386`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `notification.sent`
 
 - **Constant:** `EventType.NOTIFICATION_SENT`
-- **Publishers:**
-  - `notifications` — `backend/app/modules/notifications/gateway.py:283`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `odontogram.condition.changed`
 
 - **Constant:** `EventType.ODONTOGRAM_CONDITION_CHANGED`
-- **Publishers:**
-  - `odontogram` — `backend/app/modules/odontogram/service.py:173`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `odontogram.surface.updated`
 
 - **Constant:** `EventType.ODONTOGRAM_SURFACE_UPDATED`
-- **Publishers:**
-  - `odontogram` — `backend/app/modules/odontogram/service.py:207`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `odontogram.tooth.updated`
 
 - **Constant:** `EventType.ODONTOGRAM_TOOTH_UPDATED`
-- **Publishers:**
-  - `odontogram` — `backend/app/modules/odontogram/service.py:275`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `odontogram.treatment.added`
 
 - **Constant:** `EventType.ODONTOGRAM_TREATMENT_ADDED`
-- **Publishers:**
-  - `odontogram` — `backend/app/modules/odontogram/service.py:732`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `odontogram.treatment.deleted`
 
 - **Constant:** `EventType.ODONTOGRAM_TREATMENT_DELETED`
-- **Publishers:**
-  - `odontogram` — `backend/app/modules/odontogram/service.py:893`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `odontogram.treatment.performed`
 
 - **Constant:** `EventType.ODONTOGRAM_TREATMENT_PERFORMED`
-- **Publishers:**
-  - `odontogram` — `backend/app/modules/odontogram/service.py:833`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
   - `payments`
@@ -628,15 +570,13 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `odontogram.treatment.status_changed`
 
 - **Constant:** `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED`
-- **Publishers:**
-  - `odontogram` — `backend/app/modules/odontogram/service.py:776`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `patient.archived`
 
 - **Constant:** `EventType.PATIENT_ARCHIVED`
-- **Publishers:**
-  - `patients` — `backend/app/modules/patients/service.py:301`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `media`
   - `periodontogram`
@@ -645,8 +585,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `patient.created`
 
 - **Constant:** `EventType.PATIENT_CREATED`
-- **Publishers:**
-  - `patients` — `backend/app/modules/patients/service.py:267`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `integrations`
   - `notifications`
@@ -654,38 +593,33 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `patient.medical_updated`
 
 - **Constant:** `EventType.PATIENT_MEDICAL_UPDATED`
-- **Publishers:**
-  - `patients_clinical` — `backend/app/modules/patients_clinical/router.py:94`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `patient.updated`
 
 - **Constant:** `EventType.PATIENT_UPDATED`
-- **Publishers:**
-  - `patients` — `backend/app/modules/patients/service.py:286`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `payment.allocated`
 
 - **Constant:** `EventType.PAYMENT_ALLOCATED`
-- **Publishers:**
-  - `payments` — `backend/app/modules/payments/workflow.py:79`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `billing`
 
 ### `payment.recorded`
 
 - **Constant:** `EventType.PAYMENT_RECORDED`
-- **Publishers:**
-  - `payments` — `backend/app/modules/payments/workflow.py:184`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `payment.refunded`
 
 - **Constant:** `EventType.PAYMENT_REFUNDED`
-- **Publishers:**
-  - `payments` — `backend/app/modules/payments/workflow.py:362`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `billing`
 
@@ -698,29 +632,25 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `periodontogram.snapshot.closed`
 
 - **Constant:** `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED`
-- **Publishers:**
-  - `periodontogram` — `backend/app/modules/periodontogram/service.py:374`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `recall.cancelled`
 
 - **Constant:** `EventType.RECALL_CANCELLED`
-- **Publishers:**
-  - `recalls` — `backend/app/modules/recalls/service.py:376`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `recall.completed`
 
 - **Constant:** `EventType.RECALL_COMPLETED`
-- **Publishers:**
-  - `recalls` — `backend/app/modules/recalls/service.py:393`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `recall.created`
 
 - **Constant:** `EventType.RECALL_CREATED`
-- **Publishers:**
-  - `recalls` — `backend/app/modules/recalls/service.py:298`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `recall_reminders`
 
@@ -733,8 +663,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `recall.snoozed`
 
 - **Constant:** `EventType.RECALL_SNOOZED`
-- **Publishers:**
-  - `recalls` — `backend/app/modules/recalls/service.py:356`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `tenant.resolved`
@@ -752,87 +681,75 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `treatment_plan.budget_sync_requested`
 
 - **Constant:** `EventType.TREATMENT_PLAN_BUDGET_SYNC_REQUESTED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1315`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `budget`
 
 ### `treatment_plan.closed`
 
 - **Constant:** `EventType.TREATMENT_PLAN_CLOSED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1798`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `treatment_plan.confirmed`
 
 - **Constant:** `EventType.TREATMENT_PLAN_CONFIRMED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1658`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `treatment_plan.created`
 
 - **Constant:** `EventType.TREATMENT_PLAN_CREATED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:346`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `treatment_plan.item_completed_without_note`
 
 - **Constant:** `EventType.TREATMENT_PLAN_ITEM_COMPLETED_WITHOUT_NOTE`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1007`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `treatment_plan.item_session_completed`
 
 - **Constant:** `EventType.TREATMENT_PLAN_ITEM_SESSION_COMPLETED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:900`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `payments`
 
 ### `treatment_plan.items_reordered`
 
 - **Constant:** `EventType.TREATMENT_PLAN_ITEMS_REORDERED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:759`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `treatment_plan.reactivated`
 
 - **Constant:** `EventType.TREATMENT_PLAN_REACTIVATED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:1844`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
 
 ### `treatment_plan.status_changed`
 
 - **Constant:** `EventType.TREATMENT_PLAN_STATUS_CHANGED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:441`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
 
 ### `treatment_plan.treatment_added`
 
 - **Constant:** `EventType.TREATMENT_PLAN_TREATMENT_ADDED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:622`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `budget`
 
 ### `treatment_plan.treatment_completed`
 
 - **Constant:** `EventType.TREATMENT_PLAN_TREATMENT_COMPLETED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/events.py:100`
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:992`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `patient_timeline`
   - `recalls`
@@ -840,15 +757,13 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 ### `treatment_plan.treatment_removed`
 
 - **Constant:** `EventType.TREATMENT_PLAN_TREATMENT_REMOVED`
-- **Publishers:**
-  - `treatment_plan` — `backend/app/modules/treatment_plan/service.py:823`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `budget`
 
 ### `verifactu.record.rejected`
 
 - **Constant:** `EventType.VERIFACTU_RECORD_REJECTED`
-- **Publishers:**
-  - `verifactu` — `backend/app/modules/verifactu/services/submission_queue.py:271`
+- **Publishers:** _none in tree — declared but unused_
 - **Subscribers:**
   - `verifactu`
