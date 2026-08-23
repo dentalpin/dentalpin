@@ -20,6 +20,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `copilot` | 0.1.0 | official | — | auto | yes | 5 | 0 | 1 | yes |
 | `india_gst` | 0.1.0 | official | billing, catalog | manual | yes | 4 | 0 | 0 | yes |
 | `integrations` | 0.1.0 | official | patients | manual | yes | 4 | 0 | 2 | no |
+| `inventory` | 0.1.0 | official | — | manual | yes | 3 | 0 | 0 | yes |
 | `media` | 0.2.0 | official | patients | auto | no | 4 | 0 | 1 | yes |
 | `migration_import` | 0.1.0 | official | patients, patients_clinical, clinical_notes, agenda, schedules, recalls, catalog, budget, odontogram, treatment_plan, billing, payments, media | manual | yes | 4 | 0 | 0 | yes |
 | `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 8 | 0 | 6 | yes |
@@ -224,6 +225,23 @@ Webhook subscriptions (REST Hooks) for third-party automations.
 - **Events consumed:**
   - `appointment.completed`
   - `patient.created`
+
+### `inventory` — v0.1.0
+
+Clinic stock list: item tracking, categories, low-stock alerts, and atomic stock adjustments.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** —
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `inventory.delete`
+  - `inventory.read`
+  - `inventory.write`
+- **Events emitted:** —
+- **Events consumed:** —
 
 ### `media` — v0.2.0
 
