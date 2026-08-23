@@ -1,0 +1,33 @@
+{
+  "inventory": {
+    "title": "Inventaire",
+    "addItem": "Ajouter un article",
+    "editItem": "Modifier l'article",
+    "code": "Code",
+    "name": "Nom",
+    "quantity": "Quantité",
+    "minQuantity": "Min",
+    "unit": "Unité",
+    "location": "Emplacement",
+    "supplier": "Fournisseur",
+    "description": "Description",
+    "category": "Catégorie",
+    "noCategory": "Pas de catégorie",
+    "search": "Rechercher par code, nom ou fournisseur…",
+    "filterByCategory": "Filtrer par catégorie",
+    "lowStockOnly": "Stock bas uniquement",
+    "lowStockAlerts": "Alertes stock bas",
+    "totalItems": "Total articles",
+    "lowStockCount": "Stock bas",
+    "outOfStockCount": "Rupture de stock",
+    "totalQuantity": "Quantité totale",
+    "adjustStock": "Ajuster le stock",
+    "currentStock": "Stock actuel",
+    "deltaPlaceholder": "Quantité (positif = ajouter, négatif = retirer)",
+    "deltaHelp": "Positif pour ajouter du stock, négatif pour retirer. Ne peut pas descendre en dessous de zéro.",
+    "reason": "Raison (facultatif)",
+    "confirmDelete": "Êtes-vous sûr de vouloir supprimer cet article ?",
+    "prev": "Précédent",
+    "next": "Suivant"
+  }
+}

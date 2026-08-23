@@ -1,0 +1,33 @@
+{
+  "inventory": {
+    "title": "Inventory",
+    "addItem": "Add item",
+    "editItem": "Edit item",
+    "code": "Code",
+    "name": "Name",
+    "quantity": "Quantity",
+    "minQuantity": "Min qty",
+    "unit": "Unit",
+    "location": "Location",
+    "supplier": "Supplier",
+    "description": "Description",
+    "category": "Category",
+    "noCategory": "No category",
+    "search": "Search by code, name or supplier…",
+    "filterByCategory": "Filter by category",
+    "lowStockOnly": "Low stock only",
+    "lowStockAlerts": "Low stock alerts",
+    "totalItems": "Total items",
+    "lowStockCount": "Low stock",
+    "outOfStockCount": "Out of stock",
+    "totalQuantity": "Total quantity",
+    "adjustStock": "Adjust stock",
+    "currentStock": "Current stock",
+    "deltaPlaceholder": "Amount (positive = add, negative = subtract)",
+    "deltaHelp": "Positive to add stock, negative to subtract. Cannot go below zero.",
+    "reason": "Reason (optional)",
+    "confirmDelete": "Are you sure you want to delete this item?",
+    "prev": "Previous",
+    "next": "Next"
+  }
+}
