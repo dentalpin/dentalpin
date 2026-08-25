@@ -15,7 +15,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from fastapi import HTTPException, status
-from sqlalchemy import func, select, update
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import event_bus
@@ -227,29 +227,29 @@ class InventoryService:
         unclamped guard rejected the delta (caller decides: 409 for manual
         adjustments).
         """
-        new_value = (
-            func.greatest(InventoryItem.stock_quantity + delta, 0)
-            if clamp_at_zero
-            else InventoryItem.stock_quantity + delta
-        )
-        # ``old_stock`` is algebraically exact for BOTH branches:
-        #   unclamped: new = old + delta  -> new - delta = old
-        #   clamped:   new = 0            -> new - delta = -delta = old
-        stmt = (
-            update(InventoryItem)
-            .where(
-                InventoryItem.id == item_id,
-                InventoryItem.clinic_id == clinic_id,
+        # Row-level lock: concurrent adjustments serialise here instead of
+        # racing read-modify-write (#153). Released at commit/rollback.
+        locked = (
+            await db.execute(
+                select(InventoryItem)
+                .where(
+                    InventoryItem.id == item_id,
+                    InventoryItem.clinic_id == clinic_id,
+                )
+                .with_for_update()
             )
-            .values(stock_quantity=new_value)
-            .returning(InventoryItem, (InventoryItem.stock_quantity - delta).label("old_stock"))
-        )
-        row = (await db.execute(stmt)).first()
-        if row is None:
+        ).scalar_one_or_none()
+        if locked is None:
             return None, None
 
-        updated: InventoryItem = row[0]
-        applied = updated.stock_quantity - row.old_stock
+        new_quantity = locked.stock_quantity + delta
+        if new_quantity < 0:
+            if not clamp_at_zero:
+                return None, None
+            new_quantity = Decimal("0")
+
+        applied = new_quantity - locked.stock_quantity
+        locked.stock_quantity = new_quantity
 
         db.add(
             StockMovement(
@@ -263,7 +263,7 @@ class InventoryService:
                 created_by=created_by,
             )
         )
-        return updated, applied
+        return locked, applied
 
     @staticmethod
     async def list_movements(

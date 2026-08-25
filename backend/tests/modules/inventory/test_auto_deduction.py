@@ -200,7 +200,7 @@ async def test_rollback_discards_deduction(db_session: AsyncSession, test_clinic
     )
     await db_session.rollback()
 
-    rows = (
+    movements = (
         (
             await db_session.execute(
                 select(StockMovement).where(StockMovement.clinic_id == clinic_id)
@@ -209,4 +209,6 @@ async def test_rollback_discards_deduction(db_session: AsyncSession, test_clinic
         .scalars()
         .all()
     )
-    assert rows == []
+    # The opening-stock movement was committed by create_item before the
+    # publish; only the deduction must be gone.
+    assert all(m.reason != "consumption" for m in movements)
