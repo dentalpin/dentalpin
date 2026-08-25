@@ -14,7 +14,9 @@ from alembic import op
 
 revision = "inv_0002"
 down_revision = "inv_0001"
-branch_labels = ("inventory",)
+# Linear continuation of inv_0001 — the branch label lives there;
+# repeating it here makes Alembic treat this as a second head label.
+branch_labels = None
 depends_on = None
 
 

@@ -154,7 +154,7 @@ async function adjust(item: InventoryItem, delta: number, reason?: MovementReaso
   try {
     const res = await inventoryApi.adjust(item.id, delta, {
       reason: reason ?? adjustReason.value,
-      note: note ?? adjustNote.value || undefined
+      note: note ?? (adjustNote.value || undefined)
     })
     items.value = items.value.map(i => (i.id === res.data.id ? res.data : i))
   } catch (e) {
