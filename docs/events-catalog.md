@@ -78,7 +78,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `odontogram.tooth.updated` | `EventType.ODONTOGRAM_TOOTH_UPDATED` | `odontogram` | — |
 | `odontogram.treatment.added` | `EventType.ODONTOGRAM_TREATMENT_ADDED` | `odontogram` | — |
 | `odontogram.treatment.deleted` | `EventType.ODONTOGRAM_TREATMENT_DELETED` | `odontogram` | — |
-| `odontogram.treatment.performed` | `EventType.ODONTOGRAM_TREATMENT_PERFORMED` | `odontogram` | `activity_journal`, `patient_timeline`, `payments`, `periodontogram`, `treatment_plan` |
+| `odontogram.treatment.performed` | `EventType.ODONTOGRAM_TREATMENT_PERFORMED` | `odontogram` | `activity_journal`, `inventory`, `patient_timeline`, `payments`, `periodontogram`, `treatment_plan` |
 | `odontogram.treatment.status_changed` | `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED` | `odontogram` | — |
 | `patient.archived` | `EventType.PATIENT_ARCHIVED` | `patients` | `activity_journal`, `media`, `periodontogram`, `recalls` |
 | `patient.created` | `EventType.PATIENT_CREATED` | `patients` | `activity_journal`, `integrations`, `notifications` |
@@ -443,7 +443,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.INVENTORY_STOCK_LOW`
 - **Publishers:**
-  - `inventory` — `backend/app/modules/inventory/service.py:154`
+  - `inventory` — `backend/app/modules/inventory/service.py:403`
 - **Subscribers:** —
 
 ### `invoice.cancelled`
@@ -654,6 +654,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `odontogram` — `backend/app/modules/odontogram/service.py:833`
 - **Subscribers:**
   - `activity_journal`
+  - `inventory`
   - `patient_timeline`
   - `payments`
   - `periodontogram`

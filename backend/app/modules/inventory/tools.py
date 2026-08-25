@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -29,6 +30,13 @@ class CreateItemArgs(BaseModel):
 class AdjustStockArgs(BaseModel):
     item_id: str = Field(min_length=1)
     delta: Decimal
+    reason: Literal["restock", "consumption", "adjustment", "correction"] = "adjustment"
+    note: str | None = Field(default=None, max_length=200)
+
+
+class GetMovementsArgs(BaseModel):
+    item_id: str = Field(min_length=1)
+    limit: int = Field(default=20, ge=1, le=100)
 
 
 def _summary(item) -> dict:
@@ -39,6 +47,7 @@ def _summary(item) -> dict:
         "unit": item.unit,
         "stock_quantity": item.stock_quantity,
         "min_quantity": item.min_quantity,
+        "unit_cost": item.unit_cost,
         "is_low_stock": item.is_low_stock,
     }
 
@@ -75,9 +84,38 @@ async def _adjust_stock(ctx: AgentContext, params: AdjustStockArgs) -> dict:
     from uuid import UUID
 
     item = await InventoryService.adjust_stock(
-        ctx.db, ctx.clinic_id, UUID(params.item_id), params.delta
+        ctx.db,
+        ctx.clinic_id,
+        UUID(params.item_id),
+        params.delta,
+        reason=params.reason,
+        note=params.note,
     )
     return _summary(item)
+
+
+async def _get_movements(ctx: AgentContext, params: GetMovementsArgs) -> dict:
+    from uuid import UUID
+
+    movements, total = await InventoryService.list_movements(
+        ctx.db,
+        ctx.clinic_id,
+        inventory_item_id=UUID(params.item_id),
+        page=1,
+        page_size=params.limit,
+    )
+    return {
+        "total": total,
+        "movements": [
+            {
+                "delta": m.delta,
+                "reason": m.reason,
+                "note": m.note,
+                "created_at": m.created_at,
+            }
+            for m in movements
+        ],
+    }
 
 
 def get_tools() -> list[Tool]:
@@ -113,12 +151,25 @@ def get_tools() -> list[Tool]:
             name="adjust_inventory_stock",
             description=(
                 "Apply a relative stock change (+/- delta) to an inventory "
-                "item. Rejected if it would drive stock below zero."
+                "item, with a reason recorded in the movement ledger. "
+                "Rejected if it would drive stock below zero."
             ),
             parameters=AdjustStockArgs,
             handler=_adjust_stock,
             permissions=["inventory.write"],
             category=ToolCategory.WRITE,
+            exposes_free_text=True,
+        ),
+        Tool(
+            name="get_stock_movements",
+            description=(
+                "Audit trail for one inventory item: every stock change ever "
+                "applied, with reason and timestamp."
+            ),
+            parameters=GetMovementsArgs,
+            handler=_get_movements,
+            permissions=["inventory.read"],
+            category=ToolCategory.READ,
             exposes_free_text=True,
         ),
     ]

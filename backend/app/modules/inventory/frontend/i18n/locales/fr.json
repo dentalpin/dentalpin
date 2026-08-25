@@ -27,6 +27,17 @@
       "equipment": "Équipement",
       "office": "Bureau",
       "other": "Autre"
+    },
+    "cost": "Coût unitaire",
+    "valuation": "Valeur du stock",
+    "movements": "Mouvements",
+    "movementsTitle": "Mouvements de stock",
+    "reasons": {
+      "initial": "Ouverture",
+      "restock": "Réappro.",
+      "consumption": "Consommation",
+      "adjustment": "Ajustement",
+      "correction": "Correction"
     }
   },
   "nav": {

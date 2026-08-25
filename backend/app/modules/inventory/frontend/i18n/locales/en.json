@@ -27,6 +27,17 @@
       "equipment": "Equipment",
       "office": "Office",
       "other": "Other"
+    },
+    "cost": "Unit cost",
+    "valuation": "Stock value",
+    "movements": "Movements",
+    "movementsTitle": "Stock movements",
+    "reasons": {
+      "initial": "Opening",
+      "restock": "Restock",
+      "consumption": "Consumption",
+      "adjustment": "Adjustment",
+      "correction": "Correction"
     }
   },
   "nav": {

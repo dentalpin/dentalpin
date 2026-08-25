@@ -1,0 +1,46 @@
+{
+  "inventory": {
+    "title": "Lager",
+    "add": "Artikel hinzufügen",
+    "edit": "Artikel bearbeiten",
+    "item": "Artikel",
+    "category": "Kategorie",
+    "unit": "Einheit",
+    "stock": "Bestand",
+    "minimum": "Minimum",
+    "notes": "Notizen",
+    "status": "Status",
+    "ok": "OK",
+    "low": "Niedrig",
+    "filterByCategory": "Nach Kategorie filtern",
+    "lowStockOnly": "Nur niedriger Bestand",
+    "increment": "Bestand erhöhen",
+    "decrement": "Bestand senken",
+    "delete": "Löschen",
+    "deleteTitle": "Artikel löschen",
+    "deleteMessage": "Diesen Lagerartikel löschen? Dies kann nicht rückgängig gemacht werden.",
+    "allCategories": "Alle Kategorien",
+    "adjustBy": "Anpassen um…",
+    "apply": "Anwenden",
+    "cost": "Unit cost",
+    "valuation": "Stock value",
+    "movements": "Movements",
+    "movementsTitle": "Stock movements",
+    "reasons": {
+      "initial": "Opening",
+      "restock": "Restock",
+      "consumption": "Consumption",
+      "adjustment": "Adjustment",
+      "correction": "Correction"
+    },
+    "categories": {
+      "consumables": "Verbrauchsmaterial",
+      "equipment": "Ausstattung",
+      "office": "Büro",
+      "other": "Sonstiges"
+    }
+  },
+  "nav": {
+    "inventory": "Lager"
+  }
+}

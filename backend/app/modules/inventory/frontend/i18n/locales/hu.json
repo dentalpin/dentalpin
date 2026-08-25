@@ -1,0 +1,46 @@
+{
+  "inventory": {
+    "title": "Készlet",
+    "add": "Tétel hozzáadása",
+    "edit": "Tétel szerkesztése",
+    "item": "Tétel",
+    "category": "Kategória",
+    "unit": "Egység",
+    "stock": "Készlet",
+    "minimum": "Minimum",
+    "notes": "Megjegyzések",
+    "status": "Státusz",
+    "ok": "OK",
+    "low": "Alacsony",
+    "filterByCategory": "Szűrés kategória szerint",
+    "lowStockOnly": "Csak alacsony készlet",
+    "increment": "Készlet növelése",
+    "decrement": "Készlet csökkentése",
+    "delete": "Törlés",
+    "deleteTitle": "Tétel törlése",
+    "deleteMessage": "Törli ezt a készlettételt? Ez nem vonható vissza.",
+    "allCategories": "Minden kategória",
+    "adjustBy": "Módosítás…",
+    "apply": "Alkalmaz",
+    "cost": "Unit cost",
+    "valuation": "Stock value",
+    "movements": "Movements",
+    "movementsTitle": "Stock movements",
+    "reasons": {
+      "initial": "Opening",
+      "restock": "Restock",
+      "consumption": "Consumption",
+      "adjustment": "Adjustment",
+      "correction": "Correction"
+    },
+    "categories": {
+      "consumables": "Fogyóeszközök",
+      "equipment": "Felszerelés",
+      "office": "Iroda",
+      "other": "Egyéb"
+    }
+  },
+  "nav": {
+    "inventory": "Készlet"
+  }
+}

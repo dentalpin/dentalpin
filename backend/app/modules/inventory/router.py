@@ -15,6 +15,8 @@ from .schemas import (
     InventoryItemResponse,
     InventoryItemUpdate,
     StockAdjustPayload,
+    StockMovementResponse,
+    StockValuationResponse,
 )
 from .service import InventoryService
 
@@ -28,6 +30,7 @@ async def list_items(
     db: Annotated[AsyncSession, Depends(get_db)],
     category: str | None = Query(default=None),
     low_stock: bool = Query(default=False),
+    include_inactive: bool = Query(default=False),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
 ) -> PaginatedApiResponse[InventoryItemResponse]:
@@ -36,6 +39,7 @@ async def list_items(
         ctx.clinic_id,
         category=category,
         low_stock_only=low_stock,
+        include_inactive=include_inactive,
         page=page,
         page_size=page_size,
     )
@@ -45,6 +49,16 @@ async def list_items(
         page=page,
         page_size=page_size,
     )
+
+
+@router.get("/valuation", response_model=ApiResponse[StockValuationResponse])
+async def stock_valuation(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("inventory.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[StockValuationResponse]:
+    """Total on-hand value over active items with a known unit cost (#226)."""
+    return ApiResponse(data=await InventoryService.stock_valuation(db, ctx.clinic_id))
 
 
 @router.get("/{item_id}", response_model=ApiResponse[InventoryItemResponse])
@@ -93,10 +107,48 @@ async def adjust_stock(
 ) -> ApiResponse[InventoryItemResponse]:
     """Relative stock change (+ restock / - consumption), applied atomically.
 
-    Rejects with 409 when the delta would drive stock below zero.
+    Rejects with 409 when the delta would drive stock below zero. Every
+    adjustment is recorded in the movements ledger (#226).
     """
-    item = await InventoryService.adjust_stock(db, ctx.clinic_id, item_id, payload.delta)
+    item = await InventoryService.adjust_stock(
+        db,
+        ctx.clinic_id,
+        item_id,
+        payload.delta,
+        reason=payload.reason,
+        note=payload.note,
+        created_by=ctx.user_id,
+    )
     return ApiResponse(data=InventoryItemResponse.model_validate(item))
+
+
+@router.get("/{item_id}/movements", response_model=PaginatedApiResponse[StockMovementResponse])
+async def list_movements(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("inventory.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    item_id: UUID,
+    reason: str | None = Query(default=None),
+    page: int = Query(default=1, ge=1),
+    page_size: int = Query(default=50, ge=1, le=100),
+) -> PaginatedApiResponse[StockMovementResponse]:
+    """The audit trail for one item — every quantity change ever applied."""
+    # 404 when the item doesn't exist / belongs to another clinic.
+    await InventoryService.get_item(db, ctx.clinic_id, item_id)
+    movements, total = await InventoryService.list_movements(
+        db,
+        ctx.clinic_id,
+        inventory_item_id=item_id,
+        reason=reason,
+        page=page,
+        page_size=page_size,
+    )
+    return PaginatedApiResponse(
+        data=[StockMovementResponse.model_validate(m) for m in movements],
+        total=total,
+        page=page,
+        page_size=page_size,
+    )
 
 
 @router.delete("/{item_id}", status_code=status.HTTP_204_NO_CONTENT)

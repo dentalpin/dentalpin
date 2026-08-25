@@ -4,7 +4,9 @@ import { errorDetail } from '~~/app/utils/error'
 import {
   useInventory,
   type InventoryItem,
-  type ItemCategory
+  type ItemCategory,
+  type MovementReason,
+  type StockMovement
 } from '../../composables/useInventory'
 
 definePageMeta({ middleware: ['auth'] })
@@ -79,7 +81,10 @@ watch([filterCategory, lowStockOnly], () => {
   load()
 })
 
-onMounted(load)
+onMounted(() => {
+  load()
+  loadValuation()
+})
 
 // --- Create / edit modal ---------------------------------------------------
 const showModal = ref(false)
@@ -91,12 +96,13 @@ const form = ref({
   unit: 'units',
   stock_quantity: 0,
   min_quantity: 0,
+  unit_cost: null as number | null,
   notes: ''
 })
 
 function openCreate() {
   editing.value = null
-  form.value = { name: '', category: 'other', unit: 'units', stock_quantity: 0, min_quantity: 0, notes: '' }
+  form.value = { name: '', category: 'other', unit: 'units', stock_quantity: 0, min_quantity: 0, unit_cost: null, notes: '' }
   showModal.value = true
 }
 
@@ -108,6 +114,7 @@ function openEdit(item: InventoryItem) {
     unit: item.unit,
     stock_quantity: Number(item.stock_quantity),
     min_quantity: Number(item.min_quantity),
+    unit_cost: item.unit_cost ? Number(item.unit_cost) : null,
     notes: item.notes ?? ''
   }
   showModal.value = true
@@ -137,11 +144,18 @@ const adjustingId = ref<string | null>(null)
 const deltaRowId = ref<string | null>(null)
 const deltaValue = ref<number | null>(null)
 
-async function adjust(item: InventoryItem, delta: number) {
+const ADJUST_REASONS: MovementReason[] = ['restock', 'consumption', 'adjustment', 'correction']
+const adjustReason = ref<MovementReason>('adjustment')
+const adjustNote = ref('')
+
+async function adjust(item: InventoryItem, delta: number, reason?: MovementReason, note?: string) {
   if (!delta) return
   adjustingId.value = item.id
   try {
-    const res = await inventoryApi.adjust(item.id, delta)
+    const res = await inventoryApi.adjust(item.id, delta, {
+      reason: reason ?? adjustReason.value,
+      note: note ?? adjustNote.value || undefined
+    })
     items.value = items.value.map(i => (i.id === res.data.id ? res.data : i))
   } catch (e) {
     notifyError(e)
@@ -151,11 +165,39 @@ async function adjust(item: InventoryItem, delta: number) {
 }
 
 async function applyDelta(item: InventoryItem) {
-  await adjust(item, deltaValue.value ?? 0)
+  await adjust(item, deltaValue.value ?? 0, adjustReason.value, adjustNote.value)
   deltaRowId.value = null
   deltaValue.value = null
 }
 
+// --- Movements modal (audit trail) + valuation -------------------------------
+const showMovements = ref(false)
+const movementsItem = ref<InventoryItem | null>(null)
+const movementsRows = ref<StockMovement[]>([])
+const movementsLoading = ref(false)
+const valuation = ref<{ total_value: string } | null>(null)
+
+async function loadValuation() {
+  try {
+    valuation.value = (await inventoryApi.valuation()).data
+  } catch { /* badge is best-effort */ }
+}
+
+function openMovements(item: InventoryItem) {
+  movementsItem.value = item
+  showMovements.value = true
+}
+
+watch(showMovements, async (open) => {
+  if (!open || !movementsItem.value) return
+  movementsLoading.value = true
+  try {
+    const res = await inventoryApi.movements(movementsItem.value.id)
+    movementsRows.value = res.data
+  } finally {
+    movementsLoading.value = false
+  }
+})
 // --- Delete confirmation ----------------------------------------------------
 const showDeleteConfirm = ref(false)
 const itemToDelete = ref<InventoryItem | null>(null)
@@ -196,6 +238,11 @@ const columns = computed(() => [
     header: t('inventory.minimum'),
     meta: { class: { th: 'hidden sm:table-cell', td: 'hidden sm:table-cell' } }
   },
+  {
+    accessorKey: 'unit_cost',
+    header: t('inventory.cost'),
+    meta: { class: { th: 'hidden lg:table-cell', td: 'hidden lg:table-cell' } }
+  },
   { accessorKey: 'status', header: t('inventory.status') },
   { accessorKey: 'actions', header: '' }
 ])
@@ -207,6 +254,15 @@ const columns = computed(() => [
       <h1 class="text-h2 text-default">
         {{ t('inventory.title') }}
       </h1>
+      <UBadge
+        v-if="valuation"
+        variant="subtle"
+        size="md"
+        class="tnum"
+        icon="i-lucide-coins"
+      >
+        {{ t('inventory.valuation') }}: {{ fmtQty(valuation.total_value) }}
+      </UBadge>
       <UButton
         v-if="canWrite"
         icon="i-lucide-plus"
@@ -262,9 +318,19 @@ const columns = computed(() => [
             </button>
             <template #content>
               <form
-                class="p-2 flex items-center gap-2"
+                class="p-2 flex flex-col gap-2"
                 @submit.prevent="applyDelta(row.original)"
               >
+                <USelect
+                  v-model="adjustReason"
+                  :items="ADJUST_REASONS.map(r => ({ value: r, label: t(`inventory.reasons.${r}`) }))"
+                  class="w-44"
+                />
+                <UInput
+                  v-model="adjustNote"
+                  :placeholder="t('inventory.notes')"
+                  class="w-44"
+                />
                 <UInput
                   v-model.number="deltaValue"
                   type="number"
@@ -301,6 +367,16 @@ const columns = computed(() => [
       <template #min_quantity-cell="{ row }">
         <span class="tnum">{{ fmtQty(row.original.min_quantity) }}</span>
       </template>
+      <template #unit_cost-cell="{ row }">
+        <span
+          v-if="row.original.unit_cost"
+          class="tnum"
+        >{{ fmtQty(row.original.unit_cost) }}</span>
+        <span
+          v-else
+          class="text-subtle"
+        >—</span>
+      </template>
       <template #status-cell="{ row }">
         <UBadge
           :color="row.original.is_low_stock ? 'error' : 'success'"
@@ -313,6 +389,13 @@ const columns = computed(() => [
       <template #actions-cell="{ row }">
         <div class="flex items-center gap-1">
           <UButton
+            icon="i-lucide-history"
+            variant="ghost"
+            size="xs"
+            :aria-label="t('inventory.movements')"
+            @click="openMovements(row.original)"
+          />
+          <UButton
             v-if="canWrite"
             icon="i-lucide-pencil"
             variant="ghost"
@@ -321,7 +404,7 @@ const columns = computed(() => [
             @click="openEdit(row.original)"
           />
           <UButton
-            v-if="canWrite"
+            v-if="canWrite && row.original.is_active"
             icon="i-lucide-trash-2"
             variant="ghost"
             color="error"
@@ -385,6 +468,14 @@ const columns = computed(() => [
               />
             </UFormField>
           </div>
+          <UFormField :label="t('inventory.cost')">
+            <UInput
+              v-model.number="form.unit_cost"
+              type="number"
+              step="0.01"
+              min="0"
+            />
+          </UFormField>
           <UFormField :label="t('inventory.notes')">
             <UTextarea
               v-model="form.notes"
@@ -433,6 +524,68 @@ const columns = computed(() => [
               @click="handleDelete"
             >
               {{ t('inventory.delete') }}
+            </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Movements audit trail -->
+    <UModal v-model:open="showMovements">
+      <template #content>
+        <div class="p-4 space-y-3 max-w-xl">
+          <h2 class="text-h3 text-default">
+            {{ t('inventory.movementsTitle') }} —
+            {{ movementsItem?.name }}
+          </h2>
+          <div
+            v-if="movementsLoading"
+            class="text-sm text-subtle"
+          >
+            …
+          </div>
+          <ul
+            v-else-if="movementsRows.length"
+            class="space-y-2 max-h-96 overflow-auto"
+          >
+            <li
+              v-for="m in movementsRows"
+              :key="m.id"
+              class="flex items-center gap-2 text-sm"
+            >
+              <UBadge
+                :color="Number(m.delta) >= 0 ? 'success' : 'error'"
+                variant="subtle"
+                size="sm"
+                class="tnum"
+              >
+                {{ Number(m.delta) >= 0 ? '+' : '' }}{{ fmtQty(m.delta) }}
+              </UBadge>
+              <UBadge
+                variant="outline"
+                size="sm"
+              >
+                {{ t(`inventory.reasons.${m.reason}`) }}
+              </UBadge>
+              <span class="text-subtle tnum text-xs">{{ new Date(m.created_at).toLocaleString() }}</span>
+              <span
+                v-if="m.note"
+                class="text-subtle text-xs truncate"
+              >{{ m.note }}</span>
+            </li>
+          </ul>
+          <p
+            v-else
+            class="text-sm text-subtle"
+          >
+            {{ t('inventory.empty') }}
+          </p>
+          <div class="flex justify-end">
+            <UButton
+              variant="ghost"
+              @click="showMovements = false"
+            >
+              {{ t('actions.close') }}
             </UButton>
           </div>
         </div>
