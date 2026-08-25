@@ -11,7 +11,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from app.core.plugins.processor import PendingProcessor, ModuleState
+from app.core.plugins.processor import ModuleState, PendingProcessor
 
 
 def _record(name: str, depends: list[str], state: str):
