@@ -128,18 +128,32 @@ class PendingProcessor:
             return list(result.scalars())
 
     def _order_pending(self, records: list[ModuleRecord]) -> list[ModuleRecord]:
-        """Topological order so dependencies install first, removes last."""
+        """Installs/upgrades run dependencies-first; removals run last and
+        **dependents-first** (#286).
+
+        One topological sort over the whole batch orders every record
+        dependencies-before-dependents — right for installs, wrong for
+        removals: a dependency's downgrade drags its dependents' tables
+        down with it (that is what Alembic ``depends_on`` means), so a
+        dependent still pending removal would find its tables already
+        gone when the backup step runs. Reversing the topo slice for
+        TO_REMOVE records tears dependents down first and the dependency
+        last, matching the docstring's original intent.
+        """
         by_name = {r.name: r for r in records}
         # Filter unknown deps: a pending record may depend on already-
         # installed modules outside this batch — those don't need
         # ordering here.
-        return topological_sort(
+        ordered = topological_sort(
             records,
             key=lambda r: r.name,
             deps_of=lambda r: (
                 d for d in ((r.manifest_snapshot or {}).get("depends", []) or []) if d in by_name
             ),
         )
+        installs = [r for r in ordered if r.state != ModuleState.TO_REMOVE.value]
+        removals = [r for r in reversed(ordered) if r.state == ModuleState.TO_REMOVE.value]
+        return [*installs, *removals]
 
     # --- Dispatch -------------------------------------------------------
 
@@ -325,12 +339,27 @@ class PendingProcessor:
     async def _dump_tables(self, module_name: str, tables: list[str]) -> Path | None:
         if not tables:
             return None
+        # A batch uninstall may already have torn some of these tables down
+        # (a dependency downgraded before this module's backup ran) — dump
+        # only what still exists instead of failing the whole operation
+        # (#286). If nothing remains, there is simply nothing to back up.
+        present = await _existing_tables(tables)
+        remaining = [t for t in tables if t in present]
+        if not remaining:
+            logger.warning(
+                "No tables left to back up for module %s (already dropped by "
+                "a dependency's downgrade): %s",
+                module_name,
+                tables,
+            )
+            return None
+
         BACKUP_ROOT.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
         target = BACKUP_ROOT / f"module_{module_name}_{timestamp}.sql"
 
         args = ["pg_dump", "--data-only", "--no-owner", _pg_dump_dsn(settings.DATABASE_URL)]
-        for table in tables:
+        for table in remaining:
             args.extend(["--table", table])
 
         try:
@@ -369,6 +398,28 @@ class PendingProcessor:
 
 
 # --- Module-level helpers -------------------------------------------------
+
+
+async def _existing_tables(tables: list[str]) -> set[str]:
+    """Which of ``tables`` currently exist in the public schema.
+
+    Uses asyncpg directly (the same driver the app already ships) — the
+    processor runs outside request context and has no request session.
+    Connection failures propagate: a database we cannot inspect is a
+    hard error, not a silent skip.
+    """
+    import asyncpg
+
+    dsn = _pg_dump_dsn(settings.DATABASE_URL)
+    conn = await asyncpg.connect(dsn)
+    try:
+        rows = await conn.fetch(
+            "SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'"
+        )
+        present = {row["table_name"] for row in rows}
+    finally:
+        await conn.close()
+    return {t for t in tables if t in present}
 
 
 def _resolve_data_files(module: BaseModule) -> list[Path]:
