@@ -28,7 +28,7 @@ async def _create_links_table(db_session: AsyncSession) -> None:
     await db_session.execute(
         text(
             """
-            CREATE TABLE treatment_consumables (
+            CREATE TABLE IF NOT EXISTS treatment_consumables (
                 id UUID PRIMARY KEY,
                 clinic_id UUID NOT NULL,
                 catalog_item_id UUID NOT NULL,

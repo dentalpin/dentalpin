@@ -263,7 +263,7 @@ class InventoryService:
                 created_by=created_by,
             )
         )
-        return updated
+        return updated, applied
 
     @staticmethod
     async def list_movements(
@@ -348,7 +348,11 @@ class InventoryService:
         from sqlalchemy import text as sa_text
 
         has_links_table = await db.run_sync(
-            lambda sync_conn: sa_inspect(sync_conn).has_table("treatment_consumables")
+            # run_sync hands us the sync *Session*, not a Connection —
+            # inspection needs the underlying connection (CI-verified).
+            lambda sync_session: sa_inspect(sync_session.connection()).has_table(
+                "treatment_consumables"
+            )
         )
         if not has_links_table:
             logger.info("treatment_consumables not installed; skipping auto-deduction")

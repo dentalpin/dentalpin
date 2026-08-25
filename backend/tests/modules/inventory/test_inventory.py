@@ -49,10 +49,25 @@ async def test_create_list_update_delete(db_session: AsyncSession, test_clinic: 
     # 25 stock vs a raised threshold of 30 -> now low.
     assert updated.is_low_stock is True
 
-    await InventoryService.delete_item(db_session, test_clinic.id, item.id)
+    # The item has ledger history (opening stock) — deletion is refused
+    # in favour of deactivation so the audit trail survives (#226).
     with pytest.raises(HTTPException) as exc_info:
-        await InventoryService.get_item(db_session, test_clinic.id, item.id)
-    assert exc_info.value.status_code == 404
+        await InventoryService.delete_item(db_session, test_clinic.id, item.id)
+    assert exc_info.value.status_code == 409
+
+    deactivated = await InventoryService.update_item(
+        db_session,
+        test_clinic.id,
+        item.id,
+        InventoryItemUpdate(is_active=False),
+    )
+    assert deactivated.is_active is False
+    rows, total = await InventoryService.list_items(db_session, test_clinic.id)
+    assert total == 0  # inactive rows are hidden by default
+    rows, total = await InventoryService.list_items(
+        db_session, test_clinic.id, include_inactive=True
+    )
+    assert total == 1
 
 
 @pytest.mark.asyncio

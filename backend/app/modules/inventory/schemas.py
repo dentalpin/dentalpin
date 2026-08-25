@@ -33,6 +33,8 @@ class InventoryItemUpdate(BaseModel):
     stock_quantity: Decimal | None = Field(default=None, ge=0)
     min_quantity: Decimal | None = Field(default=None, ge=0)
     unit_cost: Decimal | None = Field(default=None, ge=0)
+    # Items with ledger history cannot be deleted — deactivate instead.
+    is_active: bool | None = None
     notes: str | None = Field(default=None, max_length=2000)
 
 
