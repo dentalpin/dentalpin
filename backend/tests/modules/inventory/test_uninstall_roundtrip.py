@@ -23,7 +23,6 @@ INVENTORY_TABLES = {"inventory_items", "stock_movements"}
 DEPENDENT_TABLES = {"treatment_consumables"}
 
 
-
 def _alembic(*args: str) -> None:
     subprocess.run(["alembic", "-c", str(ALEMBIC_INI), *args], cwd=BACKEND_ROOT, check=True)
 
