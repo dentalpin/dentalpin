@@ -56,8 +56,11 @@ INDIA_STATES: dict[str, str] = {
 }
 
 # GSTIN: 2-digit state code, 10-char PAN, 1-digit entity code, "Z", 1
-# checksum char. e.g. "33ABCDE1234F1Z5".
+# checksum char. e.g. "33ABCDE1234F1Z7".
 GSTIN_PATTERN = re.compile(r"^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$")
+
+# Base-36 alphabet the CBIC mod-36 check digit is computed over.
+GSTIN_ALPHABET = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
 # Real-world dental SAC (Services Accounting Code) under GST — "Human
 # health and social care services". The only SAC that applies to every
@@ -68,10 +71,45 @@ DEFAULT_DENTAL_SAC_CODE = "999312"
 REGISTRATION_TYPES = ("regular", "composition", "unregistered", "exempt")
 
 
-def is_valid_gstin(value: str | None) -> bool:
+def gstin_checksum_char(first14: str) -> str:
+    """CBIC mod-36 check digit over the first 14 GSTIN characters (#262).
+
+    Each character's base-36 value is multiplied by an alternating
+    factor (1, 2, 1, 2, …), the product's base-36 digit sum is
+    accumulated, and the check digit is the value that rounds the total
+    up to a multiple of 36.
+    """
+    total = 0
+    for index, char in enumerate(first14):
+        value = GSTIN_ALPHABET.index(char)
+        product = value * (2 if index % 2 else 1)
+        total += product // 36 + product % 36
+    return GSTIN_ALPHABET[(36 - total % 36) % 36]
+
+
+def gstin_format_ok(value: str | None) -> bool:
+    """Structural (regex) check only — no checksum."""
     if not value:
         return False
     return bool(GSTIN_PATTERN.match(value.strip().upper()))
+
+
+def gstin_checksum_ok(value: str) -> bool:
+    """True when the 15th character matches the mod-36 check digit.
+
+    Assumes the value already passed :func:`gstin_format_ok`.
+    """
+    normalized = value.strip().upper()
+    return gstin_checksum_char(normalized[:14]) == normalized[14]
+
+
+def is_valid_gstin(value: str | None) -> bool:
+    """Structural format AND mod-36 checksum (#262) — typos are caught
+    at input time, not at filing time."""
+    if not gstin_format_ok(value):
+        return False
+    assert value is not None
+    return gstin_checksum_ok(value)
 
 
 def state_name(code: str | None) -> str | None:

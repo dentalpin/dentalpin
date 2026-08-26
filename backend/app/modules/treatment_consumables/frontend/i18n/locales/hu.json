@@ -1,0 +1,20 @@
+{
+  "consumables": {
+    "title": "Kezelési fogyóeszközök",
+    "subtitle": "Melyik készletcikket fogyasztja az egyes katalóguskezelések, és milyen mennyiségben. Csak megfeleltetés — a készlet nem csökken automatikusan.",
+    "treatment": "Kezelés",
+    "item": "Készletcikk",
+    "quantity": "Mennyiség",
+    "note": "Megjegyzés",
+    "searchTreatments": "Kezelések keresése…",
+    "searchItems": "Cikkek keresése…",
+    "add": "Fogyóeszköz hozzárendelése",
+    "delete": "Hozzárendelés törlése",
+    "deleteTitle": "Hozzárendelés törlése",
+    "deleteMessage": "Törli ezt a hozzárendelést? A kezelés többé nem sorolja fel ezt a cikket fogyóeszközként.",
+    "empty": "Még nincs hozzárendelés. A „Fogyóeszköz hozzárendelése” gombbal társíthat kezelést egy cikkhez.",
+    "noMatches": "Nincs találat",
+    "duplicate": "Ez a kezelés már fogyasztja ezt a cikket.",
+    "editTitle": "Fogyóeszköz szerkesztése"
+  }
+}

@@ -26,6 +26,10 @@ class IndiaGstSettingsResponse(BaseModel):
     turnover_threshold: Decimal | None
     show_gstin_on_invoice: bool
     show_sac_on_invoice: bool
+    # Computed: supplier GSTIN's leading 2-digit state code disagrees
+    # with clinic_state — the UI shows a warning, saving is not blocked
+    # (#262).
+    gstin_state_mismatch: bool = False
 
 
 class IndiaGstSettingsUpdate(BaseModel):

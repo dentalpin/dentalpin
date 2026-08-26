@@ -637,13 +637,13 @@ async def seed_india_gst(db: AsyncSession) -> dict:
     # 1 — IndiaGstSettings
     settings = await get_or_create_settings(db, CLINIC_ID)
     settings.trade_name = "Chennai Dental Care"
-    settings.gstin = "33ABCDE1234F1Z5"
+    settings.gstin = "33ABCDE1234F1Z7"
     settings.registration_type = "regular"
     settings.clinic_state = "33"
     settings.show_gstin_on_invoice = True
     settings.show_sac_on_invoice = True
     await db.flush()
-    print("  Created India GST settings (GSTIN: 33ABCDE1234F1Z5, TN)")
+    print("  Created India GST settings (GSTIN: 33ABCDE1234F1Z7, TN)")
 
     # 2 — GST 18% VAT type
     await IndiaGstCatalogService.ensure_gst_vat_type(db, CLINIC_ID)

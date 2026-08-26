@@ -39,6 +39,16 @@ const form = ref({
   show_sac_on_invoice: true
 })
 
+// Live hint (mirrors the API's gstin_state_mismatch flag): the GSTIN's
+// leading two digits are the supplier's state code — a disagreement
+// with clinic_state silently flips intra/inter-state classification
+// (#262). Warn, never block.
+const gstinStateMismatch = computed(() => {
+  const gstin = (form.value.gstin || '').trim()
+  return gstin.length >= 2 && !!form.value.clinic_state
+    && gstin.slice(0, 2) !== form.value.clinic_state
+})
+
 const registrationOptions = [
   { label: t('indiaGst.settings.registrationRegular'), value: 'regular' },
   { label: t('indiaGst.settings.registrationComposition'), value: 'composition' },
@@ -173,7 +183,7 @@ async function saveSac(catalogItemId: string) {
           >
             <UInput
               v-model="form.gstin"
-              placeholder="33ABCDE1234F1Z5"
+              placeholder="33ABCDE1234F1Z7"
             />
           </UFormField>
           <UFormField :label="t('indiaGst.settings.registrationType')">
@@ -191,6 +201,12 @@ async function saveSac(catalogItemId: string) {
               :placeholder="t('indiaGst.form.selectState')"
             />
           </UFormField>
+          <p
+            v-if="gstinStateMismatch"
+            class="text-caption text-warning"
+          >
+            {{ t('indiaGst.settings.gstinStateMismatch') }}
+          </p>
         </div>
       </UCard>
 

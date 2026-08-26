@@ -72,7 +72,7 @@ tenant:
 
 - `./scripts/seed-demo.sh --lang ta` and
   `./scripts/seed-demo.sh --lang en --country in` both seed a GST-ready
-  clinic (Chennai, GSTIN `33ABCDE1234F1Z5`, `clinic_state="33"`) and 7
+  clinic (Chennai, GSTIN `33ABCDE1234F1Z7`, `clinic_state="33"`) and 7
   invoices — 4 intra-state (CGST+SGST) and 2 inter-state (IGST), plus 1
   draft with only `place_of_supply` pre-filled.
 - `seed_demo.py::seed_india_gst_invoice_breakdown()` runs the real

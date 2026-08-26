@@ -1,0 +1,20 @@
+{
+  "consumables": {
+    "title": "Verbrauchsmaterial je Behandlung",
+    "subtitle": "Welche Lagerartikel jede Katalogbehandlung verbraucht und in welcher Menge. Reine Zuordnung — der Bestand wird nicht automatisch abgezogen.",
+    "treatment": "Behandlung",
+    "item": "Lagerartikel",
+    "quantity": "Menge",
+    "note": "Notiz",
+    "searchTreatments": "Behandlungen suchen…",
+    "searchItems": "Artikel suchen…",
+    "add": "Verbrauchsmaterial verknüpfen",
+    "delete": "Verknüpfung aufheben",
+    "deleteTitle": "Verknüpfung aufheben",
+    "deleteMessage": "Diese Verknüpfung entfernen? Die Behandlung führt diesen Artikel dann nicht mehr als Verbrauchsmaterial.",
+    "empty": "Noch keine Verknüpfungen. Mit „Verbrauchsmaterial verknüpfen“ ordnen Sie einer Behandlung einen Artikel zu.",
+    "noMatches": "Keine Treffer",
+    "duplicate": "Diese Behandlung verbraucht diesen Artikel bereits.",
+    "editTitle": "Verbrauchsmaterial bearbeiten"
+  }
+}

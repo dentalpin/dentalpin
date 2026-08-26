@@ -53,7 +53,7 @@ async def india_gst_settings(
     settings = IndiaGstSettings(
         clinic_id=india_gst_clinic.id,
         trade_name="SmileCare Dental Clinic",
-        gstin="33ABCDE1234F1Z5",
+        gstin="33ABCDE1234F1Z7",
         registration_type="regular",
         clinic_state="33",
     )

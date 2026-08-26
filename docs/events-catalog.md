@@ -31,7 +31,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `budget.sent` | `EventType.BUDGET_SENT` | `budget` | `activity_journal`, `notifications`, `patient_timeline` |
 | `budget.superseded` | `EventType.BUDGET_SUPERSEDED` | `budget` | `activity_journal`, `treatment_plan` |
 | `budget.viewed` | `EventType.BUDGET_VIEWED` | `budget` | `patient_timeline` |
-| `clinic.created` | `EventType.CLINIC_CREATED` | `core:core` | `agenda`, `billing`, `catalog`, `schedules` |
+| `clinic.created` | `EventType.CLINIC_CREATED` | `core:core` | `agenda`, `billing`, `catalog`, `medication_catalog`, `schedules` |
 | `clinical_notes.administrative_created` | `EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED` | `clinical_notes` | `patient_timeline` |
 | `clinical_notes.appointment_administrative_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED` | `clinical_notes` | — |
 | `clinical_notes.appointment_clinical_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED` | `clinical_notes` | — |
@@ -315,6 +315,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `agenda`
   - `billing`
   - `catalog`
+  - `medication_catalog`
   - `schedules`
 
 ### `clinical_notes.administrative_created`

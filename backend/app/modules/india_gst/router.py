@@ -19,7 +19,13 @@ from app.core.auth.dependencies import ClinicContext, get_clinic_context, requir
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
-from .constants import DEFAULT_DENTAL_SAC_CODE, is_valid_gstin, state_name
+from .constants import (
+    DEFAULT_DENTAL_SAC_CODE,
+    gstin_checksum_char,
+    gstin_checksum_ok,
+    gstin_format_ok,
+    state_name,
+)
 from .models import (
     IndiaGstEinvoiceSubmission,
     IndiaGstInvoiceItem,
@@ -52,7 +58,18 @@ router = APIRouter()
 
 def _settings_response(settings: IndiaGstSettings) -> IndiaGstSettingsResponse:
     payload = IndiaGstSettingsResponse.model_validate(settings, from_attributes=True)
-    return payload.model_copy(update={"clinic_state_name": state_name(settings.clinic_state)})
+    # Warn (never block) when the supplier GSTIN's leading state code
+    # disagrees with clinic_state — a mismatch silently flips the
+    # intra/inter-state classification of every invoice (#262).
+    mismatch = bool(
+        settings.gstin and settings.clinic_state and settings.gstin[:2] != settings.clinic_state
+    )
+    return payload.model_copy(
+        update={
+            "clinic_state_name": state_name(settings.clinic_state),
+            "gstin_state_mismatch": mismatch,
+        }
+    )
 
 
 # ----------------------------------------------------------------------------
@@ -82,8 +99,19 @@ async def update_settings(
 
     if body.gstin is not None:
         gstin = body.gstin.strip().upper() or None
-        if gstin and not is_valid_gstin(gstin):
+        if gstin and not gstin_format_ok(gstin):
             raise HTTPException(status_code=400, detail="Invalid GSTIN format.")
+        if gstin and not gstin_checksum_ok(gstin):
+            # Right shape, wrong 15th character — almost always a typo
+            # in one of the first 14. Caught here, not at filing (#262).
+            raise HTTPException(
+                status_code=400,
+                detail=(
+                    "Invalid GSTIN: the check digit does not match "
+                    f"(expected …{gstin_checksum_char(gstin[:14])}). "
+                    "Double-check for a typo."
+                ),
+            )
         settings.gstin = gstin
     if body.trade_name is not None:
         settings.trade_name = body.trade_name.strip() or None

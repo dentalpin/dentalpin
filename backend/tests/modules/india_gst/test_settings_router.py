@@ -23,11 +23,11 @@ async def test_update_settings_accepts_valid_gstin(
 ):
     r = await client.put(
         "/api/v1/india_gst/settings",
-        json={"gstin": "33ABCDE1234F1Z5", "clinic_state": "33"},
+        json={"gstin": "33ABCDE1234F1Z7", "clinic_state": "33"},
         headers=auth_headers,
     )
     assert r.status_code == 200, r.text
-    assert r.json()["data"]["gstin"] == "33ABCDE1234F1Z5"
+    assert r.json()["data"]["gstin"] == "33ABCDE1234F1Z7"
     assert r.json()["data"]["clinic_state_name"] == "Tamil Nadu"
 
 
@@ -38,6 +38,39 @@ async def test_update_settings_rejects_invalid_gstin(
         "/api/v1/india_gst/settings", json={"gstin": "not-a-gstin"}, headers=auth_headers
     )
     assert r.status_code == 400
+
+
+async def test_update_settings_rejects_checksum_typo(
+    client: AsyncClient, auth_headers, india_gst_clinic: Clinic
+):
+    """Right shape, wrong 15th character → 400 naming the expected digit (#262)."""
+    r = await client.put(
+        "/api/v1/india_gst/settings",
+        json={"gstin": "33ABCDE1234F1Z5"},  # correct check digit is 7
+        headers=auth_headers,
+    )
+    assert r.status_code == 400
+    assert "check digit" in r.json()["message"]
+    assert "7" in r.json()["message"]
+
+
+async def test_settings_flags_gstin_state_mismatch(
+    client: AsyncClient, auth_headers, india_gst_clinic: Clinic
+):
+    """GSTIN state 33 vs clinic_state 29 → warn flag, never a block (#262)."""
+    r = await client.put(
+        "/api/v1/india_gst/settings",
+        json={"gstin": "33ABCDE1234F1Z7", "clinic_state": "29"},
+        headers=auth_headers,
+    )
+    assert r.status_code == 200
+    assert r.json()["data"]["gstin_state_mismatch"] is True
+
+    r = await client.put(
+        "/api/v1/india_gst/settings", json={"clinic_state": "33"}, headers=auth_headers
+    )
+    assert r.status_code == 200
+    assert r.json()["data"]["gstin_state_mismatch"] is False
 
 
 async def test_catalog_defaults_flags_missing_sac(

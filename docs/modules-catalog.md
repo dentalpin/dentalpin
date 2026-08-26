@@ -26,6 +26,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `lab_orders` | 0.1.0 | community | patients, contacts | manual | yes | 2 | 1 | 0 | yes |
 | `media` | 0.2.0 | official | patients | auto | no | 4 | 7 | 1 | yes |
 | `medical_reference` | 0.4.0 | community | patients_clinical, patients | manual | yes | 2 | 0 | 0 | yes |
+| `medication_catalog` | 0.1.0 | community | — | manual | yes | 2 | 0 | 1 | yes |
 | `migration_import` | 0.1.0 | official | patients, patients_clinical, clinical_notes, agenda, schedules, recalls, catalog, budget, odontogram, treatment_plan, billing, payments, media | manual | yes | 4 | 5 | 0 | yes |
 | `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 8 | 7 | 6 | yes |
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
@@ -40,6 +41,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `reports` | 0.1.0 | official | patients, agenda, catalog, budget, billing, payments | auto | no | 3 | 0 | 0 | yes |
 | `schedules` | 0.1.0 | official | agenda | auto | yes | 8 | 0 | 4 | yes |
 | `staff_tasks` | 0.1.0 | community | — | manual | yes | 2 | 2 | 0 | yes |
+| `treatment_consumables` | 0.1.0 | community | catalog, inventory | manual | yes | 2 | 0 | 0 | yes |
 | `treatment_plan` | 0.1.0 | official | patients, agenda, odontogram, catalog, budget, media | auto | no | 5 | 13 | 7 | yes |
 | `verifactu` | 0.1.0 | official | billing, catalog | manual | yes | 5 | 1 | 2 | yes |
 | `whatsapp_kapso` | 0.1.0 | community | notifications, patients | manual | yes | 2 | 0 | 0 | yes |
@@ -412,6 +414,24 @@ Managed allergy/medication/disease/surgery lists with searchable medical-history
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/medical_reference/CLAUDE.md`](../backend/app/modules/medical_reference/CLAUDE.md)
 
+### `medication_catalog` — v0.1.0
+
+Clinic-wide medication list with dose/unit/form, seeded with a 56-item dental starter set.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** —
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `medication_catalog.read`
+  - `medication_catalog.write`
+- **Events emitted:** —
+- **Events consumed:**
+  - `clinic.created`
+- **Module CLAUDE.md:** [`backend/app/modules/medication_catalog/CLAUDE.md`](../backend/app/modules/medication_catalog/CLAUDE.md)
+
 ### `migration_import` — v0.1.0
 
 Importa datos de pacientes, citas, presupuestos, pagos y documentos desde un archivo DPMF generado por dental-bridge.
@@ -756,6 +776,23 @@ Staff handoff board — internal tasks and handoffs between team members.
   - `staff_task.status_changed`
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/staff_tasks/CLAUDE.md`](../backend/app/modules/staff_tasks/CLAUDE.md)
+
+### `treatment_consumables` — v0.1.0
+
+Maps catalog treatments to inventory items with quantity per link.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `catalog`, `inventory`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `treatment_consumables.read`
+  - `treatment_consumables.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/treatment_consumables/CLAUDE.md`](../backend/app/modules/treatment_consumables/CLAUDE.md)
 
 ### `treatment_plan` — v0.1.0
 

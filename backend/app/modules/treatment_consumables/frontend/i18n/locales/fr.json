@@ -1,0 +1,20 @@
+{
+  "consumables": {
+    "title": "Consommables par traitement",
+    "subtitle": "Quels articles d'inventaire chaque traitement du catalogue consomme, et en quelle quantité. Simple mappage — le stock n'est pas déduit automatiquement.",
+    "treatment": "Traitement",
+    "item": "Article d'inventaire",
+    "quantity": "Quantité",
+    "note": "Note",
+    "searchTreatments": "Rechercher des traitements…",
+    "searchItems": "Rechercher des articles…",
+    "add": "Lier un consommable",
+    "delete": "Délier",
+    "deleteTitle": "Délier le consommable",
+    "deleteMessage": "Supprimer ce lien ? Le traitement ne listera plus cet article comme consommable.",
+    "empty": "Aucun lien pour l'instant. Utilisez « Lier un consommable » pour associer un traitement à un article.",
+    "noMatches": "Aucun résultat",
+    "duplicate": "Ce traitement consomme déjà cet article.",
+    "editTitle": "Modifier le consommable"
+  }
+}

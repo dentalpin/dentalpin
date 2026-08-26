@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(#274): the patient warning chips subscribe to the host data bus on
+  the `patients_clinical` namespace (ADR 0021) and refetch after every
+  medical-history save, instead of going stale until a page reload. The
+  chips are cleared only when the header switches patient, so a refetch
+  never blinks the warning out and back in.
 - fix: the medical-history name combobox now follows the host form's
   reset after adding an entry (the slot adapter mirrored `ctx.value`
   only at mount, so the field kept showing the previous selection).

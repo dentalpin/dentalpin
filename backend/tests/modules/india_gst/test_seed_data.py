@@ -109,7 +109,7 @@ async def test_seed_india_gst_creates_settings_vat_type_and_sac_defaults(
         select(IndiaGstSettings).where(IndiaGstSettings.clinic_id == india_gst_clinic.id)
     )
     settings = settings_q.scalar_one()
-    assert settings.gstin == "33ABCDE1234F1Z5"
+    assert settings.gstin == "33ABCDE1234F1Z7"
     assert settings.clinic_state == "33"
     assert settings.registration_type == "regular"
 

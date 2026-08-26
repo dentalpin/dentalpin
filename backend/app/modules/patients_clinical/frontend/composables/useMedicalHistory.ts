@@ -70,6 +70,11 @@ export function useMedicalHistory(patientId: Ref<string | undefined>) {
         medicalHistory.value
       )
       medicalHistory.value = response.data
+      // Cross-module refresh signal (#274): announce on the host data bus
+      // that this module's data changed, so anonymous subscribers (e.g.
+      // medical_reference's patient warning chips) can refetch. No
+      // payload, no consumer coupling — see ADR 0021.
+      useDataBus().publish('patients_clinical')
       toast.add({
         title: t('common.success'),
         description: t('patients.medicalHistory.saveSuccess'),

@@ -7,5 +7,18 @@
 export default defineI18nConfig(() => ({
   fallbackLocale: 'en',
   missingWarn: false,
-  fallbackWarn: false
+  fallbackWarn: false,
+  pluralRules: {
+    // Polish needs three plural forms — [one, few, many]: 1 klient,
+    // 2-4 klienci (except 12-14), 0/5+ klientów. vue-i18n's default
+    // two-way rule cannot express this; pl.json messages carry three
+    // pipe-separated forms in that order (#144).
+    pl: (choice: number, choicesLength: number) => {
+      if (choice === 1) return 0
+      const teen = choice % 100 >= 12 && choice % 100 <= 14
+      const few = choice % 10 >= 2 && choice % 10 <= 4 && !teen
+      if (choicesLength === 2) return 1
+      return few ? 1 : 2
+    }
+  }
 }))

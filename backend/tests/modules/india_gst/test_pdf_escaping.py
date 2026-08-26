@@ -45,7 +45,7 @@ def test_hook_emits_structured_rows_not_html():
     invoice = _invoice(
         compliance_data={
             "IN": {
-                "supplier": {"trade_name": XSS, "gstin": "33ABCDE1234F1Z5"},
+                "supplier": {"trade_name": XSS, "gstin": "33ABCDE1234F1Z7"},
                 "recipient": {"gstin": XSS},
                 "place_of_supply": "33",
                 "place_of_supply_name": "Tamil Nadu",
@@ -113,8 +113,8 @@ def test_pdf_renders_from_immutable_snapshot_not_live_settings():
     invoice = _invoice(
         compliance_data={
             "IN": {
-                "supplier": {"trade_name": "Original Clinic", "gstin": "33ABCDE1234F1Z5"},
-                "recipient": {"gstin": "29ZZZZZ9999Z9Z9"},
+                "supplier": {"trade_name": "Original Clinic", "gstin": "33ABCDE1234F1Z7"},
+                "recipient": {"gstin": "29ZZZZZ9999Z9ZW"},
                 "place_of_supply": "29",
                 "place_of_supply_name": "Karnataka",
                 "tax_type": "inter",
@@ -135,7 +135,7 @@ def test_pdf_renders_from_immutable_snapshot_not_live_settings():
     # hook reads from compliance_data['IN'], not live settings.
     assert rows_1["GST document number"] == "GST/FY26-27/0001"
     assert "Karnataka" in rows_1["Place of supply"]
-    assert "33ABCDE1234F1Z5" in rows_1["GSTIN on invoice"]
+    assert "33ABCDE1234F1Z7" in rows_1["GSTIN on invoice"]
     assert "180.00" in rows_1["IGST"]
     assert "Inter-state" in rows_1["GST calculation"]
 

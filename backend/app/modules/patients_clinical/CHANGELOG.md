@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- fix(#274): `saveMedicalHistory()` publishes a `patients_clinical` tick
+  on the host data bus (ADR 0021) after a successful PUT, and
+  `usePatientAlerts` subscribes to it. The header alert chips no longer
+  keep showing a deleted allergy — or hide a just-added critical one —
+  until a full page reload; any other module rendering into the patient
+  header refreshes off the same tick.
 - Added nullable `reference_id` UUID to `Allergy`, `Medication`,
   `SystemicDisease`, and `SurgicalHistory` (migration `pc_0002`),
   exposed in the Create/Update/Response schemas. It is a loose link —

@@ -77,6 +77,7 @@
       "registrationUnregistered": "Non enregistré",
       "registrationExempt": "Exonéré",
       "clinicState": "État de la clinique",
+      "gstinStateMismatch": "Les deux premiers chiffres du GSTIN forment un code d'État qui ne correspond pas à l'État sélectionné pour la clinique — cela inverse la classification GST intra/inter-État de chaque facture. Vérifiez les deux.",
       "catalogDefaults": "Valeurs GST par défaut du catalogue",
       "allSacConfigured": "Tous les traitements ont un code SAC configuré.",
       "missingSacCount": "{count} traitement(s) nécessitent un code SAC et un taux.",

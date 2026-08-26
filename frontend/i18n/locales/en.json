@@ -20,6 +20,7 @@
     "appointments": "Schedule",
     "recalls": "Recalls",
     "inventory": "Inventory",
+    "treatmentConsumables": "Treatment consumables",
     "expenses": "Expenses",
     "labOrdersForm": "New lab order",
     "labOrdersStatus": "Lab orders",

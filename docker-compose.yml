@@ -79,6 +79,13 @@ services:
       # The backend writes absolute paths under this mount into
       # `frontend/modules.json`.
       - ./backend/app/modules:/module_layers:ro
+      # Same source, mounted where the tracked `frontend/module_layers`
+      # symlink (-> ../backend/app/modules) resolves inside the
+      # container (/app/module_layers -> /backend/app/modules). Without
+      # it the symlink dangles and anything resolving through it
+      # in-container — ESLint's `eslint . module_layers`, editors —
+      # fails (#261). Read-only like the mount above.
+      - ./backend/app/modules:/backend/app/modules:ro
       - /app/node_modules
     healthcheck:
       test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:3000/ || exit 1"]

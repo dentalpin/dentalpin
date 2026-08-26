@@ -149,7 +149,7 @@ The module must already be installed (§3.3) before seeding.
 
 Both India variants seed the same fixture set:
 
-- Clinic: **Chennai Dental Care**, GSTIN `33ABCDE1234F1Z5`, `regular`
+- Clinic: **Chennai Dental Care**, GSTIN `33ABCDE1234F1Z7`, `regular`
   registration, `clinic_state="33"` (Tamil Nadu).
 - Catalog: every active treatment reassigned to a `GST 18%` VAT type
   and auto-configured with SAC `999312`.
@@ -199,7 +199,7 @@ must complete these steps:
 2. Fill in:
    - **Trade name** — legal trading name (shown on invoices).
    - **GSTIN** — the clinic's own 15-digit GSTIN (e.g.
-     `33ABCDE1234F1Z5`). Validated against the CBIC format regex.
+     `33ABCDE1234F1Z7`). Validated against the CBIC format regex.
    - **Registration type** — `regular`, `composition`, `unregistered`,
      or `exempt`. Only `regular` drives invoicing logic in v1.
    - **Clinic state** — the 2-digit state code (e.g. `33` for Tamil
@@ -639,21 +639,25 @@ type. Set it in the GST panel on the draft invoice before issuing.
 
 ### "GSTIN validation fails"
 
-GSTIN must match the CBIC format: `^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$`.
-Example: `33ABCDE1234F1Z5`. The first two digits must be a valid state
-code from `constants.INDIA_STATES`.
+GSTIN must match the CBIC format: `^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$`
+**and** carry a valid 15th-character mod-36 check digit
+(`constants.gstin_checksum_char`, #262). A structurally well-formed
+GSTIN with the wrong check digit is rejected at the settings PUT with
+a message naming the expected digit — almost always a typo in one of
+the first 14 characters.
 
-**This is a structural (regex) check only — it does not verify the
-15th-character mod-36 checksum digit.** `33ABCDE1234F1Z5` is the
-fixture/demo GSTIN used throughout this module's test suite and demo
-data; it is structurally well-formed (state `33` = Tamil Nadu, valid
-PAN shape, entity code, `Z`, checksum-position character) but is not a
-real taxpayer's registration and its checksum digit has not been
-verified against the official mod-36 algorithm. Do not present it as
-belonging to a real business. A future PR could add real checksum
-validation — tracked as a v1 limitation (§15), not silently
-implemented here, since tightening validation is a product decision
-that could reject GSTINs clinics are already relying on.
+Example: `33ABCDE1234F1Z7` — the fixture/demo GSTIN used throughout
+this module's test suite and demo data. It is structurally well-formed
+(state `33` = Tamil Nadu, valid PAN shape, entity code, `Z`) and its
+check digit satisfies the mod-36 algorithm, but it is not a real
+taxpayer's registration — do not present it as belonging to a real
+business.
+
+The settings screen additionally **warns (never blocks)** when the
+GSTIN's leading two digits disagree with the selected clinic state —
+that mismatch silently flips the intra/inter-state classification of
+every invoice. The API exposes it as `gstin_state_mismatch` on the
+settings response.
 
 ### "Tamil PDF shows boxes/squares"
 
@@ -689,9 +693,11 @@ docker compose restart frontend
 - **No reverse charge mechanism.** RCM is out of scope for v1.
 - **No TDS/TCS support.** Tax deducted/collected at source is not
   handled.
-- **GSTIN validation is structural only.** `is_valid_gstin` checks the
-  CBIC format regex, not the 15th-character mod-36 checksum — see
-  §14 "GSTIN validation fails".
+- ~~**GSTIN validation is structural only.**~~ Resolved in #262:
+  `is_valid_gstin` now verifies the 15th-character mod-36 check digit
+  on top of the CBIC format regex, and the settings screen warns on a
+  GSTIN ↔ clinic-state code mismatch — see §14 "GSTIN validation
+  fails".
 
 ### Roadmap
 
@@ -762,7 +768,7 @@ test that fails against the defect or missing behaviour it protects.
 | L1 | Non-regular registration: no GST rows | `test_hook_issue.py` | No compliance_data IN, no IndiaGstInvoiceItem rows |
 | L2 | Re-issuing hook path does not duplicate rows | `test_hook_issue.py` | Exactly 1 IndiaGstInvoiceItem after second hook call |
 | M1 | Tamil demo clinic gets `country=IN`, generic-country locales don't | `test_seed_data.py` | `get_clinic_data()["settings"]["country"]` set for `lang="ta"` and `lang="en" + country="in"`; unset otherwise |
-| M2 | Explicit Tamil demo GST fixture is reproducible | `test_seed_data.py` | `seed_india_gst()` creates settings (GSTIN `33ABCDE1234F1Z5`, state `33`), `GST 18%` VAT type, SAC defaults on every active catalog item — only when explicitly called, never from install |
+| M2 | Explicit Tamil demo GST fixture is reproducible | `test_seed_data.py` | `seed_india_gst()` creates settings (GSTIN `33ABCDE1234F1Z7`, state `33`), `GST 18%` VAT type, SAC defaults on every active catalog item — only when explicitly called, never from install |
 | M3 | English + India demo overlays Chennai/INR in English, not Tamil script | `test_seed_data.py` | `lang="en", country="in"` → `address.city == "Chennai"`, `currency == "INR"`, `timezone == "Asia/Kolkata"` |
 
 ### Safety invariants verified

@@ -77,6 +77,7 @@
       "registrationUnregistered": "Unregistered",
       "registrationExempt": "Exempt",
       "clinicState": "Clinic state",
+      "gstinStateMismatch": "The GSTIN's first two digits are a state code that does not match the selected clinic state — this flips the intra/inter-state GST classification of every invoice. Double-check both.",
       "catalogDefaults": "Catalog GST defaults",
       "allSacConfigured": "All treatments have a SAC code configured.",
       "missingSacCount": "{count} treatment(s) need a SAC code and rate.",

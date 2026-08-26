@@ -22,7 +22,7 @@ from app.modules.india_gst.models import (
 )
 from app.modules.patients.models import Patient
 
-FOREIGN_GSTIN = "29ZZZZZ9999Z9Z9"
+FOREIGN_GSTIN = "29ZZZZZ9999Z9ZW"
 
 
 async def _foreign_clinic_with_gst_data(db: AsyncSession, user_id) -> Clinic:

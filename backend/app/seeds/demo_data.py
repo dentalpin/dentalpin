@@ -2601,7 +2601,7 @@ PATIENT_JOURNEYS = [
             # India GST (Tamil, or English + --country in): inter-state — patient billed from Karnataka
             # (a registered recipient, e.g. an employer paying on the
             # patient's behalf) → IGST instead of CGST/SGST.
-            "gst": {"place_of_supply": "29", "recipient_gstin": "29AAACK5678H1Z3"},
+            "gst": {"place_of_supply": "29", "recipient_gstin": "29AAACK5678H1Z4"},
         },
     },
     # Patient 9 — Rosa / Charlotte (hypertensive; accepted+signed, paid invoice)
@@ -2713,7 +2713,7 @@ PATIENT_JOURNEYS = [
             "notes": None,
             # India GST (Tamil, or English + --country in): inter-state — patient billed from
             # Maharashtra → IGST instead of CGST/SGST.
-            "gst": {"place_of_supply": "27", "recipient_gstin": "27AABCM9012L1Z6"},
+            "gst": {"place_of_supply": "27", "recipient_gstin": "27AABCM9012L1ZC"},
         },
     },
     # Patient 11 — María Teresa / Patricia (corona multi-sesión en curso).

@@ -15,6 +15,13 @@ pytestmark = pytest.mark.alembic_roundtrip
 BACKEND_ROOT = Path(__file__).resolve().parents[3]
 ALEMBIC_INI = BACKEND_ROOT / "alembic.ini"
 INVENTORY_TABLES = {"inventory_items", "stock_movements"}
+# treatment_consumables declares ``depends_on = ("cat_0004", "inv_0001")``
+# in tc_0001 (its junction table FKs inventory_items). Raw Alembic
+# downgrades drag alembic-dependents along with their dependency.
+# The processor's batch-uninstall ordering does not account for this yet
+# (#286); revisit this expectation when that lands.
+DEPENDENT_TABLES = {"treatment_consumables"}
+
 
 
 def _alembic(*args: str) -> None:
@@ -38,11 +45,19 @@ async def _tables() -> set[str]:
 
 
 def test_inventory_uninstall_roundtrip_is_branch_scoped() -> None:
-    """install → uninstall → reinstall drops only inventory's tables."""
+    """install → uninstall → reinstall drops only inventory's tables.
+
+    Alembic's depends_on graph pulls dependent branches (currently
+    ``treatment_consumables``) down together with ``inventory``, so the
+    expected teardown set is inventory plus its dependents.
+    """
     _alembic("upgrade", "heads")
     before = asyncio.run(_tables())
-    assert INVENTORY_TABLES.issubset(before)
-    baseline = before - INVENTORY_TABLES
+    assert INVENTORY_TABLES.isdisjoint(DEPENDENT_TABLES), (
+        "dependent tables overlap inventory tables"
+    )
+    expected_gone = INVENTORY_TABLES | DEPENDENT_TABLES
+    baseline = before - expected_gone
 
     # Walk the branch down one revision at a time until the module's table
     # is gone. ``inventory@-1`` always resolves against the branch's
@@ -58,8 +73,10 @@ def test_inventory_uninstall_roundtrip_is_branch_scoped() -> None:
         raise AssertionError(
             f"inventory tables survived full downgrade: {INVENTORY_TABLES & asyncio.run(_tables())}"
         )
+    assert expected_gone.isdisjoint(after_down)
     assert baseline <= after_down
 
-    _alembic("upgrade", "inventory@head")
+    # Bring everything back (inventory and any branch that depends on it).
+    _alembic("upgrade", "heads")
     after_up = asyncio.run(_tables())
     assert before <= after_up

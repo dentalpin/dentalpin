@@ -1,0 +1,20 @@
+{
+  "consumables": {
+    "title": "Consumibles por tratamiento",
+    "subtitle": "Qué artículos de inventario consume cada tratamiento del catálogo, y en qué cantidad. Solo mapeo — el stock no se descuenta automáticamente.",
+    "treatment": "Tratamiento",
+    "item": "Artículo de inventario",
+    "quantity": "Cantidad",
+    "note": "Nota",
+    "searchTreatments": "Buscar tratamientos…",
+    "searchItems": "Buscar artículos…",
+    "add": "Vincular consumible",
+    "delete": "Desvincular",
+    "deleteTitle": "Desvincular consumible",
+    "deleteMessage": "¿Quitar este vínculo? El tratamiento ya no listará este artículo como consumible.",
+    "empty": "Aún no hay vínculos. Usa «Vincular consumible» para asociar un tratamiento con un artículo.",
+    "noMatches": "Sin coincidencias",
+    "duplicate": "Este tratamiento ya consume este artículo.",
+    "editTitle": "Editar consumible"
+  }
+}

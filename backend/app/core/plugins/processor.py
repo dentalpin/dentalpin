@@ -128,18 +128,34 @@ class PendingProcessor:
             return list(result.scalars())
 
     def _order_pending(self, records: list[ModuleRecord]) -> list[ModuleRecord]:
-        """Topological order so dependencies install first, removes last."""
-        by_name = {r.name: r for r in records}
-        # Filter unknown deps: a pending record may depend on already-
-        # installed modules outside this batch — those don't need
-        # ordering here.
-        return topological_sort(
-            records,
-            key=lambda r: r.name,
-            deps_of=lambda r: (
-                d for d in ((r.manifest_snapshot or {}).get("depends", []) or []) if d in by_name
-            ),
-        )
+        """Order the batch: installs dependencies-first, removals dependents-first.
+
+        Removals must run in *reverse* topological order (#286): tearing
+        the dependency down first drags the dependent's Alembic branch
+        down with it (``depends_on``), so by the time the dependent is
+        processed its tables are gone and the ``pg_dump`` backup step
+        fails — stranding the record in ``to_remove``. Installs/upgrades
+        keep the dependencies-first order and run before removals.
+        """
+
+        def topo(recs: list[ModuleRecord]) -> list[ModuleRecord]:
+            by_name = {r.name: r for r in recs}
+            # Filter unknown deps: a pending record may depend on already-
+            # installed modules outside this group — those don't need
+            # ordering here.
+            return topological_sort(
+                recs,
+                key=lambda r: r.name,
+                deps_of=lambda r: (
+                    d
+                    for d in ((r.manifest_snapshot or {}).get("depends", []) or [])
+                    if d in by_name
+                ),
+            )
+
+        removals = [r for r in records if r.state == ModuleState.TO_REMOVE.value]
+        others = [r for r in records if r.state != ModuleState.TO_REMOVE.value]
+        return topo(others) + list(reversed(topo(removals)))
 
     # --- Dispatch -------------------------------------------------------
 
@@ -337,7 +353,25 @@ class PendingProcessor:
             with target.open("w") as fh:
                 # 5 min cap so a locked / oversized table can't hang
                 # lifespan startup or an admin-triggered uninstall.
-                subprocess.run(args, stdout=fh, check=True, timeout=300)
+                subprocess.run(args, stdout=fh, stderr=subprocess.PIPE, check=True, timeout=300)
+        except subprocess.CalledProcessError as exc:
+            target.unlink(missing_ok=True)
+            stderr = (exc.stderr or b"").decode(errors="replace")
+            if "no matching tables were found" in stderr:
+                # The tables never materialized or are already gone (e.g. a
+                # crash between downgrade and backup). With removals ordered
+                # dependents-first (#286) this is a genuinely-empty backup,
+                # not silent data loss — skip it instead of stranding the
+                # record in to_remove.
+                logger.warning(
+                    "No tables to back up for module %s (%s); skipping backup",
+                    module_name,
+                    ", ".join(tables),
+                )
+                return None
+            raise RuntimeError(
+                f"pg_dump failed backing up module {module_name}: {stderr.strip()}"
+            ) from exc
         except FileNotFoundError as exc:
             target.unlink(missing_ok=True)
             raise RuntimeError(

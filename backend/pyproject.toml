@@ -85,8 +85,10 @@ integrations = "app.modules.integrations:IntegrationsModule"
 staff_tasks = "app.modules.staff_tasks:StaffTasksModule"
 medical_reference = "app.modules.medical_reference:MedicalReferenceModule"
 inventory = "app.modules.inventory:InventoryModule"
+treatment_consumables = "app.modules.treatment_consumables:TreatmentConsumablesModule"
 lab_orders = "app.modules.lab_orders:LabOrdersModule"
 activity_journal = "app.modules.activity_journal:ActivityJournalModule"
+medication_catalog = "app.modules.medication_catalog:MedicationCatalogModule"
 
 [tool.setuptools.packages.find]
 where = ["."]

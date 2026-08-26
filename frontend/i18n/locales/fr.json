@@ -20,6 +20,7 @@
     "appointments": "Agenda",
     "recalls": "Rappels",
     "inventory": "Inventaire",
+    "treatmentConsumables": "Consommables par traitement",
     "expenses": "Dépenses",
     "labOrdersForm": "Nouveau travail de laboratoire",
     "labOrdersStatus": "Travaux de laboratoire",

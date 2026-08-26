@@ -1,0 +1,20 @@
+{
+  "consumables": {
+    "title": "Treatment consumables",
+    "subtitle": "Which inventory items each catalog treatment consumes, and how much. Pure mapping — stock is not deducted automatically.",
+    "treatment": "Treatment",
+    "item": "Inventory item",
+    "quantity": "Quantity",
+    "note": "Note",
+    "searchTreatments": "Search treatments…",
+    "searchItems": "Search inventory items…",
+    "add": "Link consumable",
+    "delete": "Unlink",
+    "deleteTitle": "Unlink consumable",
+    "deleteMessage": "Remove this link? The treatment will no longer list this item as a consumable.",
+    "empty": "No links yet. Use “Link consumable” to map a treatment to an inventory item.",
+    "noMatches": "No matches",
+    "duplicate": "This treatment already consumes this item.",
+    "editTitle": "Edit consumable"
+  }
+}

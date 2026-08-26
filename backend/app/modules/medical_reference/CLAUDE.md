@@ -80,6 +80,10 @@ The searchable comboboxes and the per-patient warning flags are wired via
 - Flags surface by registering a chip component into the existing
   `patient.header.alerts` slot owned by `patients`/`patients_clinical`
   (same pattern they themselves use) — their alert banner is never edited.
+- The chips **subscribe to the host data bus** on the
+  `patients_clinical` namespace (ADR 0021): after any medical-history
+  save, the warning chips refetch immediately — clinical safety data
+  must not go stale until a page reload.
 
 ## CHANGELOG
 

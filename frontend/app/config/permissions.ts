@@ -175,7 +175,15 @@ export const PERMISSIONS = {
     read: 'inventory.read',
     write: 'inventory.write'
   },
+  treatmentConsumables: {
+    read: 'treatment_consumables.read',
+    write: 'treatment_consumables.write'
+  },
   activityJournal: {
     read: 'activity_journal.read'
+  },
+  medicationCatalog: {
+    read: 'medication_catalog.read',
+    write: 'medication_catalog.write'
   }
 } as const

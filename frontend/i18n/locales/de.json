@@ -21,6 +21,7 @@
     "recalls": "Recalls",
     "expenses": "Ausgaben",
     "inventory": "Inventar",
+    "treatmentConsumables": "Verbrauchsmaterial je Behandlung",
     "labOrdersForm": "Neuer Laborauftrag",
     "labOrdersStatus": "Laboraufträge",
     "treatmentPlans": "Behandlungspläne",

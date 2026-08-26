@@ -90,6 +90,12 @@ export function usePatientAlerts(patientId: Ref<string | undefined>) {
     }
   }, { immediate: true })
 
+  // Also refetch on this module's own data-bus tick (ADR 0021), published
+  // after every medical-history save. Without it the header alert chips
+  // keep showing a deleted allergy — or hide a just-added critical one —
+  // until a full page reload.
+  useDataBus().on('patients_clinical', fetchAlerts)
+
   return {
     alerts,
     isLoading,
