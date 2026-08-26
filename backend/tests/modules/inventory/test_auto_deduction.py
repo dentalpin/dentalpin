@@ -93,6 +93,9 @@ async def test_deduction_clamps_at_zero_and_records_partial(
         actor_id=None,
     )
 
+    # refresh() discards un-flushed in-memory changes — flush first so the
+    # deduction (held by the caller's transaction, ADR 0019) is written.
+    await db_session.flush()
     await db_session.refresh(item)
     assert item.stock_quantity == Decimal("0")  # clamped, never negative
     assert len(applied) == 1

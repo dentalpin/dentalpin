@@ -55,20 +55,16 @@ async def test_opening_stock_and_adjustments_are_ledgered(
 
     movements, total = await InventoryService.list_movements(db_session, test_clinic.id)
     assert total == 3  # initial(10) -3 +50 — the rejected one never lands
-    assert [m.delta for m in reversed(movements)] == [
-        Decimal("10"),
-        Decimal("-3"),
-        Decimal("50"),
-    ]
-    assert [m.reason for m in reversed(movements)] == [
-        "initial",
-        "consumption",
-        "restock",
-    ]
-    assert movements[0].note == "clinic use"
-
-    # Ledger sums to the on-hand quantity.
     assert sum(m.delta for m in movements) == Decimal("57")
+
+    # Look rows up by reason: created_at ties are possible within one
+    # transaction, so positional indexing would be flaky.
+    by_reason = {m.reason: m for m in movements}
+    assert by_reason["initial"].delta == Decimal("10")
+    consumption = by_reason["consumption"]
+    assert consumption.delta == Decimal("-3")
+    assert consumption.note == "clinic use"
+    assert by_reason["restock"].delta == Decimal("50")
 
 
 @pytest.mark.asyncio
