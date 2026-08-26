@@ -38,7 +38,7 @@ last_verified_commit: 76e5f4df
 - **Edit item** — opens the same modal pre-filled, including the unit
   cost used by the stock valuation (absolute quantity set, e.g. after a
   manual count, is recorded as a correction in the ledger).
-- **Movements** — the eye button per row opens the item's audit trail:
+- **Movements** — the history icon per row opens the item's audit trail:
   every quantity change ever applied, newest first, with reason and
   note. Items with history cannot be deleted; uncheck them from active
   use by editing instead.

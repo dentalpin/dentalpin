@@ -1,10 +1,10 @@
 """inventory core upgrade (#226): auto-deduction driven by
 treatment_consumables links when a treatment is performed.
 
-The links table belongs to the treatment_consumables module, so these
-tests create it with raw DDL — the same shape its migration produces.
-That also exercises the fail-soft inspector path: without the table,
-deduction is a logged no-op.
+These tests exercise ``InventoryService.apply_consumption`` (the clean
+public primitive) and the event-bus round-trip through
+``treatment_consumables.events.on_treatment_performed`` which resolves
+links with its own ORM model.
 """
 
 from __future__ import annotations
@@ -110,10 +110,22 @@ async def test_deduction_clamps_at_zero_and_records_partial(
     catalog_item_id = uuid4()
     await _seed_link(db_session, test_clinic.id, catalog_item_id, item.id, 4)
 
-    applied = await InventoryService.deduct_for_treatment(
+    # Resolve links the way treatment_consumables/events.py does.
+    from app.modules.treatment_consumables.models import TreatmentConsumable
+    rows = (
+        await db_session.execute(
+            select(TreatmentConsumable.inventory_item_id, TreatmentConsumable.quantity).where(
+                TreatmentConsumable.clinic_id == test_clinic.id,
+                TreatmentConsumable.catalog_item_id == catalog_item_id,
+            )
+        )
+    ).all()
+    links = [(r.inventory_item_id, Decimal(str(r.quantity))) for r in rows]
+
+    applied = await InventoryService.apply_consumption(
         db_session,
         clinic_id=test_clinic.id,
-        catalog_item_id=catalog_item_id,
+        links=links,
         treatment_reference_id=uuid4(),
         actor_id=None,
     )
@@ -136,10 +148,12 @@ async def test_no_links_means_no_op(db_session: AsyncSession, test_clinic: Clini
         InventoryItemCreate(name="Unlinked", category="other", stock_quantity=Decimal("9")),
         created_by=None,
     )
-    applied = await InventoryService.deduct_for_treatment(
+    # Empty links list → no deduction (mirrors treatment_consumables
+    # returning early when no rows match).
+    applied = await InventoryService.apply_consumption(
         db_session,
         clinic_id=test_clinic.id,
-        catalog_item_id=uuid4(),  # no links for this treatment
+        links=[],
         treatment_reference_id=None,
         actor_id=None,
     )
@@ -149,28 +163,21 @@ async def test_no_links_means_no_op(db_session: AsyncSession, test_clinic: Clini
 
 
 @pytest.mark.asyncio
-async def test_missing_links_table_is_a_logged_no_op(
-    db_session: AsyncSession, test_clinic: Clinic
+async def test_deduction_with_zero_links(
+    db_session: AsyncSession, test_clinic: Clinic, links_table
 ):
-    """Soft runtime coupling: treatment_consumables absent → skip cleanly.
-
-    The table is created by conftest's ``create_all`` (ORM model), so we
-    must explicitly DROP it to exercise the fail-soft inspector path.
-    """
-    # Ensure the table exists first (from create_all), then drop it.
-    await db_session.execute(text("DROP TABLE IF EXISTS treatment_consumables"))
-    await db_session.commit()
-
+    """apply_consumption with an empty links list is a no-op — the
+    caller (treatment_consumables) returns early when no rows match."""
     item = await InventoryService.create_item(
         db_session,
         test_clinic.id,
         InventoryItemCreate(name="Whatever", category="other", stock_quantity=Decimal("3")),
         created_by=None,
     )
-    applied = await InventoryService.deduct_for_treatment(
+    applied = await InventoryService.apply_consumption(
         db_session,
         clinic_id=test_clinic.id,
-        catalog_item_id=uuid4(),
+        links=[],
         treatment_reference_id=None,
         actor_id=None,
     )

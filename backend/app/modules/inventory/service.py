@@ -379,18 +379,19 @@ class InventoryService:
         }
 
     @staticmethod
-    async def deduct_for_treatment(
+    async def apply_consumption(
         db: AsyncSession,
         *,
         clinic_id: UUID,
-        catalog_item_id: UUID,
+        links: list[tuple[UUID, Decimal]],
         treatment_reference_id: UUID | None,
         actor_id: UUID | None,
     ) -> list[dict]:
-        """Auto-deduct stock for a performed treatment (#226).
+        """Deduct pre-resolved consumable links from stock (#226).
 
-        Reads the ``treatment_consumables`` links for the catalog item and
-        deducts each linked quantity via :meth:`_apply_movement`
+        Each entry in *links* is an ``(inventory_item_id, quantity)``
+        pair resolved by the caller (``treatment_consumables`` owns the
+        links table).  Each quantity is deducted via :meth:`_apply_movement`
         (``clamp_at_zero=True``): clinical care is never blocked by
         bookkeeping — an underflowing deduction floors at zero and the
         movement records what was actually applied.
@@ -399,42 +400,16 @@ class InventoryService:
         via the partial unique index on stock_movements (idempotency —
         at-least-once bus contract per ADR 0019).
 
-        This is a clean public primitive intended to be called from
-        ``treatment_consumables`` (which owns the links table and
-        already depends on inventory — no cycle).
+        This is a clean public primitive with **no knowledge** of
+        ``treatment_consumables`` — the caller reads its own table.
         """
-        from sqlalchemy import inspect as sa_inspect
-        from sqlalchemy import text as sa_text
-
-        has_links_table = await db.run_sync(
-            # run_sync hands us the sync *Session*, not a Connection —
-            # inspection needs the underlying connection (CI-verified).
-            lambda sync_session: sa_inspect(sync_session.connection()).has_table(
-                "treatment_consumables"
-            )
-        )
-        if not has_links_table:
-            logger.info("treatment_consumables not installed; skipping auto-deduction")
-            return []
-
-        link_rows = (
-            await db.execute(
-                sa_text(
-                    "SELECT inventory_item_id, quantity "
-                    "FROM treatment_consumables "
-                    "WHERE clinic_id = :clinic_id AND catalog_item_id = :catalog_item_id"
-                ),
-                {"clinic_id": str(clinic_id), "catalog_item_id": str(catalog_item_id)},
-            )
-        ).all()
-
         applied: list[dict] = []
-        for item_id_raw, quantity in link_rows:
+        for item_id, quantity in links:
             updated, applied_delta = await InventoryService._apply_movement(
                 db,
                 clinic_id=clinic_id,
-                item_id=item_id_raw if isinstance(item_id_raw, UUID) else UUID(str(item_id_raw)),
-                delta=-Decimal(str(quantity)),
+                item_id=item_id,
+                delta=-quantity,
                 reason="consumption",
                 created_by=actor_id,
                 reference_type="treatment_performance",

@@ -4,7 +4,7 @@ Pure mapping with a quantity per link (root canal → 2 anesthetic
 vials). Reads both dependencies to validate links and resolve names;
 writes only its own table.  Handles ``odontogram.treatment.performed``
 via subscription inversion (#226): reads links via ORM model, calls
-``InventoryService.deduct_for_treatment`` as a clean public primitive.
+``InventoryService.apply_consumption`` as a clean public primitive.
 
 depends: ["catalog", "inventory"] — declared so the loader mounts this
 module after both, and so CI enforces the cross-module FKs.
@@ -76,6 +76,6 @@ class TreatmentConsumablesModule(BaseModule):
         # Subscription inversion (#226): this module owns the links table
         # and already depends on inventory, so the subscription direction
         # is legal (no cycle).  Reads links via ORM model, calls
-        # InventoryService.deduct_for_treatment as a clean public
+        # InventoryService.apply_consumption as a clean public
         # primitive — no raw SQL, no inspector guard, no fail-soft branch.
         return {EventType.ODONTOGRAM_TREATMENT_PERFORMED: on_treatment_performed}

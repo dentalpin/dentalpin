@@ -36,8 +36,8 @@ procurement) sees the row and rolls back with it.
 This event is **no longer handled** by inventory.  It was moved to
 `treatment_consumables` via subscription inversion (#226):
 that module owns the links table, already depends on inventory (no
-cycle), and calls `InventoryService.deduct_for_treatment` as a clean
-public primitive.
+cycle), resolves links with its own ORM model, and calls
+`InventoryService.apply_consumption` as a clean public primitive.
 
 **Why the inversion**: inventory's original handler used raw SQL + an
 inspector guard to read another module's table — coupling that CI
@@ -46,12 +46,13 @@ deducting if the inspector call failed.  The new design eliminates
 raw SQL, the inspector round-trip, and the fail-soft branch entirely:
 the module that owns the table is the one that reads it.
 
-`InventoryService.deduct_for_treatment` is a clean public primitive
-that reads the `treatment_consumables` links table via inspector (soft
-coupling — no manifest dependency), applies each quantity via
-`_apply_movement` (``clamp_at_zero=True``), and returns the applied
-deltas.  Duplicate deductions for the same treatment are silently
-ignored via a partial unique index on `stock_movements`
+`InventoryService.apply_consumption` is a clean public primitive that
+accepts pre-resolved `(inventory_item_id, quantity)` links, applies
+each quantity via `_apply_movement` (``clamp_at_zero=True``), and
+returns the applied deltas.  Inventory has no knowledge of
+`treatment_consumables` — no raw SQL, no imports, no inspector.
+Duplicate deductions for the same treatment are silently ignored via
+a partial unique index on `stock_movements`
 (``uq_stock_movements_consumption_ref``) — idempotent at-least-once
 bus contract per ADR 0019.
 

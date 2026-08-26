@@ -46,8 +46,9 @@ instead (`is_active`), and the list hides inactive rows by default.
 When a treatment is performed (`odontogram.treatment.performed`), the
 `treatment_consumables` module handles the event via subscription
 inversion (#226): it reads its own links table via ORM and calls
-`InventoryService.deduct_for_treatment` as a clean public primitive.
-No raw SQL, no inspector guard, no fail-soft branch.
+`InventoryService.apply_consumption` as a clean public primitive.
+No raw SQL, no inspector guard, no fail-soft branch — inventory has
+no knowledge of treatment_consumables.
 
 Duplicate deductions for the same treatment are silently ignored via a
 partial unique index on `stock_movements` (idempotency — at-least-once

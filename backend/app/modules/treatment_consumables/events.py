@@ -2,7 +2,7 @@
 
 ``odontogram.treatment.performed`` → read the treatment_consumables links
 for the performed catalog item via ORM and call
-``InventoryService.deduct_for_treatment`` (a clean public primitive on
+``InventoryService.apply_consumption`` (a clean public primitive on
 inventory).  No raw SQL, no inspector guard, no fail-soft branch.
 
 This module already depends on inventory (declared in manifest), so
@@ -12,7 +12,10 @@ the subscription direction is legal and creates no cycle.
 from __future__ import annotations
 
 import logging
+from decimal import Decimal
 from uuid import UUID
+
+from sqlalchemy import select
 
 logger = logging.getLogger(__name__)
 
@@ -22,6 +25,9 @@ _ACTOR_KEYS = ("performed_by", "changed_by", "user_id")
 
 
 async def on_treatment_performed(data: dict, db) -> None:
+    from app.modules.inventory.service import InventoryService
+    from app.modules.treatment_consumables.models import TreatmentConsumable
+
     clinic_raw = data.get("clinic_id")
     catalog_raw = data.get("catalog_item_id")
     if not clinic_raw or not catalog_raw:
@@ -36,8 +42,6 @@ async def on_treatment_performed(data: dict, db) -> None:
         )
         return
 
-    from app.modules.inventory.service import InventoryService
-
     actor_id = None
     for key in _ACTOR_KEYS:
         raw = data.get(key)
@@ -48,10 +52,26 @@ async def on_treatment_performed(data: dict, db) -> None:
             except (ValueError, TypeError):
                 continue
 
-    applied = await InventoryService.deduct_for_treatment(
+    # Resolve links with our own ORM model — inventory never sees this table.
+    rows = (
+        await db.execute(
+            select(TreatmentConsumable.inventory_item_id, TreatmentConsumable.quantity).where(
+                TreatmentConsumable.clinic_id == clinic_id,
+                TreatmentConsumable.catalog_item_id == catalog_item_id,
+            )
+        )
+    ).all()
+    if not rows:
+        return  # no linked consumables for this catalog item
+
+    links: list[tuple[UUID, Decimal]] = [
+        (row.inventory_item_id, Decimal(str(row.quantity))) for row in rows
+    ]
+
+    applied = await InventoryService.apply_consumption(
         db,
         clinic_id=clinic_id,
-        catalog_item_id=catalog_item_id,
+        links=links,
         treatment_reference_id=(
             UUID(str(data["treatment_id"])) if data.get("treatment_id") else None
         ),

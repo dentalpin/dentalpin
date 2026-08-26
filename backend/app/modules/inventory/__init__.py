@@ -9,9 +9,11 @@ deduction of linked consumables when a treatment is performed.
 ``depends: []`` — treatment_consumables points its FKs *into* this
 module, so declaring it back would create a cycle. The auto-deduction
 is handled by treatment_consumables via subscription inversion (#226):
-this module exposes ``deduct_for_treatment`` as a clean public
-primitive, and treatment_consumables calls it from its own event
-handler. No raw SQL, no inspector guard, no fail-soft branch.
+this module exposes ``apply_consumption`` as a clean public primitive
+that accepts pre-resolved ``(item_id, quantity)`` links, and
+treatment_consumables reads its own table with its own ORM model and
+calls it.  Inventory has no knowledge of treatment_consumables — no
+raw SQL, no inspector guard, no fail-soft branch.
 """
 
 from fastapi import APIRouter

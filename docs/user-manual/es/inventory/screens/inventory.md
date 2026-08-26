@@ -39,7 +39,7 @@ last_verified_commit: 76e5f4df
   coste unitario usado por la valoración (la asignación absoluta de
   cantidad, p. ej. tras un recuento manual, se registra como corrección
   en el libro).
-- **Movimientos**: el botón del ojo por fila abre la pista de auditoría
+- **Movimientos**: el icono de historial por fila abre la pista de auditoría
   del artículo: cada cambio de cantidad aplicado, del más reciente al
   más antiguo, con motivo y nota. Los artículos con historial no se
   pueden eliminar; desactívalos editándolos.
