@@ -38,7 +38,10 @@ async def _create_links_table(db_session: AsyncSession) -> None:
                 clinic_id UUID NOT NULL,
                 catalog_item_id UUID NOT NULL,
                 inventory_item_id UUID NOT NULL,
-                quantity NUMERIC(10, 2) NOT NULL
+                quantity NUMERIC(10, 2) NOT NULL DEFAULT 1,
+                note VARCHAR(200),
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+                updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
             )
             """
         )
