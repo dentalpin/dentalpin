@@ -363,6 +363,7 @@ const { format: formatCurrency } = useCurrency()
                 variant="ghost"
                 color="success"
                 icon="i-lucide-check"
+                :aria-label="t('clinical.plans.markComplete')"
                 :title="t('clinical.plans.markComplete')"
                 @click.stop="openConfirmModal(item)"
               />
@@ -372,6 +373,7 @@ const { format: formatCurrency } = useCurrency()
                 variant="ghost"
                 color="error"
                 icon="i-lucide-trash-2"
+                :aria-label="t('common.delete')"
                 :title="t('clinical.plans.removeItem')"
                 @click.stop="emit('item-remove', item.id)"
               />

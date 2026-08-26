@@ -1,0 +1,351 @@
+{
+  "verifactu": {
+    "nav": { "settings": "Verifactu (AEAT)" },
+    "settingsCards": {
+      "title": "Verifactu (AEAT)",
+      "description": "Spanische Compliance für elektronische Rechnungsstellung. Verwalten Sie Zertifikat, SIF-Produzent, Übermittlungswarteschlange und Steuerjournal.",
+      "open": "Öffnen"
+    },
+    "title": "Verifactu (AEAT)",
+    "subtitle": "Spanische Compliance für elektronische Rechnungsstellung (RRSIF / Veri*Factu).",
+    "hero": {
+      "loading": { "title": "Wird geladen…", "description": "" },
+      "setup": {
+        "title": "Einrichtung ausstehend",
+        "description": "Schließen Sie die folgenden Schritte ab, bevor Sie Verifactu aktivieren."
+      },
+      "inactive": {
+        "title": "Bereit zur Aktivierung",
+        "description": "Die Konfiguration ist vollständig. Aktivieren Sie Verifactu, um Rechnungen an die AEAT zu übermitteln."
+      },
+      "active-test": {
+        "title": "Verifactu im Testmodus aktiv",
+        "description": "Rechnungen werden an die AEAT-Sandbox übermittelt. Nützlich, um die Integration vor dem Produktivbetrieb zu validieren."
+      },
+      "active-prod": {
+        "title": "Verifactu im Produktivbetrieb aktiv",
+        "description": "Rechnungen werden als echte Steuerdaten an die AEAT übermittelt. Jeder Fehler wird offiziell registriert."
+      },
+      "activate": "Verifactu aktivieren",
+      "deactivate": "Verifactu deaktivieren"
+    },
+    "setup": {
+      "clinicNif": "Steuernummer (CIF/NIF) der Praxis hinterlegen",
+      "clinicNifCta": "Praxisdaten",
+      "producer": "Angaben zum SIF-Produzenten ausfüllen",
+      "producerCta": "Produzent",
+      "declaration": "Die declaración responsable des Produzenten unterzeichnen",
+      "declarationCta": "Unterzeichnen",
+      "certificate": "Digitales Zertifikat (FNMT) hochladen",
+      "certificateCta": "Hochladen"
+    },
+    "cards": {
+      "manage": "Verwalten",
+      "emisor": {
+        "title": "Ausstellerdaten",
+        "editHint": "Diese Daten stammen aus den Praxisdaten. Um sie zu ändern, bearbeiten Sie sie dort.",
+        "editLink": "Praxisdaten"
+      },
+      "producer": {
+        "empty": "SIF-Produzent noch nicht konfiguriert."
+      },
+      "vatMapping": {
+        "title": "AEAT-Umsatzsteuerklassifikation",
+        "description": "Ordnen Sie jedem Umsatzsteuertyp des Katalogs seine AEAT-Klassifikation zu (S1, E1, N1…)."
+      },
+      "activity": {
+        "title": "Aktivität"
+      }
+    },
+    "modal": {
+      "confirmProdTitle": "In den Produktivbetrieb wechseln?",
+      "confirmProdAction": "Ja, in den Produktivbetrieb wechseln"
+    },
+    "vatMapping": {
+      "title": "AEAT-Umsatzsteuerklassifikation",
+      "subtitle": "Legen Sie fest, wie jeder Umsatzsteuertyp des Katalogs in jedem Verifactu-Datensatz in seine AEAT-Klassifikation übersetzt wird.",
+      "legalIntroTitle": "So funktioniert es",
+      "legalIntro": "Bleibt eine Zeile auf 'Auto', wird eine Heuristik verwendet (Satz>0 → S1, Satz=0 → N1). Für zahnmedizinische Leistungen ist es in der Regel sinnvoll, 'E1 — Steuerbefreit Art. 20 LIVA' festzulegen. Spanische Praxen benötigen üblicherweise nur beim Umsatzsteuertyp 'Steuerbefreit' eine manuelle Zuordnung.",
+      "empty": "Keine Umsatzsteuertypen im Praxiskatalog.",
+      "rate": "Satz",
+      "defaultBadge": "Standard",
+      "autoOption": "Auto ({code}) — Heuristik verwenden",
+      "sourceAuto": "automatisch",
+      "sourceOverride": "manuell festgelegt",
+      "save": "Speichern",
+      "saved": "Klassifikation gespeichert.",
+      "saveFailed": "Klassifikation konnte nicht gespeichert werden.",
+      "notesPlaceholder": "Notizen (z. B. 'art. 20.uno.3.º LIVA')"
+    },
+    "environment": {
+      "test": "Test",
+      "prod": "Produktion",
+      "switchToProd": "In den Produktivbetrieb wechseln",
+      "switchToTest": "In den Testmodus wechseln",
+      "warningProd": "Sie sind dabei, in den Produktivbetrieb zu wechseln. Ab jetzt wird jede ausgestellte Rechnung als echter steuerlicher Datensatz an die AEAT übermittelt.",
+      "label": "Umgebung"
+    },
+    "errors": {
+      "cannotPromoteToProd": "Ihre Rolle kann Verifactu nicht in den Produktivbetrieb versetzen. Bitten Sie einen Administrator, diese Änderung vorzunehmen."
+    },
+    "status": {
+      "enabled": "Aktiviert",
+      "disabled": "Deaktiviert",
+      "noCertificate": "Kein Zertifikat",
+      "certificateExpiringSoon": "Zertifikat läuft in {days} Tagen ab",
+      "certificateExpired": "Zertifikat abgelaufen"
+    },
+    "settings": {
+      "title": "Verifactu-Einstellungen",
+      "enable": "Verifactu aktivieren",
+      "enableHint": "Wenn aktiviert, wird jede ausgestellte Rechnung automatisch an die AEAT übermittelt.",
+      "nifEmisor": "NIF des Ausstellers",
+      "nifEmisorHint": "Die NIF der Praxis. Muss mit dem Zertifikat übereinstimmen.",
+      "nombreRazon": "Rechtlicher Name des Ausstellers",
+      "save": "Speichern",
+      "saved": "Einstellungen gespeichert"
+    },
+    "certificate": {
+      "title": "Digitales Zertifikat",
+      "description": "Laden Sie das FNMT-Zertifikat der Praxis hoch (.pfx / .p12). Wird verschlüsselt gespeichert.",
+      "active": "Aktives Zertifikat",
+      "healthy": "Gültig",
+      "subject": "Inhaber",
+      "issuer": "Aussteller",
+      "nif": "NIF des Inhabers",
+      "validFrom": "Gültig ab",
+      "validUntil": "Gültig bis",
+      "uploadFile": "Zertifikatsdatei",
+      "uploadHint": "Akzeptiert die Formate .pfx und .p12.",
+      "password": "Zertifikatspasswort",
+      "passwordHint": "Das Passwort, das die Datei schützt. Wird niemals im Klartext gespeichert.",
+      "passwordPlaceholder": "••••••••",
+      "togglePassword": "Passwort anzeigen/verbergen",
+      "uploadButton": "Zertifikat hochladen",
+      "uploadTitle": "Zertifikat hochladen",
+      "replaceTitle": "Zertifikat ersetzen",
+      "uploadSubmit": "Zertifikat hochladen",
+      "replaceSubmit": "Zertifikat ersetzen",
+      "uploaded": "Zertifikat hochgeladen und aktiv",
+      "uploadFailed": "Das Zertifikat konnte nicht hochgeladen werden",
+      "invalidFormat": "Ungültiges Format. Laden Sie eine .pfx- oder .p12-Datei hoch.",
+      "history": "Zertifikatsverlauf",
+      "historyEmpty": "Noch kein Zertifikat hochgeladen.",
+      "noActive": "Kein aktives Zertifikat",
+      "noActiveHint": "Laden Sie Ihr FNMT-Zertifikat (.pfx / .p12) hoch, um Verifactu zu aktivieren und Übermittlungen an die AEAT zu signieren.",
+      "dropzoneTitle": "Ziehen Sie Ihr Zertifikat hierher",
+      "dropzoneSubtitle": "oder klicken Sie, um eine Datei auszuwählen",
+      "dropzoneFormats": "Format .pfx oder .p12",
+      "removeFile": "Datei entfernen",
+      "encryptionNote": "Datei und Passwort werden mit dem Serverschlüssel verschlüsselt. Niemals im Klartext gespeichert.",
+      "helpTitle": "Woher bekommt man das Zertifikat?",
+      "helpBody": "Zum Signieren der Übermittlungen an die AEAT benötigen Sie ein von der FNMT ausgestelltes digitales Zertifikat der Praxis. Drei gültige Varianten:",
+      "helpItem1": "Zertifikat des gesetzlichen Vertreters — für Gesellschaften (S.L., S.A.).",
+      "helpItem2": "Persönliches Zertifikat — für autónomos, deren NIF mit dem Aussteller übereinstimmt.",
+      "helpItem3": "Unternehmenssiegel — Alternative für juristische Personen.",
+      "fnmtLink": "Zertifikat im FNMT-Portal beantragen"
+    },
+    "queue": {
+      "title": "Übermittlungswarteschlange",
+      "tabs": { "pending": "Ausstehend", "rejected": "Abgelehnt", "transient": "Temporäre Fehler" },
+      "empty": "Keine Datensätze in diesem Status.",
+      "retry": "Erneut versuchen",
+      "regenerateAndRetry": "Neu erzeugen und erneut übermitteln",
+      "regenerateTooltip": "Berechnet den Datensatz aus den aktuellen Daten neu (NIF, Positionen, …) und übermittelt ihn erneut als Subsanación.",
+      "retryAll": "Alle neu erzeugen",
+      "retryAllConfirm": "Sie sind dabei, alle abgelehnten Datensätze dieser Praxis neu zu erzeugen. Fortfahren?",
+      "retryAllResult": "{n} Datensätze neu erzeugt ({failed} fehlgeschlagen).",
+      "viewInvoice": "Rechnung anzeigen",
+      "viewHistory": "AEAT-Verlauf",
+      "errorCode": "Code",
+      "transportError": "Übertragungsfehler",
+      "aeatFault": "AEAT-Fehlerantwort",
+      "rawError": "Originalmeldung der AEAT",
+      "submissionAttempt": "Versuch {n}",
+      "processNow": "Jetzt verarbeiten",
+      "processed": "{n} Datensätze verarbeitet",
+      "regeneratedToast": "Datensatz neu erzeugt und erneut übermittelt.",
+      "blockingBanner": {
+        "title": "{n} Verifactu-Datensatz/Datensätze abgelehnt",
+        "description": "Sie können keine neuen Rechnungen ausstellen, bis diese behoben sind (die Hash-Kette würde sonst brechen).",
+        "cta": "Warteschlange öffnen",
+        "adminContact": "Wenden Sie sich an den Administrator {email}, wenn Sie keinen Zugriff haben."
+      },
+      "ctas": {
+        "edit_clinic": "Meine Steuerdaten korrigieren",
+        "edit_billing_party": "Kundendaten bearbeiten",
+        "edit_lines": "Rechnungspositionen prüfen",
+        "edit_producer": "SIF-Produzent bearbeiten",
+        "retry": "Erneut versuchen",
+        "contact_support": "Support kontaktieren"
+      },
+      "history": {
+        "title": "AEAT-Übermittlungsverlauf",
+        "empty": "Keine früheren Versuche archiviert (dies ist die erste Übermittlung).",
+        "attempt": "Versuch #{n}",
+        "huella": "Hash",
+        "code": "AEAT-Code"
+      }
+    },
+    "billingParty": {
+      "modalTitle": "Kundendaten bearbeiten",
+      "intro": "Diese Angaben werden bei der nächsten Übermittlung als Empfänger an die AEAT gesendet.",
+      "fields": {
+        "name": "Name / Firmenname",
+        "taxId": "Steuernummer",
+        "address": "Adresse"
+      },
+      "save": "Speichern und erneut übermitteln",
+      "saved": "Gespeichert. Verifactu übermittelt den Datensatz automatisch erneut.",
+      "concurrentEdit": "Jemand anderes hat diese Rechnung zwischenzeitlich bearbeitet. Laden Sie die Seite neu und versuchen Sie es erneut.",
+      "saveFailed": "Speichern nicht möglich."
+    },
+    "invoiceBanner": {
+      "rejectedTitle": "Die AEAT hat diesen Verifactu-Datensatz abgelehnt",
+      "rejectedBody": "Korrigieren Sie die unten stehenden Daten — die erneute Übermittlung als Subsanación erfolgt automatisch.",
+      "pdfStaleTitle": "Das heruntergeladene PDF ist möglicherweise veraltet",
+      "pdfStaleBody": "Der QR-Code ändert sich nach Korrektur und erneuter Übermittlung. Laden Sie das PDF erneut herunter, falls Sie es bereits an den Patienten gesendet haben.",
+      "downloadAgain": "Aktuelles PDF herunterladen"
+    },
+    "nif": {
+      "warningInvalid": "Das Format der Steuernummer scheint nicht korrekt zu sein. Die AEAT könnte sie ablehnen."
+    },
+    "globalBanner": {
+      "title": "Verifactu: {n} Rechnung(en) von der AEAT abgelehnt",
+      "description": "Beheben Sie die Ablehnungen, bevor Sie neue Rechnungen ausstellen (die Hash-Kette würde sonst brechen).",
+      "cta": "Beheben"
+    },
+    "badge": {
+      "short": "AEAT",
+      "tooltip": {
+        "ok": "Von der AEAT akzeptiert",
+        "warning": "Von der AEAT mit Hinweisen akzeptiert",
+        "pending": "Übermittlung an die AEAT ausstehend",
+        "error": "Von der AEAT abgelehnt"
+      }
+    },
+    "filter": {
+      "label": "Verifactu",
+      "options": {
+        "ok": "Akzeptiert",
+        "warning": "Mit Hinweisen",
+        "pending": "Ausstehend",
+        "error": "Abgelehnt"
+      },
+      "shortcut": "Nur Probleme",
+      "empty": "Alle Verifactu-Rechnungen sind auf dem aktuellen Stand."
+    },
+    "records": {
+      "title": "Steuerjournal",
+      "subtitle": "Unveränderlicher Verlauf der an die AEAT übermittelten Datensätze.",
+      "filterState": "Status",
+      "filterTipo": "Typ",
+      "columns": {
+        "createdAt": "Datum",
+        "tipoFactura": "Typ",
+        "serieNumero": "Nummer",
+        "importe": "Betrag",
+        "state": "Status",
+        "csv": "AEAT-CSV"
+      },
+      "viewXml": "XML anzeigen",
+      "verifyChain": "Kette prüfen"
+    },
+    "tipoFactura": {
+      "F1": "F1 — Vollständige Rechnung",
+      "F2": "F2 — Vereinfachte Rechnung",
+      "F3": "F3 — Ersatzrechnung",
+      "R1": "R1 — Korrekturrechnung",
+      "R2": "R2 — Forderungsausfall",
+      "R5": "R5 — Vereinfachte Korrekturrechnung"
+    },
+    "recordState": {
+      "pending": "Ausstehend",
+      "sending": "Wird übermittelt",
+      "accepted": "Akzeptiert",
+      "accepted_with_errors": "Mit Fehlern akzeptiert",
+      "rejected": "Abgelehnt",
+      "failed_transient": "Wird erneut versucht",
+      "failed_validation": "Validierungsfehler"
+    },
+    "panel": {
+      "verifactuTitle": "Verifactu",
+      "huella": "Hash",
+      "csv": "AEAT-CSV",
+      "qr": "QR-Code",
+      "viewRecord": "Vollständigen Datensatz anzeigen",
+      "submittedAt": "Übermittelt",
+      "stillPending": "Übermittlung an die AEAT ausstehend"
+    },
+    "producer": {
+      "title": "SIF-Produzent",
+      "subtitle": "Rechtliche Identifikation desjenigen, der die Software in Produktion bringt und die declaración responsable unterzeichnet.",
+      "legalIntroTitle": "Rechtliche Verantwortung",
+      "legalIntro": "RD 1007/2023 Art. 13 verlangt, dass der Produzent des Sistema Informático de Facturación eine declaración responsable unterzeichnet. Wird DentalPin als verwaltetes SaaS angeboten, ist der SaaS-Betreiber der Produzent. Betreibt eine Praxis die Software selbst (autodesarrollo), ist die Praxis selbst der Produzent. Stellt ein Integrator die Software bereit, ist der Integrator der Produzent.",
+      "process": {
+        "title": "Das müssen Sie tun",
+        "s1": "Ermitteln Sie, wer der SIF-Produzent ist (Schritt 1) — rechtliche Daten, die in der Erklärung und in jedem an die AEAT gesendeten Datensatz erscheinen.",
+        "s2": "Lesen Sie die declaración responsable und unterzeichnen Sie sie elektronisch (Schritt 2). Das System versiegelt Datum und unterzeichnenden Benutzer als Nachweis.",
+        "s3": "Laden Sie das unterzeichnete PDF herunter (Schritt 3) — zur Archivierung und, falls Sie ein SaaS betreiben, zur Weitergabe an Ihre Praxen.",
+        "legalNote": "Die im System gespeicherte elektronische Signatur ist als Nachweis für eine AEAT-Prüfung ausreichend. Das PDF ist ein informatives Dokument, das aus dieser Signatur abgeleitet wird."
+      },
+      "step1": {
+        "title": "Daten des Produzenten",
+        "description": "Diese Felder identifizieren den SIF-Produzenten rechtlich und werden sowohl in die declaración responsable als auch in den SistemaInformatico-Block jedes an die AEAT gesendeten Datensatzes eingebettet.",
+        "lockedTitle": "Versiegelte Daten",
+        "lockedDescription": "Die Erklärung wurde bereits mit diesen Daten unterzeichnet, daher sind sie gesperrt. Kontaktieren Sie den Support, um die Signatur zu widerrufen, falls Sie sie ändern müssen."
+      },
+      "step2": {
+        "title": "Erklärung unterzeichnen",
+        "description": "Lesen Sie den Text sorgfältig. Wenn Sie einverstanden sind, aktivieren Sie das Kontrollkästchen und klicken Sie auf Elektronisch unterzeichnen. Die Signatur wird im System mit Datum und Benutzer versiegelt."
+      },
+      "step3": {
+        "title": "Unterzeichnete Erklärung herunterladen",
+        "description": "Druckbares Dokument mit den Produzentendaten und dem Stempel der elektronischen Signatur. Nützlich für die interne Archivierung, eine AEAT-Prüfung oder die Weitergabe an Praxen, die das System nutzen.",
+        "lockedHint": "Verfügbar, sobald die Erklärung unterzeichnet ist (Schritt 2)."
+      },
+      "fields": {
+        "name": "Firmenname des Produzenten",
+        "nameHint": "Rechtlicher Name des Unternehmens oder autónomo, der als SIF-Produzent auftritt.",
+        "nif": "NIF des Produzenten",
+        "nifHint": "NIF des SIF-Produzenten. Erscheint in jedem an die AEAT übermittelten Datensatz.",
+        "idSistema": "System-ID",
+        "idSistemaHint": "Kurzkennung (1-2 Zeichen), die der Produzent dem System zuweist. Standard: DP.",
+        "version": "Systemversion",
+        "versionHint": "In Produktion eingesetzte Softwareversion (z. B. 0.1.0)."
+      },
+      "declaration": {
+        "heading": "Declaración responsable",
+        "legalRef": "Sistema Informático de Facturación — Veri*Factu (RD 1007/2023, Art. 13)",
+        "preamble": "Gemäß Artikel 13 des Königlichen Dekrets 1007/2023 (RRSIF) und der Verordnung HAC/1177/2024:",
+        "identity": "{name}, mit NIF {nif}, in der Eigenschaft als Produzent des Sistema Informático de Facturación mit dem Namen DentalPin (Systemkennung {idSistema}, Version {version}), erklärt verantwortlich, dass:",
+        "item1": "Das System erfüllt die Anforderungen des Artikels 29.2.j) des Gesetzes 58/2003 (Ley General Tributaria) und des RRSIF.",
+        "item2": "Das System gewährleistet die Integrität, Aufbewahrung, Zugänglichkeit, Lesbarkeit, Nachverfolgbarkeit und Unveränderbarkeit der Rechnungsdatensätze.",
+        "item3": "Das System implementiert die kontinuierliche Übermittlung der Datensätze an die AEAT im Veri*Factu-Modus.",
+        "item4": "Der Produzent verpflichtet sich, das System entsprechend der regulatorischen Entwicklung aktuell zu halten."
+      },
+      "statusSigned": "Unterzeichnet",
+      "statusUnsigned": "Signatur ausstehend",
+      "readAndAccept": "Ich habe die declaración responsable gelesen und akzeptiere sie als SIF-Produzent.",
+      "signButton": "Elektronisch unterzeichnen",
+      "signNote": "Mit dem Klick auf die Schaltfläche wird die Signatur mit Datum und Ihrem Benutzer registriert. Die Aktion kann über die Oberfläche nicht rückgängig gemacht werden.",
+      "signedToast": "Erklärung unterzeichnet und registriert.",
+      "sealedNote": "Die Produzentendaten werden als Nachweis für eine mögliche AEAT-Prüfung versiegelt.",
+      "saveDraft": "Ohne Unterschrift speichern",
+      "draftSaved": "Entwurf gespeichert (Signatur ausstehend).",
+      "downloadPdf": "Unterzeichnetes PDF herunterladen",
+      "revokeAction": "Signatur widerrufen, um zu bearbeiten",
+      "revokeTitle": "Signatur widerrufen?",
+      "revokeBody": "Durch den Widerruf der elektronischen Signatur können Sie die Produzentendaten wieder bearbeiten. Bevor Sie fortfahren:",
+      "revokeBullet1": "Die aktuelle Signatur verliert ihren rechtlichen Wert als Nachweis gegenüber der AEAT.",
+      "revokeBullet2": "Verifactu wird automatisch deaktiviert, bis Sie die neue Erklärung unterzeichnen.",
+      "revokeBullet3": "Bereits an die AEAT übermittelte Datensätze sind nicht betroffen — nur der deklarierte Produzent für zukünftige Übermittlungen ändert sich.",
+      "revokeConfirm": "Widerrufen und bearbeiten",
+      "revokedToast": "Signatur widerrufen. Sie können die Produzentendaten jetzt bearbeiten.",
+      "signLabel": "Declaración responsable unterzeichnen",
+      "alreadySigned": "Erklärung unterzeichnet",
+      "signedAt": "Elektronisch unterzeichnet am {at}",
+      "saveFailed": "Die Produzentendaten konnten nicht gespeichert werden."
+    }
+  }
+}

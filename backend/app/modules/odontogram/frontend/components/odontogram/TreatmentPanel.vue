@@ -150,6 +150,7 @@ function formatDate(dateString: string): string {
               <UButton
                 v-if="!readonly"
                 icon="i-lucide-trash-2"
+                :aria-label="t('common.delete')"
                 size="xs"
                 color="error"
                 variant="ghost"

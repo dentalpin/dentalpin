@@ -1,0 +1,38 @@
+{
+  "whatsapp_kapso": {
+    "settings": {
+      "title": "WhatsApp (Kapso)",
+      "description": "Verbinden Sie die WhatsApp-Nummer der Praxis über Kapso, um Nachrichten zu senden und zu empfangen."
+    },
+    "connection": "Verbindung",
+    "verified": "Verifiziert",
+    "notVerified": "Nicht verifiziert",
+    "apiKey": "Kapso-API-Schlüssel",
+    "phoneNumberId": "Telefonnummern-ID",
+    "businessAccountId": "Business-Konto-ID",
+    "businessAccountHelp": "Erforderlich, um genehmigte Vorlagen zu synchronisieren.",
+    "displayPhone": "Angezeigte Nummer",
+    "webhookSecret": "Webhook-Secret",
+    "secretStored": "Gespeichert. Leer lassen, um es unverändert zu behalten.",
+    "webhook": "Webhook",
+    "webhookHelp": "Fügen Sie diese URL in die Webhook-Einstellungen von Kapso ein, um Status und Antworten zu empfangen.",
+    "copy": "Kopieren",
+    "copied": "URL kopiert",
+    "templates": "Vorlagen",
+    "sync": "Synchronisieren",
+    "noTemplates": "Keine genehmigten Vorlagen. Synchronisieren Sie, um sie von Kapso abzurufen.",
+    "notificationType": "Benachrichtigungstyp",
+    "template": "Vorlage",
+    "map": "Zuordnen",
+    "mapped": "Vorlage zugeordnet",
+    "mapError": "Vorlage konnte nicht zugeordnet werden",
+    "test": "Testversand",
+    "sendTest": "Test senden",
+    "testOk": "Testnachricht gesendet",
+    "testFail": "Test konnte nicht gesendet werden",
+    "saved": "Einstellungen gespeichert",
+    "saveError": "Speichern nicht möglich",
+    "synced": "{n} Vorlagen synchronisiert",
+    "syncError": "Synchronisierung nicht möglich"
+  }
+}

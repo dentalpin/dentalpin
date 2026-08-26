@@ -230,6 +230,7 @@ function goBack() {
           variant="ghost"
           color="neutral"
           icon="i-lucide-arrow-left"
+          :aria-label="t('common.back')"
           @click="goBack"
         />
         <h1 class="text-display text-default">
@@ -499,6 +500,7 @@ function goBack() {
                   variant="ghost"
                   color="neutral"
                   icon="i-lucide-pencil"
+                  :aria-label="t('common.edit')"
                   size="sm"
                   @click.stop="openEditItemModal(item)"
                 />
@@ -506,6 +508,7 @@ function goBack() {
                   variant="ghost"
                   color="error"
                   icon="i-lucide-trash-2"
+                  :aria-label="t('common.delete')"
                   size="sm"
                   @click.stop="markItemForDeletion(item.id)"
                 />

@@ -26,7 +26,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 0cce028b
 ---
 
 # Citas
@@ -67,6 +67,29 @@ flujo (programada → confirmada → en sala → completada → cobrada).
    modal.
 3. **Guardar**. Se publica el evento `appointment.scheduled` para que
    módulos como notificaciones puedan enviar la confirmación.
+
+### Vincular tratamientos de un plan
+
+En cuanto seleccionas paciente, el modal ofrece los tratamientos
+pendientes de sus planes de tratamiento, para que la cita quede
+agendada contra trabajo planificado real y no contra un motivo
+escrito a mano.
+
+- Los planes en **borrador**, **pendiente de aceptación** y
+  **activo** ofrecen sus tratamientos. Un tratamiento ya realizado, o
+  uno de un plan completado o cerrado, no se ofrece.
+- Los tratamientos de un plan cuyo presupuesto el paciente todavía no
+  ha aceptado llevan la etiqueta **Presupuesto sin aceptar** (icono de
+  reloj de arena), tanto en el selector como en la lista de
+  seleccionados. Agendarlos está permitido a propósito — las clínicas
+  reservan la primera visita mientras el paciente decide — la
+  etiqueta está para que recepción sepa que agenda por delante de la
+  aceptación.
+- El tratamiento solo se puede marcar como **realizado** cuando el
+  presupuesto está aceptado y el plan activo; es ahí donde se imputa
+  el dinero.
+- Si el paciente no tiene ningún plan con tratamientos pendientes, el
+  selector lo explica en lugar de mostrar un selector vacío.
 
 ## Mover o redimensionar
 

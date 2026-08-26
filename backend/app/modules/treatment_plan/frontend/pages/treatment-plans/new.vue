@@ -101,6 +101,7 @@ function goBack() {
         variant="ghost"
         color="neutral"
         icon="i-lucide-arrow-left"
+        :aria-label="t('common.back')"
         @click="goBack"
       />
       <h1 class="text-display text-default">
@@ -135,6 +136,7 @@ function goBack() {
               variant="ghost"
               color="neutral"
               icon="i-lucide-x"
+              :aria-label="t('common.clear')"
               size="sm"
               @click="clearPatient"
             />

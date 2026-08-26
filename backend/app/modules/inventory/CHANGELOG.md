@@ -1,5 +1,9 @@
 # Changelog — inventory module
 
+## Unreleased
+
+- feat(#131): German (de) locale for the module's frontend layer.
+
 ## 0.2.0 — core upgrade (#226)
 
 - **Stock movement ledger** (`stock_movements`, migration inv_0002 on

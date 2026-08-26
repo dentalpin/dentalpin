@@ -119,6 +119,13 @@ function getPlanLabel(item: PlannedTreatmentItem): string | null {
   return item.treatment_plan.title || item.treatment_plan.plan_number
 }
 
+// A confirmed plan whose budget the patient hasn't accepted yet is
+// schedulable (#108), but the receptionist should see they're booking
+// ahead of the acceptance.
+function isAwaitingBudget(item: PlannedTreatmentItem): boolean {
+  return item.treatment_plan?.status === 'pending'
+}
+
 // Items available for selection (not already selected)
 const availableItems = computed(() => {
   const selectedIds = new Set(selectedItems.value.map(s => s.id))
@@ -217,6 +224,15 @@ const hasPendingTreatments = computed(() => {
               >
                 {{ getPlanLabel(item) }}
               </UBadge>
+              <UBadge
+                v-if="isAwaitingBudget(item)"
+                size="xs"
+                color="warning"
+                variant="subtle"
+                icon="i-lucide-hourglass"
+              >
+                {{ t('appointments.planAwaitingBudget') }}
+              </UBadge>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -230,6 +246,7 @@ const hasPendingTreatments = computed(() => {
               variant="ghost"
               color="neutral"
               icon="i-lucide-x"
+              :aria-label="t('common.remove')"
               size="xs"
               @click="removeItem(item.id)"
             />
@@ -264,6 +281,7 @@ const hasPendingTreatments = computed(() => {
             variant="ghost"
             color="neutral"
             icon="i-lucide-x"
+            :aria-label="t('common.close')"
             size="xs"
             @click="showSelector = false"
           />
@@ -313,6 +331,15 @@ const hasPendingTreatments = computed(() => {
                     variant="subtle"
                   >
                     {{ getPlanLabel(item) }}
+                  </UBadge>
+                  <UBadge
+                    v-if="isAwaitingBudget(item)"
+                    size="xs"
+                    color="warning"
+                    variant="subtle"
+                    icon="i-lucide-hourglass"
+                  >
+                    {{ t('appointments.planAwaitingBudget') }}
                   </UBadge>
                 </div>
               </div>

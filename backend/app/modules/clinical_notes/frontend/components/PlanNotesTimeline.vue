@@ -428,12 +428,14 @@ watch(() => props.planId, refresh, { immediate: true })
           >
             <UButton
               icon="i-lucide-pencil"
+              :aria-label="t('common.edit')"
               size="xs"
               variant="ghost"
               @click="startEdit(entry)"
             />
             <UButton
               icon="i-lucide-trash-2"
+              :aria-label="t('common.delete')"
               size="xs"
               variant="ghost"
               color="error"

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#127): every icon-only button in the module's frontend has an i18n-sourced `aria-label` (screen readers announced them as just "button").
+
 - fix(#184): type-check clean — drop the `onRequest` hook that cast ofetch's `Headers` to delete `Content-Type` (ofetch already leaves it unset for `FormData`).
 - fix(#183): `patient.archived` cascade is transactional (ADR 0019) — the documents are archived with the patient, and no longer stay archived when the request rolls back. Covered end-to-end now that it shares the publisher's session.
 - fix(events): repair the `patient.archived` cascade, which had never

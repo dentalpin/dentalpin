@@ -1,0 +1,84 @@
+{
+  "periodontogram": {
+    "tab": {
+      "label": "Parodontalbefund"
+    },
+    "empty": {
+      "title": "Noch keine Parodontalbefunde",
+      "description": "Öffnen Sie eine neue Sitzung, um Sondierungstiefen, Blutung, Plaque und die übrigen SEPA-Werte zu erfassen.",
+      "cta": "Befund starten"
+    },
+    "session": {
+      "draftBadge": "Entwurf in Bearbeitung",
+      "closedBadge": "Abgeschlossene Sitzung",
+      "recordedAt": "Erfasst am {date}",
+      "openDraft": "Neue Sitzung öffnen",
+      "continueDraft": "Entwurf fortsetzen",
+      "closeTitle": "Parodontale Sitzung abschließen",
+      "closeDescription": "Nach dem Abschluss ist die Sitzung unveränderlich und erscheint im Verlauf. Für Korrekturen müssen Sie eine neue Sitzung öffnen.",
+      "closeButton": "Sitzung abschließen",
+      "discardTitle": "Entwurf verwerfen",
+      "discardDescription": "Alle in dieser Sitzung erfassten Daten werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.",
+      "discardButton": "Verwerfen",
+      "cancel": "Abbrechen",
+      "closeSession": "Sitzung abschließen",
+      "discardDraft": "Entwurf verwerfen"
+    },
+    "indices": {
+      "bop": "Blutung",
+      "pi": "Plaque",
+      "calMean": "Mittlerer CAL",
+      "deepPockets": "Taschen ≥5mm"
+    },
+    "saveState": {
+      "saving": "Wird gespeichert…",
+      "dirty": "Nicht gespeicherte Änderungen",
+      "saved": "Änderungen gespeichert"
+    },
+    "history": {
+      "viewingSession": "Sitzung vom {date} wird angezeigt (schreibgeschützt).",
+      "returnToCurrent": "Zurück zur aktuellen Sitzung"
+    },
+    "arch": {
+      "upper": "Oberkiefer",
+      "lower": "Unterkiefer",
+      "palatal": "Palatinal",
+      "lingual": "Lingual",
+      "vestibular": "Vestibulär",
+      "probing": "Sondierung",
+      "margin": "Gingivarand",
+      "bleeding": "Blutung",
+      "plaque": "Plaque",
+      "probingTitle": "{code} Sondierungstiefe (0–15 mm)",
+      "marginTitle": "{code} Gingivarand (-5 bis 10 mm)",
+      "plaqueTitle": "{code} Plaque (Klicken zum Umschalten)",
+      "bleedingTitle": "{code} Blutung (Klicken zum Umschalten)",
+      "implant": "Implantat",
+      "implantToggleOn": "Implantat (Klicken zum Entfernen)",
+      "implantToggleOff": "Klicken, um als Implantat zu markieren",
+      "mobility": "Lockerungsgrad",
+      "mobilityTitle": "Klicken, um den Lockerungsgrad zu ändern (0–3)",
+      "prognosis": "Prognose",
+      "prognosisTitle": "Gut / Mäßig / Fraglich / Hoffnungslos",
+      "furcaV": "Furkation V",
+      "furcaVTitle": "Vestibuläre Furkation (0/I/II/III)",
+      "furcaLP": "Furkation L/P",
+      "furcaLPTitle": "Linguale/palatinale Furkation (0/I/II/III)",
+      "gingivalWidth": "Gingivabreite",
+      "siteMarkerAria": "Messstelle {code}, Sondierung {depth}"
+    },
+    "chart": {
+      "ariaLabel": "Parodontalbefund — Ober- und Unterkiefer"
+    },
+    "indicesBanner": {
+      "observationsPlaceholder": "Befundnotizen…",
+      "noteLabel": "Notiz (optional)"
+    },
+    "loading": "Parodontalbefund wird geladen…",
+    "errors": {
+      "loadFailed": "Der Parodontalbefund konnte nicht geladen werden.",
+      "saveFailed": "Die Änderung konnte nicht gespeichert werden.",
+      "checkConnection": "Prüfen Sie Ihre Verbindung und versuchen Sie es erneut."
+    }
+  }
+}

@@ -11,6 +11,7 @@ Why we record decisions here:
 ## Convention
 
 - Filename: `NNNN-kebab-title.md` — zero-padded sequence, never reused.
+- First line: `# NNNN — Title`, with the number matching the filename.
 - One decision per file. Short. ≤1 page when possible.
 - Every ADR uses the same structure: see `TEMPLATE.md`.
 - Status: `proposed` → `accepted` → optionally `superseded by NNNN` /
@@ -43,11 +44,16 @@ Triggers (any one):
 
 ## Index
 
-| #    | Title | Status | Date |
-|------|-------|--------|------|
-| 0001 | [Modular plugin architecture](0001-modular-plugin-architecture.md) | accepted | 2026-04-27 |
-| 0002 | [Per-module Alembic branches](0002-per-module-alembic-branches.md) | accepted | 2026-04-27 |
-| 0003 | [Event bus over direct cross-module imports](0003-event-bus-over-direct-imports.md) | accepted | 2026-04-27 |
-| 0004 | [BSL 1.1 license, Apache 2.0 after 4 years](0004-bsl-license.md) | accepted | 2026-04-27 |
-| 0005 | [Relative permissions, registry-prefixed namespacing](0005-relative-permissions.md) | accepted | 2026-04-27 |
-| 0006 | [Budget public link two-factor authentication](0006-budget-public-link-2-factor-auth.md) | accepted | 2026-04-28 |
+There is deliberately no index table here. The one this section used
+to hold rotted silently — it stopped at 0006 while the directory held
+21 files (issue #300) — and an index that reads as complete while
+covering a fraction of the decisions invites re-litigating what was
+already locked in.
+
+**The directory listing is the index.** Filenames carry number and
+title (`ls docs/adr/` reads as a table of contents), the first line of
+each file repeats them, and `status`/date live inside the file. CI's
+`docs-layout` job enforces the invariants that keep the listing
+trustworthy: strict `NNNN-kebab-title.md` names, no duplicate and no
+skipped numbers, and a first-line heading that matches the filename
+(issue #299, `scripts/check_docs_layout.py::check_adrs`).

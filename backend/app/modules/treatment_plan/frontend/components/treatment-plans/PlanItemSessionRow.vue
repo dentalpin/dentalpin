@@ -74,6 +74,7 @@ function amountValue(amount: number | string): number {
       variant="ghost"
       color="success"
       icon="i-lucide-check"
+      :aria-label="t('clinical.plans.sessions.markDone')"
       :title="t('clinical.plans.sessions.markDone')"
       @click.stop="emit('complete', session.id)"
     />
@@ -83,6 +84,7 @@ function amountValue(amount: number | string): number {
       variant="ghost"
       color="error"
       icon="i-lucide-x"
+      :aria-label="t('clinical.plans.sessions.cancel')"
       :title="t('clinical.plans.sessions.cancel')"
       @click.stop="emit('cancel', session.id)"
     />

@@ -1,0 +1,129 @@
+{
+  "recalls": {
+    "title": "Recalls",
+    "callList": "Anrufliste",
+    "noRecallsThisMonth": "Keine ausstehenden Recalls in diesem Monat",
+    "filters": {
+      "month": "Monat",
+      "reason": "Grund",
+      "professional": "Behandler",
+      "status": "Status",
+      "priority": "Priorität",
+      "overdue": "Überfällige anzeigen",
+      "any": "Alle",
+      "thisMonth": "Dieser Monat"
+    },
+    "counters": {
+      "due_this_week": "Diese Woche fällig",
+      "due_this_month": "Diesen Monat fällig",
+      "overdue": "Überfällig",
+      "scheduled_this_month": "Diesen Monat terminiert",
+      "completed_this_month": "Diesen Monat abgeschlossen",
+      "conversion_rate": "Konversion"
+    },
+    "setRecall": "Recall anlegen",
+    "setRecallShort": "Recall",
+    "history": "Recall-Verlauf",
+    "viewAll": "Alle anzeigen",
+    "pillNext": "Nächster Recall: {month} · {reason}",
+    "pillNone": "Kein aktiver Recall",
+    "reasons": {
+      "hygiene": "Prophylaxe",
+      "checkup": "Kontrolluntersuchung",
+      "ortho_review": "KFO-Kontrolle",
+      "implant_review": "Implantat-Kontrolle",
+      "post_op": "Post-OP-Kontrolle",
+      "treatment_followup": "Behandlungs-Nachsorge",
+      "other": "Sonstiges"
+    },
+    "priority": {
+      "low": "Niedrig",
+      "normal": "Normal",
+      "high": "Hoch"
+    },
+    "status": {
+      "pending": "Ausstehend",
+      "contacted_no_answer": "Nicht erreicht",
+      "contacted_scheduled": "Terminiert",
+      "contacted_declined": "Abgelehnt",
+      "done": "Erledigt",
+      "cancelled": "Storniert",
+      "needs_review": "Zu prüfen"
+    },
+    "actions": {
+      "call": "Anrufen",
+      "logAttempt": "Versuch protokollieren",
+      "noAnswer": "Nicht erreicht",
+      "book": "Termin buchen",
+      "snooze": "Zurückstellen",
+      "cancel": "Stornieren",
+      "markDone": "Als erledigt markieren",
+      "exportCsv": "CSV exportieren",
+      "save": "Speichern"
+    },
+    "closeoutPrompt": {
+      "title": "Recall planen?",
+      "subtitle": "Der Patient ist gerade fertig geworden — wann sollen wir ihn zurückrufen?",
+      "skip": "Jetzt nicht"
+    },
+    "modal": {
+      "title": "Recall anlegen",
+      "subtitle": "Patienten für einen späteren Rückruf vormerken",
+      "patient": "Patient",
+      "reason": "Grund",
+      "when": "Wann",
+      "month": "Zielmonat",
+      "targetMonth": "Zielmonat",
+      "preciseDate": "Bestimmten Tag wählen",
+      "priority": "Priorität",
+      "assigned": "Zugewiesener Behandler",
+      "note": "Interne Notiz",
+      "notePlaceholder": "Optionales Detail (z. B. 'Füllung an 47 kontrollieren')",
+      "optional": "optional",
+      "duplicateGuard": "Für diesen Patienten und Grund existiert bereits ein ausstehender Recall. Er wird aktualisiert."
+    },
+    "doNotContact": {
+      "cannotSchedule": "Dieser Patient ist mit \"Nicht kontaktieren\" markiert. Recalls können nicht geplant werden. Ändern Sie die Kontaktpräferenz in den Stammdaten, um die Kontaktaufnahme wieder zu aktivieren."
+    },
+    "activeRecallHint": "Aktiver Recall · zum Verwalten antippen",
+    "logAttempt": {
+      "channel": "Kanal",
+      "outcome": "Ergebnis",
+      "note": "Notiz",
+      "submit": "Versuch protokollieren"
+    },
+    "channel": {
+      "phone": "Telefon",
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "E-Mail"
+    },
+    "outcome": {
+      "no_answer": "Nicht erreicht",
+      "voicemail": "Mailbox",
+      "scheduled": "Termin vereinbart",
+      "declined": "Abgelehnt",
+      "wrong_number": "Falsche Nummer"
+    },
+    "snoozePrompt": "Um wie viele Monate zurückstellen?",
+    "settings": {
+      "title": "Recalls",
+      "description": "Standardintervalle + Zuordnung von Behandlungskategorien",
+      "intervals": "Standardintervalle (Monate)",
+      "categoryMap": "Behandlung → Grund",
+      "categoryKeyPlaceholder": "Kategorieschlüssel des Katalogs",
+      "autoSuggest": "Recall vorschlagen, wenn eine Behandlung abgeschlossen wird",
+      "autoLink": "Vereinbarten Termin mit einem ausstehenden Recall verknüpfen",
+      "saved": "Einstellungen gespeichert"
+    },
+    "dashboard": {
+      "title": "Recalls"
+    },
+    "suggestion": {
+      "title": "Vorgeschlagener Recall",
+      "body": "Nach dieser Behandlung empfehlen wir einen Recall im {month} ({reason}).",
+      "create": "Recall anlegen",
+      "dismiss": "Verwerfen"
+    }
+  }
+}

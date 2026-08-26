@@ -173,6 +173,7 @@ defineExpose({
           variant="ghost"
           color="neutral"
           icon="i-lucide-x"
+          :aria-label="t('common.clear')"
           size="xs"
           class="-mr-2"
           @click.stop="clearSelection"

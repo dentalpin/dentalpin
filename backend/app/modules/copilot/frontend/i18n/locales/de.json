@@ -1,0 +1,185 @@
+{
+  "nav": {
+    "copilot": "IA"
+  },
+  "copilot": {
+    "title": "IA",
+    "open": "IA öffnen",
+    "empty": "Fragen Sie mich nach Patienten oder dem Terminkalender, oder bitten Sie mich, einen Termin zu buchen.",
+    "placeholder": "Nachricht eingeben…",
+    "send": "Senden",
+    "copy": "Kopieren",
+    "new": "Neue Unterhaltung",
+    "thinking": "Denke nach…",
+    "you": "Sie",
+    "assistant": "IA",
+    "trust": "Ihre Daten sind geschützt",
+    "phase": {
+      "working": "Arbeite…",
+      "writing": "Schreibe…"
+    },
+    "tabs": {
+      "pending": "Aufgaben",
+      "chat": "Chat"
+    },
+    "pending": {
+      "empty": "Nichts Offenes. Sie sind auf dem neuesten Stand.",
+      "unknownPatient": "Unbekannter Patient",
+      "group": {
+        "recall": "Nachzufassende Recalls",
+        "budget": "Kostenvoranschläge ohne Antwort"
+      }
+    },
+    "nudge": {
+      "act": "Ansehen",
+      "dismiss": "Verwerfen",
+      "appointmentCancelled": {
+        "text": "Der Termin um {time} wurde abgesagt — gerade ist ein Slot frei geworden.",
+        "prompt": "Der Termin um {time} wurde abgesagt. Finde Recall-Patienten, die diesen Slot übernehmen könnten."
+      }
+    },
+    "suggest": {
+      "heading": "Wie kann ich helfen?",
+      "cat": {
+        "workflows": "Arbeitsabläufe",
+        "patients": "Patienten",
+        "agenda": "Terminkalender",
+        "recalls": "Recalls",
+        "money": "Zahlungseingänge & Kostenvoranschläge",
+        "reports": "Berichte"
+      },
+      "dailyBriefing": "Tagesbriefing",
+      "prepareVisit": "Besuch vorbereiten",
+      "fillGap": "Lücke füllen",
+      "searchPatient": "Patient finden",
+      "patientSummary": "Patient zusammenfassen",
+      "freeSlots": "Freie Slots heute",
+      "bookAppointment": "Termin buchen",
+      "dueRecalls": "Fällige Recalls",
+      "pendingBudgets": "Unbeantwortete Kostenvoranschläge",
+      "recordPayment": "Zahlung erfassen",
+      "monthCollections": "Zahlungseingänge dieses Monats",
+      "agendaSummary": "Terminüberblick",
+      "prompt": {
+        "dailyBriefing": "Gib mir das Tagesbriefing: heutige Termine, überfällige Recalls und unbeantwortete Kostenvoranschläge",
+        "prepareVisit": "Bereite den nächsten Besuch eines Patienten für mich vor",
+        "fillGap": "Im Terminkalender ist ein Slot frei geworden, wen können wir anrufen?",
+        "searchPatient": "Finde einen Patienten",
+        "patientSummary": "Gib mir eine Zusammenfassung eines Patienten",
+        "freeSlots": "Welche freien Slots gibt es heute?",
+        "bookAppointment": "Ich möchte einen Termin buchen",
+        "dueRecalls": "Welche Recalls sind diesen Monat fällig?",
+        "pendingBudgets": "Welche Kostenvoranschläge sind versendet und unbeantwortet?",
+        "recordPayment": "Ich möchte eine Patientenzahlung erfassen",
+        "monthCollections": "Zusammenfassung der Zahlungseingänge dieses Monats",
+        "agendaSummary": "Gib mir einen Überblick über den heutigen Terminkalender"
+      }
+    },
+    "settings": {
+      "title": "Copilot",
+      "description": "KI-Assistent: Tagesbriefing und Engine",
+      "saved": "Einstellungen gespeichert",
+      "digest": {
+        "title": "Morgendliche Briefing-E-Mail",
+        "description": "Jeden Morgen: heutige Termine, überfällige Recalls und unbeantwortete Kostenvoranschläge.",
+        "enabled": "Tagesbriefing senden",
+        "hour": "Versandzeit",
+        "hourHelp": "Wird in der Zeitzone der Praxis interpretiert.",
+        "recipients": "Empfänger",
+        "recipientsHelp": "Jeder Empfänger erhält sein eigenes Briefing, beschränkt auf das, was seine Rolle sehen darf.",
+        "recipientsPlaceholder": "Mitarbeiter auswählen…"
+      },
+      "engine": {
+        "title": "Engine",
+        "provider": "Anbieter",
+        "model": "Modell",
+        "redaction": "PHI-Schwärzung",
+        "redactionOn": "Aktiviert",
+        "redactionOff": "Deaktiviert"
+      },
+      "metrics": {
+        "title": "Nutzung",
+        "description": "Letzte {days} Tage.",
+        "toolCalls": "Tool-Aufrufe",
+        "errorRate": "Fehlerquote",
+        "avgLatency": "Ø Latenz",
+        "conversations": "Unterhaltungen",
+        "tokenBudget": "Monatliches Token-Budget",
+        "topTools": "Meistgenutzte Tools",
+        "toolNames": {
+          "recalls_list_due_recalls": "Überfällige Recalls",
+          "budget_list_budgets": "Ausstehende Kostenvoranschläge",
+          "patients_list_patients": "Patientensuche",
+          "appointments_list_appointments": "Termine",
+          "invoices_list_invoices": "Rechnungen"
+        }
+      }
+    },
+    "tool": {
+      "running": "{name} wird ausgeführt…",
+      "done": "{name} abgeschlossen",
+      "failed": "{name} fehlgeschlagen"
+    },
+    "card": {
+      "viewPatient": "Akte öffnen",
+      "noResults": "Keine Ergebnisse",
+      "notFound": "Nicht gefunden",
+      "more": "+{n} weitere",
+      "freeSlots": "Freie Slots",
+      "appointments": "Termine",
+      "patients": "Patienten"
+    },
+    "patientStatus": {
+      "active": "aktiv",
+      "archived": "archiviert"
+    },
+    "apptStatus": {
+      "scheduled": "Geplant",
+      "confirmed": "Bestätigt",
+      "checked_in": "Im Wartezimmer",
+      "in_treatment": "Am Stuhl",
+      "completed": "Abgeschlossen",
+      "cancelled": "Abgesagt",
+      "no_show": "Nicht erschienen"
+    },
+    "confirm": {
+      "title": "Aktion bestätigen",
+      "body": "Die IA möchte {name} ausführen.",
+      "approve": "Bestätigen",
+      "reject": "Abbrechen",
+      "approved": "Bestätigt",
+      "rejected": "Abgebrochen",
+      "destructiveNote": "Diese Aktion kann nicht rückgängig gemacht werden.",
+      "action": {
+        "book_appointment": "Die IA möchte einen Termin buchen.",
+        "cancel_appointment": "Die IA möchte einen Termin absagen.",
+        "create_patient": "Die IA möchte einen Patienten anlegen."
+      },
+      "field": {
+        "patient_id": "Patient",
+        "professional_id": "Behandler",
+        "appointment_id": "Termin",
+        "cabinet_id": "Zimmer",
+        "cabinet": "Zimmer",
+        "start_time": "Datum",
+        "end_time": "Ende",
+        "datetime": "Datum",
+        "service": "Leistung",
+        "reason": "Grund",
+        "duration_minutes": "Dauer (Min.)",
+        "first_name": "Vorname",
+        "last_name": "Nachname",
+        "phone": "Telefon",
+        "email": "E-Mail",
+        "date_of_birth": "Geburtsdatum",
+        "query": "Suche"
+      }
+    },
+    "budgetExceeded": "Das monatliche IA-Nutzungslimit wurde erreicht.",
+    "error": "Etwas ist schiefgelaufen.",
+    "page": {
+      "title": "IA",
+      "subtitle": "Ihr Praxisassistent, beschränkt auf Ihre Berechtigungen."
+    }
+  }
+}

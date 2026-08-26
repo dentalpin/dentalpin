@@ -1,0 +1,90 @@
+{
+  "migrationImport": {
+    "settingsCard": {
+      "title": "Datenmigration (dental-bridge)",
+      "description": "Importieren Sie eine von dental-bridge erzeugte DPMF-Datei (Patienten, Termine, Kostenvoranschläge, Zahlungen, Dokumente)."
+    },
+    "page": {
+      "title": "Datenmigration",
+      "subtitle": "Von dental-bridge extrahierte Daten in diese Praxis importieren."
+    },
+    "upload": {
+      "dropFile": "Ziehen Sie die .dpm-Datei hierher oder klicken Sie, um eine auszuwählen",
+      "passphrase": "Passphrase (nur bei verschlüsselten Dateien)",
+      "passphraseHelp": "Nur für .dpm.enc / .dpm.zst.enc erforderlich",
+      "submit": "Hochladen und validieren",
+      "uploading": "Wird hochgeladen…",
+      "error": "Hochladen fehlgeschlagen"
+    },
+    "validate": {
+      "running": "Datei wird geprüft…",
+      "ok": "Datei ist gültig",
+      "failed": "Validierung fehlgeschlagen"
+    },
+    "preview": {
+      "title": "Vorschau",
+      "entities": "Entitäten",
+      "samples": "Stichproben",
+      "warnings": "Warnungen",
+      "files": "Angehängte Dateien",
+      "filesTotal": "Gesamt",
+      "filesWithSha": "Mit sha256",
+      "filesWithoutSha": "Ohne sha256",
+      "verifactuCheckbox": "Verifactu-Rechtsdaten importieren",
+      "verifactuHelp": "Erhält die rechtlichen Hashes (Verifactu) auf Rechnungen. Nur verfügbar, wenn das Verifactu-Modul installiert ist und die Datei diese Daten enthält.",
+      "confirm": "Bestätigen und importieren",
+      "warning": "Diese Aktion kann nicht rückgängig gemacht werden. Prüfen Sie die Daten, bevor Sie bestätigen."
+    },
+    "filters": {
+      "title": "Filterung der Behandler",
+      "description": "Gefilterte Mitarbeiter werden als inaktiv importiert (für historische Verweise erhalten, aber im Terminkalender ausgeblendet). Sie können sie später unter Einstellungen → Benutzer wieder aktivieren.",
+      "totalLabel": "Gesamt",
+      "deactivatedLabel": "In der Quelle inaktiv",
+      "orphansLabel": "Reine Kalenderspalten",
+      "stale24mLabel": "Keine Aktivität in den letzten 24 Monaten",
+      "minActivityLabel": "Mindestaktivität (Monate)",
+      "minActivityHelp": "Behandler, deren letzte klinische Spur älter als diese Anzahl Monate ist, werden als inaktiv importiert. 0 deaktiviert den Filter.",
+      "excludeOrphans": "Reine Kalenderspalten ohne echten Mitarbeiterdatensatz ausschließen",
+      "excludeInactive": "In der Quelle als inaktiv markierte Behandler ausschließen",
+      "excludeNonClinical": "Nur Zahnärzte und Dentalhygieniker importieren (Assistenz- und Verwaltungspersonal überspringen)"
+    },
+    "execute": {
+      "running": "Import läuft…",
+      "progress": "{processed} von {total} Entitäten",
+      "ok": "Import abgeschlossen",
+      "failed": "Import fehlgeschlagen"
+    },
+    "proposals": {
+      "title": "Katalogzuordnungen prüfen",
+      "subtitle": "Verknüpfen Sie vor dem Import jede Gesdén-Behandlung mit dem DentalPin-Katalog.",
+      "build": "Vorschläge berechnen",
+      "building": "Wird berechnet…",
+      "summary": "{total} Vorschläge: {link} verknüpft, {fuzzy} unscharf, {create} neu anzulegen",
+      "bulkAccept": "Alle Treffer mit Konfidenz ≥ 0,9 übernehmen",
+      "accepted": "{n} Vorschläge übernommen.",
+      "columnSource": "Gesdén-Behandlung",
+      "columnProposed": "Vorschlag",
+      "columnAction": "Aktion",
+      "columnStatus": "Status",
+      "actionLink": "Mit Katalog verknüpfen",
+      "actionFuzzy": "Unscharfer Treffer",
+      "actionCreate": "Neu anlegen",
+      "operatorPending": "Ausstehend",
+      "operatorAccepted": "Übernommen",
+      "operatorRelinked": "Neu verknüpft",
+      "operatorCreated": "Neu anlegen",
+      "operatorIgnored": "Ignoriert",
+      "acceptRow": "Übernehmen",
+      "ignoreRow": "Ignorieren"
+    },
+    "status": {
+      "uploaded": "Hochgeladen",
+      "validating": "Wird validiert",
+      "validated": "Validiert",
+      "previewing": "Vorschau",
+      "executing": "Import läuft",
+      "completed": "Abgeschlossen",
+      "failed": "Fehlgeschlagen"
+    }
+  }
+}

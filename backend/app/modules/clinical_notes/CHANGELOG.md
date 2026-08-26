@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(#131): German (de) locale for the module's frontend layer.
 - i18n(#131/#275): `_resolve_label` falls back to any non-empty catalog
   name after `es→en→fr→pt→ta` (items created under core-only locales
   like de/hu).

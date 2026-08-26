@@ -651,6 +651,7 @@ const allAppointmentsWithDayIndex = computed(() => {
           variant="outline"
           color="neutral"
           icon="i-lucide-chevron-left"
+          :aria-label="t('common.previous')"
           @click="prevWeek"
         />
         <UButton
@@ -664,6 +665,7 @@ const allAppointmentsWithDayIndex = computed(() => {
           variant="outline"
           color="neutral"
           icon="i-lucide-chevron-right"
+          :aria-label="t('common.next')"
           @click="nextWeek"
         />
       </div>

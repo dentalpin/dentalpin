@@ -230,6 +230,7 @@ function handleSave() {
               variant="ghost"
               color="error"
               icon="i-lucide-trash-2"
+              :aria-label="t('common.delete')"
               size="xs"
               @click="removeAllergy(index)"
             />
@@ -303,6 +304,7 @@ function handleSave() {
               variant="ghost"
               color="error"
               icon="i-lucide-trash-2"
+              :aria-label="t('common.delete')"
               size="xs"
               @click="removeMedication(index)"
             />
@@ -373,6 +375,7 @@ function handleSave() {
               variant="ghost"
               color="error"
               icon="i-lucide-trash-2"
+              :aria-label="t('common.delete')"
               size="xs"
               @click="removeDisease(index)"
             />
@@ -566,6 +569,7 @@ function handleSave() {
               variant="ghost"
               color="error"
               icon="i-lucide-trash-2"
+              :aria-label="t('common.delete')"
               size="xs"
               @click="removeSurgery(index)"
             />

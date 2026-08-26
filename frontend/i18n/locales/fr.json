@@ -24,7 +24,6 @@
     "expenses": "Dépenses",
     "labOrdersForm": "Nouveau travail de laboratoire",
     "labOrdersStatus": "Travaux de laboratoire",
-    "staffTasks": "Tâches de l'équipe",
     "treatmentPlans": "Plans de traitement",
     "budgets": "Devis",
     "invoices": "Factures",
@@ -386,6 +385,33 @@
     "onboarding": {
       "label": "Créez votre premier patient",
       "description": "Le moyen le plus rapide de voir le dossier, l'agenda et les devis en action."
+    },
+    "editLegalGuardian": "Modifier le tuteur légal",
+    "legalGuardian": {
+      "title": "Tuteur légal",
+      "hasGuardian": "Tuteur légal enregistré",
+      "noGuardian": "Aucun tuteur légal enregistré",
+      "name": "Nom complet",
+      "namePlaceholder": "Nom du tuteur",
+      "dni": "Numéro d'identité",
+      "dniPlaceholder": "Document d'identité",
+      "relationship": "Lien",
+      "relationshipPlaceholder": "Sélectionner le lien",
+      "relationships": {
+        "parent": "Père/Mère",
+        "legal_tutor": "Tuteur légal désigné",
+        "grandparent": "Grand-parent",
+        "other": "Autre"
+      },
+      "phone": "Téléphone",
+      "phonePlaceholder": "Téléphone du tuteur",
+      "email": "Email",
+      "emailPlaceholder": "Email du tuteur",
+      "address": "Adresse",
+      "addressPlaceholder": "Adresse du tuteur",
+      "notes": "Notes",
+      "notesPlaceholder": "Remarques supplémentaires...",
+      "remove": "Supprimer le tuteur"
     }
   },
   "patientDetail": {
@@ -543,10 +569,6 @@
       "categories": {
         "common": "Courant",
         "restorative": "Restauratrice",
-        "diagnostic": "Diagnostic",
-        "orthodontic": "Orthodontie",
-        "periodontic": "Parodontie",
-        "position": "Position",
         "other": "Autre",
         "diagnostico": "Diagnostic",
         "restauradora": "Restauratrice",
@@ -936,7 +958,8 @@
       "professionalOff": "Absent",
       "onBreak": "En pause"
     },
-    "actionsMenu": "Actions du rendez-vous"
+    "actionsMenu": "Actions du rendez-vous",
+    "planAwaitingBudget": "Devis en attente d'acceptation"
   },
   "dashboard": {
     "greetings": {
@@ -1355,7 +1378,10 @@
     "yesterday": "Hier",
     "copied": "Copié dans le presse-papiers",
     "copy": "Copier",
-    "copyFailed": "Impossible de copier"
+    "copyFailed": "Impossible de copier",
+    "download": "Télécharger",
+    "remove": "Retirer",
+    "default": "Par défaut"
   },
   "cabinet": {
     "toast": {
@@ -2396,11 +2422,9 @@
     "issueDate": "Date d'émission",
     "subtotal": "Sous-total",
     "discount": "Remise",
-    "totalDiscount": "Remise totale",
     "tax": "Taxe",
     "total": "Total",
     "paid": "Payé",
-    "totalPaid": "Total payé",
     "balance": "Solde",
     "balanceDue": "Montant dû",
     "overdue": "En retard",
@@ -2437,7 +2461,6 @@
     },
     "tooth": "Dent",
     "vat": "TVA",
-    "currency": "Devise",
     "internalNotes": "Notes internes",
     "internalNotesPlaceholder": "Notes visibles uniquement par le personnel...",
     "publicNotes": "Notes publiques",
@@ -2489,7 +2512,6 @@
     },
     "payments": {
       "title": "Paiements",
-      "record": "Enregistrer un paiement",
       "void": "Annuler le paiement",
       "amount": "Montant",
       "method": "Mode de paiement",
@@ -2497,7 +2519,6 @@
       "reference": "Référence",
       "notes": "Notes",
       "noPayments": "Aucun paiement enregistré",
-      "recorded": "Paiement enregistré",
       "voided": "Paiement annulé",
       "voidReason": "Raison de l'annulation",
       "voidReasonPlaceholder": "Raison de l'annulation de ce paiement...",
@@ -2516,10 +2537,7 @@
       "reason": "Raison",
       "reasonPlaceholder": "Raison de l'avoir...",
       "selectItems": "Sélectionner les lignes à rectifier",
-      "fullCreditNote": "Avoir complet (toutes les lignes)",
-      "partialCreditNote": "Avoir partiel (lignes sélectionnées)",
-      "originalInvoice": "Facture originale",
-      "created": "Avoir créé"
+      "originalInvoice": "Facture originale"
     },
     "history": {
       "title": "Historique",
@@ -2549,10 +2567,7 @@
       "type": "Type",
       "currentNumber": "Numéro actuel",
       "resetYearly": "Réinitialiser annuellement",
-      "default": "Par défaut",
-      "active": "Actif",
-      "invoice": "Facture",
-      "credit_note": "Avoir"
+      "default": "Par défaut"
     },
     "filters": {
       "allStatuses": "Statut",
@@ -2626,7 +2641,9 @@
       "itemAdded": "Ligne ajoutée",
       "itemUpdated": "Ligne mise à jour",
       "sentByEmail": "Facture envoyée par email",
-      "sentManually": "Facture marquée comme envoyée"
+      "sentManually": "Facture marquée comme envoyée",
+      "creditNoteCreated": "Facture rectificative créée",
+      "paymentRecorded": "Paiement enregistré"
     },
     "send": {
       "title": "Envoyer la facture",
@@ -2653,7 +2670,6 @@
       "send": "Erreur lors de l'envoi de la facture",
       "creditNoteReasonRequired": "La raison de l'avoir est requise",
       "notFound": "Facture introuvable",
-      "onlyDraft": "Seules les factures en brouillon peuvent être modifiées",
       "canOnlyDeleteDraft": "Seules les factures en brouillon peuvent être supprimées",
       "patientRequired": "Le patient est requis",
       "itemsRequired": "Au moins une ligne est requise",

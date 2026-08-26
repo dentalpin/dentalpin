@@ -385,6 +385,33 @@
     "onboarding": {
       "label": "Legen Sie Ihren ersten Patienten an",
       "description": "Der schnellste Weg, Patientenakte, Terminkalender und Kostenvoranschläge in Aktion zu sehen."
+    },
+    "editLegalGuardian": "Erziehungsberechtigten bearbeiten",
+    "legalGuardian": {
+      "title": "Erziehungsberechtigte/r",
+      "hasGuardian": "Erziehungsberechtigte/r hinterlegt",
+      "noGuardian": "Kein/e Erziehungsberechtigte/r hinterlegt",
+      "name": "Vollständiger Name",
+      "namePlaceholder": "Name der/des Erziehungsberechtigten",
+      "dni": "Ausweisnummer",
+      "dniPlaceholder": "Ausweisdokument",
+      "relationship": "Beziehung",
+      "relationshipPlaceholder": "Beziehung auswählen",
+      "relationships": {
+        "parent": "Vater/Mutter",
+        "legal_tutor": "Bestellte/r Vormund/in",
+        "grandparent": "Großelternteil",
+        "other": "Sonstige"
+      },
+      "phone": "Telefon",
+      "phonePlaceholder": "Telefon der/des Erziehungsberechtigten",
+      "email": "E-Mail",
+      "emailPlaceholder": "E-Mail der/des Erziehungsberechtigten",
+      "address": "Adresse",
+      "addressPlaceholder": "Adresse der/des Erziehungsberechtigten",
+      "notes": "Notizen",
+      "notesPlaceholder": "Zusätzliche Anmerkungen...",
+      "remove": "Erziehungsberechtigte/n entfernen"
     }
   },
   "patientDetail": {
@@ -542,10 +569,6 @@
       "categories": {
         "common": "Häufig",
         "restorative": "Restaurativ",
-        "diagnostic": "Diagnostik",
-        "orthodontic": "Kieferorthopädie",
-        "periodontic": "Parodontologie",
-        "position": "Stellung",
         "other": "Sonstige",
         "diagnostico": "Diagnostik",
         "restauradora": "Restaurativ",
@@ -935,7 +958,8 @@
       "clinicClosed": "Praxis geschlossen",
       "professionalOff": "Außer Dienst",
       "onBreak": "In Pause"
-    }
+    },
+    "planAwaitingBudget": "Kostenvoranschlag noch nicht angenommen"
   },
   "dashboard": {
     "greetings": {
@@ -1354,7 +1378,10 @@
     "yesterday": "Gestern",
     "copied": "In die Zwischenablage kopiert",
     "copy": "Kopieren",
-    "copyFailed": "Kopieren nicht möglich"
+    "copyFailed": "Kopieren nicht möglich",
+    "download": "Herunterladen",
+    "remove": "Entfernen",
+    "default": "Standard"
   },
   "cabinet": {
     "toast": {
@@ -2395,11 +2422,9 @@
     "issueDate": "Ausstellungsdatum",
     "subtotal": "Zwischensumme",
     "discount": "Rabatt",
-    "totalDiscount": "Gesamtrabatt",
     "tax": "Steuer",
     "total": "Gesamt",
     "paid": "Bezahlt",
-    "totalPaid": "Gesamt bezahlt",
     "balance": "Saldo",
     "balanceDue": "Offener Betrag",
     "overdue": "Überfällig",
@@ -2436,7 +2461,6 @@
     },
     "tooth": "Zahn",
     "vat": "MwSt.",
-    "currency": "Währung",
     "internalNotes": "Interne Notizen",
     "internalNotesPlaceholder": "Nur für das Team sichtbare Notizen...",
     "publicNotes": "Öffentliche Notizen",
@@ -2488,7 +2512,6 @@
     },
     "payments": {
       "title": "Zahlungen",
-      "record": "Zahlung erfassen",
       "void": "Zahlung annullieren",
       "amount": "Betrag",
       "method": "Zahlungsart",
@@ -2496,7 +2519,6 @@
       "reference": "Referenz",
       "notes": "Notizen",
       "noPayments": "Keine Zahlungen erfasst",
-      "recorded": "Zahlung erfasst",
       "voided": "Zahlung annulliert",
       "voidReason": "Annullierungsgrund",
       "voidReasonPlaceholder": "Grund für die Annullierung dieser Zahlung...",
@@ -2515,10 +2537,7 @@
       "reason": "Grund",
       "reasonPlaceholder": "Grund für die Stornorechnung...",
       "selectItems": "Zu korrigierende Positionen auswählen",
-      "fullCreditNote": "Vollständige Stornorechnung (alle Positionen)",
-      "partialCreditNote": "Teilweise Stornorechnung (ausgewählte Positionen)",
-      "originalInvoice": "Ursprüngliche Rechnung",
-      "created": "Stornorechnung erstellt"
+      "originalInvoice": "Ursprüngliche Rechnung"
     },
     "history": {
       "title": "Verlauf",
@@ -2548,10 +2567,7 @@
       "type": "Typ",
       "currentNumber": "Aktuelle Nummer",
       "resetYearly": "Jährlich zurücksetzen",
-      "default": "Standard",
-      "active": "Aktiv",
-      "invoice": "Rechnung",
-      "credit_note": "Stornorechnung"
+      "default": "Standard"
     },
     "filters": {
       "allStatuses": "Status",
@@ -2625,7 +2641,9 @@
       "itemAdded": "Position hinzugefügt",
       "itemUpdated": "Position aktualisiert",
       "sentByEmail": "Rechnung per E-Mail gesendet",
-      "sentManually": "Rechnung als gesendet markiert"
+      "sentManually": "Rechnung als gesendet markiert",
+      "creditNoteCreated": "Stornorechnung erstellt",
+      "paymentRecorded": "Zahlung erfasst"
     },
     "send": {
       "title": "Rechnung senden",
@@ -2652,7 +2670,6 @@
       "send": "Fehler beim Senden der Rechnung",
       "creditNoteReasonRequired": "Der Grund der Stornorechnung ist erforderlich",
       "notFound": "Rechnung nicht gefunden",
-      "onlyDraft": "Nur Rechnungsentwürfe können bearbeitet werden",
       "canOnlyDeleteDraft": "Nur Rechnungsentwürfe können gelöscht werden",
       "patientRequired": "Ein Patient ist erforderlich",
       "itemsRequired": "Mindestens eine Position ist erforderlich",

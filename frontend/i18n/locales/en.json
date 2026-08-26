@@ -24,7 +24,6 @@
     "expenses": "Expenses",
     "labOrdersForm": "New lab order",
     "labOrdersStatus": "Lab orders",
-    "staffTasks": "Staff tasks",
     "treatmentPlans": "Treatment Plans",
     "budgets": "Quotes",
     "invoices": "Invoices",
@@ -386,6 +385,33 @@
     "onboarding": {
       "label": "Create your first patient",
       "description": "The quickest way to see the record, agenda and budgets in action."
+    },
+    "editLegalGuardian": "Edit legal guardian",
+    "legalGuardian": {
+      "title": "Legal Guardian",
+      "hasGuardian": "Has a registered legal guardian",
+      "noGuardian": "No legal guardian registered",
+      "name": "Full name",
+      "namePlaceholder": "Guardian's name",
+      "dni": "ID number",
+      "dniPlaceholder": "Identity document",
+      "relationship": "Relationship",
+      "relationshipPlaceholder": "Select relationship",
+      "relationships": {
+        "parent": "Parent",
+        "legal_tutor": "Appointed legal guardian",
+        "grandparent": "Grandparent",
+        "other": "Other"
+      },
+      "phone": "Phone",
+      "phonePlaceholder": "Guardian's phone",
+      "email": "Email",
+      "emailPlaceholder": "Guardian's email",
+      "address": "Address",
+      "addressPlaceholder": "Guardian's address",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional remarks...",
+      "remove": "Remove guardian"
     }
   },
   "patientDetail": {
@@ -543,10 +569,6 @@
       "categories": {
         "common": "Common",
         "restorative": "Restorative",
-        "diagnostic": "Diagnostic",
-        "orthodontic": "Orthodontics",
-        "periodontic": "Periodontics",
-        "position": "Position",
         "other": "Other",
         "diagnostico": "Diagnostic",
         "restauradora": "Restorative",
@@ -936,7 +958,8 @@
       "professionalOff": "Off-duty",
       "onBreak": "On break"
     },
-    "actionsMenu": "Appointment actions"
+    "actionsMenu": "Appointment actions",
+    "planAwaitingBudget": "Quote awaiting acceptance"
   },
   "dashboard": {
     "greetings": {
@@ -1355,7 +1378,10 @@
     "yesterday": "Yesterday",
     "copied": "Copied to clipboard",
     "copy": "Copy",
-    "copyFailed": "Could not copy"
+    "copyFailed": "Could not copy",
+    "download": "Download",
+    "remove": "Remove",
+    "default": "Default"
   },
   "cabinet": {
     "toast": {
@@ -2396,11 +2422,9 @@
     "issueDate": "Issue date",
     "subtotal": "Subtotal",
     "discount": "Discount",
-    "totalDiscount": "Total discount",
     "tax": "Tax",
     "total": "Total",
     "paid": "Paid",
-    "totalPaid": "Total paid",
     "balance": "Balance",
     "balanceDue": "Balance due",
     "overdue": "Overdue",
@@ -2437,7 +2461,6 @@
     },
     "tooth": "Tooth",
     "vat": "VAT",
-    "currency": "Currency",
     "internalNotes": "Internal notes",
     "internalNotesPlaceholder": "Notes only visible to staff...",
     "publicNotes": "Public notes",
@@ -2489,7 +2512,6 @@
     },
     "payments": {
       "title": "Payments",
-      "record": "Record payment",
       "void": "Void payment",
       "amount": "Amount",
       "method": "Payment method",
@@ -2497,7 +2519,6 @@
       "reference": "Reference",
       "notes": "Notes",
       "noPayments": "No payments recorded",
-      "recorded": "Payment recorded",
       "voided": "Payment voided",
       "voidReason": "Void reason",
       "voidReasonPlaceholder": "Reason for voiding this payment...",
@@ -2516,10 +2537,7 @@
       "reason": "Reason",
       "reasonPlaceholder": "Reason for the credit note...",
       "selectItems": "Select items to rectify",
-      "fullCreditNote": "Full credit note (all items)",
-      "partialCreditNote": "Partial credit note (selected items)",
-      "originalInvoice": "Original invoice",
-      "created": "Credit note created"
+      "originalInvoice": "Original invoice"
     },
     "history": {
       "title": "History",
@@ -2549,10 +2567,7 @@
       "type": "Type",
       "currentNumber": "Current number",
       "resetYearly": "Reset yearly",
-      "default": "Default",
-      "active": "Active",
-      "invoice": "Invoice",
-      "credit_note": "Credit note"
+      "default": "Default"
     },
     "filters": {
       "allStatuses": "Status",
@@ -2626,7 +2641,9 @@
       "itemAdded": "Item added",
       "itemUpdated": "Item updated",
       "sentByEmail": "Invoice sent by email",
-      "sentManually": "Invoice marked as sent"
+      "sentManually": "Invoice marked as sent",
+      "creditNoteCreated": "Credit note created",
+      "paymentRecorded": "Payment recorded"
     },
     "send": {
       "title": "Send invoice",
@@ -2653,7 +2670,6 @@
       "send": "Error sending invoice",
       "creditNoteReasonRequired": "Credit note reason is required",
       "notFound": "Invoice not found",
-      "onlyDraft": "Only draft invoices can be edited",
       "canOnlyDeleteDraft": "Only draft invoices can be deleted",
       "patientRequired": "Patient is required",
       "itemsRequired": "At least one item is required",

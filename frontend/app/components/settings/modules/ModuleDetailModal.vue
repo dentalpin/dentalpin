@@ -94,6 +94,7 @@ function statusColor(status: string): UiColor {
             </div>
             <UButton
               icon="i-lucide-x"
+              :aria-label="t('common.close')"
               variant="ghost"
               size="xs"
               @click="closeModal"

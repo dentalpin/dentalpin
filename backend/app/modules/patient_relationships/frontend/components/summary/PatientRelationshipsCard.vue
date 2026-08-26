@@ -124,6 +124,7 @@ const extraRelationshipsCount = computed(() =>
     >
       <UButton
         icon="i-lucide-pencil"
+        :aria-label="t('common.edit')"
         variant="ghost"
         color="neutral"
         size="xs"
@@ -188,6 +189,7 @@ const extraRelationshipsCount = computed(() =>
           <UButton
             v-if="canWrite"
             icon="i-lucide-x"
+            :aria-label="t('common.remove')"
             variant="ghost"
             color="neutral"
             size="xs"
@@ -219,6 +221,7 @@ const extraRelationshipsCount = computed(() =>
           />
           <UButton
             icon="i-lucide-plus"
+            :aria-label="t('common.add')"
             size="sm"
             :disabled="!newRelatedPatient"
             :loading="isSaving"

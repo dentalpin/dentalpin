@@ -56,6 +56,7 @@ async function onClick() {
   <div v-if="treatmentId">
     <UButton
       icon="i-lucide-bell-plus"
+      :aria-label="t('recalls.setRecall')"
       size="xs"
       color="neutral"
       variant="ghost"

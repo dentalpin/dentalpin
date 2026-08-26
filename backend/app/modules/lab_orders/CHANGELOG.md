@@ -1,5 +1,9 @@
 # Changelog — lab_orders module
 
+## Unreleased
+
+- feat(#131): German (de) locale for the module's frontend layer.
+
 ## 0.1.0 — initial release
 
 - Lab work order create/read/update with status tracking (`sent` →

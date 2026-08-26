@@ -1,13 +1,13 @@
 {
   "inventory": {
-    "title": "Lager",
+    "title": "Inventar",
     "add": "Artikel hinzufügen",
     "edit": "Artikel bearbeiten",
     "item": "Artikel",
     "category": "Kategorie",
     "unit": "Einheit",
     "stock": "Bestand",
-    "minimum": "Minimum",
+    "minimum": "Mindestbestand",
     "notes": "Notizen",
     "status": "Status",
     "ok": "OK",
@@ -15,23 +15,23 @@
     "filterByCategory": "Nach Kategorie filtern",
     "lowStockOnly": "Nur niedriger Bestand",
     "increment": "Bestand erhöhen",
-    "decrement": "Bestand senken",
+    "decrement": "Bestand verringern",
     "delete": "Löschen",
     "deleteTitle": "Artikel löschen",
     "deleteMessage": "Diesen Lagerartikel löschen? Dies kann nicht rückgängig gemacht werden.",
     "allCategories": "Alle Kategorien",
     "adjustBy": "Anpassen um…",
     "apply": "Anwenden",
-    "cost": "Unit cost",
-    "valuation": "Stock value",
-    "movements": "Movements",
-    "movementsTitle": "Stock movements",
+    "cost": "Stückpreis",
+    "valuation": "Lagerwert",
+    "movements": "Bewegungen",
+    "movementsTitle": "Lagerbewegungen",
     "reasons": {
-      "initial": "Opening",
-      "restock": "Restock",
-      "consumption": "Consumption",
-      "adjustment": "Adjustment",
-      "correction": "Correction"
+      "initial": "Eröffnung",
+      "restock": "Nachbestellung",
+      "consumption": "Verbrauch",
+      "adjustment": "Anpassung",
+      "correction": "Korrektur"
     },
     "categories": {
       "consumables": "Verbrauchsmaterial",
@@ -41,6 +41,6 @@
     }
   },
   "nav": {
-    "inventory": "Lager"
+    "inventory": "Inventar"
   }
 }

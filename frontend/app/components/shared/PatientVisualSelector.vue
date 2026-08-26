@@ -249,6 +249,7 @@ async function submitCreate() {
         variant="ghost"
         color="neutral"
         icon="i-lucide-x"
+        :aria-label="t('common.clear')"
         size="sm"
         @click="handleSelect(null)"
       />

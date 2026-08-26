@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#131): German (de) locale for the module's frontend layer.
+
 - Mark `list_expenses` / `create_expense` tools `exposes_free_text=True`:
   the user-entered `description` is free prose and must stay off the
   cloud LLM path under redaction.

@@ -25,7 +25,7 @@ Tres actores:
 | Estado | Qué significa | Quién puede editar |
 |---|---|---|
 | **Borrador** | Diseño clínico en curso. El doctor está añadiendo y ajustando tratamientos. | Doctor |
-| **Pendiente** | El plan está confirmado. Mientras el presupuesto siga en `Borrador` el plan sigue siendo editable (los cambios se reflejan en el presupuesto); en cuanto se **envía** al paciente, queda bloqueado. | Doctor/Recepción (hasta enviar) |
+| **Pendiente** | El plan está confirmado. Mientras el presupuesto siga en `Borrador` el plan sigue siendo editable (los cambios se reflejan en el presupuesto); en cuanto se **envía** al paciente, queda bloqueado. Sus tratamientos **ya se pueden vincular a citas** — igual que en `Borrador` — y el selector de la cita los marca con "Presupuesto sin aceptar" para avisar de que se agenda por delante de la aceptación. | Doctor/Recepción (hasta enviar) |
 | **Activo** | Paciente aceptó el presupuesto. Listo para agendar citas y ejecutar tratamientos. | Nadie |
 | **Completado** | Todos los tratamientos del plan están hechos. | Nadie |
 | **Cerrado** | Plan terminado sin completarse. Lleva motivo (`closure_reason`). Reabrible. | Nadie |

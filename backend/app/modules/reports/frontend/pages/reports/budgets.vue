@@ -150,6 +150,7 @@ function goBack() {
           variant="ghost"
           color="neutral"
           icon="i-lucide-arrow-left"
+          :aria-label="t('common.back')"
           @click="goBack"
         />
         <div>

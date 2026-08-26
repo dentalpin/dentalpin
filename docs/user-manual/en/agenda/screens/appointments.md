@@ -26,7 +26,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 0cce028b
 ---
 
 # Appointments
@@ -66,6 +66,26 @@ professionals and rooms, and walk them through their workflow
    room are pre-selected based on the slot you opened the modal from.
 3. **Save**. The `appointment.scheduled` event is published so
    sibling modules (like notifications) can send the confirmation.
+
+### Linking treatments from a plan
+
+Once a patient is selected, the modal offers the pending treatments
+from their treatment plans, so the visit is booked against real
+planned work instead of a free-text reason.
+
+- Plans in **draft**, **awaiting acceptance** and **accepted** all
+  offer their treatments. A treatment already done, or one from a
+  completed or closed plan, is not offered.
+- Treatments coming from a plan whose quote the patient has not
+  accepted yet carry a **Quote awaiting acceptance** badge (hourglass
+  icon), in both the picker and the selected list. Booking them is
+  allowed on purpose — clinics routinely schedule the first visit
+  while the patient is still deciding — the badge is there so
+  reception knows it is booking ahead of the acceptance.
+- The treatment can only be marked as **performed** once the quote is
+  accepted and the plan is active; that is where the money is booked.
+- If the patient has no plan with pending treatments, the selector
+  explains so instead of showing an empty picker.
 
 ## Move or resize
 

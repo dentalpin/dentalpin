@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#131): German (de) locale for the module's frontend layer.
+
 - i18n: add Tamil locale (`ta.json`) with full UI coverage.
 
 - style(lint): first ESLint pass over this module's frontend layer —

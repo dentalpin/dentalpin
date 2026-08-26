@@ -247,6 +247,7 @@ async function submit() {
           variant="ghost"
           color="error"
           icon="i-lucide-x"
+          :aria-label="t('common.clear')"
           size="sm"
           @click="clearFile"
         />

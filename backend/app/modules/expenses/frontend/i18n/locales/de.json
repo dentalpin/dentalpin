@@ -1,0 +1,24 @@
+{
+  "expenses": {
+    "title": "Ausgaben",
+    "add": "Ausgabe hinzufügen",
+    "date": "Datum",
+    "category": "Kategorie",
+    "amount": "Betrag",
+    "description": "Beschreibung",
+    "filterByCategory": "Nach Kategorie filtern",
+    "delete": "Löschen",
+    "deleteTitle": "Ausgabe löschen",
+    "deleteMessage": "Diese Ausgabe löschen? Dies kann nicht rückgängig gemacht werden.",
+    "categories": {
+      "rent": "Miete",
+      "utilities": "Nebenkosten",
+      "salaries": "Gehälter",
+      "supplies": "Verbrauchsmaterial",
+      "equipment": "Ausstattung",
+      "insurance": "Versicherung",
+      "maintenance": "Wartung",
+      "other": "Sonstiges"
+    }
+  }
+}

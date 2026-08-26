@@ -385,6 +385,33 @@
     "onboarding": {
       "label": "Dodaj pierwszego pacjenta",
       "description": "Najszybszy sposób, aby zobaczyć w działaniu dokumentację, terminarz i kosztorysy."
+    },
+    "editLegalGuardian": "Edytuj opiekuna prawnego",
+    "legalGuardian": {
+      "title": "Opiekun prawny",
+      "hasGuardian": "Zarejestrowano opiekuna prawnego",
+      "noGuardian": "Brak zarejestrowanego opiekuna prawnego",
+      "name": "Imię i nazwisko",
+      "namePlaceholder": "Imię i nazwisko opiekuna",
+      "dni": "Numer dokumentu",
+      "dniPlaceholder": "Dokument tożsamości",
+      "relationship": "Pokrewieństwo",
+      "relationshipPlaceholder": "Wybierz pokrewieństwo",
+      "relationships": {
+        "parent": "Rodzic",
+        "legal_tutor": "Wyznaczony opiekun prawny",
+        "grandparent": "Dziadek/Babcia",
+        "other": "Inne"
+      },
+      "phone": "Telefon",
+      "phonePlaceholder": "Telefon opiekuna",
+      "email": "E-mail",
+      "emailPlaceholder": "E-mail opiekuna",
+      "address": "Adres",
+      "addressPlaceholder": "Adres opiekuna",
+      "notes": "Notatki",
+      "notesPlaceholder": "Dodatkowe uwagi...",
+      "remove": "Usuń opiekuna"
     }
   },
   "patientDetail": {
@@ -542,10 +569,6 @@
       "categories": {
         "common": "Częste",
         "restorative": "Zachowawcze",
-        "diagnostic": "Diagnostyka",
-        "orthodontic": "Ortodoncja",
-        "periodontic": "Periodontologia",
-        "position": "Położenie",
         "other": "Inne",
         "diagnostico": "Diagnostyka",
         "restauradora": "Zachowawcze",
@@ -935,7 +958,8 @@
       "clinicClosed": "Gabinet zamknięty",
       "professionalOff": "Poza godzinami pracy",
       "onBreak": "Na przerwie"
-    }
+    },
+    "planAwaitingBudget": "Kosztorys oczekuje na akceptację"
   },
   "dashboard": {
     "greetings": {
@@ -1354,7 +1378,10 @@
     "yesterday": "Wczoraj",
     "copied": "Skopiowano do schowka",
     "copy": "Kopiuj",
-    "copyFailed": "Nie udało się skopiować"
+    "copyFailed": "Nie udało się skopiować",
+    "download": "Pobierz",
+    "remove": "Usuń",
+    "default": "Domyślny"
   },
   "cabinet": {
     "toast": {
@@ -2395,11 +2422,9 @@
     "issueDate": "Data wystawienia",
     "subtotal": "Suma częściowa",
     "discount": "Rabat",
-    "totalDiscount": "Suma rabatów",
     "tax": "Podatek",
     "total": "Razem",
     "paid": "Zapłacono",
-    "totalPaid": "Zapłacono łącznie",
     "balance": "Saldo",
     "balanceDue": "Do zapłaty",
     "overdue": "Po terminie",
@@ -2436,7 +2461,6 @@
     },
     "tooth": "Ząb",
     "vat": "VAT",
-    "currency": "Waluta",
     "internalNotes": "Notatki wewnętrzne",
     "internalNotesPlaceholder": "Notatki widoczne tylko dla zespołu...",
     "publicNotes": "Notatki publiczne",
@@ -2488,7 +2512,6 @@
     },
     "payments": {
       "title": "Płatności",
-      "record": "Zarejestruj płatność",
       "void": "Unieważnij płatność",
       "amount": "Kwota",
       "method": "Metoda płatności",
@@ -2496,7 +2519,6 @@
       "reference": "Numer referencyjny",
       "notes": "Notatki",
       "noPayments": "Brak zarejestrowanych płatności",
-      "recorded": "Płatność zarejestrowana",
       "voided": "Płatność unieważniona",
       "voidReason": "Powód unieważnienia",
       "voidReasonPlaceholder": "Powód unieważnienia tej płatności...",
@@ -2515,10 +2537,7 @@
       "reason": "Powód",
       "reasonPlaceholder": "Powód wystawienia korekty...",
       "selectItems": "Wybierz pozycje do skorygowania",
-      "fullCreditNote": "Pełna korekta (wszystkie pozycje)",
-      "partialCreditNote": "Częściowa korekta (wybrane pozycje)",
-      "originalInvoice": "Faktura pierwotna",
-      "created": "Korekta wystawiona"
+      "originalInvoice": "Faktura pierwotna"
     },
     "history": {
       "title": "Historia",
@@ -2548,10 +2567,7 @@
       "type": "Rodzaj",
       "currentNumber": "Bieżący numer",
       "resetYearly": "Resetuj co rok",
-      "default": "Domyślna",
-      "active": "Aktywna",
-      "invoice": "Faktura",
-      "credit_note": "Faktura korygująca"
+      "default": "Domyślna"
     },
     "filters": {
       "allStatuses": "Status",
@@ -2625,7 +2641,9 @@
       "itemAdded": "Pozycja dodana",
       "itemUpdated": "Pozycja zaktualizowana",
       "sentByEmail": "Faktura wysłana e-mailem",
-      "sentManually": "Faktura oznaczona jako wysłana"
+      "sentManually": "Faktura oznaczona jako wysłana",
+      "creditNoteCreated": "Utworzono fakturę korygującą",
+      "paymentRecorded": "Płatność zarejestrowana"
     },
     "send": {
       "title": "Wyślij fakturę",
@@ -2652,7 +2670,6 @@
       "send": "Błąd podczas wysyłania faktury",
       "creditNoteReasonRequired": "Powód korekty jest wymagany",
       "notFound": "Nie znaleziono faktury",
-      "onlyDraft": "Edytować można tylko faktury robocze",
       "canOnlyDeleteDraft": "Usuwać można tylko faktury robocze",
       "patientRequired": "Pacjent jest wymagany",
       "itemsRequired": "Wymagana jest co najmniej jedna pozycja",

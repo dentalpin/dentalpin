@@ -51,6 +51,7 @@ function relative(iso: string): string {
         color="neutral"
         size="xs"
         trailing-icon="i-lucide-arrow-right"
+        :aria-label="t('nav.patients')"
       />
     </template>
 

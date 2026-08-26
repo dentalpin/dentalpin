@@ -1,0 +1,303 @@
+{
+  "payments": {
+    "nav": {
+      "payments": "Zahlungen",
+      "reports": "Zahlungsberichte"
+    },
+    "balance": {
+      "debt": "Schuldet",
+      "credit": "Guthaben",
+      "paid": "Gezahlt gesamt"
+    },
+    "list": {
+      "title": "Zahlungen",
+      "subtitle": "Patientenzahlungen, Anzahlungen auf Kostenvoranschläge und Guthaben.",
+      "empty": "Keine Zahlungen erfasst.",
+      "new": "Neue Zahlung",
+      "searchPlaceholder": "Patient oder Referenz",
+      "filterDateFrom": "Von",
+      "filterDateTo": "Bis",
+      "filterMethod": "Zahlungsart",
+      "filterPatient": "Patient",
+      "filter": {
+        "method": "Zahlungsart",
+        "hasRefunds": "Mit Erstattungen",
+        "hasUnallocated": "Nicht zugeordnet",
+        "patient": "Patient",
+        "withDebt": "Mit Schulden",
+        "paymentStatus": "Status"
+      },
+      "sort": {
+        "paymentDate": "Datum",
+        "amount": "Betrag"
+      },
+      "budgetStatus": {
+        "paid": "Bezahlt",
+        "partial": "Teilweise",
+        "unpaid": "Unbezahlt"
+      },
+      "row": {
+        "debtTooltip": "Offener Saldo des Patienten",
+        "creditTooltip": "Guthaben des Patienten",
+        "allocationsLabel": "Zuordnung",
+        "refundedLabel": "Erstattet",
+        "noPatient": "Kein Patient"
+      },
+      "columnDate": "Datum",
+      "columnPatient": "Patient",
+      "columnAmount": "Betrag",
+      "columnMethod": "Zahlungsart",
+      "columnAllocations": "Zuordnung",
+      "columnNet": "Netto",
+      "columnActions": "Aktionen"
+    },
+    "detail": {
+      "title": "Zahlung {reference}",
+      "amount": "Betrag",
+      "method": "Zahlungsart",
+      "date": "Datum",
+      "recordedBy": "Erfasst von",
+      "allocations": "Zuordnungen",
+      "refunds": "Erstattungen",
+      "refund": "Erstatten",
+      "refundedTotal": "Erstattet",
+      "netAmount": "Netto",
+      "reference": "Referenz",
+      "notes": "Notizen"
+    },
+    "new": {
+      "title": "Zahlung erfassen",
+      "patient": "Patient",
+      "patientPlaceholder": "Patient suchen...",
+      "unknownPatient": "Unbekannter Patient",
+      "amount": "Betrag",
+      "suggestedHint": "Offen zu kassieren: {amount}",
+      "useSuggested": "diesen Betrag übernehmen",
+      "method": "Zahlungsart",
+      "moreMethods": "Weitere Optionen",
+      "date": "Datum",
+      "today": "Heute",
+      "advanced": "Erweiterte Optionen",
+      "reference": "Referenz",
+      "referencePlaceholder": "Karten-Autorisierungsnr., Überweisungsreferenz...",
+      "notes": "Notizen",
+      "allocations": "Zuordnung",
+      "allocationsHint": "Teilen Sie diese Zahlung auf Kostenvoranschläge auf oder lassen Sie sie als Patientenguthaben stehen.",
+      "addAllocation": "Zuordnung hinzufügen",
+      "allocationToBudget": "Auf Kostenvoranschlag",
+      "allocationOnAccount": "Als Guthaben",
+      "sumLabel": "Summe:",
+      "sumMismatch": "stimmt nicht mit dem Betrag überein",
+      "submit": "Erfassen",
+      "submitWithAmount": "{amount} kassieren",
+      "cancel": "Abbrechen",
+      "errPatient": "Wählen Sie einen Patienten aus",
+      "errAmount": "Geben Sie einen Betrag größer als 0 ein",
+      "errSum": "Die Summe der Zuordnungen muss dem Betrag entsprechen",
+      "errUnknown": "Die Zahlung konnte nicht erfasst werden. Bitte versuchen Sie es erneut."
+    },
+    "methods": {
+      "cash": "Bar",
+      "card": "Karte",
+      "bank_transfer": "Überweisung",
+      "direct_debit": "Lastschrift",
+      "insurance": "Versicherung",
+      "other": "Sonstige"
+    },
+    "refund": {
+      "title": "Zahlung erstatten",
+      "amount": "Betrag",
+      "method": "Zahlungsart",
+      "reason": "Grund",
+      "note": "Details",
+      "submit": "Erstatten",
+      "reasonCodes": {
+        "duplicate": "Doppelte Zahlung",
+        "overpaid": "Überzahlt",
+        "treatment_cancelled": "Behandlung storniert",
+        "dispute": "Reklamation",
+        "other": "Sonstiges"
+      }
+    },
+    "ledger": {
+      "title": "Patientenkonto",
+      "totalPaid": "Gezahlt gesamt",
+      "totalEarned": "Erbrachte Behandlungen",
+      "patientCredit": "Guthaben des Patienten",
+      "clinicReceivable": "Forderungen der Praxis",
+      "onAccount": "Guthaben",
+      "empty": "Keine Bewegungen."
+    },
+    "budgetCard": {
+      "title": "Zahlungen zum Kostenvoranschlag",
+      "budgetTotal": "Veranschlagt",
+      "collected": "Kassiert",
+      "pending": "Ausstehend",
+      "collect": "Kassieren",
+      "empty": "Diesem Kostenvoranschlag sind noch keine Zahlungen zugeordnet.",
+      "collectedLabel": "Kassiert",
+      "pendingLabel": "Ausstehend",
+      "outOfTotal": "von insgesamt {total}",
+      "settled": "Kostenvoranschlag vollständig kassiert",
+      "history": "Zahlungsverlauf",
+      "payment": "Zahlung",
+      "emptyDetailed": "Noch keine Zahlungen kassiert. Verwenden Sie „Kassieren“, um die erste zu erfassen."
+    },
+    "budgetCollect": {
+      "title": "Kostenvoranschlag kassieren",
+      "amountLabel": "Betrag",
+      "methodLabel": "Zahlungsart",
+      "dateLabel": "Zahlungsdatum",
+      "today": "Heute",
+      "quickFull": "Gesamtbetrag",
+      "optionalDetails": "Referenz oder Notizen hinzufügen (optional)",
+      "referenceLabel": "Referenz",
+      "referencePlaceholder": "z. B. POS-Transaktionsnummer",
+      "notesLabel": "Interne Notizen",
+      "submit": "Kassieren",
+      "cancel": "Abbrechen",
+      "success": "Zahlung erfasst",
+      "errorGeneric": "Zahlung konnte nicht erfasst werden",
+      "noteAppliedToBudget": "dem Kostenvoranschlag zugeordnet.",
+      "notePendingAfter": "Verbleibend",
+      "noteFullySettled": "Der Kostenvoranschlag wird vollständig beglichen.",
+      "noteToBudget": "dem Kostenvoranschlag zugeordnet und",
+      "noteExcessToOnAccount": "dem Patientenguthaben gutgeschrieben.",
+      "noteBudgetSettled": "Der Kostenvoranschlag ist bereits vollständig bezahlt.",
+      "noteToOnAccount": "werden dem Patientenguthaben gutgeschrieben."
+    },
+    "pendingCharges": {
+      "title": "Offen zu kassieren",
+      "count": "{n} Sitzungen",
+      "more": "+ {n} weitere",
+      "collect": "{amount} kassieren",
+      "unnamedSession": "Unbenannte Sitzung"
+    },
+    "patientPanel": {
+      "title": "Patientenkonto",
+      "kpis": {
+        "totalPaid": "Gezahlt gesamt",
+        "debt": "Forderungen der Praxis",
+        "onAccount": "Guthaben"
+      },
+      "sidebar": {
+        "title": "Übersicht",
+        "credit": "Patientenguthaben",
+        "lastPayment": "Letzte Zahlung",
+        "noLastPayment": "Noch keine Zahlungen",
+        "totalEarned": "Erbrachte Behandlungen"
+      },
+      "banner": {
+        "debtTitle": "Schuldet der Praxis {amount}",
+        "debtDescription": "Die Zahlungen liegen unter dem Wert der erbrachten Behandlungen.",
+        "creditTitle": "Hat {amount} Guthaben",
+        "creditDescription": "Es wurde mehr gezahlt als an Behandlungen erbracht."
+      },
+      "cobrar": "Zahlung erfassen",
+      "timeline": {
+        "title": "Bewegungen",
+        "empty": "Keine Bewegungen erfasst",
+        "emptyCta": "Erste Zahlung erfassen",
+        "loadError": "Das Patientenkonto konnte nicht geladen werden.",
+        "retry": "Erneut versuchen",
+        "drPrefix": "Dr. {name}",
+        "types": {
+          "payment": "Zahlung",
+          "refund": "Erstattung",
+          "earned": "Erbrachte Behandlung"
+        },
+        "treatmentStatus": {
+          "planned": "Geplant",
+          "performed": "Durchgeführt",
+          "completed": "Abgeschlossen",
+          "cancelled": "Storniert",
+          "in_progress": "In Bearbeitung"
+        },
+        "rowMenu": {
+          "detail": "Details anzeigen",
+          "refund": "Erstatten",
+          "reallocate": "Kostenvoranschlag zuordnen…"
+        }
+      },
+      "refundModal": {
+        "title": "Zahlung erstatten",
+        "amount": "Erstattungsbetrag",
+        "method": "Erstattungsart",
+        "reason": "Grund",
+        "note": "Details (optional)",
+        "submit": "Erstattung bestätigen",
+        "cancel": "Abbrechen",
+        "errorGeneric": "Die Erstattung konnte nicht erfasst werden"
+      }
+    },
+    "reports": {
+      "title": "Zahlungsberichte",
+      "subtitle": "Einnahmen, Erstattungen, Patientensalden und Trends für den Zeitraum.",
+      "cardDescription": "Einnahmen, Erstattungen, Patientensalden, Altersstruktur und Trends.",
+      "period": "Zeitraum",
+      "refresh": "Aktualisieren",
+      "collected": "Kassiert",
+      "refunded": "Erstattet",
+      "net": "Netto",
+      "patientCredit": "Patientenguthaben gesamt",
+      "patientCreditHint": "Guthaben- oder Anzahlungssalden.",
+      "clinicReceivable": "Forderungen der Praxis",
+      "refundRatio": "Erstattungsquote",
+      "byMethod": "Nach Zahlungsart",
+      "byProfessional": "Nach Behandler",
+      "byProfessionalHint": "Erbrachte Behandlungen, nicht kassierte Beträge.",
+      "aging": "Altersstruktur der Forderungen",
+      "agingHint": "Patienten mit offenem Saldo, gruppiert nach Alter der Forderung.",
+      "refunds": "Erstattungen nach Grund",
+      "refundsHint": "Verteilung der Erstattungen nach erfasstem Grund.",
+      "bucket": "{range} Tage",
+      "unknownProfessional": "Nicht zugewiesen",
+      "countShort": "{n} Vorgänge",
+      "countPatients": "{n} Patienten",
+      "granularity": {
+        "day": "Tag",
+        "week": "Woche",
+        "month": "Monat"
+      },
+      "hero": {
+        "netCollected": "Netto kassiert",
+        "netCollectedHint": "Einnahmen abzüglich Erstattungen im Zeitraum.",
+        "receivable": "Offene Forderungen",
+        "receivableHint": "Erbrachte, noch nicht kassierte Behandlungen, nach Alter.",
+        "vsPrevious": "ggü. Vorperiode",
+        "transactionsCount": "{n} Transaktionen im Zeitraum"
+      },
+      "trend": {
+        "title": "Einnahmenentwicklung",
+        "subtitle": "Netto pro Intervall. Die gestrichelte Linie zeigt Erstattungen."
+      },
+      "empty": {
+        "noDataTitle": "Keine Daten in diesem Zeitraum",
+        "noDataDescription": "Passen Sie den Zeitraum an oder erfassen Sie eine Zahlung, um den Bericht zu sehen.",
+        "noTrend": "Nicht genügend Datenpunkte für die Trendlinie.",
+        "noMethods": "Keine Einnahmen nach Zahlungsart im Zeitraum.",
+        "noProfessionals": "Keine erbrachten Behandlungen im Zeitraum.",
+        "noReceivable": "Keine Patienten mit offenem Saldo."
+      },
+      "drilldown": {
+        "viewPayments": "Zahlungen im Zeitraum anzeigen",
+        "viewPatients": "Patienten mit Schulden anzeigen"
+      }
+    },
+    "target": {
+      "label": "Zuordnen zu",
+      "placeholder": "Ziel auswählen",
+      "onAccount": "Patientenguthaben (Akonto)",
+      "onAccountHint": "Bleibt als Guthaben des Patienten bestehen. Es wird keiner Rechnung und keinem Kostenvoranschlag zugeordnet, bis Sie es zuweisen.",
+      "budgetHint": "Wird diesem Kostenvoranschlag und seinen ausgestellten Rechnungen zugeordnet.",
+      "lockedBudget": "Wird dem Kostenvoranschlag {budget} und seinen Rechnungen zugeordnet."
+    },
+    "reallocate": {
+      "title": "Einem Kostenvoranschlag zuordnen",
+      "hint": "Die gesamte Zahlung über {amount} wird auf den ausgewählten Kostenvoranschlag und seine ausgestellten Rechnungen übertragen.",
+      "submit": "Zuordnen",
+      "success": "Zahlung dem Kostenvoranschlag zugeordnet",
+      "error": "Die Zahlung konnte nicht neu zugeordnet werden. Bitte versuchen Sie es erneut."
+    }
+  }
+}

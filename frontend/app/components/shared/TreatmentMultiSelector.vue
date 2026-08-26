@@ -102,6 +102,7 @@ const totalDuration = computed(() =>
             variant="ghost"
             color="neutral"
             icon="i-lucide-x"
+            :aria-label="t('common.remove')"
             size="xs"
             @click="removeItem(item.id)"
           />
@@ -144,6 +145,7 @@ const totalDuration = computed(() =>
           variant="ghost"
           color="neutral"
           icon="i-lucide-x"
+          :aria-label="t('common.close')"
           size="xs"
           @click="showSelector = false"
         />

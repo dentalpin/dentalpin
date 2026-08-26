@@ -65,6 +65,7 @@ const { t } = useI18n()
           size="xs"
           variant="ghost"
           icon="i-lucide-pencil"
+          :aria-label="t('common.edit')"
           @click="emit('edit', o)"
         />
         <UButton
@@ -73,6 +74,7 @@ const { t } = useI18n()
           variant="ghost"
           color="error"
           icon="i-lucide-trash-2"
+          :aria-label="t('common.delete')"
           @click="emit('delete', o)"
         />
       </div>

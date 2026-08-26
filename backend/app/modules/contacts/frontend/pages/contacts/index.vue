@@ -191,12 +191,14 @@ const columns = [
         >
           <UButton
             icon="i-lucide-pencil"
+            :aria-label="t('common.edit')"
             variant="ghost"
             size="xs"
             @click="openEdit(row.original)"
           />
           <UButton
             icon="i-lucide-trash-2"
+            :aria-label="t('common.delete')"
             variant="ghost"
             color="error"
             size="xs"

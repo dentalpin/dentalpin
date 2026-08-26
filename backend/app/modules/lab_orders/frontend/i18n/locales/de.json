@@ -1,0 +1,27 @@
+{
+  "labOrders": {
+    "title": "Laboraufträge",
+    "add": "Neuer Laborauftrag",
+    "patient": "Patient",
+    "lab": "Labor",
+    "loading": "Wird geladen…",
+    "selectPatient": "Patient auswählen",
+    "selectLab": "Labor auswählen",
+    "workType": "Arbeitsart",
+    "tooth": "Zahn / Referenz",
+    "impressionType": "Abformung",
+    "antagonistInfo": "Angaben zum Antagonisten",
+    "shade": "Zahnfarbe",
+    "sentDate": "Versanddatum",
+    "expectedDate": "Erwartetes Datum",
+    "status": "Status",
+    "notes": "Notizen",
+    "save": "Auftrag senden",
+    "cancel": "Abbrechen",
+    "noLabsHint": "Legen Sie zuerst einen Labor-Kontakt unter Kontakte an.",
+    "workTypes": {"crown":"Krone","bridge":"Brücke","denture":"Prothese","implant":"Implantat","veneer":"Veneer","orthodontic":"Kieferorthopädie","repair":"Reparatur","other":"Sonstiges"},
+    "impressionTypes": {"alginate":"Alginat","pvs_silicone":"PVS / Silikon","digital_scan":"Digitaler Scan","other":"Sonstiges"},
+    "statuses": {"sent":"Gesendet","in_progress":"In Bearbeitung","ready":"Fertig","received":"Erhalten","cancelled":"Storniert"}
+  },
+  "nav": {"labOrdersForm":"Neuer Laborauftrag","labOrdersStatus":"Laboraufträge"}
+}

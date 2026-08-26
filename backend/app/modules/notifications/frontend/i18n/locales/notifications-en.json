@@ -5,7 +5,8 @@
       "empty": "No messages yet.",
       "placeholder": "Type a reply…",
       "replyError": "Could not send the reply",
-      "windowClosed": "The 24h window is closed. Use a template to reopen the conversation."
+      "windowClosed": "The 24h window is closed. Use a template to reopen the conversation.",
+      "send": "Send"
     }
   }
 }

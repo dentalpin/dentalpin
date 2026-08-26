@@ -193,6 +193,7 @@ function getSeriesTypeLabel(type: string): string {
         <NuxtLink to="/settings">
           <UButton
             icon="i-lucide-arrow-left"
+            :aria-label="t('common.back')"
             variant="ghost"
             color="neutral"
           />
@@ -312,6 +313,7 @@ function getSeriesTypeLabel(type: string): string {
               >
                 <UButton
                   icon="i-lucide-pencil"
+                  :aria-label="t('common.edit')"
                   size="xs"
                   variant="ghost"
                   color="neutral"
@@ -320,6 +322,7 @@ function getSeriesTypeLabel(type: string): string {
                 />
                 <UButton
                   icon="i-lucide-rotate-ccw"
+                  :aria-label="t('invoiceSeries.resetCounter')"
                   size="xs"
                   variant="ghost"
                   color="neutral"
@@ -415,6 +418,7 @@ function getSeriesTypeLabel(type: string): string {
               >
                 <UButton
                   icon="i-lucide-pencil"
+                  :aria-label="t('common.edit')"
                   size="xs"
                   variant="ghost"
                   color="neutral"
@@ -423,6 +427,7 @@ function getSeriesTypeLabel(type: string): string {
                 />
                 <UButton
                   icon="i-lucide-rotate-ccw"
+                  :aria-label="t('invoiceSeries.resetCounter')"
                   size="xs"
                   variant="ghost"
                   color="neutral"

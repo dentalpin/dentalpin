@@ -216,6 +216,7 @@ function whatsappPatient(row: PipelineRow) {
             <UButton
               v-if="row.patient.phone"
               icon="i-lucide-phone"
+              :aria-label="t('pipeline.actions.call')"
               variant="ghost"
               color="neutral"
               size="sm"
@@ -225,6 +226,7 @@ function whatsappPatient(row: PipelineRow) {
             <UButton
               v-if="row.patient.phone"
               icon="i-lucide-message-circle"
+              :aria-label="t('pipeline.actions.whatsapp')"
               variant="ghost"
               color="neutral"
               size="sm"

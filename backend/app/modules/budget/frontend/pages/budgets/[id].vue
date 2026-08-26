@@ -815,6 +815,7 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
                     variant="ghost"
                     color="error"
                     icon="i-lucide-trash-2"
+                    :aria-label="t('common.delete')"
                     size="sm"
                     @click="handleRemoveItem(item)"
                   />
@@ -869,6 +870,7 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
                 variant="ghost"
                 color="neutral"
                 icon="i-lucide-x"
+                :aria-label="t('common.close')"
                 @click="isSendModalOpen = false"
               />
             </div>
@@ -955,6 +957,7 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
                 variant="ghost"
                 color="neutral"
                 icon="i-lucide-x"
+                :aria-label="t('common.close')"
                 @click="isSignatureModalOpen = false"
               />
             </div>

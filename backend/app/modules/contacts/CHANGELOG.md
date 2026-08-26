@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#131): German (de) locale for the module's frontend layer.
+
 - Initial version: lab/supplier/other contact CRUD, name search, type
   filter, soft delete, EN/ES/FR translations.
 - Review fixes: dropped the frontend coupling to the not-yet-existing

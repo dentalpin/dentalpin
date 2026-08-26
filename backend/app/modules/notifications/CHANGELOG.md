@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#131): German (de) locale for the module's frontend layer.
+
 - fix(#184): type-check clean — per-type settings read/written through typed helpers (`settingsFor()`, generic `updateLocalSetting`) instead of casts; `UModal :ui.width` is `content` in Nuxt UI v4.
 - fix(#183): the six event handlers are transactional (ADR 0019) and no longer fire `asyncio.create_task` at a fresh session. That task raced the request's commit, and lost for `patient.created`: the patient row was invisible, so the **welcome message was never queued**. Each body runs in a savepoint — queueing must not be able to fail the appointment it announces.
 - refactor: `NotificationGateway.enqueue` flushes instead of committing; the session's owner (`get_db`, or the scheduler job) commits.

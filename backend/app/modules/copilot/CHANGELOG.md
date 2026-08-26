@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(#131): German (de) locale for the module's frontend layer.
 - fix(#184): `PERMISSIONS` imported from `~~/app/config/permissions` (the `~/` form only worked through the layer-aliasing fallback).
 - i18n: add Tamil locale (`ta.json`) with full UI coverage.
 

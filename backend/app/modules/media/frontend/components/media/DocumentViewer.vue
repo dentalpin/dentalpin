@@ -94,6 +94,7 @@ onUnmounted(() => {
             <div class="flex items-center gap-2 ml-4">
               <UButton
                 icon="i-lucide-download"
+                :aria-label="t('common.download')"
                 variant="ghost"
                 size="sm"
                 :title="t('common.download')"
@@ -101,6 +102,7 @@ onUnmounted(() => {
               />
               <UButton
                 icon="i-lucide-x"
+                :aria-label="t('common.close')"
                 variant="ghost"
                 size="sm"
                 :title="t('common.close')"

@@ -1,4 +1,4 @@
-# Multi-tenancy en Dentalpin core — brief de implementación
+# 0012 — Multi-tenancy en Dentalpin core (brief de implementación)
 
 > **Audiencia**: agentes Claude Code que vayan a implementar estos cambios.
 > **Estado**: propuesta de arquitectura, pendiente de ejecución por fases.

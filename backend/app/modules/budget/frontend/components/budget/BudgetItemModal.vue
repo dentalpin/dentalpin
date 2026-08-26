@@ -145,6 +145,7 @@ watch(() => props.open, (isOpen) => {
               variant="ghost"
               color="neutral"
               icon="i-lucide-x"
+              :aria-label="t('common.close')"
               @click="close"
             />
           </div>

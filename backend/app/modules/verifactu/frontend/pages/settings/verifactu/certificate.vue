@@ -291,6 +291,7 @@ onMounted(refresh)
               </div>
               <UButton
                 icon="i-lucide-x"
+                :aria-label="t('common.clear')"
                 size="xs"
                 color="neutral"
                 variant="ghost"

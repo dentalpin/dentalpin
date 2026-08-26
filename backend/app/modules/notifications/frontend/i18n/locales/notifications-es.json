@@ -5,7 +5,8 @@
       "empty": "Sin mensajes todavía.",
       "placeholder": "Escribe una respuesta…",
       "replyError": "No se pudo enviar la respuesta",
-      "windowClosed": "La ventana de 24h está cerrada. Usa una plantilla para reabrir la conversación."
+      "windowClosed": "La ventana de 24h está cerrada. Usa una plantilla para reabrir la conversación.",
+      "send": "Enviar"
     }
   }
 }

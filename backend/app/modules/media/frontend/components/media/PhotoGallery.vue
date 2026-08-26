@@ -172,6 +172,7 @@ function handleUploaded() {
               variant="ghost"
               color="neutral"
               icon="i-lucide-x"
+              :aria-label="t('common.close')"
               size="sm"
               @click="showUpload = false"
             />

@@ -1,0 +1,22 @@
+{
+  "patientRelationships": {
+    "title": "Familie",
+    "emptyHint": "Keine familiären Verknüpfungen hinterlegt.",
+    "relationships": {
+      "title": "Familiäre Beziehungen",
+      "searchPatient": "Patient zum Verknüpfen suchen…",
+      "addSuccess": "Beziehung hinzugefügt",
+      "addError": "Beziehung konnte nicht hinzugefügt werden",
+      "removeError": "Beziehung konnte nicht entfernt werden",
+      "types": {
+        "parent": "Elternteil",
+        "child": "Kind",
+        "spouse": "Ehepartner/in",
+        "sibling": "Geschwister",
+        "guardian": "Vormund",
+        "ward": "Mündel",
+        "other": "Sonstiges"
+      }
+    }
+  }
+}

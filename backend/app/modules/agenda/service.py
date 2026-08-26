@@ -360,7 +360,11 @@ class AppointmentService:
             if not plan or plan.patient_id != patient_id:
                 errors.append(f"Treatment item {item_id} does not belong to patient")
                 continue
-            if plan.status not in ("active", "draft"):
+            # `pending` (plan confirmed, budget not yet accepted) is bookable
+            # on purpose: an unconfirmed `draft` already is, so confirming a
+            # plan must not take that away — clinics book the first visit while
+            # the patient is still deciding (#108). Terminal states stay out.
+            if plan.status not in ("active", "draft", "pending"):
                 errors.append(f"Treatment item {item_id} belongs to {plan.status} plan")
                 continue
             if item.status != "pending":

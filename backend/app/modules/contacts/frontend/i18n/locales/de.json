@@ -1,0 +1,24 @@
+{
+  "contacts": {
+    "title": "Kontakte",
+    "add": "Kontakt hinzufügen",
+    "edit": "Kontakt bearbeiten",
+    "delete": "Kontakt löschen",
+    "deleteConfirm": "\"{name}\" deaktivieren? Der Kontakt verschwindet aus dem Verzeichnis, bleibt aber mit vorhandenen historischen Einträgen verknüpft.",
+    "name": "Name",
+    "type": "Typ",
+    "phone": "Telefon",
+    "email": "E-Mail",
+    "address": "Adresse",
+    "notes": "Notizen",
+    "search": "Kontakte suchen",
+    "filterByType": "Nach Typ filtern",
+    "allTypes": "Alle Typen",
+    "types": {
+      "lab": "Labor",
+      "supplier": "Lieferant",
+      "other": "Sonstiges",
+      "delegate": "Vertreter"
+    }
+  }
+}

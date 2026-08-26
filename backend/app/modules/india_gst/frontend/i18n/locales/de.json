@@ -1,0 +1,110 @@
+{
+  "nav": {
+    "indiaGst": "Indien GST"
+  },
+  "indiaGst": {
+    "badge": {
+      "gst": "GST",
+      "irnGenerated": "IRN erzeugt",
+      "einvoiceIssue": "E-Rechnungsproblem",
+      "needsAttention": "Prüfung erforderlich",
+      "missingGst": "GST-Daten fehlen — stellen Sie diese Rechnung erneut aus, um GST-Details zu erzeugen"
+    },
+    "banner": {
+      "unregisteredTitle": "GSTIN nicht konfiguriert",
+      "unregisteredDescription": "Sie können Patienten in der Zwischenzeit weiter abrechnen — Standardrechnungen funktionieren auch ohne GSTIN.",
+      "configureAction": "GST konfigurieren"
+    },
+    "listFilter": {
+      "needsAttention": "Prüfung erforderlich"
+    },
+    "panel": {
+      "title": "GST und E-Rechnung",
+      "correctsDocument": "Korrigiert Dokument",
+      "documentNumber": "GST-Dokumentnummer",
+      "placeOfSupply": "Ort der Leistung",
+      "gstinOnInvoice": "GSTIN auf der Rechnung",
+      "notProvided": "Nicht angegeben",
+      "calculation": "GST-Berechnung",
+      "intraState": "Innerhalb des Bundesstaats · CGST + SGST",
+      "interState": "Zwischen Bundesstaaten · IGST",
+      "einvoiceStatus": "E-Rechnungsstatus"
+    },
+    "einvoice": {
+      "notRequired": "Nicht erforderlich",
+      "notConfigured": "Nicht konfiguriert",
+      "pending": "Ausstehend",
+      "generated": "IRN erzeugt",
+      "rejected": "Abgelehnt",
+      "error": "Verbindungsfehler",
+      "notRequiredHint": "Ihre Praxis liegt unter der in den Einstellungen konfigurierten Umsatzschwelle, daher wird diese Rechnung nicht an das E-Rechnungsportal übermittelt.",
+      "notConfiguredHint": "Die E-Rechnungspflicht gilt für Praxen oberhalb der in den Indien-GST-Einstellungen festgelegten Umsatzschwelle. Für diese Rechnung wird nichts übermittelt.",
+      "reviewSettings": "E-Rechnungseinstellungen prüfen"
+    },
+    "form": {
+      "title": "GST-Details der Rechnung",
+      "clinicGstDetails": "GST-Daten der Praxis",
+      "placeOfSupply": "Ort der Leistung",
+      "placeOfSupplyHint": "Bestimmt, ob CGST+SGST oder IGST anfällt",
+      "selectState": "Bundesstaat auswählen",
+      "selectPlaceOfSupplyHint": "Wählen Sie einen Ort der Leistung, um die GST zu berechnen",
+      "sacCodes": "SAC-Codes",
+      "sacCode": "SAC-Code",
+      "sacOverrideHint": "SAC-Codes stammen aus Ihrem Behandlungskatalog. Ändern Sie einen Code nur auf Anraten Ihres Steuerberaters.",
+      "save": "GST-Details speichern",
+      "saved": "GST-Details gespeichert",
+      "saveError": "GST-Details konnten nicht gespeichert werden"
+    },
+    "settingsCards": {
+      "title": "Indien GST",
+      "description": "GSTIN, Standardwerte für den Ort der Leistung und SAC-Codes für Praxen in Indien konfigurieren.",
+      "open": "Einstellungen öffnen"
+    },
+    "settings": {
+      "title": "Indien-GST-Einstellungen",
+      "description": "GST-Daten und Rechnungsvorgaben für diese Praxis konfigurieren.",
+      "loadError": "GST-Einstellungen konnten nicht geladen werden",
+      "saved": "Einstellungen gespeichert",
+      "saveError": "Einstellungen konnten nicht gespeichert werden",
+      "clinicDetails": "GST-Daten der Praxis",
+      "nonRegularNotice": "Die GST-Berechnung ist für die Rechnungsstellung unter diesem Registrierungstyp inaktiv.",
+      "tradeName": "Handelsname",
+      "gstin": "GSTIN",
+      "gstinHint": "Die eigene (Lieferanten-)GSTIN der Praxis — niemals die des Empfängers",
+      "registrationType": "Registrierungstyp",
+      "registrationRegular": "Regulär",
+      "registrationComposition": "Composition",
+      "registrationUnregistered": "Nicht registriert",
+      "registrationExempt": "Befreit",
+      "clinicState": "Bundesstaat der Praxis",
+      "gstinStateMismatch": "Die ersten beiden Ziffern der GSTIN sind ein Bundesstaatscode, der nicht zum ausgewählten Bundesstaat der Praxis passt — das kehrt die GST-Einstufung jeder Rechnung als innerstaatlich/zwischenstaatlich um. Prüfen Sie beides.",
+      "catalogDefaults": "GST-Standardwerte des Katalogs",
+      "allSacConfigured": "Für alle Behandlungen ist ein SAC-Code konfiguriert.",
+      "missingSacCount": "{count} Behandlung(en) benötigen einen SAC-Code und Steuersatz.",
+      "autoconfigure": "Automatisch konfigurieren",
+      "autoconfigureHint": "Die automatische Konfiguration weist jeder oben aufgeführten Behandlung SAC 999312 (Gesundheitsdienstleistungen) zu; der GST-Satz folgt dem Steuertyp der jeweiligen Behandlung. Behandlungen mit bereits vorhandenem SAC bleiben unberührt.",
+      "autoconfigureDone": "{count} Behandlung(en) auf SAC {sac} gesetzt.",
+      "autoconfigureError": "SAC-Codes konnten nicht automatisch konfiguriert werden",
+      "einvoiceIntegration": "E-Rechnungsintegration",
+      "einvoiceProfessionalNotice": "Klären Sie vor der Aktivierung der E-Rechnung die Voraussetzungen und regulatorischen Pflichten mit einer qualifizierten indischen Steuerfachkraft. Dentalpin stellt nicht fest, ob die E-Rechnungspflicht für Ihre Praxis gilt.",
+      "turnoverThreshold": "Umsatzschwelle",
+      "turnoverThresholdHint": "Praxen oberhalb dieser Schwelle unterliegen der E-Rechnungspflicht",
+      "einvoiceNotConfigured": "Nicht konfiguriert",
+      "displayOptions": "Anzeigeoptionen",
+      "showGstin": "GSTIN auf der Rechnung anzeigen",
+      "showSac": "SAC-Codes auf der Rechnung anzeigen",
+      "creditNoteWorkflow": "Stornorechnungs-Workflow",
+      "creditNoteWorkflowDescription": "Jede Korrektur einer ausgestellten Rechnung erfolgt über eine Stornierung oder eine Stornorechnung und bleibt dem ausführenden Benutzer zuordenbar."
+    },
+    "reports": {
+      "title": "GST-Berichte",
+      "description": "Summen und Transaktionsdetails zur Abstimmung und als Unterstützung bei der Steuererklärung.",
+      "export": "CSV exportieren",
+      "creditNotes": "Stornorechnungen",
+      "byPlaceOfSupply": "Nach Ort der Leistung",
+      "transactions": "Transaktionen",
+      "taxableValue": "Steuerbarer Wert",
+      "empty": "Keine Transaktionen in diesem Zeitraum."
+    }
+  }
+}

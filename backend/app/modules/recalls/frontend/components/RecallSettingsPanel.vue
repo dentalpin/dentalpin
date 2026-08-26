@@ -147,6 +147,7 @@ function removeCategory(key: string) {
             <span class="flex-1">{{ t(`recalls.reasons.${row.reason}`) }}</span>
             <UButton
               icon="i-lucide-trash-2"
+              :aria-label="t('common.delete')"
               variant="ghost"
               color="error"
               size="xs"
@@ -168,6 +169,7 @@ function removeCategory(key: string) {
           />
           <UButton
             icon="i-lucide-plus"
+            :aria-label="t('common.add')"
             color="primary"
             variant="soft"
             :disabled="!newCategoryKey"

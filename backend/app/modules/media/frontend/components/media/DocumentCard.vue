@@ -135,6 +135,7 @@ function handleEdit() {
             <UButton
               v-if="canView"
               icon="i-lucide-eye"
+              :aria-label="t('common.viewDetails')"
               color="neutral"
               variant="ghost"
               size="xs"
@@ -143,6 +144,7 @@ function handleEdit() {
             />
             <UButton
               icon="i-lucide-download"
+              :aria-label="t('common.download')"
               color="neutral"
               variant="ghost"
               size="xs"
@@ -152,6 +154,7 @@ function handleEdit() {
             <UButton
               v-if="canWrite"
               icon="i-lucide-pencil"
+              :aria-label="t('common.edit')"
               color="neutral"
               variant="ghost"
               size="xs"
@@ -161,6 +164,7 @@ function handleEdit() {
             <UButton
               v-if="canWrite"
               icon="i-lucide-trash-2"
+              :aria-label="t('common.delete')"
               color="error"
               variant="ghost"
               size="xs"

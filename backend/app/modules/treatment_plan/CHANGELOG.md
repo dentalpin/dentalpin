@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#108): confirmed plans (`pending`) stay schedulable — the appointment treatment selector now fetches `active`+`draft`+`pending` plans, and items from a `pending` plan carry a "quote awaiting acceptance" badge so reception knows they're booking ahead of the acceptance.
+
 - i18n(#131/#275): treatment names from catalog names fall back to any
   non-empty translation after `es→en→fr→pt→ta` (items created under
   core-only locales like de/hu).

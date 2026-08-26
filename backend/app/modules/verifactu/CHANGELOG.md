@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#131): German (de) locale for the module's frontend layer.
+
 - fix(#91): the billing hook is registered from `on_activate()` (every boot the module is installed, never while it isn't); the three APScheduler jobs are declared via `get_scheduled_jobs()` instead of being added from `install()` (they used to vanish on the next restart); `verifactu.record.rejected` is subscribed via `get_event_handlers()`. `tasks.register_jobs/unregister_jobs/register_event_handlers` removed.
 - fix(#184): type-check clean — toasts/badges/alerts use Nuxt UI v4 semantic colours (`red/green/amber/blue/gray` were rendering uncoloured), `VatClassification` codes are typed once in `useVerifactu` and shared with the VAT-mapping page, the invoice slot's local `errorMessage` computed no longer shadows the `errorMessage()` util it calls, sibling composable imports are relative.
 - docs(#183): `on_invoice_paid` documented as own-session/payload-only (ADR 0019).

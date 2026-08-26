@@ -21,6 +21,7 @@
     "addSuccess": "Añadido",
     "addError": "No se pudo añadir el elemento",
     "updateError": "No se pudo actualizar el elemento",
+    "deactivate": "Desactivar",
     "deactivateError": "No se pudo desactivar el elemento",
     "itemCount": "{count} elementos",
     "medicationA": "Medicamento A",

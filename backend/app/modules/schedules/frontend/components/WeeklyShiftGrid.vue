@@ -92,6 +92,7 @@ function timeForInput(value: string | undefined): string {
             color="neutral"
             variant="ghost"
             icon="i-lucide-x"
+            :aria-label="t('common.remove')"
             size="xs"
             :disabled="disabled"
             @click="removeShift(weekday - 1, idx)"

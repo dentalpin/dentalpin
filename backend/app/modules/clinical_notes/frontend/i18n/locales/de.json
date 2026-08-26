@@ -1,0 +1,124 @@
+{
+  "clinicalNotes": {
+    "types": {
+      "administrative": "Administrativ",
+      "diagnosis": "Diagnose",
+      "treatment": "Behandlung",
+      "treatment_plan": "Plan",
+      "appointment_clinical": "Klinisch",
+      "appointment_administrative": "Administrativ"
+    },
+    "appointment": {
+      "addByType": "Notiz „{label}“ hinzufügen",
+      "empty": "Noch keine Notizen zu diesem Termin. Fügen Sie über die Schaltflächen oben eine hinzu."
+    },
+    "feed": {
+      "filterLabel": "Filter",
+      "filterAll": "Alle",
+      "filterClear": "Filter zurücksetzen",
+      "filterStatus": "{n} von {total} Typen angezeigt",
+      "addAdministrative": "Administrative Notiz",
+      "loadMore": "Mehr laden",
+      "empty": {
+        "title": "Noch keine Notizen",
+        "help": "Administrative, Diagnose- und Behandlungsnotizen erscheinen hier in chronologischer Reihenfolge."
+      }
+    },
+    "diagnosisSidebar": {
+      "title": "Notizen",
+      "addNote": "Notiz hinzufügen",
+      "empty": "Keine Notizen in dieser Kategorie."
+    },
+    "treatmentButton": {
+      "title": "Behandlungsnotizen",
+      "add": "Notiz hinzufügen",
+      "empty": "Noch keine Notizen zu dieser Behandlung.",
+      "aria": "Behandlungsnotizen ({n})"
+    },
+    "timeline": {
+      "addPlanNote": "Plannotiz",
+      "empty": "Noch keine Notizen.",
+      "emptyForFilter": "Keine Notizen entsprechen dem Filter.",
+      "source": {
+        "plan": "Plan",
+        "treatment": "Behandlung",
+        "visit": "Besuch"
+      }
+    },
+    "byPlan": {
+      "empty": "Dieser Patient hat noch keine planbezogenen klinischen Notizen.",
+      "planNotesLabel": "Plannotizen",
+      "unknownTreatment": "Behandlung",
+      "noNotesForTreatment": "Noch keine Notizen zu dieser Behandlung."
+    },
+    "composer": {
+      "placeholder": "Notiz schreiben…",
+      "templates": "Vorlagen",
+      "attach": "Foto oder Dokument anhängen",
+      "bindToTooth": "An Zahn {n} anheften"
+    },
+    "linked": {
+      "tooth": "Zahn {n}",
+      "treatment": "Behandlung",
+      "treatmentOnTooth": "{label} (Zahn {n})",
+      "plan": "Plan",
+      "planNamed": "Plan: {label}"
+    },
+    "actions": {
+      "showMore": "Mehr anzeigen",
+      "showLess": "Weniger anzeigen",
+      "openLinked": "Kontext öffnen"
+    },
+    "author": {
+      "unknown": "Unbekannter Autor"
+    },
+    "time": {
+      "justNow": "gerade eben",
+      "minutesAgo": "vor {n} Min.",
+      "hoursAgo": "vor {n} Std.",
+      "daysAgo": "vor {n} Tg."
+    },
+    "toasts": {
+      "saved": "Notiz gespeichert",
+      "deleted": "Notiz gelöscht",
+      "saveFailed": "Notiz konnte nicht gespeichert werden"
+    },
+    "confirms": {
+      "delete": "Diese Notiz löschen? Zur Wiederherstellung müssen Sie den Support kontaktieren."
+    },
+    "templates": {
+      "endo": {
+        "singleVisit": "Endodontie (eine Sitzung)",
+        "multiVisit": "Endodontie (mehrere Sitzungen)"
+      },
+      "perio": {
+        "scaling": "Scaling / Wurzelglättung (SRP)"
+      },
+      "implant": {
+        "placement": "Implantatinsertion"
+      },
+      "diagnosis": {
+        "caries": "Karies",
+        "periapical": "Periapikale Läsion"
+      },
+      "admin": {
+        "phoneCall": "Telefonat mit Patient",
+        "reschedule": "Terminverschiebungsanfrage"
+      },
+      "general": {
+        "followUp": "Allgemeine Nachkontrolle"
+      }
+    },
+    "templateBodies": {
+      "endo_single_visit": "Diagnose: \nAnästhesie: \nKanäle lokalisiert: \nArbeitslänge: \nObturation: \nPost-op: ",
+      "endo_multi_visit": "Sitzung: \nBearbeitete Kanäle: \nMedikamentöse Einlage: \nNächster Termin: ",
+      "perio_scaling": "Behandelte Quadranten: \nSondierungstiefe: \nBlutung auf Sondierung: \nMundhygieneinstruktionen: ",
+      "implant_placement": "Implantat (Marke / Durchmesser / Länge): \nEnddrehmoment (Ncm): \nPrimärstabilität: \nAugmentation: \nPost-op: ",
+      "diagnosis_caries": "Befund: Karies \nTiefe: \nSymptome: \nVitalitätstest: \nVorgeschlagene Behandlung: ",
+      "diagnosis_periapical": "Periapikale Läsion \nZahn: \nRöntgen: \nTests (Perkussion, Palpation): \nDiagnose: ",
+      "admin_phone_call": "Patientenanruf: \nGrund: \nErgriffene Maßnahme: \nNachverfolgung: ",
+      "admin_reschedule": "Terminverschiebungsanfrage: \nAktueller Termin: \nNeuer Vorschlag: ",
+      "general_follow_up": "Befunde: \nDurchgeführte Maßnahme: \nAnweisungen für den Patienten: "
+    }
+  }
+}

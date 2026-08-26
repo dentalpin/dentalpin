@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#127): every icon-only button in the module's frontend has an i18n-sourced `aria-label` (screen readers announced them as just "button").
+
 - feat(#204): `VatType.legal_note` (`cat_0004`) — statutory clause invoices print when a line uses the VAT type. The "es" preset seeds the art. 20.Uno.5º LIVA exemption text on the exempt type (migration backfills existing ES clinics); the generic preset stays clean. Exposed on the VAT type schemas; editable on system types alongside `is_default` (#237 precedent).
 
 - fix(#237): `PUT /catalog/items/{id}` no longer rejects every edit on

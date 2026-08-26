@@ -259,6 +259,7 @@ const totalPages = computed(() => Math.ceil(total.value / pageSize))
               variant="ghost"
               color="neutral"
               icon="i-lucide-x"
+              :aria-label="t('common.close')"
               size="sm"
               @click="showUploadModal = false"
             />

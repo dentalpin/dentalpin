@@ -44,6 +44,7 @@ function handleWheel(event: WheelEvent) {
     <div class="flex items-center justify-center gap-2 py-2 border-b border-default bg-surface-muted">
       <UButton
         icon="i-lucide-minus"
+        :aria-label="t('documents.viewer.zoomOut')"
         variant="ghost"
         size="xs"
         :disabled="scale <= MIN_SCALE"
@@ -63,6 +64,7 @@ function handleWheel(event: WheelEvent) {
       />
       <UButton
         icon="i-lucide-maximize-2"
+        :aria-label="t('documents.viewer.resetZoom')"
         variant="ghost"
         size="xs"
         :disabled="scale === 1"

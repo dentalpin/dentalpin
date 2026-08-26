@@ -7,6 +7,7 @@
   medical-history save, instead of going stale until a page reload. The
   chips are cleared only when the header switches patient, so a refetch
   never blinks the warning out and back in.
+- feat(#131): German (de) locale for the module's frontend layer.
 - fix: the medical-history name combobox now follows the host form's
   reset after adding an entry (the slot adapter mirrored `ctx.value`
   only at mount, so the field kept showing the previous selection).

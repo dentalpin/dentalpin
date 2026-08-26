@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "accountingExport": "Buchhaltungsexport"
+  },
+  "accountingExport": {
+    "title": "Buchhaltungsexport",
+    "subtitle": "Laden Sie die Rechnungen und Zahlungen des Zeitraums herunter, um sie an Ihre Buchhaltung zu übergeben.",
+    "period": "Zeitraum",
+    "from": "Von",
+    "to": "Bis",
+    "presets": {
+      "currentMonth": "Aktueller Monat",
+      "previousMonth": "Vormonat",
+      "currentQuarter": "Aktuelles Quartal",
+      "previousQuarter": "Vorquartal",
+      "yearToDate": "Laufendes Jahr",
+      "custom": "Benutzerdefiniert"
+    },
+    "actions": {
+      "preview": "Vorschau",
+      "download": "Herunterladen (.zip)"
+    },
+    "counters": {
+      "invoices": "Rechnungen",
+      "payments": "Zahlungen",
+      "base": "Bemessungsgrundlage",
+      "total": "Gesamt"
+    },
+    "cols": {
+      "numero": "Nummer",
+      "fecha_emision": "Datum",
+      "cliente": "Kunde",
+      "nif": "Steuernummer",
+      "base": "Bemessungsgrundlage",
+      "cuota_iva": "MwSt.",
+      "total": "Gesamt",
+      "estado": "Status"
+    }
+  }
+}

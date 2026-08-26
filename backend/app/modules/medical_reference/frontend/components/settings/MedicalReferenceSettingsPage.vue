@@ -224,6 +224,7 @@ watch([activeTab, includeInactive], loadActiveTab)
             <UButton
               v-if="row.original.is_active"
               icon="i-lucide-eye-off"
+              :aria-label="t('medicalReference.deactivate')"
               variant="ghost"
               color="neutral"
               size="xs"
@@ -275,6 +276,7 @@ watch([activeTab, includeInactive], loadActiveTab)
             <UButton
               v-if="row.original.is_active"
               icon="i-lucide-eye-off"
+              :aria-label="t('medicalReference.deactivate')"
               variant="ghost"
               color="neutral"
               size="xs"
@@ -342,6 +344,7 @@ watch([activeTab, includeInactive], loadActiveTab)
             <UButton
               v-if="row.original.is_active"
               icon="i-lucide-eye-off"
+              :aria-label="t('medicalReference.deactivate')"
               variant="ghost"
               color="neutral"
               size="xs"

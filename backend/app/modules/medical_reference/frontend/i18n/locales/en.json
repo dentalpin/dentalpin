@@ -21,6 +21,7 @@
     "addSuccess": "Added",
     "addError": "Could not add item",
     "updateError": "Could not update item",
+    "deactivate": "Deactivate",
     "deactivateError": "Could not deactivate item",
     "itemCount": "{count} items",
     "medicationA": "Medication A",

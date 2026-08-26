@@ -7,6 +7,11 @@ CI fails if any of the following is violated:
 2. A folder exists directly under `docs/` that is NOT in the folder allowlist.
 3. An image asset (`.png`, `.jpg`, `.jpeg`, `.gif`, `.svg`, `.webp`) lives
    anywhere under `docs/` outside `docs/screenshots/` or `docs/diagrams/`.
+4. `docs/adr/` breaks its numbering contract (issue #299): a file that
+   doesn't match ``NNNN-kebab-title.md``, two ADRs sharing a number
+   (PR #291 shipped a second 0009 and every check stayed green), a gap
+   in the sequence (ADRs are never deleted, only superseded), or a
+   first-line heading whose number disagrees with the filename.
 
 The taxonomy + routing rule is documented in:
 - root `CLAUDE.md` ("Documentation policy")
@@ -23,6 +28,7 @@ Mirrors the read-only posture of ``backend/scripts/generate_catalogs.py``.
 from __future__ import annotations
 
 import argparse
+import re
 import sys
 from pathlib import Path
 
@@ -60,6 +66,72 @@ IMAGE_EXTS: frozenset[str] = frozenset(
     {".png", ".jpg", ".jpeg", ".gif", ".svg", ".webp"}
 )
 IMAGE_FOLDERS: frozenset[str] = frozenset({"screenshots", "diagrams"})
+
+ADR_NON_NUMBERED: frozenset[str] = frozenset({"README.md", "TEMPLATE.md"})
+ADR_FILENAME = re.compile(r"^(\d{4})-[a-z0-9-]+\.md$")
+# First line of every ADR: "# NNNN — Title" (em dash, per TEMPLATE.md).
+ADR_HEADING = re.compile(r"^# (\d{4}) — \S")
+
+
+def check_adrs(adr_dir: Path) -> list[str]:
+    """The `docs/adr/` numbering contract (issue #299).
+
+    The README states it ("zero-padded sequence, never reused; never
+    delete an ADR, supersede it") and PR #291 proved nothing enforced
+    it: a second 0009 merged cleanly because the *filenames* differed.
+    Since #300 removed the hand-maintained index, the directory listing
+    IS the index — these invariants are what keep it trustworthy.
+    """
+    violations: list[str] = []
+    if not adr_dir.is_dir():
+        return [f"{adr_dir} is not a directory — nothing to check."]
+
+    by_number: dict[int, list[str]] = {}
+    for entry in sorted(adr_dir.iterdir()):
+        if entry.name.startswith(".") or entry.name in ADR_NON_NUMBERED:
+            continue
+        match = ADR_FILENAME.match(entry.name)
+        if entry.is_dir() or not match:
+            violations.append(
+                f"docs/adr/{entry.name}: does not match NNNN-kebab-title.md "
+                "(zero-padded number, lowercase kebab-case, .md)."
+            )
+            continue
+        number = int(match.group(1))
+        by_number.setdefault(number, []).append(entry.name)
+
+        heading = entry.read_text(encoding="utf-8").split("\n", 1)[0]
+        heading_match = ADR_HEADING.match(heading)
+        if not heading_match:
+            violations.append(
+                f"docs/adr/{entry.name}: first line must be "
+                f"'# {match.group(1)} — <title>', found {heading!r}."
+            )
+        elif heading_match.group(1) != match.group(1):
+            violations.append(
+                f"docs/adr/{entry.name}: heading number "
+                f"{heading_match.group(1)} disagrees with the filename. "
+                "One of them is wrong — check which number is actually free."
+            )
+
+    for number, names in sorted(by_number.items()):
+        if len(names) > 1:
+            violations.append(
+                f"docs/adr/: number {number:04d} is used by {len(names)} "
+                f"files ({', '.join(names)}). ADR numbers are never reused — "
+                "renumber the newest to the next free number."
+            )
+
+    if by_number:
+        expected = set(range(1, max(by_number) + 1))
+        for missing in sorted(expected - set(by_number)):
+            violations.append(
+                f"docs/adr/: number {missing:04d} is missing from the "
+                "sequence. ADRs are never deleted — supersede instead "
+                "(see docs/adr/README.md)."
+            )
+
+    return violations
 
 
 def check() -> list[str]:
@@ -101,6 +173,8 @@ def check() -> list[str]:
                 f"docs/{rel.as_posix()}: image outside docs/screenshots/ "
                 "or docs/diagrams/."
             )
+
+    violations.extend(check_adrs(DOCS / "adr"))
 
     return violations
 

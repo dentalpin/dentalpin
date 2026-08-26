@@ -1,0 +1,36 @@
+{
+  "medicalReference": {
+    "settingsLabel": "Medizinische Referenzlisten",
+    "settingsDescription": "Verwalten Sie die Allergie-, Medikamenten- und Krankheitslisten, die in den Patientenakten verwendet werden.",
+    "title": "Medizinische Referenzlisten",
+    "description": "Diese Listen speisen die durchsuchbaren Auswahlfelder in der medizinischen Anamnese. Wird ein Eintrag deaktiviert, erscheint er nicht mehr in künftigen Suchen; bestehende Patientenakten bleiben unberührt.",
+    "tabs": {
+      "allergies": "Allergien",
+      "medications": "Medikamente",
+      "diseases": "Krankheiten",
+      "surgeries": "Operationen",
+      "interactions": "Wechselwirkungen",
+      "contraindications": "Kontraindikationen"
+    },
+    "name": "Name",
+    "status": "Status",
+    "active": "Aktiv",
+    "inactive": "Inaktiv",
+    "showInactive": "Inaktive anzeigen",
+    "newItemPlaceholder": "Name des neuen Eintrags…",
+    "addSuccess": "Hinzugefügt",
+    "addError": "Eintrag konnte nicht hinzugefügt werden",
+    "updateError": "Eintrag konnte nicht aktualisiert werden",
+    "deactivate": "Deaktivieren",
+    "deactivateError": "Eintrag konnte nicht deaktiviert werden",
+    "itemCount": "{count} Einträge",
+    "medicationA": "Medikament A",
+    "medicationB": "Medikament B",
+    "riskNote": "Risiko",
+    "riskNotePlaceholder": "Beschreiben Sie das Risiko…",
+    "flags": {
+      "interaction": "Wechselwirkung {a} + {b}",
+      "contraindication": "{a}: kontraindiziert mit {b}"
+    }
+  }
+}

@@ -24,7 +24,6 @@
     "expenses": "Gastos",
     "labOrdersForm": "Nuevo trabajo de laboratorio",
     "labOrdersStatus": "Trabajos de laboratorio",
-    "staffTasks": "Tareas del equipo",
     "treatmentPlans": "Planes de tratamiento",
     "budgets": "Presupuestos",
     "invoices": "Facturas",
@@ -246,7 +245,6 @@
       "title": "Tutor Legal",
       "hasGuardian": "Tiene tutor legal registrado",
       "noGuardian": "No hay tutor legal registrado",
-      "required": "Obligatorio para pacientes menores de edad",
       "name": "Nombre completo",
       "namePlaceholder": "Nombre del tutor",
       "relationship": "Relación",
@@ -573,7 +571,10 @@
         "restauradora": "Restauradora",
         "cirugia": "Cirugía",
         "endodoncia": "Endodoncia",
-        "ortodoncia": "Ortodoncia"
+        "ortodoncia": "Ortodoncia",
+        "common": "Comunes",
+        "restorative": "Restauradora",
+        "other": "Otros"
       },
       "types": {
         "pulpitis": "Pulpitis",
@@ -957,7 +958,8 @@
       "professionalOff": "No disponible",
       "onBreak": "Pausa"
     },
-    "actionsMenu": "Acciones de la cita"
+    "actionsMenu": "Acciones de la cita",
+    "planAwaitingBudget": "Presupuesto sin aceptar"
   },
   "dashboard": {
     "greetings": {
@@ -1377,7 +1379,9 @@
     "copied": "Copiado al portapapeles",
     "copy": "Copiar",
     "copyFailed": "No se pudo copiar",
-    "durationMinutes": "{value} min"
+    "durationMinutes": "{value} min",
+    "download": "Descargar",
+    "remove": "Quitar"
   },
   "cabinet": {
     "toast": {
@@ -2411,7 +2415,6 @@
     "creditNoteInfo": "Se creará una nota de crédito por el importe total de la factura.",
     "payments": {
       "title": "Pagos",
-      "add": "Registrar pago",
       "void": "Anular pago",
       "voidReason": "Motivo de anulación",
       "voidReasonPlaceholder": "Indica el motivo de anulación del pago...",
@@ -2420,12 +2423,8 @@
       "method": "Método de pago",
       "date": "Fecha",
       "reference": "Referencia",
-      "referencePlaceholder": "Nº transacción, recibo...",
       "notes": "Notas",
-      "notesPlaceholder": "Observaciones sobre el pago...",
       "voided": "Anulado",
-      "voidedAt": "Anulado el",
-      "voidedBy": "Anulado por",
       "methods": {
         "cash": "Efectivo",
         "card": "Tarjeta",
@@ -2440,8 +2439,6 @@
       "create": "Crear rectificativa",
       "reason": "Motivo de rectificación",
       "reasonPlaceholder": "Describe el motivo de la rectificativa...",
-      "partial": "Rectificativa parcial",
-      "complete": "Rectificativa completa",
       "selectItems": "Seleccionar líneas a rectificar",
       "originalInvoice": "Factura original"
     },
@@ -2467,9 +2464,7 @@
       "void": "¿Anular factura?",
       "voidDescription": "Esta acción no se puede deshacer.",
       "delete": "¿Eliminar factura?",
-      "deleteDescription": "Esta acción no se puede deshacer.",
-      "voidPayment": "¿Anular pago?",
-      "voidPaymentDescription": "El saldo pendiente se actualizará automáticamente."
+      "deleteDescription": "Esta acción no se puede deshacer."
     },
     "messages": {
       "created": "Factura creada",
@@ -2478,7 +2473,6 @@
       "issued": "Factura emitida",
       "voided": "Factura anulada",
       "paymentRecorded": "Pago registrado",
-      "paymentVoided": "Pago anulado",
       "creditNoteCreated": "Rectificativa creada",
       "itemAdded": "Tratamiento añadido",
       "itemUpdated": "Tratamiento actualizado",
@@ -2535,26 +2529,13 @@
       "generating": "Generando PDF...",
       "downloadError": "Error al descargar PDF"
     },
-    "settings": {
-      "title": "Configuración de facturación",
-      "description": "Configura los datos de facturación de la clínica",
-      "paymentTermDays": "Plazo de pago por defecto (días)",
-      "footerText": "Texto legal del pie",
-      "footerTextPlaceholder": "Condiciones de pago, texto legal...",
-      "bankAccount": "Datos bancarios",
-      "bankAccountPlaceholder": "IBAN, titular de la cuenta..."
-    },
     "series": {
       "title": "Series de numeración",
       "prefix": "Prefijo",
       "type": "Tipo",
       "currentNumber": "Número actual",
       "resetYearly": "Reinicio anual",
-      "default": "Predeterminada",
-      "types": {
-        "invoice": "Factura",
-        "credit_note": "Rectificativa"
-      }
+      "default": "Predeterminada"
     },
     "reports": {
       "title": "Informes de facturación",

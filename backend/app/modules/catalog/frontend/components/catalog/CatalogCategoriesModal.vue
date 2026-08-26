@@ -140,6 +140,7 @@ async function handleReactivate(category: TreatmentCatalogCategory) {
             <UButton
               variant="ghost"
               icon="i-lucide-x"
+              :aria-label="t('common.close')"
               size="sm"
               @click="open = false"
             />
@@ -220,6 +221,7 @@ async function handleReactivate(category: TreatmentCatalogCategory) {
                 />
                 <UButton
                   icon="i-lucide-check"
+                  :aria-label="t('common.save')"
                   size="sm"
                   :loading="isSaving"
                   :disabled="!editName.trim()"
@@ -227,6 +229,7 @@ async function handleReactivate(category: TreatmentCatalogCategory) {
                 />
                 <UButton
                   icon="i-lucide-x"
+                  :aria-label="t('common.cancel')"
                   size="sm"
                   variant="ghost"
                   @click="editingId = null"

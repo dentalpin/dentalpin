@@ -489,6 +489,7 @@ const appointmentsByProfIndex = computed(() => {
           variant="outline"
           color="neutral"
           icon="i-lucide-chevron-left"
+          :aria-label="t('common.previous')"
           @click="prevDay"
         />
         <UButton
@@ -502,6 +503,7 @@ const appointmentsByProfIndex = computed(() => {
           variant="outline"
           color="neutral"
           icon="i-lucide-chevron-right"
+          :aria-label="t('common.next')"
           @click="nextDay"
         />
       </div>

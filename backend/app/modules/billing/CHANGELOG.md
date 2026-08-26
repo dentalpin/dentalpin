@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#127): every icon-only button in the module's frontend has an i18n-sourced `aria-label` (screen readers announced them as just "button").
+
 - i18n(#131/#275): invoice-line descriptions from catalog names now fall
   back to any non-empty translation after `es→en→fr→pt→ta`, so items
   created under a core-only locale (de, hu, and future ones) never

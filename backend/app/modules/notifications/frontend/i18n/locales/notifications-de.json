@@ -1,0 +1,12 @@
+{
+  "notifications": {
+    "conversation": {
+      "title": "WhatsApp-Unterhaltung",
+      "empty": "Noch keine Nachrichten.",
+      "placeholder": "Antwort eingeben…",
+      "replyError": "Antwort konnte nicht gesendet werden",
+      "windowClosed": "Das 24-Stunden-Fenster ist geschlossen. Verwenden Sie eine Vorlage, um die Unterhaltung erneut zu eröffnen.",
+      "send": "Senden"
+    }
+  }
+}

@@ -21,6 +21,7 @@
     "addSuccess": "Ajouté",
     "addError": "Impossible d'ajouter l'élément",
     "updateError": "Impossible de mettre à jour l'élément",
+    "deactivate": "Désactiver",
     "deactivateError": "Impossible de désactiver l'élément",
     "itemCount": "{count} éléments",
     "medicationA": "Médicament A",

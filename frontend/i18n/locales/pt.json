@@ -24,7 +24,6 @@
     "expenses": "Despesas",
     "labOrdersForm": "Novo trabalho de laboratório",
     "labOrdersStatus": "Trabalhos de laboratório",
-    "staffTasks": "Tarefas da equipe",
     "treatmentPlans": "Planos de tratamento",
     "budgets": "Orçamentos",
     "invoices": "Faturas",
@@ -386,6 +385,33 @@
     "onboarding": {
       "label": "Crie o seu primeiro paciente",
       "description": "A forma mais rápida de ver a ficha, a agenda e os orçamentos em ação."
+    },
+    "editLegalGuardian": "Editar responsável legal",
+    "legalGuardian": {
+      "title": "Responsável legal",
+      "hasGuardian": "Tem responsável legal registrado",
+      "noGuardian": "Nenhum responsável legal registrado",
+      "name": "Nome completo",
+      "namePlaceholder": "Nome do responsável",
+      "dni": "Documento de identidade",
+      "dniPlaceholder": "Documento de identidade",
+      "relationship": "Parentesco",
+      "relationshipPlaceholder": "Selecionar parentesco",
+      "relationships": {
+        "parent": "Pai/Mãe",
+        "legal_tutor": "Tutor legal designado",
+        "grandparent": "Avô/Avó",
+        "other": "Outro"
+      },
+      "phone": "Telefone",
+      "phonePlaceholder": "Telefone do responsável",
+      "email": "Email",
+      "emailPlaceholder": "Email do responsável",
+      "address": "Endereço",
+      "addressPlaceholder": "Endereço do responsável",
+      "notes": "Notas",
+      "notesPlaceholder": "Observações adicionais...",
+      "remove": "Remover responsável"
     }
   },
   "patientDetail": {
@@ -543,10 +569,6 @@
       "categories": {
         "common": "Comuns",
         "restorative": "Dentisteria",
-        "diagnostic": "Diagnóstico",
-        "orthodontic": "Ortodontia",
-        "periodontic": "Periodontologia",
-        "position": "Posição",
         "other": "Outros",
         "diagnostico": "Diagnóstico",
         "restauradora": "Dentisteria",
@@ -936,7 +958,8 @@
       "professionalOff": "Fora de serviço",
       "onBreak": "Em pausa"
     },
-    "actionsMenu": "Ações da consulta"
+    "actionsMenu": "Ações da consulta",
+    "planAwaitingBudget": "Orçamento aguardando aceitação"
   },
   "dashboard": {
     "greetings": {
@@ -1355,7 +1378,10 @@
     "yesterday": "Ontem",
     "copied": "Copiado para a área de transferência",
     "copy": "Copiar",
-    "copyFailed": "Não foi possível copiar"
+    "copyFailed": "Não foi possível copiar",
+    "download": "Baixar",
+    "remove": "Remover",
+    "default": "Padrão"
   },
   "cabinet": {
     "toast": {
@@ -2396,11 +2422,9 @@
     "issueDate": "Data de emissão",
     "subtotal": "Subtotal",
     "discount": "Desconto",
-    "totalDiscount": "Desconto total",
     "tax": "Imposto",
     "total": "Total",
     "paid": "Pago",
-    "totalPaid": "Total pago",
     "balance": "Saldo",
     "balanceDue": "Saldo em dívida",
     "overdue": "Em atraso",
@@ -2437,7 +2461,6 @@
     },
     "tooth": "Dente",
     "vat": "IVA",
-    "currency": "Moeda",
     "internalNotes": "Notas internas",
     "internalNotesPlaceholder": "Notas visíveis apenas para a equipa...",
     "publicNotes": "Notas públicas",
@@ -2489,7 +2512,6 @@
     },
     "payments": {
       "title": "Pagamentos",
-      "record": "Registar pagamento",
       "void": "Anular pagamento",
       "amount": "Montante",
       "method": "Método de pagamento",
@@ -2497,7 +2519,6 @@
       "reference": "Referência",
       "notes": "Notas",
       "noPayments": "Nenhum pagamento registado",
-      "recorded": "Pagamento registado",
       "voided": "Pagamento anulado",
       "voidReason": "Motivo da anulação",
       "voidReasonPlaceholder": "Motivo para anular este pagamento...",
@@ -2516,10 +2537,7 @@
       "reason": "Motivo",
       "reasonPlaceholder": "Motivo da nota de crédito...",
       "selectItems": "Selecionar as linhas a retificar",
-      "fullCreditNote": "Nota de crédito total (todas as linhas)",
-      "partialCreditNote": "Nota de crédito parcial (linhas selecionadas)",
-      "originalInvoice": "Fatura original",
-      "created": "Nota de crédito criada"
+      "originalInvoice": "Fatura original"
     },
     "history": {
       "title": "Histórico",
@@ -2549,10 +2567,7 @@
       "type": "Tipo",
       "currentNumber": "Número atual",
       "resetYearly": "Reiniciar anualmente",
-      "default": "Predefinida",
-      "active": "Ativa",
-      "invoice": "Fatura",
-      "credit_note": "Nota de crédito"
+      "default": "Predefinida"
     },
     "filters": {
       "allStatuses": "Estado",
@@ -2626,7 +2641,9 @@
       "itemAdded": "Linha adicionada",
       "itemUpdated": "Linha atualizada",
       "sentByEmail": "Fatura enviada por email",
-      "sentManually": "Fatura marcada como enviada"
+      "sentManually": "Fatura marcada como enviada",
+      "creditNoteCreated": "Nota de crédito criada",
+      "paymentRecorded": "Pagamento registrado"
     },
     "send": {
       "title": "Enviar fatura",
@@ -2653,7 +2670,6 @@
       "send": "Erro ao enviar a fatura",
       "creditNoteReasonRequired": "O motivo da nota de crédito é obrigatório",
       "notFound": "Fatura não encontrada",
-      "onlyDraft": "Só é possível editar faturas em rascunho",
       "canOnlyDeleteDraft": "Só é possível eliminar faturas em rascunho",
       "patientRequired": "O paciente é obrigatório",
       "itemsRequired": "É necessária pelo menos uma linha",

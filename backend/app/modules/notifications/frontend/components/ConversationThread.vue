@@ -81,6 +81,7 @@ function label(m: { body_text: string | null, subject: string | null, template_k
         />
         <UButton
           icon="i-lucide-send"
+          :aria-label="t('notifications.conversation.send')"
           :loading="conv.sending.value"
           :disabled="!draft.trim()"
           @click="onSend"

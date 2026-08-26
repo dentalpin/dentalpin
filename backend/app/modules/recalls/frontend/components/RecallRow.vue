@@ -177,6 +177,7 @@ async function onAttemptLogged() {
       </UButton>
       <UButton
         icon="i-lucide-phone-off"
+        :aria-label="t('recalls.actions.noAnswer')"
         size="sm"
         variant="ghost"
         color="neutral"
@@ -186,6 +187,7 @@ async function onAttemptLogged() {
       />
       <UButton
         icon="i-lucide-list-plus"
+        :aria-label="t('recalls.actions.logAttempt')"
         size="sm"
         variant="ghost"
         color="neutral"
@@ -194,6 +196,7 @@ async function onAttemptLogged() {
       />
       <UButton
         icon="i-lucide-calendar-plus"
+        :aria-label="t('recalls.actions.book')"
         size="sm"
         variant="ghost"
         color="neutral"
@@ -222,6 +225,7 @@ async function onAttemptLogged() {
       >
         <UButton
           icon="i-lucide-more-vertical"
+          :aria-label="t('common.actions')"
           size="sm"
           variant="ghost"
           color="neutral"

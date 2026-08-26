@@ -356,6 +356,7 @@ function goBack() {
                 variant="ghost"
                 color="error"
                 icon="i-lucide-trash-2"
+                :aria-label="t('common.delete')"
                 size="sm"
                 @click="removeItem(index)"
               />

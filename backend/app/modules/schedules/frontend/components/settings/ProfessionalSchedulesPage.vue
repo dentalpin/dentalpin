@@ -303,6 +303,7 @@ onMounted(async () => {
                 color="neutral"
                 variant="ghost"
                 icon="i-lucide-x"
+                :aria-label="t('common.remove')"
                 size="xs"
                 @click="removeShiftFromOverride(idx)"
               />

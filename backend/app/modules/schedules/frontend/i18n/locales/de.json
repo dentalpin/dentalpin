@@ -1,0 +1,88 @@
+{
+  "schedules": {
+    "nav": {
+      "clinicHours": "Öffnungszeiten",
+      "professionalSchedules": "Behandler-Zeitpläne"
+    },
+    "settingsCards": {
+      "clinicHoursTitle": "Öffnungszeiten",
+      "clinicHoursDescription": "Legen Sie die wöchentlichen Öffnungszeiten der Praxis sowie Sondertage (Feiertage, verkürzte Öffnungszeiten) fest.",
+      "professionalHoursTitle": "Behandler-Zeitpläne",
+      "professionalHoursDescription": "Legen Sie individuelle Zeitpläne für jeden Behandler fest und verwalten Sie Urlaube oder andere Abwesenheiten."
+    },
+    "clinicHours": {
+      "title": "Öffnungszeiten",
+      "subtitle": "Legen Sie fest, wann die Praxis an den einzelnen Wochentagen geöffnet ist.",
+      "weeklyTemplate": "Wochenvorlage",
+      "overrides": "Sondertage",
+      "addOverride": "Sondertag hinzufügen",
+      "editOverride": "Sondertag bearbeiten",
+      "save": "Änderungen speichern",
+      "saved": "Zeitplan aktualisiert",
+      "savedError": "Zeitplan konnte nicht gespeichert werden"
+    },
+    "professionalHours": {
+      "title": "Behandler-Zeitpläne",
+      "selectProfessional": "Behandler auswählen",
+      "weeklyTemplate": "Wochenplan",
+      "overrides": "Abwesenheiten und Sonderzeiten",
+      "addOverride": "Abwesenheit hinzufügen",
+      "editOverride": "Abwesenheit bearbeiten",
+      "save": "Änderungen speichern",
+      "saved": "Zeitplan aktualisiert"
+    },
+    "weekday": {
+      "0": "Montag",
+      "1": "Dienstag",
+      "2": "Mittwoch",
+      "3": "Donnerstag",
+      "4": "Freitag",
+      "5": "Samstag",
+      "6": "Sonntag",
+      "closed": "Geschlossen",
+      "addShift": "Schicht hinzufügen",
+      "removeShift": "Schicht entfernen",
+      "start": "Beginn",
+      "end": "Ende"
+    },
+    "overrides": {
+      "startDate": "Startdatum",
+      "endDate": "Enddatum",
+      "kind": "Typ",
+      "reason": "Grund",
+      "reasonPlaceholder": "Zum Beispiel: Weihnachten, Kongress...",
+      "closed": "Geschlossen",
+      "customHours": "Abweichende Zeiten",
+      "unavailable": "Nicht verfügbar",
+      "noOverrides": "Keine Sondertage geplant",
+      "delete": "Löschen",
+      "confirmDelete": "Diesen Zeitraum löschen?",
+      "add": "Hinzufügen",
+      "save": "Speichern",
+      "cancel": "Abbrechen"
+    },
+    "analytics": {
+      "occupancyTitle": "Belegung nach Zimmer",
+      "utilizationTitle": "Auslastung nach Behandler",
+      "peakHoursTitle": "Stoßzeiten",
+      "bookedMinutes": "Gebuchte Minuten",
+      "availableMinutes": "Verfügbare Minuten",
+      "rate": "Belegung",
+      "noData": "Keine Daten im gewählten Zeitraum"
+    },
+    "availability": {
+      "clinicClosed": "Praxis geschlossen",
+      "professionalOff": "Behandler nicht verfügbar",
+      "outsideHours": "Außerhalb der konfigurierten Zeiten",
+      "confirmOutside": "Dieser Slot liegt außerhalb der Arbeitszeiten. Termin trotzdem anlegen?",
+      "confirm": "Trotzdem anlegen",
+      "cancel": "Abbrechen"
+    },
+    "onboarding": {
+      "hoursLabel": "Öffnungszeiten",
+      "hoursDescription": "Der Terminkalender ist derzeit rund um die Uhr geöffnet. Legen Sie Ihre tatsächlichen Öffnungszeiten fest.",
+      "presetSplit": "Mo–Fr 9–14 & 16–20",
+      "presetContinuous": "Mo–Fr 9–18"
+    }
+  }
+}

@@ -153,6 +153,7 @@ function canEdit(_vatType: VatType): boolean {
         <NuxtLink to="/settings">
           <UButton
             icon="i-lucide-arrow-left"
+            :aria-label="t('common.back')"
             variant="ghost"
             color="neutral"
           />
@@ -253,6 +254,7 @@ function canEdit(_vatType: VatType): boolean {
             <UButton
               v-if="isAdmin && canEdit(vatType)"
               icon="i-lucide-pencil"
+              :aria-label="t('common.edit')"
               size="xs"
               variant="ghost"
               color="neutral"
@@ -261,6 +263,7 @@ function canEdit(_vatType: VatType): boolean {
             <UButton
               v-if="isAdmin && canDelete(vatType)"
               icon="i-lucide-trash-2"
+              :aria-label="t('common.delete')"
               size="xs"
               variant="ghost"
               color="error"
