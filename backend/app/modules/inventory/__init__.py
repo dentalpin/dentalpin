@@ -1,16 +1,17 @@
 """inventory — stock list with cost tracking, movement ledger and
 auto-deduction (roadmap #220 + core upgrade #226).
 
-Per-item minimum quantities, atomic DB-guarded stock changes, an
-append-only ``stock_movements`` ledger (the audit trail), ``unit_cost``
-with a valuation endpoint, and automatic deduction of linked
-consumables when a treatment is performed.
+Per-item minimum quantities, atomic ``SELECT … FOR UPDATE`` row-locked
+stock changes, an append-only ``stock_movements`` ledger (the audit
+trail), ``unit_cost`` with a valuation endpoint, and automatic
+deduction of linked consumables when a treatment is performed.
 
 ``depends: []`` — treatment_consumables points its FKs *into* this
 module, so declaring it back would create a cycle. The auto-deduction
-reads the links table fail-soft at runtime instead: absent module →
-logged no-op. See docs/technical/inventory/overview.md for the coupling
-discussion the roadmap asked for.
+is handled by treatment_consumables via subscription inversion (#226):
+this module exposes ``deduct_for_treatment`` as a clean public
+primitive, and treatment_consumables calls it from its own event
+handler. No raw SQL, no inspector guard, no fail-soft branch.
 """
 
 from fastapi import APIRouter
@@ -78,10 +79,6 @@ class InventoryModule(BaseModule):
         return tools.get_tools()
 
     def get_event_handlers(self) -> dict:
-        from app.core.events.types import EventType
-
-        from .events import on_treatment_performed
-
-        # Transactional (the publisher passes db=): deductions commit or
-        # roll back together with the treatment performance (ADR 0019).
-        return {EventType.ODONTOGRAM_TREATMENT_PERFORMED: on_treatment_performed}
+        # No event handlers — the treatment_performed handler was moved
+        # to treatment_consumables via subscription inversion (#226).
+        return {}

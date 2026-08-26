@@ -97,7 +97,7 @@ async def _adjust_stock(ctx: AgentContext, params: AdjustStockArgs) -> dict:
 async def _get_movements(ctx: AgentContext, params: GetMovementsArgs) -> dict:
     from uuid import UUID
 
-    movements, total = await InventoryService.list_movements(
+    rows, total = await InventoryService.list_movements(
         ctx.db,
         ctx.clinic_id,
         inventory_item_id=UUID(params.item_id),
@@ -108,12 +108,13 @@ async def _get_movements(ctx: AgentContext, params: GetMovementsArgs) -> dict:
         "total": total,
         "movements": [
             {
-                "delta": m.delta,
-                "reason": m.reason,
-                "note": m.note,
-                "created_at": m.created_at,
+                "delta": row["movement"].delta,
+                "reason": row["movement"].reason,
+                "note": row["movement"].note,
+                "created_by_name": row["created_by_name"],
+                "created_at": row["movement"].created_at,
             }
-            for m in movements
+            for row in rows
         ],
     }
 

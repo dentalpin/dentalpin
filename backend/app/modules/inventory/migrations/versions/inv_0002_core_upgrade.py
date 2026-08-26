@@ -65,9 +65,25 @@ def upgrade() -> None:
         "stock_movements",
         ["inventory_item_id", "created_at"],
     )
+    # Partial unique index for idempotent auto-deduction: a duplicate
+    # consumption movement for the same treatment is silently ignored
+    # via ON CONFLICT DO NOTHING.
+    op.create_index(
+        "uq_stock_movements_consumption_ref",
+        "stock_movements",
+        ["reference_type", "reference_id", "inventory_item_id"],
+        unique=True,
+        postgresql_where="reason = 'consumption'",
+    )
 
 
 def downgrade() -> None:
+    op.drop_index(
+        "uq_stock_movements_consumption_ref", table_name="stock_movements"
+    )
+    op.drop_index(
+        "uq_stock_movements_consumption_ref", table_name="stock_movements"
+    )
     op.drop_index("ix_stock_movements_item_created", table_name="stock_movements")
     op.drop_index("ix_stock_movements_clinic_created", table_name="stock_movements")
     op.drop_table("stock_movements")

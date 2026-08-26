@@ -81,6 +81,7 @@ class StockMovementResponse(BaseModel):
     reference_type: str | None
     reference_id: UUID | None
     created_by: UUID | None
+    created_by_name: str | None = None
     created_at: datetime
 
 

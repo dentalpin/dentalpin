@@ -14,20 +14,21 @@
     "low": "Low",
     "filterByCategory": "Filter by category",
     "lowStockOnly": "Low stock only",
+    "includeInactive": "Show inactive",
     "increment": "Increase stock",
     "decrement": "Decrease stock",
     "delete": "Delete",
     "deleteTitle": "Delete item",
     "deleteMessage": "Delete this stock item? This cannot be undone.",
+    "cannotDeleteWithHistory": "This item has stock history. Deactivate it instead to preserve the audit trail.",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "deactivated": "Item deactivated",
+    "reactivated": "Item reactivated",
+    "empty": "No movements yet",
     "allCategories": "All categories",
     "adjustBy": "Adjust by…",
     "apply": "Apply",
-    "categories": {
-      "consumables": "Consumables",
-      "equipment": "Equipment",
-      "office": "Office",
-      "other": "Other"
-    },
     "cost": "Unit cost",
     "valuation": "Stock value",
     "movements": "Movements",
@@ -38,6 +39,12 @@
       "consumption": "Consumption",
       "adjustment": "Adjustment",
       "correction": "Correction"
+    },
+    "categories": {
+      "consumables": "Consumables",
+      "equipment": "Equipment",
+      "office": "Office",
+      "other": "Other"
     }
   },
   "nav": {

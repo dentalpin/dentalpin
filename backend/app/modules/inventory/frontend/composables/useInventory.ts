@@ -27,6 +27,7 @@ export interface StockMovement {
   reference_type?: string | null
   reference_id?: string | null
   created_by?: string | null
+  created_by_name?: string | null
   created_at: string
 }
 
@@ -53,6 +54,7 @@ export interface InventoryItemUpdatePayload {
   stock_quantity?: number
   min_quantity?: number
   unit_cost?: number | null
+  is_active?: boolean
   notes?: string | null
 }
 

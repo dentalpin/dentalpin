@@ -1,10 +1,10 @@
 """inventory core upgrade (#226): auto-deduction driven by
 treatment_consumables links when a treatment is performed.
 
-The links table belongs to the treatment_consumables module (not merged
-into this branch's base), so these tests create it with raw DDL — the
-same shape its migration produces. That also exercises the fail-soft
-inspector path: without the table, deduction is a logged no-op.
+The links table belongs to the treatment_consumables module, so these
+tests create it with raw DDL — the same shape its migration produces.
+That also exercises the fail-soft inspector path: without the table,
+deduction is a logged no-op.
 """
 
 from __future__ import annotations
@@ -149,8 +149,18 @@ async def test_no_links_means_no_op(db_session: AsyncSession, test_clinic: Clini
 
 
 @pytest.mark.asyncio
-async def test_missing_links_table_is_a_logged_no_op(db_session: AsyncSession, test_clinic: Clinic):
-    """Soft runtime coupling: treatment_consumables absent → skip cleanly."""
+async def test_missing_links_table_is_a_logged_no_op(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """Soft runtime coupling: treatment_consumables absent → skip cleanly.
+
+    The table is created by conftest's ``create_all`` (ORM model), so we
+    must explicitly DROP it to exercise the fail-soft inspector path.
+    """
+    # Ensure the table exists first (from create_all), then drop it.
+    await db_session.execute(text("DROP TABLE IF EXISTS treatment_consumables"))
+    await db_session.commit()
+
     item = await InventoryService.create_item(
         db_session,
         test_clinic.id,
@@ -189,6 +199,9 @@ async def test_auto_deduction_on_treatment_performed(
         _performance_payload(test_clinic.id, catalog_item_id),
         db=db_session,
     )
+    # flush() is required: the handler's changes live in the caller's
+    # uncommitted transaction — refresh() without flush discards them.
+    await db_session.flush()
     await db_session.refresh(item)
 
     # 10 - 2 = 8 and a consumption movement referencing the performance.
@@ -197,7 +210,7 @@ async def test_auto_deduction_on_treatment_performed(
         db_session, test_clinic.id, inventory_item_id=item.id
     )
     assert total == 2
-    consumption = movements[0]  # newest first
+    consumption = movements[0]["movement"]  # newest first
     assert consumption.reason == "consumption"
     assert consumption.delta == Decimal("-2")
     assert consumption.reference_type == "treatment_performance"
@@ -241,3 +254,47 @@ async def test_rollback_discards_deduction(
     # The opening-stock movement was committed by create_item before the
     # publish; only the deduction must be gone.
     assert all(m.reason != "consumption" for m in movements)
+
+
+@pytest.mark.asyncio
+async def test_auto_deduction_is_idempotent(
+    db_session: AsyncSession, test_clinic: Clinic, links_table
+):
+    """Double-deduction for the same treatment produces only one consumption
+    row — the partial unique index makes the second a no-op (#226)."""
+    item = await InventoryService.create_item(
+        db_session,
+        test_clinic.id,
+        InventoryItemCreate(
+            name="Gauze pads", category="consumables", stock_quantity=Decimal("10")
+        ),
+        created_by=None,
+    )
+    catalog_item_id = uuid4()
+    treatment_id = uuid4()
+    await _seed_link(db_session, test_clinic.id, catalog_item_id, item.id, 3)
+
+    payload = _performance_payload(test_clinic.id, catalog_item_id, treatment_id=treatment_id)
+
+    # First publish — deducts 3.
+    await event_bus.publish(
+        EventType.ODONTOGRAM_TREATMENT_PERFORMED, payload, db=db_session
+    )
+    await db_session.flush()
+
+    # Second publish — same treatment_id, same reference_id → idempotent.
+    await event_bus.publish(
+        EventType.ODONTOGRAM_TREATMENT_PERFORMED, payload, db=db_session
+    )
+    await db_session.flush()
+
+    await db_session.refresh(item)
+    # Stock: 10 - 3 = 7 (not 4).
+    assert item.stock_quantity == Decimal("7")
+
+    movements, total = await InventoryService.list_movements(
+        db_session, test_clinic.id, inventory_item_id=item.id
+    )
+    consumption_rows = [m for m in movements if m["movement"].reason == "consumption"]
+    assert len(consumption_rows) == 1
+    assert consumption_rows[0]["movement"].delta == Decimal("-3")

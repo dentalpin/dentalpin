@@ -93,7 +93,9 @@ async def update_item(
     item_id: UUID,
     payload: InventoryItemUpdate,
 ) -> ApiResponse[InventoryItemResponse]:
-    item = await InventoryService.update_item(db, ctx.clinic_id, item_id, payload)
+    item = await InventoryService.update_item(
+        db, ctx.clinic_id, item_id, payload, created_by=ctx.user_id
+    )
     return ApiResponse(data=InventoryItemResponse.model_validate(item))
 
 
@@ -135,7 +137,7 @@ async def list_movements(
     """The audit trail for one item — every quantity change ever applied."""
     # 404 when the item doesn't exist / belongs to another clinic.
     await InventoryService.get_item(db, ctx.clinic_id, item_id)
-    movements, total = await InventoryService.list_movements(
+    rows, total = await InventoryService.list_movements(
         db,
         ctx.clinic_id,
         inventory_item_id=item_id,
@@ -143,8 +145,14 @@ async def list_movements(
         page=page,
         page_size=page_size,
     )
+    # Each row is a dict with 'movement' (ORM) and 'created_by_name' (str | None).
+    data = []
+    for row in rows:
+        resp = StockMovementResponse.model_validate(row["movement"])
+        resp.created_by_name = row["created_by_name"]
+        data.append(resp)
     return PaginatedApiResponse(
-        data=[StockMovementResponse.model_validate(m) for m in movements],
+        data=data,
         total=total,
         page=page,
         page_size=page_size,

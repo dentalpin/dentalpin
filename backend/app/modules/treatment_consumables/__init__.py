@@ -2,8 +2,9 @@
 
 Pure mapping with a quantity per link (root canal → 2 anesthetic
 vials). Reads both dependencies to validate links and resolve names;
-writes only its own table. **No stock deduction** — that lands in the
-inventory core upgrade (#226).
+writes only its own table.  Handles ``odontogram.treatment.performed``
+via subscription inversion (#226): reads links via ORM model, calls
+``InventoryService.deduct_for_treatment`` as a clean public primitive.
 
 depends: ["catalog", "inventory"] — declared so the loader mounts this
 module after both, and so CI enforces the cross-module FKs.
@@ -68,7 +69,13 @@ class TreatmentConsumablesModule(BaseModule):
         return tools.get_tools()
 
     def get_event_handlers(self) -> dict:
-        # Pure mapping: emits nothing, consumes nothing. Stock deduction
-        # (a future subscriber of treatment events) belongs to the
-        # inventory core upgrade (#226), not here.
-        return {}
+        from app.core.events.types import EventType
+
+        from .events import on_treatment_performed
+
+        # Subscription inversion (#226): this module owns the links table
+        # and already depends on inventory, so the subscription direction
+        # is legal (no cycle).  Reads links via ORM model, calls
+        # InventoryService.deduct_for_treatment as a clean public
+        # primitive — no raw SQL, no inspector guard, no fail-soft branch.
+        return {EventType.ODONTOGRAM_TREATMENT_PERFORMED: on_treatment_performed}

@@ -1,6 +1,6 @@
 ---
 module: inventory
-last_verified_commit: 47983b05
+last_verified_commit: db2caa92
 ---
 
 # inventory — permissions
@@ -9,8 +9,8 @@ Namespaced by the registry from the module's `get_permissions()`.
 
 | Permission | Gates | Endpoints |
 |------------|-------|-----------|
-| `inventory.read` | List/view items, low-stock filter | `GET /api/v1/inventory/`, `GET /api/v1/inventory/{item_id}` |
-| `inventory.write` | Create, edit, adjust stock, delete | `POST /api/v1/inventory/`, `PATCH …/{item_id}`, `POST …/{item_id}/adjust`, `DELETE …/{item_id}` |
+| `inventory.read` | List/view items, low-stock filter, valuation, movements | `GET /api/v1/inventory/`, `GET /api/v1/inventory/{item_id}`, `GET /api/v1/inventory/valuation`, `GET /api/v1/inventory/{item_id}/movements` |
+| `inventory.write` | Create, edit, adjust stock, delete/deactivate | `POST /api/v1/inventory/`, `PATCH …/{item_id}`, `POST …/{item_id}/adjust`, `DELETE …/{item_id}` |
 
 Default role mapping — the whole team participates; stock levels are
 operational data, not sensitive (same breadth precedent as

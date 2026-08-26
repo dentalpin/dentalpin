@@ -14,20 +14,21 @@
     "low": "Bas",
     "filterByCategory": "Filtrer par catégorie",
     "lowStockOnly": "Stock bas uniquement",
+    "includeInactive": "Afficher les inactifs",
     "increment": "Augmenter le stock",
     "decrement": "Réduire le stock",
     "delete": "Supprimer",
     "deleteTitle": "Supprimer l'article",
     "deleteMessage": "Supprimer cet article de l'inventaire ? Cette action est irréversible.",
+    "cannotDeleteWithHistory": "Cet article a un historique de mouvements. Désactivez-le pour préserver la piste d'audit.",
+    "deactivate": "Désactiver",
+    "reactivate": "Réactiver",
+    "deactivated": "Article désactivé",
+    "reactivated": "Article réactivé",
+    "empty": "Pas encore de mouvements",
     "allCategories": "Toutes les catégories",
     "adjustBy": "Ajuster de…",
     "apply": "Appliquer",
-    "categories": {
-      "consumables": "Consommables",
-      "equipment": "Équipement",
-      "office": "Bureau",
-      "other": "Autre"
-    },
     "cost": "Coût unitaire",
     "valuation": "Valeur du stock",
     "movements": "Mouvements",
@@ -38,6 +39,12 @@
       "consumption": "Consommation",
       "adjustment": "Ajustement",
       "correction": "Correction"
+    },
+    "categories": {
+      "consumables": "Consommables",
+      "equipment": "Équipement",
+      "office": "Bureau",
+      "other": "Autre"
     }
   },
   "nav": {

@@ -30,7 +30,13 @@ const filterCategoryOptions = computed(() => [
   ...categoryOptions.value
 ])
 
-// "10.00" -> "10", "2.50" -> "2.5" — Numeric(12,2) noise trimmed for display.
+// Currency formatting: 2 decimals, e.g. "12.50".
+const fmtMoney = (v: string) => {
+  const n = Number(v)
+  if (isNaN(n)) return v
+  return n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+}
+// Quantity display: trim trailing zeros.
 const fmtQty = (v: string) => String(Number(v))
 
 function notifyError(e: unknown) {
@@ -47,6 +53,7 @@ const totalPages = computed(() => Math.max(1, Math.ceil(total.value / PAGE_SIZE)
 
 const filterCategory = ref<ItemCategory | 'all'>('all')
 const lowStockOnly = ref(false)
+const includeInactive = ref(false)
 
 async function load() {
   loading.value = true
@@ -54,6 +61,7 @@ async function load() {
     const res = await inventoryApi.list({
       category: filterCategory.value === 'all' ? undefined : filterCategory.value,
       low_stock: lowStockOnly.value,
+      include_inactive: includeInactive.value,
       page: page.value,
       page_size: PAGE_SIZE
     })
@@ -76,7 +84,7 @@ function onPage(p: number) {
   load()
 }
 
-watch([filterCategory, lowStockOnly], () => {
+watch([filterCategory, lowStockOnly, includeInactive], () => {
   page.value = 1
   load()
 })
@@ -114,7 +122,7 @@ function openEdit(item: InventoryItem) {
     unit: item.unit,
     stock_quantity: Number(item.stock_quantity),
     min_quantity: Number(item.min_quantity),
-    unit_cost: item.unit_cost ? Number(item.unit_cost) : null,
+    unit_cost: item.unit_cost != null ? Number(item.unit_cost) : null,
     notes: item.notes ?? ''
   }
   showModal.value = true
@@ -132,6 +140,7 @@ async function submit() {
     toast.add({ title: t('common.success'), color: 'success' })
     showModal.value = false
     await load()
+    await loadValuation()
   } catch (e) {
     notifyError(e)
   } finally {
@@ -148,6 +157,12 @@ const ADJUST_REASONS: MovementReason[] = ['restock', 'consumption', 'adjustment'
 const adjustReason = ref<MovementReason>('adjustment')
 const adjustNote = ref('')
 
+function adjustReasonForDelta(delta: number): MovementReason {
+  // Quick +/- buttons pass an explicit reason derived from the sign,
+  // preventing cross-row pollution from the popover's shared state.
+  return delta > 0 ? 'restock' : 'consumption'
+}
+
 async function adjust(item: InventoryItem, delta: number, reason?: MovementReason, note?: string) {
   if (!delta) return
   adjustingId.value = item.id
@@ -157,6 +172,7 @@ async function adjust(item: InventoryItem, delta: number, reason?: MovementReaso
       note: note ?? (adjustNote.value || undefined)
     })
     items.value = items.value.map(i => (i.id === res.data.id ? res.data : i))
+    await loadValuation()
   } catch (e) {
     notifyError(e)
   } finally {
@@ -170,11 +186,26 @@ async function applyDelta(item: InventoryItem) {
   deltaValue.value = null
 }
 
+function onPopoverClose(open: boolean) {
+  if (!open) {
+    deltaRowId.value = null
+    deltaValue.value = null
+    // Reset popover state so the next row starts clean.
+    adjustReason.value = 'adjustment'
+    adjustNote.value = ''
+  } else if (deltaRowId.value) {
+    deltaRowId.value = null
+  }
+}
+
 // --- Movements modal (audit trail) + valuation -------------------------------
 const showMovements = ref(false)
 const movementsItem = ref<InventoryItem | null>(null)
 const movementsRows = ref<StockMovement[]>([])
 const movementsLoading = ref(false)
+const movementsPage = ref(1)
+const movementsTotal = ref(0)
+const movementsTotalPages = computed(() => Math.max(1, Math.ceil(movementsTotal.value / 50)))
 const valuation = ref<{ total_value: string } | null>(null)
 
 async function loadValuation() {
@@ -185,19 +216,36 @@ async function loadValuation() {
 
 function openMovements(item: InventoryItem) {
   movementsItem.value = item
+  movementsRows.value = []
+  movementsPage.value = 1
+  movementsTotal.value = 0
   showMovements.value = true
+}
+
+async function loadMovements() {
+  if (!movementsItem.value) return
+  movementsLoading.value = true
+  try {
+    const res = await inventoryApi.movements(movementsItem.value.id, movementsPage.value)
+    movementsRows.value = res.data
+    movementsTotal.value = res.total
+  } catch (e) {
+    notifyError(e)
+  } finally {
+    movementsLoading.value = false
+  }
 }
 
 watch(showMovements, async (open) => {
   if (!open || !movementsItem.value) return
-  movementsLoading.value = true
-  try {
-    const res = await inventoryApi.movements(movementsItem.value.id)
-    movementsRows.value = res.data
-  } finally {
-    movementsLoading.value = false
-  }
+  await loadMovements()
 })
+
+function onMovementsPageChange(p: number) {
+  movementsPage.value = p
+  loadMovements()
+}
+
 // --- Delete confirmation ----------------------------------------------------
 const showDeleteConfirm = ref(false)
 const itemToDelete = ref<InventoryItem | null>(null)
@@ -216,10 +264,37 @@ async function handleDelete() {
     toast.add({ title: t('common.success'), color: 'success' })
     showDeleteConfirm.value = false
     await load()
+    await loadValuation()
+  } catch (e: any) {
+    // 409 means the item has history — show localised message.
+    const detail = errorDetail(e)
+    if (detail === 'item_has_history') {
+      toast.add({ title: t('inventory.cannotDeleteWithHistory'), color: 'warning' })
+    } else {
+      notifyError(e)
+    }
+  } finally {
+    isDeleting.value = false
+  }
+}
+
+// --- Deactivate / reactivate ------------------------------------------------
+const isDeactivating = ref(false)
+
+async function toggleActive(item: InventoryItem) {
+  isDeactivating.value = true
+  try {
+    await inventoryApi.update(item.id, { is_active: !item.is_active })
+    toast.add({
+      title: item.is_active ? t('inventory.deactivated') : t('inventory.reactivated'),
+      color: 'success'
+    })
+    await load()
+    await loadValuation()
   } catch (e) {
     notifyError(e)
   } finally {
-    isDeleting.value = false
+    isDeactivating.value = false
   }
 }
 
@@ -228,19 +303,16 @@ async function handleDelete() {
 const columns = computed(() => [
   { accessorKey: 'name', header: t('inventory.item') },
   {
-    accessorKey: 'category',
-    header: t('inventory.category'),
+    accessorKey: 'category', header: t('inventory.category'),
     meta: { class: { th: 'hidden md:table-cell', td: 'hidden md:table-cell' } }
   },
   { accessorKey: 'stock_quantity', header: t('inventory.stock') },
   {
-    accessorKey: 'min_quantity',
-    header: t('inventory.minimum'),
+    accessorKey: 'min_quantity', header: t('inventory.minimum'),
     meta: { class: { th: 'hidden sm:table-cell', td: 'hidden sm:table-cell' } }
   },
   {
-    accessorKey: 'unit_cost',
-    header: t('inventory.cost'),
+    accessorKey: 'unit_cost', header: t('inventory.cost'),
     meta: { class: { th: 'hidden lg:table-cell', td: 'hidden lg:table-cell' } }
   },
   { accessorKey: 'status', header: t('inventory.status') },
@@ -261,7 +333,7 @@ const columns = computed(() => [
         class="tnum"
         icon="i-lucide-coins"
       >
-        {{ t('inventory.valuation') }}: {{ fmtQty(valuation.total_value) }}
+        {{ t('inventory.valuation') }}: {{ fmtMoney(valuation.total_value) }}
       </UBadge>
       <UButton
         v-if="canWrite"
@@ -283,6 +355,11 @@ const columns = computed(() => [
         v-model="lowStockOnly"
         :label="t('inventory.lowStockOnly')"
       />
+      <UCheckbox
+        v-if="canWrite"
+        v-model="includeInactive"
+        :label="t('inventory.includeInactive')"
+      />
     </div>
 
     <UTable
@@ -296,18 +373,18 @@ const columns = computed(() => [
       <template #stock_quantity-cell="{ row }">
         <div class="flex items-center gap-1">
           <UButton
-            v-if="canWrite"
+            v-if="canWrite && row.original.is_active"
             icon="i-lucide-minus"
             size="xs"
             variant="ghost"
             :disabled="Number(row.original.stock_quantity) <= 0 || adjustingId === row.original.id"
             :aria-label="t('inventory.decrement')"
-            @click="adjust(row.original, -1)"
+            @click="adjust(row.original, -1, adjustReasonForDelta(-1))"
           />
           <UPopover
-            v-if="canWrite"
+            v-if="canWrite && row.original.is_active"
             :open="deltaRowId === row.original.id"
-            @update:open="(v: boolean) => { deltaRowId = v ? row.original.id : null; deltaValue = null }"
+            @update:open="onPopoverClose"
           >
             <button
               type="button"
@@ -354,13 +431,13 @@ const columns = computed(() => [
             class="tnum"
           >{{ fmtQty(row.original.stock_quantity) }} {{ row.original.unit }}</span>
           <UButton
-            v-if="canWrite"
+            v-if="canWrite && row.original.is_active"
             icon="i-lucide-plus"
             size="xs"
             variant="ghost"
             :disabled="adjustingId === row.original.id"
             :aria-label="t('inventory.increment')"
-            @click="adjust(row.original, 1)"
+            @click="adjust(row.original, 1, adjustReasonForDelta(1))"
           />
         </div>
       </template>
@@ -369,9 +446,9 @@ const columns = computed(() => [
       </template>
       <template #unit_cost-cell="{ row }">
         <span
-          v-if="row.original.unit_cost"
+          v-if="row.original.unit_cost != null"
           class="tnum"
-        >{{ fmtQty(row.original.unit_cost) }}</span>
+        >{{ fmtMoney(row.original.unit_cost) }}</span>
         <span
           v-else
           class="text-subtle"
@@ -402,6 +479,25 @@ const columns = computed(() => [
             size="xs"
             :aria-label="t('inventory.edit')"
             @click="openEdit(row.original)"
+          />
+          <UButton
+            v-if="canWrite && row.original.is_active"
+            icon="i-lucide-power"
+            variant="ghost"
+            size="xs"
+            :aria-label="t('inventory.deactivate')"
+            :disabled="isDeactivating"
+            @click="toggleActive(row.original)"
+          />
+          <UButton
+            v-if="canWrite && !row.original.is_active"
+            icon="i-lucide-power"
+            variant="ghost"
+            color="success"
+            size="xs"
+            :aria-label="t('inventory.reactivate')"
+            :disabled="isDeactivating"
+            @click="toggleActive(row.original)"
           />
           <UButton
             v-if="canWrite && row.original.is_active"
@@ -569,6 +665,10 @@ const columns = computed(() => [
               </UBadge>
               <span class="text-subtle tnum text-xs">{{ new Date(m.created_at).toLocaleString() }}</span>
               <span
+                v-if="m.created_by_name"
+                class="text-subtle text-xs"
+              >{{ m.created_by_name }}</span>
+              <span
                 v-if="m.note"
                 class="text-subtle text-xs truncate"
               >{{ m.note }}</span>
@@ -580,6 +680,32 @@ const columns = computed(() => [
           >
             {{ t('inventory.empty') }}
           </p>
+          <div
+            v-if="movementsTotalPages > 1"
+            class="flex items-center justify-between"
+          >
+            <span class="text-xs text-subtle tnum">
+              {{ movementsPage }} / {{ movementsTotalPages }}
+            </span>
+            <div class="flex gap-1">
+              <UButton
+                size="xs"
+                variant="ghost"
+                :disabled="movementsPage <= 1"
+                @click="onMovementsPageChange(movementsPage - 1)"
+              >
+                ←
+              </UButton>
+              <UButton
+                size="xs"
+                variant="ghost"
+                :disabled="movementsPage >= movementsTotalPages"
+                @click="onMovementsPageChange(movementsPage + 1)"
+              >
+                →
+              </UButton>
+            </div>
+          </div>
           <div class="flex justify-end">
             <UButton
               variant="ghost"

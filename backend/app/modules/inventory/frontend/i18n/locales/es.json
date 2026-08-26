@@ -14,20 +14,21 @@
     "low": "Bajo",
     "filterByCategory": "Filtrar por categoría",
     "lowStockOnly": "Solo stock bajo",
+    "includeInactive": "Mostrar inactivos",
     "increment": "Aumentar stock",
     "decrement": "Reducir stock",
     "delete": "Eliminar",
     "deleteTitle": "Eliminar artículo",
     "deleteMessage": "¿Eliminar este artículo del inventario? No se puede deshacer.",
+    "cannotDeleteWithHistory": "Este artículo tiene historial de movimientos. Desactívelo para preservar la pista de auditoría.",
+    "deactivate": "Desactivar",
+    "reactivate": "Reactivar",
+    "deactivated": "Artículo desactivado",
+    "reactivated": "Artículo reactivado",
+    "empty": "Aún no hay movimientos",
     "allCategories": "Todas las categorías",
     "adjustBy": "Ajustar en…",
     "apply": "Aplicar",
-    "categories": {
-      "consumables": "Consumibles",
-      "equipment": "Equipamiento",
-      "office": "Oficina",
-      "other": "Otro"
-    },
     "cost": "Coste unitario",
     "valuation": "Valor del stock",
     "movements": "Movimientos",
@@ -38,6 +39,12 @@
       "consumption": "Consumo",
       "adjustment": "Ajuste",
       "correction": "Corrección"
+    },
+    "categories": {
+      "consumables": "Consumibles",
+      "equipment": "Equipamiento",
+      "office": "Oficina",
+      "other": "Otro"
     }
   },
   "nav": {
