@@ -13,6 +13,7 @@ from decimal import Decimal
 from uuid import uuid4
 
 import pytest
+import pytest_asyncio
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -25,6 +26,10 @@ from app.modules.inventory.service import InventoryService
 
 
 async def _create_links_table(db_session: AsyncSession) -> None:
+    # IF NOT EXISTS + the fixture's teardown DROP are both required: this
+    # raw table is NOT in Base.metadata, so conftest's drop_all never
+    # removes it — a leak would poison the shared CI database and make the
+    # later alembic-roundtrip step report schema drift.
     await db_session.execute(
         text(
             """
@@ -38,6 +43,14 @@ async def _create_links_table(db_session: AsyncSession) -> None:
             """
         )
     )
+
+
+@pytest_asyncio.fixture
+async def links_table(db_session: AsyncSession):
+    """Raw treatment_consumables table, dropped again on teardown."""
+    yield
+    await db_session.execute(text("DROP TABLE IF EXISTS treatment_consumables"))
+    await db_session.commit()
 
 
 async def _seed_link(db_session: AsyncSession, clinic_id, catalog_item_id, item_id, quantity):
@@ -69,11 +82,10 @@ def _performance_payload(clinic_id, catalog_item_id, treatment_id=None, actor=No
 
 @pytest.mark.asyncio
 async def test_deduction_clamps_at_zero_and_records_partial(
-    db_session: AsyncSession, test_clinic: Clinic
+    db_session: AsyncSession, test_clinic: Clinic, links_table
 ):
     """Underflow floors at zero — clinical care is never blocked by
     bookkeeping — and the movement records what was actually applied."""
-    await _create_links_table(db_session)
     item = await InventoryService.create_item(
         db_session,
         test_clinic.id,
@@ -104,8 +116,7 @@ async def test_deduction_clamps_at_zero_and_records_partial(
 
 
 @pytest.mark.asyncio
-async def test_no_links_means_no_op(db_session: AsyncSession, test_clinic: Clinic):
-    await _create_links_table(db_session)
+async def test_no_links_means_no_op(db_session: AsyncSession, test_clinic: Clinic, links_table):
     item = await InventoryService.create_item(
         db_session,
         test_clinic.id,
@@ -146,8 +157,9 @@ async def test_missing_links_table_is_a_logged_no_op(db_session: AsyncSession, t
 
 
 @pytest.mark.asyncio
-async def test_auto_deduction_on_treatment_performed(db_session: AsyncSession, test_clinic: Clinic):
-    await _create_links_table(db_session)
+async def test_auto_deduction_on_treatment_performed(
+    db_session: AsyncSession, test_clinic: Clinic, links_table
+):
     item = await InventoryService.create_item(
         db_session,
         test_clinic.id,
@@ -180,14 +192,15 @@ async def test_auto_deduction_on_treatment_performed(db_session: AsyncSession, t
 
 
 @pytest.mark.asyncio
-async def test_rollback_discards_deduction(db_session: AsyncSession, test_clinic: Clinic):
+async def test_rollback_discards_deduction(
+    db_session: AsyncSession, test_clinic: Clinic, links_table
+):
     """ADR 0019: a rolled-back treatment must not consume stock.
 
     The clinic id is captured before publish/rollback — rollback expires
     ORM attributes and touching them afterwards raises MissingGreenlet.
     """
     clinic_id = test_clinic.id
-    await _create_links_table(db_session)
     item = await InventoryService.create_item(
         db_session,
         clinic_id,
