@@ -9,6 +9,7 @@ from sqlalchemy import and_, case, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
+from app.core.i18n_names import catalog_name
 from app.core.list_query import parse_sort
 from app.modules.payments.models import Payment as PaymentModel
 from app.modules.payments.models import Refund as RefundModel
@@ -1136,15 +1137,7 @@ class InvoiceService:
             internal_code = None
             if budget_item.catalog_item:
                 names = budget_item.catalog_item.names or {}
-                description = (
-                    names.get("es")
-                    or names.get("en")
-                    or names.get("fr")
-                    or names.get("pt")
-                    or names.get("ta")
-                    or next((v for v in names.values() if v), None)
-                    or description
-                )
+                description = catalog_name(names) or description
                 internal_code = budget_item.catalog_item.internal_code
 
             global_share = global_shares[budget_item_id]

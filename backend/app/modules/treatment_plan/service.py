@@ -14,6 +14,7 @@ from sqlalchemy.orm import selectinload
 from app.core.auth.models import ClinicMembership
 from app.core.events import event_bus
 from app.core.events.types import EventType
+from app.core.i18n_names import catalog_name
 from app.modules.odontogram.models import Treatment
 from app.modules.patients.models import Patient
 
@@ -978,15 +979,7 @@ class TreatmentPlanService:
         if item.treatment:
             patient_id_str = str(item.treatment.patient_id)
             if item.treatment.catalog_item:
-                names = item.treatment.catalog_item.names or {}
-                item_name = (
-                    names.get("es")
-                    or names.get("en")
-                    or names.get("fr")
-                    or names.get("pt")
-                    or names.get("ta")
-                    or next((v for v in names.values() if v), None)
-                )
+                item_name = catalog_name(item.treatment.catalog_item.names)
                 if item.treatment.catalog_item.category:
                     treatment_category_key = item.treatment.catalog_item.category.key
 

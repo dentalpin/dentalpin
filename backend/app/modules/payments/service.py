@@ -21,6 +21,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
 from app.core.auth.models import User
+from app.core.i18n_names import catalog_name
 from app.core.list_query import parse_sort
 from app.modules.budget.models import Budget
 
@@ -593,11 +594,11 @@ class LedgerService:
         )
         for row in result.mappings():
             catalog_names = row["catalog_names"] or {}
-            # Catalog names are stored as i18n JSONB; prefer the
-            # operative language Spanish, fall back to English.
+            # Catalog names are stored as i18n JSONB; resolve through the
+            # shared priority chain (es → en → … → any non-empty).
             treatment_name: str | None = None
             if isinstance(catalog_names, dict):
-                treatment_name = catalog_names.get("es") or catalog_names.get("en")
+                treatment_name = catalog_name(catalog_names)
             prof_first = row["prof_first_name"] or ""
             prof_last = row["prof_last_name"] or ""
             prof_name = f"{prof_first} {prof_last}".strip() or None

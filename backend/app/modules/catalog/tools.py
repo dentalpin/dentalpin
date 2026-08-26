@@ -14,6 +14,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from app.core.agents import AgentContext, Tool, ToolCategory
+from app.core.i18n_names import catalog_name
 
 from .service import CatalogService
 
@@ -33,16 +34,7 @@ class GetCatalogItemArgs(BaseModel):
 
 
 def _name(names: dict | None) -> str | None:
-    if not names:
-        return None
-    return (
-        names.get("es")
-        or names.get("en")
-        or names.get("fr")
-        or names.get("pt")
-        or names.get("ta")
-        or next(iter(names.values()), None)
-    )
+    return catalog_name(names)
 
 
 def _summary(item) -> dict:
