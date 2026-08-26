@@ -50,7 +50,17 @@ async def _create_links_table(db_session: AsyncSession) -> None:
 
 @pytest_asyncio.fixture
 async def links_table(db_session: AsyncSession):
-    """Raw treatment_consumables table, dropped again on teardown."""
+    """Raw treatment_consumables table, dropped again on teardown.
+
+    ``create_all`` creates the table from the ORM model which uses
+    a Python-side default only — the INSERT via raw SQL then hits the
+    NOT NULL guard.  Drop that and recreate with the raw DDL that
+    carries ``DEFAULT now()`` so raw INSERTs work.
+    """
+    await db_session.execute(text("DROP TABLE IF EXISTS treatment_consumables"))
+    await db_session.commit()
+    await _create_links_table(db_session)
+    await db_session.commit()
     yield
     await db_session.execute(text("DROP TABLE IF EXISTS treatment_consumables"))
     await db_session.commit()
