@@ -37,9 +37,7 @@ async def on_treatment_performed(data: dict, db) -> None:
         clinic_id = UUID(str(clinic_raw))
         catalog_item_id = UUID(str(catalog_raw))
     except (ValueError, TypeError):
-        logger.warning(
-            "treatment_consumables: malformed ids in treatment.performed — skipped"
-        )
+        logger.warning("treatment_consumables: malformed ids in treatment.performed — skipped")
         return
 
     actor_id = None

@@ -55,11 +55,11 @@ async def test_opening_stock_and_adjustments_are_ledgered(
 
     movements, total = await InventoryService.list_movements(db_session, test_clinic.id)
     assert total == 3  # initial(10) -3 +50 — the rejected one never lands
-    assert sum(m.delta for m in movements) == Decimal("57")
+    assert sum(m["movement"].delta for m in movements) == Decimal("57")
 
     # Look rows up by reason: created_at ties are possible within one
     # transaction, so positional indexing would be flaky.
-    by_reason = {m.reason: m for m in movements}
+    by_reason = {m["movement"]["reason"]: m["movement"] for m in movements}
     assert by_reason["initial"].delta == Decimal("10")
     consumption = by_reason["consumption"]
     assert consumption.delta == Decimal("-3")
@@ -84,7 +84,7 @@ async def test_absolute_patch_set_records_correction(db_session: AsyncSession, t
     assert updated.stock_quantity == Decimal("5")
 
     movements, _ = await InventoryService.list_movements(db_session, test_clinic.id)
-    correction = next(m for m in movements if m.reason == "correction")
+    correction = next(m["movement"] for m in movements if m["movement"].reason == "correction")
     assert correction.delta == Decimal("-3")
 
 

@@ -112,6 +112,7 @@ async def test_deduction_clamps_at_zero_and_records_partial(
 
     # Resolve links the way treatment_consumables/events.py does.
     from app.modules.treatment_consumables.models import TreatmentConsumable
+
     rows = (
         await db_session.execute(
             select(TreatmentConsumable.inventory_item_id, TreatmentConsumable.quantity).where(
@@ -284,15 +285,11 @@ async def test_auto_deduction_is_idempotent(
     payload = _performance_payload(test_clinic.id, catalog_item_id, treatment_id=treatment_id)
 
     # First publish — deducts 3.
-    await event_bus.publish(
-        EventType.ODONTOGRAM_TREATMENT_PERFORMED, payload, db=db_session
-    )
+    await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_PERFORMED, payload, db=db_session)
     await db_session.flush()
 
     # Second publish — same treatment_id, same reference_id → idempotent.
-    await event_bus.publish(
-        EventType.ODONTOGRAM_TREATMENT_PERFORMED, payload, db=db_session
-    )
+    await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_PERFORMED, payload, db=db_session)
     await db_session.flush()
 
     await db_session.refresh(item)

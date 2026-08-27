@@ -17,6 +17,7 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import User
@@ -287,13 +288,18 @@ class InventoryService:
         if reason == "consumption" and reference_type and reference_id:
             # Idempotency guard: the partial unique index catches
             # duplicate consumption movements for the same treatment.
-            # ON CONFLICT DO NOTHING makes the duplicate a harmless no-op
-            # rather than an IntegrityError (ADR 0019 — at-least-once bus
-            # contract, same as payments).
-            await db.flush()
-            if not movement.id:
-                # Row was suppressed by the unique conflict — the
-                # movement already exists from a previous event.
+            # A savepoint isolates the flush so a duplicate doesn't roll
+            # back the caller's entire transaction (ADR 0019 — at-least-
+            # once bus contract, same as payments).
+            savepoint = await db.begin_nested()
+            try:
+                await db.flush()
+                await savepoint.commit()
+            except IntegrityError:
+                await savepoint.rollback()
+                # Remove the pending movement from the session so it
+                # doesn't participate in the next flush.
+                db.expunge(movement)
                 return locked, Decimal("0")
 
         return locked, applied

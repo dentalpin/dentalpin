@@ -265,9 +265,9 @@ async function handleDelete() {
     showDeleteConfirm.value = false
     await load()
     await loadValuation()
-  } catch (e: any) {
+  } catch (e: unknown) {
     // 409 means the item has history — show localised message.
-    const detail = errorDetail(e)
+    const detail = errorDetail(e as { response?: { data?: { detail?: string } } })
     if (detail === 'item_has_history') {
       toast.add({ title: t('inventory.cannotDeleteWithHistory'), color: 'warning' })
     } else {

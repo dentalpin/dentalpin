@@ -111,6 +111,4 @@ class StockMovement(Base):
     reference_id: Mapped[UUID | None] = mapped_column(PGUUID(as_uuid=True))
 
     created_by: Mapped[UUID | None] = mapped_column(ForeignKey("users.id"))
-    created_at: Mapped[datetime] = mapped_column(
-        DateTime(timezone=True), server_default=func.now()
-    )
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

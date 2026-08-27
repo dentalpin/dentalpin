@@ -78,12 +78,8 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_index(
-        "uq_stock_movements_consumption_ref", table_name="stock_movements"
-    )
-    op.drop_index(
-        "uq_stock_movements_consumption_ref", table_name="stock_movements"
-    )
+    op.drop_index("uq_stock_movements_consumption_ref", table_name="stock_movements")
+    op.drop_index("uq_stock_movements_consumption_ref", table_name="stock_movements")
     op.drop_index("ix_stock_movements_item_created", table_name="stock_movements")
     op.drop_index("ix_stock_movements_clinic_created", table_name="stock_movements")
     op.drop_table("stock_movements")
