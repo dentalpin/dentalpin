@@ -35,7 +35,8 @@
     "openMenu": "Abrir menú",
     "close": "Cerrar",
     "toggleSidebar": "Alternar barra lateral",
-    "defaultClinicName": "Clínica"
+    "defaultClinicName": "Clínica",
+    "documents": "Documentos"
   },
   "auth": {
     "login": "Iniciar sesión",

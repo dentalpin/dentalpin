@@ -1,0 +1,64 @@
+{
+  "documents": {
+    "title": "Documentos",
+    "subtitle": "Gestiona recetas, certificados, derivaciones y solicitudes de radiología",
+    "newDocument": "Nuevo documento",
+    "editDocument": "Editar documento",
+    "searchPlaceholder": "Buscar documentos...",
+    "filterType": "Filtrar por tipo",
+    "filterStatus": "Filtrar por estado",
+    "empty": "Aún no hay documentos. Crea el primero para empezar.",
+    "emptyPatient": "No hay documentos para este paciente. Crea uno con el botón de arriba.",
+    "patient": "Paciente",
+    "selectPatient": "Seleccionar paciente",
+    "type": "Tipo de documento",
+    "selectType": "Seleccionar tipo",
+    "titleLabel": "Título",
+    "titlePlaceholder": "ej. Receta de Amoxicilina",
+    "types": {
+      "all": "Todos los tipos",
+      "prescription": "Receta",
+      "medical_certificate": "Certificado médico",
+      "referral": "Carta de derivación",
+      "radiology_request": "Solicitud de radiología"
+    },
+    "status": {
+      "all": "Todos los estados",
+      "draft": "Borrador",
+      "generated": "Generado",
+      "archived": "Archivado"
+    },
+    "actions": {
+      "generate": "Generar PDF",
+      "edit": "Editar",
+      "archive": "Archivar"
+    },
+    "messages": {
+      "created": "Documento creado",
+      "updated": "Documento actualizado",
+      "generated": "Documento generado correctamente",
+      "archived": "Documento archivado"
+    },
+    "content": {
+      "diagnosis": "Diagnóstico",
+      "diagnosisPlaceholder": "Introduce el diagnóstico...",
+      "medications": "Medicamentos",
+      "addMedication": "Añadir medicamento",
+      "medName": "Nombre del medicamento",
+      "medDose": "Dosis",
+      "medFrequency": "Frecuencia",
+      "medDuration": "Duración",
+      "notes": "Notas",
+      "notesPlaceholder": "Notas adicionales...",
+      "description": "Descripción",
+      "recommendations": "Recomendaciones",
+      "referredTo": "Derivado a",
+      "specialty": "Especialidad",
+      "reason": "Motivo de la derivación",
+      "clinicalSummary": "Resumen clínico",
+      "examType": "Tipo de examen",
+      "region": "Región",
+      "clinicalQuestion": "Pregunta clínica"
+    }
+  }
+}

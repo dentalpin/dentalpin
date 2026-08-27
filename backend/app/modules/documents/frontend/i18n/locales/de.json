@@ -1,0 +1,64 @@
+{
+  "documents": {
+    "title": "Dokumente",
+    "subtitle": "Rezepte, Bescheinigungen, Überweisungen und Röntgenanfragen verwalten",
+    "newDocument": "Neues Dokument",
+    "editDocument": "Dokument bearbeiten",
+    "searchPlaceholder": "Dokumente suchen...",
+    "filterType": "Nach Typ filtern",
+    "filterStatus": "Nach Status filtern",
+    "empty": "Noch keine Dokumente. Erstellen Sie das erste Dokument.",
+    "emptyPatient": "Keine Dokumente für diesen Patienten. Erstellen Sie eines mit der Schaltfläche oben.",
+    "patient": "Patient",
+    "selectPatient": "Patient auswählen",
+    "type": "Dokumenttyp",
+    "selectType": "Typ auswählen",
+    "titleLabel": "Titel",
+    "titlePlaceholder": "z.B. Rezept für Amoxicillin",
+    "types": {
+      "all": "Alle Typen",
+      "prescription": "Rezept",
+      "medical_certificate": "Ärztliche Bescheinigung",
+      "referral": "Überweisungsschein",
+      "radiology_request": "Röntgenanfrage"
+    },
+    "status": {
+      "all": "Alle Status",
+      "draft": "Entwurf",
+      "generated": "Generiert",
+      "archived": "Archiviert"
+    },
+    "actions": {
+      "generate": "PDF generieren",
+      "edit": "Bearbeiten",
+      "archive": "Archivieren"
+    },
+    "messages": {
+      "created": "Dokument erstellt",
+      "updated": "Dokument aktualisiert",
+      "generated": "Dokument erfolgreich generiert",
+      "archived": "Dokument archiviert"
+    },
+    "content": {
+      "diagnosis": "Diagnose",
+      "diagnosisPlaceholder": "Diagnose eingeben...",
+      "medications": "Medikamente",
+      "addMedication": "Medikament hinzufügen",
+      "medName": "Medikamentenname",
+      "medDose": "Dosierung",
+      "medFrequency": "Frequenz",
+      "medDuration": "Dauer",
+      "notes": "Notizen",
+      "notesPlaceholder": "Zusätzliche Notizen...",
+      "description": "Beschreibung",
+      "recommendations": "Empfehlungen",
+      "referredTo": "Überwiesen an",
+      "specialty": "Fachgebiet",
+      "reason": "Grund der Überweisung",
+      "clinicalSummary": "Klinische Zusammenfassung",
+      "examType": "Untersuchungsart",
+      "region": "Region",
+      "clinicalQuestion": "Klinische Frage"
+    }
+  }
+}

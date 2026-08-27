@@ -145,6 +145,11 @@ class EventType:
     DOCUMENT_UPLOADED = "document.uploaded"
     DOCUMENT_DELETED = "document.deleted"
     DOCUMENT_ARCHIVED = "document.archived"
+    # Published by the documents module after a prescription, certificate,
+    # referral or radiology request is rendered as PDF. Payload carries
+    # (document_id, clinic_id, patient_id, document_type, title).
+    # Consumed by activity_journal for timeline entries.
+    DOCUMENT_GENERATED = "document.generated"
     # Photo-aware subset of DOCUMENT_UPLOADED. Fired alongside the
     # generic event whenever ``media_kind ∈ {photo, xray}`` so timeline
     # / gallery subscribers can render thumbnails inline without

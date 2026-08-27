@@ -35,7 +35,8 @@
     "menu": "Menu",
     "openMenu": "Open menu",
     "close": "Close",
-    "toggleSidebar": "Toggle sidebar"
+    "toggleSidebar": "Toggle sidebar",
+    "documents": "Documents"
   },
   "auth": {
     "login": "Log in",

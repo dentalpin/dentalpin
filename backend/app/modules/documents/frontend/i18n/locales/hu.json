@@ -1,0 +1,64 @@
+{
+  "documents": {
+    "title": "Dokumentumok",
+    "subtitle": "Receptek, igazolások, beutalók és röntgenkérések kezelése",
+    "newDocument": "Új dokumentum",
+    "editDocument": "Dokumentum szerkesztése",
+    "searchPlaceholder": "Dokumentumok keresése...",
+    "filterType": "Szűrés típus szerint",
+    "filterStatus": "Szűrés állapot szerint",
+    "empty": "Még nincsenek dokumentumok. Hozza létre az elsőt.",
+    "emptyPatient": "Nincs dokumentum ehhez a beteghez. Hozzon létre egyet a fenti gombbal.",
+    "patient": "Beteg",
+    "selectPatient": "Beteg kiválasztása",
+    "type": "Dokumentum típusa",
+    "selectType": "Típus kiválasztása",
+    "titleLabel": "Cím",
+    "titlePlaceholder": "pl. Amoxicillin recept",
+    "types": {
+      "all": "Minden típus",
+      "prescription": "Recept",
+      "medical_certificate": "Orvosi igazolás",
+      "referral": "Beutaló levél",
+      "radiology_request": "Röntgenkérés"
+    },
+    "status": {
+      "all": "Minden állapot",
+      "draft": "Piszkozat",
+      "generated": "Generálva",
+      "archived": "Archiválva"
+    },
+    "actions": {
+      "generate": "PDF generálása",
+      "edit": "Szerkesztés",
+      "archive": "Archiválás"
+    },
+    "messages": {
+      "created": "Dokumentum létrehozva",
+      "updated": "Dokumentum frissítve",
+      "generated": "Dokumentum sikeresen generálva",
+      "archived": "Dokumentum archiválva"
+    },
+    "content": {
+      "diagnosis": "Diagnózis",
+      "diagnosisPlaceholder": "Adja meg a diagnózist...",
+      "medications": "Gyógyszerek",
+      "addMedication": "Gyógyszer hozzáadása",
+      "medName": "Gyógyszer neve",
+      "medDose": "Adagolás",
+      "medFrequency": "Gyakoriság",
+      "medDuration": "Időtartam",
+      "notes": "Megjegyzések",
+      "notesPlaceholder": "További megjegyzések...",
+      "description": "Leírás",
+      "recommendations": "Javaslatok",
+      "referredTo": "Beutalva",
+      "specialty": "Szakterület",
+      "reason": "Beutalás oka",
+      "clinicalSummary": "Klinikai összefoglaló",
+      "examType": "Vizsgálat típusa",
+      "region": "Régió",
+      "clinicalQuestion": "Klinikai kérdés"
+    }
+  }
+}

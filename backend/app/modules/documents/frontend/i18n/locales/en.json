@@ -1,0 +1,64 @@
+{
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Manage prescriptions, certificates, referrals and radiology requests",
+    "newDocument": "New Document",
+    "editDocument": "Edit Document",
+    "searchPlaceholder": "Search documents...",
+    "filterType": "Filter by type",
+    "filterStatus": "Filter by status",
+    "empty": "No documents yet. Create your first document to get started.",
+    "emptyPatient": "No documents for this patient. Create one using the button above.",
+    "patient": "Patient",
+    "selectPatient": "Select a patient",
+    "type": "Document type",
+    "selectType": "Select a type",
+    "titleLabel": "Title",
+    "titlePlaceholder": "e.g. Prescription for Amoxicillin",
+    "types": {
+      "all": "All types",
+      "prescription": "Prescription",
+      "medical_certificate": "Medical certificate",
+      "referral": "Referral letter",
+      "radiology_request": "Radiology request"
+    },
+    "status": {
+      "all": "All statuses",
+      "draft": "Draft",
+      "generated": "Generated",
+      "archived": "Archived"
+    },
+    "actions": {
+      "generate": "Generate PDF",
+      "edit": "Edit",
+      "archive": "Archive"
+    },
+    "messages": {
+      "created": "Document created",
+      "updated": "Document updated",
+      "generated": "Document generated successfully",
+      "archived": "Document archived"
+    },
+    "content": {
+      "diagnosis": "Diagnosis",
+      "diagnosisPlaceholder": "Enter diagnosis...",
+      "medications": "Medications",
+      "addMedication": "Add medication",
+      "medName": "Medication name",
+      "medDose": "Dose",
+      "medFrequency": "Frequency",
+      "medDuration": "Duration",
+      "notes": "Notes",
+      "notesPlaceholder": "Additional notes...",
+      "description": "Description",
+      "recommendations": "Recommendations",
+      "referredTo": "Referred to",
+      "specialty": "Specialty",
+      "reason": "Reason for referral",
+      "clinicalSummary": "Clinical summary",
+      "examType": "Exam type",
+      "region": "Region",
+      "clinicalQuestion": "Clinical question"
+    }
+  }
+}
