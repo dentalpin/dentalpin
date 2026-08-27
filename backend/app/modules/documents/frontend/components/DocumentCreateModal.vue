@@ -143,6 +143,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const api = useApi()
+const toast = useToast()
 
 const isEditing = computed(() => !!props.document)
 const saving = ref(false)
@@ -222,6 +223,7 @@ async function submit() {
         title: form.title,
         content: form.content
       })
+      toast.add({ title: t('documents.messages.updated'), color: 'success' })
       emit('updated')
     } else {
       await api.post('/api/v1/documents', {
@@ -230,8 +232,12 @@ async function submit() {
         title: form.title,
         content: form.content
       })
+      toast.add({ title: t('documents.messages.created'), color: 'success' })
       emit('created')
     }
+  } catch (error: any) {
+    const message = error?.data?.detail || error?.message || t('common.error')
+    toast.add({ title: message, color: 'error' })
   } finally {
     saving.value = false
   }

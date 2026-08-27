@@ -122,8 +122,6 @@ import { PERMISSIONS } from '~~/app/config/permissions'
 
 const { t } = useI18n()
 const { can } = usePermissions()
-// Use generatedDocuments to avoid collision with media.documents
-const perms = { read: PERMISSIONS.generatedDocuments.read, write: PERMISSIONS.generatedDocuments.write }
 const api = useApi()
 
 // State

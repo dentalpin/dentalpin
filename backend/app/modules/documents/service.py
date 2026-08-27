@@ -7,14 +7,13 @@ Every query filters by ``clinic_id`` (multi-tenancy, mandatory).
 from __future__ import annotations
 
 import uuid
-from typing import Literal
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import event_bus
 from app.core.events.types import EventType
-from .models import DocumentStatus, DocumentType, GeneratedDocument
+from .models import DocumentStatus, GeneratedDocument
 
 
 class DocumentService:
