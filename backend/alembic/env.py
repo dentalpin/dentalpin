@@ -118,6 +118,7 @@ from app.modules.whatsapp_kapso.models import (  # noqa: F401
     WhatsappKapsoSettings,
     WhatsappKapsoTemplate,
 )
+from app.modules.documents.models import GeneratedDocument  # noqa: F401
 
 ALEMBIC_DIR = Path(__file__).parent
 BACKEND_ROOT = ALEMBIC_DIR.parent

@@ -89,6 +89,7 @@ treatment_consumables = "app.modules.treatment_consumables:TreatmentConsumablesM
 lab_orders = "app.modules.lab_orders:LabOrdersModule"
 activity_journal = "app.modules.activity_journal:ActivityJournalModule"
 medication_catalog = "app.modules.medication_catalog:MedicationCatalogModule"
+documents = "app.modules.documents:DocumentsModule"
 
 [tool.setuptools.packages.find]
 where = ["."]
