@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix(#101): removing a plan item asks for confirmation naming the treatment.
+
+- feat(#207): the plan header links to the draft quote while the plan is `pending` (and the confirm toast carries a "view quote" action); *Programar cita* opens the appointment modal with the plan's pending treatments preselected (`?new=1&plan_id=`); a post-appointment follow-up prompt lists linked treatments the visit left unmarked and completes them in one click.
+
 - fix(#108): confirmed plans (`pending`) stay schedulable — the appointment treatment selector now fetches `active`+`draft`+`pending` plans, and items from a `pending` plan carry a "quote awaiting acceptance" badge so reception knows they're booking ahead of the acceptance.
 
 - i18n(#131/#275): treatment names from catalog names fall back to any

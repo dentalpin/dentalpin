@@ -74,17 +74,18 @@ async function handleSubmit(
   if (!appointmentId.value) return
   saving.value = true
   try {
-    if (editingId.value) {
-      await updateNote(editingId.value, payload.body)
-    } else {
-      await createNote({
-        note_type: composerType.value,
-        owner_type: 'appointment',
-        owner_id: appointmentId.value,
-        body: payload.body,
-        attachment_document_ids: payload.attachmentDocumentIds
-      })
-    }
+    // The composable toasts on failure and returns null — keep the
+    // composer open with the draft intact so the user can retry.
+    const saved = editingId.value
+      ? await updateNote(editingId.value, payload.body)
+      : await createNote({
+          note_type: composerType.value,
+          owner_type: 'appointment',
+          owner_id: appointmentId.value,
+          body: payload.body,
+          attachment_document_ids: payload.attachmentDocumentIds
+        })
+    if (!saved) return
     composerOpen.value = false
     editingId.value = null
     composerBody.value = ''

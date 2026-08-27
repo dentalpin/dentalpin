@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+
+{% block title %}உங்கள் சிகிச்சை மதிப்பீடு உங்கள் பதிலுக்காக காத்திருக்கிறது - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+
+{% block content %}
+<h2>நினைவூட்டல்</h2>
+
+
+<p>வணக்கம் {{ patient_name }},</p>
+
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட சிகிச்சை மதிப்பீடு <strong>#{{ budget_number }}</strong> இன்னும் உங்கள் பதிலுக்காகக் காத்திருக்கிறது.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">மதிப்பீடு எண்</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        {% if total %}
+        <div style="flex: 1; text-align: right;">
+            <div class="label">மொத்தம்</div>
+            <div class="value">{{ total }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if valid_until %}
+<div class="alert alert-warning">
+    <strong>செல்லுபடி:</strong> இந்த மதிப்பீடு {{ valid_until }} வரை செல்லுபடியாகும்.
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">மதிப்பீட்டைப் பார்க்க</a>
+</div>
+{% endif %}
+
+<p>நீங்கள் ஏற்கனவே முடிவு எடுத்திருந்தாலோ அல்லது ஏதேனும் கேள்விகள் இருந்தாலோ, எங்களைத் தொடர்பு கொள்ளவும் — உதவ மகிழ்ச்சியாக இருப்போம்.</p>
+{% endblock %}

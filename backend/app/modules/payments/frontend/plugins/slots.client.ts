@@ -24,6 +24,18 @@ export default defineNuxtPlugin(() => {
   // Payments report card on /reports. Lets the reports module stay
   // unaware of payments while users still discover the dashboard from
   // the central reports landing.
+  // Post-completion follow-up: "Cobrar" shortcut for the visit's
+  // patient (#207). Agenda exposes the slot; payments registers into
+  // it — agenda never imports payments code.
+  registerSlot('appointment.completed.followup', {
+    id: 'payments.appointment.collect-prompt',
+    component: defineAsyncComponent(
+      () => import('../components/CollectFollowupPrompt.vue')
+    ),
+    permission: 'payments.record.write',
+    order: 20
+  })
+
   registerSlot('reports.categories', {
     id: 'payments.reports.categories.dashboard',
     component: defineAsyncComponent(

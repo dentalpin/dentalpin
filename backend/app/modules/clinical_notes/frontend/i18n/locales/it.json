@@ -1,0 +1,124 @@
+{
+  "clinicalNotes": {
+    "types": {
+      "administrative": "Amministrativa",
+      "diagnosis": "Diagnosi",
+      "treatment": "Trattamento",
+      "treatment_plan": "Piano",
+      "appointment_clinical": "Clinica",
+      "appointment_administrative": "Amministrativa"
+    },
+    "appointment": {
+      "addByType": "Aggiungi nota: {label}",
+      "empty": "Ancora nessuna nota per questo appuntamento. Usa i pulsanti qui sopra per aggiungerne una."
+    },
+    "feed": {
+      "filterLabel": "Filtri",
+      "filterAll": "Tutte",
+      "filterClear": "Cancella filtri",
+      "filterStatus": "Visualizzati {n} di {total} tipi",
+      "addAdministrative": "Nota amministrativa",
+      "loadMore": "Carica altre",
+      "empty": {
+        "title": "Ancora nessuna nota",
+        "help": "Le note amministrative, di diagnosi e di trattamento appariranno qui in ordine cronologico."
+      }
+    },
+    "diagnosisSidebar": {
+      "title": "Note",
+      "addNote": "Aggiungi nota",
+      "empty": "Nessuna nota in questa categoria."
+    },
+    "treatmentButton": {
+      "title": "Note del trattamento",
+      "add": "Aggiungi nota",
+      "empty": "Ancora nessuna nota per questo trattamento.",
+      "aria": "Note del trattamento ({n})"
+    },
+    "timeline": {
+      "addPlanNote": "Nota del piano",
+      "empty": "Ancora nessuna nota.",
+      "emptyForFilter": "Nessuna nota corrisponde al filtro.",
+      "source": {
+        "plan": "Piano",
+        "treatment": "Trattamento",
+        "visit": "Visita"
+      }
+    },
+    "byPlan": {
+      "empty": "Questo paziente non ha ancora note cliniche collegate a un piano.",
+      "planNotesLabel": "Note del piano",
+      "unknownTreatment": "Trattamento",
+      "noNotesForTreatment": "Ancora nessuna nota per questo trattamento."
+    },
+    "composer": {
+      "placeholder": "Scrivi la nota…",
+      "templates": "Modelli",
+      "attach": "Allega foto o documento",
+      "bindToTooth": "Collega al dente {n}"
+    },
+    "linked": {
+      "tooth": "Dente {n}",
+      "treatment": "Trattamento",
+      "treatmentOnTooth": "{label} (dente {n})",
+      "plan": "Piano",
+      "planNamed": "Piano: {label}"
+    },
+    "actions": {
+      "showMore": "Mostra di più",
+      "showLess": "Mostra meno",
+      "openLinked": "Apri contesto"
+    },
+    "author": {
+      "unknown": "Autore sconosciuto"
+    },
+    "time": {
+      "justNow": "adesso",
+      "minutesAgo": "{n} min fa",
+      "hoursAgo": "{n} h fa",
+      "daysAgo": "{n} g fa"
+    },
+    "toasts": {
+      "saved": "Nota salvata",
+      "deleted": "Nota eliminata",
+      "saveFailed": "Impossibile salvare la nota"
+    },
+    "confirms": {
+      "delete": "Eliminare questa nota? Il recupero richiede di contattare l'assistenza."
+    },
+    "templates": {
+      "endo": {
+        "singleVisit": "Endodonzia (seduta singola)",
+        "multiVisit": "Endodonzia (più sedute)"
+      },
+      "perio": {
+        "scaling": "Detartrasi / levigatura radicolare"
+      },
+      "implant": {
+        "placement": "Inserimento impianto"
+      },
+      "diagnosis": {
+        "caries": "Carie",
+        "periapical": "Lesione periapicale"
+      },
+      "admin": {
+        "phoneCall": "Telefonata del paziente",
+        "reschedule": "Richiesta di riprogrammazione"
+      },
+      "general": {
+        "followUp": "Controllo generale"
+      }
+    },
+    "templateBodies": {
+      "endo_single_visit": "Diagnosi: \nAnestesia: \nCanali individuati: \nLunghezza di lavoro: \nOtturazione canalare: \nPost-operatorio: ",
+      "endo_multi_visit": "Seduta: \nCanali trattati: \nMedicazione intracanalare: \nProssimo appuntamento: ",
+      "perio_scaling": "Quadranti trattati: \nProfondità di sondaggio: \nSanguinamento al sondaggio: \nIstruzioni di igiene: ",
+      "implant_placement": "Impianto (marca / diametro / lunghezza): \nTorque finale (Ncm): \nStabilità primaria: \nInnesto: \nPost-operatorio: ",
+      "diagnosis_caries": "Riscontro: carie \nProfondità: \nSintomi: \nTest di vitalità: \nTrattamento suggerito: ",
+      "diagnosis_periapical": "Lesione periapicale \nDente: \nRadiografia: \nTest (percussione, palpazione): \nDiagnosi: ",
+      "admin_phone_call": "Chiamata del paziente: \nMotivo: \nAzione intrapresa: \nFollow-up: ",
+      "admin_reschedule": "Richiesta di riprogrammazione: \nData attuale: \nNuova proposta: ",
+      "general_follow_up": "Riscontri: \nProcedura eseguita: \nIstruzioni per il paziente: "
+    }
+  }
+}

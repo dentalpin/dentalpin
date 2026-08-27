@@ -1,0 +1,12 @@
+{
+  "notifications": {
+    "conversation": {
+      "title": "Rozmowa WhatsApp",
+      "empty": "Brak wiadomości.",
+      "placeholder": "Napisz odpowiedź…",
+      "replyError": "Nie udało się wysłać odpowiedzi",
+      "windowClosed": "Okno 24 godzin jest zamknięte. Użyj szablonu, aby wznowić rozmowę.",
+      "send": "Wyślij"
+    }
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "expenses": {
+    "title": "Spese",
+    "add": "Aggiungi spesa",
+    "date": "Data",
+    "category": "Categoria",
+    "amount": "Importo",
+    "description": "Descrizione",
+    "filterByCategory": "Filtra per categoria",
+    "delete": "Elimina",
+    "deleteTitle": "Elimina spesa",
+    "deleteMessage": "Eliminare questa spesa? L'operazione non può essere annullata.",
+    "categories": {
+      "rent": "Affitto",
+      "utilities": "Utenze",
+      "salaries": "Stipendi",
+      "supplies": "Materiali",
+      "equipment": "Attrezzature",
+      "insurance": "Assicurazione",
+      "maintenance": "Manutenzione",
+      "other": "Altro"
+    }
+  }
+}

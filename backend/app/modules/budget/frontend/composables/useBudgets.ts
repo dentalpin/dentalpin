@@ -391,9 +391,11 @@ export function useBudgets() {
     } catch (e: unknown) {
       const status = (e as { statusCode?: number, status?: number })?.statusCode
         ?? (e as { statusCode?: number, status?: number })?.status
+      // 404 is the legitimate "not signed" answer. Anything else is a
+      // failed read and must NOT render as "not signed" (issue #101).
       if (status === 404) return null
       console.error('Failed to fetch budget signature:', e)
-      return null
+      throw e
     }
   }
 

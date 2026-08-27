@@ -1,0 +1,303 @@
+{
+  "payments": {
+    "nav": {
+      "payments": "Płatności",
+      "reports": "Raporty płatności"
+    },
+    "balance": {
+      "debt": "Winien",
+      "credit": "Na poczet",
+      "paid": "Łącznie zapłacono"
+    },
+    "list": {
+      "title": "Płatności",
+      "subtitle": "Płatności pacjentów, zaliczki na kosztorysy i środki na poczet leczenia.",
+      "empty": "Brak zarejestrowanych płatności.",
+      "new": "Nowa płatność",
+      "searchPlaceholder": "Pacjent lub numer referencyjny",
+      "filterDateFrom": "Od",
+      "filterDateTo": "Do",
+      "filterMethod": "Metoda",
+      "filterPatient": "Pacjent",
+      "filter": {
+        "method": "Metoda",
+        "hasRefunds": "Ze zwrotami",
+        "hasUnallocated": "Nieprzypisane",
+        "patient": "Pacjent",
+        "withDebt": "Z zadłużeniem",
+        "paymentStatus": "Status"
+      },
+      "sort": {
+        "paymentDate": "Data",
+        "amount": "Kwota"
+      },
+      "budgetStatus": {
+        "paid": "Opłacony",
+        "partial": "Częściowo",
+        "unpaid": "Nieopłacony"
+      },
+      "row": {
+        "debtTooltip": "Zaległe saldo pacjenta",
+        "creditTooltip": "Nadpłata pacjenta",
+        "allocationsLabel": "Przypisanie",
+        "refundedLabel": "Zwrócono",
+        "noPatient": "Brak pacjenta"
+      },
+      "columnDate": "Data",
+      "columnPatient": "Pacjent",
+      "columnAmount": "Kwota",
+      "columnMethod": "Metoda",
+      "columnAllocations": "Przypisanie",
+      "columnNet": "Netto",
+      "columnActions": "Akcje"
+    },
+    "detail": {
+      "title": "Płatność {reference}",
+      "amount": "Kwota",
+      "method": "Metoda",
+      "date": "Data",
+      "recordedBy": "Zarejestrował(a)",
+      "allocations": "Przypisania",
+      "refunds": "Zwroty",
+      "refund": "Zwróć",
+      "refundedTotal": "Zwrócono",
+      "netAmount": "Netto",
+      "reference": "Numer referencyjny",
+      "notes": "Notatki"
+    },
+    "new": {
+      "title": "Zarejestruj płatność",
+      "patient": "Pacjent",
+      "patientPlaceholder": "Wyszukaj pacjenta...",
+      "unknownPatient": "Nieznany pacjent",
+      "amount": "Kwota",
+      "suggestedHint": "Pozostało do pobrania: {amount}",
+      "useSuggested": "użyj tej kwoty",
+      "method": "Metoda",
+      "moreMethods": "Więcej opcji",
+      "date": "Data",
+      "today": "Dzisiaj",
+      "advanced": "Opcje zaawansowane",
+      "reference": "Numer referencyjny",
+      "referencePlaceholder": "Nr autoryzacji karty, tytuł przelewu...",
+      "notes": "Notatki",
+      "allocations": "Przypisanie",
+      "allocationsHint": "Podziel płatność między kosztorysy lub pozostaw ją na poczet leczenia pacjenta.",
+      "addAllocation": "Dodaj przypisanie",
+      "allocationToBudget": "Na kosztorys",
+      "allocationOnAccount": "Na poczet",
+      "sumLabel": "Suma:",
+      "sumMismatch": "nie zgadza się z kwotą",
+      "submit": "Zarejestruj",
+      "submitWithAmount": "Pobierz {amount}",
+      "cancel": "Anuluj",
+      "errPatient": "Wybierz pacjenta",
+      "errAmount": "Wprowadź kwotę większą niż 0",
+      "errSum": "Suma przypisań musi być równa kwocie",
+      "errUnknown": "Nie udało się zarejestrować płatności. Spróbuj ponownie."
+    },
+    "methods": {
+      "cash": "Gotówka",
+      "card": "Karta",
+      "bank_transfer": "Przelew",
+      "direct_debit": "Polecenie zapłaty",
+      "insurance": "Ubezpieczenie",
+      "other": "Inna"
+    },
+    "refund": {
+      "title": "Zwrot płatności",
+      "amount": "Kwota",
+      "method": "Metoda",
+      "reason": "Powód",
+      "note": "Szczegóły",
+      "submit": "Zwróć",
+      "reasonCodes": {
+        "duplicate": "Zduplikowana płatność",
+        "overpaid": "Nadpłata",
+        "treatment_cancelled": "Leczenie anulowane",
+        "dispute": "Reklamacja",
+        "other": "Inny"
+      }
+    },
+    "ledger": {
+      "title": "Rozliczenia pacjenta",
+      "totalPaid": "Łącznie zapłacono",
+      "totalEarned": "Wykonane leczenie",
+      "patientCredit": "Nadpłata pacjenta",
+      "clinicReceivable": "Należności kliniki",
+      "onAccount": "Na poczet",
+      "empty": "Brak operacji."
+    },
+    "budgetCard": {
+      "title": "Płatności za kosztorys",
+      "budgetTotal": "Wartość kosztorysu",
+      "collected": "Pobrano",
+      "pending": "Do pobrania",
+      "collect": "Przyjmij płatność",
+      "empty": "Brak płatności przypisanych do tego kosztorysu.",
+      "collectedLabel": "Pobrano",
+      "pendingLabel": "Do pobrania",
+      "outOfTotal": "z {total} łącznie",
+      "settled": "Kosztorys w pełni opłacony",
+      "history": "Historia płatności",
+      "payment": "Płatność",
+      "emptyDetailed": "Nie pobrano jeszcze żadnych płatności. Użyj „Przyjmij płatność”, aby zarejestrować pierwszą."
+    },
+    "budgetCollect": {
+      "title": "Przyjmij płatność za kosztorys",
+      "amountLabel": "Kwota do pobrania",
+      "methodLabel": "Metoda płatności",
+      "dateLabel": "Data płatności",
+      "today": "Dzisiaj",
+      "quickFull": "Całość",
+      "optionalDetails": "Dodaj numer referencyjny lub notatki (opcjonalnie)",
+      "referenceLabel": "Numer referencyjny",
+      "referencePlaceholder": "np. numer transakcji terminala",
+      "notesLabel": "Notatki wewnętrzne",
+      "submit": "Przyjmij płatność",
+      "cancel": "Anuluj",
+      "success": "Płatność zarejestrowana",
+      "errorGeneric": "Nie udało się zarejestrować płatności",
+      "noteAppliedToBudget": "zostanie zaliczone na kosztorys.",
+      "notePendingAfter": "Pozostanie do zapłaty",
+      "noteFullySettled": "Kosztorys zostanie w pełni rozliczony.",
+      "noteToBudget": "zostanie zaliczone na kosztorys, a",
+      "noteExcessToOnAccount": "na poczet leczenia pacjenta.",
+      "noteBudgetSettled": "Kosztorys jest już w całości opłacony.",
+      "noteToOnAccount": "trafi na poczet leczenia pacjenta."
+    },
+    "pendingCharges": {
+      "title": "Do pobrania",
+      "count": "{n} sesji",
+      "more": "+ {n} więcej",
+      "collect": "Pobierz {amount}",
+      "unnamedSession": "Sesja bez nazwy"
+    },
+    "patientPanel": {
+      "title": "Rozliczenia pacjenta",
+      "kpis": {
+        "totalPaid": "Łącznie zapłacono",
+        "debt": "Należności kliniki",
+        "onAccount": "Na poczet"
+      },
+      "sidebar": {
+        "title": "Podsumowanie",
+        "credit": "Nadpłata pacjenta",
+        "lastPayment": "Ostatnia płatność",
+        "noLastPayment": "Brak płatności",
+        "totalEarned": "Wykonane leczenie"
+      },
+      "banner": {
+        "debtTitle": "Winien klinice {amount}",
+        "debtDescription": "Łączne wpłaty są niższe niż wartość wykonanego leczenia.",
+        "creditTitle": "Ma {amount} nadpłaty",
+        "creditDescription": "Wpłacono więcej, niż wynosi wartość wykonanego leczenia."
+      },
+      "cobrar": "Zarejestruj płatność",
+      "timeline": {
+        "title": "Operacje",
+        "empty": "Brak zarejestrowanych operacji",
+        "emptyCta": "Zarejestruj pierwszą płatność",
+        "loadError": "Nie udało się załadować rozliczeń pacjenta.",
+        "retry": "Ponów",
+        "drPrefix": "Dr {name}",
+        "types": {
+          "payment": "Płatność",
+          "refund": "Zwrot",
+          "earned": "Wykonane leczenie"
+        },
+        "treatmentStatus": {
+          "planned": "Zaplanowane",
+          "performed": "Wykonane",
+          "completed": "Zakończone",
+          "cancelled": "Anulowane",
+          "in_progress": "W trakcie"
+        },
+        "rowMenu": {
+          "detail": "Zobacz szczegóły",
+          "refund": "Zwróć",
+          "reallocate": "Przypisz do kosztorysu…"
+        }
+      },
+      "refundModal": {
+        "title": "Zwrot płatności",
+        "amount": "Kwota zwrotu",
+        "method": "Metoda zwrotu",
+        "reason": "Powód",
+        "note": "Szczegóły (opcjonalnie)",
+        "submit": "Potwierdź zwrot",
+        "cancel": "Anuluj",
+        "errorGeneric": "Nie udało się zarejestrować zwrotu"
+      }
+    },
+    "reports": {
+      "title": "Raporty płatności",
+      "subtitle": "Wpływy, zwroty, salda pacjentów i trendy w wybranym okresie.",
+      "cardDescription": "Wpływy, zwroty, salda pacjentów, wiekowanie należności i trendy.",
+      "period": "Okres",
+      "refresh": "Odśwież",
+      "collected": "Pobrano",
+      "refunded": "Zwrócono",
+      "net": "Netto",
+      "patientCredit": "Łączne nadpłaty pacjentów",
+      "patientCreditHint": "Salda na poczet leczenia i zaliczki.",
+      "clinicReceivable": "Należności kliniki",
+      "refundRatio": "Wskaźnik zwrotów",
+      "byMethod": "Według metody",
+      "byProfessional": "Według specjalisty",
+      "byProfessionalHint": "Wykonane leczenie, nie pobrane płatności.",
+      "aging": "Wiekowanie należności",
+      "agingHint": "Pacjenci z zaległym saldem pogrupowani według wieku zadłużenia.",
+      "refunds": "Zwroty według powodu",
+      "refundsHint": "Rozkład zwrotów według zarejestrowanego powodu.",
+      "bucket": "{range} dni",
+      "unknownProfessional": "Nieprzypisane",
+      "countShort": "{n} transakcji",
+      "countPatients": "{n} pacjentów",
+      "granularity": {
+        "day": "Dzień",
+        "week": "Tydzień",
+        "month": "Miesiąc"
+      },
+      "hero": {
+        "netCollected": "Pobrano netto",
+        "netCollectedHint": "Wpływy pomniejszone o zwroty w okresie.",
+        "receivable": "Zaległe należności",
+        "receivableHint": "Wykonane, a jeszcze nieopłacone leczenie, według wieku.",
+        "vsPrevious": "wzgl. poprzedniego okresu",
+        "transactionsCount": "{n} transakcji w okresie"
+      },
+      "trend": {
+        "title": "Trend wpływów",
+        "subtitle": "Netto na przedział. Linia przerywana pokazuje zwroty."
+      },
+      "empty": {
+        "noDataTitle": "Brak danych w tym zakresie",
+        "noDataDescription": "Zmień okres lub zarejestruj płatność, aby zobaczyć raport.",
+        "noTrend": "Za mało punktów, aby narysować trend.",
+        "noMethods": "Brak wpływów według metody w okresie.",
+        "noProfessionals": "Brak wykonanego leczenia w okresie.",
+        "noReceivable": "Brak pacjentów z zaległym saldem."
+      },
+      "drilldown": {
+        "viewPayments": "Zobacz płatności z okresu",
+        "viewPatients": "Zobacz pacjentów z zadłużeniem"
+      }
+    },
+    "target": {
+      "label": "Zastosuj do",
+      "placeholder": "Wybierz przeznaczenie",
+      "onAccount": "Na poczet leczenia pacjenta",
+      "onAccountHint": "Pozostaje jako środki pacjenta na poczet leczenia. Nie zostanie zaliczona na żadną fakturę ani kosztorys, dopóki jej nie przypiszesz.",
+      "budgetHint": "Zostanie zaliczona na ten kosztorys i wystawione do niego faktury.",
+      "lockedBudget": "Zostanie zaliczona na kosztorys {budget} i jego faktury."
+    },
+    "reallocate": {
+      "title": "Przypisz do kosztorysu",
+      "hint": "Cała płatność {amount} zostanie przeniesiona na wybrany kosztorys i wystawione do niego faktury.",
+      "submit": "Przypisz",
+      "success": "Płatność przypisana do kosztorysu",
+      "error": "Nie udało się ponownie przypisać płatności. Spróbuj ponownie."
+    }
+  }
+}

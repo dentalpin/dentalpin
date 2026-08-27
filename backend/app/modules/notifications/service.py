@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.email import EmailResult, email_service
 
+from .channels import channel_registry
 from .models import (
     ClinicNotificationSettings,
     ClinicSmtpSettings,
@@ -31,7 +32,7 @@ async def resolve_clinic_communication_locale(
     clinic. Falls back to :data:`DEFAULT_COMMUNICATION_LOCALE` when the
     clinic row is missing or the key isn't set.
 
-    Used as the default locale for outbound emails / SMS — patient
+    Used as the default locale for outbound communications — patient
     preferences (``NotificationPreference.preferred_locale``) override
     when present.
     """
@@ -347,6 +348,22 @@ class NotificationService:
         return settings
 
     @staticmethod
+    async def available_channels(db: AsyncSession, clinic_id: UUID) -> list[str]:
+        """Channels this clinic can actually use right now.
+
+        Computed from the process-wide ``channel_registry`` plus each
+        adapter's per-clinic ``supports`` check (e.g. WhatsApp appears only
+        when a vendor adapter is registered AND connected for the clinic).
+        Never imports a vendor module (ADR 0016).
+        """
+        available: list[str] = []
+        for channel in channel_registry.available_channels():
+            adapter = channel_registry.get_for_channel(channel)
+            if adapter is not None and await adapter.supports(db, clinic_id):
+                available.append(channel.value)
+        return available
+
+    @staticmethod
     async def update_clinic_settings(
         db: AsyncSession,
         clinic_id: UUID,
@@ -355,7 +372,11 @@ class NotificationService:
         """Update notification settings for a clinic."""
         settings = await NotificationService.get_or_create_clinic_settings(db, clinic_id)
 
-        if "settings" in data:
+        for field in ("preferred_channel", "fallback_enabled", "manual_channels"):
+            if data.get(field) is not None:
+                setattr(settings, field, data[field])
+
+        if data.get("settings") is not None:
             # Merge settings instead of replacing
             # Create a copy to ensure SQLAlchemy detects the change
             current_settings = dict(settings.settings) if settings.settings else {}

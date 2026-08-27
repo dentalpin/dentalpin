@@ -62,7 +62,8 @@
     "errors": {
       "loadFailed": "No se pudo cargar el periodontograma.",
       "saveFailed": "No se pudo guardar el cambio",
-      "checkConnection": "Comprueba tu conexión e intenta de nuevo."
+      "checkConnection": "Comprueba tu conexión e intenta de nuevo.",
+      "closeAborted": "Algunas mediciones aún no se han guardado — el examen no se ha cerrado. Comprueba tu conexión e intenta de nuevo."
     },
     "chart": {
       "ariaLabel": "Periodontograma — arcadas superior e inferior"

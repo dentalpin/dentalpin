@@ -95,6 +95,56 @@ async def test_setup_es_applies_preset_and_seeds(client: AsyncClient, db_session
 
 
 @pytest.mark.asyncio
+async def test_setup_accepts_address_and_solo_professional(
+    client: AsyncClient, db_session: AsyncSession
+) -> None:
+    """#205: the wizard can complete the clinic-info and team onboarding
+    steps directly — street lands in the address, the admin membership
+    is flagged professional."""
+    from app.core.auth.models import ClinicMembership
+
+    r = await client.post(
+        "/api/v1/auth/setup",
+        json={
+            **_BASE,
+            "country": "es",
+            "admin_is_professional": True,
+            "clinic_street": "Calle Mayor 1",
+            "clinic_postal_code": "28001",
+            "clinic_city": "Madrid",
+        },
+    )
+    assert r.status_code == 201, r.text
+
+    clinic = (await db_session.execute(select(Clinic))).scalar_one()
+    assert clinic.address == {
+        "country": "ES",
+        "street": "Calle Mayor 1",
+        "city": "Madrid",
+        "postal_code": "28001",
+    }
+    membership = (await db_session.execute(select(ClinicMembership))).scalar_one()
+    assert membership.is_professional is True
+
+
+@pytest.mark.asyncio
+async def test_setup_without_new_fields_keeps_legacy_shape(
+    client: AsyncClient, db_session: AsyncSession
+) -> None:
+    """Pre-existing callers change nothing: no address keys beyond the
+    country, membership not professional."""
+    from app.core.auth.models import ClinicMembership
+
+    r = await client.post("/api/v1/auth/setup", json={**_BASE, "country": "es"})
+    assert r.status_code == 201, r.text
+
+    clinic = (await db_session.execute(select(Clinic))).scalar_one()
+    assert clinic.address == {"country": "ES"}
+    membership = (await db_session.execute(select(ClinicMembership))).scalar_one()
+    assert membership.is_professional is False
+
+
+@pytest.mark.asyncio
 async def test_setup_es_rejects_bad_tax_id_format(client: AsyncClient) -> None:
     r = await client.post(
         "/api/v1/auth/setup", json={**_BASE, "country": "ES", "clinic_tax_id": "1234"}

@@ -538,7 +538,17 @@ export function useTreatmentPlans() {
       const response = await api.post<ApiResponse<TreatmentPlan>>(
         `/api/v1/treatment_plan/treatment-plans/${planId}/confirm`
       )
-      toast.add({ title: t('treatmentPlans.confirmed'), color: 'success' })
+      // Confirming provisions a draft quote — link straight to it from
+      // the toast so reception doesn't have to dig it out of the
+      // budgets list (#207).
+      const budgetId = response.data?.budget_id
+      toast.add({
+        title: t('treatmentPlans.confirmed'),
+        color: 'success',
+        ...(budgetId
+          ? { actions: [{ label: t('clinical.plans.locked.viewBudget'), onClick: () => { navigateTo(`/budgets/${budgetId}`) } }] }
+          : {})
+      })
       return response.data
     } catch (error) {
       console.error('Error confirming plan:', error)

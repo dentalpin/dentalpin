@@ -70,6 +70,24 @@ export function useNotificationSettings() {
       label: t('notifications.types.welcome'),
       description: t('notifications.types.welcome_desc'),
       supportsHoursBefore: false
+    },
+    {
+      key: 'invoice_sent',
+      label: t('notifications.types.invoice_sent'),
+      description: t('notifications.types.invoice_sent_desc'),
+      supportsHoursBefore: false
+    },
+    {
+      key: 'budget_reminder',
+      label: t('notifications.types.budget_reminder'),
+      description: t('notifications.types.budget_reminder_desc'),
+      supportsHoursBefore: false
+    },
+    {
+      key: 'recall_reminder',
+      label: t('notifications.types.recall_reminder'),
+      description: t('notifications.types.recall_reminder_desc'),
+      supportsHoursBefore: false
     }
   ])
 

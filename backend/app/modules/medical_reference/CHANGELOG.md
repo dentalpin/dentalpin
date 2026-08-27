@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
 - fix(#274): the patient warning chips subscribe to the host data bus on
   the `patients_clinical` namespace (ADR 0021) and refetch after every
   medical-history save, instead of going stale until a page reload. The

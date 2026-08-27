@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Your estimate is awaiting your reply - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>A friendly reminder</h2>
+
+<p>Hello {{ patient_name }},</p>
+
+<p>Your treatment estimate <strong>#{{ budget_number }}</strong> from <strong>{{ clinic_name | default('DentalPin') }}</strong> is still awaiting your reply.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">Estimate</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        {% if total %}
+        <div style="flex: 1; text-align: right;">
+            <div class="label">Total</div>
+            <div class="value">{{ total }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if valid_until %}
+<div class="alert alert-warning">
+    <strong>Validity:</strong> this estimate is valid until {{ valid_until }}.
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Review your estimate</a>
+</div>
+{% endif %}
+
+<p>If you have already made a decision or have any questions, please contact us — we will be happy to help.</p>
+{% endblock %}

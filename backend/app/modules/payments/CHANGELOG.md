@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+- fix(#101): /reports/payments gets the same failed-fetch error banner; an error state is no longer mistakable for an empty period.
+
+- feat(#207): "Collect payment" shortcut in the post-appointment follow-up dialog — opens the shared payment modal for the visit's patient.
 - feat(#131): German (de) locale for the module's frontend layer.
+- feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
 
 - fix(#180): payments recorded before #178 on a budget-linked invoice
   were labeled `on_account` instead of `budget`, so the quote's

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#101): treatment delete asks for confirmation (names the treatment and tooth); the edit modal stays open with the user's edits when a save fails, and surface edits are actually included in the update payload (they were silently dropped).
+
 - feat: global treatments from unmapped catalog items are creatable —
   `TreatmentService._resolve_clinical_type` falls back to the
   server-internal type `"other"` for `global_mouth`/`global_arch` scopes

@@ -58,6 +58,19 @@ function startEdit() {
   editing.value = true
 }
 
+// Guided onboarding lands here to *fill in* the clinic data — mount the
+// edit form directly instead of parking the user on the read-only view.
+const route = useRoute()
+if (route.query.onboarding) {
+  let opened = false
+  watch(clinic.currentClinic, (c) => {
+    if (c && canEdit.value && !opened) {
+      opened = true
+      startEdit()
+    }
+  }, { immediate: true })
+}
+
 function cancelEdit() {
   editing.value = false
 }

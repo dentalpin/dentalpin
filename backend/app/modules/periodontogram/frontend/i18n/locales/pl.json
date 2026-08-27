@@ -1,0 +1,84 @@
+{
+  "periodontogram": {
+    "tab": {
+      "label": "Periodontogram"
+    },
+    "empty": {
+      "title": "Brak badań periodontologicznych",
+      "description": "Otwórz nową sesję, aby zarejestrować głębokość kieszonek, krwawienie, płytkę nazębną i pozostałe wskaźniki SEPA.",
+      "cta": "Rozpocznij badanie"
+    },
+    "session": {
+      "draftBadge": "Wersja robocza w toku",
+      "closedBadge": "Sesja zamknięta",
+      "recordedAt": "Zarejestrowano {date}",
+      "openDraft": "Otwórz nową sesję",
+      "continueDraft": "Kontynuuj wersję roboczą",
+      "closeTitle": "Zamknij sesję periodontologiczną",
+      "closeDescription": "Po zamknięciu sesja staje się niezmienna i pojawia się w historii. Aby wprowadzić poprawki, trzeba będzie otworzyć nową sesję.",
+      "closeButton": "Zamknij sesję",
+      "discardTitle": "Odrzuć wersję roboczą",
+      "discardDescription": "Wszystkie dane wprowadzone w tej sesji zostaną usunięte. Tej operacji nie można cofnąć.",
+      "discardButton": "Odrzuć",
+      "cancel": "Anuluj",
+      "closeSession": "Zamknij sesję",
+      "discardDraft": "Odrzuć wersję roboczą"
+    },
+    "indices": {
+      "bop": "Krwawienie",
+      "pi": "Płytka",
+      "calMean": "Średni CAL",
+      "deepPockets": "Kieszonki ≥5mm"
+    },
+    "saveState": {
+      "saving": "Zapisywanie…",
+      "dirty": "Niezapisane zmiany",
+      "saved": "Zmiany zapisane"
+    },
+    "history": {
+      "viewingSession": "Przeglądanie sesji z {date} (tylko do odczytu).",
+      "returnToCurrent": "Wróć do bieżącej"
+    },
+    "arch": {
+      "upper": "Górny",
+      "lower": "Dolny",
+      "palatal": "Podniebienna",
+      "lingual": "Językowa",
+      "vestibular": "Przedsionkowa",
+      "probing": "Sondowanie",
+      "margin": "Margines",
+      "bleeding": "Krwawienie",
+      "plaque": "Płytka",
+      "probingTitle": "{code} sondowanie (0–15 mm)",
+      "marginTitle": "{code} margines dziąsła (od -5 do 10 mm)",
+      "plaqueTitle": "{code} płytka (kliknij, aby przełączyć)",
+      "bleedingTitle": "{code} krwawienie (kliknij, aby przełączyć)",
+      "implant": "Implant",
+      "implantToggleOn": "Implant (kliknij, aby usunąć)",
+      "implantToggleOff": "Kliknij, aby oznaczyć jako implant",
+      "mobility": "Ruchomość",
+      "mobilityTitle": "Kliknij, aby zmienić ruchomość (0–3)",
+      "prognosis": "Rokowanie",
+      "prognosisTitle": "Dobre / Umiarkowane / Wątpliwe / Beznadziejne",
+      "furcaV": "Furkacja V",
+      "furcaVTitle": "Furkacja przedsionkowa (0/I/II/III)",
+      "furcaLP": "Furkacja J/P",
+      "furcaLPTitle": "Furkacja językowa/podniebienna (0/I/II/III)",
+      "gingivalWidth": "Szerokość dziąsła",
+      "siteMarkerAria": "Punkt {code}, sondowanie {depth}"
+    },
+    "chart": {
+      "ariaLabel": "Periodontogram — łuk górny i dolny"
+    },
+    "indicesBanner": {
+      "observationsPlaceholder": "Notatki z badania…",
+      "noteLabel": "Notatka (opcjonalna)"
+    },
+    "loading": "Wczytywanie periodontogramu…",
+    "errors": {
+      "loadFailed": "Nie udało się wczytać periodontogramu.",
+      "saveFailed": "Nie udało się zapisać zmiany.",
+      "checkConnection": "Sprawdź połączenie i spróbuj ponownie."
+    }
+  }
+}

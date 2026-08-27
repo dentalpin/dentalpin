@@ -233,6 +233,7 @@
     "reports": {
       "title": "Payment reports",
       "subtitle": "Collections, refunds, patient balances and trends for the period.",
+      "loadError": "Couldn't load payment reports",
       "cardDescription": "Collected, refunds, patient balances, aging and trends.",
       "period": "Period",
       "refresh": "Refresh",
@@ -298,6 +299,10 @@
       "submit": "Assign",
       "success": "Payment assigned to quote",
       "error": "Could not reassign the payment. Please try again."
+    },
+    "followup": {
+      "collect": "Collect payment",
+      "collected": "Payment recorded."
     }
   }
 }

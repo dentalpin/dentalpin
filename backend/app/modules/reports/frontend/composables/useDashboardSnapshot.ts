@@ -126,6 +126,7 @@ export function useDashboardSnapshot() {
   let controller: AbortController | null = null
 
   function markStart() {
+    reports.resetFetchFailed()
     for (const key of Object.keys(state) as (keyof DashboardState)[]) {
       state[key].loading = true
       state[key].error = false
@@ -275,5 +276,10 @@ export function useDashboardSnapshot() {
     if (controller) controller.abort()
   })
 
-  return { filters, state, refresh, previousRange }
+  // Any report/payments endpoint in the last batch failed (issue #101):
+  // list-shaped fetchers return [] on error, so per-card flags alone can't
+  // distinguish "failed" from "empty period". The page shows a retry banner.
+  const loadFailed = reports.fetchFailed
+
+  return { filters, state, refresh, previousRange, loadFailed }
 }

@@ -10,7 +10,7 @@
  */
 
 import type { DropdownMenuItem } from '@nuxt/ui'
-import type { TreatmentPlanDetail } from '~~/app/types'
+import type { PlannedTreatmentItem, TreatmentPlanDetail } from '~~/app/types'
 
 import ConfirmPlanModal from './modals/ConfirmPlanModal.vue'
 import ReopenPlanModal from './modals/ReopenPlanModal.vue'
@@ -36,7 +36,7 @@ const emit = defineEmits<{
   'cancelled': []
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 
 const {
@@ -370,10 +370,48 @@ async function handleCompleteItem(
   emit('updated')
 }
 
-async function handleRemoveItem(itemId: string) {
-  await removeItem(props.plan.id, itemId)
-  await odontogramRef.value?.refetchTreatments()
-  emit('updated')
+// Removing a plan item is destructive (no undo endpoint) — the trash button
+// in PlanTreatmentList opens a confirmation first (issue #101).
+const showRemoveItemConfirm = ref(false)
+const removingItem = ref(false)
+const itemToRemove = ref<PlannedTreatmentItem | null>(null)
+
+// Mirrors PlanTreatmentList.getItemName: catalog name (localized) >
+// clinical_type i18n key > generic fallback.
+const removeItemName = computed(() => {
+  const item = itemToRemove.value
+  if (!item) return ''
+  const names = item.catalog_item?.names || item.treatment?.catalog_item?.names
+  if (names) {
+    const name = names[locale.value] || names.es
+    if (name) return name
+  }
+  const clinicalType = item.treatment?.clinical_type
+  if (clinicalType) {
+    const key = `odontogram.treatments.types.${clinicalType}`
+    const translated = t(key)
+    if (translated !== key) return translated
+  }
+  return t('clinical.plans.unknownTreatment')
+})
+
+function handleRemoveItem(itemId: string) {
+  itemToRemove.value = props.plan.items.find(item => item.id === itemId) ?? null
+  showRemoveItemConfirm.value = true
+}
+
+async function confirmRemoveItem() {
+  if (!itemToRemove.value) return
+  removingItem.value = true
+  try {
+    await removeItem(props.plan.id, itemToRemove.value.id)
+    await odontogramRef.value?.refetchTreatments()
+    emit('updated')
+  } finally {
+    removingItem.value = false
+    showRemoveItemConfirm.value = false
+    itemToRemove.value = null
+  }
 }
 
 async function handleReorder(itemIds: string[]) {
@@ -516,6 +554,20 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
           :title="t('clinical.plans.ghostHint')"
         >
           {{ t('treatmentPlans.scheduleAppointment') }}
+        </UButton>
+
+        <!-- While pending, the confirm step just created a draft quote —
+             surface it here instead of leaving it only under
+             Administración → Presupuestos (#207). Once the quote is
+             sent, isLocked's banner takes over the link. -->
+        <UButton
+          v-if="plan.status === 'pending' && plan.budget_id && !isLocked"
+          variant="soft"
+          size="sm"
+          icon="i-lucide-file-text"
+          :to="`/budgets/${plan.budget_id}`"
+        >
+          {{ t('treatmentPlans.viewDraftBudget', { number: plan.budget?.budget_number || '' }) }}
         </UButton>
 
         <!-- Workflow transitions for plans past draft. The big CTA in
@@ -771,6 +823,35 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
       @confirm="onLogContact"
       @cancel="showContactLogModal = false"
     />
+
+    <!-- Remove-item confirmation (destructive, no undo endpoint) -->
+    <UModal v-model:open="showRemoveItemConfirm">
+      <template #content>
+        <div class="p-4 space-y-4">
+          <h2 class="text-h3 text-default">
+            {{ t('clinical.plans.removeItem') }}
+          </h2>
+          <p class="text-caption text-subtle">
+            {{ t('clinical.plans.removeItemConfirm', { name: removeItemName }) }}
+          </p>
+          <div class="flex justify-end gap-2">
+            <UButton
+              variant="ghost"
+              @click="showRemoveItemConfirm = false"
+            >
+              {{ t('actions.cancel') }}
+            </UButton>
+            <UButton
+              color="error"
+              :loading="removingItem"
+              @click="confirmRemoveItem"
+            >
+              {{ t('common.delete') }}
+            </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
 

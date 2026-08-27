@@ -32,11 +32,18 @@ const toast = useToast()
 const { currentLocale, availableLocales, changeLocale } = useLocale()
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+// Languages the backend accepts as clinic communication language
+// (mirrors the `language` pattern on SystemSetup).
+const COMM_LANGUAGES = ['es', 'en', 'fr', 'pt', 'ta']
 
 const step = ref<1 | 2>(1)
 const isLoading = ref(false)
 const errorMessage = ref('')
 const showAdvanced = ref(false)
+const showAddress = ref(false)
+// Set once the admin touches the language selector — from then on the
+// country preset never overrides their explicit choice.
+const languageTouched = ref(false)
 
 const form = reactive({
   firstName: '',
@@ -44,9 +51,14 @@ const form = reactive({
   email: '',
   password: '',
   passwordConfirm: '',
+  // Solo practices are the common case — default the admin to bookable.
+  isProfessional: true,
   clinicName: '',
   country: '',
   taxId: '',
+  street: '',
+  postalCode: '',
+  city: '',
   timezone: '',
   currency: ''
 })
@@ -106,6 +118,19 @@ function applyCountry(code: string) {
   form.timezone = (code === guessBrowserCountry() && browserTz) || p?.timezone || browserTz || 'UTC'
   form.currency = p?.currency || 'EUR'
   showAdvanced.value = !presets.value[code]
+  // Follow the preset's language until the admin picks one explicitly —
+  // a browser defaulting to en-US shouldn't leave a Spanish clinic in
+  // English after selecting España.
+  const lang = presets.value[code]?.language
+  if (!languageTouched.value && lang && lang !== currentLocale.value
+    && availableLocales.value.some(l => l.code === lang)) {
+    changeLocale(lang as CodeLang)
+  }
+}
+
+function pickLocale(code: CodeLang) {
+  languageTouched.value = true
+  changeLocale(code)
 }
 
 // ---- Validation ------------------------------------------------------
@@ -166,14 +191,22 @@ async function onSubmit() {
       admin_last_name: form.lastName.trim(),
       admin_email: form.email.trim(),
       admin_password: form.password,
+      admin_is_professional: form.isProfessional,
       clinic_name: form.clinicName.trim(),
       clinic_tax_id: form.taxId.trim(),
+      clinic_street: form.street.trim() || undefined,
+      clinic_postal_code: form.postalCode.trim() || undefined,
+      clinic_city: form.city.trim() || undefined,
       country: form.country,
       timezone: form.timezone,
       currency: form.currency,
       // Patient-facing language: the country's when we know it, else the
-      // language the admin picked for the UI.
-      language: isKnownCountry.value ? preset.value?.language : currentLocale.value
+      // language the admin picked for the UI — clamped to the languages
+      // the backend can send communications in (UI-only locales like
+      // de/hu/pl/it are not valid communication languages yet).
+      language: isKnownCountry.value
+        ? preset.value?.language
+        : (COMM_LANGUAGES.includes(currentLocale.value) ? currentLocale.value : 'en')
     }, { skipAuth: true })
 
     // ponytail: re-login con las credenciales recién creadas en vez de
@@ -225,7 +258,7 @@ async function onSubmit() {
         size="sm"
         :aria-label="t('settings.language')"
         class="w-32 shrink-0"
-        @update:model-value="changeLocale($event as CodeLang)"
+        @update:model-value="pickLocale($event as CodeLang)"
       />
     </div>
 
@@ -362,6 +395,16 @@ async function onSubmit() {
           />
         </UFormField>
 
+        <UFormField :help="t('setup.attendPatientsMyselfHelp')">
+          <div class="flex items-center gap-3 min-h-[36px]">
+            <USwitch
+              v-model="form.isProfessional"
+              :disabled="isLoading"
+            />
+            <span class="text-body text-default">{{ t('setup.attendPatientsMyself') }}</span>
+          </div>
+        </UFormField>
+
         <UButton
           type="submit"
           color="primary"
@@ -428,6 +471,56 @@ async function onSubmit() {
             :disabled="isLoading"
           />
         </UFormField>
+
+        <!-- Address (optional — completes the clinic-info onboarding step) -->
+        <div class="rounded-token-md border border-(--ui-border) overflow-hidden">
+          <button
+            type="button"
+            class="w-full flex items-center justify-between gap-2 px-3 py-2.5 min-h-11 text-left"
+            :aria-expanded="showAddress"
+            @click="showAddress = !showAddress"
+          >
+            <span class="text-body text-default">
+              {{ t('setup.addressTitle') }}
+              <span class="text-caption text-muted ms-1">· {{ t('setup.addressOptional') }}</span>
+            </span>
+            <UIcon
+              :name="showAddress ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
+              class="w-4 h-4 text-muted shrink-0"
+            />
+          </button>
+          <div
+            v-if="showAddress"
+            class="space-y-4 px-3 pb-3"
+          >
+            <UFormField :label="t('settings.street')">
+              <UInput
+                v-model="form.street"
+                class="w-full"
+                autocomplete="street-address"
+                :disabled="isLoading"
+              />
+            </UFormField>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <UFormField :label="t('settings.postalCode')">
+                <UInput
+                  v-model="form.postalCode"
+                  class="w-full"
+                  autocomplete="postal-code"
+                  :disabled="isLoading"
+                />
+              </UFormField>
+              <UFormField :label="t('settings.city')">
+                <UInput
+                  v-model="form.city"
+                  class="w-full"
+                  autocomplete="address-level2"
+                  :disabled="isLoading"
+                />
+              </UFormField>
+            </div>
+          </div>
+        </div>
 
         <!-- Derived settings (editable) -->
         <div class="rounded-token-md border border-(--ui-border) overflow-hidden">

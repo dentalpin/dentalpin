@@ -16,13 +16,18 @@ const toast = useToast()
 const route = useRoute()
 const router = useRouter()
 const clinic = useClinic()
-const { appointments, isLoading, fetchAppointments, updateAppointment } = useAppointments()
+const { appointments, isLoading, error: loadError, fetchAppointments, updateAppointment } = useAppointments()
 const { professionals, fetchProfessionals, getProfessionalColor } = useProfessionals()
 const { isMobile } = useBreakpoint()
 
 // Query params for pre-selecting patient from treatment plan flow
 const initialPatientId = ref<string | undefined>(
   typeof route.query.patient_id === 'string' ? route.query.patient_id : undefined
+)
+// Set by the treatment-plan flow: preselect this plan's pending
+// treatments in the create modal (#207).
+const initialPlanId = ref<string | undefined>(
+  typeof route.query.plan_id === 'string' ? route.query.plan_id : undefined
 )
 
 // View mode state
@@ -690,9 +695,26 @@ watch(isMobile, async (mobile) => {
 
     <!-- Calendar -->
     <div class="flex-1 min-h-0 min-w-0">
+      <!-- Load error — never render a blank calendar that reads as a
+           free week (issue #101). The banner replaces the grid until a
+           retry succeeds. -->
+      <UAlert
+        v-if="loadError && !isLoading"
+        icon="i-lucide-triangle-alert"
+        color="error"
+        variant="subtle"
+        :title="t('appointments.loadError')"
+        :actions="[{
+          label: t('common.retry'),
+          color: 'error',
+          variant: 'soft',
+          onClick: () => reloadActiveView()
+        }]"
+      />
+
       <!-- Mobile day view (replaces all desktop views on <md) -->
       <AppointmentMobileDayView
-        v-if="isMobile"
+        v-else-if="isMobile"
         :appointments="filteredAppointments"
         :professionals="professionalsWithColors"
         :cabinets="clinic.cabinets.value"
@@ -765,6 +787,7 @@ watch(isMobile, async (mobile) => {
       :initial-professional-id="initialProfessionalId"
       :initial-cabinet="initialCabinet"
       :initial-patient-id="initialPatientId"
+      :initial-plan-id="initialPlanId"
       :existing-appointments="appointments"
       @saved="handleSaved"
       @cancelled="handleCancelled"

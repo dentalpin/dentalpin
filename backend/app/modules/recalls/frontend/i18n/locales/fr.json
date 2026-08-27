@@ -50,6 +50,10 @@
       "cancelled": "Annulé",
       "needs_review": "À revoir"
     },
+    "confirms": {
+      "cancel": "Annuler le rappel de {name} ? Cette action est irréversible.",
+      "done": "Marquer le rappel de {name} comme terminé ? Il sera clos pour ce cycle."
+    },
     "actions": {
       "call": "Appeler",
       "logAttempt": "Enregistrer la tentative",

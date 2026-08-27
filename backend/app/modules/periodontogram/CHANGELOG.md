@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+- fix(#101): flushPending no longer swallows failures — failed payloads return to the pending buffer, closing the exam aborts with an explanation, and retrying re-flushes.
+
 - feat(#131): German (de) locale for the module's frontend layer.
+- feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
+
 - fix(#184): type-check clean — non-empty tuple cycles for the mobility/prognosis/furcation toggles, explicit central-incisor defaults for the per-position viewBox maps, `?? null` on optional site markers.
 - docs(#183): both event handlers documented as own-session/payload-only, with a note that PR-3's real cleanup should be transactional (ADR 0019).
 - i18n: add Tamil locale (`ta.json`) with full UI coverage.

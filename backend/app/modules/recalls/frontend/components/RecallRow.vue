@@ -78,6 +78,14 @@ async function snooze() {
   }
 }
 
+// Cancel closes the recall permanently and mark-done closes it for the
+// cycle — neither has an undo endpoint, so both confirm first (issue #101).
+const confirmAction = ref<'cancel' | 'done' | null>(null)
+
+const patientName = computed(() =>
+  patient.value ? `${patient.value.first_name} ${patient.value.last_name}` : ''
+)
+
 async function cancelRecall() {
   if (isBusy.value) return
   isBusy.value = true
@@ -97,6 +105,17 @@ async function markDone() {
     emit('changed', res.data)
   } finally {
     isBusy.value = false
+  }
+}
+
+async function runConfirmedAction() {
+  const action = confirmAction.value
+  if (!action) return
+  try {
+    if (action === 'cancel') await cancelRecall()
+    else await markDone()
+  } finally {
+    confirmAction.value = null
   }
 }
 
@@ -213,13 +232,13 @@ async function onAttemptLogged() {
           {
             label: t('recalls.actions.markDone'),
             icon: 'i-lucide-check',
-            onSelect: () => markDone()
+            onSelect: () => { confirmAction = 'done' }
           },
           {
             label: t('recalls.actions.cancel'),
             icon: 'i-lucide-x',
             color: 'error',
-            onSelect: () => cancelRecall()
+            onSelect: () => { confirmAction = 'cancel' }
           }
         ]"
       >
@@ -279,6 +298,43 @@ async function onAttemptLogged() {
             @click="snooze"
           >
             {{ t('recalls.actions.snooze') }}
+          </UButton>
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Cancel / mark-done confirmation: both close the recall with no undo -->
+    <UModal
+      :open="!!confirmAction"
+      :title="confirmAction === 'cancel'
+        ? t('recalls.actions.cancel')
+        : t('recalls.actions.markDone')"
+      @update:open="(v: boolean) => { if (!v) confirmAction = null }"
+    >
+      <template #body>
+        <p class="p-4 text-sm text-default">
+          {{ confirmAction === 'cancel'
+            ? t('recalls.confirms.cancel', { name: patientName })
+            : t('recalls.confirms.done', { name: patientName }) }}
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex justify-end gap-2 p-2">
+          <UButton
+            color="neutral"
+            variant="ghost"
+            @click="confirmAction = null"
+          >
+            {{ t('actions.cancel') }}
+          </UButton>
+          <UButton
+            :color="confirmAction === 'cancel' ? 'error' : 'primary'"
+            :loading="isBusy"
+            @click="runConfirmedAction"
+          >
+            {{ confirmAction === 'cancel'
+              ? t('recalls.actions.cancel')
+              : t('recalls.actions.markDone') }}
           </UButton>
         </div>
       </template>

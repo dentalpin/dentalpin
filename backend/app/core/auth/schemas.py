@@ -242,8 +242,17 @@ class SystemSetup(BaseModel):
     admin_last_name: str = Field(min_length=1, max_length=100)
     admin_email: EmailStr
     admin_password: str = Field(min_length=8)
+    # Whether the admin also attends patients (solo practice) — flips
+    # `is_professional` on the admin membership so the team onboarding
+    # step resolves without a second user.
+    admin_is_professional: bool = False
     clinic_name: str = Field(min_length=1, max_length=200)
     clinic_tax_id: str = Field(min_length=1, max_length=20)
+    # Optional address, same keys as ClinicAddressUpdate — filling street
+    # here completes the "clinic info" onboarding step from the wizard.
+    clinic_street: str | None = Field(default=None, max_length=200)
+    clinic_city: str | None = Field(default=None, max_length=100)
+    clinic_postal_code: str | None = Field(default=None, max_length=20)
     timezone: str | None = Field(default=None, max_length=64)
     currency: str | None = Field(default=None, pattern="^[A-Z]{3}$")
     # ISO-3166 alpha-2. Drives the country preset (tz/currency defaults,

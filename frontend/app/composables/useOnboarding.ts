@@ -67,6 +67,23 @@ export function useOnboarding() {
   )
   const isGuided = computed(() => currentStep.value !== null && isAdmin.value)
 
+  // The bar counts the walk, not the whole checklist: with 4 of 6 steps
+  // already done, entering guided mode reads "Step 1 of 2". `start()`
+  // freezes the pending list so steps resolved along the way keep their
+  // position ("Step 2 of 2", not "Step 1 of 1"). Deep links that bypass
+  // start() fall back to the live pending list plus the current step.
+  const guidedPlan = useState<string[]>('onboarding:guided-plan', () => [])
+  const guidedProgress = computed(() => {
+    const id = currentStepId.value
+    if (!id) return { current: 0, total: 0 }
+    const plan = guidedPlan.value.includes(id)
+      ? guidedPlan.value
+      : required.value
+          .filter(s => (!s.resolved && !s.skipped) || s.id === id)
+          .map(s => s.id)
+    return { current: plan.indexOf(id) + 1, total: plan.length }
+  })
+
   function stepRoute(step: GettingStartedItem): string {
     const sep = step.to.includes('?') ? '&' : '?'
     return `${step.to}${sep}onboarding=${encodeURIComponent(step.id)}`
@@ -83,13 +100,16 @@ export function useOnboarding() {
 
   async function start(): Promise<void> {
     const first = nextPending(null)
-    if (first) await navigateTo(stepRoute(first))
+    if (!first) return
+    guidedPlan.value = pendingRequired.value.map(s => s.id)
+    await navigateTo(stepRoute(first))
   }
 
   async function next(): Promise<boolean> {
     await refresh(true)
     const step = nextPending(currentStepId.value)
     if (!step) {
+      guidedPlan.value = []
       await navigateTo('/')
       return false
     }
@@ -98,6 +118,7 @@ export function useOnboarding() {
   }
 
   async function exit(): Promise<void> {
+    guidedPlan.value = []
     await navigateTo({ path: route.path, query: { ...route.query, onboarding: undefined } })
   }
 
@@ -126,6 +147,7 @@ export function useOnboarding() {
     currentStep,
     currentStepId,
     currentIndex,
+    guidedProgress,
     stepRoute,
     start,
     next,

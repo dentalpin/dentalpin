@@ -148,20 +148,21 @@ async function handleSubmit(
   if (!patientId.value) return
   saving.value = true
   try {
-    if (editingId.value) {
-      await updateNote(editingId.value, payload.body)
-    } else {
-      // Quick action only creates administrative notes — diagnosis /
-      // treatment / treatment_plan notes are written from their own
-      // surfaces (diagnosis sidebar, treatment row, plan timeline).
-      await createNote({
-        note_type: 'administrative',
-        owner_type: 'patient',
-        owner_id: patientId.value,
-        body: payload.body,
-        attachment_document_ids: payload.attachmentDocumentIds
-      })
-    }
+    // Quick action only creates administrative notes — diagnosis /
+    // treatment / treatment_plan notes are written from their own
+    // surfaces (diagnosis sidebar, treatment row, plan timeline).
+    // The composable toasts on failure and returns null — keep the
+    // composer open with the draft intact so the user can retry.
+    const saved = editingId.value
+      ? await updateNote(editingId.value, payload.body)
+      : await createNote({
+          note_type: 'administrative',
+          owner_type: 'patient',
+          owner_id: patientId.value,
+          body: payload.body,
+          attachment_document_ids: payload.attachmentDocumentIds
+        })
+    if (!saved) return
     composerOpen.value = false
     editingId.value = null
     composerBody.value = ''

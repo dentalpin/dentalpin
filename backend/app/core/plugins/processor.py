@@ -341,12 +341,28 @@ class PendingProcessor:
     async def _dump_tables(self, module_name: str, tables: list[str]) -> Path | None:
         if not tables:
             return None
+
+        # Ask Postgres which of the module's tables still exist (#298).
+        # This replaces the brittle stderr-string check: a table may be
+        # gone because a crash or earlier downgrade already removed it;
+        # dumping only survivors avoids pg_dump exit-1 and preserves a
+        # partial backup instead of skipping it entirely.
+        present = await self._existing_tables(tables)
+        remaining = [t for t in tables if t in present]
+        if not remaining:
+            logger.warning(
+                "No tables to back up for module %s (%s); skipping backup",
+                module_name,
+                ", ".join(tables),
+            )
+            return None
+
         BACKUP_ROOT.mkdir(parents=True, exist_ok=True)
         timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
         target = BACKUP_ROOT / f"module_{module_name}_{timestamp}.sql"
 
         args = ["pg_dump", "--data-only", "--no-owner", _pg_dump_dsn(settings.DATABASE_URL)]
-        for table in tables:
+        for table in remaining:
             args.extend(["--table", table])
 
         try:
@@ -357,18 +373,6 @@ class PendingProcessor:
         except subprocess.CalledProcessError as exc:
             target.unlink(missing_ok=True)
             stderr = (exc.stderr or b"").decode(errors="replace")
-            if "no matching tables were found" in stderr:
-                # The tables never materialized or are already gone (e.g. a
-                # crash between downgrade and backup). With removals ordered
-                # dependents-first (#286) this is a genuinely-empty backup,
-                # not silent data loss — skip it instead of stranding the
-                # record in to_remove.
-                logger.warning(
-                    "No tables to back up for module %s (%s); skipping backup",
-                    module_name,
-                    ", ".join(tables),
-                )
-                return None
             raise RuntimeError(
                 f"pg_dump failed backing up module {module_name}: {stderr.strip()}"
             ) from exc
@@ -389,6 +393,25 @@ class PendingProcessor:
             target.unlink(missing_ok=True)
             raise RuntimeError(f"pg_dump produced an empty backup for module {module_name}")
         return target
+
+    async def _existing_tables(self, tables: list[str]) -> set[str]:
+        """Return the subset of *tables* that exist in the database.
+
+        Uses the asyncpg inspector — the driver the app already ships —
+        instead of parsing pg_dump stderr (#298).  The query hits
+        ``information_schema.tables`` scoped to the public schema.
+        """
+        from sqlalchemy import text as sa_text
+
+        async with self._session_factory() as session:
+            result = await session.execute(
+                sa_text(
+                    "SELECT table_name FROM information_schema.tables "
+                    "WHERE table_schema = 'public' AND table_name = ANY(:names)"
+                ),
+                {"names": list(tables)},
+            )
+            return {row[0] for row in result.all()}
 
     # --- Error book-keeping --------------------------------------------
 

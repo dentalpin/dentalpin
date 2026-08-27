@@ -108,7 +108,7 @@ class BudgetWorkflowService:
         db: AsyncSession,
         budget: Budget,
         sent_by: UUID,
-        send_method: str = "manual",  # "manual" or "email"
+        send_method: str = "manual",  # "manual" | "email" | "whatsapp"
         recipient_email: str | None = None,
         custom_message: str | None = None,
     ) -> Budget:
@@ -118,9 +118,16 @@ class BudgetWorkflowService:
             db: Database session.
             budget: Budget to send.
             sent_by: User ID who triggered the send.
-            send_method: How it was sent ("manual" for printed/handed, "email" for email).
+            send_method: How it was sent ("manual" for printed/handed,
+                "email" / "whatsapp" for a gateway send on that channel).
+                WhatsApp follows the exact email path: status ``sent``,
+                the existing ``public_token`` link, and ``budget.sent``
+                published with ``send_method=whatsapp`` so the
+                notifications module queues the message (issue #287).
             recipient_email: Email address if sent by email.
         """
+        if send_method not in ("manual", "email", "whatsapp"):
+            raise BudgetWorkflowError(f"Invalid send_method '{send_method}'")
         if not BudgetWorkflowService.can_transition(budget.status, "sent"):
             raise BudgetWorkflowError(f"Cannot send budget from status '{budget.status}'")
 
@@ -632,8 +639,10 @@ class BudgetWorkflowService:
     ) -> Budget:
         """Stamp a reminder dispatch and publish ``budget.reminder_sent``.
 
-        Does not actually send the email — the notifications module
-        subscribes to the event and renders the message.
+        Does not put anything on the wire itself — the notifications
+        module subscribes to the event and queues the message through
+        the gateway (transactional, so ``db=db`` is offered to the
+        subscriber; the outbox tick owns the network I/O).
         """
         budget.last_reminder_sent_at = datetime.now(UTC)
         await db.flush()
@@ -649,6 +658,7 @@ class BudgetWorkflowService:
                 "milestone_days": milestone_days,
                 "sent_at": budget.last_reminder_sent_at.isoformat(),
             },
+            db=db,
         )
         return budget
 

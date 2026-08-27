@@ -79,6 +79,23 @@ const showDelete = ref(false)
 const isDeleting = ref(false)
 const toDelete = ref<ClinicUser | null>(null)
 
+// Guided team step: solo practices are the common case, so offer the
+// "I attend patients myself" flip inline instead of hiding it behind
+// pencil → edit user → toggle. Only while onboarding points here and
+// the admin isn't a professional yet.
+const route = useRoute()
+const selfUser = computed(() => users.value.find(u => isCurrentUser(u.id)) ?? null)
+const showSoloPrompt = computed(() =>
+  !!route.query.onboarding && !!selfUser.value && !selfUser.value.is_professional
+)
+const isMarkingSelf = ref(false)
+async function markSelfProfessional(value: boolean) {
+  if (!value || !selfUser.value || isMarkingSelf.value) return
+  isMarkingSelf.value = true
+  await updateUser(selfUser.value.id, { is_professional: true })
+  isMarkingSelf.value = false
+}
+
 onMounted(() => {
   if (isAdmin.value) fetchUsers()
 })
@@ -175,6 +192,30 @@ async function handleDelete() {
         {{ t('settings.newUser') }}
       </UButton>
     </template>
+
+    <div
+      v-if="showSoloPrompt"
+      class="alert-surface-info rounded-token-md px-3 py-2.5 mb-4 flex items-center gap-3"
+    >
+      <UIcon
+        name="i-lucide-stethoscope"
+        class="w-4 h-4 shrink-0"
+      />
+      <div class="min-w-0 flex-1">
+        <p class="text-body text-default">
+          {{ t('setup.attendPatientsMyself') }}
+        </p>
+        <p class="text-caption text-muted">
+          {{ t('setup.attendPatientsMyselfHelp') }}
+        </p>
+      </div>
+      <USwitch
+        :model-value="false"
+        :disabled="isMarkingSelf"
+        :aria-label="t('setup.attendPatientsMyself')"
+        @update:model-value="markSelfProfessional"
+      />
+    </div>
 
     <div
       v-if="isLoading"

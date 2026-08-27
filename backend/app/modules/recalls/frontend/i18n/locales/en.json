@@ -50,6 +50,10 @@
       "cancelled": "Cancelled",
       "needs_review": "Needs review"
     },
+    "confirms": {
+      "cancel": "Cancel the recall for {name}? This cannot be undone.",
+      "done": "Mark the recall for {name} as done? This closes it for this cycle."
+    },
     "actions": {
       "call": "Call",
       "logAttempt": "Log attempt",

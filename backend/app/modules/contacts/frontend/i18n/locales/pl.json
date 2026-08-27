@@ -1,0 +1,24 @@
+{
+  "contacts": {
+    "title": "Kontakty",
+    "add": "Dodaj kontakt",
+    "edit": "Edytuj kontakt",
+    "delete": "Usuń kontakt",
+    "deleteConfirm": "Dezaktywować „{name}”? Kontakt zniknie z katalogu, ale pozostanie powiązany z historycznymi zapisami.",
+    "name": "Nazwa",
+    "type": "Typ",
+    "phone": "Telefon",
+    "email": "E-mail",
+    "address": "Adres",
+    "notes": "Notatki",
+    "search": "Szukaj kontaktów",
+    "filterByType": "Filtruj wg typu",
+    "allTypes": "Wszystkie typy",
+    "types": {
+      "lab": "Laboratorium",
+      "supplier": "Dostawca",
+      "other": "Inny",
+      "delegate": "Przedstawiciel"
+    }
+  }
+}

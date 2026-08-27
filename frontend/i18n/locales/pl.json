@@ -96,7 +96,11 @@
     "derivedSettings": "Strefa czasowa i waluta",
     "willSeed": "Utworzymy dla Ciebie katalog zabiegów, stawki VAT, serię faktur, jeden gabinet zabiegowy i grafik od poniedziałku do piątku. Wszystko można później zmienić.",
     "willSuggestVerifactu": "Następnie zaproponujemy włączenie VeriFactu.",
-    "invalidData": "Sprawdź dane: któreś pole jest nieprawidłowe."
+    "invalidData": "Sprawdź dane: któreś pole jest nieprawidłowe.",
+    "attendPatientsMyself": "Sam przyjmuję pacjentów",
+    "attendPatientsMyselfHelp": "Oznacza Cię jako specjalistę z możliwością rezerwacji wizyt. Można to później zmienić w ustawieniach zespołu.",
+    "addressTitle": "Adres gabinetu",
+    "addressOptional": "opcjonalnie"
   },
   "onboarding": {
     "title": "Pierwsze kroki",
@@ -629,7 +633,8 @@
       "status": {
         "existing": "Istniejący",
         "planned": "Zaplanowany"
-      }
+      },
+      "deleteConfirm": "Usunąć {name} (ząb {tooth})? Tej operacji nie można cofnąć."
     },
     "position": {
       "displaced": "Przemieszczony",
@@ -806,7 +811,8 @@
         "title": "Plan zablokowany",
         "subtitle": "Kosztorys {number} został wystawiony. Aby edytować zabiegi, użyj opcji Otwórz ponownie (jeśli oczekuje) lub renegocjuj kosztorys.",
         "viewBudget": "Zobacz kosztorys"
-      }
+      },
+      "removeItemConfirm": "Usunąć {name} z tego planu? Tej operacji nie można cofnąć."
     },
     "tooth": "Ząb"
   },
@@ -959,6 +965,11 @@
       "professionalOff": "Poza godzinami pracy",
       "onBreak": "Na przerwie"
     },
+    "sendMessage": "Wyślij wiadomość",
+    "resendConfirmationVia": "Wyślij potwierdzenie ponownie ({channel})",
+    "sendReminderVia": "Wyślij przypomnienie ({channel})",
+    "sendCancellationVia": "Wyślij powiadomienie o odwołaniu ({channel})",
+    "loadError": "Nie udało się wczytać wizyt",
     "planAwaitingBudget": "Kosztorys oczekuje na akceptację"
   },
   "dashboard": {
@@ -1604,7 +1615,8 @@
     "loadDefaults": "Wczytaj domyślny katalog",
     "loadDefaultsHint": "Stawki VAT, kategorie i referencyjne zabiegi dla kraju gabinetu. Dodawane są tylko brakujące pozycje.",
     "defaultsLoaded": "Katalog wczytany: {categories} kategorii, {items} zabiegów, {vat_types} stawek VAT",
-    "defaultsFailed": "Nie udało się wczytać domyślnego katalogu"
+    "defaultsFailed": "Nie udało się wczytać domyślnego katalogu",
+    "loadError": "Nie udało się wczytać katalogu zabiegów"
   },
   "placeholders": {
     "selectRole": "Wybierz rolę..."
@@ -1863,6 +1875,12 @@
     "newBudgetHint": {
       "text": "Ten pacjent ma plan {plan} bez kosztorysu. Wygeneruj kosztorys z planu, aby pozostały powiązane.",
       "cta": "Otwórz plan"
+    },
+    "viewDraftBudget": "Kosztorys {number} (szkic)",
+    "followup": {
+      "subtitle": "Te zaplanowane leczenia z wizyty nie zostały oznaczone jako wykonane:",
+      "markPerformed": "Oznacz jako wykonane",
+      "marked": "Oznaczono jako wykonane: {count}."
     }
   },
   "pipeline": {
@@ -2026,7 +2044,8 @@
       "representative": "Pełnomocnik",
       "accept": "Akceptuję warunki kosztorysu",
       "signHere": "Podpisz tutaj",
-      "clear": "Wyczyść podpis"
+      "clear": "Wyczyść podpis",
+      "loadError": "Nie udało się wczytać stanu podpisu"
     },
     "history": {
       "title": "Historia zmian",
@@ -2062,15 +2081,18 @@
       "deleteDescription": "Tej operacji nie można cofnąć."
     },
     "send": {
-      "description": "Możesz wysłać kosztorys e-mailem lub oznaczyć jako przekazany ręcznie (wydrukowany lub wręczony).",
+      "description": "Możesz wysłać kosztorys e-mailem lub przez WhatsApp, albo oznaczyć jako przekazany ręcznie (wydrukowany lub wręczony).",
       "sendByEmail": "Wyślij e-mailem",
       "willSendTo": "Zostanie wysłany do",
       "noPatientEmail": "Pacjent nie ma zarejestrowanego e-maila",
       "customMessage": "Własna wiadomość (opcjonalnie)",
       "customMessagePlaceholder": "Dodaj wiadomość dla pacjenta...",
-      "manualNote": "Kosztorys zostanie oznaczony jako wysłany bez wysyłania e-maila.",
+      "manualNote": "Kosztorys zostanie oznaczony jako wysłany bez wysyłania wiadomości.",
       "sendEmail": "Wyślij e-mail",
-      "markAsSent": "Oznacz jako wysłany"
+      "markAsSent": "Oznacz jako wysłany",
+      "sendByWhatsapp": "Wyślij przez WhatsApp",
+      "sendWhatsapp": "Wyślij WhatsApp",
+      "willSendToPhone": "Zostanie wysłany przez WhatsApp do"
     },
     "messages": {
       "created": "Kosztorys utworzony",
@@ -2088,7 +2110,8 @@
       "itemUpdated": "Zabieg zaktualizowany",
       "itemRemoved": "Zabieg usunięty",
       "treatmentStarted": "Leczenie rozpoczęte",
-      "treatmentCompleted": "Leczenie zakończone"
+      "treatmentCompleted": "Leczenie zakończone",
+      "sentByWhatsapp": "Kosztorys wysłany przez WhatsApp"
     },
     "errors": {
       "load": "Błąd podczas wczytywania kosztorysów",
@@ -2154,10 +2177,10 @@
     "publicLink": {
       "action": "Udostępnij link",
       "title": "Link dla pacjenta",
-      "help": "Skopiuj ten link i udostępnij pacjentowi przez WhatsApp, SMS lub e-mail. Przed wyświetleniem kosztorysu zostanie poproszony o jedną daną weryfikacyjną.",
+      "help": "Skopiuj ten link i udostępnij pacjentowi przez WhatsApp lub e-mail. Przed wyświetleniem kosztorysu zostanie poproszony o jedną daną weryfikacyjną.",
       "copy": "Kopiuj link",
       "copied": "Skopiowano!",
-      "whatsapp": "Wyślij przez WhatsApp",
+      "whatsapp": "Otwórz w WhatsApp",
       "whatsappNoPhone": "Pacjent nie ma telefonu w kartotece",
       "whatsappGreeting": "Cześć {name}, oto Twój kosztorys:",
       "whatsappGreetingFallback": "Dzień dobry, oto Twój kosztorys:",
@@ -2276,10 +2299,10 @@
     "communications": {
       "language": {
         "cardTitle": "Język komunikacji",
-        "cardDescription": "Język widoku kosztorysu dla pacjenta, e-maili i SMS-ów.",
+        "cardDescription": "Język widoku kosztorysu dla pacjenta, e-maili i wiadomości WhatsApp.",
         "title": "Język komunikacji z pacjentami",
         "label": "Język",
-        "help": "Dotyczy widoku kosztorysu dla pacjenta oraz automatycznych szablonów e-mail/SMS. Interfejs zespołu zachowuje język każdego użytkownika.",
+        "help": "Dotyczy widoku kosztorysu dla pacjenta oraz automatycznych szablonów e-mail/WhatsApp. Interfejs zespołu zachowuje język każdego użytkownika.",
         "save": "Zapisz",
         "saved": "Język zapisany"
       }
@@ -2319,7 +2342,13 @@
       "budget_accepted": "Kosztorys zaakceptowany",
       "budget_accepted_desc": "E-mail z potwierdzeniem akceptacji kosztorysu",
       "welcome": "Powitanie",
-      "welcome_desc": "E-mail powitalny dla nowych pacjentów"
+      "welcome_desc": "E-mail powitalny dla nowych pacjentów",
+      "invoice_sent": "Wysyłka faktury",
+      "invoice_sent_desc": "Wiadomość z fakturą przy jej wysyłce do pacjenta",
+      "budget_reminder": "Przypomnienie o kosztorysie",
+      "budget_reminder_desc": "Ponaglenie dla kosztorysów bez odpowiedzi (7 i 14 dni)",
+      "recall_reminder": "Przypomnienie o wizycie kontrolnej",
+      "recall_reminder_desc": "Przypomnienie o umówieniu okresowej wizyty kontrolnej"
     },
     "sendConfirmation": "Wyślij potwierdzenie",
     "sendReminder": "Wyślij przypomnienie",
@@ -2373,6 +2402,27 @@
     "onboarding": {
       "label": "Wysyłka e-maili",
       "description": "Ustaw nadawcę, aby wysyłać potwierdzenia wizyt i kosztorysy."
+    },
+    "channels": {
+      "cardTitle": "Kanały",
+      "cardDescription": "Jak klinika kontaktuje się z pacjentami: kanał automatycznych wiadomości i przyciski wysyłki widoczne dla personelu.",
+      "preferredLabel": "Preferowany kanał",
+      "preferredHelp": "Używany do automatycznych wiadomości (nowa wizyta, przypomnienie, powitanie…).",
+      "fallbackLabel": "Użyj drugiego kanału awaryjnie",
+      "fallbackHelp": "Jeśli preferowany kanał nie może wysłać wiadomości, próbujemy drugiego dostępnego kanału zamiast ją pominąć.",
+      "manualLabel": "Pokaż przycisk wysyłki dla…",
+      "manualHelp": "Jakie przyciski wysyłki widzi recepcja przy wizytach, kosztorysach i fakturach.",
+      "manualAtLeastOne": "Wybierz co najmniej jeden kanał.",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp",
+      "whatsappUnavailableHint": "WhatsApp będzie dostępny po podłączeniu numeru kliniki.",
+      "whatsappConnect": "Połącz WhatsApp (Kapso)",
+      "noEmail": "Pacjent nie ma e-maila w kartotece",
+      "noPhone": "Pacjent nie ma telefonu w kartotece"
+    },
+    "channelSent": {
+      "email": "E-mail wysłany pomyślnie",
+      "whatsapp": "Wiadomość WhatsApp wysłana pomyślnie"
     }
   },
   "invoice": {
@@ -2642,20 +2692,24 @@
       "itemUpdated": "Pozycja zaktualizowana",
       "sentByEmail": "Faktura wysłana e-mailem",
       "sentManually": "Faktura oznaczona jako wysłana",
+      "sentByWhatsapp": "Faktura wysłana przez WhatsApp",
       "creditNoteCreated": "Utworzono fakturę korygującą",
       "paymentRecorded": "Płatność zarejestrowana"
     },
     "send": {
       "title": "Wyślij fakturę",
-      "description": "Możesz wysłać fakturę e-mailem lub oznaczyć jako przekazaną ręcznie (wydrukowaną lub wręczoną osobiście).",
+      "description": "Możesz wysłać fakturę e-mailem lub przez WhatsApp, albo oznaczyć jako przekazaną ręcznie (wydrukowaną lub wręczoną osobiście).",
       "sendByEmail": "Wyślij e-mailem",
       "willSendTo": "Zostanie wysłana do",
       "noPatientEmail": "Pacjent nie ma adresu e-mail",
       "customMessage": "Własna wiadomość (opcjonalnie)",
       "customMessagePlaceholder": "Dodaj wiadomość dla pacjenta...",
-      "manualNote": "Faktura zostanie oznaczona jako wysłana bez wysyłania e-maila.",
+      "manualNote": "Faktura zostanie oznaczona jako wysłana bez wysyłania wiadomości.",
       "sendEmail": "Wyślij e-mail",
-      "markAsSent": "Oznacz jako wysłaną"
+      "markAsSent": "Oznacz jako wysłaną",
+      "sendByWhatsapp": "Wyślij przez WhatsApp",
+      "sendWhatsapp": "Wyślij WhatsApp",
+      "willSendToPhone": "Zostanie wysłana przez WhatsApp do"
     },
     "errors": {
       "load": "Błąd podczas wczytywania faktur",
@@ -2878,7 +2932,8 @@
         "title": "Brak danych dla tego okresu",
         "desc": "Spróbuj szerszego zakresu dat lub usuń filtry."
       }
-    }
+    },
+    "loadError": "Nie udało się wczytać danych raportu"
   },
   "invoiceSeries": {
     "title": "Serie faktur",

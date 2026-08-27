@@ -1,0 +1,36 @@
+{
+  "medicalReference": {
+    "settingsLabel": "Medyczne listy referencyjne",
+    "settingsDescription": "Zarządzaj listami alergii, leków i chorób używanymi w kartotekach pacjentów.",
+    "title": "Medyczne listy referencyjne",
+    "description": "Te listy zasilają przeszukiwalne listy rozwijane w historii medycznej pacjenta. Dezaktywacja pozycji usuwa ją z przyszłych wyszukiwań bez wpływu na istniejące kartoteki pacjentów.",
+    "tabs": {
+      "allergies": "Alergie",
+      "medications": "Leki",
+      "diseases": "Choroby",
+      "surgeries": "Operacje",
+      "interactions": "Interakcje",
+      "contraindications": "Przeciwwskazania"
+    },
+    "name": "Nazwa",
+    "status": "Status",
+    "active": "Aktywna",
+    "inactive": "Nieaktywna",
+    "showInactive": "Pokaż nieaktywne",
+    "newItemPlaceholder": "Nazwa nowej pozycji…",
+    "addSuccess": "Dodano",
+    "addError": "Nie udało się dodać pozycji",
+    "updateError": "Nie udało się zaktualizować pozycji",
+    "deactivate": "Dezaktywuj",
+    "deactivateError": "Nie udało się dezaktywować pozycji",
+    "itemCount": "Pozycje: {count}",
+    "medicationA": "Lek A",
+    "medicationB": "Lek B",
+    "riskNote": "Ryzyko",
+    "riskNotePlaceholder": "Opisz ryzyko…",
+    "flags": {
+      "interaction": "Interakcja {a} + {b}",
+      "contraindication": "{a}: przeciwwskazane w połączeniu z {b}"
+    }
+  }
+}

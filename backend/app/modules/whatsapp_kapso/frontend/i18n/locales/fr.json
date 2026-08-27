@@ -33,6 +33,21 @@
     "saved": "Paramètres enregistrés",
     "saveError": "Impossible d'enregistrer",
     "synced": "{n} modèles synchronisés",
-    "syncError": "Impossible de synchroniser"
+    "syncError": "Impossible de synchroniser",
+    "types": {
+      "appointment_confirmation": "Confirmation de rendez-vous",
+      "appointment_reminder": "Rappel de rendez-vous",
+      "appointment_cancelled": "Annulation de rendez-vous",
+      "budget_sent": "Devis envoyé",
+      "budget_accepted": "Devis accepté",
+      "budget_reminder": "Rappel de devis",
+      "invoice_sent": "Facture envoyée",
+      "recall_reminder": "Rappel de suivi",
+      "welcome": "Bienvenue"
+    },
+    "onboarding": {
+      "label": "Envoi WhatsApp",
+      "description": "WhatsApp est le canal préféré de la clinique mais Kapso n'est pas encore connecté. Connectez-le pour que les messages automatiques puissent partir."
+    }
   }
 }

@@ -19,10 +19,10 @@ Goal: a clinic that is **operative right after `/setup`** and a **guided "gettin
 
 ### 1. `/setup` (pre-login, guest layout)
 
-Two steps, language switcher in the header (changes the wizard language on the fly).
+Two steps, language switcher in the header (changes the wizard language on the fly). Until the admin touches that switcher, the wizard language follows the selected country's preset — a browser defaulting to en-US no longer leaves a Spanish clinic in English after picking España.
 
-1. **Administrator account** — first/last name, email, password ×2 (8+ chars, letter + digit; mirrored server-side).
-2. **Clinic** — clinic name, **country** (searchable; guessed from browser timezone, then locale), tax id (label / placeholder from the country preset; Spain gets a non-blocking NIF/CIF checksum warning and a blocking format check), a collapsible "Timezone and currency" block pre-filled from the preset (opened automatically for countries without a preset), and an info line listing what will be created for them.
+1. **Administrator account** — first/last name, email, password ×2 (8+ chars, letter + digit; mirrored server-side), and an **"I attend patients myself"** switch (on by default — solo practices are the common case) that flips `is_professional` on the admin membership so the *Team* step resolves without a second user.
+2. **Clinic** — clinic name, **country** (searchable; guessed from browser timezone, then locale), tax id (label / placeholder from the country preset; Spain gets a non-blocking NIF/CIF checksum warning and a blocking format check), a collapsible **"Clinic address"** block (street, postal code, city — optional, but filling the street completes the *Clinic info* step right from the wizard), a collapsible "Timezone and currency" block pre-filled from the preset (opened automatically for countries without a preset), and an info line listing what will be created for them.
 
 Submit → `POST /api/v1/auth/setup` → auto-login → `/`.
 
@@ -41,7 +41,7 @@ A failing seed never fails setup; the card shows the gap.
 
 ### 3. Dashboard card "Puesta en marcha" (admins)
 
-Full-width card on the dashboard hero row. Progress bar over the **required** steps; each pending step has *Configurar* (opens an inline mini-modal when the rule provides one, else the real settings page in guided mode) and *Omitir*. Optional steps sit in a collapsible group. *Ocultar* dismisses for the whole clinic; when the last required step resolves the card marks the clinic complete (toast) and hides itself.
+Full-width card on the dashboard hero row. Progress bar over the **required** steps; each pending step has *Configurar* (opens an inline mini-modal when the rule provides one, else the real settings page in guided mode) and *Omitir*. Optional steps sit in a collapsible group. *Ocultar* dismisses for the whole clinic; when the last required step resolves the card marks the clinic complete (toast) and collapses to a compact "done" row (100 % bar, one line, the optional group and a *Cerrar* button) instead of lingering full-height until the next navigation.
 
 Rules (owner → data):
 
@@ -59,7 +59,7 @@ Rules (owner → data):
 
 ### 4. Guided mode
 
-*Modo guiado* opens the first pending step's page with `?onboarding=<ruleId>`. A sticky bar under the header shows "Paso N de M · `<step>`" with *Salir* and *Siguiente / Finalizar*; *Siguiente* re-checks the data and jumps to the next pending step, the last one returns to `/`. Query flag over composable state: survives reloads, deep-linkable, nothing to sync.
+*Modo guiado* opens the first pending step's page with `?onboarding=<ruleId>`. A sticky bar under the header shows "Paso N de M · `<step>`" with *Salir* and *Siguiente / Finalizar*; *Siguiente* re-checks the data and jumps to the next pending step, the last one returns to `/`. Query flag over composable state: survives reloads, deep-linkable, nothing to sync. The counter counts the **walk**, not the whole checklist: with 4 of 6 steps done, entering guided mode reads "Paso 1 de 2" (the pending list is frozen at start so a step resolved along the way keeps its position). Two target pages adapt to the flag: `/settings/general/clinic` mounts the edit form directly (guided mode exists to *fill in* data, not to read it), and the users page shows an inline "I attend patients myself" switch above the list while the admin isn't a professional yet.
 
 ### 5. Team invite links
 

@@ -1,0 +1,38 @@
+{
+  "whatsapp_kapso": {
+    "settings": {
+      "title": "WhatsApp (Kapso)",
+      "description": "Collega il numero WhatsApp dello studio tramite Kapso per inviare e ricevere messaggi."
+    },
+    "connection": "Connessione",
+    "verified": "Verificato",
+    "notVerified": "Non verificato",
+    "apiKey": "Chiave API Kapso",
+    "phoneNumberId": "Phone number ID",
+    "businessAccountId": "Business account ID",
+    "businessAccountHelp": "Necessario per sincronizzare i modelli approvati.",
+    "displayPhone": "Numero visualizzato",
+    "webhookSecret": "Secret del webhook",
+    "secretStored": "Salvato. Lascia vuoto per non modificarlo.",
+    "webhook": "Webhook",
+    "webhookHelp": "Incolla questo URL nelle impostazioni webhook di Kapso per ricevere stati e risposte.",
+    "copy": "Copia",
+    "copied": "URL copiato",
+    "templates": "Modelli",
+    "sync": "Sincronizza",
+    "noTemplates": "Nessun modello approvato. Sincronizza per recuperarli da Kapso.",
+    "notificationType": "Tipo di notifica",
+    "template": "Modello",
+    "map": "Associa",
+    "mapped": "Modello associato",
+    "mapError": "Impossibile associare il modello",
+    "test": "Invio di prova",
+    "sendTest": "Invia prova",
+    "testOk": "Messaggio di prova inviato",
+    "testFail": "Invio della prova non riuscito",
+    "saved": "Impostazioni salvate",
+    "saveError": "Impossibile salvare",
+    "synced": "Sincronizzati {n} modelli",
+    "syncError": "Impossibile sincronizzare"
+  }
+}

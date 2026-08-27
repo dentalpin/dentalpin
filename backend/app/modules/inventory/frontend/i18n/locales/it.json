@@ -1,0 +1,35 @@
+{
+  "inventory": {
+    "title": "Magazzino",
+    "add": "Aggiungi articolo",
+    "edit": "Modifica articolo",
+    "item": "Articolo",
+    "category": "Categoria",
+    "unit": "Unità",
+    "stock": "Giacenza",
+    "minimum": "Minimo",
+    "notes": "Note",
+    "status": "Stato",
+    "ok": "OK",
+    "low": "Bassa",
+    "filterByCategory": "Filtra per categoria",
+    "lowStockOnly": "Solo scorte basse",
+    "increment": "Aumenta giacenza",
+    "decrement": "Riduci giacenza",
+    "delete": "Elimina",
+    "deleteTitle": "Elimina articolo",
+    "deleteMessage": "Eliminare questo articolo di magazzino? L'operazione non può essere annullata.",
+    "allCategories": "Tutte le categorie",
+    "adjustBy": "Modifica di…",
+    "apply": "Applica",
+    "categories": {
+      "consumables": "Materiali di consumo",
+      "equipment": "Attrezzatura",
+      "office": "Ufficio",
+      "other": "Altro"
+    }
+  },
+  "nav": {
+    "inventory": "Magazzino"
+  }
+}

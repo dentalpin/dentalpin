@@ -446,10 +446,23 @@ class BudgetListResponse(BaseModel):
 
 
 class BudgetSendRequest(BaseModel):
-    """Schema for sending a budget to patient."""
+    """Schema for sending a budget to patient.
 
-    send_email: bool = False
+    ``send_method`` picks the wire: ``manual`` (printed/handed — no
+    message), ``email`` or ``whatsapp`` (gateway send on that channel).
+    The legacy ``send_email`` flag is honoured when ``send_method`` is
+    omitted so older clients keep working.
+    """
+
+    send_method: Literal["manual", "email", "whatsapp"] | None = None
+    send_email: bool = False  # legacy client flag
     custom_message: str | None = None
+
+    @property
+    def resolved_send_method(self) -> str:
+        if self.send_method is not None:
+            return self.send_method
+        return "email" if self.send_email else "manual"
 
 
 class BudgetAcceptRequest(BaseModel):

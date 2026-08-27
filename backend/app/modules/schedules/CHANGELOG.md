@@ -3,6 +3,7 @@
 ## Unreleased
 
 - feat(#131): German (de) locale for the module's frontend layer.
+- feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
 - docs(#91): `events.py` header states the real contract — handlers are only subscribed while the module is installed.
 - fix(#184): type-check clean — `useProfessionalHours` re-exports `Shift`/`WeekdayShifts`, override forms keep `reason` as a string and normalise to `null` on submit, shift edits guard the indexed row.
 - docs(#183): `on_clinic_created` documented as own-session (published after setup commits); the appointment handlers are payload-only logging.

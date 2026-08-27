@@ -1,0 +1,36 @@
+{
+  "medicalReference": {
+    "settingsLabel": "Liste di riferimento mediche",
+    "settingsDescription": "Gestisci le liste di allergie, farmaci e malattie usate nelle cartelle dei pazienti.",
+    "title": "Liste di riferimento mediche",
+    "description": "Queste liste alimentano i menu a tendina con ricerca nell'anamnesi del paziente. Disattivare una voce la rimuove dalle ricerche future senza incidere sulle cartelle esistenti dei pazienti.",
+    "tabs": {
+      "allergies": "Allergie",
+      "medications": "Farmaci",
+      "diseases": "Malattie",
+      "surgeries": "Interventi chirurgici",
+      "interactions": "Interazioni",
+      "contraindications": "Controindicazioni"
+    },
+    "name": "Nome",
+    "status": "Stato",
+    "active": "Attiva",
+    "inactive": "Inattiva",
+    "showInactive": "Mostra inattive",
+    "newItemPlaceholder": "Nome della nuova voce…",
+    "addSuccess": "Aggiunta",
+    "addError": "Impossibile aggiungere la voce",
+    "updateError": "Impossibile aggiornare la voce",
+    "deactivate": "Disattiva",
+    "deactivateError": "Impossibile disattivare la voce",
+    "itemCount": "{count} voci",
+    "medicationA": "Farmaco A",
+    "medicationB": "Farmaco B",
+    "riskNote": "Rischio",
+    "riskNotePlaceholder": "Descrivi il rischio…",
+    "flags": {
+      "interaction": "Interazione {a} + {b}",
+      "contraindication": "{a}: controindicato con {b}"
+    }
+  }
+}

@@ -104,7 +104,10 @@ async def process_appointment_reminders() -> None:
                         select(Patient).where(Patient.id == appointment.patient_id)
                     )
                     patient = result.scalar_one_or_none()
-                    if not patient or not patient.email:
+                    # Skip only patients with no contact at all — the gateway
+                    # resolves email vs phone from the clinic's preferred
+                    # channel (issue #287 bug 3).
+                    if not patient or not (patient.email or patient.phone):
                         reminders_skipped += 1
                         continue
 
@@ -140,7 +143,6 @@ async def process_appointment_reminders() -> None:
                         notification_type="appointment_reminder",
                         context=context,
                         patient_id=patient.id,
-                        to_address=patient.email,
                         triggered_by_event="scheduler.appointment_reminder",
                         force_send=True,  # Skip preference check (already checked auto_send)
                         dedup_key=f"appointment_reminder:{appointment.id}",
@@ -151,7 +153,8 @@ async def process_appointment_reminders() -> None:
                     else:
                         reminders_sent += 1
                         logger.info(
-                            f"Queued reminder for appointment {appointment.id} to {patient.email}"
+                            f"Queued reminder for appointment {appointment.id} "
+                            f"via {msg.channel} to {msg.to_address}"
                         )
 
             # This job owns its session, so it commits what ``enqueue``
@@ -204,8 +207,8 @@ async def send_single_reminder(appointment_id: UUID, clinic_id: UUID) -> bool:
             # Get patient
             result = await db.execute(select(Patient).where(Patient.id == appointment.patient_id))
             patient = result.scalar_one_or_none()
-            if not patient or not patient.email:
-                logger.warning(f"Patient has no email for appointment: {appointment_id}")
+            if not patient or not (patient.email or patient.phone):
+                logger.warning(f"Patient has no email or phone for appointment: {appointment_id}")
                 return False
 
             # Get clinic
@@ -234,14 +237,15 @@ async def send_single_reminder(appointment_id: UUID, clinic_id: UUID) -> bool:
                 "appointment_id": str(appointment.id),
             }
 
-            # Enqueue reminder (force_send to bypass auto_send check)
+            # Enqueue reminder (force_send to bypass auto_send check). The
+            # gateway resolves the address from the clinic's preferred
+            # channel + patient.email / patient.phone.
             msg = await NotificationGateway.enqueue(
                 db=db,
                 clinic_id=clinic_id,
                 notification_type="appointment_reminder",
                 context=context,
                 patient_id=patient.id,
-                to_address=patient.email,
                 triggered_by_event="manual.appointment_reminder",
                 force_send=True,
                 dedup_key=f"appointment_reminder:{appointment.id}",

@@ -18,7 +18,9 @@ const {
   fetchVatSummary,
   fetchNumberingGaps,
   formatCurrency,
-  getPaymentMethodLabel
+  getPaymentMethodLabel,
+  fetchFailed,
+  resetFetchFailed
 } = useReports()
 
 // State
@@ -94,6 +96,7 @@ watch(selectedRange, (range) => {
 // Load all report data
 async function loadReports() {
   isLoading.value = true
+  resetFetchFailed()
 
   try {
     const [
@@ -233,6 +236,21 @@ function goBack() {
         class="h-8 w-8 animate-spin text-primary-accent"
       />
     </div>
+
+    <!-- Load error — never render 0 € / empty charts for a failed read (issue #101). -->
+    <UAlert
+      v-else-if="fetchFailed"
+      icon="i-lucide-triangle-alert"
+      color="error"
+      variant="subtle"
+      :title="t('reports.loadError')"
+      :actions="[{
+        label: t('common.retry'),
+        color: 'error',
+        variant: 'soft',
+        onClick: () => loadReports()
+      }]"
+    />
 
     <template v-else>
       <!-- Summary Cards -->

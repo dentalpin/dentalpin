@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { DeepReadonly } from 'vue'
-import type { BudgetItem, InvoiceListItem, PaginatedResponse, SignatureCreate } from '~~/app/types'
+import type { BudgetItem, DocumentSendMethod, InvoiceListItem, PaginatedResponse, SignatureCreate } from '~~/app/types'
 import { BUDGET_STATUS_ROLE } from '~~/app/config/severity'
 import { PERMISSIONS } from '~~/app/config/permissions'
 import type { EntityChip } from '~~/app/components/shared/EntityStatusChips.vue'
@@ -37,6 +37,9 @@ const {
   canCancel,
   canResend
 } = useBudgets()
+
+// Manual Send buttons follow the clinic channel config (issue #287).
+const { buttonsForPatient, ensureLoaded: ensureChannelsLoaded } = useClinicNotificationChannels()
 
 const hasActiveInvoice = ref(false)
 
@@ -94,6 +97,9 @@ async function loadBudget() {
 
 onMounted(() => {
   loadBudget()
+  if (can(PERMISSIONS.notifications.settingsRead)) {
+    ensureChannelsLoaded()
+  }
 })
 
 // Modal states
@@ -104,10 +110,41 @@ const isShareLinkModalOpen = ref(false)
 const isSignatureViewModalOpen = ref(false)
 const signatureAction = ref<'accept' | 'reject'>('accept')
 
-// Send form
-const sendForm = reactive({
-  send_email: false,
+// Send form — one option per clinic manual channel, plus "Mark as sent"
+// (send_method=manual, no message) which is always available.
+const sendForm = reactive<{ method: DocumentSendMethod, custom_message: string }>({
+  method: 'manual',
   custom_message: ''
+})
+
+function channelDisabledReason(reason?: 'no_email' | 'no_phone' | 'channel_not_manual'): string | undefined {
+  if (reason === 'no_email') return t('notifications.channels.noEmail')
+  if (reason === 'no_phone') return t('notifications.channels.noPhone')
+  return undefined
+}
+
+const sendMethodOptions = computed(() => {
+  const options = buttonsForPatient(currentBudget.value?.patient ?? null).map(btn => ({
+    value: btn.channel as DocumentSendMethod,
+    label: btn.channel === 'email' ? t('budget.send.sendByEmail') : t('budget.send.sendByWhatsapp'),
+    icon: btn.channel === 'email' ? 'i-lucide-mail' : 'i-lucide-message-circle',
+    disabled: btn.disabled,
+    hint: channelDisabledReason(btn.reason)
+  }))
+  options.push({
+    value: 'manual',
+    label: t('budget.send.markAsSent'),
+    icon: 'i-lucide-check',
+    disabled: false,
+    hint: undefined
+  })
+  return options
+})
+
+const sendButtonLabel = computed(() => {
+  if (sendForm.method === 'email') return t('budget.send.sendEmail')
+  if (sendForm.method === 'whatsapp') return t('budget.send.sendWhatsapp')
+  return t('budget.send.markAsSent')
 })
 
 // Edit state
@@ -188,18 +225,41 @@ async function handleRemoveItem(item: DeepReadonly<BudgetItem>) {
   }
 }
 
-// Workflow actions
-function openSignatureModal(action: 'accept' | 'reject') {
-  signatureAction.value = action
-  isSignatureModalOpen.value = true
-}
-
 // Signature form
 const signatureForm = reactive<SignatureCreate>({
   signed_by_name: '',
   signed_by_email: '',
   relationship_to_patient: 'patient'
 })
+
+// The in-clinic flow is almost always the patient signing for
+// themselves — prefill their name/email instead of starting blank
+// (#207). Clears when the relation changes to guardian/representative
+// and comes back when it returns to 'patient'.
+function applySignerPrefill() {
+  const patient = currentBudget.value?.patient
+  if (!patient || signatureForm.relationship_to_patient !== 'patient') return
+  signatureForm.signed_by_name = [patient.first_name, patient.last_name].filter(Boolean).join(' ')
+  signatureForm.signed_by_email = patient.email ?? ''
+}
+
+watch(() => signatureForm.relationship_to_patient, (relation) => {
+  if (!isSignatureModalOpen.value) return
+  if (relation === 'patient') {
+    applySignerPrefill()
+  } else {
+    signatureForm.signed_by_name = ''
+    signatureForm.signed_by_email = ''
+  }
+})
+
+// Workflow actions
+function openSignatureModal(action: 'accept' | 'reject') {
+  signatureAction.value = action
+  resetSignatureForm()
+  applySignerPrefill()
+  isSignatureModalOpen.value = true
+}
 
 async function handleSignatureSubmit() {
   if (!currentBudget.value || !signatureForm.signed_by_name) return
@@ -267,13 +327,16 @@ async function handleSend() {
 
   try {
     await sendBudget(currentBudget.value.id, {
-      send_email: sendForm.send_email,
-      custom_message: sendForm.custom_message || undefined
+      send_method: sendForm.method,
+      send_email: sendForm.method === 'email',
+      custom_message: sendForm.method === 'email' ? (sendForm.custom_message || undefined) : undefined
     })
 
-    const message = sendForm.send_email
+    const message = sendForm.method === 'email'
       ? t('budget.messages.sentByEmail')
-      : t('budget.messages.sentManually')
+      : sendForm.method === 'whatsapp'
+        ? t('budget.messages.sentByWhatsapp')
+        : t('budget.messages.sentManually')
 
     toast.add({
       title: t('common.success'),
@@ -294,7 +357,7 @@ async function handleSend() {
 }
 
 function resetSendForm() {
-  sendForm.send_email = false
+  sendForm.method = 'manual'
   sendForm.custom_message = ''
 }
 
@@ -881,28 +944,40 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
               {{ t('budget.send.description') }}
             </p>
 
-            <div class="flex items-center gap-3">
-              <UCheckbox
-                v-model="sendForm.send_email"
-                :label="t('budget.send.sendByEmail')"
-              />
+            <!-- One option per clinic manual channel + "Mark as sent".
+                 Channels the patient cannot receive stay visible but
+                 disabled (issue #287). -->
+            <div class="flex flex-wrap gap-2">
+              <button
+                v-for="opt in sendMethodOptions"
+                :key="opt.value"
+                type="button"
+                class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-token-md text-sm font-medium transition-colors border"
+                :class="[
+                  sendForm.method === opt.value
+                    ? 'border-primary bg-primary/10 text-primary-accent'
+                    : 'border-default bg-default text-default hover:bg-elevated',
+                  opt.disabled ? 'opacity-50 cursor-not-allowed' : ''
+                ]"
+                :disabled="opt.disabled"
+                :title="opt.hint"
+                :aria-pressed="sendForm.method === opt.value"
+                @click="sendForm.method = opt.value"
+              >
+                <UIcon
+                  :name="opt.icon"
+                  class="w-4 h-4"
+                />
+                {{ opt.label }}
+              </button>
             </div>
 
             <div
-              v-if="sendForm.send_email"
+              v-if="sendForm.method === 'email'"
               class="space-y-3"
             >
-              <p
-                v-if="currentBudget?.patient?.email"
-                class="text-caption text-subtle"
-              >
-                {{ t('budget.send.willSendTo') }}: <strong>{{ currentBudget.patient.email }}</strong>
-              </p>
-              <p
-                v-else
-                class="text-sm text-warning-accent"
-              >
-                {{ t('budget.send.noPatientEmail') }}
+              <p class="text-caption text-subtle">
+                {{ t('budget.send.willSendTo') }}: <strong>{{ currentBudget?.patient?.email }}</strong>
               </p>
 
               <UFormField :label="t('budget.send.customMessage')">
@@ -915,7 +990,14 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
             </div>
 
             <p
-              v-if="!sendForm.send_email"
+              v-else-if="sendForm.method === 'whatsapp'"
+              class="text-caption text-subtle"
+            >
+              {{ t('budget.send.willSendToPhone') }}: <strong>{{ currentBudget?.patient?.phone }}</strong>
+            </p>
+
+            <p
+              v-else
               class="text-caption text-subtle"
             >
               {{ t('budget.send.manualNote') }}
@@ -933,10 +1015,9 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
               </UButton>
               <UButton
                 color="primary"
-                :disabled="sendForm.send_email && !currentBudget?.patient?.email"
                 @click="handleSend"
               >
-                {{ sendForm.send_email ? t('budget.send.sendEmail') : t('budget.send.markAsSent') }}
+                {{ sendButtonLabel }}
               </UButton>
             </div>
           </template>

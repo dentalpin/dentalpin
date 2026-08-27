@@ -18,7 +18,8 @@ COPY frontend/ ./
 # `/modules/-/active` decide what is visible at runtime.
 RUN node scripts/modules-json.mjs /module_layers
 
-ENV NODE_OPTIONS="--max-old-space-size=4096"
+# ponytail: 34 module layers × growing locale set pushed the Nitro build past 4GB
+ENV NODE_OPTIONS="--max-old-space-size=6144"
 RUN npm run build
 
 

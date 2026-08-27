@@ -42,10 +42,13 @@ class NotificationsModule(BaseModule):
         "removable": False,
         "role_permissions": {
             "admin": ["*"],
-            "dentist": ["preferences.read", "preferences.write", "send"],
+            # settings.read: every send surface (appointment modal, quote /
+            # invoice send) reads GET /settings to know which channel
+            # buttons to render (#287) — write stays admin-only.
+            "dentist": ["preferences.read", "preferences.write", "send", "settings.read"],
             "hygienist": [],
-            "assistant": ["preferences.read", "preferences.write", "send"],
-            "receptionist": ["preferences.read", "preferences.write", "send"],
+            "assistant": ["preferences.read", "preferences.write", "send", "settings.read"],
+            "receptionist": ["preferences.read", "preferences.write", "send", "settings.read"],
         },
         "frontend": {
             "layer_path": "frontend",
@@ -111,5 +114,6 @@ class NotificationsModule(BaseModule):
             EventType.PATIENT_CREATED: NotificationHandlers.on_patient_created,
             EventType.BUDGET_SENT: NotificationHandlers.on_budget_sent,
             EventType.BUDGET_ACCEPTED: NotificationHandlers.on_budget_accepted,
+            EventType.BUDGET_REMINDER_SENT: NotificationHandlers.on_budget_reminder_sent,
             EventType.INVOICE_SENT: NotificationHandlers.on_invoice_sent,
         }

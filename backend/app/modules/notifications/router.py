@@ -12,6 +12,7 @@ from app.database import get_db
 
 from .gateway import NotificationGateway
 from .schemas import (
+    ChannelAvailabilityResponse,
     ClinicNotificationSettingsResponse,
     ClinicNotificationSettingsUpdate,
     ConversationMessageResponse,
@@ -228,6 +229,23 @@ async def update_patient_preferences(
 # ============================================================================
 
 
+def _settings_response(
+    settings, available_channels: list[str]
+) -> ClinicNotificationSettingsResponse:
+    """Serialize clinic settings + the computed available_channels list."""
+    return ClinicNotificationSettingsResponse(
+        id=settings.id,
+        clinic_id=settings.clinic_id,
+        preferred_channel=settings.preferred_channel,
+        fallback_enabled=settings.fallback_enabled,
+        manual_channels=list(settings.manual_channels or []),
+        settings=settings.settings,
+        available_channels=available_channels,
+        created_at=settings.created_at,
+        updated_at=settings.updated_at,
+    )
+
+
 @router.get("/settings", response_model=ApiResponse[ClinicNotificationSettingsResponse])
 async def get_clinic_settings(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
@@ -236,10 +254,14 @@ async def get_clinic_settings(
 ) -> ApiResponse[ClinicNotificationSettingsResponse]:
     """Get notification settings for the clinic.
 
-    Creates default settings if they don't exist.
+    Creates default settings if they don't exist. ``available_channels`` is
+    computed from the channel registry + each adapter's per-clinic
+    ``supports`` check (WhatsApp appears only when its vendor adapter is
+    installed and connected for this clinic).
     """
     settings = await NotificationService.get_or_create_clinic_settings(db, ctx.clinic_id)
-    return ApiResponse(data=ClinicNotificationSettingsResponse.model_validate(settings))
+    available = await NotificationService.available_channels(db, ctx.clinic_id)
+    return ApiResponse(data=_settings_response(settings, available))
 
 
 @router.put("/settings", response_model=ApiResponse[ClinicNotificationSettingsResponse])
@@ -251,12 +273,48 @@ async def update_clinic_settings(
 ) -> ApiResponse[ClinicNotificationSettingsResponse]:
     """Update notification settings for the clinic.
 
-    Settings control which notifications are sent automatically vs manually.
+    Per-type ``settings`` control which notifications fire automatically vs
+    manually; ``preferred_channel`` / ``fallback_enabled`` /
+    ``manual_channels`` control which channel they use. Channel values must
+    be available to this clinic (422 otherwise).
     """
-    settings = await NotificationService.update_clinic_settings(
-        db, ctx.clinic_id, data.model_dump(exclude_unset=True)
-    )
-    return ApiResponse(data=ClinicNotificationSettingsResponse.model_validate(settings))
+    payload = data.model_dump(exclude_unset=True)
+    current = await NotificationService.get_or_create_clinic_settings(db, ctx.clinic_id)
+    available = await NotificationService.available_channels(db, ctx.clinic_id)
+
+    if (
+        payload.get("preferred_channel") is not None
+        and payload["preferred_channel"] not in available
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=(
+                f"preferred_channel '{payload['preferred_channel']}' is not available "
+                f"for this clinic (available: {available})"
+            ),
+        )
+
+    manual = payload.get("manual_channels")
+    if manual is not None:
+        unavailable = [c for c in manual if c not in available]
+        if unavailable:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=(
+                    f"manual_channels {unavailable} are not available "
+                    f"for this clinic (available: {available})"
+                ),
+            )
+
+    # Invariant: the preferred channel is always a manual channel too, so
+    # staff can resend on the same wire. Insert it if the client omitted it.
+    preferred = payload.get("preferred_channel") or current.preferred_channel
+    effective_manual = list(manual if manual is not None else (current.manual_channels or []))
+    if preferred not in effective_manual:
+        payload["manual_channels"] = [preferred, *effective_manual]
+
+    settings = await NotificationService.update_clinic_settings(db, ctx.clinic_id, payload)
+    return ApiResponse(data=_settings_response(settings, available))
 
 
 # ============================================================================
@@ -308,10 +366,13 @@ async def send_notification(
     _: Annotated[None, Depends(require_permission("notifications.send"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ManualSendResponse]:
-    """Manually send a notification email.
+    """Manually send a notification.
 
-    Used for notifications that are not auto-sent, like welcome emails
-    or budget emails when auto_send is disabled.
+    Used for notifications that are not auto-sent, like welcome messages
+    or budget messages when auto_send is disabled. Optional ``channels``
+    picks the wire (e.g. ``["whatsapp"]``); the recipient is resolved per
+    channel (phone for WhatsApp, email for email). Without ``channels`` the
+    legacy email behaviour applies.
     """
     from sqlalchemy import select
 
@@ -332,7 +393,11 @@ async def send_notification(
         patient = result.scalar_one_or_none()
         if not patient:
             raise HTTPException(status_code=404, detail="Patient not found")
-        if not patient.email:
+        # Legacy (no channels requested): email is the only wire, so a
+        # missing email is a hard 400. With explicit channels the recipient
+        # is validated per channel below — a phone-only patient can receive
+        # a WhatsApp send.
+        if not data.channels and not patient.email:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Patient has no email address",
@@ -462,7 +527,20 @@ async def send_notification(
                 context["patient_name"] = f"{patient.first_name} {patient.last_name}"
                 patient_email = patient.email
 
-    if not patient_email:
+    if data.channels:
+        # Recipient per requested channel: phone for WhatsApp, email for
+        # email. A phone-only patient must not 400 on a WhatsApp send.
+        has_recipient = any(
+            (channel == "whatsapp" and patient is not None and patient.phone)
+            or (channel == "email" and patient_email)
+            for channel in data.channels
+        )
+        if not has_recipient:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Patient has no contact address for the requested channels",
+            )
+    elif not patient_email:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Could not determine recipient email address",
@@ -477,6 +555,7 @@ async def send_notification(
         context=context,
         patient_id=patient.id if patient else None,
         to_address=patient_email,
+        channels=data.channels,
         triggered_by_user_id=ctx.user.id,
         force_send=True,
     )
@@ -503,6 +582,30 @@ async def send_notification(
 # ============================================================================
 # Conversation Endpoints (patient message thread + reply)
 # ============================================================================
+
+
+@router.get(
+    "/channels",
+    response_model=ApiResponse[ChannelAvailabilityResponse],
+)
+async def list_available_channels(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("notifications.logs.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[ChannelAvailabilityResponse]:
+    """Channels with a registered adapter that is configured for this clinic.
+
+    Same permission as the conversation thread — the card that gates on
+    this renders for every role that can read the thread.
+    """
+    from .channels import channel_registry
+
+    available: list[str] = []
+    for channel in channel_registry.available_channels():
+        adapter = channel_registry.get_for_channel(channel)
+        if adapter is not None and await adapter.supports(db, ctx.clinic_id):
+            available.append(channel.value)
+    return ApiResponse(data=ChannelAvailabilityResponse(available=available))
 
 
 @router.get(

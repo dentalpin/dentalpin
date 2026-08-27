@@ -33,6 +33,21 @@
     "saved": "Settings saved",
     "saveError": "Could not save",
     "synced": "Synced {n} templates",
-    "syncError": "Could not sync"
+    "syncError": "Could not sync",
+    "types": {
+      "appointment_confirmation": "Appointment confirmation",
+      "appointment_reminder": "Appointment reminder",
+      "appointment_cancelled": "Appointment cancellation",
+      "budget_sent": "Quote sent",
+      "budget_accepted": "Quote accepted",
+      "budget_reminder": "Quote reminder",
+      "invoice_sent": "Invoice sent",
+      "recall_reminder": "Recall reminder",
+      "welcome": "Welcome"
+    },
+    "onboarding": {
+      "label": "WhatsApp sending",
+      "description": "WhatsApp is the clinic's preferred channel but Kapso is not connected yet. Connect it so automatic messages can go out."
+    }
   }
 }

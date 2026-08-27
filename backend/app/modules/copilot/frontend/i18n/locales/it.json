@@ -1,0 +1,185 @@
+{
+  "nav": {
+    "copilot": "IA"
+  },
+  "copilot": {
+    "title": "IA",
+    "open": "Apri IA",
+    "empty": "Chiedimi dei pazienti, dell'agenda o di prenotare un appuntamento.",
+    "placeholder": "Scrivi il tuo messaggio…",
+    "send": "Invia",
+    "copy": "Copia",
+    "new": "Nuova conversazione",
+    "thinking": "Sto pensando…",
+    "you": "Tu",
+    "assistant": "IA",
+    "trust": "I tuoi dati sono protetti",
+    "phase": {
+      "working": "Sto lavorando…",
+      "writing": "Sto scrivendo…"
+    },
+    "tabs": {
+      "pending": "Da fare",
+      "chat": "Chat"
+    },
+    "pending": {
+      "empty": "Niente in sospeso. Sei in pari con tutto.",
+      "unknownPatient": "Paziente sconosciuto",
+      "group": {
+        "recall": "Richiami da seguire",
+        "budget": "Preventivi in attesa di risposta"
+      }
+    },
+    "nudge": {
+      "act": "Dai un'occhiata",
+      "dismiss": "Ignora",
+      "appointmentCancelled": {
+        "text": "L'appuntamento delle {time} è stato annullato — si è appena liberato uno spazio.",
+        "prompt": "L'appuntamento delle {time} è stato annullato. Trova pazienti con richiami che potrebbero occupare quello spazio."
+      }
+    },
+    "suggest": {
+      "heading": "Come posso aiutarti?",
+      "cat": {
+        "workflows": "Flussi di lavoro",
+        "patients": "Pazienti",
+        "agenda": "Agenda",
+        "recalls": "Richiami",
+        "money": "Incassi e preventivi",
+        "reports": "Report"
+      },
+      "dailyBriefing": "Briefing giornaliero",
+      "prepareVisit": "Prepara una visita",
+      "fillGap": "Riempi un vuoto",
+      "searchPatient": "Trova un paziente",
+      "patientSummary": "Riassumi un paziente",
+      "freeSlots": "Spazi liberi oggi",
+      "bookAppointment": "Prenota un appuntamento",
+      "dueRecalls": "Richiami in scadenza",
+      "pendingBudgets": "Preventivi senza risposta",
+      "recordPayment": "Registra un pagamento",
+      "monthCollections": "Incassi del mese",
+      "agendaSummary": "Panoramica dell'agenda",
+      "prompt": {
+        "dailyBriefing": "Dammi il briefing giornaliero: appuntamenti di oggi, richiami scaduti e preventivi senza risposta",
+        "prepareVisit": "Preparami la prossima visita di un paziente",
+        "fillGap": "Si è liberato uno spazio in agenda, chi possiamo chiamare?",
+        "searchPatient": "Trova un paziente",
+        "patientSummary": "Dammi un riepilogo di un paziente",
+        "freeSlots": "Quali spazi liberi ci sono oggi?",
+        "bookAppointment": "Voglio prenotare un appuntamento",
+        "dueRecalls": "Quali richiami scadono questo mese?",
+        "pendingBudgets": "Quali preventivi sono stati inviati e restano senza risposta?",
+        "recordPayment": "Voglio registrare il pagamento di un paziente",
+        "monthCollections": "Riepilogo degli incassi di questo mese",
+        "agendaSummary": "Dammi una panoramica dell'agenda di oggi"
+      }
+    },
+    "settings": {
+      "title": "Copilot",
+      "description": "Assistente IA: briefing giornaliero e motore",
+      "saved": "Impostazioni salvate",
+      "digest": {
+        "title": "E-mail di briefing mattutino",
+        "description": "Ogni mattina: appuntamenti di oggi, richiami scaduti e preventivi senza risposta.",
+        "enabled": "Invia il briefing giornaliero",
+        "hour": "Ora di invio",
+        "hourHelp": "Interpretata nel fuso orario dello studio.",
+        "recipients": "Destinatari",
+        "recipientsHelp": "Ogni destinatario riceve il proprio briefing, limitato a ciò che il suo ruolo può vedere.",
+        "recipientsPlaceholder": "Seleziona il personale…"
+      },
+      "engine": {
+        "title": "Motore",
+        "provider": "Fornitore",
+        "model": "Modello",
+        "redaction": "Anonimizzazione dei dati PHI",
+        "redactionOn": "Attivata",
+        "redactionOff": "Disattivata"
+      },
+      "metrics": {
+        "title": "Utilizzo",
+        "description": "Ultimi {days} giorni.",
+        "toolCalls": "Chiamate agli strumenti",
+        "errorRate": "Tasso di errore",
+        "avgLatency": "Latenza media",
+        "conversations": "Conversazioni",
+        "tokenBudget": "Budget mensile di token",
+        "topTools": "Strumenti più usati",
+        "toolNames": {
+          "recalls_list_due_recalls": "Richiami scaduti",
+          "budget_list_budgets": "Preventivi in sospeso",
+          "patients_list_patients": "Ricerca pazienti",
+          "appointments_list_appointments": "Appuntamenti",
+          "invoices_list_invoices": "Fatture"
+        }
+      }
+    },
+    "tool": {
+      "running": "Eseguo {name}…",
+      "done": "{name} completato",
+      "failed": "{name} non riuscito"
+    },
+    "card": {
+      "viewPatient": "Vedi cartella",
+      "noResults": "Nessun risultato",
+      "notFound": "Non trovato",
+      "more": "+{n} altri",
+      "freeSlots": "Spazi liberi",
+      "appointments": "Appuntamenti",
+      "patients": "Pazienti"
+    },
+    "patientStatus": {
+      "active": "attivo",
+      "archived": "archiviato"
+    },
+    "apptStatus": {
+      "scheduled": "Programmato",
+      "confirmed": "Confermato",
+      "checked_in": "In sala d'attesa",
+      "in_treatment": "Al riunito",
+      "completed": "Completato",
+      "cancelled": "Annullato",
+      "no_show": "Assente"
+    },
+    "confirm": {
+      "title": "Conferma azione",
+      "body": "L'IA vuole eseguire {name}.",
+      "approve": "Conferma",
+      "reject": "Annulla",
+      "approved": "Confermato",
+      "rejected": "Annullato",
+      "destructiveNote": "Questa azione non può essere annullata.",
+      "action": {
+        "book_appointment": "L'IA vuole prenotare un appuntamento.",
+        "cancel_appointment": "L'IA vuole annullare un appuntamento.",
+        "create_patient": "L'IA vuole creare un paziente."
+      },
+      "field": {
+        "patient_id": "Paziente",
+        "professional_id": "Professionista",
+        "appointment_id": "Appuntamento",
+        "cabinet_id": "Riunito",
+        "cabinet": "Riunito",
+        "start_time": "Data",
+        "end_time": "Fine",
+        "datetime": "Data",
+        "service": "Prestazione",
+        "reason": "Motivo",
+        "duration_minutes": "Durata (min)",
+        "first_name": "Nome",
+        "last_name": "Cognome",
+        "phone": "Telefono",
+        "email": "E-mail",
+        "date_of_birth": "Data di nascita",
+        "query": "Ricerca"
+      }
+    },
+    "budgetExceeded": "È stato raggiunto il limite mensile di utilizzo dell'IA.",
+    "error": "Qualcosa è andato storto.",
+    "page": {
+      "title": "IA",
+      "subtitle": "L'assistente del tuo studio, nei limiti dei tuoi permessi."
+    }
+  }
+}

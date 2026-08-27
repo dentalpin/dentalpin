@@ -78,7 +78,8 @@
     "errors": {
       "loadFailed": "Could not load the periodontogram.",
       "saveFailed": "Could not save the change.",
-      "checkConnection": "Check your connection and try again."
+      "checkConnection": "Check your connection and try again.",
+      "closeAborted": "Some measurements are not saved yet — the exam was not closed. Check your connection and try again."
     }
   }
 }

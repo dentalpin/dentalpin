@@ -111,8 +111,9 @@ class NotificationPreference(Base, TimestampMixin):
 
     # Channel master toggles
     email_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
-    # WhatsApp uses patients.phone as the number; this flag is the opt-in.
-    whatsapp_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
+    # WhatsApp uses patients.phone as the number. Opt-out, like email: an
+    # explicit False blocks; a missing row means the patient is reachable.
+    whatsapp_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
     whatsapp_opt_in_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), default=None
     )
@@ -151,9 +152,13 @@ class NotificationPreference(Base, TimestampMixin):
 class ClinicNotificationSettings(Base, TimestampMixin):
     """Clinic-level notification settings.
 
-    Each notification type carries ``enabled``/``auto_send`` and an ordered
-    ``channels`` fallback list. Defaults stay email-only so existing clinics
-    are unchanged until they enable WhatsApp.
+    Per-type ``settings`` answers *which events fire* (``enabled`` /
+    ``auto_send`` / ``hours_before``). The clinic-wide channel columns answer
+    *which channel they use*: ``preferred_channel`` is the default wire for
+    every auto-send, ``fallback_enabled`` allows the other installed channel
+    when the preferred one is not viable, and ``manual_channels`` drives which
+    Send buttons the rest of the app renders. Defaults stay email-only so
+    existing clinics are unchanged until an admin picks WhatsApp.
     """
 
     __tablename__ = "clinic_notification_settings"
@@ -161,24 +166,29 @@ class ClinicNotificationSettings(Base, TimestampMixin):
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"), unique=True, index=True)
 
+    # Clinic-wide channel configuration (not per-type).
+    preferred_channel: Mapped[str] = mapped_column(
+        String(20), default="email", server_default="email"
+    )  # 'email' | 'whatsapp'
+    fallback_enabled: Mapped[bool] = mapped_column(
+        Boolean, default=True, server_default=text("true")
+    )
+    manual_channels: Mapped[list] = mapped_column(
+        JSONB, default=lambda: ["email"], server_default=text("'[\"email\"]'::jsonb")
+    )  # subset of installed channels
+
     settings: Mapped[dict] = mapped_column(
         JSONB,
         default=lambda: {
-            "appointment_confirmation": {
-                "auto_send": True,
-                "enabled": True,
-                "channels": ["email"],
-            },
-            "appointment_cancelled": {"auto_send": True, "enabled": True, "channels": ["email"]},
-            "appointment_reminder": {
-                "auto_send": True,
-                "enabled": True,
-                "hours_before": 24,
-                "channels": ["email"],
-            },
-            "budget_sent": {"auto_send": False, "enabled": True, "channels": ["email"]},
-            "budget_accepted": {"auto_send": True, "enabled": True, "channels": ["email"]},
-            "welcome": {"auto_send": False, "enabled": True, "channels": ["email"]},
+            "appointment_confirmation": {"auto_send": True, "enabled": True},
+            "appointment_cancelled": {"auto_send": True, "enabled": True},
+            "appointment_reminder": {"auto_send": True, "enabled": True, "hours_before": 24},
+            "budget_sent": {"auto_send": False, "enabled": True},
+            "budget_accepted": {"auto_send": True, "enabled": True},
+            "welcome": {"auto_send": False, "enabled": True},
+            "invoice_sent": {"auto_send": False, "enabled": True},
+            "budget_reminder": {"auto_send": True, "enabled": True},
+            "recall_reminder": {"auto_send": True, "enabled": True},
         },
     )
 

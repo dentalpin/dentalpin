@@ -1,0 +1,24 @@
+{
+  "expenses": {
+    "title": "Wydatki",
+    "add": "Dodaj wydatek",
+    "date": "Data",
+    "category": "Kategoria",
+    "amount": "Kwota",
+    "description": "Opis",
+    "filterByCategory": "Filtruj według kategorii",
+    "delete": "Usuń",
+    "deleteTitle": "Usuń wydatek",
+    "deleteMessage": "Usunąć ten wydatek? Tej operacji nie można cofnąć.",
+    "categories": {
+      "rent": "Czynsz",
+      "utilities": "Media",
+      "salaries": "Wynagrodzenia",
+      "supplies": "Materiały",
+      "equipment": "Sprzęt",
+      "insurance": "Ubezpieczenie",
+      "maintenance": "Konserwacja",
+      "other": "Inne"
+    }
+  }
+}

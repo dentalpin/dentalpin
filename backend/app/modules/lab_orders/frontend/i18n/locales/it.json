@@ -1,0 +1,27 @@
+{
+  "labOrders": {
+    "title": "Ordini di laboratorio",
+    "add": "Nuovo ordine",
+    "patient": "Paziente",
+    "lab": "Laboratorio",
+    "loading": "Caricamento…",
+    "selectPatient": "Seleziona paziente",
+    "selectLab": "Seleziona laboratorio",
+    "workType": "Tipo di lavorazione",
+    "tooth": "Dente / riferimento",
+    "impressionType": "Impronta",
+    "antagonistInfo": "Informazioni sull'antagonista",
+    "shade": "Colore",
+    "sentDate": "Data di invio",
+    "expectedDate": "Data prevista",
+    "status": "Stato",
+    "notes": "Note",
+    "save": "Invia ordine",
+    "cancel": "Annulla",
+    "noLabsHint": "Crea prima un contatto di laboratorio in Contatti.",
+    "workTypes": {"crown":"Corona","bridge":"Ponte","denture":"Protesi","implant":"Impianto","veneer":"Faccetta","orthodontic":"Ortodonzia","repair":"Riparazione","other":"Altro"},
+    "impressionTypes": {"alginate":"Alginato","pvs_silicone":"PVS / silicone","digital_scan":"Scansione digitale","other":"Altro"},
+    "statuses": {"sent":"Inviato","in_progress":"In lavorazione","ready":"Pronto","received":"Ricevuto","cancelled":"Annullato"}
+  },
+  "nav": {"labOrdersForm":"Nuovo ordine di laboratorio","labOrdersStatus":"Ordini di laboratorio"}
+}

@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+- fix(#101): the note composer keeps typed text and attachments when a save fails (teardown only on success); the three unconfirmed delete surfaces now confirm like the other two.
+
 - feat(#131): German (de) locale for the module's frontend layer.
+- feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
+
 - i18n(#131/#275): `_resolve_label` falls back to any non-empty catalog
   name after `es→en→fr→pt→ta` (items created under core-only locales
   like de/hu).

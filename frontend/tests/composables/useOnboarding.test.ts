@@ -77,4 +77,21 @@ describe('useOnboarding', () => {
     expect(onboarding.stepRoute(b)).toBe('/b?onboarding=b')
     expect(onboarding.stepRoute({ ...b, to: '/x?tab=1' })).toBe('/x?tab=1&onboarding=b')
   })
+
+  it('freezes the pending walk when guided mode starts (step counter)', async () => {
+    const onboarding = await runInSetup(() => {
+      useState('auth:permissions', () => ['admin.clinic.write'])
+      useState('clinic:current', () => clinic())
+      return useOnboarding()
+    })
+    // 'a' is already resolved; only 'b' and 'c' are pending, so the walk
+    // start() freezes is 2 steps long — not the checklist's 3. (The bar
+    // reads guidedProgress off this plan; the route flag itself can't be
+    // exercised here — the test router pins the guest routes.)
+    await onboarding.start()
+    expect(useState<string[]>('onboarding:guided-plan').value).toEqual(['b', 'c'])
+    // Exiting clears the frozen walk.
+    await onboarding.exit()
+    expect(useState<string[]>('onboarding:guided-plan').value).toEqual([])
+  })
 })

@@ -47,6 +47,16 @@ export function usePeriodontogramSession() {
   const pendingTimers = new Map<string, ReturnType<typeof setTimeout>>()
   const pendingPayloads = new Map<string, Record<string, unknown>>()
 
+  /**
+   * Re-queue a payload whose PATCH failed so a later flush (next edit on
+   * the same key, or the close-time `flushPending`) retries it. Edits made
+   * while the request was in flight win over the failed payload.
+   */
+  function _restorePayload(key: string, payload: Record<string, unknown>) {
+    pendingPayloads.set(key, { ...payload, ...(pendingPayloads.get(key) ?? {}) })
+    dirty.value = true
+  }
+
   function _flushKey(key: string, exec: (payload: Record<string, unknown>) => Promise<void>) {
     return async () => {
       const payload = pendingPayloads.get(key)
@@ -57,8 +67,11 @@ export function usePeriodontogramSession() {
       try {
         await exec(payload)
         lastError.value = null
-        dirty.value = false
+        if (pendingPayloads.size === 0) dirty.value = false
       } catch (e) {
+        // Keep the measurements in the buffer — dropping them here would
+        // silently lose typed input on a transient failure.
+        _restorePayload(key, payload)
         lastError.value = e instanceof Error ? e.message : 'save_failed'
       } finally {
         saving.value = false
@@ -106,11 +119,23 @@ export function usePeriodontogramSession() {
     )
   }
 
-  async function flushPending(snapshotId: string): Promise<void> {
-    const timers = Array.from(pendingTimers.entries())
-    for (const [key, timer] of timers) {
+  /**
+   * Flush every pending patch immediately (e.g. before closing the exam).
+   *
+   * Returns `true` only when everything was persisted. On failure the
+   * failed payloads stay in the buffer (so a retry can flush them) and
+   * `dirty` stays true — callers must not proceed with a close/teardown
+   * that would orphan the unsaved measurements.
+   */
+  async function flushPending(snapshotId: string): Promise<boolean> {
+    let allFlushed = true
+    for (const timer of pendingTimers.values()) {
       clearTimeout(timer)
-      pendingTimers.delete(key)
+    }
+    pendingTimers.clear()
+    // Iterate the payloads (not the timers) — a payload restored after a
+    // failed flush no longer has a timer but still must be sent.
+    for (const key of Array.from(pendingPayloads.keys())) {
       const payload = pendingPayloads.get(key)
       if (!payload) continue
       pendingPayloads.delete(key)
@@ -129,13 +154,19 @@ export function usePeriodontogramSession() {
             payload
           )
         }
-      } catch (e) {
-        lastError.value = e instanceof Error ? e.message : 'save_failed'
+      } catch {
+        // No lastError here — the caller surfaces the failure from the
+        // boolean result (avoids a double toast via the lastError watcher).
+        _restorePayload(key, payload)
+        allFlushed = false
       } finally {
         saving.value = false
       }
     }
-    dirty.value = false
+    if (allFlushed && pendingPayloads.size === 0) {
+      dirty.value = false
+    }
+    return allFlushed
   }
 
   async function closeSession(snapshotId: string, notes?: string): Promise<PerioSnapshotDetail> {

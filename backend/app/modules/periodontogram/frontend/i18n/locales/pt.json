@@ -78,7 +78,8 @@
     "errors": {
       "loadFailed": "Não foi possível carregar o periodontograma.",
       "saveFailed": "Não foi possível guardar a alteração.",
-      "checkConnection": "Verifique a sua ligação e tente novamente."
+      "checkConnection": "Verifique a sua ligação e tente novamente.",
+      "closeAborted": "Algumas medições ainda não foram guardadas — o exame não foi fechado. Verifique a sua ligação e tente novamente."
     }
   }
 }

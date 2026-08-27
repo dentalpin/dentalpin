@@ -6,8 +6,8 @@ Esta guía explica qué ocurre la primera vez que abres una instalación nueva d
 
 La primera visita a una instalación nueva abre el asistente de configuración. Lleva unos dos minutos.
 
-1. **Cuenta de administrador** — tu nombre, correo y una contraseña (mínimo 8 caracteres con letras y números). Será la cuenta administradora de la clínica.
-2. **Clínica** — nombre de la clínica, **país** e identificación fiscal. El país fija por ti la zona horaria, la moneda y el IVA (puedes cambiarlos en *Zona horaria y moneda*). Para España, el asistente comprueba el formato del NIF/CIF y avisa si la letra de control no cuadra.
+1. **Cuenta de administrador** — tu nombre, correo y una contraseña (mínimo 8 caracteres con letras y números). Será la cuenta administradora de la clínica. El interruptor **«Yo mismo atiendo pacientes»** (activado por defecto) te marca como profesional agendable — déjalo activado si trabajas solo, desactívalo si solo gestionas la clínica.
+2. **Clínica** — nombre de la clínica, **país** e identificación fiscal. El país fija por ti la zona horaria, la moneda y el IVA (puedes cambiarlos en *Zona horaria y moneda*). Para España, el asistente comprueba el formato del NIF/CIF y avisa si la letra de control no cuadra. El bloque opcional **Dirección de la clínica** (calle, código postal, ciudad) rellena la dirección que aparece en presupuestos y facturas — completarlo aquí deja resuelto el paso *Datos de la clínica* desde el primer momento.
 
 Pulsa **Crear mi clínica**. DentalPin crea por ti:
 
@@ -18,7 +18,7 @@ Pulsa **Crear mi clínica**. DentalPin crea por ti:
 
 Todo se puede cambiar después en *Configuración*.
 
-> Usa el selector de idioma de la cabecera del asistente para cambiar el idioma de la interfaz en cualquier momento.
+> Usa el selector de idioma de la cabecera del asistente para cambiar el idioma de la interfaz en cualquier momento. Mientras no lo toques, el asistente sigue el idioma del país que elijas — al seleccionar España cambia solo a español.
 
 ## 2. La tarjeta "Puesta en marcha"
 
@@ -37,13 +37,15 @@ Tras entrar, los administradores ven al principio del panel de inicio la tarjeta
 - **Configurar** abre el paso (un diálogo si existe; si no, la pantalla de ajustes).
 - **Omitir** (icono del ojo) oculta un paso que no necesitas; **Deshacer** lo recupera.
 - **Ocultar** quita la tarjeta para toda la clínica; los pasos siguen resolviéndose solos según aparecen los datos.
-- La tarjeta desaparece por sí sola cuando todos los pasos obligatorios están completados.
+- Cuando el último paso obligatorio se completa, la tarjeta se pliega a una línea de «todo listo» con un botón **Cerrar** (los pasos opcionales siguen accesibles hasta que la cierres).
 
 Los pasos se comprueban contra datos reales: si borras tu último gabinete, el paso vuelve a aparecer.
 
 ## 3. Modo guiado
 
-**Modo guiado** te lleva por los pasos pendientes página a página. Una barra bajo la cabecera muestra *Paso N de M*, con **Siguiente** (vuelve a comprobar y salta al siguiente pendiente) y **Salir**. En el último paso, **Finalizar** te devuelve al inicio.
+**Modo guiado** te lleva por los pasos pendientes página a página. Una barra bajo la cabecera muestra *Paso N de M* — contando solo los pasos que faltan, así que con cuatro de seis hechos indica *Paso 1 de 2* — con **Siguiente** (vuelve a comprobar y salta al siguiente pendiente) y **Salir**. En el último paso, **Finalizar** te devuelve al inicio.
+
+Dos pasos se abren listos para actuar: *Datos de la clínica* entra directamente en el formulario de edición, y *Tu equipo* muestra el interruptor **«Yo mismo atiendo pacientes»** encima de la lista de usuarios si aún no estás marcado como profesional — actívalo y el paso queda resuelto sin crear un segundo usuario.
 
 ## 4. Dar de alta compañeros sin email
 

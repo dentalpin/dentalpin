@@ -255,6 +255,17 @@ export function usePayments() {
 export function usePaymentReports() {
   const api = useApi()
 
+  // Shared "a report fetch failed" flag (issue #101). The fetchers keep
+  // their catch-and-default contract (null / []), so callers alone cannot
+  // distinguish a failed read from a legitimately empty period. The reports
+  // page calls `resetFetchFailed()` before a load batch and renders a
+  // visible error state (instead of 0 € / empty charts) when it is set.
+  const fetchFailed = useState<boolean>('payments:reports-fetch-failed', () => false)
+
+  function resetFetchFailed() {
+    fetchFailed.value = false
+  }
+
   async function summary(date_from: string, date_to: string): Promise<PaymentsSummary | null> {
     try {
       const resp = await api.get<ApiResponse<PaymentsSummary>>(
@@ -262,6 +273,7 @@ export function usePaymentReports() {
       )
       return resp.data
     } catch {
+      fetchFailed.value = true
       return null
     }
   }
@@ -273,6 +285,7 @@ export function usePaymentReports() {
       )
       return resp.data
     } catch {
+      fetchFailed.value = true
       return []
     }
   }
@@ -284,6 +297,7 @@ export function usePaymentReports() {
       )
       return resp.data
     } catch {
+      fetchFailed.value = true
       return []
     }
   }
@@ -293,6 +307,7 @@ export function usePaymentReports() {
       const resp = await api.get<ApiResponse<AgingBuckets>>('/api/v1/payments/reports/aging-receivables')
       return resp.data
     } catch {
+      fetchFailed.value = true
       return null
     }
   }
@@ -304,6 +319,7 @@ export function usePaymentReports() {
       )
       return resp.data
     } catch {
+      fetchFailed.value = true
       return null
     }
   }
@@ -319,9 +335,19 @@ export function usePaymentReports() {
       )
       return resp.data
     } catch {
+      fetchFailed.value = true
       return null
     }
   }
 
-  return { summary, byMethod, byProfessional, aging, refunds, trends }
+  return {
+    summary,
+    byMethod,
+    byProfessional,
+    aging,
+    refunds,
+    trends,
+    fetchFailed: readonly(fetchFailed),
+    resetFetchFailed
+  }
 }

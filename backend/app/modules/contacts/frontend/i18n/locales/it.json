@@ -1,0 +1,24 @@
+{
+  "contacts": {
+    "title": "Contatti",
+    "add": "Aggiungi contatto",
+    "edit": "Modifica contatto",
+    "delete": "Elimina contatto",
+    "deleteConfirm": "Disattivare \"{name}\"? Scomparirà dalla rubrica ma resterà collegato ai record storici.",
+    "name": "Nome",
+    "type": "Tipo",
+    "phone": "Telefono",
+    "email": "E-mail",
+    "address": "Indirizzo",
+    "notes": "Note",
+    "search": "Cerca contatti",
+    "filterByType": "Filtra per tipo",
+    "allTypes": "Tutti i tipi",
+    "types": {
+      "lab": "Laboratorio",
+      "supplier": "Fornitore",
+      "other": "Altro",
+      "delegate": "Delegato"
+    }
+  }
+}

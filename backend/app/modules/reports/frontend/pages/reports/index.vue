@@ -17,7 +17,7 @@ const { can } = usePermissions()
 const route = useRoute()
 const router = useRouter()
 
-const { filters, state } = useDashboardSnapshot()
+const { filters, state, refresh, loadFailed } = useDashboardSnapshot()
 
 // Mirror filter changes into the URL so a manager can bookmark a range.
 // URL → filters hydration happens inside useDashboardSnapshot's useState
@@ -122,6 +122,22 @@ const drilldownCards = computed(() => [
     </div>
 
     <template v-else>
+      <!-- Load error — a failed fetch must not read as a 0 € month
+           (issue #101). Tiles below keep whatever partial data loaded. -->
+      <UAlert
+        v-if="loadFailed"
+        icon="i-lucide-triangle-alert"
+        color="error"
+        variant="subtle"
+        :title="t('reports.loadError')"
+        :actions="[{
+          label: t('common.retry'),
+          color: 'error',
+          variant: 'soft',
+          onClick: () => refresh()
+        }]"
+      />
+
       <!-- Drill-down chips: keep detail pages one tap away, right under
            the header. Horizontal scroll on mobile so the row stays a
            single line; flex-wrap on tablet+. -->

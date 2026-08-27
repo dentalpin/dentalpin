@@ -567,10 +567,23 @@ class CreditNoteCreate(BaseModel):
 
 
 class InvoiceSendRequest(BaseModel):
-    """Schema for sending an invoice by email."""
+    """Schema for sending an invoice to the patient.
 
-    send_email: bool = True  # If false, just marks as "sent" manually
+    ``send_method`` picks the wire: ``manual`` (just mark as sent),
+    ``email`` or ``whatsapp`` (gateway send on that channel). The legacy
+    ``send_email`` flag is honoured when ``send_method`` is omitted so
+    older clients keep working.
+    """
+
+    send_method: Literal["manual", "email", "whatsapp"] | None = None
+    send_email: bool = True  # legacy client flag; if false, marks as "sent" manually
     custom_message: str | None = None
+
+    @property
+    def resolved_send_method(self) -> str:
+        if self.send_method is not None:
+            return self.send_method
+        return "email" if self.send_email else "manual"
 
 
 # ============================================================================

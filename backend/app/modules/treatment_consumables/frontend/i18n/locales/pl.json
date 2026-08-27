@@ -1,0 +1,20 @@
+{
+  "consumables": {
+    "title": "Materiały zużywane w leczeniu",
+    "subtitle": "Które pozycje magazynowe zużywa każde leczenie z katalogu i w jakiej ilości. Czyste mapowanie — stan magazynowy nie jest odejmowany automatycznie.",
+    "treatment": "Leczenie",
+    "item": "Pozycja magazynowa",
+    "quantity": "Ilość",
+    "note": "Notatka",
+    "searchTreatments": "Szukaj leczeń…",
+    "searchItems": "Szukaj pozycji magazynowych…",
+    "add": "Powiąż materiał",
+    "delete": "Odłącz",
+    "deleteTitle": "Odłącz materiał",
+    "deleteMessage": "Usunąć to powiązanie? Leczenie nie będzie już wykazywać tej pozycji jako materiału zużywanego.",
+    "empty": "Brak powiązań. Użyj „Powiąż materiał”, aby przypisać leczeniu pozycję magazynową.",
+    "noMatches": "Brak wyników",
+    "duplicate": "To leczenie już zużywa tę pozycję.",
+    "editTitle": "Edytuj materiał"
+  }
+}

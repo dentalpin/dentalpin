@@ -51,5 +51,27 @@ _Pantalla `/settings/notifications` del módulo `notifications`._
 
 ## Para qué sirve
 
-_Pendiente de documentar._
+Configuración de notificaciones de la clínica.
+
+### Canales (#287)
+
+La tarjeta **Canales** decide por qué vía habla la clínica con los
+pacientes:
+
+- **Canal preferido** — Email o WhatsApp; todos los mensajes
+  automáticos (confirmación de cita, recordatorio, bienvenida,
+  presupuesto aceptado, …) salen primero por este canal. WhatsApp solo
+  se puede elegir cuando la integración de Kapso está conectada.
+- **Alternativa** — si el canal preferido no puede entregar (sin
+  teléfono, sin plantilla de WhatsApp aprobada), se intenta el otro
+  canal configurado en lugar de omitir en silencio.
+- **Botones de envío** — qué botones de envío manual muestra el resto
+  de la aplicación (cita, presupuesto, factura). Se requiere al menos
+  uno.
+
+### Tipos de mensaje
+
+La tabla por tipo controla qué eventos notifican
+(activado / envío automático / horas antes). Incluye factura enviada,
+recordatorios de presupuesto (7/14 días) y recordatorios de revisión.
 

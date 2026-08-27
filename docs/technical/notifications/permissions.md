@@ -16,10 +16,10 @@ Returned by `NotificationsModule.get_permissions()`
 | `notifications.templates.write` | _Describe what this allows._ | _List the endpoints._ |
 | `notifications.preferences.read` | _Describe what this allows._ | _List the endpoints._ |
 | `notifications.preferences.write` | _Describe what this allows._ | _List the endpoints._ |
-| `notifications.logs.read` | _Describe what this allows._ | _List the endpoints._ |
+| `notifications.logs.read` | Read message logs, a patient's conversation thread, and which channels are configured for the clinic. | `GET /notifications/conversations/{patient_id}`, `GET /notifications/channels` (#207), plus the log-listing endpoints. |
 | `notifications.send` | _Describe what this allows._ | _List the endpoints._ |
-| `notifications.settings.read` | _Describe what this allows._ | _List the endpoints._ |
-| `notifications.settings.write` | _Describe what this allows._ | _List the endpoints._ |
+| `notifications.settings.read` | Read clinic notification settings, incl. `preferred_channel` / `manual_channels` / computed `available_channels` — every manual-send surface needs it to render its channel buttons (#287), so all staff roles except hygienist hold it. | `GET /api/v1/notifications/settings` |
+| `notifications.settings.write` | Change clinic notification settings (per-type toggles + channel configuration). Admin only. | `PUT /api/v1/notifications/settings` |
 
 ## Role assignment
 

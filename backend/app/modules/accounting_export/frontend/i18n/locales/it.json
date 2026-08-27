@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "accountingExport": "Esportazione per il commercialista"
+  },
+  "accountingExport": {
+    "title": "Esportazione per il commercialista",
+    "subtitle": "Scarica le fatture e i pagamenti del periodo da consegnare al tuo commercialista.",
+    "period": "Periodo",
+    "from": "Dal",
+    "to": "Al",
+    "presets": {
+      "currentMonth": "Mese corrente",
+      "previousMonth": "Mese precedente",
+      "currentQuarter": "Trimestre corrente",
+      "previousQuarter": "Trimestre precedente",
+      "yearToDate": "Anno in corso",
+      "custom": "Personalizzato"
+    },
+    "actions": {
+      "preview": "Anteprima",
+      "download": "Scarica (.zip)"
+    },
+    "counters": {
+      "invoices": "Fatture",
+      "payments": "Pagamenti",
+      "base": "Imponibile",
+      "total": "Totale"
+    },
+    "cols": {
+      "numero": "Numero",
+      "fecha_emision": "Data",
+      "cliente": "Cliente",
+      "nif": "Codice fiscale",
+      "base": "Imponibile",
+      "cuota_iva": "IVA",
+      "total": "Totale",
+      "estado": "Stato"
+    }
+  }
+}

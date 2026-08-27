@@ -1,8 +1,8 @@
 """patient_timeline — unified patient activity log.
 
 Cross-module audit stream. Populated by event handlers that react to
-patient.*, appointment.*, treatment.*, budget.*, invoice.*, email.*, and
-document.* events from other modules.
+patient.*, appointment.*, treatment.*, budget.*, invoice.*, notification.*,
+and document.* events from other modules.
 
 Handlers live in ``events.py``. They read only from the event payload and
 own their DB sessions, so the module stays removable in isolation (no
@@ -90,9 +90,13 @@ class PatientTimelineModule(BaseModule):
             EventType.TREATMENT_PLAN_REACTIVATED: events.on_treatment_plan_reactivated,
             EventType.INVOICE_ISSUED: events.on_invoice_issued,
             EventType.INVOICE_PAID: events.on_invoice_paid,
-            # Communications
-            EventType.EMAIL_SENT: events.on_email_sent,
-            EventType.EMAIL_FAILED: events.on_email_failed,
+            # Communications — the generic notification.* events cover every
+            # channel (email, whatsapp, …). The legacy email.* events are NOT
+            # subscribed anymore: the gateway dual-publishes them for
+            # channel=email for one release, so keeping both would record
+            # every email send twice (issue #287 bug 12).
+            EventType.NOTIFICATION_SENT: events.on_notification_sent,
+            EventType.NOTIFICATION_FAILED: events.on_notification_failed,
             EventType.NOTIFICATION_REPLY_RECEIVED: events.on_notification_reply_received,
             # Medical history
             EventType.PATIENT_MEDICAL_UPDATED: events.on_medical_updated,

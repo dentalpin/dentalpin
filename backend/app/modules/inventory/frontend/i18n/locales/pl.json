@@ -1,0 +1,35 @@
+{
+  "inventory": {
+    "title": "Magazyn",
+    "add": "Dodaj pozycję",
+    "edit": "Edytuj pozycję",
+    "item": "Pozycja",
+    "category": "Kategoria",
+    "unit": "Jednostka",
+    "stock": "Stan",
+    "minimum": "Minimum",
+    "notes": "Notatki",
+    "status": "Status",
+    "ok": "OK",
+    "low": "Niski",
+    "filterByCategory": "Filtruj wg kategorii",
+    "lowStockOnly": "Tylko niski stan",
+    "increment": "Zwiększ stan",
+    "decrement": "Zmniejsz stan",
+    "delete": "Usuń",
+    "deleteTitle": "Usuń pozycję",
+    "deleteMessage": "Usunąć tę pozycję magazynową? Tej operacji nie można cofnąć.",
+    "allCategories": "Wszystkie kategorie",
+    "adjustBy": "Zmień o…",
+    "apply": "Zastosuj",
+    "categories": {
+      "consumables": "Materiały zużywalne",
+      "equipment": "Sprzęt",
+      "office": "Biuro",
+      "other": "Inne"
+    }
+  },
+  "nav": {
+    "inventory": "Magazyn"
+  }
+}

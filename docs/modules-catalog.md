@@ -28,7 +28,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `medical_reference` | 0.4.0 | community | patients_clinical, patients | manual | yes | 2 | 0 | 0 | yes |
 | `medication_catalog` | 0.1.0 | community | — | manual | yes | 2 | 0 | 1 | yes |
 | `migration_import` | 0.1.0 | official | patients, patients_clinical, clinical_notes, agenda, schedules, recalls, catalog, budget, odontogram, treatment_plan, billing, payments, media | manual | yes | 4 | 5 | 0 | yes |
-| `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 8 | 7 | 6 | yes |
+| `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 8 | 7 | 7 | yes |
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 35 | yes |
@@ -487,6 +487,7 @@ Email templates, preferences, SMTP, event-driven sending.
   - `appointment.cancelled`
   - `appointment.scheduled`
   - `budget.accepted`
+  - `budget.reminder_sent`
   - `budget.sent`
   - `invoice.sent`
   - `patient.created`
@@ -569,13 +570,13 @@ Patient timeline — unified activity log.
   - `clinical_notes.plan_created`
   - `clinical_notes.treatment_created`
   - `document.uploaded`
-  - `email.failed`
-  - `email.sent`
   - `invoice.issued`
   - `invoice.paid`
   - `media.pair_created`
   - `media.photo_uploaded`
+  - `notification.failed`
   - `notification.reply_received`
+  - `notification.sent`
   - `odontogram.treatment.performed`
   - `patient.medical_updated`
   - `treatment_plan.closed`

@@ -1,0 +1,129 @@
+{
+  "recalls": {
+    "title": "Richiami",
+    "callList": "Lista chiamate",
+    "noRecallsThisMonth": "Nessun richiamo in sospeso questo mese",
+    "filters": {
+      "month": "Mese",
+      "reason": "Motivo",
+      "professional": "Professionista",
+      "status": "Stato",
+      "priority": "Priorità",
+      "overdue": "Mostra scaduti",
+      "any": "Qualsiasi",
+      "thisMonth": "Questo mese"
+    },
+    "counters": {
+      "due_this_week": "In scadenza questa settimana",
+      "due_this_month": "In scadenza questo mese",
+      "overdue": "Scaduti",
+      "scheduled_this_month": "Programmati questo mese",
+      "completed_this_month": "Completati questo mese",
+      "conversion_rate": "Conversione"
+    },
+    "setRecall": "Imposta richiamo",
+    "setRecallShort": "Richiamo",
+    "history": "Storico richiami",
+    "viewAll": "Vedi tutti",
+    "pillNext": "Prossimo richiamo: {month} · {reason}",
+    "pillNone": "Nessun richiamo attivo",
+    "reasons": {
+      "hygiene": "Igiene",
+      "checkup": "Controllo",
+      "ortho_review": "Controllo ortodontico",
+      "implant_review": "Controllo implantare",
+      "post_op": "Post-operatorio",
+      "treatment_followup": "Follow-up del trattamento",
+      "other": "Altro"
+    },
+    "priority": {
+      "low": "Bassa",
+      "normal": "Normale",
+      "high": "Alta"
+    },
+    "status": {
+      "pending": "In sospeso",
+      "contacted_no_answer": "Nessuna risposta",
+      "contacted_scheduled": "Programmato",
+      "contacted_declined": "Rifiutato",
+      "done": "Completato",
+      "cancelled": "Annullato",
+      "needs_review": "Da verificare"
+    },
+    "actions": {
+      "call": "Chiama",
+      "logAttempt": "Registra tentativo",
+      "noAnswer": "Nessuna risposta",
+      "book": "Prenota appuntamento",
+      "snooze": "Rimanda",
+      "cancel": "Annulla",
+      "markDone": "Segna come completato",
+      "exportCsv": "Esporta CSV",
+      "save": "Salva"
+    },
+    "closeoutPrompt": {
+      "title": "Programmare un richiamo?",
+      "subtitle": "Il paziente ha appena terminato — quando dovremmo richiamarlo?",
+      "skip": "Non ora"
+    },
+    "modal": {
+      "title": "Imposta richiamo",
+      "subtitle": "Segnala il paziente per una futura chiamata",
+      "patient": "Paziente",
+      "reason": "Motivo",
+      "when": "Quando",
+      "month": "Mese previsto",
+      "targetMonth": "Mese previsto",
+      "preciseDate": "Scegli un giorno specifico",
+      "priority": "Priorità",
+      "assigned": "Professionista assegnato",
+      "note": "Nota interna",
+      "notePlaceholder": "Dettaglio facoltativo (es. \"Controllare l'otturazione sul 47\")",
+      "optional": "facoltativo",
+      "duplicateGuard": "Esiste già un richiamo in sospeso per questo paziente e motivo. Verrà aggiornato."
+    },
+    "doNotContact": {
+      "cannotSchedule": "Questo paziente è contrassegnato come \"Non contattare\". Non è possibile programmare richiami. Aggiorna la preferenza nei dati anagrafici per riabilitare il contatto."
+    },
+    "activeRecallHint": "Richiamo attivo · tocca per gestire",
+    "logAttempt": {
+      "channel": "Canale",
+      "outcome": "Esito",
+      "note": "Nota",
+      "submit": "Registra tentativo"
+    },
+    "channel": {
+      "phone": "Telefono",
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "E-mail"
+    },
+    "outcome": {
+      "no_answer": "Nessuna risposta",
+      "voicemail": "Segreteria telefonica",
+      "scheduled": "Appuntamento programmato",
+      "declined": "Rifiutato",
+      "wrong_number": "Numero errato"
+    },
+    "snoozePrompt": "Rimandare di quanti mesi?",
+    "settings": {
+      "title": "Richiami",
+      "description": "Intervalli predefiniti + mappatura delle categorie di trattamento",
+      "intervals": "Intervalli predefiniti (mesi)",
+      "categoryMap": "Trattamento → motivo",
+      "categoryKeyPlaceholder": "chiave categoria del listino",
+      "autoSuggest": "Suggerisci un richiamo al completamento di un trattamento",
+      "autoLink": "Collega un appuntamento programmato a un richiamo in sospeso",
+      "saved": "Impostazioni salvate"
+    },
+    "dashboard": {
+      "title": "Richiami"
+    },
+    "suggestion": {
+      "title": "Richiamo suggerito",
+      "body": "Dopo questo trattamento suggeriamo un richiamo a {month} ({reason}).",
+      "create": "Crea richiamo",
+      "dismiss": "Ignora"
+    }
+  }
+}

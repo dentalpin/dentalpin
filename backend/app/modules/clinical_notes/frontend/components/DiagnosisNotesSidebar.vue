@@ -43,6 +43,7 @@ const loading = ref(false)
 const loadingMore = ref(false)
 const hasMore = ref(false)
 const composerOpen = ref(true)
+const composerRef = ref<{ reset: () => void } | null>(null)
 const editingId = ref<string | null>(null)
 const composerBody = ref('')
 const saving = ref(false)
@@ -105,20 +106,23 @@ async function handleSubmit(payload: {
   if (!props.ctx?.patientId) return
   saving.value = true
   try {
-    if (editingId.value) {
-      await updateNote(editingId.value, payload.body)
-    } else {
-      await createNote({
-        note_type: 'diagnosis',
-        owner_type: 'patient',
-        owner_id: props.ctx.patientId,
-        tooth_number: payload.toothNumber,
-        body: payload.body,
-        attachment_document_ids: payload.attachmentDocumentIds
-      })
-    }
+    // The composable toasts on failure and returns null — keep the
+    // draft (composer state) intact so the user can retry.
+    const saved = editingId.value
+      ? await updateNote(editingId.value, payload.body)
+      : await createNote({
+          note_type: 'diagnosis',
+          owner_type: 'patient',
+          owner_id: props.ctx.patientId,
+          tooth_number: payload.toothNumber,
+          body: payload.body,
+          attachment_document_ids: payload.attachmentDocumentIds
+        })
+    if (!saved) return
     editingId.value = null
     composerBody.value = ''
+    // The sidebar keeps the composer mounted, so clear the draft explicitly.
+    composerRef.value?.reset()
     await refresh()
   } finally {
     saving.value = false
@@ -126,6 +130,9 @@ async function handleSubmit(payload: {
 }
 
 async function handleDelete(entry: RecentNoteEntry) {
+  // Destructive, no undo endpoint — same confirm the other note surfaces use.
+  const confirmed = window.confirm(t('clinicalNotes.confirms.delete'))
+  if (!confirmed) return
   const ok = await deleteNote(entry.id)
   if (ok) await refresh()
 }
@@ -192,6 +199,7 @@ watch(
 
     <NoteComposer
       v-if="composerOpen && canWrite"
+      ref="composerRef"
       note-type="diagnosis"
       :initial-body="composerBody"
       :tooth-number="composerToothNumber"

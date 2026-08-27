@@ -33,6 +33,21 @@
     "saved": "Configuración guardada",
     "saveError": "No se pudo guardar",
     "synced": "Sincronizadas {n} plantillas",
-    "syncError": "No se pudo sincronizar"
+    "syncError": "No se pudo sincronizar",
+    "types": {
+      "appointment_confirmation": "Confirmación de cita",
+      "appointment_reminder": "Recordatorio de cita",
+      "appointment_cancelled": "Cancelación de cita",
+      "budget_sent": "Presupuesto enviado",
+      "budget_accepted": "Presupuesto aceptado",
+      "budget_reminder": "Recordatorio de presupuesto",
+      "invoice_sent": "Factura enviada",
+      "recall_reminder": "Recordatorio de revisión",
+      "welcome": "Bienvenida"
+    },
+    "onboarding": {
+      "label": "Envío por WhatsApp",
+      "description": "WhatsApp es el canal preferido de la clínica pero Kapso aún no está conectado. Conéctalo para que salgan los mensajes automáticos."
+    }
   }
 }

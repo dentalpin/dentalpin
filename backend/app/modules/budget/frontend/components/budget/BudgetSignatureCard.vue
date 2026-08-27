@@ -16,14 +16,20 @@ const { fetchSignature, downloadSignedPDF } = useBudgets()
 const signature = ref<BudgetSignatureMeta | null>(null)
 const isLoading = ref(false)
 const isDownloading = ref(false)
+// A failed fetch must be visually distinct from "not signed" (issue #101):
+// fetchSignature returns null only for a real 404 and throws otherwise.
+const loadError = ref(false)
 
 const visible = computed(() => ['accepted', 'completed'].includes(props.budgetStatus))
 
 async function load() {
   if (!visible.value) return
   isLoading.value = true
+  loadError.value = false
   try {
     signature.value = await fetchSignature(props.budgetId)
+  } catch {
+    loadError.value = true
   } finally {
     isLoading.value = false
   }
@@ -99,6 +105,21 @@ function shortHash(hash: string | null): string {
       />
       {{ t('common.loading') }}
     </div>
+
+    <!-- Load error — never render a failed read as "not signed". -->
+    <UAlert
+      v-else-if="loadError"
+      icon="i-lucide-triangle-alert"
+      color="error"
+      variant="subtle"
+      :title="t('budget.signature.loadError')"
+      :actions="[{
+        label: t('common.retry'),
+        color: 'error',
+        variant: 'soft',
+        onClick: () => load()
+      }]"
+    />
 
     <div
       v-else-if="!signature"

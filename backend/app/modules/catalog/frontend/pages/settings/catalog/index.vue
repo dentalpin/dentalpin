@@ -57,6 +57,24 @@ watch([searchQuery, selectedCategoryId], () => {
   })
 })
 
+// Retry after a failed load (issue #101): refetch both categories and
+// items with the current filters so the error banner clears on success.
+async function retryLoad() {
+  await Promise.all([
+    catalog.fetchCategories(),
+    catalog.fetchItems({
+      pageSize: 500,
+      search: searchQuery.value || undefined,
+      categoryId: selectedCategoryId.value
+    })
+  ])
+  // Mirror onMounted: if the initial load failed, the expand set was
+  // seeded from an empty list — re-expand once data is actually here.
+  if (!catalog.error.value && expandedCategories.value.size === 0) {
+    expandedCategories.value = new Set(catalog.categories.value.map(c => c.id))
+  }
+}
+
 // Group items by category
 interface CategoryGroup {
   category: TreatmentCatalogCategory
@@ -275,9 +293,25 @@ const categoryOptions = computed(() => [
       </div>
     </UCard>
 
+    <!-- Load error — never show the "no items" empty state (or its seed
+         CTA) for a failed read (issue #101). -->
+    <UAlert
+      v-if="catalog.error.value && !catalog.loading.value"
+      icon="i-lucide-triangle-alert"
+      color="error"
+      variant="subtle"
+      :title="t('catalog.loadError')"
+      :actions="[{
+        label: t('common.retry'),
+        color: 'error',
+        variant: 'soft',
+        onClick: () => retryLoad()
+      }]"
+    />
+
     <!-- Items list - Grouped View -->
     <div
-      v-if="showGroupedView"
+      v-else-if="showGroupedView"
       class="space-y-4"
     >
       <!-- Header with expand/collapse buttons -->

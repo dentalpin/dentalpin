@@ -12,7 +12,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
-  'update': [treatmentId: string, data: { status?: TreatmentStatus, notes?: string }]
+  'update': [treatmentId: string, data: { status?: TreatmentStatus, notes?: string, surfaces?: Surface[] }]
   'delete': [treatmentId: string]
   'perform': [treatmentId: string]
 }>()
@@ -79,10 +79,17 @@ function toggleSurface(surface: Surface) {
   }
 }
 
+function surfacesChanged(): boolean {
+  if (!props.treatment || !isSurfaceType.value) return false
+  const before = [...(props.treatment.surfaces || [])].sort()
+  const after = [...selectedSurfaces.value].sort()
+  return before.length !== after.length || before.some((s, i) => s !== after[i])
+}
+
 function handleSave() {
   if (!props.treatment) return
 
-  const data: { status?: TreatmentStatus, notes?: string } = {}
+  const data: { status?: TreatmentStatus, notes?: string, surfaces?: Surface[] } = {}
 
   if (status.value !== props.treatment.status) {
     data.status = status.value
@@ -90,6 +97,12 @@ function handleSave() {
 
   if (notes.value !== (props.treatment.notes || '')) {
     data.notes = notes.value
+  }
+
+  // Surface edits are part of the save payload — a surface treatment
+  // needs at least one surface, so an empty selection is not sent.
+  if (surfacesChanged() && selectedSurfaces.value.length > 0) {
+    data.surfaces = [...selectedSurfaces.value]
   }
 
   if (Object.keys(data).length > 0) {

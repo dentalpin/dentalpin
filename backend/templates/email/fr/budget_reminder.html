@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Votre devis attend votre réponse - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Bonjour {{ patient_name }},</h2>
+
+<p>Votre devis <strong>#{{ budget_number }}</strong> de <strong>{{ clinic_name | default('DentalPin') }}</strong> attend toujours votre réponse.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">N° Devis</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        {% if total %}
+        <div style="flex: 1; text-align: right;">
+            <div class="label">Total</div>
+            <div class="value">{{ total }} €</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if valid_until %}
+<div class="alert alert-warning">
+    <strong>Validité :</strong> ce devis est valable jusqu'au {{ valid_until }}.
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Consulter mon devis</a>
+</div>
+{% endif %}
+
+<p>Si vous avez déjà pris une décision ou si vous avez la moindre question, contactez-nous — nous serons ravis de vous aider.</p>
+
+<p>Nous restons à votre disposition.</p>
+{% endblock %}

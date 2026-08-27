@@ -301,30 +301,34 @@ async def send_budget(
 ) -> ApiResponse[BudgetResponse]:
     """Mark budget as sent to patient.
 
-    Can be sent via email or marked as manually delivered (printed/handed).
-    Email sending is handled by the notifications module via the budget.sent event.
+    Can be sent via email or WhatsApp (gateway send), or marked as
+    manually delivered (printed/handed). The actual message is queued by
+    the notifications module via the budget.sent event.
     """
     budget = await BudgetService.get_budget(db, ctx.clinic_id, budget_id, include_items=True)
     if not budget:
         raise HTTPException(status_code=404, detail="Budget not found")
 
     try:
-        # Determine send method
-        send_method = "email" if data.send_email else "manual"
+        # Determine send method (send_method wins; legacy send_email flag
+        # maps to "email"/"manual").
+        send_method = data.resolved_send_method
         recipient_email = None
 
-        if data.send_email:
-            # Get patient email for sending
+        if send_method in ("email", "whatsapp"):
             from app.modules.patients.models import Patient
 
             patient = await db.get(Patient, budget.patient_id)
-            if not patient or not patient.email:
-                raise BudgetWorkflowError("Patient has no email address")
-            recipient_email = patient.email
+            if send_method == "email":
+                if not patient or not patient.email:
+                    raise BudgetWorkflowError("Patient has no email address")
+                recipient_email = patient.email
+            elif not patient or not patient.phone:
+                raise BudgetWorkflowError("Patient has no phone number")
 
         # This will publish the budget.sent event, which the notifications
-        # module will handle (sending email if send_method="email" and
-        # the clinic has budget_sent notifications enabled)
+        # module will handle (queueing the message on the chosen channel
+        # when send_method is "email" or "whatsapp")
         budget = await BudgetWorkflowService.send_budget(
             db,
             budget,

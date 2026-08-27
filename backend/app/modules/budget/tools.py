@@ -3,14 +3,15 @@
 Thin wrappers over :class:`BudgetService` / :class:`BudgetWorkflowService`.
 Every tool filters by ``ctx.clinic_id`` and declares the same RBAC string
 as the HTTP routes. Amounts are the budget axis only — never mixed with
-payments here. ``send_budget`` is DESTRUCTIVE: it emails the patient
-(irreversible external side effect). See
+payments here. ``send_budget`` is DESTRUCTIVE: it messages the patient
+by email or WhatsApp (irreversible external side effect). See
 ``docs/technical/copilot-agentic-architecture.md`` §3.
 """
 
 from __future__ import annotations
 
 from datetime import date as date_cls
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, Field
@@ -39,9 +40,16 @@ class GetBudgetArgs(BaseModel):
 
 class SendBudgetArgs(BaseModel):
     budget_id: UUID
+    send_method: Literal["manual", "email", "whatsapp"] | None = Field(
+        default=None,
+        description=(
+            "Canal de envío: 'email' o 'whatsapp' (mensaje por la pasarela), "
+            "'manual' para marcar entregado en mano. Si se omite, se usa send_email."
+        ),
+    )
     send_email: bool = Field(
         default=True,
-        description="True: enviar por email al paciente. False: marcar entregado en mano.",
+        description="(Legado) True: enviar por email al paciente. False: marcar entregado en mano.",
     )
     custom_message: str | None = Field(default=None, max_length=500)
 
@@ -98,8 +106,10 @@ async def _send_budget(ctx: AgentContext, params: SendBudgetArgs) -> dict:
     if budget is None:
         return {"error": "not_found"}
 
+    send_method = params.send_method or ("email" if params.send_email else "manual")
+
     recipient_email = None
-    if params.send_email:
+    if send_method == "email":
         # patient is joinedloaded by get_budget — no cross-module import.
         if budget.patient is None or not budget.patient.email:
             return {
@@ -107,19 +117,30 @@ async def _send_budget(ctx: AgentContext, params: SendBudgetArgs) -> dict:
                 "detail": "El paciente no tiene email registrado.",
             }
         recipient_email = budget.patient.email
+    elif send_method == "whatsapp":
+        if budget.patient is None or not budget.patient.phone:
+            return {
+                "error": "no_patient_phone",
+                "detail": "El paciente no tiene teléfono registrado.",
+            }
 
     try:
         budget = await BudgetWorkflowService.send_budget(
             ctx.db,
             budget,
             sent_by=ctx.supervisor_id,
-            send_method="email" if params.send_email else "manual",
+            send_method=send_method,
             recipient_email=recipient_email,
             custom_message=params.custom_message,
         )
     except BudgetWorkflowError as e:
         return {"error": "workflow_error", "detail": str(e), "status": budget.status}
-    return {"id": budget.id, "status": budget.status, "recipient_email": recipient_email}
+    return {
+        "id": budget.id,
+        "status": budget.status,
+        "send_method": send_method,
+        "recipient_email": recipient_email,
+    }
 
 
 def get_tools() -> list[Tool]:
@@ -147,8 +168,9 @@ def get_tools() -> list[Tool]:
         Tool(
             name="send_budget",
             description=(
-                "Enviar un presupuesto al paciente por email (o marcarlo como "
-                "entregado en mano). Acción irreversible: requiere confirmación."
+                "Enviar un presupuesto al paciente por email o WhatsApp (o "
+                "marcarlo como entregado en mano). Acción irreversible: "
+                "requiere confirmación."
             ),
             parameters=SendBudgetArgs,
             handler=_send_budget,

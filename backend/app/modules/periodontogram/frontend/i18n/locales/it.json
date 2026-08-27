@@ -1,0 +1,84 @@
+{
+  "periodontogram": {
+    "tab": {
+      "label": "Parodontogramma"
+    },
+    "empty": {
+      "title": "Ancora nessun esame parodontale",
+      "description": "Apri una nuova sessione per registrare profondità di sondaggio, sanguinamento, placca e le altre metriche SEPA.",
+      "cta": "Inizia esame"
+    },
+    "session": {
+      "draftBadge": "Bozza in corso",
+      "closedBadge": "Sessione chiusa",
+      "recordedAt": "Registrata il {date}",
+      "openDraft": "Apri nuova sessione",
+      "continueDraft": "Continua bozza",
+      "closeTitle": "Chiudi sessione parodontale",
+      "closeDescription": "Una volta chiusa, la sessione è immutabile e appare nello storico. Per apportare correzioni sarà necessario aprire una nuova sessione.",
+      "closeButton": "Chiudi sessione",
+      "discardTitle": "Scarta bozza",
+      "discardDescription": "Tutti i dati inseriti in questa sessione verranno eliminati. Questa azione non può essere annullata.",
+      "discardButton": "Scarta",
+      "cancel": "Annulla",
+      "closeSession": "Chiudi sessione",
+      "discardDraft": "Scarta bozza"
+    },
+    "indices": {
+      "bop": "Sanguinamento",
+      "pi": "Placca",
+      "calMean": "CAL medio",
+      "deepPockets": "Tasche ≥5mm"
+    },
+    "saveState": {
+      "saving": "Salvataggio…",
+      "dirty": "Modifiche non salvate",
+      "saved": "Modifiche salvate"
+    },
+    "history": {
+      "viewingSession": "Visualizzazione della sessione del {date} (sola lettura).",
+      "returnToCurrent": "Torna alla corrente"
+    },
+    "arch": {
+      "upper": "Superiore",
+      "lower": "Inferiore",
+      "palatal": "Palatale",
+      "lingual": "Linguale",
+      "vestibular": "Vestibolare",
+      "probing": "Sondaggio",
+      "margin": "Margine",
+      "bleeding": "Sanguinamento",
+      "plaque": "Placca",
+      "probingTitle": "{code} sondaggio (0–15 mm)",
+      "marginTitle": "{code} margine gengivale (da -5 a 10 mm)",
+      "plaqueTitle": "{code} placca (clic per attivare/disattivare)",
+      "bleedingTitle": "{code} sanguinamento (clic per attivare/disattivare)",
+      "implant": "Impianto",
+      "implantToggleOn": "Impianto (clic per rimuovere)",
+      "implantToggleOff": "Clic per contrassegnare come impianto",
+      "mobility": "Mobilità",
+      "mobilityTitle": "Clic per cambiare la mobilità (0–3)",
+      "prognosis": "Prognosi",
+      "prognosisTitle": "Buona / Discreta / Dubbia / Senza speranza",
+      "furcaV": "Forcazione V",
+      "furcaVTitle": "Forcazione vestibolare (0/I/II/III)",
+      "furcaLP": "Forcazione L/P",
+      "furcaLPTitle": "Forcazione linguale/palatale (0/I/II/III)",
+      "gingivalWidth": "Ampiezza gengivale",
+      "siteMarkerAria": "Sito {code}, sondaggio {depth}"
+    },
+    "chart": {
+      "ariaLabel": "Parodontogramma — arcate superiore e inferiore"
+    },
+    "indicesBanner": {
+      "observationsPlaceholder": "Note dell'esame…",
+      "noteLabel": "Nota (facoltativa)"
+    },
+    "loading": "Caricamento del parodontogramma…",
+    "errors": {
+      "loadFailed": "Impossibile caricare il parodontogramma.",
+      "saveFailed": "Impossibile salvare la modifica.",
+      "checkConnection": "Controlla la connessione e riprova."
+    }
+  }
+}

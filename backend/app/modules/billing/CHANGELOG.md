@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#287): invoice send accepts `send_method=whatsapp` with per-channel recipient validation; the send modal renders channel buttons from the clinic's manual channels.
+
 - fix(#127): every icon-only button in the module's frontend has an i18n-sourced `aria-label` (screen readers announced them as just "button").
 
 - i18n(#131/#275): invoice-line descriptions from catalog names now fall

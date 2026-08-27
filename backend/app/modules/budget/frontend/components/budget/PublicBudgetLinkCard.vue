@@ -1,9 +1,10 @@
 <script setup lang="ts">
 /**
  * PublicBudgetLinkCard — surfaces the patient-facing URL for a sent
- * budget (ADR 0006) so reception can copy it into WhatsApp / SMS /
- * email signature. Adds a one-tap WhatsApp deep link when the
- * patient phone is on file.
+ * budget (ADR 0006) so reception can copy it into WhatsApp or an
+ * email signature. The wa.me deep link is a secondary convenience
+ * ("Open in WhatsApp") — the primary send is the gateway send in the
+ * quote Send modal (issue #287), which is logged and consent-checked.
  */
 
 const props = defineProps<{
@@ -123,8 +124,22 @@ const statusLabel = computed(() => {
 
         <div class="flex flex-wrap gap-2">
           <UButton
+            color="neutral"
+            variant="soft"
+            icon="i-lucide-external-link"
+            size="sm"
+            :to="url"
+            target="_blank"
+            rel="noopener"
+          >
+            {{ t('budget.publicLink.preview') }}
+          </UButton>
+          <!-- Secondary convenience only: opens the receptionist's own
+               WhatsApp with the link pre-filled. The logged, templated
+               send lives in the quote Send modal. -->
+          <UButton
             v-if="whatsappUrl"
-            color="success"
+            color="neutral"
             variant="soft"
             icon="i-lucide-message-circle"
             size="sm"
@@ -144,17 +159,6 @@ const statusLabel = computed(() => {
             :title="t('budget.publicLink.whatsappNoPhone')"
           >
             {{ t('budget.publicLink.whatsapp') }}
-          </UButton>
-          <UButton
-            color="neutral"
-            variant="soft"
-            icon="i-lucide-external-link"
-            size="sm"
-            :to="url"
-            target="_blank"
-            rel="noopener"
-          >
-            {{ t('budget.publicLink.preview') }}
           </UButton>
         </div>
       </div>

@@ -2,6 +2,7 @@
 import type {
   Appointment,
   AppointmentCreate,
+  NotificationChannel,
   Patient,
   PlannedTreatmentItem,
   Surface
@@ -20,6 +21,8 @@ const props = defineProps<{
   /** Pre-fill the cabinet field (#61, mobile free-slot tap when track = cabinet). */
   initialCabinet?: string | null
   initialPatientId?: string
+  /** Preselect this plan's pending treatments (treatment-plan flow, #207). */
+  initialPlanId?: string
   existingAppointments?: Appointment[]
 }>()
 
@@ -39,7 +42,8 @@ const { isMobile } = useBreakpoint()
 const { createAppointment, updateAppointment, cancelAppointment } = useAppointments()
 const { professionals, fetchProfessionals, getProfessionalColor } = useProfessionals()
 const { fetchSettings, getAutoSendStatus } = useNotificationSettings()
-const { sendConfirmation, sendReminder, isSending: isSendingEmail } = useNotificationSend()
+const { buttonsForPatient, preferredChannel } = useClinicNotificationChannels()
+const { sendConfirmation, sendReminder, sendCancellation, isSending: isSendingNotification } = useNotificationSend()
 const scheduleAvailability = useScheduleAvailability()
 
 // Sentinel value for the "assign later" cabinet option. Reka UI's
@@ -52,7 +56,9 @@ const UNASSIGNED_CABINET = '__unassigned__'
 const isSubmitting = ref(false)
 const selectedPatient = ref<Patient | null>(null)
 const selectedProfessionalId = ref<string>('')
-const sendConfirmationEmail = ref(true)
+// Create mode, auto-send OFF: the channel the confirmation goes out on.
+// One control per clinic manual channel (issue #287); null = don't send.
+const confirmationChannel = ref<NotificationChannel | null>(null)
 const selectedTreatments = ref<PlannedTreatmentItem[]>([])
 const formData = reactive({
   date: '',
@@ -123,28 +129,46 @@ const modalTitle = computed(() =>
   isEditMode.value ? t('appointments.edit') : t('appointments.create')
 )
 
-// Email dropdown in edit mode — Nuxt UI v4 uses an items-prop API
-// instead of <UDropdownMenuItem> children.
-const emailDropdownItems = computed(() => [[
-  {
-    label: t('appointments.resendConfirmation'),
-    icon: 'i-lucide-check-circle',
-    onSelect: () => {
-      if (props.appointment?.id && props.appointment.patient_id) {
-        sendConfirmation(props.appointment.id, props.appointment.patient_id)
+// Send menu in edit mode — Nuxt UI v4 uses an items-prop API instead
+// of <UDropdownMenuItem> children. One group per clinic manual channel
+// the patient can actually receive (issue #287); items are the
+// notification types the staff can (re)send on that channel.
+const sendMenuItems = computed(() => {
+  const apt = props.appointment
+  if (!apt?.id || !apt.patient_id) return []
+  const appointmentId = apt.id
+  const patientId = apt.patient_id
+  const groups: { label: string, icon: string, onSelect: () => void }[][] = []
+  for (const btn of buttonsForPatient(apt.patient)) {
+    if (btn.disabled) continue
+    const channel = btn.channel
+    const channelLabel = t(`notifications.channels.${channel}`)
+    const group = [
+      {
+        label: t('appointments.resendConfirmationVia', { channel: channelLabel }),
+        icon: 'i-lucide-check-circle',
+        onSelect: () => { sendConfirmation(appointmentId, patientId, channel) }
+      },
+      {
+        label: t('appointments.sendReminderVia', { channel: channelLabel }),
+        icon: 'i-lucide-clock',
+        onSelect: () => { sendReminder(appointmentId, patientId, channel) }
       }
+    ]
+    // Cancellation notice is only meaningful once the visit is cancelled.
+    if (apt.status === 'cancelled') {
+      group.push({
+        label: t('appointments.sendCancellationVia', { channel: channelLabel }),
+        icon: 'i-lucide-calendar-x',
+        onSelect: () => { sendCancellation(appointmentId, patientId, channel) }
+      })
     }
-  },
-  {
-    label: t('appointments.sendReminderEmail'),
-    icon: 'i-lucide-clock',
-    onSelect: () => {
-      if (props.appointment?.id && props.appointment.patient_id) {
-        sendReminder(props.appointment.id, props.appointment.patient_id)
-      }
-    }
+    groups.push(group)
   }
-]])
+  return groups
+})
+
+const hasSendMenu = computed(() => sendMenuItems.value.length > 0)
 
 const canSave = computed(() => {
   // Cabinet is optional (#51) — only patient + date + start time +
@@ -152,10 +176,31 @@ const canSave = computed(() => {
   return selectedPatient.value && formData.date && formData.startTime && selectedProfessionalId.value
 })
 
-// Email notification computed properties
+// Notification computed properties
 const autoSendEnabled = computed(() => getAutoSendStatus('appointment_confirmation'))
-const patientHasEmail = computed(() => !!selectedPatient.value?.email)
-const appointmentPatientHasEmail = computed(() => !!props.appointment?.patient?.email)
+
+// Create mode: one control per manual channel; disabled entries stay
+// visible so reception sees why a channel is off (no email / no phone).
+const confirmationButtons = computed(() => buttonsForPatient(selectedPatient.value))
+
+function channelDisabledReason(reason?: 'no_email' | 'no_phone' | 'channel_not_manual'): string | undefined {
+  if (reason === 'no_email') return t('notifications.channels.noEmail')
+  if (reason === 'no_phone') return t('notifications.channels.noPhone')
+  return undefined
+}
+
+// Default the confirmation channel to the clinic preference (falling
+// back to the first channel the patient can receive) whenever the
+// patient changes in create mode.
+function resetConfirmationDefault() {
+  const enabled = confirmationButtons.value.filter(b => !b.disabled)
+  const preferred = enabled.find(b => b.channel === preferredChannel.value)
+  confirmationChannel.value = (preferred ?? enabled[0])?.channel ?? null
+}
+
+watch(selectedPatient, () => {
+  if (!isEditMode.value) resetConfirmationDefault()
+})
 
 // Check for overlapping appointments
 const overlappingAppointments = computed(() => {
@@ -421,8 +466,9 @@ watch(() => props.open, async (isOpen) => {
       formData.cabinet = UNASSIGNED_CABINET
     }
     selectedTreatments.value = []
-    // Reset email checkbox for create mode
-    sendConfirmationEmail.value = true
+    // Reset the confirmation channel for create mode (clinic preference
+    // first, then whatever the patient can receive).
+    resetConfirmationDefault()
   }
 
   // Wait for next tick so overlappingAppointments computed can recalculate
@@ -546,9 +592,14 @@ async function handleSave() {
         color: 'success'
       })
 
-      // Send confirmation email if checkbox is checked, auto_send is off, and patient has email
-      if (!autoSendEnabled.value && sendConfirmationEmail.value && patientHasEmail.value) {
-        await sendConfirmation(savedAppointment.id, savedAppointment.patient_id || '')
+      // Explicit send only when auto-send is off and a channel is picked —
+      // with auto-send on, the appointment.scheduled event drives it.
+      if (!autoSendEnabled.value && confirmationChannel.value) {
+        await sendConfirmation(
+          savedAppointment.id,
+          savedAppointment.patient_id || '',
+          confirmationChannel.value
+        )
       }
     }
 
@@ -575,6 +626,11 @@ async function handleSave() {
   }
 }
 
+// Cancelling an appointment is destructive (no undo endpoint) — the footer
+// button opens a confirmation first (issue #101). Mirrors the confirm step
+// AppointmentQuickActions already applies to the cancel transition.
+const showCancelConfirm = ref(false)
+
 async function handleCancel() {
   if (!props.appointment) return
 
@@ -597,6 +653,7 @@ async function handleCancel() {
     })
   } finally {
     isSubmitting.value = false
+    showCancelConfirm.value = false
   }
 }
 
@@ -692,6 +749,7 @@ function openPatientFile() {
                 <PlannedTreatmentSelector
                   v-model="selectedTreatments"
                   :patient-id="selectedPatient?.id"
+                  :preselect-plan-id="!appointment ? initialPlanId : undefined"
                 />
               </div>
             </section>
@@ -833,45 +891,51 @@ function openPatientFile() {
                 color="error"
                 icon="i-lucide-x"
                 :loading="isSubmitting"
-                @click="handleCancel"
+                @click="showCancelConfirm = true"
               >
                 {{ t('appointments.cancel') }}
               </UButton>
 
-              <!-- Email dropdown in edit mode -->
+              <!-- Send menu in edit mode — items follow the clinic's
+                   manual channels and the patient's contact details. -->
               <UDropdownMenu
-                v-if="isEditMode && appointmentPatientHasEmail"
-                :items="emailDropdownItems"
+                v-if="isEditMode && hasSendMenu"
+                :items="sendMenuItems"
               >
                 <UButton
                   variant="outline"
-                  icon="i-lucide-mail"
-                  :loading="isSendingEmail"
+                  icon="i-lucide-send"
+                  :loading="isSendingNotification"
                 >
-                  {{ t('appointments.sendEmail') }}
+                  {{ t('appointments.sendMessage') }}
                 </UButton>
               </UDropdownMenu>
             </div>
             <div class="flex flex-col-reverse sm:flex-row sm:items-center gap-2 sm:gap-3">
-              <!-- Send-confirmation checkbox surfaces inline on desktop,
-                   stacks above on mobile so the primary action stays at
-                   the thumb. -->
-              <label
-                v-if="!isEditMode && patientHasEmail"
-                class="flex items-center gap-2 text-sm text-muted cursor-pointer"
+              <!-- Send-confirmation channel controls surface inline on
+                   desktop, stack above on mobile so the primary action
+                   stays at the thumb. Hidden when auto-send is on: the
+                   appointment.scheduled event drives the send. -->
+              <div
+                v-if="!isEditMode && !autoSendEnabled && selectedPatient && confirmationButtons.length"
+                class="flex items-center gap-3 flex-wrap text-sm text-muted"
               >
-                <UCheckbox
-                  v-model="sendConfirmationEmail"
-                  :disabled="autoSendEnabled"
-                />
-                <span>
-                  {{ t('appointments.sendConfirmationEmail') }}
-                  <span
-                    v-if="autoSendEnabled"
-                    class="text-xs"
-                  >({{ t('appointments.automatic') }})</span>
-                </span>
-              </label>
+                <span>{{ t('appointments.sendConfirmationEmail') }}:</span>
+                <label
+                  v-for="btn in confirmationButtons"
+                  :key="btn.channel"
+                  class="flex items-center gap-2"
+                  :class="btn.disabled ? 'opacity-60' : 'cursor-pointer'"
+                  :title="channelDisabledReason(btn.reason)"
+                >
+                  <UCheckbox
+                    :model-value="confirmationChannel === btn.channel"
+                    :disabled="btn.disabled"
+                    @update:model-value="(v: boolean | 'indeterminate') => confirmationChannel = v === true ? btn.channel : null"
+                  />
+                  <span>{{ t(`notifications.channels.${btn.channel}`) }}</span>
+                </label>
+              </div>
               <div class="flex flex-col-reverse sm:flex-row gap-2">
                 <UButton
                   variant="ghost"
@@ -893,6 +957,35 @@ function openPatientFile() {
           </div>
         </template>
       </UCard>
+    </template>
+  </UModal>
+
+  <!-- Cancel-appointment confirmation (destructive, no undo endpoint) -->
+  <UModal v-model:open="showCancelConfirm">
+    <template #content>
+      <div class="p-4 space-y-4">
+        <h2 class="text-h3 text-default">
+          {{ t('appointments.cancel') }}
+        </h2>
+        <p class="text-caption text-subtle">
+          {{ t('appointments.confirmCancelMessage') }}
+        </p>
+        <div class="flex justify-end gap-2">
+          <UButton
+            variant="ghost"
+            @click="showCancelConfirm = false"
+          >
+            {{ t('actions.cancel') }}
+          </UButton>
+          <UButton
+            color="error"
+            :loading="isSubmitting"
+            @click="handleCancel"
+          >
+            {{ t('appointments.cancel') }}
+          </UButton>
+        </div>
+      </div>
     </template>
   </UModal>
 </template>

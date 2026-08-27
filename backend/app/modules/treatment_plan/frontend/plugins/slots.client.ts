@@ -20,6 +20,18 @@ export default defineNuxtPlugin(() => {
     permission: 'treatment_plan.plans.read'
   })
 
+  // Post-completion follow-up: linked plan treatments the visit left
+  // unmarked, with one-click "mark as performed" (#207). Rendered by
+  // agenda's CompletionFollowupHost; the slot is the only contract.
+  registerSlot('appointment.completed.followup', {
+    id: 'treatment_plan.appointment.mark-performed-prompt',
+    component: defineAsyncComponent(
+      () => import('../components/clinical/MarkPerformedFollowupPrompt.vue')
+    ),
+    order: 5,
+    permission: 'treatment_plan.plans.write'
+  })
+
   // "New quote" form — tells reception the patient already has a plan
   // without a quote and sends them to generate it from the plan (#177).
   registerSlot('budget.new.form', {

@@ -96,7 +96,11 @@
     "derivedSettings": "Fuso orario e valuta",
     "willSeed": "Creeremo per te il listino prestazioni, le aliquote IVA, una serie di fatturazione, un riunito e un orario dal lunedì al venerdì. Tutto è modificabile in seguito.",
     "willSuggestVerifactu": "In seguito ti proporremo di attivare VeriFactu.",
-    "invalidData": "Controlla i dati: un campo non è valido."
+    "invalidData": "Controlla i dati: un campo non è valido.",
+    "attendPatientsMyself": "Visito personalmente i pazienti",
+    "attendPatientsMyselfHelp": "Ti contrassegna come professionista prenotabile. Potrai cambiarlo in seguito nelle impostazioni del team.",
+    "addressTitle": "Indirizzo dello studio",
+    "addressOptional": "facoltativo"
   },
   "onboarding": {
     "title": "Primi passi",
@@ -629,7 +633,8 @@
       "status": {
         "existing": "Esistente",
         "planned": "Pianificato"
-      }
+      },
+      "deleteConfirm": "Eliminare {name} (dente {tooth})? Questa azione non può essere annullata."
     },
     "position": {
       "displaced": "Dislocato",
@@ -806,7 +811,8 @@
         "title": "Piano bloccato",
         "subtitle": "Il preventivo {number} è stato emesso. Per modificare i trattamenti usa Riapri (se in sospeso) o rinegozia il preventivo.",
         "viewBudget": "Vedi preventivo"
-      }
+      },
+      "removeItemConfirm": "Rimuovere {name} da questo piano? Questa azione non può essere annullata."
     },
     "tooth": "Dente"
   },
@@ -959,6 +965,11 @@
       "professionalOff": "Fuori servizio",
       "onBreak": "In pausa"
     },
+    "sendMessage": "Invia messaggio",
+    "resendConfirmationVia": "Reinvia conferma ({channel})",
+    "sendReminderVia": "Invia promemoria ({channel})",
+    "sendCancellationVia": "Invia avviso di annullamento ({channel})",
+    "loadError": "Impossibile caricare gli appuntamenti",
     "planAwaitingBudget": "Preventivo in attesa di accettazione"
   },
   "dashboard": {
@@ -1604,7 +1615,8 @@
     "loadDefaults": "Carica listino predefinito",
     "loadDefaultsHint": "Aliquote IVA, categorie e trattamenti di riferimento per il paese dello studio. Vengono aggiunte solo le righe mancanti.",
     "defaultsLoaded": "Listino caricato: {categories} categorie, {items} trattamenti, {vat_types} aliquote IVA",
-    "defaultsFailed": "Impossibile caricare il listino predefinito"
+    "defaultsFailed": "Impossibile caricare il listino predefinito",
+    "loadError": "Impossibile caricare il listino prestazioni"
   },
   "placeholders": {
     "selectRole": "Seleziona ruolo..."
@@ -1863,6 +1875,12 @@
     "newBudgetHint": {
       "text": "Questo paziente ha il piano {plan} senza preventivo. Genera il preventivo dal piano così restano collegati.",
       "cta": "Apri il piano"
+    },
+    "viewDraftBudget": "Preventivo {number} (bozza)",
+    "followup": {
+      "subtitle": "Questi trattamenti pianificati della visita non sono stati contrassegnati come eseguiti:",
+      "markPerformed": "Contrassegna come eseguiti",
+      "marked": "Contrassegnati come eseguiti: {count}."
     }
   },
   "pipeline": {
@@ -2026,7 +2044,8 @@
       "representative": "Rappresentante",
       "accept": "Accetto le condizioni del preventivo",
       "signHere": "Firma qui",
-      "clear": "Cancella firma"
+      "clear": "Cancella firma",
+      "loadError": "Impossibile caricare lo stato della firma"
     },
     "history": {
       "title": "Cronologia modifiche",
@@ -2062,15 +2081,18 @@
       "deleteDescription": "Questa azione non può essere annullata."
     },
     "send": {
-      "description": "Puoi inviare il preventivo via e-mail o contrassegnarlo come consegnato manualmente (stampato o consegnato a mano).",
+      "description": "Puoi inviare il preventivo via e-mail o WhatsApp, oppure contrassegnarlo come consegnato manualmente (stampato o consegnato a mano).",
       "sendByEmail": "Invia via e-mail",
       "willSendTo": "Sarà inviato a",
       "noPatientEmail": "Il paziente non ha un'e-mail registrata",
       "customMessage": "Messaggio personalizzato (facoltativo)",
       "customMessagePlaceholder": "Aggiungi un messaggio per il paziente...",
-      "manualNote": "Il preventivo sarà contrassegnato come inviato senza inviare alcuna e-mail.",
+      "manualNote": "Il preventivo sarà contrassegnato come inviato senza inviare alcun messaggio.",
       "sendEmail": "Invia e-mail",
-      "markAsSent": "Segna come inviato"
+      "markAsSent": "Segna come inviato",
+      "sendByWhatsapp": "Invia via WhatsApp",
+      "sendWhatsapp": "Invia WhatsApp",
+      "willSendToPhone": "Sarà inviato via WhatsApp a"
     },
     "messages": {
       "created": "Preventivo creato",
@@ -2088,7 +2110,8 @@
       "itemUpdated": "Trattamento aggiornato",
       "itemRemoved": "Trattamento rimosso",
       "treatmentStarted": "Trattamento iniziato",
-      "treatmentCompleted": "Trattamento completato"
+      "treatmentCompleted": "Trattamento completato",
+      "sentByWhatsapp": "Preventivo inviato via WhatsApp"
     },
     "errors": {
       "load": "Errore nel caricamento dei preventivi",
@@ -2154,10 +2177,10 @@
     "publicLink": {
       "action": "Condividi link",
       "title": "Link per il paziente",
-      "help": "Copia questo link e condividilo con il paziente via WhatsApp, SMS o e-mail. Prima di vedere il preventivo gli sarà chiesto un dato di verifica.",
+      "help": "Copia questo link e condividilo con il paziente via WhatsApp o e-mail. Prima di vedere il preventivo gli sarà chiesto un dato di verifica.",
       "copy": "Copia link",
       "copied": "Copiato!",
-      "whatsapp": "Invia via WhatsApp",
+      "whatsapp": "Apri in WhatsApp",
       "whatsappNoPhone": "Il paziente non ha un telefono in scheda",
       "whatsappGreeting": "Ciao {name}, ecco il tuo preventivo:",
       "whatsappGreetingFallback": "Salve, ecco il suo preventivo:",
@@ -2276,10 +2299,10 @@
     "communications": {
       "language": {
         "cardTitle": "Lingua delle comunicazioni",
-        "cardDescription": "Lingua della vista preventivo per il paziente, delle e-mail e degli SMS.",
+        "cardDescription": "Lingua della vista preventivo per il paziente, delle e-mail e dei messaggi WhatsApp.",
         "title": "Lingua delle comunicazioni ai pazienti",
         "label": "Lingua",
-        "help": "Si applica alla vista preventivo per il paziente e ai modelli automatici e-mail/SMS. L'interfaccia dello staff mantiene la lingua di ogni utente.",
+        "help": "Si applica alla vista preventivo per il paziente e ai modelli automatici e-mail/WhatsApp. L'interfaccia dello staff mantiene la lingua di ogni utente.",
         "save": "Salva",
         "saved": "Lingua salvata"
       }
@@ -2319,7 +2342,13 @@
       "budget_accepted": "Preventivo accettato",
       "budget_accepted_desc": "E-mail di conferma all'accettazione di un preventivo",
       "welcome": "Benvenuto",
-      "welcome_desc": "E-mail di benvenuto per i nuovi pazienti"
+      "welcome_desc": "E-mail di benvenuto per i nuovi pazienti",
+      "invoice_sent": "Invio fattura",
+      "invoice_sent_desc": "Messaggio con la fattura quando viene inviata al paziente",
+      "budget_reminder": "Promemoria preventivo",
+      "budget_reminder_desc": "Sollecito per i preventivi senza risposta (7 e 14 giorni)",
+      "recall_reminder": "Promemoria richiamo",
+      "recall_reminder_desc": "Promemoria per prenotare la visita di controllo periodica"
     },
     "sendConfirmation": "Invia conferma",
     "sendReminder": "Invia promemoria",
@@ -2373,6 +2402,27 @@
     "onboarding": {
       "label": "Invio e-mail",
       "description": "Imposta il mittente per inviare via e-mail conferme di appuntamento e preventivi."
+    },
+    "channels": {
+      "cardTitle": "Canali",
+      "cardDescription": "Come la clinica raggiunge i pazienti: il canale dei messaggi automatici e i pulsanti di invio visibili allo staff.",
+      "preferredLabel": "Canale preferito",
+      "preferredHelp": "Usato per i messaggi automatici (nuovo appuntamento, promemoria, benvenuto…).",
+      "fallbackLabel": "Usa l'altro canale come riserva",
+      "fallbackHelp": "Se il canale preferito non può inviare, viene provato l'altro canale disponibile invece di saltare il messaggio.",
+      "manualLabel": "Mostra un pulsante di invio per…",
+      "manualHelp": "Quali pulsanti di invio vede la reception su appuntamenti, preventivi e fatture.",
+      "manualAtLeastOne": "Seleziona almeno un canale.",
+      "email": "E-mail",
+      "whatsapp": "WhatsApp",
+      "whatsappUnavailableHint": "WhatsApp non è disponibile finché il numero della clinica non è collegato.",
+      "whatsappConnect": "Collega WhatsApp (Kapso)",
+      "noEmail": "Il paziente non ha un'e-mail in scheda",
+      "noPhone": "Il paziente non ha un telefono in scheda"
+    },
+    "channelSent": {
+      "email": "E-mail inviata con successo",
+      "whatsapp": "Messaggio WhatsApp inviato con successo"
     }
   },
   "invoice": {
@@ -2642,20 +2692,24 @@
       "itemUpdated": "Voce aggiornata",
       "sentByEmail": "Fattura inviata via e-mail",
       "sentManually": "Fattura contrassegnata come inviata",
+      "sentByWhatsapp": "Fattura inviata via WhatsApp",
       "creditNoteCreated": "Nota di credito creata",
       "paymentRecorded": "Pagamento registrato"
     },
     "send": {
       "title": "Invia fattura",
-      "description": "Puoi inviare la fattura via e-mail o contrassegnarla come consegnata manualmente (stampata o consegnata di persona).",
+      "description": "Puoi inviare la fattura via e-mail o WhatsApp, oppure contrassegnarla come consegnata manualmente (stampata o consegnata di persona).",
       "sendByEmail": "Invia via e-mail",
       "willSendTo": "Sarà inviata a",
       "noPatientEmail": "Il paziente non ha un indirizzo e-mail",
       "customMessage": "Messaggio personalizzato (facoltativo)",
       "customMessagePlaceholder": "Aggiungi un messaggio per il paziente...",
-      "manualNote": "La fattura sarà contrassegnata come inviata senza inviare alcuna e-mail.",
+      "manualNote": "La fattura sarà contrassegnata come inviata senza inviare alcun messaggio.",
       "sendEmail": "Invia e-mail",
-      "markAsSent": "Segna come inviata"
+      "markAsSent": "Segna come inviata",
+      "sendByWhatsapp": "Invia via WhatsApp",
+      "sendWhatsapp": "Invia WhatsApp",
+      "willSendToPhone": "Sarà inviata via WhatsApp a"
     },
     "errors": {
       "load": "Errore nel caricamento delle fatture",
@@ -2878,7 +2932,8 @@
         "title": "Nessun dato per questo periodo",
         "desc": "Prova un intervallo di date più ampio o rimuovi i filtri."
       }
-    }
+    },
+    "loadError": "Impossibile caricare i dati del report"
   },
   "invoiceSeries": {
     "title": "Serie di fatturazione",

@@ -121,6 +121,10 @@ function applyTemplate(tpl: NoteTemplate) {
 function handleSubmit() {
   const next = body.value.trim()
   if (!next || props.busy) return
+  // Keep body/attachedDocs intact until the parent confirms the save —
+  // on failure the draft must survive so the user can retry. Parents
+  // that tear the composer down (v-if) reset it by unmounting; parents
+  // that keep it mounted call the exposed reset() on success.
   emit('submit', {
     body: next,
     toothNumber:
@@ -129,7 +133,6 @@ function handleSubmit() {
         : null,
     attachmentDocumentIds: attachedDocs.value.map(d => d.id)
   })
-  attachedDocs.value = []
 }
 
 function handleCancel() {
@@ -137,6 +140,14 @@ function handleCancel() {
   attachedDocs.value = []
   emit('cancel')
 }
+
+/** Clear the draft after the parent confirmed a successful save. */
+function reset() {
+  body.value = ''
+  attachedDocs.value = []
+}
+
+defineExpose({ reset })
 
 onMounted(() => {
   refreshTemplates()

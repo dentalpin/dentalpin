@@ -160,12 +160,22 @@ async def setup(
     if data.country:
         clinic_settings["country"] = data.country
 
+    address = {
+        key: value
+        for key, value in {
+            "country": data.country,
+            "street": data.clinic_street,
+            "city": data.clinic_city,
+            "postal_code": data.clinic_postal_code,
+        }.items()
+        if value
+    }
     clinic = Clinic(
         name=data.clinic_name,
         tax_id=data.clinic_tax_id,
         timezone=timezone,
         currency=currency,
-        address={"country": data.country} if data.country else {},
+        address=address,
         settings=clinic_settings,
     )
     db.add(clinic)
@@ -180,7 +190,14 @@ async def setup(
     db.add(user)
     await db.flush()
 
-    db.add(ClinicMembership(user_id=user.id, clinic_id=clinic.id, role="admin"))
+    db.add(
+        ClinicMembership(
+            user_id=user.id,
+            clinic_id=clinic.id,
+            role="admin",
+            is_professional=data.admin_is_professional,
+        )
+    )
     await db.commit()
 
     # Modules seed their defaults (catalog + VAT preset, invoice series,

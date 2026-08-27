@@ -492,19 +492,35 @@ async def on_invoice_paid(data: dict) -> None:
 # ---------------------------------------------------------------------------
 
 
-async def on_email_sent(data: dict) -> None:
-    subject = data.get("subject") or data.get("template_key") or "email"
+# Human labels for the outbound channels the gateway publishes. Anything
+# unknown falls back to a generic "Mensaje" so a future channel still lands
+# on the timeline without a code change here.
+_CHANNEL_LABELS = {"email": "Email", "whatsapp": "WhatsApp"}
+
+
+def _channel_label(data: dict) -> str:
+    channel = data.get("channel") or ""
+    return _CHANNEL_LABELS.get(channel, "Mensaje")
+
+
+async def on_notification_sent(data: dict) -> None:
+    """Record any outbound send (every channel) from ``notification.sent``.
+
+    Replaces the legacy ``email.sent`` subscription: the gateway publishes
+    the generic event for email AND WhatsApp, so subscribing to both would
+    double-record email sends (issue #287 bug 12).
+    """
+    subject = data.get("subject") or data.get("template_key") or "mensaje"
     await _record(
-        event_type=EventType.EMAIL_SENT,
+        event_type=EventType.NOTIFICATION_SENT,
         event_category="communication",
-        source_table="email_logs",
+        source_table="communication_messages",
         data=data,
-        source_id_key="email_log_id",
-        title=f"Email enviado: {subject}",
-        description=data.get("recipient_email"),
+        source_id_key="message_id",
+        title=f"{_channel_label(data)} enviado: {subject}",
         event_data={
+            "channel": data.get("channel"),
             "template_key": data.get("template_key"),
-            "recipient_email": data.get("recipient_email"),
         },
     )
 
@@ -525,19 +541,20 @@ async def on_notification_reply_received(data: dict) -> None:
     )
 
 
-async def on_email_failed(data: dict) -> None:
-    subject = data.get("subject") or data.get("template_key") or "email"
+async def on_notification_failed(data: dict) -> None:
+    """Record a failed outbound send (every channel) from ``notification.failed``."""
+    subject = data.get("subject") or data.get("template_key") or "mensaje"
     await _record(
-        event_type=EventType.EMAIL_FAILED,
+        event_type=EventType.NOTIFICATION_FAILED,
         event_category="communication",
-        source_table="email_logs",
+        source_table="communication_messages",
         data=data,
-        source_id_key="email_log_id",
-        title=f"Email fallido: {subject}",
-        description=data.get("error_message") or data.get("recipient_email"),
+        source_id_key="message_id",
+        title=f"{_channel_label(data)} fallido: {subject}",
+        description=data.get("error_message"),
         event_data={
+            "channel": data.get("channel"),
             "template_key": data.get("template_key"),
-            "recipient_email": data.get("recipient_email"),
             "error_message": data.get("error_message"),
         },
     )

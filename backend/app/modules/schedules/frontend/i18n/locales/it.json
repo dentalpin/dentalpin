@@ -1,0 +1,88 @@
+{
+  "schedules": {
+    "nav": {
+      "clinicHours": "Orari dello studio",
+      "professionalSchedules": "Orari dei professionisti"
+    },
+    "settingsCards": {
+      "clinicHoursTitle": "Orari dello studio",
+      "clinicHoursDescription": "Definisci gli orari di apertura settimanali dello studio e le date speciali (festività, orari ridotti).",
+      "professionalHoursTitle": "Orari dei professionisti",
+      "professionalHoursDescription": "Imposta gli orari individuali di ogni professionista e gestisci ferie o altri periodi di indisponibilità."
+    },
+    "clinicHours": {
+      "title": "Orari dello studio",
+      "subtitle": "Definisci quando lo studio è aperto per ogni giorno della settimana.",
+      "weeklyTemplate": "Modello settimanale",
+      "overrides": "Date speciali",
+      "addOverride": "Aggiungi data speciale",
+      "editOverride": "Modifica data speciale",
+      "save": "Salva modifiche",
+      "saved": "Orario aggiornato",
+      "savedError": "Impossibile salvare l'orario"
+    },
+    "professionalHours": {
+      "title": "Orari dei professionisti",
+      "selectProfessional": "Seleziona un professionista",
+      "weeklyTemplate": "Orario settimanale",
+      "overrides": "Assenze e orari speciali",
+      "addOverride": "Aggiungi assenza",
+      "editOverride": "Modifica assenza",
+      "save": "Salva modifiche",
+      "saved": "Orario aggiornato"
+    },
+    "weekday": {
+      "0": "Lunedì",
+      "1": "Martedì",
+      "2": "Mercoledì",
+      "3": "Giovedì",
+      "4": "Venerdì",
+      "5": "Sabato",
+      "6": "Domenica",
+      "closed": "Chiuso",
+      "addShift": "Aggiungi turno",
+      "removeShift": "Rimuovi turno",
+      "start": "Inizio",
+      "end": "Fine"
+    },
+    "overrides": {
+      "startDate": "Data di inizio",
+      "endDate": "Data di fine",
+      "kind": "Tipo",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Ad esempio: Natale, congresso...",
+      "closed": "Chiuso",
+      "customHours": "Orario personalizzato",
+      "unavailable": "Non disponibile",
+      "noOverrides": "Nessuna data speciale programmata",
+      "delete": "Elimina",
+      "confirmDelete": "Eliminare questo periodo?",
+      "add": "Aggiungi",
+      "save": "Salva",
+      "cancel": "Annulla"
+    },
+    "analytics": {
+      "occupancyTitle": "Occupazione per riunito",
+      "utilizationTitle": "Utilizzo per professionista",
+      "peakHoursTitle": "Ore di punta",
+      "bookedMinutes": "Minuti prenotati",
+      "availableMinutes": "Minuti disponibili",
+      "rate": "Occupazione",
+      "noData": "Nessun dato nell'intervallo selezionato"
+    },
+    "availability": {
+      "clinicClosed": "Studio chiuso",
+      "professionalOff": "Professionista non disponibile",
+      "outsideHours": "Fuori dagli orari configurati",
+      "confirmOutside": "Questo orario è fuori dall'orario di lavoro. Creare comunque l'appuntamento?",
+      "confirm": "Crea comunque",
+      "cancel": "Annulla"
+    },
+    "onboarding": {
+      "hoursLabel": "Orari dello studio",
+      "hoursDescription": "L'agenda al momento è aperta 24/7. Imposta i tuoi orari di apertura reali.",
+      "presetSplit": "Lun–Ven 9–14 e 16–20",
+      "presetContinuous": "Lun–Ven 9–18"
+    }
+  }
+}

@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 # ============================================================================
 # Email Template Schemas
@@ -63,7 +63,7 @@ class NotificationPreferenceBase(BaseModel):
     """Base schema for notification preferences."""
 
     email_enabled: bool = True
-    whatsapp_enabled: bool = False
+    whatsapp_enabled: bool = True
     preferences: dict = Field(
         default_factory=lambda: {
             "appointment_confirmation": True,
@@ -112,17 +112,33 @@ class NotificationPreferenceResponse(NotificationPreferenceBase):
 
 
 class NotificationTypeSettings(BaseModel):
-    """Settings for a specific notification type."""
+    """Settings for a specific notification type.
+
+    Answers *which events fire*; the channel they use is the clinic-wide
+    ``preferred_channel`` / ``manual_channels`` configuration.
+    """
 
     auto_send: bool = True
     enabled: bool = True
     hours_before: int | None = None  # For reminders
-    channels: list[str] | None = None  # Ordered fallback, e.g. ["whatsapp", "email"]
+
+
+def _validate_manual_channels(value: list[str] | None) -> list[str] | None:
+    if value is None:
+        return value
+    if not value:
+        raise ValueError("channel list must not be empty")
+    if len(set(value)) != len(value):
+        raise ValueError("channel list must not contain duplicates")
+    return value
 
 
 class ClinicNotificationSettingsBase(BaseModel):
     """Base schema for clinic notification settings."""
 
+    preferred_channel: str = "email"
+    fallback_enabled: bool = True
+    manual_channels: list[str] = Field(default_factory=lambda: ["email"])
     settings: dict = Field(
         default_factory=lambda: {
             "appointment_confirmation": {"auto_send": True, "enabled": True},
@@ -131,6 +147,9 @@ class ClinicNotificationSettingsBase(BaseModel):
             "budget_sent": {"auto_send": False, "enabled": True},
             "budget_accepted": {"auto_send": True, "enabled": True},
             "welcome": {"auto_send": False, "enabled": True},
+            "invoice_sent": {"auto_send": False, "enabled": True},
+            "budget_reminder": {"auto_send": True, "enabled": True},
+            "recall_reminder": {"auto_send": True, "enabled": True},
         }
     )
 
@@ -138,14 +157,24 @@ class ClinicNotificationSettingsBase(BaseModel):
 class ClinicNotificationSettingsUpdate(BaseModel):
     """Schema for updating clinic notification settings."""
 
-    settings: dict
+    settings: dict | None = None
+    preferred_channel: str | None = Field(default=None, pattern="^(email|whatsapp)$")
+    fallback_enabled: bool | None = None
+    manual_channels: list[str] | None = None
+
+    _check_manual_channels = field_validator("manual_channels")(_validate_manual_channels)
 
 
 class ClinicNotificationSettingsResponse(ClinicNotificationSettingsBase):
-    """Schema for clinic notification settings response."""
+    """Schema for clinic notification settings response.
+
+    ``available_channels`` is computed per request from the channel registry
+    (each adapter's ``supports``), never stored.
+    """
 
     id: UUID
     clinic_id: UUID
+    available_channels: list[str] = Field(default_factory=list)
     created_at: datetime
     updated_at: datetime
 
@@ -185,6 +214,18 @@ class EmailLogResponse(BaseModel):
 # ============================================================================
 
 
+class ChannelAvailabilityResponse(BaseModel):
+    """Channels a clinic can actually converse on right now.
+
+    ``available`` = the adapter is registered AND configured/active for
+    this clinic (``ChannelAdapter.supports``). The patient-summary
+    conversation card gates on this instead of rendering a reply box
+    that can only ever 409.
+    """
+
+    available: list[str]
+
+
 class ConversationMessageResponse(BaseModel):
     """One message in a patient conversation thread (inbound or outbound)."""
 
@@ -218,7 +259,7 @@ class ConversationReplyRequest(BaseModel):
 
 
 class ManualSendRequest(BaseModel):
-    """Schema for manual email send request."""
+    """Schema for a manual notification send request."""
 
     notification_type: str = Field(..., description="Type of notification to send")
     patient_id: UUID | None = Field(
@@ -229,6 +270,15 @@ class ManualSendRequest(BaseModel):
     )
     budget_id: UUID | None = Field(default=None, description="Budget ID (for budget notifications)")
     custom_context: dict | None = Field(default=None, description="Additional context variables")
+    channels: list[str] | None = Field(
+        default=None,
+        description=(
+            "Ordered channels to try, e.g. ['whatsapp']. Omitted = legacy "
+            "email behaviour (clinic channel order, email recipient required)."
+        ),
+    )
+
+    _check_channels = field_validator("channels")(_validate_manual_channels)
 
 
 class ManualSendResponse(BaseModel):

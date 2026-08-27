@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- feat(#287): the appointment modal's email-only confirmation checkbox and mail dropdown are replaced by channel-aware controls driven by the clinic's manual channels (confirmation/reminder/cancellation per receivable channel).
+
+- fix(#101): a failed appointments fetch renders an error banner with Retry instead of a blank calendar that reads as a free week; the appointment modal's footer cancel now asks for confirmation.
+
+- feat(#207): the appointments page forwards `?plan_id=` to the create modal (`initialPlanId`), which preselects that plan's pending treatments in the treatment selector.
+
 - fix(#108): `validate_planned_items` accepts items from `pending` plans (plan confirmed, quote not yet accepted). It only ever allowed `active`+`draft`, so once the appointment selector started offering `pending` plans the booking failed on save with `Treatment item ... belongs to pending plan`. Terminal plans (`completed`/`closed`) stay rejected, and completion is still gated on `active` — booking ahead of the acceptance is allowed, invoicing against it is not. First test coverage for this gate (`tests/test_appointment_planned_items.py`).
 
 - feat(#129): `GET /agenda/appointments/{id}.ics` — export one appointment as an RFC 5545 iCalendar file (UTC timestamps, CRLF + 75-octet folding, escaped text values, stable `UID` of `<appointment-uuid>@dentalpin.com`, `text/calendar` attachment). Hand-rolled builder in `ics.py`, no new dependency. Registered before the plain `/{id}` route so the `.ics` suffix isn't swallowed by the UUID param.

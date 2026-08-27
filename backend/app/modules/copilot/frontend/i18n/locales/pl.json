@@ -1,0 +1,185 @@
+{
+  "nav": {
+    "copilot": "IA"
+  },
+  "copilot": {
+    "title": "IA",
+    "open": "Otwórz IA",
+    "empty": "Zapytaj mnie o pacjentów, terminarz albo poproś o umówienie wizyty.",
+    "placeholder": "Napisz wiadomość…",
+    "send": "Wyślij",
+    "copy": "Kopiuj",
+    "new": "Nowa rozmowa",
+    "thinking": "Myślę…",
+    "you": "Ty",
+    "assistant": "IA",
+    "trust": "Twoje dane są chronione",
+    "phase": {
+      "working": "Pracuję…",
+      "writing": "Piszę…"
+    },
+    "tabs": {
+      "pending": "Do zrobienia",
+      "chat": "Czat"
+    },
+    "pending": {
+      "empty": "Nic nie oczekuje. Wszystko jest na bieżąco.",
+      "unknownPatient": "Nieznany pacjent",
+      "group": {
+        "recall": "Wizyty kontrolne do obdzwonienia",
+        "budget": "Kosztorysy oczekujące na odpowiedź"
+      }
+    },
+    "nudge": {
+      "act": "Sprawdź to",
+      "dismiss": "Odrzuć",
+      "appointmentCancelled": {
+        "text": "Wizyta o {time} została odwołana — właśnie zwolnił się termin.",
+        "prompt": "Wizyta o {time} została odwołana. Znajdź pacjentów z wizytami kontrolnymi, którzy mogliby zająć ten termin."
+      }
+    },
+    "suggest": {
+      "heading": "W czym mogę pomóc?",
+      "cat": {
+        "workflows": "Przepływy pracy",
+        "patients": "Pacjenci",
+        "agenda": "Terminarz",
+        "recalls": "Wizyty kontrolne",
+        "money": "Wpłaty i kosztorysy",
+        "reports": "Raporty"
+      },
+      "dailyBriefing": "Podsumowanie dnia",
+      "prepareVisit": "Przygotuj wizytę",
+      "fillGap": "Wypełnij lukę",
+      "searchPatient": "Znajdź pacjenta",
+      "patientSummary": "Podsumuj pacjenta",
+      "freeSlots": "Wolne terminy dzisiaj",
+      "bookAppointment": "Umów wizytę",
+      "dueRecalls": "Bieżące wizyty kontrolne",
+      "pendingBudgets": "Kosztorysy bez odpowiedzi",
+      "recordPayment": "Zarejestruj wpłatę",
+      "monthCollections": "Wpłaty w tym miesiącu",
+      "agendaSummary": "Przegląd terminarza",
+      "prompt": {
+        "dailyBriefing": "Przygotuj podsumowanie dnia: dzisiejsze wizyty, zaległe wizyty kontrolne i kosztorysy bez odpowiedzi",
+        "prepareVisit": "Przygotuj dla mnie następną wizytę pacjenta",
+        "fillGap": "Zwolnił się termin w terminarzu, do kogo możemy zadzwonić?",
+        "searchPatient": "Znajdź pacjenta",
+        "patientSummary": "Przygotuj podsumowanie pacjenta",
+        "freeSlots": "Jakie wolne terminy są dzisiaj?",
+        "bookAppointment": "Chcę umówić wizytę",
+        "dueRecalls": "Które wizyty kontrolne przypadają w tym miesiącu?",
+        "pendingBudgets": "Które kosztorysy zostały wysłane i pozostają bez odpowiedzi?",
+        "recordPayment": "Chcę zarejestrować wpłatę pacjenta",
+        "monthCollections": "Podsumowanie wpłat z tego miesiąca",
+        "agendaSummary": "Przedstaw przegląd dzisiejszego terminarza"
+      }
+    },
+    "settings": {
+      "title": "Copilot",
+      "description": "Asystent AI: podsumowanie dnia i silnik",
+      "saved": "Ustawienia zapisane",
+      "digest": {
+        "title": "Poranny e-mail z podsumowaniem",
+        "description": "Każdego ranka: dzisiejsze wizyty, zaległe wizyty kontrolne i kosztorysy bez odpowiedzi.",
+        "enabled": "Wysyłaj podsumowanie dnia",
+        "hour": "Godzina wysyłki",
+        "hourHelp": "Interpretowana w strefie czasowej gabinetu.",
+        "recipients": "Odbiorcy",
+        "recipientsHelp": "Każdy odbiorca otrzymuje własne podsumowanie, ograniczone do tego, co widzi jego rola.",
+        "recipientsPlaceholder": "Wybierz pracowników…"
+      },
+      "engine": {
+        "title": "Silnik",
+        "provider": "Dostawca",
+        "model": "Model",
+        "redaction": "Anonimizacja danych PHI",
+        "redactionOn": "Włączona",
+        "redactionOff": "Wyłączona"
+      },
+      "metrics": {
+        "title": "Użycie",
+        "description": "Ostatnie {days} dni.",
+        "toolCalls": "Wywołania narzędzi",
+        "errorRate": "Wskaźnik błędów",
+        "avgLatency": "Śr. opóźnienie",
+        "conversations": "Rozmowy",
+        "tokenBudget": "Miesięczny budżet tokenów",
+        "topTools": "Najczęściej używane narzędzia",
+        "toolNames": {
+          "recalls_list_due_recalls": "Zaległe wizyty kontrolne",
+          "budget_list_budgets": "Oczekujące kosztorysy",
+          "patients_list_patients": "Wyszukiwanie pacjentów",
+          "appointments_list_appointments": "Wizyty",
+          "invoices_list_invoices": "Faktury"
+        }
+      }
+    },
+    "tool": {
+      "running": "Wykonuję {name}…",
+      "done": "{name} — zakończone",
+      "failed": "{name} — niepowodzenie"
+    },
+    "card": {
+      "viewPatient": "Zobacz kartotekę",
+      "noResults": "Brak wyników",
+      "notFound": "Nie znaleziono",
+      "more": "+{n} więcej",
+      "freeSlots": "Wolne terminy",
+      "appointments": "Wizyty",
+      "patients": "Pacjenci"
+    },
+    "patientStatus": {
+      "active": "aktywny",
+      "archived": "zarchiwizowany"
+    },
+    "apptStatus": {
+      "scheduled": "Zaplanowana",
+      "confirmed": "Potwierdzona",
+      "checked_in": "W poczekalni",
+      "in_treatment": "Na fotelu",
+      "completed": "Zakończona",
+      "cancelled": "Odwołana",
+      "no_show": "Nieobecność"
+    },
+    "confirm": {
+      "title": "Potwierdź działanie",
+      "body": "IA chce wykonać {name}.",
+      "approve": "Potwierdź",
+      "reject": "Anuluj",
+      "approved": "Potwierdzono",
+      "rejected": "Anulowano",
+      "destructiveNote": "Tej operacji nie można cofnąć.",
+      "action": {
+        "book_appointment": "IA chce umówić wizytę.",
+        "cancel_appointment": "IA chce odwołać wizytę.",
+        "create_patient": "IA chce utworzyć pacjenta."
+      },
+      "field": {
+        "patient_id": "Pacjent",
+        "professional_id": "Lekarz",
+        "appointment_id": "Wizyta",
+        "cabinet_id": "Gabinet",
+        "cabinet": "Gabinet",
+        "start_time": "Data",
+        "end_time": "Koniec",
+        "datetime": "Data",
+        "service": "Usługa",
+        "reason": "Powód",
+        "duration_minutes": "Czas trwania (min)",
+        "first_name": "Imię",
+        "last_name": "Nazwisko",
+        "phone": "Telefon",
+        "email": "E-mail",
+        "date_of_birth": "Data urodzenia",
+        "query": "Wyszukiwanie"
+      }
+    },
+    "budgetExceeded": "Osiągnięto miesięczny limit użycia IA.",
+    "error": "Coś poszło nie tak.",
+    "page": {
+      "title": "IA",
+      "subtitle": "Asystent Twojego gabinetu, działający w granicach Twoich uprawnień."
+    }
+  }
+}

@@ -16,8 +16,18 @@ const NOTIFICATION_TYPES = [
   'appointment_cancelled',
   'budget_sent',
   'budget_accepted',
+  'budget_reminder',
+  'invoice_sent',
+  'recall_reminder',
   'welcome'
 ]
+
+const notificationTypeItems = computed(() =>
+  NOTIFICATION_TYPES.map(key => ({
+    value: key,
+    label: t(`whatsapp_kapso.types.${key}`)
+  }))
+)
 
 const form = reactive({
   api_key: '',
@@ -239,7 +249,9 @@ function copyWebhook() {
           <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <USelect
               v-model="mapping.notification_type"
-              :items="NOTIFICATION_TYPES"
+              :items="notificationTypeItems"
+              value-key="value"
+              label-key="label"
               :placeholder="t('whatsapp_kapso.notificationType')"
             />
             <USelect

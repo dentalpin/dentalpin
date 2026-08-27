@@ -673,7 +673,7 @@ async def send_invoice_email(
     _: Annotated[None, Depends(require_permission("billing.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[InvoiceResponse]:
-    """Send an invoice by email to the patient.
+    """Send an invoice to the patient (email or WhatsApp via the gateway).
 
     Only issued/partial/paid invoices can be sent (not drafts or voided).
     """
@@ -690,13 +690,21 @@ async def send_invoice_email(
             detail=f"Cannot send invoice with status '{invoice.status}'. Invoice must be issued first.",
         )
 
-    # Check patient has email
+    # Check the patient has the contact the chosen channel needs
+    send_method = data.resolved_send_method
     patient = invoice.patient
-    if data.send_email and (not patient or not patient.email):
+    if send_method == "email" and (not patient or not patient.email):
         raise HTTPException(
             status_code=400,
             detail="Cannot send email: patient has no email address",
         )
+    if send_method == "whatsapp" and (not patient or not patient.phone):
+        raise HTTPException(
+            status_code=400,
+            detail="Cannot send WhatsApp: patient has no phone number",
+        )
+
+    recipient_email = patient.email if patient and send_method == "email" else None
 
     # Publish event for notifications module
     from app.core.events import EventType, event_bus
@@ -707,8 +715,8 @@ async def send_invoice_email(
             "clinic_id": str(ctx.clinic_id),
             "invoice_id": str(invoice.id),
             "patient_id": str(invoice.patient_id),
-            "send_method": "email" if data.send_email else "manual",
-            "recipient_email": patient.email if patient and data.send_email else None,
+            "send_method": send_method,
+            "recipient_email": recipient_email,
             "custom_message": data.custom_message,
         },
         db=db,
@@ -723,8 +731,8 @@ async def send_invoice_email(
         changed_by=ctx.user_id,
         previous_state={},
         new_state={
-            "send_method": "email" if data.send_email else "manual",
-            "recipient_email": patient.email if patient and data.send_email else None,
+            "send_method": send_method,
+            "recipient_email": recipient_email,
         },
     )
 

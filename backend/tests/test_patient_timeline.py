@@ -266,37 +266,58 @@ async def test_on_invoice_paid_inserts_financial(
 
 
 @pytest.mark.asyncio
-async def test_on_email_sent_inserts_communication(
+async def test_on_notification_sent_inserts_communication(
     db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
 ):
     payload = {
         **_base_payload(test_clinic, test_patient),
-        "email_log_id": str(uuid4()),
+        "message_id": str(uuid4()),
+        "channel": "email",
         "template_key": "appointment_reminder",
         "subject": "Recordatorio de cita",
-        "recipient_email": "patient@test.com",
         "status": "sent",
     }
-    await timeline_events.on_email_sent(payload)
+    await timeline_events.on_notification_sent(payload)
     entries = await _entries_for(db_session, test_patient.id)
     assert len(entries) == 1
     assert entries[0].event_category == "communication"
+    assert entries[0].title.startswith("Email enviado")
 
 
 @pytest.mark.asyncio
-async def test_on_email_failed_inserts_communication(
+async def test_on_notification_sent_records_whatsapp(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """Bug 12 (#287): WhatsApp outbound must show as a send on the timeline."""
+    payload = {
+        **_base_payload(test_clinic, test_patient),
+        "message_id": str(uuid4()),
+        "channel": "whatsapp",
+        "template_key": "budget_sent",
+        "subject": None,
+        "status": "sent",
+    }
+    await timeline_events.on_notification_sent(payload)
+    entries = await _entries_for(db_session, test_patient.id)
+    assert len(entries) == 1
+    assert entries[0].title == "WhatsApp enviado: budget_sent"
+    assert entries[0].event_data["channel"] == "whatsapp"
+
+
+@pytest.mark.asyncio
+async def test_on_notification_failed_inserts_communication(
     db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
 ):
     payload = {
         **_base_payload(test_clinic, test_patient),
-        "email_log_id": str(uuid4()),
+        "message_id": str(uuid4()),
+        "channel": "email",
         "template_key": "appointment_reminder",
         "subject": "Recordatorio de cita",
-        "recipient_email": "patient@test.com",
         "status": "failed",
         "error_message": "SMTP timeout",
     }
-    await timeline_events.on_email_failed(payload)
+    await timeline_events.on_notification_failed(payload)
     entries = await _entries_for(db_session, test_patient.id)
     assert len(entries) == 1
     assert entries[0].description == "SMTP timeout"
@@ -345,17 +366,17 @@ async def test_on_document_uploaded_inserts_document(
 async def test_handler_without_patient_id_is_noop(
     db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
 ):
-    """Admin-level emails (no patient) must not land on anyone's ficha."""
+    """Admin-level sends (no patient) must not land on anyone's ficha."""
     payload = {
         "clinic_id": str(test_clinic.id),
         "patient_id": None,
-        "email_log_id": str(uuid4()),
+        "message_id": str(uuid4()),
+        "channel": "email",
         "template_key": "admin_alert",
         "subject": "Alerta interna",
-        "recipient_email": "admin@test.com",
         "status": "sent",
     }
-    await timeline_events.on_email_sent(payload)
+    await timeline_events.on_notification_sent(payload)
     entries = await _entries_for(db_session, test_patient.id)
     assert entries == []
 

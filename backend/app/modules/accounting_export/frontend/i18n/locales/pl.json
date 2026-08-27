@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "accountingExport": "Eksport dla księgowości"
+  },
+  "accountingExport": {
+    "title": "Eksport dla księgowości",
+    "subtitle": "Pobierz faktury i płatności z wybranego okresu, aby przekazać je swojej księgowości.",
+    "period": "Okres",
+    "from": "Od",
+    "to": "Do",
+    "presets": {
+      "currentMonth": "Bieżący miesiąc",
+      "previousMonth": "Poprzedni miesiąc",
+      "currentQuarter": "Bieżący kwartał",
+      "previousQuarter": "Poprzedni kwartał",
+      "yearToDate": "Od początku roku",
+      "custom": "Niestandardowy"
+    },
+    "actions": {
+      "preview": "Podgląd",
+      "download": "Pobierz (.zip)"
+    },
+    "counters": {
+      "invoices": "Faktury",
+      "payments": "Płatności",
+      "base": "Podstawa",
+      "total": "Razem"
+    },
+    "cols": {
+      "numero": "Numer",
+      "fecha_emision": "Data",
+      "cliente": "Klient",
+      "nif": "NIP",
+      "base": "Podstawa",
+      "cuota_iva": "VAT",
+      "total": "Razem",
+      "estado": "Status"
+    }
+  }
+}

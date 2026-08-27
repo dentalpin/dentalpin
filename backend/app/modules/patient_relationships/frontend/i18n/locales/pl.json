@@ -1,0 +1,22 @@
+{
+  "patientRelationships": {
+    "title": "Rodzina",
+    "emptyHint": "Brak zarejestrowanych powiązań rodzinnych.",
+    "relationships": {
+      "title": "Powiązania rodzinne",
+      "searchPatient": "Wyszukaj pacjenta do powiązania…",
+      "addSuccess": "Dodano powiązanie",
+      "addError": "Nie udało się dodać powiązania",
+      "removeError": "Nie udało się usunąć powiązania",
+      "types": {
+        "parent": "Rodzic",
+        "child": "Dziecko",
+        "spouse": "Małżonek/Małżonka",
+        "sibling": "Rodzeństwo",
+        "guardian": "Opiekun",
+        "ward": "Podopieczny",
+        "other": "Inne"
+      }
+    }
+  }
+}

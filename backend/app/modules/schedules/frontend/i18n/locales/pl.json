@@ -1,0 +1,88 @@
+{
+  "schedules": {
+    "nav": {
+      "clinicHours": "Godziny otwarcia gabinetu",
+      "professionalSchedules": "Grafiki lekarzy"
+    },
+    "settingsCards": {
+      "clinicHoursTitle": "Godziny otwarcia gabinetu",
+      "clinicHoursDescription": "Określ tygodniowe godziny otwarcia gabinetu i daty specjalne (święta, skrócone godziny).",
+      "professionalHoursTitle": "Grafiki lekarzy",
+      "professionalHoursDescription": "Ustaw indywidualne grafiki dla każdego lekarza i zarządzaj urlopami oraz innymi okresami niedostępności."
+    },
+    "clinicHours": {
+      "title": "Godziny otwarcia gabinetu",
+      "subtitle": "Określ, kiedy gabinet jest otwarty w poszczególne dni tygodnia.",
+      "weeklyTemplate": "Szablon tygodniowy",
+      "overrides": "Daty specjalne",
+      "addOverride": "Dodaj datę specjalną",
+      "editOverride": "Edytuj datę specjalną",
+      "save": "Zapisz zmiany",
+      "saved": "Grafik zaktualizowany",
+      "savedError": "Nie udało się zapisać grafiku"
+    },
+    "professionalHours": {
+      "title": "Grafiki lekarzy",
+      "selectProfessional": "Wybierz lekarza",
+      "weeklyTemplate": "Grafik tygodniowy",
+      "overrides": "Nieobecności i godziny specjalne",
+      "addOverride": "Dodaj nieobecność",
+      "editOverride": "Edytuj nieobecność",
+      "save": "Zapisz zmiany",
+      "saved": "Grafik zaktualizowany"
+    },
+    "weekday": {
+      "0": "Poniedziałek",
+      "1": "Wtorek",
+      "2": "Środa",
+      "3": "Czwartek",
+      "4": "Piątek",
+      "5": "Sobota",
+      "6": "Niedziela",
+      "closed": "Zamknięte",
+      "addShift": "Dodaj zmianę",
+      "removeShift": "Usuń zmianę",
+      "start": "Początek",
+      "end": "Koniec"
+    },
+    "overrides": {
+      "startDate": "Data początkowa",
+      "endDate": "Data końcowa",
+      "kind": "Typ",
+      "reason": "Powód",
+      "reasonPlaceholder": "Na przykład: Boże Narodzenie, konferencja...",
+      "closed": "Zamknięte",
+      "customHours": "Niestandardowe godziny",
+      "unavailable": "Niedostępny",
+      "noOverrides": "Brak zaplanowanych dat specjalnych",
+      "delete": "Usuń",
+      "confirmDelete": "Usunąć ten okres?",
+      "add": "Dodaj",
+      "save": "Zapisz",
+      "cancel": "Anuluj"
+    },
+    "analytics": {
+      "occupancyTitle": "Obłożenie wg gabinetu",
+      "utilizationTitle": "Wykorzystanie wg lekarza",
+      "peakHoursTitle": "Godziny szczytu",
+      "bookedMinutes": "Zarezerwowane minuty",
+      "availableMinutes": "Dostępne minuty",
+      "rate": "Obłożenie",
+      "noData": "Brak danych w wybranym zakresie"
+    },
+    "availability": {
+      "clinicClosed": "Gabinet zamknięty",
+      "professionalOff": "Lekarz niedostępny",
+      "outsideHours": "Poza skonfigurowanymi godzinami",
+      "confirmOutside": "Ten termin jest poza godzinami pracy. Mimo to utworzyć wizytę?",
+      "confirm": "Utwórz mimo to",
+      "cancel": "Anuluj"
+    },
+    "onboarding": {
+      "hoursLabel": "Godziny otwarcia gabinetu",
+      "hoursDescription": "Terminarz jest obecnie otwarty 24/7. Ustaw rzeczywiste godziny otwarcia.",
+      "presetSplit": "Pn–Pt 9–14 i 16–20",
+      "presetContinuous": "Pn–Pt 9–18"
+    }
+  }
+}

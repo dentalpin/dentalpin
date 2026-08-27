@@ -42,7 +42,9 @@ async function handleGenerateBudget() {
 
 function handleSchedule() {
   if (patientId.value) {
-    router.push(`/appointments?patient_id=${patientId.value}`)
+    // new=1 opens the modal, plan_id preselects this plan's pending
+    // treatments — no re-picking on the agenda side (#207).
+    router.push(`/appointments?patient_id=${patientId.value}&new=1&plan_id=${planId.value}`)
   }
 }
 

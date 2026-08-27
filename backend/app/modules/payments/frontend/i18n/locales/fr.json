@@ -233,6 +233,7 @@
     "reports": {
       "title": "Rapports de paiements",
       "subtitle": "Encaissements, remboursements, soldes patients et tendances pour la période.",
+      "loadError": "Impossible de charger les rapports de paiements",
       "cardDescription": "Encaissements, remboursements, soldes patients, vieillissement et tendances.",
       "period": "Période",
       "refresh": "Actualiser",
@@ -298,6 +299,10 @@
       "submit": "Affecter",
       "success": "Paiement affecté au devis",
       "error": "Impossible de réaffecter le paiement. Réessayez."
+    },
+    "followup": {
+      "collect": "Encaisser",
+      "collected": "Paiement enregistré."
     }
   }
 }

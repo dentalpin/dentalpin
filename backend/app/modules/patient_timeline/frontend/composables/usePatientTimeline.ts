@@ -12,10 +12,13 @@ const HIGH_IMPACT_EVENT_TYPES = new Set([
 ])
 
 // Events that should render denser/smaller — operational chatter rather than
-// clinical milestones.
+// clinical milestones. The legacy email.* types remain for rows recorded
+// before the generic notification.* events replaced them (issue #287).
 const LOW_IMPACT_EVENT_TYPES = new Set([
   'email.sent',
   'email.failed',
+  'notification.sent',
+  'notification.failed',
   'appointment.confirmed'
 ])
 
@@ -116,6 +119,9 @@ export function usePatientTimeline(patientId: Ref<string | undefined>) {
       'invoice.paid': 'i-lucide-banknote',
       'email.sent': 'i-lucide-mail',
       'email.failed': 'i-lucide-mail-warning',
+      'notification.sent': 'i-lucide-message-square',
+      'notification.failed': 'i-lucide-message-square-warning',
+      'notification.reply_received': 'i-lucide-message-square-reply',
       'patient.medical_updated': 'i-lucide-heart-pulse',
       'document.uploaded': 'i-lucide-file-plus'
     }

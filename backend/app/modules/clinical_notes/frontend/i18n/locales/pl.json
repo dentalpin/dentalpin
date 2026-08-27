@@ -1,0 +1,124 @@
+{
+  "clinicalNotes": {
+    "types": {
+      "administrative": "Administracyjna",
+      "diagnosis": "Diagnoza",
+      "treatment": "Zabieg",
+      "treatment_plan": "Plan",
+      "appointment_clinical": "Kliniczna",
+      "appointment_administrative": "Administracyjna"
+    },
+    "appointment": {
+      "addByType": "Dodaj notatkę: {label}",
+      "empty": "Brak notatek dla tej wizyty. Użyj przycisków powyżej, aby dodać notatkę."
+    },
+    "feed": {
+      "filterLabel": "Filtry",
+      "filterAll": "Wszystkie",
+      "filterClear": "Wyczyść filtry",
+      "filterStatus": "Wyświetlane {n} z {total} typów",
+      "addAdministrative": "Notatka administracyjna",
+      "loadMore": "Wczytaj więcej",
+      "empty": {
+        "title": "Brak notatek",
+        "help": "Notatki administracyjne, diagnozy i notatki zabiegowe pojawią się tutaj w porządku chronologicznym."
+      }
+    },
+    "diagnosisSidebar": {
+      "title": "Notatki",
+      "addNote": "Dodaj notatkę",
+      "empty": "Brak notatek w tej kategorii."
+    },
+    "treatmentButton": {
+      "title": "Notatki zabiegowe",
+      "add": "Dodaj notatkę",
+      "empty": "Brak notatek dla tego zabiegu.",
+      "aria": "Notatki zabiegowe ({n})"
+    },
+    "timeline": {
+      "addPlanNote": "Notatka do planu",
+      "empty": "Brak notatek.",
+      "emptyForFilter": "Żadna notatka nie pasuje do filtra.",
+      "source": {
+        "plan": "Plan",
+        "treatment": "Zabieg",
+        "visit": "Wizyta"
+      }
+    },
+    "byPlan": {
+      "empty": "Ten pacjent nie ma jeszcze notatek klinicznych powiązanych z planem.",
+      "planNotesLabel": "Notatki planu",
+      "unknownTreatment": "Zabieg",
+      "noNotesForTreatment": "Brak notatek dla tego zabiegu."
+    },
+    "composer": {
+      "placeholder": "Napisz notatkę…",
+      "templates": "Szablony",
+      "attach": "Załącz zdjęcie lub dokument",
+      "bindToTooth": "Przypisz do zęba {n}"
+    },
+    "linked": {
+      "tooth": "Ząb {n}",
+      "treatment": "Zabieg",
+      "treatmentOnTooth": "{label} (ząb {n})",
+      "plan": "Plan",
+      "planNamed": "Plan: {label}"
+    },
+    "actions": {
+      "showMore": "Pokaż więcej",
+      "showLess": "Pokaż mniej",
+      "openLinked": "Otwórz kontekst"
+    },
+    "author": {
+      "unknown": "Nieznany autor"
+    },
+    "time": {
+      "justNow": "przed chwilą",
+      "minutesAgo": "{n} min temu",
+      "hoursAgo": "{n} godz. temu",
+      "daysAgo": "{n} dn. temu"
+    },
+    "toasts": {
+      "saved": "Notatka zapisana",
+      "deleted": "Notatka usunięta",
+      "saveFailed": "Nie udało się zapisać notatki"
+    },
+    "confirms": {
+      "delete": "Usunąć tę notatkę? Odzyskanie wymaga kontaktu z pomocą techniczną."
+    },
+    "templates": {
+      "endo": {
+        "singleVisit": "Endodoncja (jedna wizyta)",
+        "multiVisit": "Endodoncja (wiele wizyt)"
+      },
+      "perio": {
+        "scaling": "Skaling / RAR"
+      },
+      "implant": {
+        "placement": "Wszczepienie implantu"
+      },
+      "diagnosis": {
+        "caries": "Próchnica",
+        "periapical": "Zmiana okołowierzchołkowa"
+      },
+      "admin": {
+        "phoneCall": "Rozmowa telefoniczna z pacjentem",
+        "reschedule": "Prośba o zmianę terminu"
+      },
+      "general": {
+        "followUp": "Ogólna wizyta kontrolna"
+      }
+    },
+    "templateBodies": {
+      "endo_single_visit": "Diagnoza: \nZnieczulenie: \nOdnalezione kanały: \nDługość robocza: \nObturacja: \nZalecenia pozabiegowe: ",
+      "endo_multi_visit": "Sesja: \nOpracowane kanały: \nLek wewnątrzkanałowy: \nNastępna wizyta: ",
+      "perio_scaling": "Leczone kwadranty: \nGłębokość kieszonek: \nKrwawienie przy sondowaniu: \nInstruktaż higieny: ",
+      "implant_placement": "Implant (marka / średnica / długość): \nMoment końcowy (Ncm): \nStabilizacja pierwotna: \nPrzeszczep: \nZalecenia pozabiegowe: ",
+      "diagnosis_caries": "Rozpoznanie: próchnica \nGłębokość: \nObjawy: \nTest żywotności: \nProponowane leczenie: ",
+      "diagnosis_periapical": "Zmiana okołowierzchołkowa \nZąb: \nRTG: \nTesty (opukiwanie, palpacja): \nDiagnoza: ",
+      "admin_phone_call": "Telefon pacjenta: \nPowód: \nPodjęte działanie: \nDalsze kroki: ",
+      "admin_reschedule": "Prośba o zmianę terminu: \nObecny termin: \nNowa propozycja: ",
+      "general_follow_up": "Wyniki badania: \nWykonana procedura: \nZalecenia dla pacjenta: "
+    }
+  }
+}

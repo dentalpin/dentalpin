@@ -1,0 +1,90 @@
+{
+  "migrationImport": {
+    "settingsCard": {
+      "title": "Migracja danych (dental-bridge)",
+      "description": "Zaimportuj plik DPMF wygenerowany przez dental-bridge (pacjenci, wizyty, kosztorysy, płatności, dokumenty)."
+    },
+    "page": {
+      "title": "Migracja danych",
+      "subtitle": "Zaimportuj dane wyodrębnione przez dental-bridge do tej kliniki."
+    },
+    "upload": {
+      "dropFile": "Upuść tutaj plik .dpm lub kliknij, aby go wybrać",
+      "passphrase": "Hasło (tylko pliki zaszyfrowane)",
+      "passphraseHelp": "Wymagane tylko dla .dpm.enc / .dpm.zst.enc",
+      "submit": "Prześlij i zweryfikuj",
+      "uploading": "Przesyłanie…",
+      "error": "Przesyłanie nie powiodło się"
+    },
+    "validate": {
+      "running": "Weryfikowanie pliku…",
+      "ok": "Plik jest prawidłowy",
+      "failed": "Weryfikacja nie powiodła się"
+    },
+    "preview": {
+      "title": "Podgląd",
+      "entities": "Encje",
+      "samples": "Próbki",
+      "warnings": "Ostrzeżenia",
+      "files": "Załączone pliki",
+      "filesTotal": "Łącznie",
+      "filesWithSha": "Z sha256",
+      "filesWithoutSha": "Bez sha256",
+      "verifactuCheckbox": "Importuj dane prawne Verifactu",
+      "verifactuHelp": "Zachowuje prawne hasze (Verifactu) na fakturach. Dostępne tylko wtedy, gdy moduł Verifactu jest zainstalowany, a plik zawiera te dane.",
+      "confirm": "Potwierdź i importuj",
+      "warning": "Tej operacji nie można cofnąć. Przejrzyj dane przed potwierdzeniem."
+    },
+    "filters": {
+      "title": "Filtrowanie specjalistów",
+      "description": "Odfiltrowani członkowie personelu są importowani jako nieaktywni (zachowani dla odniesień historycznych, ale ukryci w terminarzu). Można ich później ponownie aktywować w Ustawienia → Użytkownicy.",
+      "totalLabel": "Łącznie",
+      "deactivatedLabel": "Nieaktywni w źródle",
+      "orphansLabel": "Kolumny tylko z terminarza",
+      "stale24mLabel": "Brak aktywności przez ostatnie 24 mies.",
+      "minActivityLabel": "Minimalna aktywność (miesiące)",
+      "minActivityHelp": "Miękko dezaktywuje specjalistów bez śladu klinicznego nowszego niż podana liczba miesięcy. Ustaw 0, aby wyłączyć.",
+      "excludeOrphans": "Wyklucz kolumny tylko z terminarza bez rzeczywistego rekordu współpracownika",
+      "excludeInactive": "Wyklucz specjalistów oznaczonych w źródle jako nieaktywni",
+      "excludeNonClinical": "Importuj tylko dentystów i higienistki (pomiń asystentów i personel administracyjny)"
+    },
+    "execute": {
+      "running": "Importowanie…",
+      "progress": "{processed} z {total} encji",
+      "ok": "Import zakończony",
+      "failed": "Import nie powiódł się"
+    },
+    "proposals": {
+      "title": "Przejrzyj mapowania katalogu",
+      "subtitle": "Przed importem powiąż każdy zabieg z Gesdén z katalogiem DentalPin.",
+      "build": "Oblicz propozycje",
+      "building": "Obliczanie…",
+      "summary": "{total} propozycji: {link} powiązane, {fuzzy} przybliżone, {create} do utworzenia",
+      "bulkAccept": "Zaakceptuj wszystkie dopasowania z pewnością ≥ 0,9",
+      "accepted": "Zaakceptowano {n} propozycji.",
+      "columnSource": "Zabieg w Gesdén",
+      "columnProposed": "Propozycja",
+      "columnAction": "Działanie",
+      "columnStatus": "Status",
+      "actionLink": "Powiąż z katalogiem",
+      "actionFuzzy": "Dopasowanie przybliżone",
+      "actionCreate": "Utwórz nowy",
+      "operatorPending": "Oczekujące",
+      "operatorAccepted": "Zaakceptowane",
+      "operatorRelinked": "Powiązane ponownie",
+      "operatorCreated": "Utwórz nowy",
+      "operatorIgnored": "Zignorowane",
+      "acceptRow": "Akceptuj",
+      "ignoreRow": "Ignoruj"
+    },
+    "status": {
+      "uploaded": "Przesłano",
+      "validating": "Weryfikacja",
+      "validated": "Zweryfikowano",
+      "previewing": "Podgląd",
+      "executing": "Importowanie",
+      "completed": "Zakończono",
+      "failed": "Niepowodzenie"
+    }
+  }
+}

@@ -25,7 +25,16 @@ definePageMeta({ middleware: 'auth' })
 
 const { t, locale } = useI18n()
 const { format: formatMoney } = useCurrency()
-const { summary, byMethod, byProfessional, aging, refunds, trends } = usePaymentReports()
+const {
+  summary,
+  byMethod,
+  byProfessional,
+  aging,
+  refunds,
+  trends,
+  fetchFailed,
+  resetFetchFailed
+} = usePaymentReports()
 
 type Granularity = 'day' | 'week' | 'month'
 
@@ -127,6 +136,7 @@ async function refreshDelta() {
 }
 
 async function refreshAll() {
+  resetFetchFailed()
   await Promise.all([refreshPrimary(), refreshTrends(), refreshDelta()])
 }
 
@@ -135,9 +145,7 @@ onMounted(() => {
 })
 
 watch(range, () => {
-  refreshPrimary()
-  refreshTrends()
-  refreshDelta()
+  refreshAll()
 }, { deep: true })
 
 watch(granularity, () => {
@@ -261,6 +269,8 @@ function onTrendPointClick(bucketIso: string) {
 
 const allReportsEmpty = computed(() => {
   if (loadingPrimary.value) return false
+  // A failed load is an error state (banner above), not an empty period.
+  if (fetchFailed.value) return false
   if (!summaryData.value) return true
   return (
     Number(summaryData.value.total_collected || 0) === 0
@@ -291,6 +301,22 @@ const allReportsEmpty = computed(() => {
         />
       </template>
     </PageHeader>
+
+    <!-- Load error — a failed fetch must not read as a 0 € period
+         (issue #101). Cards below keep whatever partial data loaded. -->
+    <UAlert
+      v-if="fetchFailed"
+      icon="i-lucide-triangle-alert"
+      color="error"
+      variant="subtle"
+      :title="t('payments.reports.loadError')"
+      :actions="[{
+        label: t('common.retry'),
+        color: 'error',
+        variant: 'soft',
+        onClick: () => refreshAll()
+      }]"
+    />
 
     <!-- HERO ROW -->
     <div class="grid gap-4 md:grid-cols-2">

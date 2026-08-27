@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Tu presupuesto sigue pendiente - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Hola {{ patient_name }},</h2>
+
+<p>Tu presupuesto <strong>#{{ budget_number }}</strong> de <strong>{{ clinic_name | default('DentalPin') }}</strong> sigue pendiente de respuesta.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">N° Presupuesto</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        {% if total %}
+        <div style="flex: 1; text-align: right;">
+            <div class="label">Total</div>
+            <div class="value">{{ total }} €</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if valid_until %}
+<div class="alert alert-warning">
+    <strong>Validez:</strong> este presupuesto es válido hasta el {{ valid_until }}.
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Revisar mi presupuesto</a>
+</div>
+{% endif %}
+
+<p>Si ya has tomado una decisión o tienes cualquier duda, contáctanos — estaremos encantados de ayudarte.</p>
+
+<p>Quedamos a tu disposición.</p>
+{% endblock %}

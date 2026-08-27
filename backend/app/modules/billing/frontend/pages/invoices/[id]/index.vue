@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { DocumentSendMethod } from '~~/app/types'
 import { INVOICE_STATUS_ROLE } from '~~/app/config/severity'
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { errorMessage } from '~~/app/utils/error'
@@ -58,15 +59,56 @@ const creditNoteForm = ref({
   items: [] as { invoice_item_id: string, quantity?: number }[]
 })
 
-// Send form
-const sendForm = ref({
-  send_email: true,
+// Manual Send buttons follow the clinic channel config (issue #287).
+const {
+  buttonsForPatient,
+  preferredChannel,
+  ensureLoaded: ensureChannelsLoaded
+} = useClinicNotificationChannels()
+
+// Send form — one option per clinic manual channel, plus "Mark as sent"
+// (no message) which is always available.
+const sendForm = ref<{ method: DocumentSendMethod, custom_message: string }>({
+  method: 'email',
   custom_message: ''
+})
+
+function channelDisabledReason(reason?: 'no_email' | 'no_phone' | 'channel_not_manual'): string | undefined {
+  if (reason === 'no_email') return t('notifications.channels.noEmail')
+  if (reason === 'no_phone') return t('notifications.channels.noPhone')
+  return undefined
+}
+
+const sendMethodOptions = computed(() => {
+  const options = buttonsForPatient(currentInvoice.value?.patient ?? null).map(btn => ({
+    value: btn.channel as DocumentSendMethod,
+    label: btn.channel === 'email' ? t('invoice.send.sendByEmail') : t('invoice.send.sendByWhatsapp'),
+    icon: btn.channel === 'email' ? 'i-lucide-mail' : 'i-lucide-message-circle',
+    disabled: btn.disabled,
+    hint: channelDisabledReason(btn.reason)
+  }))
+  options.push({
+    value: 'manual',
+    label: t('invoice.send.markAsSent'),
+    icon: 'i-lucide-check',
+    disabled: false,
+    hint: undefined
+  })
+  return options
+})
+
+const sendButtonLabel = computed(() => {
+  if (sendForm.value.method === 'email') return t('invoice.send.sendEmail')
+  if (sendForm.value.method === 'whatsapp') return t('invoice.send.sendWhatsapp')
+  return t('invoice.send.markAsSent')
 })
 
 // Load invoice
 onMounted(async () => {
   await fetchInvoice(invoiceId.value)
+  if (can(PERMISSIONS.notifications.settingsRead)) {
+    ensureChannelsLoaded()
+  }
 })
 
 // Format date
@@ -234,8 +276,12 @@ async function handleCreateCreditNote() {
 }
 
 function openSendModal() {
+  // Default to the clinic's preferred channel when the patient can
+  // receive it; else the first viable channel; else "Mark as sent".
+  const enabled = buttonsForPatient(currentInvoice.value?.patient ?? null).filter(b => !b.disabled)
+  const preferred = enabled.find(b => b.channel === preferredChannel.value) ?? enabled[0]
   sendForm.value = {
-    send_email: true,
+    method: preferred?.channel ?? 'manual',
     custom_message: ''
   }
   showSendModal.value = true
@@ -247,13 +293,18 @@ async function handleSend() {
   isSending.value = true
   try {
     await sendInvoice(invoiceId.value, {
-      send_email: sendForm.value.send_email,
-      custom_message: sendForm.value.custom_message || undefined
+      send_method: sendForm.value.method,
+      send_email: sendForm.value.method === 'email',
+      custom_message: sendForm.value.method === 'email'
+        ? (sendForm.value.custom_message || undefined)
+        : undefined
     })
 
-    const message = sendForm.value.send_email
+    const message = sendForm.value.method === 'email'
       ? t('invoice.messages.sentByEmail')
-      : t('invoice.messages.sentManually')
+      : sendForm.value.method === 'whatsapp'
+        ? t('invoice.messages.sentByWhatsapp')
+        : t('invoice.messages.sentManually')
 
     toast.add({
       title: t('common.success'),
@@ -1001,28 +1052,40 @@ function goToCreditNoteFor() {
             {{ t('invoice.send.description') }}
           </p>
 
-          <div class="flex items-center gap-3">
-            <UCheckbox
-              v-model="sendForm.send_email"
-              :label="t('invoice.send.sendByEmail')"
-            />
+          <!-- One option per clinic manual channel + "Mark as sent".
+               Channels the patient cannot receive stay visible but
+               disabled (issue #287). -->
+          <div class="flex flex-wrap gap-2">
+            <button
+              v-for="opt in sendMethodOptions"
+              :key="opt.value"
+              type="button"
+              class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-token-md text-sm font-medium transition-colors border"
+              :class="[
+                sendForm.method === opt.value
+                  ? 'border-primary bg-primary/10 text-primary-accent'
+                  : 'border-default bg-default text-default hover:bg-elevated',
+                opt.disabled ? 'opacity-50 cursor-not-allowed' : ''
+              ]"
+              :disabled="opt.disabled"
+              :title="opt.hint"
+              :aria-pressed="sendForm.method === opt.value"
+              @click="sendForm.method = opt.value"
+            >
+              <UIcon
+                :name="opt.icon"
+                class="w-4 h-4"
+              />
+              {{ opt.label }}
+            </button>
           </div>
 
           <div
-            v-if="sendForm.send_email"
+            v-if="sendForm.method === 'email'"
             class="space-y-3"
           >
-            <p
-              v-if="currentInvoice?.patient?.email"
-              class="text-caption text-subtle"
-            >
-              {{ t('invoice.send.willSendTo') }}: <strong>{{ currentInvoice.patient.email }}</strong>
-            </p>
-            <p
-              v-else
-              class="text-sm text-warning-accent"
-            >
-              {{ t('invoice.send.noPatientEmail') }}
+            <p class="text-caption text-subtle">
+              {{ t('invoice.send.willSendTo') }}: <strong>{{ currentInvoice?.patient?.email }}</strong>
             </p>
 
             <UFormField :label="t('invoice.send.customMessage')">
@@ -1035,7 +1098,14 @@ function goToCreditNoteFor() {
           </div>
 
           <p
-            v-if="!sendForm.send_email"
+            v-else-if="sendForm.method === 'whatsapp'"
+            class="text-caption text-subtle"
+          >
+            {{ t('invoice.send.willSendToPhone') }}: <strong>{{ currentInvoice?.patient?.phone }}</strong>
+          </p>
+
+          <p
+            v-else
             class="text-caption text-subtle"
           >
             {{ t('invoice.send.manualNote') }}
@@ -1054,10 +1124,9 @@ function goToCreditNoteFor() {
           <UButton
             color="primary"
             :loading="isSending"
-            :disabled="sendForm.send_email && !currentInvoice?.patient?.email"
             @click="handleSend"
           >
-            {{ sendForm.send_email ? t('invoice.send.sendEmail') : t('invoice.send.markAsSent') }}
+            {{ sendButtonLabel }}
           </UButton>
         </div>
       </template>

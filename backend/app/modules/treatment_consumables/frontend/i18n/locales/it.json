@@ -1,0 +1,20 @@
+{
+  "consumables": {
+    "title": "Materiali di consumo dei trattamenti",
+    "subtitle": "Quali articoli di magazzino consuma ciascun trattamento del listino e in che quantità. Pura mappatura — le scorte non vengono scalate automaticamente.",
+    "treatment": "Trattamento",
+    "item": "Articolo di magazzino",
+    "quantity": "Quantità",
+    "note": "Nota",
+    "searchTreatments": "Cerca trattamenti…",
+    "searchItems": "Cerca articoli di magazzino…",
+    "add": "Collega materiale",
+    "delete": "Scollega",
+    "deleteTitle": "Scollega materiale",
+    "deleteMessage": "Rimuovere questo collegamento? Il trattamento non elencherà più questo articolo tra i materiali di consumo.",
+    "empty": "Nessun collegamento. Usa “Collega materiale” per associare un trattamento a un articolo di magazzino.",
+    "noMatches": "Nessun risultato",
+    "duplicate": "Questo trattamento consuma già questo articolo.",
+    "editTitle": "Modifica materiale"
+  }
+}

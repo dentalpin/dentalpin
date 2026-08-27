@@ -1,0 +1,38 @@
+{
+  "whatsapp_kapso": {
+    "settings": {
+      "title": "WhatsApp (Kapso)",
+      "description": "Połącz numer WhatsApp gabinetu przez Kapso, aby wysyłać i odbierać wiadomości."
+    },
+    "connection": "Połączenie",
+    "verified": "Zweryfikowano",
+    "notVerified": "Niezweryfikowano",
+    "apiKey": "Klucz API Kapso",
+    "phoneNumberId": "Phone number ID",
+    "businessAccountId": "Business account ID",
+    "businessAccountHelp": "Wymagane do synchronizacji zatwierdzonych szablonów.",
+    "displayPhone": "Wyświetlany numer",
+    "webhookSecret": "Sekret webhooka",
+    "secretStored": "Zapisano. Pozostaw puste, aby nie zmieniać.",
+    "webhook": "Webhook",
+    "webhookHelp": "Wklej ten adres URL w ustawieniach webhooków Kapso, aby otrzymywać statusy i odpowiedzi.",
+    "copy": "Kopiuj",
+    "copied": "Skopiowano URL",
+    "templates": "Szablony",
+    "sync": "Synchronizuj",
+    "noTemplates": "Brak zatwierdzonych szablonów. Zsynchronizuj, aby pobrać je z Kapso.",
+    "notificationType": "Typ powiadomienia",
+    "template": "Szablon",
+    "map": "Przypisz",
+    "mapped": "Szablon przypisany",
+    "mapError": "Nie udało się przypisać szablonu",
+    "test": "Wysyłka testowa",
+    "sendTest": "Wyślij test",
+    "testOk": "Wiadomość testowa wysłana",
+    "testFail": "Nie udało się wysłać testu",
+    "saved": "Ustawienia zapisane",
+    "saveError": "Nie udało się zapisać",
+    "synced": "Zsynchronizowano {n} szablonów",
+    "syncError": "Nie udało się zsynchronizować"
+  }
+}

@@ -5,6 +5,10 @@ const props = defineProps<{
   modelValue?: PlannedTreatmentItem[]
   patientId?: string
   placeholder?: string
+  /** Preselect every pending item of this plan once items load —
+   * the schedule-from-plan flow arrives with the plan already chosen
+   * (#207). Only applies while nothing is selected yet. */
+  preselectPlanId?: string
 }>()
 
 const emit = defineEmits<{
@@ -35,6 +39,15 @@ async function loadPendingItems(patientId: string) {
   isLoading.value = true
   try {
     pendingItems.value = await fetchPatientPendingItems(patientId)
+    if (props.preselectPlanId && selectedItems.value.length === 0) {
+      const planItems = pendingItems.value.filter(
+        item => item.treatment_plan?.id === props.preselectPlanId
+      )
+      if (planItems.length > 0) {
+        selectedItems.value = planItems
+        emit('update:modelValue', selectedItems.value)
+      }
+    }
   } catch {
     pendingItems.value = []
   } finally {

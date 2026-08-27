@@ -274,10 +274,11 @@ jobs:
         run: npm run test
 
   e2e:
-    # Browser E2E smoke. Boots db + backend via docker compose, runs
-    # Nuxt on the host (simpler than juggling the container's bind
-    # mount + host npm), drives it with Playwright on the host. Slow
-    # (~6 min). Required on main + PRs.
+    # Browser E2E smoke. Boots db + backend via docker compose, builds
+    # the frontend for production and serves the .output bundle on the
+    # host (#259 — more representative than nuxt dev, catches
+    # bundle/runtime issues dev mode hides), drives it with Playwright
+    # on the host. Slow (~6 min). Required on main + PRs.
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -345,17 +346,30 @@ jobs:
         working-directory: frontend
         run: node scripts/modules-json.mjs "$GITHUB_WORKSPACE/backend/app/modules"
 
-      - name: Start Nuxt dev in background
+      - name: Build frontend (production)
+        # Prod-build e2e is more representative than nuxt dev and
+        # catches bundle/runtime issues dev mode hides (#259). The
+        # API_BASE_URL* values bake the runtimeConfig defaults; the
+        # NUXT_* runtime overrides below keep them authoritative at
+        # serve time either way.
+        working-directory: frontend
+        env:
+          API_BASE_URL: http://localhost:8000
+          API_BASE_URL_SERVER: http://localhost:8000
+          # Default Node heap OOMs since the 9-locale × 22-layer i18n
+          # surface (#304 tipped it over); runners have 16 GB.
+          NODE_OPTIONS: --max-old-space-size=6144
+        run: npm run build
+
+      - name: Start Nuxt (production build) in background
         working-directory: frontend
         env:
           NUXT_PUBLIC_API_BASE_URL: http://localhost:8000
-          API_BASE_URL_SERVER: http://localhost:8000
+          NUXT_API_BASE_URL_SERVER: http://localhost:8000
           NITRO_HOST: 0.0.0.0
           NITRO_PORT: "3000"
-          # Devtools full-page reloads abort Playwright goto (#260).
-          NUXT_DEVTOOLS: "false"
         run: |
-          nohup npm run dev > /tmp/nuxt.log 2>&1 &
+          nohup node .output/server/index.mjs > /tmp/nuxt.log 2>&1 &
           echo "nuxt started (pid $!)"
 
       - name: Wait for frontend

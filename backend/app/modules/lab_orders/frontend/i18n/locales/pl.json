@@ -1,0 +1,27 @@
+{
+  "labOrders": {
+    "title": "Zlecenia laboratoryjne",
+    "add": "Nowe zlecenie",
+    "patient": "Pacjent",
+    "lab": "Laboratorium",
+    "loading": "Ładowanie…",
+    "selectPatient": "Wybierz pacjenta",
+    "selectLab": "Wybierz laboratorium",
+    "workType": "Rodzaj pracy",
+    "tooth": "Ząb / oznaczenie",
+    "impressionType": "Wycisk",
+    "antagonistInfo": "Informacje o antagoniście",
+    "shade": "Kolor",
+    "sentDate": "Data wysłania",
+    "expectedDate": "Przewidywana data",
+    "status": "Status",
+    "notes": "Notatki",
+    "save": "Wyślij zlecenie",
+    "cancel": "Anuluj",
+    "noLabsHint": "Najpierw utwórz kontakt laboratorium w Kontaktach.",
+    "workTypes": {"crown":"Korona","bridge":"Most","denture":"Proteza","implant":"Implant","veneer":"Licówka","orthodontic":"Ortodoncja","repair":"Naprawa","other":"Inne"},
+    "impressionTypes": {"alginate":"Alginat","pvs_silicone":"PVS / silikon","digital_scan":"Skan cyfrowy","other":"Inny"},
+    "statuses": {"sent":"Wysłane","in_progress":"W realizacji","ready":"Gotowe","received":"Odebrane","cancelled":"Anulowane"}
+  },
+  "nav": {"labOrdersForm":"Nowe zlecenie laboratoryjne","labOrdersStatus":"Zlecenia laboratoryjne"}
+}

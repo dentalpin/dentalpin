@@ -62,7 +62,7 @@ the full consent path — never bypasses `do_not_contact`.
 
 - `patient.created`
 - `appointment.scheduled` / `appointment.cancelled`
-- `budget.sent` / `budget.accepted`
+- `budget.sent` / `budget.accepted` / `budget.reminder_sent`
 - `invoice.sent`
 
 ## Lifecycle

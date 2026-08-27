@@ -100,17 +100,18 @@ async function handleSubmit(payload: {
 }) {
   saving.value = true
   try {
-    if (editingId.value) {
-      await updateNote(editingId.value, payload.body)
-    } else {
-      await createNote({
-        note_type: 'treatment',
-        owner_type: 'treatment',
-        owner_id: props.ctx.treatmentId,
-        body: payload.body,
-        attachment_document_ids: payload.attachmentDocumentIds
-      })
-    }
+    // The composable toasts on failure and returns null — keep the
+    // composer open with the draft intact so the user can retry.
+    const saved = editingId.value
+      ? await updateNote(editingId.value, payload.body)
+      : await createNote({
+          note_type: 'treatment',
+          owner_type: 'treatment',
+          owner_id: props.ctx.treatmentId,
+          body: payload.body,
+          attachment_document_ids: payload.attachmentDocumentIds
+        })
+    if (!saved) return
     composerOpen.value = false
     editingId.value = null
     composerBody.value = ''
@@ -121,6 +122,9 @@ async function handleSubmit(payload: {
 }
 
 async function handleDelete(entry: RecentNoteEntry) {
+  // Destructive, no undo endpoint — same confirm the other note surfaces use.
+  const confirmed = window.confirm(t('clinicalNotes.confirms.delete'))
+  if (!confirmed) return
   const ok = await deleteNote(entry.id)
   if (ok) await refreshFull()
 }

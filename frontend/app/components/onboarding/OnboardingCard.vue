@@ -124,6 +124,36 @@ onMounted(() => {
       />
     </div>
 
+    <!-- Compact done state: the six ticks collapse into one line so the
+         card stops dominating the dashboard the moment the last required
+         step resolves (it fully disappears once closed / on navigation). -->
+    <div
+      v-else-if="onboarding.isComplete.value"
+      class="flex items-center gap-3 py-2.5"
+    >
+      <UIcon
+        name="i-lucide-party-popper"
+        class="w-5 h-5 text-(--color-success-accent) shrink-0"
+      />
+      <div class="min-w-0 flex-1">
+        <p class="text-body text-default">
+          {{ t('onboarding.completedTitle') }}
+        </p>
+        <p class="text-caption text-muted">
+          {{ t('onboarding.completedDescription') }}
+        </p>
+      </div>
+      <UButton
+        size="sm"
+        variant="soft"
+        color="neutral"
+        class="min-h-[36px]"
+        @click="onboarding.dismiss()"
+      >
+        {{ t('common.close') }}
+      </UButton>
+    </div>
+
     <ul
       v-else
       class="divide-y divide-[var(--color-border-subtle)]"

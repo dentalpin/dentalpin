@@ -96,7 +96,11 @@
     "derivedSettings": "Fuseau horaire et devise",
     "willSeed": "Nous créerons pour vous le catalogue de soins, les taux de TVA, une série de factures, un cabinet et un horaire du lundi au vendredi. Tout est modifiable ensuite.",
     "willSuggestVerifactu": "Nous vous proposerons ensuite d'activer VeriFactu.",
-    "invalidData": "Vérifiez les données : un champ est invalide."
+    "invalidData": "Vérifiez les données : un champ est invalide.",
+    "attendPatientsMyself": "Je reçois moi-même les patients",
+    "attendPatientsMyselfHelp": "Vous serez marqué comme professionnel réservable. Modifiable plus tard dans Équipe.",
+    "addressTitle": "Adresse de la clinique",
+    "addressOptional": "facultatif"
   },
   "onboarding": {
     "title": "Mise en route",
@@ -629,7 +633,8 @@
       "status": {
         "existing": "Existant",
         "planned": "Planifié"
-      }
+      },
+      "deleteConfirm": "Supprimer {name} (dent {tooth}) ? Cette action est irréversible."
     },
     "position": {
       "displaced": "Déplacée",
@@ -806,7 +811,8 @@
         "title": "Plan verrouillé",
         "subtitle": "Le devis {number} a été émis. Pour modifier les traitements, utilisez Rouvrir (si en attente) ou Renégocier le devis.",
         "viewBudget": "Voir le devis"
-      }
+      },
+      "removeItemConfirm": "Retirer {name} de ce plan ? Cette action est irréversible."
     },
     "tooth": "Dent"
   },
@@ -959,6 +965,11 @@
       "onBreak": "En pause"
     },
     "actionsMenu": "Actions du rendez-vous",
+    "sendMessage": "Envoyer un message",
+    "resendConfirmationVia": "Renvoyer la confirmation ({channel})",
+    "sendReminderVia": "Envoyer un rappel ({channel})",
+    "sendCancellationVia": "Envoyer l'annulation ({channel})",
+    "loadError": "Impossible de charger les rendez-vous",
     "planAwaitingBudget": "Devis en attente d'acceptation"
   },
   "dashboard": {
@@ -1604,7 +1615,8 @@
     "loadDefaults": "Charger le catalogue par défaut",
     "loadDefaultsHint": "Types de TVA, catégories et traitements de référence selon le pays de la clinique. Seules les lignes manquantes sont ajoutées.",
     "defaultsLoaded": "Catalogue chargé : {categories} catégories, {items} traitements, {vat_types} types de TVA",
-    "defaultsFailed": "Impossible de charger le catalogue par défaut"
+    "defaultsFailed": "Impossible de charger le catalogue par défaut",
+    "loadError": "Impossible de charger le catalogue de traitements"
   },
   "placeholders": {
     "selectRole": "Sélectionner un rôle..."
@@ -1863,6 +1875,12 @@
     "newBudgetHint": {
       "text": "Ce patient a le plan {plan} sans devis. Générez le devis depuis le plan pour qu'ils restent liés.",
       "cta": "Ouvrir le plan"
+    },
+    "viewDraftBudget": "Devis {number} (brouillon)",
+    "followup": {
+      "subtitle": "Ces traitements planifiés de la visite n'ont pas été marqués comme réalisés :",
+      "markPerformed": "Marquer comme réalisés",
+      "marked": "Marqués comme réalisés : {count}."
     }
   },
   "pipeline": {
@@ -2026,7 +2044,8 @@
       "representative": "Représentant",
       "accept": "J'accepte les termes du devis",
       "signHere": "Signez ici",
-      "clear": "Effacer la signature"
+      "clear": "Effacer la signature",
+      "loadError": "Impossible de charger l'état de la signature"
     },
     "history": {
       "title": "Historique des modifications",
@@ -2062,15 +2081,18 @@
       "deleteDescription": "Cette action est irréversible."
     },
     "send": {
-      "description": "Vous pouvez envoyer le devis par email ou le marquer comme envoyé manuellement (imprimé ou remis en main propre).",
+      "description": "Vous pouvez envoyer le devis par email ou WhatsApp, ou le marquer comme envoyé manuellement (imprimé ou remis en main propre).",
       "sendByEmail": "Envoyer par email",
       "willSendTo": "Sera envoyé à",
       "noPatientEmail": "Le patient n'a pas d'email enregistré",
       "customMessage": "Message personnalisé (facultatif)",
       "customMessagePlaceholder": "Ajoutez un message pour le patient...",
-      "manualNote": "Le devis sera marqué comme envoyé sans envoyer d'email.",
+      "manualNote": "Le devis sera marqué comme envoyé sans envoyer aucun message.",
       "sendEmail": "Envoyer l'email",
-      "markAsSent": "Marquer comme envoyé"
+      "markAsSent": "Marquer comme envoyé",
+      "sendByWhatsapp": "Envoyer par WhatsApp",
+      "sendWhatsapp": "Envoyer sur WhatsApp",
+      "willSendToPhone": "Sera envoyé par WhatsApp à"
     },
     "messages": {
       "created": "Devis créé",
@@ -2088,7 +2110,8 @@
       "itemUpdated": "Traitement mis à jour",
       "itemRemoved": "Traitement retiré",
       "treatmentStarted": "Traitement commencé",
-      "treatmentCompleted": "Traitement terminé"
+      "treatmentCompleted": "Traitement terminé",
+      "sentByWhatsapp": "Devis envoyé par WhatsApp"
     },
     "errors": {
       "load": "Erreur lors du chargement des devis",
@@ -2154,10 +2177,10 @@
     "publicLink": {
       "action": "Partager le lien",
       "title": "Lien patient",
-      "help": "Copiez ce lien et partagez-le avec le patient via WhatsApp, SMS ou email. Une vérification sera demandée avant de consulter le devis.",
+      "help": "Copiez ce lien et partagez-le avec le patient via WhatsApp ou email. Une vérification sera demandée avant de consulter le devis.",
       "copy": "Copier le lien",
       "copied": "Copié !",
-      "whatsapp": "Envoyer via WhatsApp",
+      "whatsapp": "Ouvrir dans WhatsApp",
       "whatsappNoPhone": "Le patient n'a pas de téléphone enregistré",
       "whatsappGreeting": "Bonjour {name}, voici votre devis :",
       "whatsappGreetingFallback": "Bonjour, voici votre devis :",
@@ -2276,10 +2299,10 @@
     "communications": {
       "language": {
         "cardTitle": "Langue des communications",
-        "cardDescription": "Langue utilisée dans la vue devis patient, les emails et SMS.",
+        "cardDescription": "Langue utilisée dans la vue devis patient, les emails et les messages WhatsApp.",
         "title": "Langue des communications patient",
         "label": "Langue",
-        "help": "S'applique à la vue devis accessible au patient et aux modèles email/SMS automatisés. L'interface du personnel conserve la préférence linguistique de chaque utilisateur.",
+        "help": "S'applique à la vue devis accessible au patient et aux modèles automatisés email/WhatsApp. L'interface du personnel conserve la préférence linguistique de chaque utilisateur.",
         "save": "Enregistrer",
         "saved": "Langue enregistrée"
       }
@@ -2319,7 +2342,13 @@
       "budget_accepted": "Devis accepté",
       "budget_accepted_desc": "Email de confirmation lorsqu'un devis est accepté",
       "welcome": "Bienvenue",
-      "welcome_desc": "Email de bienvenue pour les nouveaux patients"
+      "welcome_desc": "Email de bienvenue pour les nouveaux patients",
+      "invoice_sent": "Envoi de facture",
+      "invoice_sent_desc": "Message avec la facture lors de son envoi au patient",
+      "budget_reminder": "Rappel de devis",
+      "budget_reminder_desc": "Relance des devis sans réponse (7 et 14 jours)",
+      "recall_reminder": "Rappel de suivi",
+      "recall_reminder_desc": "Rappel pour réserver la visite de suivi périodique"
     },
     "sendConfirmation": "Envoyer la confirmation",
     "sendReminder": "Envoyer le rappel",
@@ -2373,6 +2402,27 @@
     "onboarding": {
       "label": "Envoi d'e-mails",
       "description": "Configurez l'expéditeur pour envoyer confirmations de rendez-vous et devis."
+    },
+    "channels": {
+      "cardTitle": "Canaux",
+      "cardDescription": "Comment la clinique contacte les patients : le canal des messages automatiques et les boutons d'envoi affichés au personnel.",
+      "preferredLabel": "Canal préféré",
+      "preferredHelp": "Utilisé pour les messages automatiques (nouveau rendez-vous, rappel, bienvenue…).",
+      "fallbackLabel": "Utiliser l'autre canal en secours",
+      "fallbackHelp": "Si le canal préféré ne peut pas envoyer, l'autre canal disponible est essayé au lieu d'ignorer le message.",
+      "manualLabel": "Afficher un bouton d'envoi pour…",
+      "manualHelp": "Les boutons d'envoi que la réception voit sur les rendez-vous, devis et factures.",
+      "manualAtLeastOne": "Sélectionnez au moins un canal.",
+      "email": "Email",
+      "whatsapp": "WhatsApp",
+      "whatsappUnavailableHint": "WhatsApp n'est pas disponible tant que le numéro de la clinique n'est pas connecté.",
+      "whatsappConnect": "Connecter WhatsApp (Kapso)",
+      "noEmail": "Le patient n'a pas d'email enregistré",
+      "noPhone": "Le patient n'a pas de téléphone enregistré"
+    },
+    "channelSent": {
+      "email": "Email envoyé avec succès",
+      "whatsapp": "Message WhatsApp envoyé avec succès"
     }
   },
   "invoice": {
@@ -2642,20 +2692,24 @@
       "itemUpdated": "Ligne mise à jour",
       "sentByEmail": "Facture envoyée par email",
       "sentManually": "Facture marquée comme envoyée",
+      "sentByWhatsapp": "Facture envoyée par WhatsApp",
       "creditNoteCreated": "Facture rectificative créée",
       "paymentRecorded": "Paiement enregistré"
     },
     "send": {
       "title": "Envoyer la facture",
-      "description": "Vous pouvez envoyer la facture par email ou la marquer comme envoyée manuellement (imprimée ou remise en main propre).",
+      "description": "Vous pouvez envoyer la facture par email ou WhatsApp, ou la marquer comme envoyée manuellement (imprimée ou remise en main propre).",
       "sendByEmail": "Envoyer par email",
       "willSendTo": "Sera envoyée à",
       "noPatientEmail": "Le patient n'a pas d'adresse email",
       "customMessage": "Message personnalisé (facultatif)",
       "customMessagePlaceholder": "Ajoutez un message pour le patient...",
-      "manualNote": "La facture sera marquée comme envoyée sans envoyer d'email.",
+      "manualNote": "La facture sera marquée comme envoyée sans envoyer aucun message.",
       "sendEmail": "Envoyer l'email",
-      "markAsSent": "Marquer comme envoyée"
+      "markAsSent": "Marquer comme envoyée",
+      "sendByWhatsapp": "Envoyer par WhatsApp",
+      "sendWhatsapp": "Envoyer sur WhatsApp",
+      "willSendToPhone": "Sera envoyée par WhatsApp à"
     },
     "errors": {
       "load": "Erreur lors du chargement des factures",
@@ -2878,7 +2932,8 @@
         "title": "Aucune donnée pour cette période",
         "desc": "Essayez une plage de dates plus large ou supprimez les filtres."
       }
-    }
+    },
+    "loadError": "Impossible de charger les données du rapport"
   },
   "invoiceSeries": {
     "title": "Séries de facturation",

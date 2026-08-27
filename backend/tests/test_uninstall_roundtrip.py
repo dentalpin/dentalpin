@@ -191,6 +191,11 @@ def test_medical_reference_uninstall_roundtrip_is_branch_scoped() -> None:
     )
 
 
+async def _all_tables_exist(tables: list[str]) -> set[str]:
+    """Fake the #298 catalog lookup: every requested table exists."""
+    return set(tables)
+
+
 def test_dump_tables_hard_fails_when_pg_dump_missing(
     monkeypatch: pytest.MonkeyPatch, tmp_path: Path
 ) -> None:
@@ -204,9 +209,10 @@ def test_dump_tables_hard_fails_when_pg_dump_missing(
 
     monkeypatch.setattr(processor_module.subprocess, "run", _raise_not_found)
 
-    # Build a processor with a dummy session factory — the method under
-    # test never opens a session.
+    # Build a processor with a dummy session factory and fake the catalog
+    # lookup (#298) — the failure under test is pg_dump's, not the DB's.
     proc = processor_module.PendingProcessor(session_factory=lambda: None)  # type: ignore[arg-type]
+    monkeypatch.setattr(proc, "_existing_tables", _all_tables_exist)
 
     with pytest.raises(RuntimeError, match="pg_dump not available"):
         asyncio.run(proc._dump_tables("schedules", ["clinic_weekly_schedules"]))
@@ -227,6 +233,7 @@ def test_dump_tables_hard_fails_on_empty_output(
     monkeypatch.setattr(processor_module.subprocess, "run", _fake_run)
 
     proc = processor_module.PendingProcessor(session_factory=lambda: None)  # type: ignore[arg-type]
+    monkeypatch.setattr(proc, "_existing_tables", _all_tables_exist)
 
     with pytest.raises(RuntimeError, match="empty backup"):
         asyncio.run(proc._dump_tables("schedules", ["clinic_weekly_schedules"]))

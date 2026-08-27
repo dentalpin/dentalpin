@@ -51,5 +51,26 @@ _Screen `/settings/notifications` of the `notifications` module._
 
 ## What this screen does
 
-_Documentation pending._
+Clinic-wide notification configuration.
+
+### Channels (#287)
+
+The **Channels** card at the top decides which wire the clinic talks to
+patients on:
+
+- **Preferred channel** — Email or WhatsApp; every automatic message
+  (booking confirmation, reminder, welcome, quote accepted, …) goes out
+  on this channel first. WhatsApp is selectable only once the Kapso
+  integration is connected for the clinic.
+- **Fallback** — when the preferred channel cannot deliver (no phone,
+  no approved WhatsApp template), try the other configured channel
+  instead of silently skipping.
+- **Send buttons** — which manual Send buttons the rest of the app
+  shows (appointment, quote, invoice). At least one is required.
+
+### Message types
+
+The per-type table controls which events notify at all
+(enabled / auto-send / hours-before). It includes invoice sent, quote
+reminders (7/14 days) and recall reminders.
 

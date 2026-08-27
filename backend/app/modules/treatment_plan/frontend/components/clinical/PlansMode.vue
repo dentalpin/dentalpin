@@ -107,7 +107,7 @@ async function handleDetailGenerateBudget() {
 }
 
 function handleSchedule(plan: TreatmentPlan) {
-  router.push(`/appointments?patient_id=${plan.patient_id}`)
+  router.push(`/appointments?patient_id=${plan.patient_id}&new=1&plan_id=${plan.id}`)
 }
 
 function handlePlanCreated(plan: TreatmentPlan) {
@@ -188,7 +188,7 @@ watch(() => props.initialPlanId, (newId) => {
       @updated="handlePlanUpdated"
       @activate="loadPatientPlans()"
       @generate-budget="handleDetailGenerateBudget"
-      @schedule="router.push(`/appointments?patient_id=${patientId}`)"
+      @schedule="router.push(`/appointments?patient_id=${patientId}&new=1&plan_id=${selectedPlan?.id ?? ''}`)"
       @cancelled="handlePlanCancelled"
     />
 

@@ -50,6 +50,10 @@
       "cancelled": "Cancelada",
       "needs_review": "Precisa de revisão"
     },
+    "confirms": {
+      "cancel": "Cancelar a reconvocação de {name}? Esta ação não pode ser anulada.",
+      "done": "Marcar a reconvocação de {name} como concluída? Fica encerrada para este ciclo."
+    },
     "actions": {
       "call": "Telefonar",
       "logAttempt": "Registar tentativa",

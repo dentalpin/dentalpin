@@ -50,6 +50,10 @@
       "cancelled": "Cancelado",
       "needs_review": "Revisar"
     },
+    "confirms": {
+      "cancel": "¿Cancelar el recordatorio de {name}? Esta acción no se puede deshacer.",
+      "done": "¿Marcar el recordatorio de {name} como hecho? Se cerrará para este ciclo."
+    },
     "actions": {
       "call": "Llamar",
       "logAttempt": "Registrar intento",

@@ -1,0 +1,129 @@
+{
+  "recalls": {
+    "title": "Wizyty kontrolne",
+    "callList": "Lista do obdzwonienia",
+    "noRecallsThisMonth": "Brak oczekujących wizyt kontrolnych w tym miesiącu",
+    "filters": {
+      "month": "Miesiąc",
+      "reason": "Powód",
+      "professional": "Lekarz",
+      "status": "Status",
+      "priority": "Priorytet",
+      "overdue": "Pokaż zaległe",
+      "any": "Dowolny",
+      "thisMonth": "Ten miesiąc"
+    },
+    "counters": {
+      "due_this_week": "Na ten tydzień",
+      "due_this_month": "Na ten miesiąc",
+      "overdue": "Zaległe",
+      "scheduled_this_month": "Umówione w tym miesiącu",
+      "completed_this_month": "Zakończone w tym miesiącu",
+      "conversion_rate": "Konwersja"
+    },
+    "setRecall": "Zaplanuj wizytę kontrolną",
+    "setRecallShort": "Kontrola",
+    "history": "Historia wizyt kontrolnych",
+    "viewAll": "Zobacz wszystkie",
+    "pillNext": "Następna kontrola: {month} · {reason}",
+    "pillNone": "Brak aktywnej wizyty kontrolnej",
+    "reasons": {
+      "hygiene": "Higienizacja",
+      "checkup": "Przegląd",
+      "ortho_review": "Kontrola ortodontyczna",
+      "implant_review": "Kontrola implantu",
+      "post_op": "Kontrola pozabiegowa",
+      "treatment_followup": "Kontynuacja leczenia",
+      "other": "Inne"
+    },
+    "priority": {
+      "low": "Niski",
+      "normal": "Normalny",
+      "high": "Wysoki"
+    },
+    "status": {
+      "pending": "Oczekująca",
+      "contacted_no_answer": "Brak odpowiedzi",
+      "contacted_scheduled": "Umówiona",
+      "contacted_declined": "Odmowa",
+      "done": "Zrealizowana",
+      "cancelled": "Anulowana",
+      "needs_review": "Do weryfikacji"
+    },
+    "actions": {
+      "call": "Zadzwoń",
+      "logAttempt": "Zapisz próbę",
+      "noAnswer": "Brak odpowiedzi",
+      "book": "Umów wizytę",
+      "snooze": "Odłóż",
+      "cancel": "Anuluj",
+      "markDone": "Oznacz jako zrealizowaną",
+      "exportCsv": "Eksportuj CSV",
+      "save": "Zapisz"
+    },
+    "closeoutPrompt": {
+      "title": "Zaplanować wizytę kontrolną?",
+      "subtitle": "Pacjent właśnie zakończył wizytę — kiedy mamy się z nim skontaktować?",
+      "skip": "Nie teraz"
+    },
+    "modal": {
+      "title": "Zaplanuj wizytę kontrolną",
+      "subtitle": "Oznacz pacjenta do przyszłego kontaktu",
+      "patient": "Pacjent",
+      "reason": "Powód",
+      "when": "Kiedy",
+      "month": "Docelowy miesiąc",
+      "targetMonth": "Docelowy miesiąc",
+      "preciseDate": "Wybierz konkretny dzień",
+      "priority": "Priorytet",
+      "assigned": "Przypisany lekarz",
+      "note": "Notatka wewnętrzna",
+      "notePlaceholder": "Opcjonalny szczegół (np. „Kontrola wypełnienia w 47”)",
+      "optional": "opcjonalnie",
+      "duplicateGuard": "Dla tego pacjenta i powodu istnieje już oczekująca wizyta kontrolna. Zostanie ona zaktualizowana."
+    },
+    "doNotContact": {
+      "cannotSchedule": "Ten pacjent ma oznaczenie „Nie kontaktować się”. Nie można planować wizyt kontrolnych. Zmień preferencję w danych pacjenta, aby ponownie umożliwić kontakt."
+    },
+    "activeRecallHint": "Aktywna wizyta kontrolna · dotknij, aby zarządzać",
+    "logAttempt": {
+      "channel": "Kanał",
+      "outcome": "Rezultat",
+      "note": "Notatka",
+      "submit": "Zapisz próbę"
+    },
+    "channel": {
+      "phone": "Telefon",
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "E-mail"
+    },
+    "outcome": {
+      "no_answer": "Brak odpowiedzi",
+      "voicemail": "Poczta głosowa",
+      "scheduled": "Wizyta umówiona",
+      "declined": "Odmowa",
+      "wrong_number": "Błędny numer"
+    },
+    "snoozePrompt": "Odłożyć o ile miesięcy?",
+    "settings": {
+      "title": "Wizyty kontrolne",
+      "description": "Domyślne odstępy + mapowanie kategorii zabiegów",
+      "intervals": "Domyślne odstępy (miesiące)",
+      "categoryMap": "Zabieg → powód",
+      "categoryKeyPlaceholder": "klucz kategorii katalogu",
+      "autoSuggest": "Sugeruj wizytę kontrolną po zakończeniu zabiegu",
+      "autoLink": "Łącz umówioną wizytę z oczekującą wizytą kontrolną",
+      "saved": "Ustawienia zapisane"
+    },
+    "dashboard": {
+      "title": "Wizyty kontrolne"
+    },
+    "suggestion": {
+      "title": "Sugerowana wizyta kontrolna",
+      "body": "Po tym zabiegu sugerujemy wizytę kontrolną w {month} ({reason}).",
+      "create": "Utwórz wizytę kontrolną",
+      "dismiss": "Odrzuć"
+    }
+  }
+}

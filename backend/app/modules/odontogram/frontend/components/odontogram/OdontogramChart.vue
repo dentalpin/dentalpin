@@ -600,24 +600,58 @@ function handleEditTreatment(treatment: ToothTreatmentView) {
 
 async function handleTreatmentUpdate(
   treatmentId: string,
-  data: { status?: TreatmentStatus, notes?: string }
+  data: { status?: TreatmentStatus, notes?: string, surfaces?: Surface[] }
 ) {
-  await updateTreatment(treatmentId, data)
+  // useTreatments toasts on failure and returns null — keep the modal
+  // open with the user's edits so nothing is lost and a retry works.
+  const updated = await updateTreatment(treatmentId, data)
+  if (!updated) return
   emit('treatmentsChanged')
   showTreatmentEditModal.value = false
   editingTreatment.value = null
 }
 
-async function handleTreatmentDelete(treatmentId: string) {
-  await deleteTreatment(treatmentId)
-  emit('treatmentsChanged')
-  showTreatmentEditModal.value = false
-  editingTreatment.value = null
+// Deleting a treatment is destructive and has no undo endpoint — the
+// edit modal's delete button opens a confirmation first (issue #101).
+const showDeleteTreatmentConfirm = ref(false)
+const deletingTreatment = ref(false)
+const pendingDeleteTreatmentId = ref<string | null>(null)
+
+const deleteTreatmentLabel = computed(() => {
+  const tr = editingTreatment.value
+  if (!tr) return ''
+  return t(`odontogram.treatments.types.${tr.clinical_type}`, tr.clinical_type)
+})
+
+function handleTreatmentDelete(treatmentId: string) {
+  pendingDeleteTreatmentId.value = treatmentId
+  showDeleteTreatmentConfirm.value = true
+}
+
+async function confirmTreatmentDelete() {
+  if (!pendingDeleteTreatmentId.value) return
+  deletingTreatment.value = true
+  try {
+    // deleteTreatment toasts on failure and returns false — keep the edit
+    // modal open so a retry works; only tear down on success.
+    const ok = await deleteTreatment(pendingDeleteTreatmentId.value)
+    showDeleteTreatmentConfirm.value = false
+    pendingDeleteTreatmentId.value = null
+    if (!ok) return
+    emit('treatmentsChanged')
+    showTreatmentEditModal.value = false
+    editingTreatment.value = null
+  } finally {
+    deletingTreatment.value = false
+  }
 }
 
 async function handleTreatmentPerform(treatmentId: string) {
+  // Same contract: performTreatment toasts on failure and returns null —
+  // keep the modal open instead of closing over a failed mutation.
   const updated = await performTreatment(treatmentId)
-  if (updated) emit('treatmentPerform', treatmentId)
+  if (!updated) return
+  emit('treatmentPerform', treatmentId)
   emit('treatmentsChanged')
   showTreatmentEditModal.value = false
   editingTreatment.value = null
@@ -926,6 +960,38 @@ defineExpose({
       @delete="handleTreatmentDelete"
       @perform="handleTreatmentPerform"
     />
+
+    <!-- Delete-treatment confirmation (no undo endpoint exists) -->
+    <UModal v-model:open="showDeleteTreatmentConfirm">
+      <template #content>
+        <div class="p-4 space-y-4">
+          <h2 class="text-h3 text-default">
+            {{ t('common.delete') }}
+          </h2>
+          <p class="text-caption text-subtle">
+            {{ t('odontogram.treatments.deleteConfirm', {
+              name: deleteTreatmentLabel,
+              tooth: editingTreatment?.tooth_number ?? ''
+            }) }}
+          </p>
+          <div class="flex justify-end gap-2">
+            <UButton
+              variant="ghost"
+              @click="showDeleteTreatmentConfirm = false"
+            >
+              {{ t('actions.cancel') }}
+            </UButton>
+            <UButton
+              color="error"
+              :loading="deletingTreatment"
+              @click="confirmTreatmentDelete"
+            >
+              {{ t('common.delete') }}
+            </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
 
     <!-- Multi-tooth confirmation popup -->
     <MultiToothConfirmPopup

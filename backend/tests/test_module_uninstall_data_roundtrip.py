@@ -86,13 +86,23 @@ def test_backup_contains_seeded_rows(tmp_path: Path) -> None:
         original_root = processor_module.BACKUP_ROOT
         processor_module.BACKUP_ROOT = backup_root
         try:
-            proc = processor_module.PendingProcessor(session_factory=lambda: None)  # type: ignore[arg-type]
-            backup_path = asyncio.run(
-                proc._dump_tables(
-                    "schedules",
-                    ["clinic_weekly_schedules"],
-                )
-            )
+            # Real session factory: _dump_tables now asks the catalog which
+            # tables still exist (#298), so this test also covers that
+            # lookup against a live Postgres.
+            async def _dump() -> Path | None:
+                from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+                from sqlalchemy.pool import NullPool
+
+                engine = create_async_engine(settings.DATABASE_URL, poolclass=NullPool)
+                try:
+                    proc = processor_module.PendingProcessor(
+                        session_factory=async_sessionmaker(engine, expire_on_commit=False)
+                    )
+                    return await proc._dump_tables("schedules", ["clinic_weekly_schedules"])
+                finally:
+                    await engine.dispose()
+
+            backup_path = asyncio.run(_dump())
         finally:
             processor_module.BACKUP_ROOT = original_root
 

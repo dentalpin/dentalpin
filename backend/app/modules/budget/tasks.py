@@ -19,6 +19,7 @@ from uuid import UUID
 
 from sqlalchemy import select, text
 
+from app.core.auth.models import Clinic
 from app.database import async_session_maker
 
 from .models import Budget
@@ -29,17 +30,19 @@ logger = logging.getLogger(__name__)
 _CLINIC_CONCURRENCY = 5
 
 
+# ORM selects, not raw SQL: the old ``WHERE deleted_at IS NULL`` referenced
+# a column NO migration ever created, so every cron tick raised — the
+# deeper half of issue #287's "reminders are logged, nothing is sent".
+# Clinics have no soft delete; there is nothing to filter.
 async def _list_clinics() -> list[UUID]:
     async with async_session_maker() as db:
-        rows = (await db.execute(text("SELECT id FROM clinics WHERE deleted_at IS NULL"))).all()
+        rows = (await db.execute(select(Clinic.id))).all()
     return [row.id for row in rows]
 
 
 async def _list_clinics_with_settings() -> list[tuple[UUID, dict]]:
     async with async_session_maker() as db:
-        rows = (
-            await db.execute(text("SELECT id, settings FROM clinics WHERE deleted_at IS NULL"))
-        ).all()
+        rows = (await db.execute(select(Clinic.id, Clinic.settings))).all()
     return [(row.id, row.settings or {}) for row in rows]
 
 
@@ -123,7 +126,8 @@ async def send_budget_reminders() -> None:
 
     Honours the per-clinic toggle ``budget_reminders_enabled`` (default
     off). The function only emits the ``budget.reminder_sent`` event;
-    the notifications module subscribes and renders the email.
+    the notifications module subscribes and queues the patient message
+    through its gateway (preferred channel + fallback, issue #287).
     """
     today = date.today()
     clinics = await _list_clinics_with_settings()

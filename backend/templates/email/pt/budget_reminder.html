@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}O seu orçamento aguarda a sua resposta - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>Olá {{ patient_name }},</h2>
+
+<p>O seu orçamento <strong>#{{ budget_number }}</strong> de <strong>{{ clinic_name | default('DentalPin') }}</strong> continua a aguardar a sua resposta.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">N.º do orçamento</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        {% if total %}
+        <div style="flex: 1; text-align: right;">
+            <div class="label">Total</div>
+            <div class="value">{{ total }} €</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if valid_until %}
+<div class="alert alert-warning">
+    <strong>Validade:</strong> este orçamento é válido até {{ valid_until }}.
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Rever o meu orçamento</a>
+</div>
+{% endif %}
+
+<p>Se já tomou uma decisão ou tiver alguma dúvida, contacte-nos — teremos todo o gosto em ajudar.</p>
+
+<p>Ficamos ao seu dispor.</p>
+{% endblock %}

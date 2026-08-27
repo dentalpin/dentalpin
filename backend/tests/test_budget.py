@@ -474,6 +474,125 @@ async def test_send_budget(client: AsyncClient, auth_headers: dict, budget_clini
     assert data["status"] == "sent"
 
 
+async def _create_sendable_budget(
+    client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict
+) -> str:
+    """Create a draft budget with one item and return its id."""
+    create_response = await client.post(
+        "/api/v1/budget/budgets",
+        json={
+            "patient_id": budget_clinic_setup["patient_id"],
+            "valid_from": "2024-01-01",
+        },
+        headers=auth_headers,
+    )
+    budget_id = create_response.json()["data"]["id"]
+    await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/items",
+        json={
+            "catalog_item_id": budget_clinic_setup["catalog_item_id"],
+            "quantity": 1,
+        },
+        headers=auth_headers,
+    )
+    return budget_id
+
+
+@pytest.mark.asyncio
+async def test_send_budget_accepts_whatsapp_method(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    budget_clinic_setup: dict,
+):
+    """send_method=whatsapp follows the email path (issue #287 bug 5): the
+    quote is marked sent and the notifications module writes an outbox row
+    for the whatsapp send request."""
+    from sqlalchemy import select
+
+    from app.modules.notifications.models import CommunicationMessage
+
+    budget_id = await _create_sendable_budget(client, auth_headers, budget_clinic_setup)
+
+    response = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/send",
+        json={"send_method": "whatsapp"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["data"]["status"] == "sent"
+
+    rows = (
+        (
+            await db_session.execute(
+                select(CommunicationMessage).where(
+                    CommunicationMessage.clinic_id == UUID(budget_clinic_setup["clinic_id"]),
+                    CommunicationMessage.template_key == "budget_sent",
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    # Row exists: queued when a WhatsApp adapter/HSM is available, otherwise
+    # an explicit skip (no_viable_channel) — never silence.
+    assert len(rows) == 1
+    assert rows[0].status in ("queued", "skipped")
+
+
+@pytest.mark.asyncio
+async def test_send_budget_whatsapp_requires_phone(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    budget_clinic_setup: dict,
+):
+    from sqlalchemy import update
+
+    await db_session.execute(
+        update(Patient)
+        .where(Patient.id == UUID(budget_clinic_setup["patient_id"]))
+        .values(phone=None)
+    )
+    await db_session.commit()
+
+    budget_id = await _create_sendable_budget(client, auth_headers, budget_clinic_setup)
+    response = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/send",
+        json={"send_method": "whatsapp"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 400
+    assert "phone" in response.json()["message"].lower()
+
+
+@pytest.mark.asyncio
+async def test_send_budget_rejects_unknown_method(
+    client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict
+):
+    budget_id = await _create_sendable_budget(client, auth_headers, budget_clinic_setup)
+    response = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/send",
+        json={"send_method": "sms"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_send_budget_legacy_send_email_flag_still_works(
+    client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict
+):
+    budget_id = await _create_sendable_budget(client, auth_headers, budget_clinic_setup)
+    response = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/send",
+        json={"send_email": True},
+        headers=auth_headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["data"]["status"] == "sent"
+
+
 @pytest.mark.asyncio
 async def test_accept_budget(client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict):
     """Test accepting a budget."""

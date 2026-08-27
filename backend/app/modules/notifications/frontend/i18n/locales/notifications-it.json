@@ -1,0 +1,12 @@
+{
+  "notifications": {
+    "conversation": {
+      "title": "Conversazione WhatsApp",
+      "empty": "Ancora nessun messaggio.",
+      "placeholder": "Scrivi una risposta…",
+      "replyError": "Impossibile inviare la risposta",
+      "windowClosed": "La finestra di 24 ore è chiusa. Usa un modello per riaprire la conversazione.",
+      "send": "Invia"
+    }
+  }
+}

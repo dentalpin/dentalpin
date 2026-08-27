@@ -1,0 +1,22 @@
+{
+  "patientRelationships": {
+    "title": "Famiglia",
+    "emptyHint": "Nessun legame familiare registrato.",
+    "relationships": {
+      "title": "Legami familiari",
+      "searchPatient": "Cerca il paziente da collegare…",
+      "addSuccess": "Legame aggiunto",
+      "addError": "Impossibile aggiungere il legame",
+      "removeError": "Impossibile rimuovere il legame",
+      "types": {
+        "parent": "Genitore",
+        "child": "Figlio/a",
+        "spouse": "Coniuge",
+        "sibling": "Fratello/Sorella",
+        "guardian": "Tutore",
+        "ward": "Tutelato/a",
+        "other": "Altro"
+      }
+    }
+  }
+}

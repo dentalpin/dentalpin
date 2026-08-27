@@ -1,0 +1,110 @@
+{
+  "nav": {
+    "indiaGst": "GST India"
+  },
+  "indiaGst": {
+    "badge": {
+      "gst": "GST",
+      "irnGenerated": "IRN generato",
+      "einvoiceIssue": "Problema e-invoice",
+      "needsAttention": "Richiede attenzione",
+      "missingGst": "Dati GST mancanti — riemettere questa fattura per generare i dettagli GST"
+    },
+    "banner": {
+      "unregisteredTitle": "GSTIN non configurato",
+      "unregisteredDescription": "Nel frattempo è possibile continuare a fatturare ai pazienti — le fatture standard funzionano senza GSTIN.",
+      "configureAction": "Configura GST"
+    },
+    "listFilter": {
+      "needsAttention": "Richiede attenzione"
+    },
+    "panel": {
+      "title": "GST ed e-invoice",
+      "correctsDocument": "Rettifica il documento",
+      "documentNumber": "Numero documento GST",
+      "placeOfSupply": "Luogo di fornitura",
+      "gstinOnInvoice": "GSTIN in fattura",
+      "notProvided": "Non fornito",
+      "calculation": "Calcolo GST",
+      "intraState": "Intrastatale · CGST + SGST",
+      "interState": "Interstatale · IGST",
+      "einvoiceStatus": "Stato e-invoice"
+    },
+    "einvoice": {
+      "notRequired": "Non richiesto",
+      "notConfigured": "Non configurato",
+      "pending": "In sospeso",
+      "generated": "IRN generato",
+      "rejected": "Rifiutato",
+      "error": "Errore di connessione",
+      "notRequiredHint": "La clinica è al di sotto della soglia di fatturato configurata nelle impostazioni, quindi questa fattura non viene inviata al portale e-invoice.",
+      "notConfiguredHint": "L'e-invoicing si applica alle cliniche sopra la soglia di fatturato impostata nelle impostazioni GST India. Per questa fattura non viene inviato nulla.",
+      "reviewSettings": "Rivedi impostazioni e-invoice"
+    },
+    "form": {
+      "title": "Dettagli GST della fattura",
+      "clinicGstDetails": "Dettagli GST della clinica",
+      "placeOfSupply": "Luogo di fornitura",
+      "placeOfSupplyHint": "Determina se si applica CGST+SGST oppure IGST",
+      "selectState": "Seleziona uno stato",
+      "selectPlaceOfSupplyHint": "Seleziona un luogo di fornitura per calcolare il GST",
+      "sacCodes": "Codici SAC",
+      "sacCode": "Codice SAC",
+      "sacOverrideHint": "I codici SAC provengono dal catalogo dei trattamenti. Modificarli solo su indicazione del proprio commercialista.",
+      "save": "Salva dettagli GST",
+      "saved": "Dettagli GST salvati",
+      "saveError": "Impossibile salvare i dettagli GST"
+    },
+    "settingsCards": {
+      "title": "GST India",
+      "description": "Configura GSTIN, luogo di fornitura predefinito e codici SAC per le cliniche in India.",
+      "open": "Apri impostazioni"
+    },
+    "settings": {
+      "title": "Impostazioni GST India",
+      "description": "Configura i dettagli GST e i valori predefiniti delle fatture per questa clinica.",
+      "loadError": "Impossibile caricare le impostazioni GST",
+      "saved": "Impostazioni salvate",
+      "saveError": "Impossibile salvare le impostazioni",
+      "clinicDetails": "Dettagli GST della clinica",
+      "nonRegularNotice": "Il calcolo del GST è inattivo per la fatturazione con questo tipo di registrazione.",
+      "tradeName": "Nome commerciale",
+      "gstin": "GSTIN",
+      "gstinHint": "Il GSTIN della clinica stessa (fornitore) — mai quello del destinatario",
+      "registrationType": "Tipo di registrazione",
+      "registrationRegular": "Regolare",
+      "registrationComposition": "Composition",
+      "registrationUnregistered": "Non registrato",
+      "registrationExempt": "Esente",
+      "clinicState": "Stato della clinica",
+      "gstinStateMismatch": "Le prime due cifre del GSTIN sono un codice di stato che non corrisponde allo stato della clinica selezionato — questo inverte la classificazione GST intra/interstatale di ogni fattura. Verificare entrambi.",
+      "catalogDefaults": "Valori GST predefiniti del catalogo",
+      "allSacConfigured": "Tutti i trattamenti hanno un codice SAC configurato.",
+      "missingSacCount": "{count} trattamento/i richiedono un codice SAC e un'aliquota.",
+      "autoconfigure": "Configura automaticamente",
+      "autoconfigureHint": "La configurazione automatica assegna il SAC 999312 (servizi sanitari) a ogni trattamento qui sopra, lasciando l'aliquota GST al tipo di imposta di ciascun trattamento. I trattamenti che hanno già un SAC restano invariati.",
+      "autoconfigureDone": "{count} trattamento/i impostati su SAC {sac}.",
+      "autoconfigureError": "Impossibile configurare automaticamente i codici SAC",
+      "einvoiceIntegration": "Integrazione e-invoice",
+      "einvoiceProfessionalNotice": "Prima di attivare l'e-invoicing, confermare i requisiti e gli obblighi normativi con un professionista fiscale indiano qualificato. Dentalpin non determina se l'e-invoicing si applica alla clinica.",
+      "turnoverThreshold": "Soglia di fatturato",
+      "turnoverThresholdHint": "Le cliniche sopra questa soglia richiedono l'e-invoicing",
+      "einvoiceNotConfigured": "Non configurato",
+      "displayOptions": "Opzioni di visualizzazione",
+      "showGstin": "Mostra GSTIN in fattura",
+      "showSac": "Mostra codici SAC in fattura",
+      "creditNoteWorkflow": "Flusso della nota di credito",
+      "creditNoteWorkflowDescription": "Qualsiasi correzione a una fattura emessa avviene tramite annullamento o nota di credito e resta tracciabile all'utente che l'ha effettuata."
+    },
+    "reports": {
+      "title": "Report GST",
+      "description": "Totali e dettaglio delle transazioni per riconciliazione e supporto alla dichiarazione.",
+      "export": "Esporta CSV",
+      "creditNotes": "Note di credito",
+      "byPlaceOfSupply": "Per luogo di fornitura",
+      "transactions": "Transazioni",
+      "taxableValue": "Valore imponibile",
+      "empty": "Nessuna transazione in questo periodo."
+    }
+  }
+}

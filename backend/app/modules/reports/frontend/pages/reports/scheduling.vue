@@ -24,7 +24,9 @@ const {
   fetchDurationVariance,
   fetchFunnel,
   formatHours,
-  getDayOfWeekLabel
+  getDayOfWeekLabel,
+  fetchFailed,
+  resetFetchFailed
 } = useReports()
 
 const { cabinets } = useClinic()
@@ -131,6 +133,7 @@ const tabOptions = computed(() => [
 // ─── Data load ───────────────────────────────────────────────────────
 async function loadReports() {
   isLoading.value = true
+  resetFetchFailed()
 
   try {
     const [
@@ -423,6 +426,21 @@ function goBack() {
       </div>
       <USkeleton class="h-48 rounded-token-lg" />
     </div>
+
+    <!-- Load error — never render 0 / empty stats for a failed read (issue #101). -->
+    <UAlert
+      v-else-if="fetchFailed"
+      icon="i-lucide-triangle-alert"
+      color="error"
+      variant="subtle"
+      :title="t('reports.loadError')"
+      :actions="[{
+        label: t('common.retry'),
+        color: 'error',
+        variant: 'soft',
+        onClick: () => loadReports()
+      }]"
+    />
 
     <template v-else>
       <!-- Hero strip -->

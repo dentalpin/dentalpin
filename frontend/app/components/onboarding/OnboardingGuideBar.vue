@@ -33,7 +33,7 @@ async function onNext() {
     />
     <p class="text-body text-default min-w-0 flex-1 truncate">
       <span class="text-muted">
-        {{ t('onboarding.stepOf', { current: onboarding.currentIndex.value + 1, total: onboarding.required.value.length }) }}
+        {{ t('onboarding.stepOf', onboarding.guidedProgress.value) }}
       </span>
       <span class="mx-1.5 text-subtle">·</span>
       <span class="font-medium">{{ t(onboarding.currentStep.value.labelKey) }}</span>

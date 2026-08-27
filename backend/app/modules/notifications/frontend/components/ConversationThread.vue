@@ -9,8 +9,22 @@ const patientId = props.ctx?.patient?.id ?? null
 const conv = patientId ? useConversation(patientId) : null
 const draft = ref('')
 
-onMounted(() => {
-  if (conv) conv.fetchThread()
+// The thread is WhatsApp-only for now. On a clinic without a configured
+// WhatsApp channel every patient showed an empty card with a reply box
+// that could only ever 409 — hide it until the channel is available
+// (GET /notifications/channels asks each adapter's `supports`).
+const api = useApi()
+const channelReady = ref(false)
+
+onMounted(async () => {
+  if (!conv) return
+  try {
+    const res = await api.get<{ data: { available: string[] } }>('/api/v1/notifications/channels')
+    channelReady.value = res.data.available.includes('whatsapp')
+  } catch {
+    channelReady.value = false
+  }
+  if (channelReady.value) conv.fetchThread()
 })
 
 async function onSend() {
@@ -34,7 +48,7 @@ function label(m: { body_text: string | null, subject: string | null, template_k
 </script>
 
 <template>
-  <UCard v-if="patientId && conv">
+  <UCard v-if="patientId && conv && channelReady">
     <template #header>
       <span class="font-medium">{{ t('notifications.conversation.title') }}</span>
     </template>

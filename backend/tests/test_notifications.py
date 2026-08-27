@@ -1,13 +1,55 @@
 """Tests for the notifications module."""
 
 import pytest
+import pytest_asyncio
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.notifications.channels import (
+    AdapterResult,
+    Channel,
+    SendStatus,
+    channel_registry,
+)
 from app.modules.notifications.models import (
     NotificationTemplate,
 )
 from app.modules.notifications.service import NotificationService
+
+
+@pytest_asyncio.fixture
+async def whatsapp_channel():
+    """A fake connected WhatsApp adapter, so 'whatsapp' is available."""
+
+    class FakeWhatsApp:
+        channel = Channel.WHATSAPP
+        adapter_name = "fake_whatsapp_api_test"
+
+        async def supports(self, db, clinic_id):  # noqa: ARG002
+            return True
+
+        async def send(self, db, msg):  # noqa: ARG002
+            return AdapterResult(
+                status=SendStatus.SENT, provider="fake_whatsapp", provider_message_id="wamid.api"
+            )
+
+    adapter = FakeWhatsApp()
+    channel_registry.register(adapter)
+    yield adapter
+    channel_registry.unregister("fake_whatsapp_api_test")
+
+
+@pytest.mark.asyncio
+async def test_available_channels_email_only_by_default(
+    client: AsyncClient, auth_headers: dict, test_clinic
+):
+    """#207: without a configured vendor channel only email is available —
+    the WhatsApp conversation card gates on this list."""
+    response = await client.get("/api/v1/notifications/channels", headers=auth_headers)
+    assert response.status_code == 200, response.text
+    available = response.json()["data"]["available"]
+    assert "email" in available
+    assert "whatsapp" not in available
 
 
 @pytest.mark.asyncio
@@ -295,3 +337,233 @@ async def test_nothing_is_queued_when_the_request_rolls_back(
         )
     )
     assert queued is None
+
+
+# ---------------------------------------------------------------------------
+# #287 — clinic preferred channel + manual channels (settings API)
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_settings_response_includes_channel_fields(
+    client: AsyncClient, auth_headers: dict, test_clinic
+):
+    """GET returns the new clinic-wide channel fields + computed
+    available_channels (email only while no WhatsApp adapter is connected)."""
+    response = await client.get("/api/v1/notifications/settings", headers=auth_headers)
+
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert data["preferred_channel"] == "email"
+    assert data["fallback_enabled"] is True
+    assert data["manual_channels"] == ["email"]
+    assert "email" in data["available_channels"]
+    assert "whatsapp" not in data["available_channels"]
+    # new types present in the per-type defaults
+    for key in ("invoice_sent", "budget_reminder", "recall_reminder"):
+        assert key in data["settings"]
+    assert data["settings"]["invoice_sent"]["auto_send"] is False
+    assert data["settings"]["budget_reminder"]["auto_send"] is True
+
+
+@pytest.mark.asyncio
+async def test_settings_put_preferred_whatsapp_not_available_is_422(
+    client: AsyncClient, auth_headers: dict, test_clinic
+):
+    """Preferred channel must be available for this clinic (Kapso connected)."""
+    response = await client.put(
+        "/api/v1/notifications/settings",
+        json={"preferred_channel": "whatsapp"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_settings_put_manual_channel_not_available_is_422(
+    client: AsyncClient, auth_headers: dict, test_clinic
+):
+    response = await client.put(
+        "/api/v1/notifications/settings",
+        json={"manual_channels": ["whatsapp"]},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_settings_put_inserts_preferred_into_manual_channels(
+    client: AsyncClient, auth_headers: dict, test_clinic, whatsapp_channel
+):
+    """Server keeps the invariant preferred ∈ manual_channels when the
+    client omits it, so staff can resend on the preferred wire."""
+    response = await client.put(
+        "/api/v1/notifications/settings",
+        json={"preferred_channel": "whatsapp", "manual_channels": ["email"]},
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert data["preferred_channel"] == "whatsapp"
+    assert set(data["manual_channels"]) == {"whatsapp", "email"}
+    assert "whatsapp" in data["available_channels"]
+
+    # persisted — a plain GET returns the same values
+    response = await client.get("/api/v1/notifications/settings", headers=auth_headers)
+    data = response.json()["data"]
+    assert data["preferred_channel"] == "whatsapp"
+    assert set(data["manual_channels"]) == {"whatsapp", "email"}
+
+
+@pytest.mark.asyncio
+async def test_new_preference_rows_default_whatsapp_enabled(
+    client: AsyncClient, auth_headers: dict, test_patient
+):
+    """Bug 11: WhatsApp is opt-out like email — new rows default enabled."""
+    response = await client.get(
+        f"/api/v1/notifications/preferences/patient/{test_patient.id}",
+        headers=auth_headers,
+    )
+    assert response.status_code == 200
+    assert response.json()["data"]["whatsapp_enabled"] is True
+
+
+# ---------------------------------------------------------------------------
+# #287 — manual send with explicit channels
+# ---------------------------------------------------------------------------
+
+
+async def _phone_only_patient(db_session: AsyncSession, clinic_id):
+    from uuid import uuid4
+
+    from app.modules.patients.models import Patient
+
+    patient = Patient(
+        id=uuid4(),
+        clinic_id=clinic_id,
+        first_name="Solo",
+        last_name="Telefono",
+        phone="+34600000001",
+    )
+    db_session.add(patient)
+    await db_session.commit()
+    return patient
+
+
+@pytest.mark.asyncio
+async def test_manual_send_whatsapp_phone_only_patient_is_not_400(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    test_clinic,
+    whatsapp_channel,
+):
+    """A phone-only patient must not 400 on a WhatsApp send. Without an
+    approved HSM the outbox row is an explicit skip on the WhatsApp wire."""
+    patient = await _phone_only_patient(db_session, test_clinic.id)
+    # clinic prefers WhatsApp so the skip row is labeled with that channel
+    put = await client.put(
+        "/api/v1/notifications/settings",
+        json={"preferred_channel": "whatsapp"},
+        headers=auth_headers,
+    )
+    assert put.status_code == 200
+
+    response = await client.post(
+        "/api/v1/notifications/send",
+        json={
+            "notification_type": "welcome",
+            "patient_id": str(patient.id),
+            "channels": ["whatsapp"],
+        },
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert data["success"] is False  # no approved HSM → explicit skip, not 400
+    assert data["log_id"] is not None
+
+    from sqlalchemy import select
+
+    from app.modules.notifications.models import CommunicationMessage
+
+    row = (
+        await db_session.execute(
+            select(CommunicationMessage).where(CommunicationMessage.id == data["log_id"])
+        )
+    ).scalar_one()
+    assert row.status == "skipped"
+    assert row.error_message == "no_viable_channel"
+    assert row.channel == "whatsapp"
+
+
+@pytest.mark.asyncio
+async def test_manual_send_whatsapp_with_approved_hsm_queues(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    test_clinic,
+    whatsapp_channel,
+):
+    """With Kapso connected and an approved HSM, the same phone-only send
+    queues a WhatsApp message addressed to the patient's phone."""
+    patient = await _phone_only_patient(db_session, test_clinic.id)
+    db_session.add(
+        NotificationTemplate(
+            clinic_id=test_clinic.id,
+            channel="whatsapp",
+            template_key="welcome",
+            locale="es",
+            provider_template_name="hsm_welcome",
+            provider_template_status="approved",
+            is_system=False,
+        )
+    )
+    await db_session.commit()
+
+    response = await client.post(
+        "/api/v1/notifications/send",
+        json={
+            "notification_type": "welcome",
+            "patient_id": str(patient.id),
+            "channels": ["whatsapp"],
+        },
+        headers=auth_headers,
+    )
+
+    assert response.status_code == 200
+    data = response.json()["data"]
+    assert data["success"] is True
+
+    from sqlalchemy import select
+
+    from app.modules.notifications.models import CommunicationMessage
+
+    row = (
+        await db_session.execute(
+            select(CommunicationMessage).where(CommunicationMessage.id == data["log_id"])
+        )
+    ).scalar_one()
+    assert row.status == "queued"
+    assert row.channel == "whatsapp"
+    assert row.to_address == patient.phone
+
+
+@pytest.mark.asyncio
+async def test_manual_send_without_channels_keeps_email_behaviour(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    test_clinic,
+):
+    """Legacy path: no channels field ⇒ email recipient still required."""
+    patient = await _phone_only_patient(db_session, test_clinic.id)
+
+    response = await client.post(
+        "/api/v1/notifications/send",
+        json={"notification_type": "welcome", "patient_id": str(patient.id)},
+        headers=auth_headers,
+    )
+    assert response.status_code == 400

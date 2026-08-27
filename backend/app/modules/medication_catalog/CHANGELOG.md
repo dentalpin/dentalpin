@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
+
 - Name normalisation now matches the unique index key exactly
   (`lower(btrim(name))`); a duplicate that differed only in inner
   whitespace used to escape the 409 and surface as a raw 500.

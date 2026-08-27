@@ -1,0 +1,303 @@
+{
+  "payments": {
+    "nav": {
+      "payments": "Pagamenti",
+      "reports": "Report pagamenti"
+    },
+    "balance": {
+      "debt": "Deve",
+      "credit": "In acconto",
+      "paid": "Totale incassato"
+    },
+    "list": {
+      "title": "Pagamenti",
+      "subtitle": "Pagamenti dei pazienti, acconti sui preventivi e crediti in acconto.",
+      "empty": "Nessun pagamento registrato.",
+      "new": "Nuovo pagamento",
+      "searchPlaceholder": "Paziente o riferimento",
+      "filterDateFrom": "Dal",
+      "filterDateTo": "Al",
+      "filterMethod": "Metodo",
+      "filterPatient": "Paziente",
+      "filter": {
+        "method": "Metodo",
+        "hasRefunds": "Con rimborsi",
+        "hasUnallocated": "Non assegnati",
+        "patient": "Paziente",
+        "withDebt": "Con debito",
+        "paymentStatus": "Stato"
+      },
+      "sort": {
+        "paymentDate": "Data",
+        "amount": "Importo"
+      },
+      "budgetStatus": {
+        "paid": "Pagato",
+        "partial": "Parziale",
+        "unpaid": "Non pagato"
+      },
+      "row": {
+        "debtTooltip": "Saldo in sospeso del paziente",
+        "creditTooltip": "Saldo a credito del paziente",
+        "allocationsLabel": "Assegnazione",
+        "refundedLabel": "Rimborsato",
+        "noPatient": "Nessun paziente"
+      },
+      "columnDate": "Data",
+      "columnPatient": "Paziente",
+      "columnAmount": "Importo",
+      "columnMethod": "Metodo",
+      "columnAllocations": "Assegnazione",
+      "columnNet": "Netto",
+      "columnActions": "Azioni"
+    },
+    "detail": {
+      "title": "Pagamento {reference}",
+      "amount": "Importo",
+      "method": "Metodo",
+      "date": "Data",
+      "recordedBy": "Registrato da",
+      "allocations": "Assegnazioni",
+      "refunds": "Rimborsi",
+      "refund": "Rimborsa",
+      "refundedTotal": "Rimborsato",
+      "netAmount": "Netto",
+      "reference": "Riferimento",
+      "notes": "Note"
+    },
+    "new": {
+      "title": "Registra pagamento",
+      "patient": "Paziente",
+      "patientPlaceholder": "Cerca paziente...",
+      "unknownPatient": "Paziente sconosciuto",
+      "amount": "Importo",
+      "suggestedHint": "Da incassare: {amount}",
+      "useSuggested": "usa questo importo",
+      "method": "Metodo",
+      "moreMethods": "Altre opzioni",
+      "date": "Data",
+      "today": "Oggi",
+      "advanced": "Opzioni avanzate",
+      "reference": "Riferimento",
+      "referencePlaceholder": "N. autorizzazione carta, riferimento bonifico...",
+      "notes": "Note",
+      "allocations": "Assegnazione",
+      "allocationsHint": "Suddividi il pagamento tra i preventivi o lascialo come credito in acconto del paziente.",
+      "addAllocation": "Aggiungi assegnazione",
+      "allocationToBudget": "A preventivo",
+      "allocationOnAccount": "In acconto",
+      "sumLabel": "Somma:",
+      "sumMismatch": "non corrisponde all'importo",
+      "submit": "Registra",
+      "submitWithAmount": "Incassa {amount}",
+      "cancel": "Annulla",
+      "errPatient": "Seleziona un paziente",
+      "errAmount": "Inserisci un importo maggiore di 0",
+      "errSum": "La somma delle assegnazioni deve corrispondere all'importo",
+      "errUnknown": "Impossibile registrare il pagamento. Riprova."
+    },
+    "methods": {
+      "cash": "Contanti",
+      "card": "Carta",
+      "bank_transfer": "Bonifico",
+      "direct_debit": "Addebito diretto",
+      "insurance": "Assicurazione",
+      "other": "Altro"
+    },
+    "refund": {
+      "title": "Rimborsa pagamento",
+      "amount": "Importo",
+      "method": "Metodo",
+      "reason": "Motivo",
+      "note": "Dettagli",
+      "submit": "Rimborsa",
+      "reasonCodes": {
+        "duplicate": "Pagamento duplicato",
+        "overpaid": "Pagamento in eccesso",
+        "treatment_cancelled": "Trattamento annullato",
+        "dispute": "Contestazione",
+        "other": "Altro"
+      }
+    },
+    "ledger": {
+      "title": "Estratto conto del paziente",
+      "totalPaid": "Totale incassato",
+      "totalEarned": "Trattamenti eseguiti",
+      "patientCredit": "Saldo a credito del paziente",
+      "clinicReceivable": "Credito della clinica",
+      "onAccount": "In acconto",
+      "empty": "Nessun movimento."
+    },
+    "budgetCard": {
+      "title": "Pagamenti del preventivo",
+      "budgetTotal": "Preventivato",
+      "collected": "Incassato",
+      "pending": "In sospeso",
+      "collect": "Incassa",
+      "empty": "Nessun pagamento imputato a questo preventivo.",
+      "collectedLabel": "Incassato",
+      "pendingLabel": "In sospeso",
+      "outOfTotal": "su {total} totali",
+      "settled": "Preventivo incassato per intero",
+      "history": "Storico pagamenti",
+      "payment": "Pagamento",
+      "emptyDetailed": "Nessun pagamento incassato finora. Usa \"Incassa\" per registrare il primo."
+    },
+    "budgetCollect": {
+      "title": "Incassa preventivo",
+      "amountLabel": "Importo",
+      "methodLabel": "Metodo di pagamento",
+      "dateLabel": "Data del pagamento",
+      "today": "Oggi",
+      "quickFull": "Intero",
+      "optionalDetails": "Aggiungi riferimento o note (facoltativo)",
+      "referenceLabel": "Riferimento",
+      "referencePlaceholder": "es. ID transazione POS",
+      "notesLabel": "Note interne",
+      "submit": "Incassa",
+      "cancel": "Annulla",
+      "success": "Pagamento registrato",
+      "errorGeneric": "Impossibile registrare il pagamento",
+      "noteAppliedToBudget": "verrà imputato al preventivo.",
+      "notePendingAfter": "Resterà in sospeso",
+      "noteFullySettled": "Il preventivo sarà saldato per intero.",
+      "noteToBudget": "verrà imputato al preventivo e",
+      "noteExcessToOnAccount": "andrà in acconto sul credito del paziente.",
+      "noteBudgetSettled": "Il preventivo è già interamente pagato.",
+      "noteToOnAccount": "andrà in acconto sul credito del paziente."
+    },
+    "pendingCharges": {
+      "title": "Da incassare",
+      "count": "{n} sedute",
+      "more": "+ {n} altre",
+      "collect": "Incassa {amount}",
+      "unnamedSession": "Seduta senza titolo"
+    },
+    "patientPanel": {
+      "title": "Estratto conto del paziente",
+      "kpis": {
+        "totalPaid": "Totale pagato",
+        "debt": "Credito della clinica",
+        "onAccount": "In acconto"
+      },
+      "sidebar": {
+        "title": "Riepilogo",
+        "credit": "Credito del paziente",
+        "lastPayment": "Ultimo pagamento",
+        "noLastPayment": "Ancora nessun pagamento",
+        "totalEarned": "Trattamenti eseguiti"
+      },
+      "banner": {
+        "debtTitle": "Deve {amount} alla clinica",
+        "debtDescription": "Il totale pagato è inferiore ai trattamenti eseguiti.",
+        "creditTitle": "Ha {amount} di credito",
+        "creditDescription": "Ha pagato più dei trattamenti eseguiti."
+      },
+      "cobrar": "Registra pagamento",
+      "timeline": {
+        "title": "Movimenti",
+        "empty": "Nessun movimento registrato",
+        "emptyCta": "Registra il primo pagamento",
+        "loadError": "Impossibile caricare l'estratto conto del paziente.",
+        "retry": "Riprova",
+        "drPrefix": "Dott. {name}",
+        "types": {
+          "payment": "Pagamento",
+          "refund": "Rimborso",
+          "earned": "Trattamento eseguito"
+        },
+        "treatmentStatus": {
+          "planned": "Pianificato",
+          "performed": "Eseguito",
+          "completed": "Completato",
+          "cancelled": "Annullato",
+          "in_progress": "In corso"
+        },
+        "rowMenu": {
+          "detail": "Vedi dettaglio",
+          "refund": "Rimborsa",
+          "reallocate": "Assegna a preventivo…"
+        }
+      },
+      "refundModal": {
+        "title": "Rimborsa pagamento",
+        "amount": "Importo del rimborso",
+        "method": "Metodo di rimborso",
+        "reason": "Motivo",
+        "note": "Dettagli (facoltativo)",
+        "submit": "Conferma rimborso",
+        "cancel": "Annulla",
+        "errorGeneric": "Impossibile registrare il rimborso"
+      }
+    },
+    "reports": {
+      "title": "Report pagamenti",
+      "subtitle": "Incassi, rimborsi, saldi dei pazienti e tendenze del periodo.",
+      "cardDescription": "Incassi, rimborsi, saldi dei pazienti, anzianità e tendenze.",
+      "period": "Periodo",
+      "refresh": "Aggiorna",
+      "collected": "Incassato",
+      "refunded": "Rimborsato",
+      "net": "Netto",
+      "patientCredit": "Totale crediti pazienti",
+      "patientCreditHint": "Saldi in acconto o anticipi.",
+      "clinicReceivable": "Credito della clinica",
+      "refundRatio": "Tasso di rimborso",
+      "byMethod": "Per metodo",
+      "byProfessional": "Per professionista",
+      "byProfessionalHint": "Trattamenti eseguiti, non incassati.",
+      "aging": "Anzianità dei crediti",
+      "agingHint": "Pazienti con saldo in sospeso raggruppati per anzianità del debito.",
+      "refunds": "Rimborsi per motivo",
+      "refundsHint": "Distribuzione dei rimborsi per motivo registrato.",
+      "bucket": "{range} giorni",
+      "unknownProfessional": "Non assegnato",
+      "countShort": "{n} transazioni",
+      "countPatients": "{n} pazienti",
+      "granularity": {
+        "day": "Giorno",
+        "week": "Settimana",
+        "month": "Mese"
+      },
+      "hero": {
+        "netCollected": "Incassato netto",
+        "netCollectedHint": "Incassi meno rimborsi nel periodo.",
+        "receivable": "Credito in sospeso",
+        "receivableHint": "Trattamenti eseguiti non ancora incassati, per anzianità.",
+        "vsPrevious": "vs. periodo precedente",
+        "transactionsCount": "{n} transazioni nel periodo"
+      },
+      "trend": {
+        "title": "Andamento degli incassi",
+        "subtitle": "Netto per intervallo. La linea tratteggiata sovrappone i rimborsi."
+      },
+      "empty": {
+        "noDataTitle": "Nessun dato in questo intervallo",
+        "noDataDescription": "Modifica il periodo o registra un pagamento per iniziare a vedere il report.",
+        "noTrend": "Punti insufficienti per tracciare l'andamento.",
+        "noMethods": "Nessun incasso per metodo nel periodo.",
+        "noProfessionals": "Nessun trattamento eseguito nel periodo.",
+        "noReceivable": "Nessun paziente con debito in sospeso."
+      },
+      "drilldown": {
+        "viewPayments": "Vedi i pagamenti del periodo",
+        "viewPatients": "Vedi i pazienti con debito"
+      }
+    },
+    "target": {
+      "label": "Applica a",
+      "placeholder": "Seleziona destinazione",
+      "onAccount": "Credito del paziente (in acconto)",
+      "onAccountHint": "Resta come credito in acconto del paziente. Non viene imputato ad alcuna fattura o preventivo finché non lo assegni.",
+      "budgetHint": "Verrà imputato a questo preventivo e alle sue fatture emesse.",
+      "lockedBudget": "Verrà imputato al preventivo {budget} e alle sue fatture."
+    },
+    "reallocate": {
+      "title": "Assegna a preventivo",
+      "hint": "L'intero pagamento di {amount} passerà al preventivo selezionato e alle sue fatture emesse.",
+      "submit": "Assegna",
+      "success": "Pagamento assegnato al preventivo",
+      "error": "Impossibile riassegnare il pagamento. Riprova."
+    }
+  }
+}

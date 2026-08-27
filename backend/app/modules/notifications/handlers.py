@@ -26,6 +26,34 @@ from sqlalchemy.ext.asyncio import AsyncSession
 logger = logging.getLogger(__name__)
 
 
+def _has_contact(patient) -> bool:
+    """A patient is reachable when they have an email OR a phone.
+
+    The gateway resolves the concrete address per channel
+    (``patient.email`` for email, ``patient.phone`` for WhatsApp), so
+    handlers only gate on "some contact exists" and never steer the
+    channel by passing an email address.
+    """
+    return patient is not None and bool(patient.email or patient.phone)
+
+
+def _public_budget_url(public_token) -> str | None:
+    """Best-effort absolute public quote link (``/p/budget/{token}``).
+
+    The frontend origin is not stored per clinic; the first configured
+    ``ALLOWED_ORIGINS`` entry is the deployment's public origin. Without
+    one (dev/test) the path is still emitted so templates can render a
+    stable link target.
+    """
+    if not public_token:
+        return None
+    from app.config import settings
+
+    origins = settings.allowed_origins_list
+    base = origins[0].rstrip("/") if origins else ""
+    return f"{base}/p/budget/{public_token}"
+
+
 class NotificationHandlers:
     """Event handlers for notification triggers."""
 
@@ -63,9 +91,10 @@ class NotificationHandlers:
                     select(Patient).where(Patient.id == appointment.patient_id)
                 )
                 patient = result.scalar_one_or_none()
-                if not patient or not patient.email:
+                if not _has_contact(patient):
                     logger.info(
-                        f"Patient has no email, skipping notification: {appointment.patient_id}"
+                        f"Patient has no email or phone, skipping notification: "
+                        f"{appointment.patient_id}"
                     )
                     return
 
@@ -98,12 +127,13 @@ class NotificationHandlers:
                     "clinic_address": clinic.address if clinic else None,
                 }
 
-                # Queue it — the outbox tick does the sending.
+                # Queue it — the outbox tick does the sending. No
+                # to_address / channels: the gateway resolves the clinic's
+                # preferred channel and the matching patient contact.
                 await NotificationGateway.enqueue(
                     db=db,
                     clinic_id=clinic_id,
                     notification_type="appointment_confirmation",
-                    to_address=patient.email,
                     context=context,
                     patient_id=patient.id,
                     triggered_by_event="appointment.scheduled",
@@ -146,7 +176,7 @@ class NotificationHandlers:
                     select(Patient).where(Patient.id == appointment.patient_id)
                 )
                 patient = result.scalar_one_or_none()
-                if not patient or not patient.email:
+                if not _has_contact(patient):
                     return
 
                 # Get clinic info
@@ -182,7 +212,6 @@ class NotificationHandlers:
                     db=db,
                     clinic_id=clinic_id,
                     notification_type="appointment_cancelled",
-                    to_address=patient.email,
                     context=context,
                     patient_id=patient.id,
                     triggered_by_event="appointment.cancelled",
@@ -213,7 +242,7 @@ class NotificationHandlers:
                 # Get patient
                 result = await db.execute(select(Patient).where(Patient.id == patient_id))
                 patient = result.scalar_one_or_none()
-                if not patient or not patient.email:
+                if not _has_contact(patient):
                     return
 
                 # Get clinic info
@@ -234,7 +263,6 @@ class NotificationHandlers:
                     db=db,
                     clinic_id=clinic_id,
                     notification_type="welcome",
-                    to_address=patient.email,
                     context=context,
                     patient_id=patient.id,
                     triggered_by_event="patient.created",
@@ -247,27 +275,24 @@ class NotificationHandlers:
     async def on_budget_sent(data: dict[str, Any], *, db: AsyncSession) -> None:
         """Handle budget.sent event.
 
-        Queues the budget email for the patient.
+        Queues the budget notification for the patient when staff chose a
+        real channel (``send_method`` is ``email`` or ``whatsapp``).
+        Manual sends (printed/handed) don't queue anything.
 
         Transactional (ADR 0019): queues the message on the publisher's
         session. Nothing is sent here — the outbox tick owns the network
         I/O — so a rolled-back request queues nothing, and the rows this
         reads are the publisher's own (issue #183).
         """
-        """Async handler for budget sent.
-
-        Only sends email if send_method is "email".
-        Manual sends (printed/handed) don't trigger email.
-        """
         from app.modules.budget.models import Budget, BudgetItem
         from app.modules.notifications.gateway import NotificationGateway
         from app.modules.patients.models import Patient
 
-        # Only send email if explicitly requested
+        # Only queue when staff explicitly picked a channel.
         send_method = data.get("send_method", "manual")
-        if send_method != "email":
+        if send_method not in ("email", "whatsapp"):
             logger.info(
-                f"Budget sent manually (not by email), skipping notification: {data.get('budget_id')}"
+                f"Budget sent manually (no channel), skipping notification: {data.get('budget_id')}"
             )
             return
 
@@ -285,7 +310,7 @@ class NotificationHandlers:
                 # Get patient
                 result = await db.execute(select(Patient).where(Patient.id == budget.patient_id))
                 patient = result.scalar_one_or_none()
-                if not patient or not patient.email:
+                if not _has_contact(patient):
                     return
 
                 # Get clinic info
@@ -312,9 +337,15 @@ class NotificationHandlers:
                         )
                     )
                     catalog_item = result.scalar_one_or_none()
+                    # ``names`` is a per-locale dict; the model has no
+                    # ``.name`` (latent AttributeError that killed every
+                    # budget_sent enqueue that got this far).
+                    names = (catalog_item.names or {}) if catalog_item else {}
                     treatments.append(
                         {
-                            "name": catalog_item.name if catalog_item else "Tratamiento",
+                            "name": names.get("es")
+                            or names.get("en")
+                            or next(iter(names.values()), "Tratamiento"),
                             "tooth": item.tooth_number,
                             "price": float(item.line_total),
                         }
@@ -338,15 +369,23 @@ class NotificationHandlers:
                     "custom_message": data.get("custom_message"),
                     "clinic_name": clinic.name if clinic else "DentalPin",
                     "clinic_phone": clinic.phone if clinic else None,
+                    # Public quote link — the WhatsApp HSM carries this
+                    # instead of the HTML treatments table.
+                    "public_url": _public_budget_url(budget.public_token),
                 }
 
+                # Staff explicitly picked the channel on the send modal, so
+                # steer resolution to exactly that channel (no fallback) and
+                # bypass the auto_send gate — this is a manual send.
+                # ``do_not_contact`` still hard-blocks inside the gateway.
                 await NotificationGateway.enqueue(
                     db=db,
                     clinic_id=clinic_id,
                     notification_type="budget_sent",
-                    to_address=patient.email,
                     context=context,
                     patient_id=patient.id,
+                    channels=[send_method],
+                    force_send=True,
                     triggered_by_event="budget.sent",
                 )
 
@@ -357,27 +396,24 @@ class NotificationHandlers:
     async def on_invoice_sent(data: dict[str, Any], *, db: AsyncSession) -> None:
         """Handle invoice.sent event.
 
-        Queues the invoice email for the patient.
+        Queues the invoice notification for the patient when staff chose a
+        real channel (``send_method`` is ``email`` or ``whatsapp``).
+        Manual sends don't queue anything.
 
         Transactional (ADR 0019): queues the message on the publisher's
         session. Nothing is sent here — the outbox tick owns the network
         I/O — so a rolled-back request queues nothing, and the rows this
         reads are the publisher's own (issue #183).
         """
-        """Async handler for invoice sent.
-
-        Only sends email if send_method is "email".
-        Manual sends don't trigger email.
-        """
         from app.modules.billing.models import Invoice, InvoiceItem
         from app.modules.notifications.gateway import NotificationGateway
         from app.modules.patients.models import Patient
 
-        # Only send email if explicitly requested
+        # Only queue when staff explicitly picked a channel.
         send_method = data.get("send_method", "manual")
-        if send_method != "email":
+        if send_method not in ("email", "whatsapp"):
             logger.info(
-                f"Invoice sent manually (not by email), skipping notification: {data.get('invoice_id')}"
+                f"Invoice sent manually (no channel), skipping notification: {data.get('invoice_id')}"
             )
             return
 
@@ -395,7 +431,7 @@ class NotificationHandlers:
                 # Get patient
                 result = await db.execute(select(Patient).where(Patient.id == invoice.patient_id))
                 patient = result.scalar_one_or_none()
-                if not patient or not patient.email:
+                if not _has_contact(patient):
                     return
 
                 # Get clinic info
@@ -445,13 +481,16 @@ class NotificationHandlers:
                     "clinic_address": clinic.address if clinic else None,
                 }
 
+                # Staff explicitly picked the channel on the send modal —
+                # same manual-send semantics as budget_sent above.
                 await NotificationGateway.enqueue(
                     db=db,
                     clinic_id=clinic_id,
                     notification_type="invoice_sent",
-                    to_address=patient.email,
                     context=context,
                     patient_id=patient.id,
+                    channels=[send_method],
+                    force_send=True,
                     triggered_by_event="invoice.sent",
                 )
 
@@ -487,7 +526,7 @@ class NotificationHandlers:
                 # Get patient
                 result = await db.execute(select(Patient).where(Patient.id == budget.patient_id))
                 patient = result.scalar_one_or_none()
-                if not patient or not patient.email:
+                if not _has_contact(patient):
                     return
 
                 # Get clinic info
@@ -511,7 +550,6 @@ class NotificationHandlers:
                     db=db,
                     clinic_id=clinic_id,
                     notification_type="budget_accepted",
-                    to_address=patient.email,
                     context=context,
                     patient_id=patient.id,
                     triggered_by_event="budget.accepted",
@@ -519,3 +557,78 @@ class NotificationHandlers:
 
         except Exception as e:
             logger.error(f"Error handling budget.accepted: {e}", exc_info=True)
+
+    @staticmethod
+    async def on_budget_reminder_sent(data: dict[str, Any], *, db: AsyncSession) -> None:
+        """Handle budget.reminder_sent event (7d / 14d milestones).
+
+        The budget cron (and the manual ``/send-reminder`` endpoint) only
+        stamps ``last_reminder_sent_at`` and publishes the event — this
+        handler is what actually queues a patient-visible message through
+        the gateway (issue #287 bug 7: before it existed, the timeline
+        recorded a reminder no patient ever received).
+
+        Transactional (ADR 0019): queues the message on the publisher's
+        session. Nothing is sent here — the outbox tick owns the network
+        I/O — so a rolled-back request queues nothing, and the rows this
+        reads are the publisher's own (issue #183).
+        """
+        from app.modules.budget.models import Budget
+        from app.modules.notifications.gateway import NotificationGateway
+        from app.modules.patients.models import Patient
+
+        try:
+            clinic_id = UUID(data["clinic_id"])
+            budget_id = UUID(data["budget_id"])
+            milestone_days = data.get("milestone_days")
+
+            async with db.begin_nested():
+                # Get budget
+                result = await db.execute(select(Budget).where(Budget.id == budget_id))
+                budget = result.scalar_one_or_none()
+                if not budget:
+                    return
+
+                # Get patient
+                result = await db.execute(select(Patient).where(Patient.id == budget.patient_id))
+                patient = result.scalar_one_or_none()
+                if not _has_contact(patient):
+                    logger.info(
+                        f"Patient has no email or phone, skipping budget reminder: {budget_id}"
+                    )
+                    return
+
+                # Get clinic info
+                from app.core.auth.models import Clinic
+
+                result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
+                clinic = result.scalar_one_or_none()
+
+                context = {
+                    "patient_name": f"{patient.first_name} {patient.last_name}",
+                    "budget_number": budget.budget_number,
+                    "milestone_days": milestone_days,
+                    "total": float(budget.total) if budget.total is not None else None,
+                    "valid_until": budget.valid_until.strftime("%d/%m/%Y")
+                    if budget.valid_until
+                    else None,
+                    "public_url": _public_budget_url(budget.public_token),
+                    "clinic_name": clinic.name if clinic else "DentalPin",
+                    "clinic_phone": clinic.phone if clinic else None,
+                }
+
+                # No force_send: the clinic-level budget_reminder toggle and
+                # the patient's per-type opt-out both apply. A skip still
+                # writes an outbox row with the real reason, so "reminder
+                # sent" on the timeline is never silent again.
+                await NotificationGateway.enqueue(
+                    db=db,
+                    clinic_id=clinic_id,
+                    notification_type="budget_reminder",
+                    context=context,
+                    patient_id=patient.id,
+                    triggered_by_event="budget.reminder_sent",
+                )
+
+        except Exception as e:
+            logger.error(f"Error handling budget.reminder_sent: {e}", exc_info=True)

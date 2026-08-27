@@ -1,4 +1,4 @@
-"""Batch ordering and backup tolerance in the pending processor (#286).
+"""Batch ordering and backup tolerance in the pending processor (#286, #298).
 
 Removing a dependency pair in one "Apply changes" batch used to process
 the dependency first: its Alembic downgrade dragged the dependent's
@@ -6,6 +6,11 @@ branch down (``depends_on``), so the dependent's tables were gone by the
 time its own ``pg_dump`` backup ran — exit 1, record stranded in
 ``to_remove``. Removals must run dependents-first; installs keep the
 dependencies-first order.
+
+#298 replaces the brittle ``pg_dump`` stderr string check with a catalog
+lookup: ``_existing_tables`` asks Postgres which tables still exist and
+only dumps survivors. Tests here use ``monkeypatch`` to fake the lookup
+and ``subprocess.run`` (no live database required).
 """
 
 from __future__ import annotations
@@ -77,23 +82,45 @@ def test_removal_chain_of_three_reverses_fully(processor: PendingProcessor) -> N
 
 
 @pytest.mark.asyncio
-async def test_dump_tables_skips_when_tables_are_gone(
+async def test_dump_tables_skips_when_no_tables_exist(
     processor: PendingProcessor, monkeypatch: pytest.MonkeyPatch, tmp_path
 ) -> None:
-    """pg_dump's 'no matching tables' is a skipped backup, not a failure."""
+    """All tables already dropped → catalog lookup returns empty set → skip."""
     from app.core.plugins import processor as processor_module
 
     monkeypatch.setattr(processor_module, "BACKUP_ROOT", tmp_path)
 
-    def fake_run(args, **kwargs):  # noqa: ANN001, ANN003
-        raise subprocess.CalledProcessError(
-            1, args, stderr=b"pg_dump: error: no matching tables were found\n"
-        )
+    async def fake_existing(tables):  # noqa: ANN002
+        return set()  # none exist
 
-    monkeypatch.setattr(subprocess, "run", fake_run)
+    monkeypatch.setattr(processor, "_existing_tables", fake_existing)
     result = await processor._dump_tables("ghost", ["ghost_table"])
     assert result is None
     assert list(tmp_path.iterdir()) == []  # no empty backup file left behind
+
+
+@pytest.mark.asyncio
+async def test_dump_tables_partial_backup_when_some_tables_dropped(
+    processor: PendingProcessor, monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    """Two of three tables already dropped → back up the survivor only."""
+    from app.core.plugins import processor as processor_module
+
+    monkeypatch.setattr(processor_module, "BACKUP_ROOT", tmp_path)
+
+    async def fake_existing(tables):  # noqa: ANN002
+        return {"survivor_table"}
+
+    monkeypatch.setattr(processor, "_existing_tables", fake_existing)
+
+    def fake_run(args, stdout, **kwargs):  # noqa: ANN001, ANN003
+        stdout.write("COPY 0;\n")
+        return subprocess.CompletedProcess(args, 0)
+
+    monkeypatch.setattr(subprocess, "run", fake_run)
+    result = await processor._dump_tables("partial", ["gone_a", "gone_b", "survivor_table"])
+    assert result is not None
+    assert result.name.startswith("module_partial_")
 
 
 @pytest.mark.asyncio
@@ -103,6 +130,11 @@ async def test_dump_tables_still_raises_on_other_pg_dump_errors(
     from app.core.plugins import processor as processor_module
 
     monkeypatch.setattr(processor_module, "BACKUP_ROOT", tmp_path)
+
+    async def fake_existing(tables):  # noqa: ANN002
+        return set(tables)  # all exist — pg_dump will be called
+
+    monkeypatch.setattr(processor, "_existing_tables", fake_existing)
 
     def fake_run(args, **kwargs):  # noqa: ANN001, ANN003
         raise subprocess.CalledProcessError(

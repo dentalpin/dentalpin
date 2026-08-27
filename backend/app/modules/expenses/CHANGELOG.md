@@ -3,6 +3,7 @@
 ## Unreleased
 
 - feat(#131): German (de) locale for the module's frontend layer.
+- feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
 
 - Mark `list_expenses` / `create_expense` tools `exposes_free_text=True`:
   the user-entered `description` is free prose and must stay off the

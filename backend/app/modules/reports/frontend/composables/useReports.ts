@@ -203,6 +203,17 @@ export function useReports() {
   const api = useApi()
   const { t } = useI18n()
 
+  // Shared "a report fetch failed" flag (issue #101). The fetchers keep
+  // their catch-and-default contract (null / []), so callers alone cannot
+  // distinguish a failed read from a legitimately empty period. Pages call
+  // `resetFetchFailed()` before a load batch and render a visible error
+  // state (instead of 0 € / empty charts) when `fetchFailed` is set after.
+  const fetchFailed = useState<boolean>('reports:fetch-failed', () => false)
+
+  function resetFetchFailed() {
+    fetchFailed.value = false
+  }
+
   // ============================================================================
   // Billing Reports
   // ============================================================================
@@ -218,6 +229,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch billing summary:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -230,6 +242,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch overdue invoices:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -245,6 +258,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch payments by method:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -260,6 +274,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch billing by professional:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -275,6 +290,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch VAT summary:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -287,6 +303,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch numbering gaps:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -306,6 +323,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch budget summary:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -321,6 +339,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch budgets by professional:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -337,6 +356,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch budgets by treatment:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -352,6 +372,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch budgets by status:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -371,6 +392,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch scheduling summary:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -386,6 +408,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch first visits:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -401,6 +424,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch hours by professional:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -416,6 +440,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch cabinet utilization:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -431,6 +456,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch by day of week:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -458,6 +484,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch waiting times:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -474,6 +501,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch punctuality:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -490,6 +518,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch duration variance:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -506,6 +535,7 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch funnel:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -530,6 +560,7 @@ export function useReports() {
     } catch (e) {
       if ((e as Error)?.name === 'AbortError') return null
       console.error('Failed to fetch payments summary:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -549,6 +580,7 @@ export function useReports() {
     } catch (e) {
       if ((e as Error)?.name === 'AbortError') return null
       console.error('Failed to fetch payments trends:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -567,6 +599,7 @@ export function useReports() {
     } catch (e) {
       if ((e as Error)?.name === 'AbortError') return []
       console.error('Failed to fetch payments by method:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -585,6 +618,7 @@ export function useReports() {
     } catch (e) {
       if ((e as Error)?.name === 'AbortError') return []
       console.error('Failed to fetch payments by professional:', e)
+      fetchFailed.value = true
       return []
     }
   }
@@ -601,6 +635,7 @@ export function useReports() {
     } catch (e) {
       if ((e as Error)?.name === 'AbortError') return null
       console.error('Failed to fetch aging receivables:', e)
+      fetchFailed.value = true
       return null
     }
   }
@@ -666,6 +701,9 @@ export function useReports() {
   }
 
   return {
+    // Error state — set by any failed fetch, reset by pages before a batch.
+    fetchFailed: readonly(fetchFailed),
+    resetFetchFailed,
     // Billing
     fetchBillingSummary,
     fetchOverdueInvoices,

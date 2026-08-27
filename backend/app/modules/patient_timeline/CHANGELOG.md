@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#287): subscribes the generic notification.sent/notification.failed events (all channels) instead of the legacy email.* pair — WhatsApp outbound now shows on the timeline.
+
 - i18n(#131/#275): demo-seed treatment names fall back to any non-empty
   catalog translation after `es→en→fr→pt→ta`.
 

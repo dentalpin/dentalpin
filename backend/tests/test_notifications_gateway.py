@@ -22,6 +22,7 @@ from app.modules.notifications.models import (
     NotificationPreference,
     NotificationTemplate,
 )
+from app.modules.notifications.service import NotificationService
 
 
 @pytest_asyncio.fixture
@@ -59,6 +60,33 @@ async def _email_template(db: AsyncSession, clinic_id, key: str = "appointment_c
     db.add(tmpl)
     await db.commit()
     return tmpl
+
+
+async def _approved_hsm(db: AsyncSession, clinic_id, key: str = "appointment_confirmation"):
+    """An approved WhatsApp HSM mapping so proactive WhatsApp is viable."""
+    tmpl = NotificationTemplate(
+        clinic_id=clinic_id,
+        channel="whatsapp",
+        template_key=key,
+        locale="es",
+        provider_template_name="hsm_test",
+        provider_template_status="approved",
+        is_system=False,
+    )
+    db.add(tmpl)
+    await db.commit()
+    return tmpl
+
+
+async def _channel_settings(
+    db: AsyncSession, clinic_id, preferred: str = "whatsapp", fallback: bool = True
+):
+    settings = await NotificationService.get_or_create_clinic_settings(db, clinic_id)
+    settings.preferred_channel = preferred
+    settings.fallback_enabled = fallback
+    settings.manual_channels = [preferred]
+    await db.commit()
+    return settings
 
 
 # --------------------------------------------------------------------------- #
@@ -371,3 +399,195 @@ async def test_reply_outside_window_is_blocked(db_session, test_patient, whatsap
         force_send=True,
     )
     assert msg.status == "skipped"
+
+
+# --------------------------------------------------------------------------- #
+# #287 — clinic preferred channel + fallback ordering
+# --------------------------------------------------------------------------- #
+@pytest.mark.asyncio
+async def test_clinic_channels_missing_settings_row_is_email_only(db_session, test_clinic):
+    """Ponytail: a clinic without a settings row stays email-only."""
+    order = await NotificationGateway._clinic_channels(db_session, test_clinic.id)
+    assert order == ["email"]
+
+
+@pytest.mark.asyncio
+async def test_clinic_channels_preferred_whatsapp_appends_email_fallback(
+    db_session, test_clinic, whatsapp_adapter
+):
+    await _channel_settings(db_session, test_clinic.id, preferred="whatsapp", fallback=True)
+    order = await NotificationGateway._clinic_channels(db_session, test_clinic.id)
+    assert order == ["whatsapp", "email"]
+
+
+@pytest.mark.asyncio
+async def test_clinic_channels_no_fallback_is_preferred_only(
+    db_session, test_clinic, whatsapp_adapter
+):
+    await _channel_settings(db_session, test_clinic.id, preferred="whatsapp", fallback=False)
+    order = await NotificationGateway._clinic_channels(db_session, test_clinic.id)
+    assert order == ["whatsapp"]
+
+
+@pytest.mark.asyncio
+async def test_clinic_channels_fallback_skips_unavailable_whatsapp(db_session, test_clinic):
+    """Preferred email + fallback on, but no connected WhatsApp adapter:
+    the order must not advertise a channel the clinic cannot use."""
+    await _channel_settings(db_session, test_clinic.id, preferred="email", fallback=True)
+    order = await NotificationGateway._clinic_channels(db_session, test_clinic.id)
+    assert order == ["email"]
+
+
+# --------------------------------------------------------------------------- #
+# #287 bug 11 — missing prefs row must not block proactive WhatsApp
+# --------------------------------------------------------------------------- #
+@pytest.mark.asyncio
+async def test_missing_prefs_row_does_not_block_whatsapp(
+    db_session, test_patient, whatsapp_adapter
+):
+    """No NotificationPreference row exists: WhatsApp is opt-out like email,
+    so a preferred-WhatsApp auto-send still resolves to WhatsApp."""
+    await _channel_settings(db_session, test_patient.clinic_id, preferred="whatsapp")
+    await _approved_hsm(db_session, test_patient.clinic_id)
+
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        test_patient.clinic_id,
+        "appointment_confirmation",
+        context={},
+        patient_id=test_patient.id,
+    )
+    assert msg is not None
+    assert msg.status == "queued"
+    assert msg.channel == "whatsapp"
+    assert msg.to_address == test_patient.phone
+
+
+@pytest.mark.asyncio
+async def test_explicit_whatsapp_opt_out_falls_back_to_email(
+    db_session, test_patient, whatsapp_adapter
+):
+    """An explicit whatsapp_enabled=False still blocks proactive WhatsApp;
+    with fallback enabled the send lands on email instead."""
+    await _channel_settings(db_session, test_patient.clinic_id, preferred="whatsapp")
+    await _approved_hsm(db_session, test_patient.clinic_id)
+    db_session.add(
+        NotificationPreference(
+            clinic_id=test_patient.clinic_id,
+            patient_id=test_patient.id,
+            whatsapp_enabled=False,
+        )
+    )
+    await db_session.commit()
+
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        test_patient.clinic_id,
+        "appointment_confirmation",
+        context={},
+        patient_id=test_patient.id,
+    )
+    assert msg.status == "queued"
+    assert msg.channel == "email"
+    assert msg.to_address == test_patient.email
+
+
+@pytest.mark.asyncio
+async def test_skip_row_carries_preferred_channel_not_email(
+    db_session, test_patient, whatsapp_adapter
+):
+    """Opt-out + fallback off ⇒ nothing viable. The skip row must be labeled
+    with the clinic's preferred channel, not a hardcoded 'email'."""
+    await _channel_settings(
+        db_session, test_patient.clinic_id, preferred="whatsapp", fallback=False
+    )
+    await _approved_hsm(db_session, test_patient.clinic_id)
+    db_session.add(
+        NotificationPreference(
+            clinic_id=test_patient.clinic_id,
+            patient_id=test_patient.id,
+            whatsapp_enabled=False,
+        )
+    )
+    await db_session.commit()
+
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        test_patient.clinic_id,
+        "appointment_confirmation",
+        context={},
+        patient_id=test_patient.id,
+    )
+    assert msg.status == "skipped"
+    assert msg.error_message == "no_viable_channel"
+    assert msg.channel == "whatsapp"
+
+
+@pytest.mark.asyncio
+async def test_force_send_whatsapp_needs_no_opt_in_but_still_needs_hsm(
+    db_session, test_patient, whatsapp_adapter
+):
+    """A manual (force) WhatsApp send works without a prefs opt-in row, but
+    proactive WhatsApp still requires an approved HSM — no direct-text
+    fallback, ever."""
+    await _channel_settings(db_session, test_patient.clinic_id, preferred="whatsapp")
+
+    # No HSM mapped: not viable, even forced — the send is skipped.
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        test_patient.clinic_id,
+        "appointment_confirmation",
+        context={},
+        patient_id=test_patient.id,
+        channels=["whatsapp"],
+        force_send=True,
+    )
+    assert msg.status == "skipped"
+    assert msg.error_message == "no_viable_channel"
+
+    # With an approved HSM the same forced send queues on WhatsApp.
+    await _approved_hsm(db_session, test_patient.clinic_id)
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        test_patient.clinic_id,
+        "appointment_confirmation",
+        context={},
+        patient_id=test_patient.id,
+        channels=["whatsapp"],
+        force_send=True,
+    )
+    assert msg.status == "queued"
+    assert msg.channel == "whatsapp"
+    assert msg.to_address == test_patient.phone
+
+
+@pytest.mark.asyncio
+async def test_explicit_whatsapp_opt_out_blocks_even_force_send(
+    db_session, test_patient, whatsapp_adapter
+):
+    """A recorded whatsapp_enabled=False blocks force sends too — the
+    reminder cron and the staff Send buttons both pass force_send, and
+    neither may override an explicit opt-out (same contract as
+    email_enabled)."""
+    await _channel_settings(db_session, test_patient.clinic_id, preferred="whatsapp")
+    await _approved_hsm(db_session, test_patient.clinic_id)
+    db_session.add(
+        NotificationPreference(
+            clinic_id=test_patient.clinic_id,
+            patient_id=test_patient.id,
+            whatsapp_enabled=False,
+        )
+    )
+    await db_session.commit()
+
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        test_patient.clinic_id,
+        "appointment_confirmation",
+        context={},
+        patient_id=test_patient.id,
+        channels=["whatsapp"],
+        force_send=True,
+    )
+    assert msg.status == "skipped"
+    assert msg.error_message == "no_viable_channel"

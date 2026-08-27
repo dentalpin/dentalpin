@@ -43,8 +43,8 @@ must never be able to fail the event it is logging.
 | `clinical_notes.plan_created` | _Handler module path._ | _What it does in response._ |
 | `clinical_notes.treatment_created` | _Handler module path._ | _What it does in response._ |
 | `document.uploaded` | _Handler module path._ | _What it does in response._ |
-| `email.failed` | _Handler module path._ | _What it does in response._ |
-| `email.sent` | _Handler module path._ | _What it does in response._ |
+| `notification.failed` | `events.on_notification_failed` | Timeline row for a failed outbound send, any channel (#287 bug 12; replaces the legacy `email.failed` subscription). |
+| `notification.sent` | `events.on_notification_sent` | Timeline row for an outbound send, any channel (replaces the legacy `email.sent` subscription — the gateway dual-publishes both for email, so subscribing to both would double-record). |
 | `invoice.issued` | _Handler module path._ | _What it does in response._ |
 | `invoice.paid` | _Handler module path._ | _What it does in response._ |
 | `media.pair_created` | _Handler module path._ | _What it does in response._ |

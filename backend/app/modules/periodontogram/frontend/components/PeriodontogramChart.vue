@@ -105,7 +105,19 @@ function handleEditTooth(toothNumber: number, patch: Record<string, unknown>) {
 }
 
 async function handleClose(notes: string | null) {
-  await flushPending(props.snapshot.id)
+  // Abort the close when pending measurements could not be persisted —
+  // closing anyway would freeze the snapshot without them. The buffer
+  // keeps the failed patches, so retrying the close re-flushes them.
+  const flushed = await flushPending(props.snapshot.id)
+  if (!flushed) {
+    toast.add({
+      title: t('periodontogram.errors.saveFailed'),
+      description: t('periodontogram.errors.closeAborted'),
+      color: 'error',
+      icon: 'i-lucide-alert-triangle'
+    })
+    return
+  }
   const closed = await closeSession(props.snapshot.id, notes ?? undefined)
   emit('closed', closed)
 }

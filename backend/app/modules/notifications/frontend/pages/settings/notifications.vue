@@ -1,5 +1,10 @@
 <script setup lang="ts">
-import type { NotificationTypeSettings, SmtpSettingsUpdate, SmtpTestRequest } from '~~/app/types'
+import type {
+  NotificationChannel,
+  NotificationTypeSettings,
+  SmtpSettingsUpdate,
+  SmtpTestRequest
+} from '~~/app/types'
 
 const { t } = useI18n()
 const { isAdmin } = usePermissions()
@@ -25,6 +30,41 @@ const {
 // Local state for editing
 const localSettings = ref<Record<string, NotificationTypeSettings>>({})
 const hasChanges = ref(false)
+
+// Clinic-wide channel configuration (issue #287): which channel
+// auto-sends use and which Send buttons the rest of the app renders.
+const channelForm = reactive<{
+  preferred_channel: NotificationChannel
+  fallback_enabled: boolean
+  manual_channels: string[]
+}>({
+  preferred_channel: 'email',
+  fallback_enabled: true,
+  manual_channels: ['email']
+})
+
+const availableChannels = computed<readonly string[]>(() => settings.value?.available_channels ?? ['email'])
+const whatsappAvailable = computed(() => availableChannels.value.includes('whatsapp'))
+
+const preferredOptions = computed(() => [
+  { value: 'email', label: t('notifications.channels.email') },
+  {
+    value: 'whatsapp',
+    label: t('notifications.channels.whatsapp'),
+    disabled: !whatsappAvailable.value
+  }
+])
+
+// At least one manual channel is required (also enforced server-side).
+const manualChannelsValid = computed(() => channelForm.manual_channels.length >= 1)
+
+function toggleManualChannel(channel: string, checked: boolean) {
+  const set = new Set(channelForm.manual_channels)
+  if (checked) set.add(channel)
+  else set.delete(channel)
+  channelForm.manual_channels = [...set]
+  onSettingChange()
+}
 const showTestEmailModal = ref(false)
 const testEmail = ref('')
 
@@ -55,6 +95,11 @@ watch(settings, (newSettings) => {
   if (newSettings?.settings) {
     localSettings.value = JSON.parse(JSON.stringify(newSettings.settings))
     hasChanges.value = false
+  }
+  if (newSettings) {
+    channelForm.preferred_channel = newSettings.preferred_channel ?? 'email'
+    channelForm.fallback_enabled = newSettings.fallback_enabled ?? true
+    channelForm.manual_channels = [...(newSettings.manual_channels ?? ['email'])]
   }
 }, { immediate: true })
 
@@ -114,7 +159,13 @@ function updateLocalSetting<K extends ScalarSetting>(key: string, field: K, valu
 
 // Save all settings
 async function saveSettings() {
-  const success = await updateSettings({ settings: localSettings.value })
+  if (!manualChannelsValid.value) return
+  const success = await updateSettings({
+    preferred_channel: channelForm.preferred_channel,
+    fallback_enabled: channelForm.fallback_enabled,
+    manual_channels: channelForm.manual_channels,
+    settings: localSettings.value
+  })
   if (success) {
     hasChanges.value = false
   }
@@ -250,6 +301,7 @@ if (!isAdmin.value) {
           v-if="hasChanges"
           icon="i-lucide-save"
           :loading="isSaving"
+          :disabled="!manualChannelsValid"
           @click="saveSettings"
         >
           {{ t('common.save') }}
@@ -268,6 +320,107 @@ if (!isAdmin.value) {
 
     <!-- Settings content -->
     <template v-else>
+      <!-- Clinic channels (issue #287) -->
+      <UCard>
+        <template #header>
+          <div class="flex items-center gap-2">
+            <UIcon
+              name="i-lucide-send"
+              class="w-5 h-5 text-primary-accent"
+            />
+            <h2 class="font-semibold text-default">
+              {{ t('notifications.channels.cardTitle') }}
+            </h2>
+          </div>
+        </template>
+
+        <p class="text-caption text-subtle mb-6">
+          {{ t('notifications.channels.cardDescription') }}
+        </p>
+
+        <div class="space-y-6">
+          <!-- Preferred channel -->
+          <UFormField
+            :label="t('notifications.channels.preferredLabel')"
+            :help="t('notifications.channels.preferredHelp')"
+          >
+            <USelect
+              v-model="channelForm.preferred_channel"
+              :items="preferredOptions"
+              value-key="value"
+              label-key="label"
+              class="w-full sm:w-64"
+              @update:model-value="onSettingChange"
+            />
+          </UFormField>
+
+          <!-- Fallback -->
+          <div class="flex items-start gap-3">
+            <USwitch
+              v-model="channelForm.fallback_enabled"
+              @update:model-value="onSettingChange"
+            />
+            <div>
+              <p class="text-sm font-medium text-default">
+                {{ t('notifications.channels.fallbackLabel') }}
+              </p>
+              <p class="text-caption text-subtle">
+                {{ t('notifications.channels.fallbackHelp') }}
+              </p>
+            </div>
+          </div>
+
+          <!-- Manual send buttons -->
+          <div>
+            <p class="text-sm font-medium text-default mb-1">
+              {{ t('notifications.channels.manualLabel') }}
+            </p>
+            <p class="text-caption text-subtle mb-3">
+              {{ t('notifications.channels.manualHelp') }}
+            </p>
+            <div class="flex flex-col gap-2">
+              <UCheckbox
+                :model-value="channelForm.manual_channels.includes('email')"
+                :label="t('notifications.channels.email')"
+                @update:model-value="(v: boolean | 'indeterminate') => toggleManualChannel('email', v === true)"
+              />
+              <UCheckbox
+                :model-value="channelForm.manual_channels.includes('whatsapp')"
+                :label="t('notifications.channels.whatsapp')"
+                :disabled="!whatsappAvailable"
+                @update:model-value="(v: boolean | 'indeterminate') => toggleManualChannel('whatsapp', v === true)"
+              />
+            </div>
+            <p
+              v-if="!manualChannelsValid"
+              class="text-caption text-danger-accent mt-2"
+            >
+              {{ t('notifications.channels.manualAtLeastOne') }}
+            </p>
+          </div>
+
+          <!-- WhatsApp not connected hint -->
+          <div
+            v-if="!whatsappAvailable"
+            class="p-3 alert-surface-info rounded-lg flex items-start gap-2"
+          >
+            <UIcon
+              name="i-lucide-message-circle"
+              class="w-4 h-4 text-info-accent flex-shrink-0 mt-0.5"
+            />
+            <p class="text-caption text-info">
+              {{ t('notifications.channels.whatsappUnavailableHint') }}
+              <NuxtLink
+                to="/settings/whatsapp-kapso"
+                class="underline font-medium"
+              >
+                {{ t('notifications.channels.whatsappConnect') }}
+              </NuxtLink>
+            </p>
+          </div>
+        </div>
+      </UCard>
+
       <!-- Notification Types Configuration -->
       <UCard>
         <template #header>
