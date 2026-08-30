@@ -11,6 +11,17 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+- **Arabic (`ar`) interface with full RTL support** — core app at exact
+  key parity, MSA register with Latin clinical/financial glosses, and
+  right-to-left layout wiring: the `ar` locale ships `dir: 'rtl'` in
+  `nuxt.config.ts`, the app shell drives `html[dir]` from the active
+  Nuxt UI locale (`app.vue`), and the Cairo Variable font joins the
+  system font stack as the Arabic glyph carrier. FDI tooth-chart
+  components in `odontogram`/`periodontogram` pin `dir="ltr"` so anatomy
+  stays left-right. `i18n.config.ts` gains a CLDR-exact `ar`
+  `pluralRules` entry (zero/one/two/few/many/other) alongside the
+  existing `pl` one.
+
 ## [2.5.0] - 2026-09-02
 
 ### Added
