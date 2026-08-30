@@ -192,7 +192,7 @@ const liveIndices = computed<PerioIndices | null>(() => {
       role="region"
       :aria-label="t('periodontogram.chart.ariaLabel')"
     >
-      <div class="min-w-[1100px] space-y-4">
+      <div dir="ltr" class="min-w-[1100px] space-y-4">
         <PerioArchBlock
           arch="upper"
           :teeth="upperTeeth"

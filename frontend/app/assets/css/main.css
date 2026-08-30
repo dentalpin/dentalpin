@@ -1,10 +1,11 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/cairo";
 @import "./typography.css";
 
 @theme static {
-  --font-sans: 'Inter Variable', 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', 'Cairo Variable', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
 /* ============================================================================

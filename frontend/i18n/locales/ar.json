@@ -1,0 +1,3128 @@
+{
+  "app": {
+    "name": "DentalPin",
+    "tagline": "إدارة عيادات الأسنان"
+  },
+  "demo": {
+    "bannerMessage": "نسخة تجريبية عامة — لا تُدخل بيانات مرضى حقيقية. تُعاد تهيئة قاعدة البيانات دوريًا.",
+    "bannerDismiss": "إخفاء",
+    "credentialsTitle": "بيانات الدخول التجريبية",
+    "credentialsNote": "للتقييم فقط — تظهر لأن هذه نسخة تجريبية عامة.",
+    "copyEmail": "نسخ البريد الإلكتروني",
+    "copyPassword": "نسخ كلمة المرور",
+    "copied": "تم النسخ إلى الحافظة"
+  },
+  "nav": {
+    "dashboard": "الرئيسية",
+    "patients": "المرضى",
+    "appointments": "المواعيد",
+    "recalls": "استدعاءات الفحص",
+    "expenses": "المصروفات",
+    "labOrdersForm": "طلب مختبر جديد",
+    "labOrdersStatus": "طلبات المختبر",
+    "treatmentPlans": "خطط العلاج",
+    "budgets": "عروض السعر",
+    "invoices": "الفواتير",
+    "reports": "التقارير",
+    "settings": "الإعدادات",
+    "defaultClinicName": "العيادة",
+    "catalog": "كتالوج العلاج",
+    "contacts": "جهات الاتصال",
+    "menu": "القائمة",
+    "openMenu": "فتح القائمة",
+    "close": "إغلاق",
+    "toggleSidebar": "إظهار/إخفاء الشريط الجانبي",
+    "inventory": "المخزون",
+    "journal": "سجل النشاط",
+    "staffTasks": "مهام الفريق",
+    "treatmentConsumables": "مستهلكات العلاج"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "logout": "تسجيل الخروج",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "loginButton": "تسجيل الدخول",
+    "loginSuccess": "تم تسجيل الدخول بنجاح",
+    "invalidCredentials": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
+    "emailRequired": "أدخل البريد الإلكتروني",
+    "passwordRequired": "أدخل كلمة المرور",
+    "emailInvalid": "عنوان البريد الإلكتروني غير صالح",
+    "accountInactive": "حسابك غير مفعّل. تواصل مع مسؤول النظام",
+    "tooManyAttempts": "محاولات كثيرة جدًا. أعد المحاولة بعد دقائق",
+    "sessionExpired": "انتهت صلاحية جلستك",
+    "networkError": "تعذر الاتصال بالخادم",
+    "serverError": "الخادم غير متاح حاليًا. حاول مجددًا بعد دقائق",
+    "unknownError": "خطأ غير متوقع. حاول مجددًا"
+  },
+  "setup": {
+    "title": "الإعداد الأول",
+    "subtitle": "أنشئ حسابك وعيادتك. ستكون جاهزًا للعمل خلال دقيقتين.",
+    "stepAccount": "حساب المسؤول",
+    "stepClinic": "بيانات العيادة",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "passwordConfirm": "تأكيد كلمة المرور",
+    "passwordHint": "٨ أحرف على الأقل، تتضمن حروفًا وأرقامًا",
+    "clinicName": "اسم العيادة",
+    "taxId": "الرقم الضريبي",
+    "next": "التالي",
+    "back": "رجوع",
+    "submit": "إنشاء عيادتي",
+    "success": "كل شيء جاهز! مرحبًا بك في DentalPin",
+    "firstNameRequired": "أدخل الاسم الأول",
+    "lastNameRequired": "أدخل اسم العائلة",
+    "emailRequired": "أدخل البريد الإلكتروني",
+    "emailInvalid": "البريد الإلكتروني غير صالح",
+    "passwordRequired": "أدخل كلمة المرور",
+    "passwordTooShort": "يجب ألا تقل كلمة المرور عن ٨ أحرف",
+    "passwordWeak": "يجب أن تتضمن كلمة المرور حروفًا وأرقامًا",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "clinicNameRequired": "أدخل اسم العيادة",
+    "taxIdRequired": "أدخل الرقم الضريبي",
+    "alreadyInitialized": "تم إعداد النظام مسبقًا. يُرجى تسجيل الدخول.",
+    "error": "تعذر إكمال الإعداد. حاول مجددًا",
+    "stepOf": "الخطوة {current} من {total}",
+    "country": "الدولة",
+    "countryHelp": "نحدّد لك الضرائب والعملة والمنطقة الزمنية تلقائيًا",
+    "countryRequired": "اختر الدولة",
+    "taxIdGeneric": "الرقم الضريبي",
+    "taxIdLooksInvalid": "لا يبدو هذا رقمًا ضريبيًا صالحًا. تحقق منه قبل إصدار الفواتير.",
+    "taxIdFormat": "صيغة غير صالحة (مثال: {example})",
+    "timezoneRequired": "اختر المنطقة الزمنية",
+    "currencyRequired": "اختر العملة",
+    "derivedSettings": "المنطقة الزمنية والعملة",
+    "willSeed": "سننشئ لك كتالوج العلاجات وأنواع ضريبة القيمة المضافة وسلسلة فواتير وغرفة واحدة وجدول عمل من الاثنين إلى الجمعة. يمكن تعديل كل شيء لاحقًا.",
+    "willSuggestVerifactu": "سنقترح عليك تفعيل VeriFactu لاحقًا.",
+    "invalidData": "راجع البيانات: بعض الحقول غير صالحة.",
+    "attendPatientsMyself": "أستقبل المرضى بنفسي",
+    "attendPatientsMyselfHelp": "يُعلّمك كأخصائي قابل للحجز. يمكنك تغيير ذلك لاحقاً في إعدادات الفريق.",
+    "addressTitle": "عنوان العيادة",
+    "addressOptional": "اختياري"
+  },
+  "onboarding": {
+    "title": "البداية",
+    "progress": "أُنجزت {done} خطوة من {total}",
+    "configure": "إعداد",
+    "skip": "تخطٍ",
+    "unskip": "تراجع",
+    "dismiss": "إخفاء",
+    "guidedMode": "الوضع الموجَّه",
+    "optional": "اختياري ({count})",
+    "stepOf": "الخطوة {current} من {total}",
+    "next": "التالي",
+    "finish": "إنهاء",
+    "exit": "خروج",
+    "completedTitle": "عيادتك جاهزة!",
+    "completedDescription": "اكتمل الإعداد. يمكنك العمل بشكل طبيعي الآن.",
+    "guidedDoneTitle": "انتهت الجولة الإرشادية",
+    "guidedDoneDescription": "لا توجد خطوات معلقة.",
+    "items": {
+      "team": {
+        "label": "فريقك",
+        "description": "أضف الأطباء الذين يفحصون المرضى، أو علّم نفسك كممارس إن كنت تعمل بمفردك."
+      },
+      "verifactu": {
+        "label": "تفعيل VeriFactu",
+        "description": "مطلوب في إسبانيا لإصدار فواتير معتمدة من المصالح الضريبية (AEAT)."
+      }
+    }
+  },
+  "actions": {
+    "edit": "تعديل",
+    "cancel": "إلغاء",
+    "save": "حفظ",
+    "create": "إنشاء",
+    "delete": "حذف",
+    "close": "إغلاق",
+    "remove": "إزالة"
+  },
+  "patients": {
+    "title": "المرضى",
+    "create": "مريض جديد",
+    "edit": "تعديل بيانات المريض",
+    "search": "ابحث عن مريض...",
+    "searchPlaceholder": "الاسم أو الهاتف",
+    "noResults": "لا يوجد مرضى مطابقون",
+    "empty": "لا يوجد مرضى مسجلون",
+    "emptyAction": "أنشئ أول مريض",
+    "name": "الاسم",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "phone": "الهاتف",
+    "email": "البريد الإلكتروني",
+    "dateOfBirth": "تاريخ الميلاد",
+    "notes": "ملاحظات",
+    "created": "تم إنشاء المريض",
+    "updated": "تم تحديث بيانات المريض",
+    "archived": "تم أرشفة المريض",
+    "notFound": "المريض غير موجود",
+    "archiveConfirm": "أرشفة المريض {name}؟",
+    "archiveDescription": "سيؤدي هذا الإجراء إلى إخفاء المريض من نتائج البحث. لن تُحذف مواعيده القائمة.",
+    "cancel": "إلغاء",
+    "archive": "أرشفة",
+    "dangerZone": {
+      "title": "منطقة الخطر",
+      "archiveHelp": "أرشِف المريض لإخفائه من البحث. تبقى المواعيد والسجل الطبي محفوظة."
+    },
+    "billingSection": "بيانات الفوترة",
+    "billingSectionHint": "ستُستخدم هذه البيانات تلقائيًا عند إنشاء فواتير لهذا المريض.",
+    "editingBillingForInvoice": "تحرير بيانات الفوترة. ستنعكس التغييرات على الفاتورة.",
+    "returnToInvoice": "العودة إلى الفاتورة",
+    "billingName": "اسم الفوترة",
+    "billingNamePlaceholder": "الاسم أو الشركة للفواتير",
+    "billingTaxId": "الرقم الضريبي",
+    "billingEmail": "بريد الفوترة الإلكتروني",
+    "billingAddress": "عنوان الفوترة",
+    "billingComplete": "مكتملة",
+    "billingIncomplete": "غير مكتملة",
+    "demographics": "البيانات الديموغرافية",
+    "nationalId": "وثيقة الهوية",
+    "nationalIdType": "نوع الوثيقة",
+    "passport": "جواز السفر",
+    "profession": "المهنة",
+    "workplace": "جهة العمل",
+    "years": "سنة",
+    "status": {
+      "active": "نشط",
+      "archived": "مؤرشف"
+    },
+    "filters": {
+      "status": "الحالة",
+      "city": "المدينة",
+      "withDebt": "لديه مستحقات",
+      "doNotContact": "عدم الاتصال",
+      "doNotContactOnly": "عدم الاتصال فقط",
+      "doNotContactOnlyContactable": "قابل للتواصل فقط"
+    },
+    "columns": {
+      "city": "المدينة",
+      "contact": "التواصل",
+      "debt": "المستحقات"
+    },
+    "sort": {
+      "lastVisit": "آخر زيارة",
+      "lastName": "اسم العائلة",
+      "firstName": "الاسم الأول",
+      "createdAt": "تاريخ الانضمام",
+      "updatedAt": "الأحدث تعديلًا"
+    },
+    "doNotContact": {
+      "label": "عدم الاتصال",
+      "hint": "سيُستثنى المريض من قوائم الاتصال والتواصل الآلي",
+      "badge": "عدم الاتصال"
+    },
+    "gender": {
+      "label": "الجنس",
+      "select": "اختر الجنس",
+      "male": "ذكر",
+      "female": "أنثى",
+      "other": "آخر",
+      "preferNotSay": "أفضل عدم الإفصاح"
+    },
+    "emergencyContact": {
+      "title": "جهة اتصال للطوارئ",
+      "hasContact": "لدى المريض جهة اتصال للطوارئ",
+      "noContact": "لا توجد جهة اتصال للطوارئ مسجلة",
+      "name": "الاسم الكامل",
+      "namePlaceholder": "اسم جهة الاتصال",
+      "relationship": "صلة القرابة",
+      "relationshipPlaceholder": "اختر صلة القرابة",
+      "phone": "الهاتف",
+      "phonePlaceholder": "هاتف جهة الاتصال",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "بريد جهة الاتصال",
+      "isLegalGuardian": "هو الولي القانوني",
+      "remove": "إزالة جهة الاتصال",
+      "relationships": {
+        "spouse": "الزوج/الزوجة",
+        "parent": "الأب/الأم",
+        "child": "الابن/الابنة",
+        "sibling": "الأخ/الأخت",
+        "friend": "صديق",
+        "other": "آخر"
+      }
+    },
+    "medicalHistory": {
+      "title": "التاريخ الطبي",
+      "save": "حفظ التاريخ الطبي",
+      "fetchError": "خطأ في تحميل التاريخ الطبي",
+      "saveSuccess": "تم حفظ التاريخ الطبي",
+      "saveError": "خطأ في حفظ التاريخ الطبي",
+      "allergies": "الحساسية",
+      "allergiesCount": "{n} حساسية | {n} حساسية",
+      "onAnticoagulants": "يتناول مضادات تخثر",
+      "allergyName": "نوع الحساسية",
+      "type": "النوع",
+      "allergyTypes": {
+        "drug": "دوائية",
+        "food": "غذائية",
+        "material": "مواد",
+        "environmental": "بيئية"
+      },
+      "severity": {
+        "low": "خفيفة",
+        "medium": "متوسطة",
+        "high": "مرتفعة",
+        "critical": "حرجة"
+      },
+      "medications": "الأدوية",
+      "medicationName": "اسم الدواء",
+      "dosage": "الجرعة",
+      "frequency": "عدد المرات",
+      "systemicDiseases": "الأمراض الجهازية",
+      "diseaseName": "اسم المرض",
+      "diseaseTypes": {
+        "cardiovascular": "قلبية وعائية",
+        "respiratory": "تنفسية",
+        "endocrine": "هرمونية",
+        "neurological": "عصبية",
+        "autoimmune": "مناعية ذاتية",
+        "other": "أخرى"
+      },
+      "critical": "حرجة",
+      "controlled": "مضبوطة",
+      "notControlled": "غير مضبوطة",
+      "specialConditions": "حالات خاصة",
+      "pregnant": "حامل",
+      "pregnancyWeek": "أسبوع الحمل",
+      "lactating": "مرضع",
+      "anticoagulants": "مضادات التخثر",
+      "anticoagulantMedication": "دواء مضاد للتخثر",
+      "inrValue": "قيمة INR",
+      "anesthesiaReaction": "تفاعل مع التخدير",
+      "anesthesiaReactionDetails": "تفاصيل التفاعل",
+      "bruxism": "صرير الأسنان",
+      "lifestyle": "نمط الحياة",
+      "smoker": "مدخن",
+      "smokingFrequency": "سيجارة/يوم",
+      "alcoholConsumption": "استهلاك الكحول",
+      "alcohol": {
+        "none": "لا يستهلك",
+        "occasional": "من حين لآخر",
+        "moderate": "متوسط",
+        "heavy": "مفرط"
+      },
+      "surgicalHistory": "التاريخ الجراحي",
+      "procedure": "الإجراء الجراحي"
+    },
+    "timeline": {
+      "empty": "لا يوجد نشاط مسجل بعد",
+      "emptyFiltered": "لا توجد أحداث في هذه الفئة",
+      "clearFilter": "إظهار كل النشاط",
+      "endOfTimeline": "نهاية الخط الزمني",
+      "totalEntries": "{count} حدث | {count} حدثًا",
+      "groups": {
+        "today": "اليوم",
+        "yesterday": "أمس",
+        "thisWeek": "هذا الأسبوع",
+        "thisMonth": "هذا الشهر",
+        "earlier": "أقدم"
+      },
+      "author": "بواسطة {name}",
+      "meta": {
+        "cabinet": "الغرفة {name}",
+        "teeth": "الأسنان: {list}",
+        "total": "الإجمالي: {amount}",
+        "number": "رقم {value}",
+        "via": "عبر {channel}",
+        "template": "القالب: {key}",
+        "docType": "النوع: {type}"
+      },
+      "categories": {
+        "all": "الكل",
+        "visit": "الزيارات",
+        "treatment": "العلاجات",
+        "financial": "المالية",
+        "communication": "التواصل",
+        "medical": "التاريخ الطبي",
+        "document": "المستندات",
+        "note": "الملاحظات السريرية"
+      }
+    },
+    "alerts": {
+      "title": "{count} تنبيه | {count} تنبيهات",
+      "label": "التنبيهات السريرية"
+    },
+    "editDemographics": "تعديل البيانات الديموغرافية",
+    "editEmergencyContact": "تعديل جهة اتصال الطوارئ",
+    "editBilling": "تعديل بيانات الفوترة",
+    "editMedicalHistory": "تعديل التاريخ الطبي",
+    "medicalSnapshot": {
+      "title": "المعلومات الطبية",
+      "allergiesLabel": "الحساسية",
+      "allergiesEmpty": "لا توجد حساسية معروفة",
+      "allergiesNotReviewed": "لم يُسجل التاريخ الطبي",
+      "completeHistory": "استكمال التاريخ الطبي",
+      "reviewedOn": "آخر مراجعة: {date}",
+      "conditions": {
+        "pregnantWeek": "حامل · الأسبوع {week}",
+        "anticoagulantInr": "مضادات تخثر · INR {inr}",
+        "smokerFreq": "مدخن · {freq}/يوم"
+      }
+    },
+    "personalInfo": {
+      "title": "المعلومات الشخصية",
+      "ageLabel": "{age} سنة",
+      "birthWithAge": "{date} ({age} سنة)"
+    },
+    "contactInfo": {
+      "title": "التواصل",
+      "copyPhone": "نسخ الهاتف",
+      "copyEmail": "نسخ البريد الإلكتروني",
+      "address": "العنوان",
+      "addEmergency": "إضافة جهة اتصال للطوارئ",
+      "addGuardian": "إضافة ولي أمر قانوني",
+      "guardianRequired": "الولي القانوني مطلوب"
+    },
+    "administrative": {
+      "title": "الإدارة"
+    },
+    "header": {
+      "ariaLabel": "ترويسة المريض"
+    },
+    "quickActions": {
+      "ariaLabel": "إجراءات سريعة للمريض"
+    },
+    "onboarding": {
+      "label": "أنشئ أول مريض",
+      "description": "أسرع طريقة لرؤية الملف والمواعيد وعروض السعر على أرض الواقع."
+    },
+    "legalGuardian": {
+      "title": "الولي الشرعي",
+      "hasGuardian": "يوجد ولي شرعي مسجل",
+      "noGuardian": "لا يوجد ولي شرعي مسجل",
+      "name": "الاسم الكامل",
+      "namePlaceholder": "اسم الولي",
+      "dni": "رقم الهوية",
+      "dniPlaceholder": "وثيقة الهوية",
+      "relationship": "الصلة",
+      "relationshipPlaceholder": "اختر الصلة",
+      "relationships": {
+        "parent": "الوالد",
+        "legal_tutor": "الولي الشرعي المعين",
+        "grandparent": "الجدّ",
+        "other": "أخرى"
+      },
+      "phone": "الهاتف",
+      "phonePlaceholder": "هاتف الولي",
+      "email": "البريد الإلكتروني",
+      "emailPlaceholder": "بريد الولي الإلكتروني",
+      "address": "العنوان",
+      "addressPlaceholder": "عنوان الولي",
+      "notes": "ملاحظات",
+      "notesPlaceholder": "ملاحظات إضافية...",
+      "remove": "إزالة الولي"
+    },
+    "editLegalGuardian": "تعديل الولي الشرعي"
+  },
+  "patientDetail": {
+    "tabs": {
+      "summary": "الملخص",
+      "info": "المعلومات",
+      "clinical": "سريري",
+      "odontogram": "مخطط الأسنان",
+      "administration": "الإدارة",
+      "history": "السجل",
+      "timeline": "النشاط",
+      "appointments": "المواعيد",
+      "budgets": "عروض السعر",
+      "billing": "الفوترة",
+      "payments": "المدفوعات",
+      "documents": "المستندات",
+      "gallery": "الصور"
+    },
+    "historyPlaceholder": "الملاحظات السريرية متاحة في إصدار لاحق",
+    "noAppointments": "لا مواعيد لهذا المريض",
+    "scheduleAppointment": "حجز موعد",
+    "noBudgets": "لا عروض سعر لهذا المريض",
+    "createBudget": "إنشاء عرض سعر",
+    "viewAllBudgets": "عرض كل عروض السعر",
+    "activePlan": "الخطة النشطة",
+    "noActivePlan": "لا توجد خطة نشطة",
+    "viewPlan": "فتح الخطة",
+    "createPlan": "إنشاء خطة",
+    "nextAppointment": "الموعد القادم",
+    "noUpcomingAppointments": "لا توجد مواعيد قادمة",
+    "openAppointment": "فتح الموعد",
+    "lastVisit": "آخر زيارة",
+    "neverVisited": "لم يزر العيادة من قبل",
+    "reschedule": "إعادة جدولة",
+    "balance": "الرصيد",
+    "collect": "تحصيل",
+    "viewLedger": "فتح دفتر الحساب",
+    "noPayments": "لا توجد حركات",
+    "diagnoses": "التشخيصات",
+    "pending": "غير معالج",
+    "noDiagnoses": "لا توجد نتائج معلقة",
+    "openOdontogram": "فتح مخطط الأسنان",
+    "medicalHistory": "التاريخ الطبي",
+    "completeMedicalHistory": "لا يوجد تاريخ طبي. أكمِله لتسجيل الحساسية والحالات والأدوية.",
+    "editMedicalHistory": "تعديل التاريخ الطبي",
+    "quickActions": "إجراءات سريعة",
+    "edit": "تعديل",
+    "editPatient": "تعديل بيانات المريض",
+    "noSummaryCards": "لا وحدات مسجلة في الملخص.",
+    "actions": {
+      "label": "إجراءات",
+      "newAppointment": "موعد",
+      "collect": "تحصيل",
+      "newNote": "ملاحظة",
+      "newBudget": "عرض سعر",
+      "uploadDocument": "مستند"
+    }
+  },
+  "patientBilling": {
+    "totalBudgeted": "إجمالي المبرمج",
+    "workInProgress": "أعمال جارية",
+    "workCompleted": "أعمال منجزة",
+    "totalInvoiced": "إجمالي المفوتر",
+    "totalPaid": "إجمالي المدفوع",
+    "balancePending": "الرصيد المستحق",
+    "invoices": "الفواتير",
+    "createInvoice": "إنشاء فاتورة",
+    "noInvoices": "لا فواتير لهذا المريض",
+    "pending": "معلقة",
+    "totalDiscount": "في الخصومات"
+  },
+  "odontogram": {
+    "title": "مخطط الأسنان",
+    "tooth": "السن",
+    "globals": {
+      "category": "الفم بالكامل",
+      "applied": "أُضيف {name} إلى الخطة",
+      "archPickerTitle": "أي فك لـ\"{name}\"؟",
+      "upperArch": "الفك العلوي",
+      "lowerArch": "الفك السفلي",
+      "searchPlaceholder": "ابحث عن علاج…"
+    },
+    "selectCondition": "اختر الحالة",
+    "readOnly": "عرض فقط",
+    "legend": "المفتاح",
+    "statusLegend": "حالة العلاج",
+    "toothPosition": "وضعية السن",
+    "displaced": "ملتبد",
+    "rotated": "مدوّر",
+    "dentition": {
+      "permanent": "دائمة",
+      "deciduous": "لبنية",
+      "toggle": "تبديل نوع التسنن"
+    },
+    "quadrants": {
+      "upper": "الفك العلوي",
+      "lower": "الفك السفلي",
+      "upperRight": "علوي أيمن",
+      "upperLeft": "علوي أيسر",
+      "lowerRight": "سفلي أيمن",
+      "lowerLeft": "سفلي أيسر"
+    },
+    "surfaces": {
+      "M": "أنسي (Mesial)",
+      "D": "وحشي (Distal)",
+      "O": "إطباقي",
+      "V": "دهليزي",
+      "L": "لساني"
+    },
+    "conditions": {
+      "healthy": "سليم",
+      "caries": "تسوس",
+      "filling": "حشوة",
+      "crown": "تلبيسة",
+      "missing": "مفقود",
+      "root_canal": "علاج جذور",
+      "implant": "غرسة",
+      "bridge_pontic": "جسر — سن صناعي",
+      "bridge_abutment": "جسر — دعامة",
+      "extraction_indicated": "يُنصح بالخلع",
+      "sealant": "سادة وقائية",
+      "fracture": "كسر"
+    },
+    "history": {
+      "title": "سجل التغييرات",
+      "noChanges": "لا توجد تغييرات مسجلة",
+      "changedBy": "بواسطة",
+      "changeTypes": {
+        "created": "إنشاء",
+        "general_condition": "الحالة العامة",
+        "surface_update": "تحديث السطح",
+        "note": "ملاحظة"
+      }
+    },
+    "messages": {
+      "updated": "تم تحديث مخطط الأسنان",
+      "error": "خطأ في تحديث مخطط الأسنان",
+      "loadError": "تعذر تحميل مخطط الأسنان"
+    },
+    "actions": {
+      "save": "حفظ",
+      "reset": "استعادة",
+      "print": "طباعة"
+    },
+    "status": {
+      "existing": "قائم",
+      "planned": "مبرمج"
+    },
+    "treatments": {
+      "title": "العلاجات",
+      "addTreatment": "إضافة علاج",
+      "selectStatus": "اختر الحالة",
+      "noTreatments": "لا توجد علاجات مسجلة",
+      "markPerformed": "تحديد كمنفَّذ",
+      "categories": {
+        "common": "شائع",
+        "restorative": "ترميمي",
+        "other": "أخرى",
+        "diagnostico": "تشخيصي",
+        "restauradora": "ترميمي",
+        "cirugia": "جراحة",
+        "endodoncia": "علاج جذور",
+        "ortodoncia": "تقويم"
+      },
+      "types": {
+        "pulpitis": "التهاب لب",
+        "caries": "تسوس",
+        "incipient_caries": "تسوس مبكر",
+        "pigmentation": "تصبغ",
+        "fracture": "كسر",
+        "missing": "مفقود",
+        "periapical_small": "ذرواني <٢ مم",
+        "periapical_medium": "ذرواني ٢-٤ مم",
+        "periapical_large": "ذرواني >٤ مم",
+        "rotated": "مدوّر",
+        "displaced": "ملتبد",
+        "unerupted": "غير منبثق",
+        "filling": "حشوة",
+        "filling_composite": "حشوة مركبة",
+        "filling_amalgam": "حشوة ملغم",
+        "filling_temporary": "حشوة مؤقتة",
+        "sealant": "سادة وقائية",
+        "veneer": "قشرة تجميلية",
+        "inlay": "حشوة مجسمة داخلية",
+        "overlay": "حشوة مجسمة خارجية",
+        "crown": "تلبيسة",
+        "crown_on_implant": "تلبيسة على غرسة",
+        "provisional_crown_on_implant": "تلبيسة مؤقتة على غرسة",
+        "pontic": "سن صناعي",
+        "bridge_pontic": "جسر — سن صناعي",
+        "bridge_abutment": "جسر — دعامة",
+        "extraction": "خلع",
+        "implant": "غرسة",
+        "apicoectomy": "استئصال ذروة",
+        "root_canal": "علاج جذور",
+        "root_canal_full": "علاج جذور كامل",
+        "root_canal_two_thirds": "علاج جذور ٢/٣",
+        "root_canal_half": "علاج جذور ١/٢",
+        "root_canal_overfill": "علاج جذور متجاوز",
+        "post": "سبائك داخل الجذر (Post)",
+        "bracket": "دعامة تقويم",
+        "tube": "أنبوب تقويم",
+        "band": "حلقة تقويم",
+        "attachment": "ملحق تقويم",
+        "retainer": "مُثبِّت تقويم",
+        "rotate": "مدوّر",
+        "displace": "ملتبد",
+        "splint": "تثبيت بالربط",
+        "migrated": "علاج عام",
+        "other": "علاج آخر"
+      },
+      "treatmentAdded": "تمت إضافة العلاج",
+      "treatmentPerformed": "تم تحديد العلاج كمنفَّذ",
+      "treatmentDeleted": "تم حذف العلاج",
+      "status": {
+        "existing": "قائم",
+        "planned": "مبرمج"
+      },
+      "deleteConfirm": "حذف {name} (السن {tooth})؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "position": {
+      "displaced": "ملتبد",
+      "rotated": "مدوّر",
+      "normal": "طبيعي"
+    },
+    "views": {
+      "occlusal": "منظر إطباقي",
+      "lateral": "منظر جانبي",
+      "dual": "منظر مزدوج"
+    },
+    "selectSurfaces": "اختر الأسطح",
+    "selectedSurfaces": "الأسطح المحددة",
+    "surfacesSelected": "سطح/أسطح محددة",
+    "instructions": {
+      "selectTreatment": "اختر علاجًا لتطبيقه",
+      "clickTooth": "انقر على السن لتطبيقه"
+    },
+    "addToPlan": "إضافة إلى الخطة",
+    "noPlan": "لا خطة",
+    "createNewPlan": "إنشاء خطة جديدة...",
+    "applyTo": "تطبيق على",
+    "oneTooth": "سن واحد",
+    "multipleTeeth": "عدة أسنان",
+    "surfacePricingHint": "السعر حسب السطح: {range}",
+    "toothNames": {
+      "centralIncisor": "قاطعة مركزية",
+      "lateralIncisor": "قاطعة جانبية",
+      "canine": "ناب",
+      "firstPremolar": "ضاحك أول",
+      "secondPremolar": "ضاحك ثانٍ",
+      "firstMolar": "رحى أولى",
+      "secondMolar": "رحى ثانية",
+      "thirdMolar": "رحى ثالثة"
+    },
+    "positions": {
+      "upper": "علوي",
+      "lower": "سفلي",
+      "left": "أيسر",
+      "right": "أيمن"
+    },
+    "tooltip": {
+      "clickToEdit": "انقر للتعديل"
+    },
+    "planning": "التخطيط",
+    "diagnosisMode": "التشخيص",
+    "treatmentList": {
+      "title": "قائمة العلاجات",
+      "noTreatments": "لا علاجات مسجلة"
+    },
+    "changeHistory": {
+      "title": "سجل التغييرات",
+      "noChanges": "لا تغييرات مسجلة",
+      "treatmentAdded": "العلاج"
+    },
+    "timeline": {
+      "title": "الخط الزمني",
+      "viewingDate": "تُعرض: {date}",
+      "viewingHistory": "أنت تعرض الحالة التاريخية لمخطط الأسنان",
+      "returnToNow": "العودة إلى الحالة الحالية",
+      "noHistory": "لا سجل سابق"
+    },
+    "multiTooth": {
+      "bridge": {
+        "label": "جسر ثابت"
+      },
+      "splint": {
+        "label": "ربط تثبيتي"
+      },
+      "veneers": {
+        "label": "قشور متعددة"
+      },
+      "crowns": {
+        "label": "تلبيسات متعددة"
+      },
+      "pillar": "دعامة",
+      "pontic": "سن صناعي",
+      "roleHint": "انقر على سن للتبديل بين الدعامة/السن الصناعي.",
+      "needPillar": "يتطلب الجسر سن دعامة واحدًا على الأقل.",
+      "confirmHint": "أنت على وشك إنشاء مجموعة علاج بـ{n} أسنان.",
+      "willBePlanned": "ستُعلَّم المجموعة كمبرمجة.",
+      "willBeExisting": "ستُسجل المجموعة كحالة قائمة.",
+      "hints": {
+        "range": "انقر على السن الأول ثم السن الأخير",
+        "free": "انقر لإضافة الأسنان أو إزالتها"
+      },
+      "errors": {
+        "tooFew": "مطلوب {n} أسنان على الأقل",
+        "tooMany": "الحد الأقصى {n} أسنان",
+        "sameArchRequired": "يجب أن تكون الأسنان في الفك نفسه"
+      },
+      "sectionLabel": "علاجات متعددة الأسنان"
+    }
+  },
+  "clinical": {
+    "modes": {
+      "history": "السجل",
+      "diagnosis": "التشخيص",
+      "plans": "خطط العلاج",
+      "appointments": "المواعيد"
+    },
+    "history": {
+      "stateAt": "الحالة عند",
+      "changesOnDate": "التغييرات في هذا التاريخ",
+      "noChanges": "لا تغييرات مسجلة"
+    },
+    "diagnosis": {
+      "registeredConditions": "الحالات المشخصة",
+      "registerConditions": "تسجيل الحالات",
+      "noConditions": "لا حالات مسجلة",
+      "startDiagnosis": "اختر سنًا وأضف الحالات القائمة",
+      "generalConditions": "الحالات العامة",
+      "readyToCreatePlan": "اكتمل التشخيص؟",
+      "createPlan": "إنشاء خطة علاج",
+      "continuePlan": "متابعة الخطة \"{name}\"",
+      "selectPlan": "اختر الخطة",
+      "continue": "متابعة",
+      "odontogramTab": "مخطط الأسنان"
+    },
+    "plans": {
+      "title": "خطط العلاج",
+      "create": "خطة جديدة",
+      "backToList": "العودة إلى الخطط",
+      "treatments": "علاجات الخطة",
+      "addTreatment": "إضافة علاج",
+      "total": "الإجمالي",
+      "activate": "تفعيل الخطة",
+      "generateBudget": "توليد عرض السعر",
+      "empty": "لا خطط علاج",
+      "emptyDescription": "أنشئ خطة لتنظيم علاجات المريض",
+      "createFirst": "إنشاء أول خطة",
+      "active": "الخطط النشطة",
+      "drafts": "المسودات",
+      "completed": "منجزة",
+      "closed": "مغلقة",
+      "other": "أخرى",
+      "noItems": "لا علاجات في الخطة",
+      "markComplete": "تحديد كمنجز",
+      "removeItem": "إزالة من الخطة",
+      "sessions": {
+        "progress": "{done}/{total} جلسات",
+        "markDone": "تحديد الجلسة منجزة",
+        "cancel": "إلغاء الجلسة",
+        "markedDone": "عُلّمت الجلسة منجزة",
+        "cancelled": "أُلغيت الجلسة",
+        "untitled": "الجلسة {n}"
+      },
+      "unknownTreatment": "العلاج",
+      "odontogram": "مخطط الأسنان",
+      "pending": "معلقة",
+      "dragToReorder": "اسحب لإعادة الترتيب",
+      "reorderHint": "استخدم Alt + الأسهم للتحريك",
+      "emptyDraft": {
+        "title": "برمج العلاجات",
+        "step1": "اختر علاجًا من الشريط أدناه",
+        "step2": "انقر على سن في مخطط الأسنان",
+        "step3": "أكد الخطة لتوليد عرض السعر والمواعيد"
+      },
+      "steps": {
+        "plan": "التخطيط",
+        "confirm": "تأكيد",
+        "inProgress": "قيد التنفيذ"
+      },
+      "confirmCta": {
+        "titleWithItems": "تأكيد الخطة",
+        "subtitleWithItems": "يفتح التأكيد توليد عروض السعر وجدولة المواعيد.",
+        "empty": "أضف علاجًا واحدًا على الأقل لتأكيد الخطة"
+      },
+      "ghostHint": "متاح بعد تأكيد الخطة",
+      "addedToPlan": "أُضيف إلى الخطة",
+      "addingToPlan": "يُضاف إلى هذه الخطة",
+      "cancelPlan": "إلغاء الخطة",
+      "locked": {
+        "title": "الخطة مقفلة",
+        "subtitle": "صدر عرض السعر {number}. لتعديل العلاجات، استخدم إعادة الفتح (إن كانت معلقة) أو أعد التفاوض على عرض السعر.",
+        "viewBudget": "عرض السعر"
+      },
+      "removeItemConfirm": "إزالة {name} من هذه الخطة؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "tooth": "السن"
+  },
+  "appointments": {
+    "title": "المواعيد",
+    "create": "موعد جديد",
+    "edit": "تعديل الموعد",
+    "today": "اليوم",
+    "tomorrow": "غدًا",
+    "yesterday": "أمس",
+    "week": "الأسبوع",
+    "prevWeek": "الأسبوع السابق",
+    "nextWeek": "الأسبوع التالي",
+    "selectPatient": "اختر المريض",
+    "selectProfessional": "اختر الطبيب",
+    "openPatientFile": "فتح ملف المريض",
+    "patient": "المريض",
+    "professional": "الطبيب",
+    "cabinet": "الغرفة",
+    "date": "التاريخ",
+    "time": "الوقت",
+    "startTime": "وقت البدء",
+    "duration": "المدة",
+    "treatmentType": "نوع العلاج",
+    "treatments": "العلاجات",
+    "addTreatment": "إضافة علاج",
+    "selectTreatment": "اختر العلاج",
+    "estimatedDuration": "المدة المتوقعة",
+    "notes": "ملاحظات",
+    "hasNotes": "تتضمن ملاحظات",
+    "status": {
+      "label": "الحالة",
+      "scheduled": "مجدول",
+      "confirmed": "مؤكد",
+      "checked_in": "في غرفة الانتظار",
+      "in_treatment": "على الكرسي",
+      "completed": "منجز",
+      "cancelled": "ملغى",
+      "no_show": "لم يحضر"
+    },
+    "scheduled": "مجدول",
+    "confirmed": "مؤكد",
+    "inProgress": "جارٍ",
+    "in_progress": "جارٍ",
+    "completed": "منجز",
+    "cancelled": "ملغى",
+    "noShow": "لم يحضر",
+    "no_show": "لم يحضر",
+    "actionsMenu": "إجراءات الموعد",
+    "transitions": {
+      "confirmed": "تحديد كمؤكد",
+      "checked_in": "تسجيل الوصول",
+      "in_treatment": "نقل إلى الكرسي",
+      "completed": "إنهاء الموعد",
+      "cancelled": "إلغاء الموعد",
+      "no_show": "تحديد كغير حاضر"
+    },
+    "timer": {
+      "startsIn": "يبدأ بعد {minutes} دقيقة",
+      "startsInOverdue": "متأخر {minutes} دقيقة",
+      "waiting": "ينتظر منذ {minutes} دقيقة",
+      "inTreatment": "{elapsed}/{planned} دقيقة",
+      "completedAt": "انتهى {time}",
+      "cancelledAt": "ملغى",
+      "noShowAt": "لم يحضر"
+    },
+    "confirmTransitionTitle": "تأكيد تغيير الحالة",
+    "confirmCancelMessage": "إلغاء هذا الموعد؟ سيُسجل التغيير.",
+    "confirmNoShowMessage": "تحديد هذا المريض كغير حاضر؟ سيُسجل التغيير.",
+    "noteLabel": "ملاحظة (اختياري)",
+    "transitionFailed": "تعذر تغيير حالة الموعد",
+    "when": "الموعد",
+    "whereWho": "الغرفة والطبيب",
+    "followup": {
+      "title": "إجراءات ما بعد الموعد"
+    },
+    "created": "تم إنشاء الموعد",
+    "saved": "تم حفظ الموعد",
+    "updated": "تم تحديث الموعد",
+    "conflict": "هذه الفترة محجوزة مسبقًا",
+    "cancel": "إلغاء الموعد",
+    "markCompleted": "تحديد كمنجز",
+    "markNoShow": "لم يحضر",
+    "dailyView": "يوم",
+    "weeklyView": "أسبوع",
+    "kanbanView": "لوحة",
+    "kanban": {
+      "upcoming": "القادمة",
+      "waiting": "غرفة الانتظار",
+      "inChair": "على الكرسي",
+      "done": "منجزة",
+      "missed": "لم يحضر / ملغاة",
+      "free": "متفرغ",
+      "inactive": "غير نشط",
+      "empty": "لا مواعيد",
+      "nextIn": "التالي الساعة {time}",
+      "subtitleCount": "{count} موعدًا",
+      "subtitleEmpty": "لا مواعيد",
+      "subtitleWaiting": "{count} منتظرون · متوسط الانتظار {avg} دقيقة",
+      "subtitleInChair": "{busy} مشغولة · {free} حرة"
+    },
+    "cabinetAssignment": {
+      "assignLater": "تعيين لاحقًا",
+      "unassigned": "غير معينة",
+      "assign": "تعيين غرفة",
+      "reassign": "إعادة تعيين الغرفة",
+      "unassign": "إزالة الغرفة",
+      "requiredForTreatment": "عيّن غرفة قبل الانتقال إلى العلاج"
+    },
+    "professionals": {
+      "strip": "الأطباء",
+      "state": {
+        "free": "متفرغ",
+        "in_treatment": "على الكرسي",
+        "on_break": "في استراحة",
+        "off": "خارج العمل"
+      }
+    },
+    "noProfessionals": "لا يوجد أطباء معينون",
+    "overlapWarning": "توجد تعارضات في المواعيد",
+    "overlapProfessional": "لدى الطبيب {count} موعد/مواعيد في هذه الفترة",
+    "overlapCabinet": "الغرفة فيها {count} موعد/مواعيد في هذه الفترة",
+    "selectDuration": "اختر المدة...",
+    "sendEmail": "إرسال بريد إلكتروني",
+    "sendConfirmationEmail": "إرسال تأكيد",
+    "resendConfirmation": "إعادة إرسال التأكيد",
+    "sendReminderEmail": "إرسال تذكير",
+    "emailSent": "أُرسل البريد الإلكتروني بنجاح",
+    "automatic": "تلقائي",
+    "selectPatientFirst": "اختر مريضًا لعرض علاجاته المعلقة",
+    "noPendingTreatments": "لا توجد علاجات معلقة",
+    "createPlanFirst": "أنشئ خطة علاج لهذا المريض",
+    "addTreatmentFromPlan": "إضافة علاج من الخطة",
+    "selectPendingTreatment": "اختر علاجًا معلقًا",
+    "emptyDay": "لا مواعيد في هذا اليوم",
+    "noPatient": "بدون مريض",
+    "freeSlots": {
+      "byProfessional": "الطبيب",
+      "byCabinet": "الغرفة",
+      "freeSuffix": "متاح",
+      "freeShort": "متاح",
+      "noFreeTime": "لا وقت متاح",
+      "tapToBook": "انقر للحجز",
+      "tapToBookAria": "فترة حرة مدتها {duration} الساعة {time}",
+      "nextFreeAt": "التالي الساعة {time}",
+      "gapsAtLeast": "{count} فترة بحد أدنى {min} دقيقة",
+      "minDuration": "الحد الأدنى",
+      "noFreeSlots": "لا فترات متاحة اليوم",
+      "clinicClosed": "العيادة مغلقة",
+      "professionalOff": "خارج العمل",
+      "onBreak": "في استراحة"
+    },
+    "sendMessage": "إرسال رسالة",
+    "resendConfirmationVia": "إعادة إرسال التأكيد ({channel})",
+    "sendReminderVia": "إرسال التذكير ({channel})",
+    "sendCancellationVia": "إرسال الإلغاء ({channel})",
+    "loadError": "تعذّر تحميل المواعيد",
+    "planAwaitingBudget": "عرض سعر بانتظار القبول"
+  },
+  "dashboard": {
+    "greetings": {
+      "morning": "صباح الخير",
+      "afternoon": "مساء الخير",
+      "evening": "مساء الخير"
+    },
+    "welcome": "مرحبًا بك في DentalPin",
+    "welcomeMessage": "ابدأ بإنشاء أول مريض.",
+    "quickActions": {
+      "newAppointment": "موعد جديد",
+      "newPatient": "مريض جديد",
+      "search": "البحث عن مريض",
+      "searchPlaceholder": "ابحث بالاسم أو الهاتف أو البريد الإلكتروني"
+    },
+    "timeline": {
+      "title": "اليوم",
+      "empty": "لا مواعيد مجدولة لليوم",
+      "now": "الآن",
+      "openSchedule": "فتح الجدول"
+    },
+    "todayKpi": {
+      "title": "مواعيد اليوم",
+      "completed": "منجزة",
+      "inProgress": "جارية",
+      "upcoming": "قادمة",
+      "cancelled": "ملغاة",
+      "noShow": "لم يحضروا",
+      "empty": "لا مواعيد اليوم"
+    },
+    "inClinic": {
+      "title": "الحاضرون الآن",
+      "inTreatment": "{n} على الكرسي",
+      "waiting": "{n} منتظرون",
+      "empty": "لا أحد في العيادة"
+    },
+    "unconfirmed": {
+      "title": "غير مؤكدة للغد",
+      "empty": "كل مواعيد الغد مؤكدة",
+      "confirm": "تأكيد",
+      "confirmError": "تعذر التأكيد"
+    },
+    "overdue": {
+      "title": "مدفوعات متأخرة",
+      "daysOverdue": "متأخر يوم واحد | متأخرة {n} يوم",
+      "viewAll": "عرض الكل",
+      "empty": "لا فواتير متأخرة"
+    },
+    "recent": {
+      "title": "المرضى الأخيرون",
+      "empty": "لا يوجد مرضى بعد"
+    },
+    "weekGlance": {
+      "title": "الأسبوع بنظرة",
+      "subtitle": "آخر ٧ أيام مقابل السابقة",
+      "appointments": "المواعيد",
+      "completed": "منجزة",
+      "invoiced": "المفوتر",
+      "empty": "لا بيانات هذا الأسبوع"
+    }
+  },
+  "settings": {
+    "title": "الإعدادات",
+    "subtitle": "أدر عيادتك وفريقك ووحداتك.",
+    "allCategories": "كل الفئات",
+    "navLabel": "فئات الإعدادات",
+    "attentionRequired": "تتطلب انتباهًا",
+    "categories": {
+      "general": {
+        "label": "عام",
+        "description": "ملف العيادة والهوية البصرية والمنطقة الزمنية."
+      },
+      "workspace": {
+        "label": "مساحة العمل",
+        "description": "الغرف وساعات العمل والتوافر."
+      },
+      "people": {
+        "label": "الأشخاص",
+        "description": "المستخدمون والأدوار والدعوات."
+      },
+      "clinical": {
+        "label": "سريري",
+        "description": "الكتالوج وإعدادات العلاج الافتراضية والقوالب."
+      },
+      "billing": {
+        "label": "الفوترة والضرائب",
+        "description": "سلاسل الفواتير وضريبة القيمة المضافة والامتثال الضريبي."
+      },
+      "communications": {
+        "label": "التواصل",
+        "description": "الإشعارات وبروتوكول SMTP والقوالب."
+      },
+      "integrations": {
+        "label": "التكاملات",
+        "description": "الخدمات الخارجية ومزودو الخدمة."
+      },
+      "modules": {
+        "label": "الوحدات",
+        "description": "تثبيت الوحدات وترقيتها وإلغاء تثبيتها."
+      },
+      "account": {
+        "label": "الحساب",
+        "description": "ملفك الشخصي وكلمة المرور واللغة."
+      }
+    },
+    "search": {
+      "placeholder": "ابحث في الإعدادات…",
+      "empty": "لا نتائج مطابقة لبحثك.",
+      "navigate": "تنقل",
+      "open": "فتح"
+    },
+    "locked": {
+      "title": "لا تملك صلاحية الوصول إلى هذا القسم",
+      "description": "اطلب من مسؤول عيادتك منحك الصلاحيات المطلوبة."
+    },
+    "emptyCategory": {
+      "title": "لا خيارات متاحة",
+      "description": "عند تفعيل الوحدات المتوافقة ستظهر إعداداتها هنا."
+    },
+    "loadError": {
+      "description": "تعذر تحميل هذا المحرر. أعد المحاولة بعد ثوانٍ."
+    },
+    "comingSoon": {
+      "title": "قريبًا",
+      "subtitle": "نعمل على هذا القسم. في هذه الأثناء يمكنك إدارته عبر الواجهة البرمجية."
+    },
+    "onboarding": {
+      "title": "أكمل إعداد عيادتك",
+      "subtitle": "لديك {count} خطوات معلقة لإتمام الإعداد الأولي.",
+      "dismiss": "إخفاء",
+      "items": {
+        "clinicInfo": {
+          "label": "أكمل ملف العيادة",
+          "description": "الاسم والرقم الضريبي والعنوان تظهر على عروض السعر والفواتير."
+        },
+        "cabinets": {
+          "label": "أنشئ غرفة واحدة على الأقل",
+          "description": "بدون غرف لا يمكنك جدولة المواعيد."
+        }
+      }
+    },
+    "cabinetsDescription": "الغرف أو العيادات الفرعية التي يُعالج فيها المرضى.",
+    "usersDescription": "الحسابات التي تملك صلاحية الوصول إلى هذه العيادة وأدوارها.",
+    "profileDescription": "معلوماتك الشخصية في هذه العيادة.",
+    "clinic": "العيادة",
+    "profile": "الملف الشخصي",
+    "clinicName": "اسم العيادة",
+    "clinicInfo": "معلومات العيادة",
+    "clinicInfoDescription": "ستظهر هذه البيانات على عروض السعر والمستندات",
+    "taxId": "الرقم الضريبي",
+    "legalName": "الاسم القانوني",
+    "legalNameHelp": "الاسم القانوني للكيان لأغراض الفوترة. اتركه فارغًا لاستخدام اسم العيادة.",
+    "street": "العنوان",
+    "city": "المدينة",
+    "postalCode": "الرمز البريدي",
+    "country": "الدولة",
+    "countryPlaceholder": "اختر الدولة",
+    "countrySearchPlaceholder": "ابحث عن دولة…",
+    "phone": "الهاتف",
+    "timezone": "المنطقة الزمنية",
+    "timezoneHelp": "تُفسَّر كل الجداول والمواعيد وفق هذه المنطقة الزمنية.",
+    "currency": "العملة",
+    "currencyHelp": "عملة العيادة المستخدمة في عروض السعر والفواتير والكتالوج.",
+    "editClinicInfo": "تعديل المعلومات",
+    "clinicUpdated": "تم تحديث معلومات العيادة",
+    "clinicUpdateError": "خطأ في تحديث المعلومات",
+    "cabinets": "الغرف",
+    "language": "اللغة",
+    "languageDescription": "اختر لغتك المفضلة",
+    "users": "مستخدمو العيادة",
+    "newUser": "مستخدم جديد",
+    "createUser": "إنشاء مستخدم",
+    "editUser": "تعديل المستخدم",
+    "deleteUser": "حذف المستخدم",
+    "deleteUserConfirm": "هل أنت متأكد من إزالة",
+    "deleteUserNote": "سيفقد المستخدم صلاحية الوصول إلى هذه العيادة لكن لن يُحذف حسابه.",
+    "noUsers": "لا يوجد مستخدمون مسجلون",
+    "youTag": "(أنت)",
+    "userActive": "المستخدم نشط",
+    "isProfessional": "يمارس كطبيب",
+    "isProfessionalHelp": "يظهر في جدول المواعيد، وله ساعات عمل، ويمكن إسناد علاجات له. يمكن للمسؤول أيضًا ممارسة المهنة.",
+    "userInactiveNote": "(لا يستطيع تسجيل الدخول)",
+    "saveChanges": "حفظ التغييرات",
+    "noCabinets": "لا غرف مُهيأة",
+    "addCabinet": "إضافة",
+    "newCabinet": "غرفة جديدة",
+    "editCabinet": "تعديل الغرفة",
+    "deleteCabinet": "حذف الغرفة",
+    "deleteCabinetConfirm": "هل أنت متأكد من حذف الغرفة",
+    "deleteCabinetNote": "لن تتأثر المواعيد القائمة في هذه الغرفة.",
+    "createCabinet": "إنشاء غرفة",
+    "roles": {
+      "admin": "مسؤول",
+      "dentist": "طبيب أسنان",
+      "hygienist": "أخصائي صحة أسنان",
+      "assistant": "مساعد",
+      "receptionist": "موظف استقبال"
+    },
+    "errors": {
+      "loadUsers": "خطأ في تحميل المستخدمين",
+      "createUser": "خطأ في إنشاء المستخدم",
+      "updateUser": "خطأ في تحديث المستخدم",
+      "deleteUser": "خطأ في حذف المستخدم",
+      "emailExists": "البريد الإلكتروني مستخدم مسبقًا",
+      "userNotFound": "المستخدم غير موجود",
+      "operationNotAllowed": "العملية غير مسموحة",
+      "invalidData": "بيانات غير صالحة",
+      "inviteLink": "تعذر إنشاء رابط الوصول"
+    },
+    "messages": {
+      "userCreated": "أُنشئ المستخدم بنجاح",
+      "userUpdated": "حُدث المستخدم بنجاح",
+      "userDeleted": "أُزيل المستخدم من العيادة"
+    },
+    "modules": {
+      "title": "الوحدات",
+      "subtitle": "تثبيت الوحدات وإلغاء تثبيتها وترقيتها.",
+      "description": "أدر الوحدات النشطة في عيادتك.",
+      "deps": "التبعيات",
+      "noDeps": "لا توجد تبعيات",
+      "state": {
+        "installed": "مثبتة",
+        "uninstalled": "غير مثبتة",
+        "toInstall": "بانتظار التثبيت",
+        "toUpgrade": "بانتظار الترقية",
+        "toRemove": "بانتظار الإزالة",
+        "disabled": "معطلة",
+        "error": "خطأ"
+      },
+      "category": {
+        "official": "رسمية",
+        "community": "من المجتمع"
+      },
+      "actions": {
+        "install": "تثبيت",
+        "uninstall": "إلغاء التثبيت",
+        "upgrade": "ترقية",
+        "apply": "تطبيق التغييرات",
+        "viewDetails": "التفاصيل",
+        "force": "إجبار إلغاء التثبيت"
+      },
+      "confirmInstall": {
+        "title": "تثبيت {name}؟",
+        "message": "ستُجدول الوحدة للتثبيت وتصبح نشطة بعد تطبيق التغييرات.",
+        "scheduled": "ستُثبت هذه التبعيات أيضًا:"
+      },
+      "confirmUninstall": {
+        "title": "إلغاء تثبيت {name}؟",
+        "warning": "ستُحذف جداول الوحدة. يُنشأ نسخ احتياطي بـpg_dump أولًا حتى يمكن استعادة البيانات.",
+        "forceHint": "يتجاهل الوحدات التابعة. استخدم هذا فقط إذا كنت تعرف ما تفعله."
+      },
+      "confirmUpgrade": {
+        "title": "ترقية {name}؟",
+        "message": "ستُرقى الوحدة إلى إصدار البيان الموجود على القرص عند تطبيق التغييرات."
+      },
+      "confirmApply": {
+        "title": "تطبيق التغييرات",
+        "message": "سيعاد تشغيل الخادم الخلفي. قد تنقطع الجلسة لوهلة أثناء تنفيذ العمليات المعلقة."
+      },
+      "pending": {
+        "banner": "تغييرات معلقة:",
+        "apply": "تطبيق التغييرات"
+      },
+      "doctor": {
+        "banner": "توجد مشكلات في نظام الوحدات.",
+        "orphans": "وحدات يتيمة",
+        "missingDeps": "تبعيات مفقودة",
+        "manifestErrors": "أخطاء في البيانات التعريفية",
+        "errored": "وحدات بها أخطاء"
+      },
+      "detail": {
+        "state": "الحالة",
+        "category": "الفئة",
+        "installedAt": "ثُبتت في",
+        "lastChange": "آخر تغيير",
+        "baseRevision": "مرجع الأساس",
+        "appliedRevision": "المرجع المطبق",
+        "manifest": "البيان الكامل",
+        "errorMessage": "رسالة الخطأ",
+        "operationLog": "سجل العمليات",
+        "noOperations": "لا عمليات مسجلة."
+      },
+      "restart": {
+        "inProgress": "جارٍ إعادة تشغيل الخادم…",
+        "done": "طُبقت التغييرات",
+        "failed": "فشل تطبيق التغييرات",
+        "timeout": "انتهت مهلة انتظار الخادم"
+      },
+      "toasts": {
+        "scheduled": "جُدولت العملية. طبّق التغييرات لإتمامها.",
+        "applied": "طُبقت التغييرات بنجاح."
+      }
+    },
+    "invite": {
+      "linkTitle": "رابط الوصول",
+      "linkHelp": "أرسل هذا الرابط إلى {name} ليختار كلمة المرور. ينتهي في {date} ويعمل مرة واحدة.",
+      "copy": "نسخ الرابط",
+      "copied": "تم نسخ الرابط",
+      "whatsapp": "إرسال عبر واتساب",
+      "shareText": "مرحبًا {name}، هذا رابط وصولك إلى DentalPin. افتحه واختر كلمة مرورك: {url}",
+      "secretNote": "تعامل معه ككلمة مرور: أي شخص لديه الرابط يستطيع الدخول إلى هذا الحساب.",
+      "passwordOptionalHelp": "اتركه فارغًا لتوليد رابط وصول يمكنك إرساله عبر واتساب أو البريد الإلكتروني.",
+      "passwordOptionalPlaceholder": "اختياري",
+      "createAndLink": "إنشاء وتوليد الرابط",
+      "rowAction": "رابط الوصول",
+      "setPasswordTitle": "اختر كلمة مرورك",
+      "setPasswordSubtitle": "تمت دعوتك إلى DentalPin. أنشئ كلمة مرورك لتسجيل الدخول.",
+      "setPasswordSubmit": "حفظ وتسجيل الدخول",
+      "invalidToken": "هذا الرابط غير صالح أو استُخدم مسبقًا. اطلب من مسؤول عيادتك رابطًا جديدًا."
+    }
+  },
+  "selector": {
+    "recentPatients": "المرضى الأخيرون",
+    "commonTreatments": "العلاجات الشائعة",
+    "noRecentPatients": "لا يوجد مرضى أخيرون",
+    "noCommonTreatments": "لا توجد علاجات شائعة",
+    "noMatches": "لا توجد نتائج مطابقة",
+    "typeToSearch": "اكتب للبحث..."
+  },
+  "density": {
+    "switchToCompact": "عرض مضغوط",
+    "switchToComfortable": "عرض مريح"
+  },
+  "patientSelector": {
+    "createOption": "إنشاء المريض \"{query}\"",
+    "createOptionEmpty": "إنشاء مريض جديد",
+    "newBadge": "جديد",
+    "duplicateWarning": "{name} موجود مسبقًا بهذا الرقم",
+    "useExisting": "استخدم هذا المريض",
+    "createForm": {
+      "title": "مريض جديد",
+      "back": "العودة إلى البحث",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "phone": "الهاتف",
+      "phoneHint": "يمكنك إضافته لاحقًا في ملف المريض.",
+      "submit": "إنشاء واختيار",
+      "cancel": "إلغاء",
+      "errorGeneric": "تعذر إنشاء المريض. أعد المحاولة."
+    }
+  },
+  "common": {
+    "save": "حفظ",
+    "add": "إضافة",
+    "cancel": "إلغاء",
+    "clear": "مسح",
+    "close": "إغلاق",
+    "delete": "حذف",
+    "comingSoon": "قريبًا",
+    "edit": "تعديل",
+    "change": "تغيير | تغييرات",
+    "back": "رجوع",
+    "loading": "جارٍ التحميل...",
+    "error": "خطأ",
+    "success": "تم بنجاح",
+    "completed": "منجز",
+    "retry": "إعادة المحاولة",
+    "refresh": "تحديث",
+    "hide": "إخفاء",
+    "forbidden": "الوصول مرفوض",
+    "confirm": "تأكيد",
+    "yes": "نعم",
+    "no": "لا",
+    "actions": "الإجراءات",
+    "viewDetails": "عرض التفاصيل",
+    "previous": "السابق",
+    "next": "التالي",
+    "previousYear": "السنة السابقة",
+    "nextYear": "السنة التالية",
+    "undo": "تراجع",
+    "undone": "تم التراجع",
+    "added": "أُضيف",
+    "removed": "أُزيل",
+    "page": "صفحة {current} من {total}",
+    "noData": "لا توجد بيانات",
+    "noValue": "بدون قيمة",
+    "noResults": "لا توجد نتائج",
+    "search": "بحث...",
+    "selectAll": "الكل",
+    "deselectAll": "ولا واحد",
+    "all": "الكل",
+    "required": "هذا الحقل مطلوب",
+    "invalidEmail": "بريد إلكتروني غير صالح",
+    "networkError": "خطأ في الاتصال",
+    "serverError": "خطأ في الخادم",
+    "notFound": "غير موجود",
+    "offline": "غير متصل — قد لا تكون البيانات محدثة",
+    "inactive": "غير نشط",
+    "name": "الاسم",
+    "color": "اللون",
+    "firstName": "الاسم الأول",
+    "lastName": "اسم العائلة",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "passwordPlaceholder": "٨ أحرف على الأقل",
+    "role": "الدور",
+    "readOnly": "قراءة فقط",
+    "createdBy": "أنشأه",
+    "date": "التاريخ",
+    "upload": "رفع",
+    "uploading": "جارٍ الرفع…",
+    "maxFileSize": "حتى ١٠ ميغابايت",
+    "durationMinutes": "{value} دقيقة",
+    "days": {
+      "sunday": "الأحد",
+      "monday": "الاثنين",
+      "tuesday": "الثلاثاء",
+      "wednesday": "الأربعاء",
+      "thursday": "الخميس",
+      "friday": "الجمعة",
+      "saturday": "السبت"
+    },
+    "now": "الآن",
+    "today": "اليوم",
+    "tomorrow": "غدًا",
+    "yesterday": "أمس",
+    "copied": "تم النسخ إلى الحافظة",
+    "copy": "نسخ",
+    "copyFailed": "تعذر النسخ",
+    "default": "افتراضي",
+    "download": "تنزيل",
+    "remove": "إزالة"
+  },
+  "cabinet": {
+    "toast": {
+      "created": "أُنشئت الغرفة",
+      "updated": "حُدثت الغرفة",
+      "deleted": "حُذفت الغرفة",
+      "duplicateName": "توجد غرفة بهذا الاسم مسبقًا",
+      "notFound": "الغرفة غير موجودة",
+      "createFailed": "فشل إنشاء الغرفة",
+      "updateFailed": "فشل تحديث الغرفة",
+      "deleteFailed": "فشل حذف الغرفة"
+    }
+  },
+  "professionals": {
+    "toast": {
+      "loadFailed": "فشل تحميل الأطباء"
+    }
+  },
+  "lists": {
+    "empty": {
+      "title": "لا توجد نتائج",
+      "description": "عدّل عوامل التصفية أو امسحها لعرض كل السجلات."
+    },
+    "resultCount": "{shown} من {total}",
+    "filter": {
+      "title": "عوامل التصفية",
+      "more": "تصفية",
+      "moreCount": "تصفية ({count})",
+      "clear": "مسح",
+      "apply": "تطبيق",
+      "date": "التواريخ",
+      "dateFrom": "من",
+      "dateTo": "إلى",
+      "searchPlaceholder": "بحث...",
+      "noResults": "لا توجد نتائج مطابقة",
+      "all": "الكل"
+    },
+    "sort": {
+      "label": "الترتيب",
+      "asc": "تصاعدي",
+      "desc": "تنازلي"
+    },
+    "datePreset": {
+      "today": "اليوم",
+      "last7": "آخر ٧ أيام",
+      "last30": "آخر ٣٠ يومًا",
+      "thisMonth": "هذا الشهر",
+      "thisQuarter": "الربع",
+      "thisYear": "السنة",
+      "custom": "مخصص"
+    },
+    "truncatedWarning": "النتائج مقتطعة (>١٠٠٠). حسّن عوامل التصفية."
+  },
+  "shared": {
+    "totals": "الإجماليات",
+    "info": "التفاصيل",
+    "moreActions": "مزيد من الإجراءات",
+    "criticalBanner": {
+      "dismiss": "إخفاء التنبيه"
+    },
+    "collect": {
+      "amountLabel": "المبلغ المطلوب تحصيله",
+      "methodLabel": "طريقة الدفع",
+      "dateLabel": "تاريخ الدفع",
+      "today": "اليوم",
+      "quickFull": "كامل المبلغ",
+      "optionalDetails": "أضف مرجعًا أو ملاحظات (اختياري)",
+      "referenceLabel": "المرجع",
+      "referencePlaceholder": "مثال: رقم عملية نقاط البيع",
+      "notesLabel": "ملاحظات داخلية",
+      "submit": "تحصيل",
+      "cancel": "إلغاء"
+    }
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "email": "أدخل بريدًا إلكترونيًا صالحًا",
+    "minLength": "حد أدنى {min} حرفًا",
+    "maxLength": "حد أقصى {max} حرفًا",
+    "phone": "أدخل رقم هاتف صالحًا"
+  },
+  "time": {
+    "minutes": "{n} دقيقة",
+    "hours": "{n} ساعة | {n} ساعة"
+  },
+  "calendar": {
+    "today": "اليوم",
+    "prevWeek": "الأسبوع السابق",
+    "nextWeek": "الأسبوع التالي",
+    "monday": "الاثنين",
+    "tuesday": "الثلاثاء",
+    "wednesday": "الأربعاء",
+    "thursday": "الخميس",
+    "friday": "الجمعة",
+    "saturday": "السبت",
+    "sunday": "الأحد"
+  },
+  "catalog": {
+    "title": "كتالوج العلاجات",
+    "description": "أدر العلاجات والتسعير وإعدادات الضرائب",
+    "items": "العلاجات",
+    "categories": "الفئات",
+    "noItems": "لا توجد علاجات في الكتالوج",
+    "searchPlaceholder": "ابحث بالرمز أو الاسم...",
+    "code": "الرمز",
+    "name": "الاسم",
+    "category": "الفئة",
+    "price": "السعر",
+    "defaultPrice": "السعر الأساسي",
+    "costPrice": "سعر التكلفة",
+    "currency": "العملة",
+    "vatType": "نوع ضريبة القيمة المضافة",
+    "vatRate": "نسبة الضريبة %",
+    "duration": "المدة",
+    "system": "النظام",
+    "newItem": "علاج جديد",
+    "editItem": "تعديل العلاج",
+    "deleteItem": "حذف العلاج",
+    "deleteItemConfirm": "هل أنت متأكد من حذف العلاج \"{name}\"؟",
+    "deleteItemNote": "لا يمكن التراجع عن هذا الإجراء.",
+    "pricing": "التسعير",
+    "scheduling": "الجدولة",
+    "characteristics": "الخصائص",
+    "scope": "النطاق",
+    "requiresAppointment": "يتطلب موعدًا",
+    "isDiagnostic": "تشخيصي",
+    "requiresSurfaces": "يتطلب تحديد الأسطح",
+    "materialNotes": "ملاحظات المواد",
+    "materialNotesPlaceholder": "المواد أو المستلزمات المطلوبة...",
+    "active": "نشط",
+    "vatTypes": {
+      "exempt": "معفى",
+      "reduced": "مخفض",
+      "standard": "قياسي"
+    },
+    "scopeTypes": {
+      "tooth": "سن واحد",
+      "multi_tooth": "عدة أسنان",
+      "global_mouth": "الفم بالكامل",
+      "global_arch": "لكل فك"
+    },
+    "pricingStrategy": {
+      "label": "استراتيجية التسعير",
+      "help": "كيف يُحسب سعر العلاج عند تطبيقه",
+      "flat": "ثابت (سعر واحد)",
+      "per_tooth": "لكل سن",
+      "per_surface": "لكل سطح",
+      "per_role": "حسب الدور (جسر: دعامة/سن صناعي)"
+    },
+    "surfacePrices": {
+      "title": "الأسعار حسب عدد الأسطح",
+      "help": "حدد سعر ١-٥ أسطح. عند اختيار الأسطح على سن، تُستخدم الشريحة المطابقة. الشرائح الناقصة تعود إلى أقرب شريحة أدنى مسعّرة.",
+      "tier": "{n} سطح/أسطح"
+    },
+    "sessions": {
+      "title": "الجلسات (فوترة مجزأة)",
+      "help": "حدد الخطوات المسماة التي يُنجز فيها هذا العلاج ويُفوتر (مثال: التلبيسة: «الطبعات» + «التركيب»). يجب أن يساوي المجموع السعر الأساسي.",
+      "label": "التسمية",
+      "labelPlaceholder": "مثال: الطبعات",
+      "price": "المبلغ",
+      "add": "إضافة جلسة",
+      "sumStatus": "المجموع {sum} € · الإجمالي {total} €"
+    },
+    "categoryCreated": "أُنشئت الفئة",
+    "categoryUpdated": "حُدثت الفئة",
+    "categoryDeleted": "حُذفت الفئة",
+    "categoryKeyExists": "توجد فئة بهذا المعرف مسبقًا",
+    "categoryCreateFailed": "خطأ في إنشاء الفئة",
+    "categoryUpdateFailed": "خطأ في تحديث الفئة",
+    "categoryDeleteFailed": "خطأ في حذف الفئة",
+    "cannotModifySystemCategory": "لا يمكن تعديل فئة نظام",
+    "cannotDeleteSystemCategory": "لا يمكن حذف فئة نظام",
+    "itemCreated": "أُنشئ العلاج",
+    "itemUpdated": "حُدث العلاج",
+    "itemDeleted": "حُذف العلاج",
+    "itemCodeExists": "يوجد علاج بهذا الرمز مسبقًا",
+    "categoryNotFound": "الفئة غير موجودة",
+    "itemCreateFailed": "خطأ في إنشاء العلاج",
+    "itemUpdateFailed": "خطأ في تحديث العلاج",
+    "itemDeleteFailed": "خطأ في حذف العلاج",
+    "cannotModifySystemItem": "لا يمكن تعديل علاج نظام",
+    "systemItemHint": "علاج نظام: الرمز والفئة واستراتيجية التسعير والنطاق مقفلة؛ يمكن تعديل السعر والتكلفة والضريبة والأسماء والمدة والجلسات والحالة.",
+    "cannotDeleteSystemItem": "لا يمكن حذف علاج نظام",
+    "odontogramMapping": "التمثيل على مخطط الأسنان",
+    "odontogramMappingDescription": "اربط هذا العلاج بنوع تمثيل على مخطط الأسنان ليظهر في رسم المريض.",
+    "odontogramType": "نوع العلاج",
+    "clinicalCategory": "الفئة السريرية",
+    "noOdontogramMapping": "بدون ارتباط",
+    "odontogramMappingHint": "ستُعدَّل خصائص العلاج تلقائيًا بحسب النوع المحدد.",
+    "selectCategory": "اختر الفئة...",
+    "selectVatType": "اختر نوع الضريبة...",
+    "selectScope": "اختر النطاق...",
+    "selectOdontogramType": "اختر النوع...",
+    "selectClinicalCategory": "اختر الفئة...",
+    "expandAll": "توسيع الكل",
+    "collapseAll": "طي الكل",
+    "unnamed": "بدون عنوان",
+    "activeHint": "متاح لعروض السعر والخطط",
+    "tabs": {
+      "general": "عام",
+      "pricing": "التسعير",
+      "scheduling": "الجدولة",
+      "clinical": "سريري"
+    },
+    "onboarding": {
+      "label": "كتالوج العلاجات",
+      "description": "بدون علاجات لا توجد عروض سعر ولا خطط. حمّل الكتالوج الافتراضي أو أنشئ كتالوجك.",
+      "createOwn": "سأنشئ كتالوجي الخاص"
+    },
+    "manageCategories": "إدارة الفئات",
+    "newCategory": "فئة جديدة",
+    "categoryName": "الاسم",
+    "categoryNamePlaceholder": "مثال: تقويم",
+    "categoryOrder": "الترتيب",
+    "noCategories": "لا توجد فئات. أنشئ واحدة أو حمّل الكتالوج الافتراضي.",
+    "inactiveCategories": "فئات غير نشطة",
+    "reactivate": "إعادة تنشيط",
+    "deleteCategoryConfirm": "ستُوقف الفئة عن العمل؛ تبقى علاجاتها محفوظة. هل تريد المتابعة؟",
+    "systemCategoryNote": "لا يمكن تعديل فئات النظام أو حذفها.",
+    "loadDefaults": "تحميل الكتالوج الافتراضي",
+    "loadDefaultsHint": "أنواع الضريبة والفئات والعلاجات المرجعية الخاصة بدولة العيادة. تُضاف الصفوف الناقصة فقط.",
+    "defaultsLoaded": "حُمل الكتالوج: {categories} فئات، {items} علاجًا، {vat_types} نوع ضريبة",
+    "defaultsFailed": "تعذر تحميل الكتالوج الافتراضي",
+    "loadError": "تعذّر تحميل كتالوج العلاج"
+  },
+  "placeholders": {
+    "selectRole": "اختر الدور..."
+  },
+  "vatTypes": {
+    "title": "أنواع ضريبة القيمة المضافة",
+    "description": "أدر أنواع الضريبة المتاحة للعلاجات",
+    "name": "الاسم",
+    "rate": "النسبة",
+    "default": "افتراضي",
+    "system": "النظام",
+    "active": "نشط",
+    "new": "نوع ضريبة جديد",
+    "edit": "تعديل نوع الضريبة",
+    "delete": "حذف نوع الضريبة",
+    "setAsDefault": "تعيين كافتراضي",
+    "showInactive": "عرض غير النشطة",
+    "noItems": "لا أنواع ضريبة مُهيأة",
+    "namePlaceholder": "مثال: مخفض (١٠٪)",
+    "systemNote": "يمكن تغيير حالة النظام الافتراضية فقط لأنواع ضريبة النظام.",
+    "deleteConfirm": "هل أنت متأكد من حذف نوع الضريبة",
+    "deleteNote": "لن تتأثر العلاجات التي تستخدم نوع الضريبة هذا.",
+    "created": "أُنشئ نوع الضريبة",
+    "updated": "حُدث نوع الضريبة",
+    "deleted": "حُذف نوع الضريبة",
+    "loadError": "خطأ في تحميل أنواع الضريبة",
+    "createError": "خطأ في إنشاء نوع الضريبة",
+    "updateError": "خطأ في تحديث نوع الضريبة",
+    "deleteError": "خطأ في حذف نوع الضريبة"
+  },
+  "treatmentPlans": {
+    "title": "خطط العلاج",
+    "description": "أدر خطط علاج المرضى",
+    "new": "خطة جديدة",
+    "create": "إنشاء خطة علاج",
+    "edit": "تعديل الخطة",
+    "view": "عرض الخطة",
+    "delete": "حذف الخطة",
+    "noItems": "لا توجد علاجات في هذه الخطة",
+    "noPlans": "لا خطط علاج لهذا المريض",
+    "noPlansHint": "حدد العلاجات على مخطط الأسنان وأنشئ خطة لتنظيمها",
+    "createFirst": "إنشاء أول خطة",
+    "empty": "لا خطط علاج مسجلة",
+    "emptyAction": "إنشاء أول خطة",
+    "searchPlaceholder": "ابحث بالرقم أو المريض أو العنوان...",
+    "planNumber": "الرقم",
+    "patient": "المريض",
+    "untitled": "بدون عنوان",
+    "untitledPlan": "خطة بدون عنوان",
+    "itemCount": "{count} علاج | {count} علاجًا",
+    "treatments": "علاجات",
+    "progress": "التقدم",
+    "pendingTreatments": "علاجات معلقة",
+    "completedTreatments": "علاجات منجزة",
+    "linkedBudget": "عرض السعر المرتبط",
+    "unknownTreatment": "علاج غير معروف",
+    "globalTreatment": "علاج عام",
+    "activePlan": "الخطة النشطة",
+    "otherPlans": "خطط أخرى",
+    "viewAllPlans": "عرض سجل الخطط",
+    "activate": "تفعيل",
+    "generateBudget": "توليد عرض السعر",
+    "scheduleAppointment": "جدولة موعد",
+    "status": {
+      "draft": "مسودة",
+      "pending": "معلقة",
+      "active": "نشطة",
+      "completed": "منجزة",
+      "closed": "مغلقة",
+      "archived": "مؤرشفة"
+    },
+    "fields": {
+      "title": "العنوان",
+      "titlePlaceholder": "مثال: تأهيل فموي كامل",
+      "assignedProfessional": "الطبيب المسؤول",
+      "selectProfessional": "اختر الطبيب",
+      "diagnosisNotes": "ملاحظات التشخيص",
+      "diagnosisNotesPlaceholder": "التشخيص والملاحظات السريرية...",
+      "internalNotes": "ملاحظات داخلية",
+      "internalNotesPlaceholder": "ملاحظات يراها الفريق فقط..."
+    },
+    "modal": {
+      "subtitle": "نظّم علاجات المريض",
+      "titleHint": "اختياري — يساعد على تمييز الخطة",
+      "additionalNotes": "ملاحظات إضافية",
+      "quickTip": "بعد إنشاء الخطة يمكنك إضافة علاجات من مخطط الأسنان أو الكتالوج.",
+      "createButton": "إنشاء الخطة"
+    },
+    "actions": {
+      "activate": "تفعيل الخطة",
+      "confirm": "تأكيد الخطة",
+      "complete": "تحديد كمنجزة",
+      "generateBudget": "توليد عرض السعر",
+      "linkBudget": "ربط عرض السعر",
+      "syncBudget": "مزامنة عرض السعر",
+      "cancelPlan": "إلغاء الخطة",
+      "reopen": "إعادة فتح",
+      "close": "إغلاق الخطة",
+      "reactivate": "إعادة تنشيط الخطة",
+      "logContact": "تسجيل تواصل"
+    },
+    "items": {
+      "title": "العلاجات",
+      "add": "إضافة علاج",
+      "addSelected": "إضافة {count} علاج | إضافة {count} علاجًا",
+      "remove": "إزالة العلاج",
+      "empty": "لا توجد علاجات في هذه الخطة",
+      "assignedProfessional": "الطبيب المسؤول",
+      "assignedProfessionalAriaLabel": "تغيير الطبيب المسؤول عن هذا العلاج",
+      "useUsersPlanDoctor": "استخدام طبيب الخطة",
+      "noProfessional": "لا طبيب معين",
+      "inactiveProfessional": "طبيب غير نشط",
+      "cascadeReassign": {
+        "title": "إعادة إسناد العلاجات المعلقة؟",
+        "body": "غيّرتَ طبيب الخطة. {count} علاج/علاجات معلقة كانت مسندة إلى {previousName}. هل تعيد إسنادها إلى الطبيب الجديد أيضًا؟",
+        "confirm": "نعم، أعد إسناد المعلقة",
+        "cancel": "لا، أبقها كما هي"
+      }
+    },
+    "filters": {
+      "allStatuses": "كل الحالات"
+    },
+    "confirmations": {
+      "delete": "حذف خطة العلاج هذه؟",
+      "completeItem": "تحديد العلاج كمنجز؟",
+      "completeItemDescription": "لا يمكن التراجع عن هذا الإجراء.",
+      "activateTitle": "تأكيد خطة العلاج؟",
+      "activateDescription": "يفتح التأكيد توليد عروض السعر وجدولة المواعيد. يمكنك بعده الاستمرار في إضافة أو إكمال العلاجات.",
+      "unlockTitle": "تعديل الخطة؟",
+      "unlockIntro": "لهذه الخطة عرض سعر {number} صادر مسبقًا. لتعديلها يجب إلغاء عرض السعر الحالي.",
+      "unlockConsequence1": "سيُلغى عرض السعر {number} ولن يكون صالحًا للمريض بعد الآن.",
+      "unlockConsequence2": "يمكنك إضافة علاجات الخطة أو تعديلها أو إزالتها.",
+      "unlockConsequence3": "ستحتاج إلى توليد عرض سعر جديد عند الانتهاء من التغييرات.",
+      "unlockConsequence4": "يبقى عرض السعر الملغى في السجل لأغراض التتبع.",
+      "cancelTitle": "إلغاء خطة العلاج؟",
+      "cancelDescription": "ستنتقل الخطة إلى حالة ملغاة وستُزال العلاجات المبرمجة غير المنفذة من مخطط الأسنان. يبقى سجل الخطة محفوظًا."
+    },
+    "messages": {
+      "created": "أُنشئت خطة العلاج",
+      "updated": "حُدثت خطة العلاج",
+      "deleted": "حُذفت خطة العلاج",
+      "itemsAdded": "أُضيفت العلاجات إلى الخطة"
+    },
+    "itemCompleted": "اكتمل العلاج",
+    "budgetGenerated": "أُنشئ عرض السعر",
+    "created": "أُنشئت خطة العلاج",
+    "updated": "حُدثت خطة العلاج",
+    "statusUpdated": "حُدثت حالة الخطة",
+    "deleted": "حُذفت خطة العلاج",
+    "budgetLinked": "رُبط عرض السعر بالخطة",
+    "budgetSynced": "تمت مزامنة عرض السعر",
+    "errors": {
+      "load": "خطأ في تحميل خطط العلاج",
+      "create": "خطأ في إنشاء خطة العلاج",
+      "update": "خطأ في تحديث خطة العلاج",
+      "delete": "خطأ في حذف خطة العلاج"
+    },
+    "notes": {
+      "title": "الملاحظات السريرية",
+      "empty": "لا ملاحظات سريرية بعد",
+      "addNote": "إضافة ملاحظة",
+      "edit": "تعديل الملاحظة",
+      "delete": "حذف الملاحظة",
+      "attachments": "المرفقات",
+      "author": "الكاتب",
+      "createdAt": "أُنشئت",
+      "templatePicker": "القوالب",
+      "bodyPlaceholder": "اكتب الملاحظة السريرية…",
+      "saved": "حُفظت الملاحظة",
+      "deleted": "حُذفت الملاحظة"
+    },
+    "completionNudge": {
+      "title": "إكمال العلاج",
+      "description": "أضف ملاحظة سريرية توثق ما حدث في هذه الزيارة قبل تحديده منجزًا.",
+      "completeWithNote": "إكمال مع ملاحظة",
+      "skip": "بدون ملاحظة",
+      "skipConfirm": "إكمال العلاج بدون ملاحظة سريرية؟"
+    },
+    "visitNote": {
+      "title": "ملاحظة الزيارة السريرية",
+      "save": "حفظ الملاحظة",
+      "empty": "لا ملاحظة زيارة بعد",
+      "saved": "حُفظت الملاحظة"
+    },
+    "clinicalNotesTab": "الملاحظات السريرية",
+    "filterBy": {
+      "plan": "الخطة",
+      "item": "العلاج",
+      "visit": "الزيارة",
+      "all": "الكل"
+    },
+    "byPlan": {
+      "empty": "لا ملاحظات سريرية لهذا المريض في أي خطة علاج",
+      "planNotesLabel": "ملاحظات الخطة",
+      "noNotesForTreatment": "لا ملاحظات لهذا العلاج",
+      "noNotesForPlan": "لا ملاحظات في هذه الخطة"
+    },
+    "noteTemplates": {
+      "endo": {
+        "singleVisit": "علاج جذور — زيارة واحدة",
+        "multiVisit": "علاج جذور — زيارات متعددة"
+      },
+      "perio": {
+        "scaling": "تنظيف وتجليخ جذور"
+      },
+      "implant": {
+        "placement": "تركيب غرسة"
+      },
+      "general": {
+        "followUp": "متابعة عامة"
+      }
+    },
+    "closureReason": {
+      "rejected_by_patient": "رفضها المريض",
+      "expired": "انتهت صلاحيتها",
+      "cancelled_by_clinic": "ألغتها العيادة",
+      "patient_abandoned": "توقف المريض عن المتابعة",
+      "other": "سبب آخر"
+    },
+    "confirmed": "أُكدت الخطة",
+    "reopened": "أُعيد فتح الخطة",
+    "closed": "أُغلقت الخطة",
+    "reactivated": "أُعيد تنشيط الخطة",
+    "contactLogged": "سُجل التواصل",
+    "modals": {
+      "confirm": {
+        "title": "تأكيد الخطة",
+        "description": "ستنتقل الخطة إلى \"معلقة\" وسينشئ عرض سعر تلقائيًا كمسودة. تصبح العلاجات للقراءة فقط بعد التأكيد.",
+        "submit": "تأكيد الخطة"
+      },
+      "reopen": {
+        "title": "إعادة فتح الخطة للتعديل",
+        "description": "سيؤدي هذا إلى إلغاء عرض السعر الحالي. تعود الخطة إلى \"مسودة\" لتتمكن من تعديل العلاجات.",
+        "submit": "إعادة الفتح"
+      },
+      "close": {
+        "title": "إغلاق الخطة",
+        "description": "اختر سبب الإغلاق. ستُؤرشف العلاجات المعلقة.",
+        "reasonLabel": "السبب",
+        "noteLabel": "ملاحظة (اختياري)",
+        "submit": "إغلاق الخطة"
+      },
+      "reactivate": {
+        "title": "إعادة تنشيط خطة مغلقة",
+        "description": "سيعيد هذا تنشيط خطة أُغلقت بتاريخ {date} بسبب «{reason}». هل تريد المتابعة؟",
+        "submit": "إعادة التنشيط"
+      },
+      "contactLog": {
+        "title": "تسجيل تواصل",
+        "description": "يسجل نقطة التواصل دون تغيير حالة الخطة.",
+        "channelLabel": "القناة",
+        "noteLabel": "ملاحظة (اختياري)",
+        "submit": "تسجيل"
+      }
+    },
+    "newBudgetHint": {
+      "text": "لدى هذا المريض خطة {plan} بدون عرض سعر. ولّد عرض السعر من الخطة ليظلا مرتبطين.",
+      "cta": "فتح الخطة"
+    },
+    "viewDraftBudget": "عرض السعر {number} (مسودة)",
+    "followup": {
+      "subtitle": "هذه العلاجات المخططة من الزيارة لم تُعلَّم كمنفّذة:",
+      "markPerformed": "وضع علامة منفّذ",
+      "marked": "عُلّمت كمنفّذة: {count}."
+    }
+  },
+  "pipeline": {
+    "title": "مسار الخطط",
+    "description": "أدر مسار خطط العلاج.",
+    "tabs": {
+      "por_presupuestar": "بانتظار عرض السعر",
+      "esperando_paciente": "بانتظار المريض",
+      "sin_cita": "بدون موعد",
+      "sin_proxima_cita": "بدون موعد قادم",
+      "cerrados": "مغلقة",
+      "listado": "قائمة"
+    },
+    "row": {
+      "patient": "المريض",
+      "plan": "الخطة",
+      "budget": "عرض السعر",
+      "items": "العلاجات",
+      "daysIn": "{n} يومًا في الحالة",
+      "nextAppt": "الموعد القادم",
+      "noNextAppt": "لا موعد",
+      "noBudget": "لا عرض سعر"
+    },
+    "actions": {
+      "open": "فتح",
+      "send": "إرسال",
+      "remind": "إعادة الإرسال",
+      "schedule": "جدولة",
+      "scheduleNext": "جدولة القادم",
+      "reactivate": "إعادة تنشيط",
+      "call": "اتصال",
+      "whatsapp": "واتساب",
+      "markContacted": "تحديد تم التواصل",
+      "acceptInClinic": "قبول في العيادة"
+    },
+    "search": "ابحث بالاسم أو الرقم…",
+    "empty": "لا صفوف في هذا التبويب.",
+    "loading": "جارٍ التحميل…"
+  },
+  "budget": {
+    "title": "عروض السعر",
+    "description": "أدر عروض سعر العلاج للمرضى",
+    "new": "عرض سعر جديد",
+    "edit": "تعديل عرض السعر",
+    "view": "عرض السعر",
+    "delete": "حذف عرض السعر",
+    "duplicate": "إنشاء نسخة جديدة",
+    "noItems": "لا عروض سعر",
+    "empty": "لا عروض سعر مسجلة",
+    "emptyAction": "إنشاء أول عرض سعر",
+    "linkedToPlan": "مرتبط بخطة",
+    "searchPlaceholder": "ابحث بالرقم أو المريض...",
+    "budgetNumber": "الرقم",
+    "version": "النسخة",
+    "treatmentPlan": "خطة العلاج",
+    "patient": "المريض",
+    "selectPatient": "اختر المريض",
+    "selectPatientHint": "ابحث واختر مريض عرض السعر هذا",
+    "professional": "الطبيب",
+    "validFrom": "صالح من",
+    "validUntil": "صالح حتى",
+    "validUntilHint": "اتركه فارغًا لعرض سعر بدون تاريخ انتهاء",
+    "noExpiry": "بدون تاريخ انتهاء",
+    "createAndAddItems": "إنشاء وإضافة علاجات",
+    "subtotal": "المجموع الفرعي",
+    "totalDiscount": "إجمالي الخصم",
+    "totalTax": "إجمالي ضريبة القيمة المضافة",
+    "total": "الإجمالي",
+    "globalDiscount": "خصم عام",
+    "discountType": "نوع الخصم",
+    "discountValue": "قيمة الخصم",
+    "percentage": "نسبة مئوية",
+    "absolute": "مبلغ ثابت",
+    "internalNotes": "ملاحظات داخلية",
+    "internalNotesPlaceholder": "ملاحظات يراها الفريق فقط...",
+    "patientNotes": "ملاحظات للمريض",
+    "patientNotesPlaceholder": "ملاحظات تظهر على عرض السعر...",
+    "status": {
+      "title": "الحالة",
+      "draft": "مسودة",
+      "sent": "مُرسل",
+      "partially_accepted": "مقبول جزئيًا",
+      "accepted": "مقبول",
+      "in_progress": "جارٍ التنفيذ",
+      "completed": "منجز",
+      "invoiced": "مفوتر",
+      "rejected": "مرفوض",
+      "expired": "منتهي الصلاحية",
+      "cancelled": "ملغى"
+    },
+    "itemStatus": {
+      "pending": "معلق",
+      "accepted": "مقبول",
+      "rejected": "مرفوض",
+      "in_progress": "جارٍ التنفيذ",
+      "completed": "منجز"
+    },
+    "actions": {
+      "send": "إرسال إلى المريض",
+      "accept": "قبول عرض السعر",
+      "acceptPartial": "قبول المحدد",
+      "reject": "رفض",
+      "cancel": "إلغاء عرض السعر",
+      "duplicate": "إنشاء نسخة جديدة",
+      "downloadPdf": "تنزيل PDF",
+      "previewPdf": "معاينة PDF",
+      "startTreatment": "بدء العلاج",
+      "completeTreatment": "إكمال العلاج",
+      "renegotiate": "إعادة التفاوض",
+      "acceptInClinic": "قبول في العيادة",
+      "resend": "إعادة الإرسال",
+      "sendReminder": "إرسال تذكير",
+      "setPublicCode": "تعيين رمز الوصول",
+      "unlockPublic": "فتح الوصول"
+    },
+    "items": {
+      "title": "العلاجات",
+      "add": "إضافة علاج",
+      "remove": "إزالة العلاج",
+      "edit": "تعديل العلاج",
+      "empty": "لا علاجات في هذا العرض",
+      "singular": "علاج",
+      "plural": "علاجات",
+      "addFromCatalog": "إضافة من الكتالوج",
+      "addFromOdontogram": "إضافة من مخطط الأسنان",
+      "treatment": "العلاج",
+      "searchCatalog": "ابحث في كتالوج العلاجات...",
+      "unitPrice": "سعر الوحدة",
+      "quantity": "الكمية",
+      "discount": "الخصم",
+      "lineTotal": "إجمالي السطر",
+      "tooth": "السن",
+      "toothNumber": "رقم السن",
+      "toothNumberPlaceholder": "مثال: ١١، ٢١، ٣٦...",
+      "surfaces": "الأسطح",
+      "notes": "ملاحظات",
+      "notesPlaceholder": "ملاحظات حول هذا العلاج...",
+      "managedByPlan": "تُدار بنود هذا العرض من خطة العلاج {plan}."
+    },
+    "signature": {
+      "title": "التوقيع الرقمي",
+      "viewAction": "عرض التوقيع",
+      "signedBy": "وقّع",
+      "signedAt": "بتاريخ",
+      "methodLabel": "الطريقة",
+      "relationshipLabel": "صلة القرابة",
+      "documentHash": "بصمة المستند (SHA-256)",
+      "hashHint": "البصمة {short} — تربط التوقيع بهذا الملف تحديدًا. أي تعديل يُبطلها.",
+      "downloadSignedPdf": "تنزيل PDF الموقَّع",
+      "downloadError": "تعذر تنزيل PDF الموقَّع.",
+      "notSigned": "لم يُسجل أي توقيع لهذا عرض السعر بعد.",
+      "method": {
+        "drawn": "توقيع يدوي",
+        "clickAccept": "قبول بالنقر",
+        "external": "مزود خارجي"
+      },
+      "email": "البريد الإلكتروني",
+      "relationship": "صلة القرابة بالمريض",
+      "patient": "المريض",
+      "guardian": "الولي القانوني",
+      "representative": "المفوض",
+      "accept": "أوافق على شروط عرض السعر",
+      "signHere": "وقّع هنا",
+      "clear": "مسح التوقيع",
+      "loadError": "تعذّر تحميل حالة التوقيع"
+    },
+    "history": {
+      "title": "سجل التغييرات",
+      "noChanges": "لا تغييرات مسجلة",
+      "actions": {
+        "created": "أُنشئ عرض السعر",
+        "updated": "حُدث عرض السعر",
+        "status_changed": "تغيرت الحالة",
+        "item_added": "أُضيف علاج",
+        "item_removed": "أُزيل علاج",
+        "signed": "وُقع عرض السعر",
+        "sent": "أُرسل عرض السعر",
+        "duplicated": "أُنشئت نسخة جديدة",
+        "deleted": "حُذف عرض السعر",
+        "item_treatment_started": "بدأ العلاج",
+        "item_treatment_completed": "اكتمل العلاج"
+      }
+    },
+    "versions": {
+      "title": "النسخ",
+      "current": "الحالية",
+      "viewVersion": "عرض النسخة"
+    },
+    "confirmations": {
+      "send": "إرسال عرض السعر إلى المريض؟",
+      "sendDescription": "سيُعلَّم عرض السعر كمُرسل.",
+      "reject": "رفض عرض السعر؟",
+      "rejectDescription": "لا يمكن التراجع عن هذا الإجراء.",
+      "cancel": "إلغاء عرض السعر؟",
+      "cancelDescription": "لا يمكن التراجع عن هذا الإجراء.",
+      "resend": "إنشاء نسخة جديدة من هذا العرض؟ ستتبع خطة العلاج المرتبطة النسخة الجديدة.",
+      "delete": "حذف عرض السعر؟",
+      "deleteDescription": "لا يمكن التراجع عن هذا الإجراء."
+    },
+    "send": {
+      "description": "يمكنك إرسال عرض السعر بالبريد الإلكتروني أو تعليمه كمُرسل يدويًا (مطبوعًا أو مُسلَّمًا).",
+      "sendByEmail": "إرسال بالبريد الإلكتروني",
+      "willSendTo": "سيُرسل إلى",
+      "noPatientEmail": "لا يوجد بريد إلكتروني مسجل للمريض",
+      "customMessage": "رسالة مخصصة (اختياري)",
+      "customMessagePlaceholder": "أضف رسالة للمريض...",
+      "manualNote": "سُيعلم عرض السعر كمُرسل دون إرسال أي بريد إلكتروني.",
+      "sendEmail": "إرسال بريد إلكتروني",
+      "markAsSent": "تعليم كمُرسل",
+      "sendByWhatsapp": "إرسال عبر واتساب",
+      "sendWhatsapp": "إرسال واتساب",
+      "willSendToPhone": "سيُرسَل عبر واتساب إلى"
+    },
+    "messages": {
+      "created": "أُنشئ عرض السعر",
+      "updated": "حُدث عرض السعر",
+      "deleted": "حُذف عرض السعر",
+      "sent": "أُرسل عرض السعر",
+      "sentByEmail": "أُرسل عرض السعر بالبريد الإلكتروني",
+      "sentManually": "عُلّم عرض السعر كمُرسل",
+      "accepted": "قُبل عرض السعر",
+      "rejected": "رُفض عرض السعر",
+      "cancelled": "أُلغي عرض السعر",
+      "duplicated": "أُنشئت نسخة جديدة",
+      "resent": "أُنشئت نسخة جديدة من العرض السابق",
+      "itemAdded": "أُضيف العلاج",
+      "itemUpdated": "حُدث العلاج",
+      "itemRemoved": "أُزيل العلاج",
+      "treatmentStarted": "بدأ العلاج",
+      "treatmentCompleted": "اكتمل العلاج",
+      "sentByWhatsapp": "أُرسل عرض السعر عبر واتساب"
+    },
+    "errors": {
+      "load": "خطأ في تحميل عروض السعر",
+      "create": "خطأ في إنشاء عرض السعر",
+      "update": "خطأ في تحديث عرض السعر",
+      "delete": "خطأ في حذف عرض السعر",
+      "send": "خطأ في إرسال عرض السعر",
+      "accept": "خطأ في قبول عرض السعر",
+      "reject": "خطأ في رفض عرض السعر",
+      "notFound": "عرض السعر غير موجود",
+      "onlyDraft": "لا يمكن تعديل إلا عروض السعر في وضع المسودة"
+    },
+    "filters": {
+      "allStatuses": "كل الحالات",
+      "status": "الحالة",
+      "paymentStatus": "الحالة",
+      "professional": "الطبيب",
+      "validity": "الصلاحية",
+      "validityValid": "ساري",
+      "validityExpiringSoon": "ينتهي خلال ٧ أيام",
+      "validityExpired": "منتهي الصلاحية",
+      "dateFrom": "من",
+      "dateTo": "إلى",
+      "showExpired": "عرض المنتهية",
+      "advanced": "تصفية متقدمة",
+      "clear": "مسح التصفية"
+    },
+    "sortFields": {
+      "createdAt": "تاريخ الإنشاء",
+      "validUntil": "صالح حتى",
+      "total": "الإجمالي",
+      "status": "الحالة",
+      "budgetNumber": "الرقم"
+    },
+    "validity": {
+      "expired": "منتهي الصلاحية",
+      "expiresIn": "ينتهي خلال {days} يوم"
+    },
+    "pdf": {
+      "generating": "جارٍ توليد PDF...",
+      "downloadError": "خطأ في تنزيل PDF"
+    },
+    "modals": {
+      "renegotiate": {
+        "title": "إعادة التفاوض على عرض السعر",
+        "description": "سيؤدي هذا إلى إلغاء العرض الحالي وإعادة فتح الخطة كمسودة لتتمكن من تعديل العلاجات.",
+        "submit": "إعادة التفاوض"
+      },
+      "acceptInClinic": {
+        "title": "قبول العرض في العيادة",
+        "description": "توثيق موافقة المريض. يمكنك التقاط توقيع على جهاز لوحي (اختياري).",
+        "signerLabel": "اسم الموقّع الكامل",
+        "captureSignature": "التقاط التوقيع",
+        "submit": "تعليم كمقبول"
+      },
+      "setPublicCode": {
+        "title": "تعيين رمز الوصول",
+        "description": "لا يوجد لهذا المريض هاتف ولا تاريخ ميلاد مسجل. عيّن رمزًا من ٤-٦ أرقام وشاركه مع المريض شفهيًا. لا تُدرج الرمز في البريد الإلكتروني.",
+        "codeLabel": "الرمز (٤-٦ أرقام)",
+        "submit": "حفظ الرمز"
+      }
+    },
+    "publicLink": {
+      "action": "مشاركة الرابط",
+      "title": "رابط المريض",
+      "help": "انسخ هذا الرابط وشاركه مع المريض عبر واتساب أو SMS أو البريد الإلكتروني. سيُطلب منه تفاصيل تحقق واحدة قبل عرض السعر.",
+      "copy": "نسخ الرابط",
+      "copied": "تم النسخ!",
+      "whatsapp": "إرسال عبر واتساب",
+      "whatsappNoPhone": "لا يوجد هاتف مسجل للمريض",
+      "whatsappGreeting": "مرحبًا {name}، هذا عرض السعر الخاص بك:",
+      "whatsappGreetingFallback": "مرحبًا، هذا عرض السعر الخاص بك:",
+      "preview": "معاينة",
+      "statusSent": "مُرسل",
+      "statusAccepted": "مقبول",
+      "statusRejected": "مرفوض",
+      "statusExpired": "منتهي الصلاحية"
+    },
+    "public": {
+      "title": "عرض السعر الخاص بك",
+      "intro": "أرسلت لك {clinic} هذا العرض. راجع العلاجات واختر خيارًا.",
+      "greeting": "مرحبًا، {name}",
+      "subtitle": "خطة علاجك المخصصة",
+      "budgetNumber": "عرض السعر",
+      "issuedOn": "صادر بتاريخ {date}",
+      "items": "العلاجات المشمولة",
+      "tooth": "السن {number}",
+      "subtotal": "المجموع الفرعي",
+      "discount": "الخصم",
+      "tax": "ضريبة القيمة المضافة",
+      "total": "الإجمالي",
+      "validUntil": "صالح حتى {date}",
+      "trustSecure": "اتصال آمن",
+      "trustEncrypted": "بيانات مشفرة",
+      "trustSignature": "توقيع ملزم قانونًا",
+      "needHelp": "تحتاج مساعدة؟ اتصل بالعيادة",
+      "noteFromClinic": "رسالة من العيادة",
+      "callClinic": "الاتصال بالعيادة",
+      "emailClinic": "إرسال بريد إلكتروني",
+      "cta_accept": "أوافق وأوقّع",
+      "cta_reject": "غير مهتم",
+      "expired": "انتهت صلاحية هذا العرض. يُرجى التواصل مع العيادة.",
+      "locked": "قُفل الوصول بعد محاولات كثيرة. يُرجى الاتصال بالعيادة.",
+      "already_accepted": "لقد قبلت هذا العرض مسبقًا. ستتواصل معك العيادة لجدولة موعدك الأول.",
+      "already_rejected": "لقد رفضت هذا العرض. إذا غيرت رأيك فيُرجى الاتصال بالعيادة.",
+      "download": {
+        "signedPdf": "تنزيل PDF الموقَّع",
+        "notSigned": "لا توجد نسخة موقعة مرفقة بهذا العرض بعد.",
+        "error": "تعذر تنزيل الملف. حاول مجددًا.",
+        "reauthIntro": "لأسباب أمنية، تحقق من هويتك مجددًا لتنزيل PDF الموقَّع."
+      },
+      "verify": {
+        "title": "تحقق من هويتك",
+        "intro": "لحماية معلوماتك، أكّد تفصيلة واحدة قبل عرض السعر.",
+        "phone_last4_label": "آخر ٤ أرقام من رقم هاتفك",
+        "dob_label": "تاريخ ميلادك",
+        "manual_code_label": "الرمز الذي أعطتك إياه العيادة",
+        "submit": "متابعة",
+        "invalid": "تفاصيل غير صحيحة. حاول مجددًا.",
+        "locked": "قُفل الوصول بعد محاولات كثيرة. يُرجى الاتصال بالعيادة.",
+        "rate_limited": "محاولات كثيرة جدًا. انتظر ١٥ دقيقة."
+      },
+      "accept": {
+        "title": "قبول وتوقيع",
+        "signerLabel": "اسمك الكامل",
+        "signatureLabel": "وقّع هنا (اختياري)",
+        "signatureClear": "مسح",
+        "consent": "أوافق على هذا العرض وأجيز العلاج الموضح.",
+        "submit": "تأكيد القبول",
+        "success": "تم! ستتواصل معك العيادة لجدولة موعدك الأول."
+      },
+      "reject": {
+        "title": "غير مهتم",
+        "intro": "لماذا لا يناسبك هذا العرض؟",
+        "reasonLabel": "السبب",
+        "noteLabel": "تعليق (اختياري)",
+        "submit": "تأكيد الرفض",
+        "success": "أبلغنا العيادة.",
+        "reasons": {
+          "price": "السعر",
+          "time": "قلة الوقت",
+          "second_opinion": "رأي طبي ثانٍ",
+          "other": "سبب آخر"
+        }
+      }
+    },
+    "settings": {
+      "title": "إعدادات عروض السعر",
+      "description": "تهيئة الصلاحية والتذكيرات وتحقق الرابط العام.",
+      "cards": {
+        "expiry": {
+          "title": "الصلاحية والإغلاق التلقائي",
+          "description": "مدة صلاحية عرض السعر قبل انتهائه وموعد الإغلاق التلقائي للخطط المعلقة."
+        },
+        "reminders": {
+          "title": "التذكيرات التلقائية",
+          "description": "تذكيرات تُرسل للمريض قبل انتهاء صلاحية العرض."
+        },
+        "publicLink": {
+          "title": "الرابط العام والتحقق",
+          "description": "تهيئة حماية رابط عرض السعر الموجه للمريض."
+        }
+      },
+      "expiry": {
+        "validityDays": "صلاحية عرض السعر (أيام)",
+        "validityHelp": "بعد هذه الأيام دون رد يصبح العرض منتهي الصلاحية (٧-١٨٠).",
+        "autoCloseDays": "الأيام قبل الإغلاق التلقائي للخطة",
+        "autoCloseHelp": "الخطط ذات عرض سعر منتهٍ وبلا حركة لهذا العدد من الأيام تنتقل إلى \"مغلقة\" (٧-١٨٠).",
+        "save": "حفظ"
+      },
+      "reminders": {
+        "enabled": "إرسال تذكيرات تلقائية بعد ٧ و١٤ يومًا",
+        "enabledHelp": "عند التفعيل يرسل النظام بريدًا للمريض بشأن العروض المعلقة. عند التعطيل تتابع الاستقبال يدويًا.",
+        "save": "حفظ"
+      },
+      "publicLink": {
+        "authDisabled": "تعطيل تحقق الرابط العام",
+        "authDisabledHelp": "عند التفعيل، يرى المريض العرض بالرابط فقط — بدون تحقق الهاتف أو تاريخ الميلاد. اقبل المخاطرة إن تم مشاركة الرابط.",
+        "save": "حفظ"
+      },
+      "saved": "حُفظت الإعدادات"
+    }
+  },
+  "notifications": {
+    "communications": {
+      "language": {
+        "cardTitle": "لغة التواصل",
+        "cardDescription": "اللغة المستخدمة في عرض السعر للمريض ورسائل البريد وSMS.",
+        "title": "لغة تواصل المريض",
+        "label": "اللغة",
+        "help": "تنطبق على عرض السعر الموجه للمريض وقوالب البريد/SMS الآلية. تحافظ واجهة الفريق على تفضيل لغة كل مستخدم.",
+        "save": "حفظ",
+        "saved": "حُفظت اللغة"
+      }
+    },
+    "title": "الإشعارات",
+    "description": "تهيئة إشعارات البريد الإلكتروني للعيادة",
+    "pageDescription": "حدد الإشعارات التي تُرسل تلقائيًا والتي تتطلب إرسالًا يدويًا.",
+    "autoVsManual": "تلقائي مقابل يدوي",
+    "autoVsManualDescription": "حدد الإشعارات التي تُرسل تلقائيًا عند وقوع حدث والتي تتطلب من المستخدم إرسالها يدويًا.",
+    "notificationType": "نوع الإشعار",
+    "enabled": "مفعّل",
+    "autoSend": "إرسال تلقائي",
+    "options": "خيارات",
+    "hoursBefore": "ساعة قبل",
+    "testConnection": "اختبار الاتصال",
+    "testEmailTitle": "إرسال بريد تجريبي",
+    "testEmailDescription": "سنرسل بريدًا تجريبيًا للتأكد من عمل الإعدادات بشكل صحيح.",
+    "sendTestEmail": "إرسال تجريبي",
+    "test_email_sent": "أُرسل البريد التجريبي بنجاح",
+    "settings_saved": "حُفظت الإعدادات",
+    "emailProvider": "مزود البريد الإلكتروني",
+    "providerConfigured": "مزود البريد مهيأ",
+    "providerNote": "تتم إعداد خادم البريد عبر متغيرات بيئة الخادم.",
+    "infoTitle": "معلومات",
+    "infoAutoSend": "إرسال تلقائي: يُرسل الإشعار عند وقوع الحدث (مثلًا عند إنشاء موعد).",
+    "infoManualSend": "إرسال يدوي: سيظهر زر لإرسال الإشعار عند الرغبة.",
+    "infoDisabled": "معطل: لن يُرسل الإشعار ولن يظهر خيار الإرسال.",
+    "types": {
+      "appointment_confirmation": "تأكيد الموعد",
+      "appointment_confirmation_desc": "بريد تأكيد عند جدولة موعد",
+      "appointment_cancelled": "إلغاء الموعد",
+      "appointment_cancelled_desc": "بريد إشعار عند إلغاء موعد",
+      "appointment_reminder": "تذكير بالموعد",
+      "appointment_reminder_desc": "بريد تذكير قبل الموعد",
+      "budget_sent": "إرسال عرض السعر",
+      "budget_sent_desc": "بريد بتفاصيل عرض السعر",
+      "budget_accepted": "قبول عرض السعر",
+      "budget_accepted_desc": "بريد تأكيد عند قبول عرض السعر",
+      "welcome": "ترحيب",
+      "welcome_desc": "بريد ترحيبي للمرضى الجدد",
+      "invoice_sent": "إرسال الفاتورة",
+      "invoice_sent_desc": "رسالة بالفاتورة عند إرسالها إلى المريض",
+      "budget_reminder": "تذكير عرض السعر",
+      "budget_reminder_desc": "متابعة عروض السعر دون رد (بعد 7 و14 يوماً)",
+      "recall_reminder": "تذكير الاستدعاء",
+      "recall_reminder_desc": "تذكير بحجز الزيارة الدورية للمتابعة"
+    },
+    "sendConfirmation": "إرسال تأكيد",
+    "sendReminder": "إرسال تذكير",
+    "sendCancellation": "إرسال إشعار بالإلغاء",
+    "sendBudget": "إرسال بالبريد",
+    "sendAcceptance": "إرسال تأكيد",
+    "sendWelcome": "إرسال ترحيب",
+    "sendEmail": "إرسال بريد إلكتروني",
+    "errors": {
+      "fetch_failed": "خطأ في تحميل الإعدادات",
+      "save_failed": "خطأ في حفظ الإعدادات",
+      "test_failed": "خطأ في إرسال البريد التجريبي",
+      "send_failed": "خطأ في إرسال الإشعار"
+    },
+    "smtp": {
+      "title": "إعداد خادم البريد الإلكتروني",
+      "description": "هيّئ خادم SMTP لإرسال البريد من عيادتك. لكل عيادة إعدادها الخاص.",
+      "configure": "تهيئة",
+      "provider": "المزود",
+      "host": "الخادم",
+      "port": "المنفذ",
+      "username": "اسم المستخدم",
+      "password": "كلمة المرور",
+      "passwordHint": "اتركها فارغة للإبقاء على كلمة المرور الحالية",
+      "useTls": "استخدام TLS",
+      "useSsl": "استخدام SSL",
+      "fromEmail": "بريد المُرسل",
+      "fromName": "اسم المُرسل",
+      "security": "الأمان",
+      "testConnection": "اختبار الاتصال",
+      "testConnectionTitle": "اختبر الإعداد قبل الحفظ",
+      "testEmailPlaceholder": "عنوان البريد التجريبي",
+      "test_success": "نجح اتصال SMTP. أُرسل البريد التجريبي.",
+      "test_failed": "خطأ في اتصال SMTP",
+      "settings_saved": "حُفظت إعدادات SMTP",
+      "consoleNote": "في وضع الطرفية تُعرض الرسائل في طرفية الخادم بدلًا من إرسالها. مفيد أثناء التطوير.",
+      "disabledNote": "مع تعطيل البريد لن تُرسل أي إشعارات بريد إلكتروني من هذه العيادة.",
+      "status": {
+        "not_configured": "غير مهيأ",
+        "verified": "مُتحقق منه ويعمل",
+        "not_verified": "مهيأ لكن غير مُتحقق منه",
+        "disabled": "البريد معطل",
+        "console": "وضع الطرفية (تطوير)"
+      },
+      "errors": {
+        "fetch_failed": "خطأ في تحميل إعدادات SMTP",
+        "save_failed": "خطأ في حفظ إعدادات SMTP",
+        "test_failed": "خطأ في اختبار اتصال SMTP"
+      }
+    },
+    "onboarding": {
+      "label": "إرسال البريد الإلكتروني",
+      "description": "عيّن المُرسل لإرسال تأكيدات المواعيد وعروض السعر."
+    },
+    "channels": {
+      "cardTitle": "القنوات",
+      "cardDescription": "كيف تصل العيادة إلى المرضى: القناة التي تستخدمها الرسائل التلقائية وأزرار الإرسال التي يراها الموظفون.",
+      "preferredLabel": "القناة المفضّلة",
+      "preferredHelp": "تُستخدم للرسائل التلقائية (حجز جديد، تذكير، ترحيب…).",
+      "fallbackLabel": "الرجوع إلى القناة الأخرى",
+      "fallbackHelp": "إذا تعذّر الإرسال عبر القناة المفضّلة، جرّب القناة المتاحة الأخرى بدلاً من تخطّي الرسالة.",
+      "manualLabel": "إظهار زر إرسال لـ…",
+      "manualHelp": "أزرار الإرسال التي يراها موظفو الاستقبال في المواعيد وعروض السعر والفواتير.",
+      "manualAtLeastOne": "اختر قناة واحدة على الأقل.",
+      "email": "البريد الإلكتروني",
+      "whatsapp": "واتساب",
+      "whatsappUnavailableHint": "واتساب غير متاح حتى يتم ربط رقم العيادة.",
+      "whatsappConnect": "ربط واتساب (Kapso)",
+      "noEmail": "لا يوجد بريد إلكتروني للمريض في الملف",
+      "noPhone": "لا يوجد هاتف للمريض في الملف"
+    },
+    "channelSent": {
+      "email": "أُرسل البريد الإلكتروني بنجاح",
+      "whatsapp": "أُرسلت رسالة واتساب بنجاح"
+    }
+  },
+  "invoice": {
+    "title": "الفواتير",
+    "description": "أدر الفواتير والفوترة",
+    "new": "فاتورة جديدة",
+    "edit": "تعديل الفاتورة",
+    "view": "عرض الفاتورة",
+    "delete": "حذف الفاتورة",
+    "noItems": "لا فواتير",
+    "empty": "لا فواتير مسجلة",
+    "emptyAction": "إنشاء أول فاتورة",
+    "searchPlaceholder": "ابحث بالرقم أو المريض...",
+    "notFound": "الفاتورة غير موجودة",
+    "draftNoNumber": "مسودة",
+    "details": "التفاصيل",
+    "invoiceNumber": "رقم الفاتورة",
+    "patient": "المريض",
+    "searchPatient": "البحث عن مريض",
+    "searchPatientPlaceholder": "ابحث بالاسم...",
+    "professional": "الطبيب",
+    "billingData": "بيانات الفوترة",
+    "billingName": "اسم الفوترة",
+    "taxId": "الرقم الضريبي",
+    "billingEmail": "بريد الفوترة",
+    "billingAddress": "عنوان الفوترة",
+    "billingDataComplete": "مكتملة",
+    "billingDataIncomplete": "غير مكتملة",
+    "billingDataIncompleteHint": "تنقص بعض بيانات الفوترة لدى المريض.",
+    "editPatientBilling": "تعديل بيانات المريض",
+    "fromPatient": "من ملف المريض",
+    "editInPatient": "التعديل في الملف",
+    "billingFromPatientHint": "هذه البيانات من ملف المريض. لتعديلها، عدّل معلومات فوترة المريض.",
+    "paymentTerms": "شروط الدفع",
+    "linkedToBudget": "مرتبطة بعرض سعر",
+    "selectPatient": "اختر المريض",
+    "noBillingData": "لا بيانات فوترة",
+    "street": "الشارع",
+    "city": "المدينة",
+    "postalCode": "الرمز البريدي",
+    "province": "المحافظة",
+    "country": "الدولة",
+    "linkedBudget": "عرض السعر المرتبط",
+    "creditNoteFor": "إشعار دائن عن",
+    "paymentTermDays": "مدة السداد (أيام)",
+    "dueDate": "تاريخ الاستحقاق",
+    "issueDate": "تاريخ الإصدار",
+    "subtotal": "المجموع الفرعي",
+    "discount": "الخصم",
+    "tax": "الضريبة",
+    "total": "الإجمالي",
+    "paid": "مدفوعة",
+    "balance": "الرصيد",
+    "balanceDue": "الرصيد المستحق",
+    "overdue": "متأخرة",
+    "overdueDays": "متأخرة {n} يومًا",
+    "info": {
+      "issueDate": "تاريخ الإصدار",
+      "dueDate": "تاريخ الاستحقاق",
+      "issuedBy": "صادر عن",
+      "createdBy": "أنشأها",
+      "createdAt": "أُنشئت",
+      "budget": "عرض السعر",
+      "creditNoteFor": "إشعار دائن عن"
+    },
+    "criticalBanner": {
+      "aeatRejected": {
+        "title": "رفضت AEAT هذه الفاتورة",
+        "cta": "تصحيح وإعادة الإرسال"
+      },
+      "billingIncomplete": {
+        "title": "بيانات الفوترة غير مكتملة",
+        "cta": "إكمال البيانات"
+      }
+    },
+    "collect": {
+      "title": "تحصيل الفاتورة",
+      "submit": "تحصيل",
+      "noteAppliedToInvoice": "طُبقت على هذه الفاتورة.",
+      "notePendingAfter": "الرصيد المتبقي",
+      "noteFullySettled": "يسدد هذا الدفع الفاتورة بالكامل.",
+      "noteToInvoice": "طُبقت على هذه الفاتورة و",
+      "noteExcessToOnAccount": "قُيّد الفائض كرصيد دائن للمريض.",
+      "noteInvoiceSettled": "هذه الفاتورة مدفوعة بالكامل.",
+      "noteToOnAccount": "سيُقيّدها كرصيد دائن للمريض."
+    },
+    "tooth": "السن",
+    "vat": "ضريبة القيمة المضافة",
+    "internalNotes": "ملاحظات داخلية",
+    "internalNotesPlaceholder": "ملاحظات يراها الفريق فقط...",
+    "publicNotes": "ملاحظات عامة",
+    "publicNotesPlaceholder": "ملاحظات تظهر على الفاتورة...",
+    "items": "البنود",
+    "addItem": "إضافة بند",
+    "editItem": "تعديل البند",
+    "selectTreatment": "العلاج",
+    "searchCatalog": "ابحث عن علاج في الكتالوج...",
+    "itemDescription": "الوصف",
+    "itemPrice": "سعر الوحدة",
+    "itemQuantity": "الكمية",
+    "selectVatType": "اختر نوع الضريبة",
+    "summary": "الملخص",
+    "createDraft": "إنشاء مسودة",
+    "createFromBudget": "إنشاء فاتورة من عرض السعر",
+    "notes": "ملاحظات",
+    "status": {
+      "draft": "مسودة",
+      "issued": "صادرة",
+      "partial": "مدفوعة جزئيًا",
+      "paid": "مدفوعة",
+      "cancelled": "ملغاة",
+      "voided": "ملغاة قانونًا"
+    },
+    "actions": {
+      "issue": "إصدار الفاتورة",
+      "void": "إبطال",
+      "recordPayment": "تسجيل دفعة",
+      "createCreditNote": "إنشاء إشعار دائن",
+      "downloadPdf": "تنزيل PDF",
+      "previewPdf": "معاينة PDF",
+      "sendEmail": "إرسال بالبريد الإلكتروني"
+    },
+    "recordPayment": "تسجيل دفعة",
+    "paymentAmount": "المبلغ",
+    "paymentMethod": "طريقة الدفع",
+    "paymentDate": "تاريخ الدفع",
+    "paymentReference": "المرجع",
+    "paymentReferencePlaceholder": "رقم العملية، الإيصال...",
+    "paymentNotes": "ملاحظات الدفع",
+    "paymentVoided": "أُبطلت الدفعة",
+    "createCreditNote": "إنشاء إشعار دائن",
+    "creditNoteReason": "سبب الإشعار الدائن",
+    "creditNoteReasonPlaceholder": "اذكر سبب الإشعار الدائن...",
+    "creditNoteInfo": "سيُنشأ إشعار دائن بكامل مبلغ الفاتورة.",
+    "prompts": {
+      "voidPaymentReason": "أدخل سبب إبطال هذه الدفعة"
+    },
+    "payments": {
+      "title": "الدفعات",
+      "void": "إبطال دفعة",
+      "amount": "المبلغ",
+      "method": "طريقة الدفع",
+      "date": "التاريخ",
+      "reference": "المرجع",
+      "notes": "ملاحظات",
+      "noPayments": "لا دفعات مسجلة",
+      "voided": "أُبطلت الدفعة",
+      "voidReason": "سبب الإبطال",
+      "voidReasonPlaceholder": "سبب إبطال هذه الدفعة...",
+      "methods": {
+        "cash": "نقدًا",
+        "card": "بطاقة",
+        "bank_transfer": "حوالة بنكية",
+        "direct_debit": "خصم مباشر",
+        "insurance": "تأمين",
+        "other": "أخرى"
+      }
+    },
+    "creditNote": {
+      "title": "إشعار دائن",
+      "create": "إنشاء إشعار دائن",
+      "reason": "السبب",
+      "reasonPlaceholder": "سبب الإشعار الدائن...",
+      "selectItems": "اختر البنود لتصحيحها",
+      "originalInvoice": "الفاتورة الأصلية"
+    },
+    "history": {
+      "title": "السجل",
+      "noChanges": "لا تغييرات مسجلة",
+      "actions": {
+        "created": "أُنشئت الفاتورة",
+        "updated": "حُدثت الفاتورة",
+        "issued": "صُدرت الفاتورة",
+        "voided": "أُبطلت الفاتورة",
+        "payment_recorded": "سُجلت دفعة",
+        "payment_voided": "أُبطلت دفعة",
+        "credit_note_created": "أُنشئ إشعار دائن"
+      }
+    },
+    "fromBudget": "إنشاء فاتورة من عرض السعر",
+    "selectItems": "اختر البنود للفوترة",
+    "selectItemsHint": "اختر بنود عرض السعر التي تريد فوترتها",
+    "availableQuantity": "المتاح",
+    "quantityToInvoice": "الكمية المطلوب فوترتها",
+    "alreadyInvoiced": "مفوتر مسبقًا",
+    "remaining": "المتبقي",
+    "noItemsAvailable": "لا بنود متاحة للفوترة",
+    "allItemsInvoiced": "فُوترت كل البنود",
+    "series": {
+      "title": "سلسلة الفواتير",
+      "prefix": "البادئة",
+      "type": "النوع",
+      "currentNumber": "الرقم الحالي",
+      "resetYearly": "تصفير سنوي",
+      "default": "افتراضية"
+    },
+    "filters": {
+      "allStatuses": "الحالة",
+      "overdueOnly": "متأخرة فقط",
+      "dateFrom": "من",
+      "dateTo": "إلى"
+    },
+    "sortFields": {
+      "created": "تاريخ الإنشاء",
+      "issueDate": "تاريخ الإصدار",
+      "dueDate": "تاريخ الاستحقاق",
+      "total": "الإجمالي"
+    },
+    "overdueByDays": "متأخرة {days} يومًا",
+    "pdf": {
+      "generating": "جارٍ توليد PDF...",
+      "downloadError": "خطأ في تنزيل PDF"
+    },
+    "reports": {
+      "title": "تقارير الفوترة",
+      "summary": "الملخص",
+      "overdue": "متأخرة",
+      "overdueInvoices": "الفواتير المتأخرة",
+      "byPaymentMethod": "حسب طريقة الدفع",
+      "byProfessional": "حسب الطبيب",
+      "vatSummary": "ملخص ضريبة القيمة المضافة",
+      "gaps": "فجوات الترقيم",
+      "period": "الفترة",
+      "from": "من",
+      "to": "إلى",
+      "refresh": "تحديث",
+      "totalInvoiced": "إجمالي المفوتر",
+      "totalCollected": "إجمالي المحصَّل",
+      "totalPaid": "إجمالي المدفوع",
+      "totalPending": "إجمالي المعلق",
+      "pending": "الرصيد المستحق",
+      "invoices": "فواتير",
+      "paid": "مدفوعة",
+      "payments": "دفعات",
+      "noGaps": "لا فجوات في الترقيم",
+      "gapsFound": "عُثر على {count} فجوة في الترقيم",
+      "gapsDetected": "رُصدت فجوات في الترقيم",
+      "missingNumbers": "الأرقام المفقودة:",
+      "noData": "لا بيانات للفترة المحددة",
+      "noOverdue": "لا فواتير متأخرة",
+      "daysOverdue": "يوم تأخير",
+      "vatType": "نوع الضريبة",
+      "base": "الوعاء",
+      "tax": "الضريبة",
+      "thisMonth": "هذا الشهر",
+      "thisQuarter": "هذا الربع",
+      "thisYear": "هذه السنة",
+      "lastMonth": "الشهر الماضي",
+      "lastQuarter": "الربع الماضي",
+      "lastYear": "السنة الماضية"
+    },
+    "confirmations": {
+      "issue": "إصدار الفاتورة؟",
+      "issueDescription": "بعد الإصدار لا يمكن تعديل الفاتورة. يمكن فقط تسجيل دفعات أو إنشاء إشعارات دائنة.",
+      "void": "إبطال الفاتورة؟",
+      "voidDescription": "لا يمكن التراجع عن هذا الإجراء.",
+      "delete": "حذف الفاتورة؟",
+      "deleteDescription": "لا يمكن التراجع عن هذا الإجراء."
+    },
+    "messages": {
+      "created": "أُنشئت الفاتورة",
+      "updated": "حُدثت الفاتورة",
+      "deleted": "حُذفت الفاتورة",
+      "issued": "صُدرت الفاتورة",
+      "voided": "أُبطلت الفاتورة",
+      "itemAdded": "أُضيف البند",
+      "itemUpdated": "حُدث البند",
+      "sentByEmail": "أُرسلت الفاتورة بالبريد الإلكتروني",
+      "sentManually": "عُلمت الفاتورة كمُرسلة",
+      "paymentRecorded": "تم تسجيل الدفع",
+      "creditNoteCreated": "تم إنشاء إشعار الدائن",
+      "sentByWhatsapp": "أُرسلت الفاتورة عبر واتساب"
+    },
+    "send": {
+      "title": "إرسال الفاتورة",
+      "description": "يمكنك إرسال الفاتورة بالبريد الإلكتروني أو تعليمها كمُرسلة يدويًا (مطبوعة أو مسلّمة شخصيًا).",
+      "sendByEmail": "إرسال بالبريد الإلكتروني",
+      "willSendTo": "ستُرسل إلى",
+      "noPatientEmail": "لا بريد إلكتروني للمريض",
+      "customMessage": "رسالة مخصصة (اختياري)",
+      "customMessagePlaceholder": "أضف رسالة للمريض...",
+      "manualNote": "ستُعلَّم الفاتورة كمُرسلة دون إرسال أي بريد إلكتروني.",
+      "sendEmail": "إرسال بريد إلكتروني",
+      "markAsSent": "تعليم كمُرسلة",
+      "sendByWhatsapp": "إرسال عبر واتساب",
+      "sendWhatsapp": "إرسال واتساب",
+      "willSendToPhone": "ستُرسَل عبر واتساب إلى"
+    },
+    "errors": {
+      "load": "خطأ في تحميل الفواتير",
+      "create": "خطأ في إنشاء الفاتورة",
+      "update": "خطأ في تحديث الفاتورة",
+      "delete": "خطأ في حذف الفاتورة",
+      "issue": "خطأ في إصدار الفاتورة",
+      "void": "خطأ في إبطال الفاتورة",
+      "recordPayment": "خطأ في تسجيل الدفعة",
+      "voidPayment": "خطأ في إبطال الدفعة",
+      "createCreditNote": "خطأ في إنشاء الإشعار الدائن",
+      "send": "خطأ في إرسال الفاتورة",
+      "creditNoteReasonRequired": "سبب الإشعار الدائن مطلوب",
+      "notFound": "الفاتورة غير موجودة",
+      "canOnlyDeleteDraft": "لا يمكن حذف إلا الفواتير في وضع المسودة",
+      "patientRequired": "المريض مطلوب",
+      "itemsRequired": "بند واحد على الأقل مطلوب",
+      "itemRequired": "الوصف والسعر مطلوبان",
+      "selectCatalogItem": "يُرجى اختيار علاج من الكتالوج",
+      "cannotEdit": "لا يمكن تعديل إلا الفواتير في وضع المسودة"
+    },
+    "newItemsPending": "بنود جديدة بانتظار الحفظ",
+    "linkedPlan": "خطة العلاج"
+  },
+  "reports": {
+    "title": "التقارير",
+    "subtitle": "تحليلات وإحصاءات العيادة",
+    "viewReports": "عرض التقارير",
+    "noAccess": "لا تملك صلاحية الوصول إلى أي تقرير",
+    "dashboard": {
+      "title": "لوحة المعلومات",
+      "subtitle": "عيادتك بنظرة سريعة",
+      "period": "الفترة",
+      "snapshotBadge": "اليوم",
+      "snapshotTooltip": "غير متأثرة بالنطاق الزمني",
+      "vsPrev": "مقارنة بالفترة السابقة",
+      "empty": {
+        "noData": "لا بيانات في هذا النطاق"
+      },
+      "drilldown": {
+        "title": "تفاصيل أعمق",
+        "payments": "الدفعات"
+      },
+      "kpi": {
+        "cashCollected": "النقد المحصَّل",
+        "cashCollectedHint": "{count} دفعة",
+        "patientAdvance": "رصيد دائن للمريض",
+        "patientAdvanceHint": "دفعات غير مخصصة",
+        "production": "الإنتاج",
+        "productionHint": "{count} علاجًا",
+        "byMethod": "حسب طريقة الدفع",
+        "methodCount": "{count} دفعة",
+        "total": "الإجمالي",
+        "newPatients": "مرضى جدد",
+        "newPatientsHint": "{rate}% من إجمالي المواعيد",
+        "appointmentFunnel": "نسبة عدم الحضور",
+        "funnelHint": "{completed}% مكتملة",
+        "avgCollectedTicket": "متوسط قيمة التحصيل",
+        "avgTicketHint": "على {count} دفعة",
+        "aging": "أعمار الذمم"
+      },
+      "charts": {
+        "cashOverTime": "التحصيل عبر الزمن",
+        "productionByDoctor": "الإنتاج حسب الطبيب",
+        "refunded": "المستردات"
+      },
+      "production": {
+        "unassigned": "غير مسند",
+        "others": "أخرى",
+        "treatmentCount": "{count} علاجًا"
+      },
+      "aging": {
+        "bucket0_30": "٠-٣٠ يومًا",
+        "bucket31_60": "٣١-٦٠ يومًا",
+        "bucket61_90": "٦١-٩٠ يومًا",
+        "bucket90plus": "٩٠+ يومًا",
+        "empty": "لا ذمم قائمة",
+        "patientCount": "{count} مريضًا"
+      }
+    },
+    "billing": {
+      "title": "الفوترة",
+      "description": "الإيرادات والدفعات وضريبة القيمة المضافة والفواتير المتأخرة",
+      "summary": "الملخص",
+      "overdue": "متأخرة",
+      "overdueInvoices": "الفواتير المتأخرة",
+      "byPaymentMethod": "حسب طريقة الدفع",
+      "byProfessional": "حسب الطبيب",
+      "vatSummary": "ملخص ضريبة القيمة المضافة",
+      "gaps": "فجوات الترقيم",
+      "period": "الفترة",
+      "from": "من",
+      "to": "إلى",
+      "refresh": "تحديث",
+      "totalInvoiced": "إجمالي المفوتر",
+      "totalCollected": "إجمالي المحصَّل",
+      "pending": "الرصيد المستحق",
+      "invoices": "فواتير",
+      "paid": "مدفوعة",
+      "payments": "دفعات",
+      "gapsDetected": "رُصدت فجوات في الترقيم",
+      "missingNumbers": "الأرقام المفقودة:",
+      "noData": "لا بيانات للفترة المحددة",
+      "noOverdue": "لا فواتير متأخرة",
+      "daysOverdue": "يوم تأخير",
+      "vatType": "نوع الضريبة",
+      "base": "الوعاء",
+      "tax": "الضريبة",
+      "thisMonth": "هذا الشهر",
+      "thisQuarter": "هذا الربع",
+      "thisYear": "هذه السنة",
+      "lastMonth": "الشهر الماضي",
+      "lastQuarter": "الربع الماضي",
+      "lastYear": "السنة الماضية"
+    },
+    "budgets": {
+      "title": "عروض السعر",
+      "description": "معدلات القبول وتحليل الأطباء والعلاجات",
+      "comingSoonDescription": "تقارير عروض السعر ستتوفر قريبًا. يمكنك تحليل معدلات القبول والعروض حسب الطبيب والعلاجات الأكثر طلبًا.",
+      "features": {
+        "acceptanceRate": "معدل القبول",
+        "acceptanceRateDesc": "نسبة العروض المقبولة مقابل المرفوضة",
+        "byProfessional": "حسب الطبيب",
+        "byProfessionalDesc": "العروض التي أنشأها كل طبيب",
+        "byTreatment": "حسب العلاج",
+        "byTreatmentDesc": "العلاجات الأكثر تسعيرًا",
+        "averageValue": "المتوسط الحسابي للقيمة",
+        "averageValueDesc": "متوسط مبلغ عرض السعر"
+      },
+      "labels": {
+        "totalCreated": "إجمالي المنشأة",
+        "accepted": "مقبولة",
+        "rejected": "مرفوضة",
+        "pending": "معلقة",
+        "completed": "منجزة",
+        "acceptanceRate": "معدل القبول",
+        "averageValue": "متوسط القيمة",
+        "byStatus": "حسب الحالة",
+        "topTreatments": "العلاجات الأكثر تسعيرًا",
+        "treatment": "العلاج",
+        "occurrences": "التكرارات",
+        "quantity": "الكمية"
+      }
+    },
+    "scheduling": {
+      "title": "المواعيد",
+      "description": "الزيارات الأولى وساعات العمل ونسب الإشغال",
+      "comingSoonDescription": "تقارير الجدولة ستتوفر قريبًا. يمكنك تحليل الزيارات الأولى والساعات حسب الطبيب ومعدلات الإلغاء.",
+      "features": {
+        "firstVisits": "الزيارات الأولى",
+        "firstVisitsDesc": "المرضى الجدد في كل فترة",
+        "hoursWorked": "ساعات العمل",
+        "hoursWorkedDesc": "الوقت لكل طبيب",
+        "cancellations": "الإلغاءات",
+        "cancellationsDesc": "معدلات الإلغاء وعدم الحضور",
+        "cabinetUtilization": "إشغال الغرف",
+        "cabinetUtilizationDesc": "استخدام كل غرفة"
+      },
+      "labels": {
+        "totalAppointments": "إجمالي المواعيد",
+        "completionRate": "معدل الإنجاز",
+        "completed": "منجزة",
+        "cancellationRate": "معدل الإلغاء",
+        "cancelled": "ملغاة",
+        "noShowRate": "نسبة عدم الحضور",
+        "noShows": "لم يحضروا",
+        "newPatients": "مرضى جدد",
+        "firstVisitRate": "نسبة الزيارات الأولى",
+        "ofTotalAppointments": "من إجمالي المواعيد",
+        "appointmentsInPeriod": "المواعيد في الفترة",
+        "excludingCancelled": "باستثناء الملغاة",
+        "appointments": "مواعيد",
+        "byDayOfWeek": "حسب أيام الأسبوع",
+        "statusBreakdown": "توزيع الحالات",
+        "pending": "معلقة"
+      },
+      "analytics": {
+        "funnel": "قمع الحالات",
+        "funnelDesc": "توزيع المواعيد حسب الحالة في الفترة",
+        "waitingTimes": "أزمنة الانتظار",
+        "waitingTimesDesc": "الدقائق بين وصول المريض ودخوله الكرسي",
+        "punctuality": "التزام المريض بالموعد",
+        "punctualityDesc": "الفرق بين الوقت المجدول والوصول الفعلي",
+        "durationVariance": "المدة المخططة مقابل الفعلية",
+        "durationVarianceDesc": "المقارنة بين المدة المخططة وزمن الكرسي الفعلي",
+        "samples": "العينات",
+        "average": "المتوسط",
+        "median": "الوسيط",
+        "p90": "P90",
+        "avgDelta": "متوسط الانحراف",
+        "medianDelta": "وسيط الانحراف",
+        "onTime": "% في الموعد",
+        "avgOverrun": "متوسط التجاوز",
+        "overrunCount": "مرات التجاوز",
+        "underCount": "مرات الانتهاء المبكر",
+        "completionRate": "الإنجاز",
+        "noShowRate": "عدم الحضور",
+        "cancellationRate": "الإلغاء",
+        "punctuality_early": "مبكر (<-٥)",
+        "punctuality_on_time": "في الموعد (±٥)",
+        "punctuality_late_short": "متأخر (٥-١٥)",
+        "punctuality_late_long": "متأخر (>١٥)"
+      },
+      "tabs": {
+        "overview": "نظرة عامة",
+        "activity": "النشاط",
+        "quality": "الجودة"
+      },
+      "hero": {
+        "inPeriod": "في الفترة"
+      },
+      "filters": {
+        "cabinet": "الغرفة",
+        "professional": "الطبيب",
+        "custom": "نطاق مخصص",
+        "all": "الكل",
+        "clear": "مسح التصفية"
+      },
+      "empty": {
+        "title": "لا بيانات لهذه الفترة",
+        "desc": "جرّب نطاقًا زمنيًا أوسع أو أزل عوامل التصفية."
+      }
+    },
+    "loadError": "تعذّر تحميل بيانات التقرير"
+  },
+  "invoiceSeries": {
+    "title": "سلاسل الفواتير",
+    "description": "هيّئ بادئات الفواتير والترقيم",
+    "regularInvoices": "الفواتير",
+    "creditNotes": "الإشعارات الدائنة",
+    "new": "سلسلة جديدة",
+    "newTitle": "سلسلة {type} جديدة",
+    "editTitle": "تعديل السلسلة",
+    "prefix": "البادئة",
+    "prefixHint": "مثال: FAC، CR. يُضاف العام تلقائيًا.",
+    "descriptionLabel": "الوصف",
+    "descriptionPlaceholder": "وصف اختياري للسلسلة...",
+    "nextNumber": "الرقم التالي",
+    "preview": "معاينة",
+    "resetYearly": "تصفير سنوي",
+    "resetYearlyLabel": "تصفير الترقيم كل سنة",
+    "setAsDefault": "تعيين كافتراضية",
+    "activeLabel": "سلسلة نشطة",
+    "showInactive": "عرض غير النشطة",
+    "noItems": "لا سلاسل مُهيأة",
+    "resetCounter": "تصفير العداد",
+    "currentNumber": "الرقم الحالي",
+    "seriesPrefix": "بادئة السلسلة",
+    "newNumber": "الرقم الجديد",
+    "newNumberHint": "يجب أن يكون الرقم أكبر من أعلى رقم موجود في هذه السلسلة.",
+    "resetWarningTitle": "تحذير",
+    "resetWarning": "سيُسجل هذا الإجراء في سجل التدقيق ولا يمكن التراجع عنه.",
+    "confirmReset": "تصفير العداد",
+    "created": "أُنشئت السلسلة بنجاح",
+    "saved": "حُدثت السلسلة بنجاح",
+    "resetSuccess": "صُفّر العداد بنجاح",
+    "onboarding": {
+      "label": "سلسلة الفواتير",
+      "description": "مطلوبة لإصدار أول فاتورة (مثال: FAC-2026-0001)."
+    }
+  },
+  "documents": {
+    "title": "المستندات",
+    "add": "إضافة",
+    "edit": "تعديل المستند",
+    "upload": "رفع مستند",
+    "uploading": "جارٍ الرفع...",
+    "empty": "لا مستندات بعد",
+    "uploadFirst": "ارفع أول مستند",
+    "types": {
+      "consent": "موافقة",
+      "id_scan": "وثيقة هوية",
+      "insurance": "تأمين",
+      "report": "تقرير",
+      "referral": "إحالة",
+      "other": "أخرى"
+    },
+    "fields": {
+      "type": "النوع",
+      "title": "العنوان",
+      "titlePlaceholder": "عنوان المستند",
+      "description": "الوصف",
+      "descriptionPlaceholder": "ملاحظات اختيارية"
+    },
+    "dropzone": {
+      "hint": "اسحب ملفًا وأفلته هنا، أو انقر لاختياره"
+    },
+    "filter": {
+      "allTypes": "كل الأنواع"
+    },
+    "deleteConfirm": {
+      "title": "حذف المستند",
+      "message": "هل أنت متأكد من حذف هذا المستند؟ لا يمكن التراجع عن هذا الإجراء."
+    },
+    "fetchError": "خطأ في تحميل المستندات",
+    "uploadSuccess": "رُفع المستند بنجاح",
+    "uploadError": "خطأ في رفع المستند",
+    "downloadError": "خطأ في تنزيل المستند",
+    "deleteSuccess": "حُذف المستند",
+    "deleteError": "خطأ في حذف المستند",
+    "updateSuccess": "حُدث المستند",
+    "updateError": "خطأ في تحديث المستند",
+    "viewer": {
+      "loading": "جارٍ تحميل المستند...",
+      "error": "تعذر تحميل المستند",
+      "downloadInstead": "تنزيل بدلًا من ذلك",
+      "unsupported": "المعاينة غير متاحة لهذا النوع من الملفات",
+      "zoomOut": "تصغير",
+      "zoomIn": "تكبير",
+      "resetZoom": "إعادة إلى ١٠٠٪",
+      "zoomHint": "Ctrl + تمرير للتكبير"
+    },
+    "typeDesc": {
+      "consent": "مستند موقع",
+      "id_scan": "هوية / جواز سفر",
+      "insurance": "بوليصة أو بطاقة تأمين",
+      "report": "تقرير سريري",
+      "referral": "خطاب إحالة",
+      "other": "غير مصنف"
+    },
+    "errors": {
+      "mime": "نوع الملف غير مسموح. يُسمح فقط بـPDF أو JPG أو PNG.",
+      "size": "الملف يتجاوز ١٠ ميغابايت."
+    },
+    "pdfPreviewHint": "المعاينة متاحة بعد الرفع",
+    "uploadHelp": "صنّف الملف ليظهر في الفئة الصحيحة."
+  },
+  "photoGallery": {
+    "title": "معرض صور المريض",
+    "add": "إضافة صورة",
+    "empty": "لا صور بعد",
+    "uploadFirst": "ارفع أول صورة",
+    "showingOf": "عرض {count} من {total}",
+    "upload": "رفع صورة",
+    "uploadHelp": "صنّفها لتظهر في الفئة الصحيحة",
+    "dropHere": "اسحب صورة إلى هنا أو انقر",
+    "category": "النوع",
+    "subtype": "المنظر",
+    "titlePlaceholder": "داخلية أمامية — ٠٢/٠٥",
+    "capturedAt": "التاريخ",
+    "exifHint": "تلقائيًا من EXIF",
+    "cat": {
+      "all": "الكل",
+      "intraoral": "داخل الفم",
+      "extraoral": "خارج الفم",
+      "xray": "أشعة",
+      "clinical": "قبل/بعد",
+      "other": "أخرى"
+    },
+    "catDesc": {
+      "intraoral": "داخل الفم",
+      "extraoral": "الوجه والبروفايل",
+      "xray": "صورة شعاعية",
+      "clinical": "مقارنة قبل/بعد العلاج",
+      "other": "غير مصنفة"
+    },
+    "sub": {
+      "frontal": "أمامية",
+      "lateral_left": "جانبية يسرى",
+      "lateral_right": "جانبية يمنى",
+      "occlusal_upper": "إطباقية عليا",
+      "occlusal_lower": "إطباقية سفلى",
+      "palatal": "حنكية",
+      "lingual": "لسانية",
+      "smile": "ابتسامة",
+      "rest": "راحة",
+      "frontal_face": "أمامية",
+      "profile_left": "بروفايل أيسر",
+      "profile_right": "بروفايل أيمن",
+      "three_quarter_left": "ثلاثة أرباع يسار",
+      "three_quarter_right": "ثلاثة أرباع يمين",
+      "panoramic": "بانورامية",
+      "periapical": "ذروانية",
+      "bitewing": "قضمة (Bitewing)",
+      "ceph_lat": "قياسية جانبية",
+      "ceph_pa": "قياسية خلفية-أمامية",
+      "cbct": "مقطعية مخروطية CBCT",
+      "occlusal_xray": "إطباقية شعاعية",
+      "before": "قبل",
+      "after": "بعد",
+      "progress": "تطور العلاج",
+      "reference": "مرجعية",
+      "portrait": "بورتريه",
+      "document_scan": "مستند ممسوح",
+      "model_photo": "نموذج"
+    },
+    "compare": {
+      "before": "قبل",
+      "after": "بعد"
+    },
+    "pair": {
+      "pickHint": "اختر الصورة المراد اقترانها:",
+      "noCandidates": "لا صور متاحة. ارفع صورة أخرى أولًا.",
+      "paired": "تم الاقتران",
+      "exitCompare": "خروج من المقارنة",
+      "compare": "مقارنة",
+      "unpair": "إزالة الاقتران",
+      "pair": "اقتران قبل/بعد"
+    }
+  },
+  "help": {
+    "label": "المساعدة",
+    "openHelp": "فتح المساعدة",
+    "drawerTitle": "مساعدة لهذه الصفحة",
+    "unavailable": "لا تتوفر مساعدة سياقية لهذه الصفحة بعد.",
+    "openFullManual": "فتح الدليل الكامل"
+  },
+  "charts": {
+    "trend": {
+      "ariaLabel": "الاتجاه عبر {count} نقطة"
+    },
+    "donut": {
+      "ariaLabel": "رسم دائري، {count} قطاعًا"
+    }
+  }
+}
