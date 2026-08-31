@@ -168,7 +168,7 @@ function close() {
               :key="r.value"
               type="button"
               :aria-pressed="reason === r.value"
-              class="flex items-center gap-2 px-3 py-2 rounded-token-md border text-sm text-left transition-colors"
+              class="flex items-center gap-2 px-3 py-2 rounded-token-md border text-sm text-start whitespace-normal transition-colors"
               :class="reason === r.value
                 ? 'border-primary bg-primary/10 text-primary-accent'
                 : 'border-default bg-default hover:bg-elevated text-default'"
@@ -178,7 +178,7 @@ function close() {
                 :name="r.icon"
                 class="w-4 h-4 shrink-0"
               />
-              <span class="truncate">{{ r.label }}</span>
+              <span class="leading-tight text-start whitespace-normal">{{ r.label }}</span>
             </button>
           </div>
         </section>
