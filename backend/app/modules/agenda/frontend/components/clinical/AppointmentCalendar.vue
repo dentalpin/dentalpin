@@ -422,7 +422,9 @@ function handleDragMove(event: MouseEvent) {
       const calendarWidth = calendarRef.value.offsetWidth
       const columnWidth = calendarWidth / 8
       const dayDelta = Math.round(deltaX / columnWidth)
-      const newDayIndex = Math.max(0, Math.min(6, dragState.value.originalDayIndex + dayDelta))
+      const isRtl = window.getComputedStyle(calendarRef.value).direction === 'rtl'
+      const actualDayDelta = isRtl ? -dayDelta : dayDelta
+      const newDayIndex = Math.max(0, Math.min(6, dragState.value.originalDayIndex + actualDayDelta))
       dragState.value.currentDayIndex = newDayIndex
     }
   }
