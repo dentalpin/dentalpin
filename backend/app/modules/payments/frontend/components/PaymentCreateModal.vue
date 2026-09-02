@@ -56,6 +56,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const { create } = usePayments()
+const api = useApi()
 const { format: formatCurrency, symbol: currencySymbol } = useCurrency()
 
 const isBudgetContext = computed(() => Boolean(props.defaultBudgetId))
@@ -269,6 +270,106 @@ function handleKeydown(e: KeyboardEvent) {
   if (e.key === 'Enter' && !e.shiftKey && canSubmit.value) {
     e.preventDefault()
     submit()
+  }
+}
+
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if ((window as any).Razorpay) {
+      resolve(true)
+      return
+    }
+    const script = document.createElement('script')
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js'
+    script.onload = () => resolve(true)
+    script.onerror = () => resolve(false)
+    document.body.appendChild(script)
+  })
+}
+
+interface RazorpayOrder {
+  order_id: string
+  amount: number
+  currency: string
+  key_id: string
+}
+
+async function payWithRazorpay() {
+  formError.value = null
+
+  if (!canSubmit.value) return
+
+  isSubmitting.value = true
+
+  try {
+    const loaded = await loadRazorpayScript()
+    if (!loaded) {
+      formError.value = t('payments.new.razorpayLoadError')
+      return
+    }
+
+    // The backend creates the Razorpay order (needs the key secret, which
+    // must never leave the server) and returns the public key id.
+    const orderResp = await api.post<{ data: RazorpayOrder }>(
+      '/api/v1/payments/razorpay-order',
+      {
+        patient_id: form.value.patient_id,
+        amount: Number(form.value.amount),
+        currency: 'INR'
+      },
+      { errorToast: false }
+    )
+    const orderData = orderResp.data
+
+    const allocations = form.value.allocations.map(a => ({
+      target_type: a.target_type,
+      target_id: a.target_type === 'budget' ? a.target_id : undefined,
+      amount: Number(a.amount)
+    }))
+
+    const options = {
+      key: orderData.key_id,
+      amount: orderData.amount,
+      currency: 'INR',
+      name: 'Clinic Payment',
+      description: 'Medical Services Payment',
+      order_id: orderData.order_id,
+      handler: async function (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) {
+        // Signature is verified server-side before a payment record is
+        // written — the browser callback alone is not trusted.
+        const verifyResp = await api.post<{ data: PaymentRecord }>(
+          '/api/v1/payments/razorpay-verify',
+          {
+            patient_id: form.value.patient_id,
+            amount: Number(form.value.amount),
+            payment_date: form.value.payment_date,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_signature: response.razorpay_signature,
+            allocations
+          },
+          { errorToast: false }
+        )
+        const created = verifyResp.data
+        emit('created', created)
+        emit('update:open', false)
+      },
+      prefill: {
+        name: props.defaultPatientName || '',
+      },
+      theme: {
+        color: '#3B82F6'
+      }
+    }
+
+    const rzp = new (window as any).Razorpay(options)
+    rzp.open()
+  } catch (err: any) {
+    // 4xx from the backend carries a readable `detail`; use it when present.
+    const detail = err?.data?.detail
+    formError.value = detail || err?.message || t('payments.new.razorpayError')
+  } finally {
+    isSubmitting.value = false
   }
 }
 </script>
@@ -561,12 +662,21 @@ function handleKeydown(e: KeyboardEvent) {
 
     <template #footer>
       <div class="flex justify-end gap-2">
-        <UButton
-          variant="ghost"
-          @click="emit('update:open', false)"
-        >
+        <UButton variant="ghost" @click="emit('update:open', false)">
           {{ t('payments.new.cancel') }}
         </UButton>
+        
+        <!-- Add Razorpay Button -->
+        <UButton
+          color="black"
+          icon="i-lucide-credit-card"
+          :loading="isSubmitting"
+          :disabled="!canSubmit"
+          @click="payWithRazorpay"
+        >
+          {{ t('payments.new.razorpay') }}
+        </UButton>
+
         <UButton
           color="primary"
           icon="i-lucide-check"
@@ -574,11 +684,7 @@ function handleKeydown(e: KeyboardEvent) {
           :disabled="!canSubmit"
           @click="submit"
         >
-          {{
-            amountValid
-              ? t('payments.new.submitWithAmount', { amount: formatCurrency(form.amount) })
-              : t('payments.new.submit')
-          }}
+          {{ amountValid ? t('payments.new.submitWithAmount', { amount: formatCurrency(form.amount) }) : t('payments.new.submit') }}
         </UButton>
       </div>
     </template>

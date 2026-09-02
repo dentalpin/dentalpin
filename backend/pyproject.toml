@@ -51,6 +51,9 @@ dependencies = [
     "anthropic>=0.40",
     # telephony module: E.164 normalization of caller numbers (issue #64).
     "phonenumbers>=8.13",
+    # payments module: Razorpay online payment gateway (India). Client-side
+    # loads checkout.js; this SDK creates orders and verifies signatures.
+    "razorpay>=1.4.0",
 ]
 
 [project.optional-dependencies]

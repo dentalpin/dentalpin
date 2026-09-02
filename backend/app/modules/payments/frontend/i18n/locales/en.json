@@ -90,6 +90,9 @@
       "sumMismatch": "does not match the amount",
       "submit": "Record",
       "submitWithAmount": "Charge {amount}",
+      "razorpay": "Pay with Razorpay",
+      "razorpayLoadError": "Could not load Razorpay. Check your connection.",
+      "razorpayError": "Could not process the Razorpay payment. Try again.",
       "cancel": "Cancel",
       "errPatient": "Select a patient",
       "errAmount": "Enter an amount greater than 0",
@@ -102,6 +105,7 @@
       "bank_transfer": "Transfer",
       "direct_debit": "Direct debit",
       "insurance": "Insurance",
+      "razorpay": "Razorpay",
       "other": "Other"
     },
     "refund": {

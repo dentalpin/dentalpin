@@ -7,7 +7,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-PaymentMethod = Literal["cash", "card", "bank_transfer", "direct_debit", "insurance", "other"]
+PaymentMethod = Literal["cash", "card", "bank_transfer", "direct_debit", "insurance", "razorpay", "other"]
 AllocationTarget = Literal["budget", "on_account"]
 RefundReason = Literal["duplicate", "overpaid", "treatment_cancelled", "dispute", "other"]
 
@@ -102,6 +102,42 @@ class PaymentCreate(BaseModel):
 
 class PaymentReallocate(BaseModel):
     allocations: list[AllocationCreate] = Field(min_length=1)
+
+
+# --- Razorpay ----------------------------------------------------------
+
+
+class RazorpayOrderCreate(BaseModel):
+    patient_id: UUID
+    amount: Decimal = Field(gt=0)
+    currency: str = "INR"  # Razorpay is an INR gateway
+
+
+class RazorpayOrderResponse(BaseModel):
+    order_id: str
+    amount: int  # paise, per Razorpay convention
+    currency: str
+    key_id: str
+
+
+class RazorpayVerifyCreate(BaseModel):
+    """Server-side signature verification payload (sent by the client in
+    the Razorpay checkout ``handler`` callback)."""
+
+    patient_id: UUID
+    amount: Decimal = Field(gt=0)
+    payment_date: date = Field(default_factory=date.today)
+    razorpay_payment_id: str
+    razorpay_order_id: str
+    razorpay_signature: str
+    allocations: list[AllocationCreate] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _check_allocation_sum(self) -> "RazorpayVerifyCreate":
+        allocated = sum(a.amount for a in self.allocations)
+        if allocated != self.amount:
+            raise ValueError(f"Allocations must sum to amount ({self.amount}); got {allocated}")
+        return self
 
 
 class PaymentResponse(BaseModel):

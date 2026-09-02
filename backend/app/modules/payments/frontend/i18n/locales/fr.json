@@ -90,6 +90,9 @@
       "sumMismatch": "ne correspond pas au montant",
       "submit": "Enregistrer",
       "submitWithAmount": "Facturer {amount}",
+      "razorpay": "Payer avec Razorpay",
+      "razorpayLoadError": "Impossible de charger Razorpay. Vérifiez votre connexion.",
+      "razorpayError": "Impossible de traiter le paiement Razorpay. Réessayez.",
       "cancel": "Annuler",
       "errPatient": "Sélectionnez un patient",
       "errAmount": "Saisissez un montant supérieur à 0",
@@ -102,6 +105,7 @@
       "bank_transfer": "Virement",
       "direct_debit": "Prélèvement",
       "insurance": "Assurance",
+      "razorpay": "Razorpay",
       "other": "Autre"
     },
     "refund": {

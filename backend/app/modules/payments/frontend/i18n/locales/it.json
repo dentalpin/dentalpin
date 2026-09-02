@@ -90,6 +90,9 @@
       "sumMismatch": "non corrisponde all'importo",
       "submit": "Registra",
       "submitWithAmount": "Incassa {amount}",
+      "razorpay": "Paga con Razorpay",
+      "razorpayLoadError": "Impossibile caricare Razorpay. Controlla la connessione.",
+      "razorpayError": "Impossibile elaborare il pagamento Razorpay. Riprova.",
       "cancel": "Annulla",
       "errPatient": "Seleziona un paziente",
       "errAmount": "Inserisci un importo maggiore di 0",
@@ -102,6 +105,7 @@
       "bank_transfer": "Bonifico",
       "direct_debit": "Addebito diretto",
       "insurance": "Assicurazione",
+      "razorpay": "Razorpay",
       "other": "Altro"
     },
     "refund": {

@@ -90,6 +90,9 @@
       "sumMismatch": "nie zgadza się z kwotą",
       "submit": "Zarejestruj",
       "submitWithAmount": "Pobierz {amount}",
+      "razorpay": "Zapłać przez Razorpay",
+      "razorpayLoadError": "Nie udało się załadować Razorpay. Sprawdź połączenie.",
+      "razorpayError": "Nie udało się przetworzyć płatności Razorpay. Spróbuj ponownie.",
       "cancel": "Anuluj",
       "errPatient": "Wybierz pacjenta",
       "errAmount": "Wprowadź kwotę większą niż 0",
@@ -102,6 +105,7 @@
       "bank_transfer": "Przelew",
       "direct_debit": "Polecenie zapłaty",
       "insurance": "Ubezpieczenie",
+      "razorpay": "Razorpay",
       "other": "Inna"
     },
     "refund": {

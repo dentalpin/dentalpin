@@ -16,6 +16,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
@@ -36,9 +37,17 @@ from .schemas import (
     PaymentsSummary,
     PaymentsTrends,
     ProfessionalBreakdown,
+    RazorpayOrderCreate,
+    RazorpayOrderResponse,
+    RazorpayVerifyCreate,
     RefundCreate,
     RefundResponse,
     RefundsReport,
+)
+from .razorpay_service import (
+    RazorpayNotConfigured,
+    create_order,
+    verify_signature,
 )
 from .service import (
     LedgerService,
@@ -123,6 +132,80 @@ async def create_payment(
             allocations=[a.model_dump() for a in payload.allocations],
             reference=payload.reference,
             notes=payload.notes,
+        )
+    except PaymentWorkflowError as exc:
+        raise _bad_request(exc)
+
+    fresh = await PaymentService.get(db, ctx.clinic_id, payment.id)
+    if fresh is None:  # pragma: no cover - defensive
+        raise HTTPException(status_code=500, detail="Payment vanished after create")
+    return ApiResponse(data=PaymentResponse.from_model(fresh))
+
+
+# --- Razorpay ---------------------------------------------------------
+#
+# Online payment flow. The client opens Razorpay's checkout with the
+# order created here; the browser callback then POSTs to -verify so the
+# signature is checked server-side before a payment record is written.
+
+
+@router.post(
+    "/razorpay-order",
+    response_model=ApiResponse[RazorpayOrderResponse],
+    status_code=201,
+)
+async def razorpay_create_order(
+    payload: RazorpayOrderCreate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("payments.record.write"))],
+) -> ApiResponse[RazorpayOrderResponse]:
+    try:
+        order = create_order(amount=float(payload.amount), currency=payload.currency)
+    except RazorpayNotConfigured as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    return ApiResponse(
+        data=RazorpayOrderResponse(
+            order_id=order["order_id"],
+            amount=order["amount"],
+            currency=order["currency"],
+            key_id=settings.RAZORPAY_KEY_ID,
+        )
+    )
+
+
+@router.post("/razorpay-verify", response_model=ApiResponse[PaymentResponse], status_code=201)
+async def razorpay_verify(
+    payload: RazorpayVerifyCreate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("payments.record.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[PaymentResponse]:
+    try:
+        ok = verify_signature(
+            payload.razorpay_payment_id,
+            payload.razorpay_order_id,
+            payload.razorpay_signature,
+        )
+    except RazorpayNotConfigured as exc:
+        raise HTTPException(status_code=400, detail=str(exc))
+    if not ok:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid Razorpay signature — payment not recorded.",
+        )
+    try:
+        payment = await record_payment(
+            db,
+            clinic_id=ctx.clinic_id,
+            currency=ctx.clinic.currency,
+            patient_id=payload.patient_id,
+            amount=payload.amount,
+            method="razorpay",
+            payment_date=payload.payment_date,
+            recorded_by=ctx.user_id,
+            allocations=[a.model_dump() for a in payload.allocations],
+            reference=payload.razorpay_payment_id,
+            notes=f"Razorpay order: {payload.razorpay_order_id}",
         )
     except PaymentWorkflowError as exc:
         raise _bad_request(exc)
