@@ -2,6 +2,7 @@
 import type { Surface, ToothTreatmentView, TreatmentStatus } from '~~/app/types'
 import {
   getOcclusalPath,
+  getOcclusalSurfaceCenter,
   getLateralPath,
   getToothTransform,
   getToothDisplayConfig,
@@ -845,8 +846,8 @@ const hasPlannedLateralTreatments = computed(() => {
                   <circle
                     v-for="surface in treatment.surfaces"
                     :key="`${treatment.id}-${surface}-dot`"
-                    :cx="surface === 'O' ? 25 : surface === 'M' ? 12 : surface === 'D' ? 38 : surface === 'V' ? 25 : 25"
-                    :cy="surface === 'O' ? 25 : surface === 'M' ? 25 : surface === 'D' ? 25 : surface === 'V' ? 12 : 38"
+                    :cx="getOcclusalSurfaceCenter(toothNumber, surface).x"
+                    :cy="getOcclusalSurfaceCenter(toothNumber, surface).y"
                     r="4"
                     :fill="getTreatmentColor(treatment.treatment_type)"
                     :fill-opacity="STATUS_STYLES[treatment.status]?.opacity ?? 1"
