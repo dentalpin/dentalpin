@@ -21,6 +21,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `copilot` | 0.1.0 | official | — | auto | yes | 5 | 3 | 1 | yes |
 | `documents` | 0.1.0 | official | patients | manual | yes | 2 | 1 | 0 | yes |
 | `expenses` | 0.1.0 | community | — | manual | yes | 2 | 0 | 0 | yes |
+| `gdpr` | 0.1.0 | official | patients | manual | yes | 9 | 6 | 0 | no |
 | `india_gst` | 0.1.0 | official | billing, catalog | manual | yes | 4 | 0 | 0 | yes |
 | `integrations` | 0.1.0 | official | patients | manual | yes | 4 | 0 | 8 | no |
 | `inventory` | 0.2.0 | community | — | manual | yes | 2 | 1 | 0 | yes |
@@ -315,6 +316,36 @@ Fixed/recurring office expense tracking with monthly category totals.
 - **Events emitted:** —
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/expenses/CLAUDE.md`](../backend/app/modules/expenses/CLAUDE.md)
+
+### `gdpr` — v0.1.0
+
+Data-subject rights, consents, retention and breach reporting (GDPR).
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `patients`
+- **Frontend layer:** —
+- **Permissions:**
+  - `gdpr.audit.read`
+  - `gdpr.breaches.read`
+  - `gdpr.breaches.write`
+  - `gdpr.consents.read`
+  - `gdpr.consents.write`
+  - `gdpr.requests.read`
+  - `gdpr.requests.write`
+  - `gdpr.retention.read`
+  - `gdpr.retention.write`
+- **Events emitted:**
+  - `gdpr.breach.reported`
+  - `gdpr.consent.granted`
+  - `gdpr.consent.withdrawn`
+  - `gdpr.erasure.executed`
+  - `gdpr.request.created`
+  - `gdpr.request.status_changed`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/gdpr/CLAUDE.md`](../backend/app/modules/gdpr/CLAUDE.md)
 
 ### `india_gst` — v0.1.0
 
