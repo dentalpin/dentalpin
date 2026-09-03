@@ -35,7 +35,8 @@
     "inventory": "المخزون",
     "journal": "سجل النشاط",
     "staffTasks": "مهام الفريق",
-    "treatmentConsumables": "مستهلكات العلاج"
+    "treatmentConsumables": "مستهلكات العلاج",
+    "documents": "المستندات"
   },
   "auth": {
     "login": "تسجيل الدخول",
