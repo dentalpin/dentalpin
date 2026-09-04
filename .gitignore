@@ -6,6 +6,10 @@
 # Claude Code
 .claude/
 
+# Workflow layer (guards, commands, agents, skills, charters) — never committed
+.opencode/
+MODULE-BUILDING-REFERENCE.md
+
 # Python
 __pycache__/
 *.py[cod]
