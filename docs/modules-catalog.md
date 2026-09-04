@@ -44,6 +44,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `schedules` | 0.1.0 | official | agenda | auto | yes | 8 | 0 | 4 | yes |
 | `staff_tasks` | 0.1.0 | community | — | manual | yes | 2 | 2 | 0 | yes |
 | `supplier_items` | 0.1.0 | official | contacts, inventory, suppliers | manual | yes | 2 | 0 | 0 | no |
+| `supplier_ratings` | 0.1.0 | official | contacts, purchase_orders | manual | yes | 2 | 0 | 0 | no |
 | `suppliers` | 0.1.0 | official | contacts | manual | yes | 2 | 0 | 0 | no |
 | `telephony` | 0.1.0 | community | patients | manual | yes | 4 | 5 | 0 | yes |
 | `treatment_consumables` | 0.1.0 | community | catalog, inventory | manual | yes | 2 | 0 | 1 | yes |
@@ -844,6 +845,23 @@ Links inventory items to suppliers (multi-vendor, SKU and price).
 - **Events emitted:** —
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/supplier_items/CLAUDE.md`](../backend/app/modules/supplier_items/CLAUDE.md)
+
+### `supplier_ratings` — v0.1.0
+
+Automatic delivery/quality metrics from PO history plus a manual 1-5 communication rating per supplier.
+
+- **Author:** lamanji
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `contacts`, `purchase_orders`
+- **Frontend layer:** —
+- **Permissions:**
+  - `supplier_ratings.read`
+  - `supplier_ratings.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/supplier_ratings/CLAUDE.md`](../backend/app/modules/supplier_ratings/CLAUDE.md)
 
 ### `suppliers` — v0.1.0
 
