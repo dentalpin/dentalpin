@@ -64,6 +64,7 @@ class NotificationPreferenceBase(BaseModel):
 
     email_enabled: bool = True
     whatsapp_enabled: bool = True
+    sms_enabled: bool = True
     preferences: dict = Field(
         default_factory=lambda: {
             "appointment_confirmation": True,
@@ -89,6 +90,7 @@ class NotificationPreferenceUpdate(BaseModel):
 
     email_enabled: bool | None = None
     whatsapp_enabled: bool | None = None
+    sms_enabled: bool | None = None
     preferences: dict | None = None
     preferred_locale: str | None = Field(default=None, max_length=5)
 
@@ -138,6 +140,7 @@ class ClinicNotificationSettingsBase(BaseModel):
 
     preferred_channel: str = "email"
     fallback_enabled: bool = True
+    sms_daily_limit: int = 100
     manual_channels: list[str] = Field(default_factory=lambda: ["email"])
     settings: dict = Field(
         default_factory=lambda: {
@@ -158,8 +161,9 @@ class ClinicNotificationSettingsUpdate(BaseModel):
     """Schema for updating clinic notification settings."""
 
     settings: dict | None = None
-    preferred_channel: str | None = Field(default=None, pattern="^(email|whatsapp)$")
+    preferred_channel: str | None = Field(default=None, pattern="^(email|whatsapp|sms)$")
     fallback_enabled: bool | None = None
+    sms_daily_limit: int | None = Field(default=None, ge=0)
     manual_channels: list[str] | None = None
 
     _check_manual_channels = field_validator("manual_channels")(_validate_manual_channels)
