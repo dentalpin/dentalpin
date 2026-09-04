@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- feat: CSV expense import — `POST /expenses/import.csv` (dry-run default,
+  commit with `dry_run=false`), `import_expenses_csv` agent tool. Validation
+  reuses `ExpenseCreate`; unknown columns ignored, 1000 rows / 1 MiB caps.
+
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
 
 - feat(i18n): Arabic (ar) locale for the module's frontend layer.
