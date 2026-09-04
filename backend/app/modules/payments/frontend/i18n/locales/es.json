@@ -105,8 +105,9 @@
       "bank_transfer": "Transferencia",
       "direct_debit": "Domiciliación",
       "insurance": "Seguro",
-      "razorpay": "Razorpay",
-      "other": "Otro"
+      "other": "Otro",
+      "upi": "UPI",
+      "netbanking": "Banca online"
     },
     "refund": {
       "title": "Devolver cobro",

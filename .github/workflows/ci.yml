@@ -357,9 +357,20 @@ jobs:
           API_BASE_URL: http://localhost:8000
           API_BASE_URL_SERVER: http://localhost:8000
           # Default Node heap OOMs since the 9-locale × 22-layer i18n
-          # surface (#304 tipped it over); runners have 16 GB.
+          # surface (#304 tipped it over); runners have 16 GB. The RSS
+          # budget below (#322) makes the next regression fail here with
+          # a number instead of as a production-image OOM.
           NODE_OPTIONS: --max-old-space-size=6144
-        run: npm run build
+        run: |
+          /usr/bin/time -v npm run build 2> /tmp/build-time.log || { cat /tmp/build-time.log; exit 1; }
+          grep -v "Maximum resident" /tmp/build-time.log | tail -20
+          rss_kb=$(grep 'Maximum resident set size' /tmp/build-time.log | grep -o '[0-9]*')
+          echo "Frontend prod build peak RSS: $((rss_kb / 1024)) MB" | tee -a "$GITHUB_STEP_SUMMARY"
+          budget_kb=$((6800 * 1024))
+          if [ "$rss_kb" -gt "$budget_kb" ]; then
+            echo "::error::Frontend build peak RSS $((rss_kb / 1024))MB exceeds the 6800MB budget — a module or locale addition tipped it over (issue #322)."
+            exit 1
+          fi
 
       - name: Start Nuxt (production build) in background
         working-directory: frontend

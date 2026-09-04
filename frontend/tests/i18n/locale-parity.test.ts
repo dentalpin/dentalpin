@@ -115,4 +115,19 @@ describe('locale key parity', () => {
     // glob breaks (path change), fail loudly instead of passing vacuously.
     expect(compared).toBeGreaterThan(10)
   })
+
+  // A locale file that exists on disk but is not declared in the layer's
+  // nuxt.config is silently never loaded (#322/#330).
+  it('module layers: locale files on disk match the nuxt.config declaration', () => {
+    for (const mod of readdirSync(MODULES_ROOT)) {
+      const i18nDir = resolve(MODULES_ROOT, mod, 'frontend/i18n/locales')
+      const config = resolve(MODULES_ROOT, mod, 'frontend/nuxt.config.ts')
+      if (!existsSync(i18nDir) || !existsSync(config)) continue
+      const onDisk = readdirSync(i18nDir).filter(f => f.endsWith('.json')).sort()
+      const declared = [...readFileSync(config, 'utf-8').matchAll(/file:\s*['"]([^'"]+)['"]/g)]
+        .map(m => m[1])
+        .sort()
+      expect(onDisk, `${mod}: locale files on disk vs i18n.locales in nuxt.config.ts`).toEqual(declared)
+    }
+  })
 })

@@ -105,8 +105,9 @@
       "bank_transfer": "Transferência",
       "direct_debit": "Débito direto",
       "insurance": "Seguro",
-      "razorpay": "Razorpay",
-      "other": "Outro"
+      "other": "Outro",
+      "upi": "UPI",
+      "netbanking": "Net banking"
     },
     "refund": {
       "title": "Reembolsar pagamento",

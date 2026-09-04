@@ -105,8 +105,9 @@
       "bank_transfer": "Transfer",
       "direct_debit": "Direct debit",
       "insurance": "Insurance",
-      "razorpay": "Razorpay",
-      "other": "Other"
+      "other": "Other",
+      "upi": "UPI",
+      "netbanking": "Net banking"
     },
     "refund": {
       "title": "Refund payment",

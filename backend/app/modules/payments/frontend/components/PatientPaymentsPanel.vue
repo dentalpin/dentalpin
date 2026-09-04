@@ -357,7 +357,7 @@ function handleRefunded() {
         </dl>
         <div
           v-if="canCollect"
-          class="mt-4 pt-4 border-t border-default"
+          class="mt-4 pt-4 border-t border-default space-y-2"
         >
           <UButton
             block
@@ -367,6 +367,10 @@ function handleRefunded() {
           >
             {{ t('payments.patientPanel.cobrar') }}
           </UButton>
+          <ModuleSlot
+            name="payments.collect.actions"
+            :ctx="{ patient: ctx.patient }"
+          />
         </div>
       </UCard>
     </div>
@@ -448,6 +452,10 @@ function handleRefunded() {
                   > · </span>
                 </span>
               </div>
+              <ModuleSlot
+                name="payments.ledger.row.meta"
+                :ctx="{ entry }"
+              />
               <div class="text-caption text-muted mt-0.5">
                 {{ formatDate(entry.occurred_at) }}
               </div>
@@ -491,6 +499,10 @@ function handleRefunded() {
       >
         {{ t('payments.patientPanel.cobrar') }}
       </UButton>
+      <ModuleSlot
+        name="payments.collect.actions"
+        :ctx="{ patient: ctx.patient }"
+      />
     </div>
 
     <PaymentCreateModal

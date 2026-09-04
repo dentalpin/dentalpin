@@ -29,9 +29,16 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { refund } = usePayments()
 
-const PAYMENT_METHODS: PaymentMethod[] = [
+const BASE_METHODS: PaymentMethod[] = [
   'cash', 'card', 'bank_transfer', 'direct_debit', 'insurance', 'other'
 ]
+// The source payment's method (e.g. upi / netbanking, #365) must always be
+// selectable, whatever the clinic's country.
+const PAYMENT_METHODS = computed<PaymentMethod[]>(() =>
+  props.defaultMethod && !BASE_METHODS.includes(props.defaultMethod)
+    ? [...BASE_METHODS, props.defaultMethod]
+    : BASE_METHODS
+)
 
 const REASON_CODES: RefundReason[] = [
   'duplicate', 'overpaid', 'treatment_cancelled', 'dispute', 'other'

@@ -111,14 +111,32 @@ async def record_payment(
     reference: str | None = None,
     notes: str | None = None,
     context: dict | None = None,
+    idempotency_key: str | None = None,
 ) -> Payment:
     """Create a Payment with its allocations transactionally.
+
+    ``idempotency_key`` (#365): when set and a payment with the same key
+    already exists for the clinic, that payment is returned and nothing
+    is written — a gateway callback / agent retry / public-API retry can
+    never double-record money.
 
     Each item of ``allocations`` is ``{target_type, target_id?, amount}``.
     ``context`` is an opaque dict echoed into every ``payment.allocated``
     payload for transactional subscribers (e.g. billing passes the
     invoice the user is collecting on); payments never interprets it.
     """
+    if idempotency_key:
+        existing = (
+            await db.execute(
+                select(Payment).where(
+                    Payment.clinic_id == clinic_id,
+                    Payment.idempotency_key == idempotency_key,
+                )
+            )
+        ).scalar_one_or_none()
+        if existing is not None:
+            return existing
+
     if not allocations:
         raise PaymentWorkflowError("At least one allocation required")
     allocated_total = _allocations_sum(allocations)
@@ -139,6 +157,7 @@ async def record_payment(
         reference=reference,
         notes=notes,
         recorded_by=recorded_by,
+        idempotency_key=idempotency_key or None,
     )
     db.add(payment)
     await db.flush()  # need payment.id for allocations

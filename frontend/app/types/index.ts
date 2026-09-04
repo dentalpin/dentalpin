@@ -1282,7 +1282,11 @@ export interface SmtpTestRequest {
 
 export type InvoiceStatus = 'draft' | 'issued' | 'partial' | 'paid' | 'cancelled' | 'voided'
 
-export type PaymentMethod = 'cash' | 'card' | 'bank_transfer' | 'direct_debit' | 'insurance' | 'razorpay' | 'other'
+export type PaymentMethod
+  = | 'cash' | 'card' | 'bank_transfer' | 'direct_debit' | 'insurance'
+  // India (#365 / #263) — shown only to clinics with country IN.
+    | 'upi' | 'netbanking'
+    | 'other'
 
 // ============================================================================
 // Payments module (issue #53). Patient-centric Payment, allocations,

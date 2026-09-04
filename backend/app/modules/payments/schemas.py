@@ -7,7 +7,9 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
-PaymentMethod = Literal["cash", "card", "bank_transfer", "direct_debit", "insurance", "razorpay", "other"]
+PaymentMethod = Literal[
+    "cash", "card", "bank_transfer", "direct_debit", "insurance", "upi", "netbanking", "other"
+]
 AllocationTarget = Literal["budget", "on_account"]
 RefundReason = Literal["duplicate", "overpaid", "treatment_cancelled", "dispute", "other"]
 
@@ -83,6 +85,8 @@ class PaymentCreate(BaseModel):
     reference: str | None = Field(default=None, max_length=100)
     notes: str | None = None
     allocations: list[AllocationCreate] = Field(min_length=1)
+    # Retry-safe create (#365): same key ⇒ the original payment is returned.
+    idempotency_key: str | None = Field(default=None, max_length=100)
 
     @field_validator("reference", "notes", mode="before")
     @classmethod

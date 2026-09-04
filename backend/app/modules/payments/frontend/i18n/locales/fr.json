@@ -105,8 +105,9 @@
       "bank_transfer": "Virement",
       "direct_debit": "Prélèvement",
       "insurance": "Assurance",
-      "razorpay": "Razorpay",
-      "other": "Autre"
+      "other": "Autre",
+      "upi": "UPI",
+      "netbanking": "Banque en ligne"
     },
     "refund": {
       "title": "Rembourser le paiement",
