@@ -11,6 +11,8 @@ Routes mounted at `/api/v1/patients/`.
 - `GET    /patients`        — list (paginated); `patients.read`
 - `GET    /patients/{id}`   — detail; `patients.read`
 - `POST   /patients`        — create; `patients.write`
+- `POST   /patients/import.csv` — CSV import (dry-run default, `dry_run=false`
+  commits; validation reuses `PatientCreate`); `patients.write`
 - `PUT    /patients/{id}`   — update; `patients.write`
 - `DELETE /patients/{id}`   — soft-archive (status → archived); `patients.write`
 
@@ -34,6 +36,7 @@ Agent tools in `tools.py` (wrap `PatientService`, no logic duplicated).
 | `search_patients` | READ | `PatientService.list_patients` | `patients.read` |
 | `get_patient` | READ | `PatientService.get_patient` | `patients.read` |
 | `create_patient` | WRITE | `PatientService.create_patient` | `patients.write` |
+| `import_patients_csv` | WRITE | `csv_import.validate/import` (dry-run default) | `patients.write` |
 | `update_patient` | WRITE | `PatientService.update_patient` | `patients.write` |
 
 `update_patient` covers contact data only (phone, email) — identity

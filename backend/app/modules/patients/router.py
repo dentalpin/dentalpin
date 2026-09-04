@@ -10,17 +10,19 @@ the ``patients_clinical`` module after Fase B.4.
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
+from .csv_import import CsvImportError, import_patients, validate_patient_csv
 from .schemas import (
     PatientCreate,
     PatientExtendedResponse,
     PatientExtendedUpdate,
+    PatientImportReport,
     PatientResponse,
     PatientUpdate,
 )
@@ -97,6 +99,34 @@ async def create_patient(
         db, ctx.clinic_id, data.model_dump(exclude_unset=True)
     )
     return ApiResponse(data=PatientResponse.model_validate(patient))
+
+
+@router.post(
+    "/import.csv",
+    response_model=ApiResponse[PatientImportReport],
+    status_code=status.HTTP_200_OK,
+)
+async def import_patients_csv(
+    file: Annotated[UploadFile, File()],
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("patients.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    dry_run: bool = Query(default=True),
+) -> ApiResponse[PatientImportReport]:
+    """Import patients from CSV. Dry-run (default) validates only; with
+    ``dry_run=false`` valid rows are created and per-row events fire."""
+    content = await file.read()
+    try:
+        valid, errors, total = validate_patient_csv(content)
+    except CsvImportError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))
+    created = 0
+    if not dry_run and valid:
+        patients = await import_patients(db, ctx.clinic_id, valid)
+        created = len(patients)
+    return ApiResponse(
+        data=PatientImportReport(total=total, valid=len(valid), created=created, errors=errors)
+    )
 
 
 @router.get("/{patient_id}", response_model=ApiResponse[PatientResponse])

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- feat: CSV patient import — `POST /patients/import.csv` (dry-run default,
+  commit with `dry_run=false`), `import_patients_csv` agent tool. Validation
+  reuses `PatientCreate`; unknown columns ignored, 1000 rows / 1 MiB caps.
+
 - fix(#326): the first-patient onboarding rule carries `permission: 'patients.read'`.
 
 - feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).

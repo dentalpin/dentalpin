@@ -120,3 +120,17 @@ class PatientExtendedUpdate(PatientUpdate):
     preferred_language: str | None = Field(default=None, max_length=10)
     address: PatientAddress | None = None
     photo_url: str | None = Field(default=None, max_length=500)
+
+
+class CsvRowError(BaseModel):
+    row: int
+    message: str
+
+
+class PatientImportReport(BaseModel):
+    """Dry-run validation or commit result for a patients CSV upload."""
+
+    total: int
+    valid: int
+    created: int
+    errors: list[CsvRowError]
