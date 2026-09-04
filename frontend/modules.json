@@ -26,6 +26,7 @@
     "/module_layers/patients_clinical/frontend",
     "/module_layers/payments/frontend",
     "/module_layers/periodontogram/frontend",
+    "/module_layers/purchase_orders/frontend",
     "/module_layers/recall_reminders/frontend",
     "/module_layers/recalls/frontend",
     "/module_layers/reports/frontend",
@@ -213,6 +214,17 @@
       "name": "periodontogram",
       "path": "/module_layers/periodontogram/frontend",
       "routes": []
+    },
+    {
+      "name": "purchase_orders",
+      "path": "/module_layers/purchase_orders/frontend",
+      "routes": [
+        "/procurement/items",
+        "/procurement/orders",
+        "/procurement/ratings",
+        "/procurement/reorder",
+        "/procurement/suppliers"
+      ]
     },
     {
       "name": "recall_reminders",
