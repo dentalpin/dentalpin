@@ -14,6 +14,7 @@ from .models import (
     CommunicationMessage,
     NotificationPreference,
     NotificationTemplate,
+    PushSubscription,
 )
 from .router import router
 
@@ -45,10 +46,31 @@ class NotificationsModule(BaseModule):
             # settings.read: every send surface (appointment modal, quote /
             # invoice send) reads GET /settings to know which channel
             # buttons to render (#287) — write stays admin-only.
-            "dentist": ["preferences.read", "preferences.write", "send", "settings.read"],
+            "dentist": [
+                "preferences.read",
+                "preferences.write",
+                "send",
+                "settings.read",
+                "push.read",
+                "push.write",
+            ],
             "hygienist": [],
-            "assistant": ["preferences.read", "preferences.write", "send", "settings.read"],
-            "receptionist": ["preferences.read", "preferences.write", "send", "settings.read"],
+            "assistant": [
+                "preferences.read",
+                "preferences.write",
+                "send",
+                "settings.read",
+                "push.read",
+                "push.write",
+            ],
+            "receptionist": [
+                "preferences.read",
+                "preferences.write",
+                "send",
+                "settings.read",
+                "push.read",
+                "push.write",
+            ],
         },
         "frontend": {
             "layer_path": "frontend",
@@ -63,8 +85,10 @@ class NotificationsModule(BaseModule):
         # on it.
         from .channels import channel_registry
         from .channels.email_adapter import EmailAdapter
+        from .channels.push_adapter import PushAdapter
 
         channel_registry.register(EmailAdapter())
+        channel_registry.register(PushAdapter())
 
     def get_models(self) -> list:
         return [
@@ -74,6 +98,7 @@ class NotificationsModule(BaseModule):
             ClinicChannelSettings,
             ClinicSmtpSettings,
             CommunicationMessage,
+            PushSubscription,
         ]
 
     def get_router(self) -> APIRouter:
@@ -112,6 +137,8 @@ class NotificationsModule(BaseModule):
             "preferences.write",  # Edit notification preferences
             "logs.read",  # View email logs
             "send",  # Send emails manually
+            "push.read",  # View push subscriptions
+            "push.write",  # Register/remove push subscriptions
             "settings.read",  # View clinic notification settings
             "settings.write",  # Edit clinic notification settings
         ]

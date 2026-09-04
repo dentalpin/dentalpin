@@ -25,6 +25,11 @@
   next channel in the order (fallback) and only skips with
   `sms_rate_limited` when nothing else is viable; inbound rows never
   consume the cap; `sms_daily_limit` is echoed back by `/settings`.
+- feat: WebPush channel (T6) — `PushAdapter` + `notification_push_subscriptions`
+  table (`notif_0006`) + `push_enabled` preference + `push.read`/`push.write`
+  permissions + subscription endpoints + VAPID public-key endpoint. One VAPID
+  pair per deployment (`DENTALPIN_VAPID_PRIVATE_KEY`, env only). Dead
+  endpoints (410/404) prune on send. Browser service worker is a follow-up.
 - fix(#326): the SMTP onboarding rule carries `permission: 'notifications.settings.read'`.
 
 - refactor(#126): budget_sent treatment names resolve through the shared `app.core.i18n_names.catalog_name` helper (was es → en → first value).

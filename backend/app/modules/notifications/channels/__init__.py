@@ -15,6 +15,7 @@ from .base import (
     SendStatus,
 )
 from .email_adapter import EmailAdapter
+from .push_adapter import PushAdapter
 from .registry import ChannelRegistry, channel_registry
 
 __all__ = [
@@ -24,6 +25,7 @@ __all__ = [
     "ChannelRegistry",
     "EmailAdapter",
     "OutboundMessage",
+    "PushAdapter",
     "SendStatus",
     "channel_registry",
 ]

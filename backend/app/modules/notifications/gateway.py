@@ -616,6 +616,23 @@ class NotificationGateway:
                 if prefs is not None and not prefs.sms_enabled:
                     continue
                 return channel, addr, requested_kind or "template", None
+            if channel == Channel.PUSH:
+                # Viable when the patient holds at least one browser
+                # subscription; explicit push_enabled=False opts out (missing
+                # prefs row does not block, like email/WhatsApp). The row's
+                # to_address carries the patient email fallback — delivery
+                # itself fans out to subscriptions in the adapter.
+                from .push import PushSubscriptionService
+
+                if patient is None:
+                    continue
+                subs = await PushSubscriptionService.active_for_patient(db, clinic_id, patient.id)
+                if not subs:
+                    continue
+                if prefs is not None and not prefs.push_enabled:
+                    continue
+                addr = (patient.email if patient else None) or to_address or f"push:{patient.id}"
+                return channel, addr, "template", None
         return None
 
     @staticmethod
