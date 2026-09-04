@@ -50,14 +50,23 @@ interface MethodOption {
   icon: string
 }
 
-const METHODS: MethodOption[] = [
+// India-only methods appear for clinics whose server-side country is IN
+// (#365) — same gate as PaymentCreateModal / the payments list filter.
+const clinicCountry = useClinicCountry()
+const METHODS = computed<MethodOption[]>(() => [
   { value: 'cash', icon: 'i-lucide-banknote' },
   { value: 'card', icon: 'i-lucide-credit-card' },
   { value: 'bank_transfer', icon: 'i-lucide-landmark' },
   { value: 'direct_debit', icon: 'i-lucide-repeat' },
   { value: 'insurance', icon: 'i-lucide-shield' },
+  ...(clinicCountry.value === 'IN'
+    ? [
+        { value: 'upi' as PaymentMethod, icon: 'i-lucide-smartphone-nfc' },
+        { value: 'netbanking' as PaymentMethod, icon: 'i-lucide-landmark' }
+      ]
+    : []),
   { value: 'other', icon: 'i-lucide-more-horizontal' }
-]
+])
 
 const todayIso = () => new Date().toISOString().slice(0, 10)
 

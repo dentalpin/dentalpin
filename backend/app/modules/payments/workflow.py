@@ -14,6 +14,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import EventType, event_bus
@@ -159,8 +160,28 @@ async def record_payment(
         recorded_by=recorded_by,
         idempotency_key=idempotency_key or None,
     )
-    db.add(payment)
-    await db.flush()  # need payment.id for allocations
+    if idempotency_key:
+        # Two *concurrent* calls with the same key both miss the pre-check
+        # above; the partial unique index arbitrates. Savepoint so the
+        # loser's failed INSERT doesn't poison the caller's transaction,
+        # then adopt the winner's row — same shape as telephony's ingest.
+        try:
+            async with db.begin_nested():
+                db.add(payment)
+                await db.flush()
+        except IntegrityError:
+            winner = (
+                await db.execute(
+                    select(Payment).where(
+                        Payment.clinic_id == clinic_id,
+                        Payment.idempotency_key == idempotency_key,
+                    )
+                )
+            ).scalar_one()
+            return winner
+    else:
+        db.add(payment)
+        await db.flush()  # need payment.id for allocations
 
     created_allocations: list[PaymentAllocation] = []
     for spec in allocations:

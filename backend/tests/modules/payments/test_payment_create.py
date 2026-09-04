@@ -240,3 +240,57 @@ async def test_india_methods_accepted(
         )
         assert resp.status_code == 201, resp.text
         assert resp.json()["data"]["method"] == method
+
+
+@pytest.mark.asyncio
+async def test_idempotency_key_concurrent_race_adopts_winner(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    monkeypatch,
+):
+    """Two concurrent record_payment calls with one key: the loser of the
+    unique index must return the winner's payment, not 500 (#365 follow-up)."""
+    from sqlalchemy import text
+
+    from app.modules.payments import workflow as wf
+
+    setup = await _setup_clinic(db_session, auth_headers, client)
+    original = wf._validate_allocations_for_clinic
+
+    async def validate_then_race(db, clinic_id, allocations):
+        # Runs after the pre-check SELECT and before the INSERT — inject the
+        # concurrent writer's row here so our INSERT collides.
+        await original(db, clinic_id, allocations)
+        await db.execute(
+            text(
+                "INSERT INTO payments (id, clinic_id, patient_id, amount, currency, method, "
+                " payment_date, recorded_by, idempotency_key, created_at, updated_at) "
+                "VALUES (gen_random_uuid(), :clinic, :patient, 80.00, 'EUR', 'card', "
+                " CURRENT_DATE, :user, 'gw-race-1', now(), now())"
+            ),
+            {
+                "clinic": setup["clinic_id"],
+                "patient": setup["patient_id"],
+                "user": setup["user_id"],
+            },
+        )
+
+    monkeypatch.setattr(wf, "_validate_allocations_for_clinic", validate_then_race)
+    resp = await client.post(
+        f"/api/v1/payments?clinic_id={setup['clinic_id']}",
+        headers=auth_headers,
+        json={
+            "patient_id": setup["patient_id"],
+            "amount": "80.00",
+            "method": "card",
+            "payment_date": date.today().isoformat(),
+            "allocations": [{"target_type": "on_account", "amount": "80.00"}],
+            "idempotency_key": "gw-race-1",
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    listing = await client.get(
+        f"/api/v1/payments?clinic_id={setup['clinic_id']}", headers=auth_headers
+    )
+    assert listing.json()["total"] == 1
