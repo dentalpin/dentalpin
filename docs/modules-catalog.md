@@ -36,6 +36,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `patients` | 0.1.0 | official | — | auto | no | 2 | 3 | 0 | yes |
 | `patients_clinical` | 0.1.0 | official | patients | auto | no | 4 | 1 | 0 | yes |
 | `payments` | 0.1.0 | official | patients, budget | auto | no | 4 | 3 | 2 | yes |
+| `payroll` | 0.1.0 | official | — | manual | yes | 3 | 2 | 0 | no |
 | `periodontogram` | 0.1.0 | official | patients, odontogram | manual | yes | 2 | 1 | 2 | yes |
 | `purchase_orders` | 0.1.0 | official | contacts, inventory, suppliers | manual | yes | 2 | 3 | 0 | no |
 | `recall_reminders` | 0.1.0 | community | recalls, notifications, patients | manual | yes | 0 | 0 | 1 | yes |
@@ -680,6 +681,26 @@ Patient-centric collections, allocations to budgets / on-account, refunds, patie
   - `odontogram.treatment.performed`
   - `treatment_plan.item_session_completed`
 - **Module CLAUDE.md:** [`backend/app/modules/payments/CLAUDE.md`](../backend/app/modules/payments/CLAUDE.md)
+
+### `payroll` — v0.1.0
+
+Staff payroll with encrypted bank/tax data, periods, entries and reports.
+
+- **Author:** lamanji
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** —
+- **Frontend layer:** —
+- **Permissions:**
+  - `payroll.read`
+  - `payroll.reports.read`
+  - `payroll.write`
+- **Events emitted:**
+  - `payroll.period.status_changed`
+  - `payroll.profile.updated`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/payroll/CLAUDE.md`](../backend/app/modules/payroll/CLAUDE.md)
 
 ### `periodontogram` — v0.1.0
 

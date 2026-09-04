@@ -94,6 +94,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `payment.recorded` | `EventType.PAYMENT_RECORDED` | `payments` | — |
 | `payment.refunded` | `EventType.PAYMENT_REFUNDED` | `payments` | `activity_journal`, `billing` |
 | `payment.voided` | `EventType.PAYMENT_VOIDED` | — | — |
+| `payroll.period.status_changed` | `EventType.PAYROLL_PERIOD_STATUS_CHANGED` | `payroll` | — |
+| `payroll.profile.updated` | `EventType.PAYROLL_PROFILE_UPDATED` | `payroll` | — |
 | `periodontogram.snapshot.closed` | `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED` | `periodontogram` | — |
 | `purchase_order.created` | `EventType.PURCHASE_ORDER_CREATED` | `purchase_orders` | — |
 | `purchase_order.received` | `EventType.PURCHASE_ORDER_RECEIVED` | `purchase_orders` | — |
@@ -792,6 +794,20 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.PAYMENT_VOIDED`
 - **Publishers:** _none in tree — declared but unused_
+- **Subscribers:** —
+
+### `payroll.period.status_changed`
+
+- **Constant:** `EventType.PAYROLL_PERIOD_STATUS_CHANGED`
+- **Publishers:**
+  - `payroll` — `backend/app/modules/payroll/service.py`
+- **Subscribers:** —
+
+### `payroll.profile.updated`
+
+- **Constant:** `EventType.PAYROLL_PROFILE_UPDATED`
+- **Publishers:**
+  - `payroll` — `backend/app/modules/payroll/service.py`
 - **Subscribers:** —
 
 ### `periodontogram.snapshot.closed`
