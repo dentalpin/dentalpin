@@ -11,7 +11,7 @@ Returned by `GdprModule.get_permissions()`
 | Permission | Allows | Required by |
 |------------|--------|-------------|
 | `gdpr.requests.read` | List and view data-subject requests, erasure audit, exports | `GET /api/v1/gdpr/requests`, `GET /api/v1/gdpr/requests/{id}`, `GET /api/v1/gdpr/export/{patient_id}` |
-| `gdpr.requests.write` | Create/transition/delete DSRs; run erasure | `POST /api/v1/gdpr/requests`, `PATCH /api/v1/gdpr/requests/{id}`, `DELETE /api/v1/gdpr/requests/{id}`, `POST /api/v1/gdpr/erasure` |
+| `gdpr.requests.write` | Create/transition DSRs (never delete — accountability, Art. 5(2)); run erasure | `POST /api/v1/gdpr/requests`, `PATCH /api/v1/gdpr/requests/{id}`, `POST /api/v1/gdpr/erasure` |
 | `gdpr.consents.read` | List patient consents | `GET /api/v1/gdpr/consents` |
 | `gdpr.consents.write` | Record consent grant or withdrawal | `POST /api/v1/gdpr/consents` |
 | `gdpr.retention.read` | List active retention policies | `GET /api/v1/gdpr/retention` |

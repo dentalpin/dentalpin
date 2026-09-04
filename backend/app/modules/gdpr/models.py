@@ -8,7 +8,7 @@ by ``clinic_id`` for multi-tenancy.
 
 from __future__ import annotations
 
-from datetime import date, datetime
+from datetime import UTC, date, datetime
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
@@ -24,12 +24,15 @@ if TYPE_CHECKING:
 
 
 class GdprRequest(Base, TimestampMixin):
-    """A data-subject request (Art. 15-21 GDPR).
+    """A data-subject request (Art. 15-20 GDPR) — v1 is a ticket tracker.
 
     Status lifecycle: ``received`` -> ``in_progress`` -> ``completed`` (one
     of ``access``/``rectification``/``erasure``/``portability``/``restrict``
-    subtypes), or ``rejected`` (Art. 12(5)). A 30-day deadline is derived
-    from ``received_at`` and surfaced via ``SlaCalculator``.
+    subtypes), or ``rejected`` (Art. 12(5)). ``rectification`` and
+    ``restrict`` track the request but do not mutate the patient record in
+    v1; objection (Art. 21) has no request type yet. A 30-day deadline is
+    derived from ``received_at`` and surfaced via ``SlaCalculator``.
+    DSR rows are never deleted (accountability, Art. 5(2)).
     """
 
     __tablename__ = "gdpr_requests"
@@ -50,8 +53,12 @@ class GdprRequest(Base, TimestampMixin):
     status: Mapped[str] = mapped_column(
         String(20), default="received"
     )  # received|in_progress|completed|rejected
-    received_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
-    deadline_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
+    received_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
+    deadline_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     resolved_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
 
@@ -88,9 +95,11 @@ class RetentionPolicy(Base, TimestampMixin):
 
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"), index=True)
-    # Data category the rule applies to, e.g. "clinical", "billing",
-    # "radiology", "administrative". Scoped per clinic so each clinic can
-    # set its own legal hold periods.
+    # Data category the rule applies to. Only the closed erasure
+    # vocabulary (email | phone | identity — see schemas.ErasureCategory)
+    # can ever be erased; policies for other categories (e.g. "clinical",
+    # "billing", "radiology") document the hold and always retain.
+    # Scoped per clinic so each clinic can set its own legal hold periods.
     data_category: Mapped[str] = mapped_column(String(100))
     retention_years: Mapped[int] = mapped_column(Integer)
     # Optional extra hold (e.g. a litigation hold). When set, erasure waits
@@ -112,9 +121,9 @@ class ErasureAuditLog(Base, TimestampMixin):
         ForeignKey("patients.id"), index=True, nullable=True
     )
     # UUID of the DSR (if any) that triggered this erasure; kept as a
-    # snapshot so the audit trail reads cleanly even if the request is
-    # later deleted. Not an FK constraint — an erasure can be run directly
-    # by an agent without a request record.
+    # snapshot so the audit trail reads cleanly. Not an FK constraint —
+    # an erasure can be run directly by an agent without a request
+    # record. (DSR rows themselves are never deleted.)
     request_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
     # Categories erased (subset of the retention data_categories), stored as a
     # JSON array for auditability.
@@ -122,7 +131,9 @@ class ErasureAuditLog(Base, TimestampMixin):
     # Snapshot of which identifiers were blanked, keyed by category.
     fields_blanked: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     rationale: Mapped[str | None] = mapped_column(Text, nullable=True)
-    executed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
+    executed_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     # UUID of the operator/agent who ran the erasure (audit attribution).
     executed_by: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
 
@@ -136,7 +147,9 @@ class DataBreach(Base, TimestampMixin):
 
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
     clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"), index=True)
-    occurred_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.now)
+    occurred_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), default=lambda: datetime.now(UTC)
+    )
     description: Mapped[str] = mapped_column(Text)
     data_involved: Mapped[list] = mapped_column(JSON, default=list)
     affected_people: Mapped[int | None] = mapped_column(Integer, nullable=True)

@@ -12,7 +12,8 @@ Routes mounted at `/api/v1/gdpr/`.
 - `GET    /requests/{id}`     — single DSR; `gdpr.requests.read`
 - `POST   /requests`          — create a DSR (201); `gdpr.requests.write`
 - `PATCH  /requests/{id}`     — transition status; auto-stamps `resolved_at`; `gdpr.requests.write`
-- `DELETE /requests/{id}`     — remove a DSR record (204); `gdpr.requests.write`
+- (no `DELETE /requests/{id}` — DSRs are accountability records, Art. 5(2),
+  immutable except for status transitions)
 - `GET    /consents`          — list consents (optionally per patient); `gdpr.consents.read`
 - `POST   /consents`          — record a consent grant or withdrawal (201); `gdpr.consents.write`
 - `GET    /retention`         — list active retention policies; `gdpr.retention.read`
@@ -35,9 +36,10 @@ Routes mounted at `/api/v1/gdpr/`.
   `request_type` (access | rectification | erasure | portability | restrict),
   `status` (received | in_progress | completed | rejected), `received_at`,
   `deadline_at` (30-day SLA, Art. 12(3)), `resolved_at`.
-- `patient_consents` — per-patient processing consent (Art. 7-8): `purpose`,
-  `granted`, `provided_text` (verbatim consent copy), `granted_at`,
-  `withdrawn_at`. Grant/withdraw keeps a single row for audit continuity.
+- `patient_consents` — append-only consent events (Art. 7-8): every
+  grant/withdraw inserts a row (`purpose`, `granted`, `provided_text`
+  verbatim, `granted_at`, `withdrawn_at`). Latest row per
+  (patient, purpose) is current; history is never mutated.
 - `retention_policies` — per-clinic rules (Art. 5(1)(e)): `data_category`,
   `retention_years`, `legal_hold_until`, `is_active`. These gate erasure
   eligibility.
@@ -57,14 +59,20 @@ patient may request deletion, but a clinic may retain data where another legal
 basis applies (Art. 17(3) — billing, legal claims, public health). `_erasure`
 therefore:
 
-1. Looks up active `retention_policies` for the requested `categories`.
-2. A category is **erasable** only when its policy has `retention_years == 0`
-   AND any `legal_hold_until` has passed.
-3. Categories with no policy, unexpired years, or an unexpired legal hold are
+1. Looks up the patient first (clinic-scoped) — unknown/other-clinic
+   ids return `None` (404 upstream, error in the tool) before anything is
+   written, because the audit table FKs `patient_id`.
+2. Looks up active `retention_policies` for the requested `categories`
+   (closed vocabulary `email | phone | identity` — anything else is a 422;
+   unmapped policy categories always retain).
+3. A category is **erasable** only when its policy's `legal_hold_until`
+   has passed AND its age window has passed (`retention_years == 0` =
+   no age hold, else N years from the patient's `updated_at`).
+4. Categories with no policy, unexpired holds, or no field mapping are
    **retained**.
-4. For each erasable category, the patient's corresponding identity/PII fields
+5. For each erasable category, the patient's corresponding identity/PII fields
    (`email`+`billing_email`, `phone`, `national_id`) are set to `NULL`.
-5. Every run writes an `ErasureAuditLog` and publishes `gdpr.erasure.executed`.
+6. Every run writes an `ErasureAuditLog` and publishes `gdpr.erasure.executed`.
 
 Sibling modules must not add hard-DELETE for GDPR; if a future full-erasure
 feature ships, it must clear rows via a dedicated reversible job, not an
@@ -119,10 +127,12 @@ All tools filter by `ctx.clinic_id` and return native values (UUID/datetime).
 - **Every query filters `clinic_id`** — including agent tools. A DSR for a
   patient of another clinic 404s, never leaks.
 - **Never hard-delete a patient for GDPR.** Erasure blanks PII; the row stays.
-- **A consent withdrawal must not delete the consent row** — it flips
-  `granted=false` and stamps `withdrawn_at` for audit.
-- **`retention_years == 0` is "no legal hold on age"** — erasure still needs
-  any `legal_hold_until` to have passed.
+- **A consent withdrawal appends — never mutates.** Re-granting must not
+  clear `withdrawn_at`; latest-per-(patient, purpose) is current.
+- **`retention_years` runs from the patient's `updated_at`.**
+  `0` = no age hold; N > 0 = erasable once N years past `updated_at`
+  (minimum-honest anchor until a last-visit provider exists) — and erasure
+  still needs any `legal_hold_until` to have passed.
 - **Approvals are additive:** `update_request` moves `received → in_progress →
   completed/rejected`; going back to `received` clears `resolved_at`.
 

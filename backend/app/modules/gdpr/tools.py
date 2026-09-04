@@ -8,7 +8,12 @@ from pydantic import BaseModel, Field
 
 from app.core.agents import AgentContext, Tool, ToolCategory
 
-from .schemas import ConsentCreate, GdprRequestCreate, RetentionPolicyCreate
+from .schemas import (
+    ConsentCreate,
+    ErasureCategory,
+    GdprRequestCreate,
+    RetentionPolicyCreate,
+)
 from .service import ConsentService, ErasureService, GdprService, RetentionService
 
 
@@ -39,13 +44,19 @@ class ListConsentsArgs(BaseModel):
 
 
 class CreatePolicyArgs(BaseModel):
-    data_category: str = Field(description="e.g. clinical, billing, radiology")
+    data_category: str = Field(
+        description="retention category; only email|phone|identity are erasable, "
+        "other values (e.g. clinical, billing, radiology) document the hold "
+        "and always retain"
+    )
     retention_years: int = Field(ge=0)
 
 
 class ExecuteErasureArgs(BaseModel):
     patient_id: str = Field(description="UUID of the patient")
-    categories: list[str] = Field(description="data categories to erase")
+    categories: list[ErasureCategory] = Field(
+        description="data categories to erase: email|phone|identity only"
+    )
     rationale: str | None = None
 
 
@@ -150,10 +161,12 @@ async def _execute_erasure(ctx: AgentContext, params: ExecuteErasureArgs) -> dic
         ctx.db,
         ctx.clinic_id,
         patient_id=UUID(params.patient_id),
-        categories=params.categories,
+        categories=list(params.categories),
         rationale=params.rationale,
         executed_by=ctx.agent_id,
     )
+    if result is None:
+        return {"error": "patient not found"}
     return {
         "patient_id": result.patient_id,
         "erased_categories": result.erased_categories,

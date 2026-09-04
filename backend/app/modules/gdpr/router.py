@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -105,20 +104,12 @@ async def update_request(
     row = await GdprService.get_request(db, ctx.clinic_id, request_id)
     if not row:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request not found")
-    row = await GdprService.update_request(db, row, data, resolved_by=getattr(ctx, "user_id", None))
+    row = await GdprService.update_request(db, row, data, resolved_by=ctx.user_id)
     return ApiResponse(data=GdprRequestResponse.model_validate(row))
 
 
-@router.delete("/requests/{request_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_request(
-    request_id: UUID,
-    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
-    _: Annotated[None, Depends(require_permission("gdpr.requests.write"))],
-    db: Annotated[AsyncSession, Depends(get_db)],
-) -> None:
-    deleted = await GdprService.delete_request(db, ctx.clinic_id, request_id)
-    if not deleted:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Request not found")
+# NOTE: no DELETE /requests/{id} — DSRs are accountability records
+# (Art. 5(2)) and are immutable except for status transitions above.
 
 
 # ---------------------------------------------------------------------------
@@ -230,8 +221,10 @@ async def execute_erasure(
         patient_id=data.patient_id,
         categories=data.categories,
         rationale=data.rationale,
-        executed_by=getattr(ctx, "user_id", None),
+        executed_by=ctx.user_id,
     )
+    if result is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
     return ApiResponse(data=result)
 
 
@@ -335,7 +328,6 @@ async def export_patient_data(
         data=ExportResponse(
             patient_id=patient_id,
             clinic_id=ctx.clinic_id,
-            definition_year=datetime.now().year,
             data=data,
         )
     )

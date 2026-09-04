@@ -7,7 +7,7 @@ bus for cross-module reactions (patient_timeline, notifications, etc.).
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
 
 from sqlalchemy import delete, func, select
@@ -41,7 +41,7 @@ class GdprService:
     async def create_request(
         db: AsyncSession, clinic_id: UUID, payload: GdprRequestCreate
     ) -> GdprRequest:
-        received_at = datetime.now()
+        received_at = datetime.now(UTC)
         row = GdprRequest(
             clinic_id=clinic_id,
             patient_id=payload.patient_id,
@@ -114,7 +114,7 @@ class GdprService:
         for field, value in changes.items():
             setattr(row, field, value)
         if "status" in changes and changes["status"] in ("completed", "rejected"):
-            row.resolved_at = datetime.now()
+            row.resolved_at = datetime.now(UTC)
         elif "status" in changes and changes["status"] == "received":
             row.resolved_at = None
         await db.commit()
@@ -123,7 +123,7 @@ class GdprService:
             await event_bus.publish(
                 EventType.GDPR_REQUEST_STATUS_CHANGED,
                 {
-                    "clinic_id": str(clinic_id_of(row)),
+                    "clinic_id": str(row.clinic_id),
                     "request_id": str(row.id),
                     "patient_id": str(row.patient_id) if row.patient_id else None,
                     "from_status": old_status,
@@ -134,64 +134,30 @@ class GdprService:
             )
         return row
 
-    @staticmethod
-    async def delete_request(db: AsyncSession, clinic_id: UUID, request_id: UUID) -> bool:
-        result = await db.execute(
-            delete(GdprRequest).where(
-                GdprRequest.id == request_id, GdprRequest.clinic_id == clinic_id
-            )
-        )
-        await db.commit()
-        return (result.rowcount or 0) > 0
-
-
-def clinic_id_of(row: GdprRequest) -> str:
-    return str(row.clinic_id)
-
 
 class ConsentService:
     @staticmethod
     async def grant_or_withdraw(
         db: AsyncSession, clinic_id: UUID, payload: ConsentCreate
     ) -> PatientConsent:
-        """Record a consent grant/withdrawal (Art. 7-8). A withdrawal flips
-        an existing active consent; a re-grant revives it. Removal is never
-        destructive — the row stays for audit."""
-        existing = (
-            (
-                await db.execute(
-                    select(PatientConsent).where(
-                        PatientConsent.clinic_id == clinic_id,
-                        PatientConsent.patient_id == payload.patient_id,
-                        PatientConsent.purpose == payload.purpose,
-                    )
-                )
-            )
-            .scalars()
-            .first()
-        )
+        """Record a consent grant/withdrawal (Art. 7-8) as an immutable event.
 
-        now = datetime.now()
-        if existing:
-            existing.granted = payload.granted
-            existing.provided_text = payload.provided_text
-            if payload.granted:
-                existing.granted_at = now
-                existing.withdrawn_at = None
-            else:
-                existing.withdrawn_at = now
-            row = existing
-        else:
-            row = PatientConsent(
-                clinic_id=clinic_id,
-                patient_id=payload.patient_id,
-                purpose=payload.purpose,
-                granted=payload.granted,
-                provided_text=payload.provided_text,
-                granted_at=now if payload.granted else None,
-                withdrawn_at=None if payload.granted else now,
-            )
-            db.add(row)
+        Every call APPENDS a row — grant → withdraw → grant leaves three
+        rows, so the withdrawal is never lost. The latest row per
+        (patient, purpose) (``created_at`` desc) is the current state;
+        ``list_consents`` already orders that way.
+        """
+        now = datetime.now(UTC)
+        row = PatientConsent(
+            clinic_id=clinic_id,
+            patient_id=payload.patient_id,
+            purpose=payload.purpose,
+            granted=payload.granted,
+            provided_text=payload.provided_text,
+            granted_at=now if payload.granted else None,
+            withdrawn_at=None if payload.granted else now,
+        )
+        db.add(row)
         await db.commit()
         await db.refresh(row)
         if payload.granted:
@@ -306,16 +272,33 @@ class ErasureService:
     once every active retention policy for the data category no longer holds;
     the patient row itself is never hard-deleted (L7 governance)."""
 
+    # Closed vocabulary (mirrors ``schemas.ErasureCategory``): the only data
+    # categories that map onto patient PII fields. A category without a
+    # mapping here can never be reported as erased.
+    category_to_fields: dict[str, list[str]] = {
+        "email": ["email", "billing_email"],
+        "phone": ["phone"],
+        "identity": ["national_id"],
+    }
+
     @staticmethod
     async def erasure_eligible(
-        db: AsyncSession, clinic_id: UUID, categories: list[str]
+        db: AsyncSession,
+        clinic_id: UUID,
+        categories: list[str],
+        anchor_date: date,
     ) -> tuple[list[str], list[str]]:
         """Return (erasable, retained) categories given active retention policies.
 
-        A category is blocked if any active policy has an unexpired
-        retention_years window or an unexpired legal_hold_until.
+        A category is erasable only when it has an active policy whose
+        legal hold has expired AND whose retention window has passed:
+        ``retention_years == 0`` means no age hold, otherwise the window
+        runs ``retention_years`` years from ``anchor_date`` (the patient's
+        ``updated_at`` — the minimum-honest anchor until a last-visit
+        provider exists). Categories with no policy, or with no field
+        mapping in ``category_to_fields``, are retained.
         """
-        now = datetime.now()
+        today = datetime.now(UTC).date()
         policies = await RetentionService.list_active(db, clinic_id)
         by_category: dict[str, RetentionPolicy] = {p.data_category: p for p in policies}
 
@@ -323,13 +306,16 @@ class ErasureService:
         retained: list[str] = []
         for cat in categories:
             policy = by_category.get(cat)
-            if policy is None:
-                # No policy configured → conservative default: retain.
+            if policy is None or cat not in ErasureService.category_to_fields:
+                # No policy configured, or nothing to blank → retain.
                 retained.append(cat)
                 continue
-            legal_expired = policy.legal_hold_until is None or policy.legal_hold_until < now.date()
-            year_passed = (policy.retention_years or 0) == 0  # 0 years = no retention hold
-            if legal_expired and year_passed:
+            legal_expired = policy.legal_hold_until is None or policy.legal_hold_until < today
+            if (policy.retention_years or 0) == 0:
+                age_expired = True
+            else:
+                age_expired = (today - anchor_date).days >= policy.retention_years * 365
+            if legal_expired and age_expired:
                 erasable.append(cat)
             else:
                 retained.append(cat)
@@ -344,28 +330,29 @@ class ErasureService:
         rationale: str | None,
         request_id: UUID | None = None,
         executed_by: UUID | None = None,
-    ) -> ErasureResult:
+    ) -> ErasureResult | None:
         from app.modules.patients.models import Patient
 
-        erasable, retained = await ErasureService.erasure_eligible(db, clinic_id, categories)
-        # Blank only the selected patient's PII (still scoped by clinic).
+        # Patient first: unknown or other-clinic ids are None upstream
+        # (404 in the router, error in the tool). The audit table FKs
+        # patient_id, so nothing is written before this check.
         patient = (
             await db.execute(
                 select(Patient).where(Patient.id == patient_id, Patient.clinic_id == clinic_id)
             )
         ).scalar_one_or_none()
-        fields_blanked: dict[str, list[str]] = {}
-        if patient and erasable:
-            # Each data category maps to the patient identity/PII fields it
-            # covers. A category is only blanked when it is erasable.
-            category_to_fields: dict[str, list[str]] = {
-                "email": ["email", "billing_email"],
-                "phone": ["phone"],
-                "identity": ["national_id"],
-            }
+        if patient is None:
+            return None
+        anchor = (patient.updated_at or datetime.now(UTC)).date()
+        erasable, retained = await ErasureService.erasure_eligible(
+            db, clinic_id, categories, anchor
+        )
+        # Blank only the selected patient's PII (still scoped by clinic).
+        fields_blanked: dict[str, str] = {}
+        if erasable:
             seen: set[str] = set()
             for cat in erasable:
-                for field in category_to_fields.get(cat, []):
+                for field in ErasureService.category_to_fields.get(cat, []):
                     if field in seen:
                         continue
                     seen.add(field)
@@ -423,7 +410,7 @@ class DataBreachService:
     async def create(db: AsyncSession, clinic_id: UUID, payload: DataBreachCreate) -> DataBreach:
         row = DataBreach(
             clinic_id=clinic_id,
-            occurred_at=payload.occurred_at or datetime.now(),
+            occurred_at=payload.occurred_at or datetime.now(UTC),
             description=payload.description,
             data_involved=payload.data_involved,
             affected_people=payload.affected_people,
@@ -476,7 +463,7 @@ class DataBreachService:
         for field, value in payload.model_dump(exclude_unset=True).items():
             setattr(row, field, value)
         if payload.status == "reported" and not row.notified_authority_at:
-            row.notified_authority_at = datetime.now()
+            row.notified_authority_at = datetime.now(UTC)
         if row.status == "reported":
             row.reported = True
         await db.commit()
@@ -542,22 +529,3 @@ class ExportService:
                 for r in requests
             ],
         }
-
-    @staticmethod
-    async def record_export(
-        db: AsyncSession, clinic_id: UUID, patient_id: UUID, by: UUID | None = None
-    ) -> None:
-        # As an accountability trail, every export is reflected in the
-        # erasure audit log's sibling: here we persist to gdpr_requests via
-        # a side log. For minimal scope we just publish the event; the
-        # access request (DSR) itself already records the export activity.
-        await event_bus.publish(
-            EventType.GDPR_REQUEST_CREATED,
-            {
-                "clinic_id": str(clinic_id),
-                "request_id": None,
-                "patient_id": str(patient_id),
-                "request_type": "access",
-            },
-            db=db,
-        )

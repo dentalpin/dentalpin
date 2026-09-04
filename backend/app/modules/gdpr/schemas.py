@@ -11,6 +11,11 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field
 RequestType = Literal["access", "rectification", "erasure", "portability", "restrict"]
 RequestStatus = Literal["received", "in_progress", "completed", "rejected"]
 
+# Closed erasure vocabulary (Art. 17): only categories with a documented
+# field mapping in ErasureService.category_to_fields are erasable. Unknown
+# values are a 422 — an erasure must never report a category it cannot blank.
+ErasureCategory = Literal["email", "phone", "identity"]
+
 
 class GdprRequestCreate(BaseModel):
     patient_id: UUID | None = None
@@ -94,8 +99,9 @@ class ErasureRequest(BaseModel):
     """Define which data categories to erase for a patient."""
 
     patient_id: UUID
-    # Categories to erase; each must map to an active retention policy.
-    categories: list[str] = Field(min_length=1)
+    # Closed vocabulary (ErasureCategory): each value maps to an active
+    # retention policy AND to patient PII fields. Unknown values are a 422.
+    categories: list[ErasureCategory] = Field(min_length=1)
     rationale: str | None = Field(default=None, max_length=2000)
 
 
@@ -157,6 +163,5 @@ class ExportResponse(BaseModel):
     """Portable data export payload."""
 
     patient_id: UUID
-    definition_year: int
     clinic_id: UUID
     data: dict
