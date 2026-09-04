@@ -111,3 +111,12 @@ lifecycle (L7): a cancelled/received order is never removed.
 
 See [`./permissions.md`](./permissions.md) and [`./events.md`](./events.md)
 for full detail.
+
+## Frontend
+
+One shared Nuxt layer owned here (`backend/app/modules/purchase_orders/frontend/`)
+covers the whole suite (#227): `/procurement/suppliers`, `/procurement/items`,
+`/procurement/orders`, `/procurement/reorder`, `/procurement/ratings`, with
+nav entries gated on each area's read permission and `en`/`es` locales under
+`frontend/i18n/locales/`. Screen docs live under
+`docs/user-manual/{en,es}/procurement/`.

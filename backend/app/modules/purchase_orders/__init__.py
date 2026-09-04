@@ -39,6 +39,50 @@ class PurchaseOrdersModule(BaseModule):
             "assistant": ["read", "write"],
             "receptionist": ["read", "write"],
         },
+        # Shared procurement frontend (suite #227): one Nuxt layer owned
+        # here with a page per area. Cross-module permission gating is
+        # validator-legal (namespaced permission required, same-module
+        # ownership is not).
+        "frontend": {
+            "layer_path": "frontend",
+            "navigation": [
+                {
+                    "label": "nav.procurementSuppliers",
+                    "to": "/procurement/suppliers",
+                    "icon": "i-lucide-truck",
+                    "permission": "suppliers.read",
+                    "order": 80,
+                },
+                {
+                    "label": "nav.procurementItems",
+                    "to": "/procurement/items",
+                    "icon": "i-lucide-link",
+                    "permission": "supplier_items.read",
+                    "order": 81,
+                },
+                {
+                    "label": "nav.procurementOrders",
+                    "to": "/procurement/orders",
+                    "icon": "i-lucide-clipboard-list",
+                    "permission": "purchase_orders.read",
+                    "order": 82,
+                },
+                {
+                    "label": "nav.procurementReorder",
+                    "to": "/procurement/reorder",
+                    "icon": "i-lucide-rotate-ccw",
+                    "permission": "inventory_reorder.read",
+                    "order": 83,
+                },
+                {
+                    "label": "nav.procurementRatings",
+                    "to": "/procurement/ratings",
+                    "icon": "i-lucide-star",
+                    "permission": "supplier_ratings.read",
+                    "order": 84,
+                },
+            ],
+        },
     }
 
     def get_models(self) -> list:
