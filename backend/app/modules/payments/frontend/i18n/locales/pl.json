@@ -102,7 +102,9 @@
       "bank_transfer": "Przelew",
       "direct_debit": "Polecenie zapłaty",
       "insurance": "Ubezpieczenie",
-      "other": "Inna"
+      "other": "Inna",
+      "upi": "UPI",
+      "netbanking": "Bankowość internetowa"
     },
     "refund": {
       "title": "Zwrot płatności",

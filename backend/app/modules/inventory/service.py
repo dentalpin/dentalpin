@@ -1,6 +1,6 @@
 """InventoryService — stock CRUD, atomic adjustments and the movement ledger.
 
-Every quantity change goes through :meth:`_apply_movement`: a
+Every quantity change goes through :meth:`apply_movement`: a
 ``SELECT … FOR UPDATE`` row lock (concurrent adjustments serialise at
 the row level — the DB arbitrates, never app code) followed by a Python
 arithmetic floor check and an append-only ``stock_movements`` row in the
@@ -199,7 +199,7 @@ class InventoryService:
         pre = await InventoryService.get_item(db, clinic_id, item_id)
         was_low = pre.is_low_stock
 
-        updated, _applied = await InventoryService._apply_movement(
+        updated, _applied = await InventoryService.apply_movement(
             db,
             clinic_id=clinic_id,
             item_id=item_id,
@@ -221,7 +221,7 @@ class InventoryService:
         return updated
 
     @staticmethod
-    async def _apply_movement(
+    async def apply_movement(
         db: AsyncSession,
         *,
         clinic_id: UUID,
@@ -434,13 +434,13 @@ class InventoryService:
 
         Each entry in *links* is an ``(inventory_item_id, quantity)``
         pair resolved by the caller (``treatment_consumables`` owns the
-        links table).  Each quantity is deducted via :meth:`_apply_movement`
+        links table).  Each quantity is deducted via :meth:`apply_movement`
         (``clamp_at_zero=True``): clinical care is never blocked by
         bookkeeping — an underflowing deduction floors at zero and the
         movement records what was actually applied.
 
         Duplicate deliveries for the same treatment are silently ignored —
-        ``_apply_movement`` bails before touching stock when the movement
+        ``apply_movement`` bails before touching stock when the movement
         already exists (at-least-once bus contract per ADR 0019), with the
         partial unique index as the concurrency backstop.
 
@@ -449,7 +449,7 @@ class InventoryService:
         """
         applied: list[dict] = []
         for item_id, quantity in links:
-            updated, applied_delta = await InventoryService._apply_movement(
+            updated, applied_delta = await InventoryService.apply_movement(
                 db,
                 clinic_id=clinic_id,
                 item_id=item_id,

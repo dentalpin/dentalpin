@@ -90,6 +90,20 @@ Idempotency is DB-level: `uq_earned_treatment_session` (session rows) +
 partial index `uq_earned_treatment_null_session` (NULL rows, `pay_0004`
 — plain unique constraints treat NULLs as distinct).
 
+## Frontend slots rendered
+
+Entry points for payment-*gateway* modules (#365 / #263, ADR 0010).
+`payments` registers nothing into them; on a clean install they render
+nothing. Country gating is the gateway's `condition` (same as
+`verifactu` / `india_gst`), never ours.
+
+| Slot | Where | `ctx` |
+|---|---|---|
+| `payments.collect.actions` | next to "New payment" (payments page), "Cobrar" (`PatientPaymentsPanel`, both buttons), "Collect" (`BudgetPaymentsCard`) | `{ patient?, budget?, prefer_invoice_id? }` — each host passes what it has |
+| `payments.list.row.meta` | payments list row, under the date · method line | `{ payment }` |
+| `payments.ledger.row.meta` | patient ledger row, under the meta line | `{ entry }` |
+| `payments.detail.sections` | payments list row, above the refund action (there is no dedicated detail view yet — this is its stand-in) | `{ payment }` |
+
 ## Frontend slots consumed
 
 | Slot | Component | Permission |
@@ -110,6 +124,18 @@ the public endpoints.
   blocked by manifest.
 
 ## Gotchas
+
+- **Methods are a closed list** — `PAYMENT_METHODS` (models) and the
+  `PaymentMethod` Literal (schemas) must stay in sync; `upi` /
+  `netbanking` (#365) exist for India gateway modules; the create modal
+  and the list's method filter show them only when the clinic's
+  server-side country is `IN` (`useClinicCountry`). The refund modal
+  always offers the source payment's method, whatever the country.
+- **`idempotency_key` short-circuits `record_payment`** (#365): a key
+  hit returns the existing payment *before* any validation — the
+  caller's retry gets the original row, allocations untouched. Unique
+  per clinic via a partial index (`NOT NULL` only); `None`/empty never
+  collides.
 
 - **No `is_voided` flag.** Total reverso is `Refund(amount=Payment.amount)`.
   Don't reintroduce the legacy flag — the report stack relies on

@@ -101,6 +101,8 @@ documents = "app.modules.documents:DocumentsModule"
 whatsapp_webhook = "app.modules.whatsapp_webhook:WhatsappWebhookModule"
 telephony = "app.modules.telephony:TelephonyModule"
 suppliers = "app.modules.suppliers:SuppliersModule"
+supplier_items = "app.modules.supplier_items:SupplierItemsModule"
+purchase_orders = "app.modules.purchase_orders:PurchaseOrdersModule"
 gdpr = "app.modules.gdpr:GdprModule"
 
 [tool.setuptools.packages.find]

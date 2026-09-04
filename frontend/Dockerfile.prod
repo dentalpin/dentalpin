@@ -1,4 +1,4 @@
-FROM node:20-alpine AS builder
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS builder
 
 ARG API_BASE_URL=http://localhost:8000
 ENV API_BASE_URL=$API_BASE_URL
@@ -23,7 +23,7 @@ ENV NODE_OPTIONS="--max-old-space-size=6144"
 RUN npm run build
 
 
-FROM node:20-alpine
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32
 
 USER node
 

@@ -101,6 +101,9 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `payment.refunded` | `EventType.PAYMENT_REFUNDED` | `payments` | `activity_journal`, `billing` |
 | `payment.voided` | `EventType.PAYMENT_VOIDED` | — | — |
 | `periodontogram.snapshot.closed` | `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED` | `periodontogram` | — |
+| `purchase_order.created` | `EventType.PURCHASE_ORDER_CREATED` | `purchase_orders` | — |
+| `purchase_order.received` | `EventType.PURCHASE_ORDER_RECEIVED` | `purchase_orders` | — |
+| `purchase_order.status_changed` | `EventType.PURCHASE_ORDER_STATUS_CHANGED` | `purchase_orders` | — |
 | `recall.cancelled` | `EventType.RECALL_CANCELLED` | `recalls` | — |
 | `recall.completed` | `EventType.RECALL_COMPLETED` | `recalls` | — |
 | `recall.created` | `EventType.RECALL_CREATED` | `recalls` | `activity_journal`, `recall_reminders` |
@@ -844,6 +847,27 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED`
 - **Publishers:**
   - `periodontogram` — `backend/app/modules/periodontogram/service.py`
+- **Subscribers:** —
+
+### `purchase_order.created`
+
+- **Constant:** `EventType.PURCHASE_ORDER_CREATED`
+- **Publishers:**
+  - `purchase_orders` — `backend/app/modules/purchase_orders/service.py`
+- **Subscribers:** —
+
+### `purchase_order.received`
+
+- **Constant:** `EventType.PURCHASE_ORDER_RECEIVED`
+- **Publishers:**
+  - `purchase_orders` — `backend/app/modules/purchase_orders/service.py`
+- **Subscribers:** —
+
+### `purchase_order.status_changed`
+
+- **Constant:** `EventType.PURCHASE_ORDER_STATUS_CHANGED`
+- **Publishers:**
+  - `purchase_orders` — `backend/app/modules/purchase_orders/service.py`
 - **Subscribers:** —
 
 ### `recall.cancelled`

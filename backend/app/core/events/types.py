@@ -287,6 +287,15 @@ class EventType:
     STAFF_TASK_CREATED = "staff_task.created"
     STAFF_TASK_STATUS_CHANGED = "staff_task.status_changed"
 
+    # Purchase order events (purchase_orders module — procurement execution
+    # layer, roadmap #227). PUBLISHED in the same transaction as the change
+    # (ADR 0019). No bundled subscriber today; `inventory_reorder` (#227-4)
+    # and `supplier_ratings` (#227-5) are expected to subscribe without
+    # importing purchase_orders.
+    PURCHASE_ORDER_CREATED = "purchase_order.created"
+    PURCHASE_ORDER_STATUS_CHANGED = "purchase_order.status_changed"
+    PURCHASE_ORDER_RECEIVED = "purchase_order.received"
+
     # Telephony events (telephony module — CTI screen-pop + call log,
     # issue #64). Fired by the inbound CTI webhook after normalization
     # and caller→patient matching. Payload: (clinic_id, call_log_id,

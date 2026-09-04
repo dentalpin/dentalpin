@@ -102,7 +102,9 @@
       "bank_transfer": "Bonifico",
       "direct_debit": "Addebito diretto",
       "insurance": "Assicurazione",
-      "other": "Altro"
+      "other": "Altro",
+      "upi": "UPI",
+      "netbanking": "Internet banking"
     },
     "refund": {
       "title": "Rimborsa pagamento",

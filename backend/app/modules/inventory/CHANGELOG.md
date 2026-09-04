@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+- `InventoryService._apply_movement` renamed to `apply_movement`: it is the
+  non-committing, row-locked entry point dependents use to move stock inside
+  their own transaction (first consumer: `purchase_orders` receiving).
+
 - fix(#226): auto-deduction idempotency — a duplicate delivery of the
   same treatment (same `reference_type`/`reference_id`/item) now bails
-  in `InventoryService._apply_movement` **before** touching stock, so
+  in `InventoryService.apply_movement` **before** touching stock, so
   re-publishes are a true no-op (the partial unique index remains the
   concurrency backstop instead of the only guard). Previously the second
   delivery suppressed the movement row but still decremented the stock.

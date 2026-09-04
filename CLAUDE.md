@@ -99,6 +99,7 @@ Decision tree + folder descriptions: [`docs/README.md`](./docs/README.md).
 docker-compose up
 docker-compose exec backend python -m pytest -v
 cd backend && ruff check . && ruff format --check .
+cd backend && uv lock                    # after changing dependencies in pyproject.toml — uv.lock is what Docker installs (#356); CI fails on drift
 cd frontend && npm run lint
 cd frontend && npm run typecheck:layers   # vue-tsc over host + all module layers (stop the frontend container first; modules.json is auto-restored, and CI guards it — see #264)
 

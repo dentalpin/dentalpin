@@ -10,17 +10,17 @@ import asyncpg
 import pytest
 
 from app.config import settings
+from tests.modules._roundtrip_depends import dependent_tables
 
 pytestmark = pytest.mark.alembic_roundtrip
 BACKEND_ROOT = Path(__file__).resolve().parents[3]
 ALEMBIC_INI = BACKEND_ROOT / "alembic.ini"
 INVENTORY_TABLES = {"inventory_items", "stock_movements"}
-# treatment_consumables declares ``depends_on = ("cat_0004", "inv_0001")``
-# in tc_0001 (its junction table FKs inventory_items). Raw Alembic
-# downgrades drag alembic-dependents along with their dependency.
-# The processor's batch-uninstall ordering does not account for this yet
-# (#286); revisit this expectation when that lands.
-DEPENDENT_TABLES = {"treatment_consumables"}
+# Branches that ``depends_on`` inventory (purchase_orders, treatment_consumables,
+# and any future dependent) are dragged down with it: raw Alembic ``depends_on``
+# downgrades pull the dependents, so the expected teardown set is inventory plus
+# whatever the graph derives (trap M6).
+INVENTORY_HEAD = "inv_0002"
 
 
 def _alembic(*args: str) -> None:
@@ -47,15 +47,15 @@ def test_inventory_uninstall_roundtrip_is_branch_scoped() -> None:
     """install → uninstall → reinstall drops only inventory's tables.
 
     Alembic's depends_on graph pulls dependent branches (currently
-    ``treatment_consumables``) down together with ``inventory``, so the
-    expected teardown set is inventory plus its dependents.
+    ``treatment_consumables``, ``purchase_orders``) down together with
+    ``inventory``, so the expected teardown set is inventory plus whatever
+    the graph derives (trap M6).
     """
     _alembic("upgrade", "heads")
     before = asyncio.run(_tables())
-    assert INVENTORY_TABLES.isdisjoint(DEPENDENT_TABLES), (
-        "dependent tables overlap inventory tables"
-    )
-    expected_gone = INVENTORY_TABLES | DEPENDENT_TABLES
+    dependents = dependent_tables(INVENTORY_HEAD)
+    assert INVENTORY_TABLES.isdisjoint(dependents), "dependent tables overlap inventory tables"
+    expected_gone = INVENTORY_TABLES | dependents
     baseline = before - expected_gone
 
     # Walk the branch down one revision at a time until the module's table

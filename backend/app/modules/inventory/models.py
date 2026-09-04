@@ -7,7 +7,7 @@ deleted.
 
 Concurrency: ``stock_quantity`` carries a CHECK (>= 0) constraint at the
 DB level, and every quantity change goes through a ``SELECT … FOR UPDATE``
-row lock (:meth:`InventoryService._apply_movement`) — never
+row lock (:meth:`InventoryService.apply_movement`) — never
 read-modify-write.  PR #153's earlier inventory died on exactly this
 race; see roadmap #220.
 """
@@ -80,7 +80,7 @@ class StockMovement(Base):
     (reference_type, reference_id, inventory_item_id) WHERE
     reason = 'consumption' is the backstop for idempotency: a duplicate
     deduction for the same treatment is caught by
-    ``InventoryService._apply_movement``'s check-then-act guard (the
+    ``InventoryService.apply_movement``'s check-then-act guard (the
     index/``ON CONFLICT DO NOTHING`` protects against races).
     """
 

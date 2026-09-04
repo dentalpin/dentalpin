@@ -7,7 +7,7 @@
 # `npm run build` at image-build time with the default Node heap — the
 # 34-layer × 9-locale Nitro build needs >4GB (see Dockerfile.prod) — and
 # then discarded the output, because the dev container runs `npm run dev`.
-FROM node:20-alpine AS dev
+FROM node:22-alpine@sha256:c610fcdfb1d5b4740dd70c284ed3cb16bb857e0f7166196e36a5501df7a3aa32 AS dev
 
 WORKDIR /app
 

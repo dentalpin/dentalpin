@@ -177,3 +177,66 @@ async def test_patient_ledger_endpoint(
     # No earned entries seeded, so the entire amount sits as patient credit.
     assert Decimal(ledger["patient_credit"]) == Decimal("300.00")
     assert Decimal(ledger["clinic_receivable"]) == Decimal("0.00")
+
+
+@pytest.mark.asyncio
+async def test_idempotency_key_returns_existing_payment(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+):
+    """#365: retrying record_payment with the same key never double-records."""
+    setup = await _setup_clinic(db_session, auth_headers, client)
+    body = {
+        "patient_id": setup["patient_id"],
+        "amount": "80.00",
+        "method": "card",
+        "payment_date": date.today().isoformat(),
+        "allocations": [{"target_type": "on_account", "amount": "80.00"}],
+        "idempotency_key": "gw-txn-0001",
+    }
+    first = await client.post(
+        f"/api/v1/payments?clinic_id={setup['clinic_id']}", headers=auth_headers, json=body
+    )
+    assert first.status_code == 201, first.text
+    second = await client.post(
+        f"/api/v1/payments?clinic_id={setup['clinic_id']}", headers=auth_headers, json=body
+    )
+    assert second.status_code == 201, second.text
+    assert second.json()["data"]["id"] == first.json()["data"]["id"]
+
+    listing = await client.get(
+        f"/api/v1/payments?clinic_id={setup['clinic_id']}", headers=auth_headers
+    )
+    assert listing.json()["total"] == 1
+
+    # A different key is a different payment.
+    other = await client.post(
+        f"/api/v1/payments?clinic_id={setup['clinic_id']}",
+        headers=auth_headers,
+        json={**body, "idempotency_key": "gw-txn-0002"},
+    )
+    assert other.json()["data"]["id"] != first.json()["data"]["id"]
+
+
+@pytest.mark.asyncio
+async def test_india_methods_accepted(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+):
+    setup = await _setup_clinic(db_session, auth_headers, client)
+    for method in ("upi", "netbanking"):
+        resp = await client.post(
+            f"/api/v1/payments?clinic_id={setup['clinic_id']}",
+            headers=auth_headers,
+            json={
+                "patient_id": setup["patient_id"],
+                "amount": "10.00",
+                "method": method,
+                "payment_date": date.today().isoformat(),
+                "allocations": [{"target_type": "on_account", "amount": "10.00"}],
+            },
+        )
+        assert resp.status_code == 201, resp.text
+        assert resp.json()["data"]["method"] == method

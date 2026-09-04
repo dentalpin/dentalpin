@@ -21,7 +21,7 @@ Routes mounted at `/api/v1/inventory/`.
 
 Stock changes are guarded at the DB level: a
 `ck_inventory_items_stock_non_negative` CHECK constraint plus a
-`SELECT … FOR UPDATE` row lock in `InventoryService._apply_movement`,
+`SELECT … FOR UPDATE` row lock in `InventoryService.apply_movement`,
 the single write path every quantity change goes through (it also
 appends the `stock_movements` ledger row in the same transaction).
 Never read-modify-write without the lock — this is the PR #153 race

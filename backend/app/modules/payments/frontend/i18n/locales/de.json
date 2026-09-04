@@ -102,7 +102,9 @@
       "bank_transfer": "Überweisung",
       "direct_debit": "Lastschrift",
       "insurance": "Versicherung",
-      "other": "Sonstige"
+      "other": "Sonstige",
+      "upi": "UPI",
+      "netbanking": "Online-Banking"
     },
     "refund": {
       "title": "Zahlung erstatten",

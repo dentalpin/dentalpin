@@ -61,6 +61,8 @@ const METHOD_ICONS: Record<PaymentMethod, string> = {
   bank_transfer: 'i-lucide-landmark',
   direct_debit: 'i-lucide-repeat',
   insurance: 'i-lucide-shield',
+  upi: 'i-lucide-smartphone-nfc',
+  netbanking: 'i-lucide-landmark',
   other: 'i-lucide-circle-dollar-sign'
 }
 
@@ -117,6 +119,10 @@ function handleCreated() {
         >
           {{ t('payments.budgetCard.collect') }}
         </UButton>
+        <ModuleSlot
+          name="payments.collect.actions"
+          :ctx="{ budget: ctx.budget, patient: ctx.budget?.patient ?? null }"
+        />
       </div>
     </template>
 

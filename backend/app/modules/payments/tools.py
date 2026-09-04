@@ -53,6 +53,11 @@ class RecordPaymentArgs(BaseModel):
     )
     reference: str | None = Field(default=None, max_length=100)
     notes: str | None = Field(default=None, max_length=500)
+    idempotency_key: str | None = Field(
+        default=None,
+        max_length=100,
+        description="Clave de idempotencia: repetir la llamada con la misma clave devuelve el cobro ya registrado.",
+    )
 
 
 class PatientPaymentHistoryArgs(BaseModel):
@@ -104,6 +109,7 @@ async def _record_payment(ctx: AgentContext, params: RecordPaymentArgs) -> dict:
             allocations=[a.model_dump() for a in params.allocations],
             reference=params.reference,
             notes=params.notes,
+            idempotency_key=params.idempotency_key,
         )
     except PaymentWorkflowError as e:
         return {"error": "workflow_error", "detail": str(e)}

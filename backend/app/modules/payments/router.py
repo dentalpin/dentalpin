@@ -123,6 +123,7 @@ async def create_payment(
             allocations=[a.model_dump() for a in payload.allocations],
             reference=payload.reference,
             notes=payload.notes,
+            idempotency_key=payload.idempotency_key,
         )
     except PaymentWorkflowError as exc:
         raise _bad_request(exc)
