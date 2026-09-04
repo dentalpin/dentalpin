@@ -88,6 +88,13 @@ class Settings(BaseSettings):
     # Copilot / agentic layer (app/core/llm/). OpenAI and Anthropic are
     # the live providers; per-clinic `copilot_settings` overrides
     # provider + model.
+    # Razorpay online payments (payments module). Key ID is handed to the
+    # client SDK; the secret stays server-side for order creation and
+    # signature verification. Optional — payments fall back to offline
+    # methods when unset.
+    RAZORPAY_KEY_ID: str = ""
+    RAZORPAY_KEY_SECRET: str = ""
+
     OPENAI_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
     COPILOT_PROVIDER_DEFAULT: str = "openai"

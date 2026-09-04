@@ -29,6 +29,10 @@ services:
       # Copilot agentic layer (app/core/llm/). Set OPENAI_API_KEY in .env
       # (gitignored). Empty default keeps the stack bootable without it.
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # payments module Razorpay gateway. Optional — unset disables the
+      # online payment button. Test keys from dashboard.razorpay.com.
+      RAZORPAY_KEY_ID: ${RAZORPAY_KEY_ID:-}
+      RAZORPAY_KEY_SECRET: ${RAZORPAY_KEY_SECRET:-}
     ports:
       - "8000:8000"
     depends_on:
