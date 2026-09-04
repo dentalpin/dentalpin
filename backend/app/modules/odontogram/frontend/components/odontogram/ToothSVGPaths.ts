@@ -418,57 +418,153 @@ const LATERAL_PATHS_BY_POSITION: Record<ToothPosition, LateralPaths> = {
 
 // ============================================================================
 // OCCLUSAL VIEW PATHS (ViewBox: 0 0 50 50)
-// Circular design with 5 treatment zones: center (O) + 4 outer sectors (M,D,V,L)
-// All teeth in the same quadrant have identical shape, other quadrants are symmetric
+// Anatomically shaped outlines per tooth category with 5 treatment zones
+// (O center + M/D/V/L outer sectors). Quadrant symmetry via CSS transform.
 // ============================================================================
+
+interface Point {
+  x: number
+  y: number
+}
 
 interface OcclusalPaths {
   outline: string
   highlight: string[]
   surfaces: Record<string, string>
+  surfaceCenters: Record<string, Point>
 }
 
-// Circular surfaces for all teeth
-// Center: (25, 25), Outer radius: 22, Inner radius: 10
-// Diagonal dividers at 45°, 135°, 225°, 315°
-// Outer points: (41,9), (9,9), (9,41), (41,41)
-// Inner points: (32,18), (18,18), (18,32), (32,32)
-const CIRCULAR_SURFACES = {
-  // O (occlusal/incisal center): inner circle
-  O: 'M 35,25 A 10,10 0 1,1 15,25 A 10,10 0 1,1 35,25 Z',
-  // V (vestibular/buccal): top sector (45° to 135°)
-  V: 'M 32,18 L 41,9 A 22,22 0 0,0 9,9 L 18,18 A 10,10 0 0,1 32,18 Z',
-  // L (lingual/palatal): bottom sector (225° to 315°)
-  L: 'M 18,32 L 9,41 A 22,22 0 0,0 41,41 L 32,32 A 10,10 0 0,1 18,32 Z',
-  // M (mesial): left sector (135° to 225°)
-  M: 'M 18,18 L 9,9 A 22,22 0 0,0 9,41 L 18,32 A 10,10 0 0,1 18,18 Z',
-  // D (distal): right sector (315° to 45°)
-  D: 'M 32,32 L 41,41 A 22,22 0 0,0 41,9 L 32,18 A 10,10 0 0,1 32,32 Z'
+function pointStr(p: Point): string {
+  return `${p.x},${p.y}`
 }
 
-// Circular outline for all teeth
-const CIRCULAR_OUTLINE = 'M 25,3 A 22,22 0 1,1 25,47 A 22,22 0 1,1 25,3 Z'
+/** Build 5-sector surface paths from outer/inner corner points (Q1 orientation). */
+function buildOcclusalSurfaces(outer: Point[], inner: Point[]): Record<string, string> {
+  const [otl, otr, obr, obl] = outer
+  const [itl, itr, ibr, ibl] = inner
+  return {
+    O: `M ${pointStr(itr)} L ${pointStr(itl)} L ${pointStr(ibl)} L ${pointStr(ibr)} Z`,
+    V: `M ${pointStr(itl)} L ${pointStr(itr)} L ${pointStr(otr)} L ${pointStr(otl)} Z`,
+    L: `M ${pointStr(ibl)} L ${pointStr(obl)} L ${pointStr(obr)} L ${pointStr(ibr)} Z`,
+    M: `M ${pointStr(itl)} L ${pointStr(otl)} L ${pointStr(obl)} L ${pointStr(ibl)} Z`,
+    D: `M ${pointStr(itr)} L ${pointStr(obr)} L ${pointStr(otr)} L ${pointStr(itr)} Z`
+  }
+}
 
-// Radial dividers and inner circle (for visual reference, rendered as highlight lines)
-const CIRCULAR_DIVIDERS = [
-  'M 18,18 L 9,9', // Top-left diagonal
-  'M 32,18 L 41,9', // Top-right diagonal
-  'M 18,32 L 9,41', // Bottom-left diagonal
-  'M 32,32 L 41,41', // Bottom-right diagonal
-  'M 35,25 A 10,10 0 1,1 15,25 A 10,10 0 1,1 35,25' // Inner circle outline
+function buildOcclusalDividers(outer: Point[], inner: Point[]): string[] {
+  const [otl, otr, obr, obl] = outer
+  const [itl, itr, ibr, ibl] = inner
+  return [
+    `M ${pointStr(itl)} L ${pointStr(otl)}`,
+    `M ${pointStr(itr)} L ${pointStr(otr)}`,
+    `M ${pointStr(ibl)} L ${pointStr(obl)}`,
+    `M ${pointStr(ibr)} L ${pointStr(obr)}`,
+    `M ${pointStr(itr)} L ${pointStr(itl)} L ${pointStr(ibl)} L ${pointStr(ibr)} Z`
+  ]
+}
+
+function buildOcclusalPaths(
+  outline: string,
+  outer: Point[],
+  inner: Point[],
+  highlight: string[],
+  surfaceCenters: Record<string, Point>
+): OcclusalPaths {
+  return {
+    outline,
+    highlight,
+    surfaces: buildOcclusalSurfaces(outer, inner),
+    surfaceCenters
+  }
+}
+
+// Incisor — wide mesio-distal, narrow bucco-lingual (incisal edge toward V)
+const INCISOR_OUTER: Point[] = [
+  { x: 9, y: 16 }, { x: 41, y: 16 }, { x: 41, y: 34 }, { x: 9, y: 34 }
 ]
+const INCISOR_INNER: Point[] = [
+  { x: 20, y: 22 }, { x: 30, y: 22 }, { x: 30, y: 28 }, { x: 20, y: 28 }
+]
+const OCCLUSAL_INCISOR = buildOcclusalPaths(
+  'M 9,18 Q 9,14 13,14 L 37,14 Q 41,14 41,18 L 41,32 Q 41,36 37,36 L 13,36 Q 9,36 9,32 Z',
+  INCISOR_OUTER,
+  INCISOR_INNER,
+  [
+    'M 13,32 Q 25,34 37,32',
+    ...buildOcclusalDividers(INCISOR_OUTER, INCISOR_INNER)
+  ],
+  { O: { x: 25, y: 25 }, M: { x: 14, y: 25 }, D: { x: 36, y: 25 }, V: { x: 25, y: 17 }, L: { x: 25, y: 33 } }
+)
 
-// All teeth use the same circular occlusal view
+// Canine — cuspal diamond with buccal cusp toward V
+const CANINE_OUTER: Point[] = [
+  { x: 10, y: 9 }, { x: 40, y: 9 }, { x: 40, y: 41 }, { x: 10, y: 41 }
+]
+const CANINE_INNER: Point[] = [
+  { x: 20, y: 22 }, { x: 30, y: 22 }, { x: 30, y: 28 }, { x: 20, y: 28 }
+]
+const OCCLUSAL_CANINE = buildOcclusalPaths(
+  'M 25,8 Q 36,12 40,25 Q 36,38 25,42 Q 14,38 10,25 Q 14,12 25,8 Z',
+  CANINE_OUTER,
+  CANINE_INNER,
+  [
+    'M 25,8 L 25,28',
+    ...buildOcclusalDividers(CANINE_OUTER, CANINE_INNER)
+  ],
+  { O: { x: 25, y: 25 }, M: { x: 15, y: 25 }, D: { x: 35, y: 25 }, V: { x: 25, y: 14 }, L: { x: 25, y: 36 } }
+)
+
+// Premolar — oval with buccal and lingual cusps
+const PREMOLAR_OUTER: Point[] = [
+  { x: 13, y: 13 }, { x: 37, y: 13 }, { x: 37, y: 37 }, { x: 13, y: 37 }
+]
+const PREMOLAR_INNER: Point[] = [
+  { x: 20, y: 20 }, { x: 30, y: 20 }, { x: 30, y: 30 }, { x: 20, y: 30 }
+]
+const OCCLUSAL_PREMOLAR = buildOcclusalPaths(
+  'M 14,12 Q 25,10 36,12 Q 40,25 36,38 Q 25,40 14,38 Q 10,25 14,12 Z',
+  PREMOLAR_OUTER,
+  PREMOLAR_INNER,
+  [
+    'M 18,19 Q 25,17 32,19',
+    'M 20,31 Q 25,33 30,31',
+    'M 25,17 L 25,33',
+    ...buildOcclusalDividers(PREMOLAR_OUTER, PREMOLAR_INNER)
+  ],
+  { O: { x: 25, y: 25 }, M: { x: 15, y: 25 }, D: { x: 35, y: 25 }, V: { x: 25, y: 15 }, L: { x: 25, y: 35 } }
+)
+
+// Molar — squarish with four cusps and central cross fissure
+const MOLAR_OUTER: Point[] = [
+  { x: 11, y: 11 }, { x: 39, y: 11 }, { x: 39, y: 39 }, { x: 11, y: 39 }
+]
+const MOLAR_INNER: Point[] = [
+  { x: 19, y: 19 }, { x: 31, y: 19 }, { x: 31, y: 31 }, { x: 19, y: 31 }
+]
+const OCCLUSAL_MOLAR = buildOcclusalPaths(
+  'M 12,13 Q 12,11 14,11 L 36,11 Q 38,11 38,13 L 38,37 Q 38,39 36,39 L 14,39 Q 12,39 12,37 Z',
+  MOLAR_OUTER,
+  MOLAR_INNER,
+  [
+    'M 25,13 L 25,37',
+    'M 13,25 L 37,25',
+    'M 17,17 L 33,33',
+    'M 33,17 L 17,33',
+    ...buildOcclusalDividers(MOLAR_OUTER, MOLAR_INNER)
+  ],
+  { O: { x: 25, y: 25 }, M: { x: 13, y: 25 }, D: { x: 37, y: 25 }, V: { x: 25, y: 13 }, L: { x: 25, y: 37 } }
+)
+
 // Quadrant symmetry is handled by CSS transform (napkin unfolding)
 const OCCLUSAL_PATHS_BY_POSITION: Record<ToothPosition, OcclusalPaths> = {
-  1: { outline: CIRCULAR_OUTLINE, highlight: CIRCULAR_DIVIDERS, surfaces: CIRCULAR_SURFACES },
-  2: { outline: CIRCULAR_OUTLINE, highlight: CIRCULAR_DIVIDERS, surfaces: CIRCULAR_SURFACES },
-  3: { outline: CIRCULAR_OUTLINE, highlight: CIRCULAR_DIVIDERS, surfaces: CIRCULAR_SURFACES },
-  4: { outline: CIRCULAR_OUTLINE, highlight: CIRCULAR_DIVIDERS, surfaces: CIRCULAR_SURFACES },
-  5: { outline: CIRCULAR_OUTLINE, highlight: CIRCULAR_DIVIDERS, surfaces: CIRCULAR_SURFACES },
-  6: { outline: CIRCULAR_OUTLINE, highlight: CIRCULAR_DIVIDERS, surfaces: CIRCULAR_SURFACES },
-  7: { outline: CIRCULAR_OUTLINE, highlight: CIRCULAR_DIVIDERS, surfaces: CIRCULAR_SURFACES },
-  8: { outline: CIRCULAR_OUTLINE, highlight: CIRCULAR_DIVIDERS, surfaces: CIRCULAR_SURFACES }
+  1: OCCLUSAL_INCISOR,
+  2: OCCLUSAL_INCISOR,
+  3: OCCLUSAL_CANINE,
+  4: OCCLUSAL_PREMOLAR,
+  5: OCCLUSAL_PREMOLAR,
+  6: OCCLUSAL_MOLAR,
+  7: OCCLUSAL_MOLAR,
+  8: OCCLUSAL_MOLAR
 }
 
 // ============================================================================
@@ -494,6 +590,12 @@ export function getLateralPath(toothNumber: number): LateralPaths {
 
 export function getOcclusalPath(toothNumber: number): OcclusalPaths {
   return OCCLUSAL_PATHS_BY_POSITION[getShapePosition(toothNumber)]
+}
+
+/** Center point for dot-style occlusal treatment overlays. */
+export function getOcclusalSurfaceCenter(toothNumber: number, surface: string): Point {
+  const paths = getOcclusalPath(toothNumber)
+  return paths.surfaceCenters[surface] ?? { x: 25, y: 25 }
 }
 
 // ============================================================================
