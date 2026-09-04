@@ -13,6 +13,8 @@ Routes mounted at `/api/v1/patients/`.
 - `POST   /patients`        — create; `patients.write`
 - `POST   /patients/import.csv` — CSV import (dry-run default, `dry_run=false`
   commits; validation reuses `PatientCreate`); `patients.write`
+- `POST   /patients/{id}/restore` — restore a soft-archived patient (no-op
+  when active); `patients.write`
 - `PUT    /patients/{id}`   — update; `patients.write`
 - `DELETE /patients/{id}`   — soft-archive (status → archived); `patients.write`
 

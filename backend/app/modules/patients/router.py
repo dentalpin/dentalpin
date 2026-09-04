@@ -182,6 +182,27 @@ async def delete_patient(
     await PatientService.archive_patient(db, patient)
 
 
+@router.post(
+    "/{patient_id}/restore",
+    response_model=ApiResponse[PatientResponse],
+)
+async def restore_patient(
+    patient_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("patients.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[PatientResponse]:
+    """Restore a soft-archived patient. No-op when already active."""
+    patient = await PatientService.get_patient(db, ctx.clinic_id, patient_id)
+    if not patient:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Patient not found",
+        )
+    patient = await PatientService.restore_patient(db, patient)
+    return ApiResponse(data=PatientResponse.model_validate(patient))
+
+
 # --- Extended info ------------------------------------------------------
 
 

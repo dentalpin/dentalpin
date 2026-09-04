@@ -5,6 +5,8 @@
 - feat: CSV patient import — `POST /patients/import.csv` (dry-run default,
   commit with `dry_run=false`), `import_patients_csv` agent tool. Validation
   reuses `PatientCreate`; unknown columns ignored, 1000 rows / 1 MiB caps.
+- feat: `POST /patients/{id}/restore` — restore a soft-archived patient
+  (no-op when active; publishes `patient.updated`).
 
 - fix(#326): the first-patient onboarding rule carries `permission: 'patients.read'`.
 
