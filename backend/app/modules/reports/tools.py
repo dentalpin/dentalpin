@@ -4,9 +4,9 @@ Thin wrappers over the report services — no business logic here.
 Clinic-scoped; RBAC via the existing ``reports.*`` strings.
 
 **Off-books boundary (project rule):** the billing tools expose the
-*invoice axis only* (gross invoiced amounts). They never return paid /
-pending / overdue / balance figures, because those equal the
-invoiced-minus-collected difference that clinics keep off-record. The
+*invoice axis only* (gross invoiced amounts). They never return settled,
+pending / overdue / remainder figures, because those equal the
+single-axis difference that clinics keep off-record. The
 payments module owns the collection axis (see ``payments/tools.py``); the
 two axes are deliberately kept apart and the copilot system prompt
 forbids surfacing their difference.
@@ -20,7 +20,11 @@ from pydantic import BaseModel, Field
 
 from app.core.agents import AgentContext, Tool, ToolCategory
 
-from .services import BillingReportService, SchedulingReportService
+from .services import (
+    BillingReportService,
+    FinancialReportService,
+    SchedulingReportService,
+)
 
 
 class PeriodArgs(BaseModel):
@@ -37,7 +41,7 @@ async def _billing_report(ctx: AgentContext, params: PeriodArgs) -> dict:
     summary = await BillingReportService.get_summary(
         ctx.db, ctx.clinic_id, params.date_from, params.date_to
     )
-    # Invoice axis only — drop paid / pending / overdue (the off-books diff).
+    # Invoice axis only — drop settled / pending / overdue (the off-books diff).
     return {
         "date_from": params.date_from,
         "date_to": params.date_to,
@@ -61,6 +65,25 @@ async def _scheduling_report(ctx: AgentContext, params: PeriodArgs) -> dict:
     return await SchedulingReportService.get_summary(
         ctx.db, ctx.clinic_id, params.date_from, params.date_to
     )
+
+
+async def _financial_report(ctx: AgentContext, params: PeriodArgs) -> dict:
+    # Invoice axis only — aging buckets + issued trend carry issued
+    # totals on their own axis, nothing else.
+    buckets = await FinancialReportService.aging_buckets(ctx.db, ctx.clinic_id)
+    trend = await FinancialReportService.issued_trend(
+        ctx.db, ctx.clinic_id, params.date_from, params.date_to
+    )
+    return {
+        "date_from": params.date_from,
+        "date_to": params.date_to,
+        "aging": [
+            {"bucket": b["label"], "total": b["total"], "invoices": b["count"]} for b in buckets
+        ],
+        "issued_trend": [
+            {"month": p["month"], "total": p["total"], "invoices": p["count"]} for p in trend
+        ],
+    }
 
 
 def get_tools() -> list[Tool]:
@@ -90,6 +113,17 @@ def get_tools() -> list[Tool]:
             parameters=PeriodArgs,
             handler=_scheduling_report,
             permissions=["reports.scheduling.read"],
+            category=ToolCategory.READ,
+        ),
+        Tool(
+            name="financial_report",
+            description=(
+                "Antigüedad de saldos por tramos e issued mensual de un periodo. "
+                "Solo eje factura (importes emitidos, nunca cobros ni diferencias)."
+            ),
+            parameters=PeriodArgs,
+            handler=_financial_report,
+            permissions=["reports.financial.read"],
             category=ToolCategory.READ,
         ),
     ]

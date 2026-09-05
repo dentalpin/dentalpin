@@ -69,7 +69,12 @@ class ProfessionalBillingSummary(BaseModel):
 
 
 class OverdueInvoice(BaseModel):
-    """Overdue invoice item."""
+    """Overdue invoice item.
+
+    Grandfathered: ``balance_due`` nets recorded amounts against the
+    invoice total (invoice-minus-collected). The off-books rule now
+    forbids this pattern in new code — see ``services/financial.py``.
+    """
 
     id: UUID
     invoice_number: str
@@ -78,6 +83,37 @@ class OverdueInvoice(BaseModel):
     due_date: date
     days_overdue: int
     balance_due: Decimal
+
+
+class AgingBucket(BaseModel):
+    """One outstanding-age bucket (invoice axis only)."""
+
+    label: str
+    total: Decimal
+    count: int
+    patient_count: int
+
+
+class AgingReport(BaseModel):
+    """Aging buckets snapshot, same shape the dashboard card renders."""
+
+    currency: str
+    buckets: list[AgingBucket]
+
+
+class TrendPoint(BaseModel):
+    """Issued invoice totals for one YYYY-MM point."""
+
+    month: str
+    total: Decimal
+    count: int
+
+
+class IssuedTrend(BaseModel):
+    """Issued trend over a window (invoice axis only)."""
+
+    currency: str
+    points: list[TrendPoint]
 
 
 class NumberingGap(BaseModel):

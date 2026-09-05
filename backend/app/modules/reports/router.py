@@ -1,10 +1,12 @@
 """Reports module router."""
 
+import csv
+import io
 from datetime import date
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -12,6 +14,8 @@ from app.core.schemas import ApiResponse
 from app.database import get_db
 
 from .schemas import (
+    AgingBucket,
+    AgingReport,
     AppointmentFunnel,
     BillingSummary,
     BudgetByProfessional,
@@ -23,12 +27,14 @@ from .schemas import (
     DurationVarianceStats,
     FirstVisitsSummary,
     HoursByProfessional,
+    IssuedTrend,
     NumberingGap,
     OverdueInvoice,
     PaymentMethodSummary,
     ProfessionalBillingSummary,
     PunctualityStats,
     SchedulingSummary,
+    TrendPoint,
     VatSummaryItem,
     WaitingTimeStats,
 )
@@ -36,6 +42,7 @@ from .services import (
     AppointmentLifecycleService,
     BillingReportService,
     BudgetReportService,
+    FinancialReportService,
     SchedulingReportService,
 )
 
@@ -143,6 +150,79 @@ async def get_numbering_gaps(
     """
     data = await BillingReportService.get_numbering_gaps(db, ctx.clinic_id)
     return ApiResponse(data=[NumberingGap(**item) for item in data])
+
+
+# ============================================================================
+# Financial family (invoice axis only — off-books rule is structural)
+# ============================================================================
+
+
+def _csv_response(filename: str, header: list[str], rows: list[list]) -> Response:
+    buf = io.StringIO()
+    writer = csv.writer(buf)
+    writer.writerow(header)
+    writer.writerows(rows)
+    return Response(
+        content=buf.getvalue(),
+        media_type="text/csv",
+        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+    )
+
+
+@router.get("/billing/aging")
+async def get_aging_buckets(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("reports.financial.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    format: str = Query(default="json", pattern="^(json|csv)$"),
+):
+    """Outstanding invoice totals per age bucket (invoice axis only).
+
+    Buckets are due-date anchored (0-30/31-60/61-90/90+); invoices with
+    no due date count as current. Totals are issued amounts, never net
+    of collected ones. Same shape the dashboard aging card renders.
+    """
+    buckets = await FinancialReportService.aging_buckets(db, ctx.clinic_id)
+    if format == "csv":
+        return _csv_response(
+            "aging.csv",
+            ["bucket", "total", "invoices", "patients"],
+            [[b["label"], b["total"], b["count"], b["patient_count"]] for b in buckets],
+        )
+    return ApiResponse(
+        data=AgingReport(
+            currency=ctx.clinic.currency,
+            buckets=[AgingBucket(**b) for b in buckets],
+        )
+    )
+
+
+@router.get("/billing/issued-trend")
+async def get_issued_trend(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("reports.financial.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    date_from: date = Query(..., description="Start date for the trend window"),
+    date_to: date = Query(..., description="End date for the trend window"),
+    format: str = Query(default="json", pattern="^(json|csv)$"),
+):
+    """Issued invoice totals per month (invoice axis only).
+
+    Drafts, cancelled, voided and soft-deleted invoices never count.
+    """
+    points = await FinancialReportService.issued_trend(db, ctx.clinic_id, date_from, date_to)
+    if format == "csv":
+        return _csv_response(
+            "issued-trend.csv",
+            ["month", "total", "invoices"],
+            [[p["month"], p["total"], p["count"]] for p in points],
+        )
+    return ApiResponse(
+        data=IssuedTrend(
+            currency=ctx.clinic.currency,
+            points=[TrendPoint(**p) for p in points],
+        )
+    )
 
 
 # ============================================================================
