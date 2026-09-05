@@ -1,0 +1,24 @@
+{
+  "contacts": {
+    "title": "Contactos",
+    "add": "Adicionar contacto",
+    "edit": "Editar contacto",
+    "delete": "Eliminar contacto",
+    "deleteConfirm": "Desativar \"{name}\"? Desaparecerá do diretório, mas continua ligado aos registos históricos.",
+    "name": "Nome",
+    "type": "Tipo",
+    "phone": "Telefone",
+    "email": "E-mail",
+    "address": "Morada",
+    "notes": "Notas",
+    "search": "Pesquisar contactos",
+    "filterByType": "Filtrar por tipo",
+    "allTypes": "Todos os tipos",
+    "types": {
+      "lab": "Laboratório",
+      "supplier": "Fornecedor",
+      "other": "Outro",
+      "delegate": "Representante"
+    }
+  }
+}

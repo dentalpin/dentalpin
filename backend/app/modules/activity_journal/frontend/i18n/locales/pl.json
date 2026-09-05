@@ -1,0 +1,20 @@
+{
+  "journal": {
+    "title": "Dziennik aktywności",
+    "subtitle": "Niemodyfikowalny zapis tego, kto co i kiedy zrobił — zasilany zdarzeniami modułów.",
+    "filterByType": "Filtruj według typu zdarzenia",
+    "filterByDateFrom": "Od",
+    "filterByDateTo": "Do",
+    "event": "Zdarzenie",
+    "actor": "Wykonawca",
+    "patient": "Pacjent",
+    "when": "Kiedy",
+    "source": "Źródło",
+    "empty": "Brak zarejestrowanej aktywności.",
+    "total": "{total} wpisów",
+    "detailTitle": "Dane zdarzenia",
+    "unattributed": "—",
+    "allEvents": "Wszystkie zdarzenia",
+    "viewPayload": "Zobacz szczegóły"
+  }
+}

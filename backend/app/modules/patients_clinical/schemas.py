@@ -64,6 +64,7 @@ class AllergyUpdate(BaseModel):
 
 class AllergyResponse(AllergyCreate):
     id: UUID
+    status: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -92,6 +93,7 @@ class MedicationUpdate(BaseModel):
 
 class MedicationResponse(MedicationCreate):
     id: UUID
+    status: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -124,6 +126,7 @@ class SystemicDiseaseUpdate(BaseModel):
 
 class SystemicDiseaseResponse(SystemicDiseaseCreate):
     id: UUID
+    status: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -150,6 +153,7 @@ class SurgicalHistoryUpdate(BaseModel):
 
 class SurgicalHistoryResponse(SurgicalHistoryCreate):
     id: UUID
+    status: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -170,6 +174,7 @@ class EmergencyContactUpsert(EmergencyContactBase):
 
 
 class EmergencyContactResponse(EmergencyContactBase):
+    status: str
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -191,6 +196,7 @@ class LegalGuardianUpsert(LegalGuardianBase):
 
 
 class LegalGuardianResponse(LegalGuardianBase):
+    status: str
     model_config = ConfigDict(from_attributes=True)
 
 

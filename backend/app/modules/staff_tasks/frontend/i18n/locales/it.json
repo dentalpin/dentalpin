@@ -1,0 +1,34 @@
+{
+  "staffTasks": {
+    "title": "Attività del personale",
+    "add": "Nuova attività",
+    "taskTitle": "Attività",
+    "details": "Dettagli",
+    "priority": "Priorità",
+    "dueDate": "Scadenza",
+    "status": "Stato",
+    "assignee": "Assegnata a",
+    "filterByStatus": "Filtra per stato",
+    "all": "Tutte",
+    "delete": "Elimina",
+    "deleteTitle": "Elimina attività",
+    "deleteMessage": "Eliminare questa attività? Operazione irreversibile.",
+    "updateFailed": "Impossibile aggiornare l'attività.",
+    "saveFailed": "Impossibile salvare l'attività.",
+    "deleteFailed": "Impossibile eliminare l'attività.",
+    "statuses": {
+      "open": "Aperta",
+      "claimed": "Presa in carico",
+      "done": "Completata",
+      "cancelled": "Annullata"
+    },
+    "priorities": {
+      "low": "Bassa",
+      "normal": "Normale",
+      "high": "Alta"
+    }
+  },
+  "nav": {
+    "staffTasks": "Attività del personale"
+  }
+}

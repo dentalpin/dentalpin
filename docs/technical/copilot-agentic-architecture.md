@@ -3,6 +3,12 @@
 Status: **plan / not yet implemented**. This is the technical/architecture plan for the `copilot` module and the core agentic primitives it sits on. It is the implementation contract for the design approved in the design phase. Companion: the ADRs listed in §13.
 
 > **Scope cut (owner):** v1 = thin vertical slice + **mandatory PHI redaction** + **OpenAI provider only**. The `Provider` protocol stays vendor-agnostic so Anthropic plugs in later with zero changes below `app/core/llm/`. Deferred: Anthropic provider, RAG/pgvector, proactive/scheduled agents, self-hosted/Ollama provider, admin dashboards. Rationale in the design phase; not repeated here.
+>
+> **Drift note (2026-09, audit DOCS-01):** this page is the frozen v1-design
+> record — the scope cut above is historical. `AnthropicProvider` has since
+> landed in `backend/app/core/llm/` (factory resolves `openai` + `anthropic`
+> via settings keys); RAG/proactive-agents/Ollama/admin-dashboards remain
+> deferred as stated.
 
 ---
 

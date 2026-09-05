@@ -1,0 +1,20 @@
+{
+  "journal": {
+    "title": "Registro attività",
+    "subtitle": "Registro immodificabile di chi ha fatto cosa e quando — alimentato dagli eventi dei moduli.",
+    "filterByType": "Filtra per tipo di evento",
+    "filterByDateFrom": "Da",
+    "filterByDateTo": "A",
+    "event": "Evento",
+    "actor": "Autore",
+    "patient": "Paziente",
+    "when": "Quando",
+    "source": "Origine",
+    "empty": "Nessuna attività registrata.",
+    "total": "{total} voci",
+    "detailTitle": "Dati evento",
+    "unattributed": "—",
+    "allEvents": "Tutti gli eventi",
+    "viewPayload": "Vedi dettagli"
+  }
+}

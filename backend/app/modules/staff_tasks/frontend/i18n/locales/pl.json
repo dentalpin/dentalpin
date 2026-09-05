@@ -1,0 +1,34 @@
+{
+  "staffTasks": {
+    "title": "Zadania personelu",
+    "add": "Nowe zadanie",
+    "taskTitle": "Zadanie",
+    "details": "Szczegóły",
+    "priority": "Priorytet",
+    "dueDate": "Termin",
+    "status": "Status",
+    "assignee": "Przypisano do",
+    "filterByStatus": "Filtruj według statusu",
+    "all": "Wszystkie",
+    "delete": "Usuń",
+    "deleteTitle": "Usuń zadanie",
+    "deleteMessage": "Usunąć to zadanie? Tej operacji nie można cofnąć.",
+    "updateFailed": "Nie udało się zaktualizować zadania.",
+    "saveFailed": "Nie udało się zapisać zadania.",
+    "deleteFailed": "Nie udało się usunąć zadania.",
+    "statuses": {
+      "open": "Otwarte",
+      "claimed": "Podjęte",
+      "done": "Ukończone",
+      "cancelled": "Anulowane"
+    },
+    "priorities": {
+      "low": "Niski",
+      "normal": "Normalny",
+      "high": "Wysoki"
+    }
+  },
+  "nav": {
+    "staffTasks": "Zadania personelu"
+  }
+}

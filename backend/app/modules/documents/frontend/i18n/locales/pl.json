@@ -1,0 +1,88 @@
+{
+  "documents": {
+    "title": "Dokumenty",
+    "subtitle": "Zarządzaj receptami, zaświadczeniami, skierowaniami i zleceniami radiologicznymi",
+    "newDocument": "Nowy dokument",
+    "editDocument": "Edytuj dokument",
+    "filterType": "Filtruj według typu",
+    "filterStatus": "Filtruj według statusu",
+    "empty": "Brak dokumentów. Utwórz pierwszy dokument, aby zacząć.",
+    "patient": "Pacjent",
+    "selectPatient": "Wybierz pacjenta",
+    "patientSearchEmpty": "Nie znaleziono pacjentów pasujących do wyszukiwania",
+    "type": "Typ dokumentu",
+    "selectType": "Wybierz typ",
+    "titleLabel": "Tytuł",
+    "titlePlaceholder": "np. Recepta na Amoksycylinę",
+    "types": {
+      "all": "Wszystkie typy",
+      "prescription": "Recepta",
+      "medical_certificate": "Zaświadczenie lekarskie",
+      "referral": "Skierowanie",
+      "radiology_request": "Zlecenie radiologiczne"
+    },
+    "status": {
+      "all": "Wszystkie statusy",
+      "draft": "Szkic",
+      "generated": "Wygenerowany",
+      "archived": "Zarchiwizowany"
+    },
+    "actions": {
+      "generate": "Generuj PDF",
+      "edit": "Edytuj",
+      "archive": "Archiwizuj",
+      "download": "Pobierz PDF"
+    },
+    "messages": {
+      "created": "Utworzono dokument",
+      "updated": "Zaktualizowano dokument",
+      "generated": "Dokument wygenerowano pomyślnie",
+      "archived": "Zarchiwizowano dokument",
+      "downloaded": "Pobrano PDF",
+      "downloadFailed": "Nie udało się pobrać PDF"
+    },
+    "content": {
+      "diagnosis": "Rozpoznanie",
+      "diagnosisPlaceholder": "Wpisz rozpoznanie...",
+      "medications": "Leki",
+      "addMedication": "Dodaj lek",
+      "medName": "Nazwa leku",
+      "medDose": "Dawka",
+      "medFrequency": "Częstotliwość",
+      "medDuration": "Czas trwania",
+      "notes": "Uwagi",
+      "notesPlaceholder": "Dodatkowe uwagi...",
+      "description": "Opis",
+      "recommendations": "Zalecenia",
+      "referredTo": "Skierowano do",
+      "specialty": "Specjalizacja",
+      "reason": "Powód skierowania",
+      "clinicalSummary": "Podsumowanie kliniczne",
+      "examType": "Typ badania",
+      "region": "Okolica",
+      "clinicalQuestion": "Pytanie kliniczne"
+    },
+    "settings": {
+      "cards": {
+        "letterhead": {
+          "title": "Nagłówek dokumentów",
+          "description": "Branding kliniki na receptach, zaświadczeniach, skierowaniach i zleceniach radiologicznych"
+        }
+      },
+      "letterhead": {
+        "help": "Te pola nadpisują profil kliniki na generowanych plikach PDF. Pozostaw pole puste, aby użyć zapisanej nazwy, adresu i NIP kliniki.",
+        "name": "Nazwa nagłówka",
+        "nameHint": "Domyślnie nazwa kliniki",
+        "address": "Adres nagłówka",
+        "phone": "Telefon nagłówka",
+        "email": "E-mail nagłówka",
+        "registrationNumber": "Numer rejestracyjny / prawa wykonywania zawodu",
+        "logo": "Logo",
+        "logoHint": "Wyświetlane w lewym górnym rogu każdego PDF. Zalecenie: kwadratowy przezroczysty PNG poniżej 512&times;512 px.",
+        "chooseLogo": "Wybierz obraz",
+        "save": "Zapisz nagłówek",
+        "saved": "Zapisano nagłówek"
+      }
+    }
+  }
+}

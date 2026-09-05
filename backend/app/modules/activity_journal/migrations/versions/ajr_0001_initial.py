@@ -14,6 +14,13 @@ from alembic import op
 revision = "ajr_0001"
 down_revision = None
 branch_labels = ("activity_journal",)
+# NOTE (audit ARCH-01, reverted 2026-09-06): depends_on = ("0001",) was
+# tried to order clinics first, but a depends_on edge also means
+# "downgrade drags me" to the M6 roundtrip helper — and Alembic never
+# downgrades core 0001 on a branch uninstall, so the helper wrongly
+# expected these tables gone (inventory roundtrip red on CI). Bare-schema
+# upgrade applies deterministically today; the ordering risk stays
+# documented-latent instead of breaking a green gate.
 depends_on = None
 
 
