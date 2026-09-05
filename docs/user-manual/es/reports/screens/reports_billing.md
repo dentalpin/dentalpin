@@ -3,14 +3,17 @@ module: reports
 screen: billing
 route: /reports/billing
 related_endpoints:
+  - GET /api/v1/reports/billing/aging
   - GET /api/v1/reports/billing/by-payment-method
   - GET /api/v1/reports/billing/by-professional
   - GET /api/v1/reports/billing/gaps
+  - GET /api/v1/reports/billing/issued-trend
   - GET /api/v1/reports/billing/overdue
   - GET /api/v1/reports/billing/summary
   - GET /api/v1/reports/billing/vat-summary
 related_permissions:
   - reports.billing.read
+  - reports.financial.read
 related_paths:
   - backend/app/modules/reports/frontend/pages/reports/billing.vue
   - backend/app/modules/reports/router.py
@@ -40,6 +43,12 @@ preparación de IVA.
   fiscal del periodo.
 - **Vencidos y huecos** — facturas pasadas de fecha y series con
   saltos en la numeración (gaps), si los hay.
+- **Antigüedad** — totales pendientes por tramo
+  (0–30/31–60/61–90/90+ días, solo importes emitidos). Los mismos
+  números que la tarjeta del panel; añade `?format=csv` al endpoint
+  para la hoja de cálculo.
+- **Tendencia emitida** — totales emitidos por mes del rango
+  (`?format=csv` disponible).
 
 ## Drill-downs
 

@@ -3,14 +3,17 @@ module: reports
 screen: billing
 route: /reports/billing
 related_endpoints:
+  - GET /api/v1/reports/billing/aging
   - GET /api/v1/reports/billing/by-payment-method
   - GET /api/v1/reports/billing/by-professional
   - GET /api/v1/reports/billing/gaps
+  - GET /api/v1/reports/billing/issued-trend
   - GET /api/v1/reports/billing/overdue
   - GET /api/v1/reports/billing/summary
   - GET /api/v1/reports/billing/vat-summary
 related_permissions:
   - reports.billing.read
+  - reports.financial.read
 related_paths:
   - backend/app/modules/reports/frontend/pages/reports/billing.vue
   - backend/app/modules/reports/router.py
@@ -40,6 +43,12 @@ reconciliation, and VAT filing.
   fiscal return.
 - **Overdue and gaps** — past-due invoices and numbering gaps in
   series, if any.
+- **Aging** — outstanding invoice totals per age bucket
+  (0–30/31–60/61–90/90+ days past due, issued amounts only). Same
+  numbers as the dashboard aging card; append `?format=csv` to the
+  endpoint for the spreadsheet.
+- **Issued trend** — issued totals per month over the range
+  (`?format=csv` available).
 
 ## Drill-downs
 

@@ -646,8 +646,10 @@ export function useReports() {
     options?: { signal?: AbortSignal }
   ): Promise<PaymentsAgingBuckets | null> {
     try {
+      // Single source: the reports invoice-axis aging family (off-books
+      // rule). Same {currency, buckets[]} shape as before.
       const response = await api.get<ApiResponse<PaymentsAgingBuckets>>(
-        '/api/v1/payments/reports/aging-receivables',
+        '/api/v1/reports/billing/aging',
         { signal: options?.signal, errorToast: false }
       )
       return response.data
