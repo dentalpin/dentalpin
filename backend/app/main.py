@@ -41,6 +41,16 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # (defaults to ``-`` outside a request).
     setup_logging()
 
+    # Security posture (audit SEC-01): public budget sessions fall back to
+    # SECRET_KEY when BUDGET_PUBLIC_SECRET_KEY is unset. Warn once in
+    # production; behavior unchanged (hard-requiring would break existing
+    # deploys that rely on the fallback).
+    if settings.ENVIRONMENT == "production" and not settings.BUDGET_PUBLIC_SECRET_KEY:
+        logger.warning(
+            "BUDGET_PUBLIC_SECRET_KEY is unset: public budget sessions fall "
+            "back to SECRET_KEY. Set a dedicated key in production."
+        )
+
     # Startup — discover everything, settle DB state, then mount only what
     # is installed (issue #91). Order matters: the processor may install or
     # remove modules in this very boot, and the mount step reads the result.
