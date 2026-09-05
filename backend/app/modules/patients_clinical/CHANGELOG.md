@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- fix(data): deletes are now soft-deletes (audit DATA-01). `delete_*`
+  sets `status = "archived"` instead of hard-deleting; lists show only
+  active rows, gets still return archived rows for history, contact
+  upserts revive, and the bulk replace archives the superseded set.
+  New `status` column (`pc_0003`, existing rows backfill `active`).
+
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - fix(#274): `saveMedicalHistory()` publishes a `patients_clinical` tick

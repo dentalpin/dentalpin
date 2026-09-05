@@ -5,7 +5,12 @@ last_verified_commit: 0000000
 
 # Patients Clinical — technical overview
 
-> _Scaffolded stub — replace with proper documentation when this module is next touched._
+Deletes are soft-deletes (house rule: never hard-delete patient data).
+`DELETE` endpoints answer 204 and set `status = "archived"`; list
+endpoints show only active rows, single-item GETs still return archived
+rows for history, contact upserts revive the 1:1 row, and the bulk
+history replace archives the superseded set instead of destroying it
+(`pc_0003`).
 
 Auto-discovered facts about the `patients_clinical` module. See the module's
 own notes at `backend/app/modules/patients_clinical/CLAUDE.md` for context
