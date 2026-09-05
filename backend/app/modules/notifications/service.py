@@ -373,7 +373,12 @@ class NotificationService:
         """Update notification settings for a clinic."""
         settings = await NotificationService.get_or_create_clinic_settings(db, clinic_id)
 
-        for field in ("preferred_channel", "fallback_enabled", "manual_channels"):
+        for field in (
+            "preferred_channel",
+            "fallback_enabled",
+            "manual_channels",
+            "sms_daily_limit",
+        ):
             if data.get(field) is not None:
                 setattr(settings, field, data[field])
 

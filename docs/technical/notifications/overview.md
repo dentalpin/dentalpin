@@ -5,11 +5,25 @@ last_verified_commit: 0000000
 
 # Notifications — technical overview
 
-> _Scaffolded stub — replace with proper documentation when this module is next touched._
+Central multi-channel notification gateway: templates, per-patient
+channel preferences, clinic settings, delivery logs, and a single
+`POST /send` entry point that resolves the channel per recipient.
 
-Auto-discovered facts about the `notifications` module. See the module's
-own notes at `backend/app/modules/notifications/CLAUDE.md` for context
-the scaffold could not infer.
+## Channels
+
+- **email** — via clinic SMTP settings (`/smtp-settings`, testable).
+- **whatsapp** — opt-out prefs (`whatsapp_opt_in_at` consent trail).
+- **sms** (roadmap #231 PR1) — `Channel.SMS`; resolves to
+  `patients.phone` (E.164, single source of truth — no separate
+  `sms_phone` column in v1). Text-only: no attachments. Opt-out like
+  email/whatsapp: explicit `sms_enabled=False` blocks (even
+  `force_send`); a missing prefs row means reachable.
+  `sms_opt_in_at` mirrors the whatsapp consent trail.
+  Per-clinic cost guard: `sms_daily_limit` (default 100/UTC day,
+  `0` = blocked, skips don't consume); email/whatsapp are uncapped
+  flat-rate transports. Delivery itself arrives with the `sms_gateway`
+  module (pluggable providers); until then SMS resolves but has no
+  transport backend.
 
 ## API surface
 

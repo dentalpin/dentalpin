@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- feat(#231 PR1): SMS channel core support. `Channel.SMS` enum;
+  `_resolve_channel` SMS branch (destination = patient E.164 phone,
+  `sms_enabled` opt-out honoured even on force_send, text-only so both
+  template and session kinds resolve); `sms` in the ordered
+  preferred/fallback channel list (replaces the hardcoded
+  email/whatsapp pair); per-clinic `sms_daily_limit` (default 100/day,
+  skips with `sms_rate_limited`); `sms_enabled` + `sms_opt_in_at` on
+  preferences and `preferred_channel` accepting `sms`
+  (`notif_0005_sms_channel`).
 - fix(#326): the SMTP onboarding rule carries `permission: 'notifications.settings.read'`.
 
 - refactor(#126): budget_sent treatment names resolve through the shared `app.core.i18n_names.catalog_name` helper (was es → en → first value).
