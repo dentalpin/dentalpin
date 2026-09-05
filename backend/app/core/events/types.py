@@ -309,3 +309,9 @@ class EventType:
     CALL_ENDED = "call.ended"
     CALL_MISSED = "call.missed"
     CALL_UNKNOWN_CALLER = "call.unknown_caller"
+
+    # Payroll events (payroll module — admin-only compliance data).
+    # Payloads are masked: profile events carry ids only, never amounts
+    # or bank/tax values (plaintext or ciphertext).
+    PAYROLL_PROFILE_UPDATED = "payroll.profile.updated"
+    PAYROLL_PERIOD_STATUS_CHANGED = "payroll.period.status_changed"
