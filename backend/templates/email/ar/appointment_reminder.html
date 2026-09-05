@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}تذكير بالموعد - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>تذكير بالموعد</h2>
+
+<p>مرحباً {{ patient_name }}،</p>
+
+<p>نود تذكيرك بموعدك القادم في <strong>{{ clinic_name | default('DentalPin') }}</strong>:</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">التاريخ</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">الوقت</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">الطبيب</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<p>يرجى الحضور قبل الموعد ببضع دقائق. إذا كنت بحاجة إلى تغيير الموعد، يرجى التواصل معنا في أقرب وقت ممكن.</p>
+{% endblock %}
