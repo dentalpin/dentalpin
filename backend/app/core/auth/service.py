@@ -20,13 +20,19 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
 
 
+# Length beats composition rules (#354): 12 is the floor NIST 800-63B
+# calls out once composition checks are kept minimal; the letter+number
+# check stays because it's what the UI already teaches.
+MIN_PASSWORD_LENGTH = 12
+
+
 def validate_password_strength(password: str) -> tuple[bool, str]:
     """Validate password meets minimum requirements.
 
     Returns (is_valid, error_message).
     """
-    if len(password) < 8:
-        return False, "Password must be at least 8 characters"
+    if len(password) < MIN_PASSWORD_LENGTH:
+        return False, f"Password must be at least {MIN_PASSWORD_LENGTH} characters"
 
     has_letter = any(c.isalpha() for c in password)
     has_number = any(c.isdigit() for c in password)

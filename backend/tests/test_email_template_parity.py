@@ -55,7 +55,7 @@ def test_language_gate_accepts_every_template_locale() -> None:
             admin_first_name="A",
             admin_last_name="B",
             admin_email="admin@example.com",
-            admin_password="password123",
+            admin_password="password12345",
             clinic_name="X",
             clinic_tax_id="B12345678",
             language=locale,

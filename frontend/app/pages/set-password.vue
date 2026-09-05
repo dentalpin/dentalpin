@@ -22,7 +22,7 @@ const isLoading = ref(false)
 
 function validate(): boolean {
   if (!password.value) errors.password = t('setup.passwordRequired')
-  else if (password.value.length < 8) errors.password = t('setup.passwordTooShort')
+  else if (password.value.length < 12) errors.password = t('setup.passwordTooShort')
   else if (!/[a-zA-Z]/.test(password.value) || !/\d/.test(password.value)) errors.password = t('setup.passwordWeak')
   else errors.password = ''
   errors.passwordConfirm = password.value === passwordConfirm.value ? '' : t('setup.passwordMismatch')
