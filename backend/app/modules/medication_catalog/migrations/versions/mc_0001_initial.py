@@ -16,7 +16,9 @@ from alembic import op
 revision = "mc_0001"
 down_revision = None
 branch_labels = ("medication_catalog",)
-depends_on = None
+# FK to clinics.id: order after the core 0001 branch without threading
+# this module's chain into it (audit ARCH-01).
+depends_on = ("0001",)
 
 
 def upgrade() -> None:
