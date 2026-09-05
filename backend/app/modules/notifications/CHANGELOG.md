@@ -26,7 +26,8 @@
   `sms_rate_limited` when nothing else is viable; inbound rows never
   consume the cap; `sms_daily_limit` is echoed back by `/settings`.
 - feat: WebPush channel (T6) — `PushAdapter` + `notification_push_subscriptions`
-  table (`notif_0006`) + `push_enabled` preference + `push.read`/`push.write`
+  table (`notif_0006`, chained on the SMS `notif_0005`) + `push_enabled`
+  preference + `push.read`/`push.write`
   permissions + subscription endpoints + VAPID public-key endpoint. One VAPID
   pair per deployment (`DENTALPIN_VAPID_PRIVATE_KEY`, env only). Dead
   endpoints (410/404) prune on send. Browser service worker is a follow-up.

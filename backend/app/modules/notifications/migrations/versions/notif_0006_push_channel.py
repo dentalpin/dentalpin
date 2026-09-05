@@ -6,10 +6,10 @@ Columns:
     - ``notification_preferences.push_enabled`` — per-patient opt-out.
 
 Lives on the ``notifications`` Alembic branch (ADR 0002), chained on
-``notif_0004``.
+``notif_0005`` (the SMS channel revision, which merges first).
 
-Revision ID: notif_0005
-Revises: notif_0004
+Revision ID: notif_0006
+Revises: notif_0005
 Create Date: 2026-09-04
 """
 
@@ -20,8 +20,8 @@ from sqlalchemy.dialects import postgresql
 
 from alembic import op
 
-revision: str = "notif_0005"
-down_revision: str | None = "notif_0004"
+revision: str = "notif_0006"
+down_revision: str | None = "notif_0005"
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
 
