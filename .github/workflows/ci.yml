@@ -401,6 +401,10 @@ jobs:
           NUXT_API_BASE_URL_SERVER: http://localhost:8000
           NITRO_HOST: 0.0.0.0
           NITRO_PORT: "3000"
+          # Enforce the CSP under e2e (#355) so a new inline handler or
+          # external origin fails here — tests/e2e/csp.spec.ts asserts
+          # zero "Refused to …" console lines on login + dashboard.
+          NUXT_CSP_MODE: enforce
         run: |
           nohup node .output/server/index.mjs > /tmp/nuxt.log 2>&1 &
           echo "nuxt started (pid $!)"

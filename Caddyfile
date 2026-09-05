@@ -21,8 +21,11 @@
 
 	encode gzip
 
-	# Basic security headers. Only frame-ancestors from CSP for now: the app
-	# is never embedded cross-origin. A full CSP is a separate issue (#351).
+	# Basic security headers. Only frame-ancestors from CSP here: the full
+	# document policy is set by the frontend itself (Nitro middleware,
+	# NUXT_CSP_MODE — see docs/technical/security-csp.md, #355) so the e2e
+	# job enforces the same policy prod ships. Two CSP headers on a page
+	# are enforced as their intersection, which is intended.
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"

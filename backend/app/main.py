@@ -209,6 +209,11 @@ from app.core.agents.router import router as agents_router  # noqa: E402
 
 app.include_router(agents_router, prefix="/api/v1")
 
+# CSP violation report sink (issue #355) — public, rate-limited, log-only.
+from app.core.security.router import router as security_router  # noqa: E402
+
+app.include_router(security_router, prefix="/api/v1")
+
 
 @app.get("/health")
 async def health_check() -> JSONResponse:
