@@ -1,0 +1,88 @@
+{
+  "documents": {
+    "title": "Documents",
+    "subtitle": "Gérer les ordonnances, certificats, lettres de liaison et demandes de radiologie",
+    "newDocument": "Nouveau document",
+    "editDocument": "Modifier le document",
+    "filterType": "Filtrer par type",
+    "filterStatus": "Filtrer par statut",
+    "empty": "Aucun document pour le moment. Créez votre premier document pour commencer.",
+    "patient": "Patient",
+    "selectPatient": "Sélectionner un patient",
+    "patientSearchEmpty": "Aucun patient trouvé pour cette recherche",
+    "type": "Type de document",
+    "selectType": "Sélectionner un type",
+    "titleLabel": "Titre",
+    "titlePlaceholder": "ex. Ordonnance pour Amoxicilline",
+    "types": {
+      "all": "Tous les types",
+      "prescription": "Ordonnance",
+      "medical_certificate": "Certificat médical",
+      "referral": "Lettre de liaison",
+      "radiology_request": "Demande de radiologie"
+    },
+    "status": {
+      "all": "Tous les statuts",
+      "draft": "Brouillon",
+      "generated": "Généré",
+      "archived": "Archivé"
+    },
+    "actions": {
+      "generate": "Générer le PDF",
+      "edit": "Modifier",
+      "archive": "Archiver",
+      "download": "Télécharger le PDF"
+    },
+    "messages": {
+      "created": "Document créé",
+      "updated": "Document mis à jour",
+      "generated": "Document généré avec succès",
+      "archived": "Document archivé",
+      "downloaded": "PDF téléchargé",
+      "downloadFailed": "Échec du téléchargement du PDF"
+    },
+    "content": {
+      "diagnosis": "Diagnostic",
+      "diagnosisPlaceholder": "Saisir le diagnostic...",
+      "medications": "Médicaments",
+      "addMedication": "Ajouter un médicament",
+      "medName": "Nom du médicament",
+      "medDose": "Dose",
+      "medFrequency": "Fréquence",
+      "medDuration": "Durée",
+      "notes": "Notes",
+      "notesPlaceholder": "Notes supplémentaires...",
+      "description": "Description",
+      "recommendations": "Recommandations",
+      "referredTo": "Adressé à",
+      "specialty": "Spécialité",
+      "reason": "Motif de la liaison",
+      "clinicalSummary": "Résumé clinique",
+      "examType": "Type d'examen",
+      "region": "Région",
+      "clinicalQuestion": "Question clinique"
+    },
+    "settings": {
+      "cards": {
+        "letterhead": {
+          "title": "En-tête des documents",
+          "description": "Image de la clinique sur les ordonnances, certificats, lettres de liaison et demandes de radiologie"
+        }
+      },
+      "letterhead": {
+        "help": "Ces champs remplacent le profil de la clinique sur les PDF générés. Laissez un champ vide pour utiliser le nom, l'adresse et le numéro fiscal enregistrés de la clinique.",
+        "name": "Nom de l'en-tête",
+        "nameHint": "Par défaut, le nom de la clinique",
+        "address": "Adresse de l'en-tête",
+        "phone": "Téléphone de l'en-tête",
+        "email": "E-mail de l'en-tête",
+        "registrationNumber": "Numéro d'inscription / d'ordre",
+        "logo": "Logo",
+        "logoHint": "Affiché en haut à gauche de chaque PDF. Recommandation : un PNG transparent carré de moins de 512&times;512 px.",
+        "chooseLogo": "Choisir une image",
+        "save": "Enregistrer l'en-tête",
+        "saved": "En-tête enregistré"
+      }
+    }
+  }
+}

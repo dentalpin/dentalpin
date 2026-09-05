@@ -1,0 +1,88 @@
+{
+  "documents": {
+    "title": "Documenti",
+    "subtitle": "Gestisci prescrizioni, certificati, lettere di invio e richieste radiologiche",
+    "newDocument": "Nuovo documento",
+    "editDocument": "Modifica documento",
+    "filterType": "Filtra per tipo",
+    "filterStatus": "Filtra per stato",
+    "empty": "Nessun documento. Crea il primo documento per iniziare.",
+    "patient": "Paziente",
+    "selectPatient": "Seleziona un paziente",
+    "patientSearchEmpty": "Nessun paziente trovato per questa ricerca",
+    "type": "Tipo di documento",
+    "selectType": "Seleziona un tipo",
+    "titleLabel": "Titolo",
+    "titlePlaceholder": "es. Prescrizione per Amoxicillina",
+    "types": {
+      "all": "Tutti i tipi",
+      "prescription": "Prescrizione",
+      "medical_certificate": "Certificato medico",
+      "referral": "Lettera di invio",
+      "radiology_request": "Richiesta radiologica"
+    },
+    "status": {
+      "all": "Tutti gli stati",
+      "draft": "Bozza",
+      "generated": "Generato",
+      "archived": "Archiviato"
+    },
+    "actions": {
+      "generate": "Genera PDF",
+      "edit": "Modifica",
+      "archive": "Archivia",
+      "download": "Scarica PDF"
+    },
+    "messages": {
+      "created": "Documento creato",
+      "updated": "Documento aggiornato",
+      "generated": "Documento generato con successo",
+      "archived": "Documento archiviato",
+      "downloaded": "PDF scaricato",
+      "downloadFailed": "Download del PDF non riuscito"
+    },
+    "content": {
+      "diagnosis": "Diagnosi",
+      "diagnosisPlaceholder": "Inserisci la diagnosi...",
+      "medications": "Farmaci",
+      "addMedication": "Aggiungi farmaco",
+      "medName": "Nome del farmaco",
+      "medDose": "Dose",
+      "medFrequency": "Frequenza",
+      "medDuration": "Durata",
+      "notes": "Note",
+      "notesPlaceholder": "Note aggiuntive...",
+      "description": "Descrizione",
+      "recommendations": "Raccomandazioni",
+      "referredTo": "Inviato a",
+      "specialty": "Specialità",
+      "reason": "Motivo dell'invio",
+      "clinicalSummary": "Riepilogo clinico",
+      "examType": "Tipo di esame",
+      "region": "Regione",
+      "clinicalQuestion": "Quesito clinico"
+    },
+    "settings": {
+      "cards": {
+        "letterhead": {
+          "title": "Intestazione documenti",
+          "description": "Immagine della clinica su prescrizioni, certificati, lettere di invio e richieste radiologiche"
+        }
+      },
+      "letterhead": {
+        "help": "Questi campi sostituiscono il profilo della clinica nei PDF generati. Lascia un campo vuoto per usare il nome, l'indirizzo e la partita IVA registrati della clinica.",
+        "name": "Nome intestazione",
+        "nameHint": "Per impostazione predefinita, il nome della clinica",
+        "address": "Indirizzo intestazione",
+        "phone": "Telefono intestazione",
+        "email": "E-mail intestazione",
+        "registrationNumber": "Numero di registrazione / albo",
+        "logo": "Logo",
+        "logoHint": "Mostrato in alto a sinistra di ogni PDF. Raccomandazione: un PNG trasparente quadrato inferiore a 512&times;512 px.",
+        "chooseLogo": "Scegli immagine",
+        "save": "Salva intestazione",
+        "saved": "Intestazione salvata"
+      }
+    }
+  }
+}
