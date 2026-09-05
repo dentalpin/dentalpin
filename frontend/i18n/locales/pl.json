@@ -78,7 +78,7 @@
     "emailRequired": "Podaj adres e-mail",
     "emailInvalid": "Adres e-mail jest nieprawidłowy",
     "passwordRequired": "Podaj hasło",
-    "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków",
+    "passwordTooShort": "Hasło musi mieć co najmniej 12 znaków",
     "passwordWeak": "Hasło musi zawierać litery i cyfry",
     "passwordMismatch": "Hasła nie są zgodne",
     "clinicNameRequired": "Podaj nazwę gabinetu",

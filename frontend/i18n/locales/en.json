@@ -78,7 +78,7 @@
     "emailRequired": "Enter the email",
     "emailInvalid": "The email is not valid",
     "passwordRequired": "Enter a password",
-    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordTooShort": "Password must be at least 12 characters",
     "passwordWeak": "Password must include letters and numbers",
     "passwordMismatch": "Passwords do not match",
     "clinicNameRequired": "Enter the clinic name",

@@ -144,9 +144,9 @@ function validateAccount(): boolean {
   else if (!EMAIL_RE.test(email)) errors.email = t('setup.emailInvalid')
   else errors.email = ''
 
-  // Mirror the backend strength check: 8+ chars with a letter and a digit.
+  // Mirror the backend strength check (#354): 12+ chars with a letter and a digit.
   if (!form.password) errors.password = t('setup.passwordRequired')
-  else if (form.password.length < 8) errors.password = t('setup.passwordTooShort')
+  else if (form.password.length < 12) errors.password = t('setup.passwordTooShort')
   else if (!/[a-zA-Z]/.test(form.password) || !/\d/.test(form.password)) {
     errors.password = t('setup.passwordWeak')
   } else errors.password = ''

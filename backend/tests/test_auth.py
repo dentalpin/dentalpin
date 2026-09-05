@@ -71,6 +71,17 @@ async def test_setup_rejected_when_initialized(client: AsyncClient) -> None:
 
 
 @pytest.mark.asyncio
+async def test_password_floor_is_12(client: AsyncClient) -> None:
+    """#354: length beats composition — 11 characters is rejected even with
+    letters and digits; 12 passes the length gate."""
+    resp = await client.post(
+        "/api/v1/auth/setup", json={**_SETUP_PAYLOAD, "admin_password": "Abcdefghij1"}
+    )
+    assert resp.status_code in (400, 422), resp.text
+    assert "12" in resp.text
+
+
+@pytest.mark.asyncio
 async def test_setup_weak_password(client: AsyncClient) -> None:
     """Weak admin passwords are rejected."""
     response = await client.post(

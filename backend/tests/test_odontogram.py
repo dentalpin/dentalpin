@@ -401,7 +401,7 @@ async def receptionist_setup(
     receptionist = User(
         id=uuid4(),
         email="receptionist@test.clinic",
-        password_hash=hash_password("TestPass123"),
+        password_hash=hash_password("TestPass12345"),
         first_name="Test",
         last_name="Receptionist",
         is_active=True,
@@ -424,7 +424,7 @@ async def receptionist_setup(
         "/api/v1/auth/login",
         data={
             "username": "receptionist@test.clinic",
-            "password": "TestPass123",
+            "password": "TestPass12345",
         },
     )
     login_data = login_response.json()

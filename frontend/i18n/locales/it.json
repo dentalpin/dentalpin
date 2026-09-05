@@ -78,7 +78,7 @@
     "emailRequired": "Inserisci l'e-mail",
     "emailInvalid": "L'e-mail non è valida",
     "passwordRequired": "Inserisci una password",
-    "passwordTooShort": "La password deve avere almeno 8 caratteri",
+    "passwordTooShort": "La password deve avere almeno 12 caratteri",
     "passwordWeak": "La password deve contenere lettere e numeri",
     "passwordMismatch": "Le password non coincidono",
     "clinicNameRequired": "Inserisci il nome dello studio",

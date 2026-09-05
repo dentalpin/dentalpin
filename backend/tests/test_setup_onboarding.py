@@ -311,7 +311,7 @@ async def test_invite_link_flow(client: AsyncClient, auth_headers: dict, test_cl
 
     # Consume → tokens back
     r = await client.post(
-        "/api/v1/auth/set-password", json={"token": token, "password": "NewPass123"}
+        "/api/v1/auth/set-password", json={"token": token, "password": "NewPassword123"}
     )
     assert r.status_code == 200, r.text
     access = r.json()["access_token"]
@@ -327,7 +327,7 @@ async def test_invite_link_flow(client: AsyncClient, auth_headers: dict, test_cl
 
     # New password works
     r = await client.post(
-        "/api/v1/auth/login", data={"username": "dentist@example.com", "password": "NewPass123"}
+        "/api/v1/auth/login", data={"username": "dentist@example.com", "password": "NewPassword123"}
     )
     assert r.status_code == 200
 
@@ -355,6 +355,6 @@ async def test_invite_link_scoped_to_clinic_and_admin(
 @pytest.mark.asyncio
 async def test_set_password_rejects_garbage_token(client: AsyncClient) -> None:
     r = await client.post(
-        "/api/v1/auth/set-password", json={"token": "not-a-jwt", "password": "NewPass123"}
+        "/api/v1/auth/set-password", json={"token": "not-a-jwt", "password": "NewPassword123"}
     )
     assert r.status_code == 400

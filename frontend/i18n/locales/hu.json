@@ -78,7 +78,7 @@
     "emailRequired": "Adja meg az e-mail-címet",
     "emailInvalid": "Az e-mail-cím érvénytelen",
     "passwordRequired": "Adjon meg egy jelszót",
-    "passwordTooShort": "A jelszónak legalább 8 karakterből kell állnia",
+    "passwordTooShort": "A jelszónak legalább 12 karakterből kell állnia",
     "passwordWeak": "A jelszónak betűket és számokat is tartalmaznia kell",
     "passwordMismatch": "A jelszavak nem egyeznek",
     "clinicNameRequired": "Adja meg a rendelő nevét",
