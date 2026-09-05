@@ -28,7 +28,7 @@ FAMILY_SOURCES = (
 
 
 def _module_root() -> Path:
-    return Path(__file__).resolve().parents[1] / "app" / "modules" / "reports"
+    return Path(__file__).resolve().parents[3] / "app" / "modules" / "reports"
 
 
 def test_financial_family_touches_no_settlement_columns():
