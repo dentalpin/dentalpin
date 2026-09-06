@@ -224,7 +224,7 @@ jobs:
 
       - name: Install portal dependencies
         working-directory: docs/portal
-        run: npm install --no-audit --no-fund
+        run: npm ci --no-audit --no-fund
 
       - name: Build portal
         working-directory: docs/portal
@@ -245,7 +245,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci --no-audit --no-fund
 
       - name: Run ESLint
         working-directory: frontend
@@ -267,7 +267,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci --no-audit --no-fund
 
       - name: modules.json with every layer
         working-directory: frontend
@@ -289,7 +289,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci --no-audit --no-fund
 
       - name: Run tests
         working-directory: frontend
@@ -357,7 +357,7 @@ jobs:
       - name: Install frontend deps + Playwright browsers
         working-directory: frontend
         run: |
-          npm install
+          npm ci --no-audit --no-fund
           npx playwright install --with-deps chromium
 
       - name: Generate modules.json with host paths
