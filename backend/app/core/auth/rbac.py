@@ -27,13 +27,15 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
+
 from .models import (
     ClinicRoleOverride,
     Permission,
     Role,
     RolePermission,
 )
-from .permissions import permission_matches
+from .permissions import get_role_permissions, has_permission, permission_matches
 
 #: 5 standard roles seeded as system roles (clinic_id IS NULL).
 SYSTEM_ROLE_NAMES: tuple[str, ...] = (
@@ -163,3 +165,36 @@ async def has_permission_in_clinic(
     if "*" in granted:
         return True
     return any(permission_matches(permission, g) for g in granted)
+
+
+async def resolve_role_id(db: AsyncSession, clinic_id: UUID | None, role_name: str) -> UUID | None:
+    """PK of the ``roles`` row a membership with ``role_name`` should point
+    at (clinic-custom role first, system role as fallback). ``None`` when no
+    row exists — callers leave ``role_id`` null and the string ``role``
+    column remains the read path."""
+    role = await _load_role(db, clinic_id, role_name)
+    return role.id if role is not None else None
+
+
+async def granted_permissions_for(
+    db: AsyncSession, clinic_id: UUID | None, role_name: str
+) -> list[str]:
+    """Effective permission codes for a role, honouring ``RBAC_FROM_DB``.
+
+    Single flag-aware entry point for every non-``require_permission``
+    caller (routers, services, agent contexts): DB resolution when the
+    flag is on, the static merged map otherwise. Dropping the flag later
+    is a one-line change here."""
+    if settings.RBAC_FROM_DB:
+        return sorted(await resolve_granted_permissions(db, clinic_id, role_name))
+    return get_role_permissions(role_name)
+
+
+async def has_permission_for(
+    db: AsyncSession, clinic_id: UUID | None, role_name: str, permission: str
+) -> bool:
+    """Flag-aware single-permission check. Same contract as
+    :func:`has_permission`, clinic-scoped when ``RBAC_FROM_DB`` is on."""
+    if settings.RBAC_FROM_DB:
+        return await has_permission_in_clinic(db, clinic_id, role_name, permission)
+    return has_permission(role_name, permission)

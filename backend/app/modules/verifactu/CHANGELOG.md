@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- feat(#46): the test-to-prod promotion check resolves flag-aware
+  (`RBAC_FROM_DB` on: custom roles and per-clinic overrides apply).
+
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
 
 - feat(i18n): Arabic (ar) locale for the module's frontend layer.

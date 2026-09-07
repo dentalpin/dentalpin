@@ -33,6 +33,7 @@ from uuid import UUID, uuid4
 from sqlalchemy import select
 
 from app.core.auth.models import ClinicMembership, User
+from app.core.auth.rbac import resolve_role_id
 
 from ..models import ImportWarning
 from .base import MapperContext, ProfessionalFilterOptions
@@ -202,6 +203,7 @@ class ProfessionalMapper:
                 clinic_id=ctx.clinic_id,
                 user_id=user.id,
                 role=role,
+                role_id=await resolve_role_id(ctx.db, ctx.clinic_id, role),
             )
             ctx.db.add(membership)
             await ctx.db.flush()
