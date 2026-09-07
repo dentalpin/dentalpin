@@ -78,8 +78,9 @@ Subscription only — copilot never imports the publisher (ADR 0003), so
 - **History is real space.** `copilot_messages` store real values; the
   redactor tokenizes only on the way to the provider. Tokens are
   deterministic, so a resumed turn re-derives the same token.
-- **`AgentContext.permissions = get_role_permissions(role)`** — identical
-  to what routers enforce. Every tool call re-checks at the chokepoint.
+- **`AgentContext.permissions` is the caller's effective grant set** (flag-aware:
+  DB resolution when `RBAC_FROM_DB` is on, the static merged map otherwise)
+  — identical to what routers enforce. Every tool call re-checks at the chokepoint.
 - **PHI redaction is mandatory** by default (`copilot_settings.redaction_enabled`).
   Tools flagged `exposes_free_text` are excluded from the cloud path.
   What the redactor does and does not guarantee (pseudonymization, the

@@ -16,8 +16,6 @@ from app.core.log_context import set_request_context
 from app.database import get_db
 
 from .models import Clinic, ClinicMembership, User
-from .permissions import has_permission
-from .rbac import has_permission_in_clinic
 from .service import decode_token
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
@@ -160,11 +158,9 @@ def require_permission(permission: str) -> Callable:
         ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
         db: Annotated[AsyncSession, Depends(get_db)],
     ) -> None:
-        if settings.RBAC_FROM_DB:
-            allowed = await has_permission_in_clinic(db, ctx.clinic_id, ctx.role, permission)
-        else:
-            allowed = has_permission(ctx.role, permission)
-        if not allowed:
+        from app.core.auth.rbac import has_permission_for
+
+        if not await has_permission_for(db, ctx.clinic_id, ctx.role, permission):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail=f"Permission denied: {permission}",

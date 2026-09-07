@@ -14,7 +14,7 @@ from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel, Field
-from sqlalchemy import delete, select, update
+from sqlalchemy import delete, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.plugins import module_registry
@@ -327,7 +327,10 @@ async def delete_role(
             await db.execute(
                 select(ClinicMembership.id).where(
                     ClinicMembership.clinic_id == ctx.clinic_id,
-                    ClinicMembership.role == role.name,
+                    or_(
+                        ClinicMembership.role == role.name,
+                        ClinicMembership.role_id == role.id,
+                    ),
                 )
             )
         )
