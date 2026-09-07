@@ -1,0 +1,26 @@
+name: PR Size Limit Check
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-pr-size:
+    name: Check PR Line Count
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Calculate Changed Lines
+        run: |
+          git fetch origin ${{ github.base_ref }}
+          TOTAL_CHANGES=$(git diff --numstat origin/${{ github.base_ref }}...HEAD | awk '{s+=$1+$2} END {print s+0}')
+          echo "Total lines changed: $TOTAL_CHANGES"
+
+          if [ "$TOTAL_CHANGES" -gt 200 ]; then
+            echo "::error::PR size limit exceeded ($TOTAL_CHANGES lines modified, max allowed is 200). Please break down this PR into smaller chunks."
+            exit 1
+          fi
