@@ -638,6 +638,14 @@ the manifest:
             "icon": "i-lucide-box",
             "permission": "inventory.items.read",
             "order": 70,
+            # Optional sidebar grouping (issue #232): items sharing a
+            # `section` render under one collapsible, non-clickable
+            # header. Free-form key — the host never hardcodes section
+            # names. Headers translate via `nav.sections.<key>` with the
+            # raw key as fallback; items without `section` stay flat,
+            # and empty groups collapse on their own (grouping runs
+            # after the permission filter).
+            # "section": "clinical",
         }
     ],
 }

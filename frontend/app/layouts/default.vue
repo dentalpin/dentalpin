@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { groupNavigationItems } from '~/utils/navigation'
+
 const { t } = useI18n()
 const auth = useAuth()
 const clinic = useClinic()
@@ -67,6 +69,25 @@ async function handleLogout() {
 const settingsItem = computed(() => navigationItems.value.find(i => i.to === '/settings'))
 const mainNavItems = computed(() => navigationItems.value.filter(i => i.to !== '/settings'))
 
+// Collapsible sidebar sections (issue #232): headers are expandable,
+// never links. Collapsed map persists for the session; every section
+// starts expanded. When the sidebar itself is collapsed, labels are
+// hidden anyway so items render flat as before.
+const collapsedSections = useState<Record<string, boolean>>('sidebar:nav:collapsed', () => ({}))
+const mainNavGroups = computed(() => groupNavigationItems(mainNavItems.value))
+// Flat entries (no section) for the drawer and the expanded sidebar;
+// the collapsed icon-only sidebar renders everything flat.
+const mainNavFlat = computed(() => mainNavGroups.value.flat)
+const sidebarItems = computed(
+  () => isSidebarCollapsed.value ? mainNavItems.value : mainNavFlat.value
+)
+function toggleSection(key: string) {
+  collapsedSections.value = { ...collapsedSections.value, [key]: !collapsedSections.value[key] }
+}
+function sectionLabel(key: string): string {
+  return t(`nav.sections.${key}`, key)
+}
+
 // Check if nav item is active
 function isActive(to: string): boolean {
   if (to === '/') {
@@ -120,7 +141,7 @@ function isActive(to: string): boolean {
       <!-- Navigation -->
       <nav class="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
         <NuxtLink
-          v-for="item in mainNavItems"
+          v-for="item in sidebarItems"
           :key="item.to"
           :to="item.to"
           class="group flex items-center gap-3 px-3 py-2 rounded-token-md text-ui transition-colors"
@@ -141,6 +162,50 @@ function isActive(to: string): boolean {
             {{ item.label }}
           </span>
         </NuxtLink>
+        <div
+          v-for="group in mainNavGroups.groups"
+          v-show="!isSidebarCollapsed"
+          :key="group.key"
+          class="contents"
+        >
+          <button
+            type="button"
+            :aria-expanded="!collapsedSections[group.key]"
+            class="w-full flex items-center gap-2 px-3 pt-3 pb-1 text-caption text-subtle uppercase tracking-wide hover:text-default"
+            @click="toggleSection(group.key)"
+          >
+            <span class="truncate">{{ sectionLabel(group.key) }}</span>
+            <UIcon
+              name="i-lucide-chevron-down"
+              class="w-4 h-4 shrink-0 transition-transform"
+              :class="{ 'rotate-180': !collapsedSections[group.key] }"
+            />
+          </button>
+          <div
+            v-show="!collapsedSections[group.key]"
+            class="space-y-1"
+          >
+            <NuxtLink
+              v-for="item in group.items"
+              :key="item.to"
+              :to="item.to"
+              class="group flex items-center gap-3 px-3 py-2 rounded-token-md text-ui transition-colors"
+              :class="[
+                isActive(item.to)
+                  ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
+                  : 'text-muted hover:bg-surface hover:text-default'
+              ]"
+            >
+              <UIcon
+                :name="item.icon"
+                class="w-[18px] h-[18px] shrink-0"
+              />
+              <span class="truncate">
+                {{ item.label }}
+              </span>
+            </NuxtLink>
+          </div>
+        </div>
       </nav>
 
       <!-- User section -->
@@ -226,7 +291,7 @@ function isActive(to: string): boolean {
           <!-- Navigation -->
           <nav class="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
             <NuxtLink
-              v-for="item in mainNavItems"
+              v-for="item in mainNavFlat"
               :key="item.to"
               :to="item.to"
               class="group flex items-center gap-3 px-3 py-3 rounded-token-md text-ui transition-colors"
@@ -242,6 +307,47 @@ function isActive(to: string): boolean {
               />
               <span class="truncate">{{ item.label }}</span>
             </NuxtLink>
+            <div
+              v-for="group in mainNavGroups.groups"
+              :key="group.key"
+              class="contents"
+            >
+              <button
+                type="button"
+                :aria-expanded="!collapsedSections[group.key]"
+                class="w-full flex items-center gap-2 px-3 pt-3 pb-1 text-caption text-subtle uppercase tracking-wide"
+                @click="toggleSection(group.key)"
+              >
+                <span class="truncate">{{ sectionLabel(group.key) }}</span>
+                <UIcon
+                  name="i-lucide-chevron-down"
+                  class="w-4 h-4 shrink-0 transition-transform"
+                  :class="{ 'rotate-180': !collapsedSections[group.key] }"
+                />
+              </button>
+              <div
+                v-show="!collapsedSections[group.key]"
+                class="space-y-1"
+              >
+                <NuxtLink
+                  v-for="item in group.items"
+                  :key="item.to"
+                  :to="item.to"
+                  class="group flex items-center gap-3 px-3 py-3 rounded-token-md text-ui transition-colors"
+                  :class="[
+                    isActive(item.to)
+                      ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
+                      : 'text-muted hover:bg-surface hover:text-default'
+                  ]"
+                >
+                  <UIcon
+                    :name="item.icon"
+                    class="w-5 h-5 shrink-0"
+                  />
+                  <span class="truncate">{{ item.label }}</span>
+                </NuxtLink>
+              </div>
+            </div>
           </nav>
 
           <!-- User section -->
