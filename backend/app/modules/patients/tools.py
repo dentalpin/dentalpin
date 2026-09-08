@@ -162,8 +162,8 @@ def get_tools() -> list[Tool]:
         Tool(
             name="update_patient",
             description=(
-                "Actualizar los datos de contacto (tel�fono, email) de un "
-                "paciente existente. Requiere confirmaci�n del usuario."
+                "Actualizar los datos de contacto (teléfono, email) de un "
+                "paciente existente. Requiere confirmación del usuario."
             ),
             parameters=UpdatePatientArgs,
             handler=_update_patient,
@@ -175,7 +175,7 @@ def get_tools() -> list[Tool]:
             description=(
                 "Importar pacientes desde un CSV (cabecera first_name,"
                 "last_name,...). Valida sin escribir por defecto; crea con "
-                "dry_run=false. Requiere confirmaci�n del usuario."
+                "dry_run=false. Requiere confirmación del usuario."
             ),
             parameters=ImportPatientsCsvArgs,
             handler=_import_patients_csv,

@@ -86,7 +86,7 @@ def validate_expense_csv(content: bytes) -> tuple[list[ExpenseCreate], list[dict
 
 
 async def import_expenses(
-    db: AsyncSession, clinic_id: UUID, user_id: UUID, rows: list[ExpenseCreate]
+    db: AsyncSession, clinic_id: UUID, user_id: UUID | None, rows: list[ExpenseCreate]
 ) -> list[Expense]:
     """Persist validated rows via the canonical create path."""
     created = []
