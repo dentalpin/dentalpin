@@ -230,6 +230,7 @@ function getPulpFillOpacity(): number {
 
 // Unique clip-path ID for this tooth
 const pulpClipId = computed(() => `pulp-clip-${props.toothNumber}`)
+const occlusalClipId = computed(() => `occlusal-clip-${props.toothNumber}`)
 
 // Parse viewBox to get dimensions for clip-path calculation
 const viewBoxDimensions = computed(() => {
@@ -771,6 +772,11 @@ const hasPlannedLateralTreatments = computed(() => {
       >
         <!-- SVG Patterns and Gradients Definition -->
         <defs v-html="PATTERN_DEFINITIONS" />
+        <defs>
+          <clipPath :id="occlusalClipId">
+            <path :d="occlusalPaths.outline" />
+          </clipPath>
+        </defs>
 
         <!-- Background - pointer-events none to let clicks pass through to surfaces -->
         <rect
@@ -793,22 +799,11 @@ const hasPlannedLateralTreatments = computed(() => {
           :opacity="toothOpacity"
         />
 
-        <!-- Highlight details (fissures, ridges) -->
-        <path
-          v-for="(highlightPath, idx) in occlusalPaths.highlight"
-          :key="`occlusal-highlight-${idx}`"
-          :d="highlightPath"
-          class="tooth-highlight"
-          stroke-width="0.6"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          fill="none"
-          pointer-events="none"
-          :opacity="toothOpacity"
-        />
-
-        <!-- Treatment overlays on occlusal view -->
-        <g class="treatment-overlays">
+        <!-- Treatment overlays on occlusal view (clipped to anatomical outline) -->
+        <g
+          class="treatment-overlays"
+          :clip-path="`url(#${occlusalClipId})`"
+        >
           <!-- Rule 2: Occlusal surface treatments (solid fill, dot, outline) -->
           <template
             v-for="treatment in occlusalSurfaceTreatments"
@@ -955,6 +950,36 @@ const hasPlannedLateralTreatments = computed(() => {
             </g>
           </template>
         </g>
+
+        <!-- Highlight details (fissures, ridges) — after fills so they stay visible; clipped to outline -->
+        <g
+          :clip-path="`url(#${occlusalClipId})`"
+          pointer-events="none"
+        >
+          <path
+            v-for="(highlightPath, idx) in occlusalPaths.highlight"
+            :key="`occlusal-highlight-${idx}`"
+            :d="highlightPath"
+            class="tooth-highlight"
+            stroke-width="0.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+            :opacity="toothOpacity"
+          />
+        </g>
+
+        <!-- Redraw outline stroke so the silhouette stays crisp over fills -->
+        <path
+          :d="occlusalPaths.outline"
+          class="tooth-occlusal"
+          fill="none"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          pointer-events="none"
+          :opacity="toothOpacity"
+        />
 
         <!-- Missing tooth X overlay -->
         <g

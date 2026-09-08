@@ -420,12 +420,16 @@ const LATERAL_PATHS_BY_POSITION: Record<ToothPosition, LateralPaths> = {
 // OCCLUSAL VIEW PATHS (ViewBox: 0 0 50 50)
 // Anatomically shaped outlines per tooth category with 5 treatment zones
 // (O center + M/D/V/L outer sectors). Quadrant symmetry via CSS transform.
+// Outer quads may extend past the silhouette; callers clip fills to `outline`.
 // ============================================================================
 
 interface Point {
   x: number
   y: number
 }
+
+/** Four corners in order: top-left, top-right, bottom-right, bottom-left (Q1). */
+type Quad = [Point, Point, Point, Point]
 
 interface OcclusalPaths {
   outline: string
@@ -439,7 +443,7 @@ function pointStr(p: Point): string {
 }
 
 /** Build 5-sector surface paths from outer/inner corner points (Q1 orientation). */
-function buildOcclusalSurfaces(outer: Point[], inner: Point[]): Record<string, string> {
+function buildOcclusalSurfaces(outer: Quad, inner: Quad): Record<string, string> {
   const [otl, otr, obr, obl] = outer
   const [itl, itr, ibr, ibl] = inner
   return {
@@ -447,11 +451,11 @@ function buildOcclusalSurfaces(outer: Point[], inner: Point[]): Record<string, s
     V: `M ${pointStr(itl)} L ${pointStr(itr)} L ${pointStr(otr)} L ${pointStr(otl)} Z`,
     L: `M ${pointStr(ibl)} L ${pointStr(obl)} L ${pointStr(obr)} L ${pointStr(ibr)} Z`,
     M: `M ${pointStr(itl)} L ${pointStr(otl)} L ${pointStr(obl)} L ${pointStr(ibl)} Z`,
-    D: `M ${pointStr(itr)} L ${pointStr(obr)} L ${pointStr(otr)} L ${pointStr(itr)} Z`
+    D: `M ${pointStr(itr)} L ${pointStr(otr)} L ${pointStr(obr)} L ${pointStr(ibr)} Z`
   }
 }
 
-function buildOcclusalDividers(outer: Point[], inner: Point[]): string[] {
+function buildOcclusalDividers(outer: Quad, inner: Quad): string[] {
   const [otl, otr, obr, obl] = outer
   const [itl, itr, ibr, ibl] = inner
   return [
@@ -465,8 +469,8 @@ function buildOcclusalDividers(outer: Point[], inner: Point[]): string[] {
 
 function buildOcclusalPaths(
   outline: string,
-  outer: Point[],
-  inner: Point[],
+  outer: Quad,
+  inner: Quad,
   highlight: string[],
   surfaceCenters: Record<string, Point>
 ): OcclusalPaths {
@@ -478,81 +482,80 @@ function buildOcclusalPaths(
   }
 }
 
-// Incisor — wide mesio-distal, narrow bucco-lingual (incisal edge toward V)
-const INCISOR_OUTER: Point[] = [
-  { x: 9, y: 16 }, { x: 41, y: 16 }, { x: 41, y: 34 }, { x: 9, y: 34 }
+// Incisor — wide mesio-distal, narrow bucco-lingual; rounded MD corners, flatter labial edge
+const INCISOR_OUTER: Quad = [
+  { x: 6, y: 14 }, { x: 44, y: 14 }, { x: 44, y: 36 }, { x: 6, y: 36 }
 ]
-const INCISOR_INNER: Point[] = [
-  { x: 20, y: 22 }, { x: 30, y: 22 }, { x: 30, y: 28 }, { x: 20, y: 28 }
+const INCISOR_INNER: Quad = [
+  { x: 19, y: 21 }, { x: 31, y: 21 }, { x: 31, y: 29 }, { x: 19, y: 29 }
 ]
 const OCCLUSAL_INCISOR = buildOcclusalPaths(
-  'M 9,18 Q 9,14 13,14 L 37,14 Q 41,14 41,18 L 41,32 Q 41,36 37,36 L 13,36 Q 9,36 9,32 Z',
+  'M 7,17 C 7,12 12,10 18,10 L 32,10 C 38,10 43,12 43,17 L 44,33 C 44,38 39,40 34,40 L 16,40 C 11,40 6,38 6,33 Z',
   INCISOR_OUTER,
   INCISOR_INNER,
   [
-    'M 13,32 Q 25,34 37,32',
+    'M 14,33 Q 25,36 36,33',
     ...buildOcclusalDividers(INCISOR_OUTER, INCISOR_INNER)
   ],
-  { O: { x: 25, y: 25 }, M: { x: 14, y: 25 }, D: { x: 36, y: 25 }, V: { x: 25, y: 17 }, L: { x: 25, y: 33 } }
+  { O: { x: 25, y: 25 }, M: { x: 12, y: 25 }, D: { x: 38, y: 25 }, V: { x: 25, y: 15 }, L: { x: 25, y: 35 } }
 )
 
-// Canine — cuspal diamond with buccal cusp toward V
-const CANINE_OUTER: Point[] = [
-  { x: 10, y: 9 }, { x: 40, y: 9 }, { x: 40, y: 41 }, { x: 10, y: 41 }
+// Canine — pointed buccal cusp (V), wider mid-crown, rounded lingual base
+const CANINE_OUTER: Quad = [
+  { x: 7, y: 5 }, { x: 43, y: 5 }, { x: 43, y: 45 }, { x: 7, y: 45 }
 ]
-const CANINE_INNER: Point[] = [
+const CANINE_INNER: Quad = [
   { x: 20, y: 22 }, { x: 30, y: 22 }, { x: 30, y: 28 }, { x: 20, y: 28 }
 ]
 const OCCLUSAL_CANINE = buildOcclusalPaths(
-  'M 25,8 Q 36,12 40,25 Q 36,38 25,42 Q 14,38 10,25 Q 14,12 25,8 Z',
+  'M 25,5 Q 38,12 42,25 Q 38,37 28,43 Q 25,45 22,43 Q 12,37 8,25 Q 12,12 25,5 Z',
   CANINE_OUTER,
   CANINE_INNER,
   [
-    'M 25,8 L 25,28',
+    'M 25,12 L 25,26',
     ...buildOcclusalDividers(CANINE_OUTER, CANINE_INNER)
   ],
-  { O: { x: 25, y: 25 }, M: { x: 15, y: 25 }, D: { x: 35, y: 25 }, V: { x: 25, y: 14 }, L: { x: 25, y: 36 } }
+  { O: { x: 25, y: 25 }, M: { x: 14, y: 25 }, D: { x: 36, y: 25 }, V: { x: 25, y: 12 }, L: { x: 25, y: 38 } }
 )
 
-// Premolar — oval with buccal and lingual cusps
-const PREMOLAR_OUTER: Point[] = [
-  { x: 13, y: 13 }, { x: 37, y: 13 }, { x: 37, y: 37 }, { x: 13, y: 37 }
+// Premolar — BL-elongated oval with buccal + lingual cusp lobes and a waist
+const PREMOLAR_OUTER: Quad = [
+  { x: 10, y: 7 }, { x: 40, y: 7 }, { x: 40, y: 43 }, { x: 10, y: 43 }
 ]
-const PREMOLAR_INNER: Point[] = [
+const PREMOLAR_INNER: Quad = [
   { x: 20, y: 20 }, { x: 30, y: 20 }, { x: 30, y: 30 }, { x: 20, y: 30 }
 ]
 const OCCLUSAL_PREMOLAR = buildOcclusalPaths(
-  'M 14,12 Q 25,10 36,12 Q 40,25 36,38 Q 25,40 14,38 Q 10,25 14,12 Z',
+  'M 17,8 C 25,4 33,8 36,14 C 40,20 40,24 37,27 C 40,30 40,36 36,40 C 30,45 20,45 14,40 C 10,36 10,30 13,27 C 10,24 10,20 14,14 C 15,10 17,8 17,8 Z',
   PREMOLAR_OUTER,
   PREMOLAR_INNER,
   [
-    'M 18,19 Q 25,17 32,19',
-    'M 20,31 Q 25,33 30,31',
-    'M 25,17 L 25,33',
+    'M 20,18 Q 25,16 30,18',
+    'M 21,32 Q 25,34 29,32',
+    'M 25,18 L 25,32',
     ...buildOcclusalDividers(PREMOLAR_OUTER, PREMOLAR_INNER)
   ],
-  { O: { x: 25, y: 25 }, M: { x: 15, y: 25 }, D: { x: 35, y: 25 }, V: { x: 25, y: 15 }, L: { x: 25, y: 35 } }
+  { O: { x: 25, y: 25 }, M: { x: 14, y: 25 }, D: { x: 36, y: 25 }, V: { x: 25, y: 12 }, L: { x: 25, y: 38 } }
 )
 
-// Molar — squarish with four cusps and central cross fissure
-const MOLAR_OUTER: Point[] = [
-  { x: 11, y: 11 }, { x: 39, y: 11 }, { x: 39, y: 39 }, { x: 11, y: 39 }
+// Molar — rounded square with four cusp bulges; short central fissure only (not a missing-tooth X)
+const MOLAR_OUTER: Quad = [
+  { x: 8, y: 8 }, { x: 42, y: 8 }, { x: 42, y: 42 }, { x: 8, y: 42 }
 ]
-const MOLAR_INNER: Point[] = [
+const MOLAR_INNER: Quad = [
   { x: 19, y: 19 }, { x: 31, y: 19 }, { x: 31, y: 31 }, { x: 19, y: 31 }
 ]
 const OCCLUSAL_MOLAR = buildOcclusalPaths(
-  'M 12,13 Q 12,11 14,11 L 36,11 Q 38,11 38,13 L 38,37 Q 38,39 36,39 L 14,39 Q 12,39 12,37 Z',
+  'M 14,10 C 18,6 22,7 25,8 C 28,7 32,6 36,10 C 42,14 43,18 42,22 C 43,25 43,28 42,31 C 43,35 42,39 36,42 C 32,45 28,44 25,43 C 22,44 18,45 14,42 C 8,39 7,35 8,31 C 7,28 7,25 8,22 C 7,18 8,14 14,10 Z',
   MOLAR_OUTER,
   MOLAR_INNER,
   [
-    'M 25,13 L 25,37',
-    'M 13,25 L 37,25',
-    'M 17,17 L 33,33',
-    'M 33,17 L 17,33',
+    // Keep fissures inside the central O so they do not read as a missing-tooth overlay
+    'M 25,20 L 25,30',
+    'M 20,25 L 30,25',
     ...buildOcclusalDividers(MOLAR_OUTER, MOLAR_INNER)
   ],
-  { O: { x: 25, y: 25 }, M: { x: 13, y: 25 }, D: { x: 37, y: 25 }, V: { x: 25, y: 13 }, L: { x: 25, y: 37 } }
+  { O: { x: 25, y: 25 }, M: { x: 12, y: 25 }, D: { x: 38, y: 25 }, V: { x: 25, y: 12 }, L: { x: 25, y: 38 } }
 )
 
 // Quadrant symmetry is handled by CSS transform (napkin unfolding)

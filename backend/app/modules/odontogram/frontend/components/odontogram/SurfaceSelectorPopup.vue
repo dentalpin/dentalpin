@@ -217,6 +217,9 @@ watch(() => props.open, (isOpen) => {
             >
               <!-- Pattern definition -->
               <defs>
+                <clipPath :id="`occlusal-surface-clip-${toothNumber}`">
+                  <path :d="occlusalPaths.outline" />
+                </clipPath>
                 <pattern
                   id="surface-pattern"
                   patternUnits="userSpaceOnUse"
@@ -237,41 +240,55 @@ watch(() => props.open, (isOpen) => {
 
               <!-- Tooth paths group with transform for quadrant symmetry -->
               <g :transform="occlusalGroupTransform">
-                <!-- Outline -->
+                <!-- Outline (fill under, stroke redrawn after surfaces) -->
                 <path
                   :d="occlusalPaths.outline"
                   fill="var(--odontogram-fill-shade)"
+                  stroke="none"
+                />
+
+                <!-- Surfaces (clickable), clipped so silhouette stays anatomical -->
+                <g :clip-path="`url(#occlusal-surface-clip-${toothNumber})`">
+                  <path
+                    v-for="(path, surface) in occlusalPaths.surfaces"
+                    :key="surface"
+                    :d="path"
+                    :fill="getSurfaceFill(surface as Surface)"
+                    :opacity="getSurfaceOpacity(surface as Surface)"
+                    :stroke="isSurfaceSelected(surface as Surface) ? treatmentColor : 'var(--odontogram-outline-light)'"
+                    :stroke-width="isSurfaceSelected(surface as Surface) ? 2 : 0.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="surface-path"
+                    @click="toggleSurface(surface as Surface)"
+                  />
+                </g>
+
+                <!-- Highlight details (fissures) — drawn after fills so they remain visible -->
+                <g
+                  :clip-path="`url(#occlusal-surface-clip-${toothNumber})`"
+                  pointer-events="none"
+                >
+                  <path
+                    v-for="(highlightPath, idx) in occlusalPaths.highlight"
+                    :key="`occlusal-highlight-${idx}`"
+                    :d="highlightPath"
+                    fill="none"
+                    stroke="var(--odontogram-detail)"
+                    stroke-width="0.75"
+                    stroke-linecap="round"
+                  />
+                </g>
+
+                <!-- Crisp outline on top so the anatomical edge is never covered -->
+                <path
+                  :d="occlusalPaths.outline"
+                  fill="none"
                   stroke="var(--odontogram-outline)"
                   stroke-width="1.25"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                />
-
-                <!-- Highlight details (fissures) -->
-                <path
-                  v-for="(highlightPath, idx) in occlusalPaths.highlight"
-                  :key="`occlusal-highlight-${idx}`"
-                  :d="highlightPath"
-                  fill="none"
-                  stroke="var(--odontogram-detail)"
-                  stroke-width="0.75"
-                  stroke-linecap="round"
                   pointer-events="none"
-                />
-
-                <!-- Surfaces (clickable) -->
-                <path
-                  v-for="(path, surface) in occlusalPaths.surfaces"
-                  :key="surface"
-                  :d="path"
-                  :fill="getSurfaceFill(surface as Surface)"
-                  :opacity="getSurfaceOpacity(surface as Surface)"
-                  :stroke="isSurfaceSelected(surface as Surface) ? treatmentColor : 'var(--odontogram-outline-light)'"
-                  :stroke-width="isSurfaceSelected(surface as Surface) ? 2 : 0.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="surface-path"
-                  @click="toggleSurface(surface as Surface)"
                 />
               </g>
 
