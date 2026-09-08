@@ -232,9 +232,19 @@ docker compose exec -T db psql -U dental -d dental_clinic \
 El esquema debe existir previamente (reinstala primero el módulo y
 después restaura los datos).
 
-Para copias de la base de datos completa usa tu flujo habitual de
-Postgres (pg_dump, restauración a un punto en el tiempo, etc.) — el
-sistema de módulos no lo sustituye.
+### Copia completa (base de datos + archivos)
+
+```bash
+docker compose exec backend dentalpin db backup
+```
+
+Genera `full_<fecha>.dump` (toda la base de datos) y
+`storage_<fecha>.tar.gz` (documentos, radiografías, importaciones) en
+`storage/backups/`. Programa este comando cada noche y copia los
+archivos fuera del servidor: una copia en el mismo disco no es una
+copia de seguridad. Procedimiento completo de restauración,
+migración de hardware y verificación mensual: la guía
+`docs/workflows/backup-restore.md`.
 
 ---
 

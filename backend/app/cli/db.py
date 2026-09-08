@@ -18,9 +18,15 @@ from __future__ import annotations
 
 import argparse
 import asyncio
+import shutil
+import subprocess
+import tarfile
+from datetime import UTC, datetime
+from pathlib import Path
 
 from sqlalchemy import text
 
+from app.config import settings
 from app.core.plugins.alembic_paths import alembic_cfg_path, boot_upgrade_targets
 from app.core.plugins.loader import register_discovered
 from app.core.plugins.state import ModuleState
@@ -41,6 +47,28 @@ def register(sub: argparse._SubParsersAction) -> None:
         help="Print the Alembic targets without applying them",
     )
     p_upgrade.set_defaults(func=_cmd_upgrade)
+
+    p_backup = db_sub.add_parser(
+        "backup",
+        help="Full-database pg_dump plus storage snapshot for disaster recovery",
+    )
+    p_backup.add_argument(
+        "--out-dir",
+        default=None,
+        help="Backup directory (default: <storage>/backups)",
+    )
+    p_backup.add_argument(
+        "--keep",
+        type=int,
+        default=7,
+        help="Retain the newest N backups per kind (default: 7)",
+    )
+    p_backup.add_argument(
+        "--skip-storage",
+        action="store_true",
+        help="Skip the storage tarball (database dump only)",
+    )
+    p_backup.set_defaults(func=_cmd_backup)
 
 
 def _cmd_upgrade(args: argparse.Namespace) -> int:
@@ -81,3 +109,79 @@ async def _load_states() -> dict[str, str]:
             return {}
         rows = await session.execute(text("SELECT name, state FROM core_module"))
         return {name: state for name, state in rows.all()}
+
+
+def backup_out_dir(out_dir: str | None) -> Path:
+    """Resolve the backup directory (explicit arg wins, else the storage volume)."""
+    return Path(out_dir) if out_dir else Path(settings.STORAGE_LOCAL_PATH) / "backups"
+
+
+def prune_backups(out_dir: Path, prefix: str, keep: int) -> list[Path]:
+    """Delete all but the newest ``keep`` files starting with ``prefix``.
+
+    Returns the pruned paths. Lexicographic order == chronological order
+    because every backup filename embeds a ``%Y%m%dT%H%M%SZ`` timestamp.
+    """
+    candidates = sorted(out_dir.glob(f"{prefix}*"))
+    pruned = candidates[: max(0, len(candidates) - keep)]
+    for path in pruned:
+        path.unlink()
+    return pruned
+
+
+def dump_database(dsn: str, target: Path) -> str | None:
+    """Run ``pg_dump --format=custom`` into ``target``. None on success,
+    else a human-readable error (missing binary, failure, empty output)."""
+    if shutil.which("pg_dump") is None:
+        return "pg_dump not found on PATH; cannot back up the database"
+    try:
+        proc = subprocess.run(
+            ["pg_dump", "--format=custom", "--no-owner", dsn],
+            capture_output=True,
+            timeout=3600,
+        )
+    except subprocess.TimeoutExpired:
+        return "pg_dump timed out after 3600 seconds"
+    if proc.returncode != 0:
+        return f"pg_dump failed: {proc.stderr.decode(errors='replace').strip()}"
+    if not proc.stdout:
+        return "pg_dump produced an empty backup"
+    target.write_bytes(proc.stdout)
+    return None
+
+
+def snapshot_storage(storage_root: Path, target: Path) -> None:
+    """Tarball the storage volume, excluding the backups dir itself
+    (it lives inside the volume — archiving it would recurse)."""
+    with tarfile.open(target, "w:gz") as tar:
+        for child in sorted(storage_root.iterdir()):
+            if child.name == "backups":
+                continue
+            tar.add(child, arcname=child.name)
+
+
+def _cmd_backup(args: argparse.Namespace) -> int:
+    from app.core.plugins.processor import _pg_dump_dsn
+
+    out_dir = backup_out_dir(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
+
+    db_target = out_dir / f"full_{timestamp}.dump"
+    error = dump_database(_pg_dump_dsn(settings.DATABASE_URL), db_target)
+    if error is not None:
+        print(f"db backup: {error}", flush=True)
+        return 3
+    print(f"db backup: database -> {db_target}")
+
+    if not args.skip_storage:
+        storage_target = out_dir / f"storage_{timestamp}.tar.gz"
+        snapshot_storage(Path(settings.STORAGE_LOCAL_PATH), storage_target)
+        print(f"db backup: storage -> {storage_target}")
+        pruned = prune_backups(out_dir, "storage_", args.keep)
+    else:
+        pruned = []
+    pruned += prune_backups(out_dir, "full_", args.keep)
+    for path in pruned:
+        print(f"db backup: pruned {path.name}")
+    return 0
