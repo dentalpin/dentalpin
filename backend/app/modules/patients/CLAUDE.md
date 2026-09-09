@@ -38,11 +38,11 @@ Agent tools in `tools.py` (wrap `PatientService`, no logic duplicated).
 | `search_patients` | READ | `PatientService.list_patients` | `patients.read` |
 | `get_patient` | READ | `PatientService.get_patient` | `patients.read` |
 | `create_patient` | WRITE | `PatientService.create_patient` | `patients.write` |
-| `import_patients_csv` | WRITE | `csv_import.validate/import` (dry-run default) | `patients.write` |
 | `update_patient` | WRITE | `PatientService.update_patient` | `patients.write` |
 
 `update_patient` covers contact data only (phone, email) — identity
-fields stay manual.
+fields stay manual. CSV import is HTTP-only (no agent tool — the LLM
+must never emit 1,000 PII rows as an argument).
 
 ## Events emitted
 
@@ -51,6 +51,7 @@ fields stay manual.
 | `patient.created` | `PatientService.create` succeeds | `patient_id`, `clinic_id` |
 | `patient.updated` | `PatientService.update` succeeds | `patient_id`, `clinic_id`, `changes` |
 | `patient.archived` | `PatientService.archive` (soft-delete) | `patient_id`, `clinic_id` |
+| `patient.restored` | `PatientService.restore` (status → active) | `patient_id`, `clinic_id` |
 
 See `service.py:113`, `service.py:131`, `service.py:142`.
 

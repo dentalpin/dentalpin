@@ -73,35 +73,6 @@ async def _monthly_totals(ctx: AgentContext, params: MonthlyTotalsArgs) -> dict:
     return {"totals": [{"category": t.category, "total": t.total} for t in totals]}
 
 
-class ImportExpensesCsvArgs(BaseModel):
-    csv_text: str = Field(
-        description=("CSV with header category,amount,expense_date[,description]. Max 1000 rows.")
-    )
-    dry_run: bool = Field(
-        default=True,
-        description="Validate only when true; create the expenses when false.",
-    )
-
-
-async def _import_expenses_csv(ctx: AgentContext, params: ImportExpensesCsvArgs) -> dict:
-    from .csv_import import CsvImportError, import_expenses, validate_expense_csv
-
-    try:
-        valid, errors, total = validate_expense_csv(params.csv_text.encode("utf-8"))
-    except CsvImportError as exc:
-        return {"error": str(exc)}
-    created_ids: list = []
-    if not params.dry_run and valid:
-        expenses = await import_expenses(ctx.db, ctx.clinic_id, None, valid)
-        created_ids = [e.id for e in expenses]
-    return {
-        "total": total,
-        "valid": len(valid),
-        "created": created_ids,
-        "errors": errors,
-    }
-
-
 def get_tools() -> list[Tool]:
     return [
         Tool(
@@ -131,18 +102,5 @@ def get_tools() -> list[Tool]:
             handler=_monthly_totals,
             permissions=["expenses.read"],
             category=ToolCategory.READ,
-        ),
-        Tool(
-            name="import_expenses_csv",
-            description=(
-                "Import fixed office expenses from a CSV (header "
-                "category,amount,expense_date[,description]). Validates "
-                "without writing by default; creates with dry_run=false."
-            ),
-            parameters=ImportExpensesCsvArgs,
-            handler=_import_expenses_csv,
-            permissions=["expenses.write"],
-            category=ToolCategory.WRITE,
-            exposes_free_text=True,
         ),
     ]

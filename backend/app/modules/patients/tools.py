@@ -50,20 +50,6 @@ class UpdatePatientArgs(BaseModel):
     email: str | None = Field(default=None, max_length=255)
 
 
-class ImportPatientsCsvArgs(BaseModel):
-    csv_text: str = Field(
-        description=(
-            "CSV with header first_name,last_name[,phone,email,date_of_birth,"
-            "notes,do_not_contact,national_id,national_id_type,billing_name,"
-            "billing_tax_id]. Max 1000 rows."
-        )
-    )
-    dry_run: bool = Field(
-        default=True,
-        description="Validate only when true; create the patients when false.",
-    )
-
-
 def _summary(patient) -> dict:
     return {
         "id": patient.id,
@@ -110,25 +96,6 @@ async def _update_patient(ctx: AgentContext, params: UpdatePatientArgs) -> dict:
     return _summary(patient)
 
 
-async def _import_patients_csv(ctx: AgentContext, params: ImportPatientsCsvArgs) -> dict:
-    from .csv_import import CsvImportError, import_patients, validate_patient_csv
-
-    try:
-        valid, errors, total = validate_patient_csv(params.csv_text.encode("utf-8"))
-    except CsvImportError as exc:
-        return {"error": str(exc)}
-    created_ids: list = []
-    if not params.dry_run and valid:
-        patients = await import_patients(ctx.db, ctx.clinic_id, valid)
-        created_ids = [p.id for p in patients]
-    return {
-        "total": total,
-        "valid": len(valid),
-        "created": created_ids,
-        "errors": errors,
-    }
-
-
 def get_tools() -> list[Tool]:
     return [
         Tool(
@@ -169,18 +136,5 @@ def get_tools() -> list[Tool]:
             handler=_update_patient,
             permissions=["patients.write"],
             category=ToolCategory.WRITE,
-        ),
-        Tool(
-            name="import_patients_csv",
-            description=(
-                "Importar pacientes desde un CSV (cabecera first_name,"
-                "last_name,...). Valida sin escribir por defecto; crea con "
-                "dry_run=false. Requiere confirmación del usuario."
-            ),
-            parameters=ImportPatientsCsvArgs,
-            handler=_import_patients_csv,
-            permissions=["patients.write"],
-            category=ToolCategory.WRITE,
-            exposes_free_text=True,
         ),
     ]

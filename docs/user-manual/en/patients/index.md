@@ -38,3 +38,23 @@ search results.
 - **Schedules** — book appointments against a patient.
 
 For end-user instructions, follow the screen-by-screen guides above.
+
+## Importing from CSV
+
+`POST /api/v1/patients/import.csv` (multipart `file`, `patients.write`):
+
+```bash
+curl -X POST "https://clinic/api/v1/patients/import.csv?dry_run=false" \
+  -H "Authorization: Bearer $TOKEN" -F file=@patients.csv
+```
+
+Columns: `first_name*`, `last_name*`, `phone`, `email`,
+`date_of_birth` (YYYY-MM-DD or DD/MM/YYYY), `notes`,
+`do_not_contact`, `national_id`, `national_id_type`,
+`billing_name`, `billing_tax_id`. Delimiter `,` or `;`
+(auto-detected), UTF-8, max 1000 rows / 1 MiB. Dry-run (default)
+validates only and returns per-row errors plus `duplicates` (rows
+matching an existing patient by national id, else email + birth
+date); commit skips duplicates unless `allow_duplicates=true`.
+The report shape is `{total, valid, created, skipped, errors,
+duplicates}`.

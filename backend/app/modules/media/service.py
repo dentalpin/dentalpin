@@ -248,6 +248,27 @@ class DocumentService:
         await db.flush()
         return len(documents)
 
+    @staticmethod
+    async def unarchive_patient_documents(
+        db: AsyncSession,
+        clinic_id: UUID,
+        patient_id: UUID,
+    ) -> int:
+        """Reverse of :meth:`archive_patient_documents` — restores the
+        documents archived with the patient (patient.restored cascade)."""
+        result = await db.execute(
+            select(Document).where(
+                Document.clinic_id == clinic_id,
+                Document.patient_id == patient_id,
+                Document.status == "archived",
+            )
+        )
+        documents = list(result.scalars().all())
+        for doc in documents:
+            doc.status = "active"
+        await db.flush()
+        return len(documents)
+
 
 class PhotoService:
     """Photo-specific operations (gallery filters, pairing, metadata)."""

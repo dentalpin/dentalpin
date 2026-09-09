@@ -17,7 +17,13 @@ from app.core.auth.dependencies import ClinicContext, get_clinic_context, requir
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
-from .csv_import import CsvImportError, import_patients, validate_patient_csv
+from .csv_import import (
+    CsvImportError,
+    find_duplicate_lines,
+    import_patients,
+    read_upload_limited,
+    validate_patient_csv,
+)
 from .schemas import (
     PatientCreate,
     PatientExtendedResponse,
@@ -112,20 +118,37 @@ async def import_patients_csv(
     _: Annotated[None, Depends(require_permission("patients.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
     dry_run: bool = Query(default=True),
+    allow_duplicates: bool = Query(default=False),
 ) -> ApiResponse[PatientImportReport]:
     """Import patients from CSV. Dry-run (default) validates only; with
-    ``dry_run=false`` valid rows are created and per-row events fire."""
-    content = await file.read()
+    ``dry_run=false`` valid rows are created and per-row events fire.
+    Rows matching an existing patient are reported as duplicates and
+    skipped unless ``allow_duplicates`` is set."""
+    content = await read_upload_limited(file)
     try:
-        valid, errors, total = validate_patient_csv(content)
+        valid, errors, total, lines = validate_patient_csv(content)
     except CsvImportError as exc:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))
+    duplicates = await find_duplicate_lines(db, ctx.clinic_id, valid, lines)
+    dup_lines = {d["row"] for d in duplicates}
     created = 0
+    skipped = 0
     if not dry_run and valid:
-        patients = await import_patients(db, ctx.clinic_id, valid)
+        to_create = [
+            row for row, line in zip(valid, lines) if allow_duplicates or line not in dup_lines
+        ]
+        skipped = len(valid) - len(to_create)
+        patients = await import_patients(db, ctx.clinic_id, to_create)
         created = len(patients)
     return ApiResponse(
-        data=PatientImportReport(total=total, valid=len(valid), created=created, errors=errors)
+        data=PatientImportReport(
+            total=total,
+            valid=len(valid),
+            created=created,
+            skipped=skipped,
+            errors=errors,
+            duplicates=duplicates,
+        )
     )
 
 

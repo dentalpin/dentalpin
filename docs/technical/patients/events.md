@@ -15,6 +15,7 @@ Per-module slice of [`docs/events-catalog.md`](../../events-catalog.md)
 | `patient.created` | `service.py:PatientService.create` | After insert + extended row commit. | `patient_id` (UUID), `clinic_id` (UUID) |
 | `patient.updated` | `service.py:PatientService.update` | After partial update commit. | `patient_id` (UUID), `changes` (dict of changed fields) |
 | `patient.archived` | `service.py:PatientService.archive` | After soft-delete (status → archived). | `patient_id` (UUID) |
+| `patient.restored` | `service.py:PatientService.restore` | After restore (status → active). Reverses the media archive cascade. | `patient_id` (UUID), `clinic_id` (UUID) |
 
 Subscribers are listed in the auto-generated [events catalog](../../events-catalog.md).
 

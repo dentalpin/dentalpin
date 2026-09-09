@@ -127,10 +127,18 @@ class CsvRowError(BaseModel):
     message: str
 
 
+class CsvRowDuplicate(BaseModel):
+    row: int
+    patient_id: UUID
+    matched_on: str
+
+
 class PatientImportReport(BaseModel):
     """Dry-run validation or commit result for a patients CSV upload."""
 
     total: int
     valid: int
     created: int
+    skipped: int = 0
     errors: list[CsvRowError]
+    duplicates: list[CsvRowDuplicate] = []

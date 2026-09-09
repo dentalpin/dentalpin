@@ -95,6 +95,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `patient.archived` | `EventType.PATIENT_ARCHIVED` | `patients` | `activity_journal`, `media`, `periodontogram`, `recalls` |
 | `patient.created` | `EventType.PATIENT_CREATED` | `patients` | `activity_journal`, `integrations`, `notifications` |
 | `patient.medical_updated` | `EventType.PATIENT_MEDICAL_UPDATED` | `patients_clinical` | `patient_timeline` |
+| `patient.restored` | `EventType.PATIENT_RESTORED` | `patients` | `media` |
 | `patient.updated` | `EventType.PATIENT_UPDATED` | `patients` | — |
 | `payment.allocated` | `EventType.PAYMENT_ALLOCATED` | `payments` | `activity_journal`, `billing` |
 | `payment.recorded` | `EventType.PAYMENT_RECORDED` | `payments` | — |
@@ -805,6 +806,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `patients_clinical` — `backend/app/modules/patients_clinical/router.py`
 - **Subscribers:**
   - `patient_timeline`
+
+### `patient.restored`
+
+- **Constant:** `EventType.PATIENT_RESTORED`
+- **Publishers:**
+  - `patients` — `backend/app/modules/patients/service.py`
+- **Subscribers:**
+  - `media`
 
 ### `patient.updated`
 

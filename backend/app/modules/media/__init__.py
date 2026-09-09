@@ -65,6 +65,7 @@ class MediaModule(BaseModule):
         """Register event handlers."""
         return {
             EventType.PATIENT_ARCHIVED: self._on_patient_archived,
+            EventType.PATIENT_RESTORED: self._on_patient_restored,
         }
 
     async def _on_patient_archived(self, data: dict, *, db: AsyncSession) -> None:
@@ -86,5 +87,23 @@ class MediaModule(BaseModule):
             return
 
         await DocumentService.archive_patient_documents(
+            db, UUID(str(clinic_id)), UUID(str(patient_id))
+        )
+
+    async def _on_patient_restored(self, data: dict, *, db: AsyncSession) -> None:
+        """Reverse the archive cascade when a patient is restored.
+
+        Transactional (ADR 0019): runs inside the publisher's session.
+        """
+        patient_id = data.get("patient_id")
+        clinic_id = data.get("clinic_id")
+        if not patient_id or not clinic_id:
+            logger.error(
+                "media._on_patient_restored: missing patient_id/clinic_id in payload: %r",
+                data,
+            )
+            return
+
+        await DocumentService.unarchive_patient_documents(
             db, UUID(str(clinic_id)), UUID(str(patient_id))
         )

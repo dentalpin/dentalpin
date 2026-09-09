@@ -309,8 +309,8 @@ class PatientService:
     async def restore_patient(db: AsyncSession, patient: Patient) -> Patient:
         """Restore a soft-archived patient. No-op when already active.
 
-        Publishes ``patient.updated`` (no dedicated restored event exists)
-        so timeline/consumers refresh off the same contract as edits.
+        Publishes ``patient.restored`` (transactional) so the media
+        cascade reverses and consumers refresh off a dedicated contract.
         """
         if patient.status != "archived":
             return patient
@@ -318,11 +318,10 @@ class PatientService:
         await db.flush()
 
         await event_bus.publish(
-            EventType.PATIENT_UPDATED,
+            EventType.PATIENT_RESTORED,
             {
                 "patient_id": str(patient.id),
                 "clinic_id": str(patient.clinic_id),
-                "changes": ["status"],
             },
             db=db,
         )

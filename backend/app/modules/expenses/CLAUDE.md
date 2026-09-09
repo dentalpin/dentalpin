@@ -33,8 +33,10 @@ the module admin UI) if e.g. reception should record supplies.
 |---|---|---|---|
 | `list_expenses` | READ | `ExpenseService.list_expenses` | `expenses.read` |
 | `create_expense` | WRITE | `ExpenseService.create_expense` | `expenses.write` |
-| `import_expenses_csv` | WRITE | `csv_import.validate/import` (dry-run default) | `expenses.write` |
 | `expense_monthly_totals` | READ | `ExpenseService.monthly_totals_by_category` | `expenses.read` |
+
+CSV import is HTTP-only (no agent tool — same PII-volume reason as
+patients).
 
 `list_expenses` and `create_expense` return the user-entered `description`
 (free prose, may name employees) and are marked `exposes_free_text=True`,

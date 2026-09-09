@@ -11,7 +11,7 @@ from app.core.auth.dependencies import ClinicContext, get_clinic_context, requir
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
-from .csv_import import CsvImportError, import_expenses, validate_expense_csv
+from .csv_import import CsvImportError, import_expenses, read_upload_limited, validate_expense_csv
 from .schemas import (
     ExpenseCreate,
     ExpenseImportReport,
@@ -82,7 +82,7 @@ async def import_expenses_csv(
 ) -> ApiResponse[ExpenseImportReport]:
     """Import expenses from CSV. Dry-run (default) validates only; with
     ``dry_run=false`` valid rows are created attributed to the caller."""
-    content = await file.read()
+    content = await read_upload_limited(file)
     try:
         valid, errors, total = validate_expense_csv(content)
     except CsvImportError as exc:
