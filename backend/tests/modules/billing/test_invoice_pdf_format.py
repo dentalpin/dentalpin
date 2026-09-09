@@ -113,6 +113,8 @@ def test_every_ui_locale_renders_a_pdf() -> None:
     from app.modules.billing.pdf import PDF_LOCALE_PATTERN, PDF_LOCALES
 
     nuxt_config = Path(__file__).resolve().parents[4] / "frontend" / "nuxt.config.ts"
+    if not nuxt_config.exists():
+        nuxt_config = Path("/host_frontend/nuxt.config.ts")
     i18n_block = nuxt_config.read_text().split("i18n: {", 1)[1].split("defaultLocale", 1)[0]
     ui_locales = set(re.findall(r"code: '([a-z]{2})'", i18n_block))
     assert ui_locales, "could not read the host locales from nuxt.config.ts"
@@ -124,4 +126,7 @@ def test_every_ui_locale_renders_a_pdf() -> None:
         assert f'lang="{locale}"' in html
     assert "Rechnung" not in _html(_invoice(), _clinic(), locale="de")  # English fallback for now
     assert "60,00" in _html(_invoice(), _clinic(), locale="de")  # but German separators
+    html_ar = _html(_invoice(), _clinic(), locale="ar")
+    assert 'dir="rtl"' in html_ar
+    assert "فاتورة" in html_ar
     assert not re.match(PDF_LOCALE_PATTERN, "xx")

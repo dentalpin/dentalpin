@@ -303,9 +303,10 @@ class InvoicePDFService:
             """
 
         # Build HTML
+        dir_attr = ' dir="rtl"' if locale == "ar" else ""
         html = f"""
         <!DOCTYPE html>
-        <html lang="{locale}">
+        <html lang="{locale}"{dir_attr}>
         <head>
             <meta charset="UTF-8">
             <title>{doc_title} {doc_number}</title>
@@ -316,11 +317,27 @@ class InvoicePDFService:
                     box-sizing: border-box;
                 }}
                 body {{
-                    font-family: 'Helvetica Neue', Arial, 'Noto Sans Tamil', sans-serif;
+                    font-family: 'Cairo', 'Helvetica Neue', Arial, 'Noto Sans Tamil', sans-serif;
                     font-size: 11pt;
                     line-height: 1.4;
                     color: #333;
                     padding: 20mm;
+                }}
+                html[dir="rtl"] body {{
+                    direction: rtl;
+                    text-align: right;
+                }}
+                html[dir="rtl"] .invoice-info {{
+                    text-align: left;
+                }}
+                html[dir="rtl"] th {{
+                    text-align: right;
+                }}
+                html[dir="rtl"] .totals .label {{
+                    text-align: right;
+                }}
+                html[dir="rtl"] .totals .value {{
+                    text-align: left;
                 }}
                 {watermark_style}
                 .header {{
@@ -896,9 +913,50 @@ class InvoicePDFService:
             },
         }
 
+        labels_ar = {
+            "invoice": "فاتورة",
+            "credit_note": "فاتورة إشعار دائن",
+            "credit_note_for": "تصحيح لـ",
+            "draft": "مسودة",
+            "issue_date": "تاريخ الإصدار",
+            "due_date": "تاريخ الاستحقاق",
+            "billing_info": "بيانات الفوترة",
+            "billing_name": "الاسم / الشركة",
+            "tax_id": "الرقم الضريبي",
+            "address": "العنوان",
+            "patient": "المريض",
+            "items": "البنود",
+            "description": "الوصف",
+            "qty": "الكمية",
+            "unit_price": "سعر الوحدة",
+            "discount": "الخصم",
+            "vat": "ضريبة القيمة المضافة",
+            "total": "الإجمالي",
+            "subtotal": "المجموع الفرعي",
+            "total_discount": "إجمالي الخصم",
+            "tax": "الضريبة",
+            "grand_total": "المجموع الكلي",
+            "total_paid": "إجمالي المدفوع",
+            "balance_due": "المبلغ المتبقي",
+            "notes": "ملاحظات",
+            "payment_terms": "شروط الدفع",
+            "days": "أيام",
+            "generated_by": "تم الإنشاء بواسطة",
+            "status": {
+                "draft": "مسودة",
+                "issued": "صادرة",
+                "partial": "دفع جزئي",
+                "paid": "مدفوعة",
+                "cancelled": "ملغاة",
+                "voided": "باطلة",
+            },
+        }
+
         if locale == "es":
             return labels_es
         if locale == "ta":
             return labels_ta
-        # fr/pt/de/hu/pl/it/ar: English labels until translated (#422).
+        if locale == "ar":
+            return labels_ar
+        # fr/pt/de/hu/pl/it: English labels until translated (#422).
         return labels_en
