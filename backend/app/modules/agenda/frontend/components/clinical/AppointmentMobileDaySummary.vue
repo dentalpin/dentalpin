@@ -80,7 +80,7 @@ function minDurationLabel(value: number): string {
       >
         <UIcon
           name="i-lucide-user-round"
-          class="w-4 h-4 inline-block align-text-bottom mr-1"
+          class="w-4 h-4 inline-block align-text-bottom me-1"
         />
         {{ t('appointments.freeSlots.byProfessional', 'Profesional') }}
       </button>
@@ -94,7 +94,7 @@ function minDurationLabel(value: number): string {
       >
         <UIcon
           name="i-lucide-door-open"
-          class="w-4 h-4 inline-block align-text-bottom mr-1"
+          class="w-4 h-4 inline-block align-text-bottom me-1"
         />
         {{ t('appointments.freeSlots.byCabinet', 'Gabinete') }}
       </button>
@@ -196,7 +196,7 @@ function minDurationLabel(value: number): string {
 
     <!-- Min-duration chips -->
     <div class="flex items-center gap-1.5 px-3 pb-2 overflow-x-auto no-scrollbar">
-      <span class="text-caption text-subtle shrink-0 mr-1">
+      <span class="text-caption text-subtle shrink-0 me-1">
         {{ t('appointments.freeSlots.minDuration', 'Mínimo') }}
       </span>
       <button

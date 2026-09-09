@@ -167,17 +167,17 @@ async function exportCsv() {
         </template>
         <table class="w-full text-sm">
           <thead>
-            <tr class="text-left text-subtle">
+            <tr class="text-start text-subtle">
               <th class="py-1">
                 {{ t('indiaGst.panel.placeOfSupply') }}
               </th>
-              <th class="py-1 text-right">
+              <th class="py-1 text-end">
                 CGST
               </th>
-              <th class="py-1 text-right">
+              <th class="py-1 text-end">
                 SGST
               </th>
-              <th class="py-1 text-right">
+              <th class="py-1 text-end">
                 IGST
               </th>
             </tr>
@@ -191,13 +191,13 @@ async function exportCsv() {
               <td class="py-1">
                 {{ row.state_name || row.state_code || '-' }}
               </td>
-              <td class="py-1 text-right">
+              <td class="py-1 text-end">
                 {{ row.cgst }}
               </td>
-              <td class="py-1 text-right">
+              <td class="py-1 text-end">
                 {{ row.sgst }}
               </td>
-              <td class="py-1 text-right">
+              <td class="py-1 text-end">
                 {{ row.igst }}
               </td>
             </tr>
@@ -213,7 +213,7 @@ async function exportCsv() {
         </template>
         <table class="w-full text-sm">
           <thead>
-            <tr class="text-left text-subtle">
+            <tr class="text-start text-subtle">
               <th class="py-1">
                 {{ t('indiaGst.panel.documentNumber') }}
               </th>
@@ -223,16 +223,16 @@ async function exportCsv() {
               <th class="py-1">
                 {{ t('indiaGst.panel.placeOfSupply') }}
               </th>
-              <th class="py-1 text-right">
+              <th class="py-1 text-end">
                 {{ t('indiaGst.reports.taxableValue') }}
               </th>
-              <th class="py-1 text-right">
+              <th class="py-1 text-end">
                 CGST
               </th>
-              <th class="py-1 text-right">
+              <th class="py-1 text-end">
                 SGST
               </th>
-              <th class="py-1 text-right">
+              <th class="py-1 text-end">
                 IGST
               </th>
             </tr>
@@ -260,16 +260,16 @@ async function exportCsv() {
               <td class="py-1">
                 {{ row.place_of_supply || '-' }}
               </td>
-              <td class="py-1 text-right">
+              <td class="py-1 text-end">
                 {{ row.taxable_value }}
               </td>
-              <td class="py-1 text-right">
+              <td class="py-1 text-end">
                 {{ row.cgst }}
               </td>
-              <td class="py-1 text-right">
+              <td class="py-1 text-end">
                 {{ row.sgst }}
               </td>
-              <td class="py-1 text-right">
+              <td class="py-1 text-end">
                 {{ row.igst }}
               </td>
             </tr>

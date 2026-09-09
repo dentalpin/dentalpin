@@ -1,0 +1,24 @@
+{
+  "expenses": {
+    "title": "المصروفات",
+    "add": "إضافة مصروف",
+    "date": "التاريخ",
+    "category": "الفئة",
+    "amount": "المبلغ",
+    "description": "الوصف",
+    "filterByCategory": "تصفية حسب الفئة",
+    "delete": "حذف",
+    "deleteTitle": "حذف مصروف",
+    "deleteMessage": "حذف هذا المصروف؟ لا يمكن التراجع عن هذا الإجراء.",
+    "categories": {
+      "rent": "إيجار",
+      "utilities": "المرافق",
+      "salaries": "الرواتب",
+      "supplies": "المستلزمات",
+      "equipment": "المعدات",
+      "insurance": "التأمين",
+      "maintenance": "الصيانة",
+      "other": "أخرى"
+    }
+  }
+}

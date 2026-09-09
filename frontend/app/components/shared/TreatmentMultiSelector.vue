@@ -112,7 +112,7 @@ const totalDuration = computed(() =>
       <!-- Summary -->
       <div
         v-if="totalDuration > 0"
-        class="text-caption text-subtle text-right"
+        class="text-caption text-subtle text-end"
       >
         {{ t('appointments.estimatedDuration') }}: {{ t('common.durationMinutes', { value: totalDuration }) }}
       </div>

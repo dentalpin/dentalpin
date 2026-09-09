@@ -470,7 +470,7 @@ function isInvalidHint(col: ColumnDef): boolean {
           @click="nextDay"
         />
       </div>
-      <h2 class="text-h2 text-default capitalize truncate ml-4">
+      <h2 class="text-h2 text-default capitalize truncate ms-4">
         {{ formattedDate() }}
       </h2>
     </div>
@@ -558,8 +558,8 @@ function isInvalidHint(col: ColumnDef): boolean {
               <div
                 v-for="entry in inChairByCabinet"
                 :key="entry.cabinet.name"
-                class="rounded-md ring-1 ring-[var(--color-border)] bg-surface p-2 border-l-4 transition-shadow"
-                :style="{ borderLeftColor: CABINET_STATE_ACCENT[entry.state] }"
+                class="rounded-md ring-1 ring-[var(--color-border)] bg-surface p-2 border-s-4 transition-shadow"
+                :style="{ borderInlineStartColor: CABINET_STATE_ACCENT[entry.state] }"
                 :class="{ 'ring-2 ring-[var(--color-primary)]': drag && isDropHint(col, entry.cabinet.name) }"
                 @dragover.stop="onDragOverColumn(col, $event, entry.cabinet.name)"
                 @drop.stop="onDrop(col, $event, entry.cabinet.name)"
@@ -572,7 +572,7 @@ function isInvalidHint(col: ColumnDef): boolean {
                   <span class="text-ui text-default truncate">{{ entry.cabinet.name }}</span>
                   <span
                     v-if="!entry.appointment"
-                    class="ml-auto text-caption text-subtle italic"
+                    class="ms-auto text-caption text-subtle italic"
                   >{{ entry.state === 'inactive' ? t('appointments.kanban.inactive') : t('appointments.kanban.free') }}</span>
                 </div>
                 <AppointmentCard

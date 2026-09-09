@@ -93,7 +93,7 @@ function clear() {
           v-for="opt in items"
           :key="opt.value"
           type="button"
-          class="w-full text-left px-2 py-1.5 rounded-token-sm hover:bg-surface-muted focus-visible:bg-surface-muted focus-visible:outline-none flex items-center gap-2 text-ui"
+          class="w-full text-start px-2 py-1.5 rounded-token-sm hover:bg-surface-muted focus-visible:bg-surface-muted focus-visible:outline-none flex items-center gap-2 text-ui"
           :class="isSelected(opt.value) ? 'text-default' : 'text-muted'"
           @click="toggle(opt.value)"
         >
@@ -110,7 +110,7 @@ function clear() {
         >
           <button
             type="button"
-            class="w-full text-left px-2 py-1.5 rounded-token-sm hover:bg-surface-muted text-caption text-subtle"
+            class="w-full text-start px-2 py-1.5 rounded-token-sm hover:bg-surface-muted text-caption text-subtle"
             @click="clear"
           >
             {{ $t('lists.filter.clear') }}

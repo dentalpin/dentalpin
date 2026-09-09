@@ -177,7 +177,7 @@ const isEmpty = computed(() => !total.value)
         <component
           :is="clickable ? 'button' : 'div'"
           :type="clickable ? 'button' : undefined"
-          class="w-full flex items-center gap-2 text-left group"
+          class="w-full flex items-center gap-2 text-start group"
           :class="clickable ? 'cursor-pointer rounded-token-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]' : ''"
           @click="clickable && $emit('slice-click', s.key)"
         >

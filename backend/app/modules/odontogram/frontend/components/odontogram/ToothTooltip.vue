@@ -273,7 +273,7 @@ function handleEditClick(event: Event, treatment: ToothTreatmentView) {
   flex-direction: column;
   gap: 2px;
   padding: 6px 8px;
-  margin-left: 8px;
+  margin-inline-start: 8px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.15s;
@@ -313,7 +313,7 @@ function handleEditClick(event: Event, treatment: ToothTreatmentView) {
 .treatment-date {
   font-size: 10px;
   color: #9CA3AF;
-  margin-left: 14px;
+  margin-inline-start: 14px;
 }
 
 .empty-state {

@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "بوابة SMS",
+      "description": "مزود رسائل SMS الصادرة للعيادة",
+      "provider": "المزود",
+      "fromNumber": "رقم المرسل",
+      "active": "مفعل",
+      "activeHelp": "فقط المزود المفعل مع صف محفوظ يمكنه الإرسال.",
+      "placeholderNote": "المزود المرفق يسجل الرسائل في سجل الخادم فقط. لا يتم إرسال أي شيء حتى يتم إعداد backend حقيقي.",
+      "test": "اختبار",
+      "testResult": "تم الإعداد: {configured}. سيرسل: {wouldSend}."
+    },
+    "common": {
+      "save": "حفظ",
+      "saved": "تم حفظ الإعدادات",
+      "saveError": "تعذر حفظ الإعدادات",
+      "loadError": "تعذر تحميل الإعدادات",
+      "retry": "إعادة"
+    }
+  }
+}

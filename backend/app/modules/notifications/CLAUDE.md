@@ -16,6 +16,10 @@ Heavy subscriber + now a publisher. See ADR 0016.
 - `gateway.py` — `NotificationGateway.enqueue` (consent gate → channel
   resolution → persist `queued` row → publish) and `dispatch_outbox`
   (the scheduled sender, retry + backoff). **No network in a request.**
+  SMS resolves like WhatsApp minus the Meta template gate (text-only,
+  either message kind), gated by per-patient `sms_enabled` and a
+  per-clinic `sms_daily_limit` (default 100/day, skips log
+  `sms_rate_limited`).
 - `service.py` — CRUD for templates/preferences/settings/SMTP + the
   `should_send_notification` consent check. No send path here anymore.
 - Tables: `communication_messages` (outbox + audit), `notification_templates`,

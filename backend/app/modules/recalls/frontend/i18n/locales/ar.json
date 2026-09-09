@@ -1,0 +1,133 @@
+{
+  "recalls": {
+    "title": "استدعاءات الفحص",
+    "callList": "قائمة الاتصال",
+    "noRecallsThisMonth": "لا توجد استدعاءات معلقة هذا الشهر",
+    "filters": {
+      "month": "الشهر",
+      "reason": "السبب",
+      "professional": "الطبيب",
+      "status": "الحالة",
+      "priority": "الأولوية",
+      "overdue": "عرض المتأخرة",
+      "any": "أي",
+      "thisMonth": "هذا الشهر"
+    },
+    "counters": {
+      "due_this_week": "مستحقة هذا الأسبوع",
+      "due_this_month": "مستحقة هذا الشهر",
+      "overdue": "متأخرة",
+      "scheduled_this_month": "مجدولة هذا الشهر",
+      "completed_this_month": "مكتملة هذا الشهر",
+      "conversion_rate": "نسبة التحويل"
+    },
+    "setRecall": "ضبط استدعاء",
+    "setRecallShort": "استدعاء",
+    "history": "سجل الاستدعاءات",
+    "viewAll": "عرض الكل",
+    "pillNext": "الاستدعاء التالي: {month} · {reason}",
+    "pillNone": "لا استدعاء نشط",
+    "reasons": {
+      "hygiene": "نظافة",
+      "checkup": "فحص دوري",
+      "ortho_review": "مراجعة تقويم",
+      "implant_review": "مراجعة غرسة",
+      "post_op": "ما بعد العملية",
+      "treatment_followup": "متابعة العلاج",
+      "other": "أخرى"
+    },
+    "priority": {
+      "low": "منخفضة",
+      "normal": "عادية",
+      "high": "عالية"
+    },
+    "status": {
+      "pending": "معلق",
+      "contacted_no_answer": "لا رد",
+      "contacted_scheduled": "مجدول",
+      "contacted_declined": "مرفوض",
+      "done": "منجز",
+      "cancelled": "ملغى",
+      "needs_review": "يحتاج مراجعة"
+    },
+    "confirms": {
+      "cancel": "إلغاء استدعاء {name}؟ لا يمكن التراجع عن هذا الإجراء.",
+      "done": "تحديد استدعاء {name} كمنجز؟ سيغلق هذا الدورة الحالية."
+    },
+    "actions": {
+      "call": "اتصال",
+      "logAttempt": "تسجيل محاولة",
+      "noAnswer": "لا رد",
+      "book": "حجز موعد",
+      "snooze": "تأجيل",
+      "cancel": "إلغاء",
+      "markDone": "تحديد كمنجز",
+      "exportCsv": "تصدير CSV",
+      "save": "حفظ"
+    },
+    "closeoutPrompt": {
+      "title": "جدولة استدعاء؟",
+      "subtitle": "انتهى المريض للتو — متى نستدعيه مجددًا؟",
+      "skip": "ليس الآن"
+    },
+    "modal": {
+      "title": "ضبط استدعاء",
+      "subtitle": "علّم المريض لاستدعائه لاحقًا",
+      "patient": "المريض",
+      "reason": "السبب",
+      "when": "متى",
+      "month": "الشهر المستهدف",
+      "targetMonth": "الشهر المستهدف",
+      "preciseDate": "اختر يومًا محددًا",
+      "priority": "الأولوية",
+      "assigned": "الطبيب المسؤول",
+      "note": "ملاحظة داخلية",
+      "notePlaceholder": "تفصيل اختياري (مثال: 'مراجعة الحشوة على 47')",
+      "optional": "اختياري",
+      "duplicateGuard": "يوجد بالفعل استدعاء معلق لهذا المريض وبنفس السبب. سيتم تحديثه."
+    },
+    "doNotContact": {
+      "cannotSchedule": "هذا المريض مُعلَّم على أنه \"عدم الاتصال\". لا يمكن جدولة الاستدعاءات. حدّث تفضيل البيانات الديموغرافية لإعادة تفعيل التواصل."
+    },
+    "activeRecallHint": "استدعاء نشط · انقر للإدارة",
+    "logAttempt": {
+      "channel": "القناة",
+      "outcome": "النتيجة",
+      "note": "ملاحظة",
+      "submit": "تسجيل محاولة"
+    },
+    "channel": {
+      "phone": "الهاتف",
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "البريد الإلكتروني"
+    },
+    "outcome": {
+      "no_answer": "لا رد",
+      "voicemail": "بريد صوتي",
+      "scheduled": "تم حجز الموعد",
+      "declined": "مرفوض",
+      "wrong_number": "رقم خاطئ"
+    },
+    "snoozePrompt": "التأجيل لعدد الأشهر التالية؟",
+    "settings": {
+      "title": "استدعاءات الفحص",
+      "description": "الفواصل الافتراضية + الربط بفئة العلاج",
+      "intervals": "الفواصل الافتراضية (بالأشهر)",
+      "categoryMap": "العلاج ← السبب",
+      "categoryKeyPlaceholder": "مفتاح فئة الكتالوج",
+      "autoSuggest": "اقتراح استدعاء عند اكتمال علاج",
+      "autoLink": "ربط موعد مجدول باستدعاء معلق",
+      "saved": "حُفظت الإعدادات"
+    },
+    "dashboard": {
+      "title": "استدعاءات الفحص"
+    },
+    "suggestion": {
+      "title": "استدعاء مقترح",
+      "body": "بعد هذا العلاج نقترح استدعاءً في {month} ({reason}).",
+      "create": "إنشاء استدعاء",
+      "dismiss": "تجاهل"
+    }
+  }
+}

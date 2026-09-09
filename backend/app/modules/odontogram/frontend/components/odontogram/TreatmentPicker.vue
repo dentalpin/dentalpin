@@ -183,7 +183,7 @@ function handleClose() {
                   @click="selectedType = treatment.key"
                 >
                   <span
-                    class="w-2.5 h-2.5 rounded-full mr-1.5"
+                    class="w-2.5 h-2.5 rounded-full me-1.5"
                     :style="{ backgroundColor: getTreatmentColor(treatment.key) }"
                   />
                   {{ treatment.label }}
@@ -209,7 +209,7 @@ function handleClose() {
             >
               <UIcon
                 :name="option.icon"
-                class="w-4 h-4 mr-1"
+                class="w-4 h-4 me-1"
               />
               {{ option.label }}
             </button>

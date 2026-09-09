@@ -154,7 +154,7 @@ class UserCreate(BaseModel):
     email: EmailStr
     # Optional: without a password the account is created locked and the
     # admin hands out an invite link (``POST /users/{id}/invite-link``).
-    password: str | None = Field(default=None, min_length=8)
+    password: str | None = Field(default=None, min_length=12)
     first_name: str = Field(min_length=1, max_length=100)
     last_name: str = Field(min_length=1, max_length=100)
     role: str = Field(description="Role: admin, dentist, hygienist, assistant, receptionist")
@@ -179,7 +179,7 @@ class SetPasswordRequest(BaseModel):
     """Consume an invite token and set the account password."""
 
     token: str
-    password: str = Field(min_length=8)
+    password: str = Field(min_length=12)
 
 
 class UserWithRoleResponse(BaseModel):
@@ -241,7 +241,7 @@ class SystemSetup(BaseModel):
     admin_first_name: str = Field(min_length=1, max_length=100)
     admin_last_name: str = Field(min_length=1, max_length=100)
     admin_email: EmailStr
-    admin_password: str = Field(min_length=8)
+    admin_password: str = Field(min_length=12)
     # Whether the admin also attends patients (solo practice) — flips
     # `is_professional` on the admin membership so the team onboarding
     # step resolves without a second user.

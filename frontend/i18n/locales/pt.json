@@ -78,7 +78,7 @@
     "emailRequired": "Introduza o email",
     "emailInvalid": "O email não é válido",
     "passwordRequired": "Introduza uma palavra-passe",
-    "passwordTooShort": "A palavra-passe deve ter pelo menos 8 caracteres",
+    "passwordTooShort": "A palavra-passe deve ter pelo menos 12 caracteres",
     "passwordWeak": "A palavra-passe deve incluir letras e números",
     "passwordMismatch": "As palavras-passe não coincidem",
     "clinicNameRequired": "Introduza o nome da clínica",
@@ -2419,11 +2419,22 @@
       "whatsappUnavailableHint": "O WhatsApp não está disponível até ligar o número da clínica.",
       "whatsappConnect": "Ligar WhatsApp (Kapso)",
       "noEmail": "O paciente não tem email registado",
-      "noPhone": "O paciente não tem telefone registado"
+      "noPhone": "O paciente não tem telefone registado",
+      "sms": "SMS",
+      "smsUnavailableHint": "SMS indisponível até que um fornecedor de SMS seja configurado.",
+      "smsConnect": "Configurar",
+      "smsDailyLimitLabel": "Limite diário de SMS",
+      "smsDailyLimitHelp": "Máximo de SMS enviados por dia para a clínica."
     },
     "channelSent": {
       "email": "Email enviado com sucesso",
-      "whatsapp": "Mensagem de WhatsApp enviada com sucesso"
+      "whatsapp": "Mensagem de WhatsApp enviada com sucesso",
+      "sms": "Mensagem SMS enviada com sucesso"
+    },
+    "prefs": {
+      "title": "Preferências de notificação",
+      "description": "Que canais podem contactar este paciente. Cancelar a subscrição bloqueia esse canal mesmo em envios forçados.",
+      "saved": "Preferências guardadas"
     }
   },
   "invoice": {
@@ -2815,6 +2826,10 @@
       "missingNumbers": "Números em falta:",
       "noData": "Sem dados para o período selecionado",
       "noOverdue": "Sem faturas em atraso",
+      "invoiceAging": "Idade das faturas",
+      "invoiceAgingDescription": "Totais emitidos pendentes por faixa. Não vencidos à parte.",
+      "notDue": "Não vencidas",
+      "issuedTrend": "Tendência emitida",
       "daysOverdue": "dias de atraso",
       "vatType": "Tipo de IVA",
       "base": "Base",

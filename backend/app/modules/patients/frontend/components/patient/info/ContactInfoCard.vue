@@ -160,6 +160,7 @@ const guardianRelationshipLabel = computed(() => {
         </p>
         <a
           :href="`tel:${patient.emergency_contact.phone}`"
+          dir="ltr"
           class="text-primary-accent hover:underline break-words"
         >
           {{ patient.emergency_contact.phone }}
@@ -168,7 +169,7 @@ const guardianRelationshipLabel = computed(() => {
           v-if="patient.emergency_contact.email"
           class="text-caption text-subtle break-words"
         >
-          {{ patient.emergency_contact.email }}
+          <span dir="ltr">{{ patient.emergency_contact.email }}</span>
         </p>
       </div>
       <div
@@ -188,7 +189,7 @@ const guardianRelationshipLabel = computed(() => {
           variant="link"
           color="warning"
           size="sm"
-          class="ml-auto"
+          class="ms-auto"
           @click="emit('editEmergency')"
         >
           {{ t('patients.contactInfo.addEmergency') }} →
@@ -237,10 +238,11 @@ const guardianRelationshipLabel = computed(() => {
           v-if="patient.legal_guardian.dni"
           class="text-caption text-subtle break-words"
         >
-          {{ patient.legal_guardian.dni }}
+          <span dir="ltr">{{ patient.legal_guardian.dni }}</span>
         </p>
         <a
           :href="`tel:${patient.legal_guardian.phone}`"
+          dir="ltr"
           class="text-primary-accent hover:underline break-words"
         >
           {{ patient.legal_guardian.phone }}
@@ -263,7 +265,7 @@ const guardianRelationshipLabel = computed(() => {
           variant="link"
           color="warning"
           size="sm"
-          class="ml-auto"
+          class="ms-auto"
           @click="emit('editGuardian')"
         >
           {{ t('patients.contactInfo.addGuardian') }} →

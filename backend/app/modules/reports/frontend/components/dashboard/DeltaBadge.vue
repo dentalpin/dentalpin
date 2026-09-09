@@ -65,7 +65,7 @@ const formatted = computed(() => {
     <span>{{ formatted }}</span>
     <span
       v-if="label"
-      class="text-subtle ml-1"
+      class="text-subtle ms-1"
     >{{ label }}</span>
   </span>
 </template>

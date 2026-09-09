@@ -78,7 +78,7 @@
     "emailRequired": "Inserisci l'e-mail",
     "emailInvalid": "L'e-mail non è valida",
     "passwordRequired": "Inserisci una password",
-    "passwordTooShort": "La password deve avere almeno 8 caratteri",
+    "passwordTooShort": "La password deve avere almeno 12 caratteri",
     "passwordWeak": "La password deve contenere lettere e numeri",
     "passwordMismatch": "Le password non coincidono",
     "clinicNameRequired": "Inserisci il nome dello studio",
@@ -2419,11 +2419,22 @@
       "whatsappUnavailableHint": "WhatsApp non è disponibile finché il numero della clinica non è collegato.",
       "whatsappConnect": "Collega WhatsApp (Kapso)",
       "noEmail": "Il paziente non ha un'e-mail in scheda",
-      "noPhone": "Il paziente non ha un telefono in scheda"
+      "noPhone": "Il paziente non ha un telefono in scheda",
+      "sms": "SMS",
+      "smsUnavailableHint": "Gli SMS non sono disponibili finché non viene configurato un provider SMS.",
+      "smsConnect": "Configura",
+      "smsDailyLimitLabel": "Limite giornaliero SMS",
+      "smsDailyLimitHelp": "Massimo di SMS in uscita al giorno per la clinica."
     },
     "channelSent": {
       "email": "E-mail inviata con successo",
-      "whatsapp": "Messaggio WhatsApp inviato con successo"
+      "whatsapp": "Messaggio WhatsApp inviato con successo",
+      "sms": "Messaggio SMS inviato con successo"
+    },
+    "prefs": {
+      "title": "Preferenze di notifica",
+      "description": "Tramite quali canali è possibile contattare questo paziente. La disiscrizione blocca il canale anche per gli invii forzati.",
+      "saved": "Preferenze salvate"
     }
   },
   "invoice": {
@@ -2815,6 +2826,10 @@
       "missingNumbers": "Numeri mancanti:",
       "noData": "Nessun dato per il periodo selezionato",
       "noOverdue": "Nessuna fattura scaduta",
+      "invoiceAging": "Anzianità fatture",
+      "invoiceAgingDescription": "Totali emessi in sospeso per fascia. Il non scaduto a parte.",
+      "notDue": "Non scadute",
+      "issuedTrend": "Trend emesse",
       "daysOverdue": "giorni di ritardo",
       "vatType": "Aliquota IVA",
       "base": "Imponibile",

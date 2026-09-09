@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "SMS-átjáró",
+      "description": "A klinika kimenő SMS-szolgáltatója",
+      "provider": "Szolgáltató",
+      "fromNumber": "Feladó szám",
+      "active": "Bekapcsolva",
+      "activeHelp": "Csak mentett sorral rendelkező bekapcsolt szolgáltató küldhet.",
+      "placeholderNote": "A mellékelt szolgáltató csak a szerver naplójába rögzíti az üzeneteket. Semmi nem kerül kiküldésre, amíg nincs valódi backend beállítva.",
+      "test": "Teszt",
+      "testResult": "Beállítva: {configured}. Küldene: {wouldSend}."
+    },
+    "common": {
+      "save": "Mentés",
+      "saved": "Beállítások mentve",
+      "saveError": "A beállítások nem menthetők",
+      "loadError": "A beállítások nem tölthetők be",
+      "retry": "Újra"
+    }
+  }
+}

@@ -238,6 +238,7 @@ def _settings_response(
         clinic_id=settings.clinic_id,
         preferred_channel=settings.preferred_channel,
         fallback_enabled=settings.fallback_enabled,
+        sms_daily_limit=settings.sms_daily_limit,
         manual_channels=list(settings.manual_channels or []),
         settings=settings.settings,
         available_channels=available_channels,
@@ -528,10 +529,11 @@ async def send_notification(
                 patient_email = patient.email
 
     if data.channels:
-        # Recipient per requested channel: phone for WhatsApp, email for
-        # email. A phone-only patient must not 400 on a WhatsApp send.
+        # Recipient per requested channel: phone for WhatsApp/SMS, email
+        # for email. A phone-only patient must not 400 on a WhatsApp/SMS
+        # send (issue #392 review).
         has_recipient = any(
-            (channel == "whatsapp" and patient is not None and patient.phone)
+            (channel in ("whatsapp", "sms") and patient is not None and patient.phone)
             or (channel == "email" and patient_email)
             for channel in data.channels
         )

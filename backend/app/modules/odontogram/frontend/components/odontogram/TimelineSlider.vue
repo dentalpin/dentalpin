@@ -246,7 +246,7 @@ onUnmounted(() => {
       <span class="flex items-center text-sm font-medium text-muted">
         <UIcon
           name="i-lucide-history"
-          class="w-4 h-4 mr-1"
+          class="w-4 h-4 me-1"
         />
         {{ t('odontogram.timeline.title') }}
       </span>
@@ -278,7 +278,7 @@ onUnmounted(() => {
       @keydown="handleKeydown"
     >
       <!-- Background line -->
-      <div class="absolute top-4 left-0 right-0 h-1 bg-surface-sunken  rounded-full" />
+      <div class="absolute top-4 start-0 end-0 h-1 bg-surface-sunken  rounded-full" />
 
       <!-- Date markers -->
       <div

@@ -143,7 +143,7 @@ function openPicker() {
           <UIcon
             v-if="prof.id === currentDoctorId"
             name="i-lucide-check"
-            class="w-4 h-4 text-success-accent ml-auto"
+            class="w-4 h-4 text-success-accent ms-auto"
           />
         </button>
 
@@ -220,7 +220,7 @@ function openPicker() {
             <UIcon
               v-if="prof.id === currentDoctorId"
               name="i-lucide-check"
-              class="w-4 h-4 text-success-accent ml-auto"
+              class="w-4 h-4 text-success-accent ms-auto"
             />
           </button>
           <button
@@ -286,7 +286,7 @@ function openPicker() {
   width: 100%;
   padding: 6px 8px;
   border-radius: 6px;
-  text-align: left;
+  text-align: start;
   font-size: 13px;
   color: var(--color-text-default);
   transition: background-color 120ms ease;

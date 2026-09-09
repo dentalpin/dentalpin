@@ -723,7 +723,7 @@ function openPatientFile() {
         <div
           :class="isMobile
             ? 'h-full overflow-y-auto px-4 py-4'
-            : 'max-h-[65vh] overflow-y-auto pr-1'"
+            : 'max-h-[65vh] overflow-y-auto pe-1'"
         >
           <form
             class="space-y-6"

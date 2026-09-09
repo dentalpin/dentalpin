@@ -55,6 +55,12 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `document.uploaded` | `EventType.DOCUMENT_UPLOADED` | `media` | `patient_timeline` |
 | `email.failed` | `EventType.EMAIL_FAILED` | `notifications` | — |
 | `email.sent` | `EventType.EMAIL_SENT` | `notifications` | — |
+| `gdpr.breach.reported` | `EventType.GDPR_BREACH_REPORTED` | `gdpr` | — |
+| `gdpr.consent.granted` | `EventType.GDPR_CONSENT_GRANTED` | `gdpr` | — |
+| `gdpr.consent.withdrawn` | `EventType.GDPR_CONSENT_WITHDRAWN` | `gdpr` | — |
+| `gdpr.erasure.executed` | `EventType.GDPR_ERASURE_EXECUTED` | `gdpr` | — |
+| `gdpr.request.created` | `EventType.GDPR_REQUEST_CREATED` | `gdpr` | — |
+| `gdpr.request.status_changed` | `EventType.GDPR_REQUEST_STATUS_CHANGED` | `gdpr` | — |
 | `inventory.low_stock` | `EventType.INVENTORY_STOCK_LOW` | `inventory` | — |
 | `invoice.cancelled` | `EventType.INVOICE_CANCELLED` | — | — |
 | `invoice.created` | `EventType.INVOICE_CREATED` | — | — |
@@ -94,6 +100,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `payment.recorded` | `EventType.PAYMENT_RECORDED` | `payments` | — |
 | `payment.refunded` | `EventType.PAYMENT_REFUNDED` | `payments` | `activity_journal`, `billing` |
 | `payment.voided` | `EventType.PAYMENT_VOIDED` | — | — |
+| `payroll.period.status_changed` | `EventType.PAYROLL_PERIOD_STATUS_CHANGED` | `payroll` | — |
+| `payroll.profile.updated` | `EventType.PAYROLL_PROFILE_UPDATED` | `payroll` | — |
 | `periodontogram.snapshot.closed` | `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED` | `periodontogram` | — |
 | `purchase_order.created` | `EventType.PURCHASE_ORDER_CREATED` | `purchase_orders` | — |
 | `purchase_order.received` | `EventType.PURCHASE_ORDER_RECEIVED` | `purchase_orders` | — |
@@ -497,6 +505,48 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `notifications` — `backend/app/modules/notifications/gateway.py`
 - **Subscribers:** —
 
+### `gdpr.breach.reported`
+
+- **Constant:** `EventType.GDPR_BREACH_REPORTED`
+- **Publishers:**
+  - `gdpr` — `backend/app/modules/gdpr/service.py`
+- **Subscribers:** —
+
+### `gdpr.consent.granted`
+
+- **Constant:** `EventType.GDPR_CONSENT_GRANTED`
+- **Publishers:**
+  - `gdpr` — `backend/app/modules/gdpr/service.py`
+- **Subscribers:** —
+
+### `gdpr.consent.withdrawn`
+
+- **Constant:** `EventType.GDPR_CONSENT_WITHDRAWN`
+- **Publishers:**
+  - `gdpr` — `backend/app/modules/gdpr/service.py`
+- **Subscribers:** —
+
+### `gdpr.erasure.executed`
+
+- **Constant:** `EventType.GDPR_ERASURE_EXECUTED`
+- **Publishers:**
+  - `gdpr` — `backend/app/modules/gdpr/service.py`
+- **Subscribers:** —
+
+### `gdpr.request.created`
+
+- **Constant:** `EventType.GDPR_REQUEST_CREATED`
+- **Publishers:**
+  - `gdpr` — `backend/app/modules/gdpr/service.py`
+- **Subscribers:** —
+
+### `gdpr.request.status_changed`
+
+- **Constant:** `EventType.GDPR_REQUEST_STATUS_CHANGED`
+- **Publishers:**
+  - `gdpr` — `backend/app/modules/gdpr/service.py`
+- **Subscribers:** —
+
 ### `inventory.low_stock`
 
 - **Constant:** `EventType.INVENTORY_STOCK_LOW`
@@ -792,6 +842,20 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.PAYMENT_VOIDED`
 - **Publishers:** _none in tree — declared but unused_
+- **Subscribers:** —
+
+### `payroll.period.status_changed`
+
+- **Constant:** `EventType.PAYROLL_PERIOD_STATUS_CHANGED`
+- **Publishers:**
+  - `payroll` — `backend/app/modules/payroll/service.py`
+- **Subscribers:** —
+
+### `payroll.profile.updated`
+
+- **Constant:** `EventType.PAYROLL_PROFILE_UPDATED`
+- **Publishers:**
+  - `payroll` — `backend/app/modules/payroll/service.py`
 - **Subscribers:** —
 
 ### `periodontogram.snapshot.closed`

@@ -78,7 +78,7 @@
     "emailRequired": "Saisissez l'email",
     "emailInvalid": "L'email n'est pas valide",
     "passwordRequired": "Saisissez un mot de passe",
-    "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+    "passwordTooShort": "Le mot de passe doit contenir au moins 12 caractères",
     "passwordWeak": "Le mot de passe doit contenir des lettres et des chiffres",
     "passwordMismatch": "Les mots de passe ne correspondent pas",
     "clinicNameRequired": "Saisissez le nom de la clinique",
@@ -2419,11 +2419,22 @@
       "whatsappUnavailableHint": "WhatsApp n'est pas disponible tant que le numéro de la clinique n'est pas connecté.",
       "whatsappConnect": "Connecter WhatsApp (Kapso)",
       "noEmail": "Le patient n'a pas d'email enregistré",
-      "noPhone": "Le patient n'a pas de téléphone enregistré"
+      "noPhone": "Le patient n'a pas de téléphone enregistré",
+      "sms": "SMS",
+      "smsUnavailableHint": "Les SMS ne sont pas disponibles tant qu'un fournisseur SMS n'est pas configuré.",
+      "smsConnect": "Configurer",
+      "smsDailyLimitLabel": "Limite quotidienne de SMS",
+      "smsDailyLimitHelp": "Nombre maximal de SMS sortants par jour pour la clinique."
     },
     "channelSent": {
       "email": "Email envoyé avec succès",
-      "whatsapp": "Message WhatsApp envoyé avec succès"
+      "whatsapp": "Message WhatsApp envoyé avec succès",
+      "sms": "Message SMS envoyé avec succès"
+    },
+    "prefs": {
+      "title": "Préférences de notification",
+      "description": "Quels canaux peuvent joindre ce patient. Se désinscrire bloque ce canal même pour les envois forcés.",
+      "saved": "Préférences enregistrées"
     }
   },
   "invoice": {
@@ -2815,6 +2826,10 @@
       "missingNumbers": "Numéros manquants :",
       "noData": "Aucune donnée pour la période sélectionnée",
       "noOverdue": "Aucune facture en retard",
+      "invoiceAging": "Ancienneté des factures",
+      "invoiceAgingDescription": "Totaux émis en souffrance par tranche. Le non échu est à part.",
+      "notDue": "Non échues",
+      "issuedTrend": "Tendance émise",
       "daysOverdue": "jours de retard",
       "vatType": "Type de TVA",
       "base": "Base",

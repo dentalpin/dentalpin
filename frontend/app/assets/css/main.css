@@ -1,10 +1,11 @@
 @import "tailwindcss";
 @import "@nuxt/ui";
 @import "@fontsource-variable/inter";
+@import "@fontsource-variable/cairo";
 @import "./typography.css";
 
 @theme static {
-  --font-sans: 'Inter Variable', 'Inter', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
+  --font-sans: 'Inter Variable', 'Inter', 'Cairo Variable', -apple-system, system-ui, 'Segoe UI', Helvetica, Arial, sans-serif;
 }
 
 /* ============================================================================
@@ -214,27 +215,27 @@ body {
   .alert-surface-danger {
     background-color: var(--color-danger-soft);
     color: var(--color-danger-text);
-    border-left: 3px solid var(--color-danger-accent);
+    border-inline-start: 3px solid var(--color-danger-accent);
   }
   .alert-surface-warning {
     background-color: var(--color-warning-soft);
     color: var(--color-warning-text);
-    border-left: 3px solid var(--color-warning-accent);
+    border-inline-start: 3px solid var(--color-warning-accent);
   }
   .alert-surface-info {
     background-color: var(--color-info-soft);
     color: var(--color-info-text);
-    border-left: 3px solid var(--color-info-accent);
+    border-inline-start: 3px solid var(--color-info-accent);
   }
   .alert-surface-success {
     background-color: var(--color-success-soft);
     color: var(--color-success-text);
-    border-left: 3px solid var(--color-success-accent);
+    border-inline-start: 3px solid var(--color-success-accent);
   }
   .alert-surface-primary {
     background-color: var(--color-primary-soft);
     color: var(--color-primary-soft-text);
-    border-left: 3px solid var(--color-primary);
+    border-inline-start: 3px solid var(--color-primary);
   }
 
   /* Alert "critical" modifier — 1 px outer border in accent (DESIGN §7.1) */

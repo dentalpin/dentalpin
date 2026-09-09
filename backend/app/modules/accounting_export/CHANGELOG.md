@@ -3,6 +3,10 @@
 ## Unreleased
 
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
+
+- feat(i18n): Arabic (ar) locale for the module's frontend layer.
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
 - feat(#131): German (de) locale for the module's frontend layer.
 - feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
 

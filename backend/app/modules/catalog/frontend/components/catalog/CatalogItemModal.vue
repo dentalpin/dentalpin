@@ -427,7 +427,7 @@ function handleClose() {
               {{ tab.label }}
               <span
                 v-if="(tab.id === 'general' && generalHasError) || (tab.id === 'pricing' && pricingHasError)"
-                class="w-1.5 h-1.5 rounded-full bg-danger-accent absolute top-2 right-1"
+                class="w-1.5 h-1.5 rounded-full bg-danger-accent absolute top-2 end-1"
               />
             </button>
           </div>
@@ -553,7 +553,7 @@ function handleClose() {
                     v-for="opt in strategyOptionsVisual"
                     :key="opt.value"
                     type="button"
-                    class="p-3 rounded-lg border-2 transition-all text-left disabled:opacity-50 disabled:cursor-not-allowed"
+                    class="p-3 rounded-lg border-2 transition-all text-start disabled:opacity-50 disabled:cursor-not-allowed"
                     :class="formData.pricing_strategy === opt.value
                       ? 'border-primary-accent bg-primary-soft/30 shadow-sm'
                       : 'border-default hover:border-muted bg-surface'"

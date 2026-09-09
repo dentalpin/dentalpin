@@ -1,0 +1,86 @@
+{
+  "payroll": {
+    "title": "Buste paga",
+    "subtitle": "Profili del personale, periodi di paga e report",
+    "nav": {
+      "profiles": "Profili",
+      "periods": "Periodi",
+      "reports": "Report"
+    },
+    "profiles": {
+      "title": "Profili",
+      "subtitle": "Condizioni salariali e dati bancari cifrati per dipendente",
+      "new": "Nuovo profilo",
+      "edit": "Modifica profilo",
+      "staff": "Membro dello staff",
+      "staffPlaceholder": "Seleziona",
+      "paymentType": "Tipo di pagamento",
+      "monthly": "Mensile",
+      "hourly": "Orario",
+      "baseAmount": "Importo base",
+      "currency": "Valuta",
+      "bankAccount": "Conto bancario",
+      "bankAccountPlaceholder": "Vuoto per mantenere",
+      "taxId": "Codice fiscale",
+      "taxIdPlaceholder": "Vuoto per mantenere",
+      "hasBank": "Conto bancario registrato",
+      "hasTax": "Codice fiscale registrato",
+      "active": "Profilo attivo",
+      "inactive": "Inattivo",
+      "empty": "Ancora nessun profilo"
+    },
+    "periods": {
+      "title": "Periodi",
+      "subtitle": "Periodi di paga mensili e relative voci",
+      "open": "Apri periodo",
+      "month": "Mese (AAAA-MM)",
+      "status": "Stato",
+      "draft": "Bozza",
+      "closed": "Chiuso",
+      "paid": "Pagato",
+      "close": "Chiudi periodo",
+      "markPaid": "Segna come pagato",
+      "deleteConfirm": "Eliminare il periodo {month}? Solo bozze vuote.",
+      "transitionConfirm": "Spostare {month} in {status}?",
+      "empty": "Ancora nessun periodo"
+    },
+    "entries": {
+      "title": "Voci",
+      "gross": "Lordo",
+      "deductions": "Trattenute",
+      "net": "Netto",
+      "netMismatch": "Il netto deve essere pari al lordo meno le trattenute",
+      "notes": "Note",
+      "add": "Aggiungi voce",
+      "edit": "Modifica voce",
+      "deleteConfirm": "Eliminare questa voce? Impossibile annullare.",
+      "staff": "Membro dello staff",
+      "empty": "Ancora nessuna voce"
+    },
+    "reports": {
+      "title": "Report",
+      "subtitle": "Totali mensili e annuali nella valuta della clinica",
+      "month": "Mese",
+      "year": "Anno",
+      "monthly": "Report mensile",
+      "annual": "Report annuale",
+      "entryCount": "Voci",
+      "totalGross": "Lordo totale",
+      "totalDeductions": "Trattenute totali",
+      "totalNet": "Netto totale",
+      "periodCount": "Periodi"
+    },
+    "common": {
+      "save": "Salva",
+      "cancel": "Annulla",
+      "edit": "Modifica",
+      "close": "Chiudi",
+      "delete": "Elimina",
+      "back": "Indietro",
+      "retry": "Riprova",
+      "loadError": "Impossibile caricare i dati",
+      "saveError": "Impossibile salvare le modifiche",
+      "empty": "Ancora niente qui"
+    }
+  }
+}

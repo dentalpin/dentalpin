@@ -53,7 +53,7 @@ function allergyTooltip(a: AllergyEntry): string {
 
 <template>
   <UCard
-    :class="showCriticalBorder ? 'border-l-4 border-(--color-danger-accent)' : ''"
+    :class="showCriticalBorder ? 'border-s-4 border-(--color-danger-accent)' : ''"
     role="region"
     aria-labelledby="medical-snapshot-title"
   >
@@ -111,7 +111,7 @@ function allergyTooltip(a: AllergyEntry): string {
           variant="link"
           color="warning"
           size="sm"
-          class="ml-auto"
+          class="ms-auto"
           @click="emit('completeHistory')"
         >
           {{ t('patients.medicalSnapshot.completeHistory') }} →
@@ -133,7 +133,7 @@ function allergyTooltip(a: AllergyEntry): string {
         <span class="text-body">{{ t('patients.medicalSnapshot.allergiesEmpty') }}</span>
         <span
           v-if="isExplicitlyReviewed && reviewedDate"
-          class="text-caption text-subtle ml-auto"
+          class="text-caption text-subtle ms-auto"
         >
           {{ t('patients.medicalSnapshot.reviewedOn', { date: reviewedDate }) }}
         </span>
@@ -160,7 +160,7 @@ function allergyTooltip(a: AllergyEntry): string {
             >
               <UIcon
                 :name="severityIcon(a.severity)"
-                class="w-3.5 h-3.5 mr-1.5 shrink-0"
+                class="w-3.5 h-3.5 me-1.5 shrink-0"
                 aria-hidden="true"
               />
               <span class="break-words">{{ a.name }} · {{ t(`patients.medicalHistory.severity.${a.severity}`) }}</span>
@@ -175,7 +175,7 @@ function allergyTooltip(a: AllergyEntry): string {
           >
             <UIcon
               :name="severityIcon(a.severity)"
-              class="w-3.5 h-3.5 mr-1.5 shrink-0"
+              class="w-3.5 h-3.5 me-1.5 shrink-0"
               aria-hidden="true"
             />
             <span class="break-words">{{ a.name }} · {{ t(`patients.medicalHistory.severity.${a.severity}`) }}</span>
@@ -236,7 +236,7 @@ function allergyTooltip(a: AllergyEntry): string {
           <li
             v-for="m in medications"
             :key="m.name"
-            :class="m.highlight ? 'border-l-2 border-(--color-warning-accent) pl-2' : ''"
+            :class="m.highlight ? 'border-s-2 border-(--color-warning-accent) ps-2' : ''"
           >
             <span class="text-body text-default break-words">{{ m.name }}</span>
             <span
@@ -277,7 +277,7 @@ function allergyTooltip(a: AllergyEntry): string {
           >
             <UIcon
               :name="c.icon"
-              class="w-3.5 h-3.5 mr-1.5 shrink-0"
+              class="w-3.5 h-3.5 me-1.5 shrink-0"
               aria-hidden="true"
             />
             <span class="break-words">{{ c.label }}</span>

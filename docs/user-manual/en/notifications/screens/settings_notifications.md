@@ -58,15 +58,18 @@ Clinic-wide notification configuration.
 The **Channels** card at the top decides which wire the clinic talks to
 patients on:
 
-- **Preferred channel** — Email or WhatsApp; every automatic message
+- **Preferred channel** — Email, WhatsApp or SMS; every automatic message
   (booking confirmation, reminder, welcome, quote accepted, …) goes out
   on this channel first. WhatsApp is selectable only once the Kapso
-  integration is connected for the clinic.
+  integration is connected for the clinic; SMS only once an SMS provider
+  is configured (Settings → Integrations → SMS gateway).
 - **Fallback** — when the preferred channel cannot deliver (no phone,
   no approved WhatsApp template), try the other configured channel
   instead of silently skipping.
 - **Send buttons** — which manual Send buttons the rest of the app
   shows (appointment, quote, invoice). At least one is required.
+- **SMS daily limit** — max outbound SMS per day for the clinic
+  (default 100); exhausted sends wait for the next channel or day.
 
 ### Message types
 

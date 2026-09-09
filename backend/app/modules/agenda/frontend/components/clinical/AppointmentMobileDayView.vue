@@ -430,7 +430,7 @@ const hasAnyEntry = computed(() => entries.value.length > 0)
 
     <!-- FAB: create appointment -->
     <UButton
-      class="fixed right-4 z-30 shadow-lg"
+      class="fixed end-4 z-30 shadow-lg"
       :style="{ bottom: 'calc(1rem + env(safe-area-inset-bottom))' }"
       color="primary"
       size="lg"

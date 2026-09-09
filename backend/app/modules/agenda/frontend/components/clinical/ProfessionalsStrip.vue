@@ -116,14 +116,14 @@ function onPillClick(pill: StripPill) {
     v-if="pills.length > 0 || isLoading"
     class="flex flex-wrap items-center gap-2 px-1 py-2 mb-3 border-b border-subtle"
   >
-    <span class="text-caption text-subtle mr-2 shrink-0">
+    <span class="text-caption text-subtle me-2 shrink-0">
       {{ t('appointments.professionals.strip') }}
     </span>
     <button
       v-for="pill in pills"
       :key="pill.id"
       type="button"
-      class="group flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full ring-1 ring-[var(--color-border)] bg-surface transition-all"
+      class="group flex items-center gap-2 ps-1 pe-2.5 py-1 rounded-full ring-1 ring-[var(--color-border)] bg-surface transition-all"
       :class="{
         'ring-2 ring-[var(--color-primary)]': filteredId === pill.id,
         'opacity-60': pill.state === 'off'

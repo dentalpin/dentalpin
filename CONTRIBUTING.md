@@ -495,11 +495,13 @@ Every contribution matters — from fixing typos to adding major features. We ap
 
 ### Contributors
 
+Maintainers and the review bar: [MAINTAINERS.md](./MAINTAINERS.md).
+
 DentalPin is what it is thanks to everyone who has shipped code, reviewed changes, reported what's broken and translated the product:
 
 - [@martinezsalmeron](https://github.com/martinezsalmeron) — creator and maintainer
 - [@lamanji](https://github.com/lamanji) — contacts, tasks, activity journal, inventory, medication catalog and the practice-management module chain
-- [@ZoliQua](https://github.com/ZoliQua) — i18n (de/hu/pl/it and module-layer coverage), onboarding, notifications channels, a11y and audit sweeps
+- [@ZoliQua](https://github.com/ZoliQua) — maintainer; i18n (de/hu/pl/it and module-layer coverage), onboarding, notifications channels, a11y and audit sweeps
 - [@tresundios](https://github.com/tresundios) — India GST compliance module and the Tamil localization
 - [@hirad121](https://github.com/hirad121) — public integrations API / webhooks (phase 1) and security hardening
 - [@javier-delacruz](https://github.com/javier-delacruz)

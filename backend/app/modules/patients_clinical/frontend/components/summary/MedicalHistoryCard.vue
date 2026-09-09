@@ -86,7 +86,7 @@ const isEmpty = computed(() =>
             {{ t('patients.medicalHistory.allergiesCount', { n: allergyCount }, allergyCount) }}
           </span>
         </div>
-        <ul class="pl-5 text-muted">
+        <ul class="ps-5 text-muted">
           <li
             v-for="(a, i) in topAllergies"
             :key="`allergy-${i}`"

@@ -3,6 +3,9 @@
 ## Unreleased
 
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
+
+- feat(i18n): Arabic (ar) locale for the module's frontend layer.
+
 - feat(#131): German (de) locale for the module's frontend layer.
 - feat(#144, #132): Polish (pl) and Italian (it) locales for the module's frontend layer.
 

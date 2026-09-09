@@ -1,0 +1,17 @@
+---
+module: sdi_it
+last_verified_commit: 0000000
+---
+
+# sdi_it — permissions
+
+| Permission | Gates | Endpoints |
+|------------|-------|-----------|
+| `sdi_it.settings.read` | View SDI configuration | `GET /api/v1/sdi_it/settings` |
+| `sdi_it.settings.configure` | Edit regime, bollo, riferimento; enable | `PUT /api/v1/sdi_it/settings` |
+| `sdi_it.records.read` | Record list and XML download | `GET /api/v1/sdi_it/records`, `GET /api/v1/sdi_it/records/{id}/xml` |
+| `sdi_it.records.manage` | Mark exported, import receipts, requeue after scarto | `POST /api/v1/sdi_it/records/{id}/exported`, `POST /api/v1/sdi_it/receipts`, `POST /api/v1/sdi_it/records/{id}/requeue` |
+
+Role grants: admin `*`; dentist `records.read`; receptionist
+`records.read`, `records.manage` (the front desk is who uploads files
+and imports receipts in a small practice).

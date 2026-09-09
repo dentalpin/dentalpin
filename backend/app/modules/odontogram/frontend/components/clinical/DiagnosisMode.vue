@@ -176,7 +176,7 @@ async function handleTreatmentsChanged() {
           <template #header>
             <button
               type="button"
-              class="w-full flex items-center justify-between gap-2 text-left"
+              class="w-full flex items-center justify-between gap-2 text-start"
               :aria-expanded="!conditionsCollapsed"
               @click="conditionsCollapsed = !conditionsCollapsed"
             >
@@ -231,7 +231,7 @@ async function handleTreatmentsChanged() {
 
     <!-- Floating action button + slideover for narrow viewports. -->
     <UButton
-      class="fixed right-4 bottom-4 z-30 min-[960px]:hidden shadow-lg"
+      class="fixed end-4 bottom-4 z-30 min-[960px]:hidden shadow-lg"
       icon="i-lucide-notebook-pen"
       color="primary"
       size="lg"

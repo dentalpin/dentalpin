@@ -86,7 +86,7 @@ const categoryColor = computed<UiColor>(() =>
             <code
               v-for="(dep, idx) in module.depends"
               :key="dep"
-              class="ml-1"
+              class="ms-1"
             >{{ dep }}{{ idx < module.depends.length - 1 ? ',' : '' }}</code>
           </span>
           <span
@@ -103,7 +103,7 @@ const categoryColor = computed<UiColor>(() =>
         >
           <UIcon
             name="i-lucide-alert-circle"
-            class="w-4 h-4 inline-block mr-1 align-text-bottom"
+            class="w-4 h-4 inline-block me-1 align-text-bottom"
           />
           {{ module.error_message }}
         </p>

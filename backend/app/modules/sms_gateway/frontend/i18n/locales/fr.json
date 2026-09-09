@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "Passerelle SMS",
+      "description": "Fournisseur de SMS sortants de la clinique",
+      "provider": "Fournisseur",
+      "fromNumber": "Numéro expéditeur",
+      "active": "Activé",
+      "activeHelp": "Seul un fournisseur activé avec une ligne enregistrée peut envoyer.",
+      "placeholderNote": "Le fournisseur inclus enregistre seulement les messages dans le journal du serveur. Rien n'est envoyé tant qu'un backend réel n'est pas configuré.",
+      "test": "Tester",
+      "testResult": "Configuré : {configured}. Enverrait : {wouldSend}."
+    },
+    "common": {
+      "save": "Enregistrer",
+      "saved": "Paramètres enregistrés",
+      "saveError": "Impossible d'enregistrer les paramètres",
+      "loadError": "Impossible de charger les paramètres",
+      "retry": "Réessayer"
+    }
+  }
+}

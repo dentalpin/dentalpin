@@ -52,7 +52,7 @@ const groups = computed(() =>
       {{ t('copilot.suggest.heading') }}
     </p>
 
-    <div class="flex w-full flex-col gap-4 text-left">
+    <div class="flex w-full flex-col gap-4 text-start">
       <div
         v-for="g in groups"
         :key="g.cat"

@@ -6,7 +6,7 @@ Esta guía explica qué ocurre la primera vez que abres una instalación nueva d
 
 La primera visita a una instalación nueva abre el asistente de configuración. Lleva unos dos minutos.
 
-1. **Cuenta de administrador** — tu nombre, correo y una contraseña (mínimo 8 caracteres con letras y números). Será la cuenta administradora de la clínica. El interruptor **«Yo mismo atiendo pacientes»** (activado por defecto) te marca como profesional agendable — déjalo activado si trabajas solo, desactívalo si solo gestionas la clínica.
+1. **Cuenta de administrador** — tu nombre, correo y una contraseña (mínimo 12 caracteres con letras y números). Será la cuenta administradora de la clínica. El interruptor **«Yo mismo atiendo pacientes»** (activado por defecto) te marca como profesional agendable — déjalo activado si trabajas solo, desactívalo si solo gestionas la clínica.
 2. **Clínica** — nombre de la clínica, **país** e identificación fiscal. El país fija por ti la zona horaria, la moneda y el IVA (puedes cambiarlos en *Zona horaria y moneda*). Para España, el asistente comprueba el formato del NIF/CIF y avisa si la letra de control no cuadra. El bloque opcional **Dirección de la clínica** (calle, código postal, ciudad) rellena la dirección que aparece en presupuestos y facturas — completarlo aquí deja resuelto el paso *Datos de la clínica* desde el primer momento.
 
 Pulsa **Crear mi clínica**. DentalPin crea por ti:

@@ -1,0 +1,58 @@
+{
+  "nav_online": {
+    "settings": {
+      "title": "NAV Online Számla",
+      "description": "Raportowanie faktur w czasie rzeczywistym do węgierskiego urzędu skarbowego (NAV)."
+    },
+    "connection": "Połączenie",
+    "enabled": "Włączone",
+    "disabled": "Wyłączone",
+    "environment": "Środowisko",
+    "env": {
+      "test": "Test (sandbox)",
+      "prod": "Produkcja"
+    },
+    "taxNumber": "Numer podatkowy",
+    "taxNumberHelp": "8-cyfrowy törzsszám lub pełny 11-cyfrowy adószám.",
+    "login": "Użytkownik techniczny",
+    "password": "Hasło",
+    "signatureKey": "Klucz podpisu",
+    "exchangeKey": "Klucz wymiany",
+    "exchangeKeyHelp": "Dokładnie 16 znaków, z portalu NAV Online Számla.",
+    "softwareId": "ID oprogramowania",
+    "softwareIdHelp": "18 znaków [0-9A-Z-], zarejestrowane w NAV dla tego oprogramowania.",
+    "devContact": "E-mail kontaktowy dewelopera",
+    "secretStored": "Zapisane — zostaw puste, aby zachować.",
+    "testConnection": "Testuj połączenie",
+    "testOk": "Wymiana tokenu powiodła się",
+    "testFail": "Połączenie nieudane",
+    "enable": "Włącz raportowanie",
+    "disable": "Wyłącz raportowanie",
+    "saved": "Ustawienia zapisane",
+    "saveError": "Nie udało się zapisać ustawień",
+    "records": {
+      "title": "Wysyłki do NAV",
+      "description": "Każda wystawiona faktura jest raportowana do NAV; śledź tu jej status.",
+      "allStates": "Wszystkie stany",
+      "processNow": "Przetwórz teraz",
+      "processed": "Przetworzono: {sent} wysłanych, {done} zakończonych, {rejected} odrzuconych, {failed} nieudanych",
+      "requeued": "Ponownie w kolejce",
+      "empty": "Brak wysyłek.",
+      "invoice": "Faktura",
+      "operation": "Operacja",
+      "state": "Stan",
+      "transaction": "Transakcja",
+      "error": "Błąd",
+      "retry": "Ponów"
+    },
+    "state": {
+      "pending": "Oczekuje",
+      "sending": "Wysyłanie",
+      "sent": "Wysłano",
+      "done": "Zakończono",
+      "rejected": "Odrzucono",
+      "failed": "Nieudane",
+      "aborted": "Przerwano"
+    }
+  }
+}

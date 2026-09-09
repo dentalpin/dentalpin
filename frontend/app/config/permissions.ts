@@ -63,7 +63,8 @@ export const PERMISSIONS = {
   reports: {
     billingRead: 'reports.billing.read',
     budgetsRead: 'reports.budgets.read',
-    schedulingRead: 'reports.scheduling.read'
+    schedulingRead: 'reports.scheduling.read',
+    financialRead: 'reports.financial.read'
   },
   documents: {
     read: 'media.documents.read',
@@ -92,7 +93,9 @@ export const PERMISSIONS = {
   },
   admin: {
     clinicRead: 'admin.clinic.read',
-    clinicWrite: 'admin.clinic.write'
+    clinicWrite: 'admin.clinic.write',
+    rolesRead: 'admin.roles.read',
+    rolesWrite: 'admin.roles.write'
   },
   migrationImport: {
     jobRead: 'migration_import.job.read',
@@ -105,6 +108,11 @@ export const PERMISSIONS = {
     recordWrite: 'payments.record.write',
     recordRefund: 'payments.record.refund',
     reportsRead: 'payments.reports.read'
+  },
+  payroll: {
+    read: 'payroll.read',
+    write: 'payroll.write',
+    reportsRead: 'payroll.reports.read'
   },
   verifactu: {
     settingsRead: 'verifactu.settings.read',
@@ -131,6 +139,12 @@ export const PERMISSIONS = {
   whatsappWebhook: {
     settingsRead: 'whatsapp_webhook.settings.read',
     settingsWrite: 'whatsapp_webhook.settings.write'
+  },
+  navOnline: {
+    settingsRead: 'nav_online.settings.read',
+    settingsConfigure: 'nav_online.settings.configure',
+    recordsRead: 'nav_online.records.read',
+    queueManage: 'nav_online.queue.manage'
   },
   telephony: {
     settingsRead: 'telephony.settings.read',
@@ -199,5 +213,25 @@ export const PERMISSIONS = {
   generatedDocuments: {
     read: 'documents.read',
     write: 'documents.write'
+  },
+  suppliers: {
+    read: 'suppliers.read',
+    write: 'suppliers.write'
+  },
+  supplierItems: {
+    read: 'supplier_items.read',
+    write: 'supplier_items.write'
+  },
+  purchaseOrders: {
+    read: 'purchase_orders.read',
+    write: 'purchase_orders.write'
+  },
+  inventoryReorder: {
+    read: 'inventory_reorder.read',
+    write: 'inventory_reorder.write'
+  },
+  supplierRatings: {
+    read: 'supplier_ratings.read',
+    write: 'supplier_ratings.write'
   }
 } as const

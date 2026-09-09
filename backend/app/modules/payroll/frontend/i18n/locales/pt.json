@@ -1,0 +1,86 @@
+{
+  "payroll": {
+    "title": "Folha de pagamento",
+    "subtitle": "Perfis do pessoal, períodos de pagamento e relatórios",
+    "nav": {
+      "profiles": "Perfis",
+      "periods": "Períodos",
+      "reports": "Relatórios"
+    },
+    "profiles": {
+      "title": "Perfis",
+      "subtitle": "Condições salariais e dados bancários cifrados por funcionário",
+      "new": "Novo perfil",
+      "edit": "Editar perfil",
+      "staff": "Membro do pessoal",
+      "staffPlaceholder": "Selecionar pessoal",
+      "paymentType": "Tipo de pagamento",
+      "monthly": "Mensal",
+      "hourly": "Por hora",
+      "baseAmount": "Valor base",
+      "currency": "Moeda",
+      "bankAccount": "Conta bancária",
+      "bankAccountPlaceholder": "Vazio para manter",
+      "taxId": "NIF",
+      "taxIdPlaceholder": "Vazio para manter",
+      "hasBank": "Conta bancária registada",
+      "hasTax": "NIF registado",
+      "active": "Perfil ativo",
+      "inactive": "Inativo",
+      "empty": "Ainda não há perfis"
+    },
+    "periods": {
+      "title": "Períodos",
+      "subtitle": "Períodos de pagamento mensais e os seus movimentos",
+      "open": "Abrir período",
+      "month": "Mês (AAAA-MM)",
+      "status": "Estado",
+      "draft": "Rascunho",
+      "closed": "Fechado",
+      "paid": "Pago",
+      "close": "Fechar período",
+      "markPaid": "Marcar como pago",
+      "deleteConfirm": "Eliminar o período {month}? Só rascunhos vazios.",
+      "transitionConfirm": "Mover {month} para {status}?",
+      "empty": "Ainda não há períodos"
+    },
+    "entries": {
+      "title": "Movimentos",
+      "gross": "Bruto",
+      "deductions": "Deduções",
+      "net": "Líquido",
+      "netMismatch": "O líquido deve ser igual ao bruto menos as deduções",
+      "notes": "Notas",
+      "add": "Adicionar movimento",
+      "edit": "Editar movimento",
+      "deleteConfirm": "Eliminar este lançamento? Não pode ser anulado.",
+      "staff": "Membro do pessoal",
+      "empty": "Ainda não há movimentos"
+    },
+    "reports": {
+      "title": "Relatórios",
+      "subtitle": "Totais mensais e anuais na moeda da clínica",
+      "month": "Mês",
+      "year": "Ano",
+      "monthly": "Relatório mensal",
+      "annual": "Relatório anual",
+      "entryCount": "Movimentos",
+      "totalGross": "Bruto total",
+      "totalDeductions": "Deduções totais",
+      "totalNet": "Líquido total",
+      "periodCount": "Períodos"
+    },
+    "common": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "edit": "Editar",
+      "close": "Fechar",
+      "delete": "Eliminar",
+      "back": "Voltar",
+      "retry": "Tentar novamente",
+      "loadError": "Não foi possível carregar os dados",
+      "saveError": "Não foi possível guardar as alterações",
+      "empty": "Ainda nada aqui"
+    }
+  }
+}

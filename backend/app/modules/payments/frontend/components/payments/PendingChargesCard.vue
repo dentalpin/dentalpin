@@ -68,7 +68,7 @@ function formatDate(iso: string): string {
           color="warning"
           variant="subtle"
           size="sm"
-          class="ml-auto"
+          class="ms-auto"
         >
           {{ t('payments.pendingCharges.count', { n: charges.length }) }}
         </UBadge>

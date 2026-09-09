@@ -1,0 +1,58 @@
+{
+  "nav_online": {
+    "settings": {
+      "title": "NAV Online Számla",
+      "description": "Real-time invoice reporting to the Hungarian tax authority (NAV)."
+    },
+    "connection": "Connection",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "environment": "Environment",
+    "env": {
+      "test": "Test (sandbox)",
+      "prod": "Production"
+    },
+    "taxNumber": "Tax number",
+    "taxNumberHelp": "8-digit törzsszám, or the full 11-digit adószám.",
+    "login": "Technical user",
+    "password": "Password",
+    "signatureKey": "Signature key",
+    "exchangeKey": "Exchange key",
+    "exchangeKeyHelp": "Exactly 16 characters, from the NAV Online Számla portal.",
+    "softwareId": "Software ID",
+    "softwareIdHelp": "18 characters [0-9A-Z-], registered for this software at NAV.",
+    "devContact": "Developer contact e-mail",
+    "secretStored": "Stored — leave empty to keep.",
+    "testConnection": "Test connection",
+    "testOk": "Token exchange succeeded",
+    "testFail": "Connection failed",
+    "enable": "Enable reporting",
+    "disable": "Disable reporting",
+    "saved": "Settings saved",
+    "saveError": "Could not save the settings",
+    "records": {
+      "title": "NAV submissions",
+      "description": "Every issued invoice is reported to NAV; follow its status here.",
+      "allStates": "All states",
+      "processNow": "Process now",
+      "processed": "Processed: {sent} sent, {done} done, {rejected} rejected, {failed} failed",
+      "requeued": "Re-queued",
+      "empty": "No submissions yet.",
+      "invoice": "Invoice",
+      "operation": "Operation",
+      "state": "State",
+      "transaction": "Transaction",
+      "error": "Error",
+      "retry": "Retry"
+    },
+    "state": {
+      "pending": "Pending",
+      "sending": "Sending",
+      "sent": "Sent",
+      "done": "Done",
+      "rejected": "Rejected",
+      "failed": "Failed",
+      "aborted": "Aborted"
+    }
+  }
+}

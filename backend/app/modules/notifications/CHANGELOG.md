@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+- fix: the "connect WhatsApp" / "configure SMS" hints on the settings page
+  link to `/settings/integrations/<page>` (the registry route); the bare
+  `/settings/<page>` form 404s.
+
+- feat(#231 PR2): SMS in the UI. `sms` joins the `NotificationChannel`
+  union, `CHANNEL_ORDER`, and the settings page (preferred select +
+  manual checkbox + unconfigured hint, all gated by adapter
+  availability); new `PatientNotificationPrefs` card on the patient
+  summary (email/WhatsApp/SMS opt-out toggles over the preferences
+  API). Host locale keys added in all 9 languages.
+
+- feat(#231 PR1): SMS channel core support. `Channel.SMS` enum;
+  `_resolve_channel` SMS branch (destination = patient E.164 phone,
+  `sms_enabled` opt-out honoured even on force_send, text-only so both
+  template and session kinds resolve); `sms` in the ordered
+  preferred/fallback channel list (replaces the hardcoded
+  email/whatsapp pair); per-clinic `sms_daily_limit` (default 100/day,
+  skips with `sms_rate_limited`); `sms_enabled` + `sms_opt_in_at` on
+  preferences and `preferred_channel` accepting `sms`
+  (`notif_0005_sms_channel`). An exhausted cap falls through to the
+  next channel in the order (fallback) and only skips with
+  `sms_rate_limited` when nothing else is viable; inbound rows never
+  consume the cap; `sms_daily_limit` is echoed back by `/settings`.
 - fix(#326): the SMTP onboarding rule carries `permission: 'notifications.settings.read'`.
 
 - refactor(#126): budget_sent treatment names resolve through the shared `app.core.i18n_names.catalog_name` helper (was es → en → first value).
@@ -11,6 +34,10 @@
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
 
 - fix(#325): the built-in EmailAdapter registers from `on_activate()` instead of at import in `channels/registry.py` (ADR 0020); activation order still guarantees email precedes vendor channels.
+
+- feat(i18n): Arabic (ar) locale for the module's frontend layer.
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
 
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 

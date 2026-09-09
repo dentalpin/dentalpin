@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "Bramka SMS",
+      "description": "Dostawca wychodzących SMS kliniki",
+      "provider": "Dostawca",
+      "fromNumber": "Numer nadawcy",
+      "active": "Włączona",
+      "activeHelp": "Wysyłać może tylko włączony dostawca z zapisanym wierszem.",
+      "placeholderNote": "Dołączony dostawca jedynie zapisuje wiadomości w logu serwera. Nic nie jest wysyłane, dopóki nie skonfigurowano prawdziwego backendu.",
+      "test": "Testuj",
+      "testResult": "Skonfigurowano: {configured}. Wysłałby: {wouldSend}."
+    },
+    "common": {
+      "save": "Zapisz",
+      "saved": "Zapisano ustawienia",
+      "saveError": "Nie można zapisać ustawień",
+      "loadError": "Nie można załadować ustawień",
+      "retry": "Ponów"
+    }
+  }
+}

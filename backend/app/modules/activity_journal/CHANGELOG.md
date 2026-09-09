@@ -6,6 +6,9 @@
   transactionally with `db=db`), so generated PDFs land in the journal
   with the acting user (`created_by`) when known.
 
+- feat(i18n): Arabic (ar) locale for the module's frontend layer.
+
+
 ## 0.1.0 — initial release
 
 - Append-only journal of transactionally-published events (25 event

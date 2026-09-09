@@ -48,7 +48,7 @@ async function copy(value: string | number) {
         <dt class="text-body text-muted shrink-0">
           {{ item.label }}
         </dt>
-        <dd class="text-body text-default text-right min-w-0 truncate flex items-center gap-1.5">
+        <dd class="text-body text-default text-end min-w-0 truncate flex items-center gap-1.5">
           <NuxtLink
             v-if="item.link"
             :to="item.link.to"

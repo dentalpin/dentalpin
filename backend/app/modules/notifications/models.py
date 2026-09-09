@@ -117,6 +117,12 @@ class NotificationPreference(Base, TimestampMixin):
     whatsapp_opt_in_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), default=None
     )
+    # SMS uses patients.phone as the number (E.164). Opt-out, like email:
+    # an explicit False blocks; a missing row means the patient is
+    # reachable. sms_opt_in_at mirrors whatsapp_opt_in_at for the
+    # consent trail.
+    sms_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
+    sms_opt_in_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
     # Last inbound message timestamp — opens the 24h free-form session window.
     last_inbound_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
 
@@ -173,6 +179,11 @@ class ClinicNotificationSettings(Base, TimestampMixin):
     fallback_enabled: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=text("true")
     )
+    # Max SMS parts queued per clinic per UTC day (cost guard — SMS is
+    # billed per message, unlike email). Enforced in enqueue; admins
+    # adjust it via clinic settings. No equivalent cap exists for
+    # email/whatsapp (flat-rate transports).
+    sms_daily_limit: Mapped[int] = mapped_column(Integer, default=100, server_default="100")
     manual_channels: Mapped[list] = mapped_column(
         JSONB, default=lambda: ["email"], server_default=text("'[\"email\"]'::jsonb")
     )  # subset of installed channels

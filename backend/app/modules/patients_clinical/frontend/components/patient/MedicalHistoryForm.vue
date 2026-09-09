@@ -462,7 +462,7 @@ function handleSave() {
             />
             <div
               v-if="localData.is_on_anticoagulants"
-              class="ml-6 grid grid-cols-1 md:grid-cols-3 gap-2"
+              class="ms-6 grid grid-cols-1 md:grid-cols-3 gap-2"
             >
               <UInput
                 v-model="localData.anticoagulant_medication"
@@ -495,7 +495,7 @@ function handleSave() {
               v-if="localData.adverse_reactions_to_anesthesia"
               v-model="localData.anesthesia_reaction_details"
               :placeholder="t('patients.medicalHistory.anesthesiaReactionDetails')"
-              class="ml-6"
+              class="ms-6"
               :disabled="readonly"
             />
           </div>

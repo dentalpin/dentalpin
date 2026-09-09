@@ -1,0 +1,185 @@
+{
+  "nav": {
+    "copilot": "AI"
+  },
+  "copilot": {
+    "title": "AI",
+    "open": "فتح AI",
+    "empty": "اسألني عن المرضى أو مواعيد العمل أو حجز موعد.",
+    "placeholder": "اكتب رسالتك…",
+    "send": "إرسال",
+    "copy": "نسخ",
+    "new": "محادثة جديدة",
+    "thinking": "جارٍ التفكير…",
+    "you": "أنت",
+    "assistant": "AI",
+    "trust": "بياناتك محمية",
+    "phase": {
+      "working": "جارٍ العمل…",
+      "writing": "جارٍ الكتابة…"
+    },
+    "tabs": {
+      "pending": "للتنفيذ",
+      "chat": "المحادثة"
+    },
+    "pending": {
+      "empty": "لا شيء معلّق. كل شيء تحت السيطرة.",
+      "unknownPatient": "مريض غير معروف",
+      "group": {
+        "recall": "استدعاءات تحتاج إلى متابعة",
+        "budget": "عروض أسعار بانتظار الرد"
+      }
+    },
+    "nudge": {
+      "act": "الاطلاع عليه",
+      "dismiss": "إخفاء",
+      "appointmentCancelled": {
+        "text": "أُلغي موعد الساعة {time} — تتوفر فترة شاغرة الآن.",
+        "prompt": "أُلغي موعد الساعة {time}. ابحث عن مرضى الاستدعاء الذين يمكنهم ملء هذه الفترة."
+      }
+    },
+    "suggest": {
+      "heading": "كيف يمكنني المساعدة؟",
+      "cat": {
+        "workflows": "سير العمل",
+        "patients": "المرضى",
+        "agenda": "مواعيد العمل",
+        "recalls": "الاستدعاءات",
+        "money": "التحصيل وعروض الأسعار",
+        "reports": "التقارير"
+      },
+      "dailyBriefing": "الملخص اليومي",
+      "prepareVisit": "التحضير لزيارة",
+      "fillGap": "ملء فترة شاغرة",
+      "searchPatient": "البحث عن مريض",
+      "patientSummary": "تلخيص ملف مريض",
+      "freeSlots": "الفترات الشاغرة اليوم",
+      "bookAppointment": "حجز موعد",
+      "dueRecalls": "الاستدعاءات المستحقة",
+      "pendingBudgets": "عروض الأسعار بدون رد",
+      "recordPayment": "تسجيل دفعة",
+      "monthCollections": "تحصيلات هذا الشهر",
+      "agendaSummary": "نظرة عامة على المواعيد",
+      "prompt": {
+        "dailyBriefing": "قدّم لي الملخص اليومي: مواعيد اليوم، والاستدعاءات المتأخرة، وعروض الأسعار بدون رد",
+        "prepareVisit": "تحضّر للزيارة القادمة لمريض",
+        "fillGap": "ظهرت فترة شاغرة في مواعيد العمل، بمن يمكننا الاتصال؟",
+        "searchPatient": "ابحث عن مريض",
+        "patientSummary": "قدّم لي ملخصًا لملف مريض",
+        "freeSlots": "ما الفترات الشاغرة المتاحة اليوم؟",
+        "bookAppointment": "أريد حجز موعد",
+        "dueRecalls": "ما الاستدعاءات المستحقة هذا الشهر؟",
+        "pendingBudgets": "ما عروض الأسعار المُرسلة التي لم يُرد عليها؟",
+        "recordPayment": "أريد تسجيل دفعة مريض",
+        "monthCollections": "ملخص تحصيلات هذا الشهر",
+        "agendaSummary": "قدّم لي نظرة عامة على مواعيد اليوم"
+      }
+    },
+    "settings": {
+      "title": "Copilot",
+      "description": "المساعد الذكي: الملخص اليومي والمحرّك",
+      "saved": "حُفظت الإعدادات",
+      "digest": {
+        "title": "بريد الملخص الصباحي",
+        "description": "كل صباح: مواعيد اليوم، والاستدعاءات المتأخرة، وعروض الأسعار بدون رد.",
+        "enabled": "إرسال الملخص اليومي",
+        "hour": "ساعة الإرسال",
+        "hourHelp": "يُفسَّر وفق المنطقة الزمنية للعيادة.",
+        "recipients": "المستلمون",
+        "recipientsHelp": "يتلقى كل مستلم ملخصه الخاص، محصورًا بما يمكن لدوره رؤيته.",
+        "recipientsPlaceholder": "اختر الفريق…"
+      },
+      "engine": {
+        "title": "المحرّك",
+        "provider": "المزوّد",
+        "model": "النموذج",
+        "redaction": "إخفاء البيانات الصحية (PHI)",
+        "redactionOn": "مفعّل",
+        "redactionOff": "معطّل"
+      },
+      "metrics": {
+        "title": "الاستخدام",
+        "description": "آخر {days} يوم.",
+        "toolCalls": "استدعاءات الأدوات",
+        "errorRate": "معدل الأخطاء",
+        "avgLatency": "متوسط زمن الاستجابة",
+        "conversations": "المحادثات",
+        "tokenBudget": "الميزانية الشهرية للرموز",
+        "topTools": "الأدوات الأكثر استخدامًا",
+        "toolNames": {
+          "recalls_list_due_recalls": "الاستدعاءات المتأخرة",
+          "budget_list_budgets": "عروض أسعار معلّقة",
+          "patients_list_patients": "البحث عن مرضى",
+          "appointments_list_appointments": "المواعيد",
+          "invoices_list_invoices": "الفواتير"
+        }
+      }
+    },
+    "tool": {
+      "running": "جارٍ تشغيل {name}…",
+      "done": "اكتمل {name}",
+      "failed": "فشل {name}"
+    },
+    "card": {
+      "viewPatient": "عرض الملف",
+      "noResults": "لا نتائج",
+      "notFound": "غير موجود",
+      "more": "+{n} إضافية",
+      "freeSlots": "فترات شاغرة",
+      "appointments": "المواعيد",
+      "patients": "المرضى"
+    },
+    "patientStatus": {
+      "active": "نشط",
+      "archived": "مؤرشف"
+    },
+    "apptStatus": {
+      "scheduled": "مجدول",
+      "confirmed": "مؤكد",
+      "checked_in": "تم التسجيل",
+      "in_treatment": "قيد العلاج",
+      "completed": "مكتمل",
+      "cancelled": "ملغى",
+      "no_show": "لم يحضر"
+    },
+    "confirm": {
+      "title": "تأكيد الإجراء",
+      "body": "يرغب AI في تنفيذ {name}.",
+      "approve": "تأكيد",
+      "reject": "إلغاء",
+      "approved": "مؤكد",
+      "rejected": "ملغى",
+      "destructiveNote": "لا يمكن التراجع عن هذا الإجراء.",
+      "action": {
+        "book_appointment": "يرغب AI في حجز موعد.",
+        "cancel_appointment": "يرغب AI في إلغاء موعد.",
+        "create_patient": "يرغب AI في إنشاء مريض."
+      },
+      "field": {
+        "patient_id": "المريض",
+        "professional_id": "الطبيب",
+        "appointment_id": "الموعد",
+        "cabinet_id": "الغرفة",
+        "cabinet": "الغرفة",
+        "start_time": "التاريخ",
+        "end_time": "النهاية",
+        "datetime": "التاريخ",
+        "service": "الخدمة",
+        "reason": "السبب",
+        "duration_minutes": "المدة (دقيقة)",
+        "first_name": "الاسم الأول",
+        "last_name": "اسم العائلة",
+        "phone": "الهاتف",
+        "email": "البريد الإلكتروني",
+        "date_of_birth": "تاريخ الميلاد",
+        "query": "بحث"
+      }
+    },
+    "budgetExceeded": "تم بلوغ الحد الشهري لاستخدام AI.",
+    "error": "حدث خطأ ما.",
+    "page": {
+      "title": "AI",
+      "subtitle": "مساعد عيادتك، ضمن حدود صلاحياتك."
+    }
+  }
+}

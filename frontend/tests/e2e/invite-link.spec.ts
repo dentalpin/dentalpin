@@ -31,8 +31,8 @@ test.describe('invite link', () => {
     const page = await ctx.newPage()
     await page.goto(url)
     await page.waitForLoadState('networkidle') // hydrate before typing
-    await page.locator('input[name="password"]').fill('Invitee123')
-    await page.locator('input[name="passwordConfirm"]').fill('Invitee123')
+    await page.locator('input[name="password"]').fill('Invitee12345')
+    await page.locator('input[name="passwordConfirm"]').fill('Invitee12345')
     await page.getByRole('button', { name: /guardar y entrar|save and sign in/i }).click()
     await page.waitForURL(u => u.pathname === '/', { timeout: 15_000 })
     await expect(page.getByRole('heading', { level: 1 })).toContainText(/Invitada/)
@@ -40,8 +40,8 @@ test.describe('invite link', () => {
     // Link is single use
     await page.goto(url)
     await page.waitForLoadState('networkidle')
-    await page.locator('input[name="password"]').fill('Invitee123')
-    await page.locator('input[name="passwordConfirm"]').fill('Invitee123')
+    await page.locator('input[name="password"]').fill('Invitee12345')
+    await page.locator('input[name="passwordConfirm"]').fill('Invitee12345')
     await page.getByRole('button', { name: /guardar y entrar|save and sign in/i }).click()
     await expect(page.getByRole('alert')).toBeVisible()
     await ctx.close()

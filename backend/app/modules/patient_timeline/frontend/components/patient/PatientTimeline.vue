@@ -330,7 +330,7 @@ onMounted(() => {
       class="relative"
     >
       <!-- Timeline rail -->
-      <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-surface-sunken" />
+      <div class="absolute start-4 top-0 bottom-0 w-0.5 bg-surface-sunken" />
 
       <div class="space-y-6">
         <section
@@ -339,7 +339,7 @@ onMounted(() => {
           class="space-y-3"
         >
           <!-- Group header -->
-          <h3 class="relative pl-10 text-caption font-medium text-muted uppercase tracking-wide">
+          <h3 class="relative ps-10 text-caption font-medium text-muted uppercase tracking-wide">
             {{ group.label }}
           </h3>
 
@@ -347,11 +347,11 @@ onMounted(() => {
             <div
               v-for="entry in group.entries"
               :key="entry.id"
-              class="relative pl-10"
+              class="relative ps-10"
             >
               <!-- Timeline dot -->
               <div
-                class="absolute left-2 top-1 w-5 h-5 rounded-full flex items-center justify-center"
+                class="absolute start-2 top-1 w-5 h-5 rounded-full flex items-center justify-center"
                 :class="`bg-${getCategoryColor(entry.event_category)}-100 dark:bg-${getCategoryColor(entry.event_category)}-900`"
               >
                 <UIcon
@@ -363,7 +363,7 @@ onMounted(() => {
 
               <!-- Entry Card -->
               <UCard
-                class="ml-2 transition-colors"
+                class="ms-2 transition-colors"
                 :class="[
                   isHighImpact(entry.event_type) ? `border-l-4 border-l-${getCategoryColor(entry.event_category)}-500` : '',
                   isLowImpact(entry.event_type) ? 'opacity-85' : '',

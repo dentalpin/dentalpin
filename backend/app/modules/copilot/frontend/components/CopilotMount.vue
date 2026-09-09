@@ -19,7 +19,7 @@ onBeforeUnmount(() => window.removeEventListener('keydown', onKeydown))
 <template>
   <ClientOnly>
     <UButton
-      class="fixed bottom-4 right-4 z-40 rounded-full shadow-lg"
+      class="fixed bottom-4 end-4 z-40 rounded-full shadow-lg"
       icon="i-lucide-sparkles"
       size="lg"
       color="primary"

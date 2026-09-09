@@ -367,7 +367,7 @@ const categoryOptions = computed(() => [
           <!-- Category header (clickable) -->
           <template #header>
             <button
-              class="w-full flex items-center justify-between py-1 text-left"
+              class="w-full flex items-center justify-between py-1 text-start"
               @click="toggleCategory(group.category.id)"
             >
               <div class="flex items-center gap-3">
@@ -402,13 +402,13 @@ const categoryOptions = computed(() => [
             <table class="w-full">
               <thead>
                 <tr class="border-b border-default bg-surface-muted/50">
-                  <th class="text-left py-2 px-4 font-medium text-muted text-sm">
+                  <th class="text-start py-2 px-4 font-medium text-muted text-sm">
                     {{ t('catalog.code') }}
                   </th>
-                  <th class="text-left py-2 px-4 font-medium text-muted text-sm">
+                  <th class="text-start py-2 px-4 font-medium text-muted text-sm">
                     {{ t('catalog.name') }}
                   </th>
-                  <th class="text-right py-2 px-4 font-medium text-muted text-sm">
+                  <th class="text-end py-2 px-4 font-medium text-muted text-sm">
                     {{ t('catalog.price') }}
                   </th>
                   <th class="hidden sm:table-cell text-center py-2 px-4 font-medium text-muted text-sm">
@@ -417,7 +417,7 @@ const categoryOptions = computed(() => [
                   <th class="hidden md:table-cell text-center py-2 px-4 font-medium text-muted text-sm">
                     {{ t('catalog.duration') }}
                   </th>
-                  <th class="text-right py-2 px-4 font-medium text-muted text-sm" />
+                  <th class="text-end py-2 px-4 font-medium text-muted text-sm" />
                 </tr>
               </thead>
               <tbody class="divide-y divide-[var(--color-border-subtle)]">
@@ -439,7 +439,7 @@ const categoryOptions = computed(() => [
                       v-if="item.is_system"
                       variant="subtle"
                       color="info"
-                      class="ml-2"
+                      class="ms-2"
                       size="xs"
                     >
                       {{ t('catalog.system') }}
@@ -448,13 +448,13 @@ const categoryOptions = computed(() => [
                       v-if="!item.is_active"
                       variant="subtle"
                       color="error"
-                      class="ml-2"
+                      class="ms-2"
                       size="xs"
                     >
                       {{ t('common.inactive') }}
                     </UBadge>
                   </td>
-                  <td class="py-2.5 px-4 text-right font-medium">
+                  <td class="py-2.5 px-4 text-end font-medium">
                     {{ catalog.formatPrice(item.default_price) }}
                   </td>
                   <td class="hidden sm:table-cell py-2.5 px-4 text-center">
@@ -469,7 +469,7 @@ const categoryOptions = computed(() => [
                   <td class="hidden md:table-cell py-2.5 px-4 text-center text-muted dark:text-subtle">
                     {{ item.default_duration_minutes ? `${item.default_duration_minutes} min` : '-' }}
                   </td>
-                  <td class="py-2.5 px-4 text-right">
+                  <td class="py-2.5 px-4 text-end">
                     <div
                       v-if="isAdmin"
                       class="flex items-center justify-end gap-1"
@@ -568,16 +568,16 @@ const categoryOptions = computed(() => [
         <table class="w-full">
           <thead>
             <tr class="border-b border-default">
-              <th class="text-left py-3 px-4 font-medium text-muted">
+              <th class="text-start py-3 px-4 font-medium text-muted">
                 {{ t('catalog.code') }}
               </th>
-              <th class="text-left py-3 px-4 font-medium text-muted">
+              <th class="text-start py-3 px-4 font-medium text-muted">
                 {{ t('catalog.name') }}
               </th>
-              <th class="hidden md:table-cell text-left py-3 px-4 font-medium text-muted">
+              <th class="hidden md:table-cell text-start py-3 px-4 font-medium text-muted">
                 {{ t('catalog.category') }}
               </th>
-              <th class="text-right py-3 px-4 font-medium text-muted">
+              <th class="text-end py-3 px-4 font-medium text-muted">
                 {{ t('catalog.price') }}
               </th>
               <th class="hidden sm:table-cell text-center py-3 px-4 font-medium text-muted">
@@ -586,7 +586,7 @@ const categoryOptions = computed(() => [
               <th class="hidden lg:table-cell text-center py-3 px-4 font-medium text-muted">
                 {{ t('catalog.duration') }}
               </th>
-              <th class="text-right py-3 px-4 font-medium text-muted" />
+              <th class="text-end py-3 px-4 font-medium text-muted" />
             </tr>
           </thead>
           <tbody class="divide-y divide-[var(--color-border-subtle)]">
@@ -608,7 +608,7 @@ const categoryOptions = computed(() => [
                   v-if="item.is_system"
                   variant="subtle"
                   color="info"
-                  class="ml-2"
+                  class="ms-2"
                   size="xs"
                 >
                   {{ t('catalog.system') }}
@@ -617,7 +617,7 @@ const categoryOptions = computed(() => [
                   v-if="!item.is_active"
                   variant="subtle"
                   color="error"
-                  class="ml-2"
+                  class="ms-2"
                   size="xs"
                 >
                   {{ t('common.inactive') }}
@@ -626,7 +626,7 @@ const categoryOptions = computed(() => [
               <td class="hidden md:table-cell py-3 px-4 text-muted dark:text-subtle">
                 {{ getCategoryName(item.category_id) }}
               </td>
-              <td class="py-3 px-4 text-right font-medium">
+              <td class="py-3 px-4 text-end font-medium">
                 {{ catalog.formatPrice(item.default_price) }}
               </td>
               <td class="hidden sm:table-cell py-3 px-4 text-center">
@@ -641,7 +641,7 @@ const categoryOptions = computed(() => [
               <td class="hidden lg:table-cell py-3 px-4 text-center text-muted dark:text-subtle">
                 {{ item.default_duration_minutes ? `${item.default_duration_minutes} min` : '-' }}
               </td>
-              <td class="py-3 px-4 text-right">
+              <td class="py-3 px-4 text-end">
                 <div
                   v-if="isAdmin"
                   class="flex items-center justify-end gap-1"

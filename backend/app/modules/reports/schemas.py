@@ -80,6 +80,37 @@ class OverdueInvoice(BaseModel):
     balance_due: Decimal
 
 
+class AgingBucket(BaseModel):
+    """One outstanding-age bucket (invoice axis only)."""
+
+    label: str
+    total: Decimal
+    count: int
+    patient_count: int
+
+
+class AgingReport(BaseModel):
+    """Aging buckets snapshot, same shape the dashboard card renders."""
+
+    currency: str
+    buckets: list[AgingBucket]
+
+
+class TrendPoint(BaseModel):
+    """Issued invoice totals for one YYYY-MM point."""
+
+    month: str
+    total: Decimal
+    count: int
+
+
+class IssuedTrend(BaseModel):
+    """Issued trend over a window (invoice axis only)."""
+
+    currency: str
+    points: list[TrendPoint]
+
+
 class NumberingGap(BaseModel):
     """Invoice numbering gap."""
 

@@ -1,0 +1,58 @@
+{
+  "nav_online": {
+    "settings": {
+      "title": "NAV Online Számla",
+      "description": "الإبلاغ الفوري عن الفواتير إلى مصلحة الضرائب الهنغارية (NAV)."
+    },
+    "connection": "الاتصال",
+    "enabled": "مفعّل",
+    "disabled": "معطّل",
+    "environment": "البيئة",
+    "env": {
+      "test": "اختبار (sandbox)",
+      "prod": "الإنتاج"
+    },
+    "taxNumber": "الرقم الضريبي",
+    "taxNumberHelp": "törzsszám مكوّن من 8 أرقام، أو adószám الكامل المكوّن من 11 رقمًا.",
+    "login": "المستخدم التقني",
+    "password": "كلمة المرور",
+    "signatureKey": "مفتاح التوقيع",
+    "exchangeKey": "مفتاح التبادل",
+    "exchangeKeyHelp": "يتكوّن من 16 حرفًا بالضبط، من بوابة NAV Online Számla.",
+    "softwareId": "معرّف البرنامج",
+    "softwareIdHelp": "18 حرفًا [0-9A-Z-]، مسجّل لهذا البرنامج لدى NAV.",
+    "devContact": "البريد الإلكتروني لجهة اتصال المطوّر",
+    "secretStored": "محفوظ — اتركه فارغًا للاحتفاظ به.",
+    "testConnection": "اختبار الاتصال",
+    "testOk": "نجح تبادل الرمز",
+    "testFail": "فشل الاتصال",
+    "enable": "تفعيل الإبلاغ",
+    "disable": "تعطيل الإبلاغ",
+    "saved": "تم حفظ الإعدادات",
+    "saveError": "تعذّر حفظ الإعدادات",
+    "records": {
+      "title": "إرساليات NAV",
+      "description": "يتم الإبلاغ عن كل فاتورة صادرة إلى NAV؛ تابع حالتها هنا.",
+      "allStates": "كل الحالات",
+      "processNow": "معالجة الآن",
+      "processed": "تمت المعالجة: {sent} مُرسلة، {done} مكتملة، {rejected} مرفوضة، {failed} فاشلة",
+      "requeued": "أُعيدت إلى قائمة الانتظار",
+      "empty": "لا توجد إرساليات بعد.",
+      "invoice": "الفاتورة",
+      "operation": "العملية",
+      "state": "الحالة",
+      "transaction": "المعاملة",
+      "error": "الخطأ",
+      "retry": "إعادة المحاولة"
+    },
+    "state": {
+      "pending": "قيد الانتظار",
+      "sending": "جارٍ الإرسال",
+      "sent": "مُرسلة",
+      "done": "مكتملة",
+      "rejected": "مرفوضة",
+      "failed": "فاشلة",
+      "aborted": "مُلغاة"
+    }
+  }
+}

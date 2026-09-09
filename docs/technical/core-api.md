@@ -283,6 +283,23 @@ All routes under `/api/v1/modules`.
 
 ---
 
+## 9b. Roles REST (issue #46, ADR 0024)
+
+All routes under `/api/v1/roles`, scoped to the caller's clinic.
+
+| Method | Path | Permission | Notes |
+|--------|------|------------|-------|
+| GET | `/roles` | `admin.roles.read` | 5 system roles + clinic custom roles, with effective grants. |
+| GET | `/roles/catalog` | `admin.roles.read` | Every grantable permission code. |
+| POST | `/roles` | `admin.roles.write` | Create a custom role. 409 on system/duplicate name, 422 on unknown code. |
+| PUT | `/roles/{id}` | `admin.roles.write` | Update a custom role; a rename follows memberships. |
+| DELETE | `/roles/{id}` | `admin.roles.write` | 409 while any member holds it. |
+| PUT | `/roles/{id}/overrides` | `admin.roles.write` | Per-clinic grant/revoke on a system role; `admin` never accepts revokes. |
+
+Custom roles are assignable to members only with `RBAC_FROM_DB=true`.
+
+---
+
 ## 10. Deprecation policy
 
 Until DentalPin v1.0 is tagged:

@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "accountingExport": "تصدير المحاسب"
+  },
+  "accountingExport": {
+    "title": "تصدير بيانات المحاسب",
+    "subtitle": "نزّل فواتير ومدفوعات الفترة لتسليمها إلى محاسبك.",
+    "period": "الفترة",
+    "from": "من",
+    "to": "إلى",
+    "presets": {
+      "currentMonth": "الشهر الحالي",
+      "previousMonth": "الشهر الماضي",
+      "currentQuarter": "الربع الحالي",
+      "previousQuarter": "الربع الماضي",
+      "yearToDate": "من بداية العام حتى اليوم",
+      "custom": "مخصص"
+    },
+    "actions": {
+      "preview": "معاينة",
+      "download": "تنزيل (.zip)"
+    },
+    "counters": {
+      "invoices": "الفواتير",
+      "payments": "المدفوعات",
+      "base": "الوعاء",
+      "total": "الإجمالي"
+    },
+    "cols": {
+      "numero": "الرقم",
+      "fecha_emision": "التاريخ",
+      "cliente": "العميل",
+      "nif": "الرقم الضريبي",
+      "base": "الوعاء",
+      "cuota_iva": "ضريبة القيمة المضافة",
+      "total": "الإجمالي",
+      "estado": "الحالة"
+    }
+  }
+}

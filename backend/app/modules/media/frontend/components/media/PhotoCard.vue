@@ -85,7 +85,7 @@ const subtypeLabel = computed(() => props.document.media_subtype ?? props.docume
     <!-- Pair badge -->
     <span
       v-if="document.paired_document_id"
-      class="absolute top-1.5 right-1.5 rounded bg-primary/90 px-1.5 py-0.5 text-[10px] font-medium text-white"
+      class="absolute top-1.5 end-1.5 rounded bg-primary/90 px-1.5 py-0.5 text-[10px] font-medium text-white"
     >
       <UIcon
         name="i-lucide-link"

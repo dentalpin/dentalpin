@@ -1,0 +1,310 @@
+{
+  "payments": {
+    "nav": {
+      "payments": "الدفعات",
+      "reports": "تقارير الدفعات"
+    },
+    "balance": {
+      "debt": "مستحقات",
+      "credit": "رصيد دائن",
+      "paid": "الإجمالي المدفوع"
+    },
+    "list": {
+      "title": "الدفعات",
+      "subtitle": "دفعات المرضى والسلف على عروض السعر والرصيد الدائن.",
+      "empty": "لا توجد دفعات مسجلة.",
+      "new": "دفعة جديدة",
+      "searchPlaceholder": "المريض أو المرجع",
+      "filterDateFrom": "من",
+      "filterDateTo": "إلى",
+      "filterMethod": "الطريقة",
+      "filterPatient": "المريض",
+      "filter": {
+        "method": "الطريقة",
+        "hasRefunds": "مستردة",
+        "hasUnallocated": "غير مخصصة",
+        "patient": "المريض",
+        "withDebt": "لديه مستحقات",
+        "paymentStatus": "الحالة"
+      },
+      "sort": {
+        "paymentDate": "التاريخ",
+        "amount": "المبلغ"
+      },
+      "budgetStatus": {
+        "paid": "مدفوعة",
+        "partial": "جزئية",
+        "unpaid": "غير مدفوعة"
+      },
+      "row": {
+        "debtTooltip": "الرصيد المستحق للمريض",
+        "creditTooltip": "الرصيد الدائن للمريض",
+        "allocationsLabel": "التخصيص",
+        "refundedLabel": "مستردة",
+        "noPatient": "بدون مريض"
+      },
+      "columnDate": "التاريخ",
+      "columnPatient": "المريض",
+      "columnAmount": "المبلغ",
+      "columnMethod": "الطريقة",
+      "columnAllocations": "التخصيص",
+      "columnNet": "الصافي",
+      "columnActions": "إجراءات"
+    },
+    "detail": {
+      "title": "الدفعة {reference}",
+      "amount": "المبلغ",
+      "method": "الطريقة",
+      "date": "التاريخ",
+      "recordedBy": "سجلها",
+      "allocations": "التخصيصات",
+      "refunds": "الاستردادات",
+      "refund": "استرداد",
+      "refundedTotal": "المسترد",
+      "netAmount": "الصافي",
+      "reference": "المرجع",
+      "notes": "ملاحظات"
+    },
+    "new": {
+      "title": "تسجيل دفعة",
+      "patient": "المريض",
+      "patientPlaceholder": "ابحث عن مريض...",
+      "unknownPatient": "مريض غير معروف",
+      "amount": "المبلغ",
+      "suggestedHint": "مستحق التحصيل: {amount}",
+      "useSuggested": "استخدم هذا المبلغ",
+      "method": "الطريقة",
+      "moreMethods": "خيارات إضافية",
+      "date": "التاريخ",
+      "today": "اليوم",
+      "advanced": "خيارات متقدمة",
+      "reference": "المرجع",
+      "referencePlaceholder": "معرّف تفويض البطاقة، مرجع التحويل...",
+      "notes": "ملاحظات",
+      "allocations": "التخصيص",
+      "allocationsHint": "قسّم هذه الدفعة على عروض السعر أو اتركها كرصيد دائن للمريض.",
+      "addAllocation": "إضافة تخصيص",
+      "allocationToBudget": "إلى عرض السعر",
+      "allocationOnAccount": "رصيد دائن",
+      "sumLabel": "المجموع:",
+      "sumMismatch": "لا يطابق المبلغ",
+      "submit": "تسجيل",
+      "submitWithAmount": "تحصيل {amount}",
+      "cancel": "إلغاء",
+      "errPatient": "اختر مريضًا",
+      "errAmount": "أدخل مبلغًا أكبر من 0",
+      "errSum": "يجب أن يساوي مجموع التخصيص المبلغ",
+      "errUnknown": "تعذر تسجيل الدفعة. حاول مجددًا."
+    },
+    "methods": {
+      "cash": "نقدًا",
+      "card": "بطاقة",
+      "bank_transfer": "تحويل",
+      "direct_debit": "خصم مباشر",
+      "insurance": "تأمين",
+      "other": "أخرى",
+      "upi": "UPI",
+      "netbanking": "تحويل إلكتروني"
+    },
+    "refund": {
+      "title": "استرداد الدفعة",
+      "amount": "المبلغ",
+      "method": "الطريقة",
+      "reason": "السبب",
+      "note": "التفاصيل",
+      "submit": "استرداد",
+      "reasonCodes": {
+        "duplicate": "دفعة مكررة",
+        "overpaid": "دفع زائد",
+        "treatment_cancelled": "أُلغي العلاج",
+        "dispute": "نزاع",
+        "other": "أخرى"
+      }
+    },
+    "ledger": {
+      "title": "دفتر حساب المريض",
+      "totalPaid": "الإجمالي المدفوع",
+      "totalEarned": "العلاج المنفَّذ",
+      "patientCredit": "الرصيد الدائن للمريض",
+      "clinicReceivable": "حصة العيادة",
+      "onAccount": "رصيد دائن",
+      "empty": "لا توجد حركات."
+    },
+    "budgetCard": {
+      "title": "دفعات عرض السعر",
+      "budgetTotal": "المبرمج",
+      "collected": "المحصَّل",
+      "pending": "معلق",
+      "collect": "تحصيل",
+      "empty": "لا توجد دفعات مسندة إلى هذا العرض بعد.",
+      "collectedLabel": "المحصَّل",
+      "pendingLabel": "معلق",
+      "outOfTotal": "من إجمالي {total}",
+      "settled": "سُدد عرض السعر بالكامل",
+      "history": "سجل الدفعات",
+      "payment": "دفعة",
+      "emptyDetailed": "لا توجد دفعات محصَّلة بعد. استخدم \"تحصيل\" لتسجيل أول دفعة."
+    },
+    "budgetCollect": {
+      "title": "تحصيل عرض السعر",
+      "amountLabel": "المبلغ",
+      "methodLabel": "طريقة الدفع",
+      "dateLabel": "تاريخ الدفع",
+      "today": "اليوم",
+      "quickFull": "الكامل",
+      "optionalDetails": "أضف مرجعًا أو ملاحظات (اختياري)",
+      "referenceLabel": "المرجع",
+      "referencePlaceholder": "مثال: رقم عملية نقاط البيع",
+      "notesLabel": "ملاحظات داخلية",
+      "submit": "تحصيل",
+      "cancel": "إلغاء",
+      "success": "تم تسجيل الدفعة",
+      "errorGeneric": "تعذر تسجيل الدفعة",
+      "noteAppliedToBudget": "طُبقت على عرض السعر.",
+      "notePendingAfter": "المتبقي",
+      "noteFullySettled": "سيُسدد عرض السعر بالكامل.",
+      "noteToBudget": "طُبقت على عرض السعر و",
+      "noteExcessToOnAccount": "الفائض كرصيد دائن للمريض.",
+      "noteBudgetSettled": "عرض السعر مدفوع بالكامل بالفعل.",
+      "noteToOnAccount": "يُضاف كرصيد دائن للمريض."
+    },
+    "pendingCharges": {
+      "title": "مستحق التحصيل",
+      "count": "{n} جلسة",
+      "more": "+ {n} أخرى",
+      "collect": "تحصيل {amount}",
+      "unnamedSession": "جلسة بدون عنوان"
+    },
+    "patientPanel": {
+      "title": "دفتر حساب المريض",
+      "kpis": {
+        "totalPaid": "الإجمالي المدفوع",
+        "debt": "حصة العيادة",
+        "onAccount": "رصيد دائن"
+      },
+      "sidebar": {
+        "title": "الملخص",
+        "credit": "رصيد المريض",
+        "lastPayment": "آخر دفعة",
+        "noLastPayment": "لا توجد دفعات بعد",
+        "totalEarned": "العلاج المنفَّذ"
+      },
+      "banner": {
+        "debtTitle": "يدين بـ{amount} للعيادة",
+        "debtDescription": "الإجمالي المدفوع أقل من قيمة العلاج المنفَّذ.",
+        "creditTitle": "لديه {amount} رصيدًا دائنًا",
+        "creditDescription": "المدفوع يفوق قيمة العلاج المنفَّذ."
+      },
+      "cobrar": "تسجيل دفعة",
+      "timeline": {
+        "title": "الحركات",
+        "empty": "لا توجد حركات مسجلة",
+        "emptyCta": "سجل أول دفعة",
+        "loadError": "تعذر تحميل دفتر حساب المريض.",
+        "retry": "إعادة المحاولة",
+        "drPrefix": "د. {name}",
+        "types": {
+          "payment": "دفعة",
+          "refund": "استرداد",
+          "earned": "العلاج المنفَّذ"
+        },
+        "treatmentStatus": {
+          "planned": "مبرمج",
+          "performed": "منفَّذ",
+          "completed": "مكتمل",
+          "cancelled": "ملغى",
+          "in_progress": "قيد التنفيذ"
+        },
+        "rowMenu": {
+          "detail": "عرض التفاصيل",
+          "refund": "استرداد",
+          "reallocate": "إسناد إلى عرض السعر…"
+        }
+      },
+      "refundModal": {
+        "title": "استرداد الدفعة",
+        "amount": "مبلغ الاسترداد",
+        "method": "طريقة الاسترداد",
+        "reason": "السبب",
+        "note": "التفاصيل (اختياري)",
+        "submit": "تأكيد الاسترداد",
+        "cancel": "إلغاء",
+        "errorGeneric": "تعذر تسجيل الاسترداد"
+      }
+    },
+    "reports": {
+      "title": "تقارير الدفعات",
+      "subtitle": "التحصيلات والاستردادات وأرصدة المرضى والاتجاهات للفترة.",
+      "loadError": "تعذر تحميل تقارير الدفعات",
+      "cardDescription": "المحصَّل والاستردادات وأرصدة المرضى والذمم والاتجاهات.",
+      "period": "الفترة",
+      "refresh": "تحديث",
+      "collected": "المحصَّل",
+      "refunded": "المسترد",
+      "net": "الصافي",
+      "patientCredit": "إجمالي الرصيد الدائن للمرضى",
+      "patientCreditHint": "أرصدة حسابات أو سلف.",
+      "clinicReceivable": "حصة العيادة",
+      "refundRatio": "نسبة الاسترداد",
+      "byMethod": "حسب الطريقة",
+      "byProfessional": "حسب الطبيب",
+      "byProfessionalHint": "العلاج المنفَّذ، غير المحصَّل.",
+      "aging": "دين الذمم",
+      "agingHint": "المرضى ذوو الرصيد المستحق مصنّفون حسب عمر الدين.",
+      "refunds": "الاستردادات حسب السبب",
+      "refundsHint": "توزيع الاستردادات حسب السبب المُسجل.",
+      "bucket": "{range} يومًا",
+      "unknownProfessional": "غير مسند",
+      "countShort": "{n} عملية",
+      "countPatients": "{n} مريضًا",
+      "granularity": {
+        "day": "يومي",
+        "week": "أسبوعي",
+        "month": "شهري"
+      },
+      "hero": {
+        "netCollected": "المحصَّل الصافي",
+        "netCollectedHint": "التحصيلات مطروحًا منها الاستردادات في الفترة.",
+        "receivable": "الرصيد المستحق",
+        "receivableHint": "العلاج المنفَّذ غير المحصَّل بعد، حسب عمره.",
+        "vsPrevious": "مقارنة بالفترة السابقة",
+        "transactionsCount": "{n} عملية في الفترة"
+      },
+      "trend": {
+        "title": "اتجاه التحصيل",
+        "subtitle": "الصافي لكل فترة. الخط المتقطع يعرض الاستردادات."
+      },
+      "empty": {
+        "noDataTitle": "لا بيانات في هذا النطاق",
+        "noDataDescription": "عدّل الفترة أو سجل دفعة لبدء رؤية التقرير.",
+        "noTrend": "لا توجد نقاط كافية لرسم الاتجاه.",
+        "noMethods": "لا تحصيلات حسب الطريقة في الفترة.",
+        "noProfessionals": "لا علاج منفَّذ في الفترة.",
+        "noReceivable": "لا مرضى بديون مستحقة."
+      },
+      "drilldown": {
+        "viewPayments": "عرض الدفعات في الفترة",
+        "viewPatients": "عرض المرضى ذوي الديون"
+      }
+    },
+    "target": {
+      "label": "تطبيق على",
+      "placeholder": "اختر الوجهة",
+      "onAccount": "رصيد المريض (حساب دائن)",
+      "onAccountHint": "يبقى كرصيد دائن للمريض. لا يُطبق على أي فاتورة أو عرض سعر حتى تسنده.",
+      "budgetHint": "سيُطبق على عرض السعر هذا وفواتيره الصادرة.",
+      "lockedBudget": "سيُطبق على عرض السعر {budget} وفواتيره."
+    },
+    "reallocate": {
+      "title": "الإسناد إلى عرض السعر",
+      "hint": "ستنتقل كامل دفعة {amount} إلى عرض السعر المحدد وفواتيره الصادرة.",
+      "submit": "إسناد",
+      "success": "أُسندت الدفعة إلى عرض السعر",
+      "error": "تعذر إعادة إسناد الدفعة. حاول مجددًا."
+    },
+    "followup": {
+      "collect": "تحصيل الدفعة",
+      "collected": "تم تسجيل الدفعة."
+    }
+  }
+}

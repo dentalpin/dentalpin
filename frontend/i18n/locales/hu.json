@@ -78,7 +78,7 @@
     "emailRequired": "Adja meg az e-mail-címet",
     "emailInvalid": "Az e-mail-cím érvénytelen",
     "passwordRequired": "Adjon meg egy jelszót",
-    "passwordTooShort": "A jelszónak legalább 8 karakterből kell állnia",
+    "passwordTooShort": "A jelszónak legalább 12 karakterből kell állnia",
     "passwordWeak": "A jelszónak betűket és számokat is tartalmaznia kell",
     "passwordMismatch": "A jelszavak nem egyeznek",
     "clinicNameRequired": "Adja meg a rendelő nevét",
@@ -2419,11 +2419,22 @@
       "whatsappUnavailableHint": "A WhatsApp addig nem érhető el, amíg a rendelő száma nincs csatlakoztatva.",
       "whatsappConnect": "WhatsApp (Kapso) csatlakoztatása",
       "noEmail": "A páciensnek nincs rögzített e-mail-címe",
-      "noPhone": "A páciensnek nincs rögzített telefonszáma"
+      "noPhone": "A páciensnek nincs rögzített telefonszáma",
+      "sms": "SMS",
+      "smsUnavailableHint": "Az SMS csak SMS-szolgáltató beállítása után érhető el.",
+      "smsConnect": "Beállítás",
+      "smsDailyLimitLabel": "Napi SMS-limit",
+      "smsDailyLimitHelp": "A klinikáról naponta küldhető SMS-ek maximális száma."
     },
     "channelSent": {
       "email": "E-mail sikeresen elküldve",
-      "whatsapp": "WhatsApp-üzenet sikeresen elküldve"
+      "whatsapp": "WhatsApp-üzenet sikeresen elküldve",
+      "sms": "SMS-üzenet sikeresen elküldve"
+    },
+    "prefs": {
+      "title": "Értesítési beállítások",
+      "description": "Mely csatornákon érhető el a páciens. A leiratkozás kényszerített küldésnél is blokkolja a csatornát.",
+      "saved": "Beállítások mentve"
     }
   },
   "invoice": {
@@ -2815,6 +2826,10 @@
       "missingNumbers": "Hiányzó sorszámok:",
       "noData": "Nincs adat a kiválasztott időszakra",
       "noOverdue": "Nincs lejárt számla",
+      "invoiceAging": "Számla korosítás",
+      "invoiceAgingDescription": "Kintlévőség korosítás szerint. A még nem esedékes külön.",
+      "notDue": "Nem esedékes",
+      "issuedTrend": "Kibocsátási trend",
       "daysOverdue": "napja lejárt",
       "vatType": "Áfakulcs",
       "base": "Adóalap",

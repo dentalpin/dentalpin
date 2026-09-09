@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "SMS gateway",
+      "description": "Outbound SMS provider for the clinic",
+      "provider": "Provider",
+      "fromNumber": "Sender number",
+      "active": "Enabled",
+      "activeHelp": "Only an enabled provider with a saved row can send.",
+      "placeholderNote": "The bundled provider only records messages in the server log. Nothing is sent until a real backend is configured.",
+      "test": "Test",
+      "testResult": "Configured: {configured}. Would send: {wouldSend}."
+    },
+    "common": {
+      "save": "Save",
+      "saved": "Settings saved",
+      "saveError": "Could not save settings",
+      "loadError": "Could not load settings",
+      "retry": "Retry"
+    }
+  }
+}

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix: `GET /api/v1/supplier_items` returned 500 (the router passed the joined `Contact`/`InventoryItem` rows where the response schema expects their names).
+
 - Initial module (roadmap issue #227-2): supplier <-> inventory item link
   table supporting the "multiple vendors per item" model.
 - Added `SupplierItem` model: `supplier_id`, `inventory_item_id`,

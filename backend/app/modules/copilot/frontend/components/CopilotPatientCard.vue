@@ -42,13 +42,13 @@ const statusLabel = computed(() =>
         class="truncate text-xs text-muted"
       >
         <template v-if="patient.phone">
-          {{ patient.phone }}
+          <span dir="ltr">{{ patient.phone }}</span>
         </template>
         <template v-if="patient.phone && patient.email">
           ·
         </template>
         <template v-if="patient.email">
-          {{ patient.email }}
+          <span dir="ltr">{{ patient.email }}</span>
         </template>
       </p>
     </div>

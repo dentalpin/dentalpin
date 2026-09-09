@@ -67,6 +67,10 @@ from app.modules.catalog.models import (  # noqa: F401
 )
 from app.modules.documents.models import GeneratedDocument  # noqa: F401
 from app.modules.media.models import Document, MediaAttachment  # noqa: F401
+from app.modules.nav_online.models import (  # noqa: F401
+    NavOnlineRecord,
+    NavOnlineSettings,
+)
 from app.modules.notifications.models import (  # noqa: F401
     ClinicChannelSettings,
     ClinicNotificationSettings,
@@ -111,6 +115,7 @@ from app.modules.schedules.models import (  # noqa: F401
     ProfessionalWeeklySchedule,
     ScheduleShift,
 )
+from app.modules.sdi_it.models import SdiItRecord, SdiItSettings  # noqa: F401
 from app.modules.telephony.models import (  # noqa: F401
     CallLog,
     TelephonySettings,

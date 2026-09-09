@@ -37,7 +37,10 @@ async def list_supplier_items(
         page_size=page_size,
     )
     return PaginatedApiResponse(
-        data=[SupplierItemResponse.from_link(link, sname, iname) for link, sname, iname in items],
+        data=[
+            SupplierItemResponse.from_link(link, contact.name, item.name)
+            for link, contact, item in items
+        ],
         total=total,
         page=page,
         page_size=page_size,

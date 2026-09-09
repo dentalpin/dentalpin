@@ -37,6 +37,9 @@ CORE_PERMISSIONS: Final[list[str]] = [
     "admin.users.write",
     "admin.clinic.read",
     "admin.clinic.write",
+    # Role / permission management (issue #46)
+    "admin.roles.read",
+    "admin.roles.write",
     # AI agent infrastructure
     "agents.view",
     "agents.supervise",

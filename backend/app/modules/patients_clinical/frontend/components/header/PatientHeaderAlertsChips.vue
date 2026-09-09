@@ -44,7 +44,7 @@ const importantAlerts = computed<PatientAlert[]>(() =>
       >
         <UIcon
           :name="getAlertIcon(alert.type)"
-          class="w-3 h-3 mr-1 shrink-0"
+          class="w-3 h-3 me-1 shrink-0"
         />
         {{ alert.title }}
       </UBadge>
@@ -59,7 +59,7 @@ const importantAlerts = computed<PatientAlert[]>(() =>
     >
       <UIcon
         :name="getAlertIcon(alert.type)"
-        class="w-3 h-3 mr-1 shrink-0"
+        class="w-3 h-3 me-1 shrink-0"
       />
       {{ alert.title }}
     </UBadge>

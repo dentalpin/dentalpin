@@ -221,7 +221,7 @@ onMounted(() => {
     >
       <button
         type="button"
-        class="flex items-center gap-2 text-caption text-muted min-h-[36px] w-full text-left"
+        class="flex items-center gap-2 text-caption text-muted min-h-[36px] w-full text-start"
         :aria-expanded="showOptional"
         @click="showOptional = !showOptional"
       >

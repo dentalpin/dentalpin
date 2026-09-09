@@ -211,7 +211,7 @@ onMounted(refresh)
       :title="t('verifactu.producer.process.title')"
     >
       <template #description>
-        <ol class="list-decimal pl-5 mt-2 space-y-1 text-sm">
+        <ol class="list-decimal ps-5 mt-2 space-y-1 text-sm">
           <li>{{ t('verifactu.producer.process.s1') }}</li>
           <li>{{ t('verifactu.producer.process.s2') }}</li>
           <li>{{ t('verifactu.producer.process.s3') }}</li>
@@ -372,7 +372,7 @@ onMounted(refresh)
             }) }}
           </p>
 
-          <ol class="list-decimal pl-5 space-y-2">
+          <ol class="list-decimal ps-5 space-y-2">
             <li>{{ t('verifactu.producer.declaration.item1') }}</li>
             <li>{{ t('verifactu.producer.declaration.item2') }}</li>
             <li>{{ t('verifactu.producer.declaration.item3') }}</li>
@@ -485,7 +485,7 @@ onMounted(refresh)
           <p class="text-sm">
             {{ t('verifactu.producer.revokeBody') }}
           </p>
-          <ul class="text-sm list-disc pl-5 mt-3 space-y-1 text-gray-600 dark:text-gray-300">
+          <ul class="text-sm list-disc ps-5 mt-3 space-y-1 text-gray-600 dark:text-gray-300">
             <li>{{ t('verifactu.producer.revokeBullet1') }}</li>
             <li>{{ t('verifactu.producer.revokeBullet2') }}</li>
             <li>{{ t('verifactu.producer.revokeBullet3') }}</li>

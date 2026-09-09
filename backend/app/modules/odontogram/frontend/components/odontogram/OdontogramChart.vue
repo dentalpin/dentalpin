@@ -767,7 +767,7 @@ defineExpose({
       v-else
       class="flex flex-col gap-4"
     >
-      <div class="odontogram-wrapper">
+      <div class="odontogram-wrapper" dir="ltr">
         <div
           class="odontogram-grid bg-surface rounded-lg border border-default p-4"
           :class="{ 'cursor-crosshair': isClickToApplyMode }"

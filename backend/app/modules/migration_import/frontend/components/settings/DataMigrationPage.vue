@@ -447,16 +447,16 @@ onUnmounted(() => {
             <table class="w-full text-xs">
               <thead class="sticky top-0 bg-gray-100">
                 <tr>
-                  <th class="px-2 py-1 text-left">
+                  <th class="px-2 py-1 text-start">
                     {{ t('migrationImport.proposals.columnSource') }}
                   </th>
-                  <th class="px-2 py-1 text-left">
+                  <th class="px-2 py-1 text-start">
                     {{ t('migrationImport.proposals.columnProposed') }}
                   </th>
-                  <th class="px-2 py-1 text-left">
+                  <th class="px-2 py-1 text-start">
                     {{ t('migrationImport.proposals.columnStatus') }}
                   </th>
-                  <th class="px-2 py-1 text-left">
+                  <th class="px-2 py-1 text-start">
                     {{ t('migrationImport.proposals.columnAction') }}
                   </th>
                 </tr>
@@ -564,19 +564,19 @@ onUnmounted(() => {
           >
             <div>
               <span class="text-(--ui-text-muted)">{{ t('migrationImport.filters.totalLabel') }}</span>
-              <span class="ml-1 font-medium">{{ professionalTotal }}</span>
+              <span class="ms-1 font-medium">{{ professionalTotal }}</span>
             </div>
             <div>
               <span class="text-(--ui-text-muted)">{{ t('migrationImport.filters.deactivatedLabel') }}</span>
-              <span class="ml-1 font-medium">{{ professionalBreakdown.deactivated_count }}</span>
+              <span class="ms-1 font-medium">{{ professionalBreakdown.deactivated_count }}</span>
             </div>
             <div>
               <span class="text-(--ui-text-muted)">{{ t('migrationImport.filters.orphansLabel') }}</span>
-              <span class="ml-1 font-medium">{{ professionalBreakdown.agenda_orphan_count }}</span>
+              <span class="ms-1 font-medium">{{ professionalBreakdown.agenda_orphan_count }}</span>
             </div>
             <div>
               <span class="text-(--ui-text-muted)">{{ t('migrationImport.filters.stale24mLabel') }}</span>
-              <span class="ml-1 font-medium">{{ professionalBreakdown.stale_24m_count }}</span>
+              <span class="ms-1 font-medium">{{ professionalBreakdown.stale_24m_count }}</span>
             </div>
           </div>
 

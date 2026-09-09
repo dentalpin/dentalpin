@@ -142,7 +142,7 @@ function onLeave() {
   color: #71717A;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-right: 4px;
+  margin-inline-end: 4px;
 }
 
 :root.dark .global-strip-label {

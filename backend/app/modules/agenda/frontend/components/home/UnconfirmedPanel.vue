@@ -109,7 +109,7 @@ function appointmentHref(a: Appointment): string {
             </span>
             <span
               v-if="a.cabinet"
-              class="ml-1 text-subtle"
+              class="ms-1 text-subtle"
             >
               · {{ a.cabinet }}
             </span>

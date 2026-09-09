@@ -72,7 +72,7 @@ const rows = computed(() =>
         <dt class="capitalize text-muted">
           {{ row.label }}
         </dt>
-        <dd class="text-right font-medium">
+        <dd class="text-end font-medium">
           {{ row.value }}
         </dd>
       </template>

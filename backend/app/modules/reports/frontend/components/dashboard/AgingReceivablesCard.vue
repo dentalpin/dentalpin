@@ -56,7 +56,7 @@ const isEmpty = computed(() =>
     :empty="isEmpty"
   >
     <template #header-trailing>
-      <span class="ml-auto inline-flex items-center gap-1 text-caption text-subtle">
+      <span class="ms-auto inline-flex items-center gap-1 text-caption text-subtle">
         <UIcon
           name="i-lucide-clock"
           class="w-3 h-3"

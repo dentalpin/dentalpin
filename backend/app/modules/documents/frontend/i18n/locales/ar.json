@@ -1,0 +1,88 @@
+{
+  "documents": {
+    "title": "المستندات",
+    "subtitle": "إدارة الوصفات الطبية والشهادات وخطابات الإحالة وطلبات الأشعة",
+    "newDocument": "مستند جديد",
+    "editDocument": "تعديل المستند",
+    "filterType": "تصفية حسب النوع",
+    "filterStatus": "تصفية حسب الحالة",
+    "empty": "لا توجد مستندات بعد. أنشئ أول مستند للبدء.",
+    "patient": "المريض",
+    "selectPatient": "اختر المريض",
+    "patientSearchEmpty": "لم يتم العثور على مرضى يطابقون بحثك",
+    "type": "نوع المستند",
+    "selectType": "اختر النوع",
+    "titleLabel": "العنوان",
+    "titlePlaceholder": "مثال: وصفة أموكسيسيلين",
+    "types": {
+      "all": "جميع الأنواع",
+      "prescription": "وصفة طبية",
+      "medical_certificate": "شهادة طبية",
+      "referral": "خطاب إحالة",
+      "radiology_request": "طلب أشعة"
+    },
+    "status": {
+      "all": "جميع الحالات",
+      "draft": "مسودة",
+      "generated": "تم إنشاؤه",
+      "archived": "مؤرشف"
+    },
+    "actions": {
+      "generate": "إنشاء PDF",
+      "edit": "تعديل",
+      "archive": "أرشفة",
+      "download": "تنزيل PDF"
+    },
+    "messages": {
+      "created": "تم إنشاء المستند",
+      "updated": "تم تحديث المستند",
+      "generated": "تم إنشاء المستند بنجاح",
+      "archived": "تمت أرشفة المستند",
+      "downloaded": "تم تنزيل ملف PDF",
+      "downloadFailed": "فشل تنزيل ملف PDF"
+    },
+    "content": {
+      "diagnosis": "التشخيص",
+      "diagnosisPlaceholder": "أدخل التشخيص...",
+      "medications": "الأدوية",
+      "addMedication": "إضافة دواء",
+      "medName": "اسم الدواء",
+      "medDose": "الجرعة",
+      "medFrequency": "التكرار",
+      "medDuration": "المدة",
+      "notes": "ملاحظات",
+      "notesPlaceholder": "ملاحظات إضافية...",
+      "description": "الوصف",
+      "recommendations": "التوصيات",
+      "referredTo": "مُحال إلى",
+      "specialty": "التخصص",
+      "reason": "سبب الإحالة",
+      "clinicalSummary": "الملخص السريري",
+      "examType": "نوع الفحص",
+      "region": "المنطقة",
+      "clinicalQuestion": "السؤال السريري"
+    },
+    "settings": {
+      "cards": {
+        "letterhead": {
+          "title": "ترويسة المستندات",
+          "description": "الهوية البصرية للعيادة على الوصفات والشهادات وخطابات الإحالة وطلبات الأشعة"
+        }
+      },
+      "letterhead": {
+        "help": "تتجاوز هذه الحقول ملف العيادة في ملفات PDF المُنشأة. اترك أي حقل فارغًا لاستخدام اسم العيادة وعنوانها ورقمها الضريبي المسجل.",
+        "name": "اسم الترويسة",
+        "nameHint": "يُستخدم اسم العيادة افتراضيًا",
+        "address": "عنوان الترويسة",
+        "phone": "هاتف الترويسة",
+        "email": "البريد الإلكتروني للترويسة",
+        "registrationNumber": "رقم التسجيل / الترخيص",
+        "logo": "الشعار",
+        "logoHint": "يظهر أعلى يسار كل ملف PDF. التوصية: صورة PNG شفافة مربعة أصغر من 512&times;512 px.",
+        "chooseLogo": "اختيار صورة",
+        "save": "حفظ الترويسة",
+        "saved": "تم حفظ الترويسة"
+      }
+    }
+  }
+}

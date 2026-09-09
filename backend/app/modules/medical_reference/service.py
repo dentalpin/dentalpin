@@ -277,12 +277,16 @@ class MedicalReferenceService:
         otherwise never reading another module's data directly.
         """
         med_ids_stmt = select(Medication.reference_id).where(
-            Medication.patient_id == patient_id, Medication.reference_id.is_not(None)
+            Medication.patient_id == patient_id,
+            Medication.reference_id.is_not(None),
+            Medication.status == "active",
         )
         med_ids = {row[0] for row in (await db.execute(med_ids_stmt)).all()}
 
         disease_ids_stmt = select(SystemicDisease.reference_id).where(
-            SystemicDisease.patient_id == patient_id, SystemicDisease.reference_id.is_not(None)
+            SystemicDisease.patient_id == patient_id,
+            SystemicDisease.reference_id.is_not(None),
+            SystemicDisease.status == "active",
         )
         disease_ids = {row[0] for row in (await db.execute(disease_ids_stmt)).all()}
 

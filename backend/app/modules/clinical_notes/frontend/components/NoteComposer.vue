@@ -165,7 +165,7 @@ watch(category, refreshTemplates)
       v-if="templates.length"
       class="flex flex-wrap gap-1 items-center"
     >
-      <span class="text-caption text-muted mr-1">
+      <span class="text-caption text-muted me-1">
         {{ t('clinicalNotes.composer.templates') }}:
       </span>
       <UButton
@@ -206,12 +206,12 @@ watch(category, refreshTemplates)
         >
           <UIcon
             :name="attachmentIcon(doc)"
-            class="mr-1 h-3 w-3"
+            class="me-1 h-3 w-3"
           />
           {{ doc.title }}
           <button
             type="button"
-            class="ml-1"
+            class="ms-1"
             :aria-label="t('actions.remove')"
             @click="removeAttached(doc.id)"
           >

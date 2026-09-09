@@ -170,7 +170,7 @@ async function onAttemptLogged() {
       </div>
       <div class="text-caption text-subtle mt-1 flex flex-wrap gap-x-3 gap-y-0.5">
         <span>{{ monthLabel }}</span>
-        <span v-if="patient?.phone">📞 {{ patient.phone }}</span>
+        <span v-if="patient?.phone">📞 <span dir="ltr">{{ patient.phone }}</span></span>
         <span v-if="recall.contact_attempt_count > 0">
           {{ recall.contact_attempt_count }} {{ t('recalls.actions.logAttempt') }}
         </span>

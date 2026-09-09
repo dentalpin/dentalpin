@@ -491,7 +491,7 @@ function goBack() {
                     {{ item.catalog_item.internal_code }}
                   </p>
                 </div>
-                <div class="text-right">
+                <div class="text-end">
                   <p class="font-semibold text-default">
                     {{ formatCurrency(item.line_total) }}
                   </p>

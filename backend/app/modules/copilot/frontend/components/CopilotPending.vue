@@ -97,7 +97,7 @@ async function go(item: PendingItem) {
         v-for="item in g.items"
         :key="`${item.kind}-${item.id}`"
         type="button"
-        class="flex items-center gap-3 rounded-lg border border-default p-3 text-left transition hover:bg-elevated"
+        class="flex items-center gap-3 rounded-lg border border-default p-3 text-start transition hover:bg-elevated"
         @click="go(item)"
       >
         <UIcon

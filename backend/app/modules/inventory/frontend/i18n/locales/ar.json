@@ -1,0 +1,53 @@
+{
+  "inventory": {
+    "title": "المخزون",
+    "add": "إضافة صنف",
+    "edit": "تعديل الصنف",
+    "item": "الصنف",
+    "category": "الفئة",
+    "unit": "الوحدة",
+    "stock": "المخزون",
+    "minimum": "الحد الأدنى",
+    "notes": "ملاحظات",
+    "status": "الحالة",
+    "ok": "جيد",
+    "low": "منخفض",
+    "filterByCategory": "التصفية حسب الفئة",
+    "lowStockOnly": "المخزون المنخفض فقط",
+    "includeInactive": "عرض غير النشط",
+    "increment": "زيادة المخزون",
+    "decrement": "إنقاص المخزون",
+    "delete": "حذف",
+    "deleteTitle": "حذف الصنف",
+    "deleteMessage": "حذف هذا الصنف؟ لا يمكن التراجع عن هذا الإجراء.",
+    "cannotDeleteWithHistory": "لهذا الصنف سجل حركات. عطّله بدلاً من الحذف للحفاظ على أثر التدقيق.",
+    "deactivate": "تعطيل",
+    "reactivate": "إعادة تنشيط",
+    "deactivated": "عُطّل الصنف",
+    "reactivated": "أُعيد تنشيط الصنف",
+    "empty": "لا حركات بعد",
+    "allCategories": "كل الفئات",
+    "adjustBy": "تعديل بمقدار…",
+    "apply": "تطبيق",
+    "cost": "تكلفة الوحدة",
+    "valuation": "قيمة المخزون",
+    "movements": "الحركات",
+    "movementsTitle": "حركات المخزون",
+    "reasons": {
+      "initial": "افتتاحي",
+      "restock": "إعادة تزويد",
+      "consumption": "استهلاك",
+      "adjustment": "تعديل",
+      "correction": "تصحيح"
+    },
+    "categories": {
+      "consumables": "مستهلكات",
+      "equipment": "معدات",
+      "office": "مكتبية",
+      "other": "أخرى"
+    }
+  },
+  "nav": {
+    "inventory": "المخزون"
+  }
+}

@@ -175,7 +175,7 @@ defineExpose({
           icon="i-lucide-x"
           :aria-label="t('common.clear')"
           size="xs"
-          class="-mr-2"
+          class="-me-2"
           @click.stop="clearSelection"
         />
       </template>
@@ -191,7 +191,7 @@ defineExpose({
         :style="inModal ? {} : dropdownStyle"
         :class="[
           'bg-surface border border-default rounded-lg shadow-lg overflow-hidden',
-          inModal ? 'absolute left-0 right-0 top-full mt-1 z-50' : ''
+          inModal ? 'absolute start-0 end-0 top-full mt-1 z-50' : ''
         ]"
       >
         <!-- Loading state -->

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - fix(#127): every icon-only button in the module's frontend has an i18n-sourced `aria-label` (screen readers announced them as just "button").

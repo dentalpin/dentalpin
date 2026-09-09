@@ -1,0 +1,58 @@
+{
+  "nav_online": {
+    "settings": {
+      "title": "NAV Online Számla",
+      "description": "Comunicazione delle fatture in tempo reale all'agenzia fiscale ungherese (NAV)."
+    },
+    "connection": "Connessione",
+    "enabled": "Attivo",
+    "disabled": "Disattivo",
+    "environment": "Ambiente",
+    "env": {
+      "test": "Test (sandbox)",
+      "prod": "Produzione"
+    },
+    "taxNumber": "Numero fiscale",
+    "taxNumberHelp": "Törzsszám a 8 cifre o l'adószám completo a 11 cifre.",
+    "login": "Utente tecnico",
+    "password": "Password",
+    "signatureKey": "Chiave di firma",
+    "exchangeKey": "Chiave di scambio",
+    "exchangeKeyHelp": "Esattamente 16 caratteri, dal portale NAV Online Számla.",
+    "softwareId": "ID software",
+    "softwareIdHelp": "18 caratteri [0-9A-Z-], registrato presso NAV per questo software.",
+    "devContact": "E-mail di contatto dello sviluppatore",
+    "secretStored": "Salvato — lascia vuoto per mantenere.",
+    "testConnection": "Prova connessione",
+    "testOk": "Scambio token riuscito",
+    "testFail": "Connessione non riuscita",
+    "enable": "Attiva comunicazione",
+    "disable": "Disattiva comunicazione",
+    "saved": "Impostazioni salvate",
+    "saveError": "Impossibile salvare le impostazioni",
+    "records": {
+      "title": "Invii NAV",
+      "description": "Ogni fattura emessa viene comunicata a NAV; segui qui lo stato.",
+      "allStates": "Tutti gli stati",
+      "processNow": "Elabora ora",
+      "processed": "Elaborato: {sent} inviati, {done} completati, {rejected} respinti, {failed} falliti",
+      "requeued": "Rimesso in coda",
+      "empty": "Nessun invio ancora.",
+      "invoice": "Fattura",
+      "operation": "Operazione",
+      "state": "Stato",
+      "transaction": "Transazione",
+      "error": "Errore",
+      "retry": "Riprova"
+    },
+    "state": {
+      "pending": "In attesa",
+      "sending": "Invio",
+      "sent": "Inviato",
+      "done": "Completato",
+      "rejected": "Respinto",
+      "failed": "Fallito",
+      "aborted": "Interrotto"
+    }
+  }
+}

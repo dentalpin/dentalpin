@@ -92,7 +92,7 @@ async function handleSubmit(payload: {
     <template #narration="{ amount, pending }">
       <section
         v-if="amount > 0"
-        class="rounded-md border-l-4 px-3 py-2 text-sm"
+        class="rounded-md border-s-4 px-3 py-2 text-sm"
         :class="amount > pending
           ? 'border-amber-400 bg-amber-50 text-amber-900 dark:bg-amber-950 dark:text-amber-100'
           : amount === pending && pending > 0

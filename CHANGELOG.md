@@ -11,6 +11,96 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+## [2.6.0] - 2026-09-07
+
+### Added
+
+- **Six new optional modules** (all manual-install from the admin UI):
+  - **`purchase_orders`** — purchase orders with receiving, quality
+    checks and PDF export (#369, thanks @lamanji), on top of
+    **`supplier_items`** — per-vendor SKU and price links (#368,
+    thanks @lamanji).
+  - **`inventory_reorder`** — reorder suggestions from stock levels
+    and draft PO generation (#377, thanks @lamanji) and
+    **`supplier_ratings`** — delivery/quality metrics plus manual 1–5
+    ratings (#378, thanks @lamanji). The whole supplier suite
+    (roadmap #227) ships a shared five-page frontend layer with
+    locales (#379, thanks @lamanji).
+  - **`gdpr`** — EU 2016/679 compliance: data-subject requests with a
+    30-day SLA, append-only consents, retention policies gating
+    erasure, partial erasure with an immutable audit log, breach
+    register and portability export (#374, #44, thanks @lamanji).
+  - **`payroll`** — admin-only staff payroll with Fernet-encrypted
+    bank/tax data, pay periods with a guarded status machine, entries,
+    monthly reports and a frontend layer; empty draft periods and
+    draft entries can be deleted (#383, #401, #399, #229, #391,
+    thanks @lamanji).
+  - **`nav_online`** — NAV Online Számla 3.0 real-time invoice
+    reporting for Hungary, phase 1: the third `BillingComplianceHook`
+    after `verifactu` and `india_gst`, with a queued worker and no
+    network in the request path (#395, #341, thanks @ZoliQua).
+- **Arabic (`ar`) interface with full RTL support** — core app at exact
+  key parity plus every module layer, MSA register with Latin
+  clinical/financial glosses, `html[dir]` driven from the active locale,
+  Cairo Variable as the Arabic glyph carrier, FDI tooth charts pinned
+  LTR, and phone/email/DNI tokens bidi-isolated so `+1 (212) 555-0007`
+  no longer reverses (#375, #397, #398, #389, thanks @lamanji).
+- **DB-backed, clinic-aware RBAC** (#46): `roles`, `permissions` and
+  per-clinic override tables, a roles management API, a seeder and ADR
+  0024; resolution stays code-based until `RBAC_FROM_DB` is switched on
+  (#400, thanks @lamanji).
+- **Notifications: SMS channel core** — `Channel.SMS` resolving to the
+  patient's E.164 phone, opt-in preferences, preferred-channel ordering
+  with SMS fallback and a per-clinic daily cap; transport arrives with
+  the `sms_gateway` module (#384, #231, thanks @lamanji).
+- **Payments: gateway prerequisites** — `upi`/`netbanking` methods
+  gated on the clinic's server-side country, extension slots for
+  gateway modules, an idempotency key on `record_payment` and a
+  graceful winner-returns response on the concurrent same-key race
+  (#370, #376, #365, thanks @ZoliQua).
+- **Security**: Content-Security-Policy middleware with an inventory,
+  Report-Only rollout and enforcement under e2e (#382, #355); a
+  12-character password floor with ADR 0022 deferring TOTP MFA (#380,
+  #354); and ADR 0023 for HttpOnly cookie sessions with rotating,
+  revocable refresh tokens (#381, #353, thanks @ZoliQua).
+- **ADRs for Italy**: 0025 SDI e-invoicing scope and transport for
+  `sdi_it` (#402, #133) and 0026 Sistema Tessera Sanitaria submission
+  for `sistema_ts` (#403, #134, thanks @ZoliQua).
+
+### Changed
+
+- **Production frontend builds ship one locale chunk per language**
+  instead of one per layer: a local Nuxt module merges every layer's
+  locale files at build time (593 → 335 client chunks, 8.1 → 7.6 MB);
+  dev mode is untouched and `NUXT_I18N_CONSOLIDATE=0` opts out (#406,
+  #322, thanks @ZoliQua).
+- **Physical→logical CSS utilities across the core app and all module
+  layers** for right-to-left readiness: directional spacing
+  (`ml→ms`, `mr→me`, `pl→ps`, `pr→pe`), borders (`border-l/r→s/e`),
+  text alignment (`text-left/right→start/end`), inset positioning
+  (`left/right-*→start/end-*`) and the inline-style equivalents now
+  resolve against the document direction. Identical pixels in LTR;
+  mirrored under `dir="rtl"` (#397, thanks @lamanji).
+- **Reproducible installs**: Python dependencies locked with `uv.lock`,
+  frozen in the Docker image and drift-checked in CI (#371, #356);
+  frontend CI runs `npm ci` so a drifted lockfile fails (#393, #388);
+  frontend and docs-portal images move to `node:22-alpine` pinned by
+  digest (#372, #367, thanks @ZoliQua).
+- **CI guards the frontend prod-build memory budget** (6.8 GB RSS)
+  and per-layer locale parity; the #322 "move host keys into layers"
+  proposal was measured and parked (#330, thanks @ZoliQua).
+
+### Fixed
+
+- Discount-type and state-filter selects crashed on open because an
+  item carried an empty-string value; five call sites now use `null`
+  (#407).
+- External-audit fixes: soft-delete in `patients_clinical`,
+  `ajr_0001`/`mc_0001` migrations ordered after core `0001`, a one-time
+  startup warning on the `SECRET_KEY` fallback, `ANTHROPIC_API_KEY`
+  passed through the prod compose, plus locale and micro-fixes (#386,
+  thanks @lamanji).
+
 ## [2.5.0] - 2026-09-02
 
 ### Added

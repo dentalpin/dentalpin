@@ -1,8 +1,8 @@
 Business Source License 1.1
 
-Licensor: DentalPin Contributors
+Licensor: Wikiparty Labs S.L. (NIF B25884396)
 Licensed Work: DentalPin
-The Licensed Work is (c) 2026 DentalPin Contributors
+The Licensed Work is (c) 2026 Wikiparty Labs S.L. and contributors
 
 Additional Use Grant: You may make production use of the Licensed Work,
 provided that you do not use it to provide a commercial Software-as-a-Service
@@ -33,7 +33,7 @@ deployment of a Sistema Informático de Facturación (SIF) has a
 compliance and who must sign a declaración responsable. That role does
 not transfer with the source code: the producer is whoever deploys and
 operates this software in production for issuing real invoices in
-Spain. The DentalPin Contributors do not act as producer for any
+Spain. The Licensor and the DentalPin contributors do not act as producer for any
 deployment they do not themselves operate. Operators (SaaS providers,
 integrators, or self-hosting clinics under autodesarrollo) are solely
 responsible for completing the producer wizard, signing the declaración

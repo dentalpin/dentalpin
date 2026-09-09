@@ -239,7 +239,7 @@ const cursor = computed(() => {
 
       <!-- Y max label -->
       <div
-        class="absolute top-0 left-0 text-caption text-subtle tnum pointer-events-none"
+        class="absolute top-0 start-0 text-caption text-subtle tnum pointer-events-none"
       >
         {{ yMaxLabel }}
       </div>
@@ -256,7 +256,7 @@ const cursor = computed(() => {
         <div class="tnum">
           <span
             v-if="seriesLabel"
-            class="text-muted mr-1"
+            class="text-muted me-1"
           >{{ seriesLabel }}:</span>{{ formatY(cursor.main.y) }}
         </div>
         <div
@@ -265,7 +265,7 @@ const cursor = computed(() => {
         >
           <span
             v-if="comparisonLabel"
-            class="mr-1"
+            class="me-1"
           >{{ comparisonLabel }}:</span>{{ formatY(cursor.comparison.y) }}
         </div>
       </div>

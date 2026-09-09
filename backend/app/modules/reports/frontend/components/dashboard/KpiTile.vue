@@ -62,7 +62,7 @@ withDefaults(defineProps<Props>(), {
       #header-trailing
     >
       <span
-        class="ml-auto inline-flex items-center gap-1 text-caption text-subtle"
+        class="ms-auto inline-flex items-center gap-1 text-caption text-subtle"
         :title="snapshotLabel"
       >
         <UIcon

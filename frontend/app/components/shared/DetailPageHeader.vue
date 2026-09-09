@@ -26,7 +26,7 @@ withDefaults(defineProps<Props>(), {
       icon="i-lucide-arrow-left"
       size="sm"
       :to="backTo.to"
-      class="-ml-2 mb-3"
+      class="-ms-2 mb-3"
     >
       {{ backTo.label }}
     </UButton>

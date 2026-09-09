@@ -2,9 +2,20 @@
 
 ## Unreleased
 
+- fix: invoice send options exclude SMS via the shared
+  `documentButtonsForPatient` composable (documents travel over
+  email/WhatsApp only); the predicate lives in notifications so every
+  document surface filters identically (issue #392).
+- fix: `regenerate_after_party_change` results are persisted — `compliance_data` is reassigned instead of updated in place (plain JSONB does not track mutation), so the regenerated record shows on the invoice after a billing-party edit.
+
+- fix: the discount-type select in the invoice item modals crashed on open — reka-ui rejects `''` as an item value; the 'no discount' option now uses `null`.
+
 - fix(#326): the invoice-series onboarding rule carries `permission: 'billing.read'` — it no longer renders or fires its load for a clinic where billing isn't active.
 
 - refactor(#126): invoice-line descriptions resolve catalog names through the shared `app.core.i18n_names.catalog_name` helper (same chain, one source of truth).
+
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
 
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 

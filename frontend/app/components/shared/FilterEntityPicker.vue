@@ -142,7 +142,7 @@ const isActive = computed(() => Boolean(props.modelValue))
             v-for="opt in options"
             :key="opt.id"
             type="button"
-            class="w-full text-left px-2 py-2 rounded-token-sm hover:bg-surface-muted focus-visible:bg-surface-muted focus-visible:outline-none"
+            class="w-full text-start px-2 py-2 rounded-token-sm hover:bg-surface-muted focus-visible:bg-surface-muted focus-visible:outline-none"
             @click="select(opt)"
           >
             <div class="text-ui text-default">

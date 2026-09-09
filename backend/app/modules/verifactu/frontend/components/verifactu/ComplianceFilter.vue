@@ -76,7 +76,7 @@ const filterLabel = computed(() => {
           {{ filterLabel }}
           <UIcon
             :name="open ? 'i-lucide-chevron-up' : 'i-lucide-chevron-down'"
-            class="ml-1"
+            class="ms-1"
           />
         </UButton>
       </template>

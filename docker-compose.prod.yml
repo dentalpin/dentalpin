@@ -38,6 +38,7 @@ services:
       STORAGE_BACKEND: local
       STORAGE_LOCAL_PATH: /app/storage
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       # Seeds the demo clinic on first boot. Leave at 0 for a real clinic.
       SEED_ON_STARTUP: ${SEED_ON_STARTUP:-0}
       SEED_LANG: ${SEED_LANG:-es}
@@ -62,6 +63,11 @@ services:
       NUXT_PUBLIC_API_BASE_URL: ${PUBLIC_URL:-http://localhost}
       API_BASE_URL_SERVER: http://backend:8000
       NUXT_PUBLIC_DOCS_URL: ${DOCS_URL:-https://docs.dentalpin.com}
+      # Content-Security-Policy rollout (#355): report | enforce | off.
+      # Report-Only by default; violations are logged by the backend
+      # (`grep "csp violation"`). Flip to enforce once the log is quiet.
+      # See docs/technical/security-csp.md.
+      NUXT_CSP_MODE: ${NUXT_CSP_MODE:-report}
     depends_on:
       backend:
         condition: service_started

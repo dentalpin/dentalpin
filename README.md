@@ -186,7 +186,7 @@ See [docs/user-manual/en/demo.md](docs/user-manual/en/demo.md) for full details 
 
 ### User Experience
 - **Visual Selectors** — Smart dropdowns showing recent patients and popular treatments
-- **Nine-Language Interface** — English, Spanish, French, Portuguese, Tamil, German, Hungarian, Polish and Italian — core app and every module
+- **Ten-Language Interface** — English, Spanish, French, Portuguese, Tamil, German, Hungarian, Polish, Italian and Arabic — core app and every module
 - **Dark Mode** — System-aware theme switching
 - **Responsive Design** — Works on desktop and tablet
 
@@ -198,8 +198,8 @@ See [docs/user-manual/en/demo.md](docs/user-manual/en/demo.md) for full details 
 
 ## Languages
 
-The interface ships in **nine languages** — English, Español, Français, Português,
-தமிழ் (Tamil), Deutsch, Magyar, Polski and Italiano — covering the core app **and
+The interface ships in **ten languages** — English, Español, Français, Português,
+தமிழ் (Tamil), Deutsch, Magyar, Polski, Italiano and العربية (Arabic) — covering the core app **and
 every module layer**, with a CI-enforced key-parity test so locales can't silently
 drift. Polish uses its full three-form plural rules.
 

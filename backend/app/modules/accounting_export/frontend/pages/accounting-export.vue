@@ -116,7 +116,7 @@ const invoiceCols = ['numero', 'fecha_emision', 'cliente', 'nif', 'base', 'cuota
             >
           </UFormField>
         </template>
-        <div class="flex gap-2 w-full sm:w-auto sm:ml-auto">
+        <div class="flex gap-2 w-full sm:w-auto sm:ms-auto">
           <UButton
             icon="i-lucide-eye"
             variant="soft"
@@ -186,7 +186,7 @@ const invoiceCols = ['numero', 'fecha_emision', 'cliente', 'nif', 'base', 'cuota
       >
         <table class="w-full text-sm">
           <thead>
-            <tr class="text-left text-subtle">
+            <tr class="text-start text-subtle">
               <th
                 v-for="c in invoiceCols"
                 :key="c"

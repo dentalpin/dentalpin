@@ -249,7 +249,7 @@ function computeInstallPreview(name: string): string[] {
           <span class="font-semibold">
             {{ t('settings.modules.pending.banner') }}
           </span>
-          <span class="ml-1 text-subtle">
+          <span class="ms-1 text-subtle">
             {{ pendingModules.map(m => m.name).join(', ') }}
           </span>
         </div>

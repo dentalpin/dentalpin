@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "Gateway SMS",
+      "description": "Fornitore di SMS in uscita della clinica",
+      "provider": "Fornitore",
+      "fromNumber": "Numero mittente",
+      "active": "Attivato",
+      "activeHelp": "Solo un fornitore attivato con riga salvata può inviare.",
+      "placeholderNote": "Il fornitore incluso registra solo i messaggi nel log del server. Nulla viene inviato finché non si configura un backend reale.",
+      "test": "Prova",
+      "testResult": "Configurato: {configured}. Invierebbe: {wouldSend}."
+    },
+    "common": {
+      "save": "Salva",
+      "saved": "Impostazioni salvate",
+      "saveError": "Impossibile salvare le impostazioni",
+      "loadError": "Impossibile caricare le impostazioni",
+      "retry": "Riprova"
+    }
+  }
+}

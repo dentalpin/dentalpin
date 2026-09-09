@@ -144,7 +144,7 @@ const isEmpty = computed(
         <dt class="capitalize text-muted">
           {{ row.label }}
         </dt>
-        <dd class="text-right font-medium tabular-nums">
+        <dd class="text-end font-medium tabular-nums">
           {{ row.value }}
         </dd>
       </template>

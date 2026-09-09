@@ -78,7 +78,7 @@
     "emailRequired": "Podaj adres e-mail",
     "emailInvalid": "Adres e-mail jest nieprawidłowy",
     "passwordRequired": "Podaj hasło",
-    "passwordTooShort": "Hasło musi mieć co najmniej 8 znaków",
+    "passwordTooShort": "Hasło musi mieć co najmniej 12 znaków",
     "passwordWeak": "Hasło musi zawierać litery i cyfry",
     "passwordMismatch": "Hasła nie są zgodne",
     "clinicNameRequired": "Podaj nazwę gabinetu",
@@ -2419,11 +2419,22 @@
       "whatsappUnavailableHint": "WhatsApp będzie dostępny po podłączeniu numeru kliniki.",
       "whatsappConnect": "Połącz WhatsApp (Kapso)",
       "noEmail": "Pacjent nie ma e-maila w kartotece",
-      "noPhone": "Pacjent nie ma telefonu w kartotece"
+      "noPhone": "Pacjent nie ma telefonu w kartotece",
+      "sms": "SMS",
+      "smsUnavailableHint": "SMS będą dostępne po skonfigurowaniu dostawcy SMS.",
+      "smsConnect": "Konfiguruj",
+      "smsDailyLimitLabel": "Dzienny limit SMS",
+      "smsDailyLimitHelp": "Maksymalna liczba wychodzących SMS dziennie dla kliniki."
     },
     "channelSent": {
       "email": "E-mail wysłany pomyślnie",
-      "whatsapp": "Wiadomość WhatsApp wysłana pomyślnie"
+      "whatsapp": "Wiadomość WhatsApp wysłana pomyślnie",
+      "sms": "Wiadomość SMS wysłana pomyślnie"
+    },
+    "prefs": {
+      "title": "Preferencje powiadomień",
+      "description": "Jakimi kanałami można kontaktować się z tym pacjentem. Rezygnacja blokuje kanał nawet przy wysyłkach wymuszonych.",
+      "saved": "Zapisano preferencje"
     }
   },
   "invoice": {
@@ -2815,6 +2826,10 @@
       "missingNumbers": "Brakujące numery:",
       "noData": "Brak danych dla wybranego okresu",
       "noOverdue": "Brak faktur po terminie",
+      "invoiceAging": "Wiek faktur",
+      "invoiceAgingDescription": "Należne wystawione sumy wg przedziałów. Niewymagalne osobno.",
+      "notDue": "Niewymagalne",
+      "issuedTrend": "Trend wystawionych",
       "daysOverdue": "dni po terminie",
       "vatType": "Stawka VAT",
       "base": "Podstawa",

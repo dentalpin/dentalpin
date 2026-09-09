@@ -24,10 +24,9 @@ COPY docs/ ./docs/
 
 WORKDIR /build/docs/portal
 
-# Install deps and build the static site.
-# We use `npm install` rather than `npm ci` until a package-lock.json is
-# committed; the lockfile lands in a follow-up PR once the dep set settles.
-RUN npm install --no-audit --no-fund \
+# Install deps from the committed lockfile and build the static site
+# (`npm ci` fails on a drifted lock instead of silently repairing it — #388).
+RUN npm ci --no-audit --no-fund \
  && npm run build
 
 # ---- Runtime ----------------------------------------------------------------

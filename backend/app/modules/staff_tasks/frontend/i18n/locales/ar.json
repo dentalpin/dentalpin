@@ -1,0 +1,34 @@
+{
+  "staffTasks": {
+    "title": "مهام الفريق",
+    "add": "مهمة جديدة",
+    "taskTitle": "المهمة",
+    "details": "التفاصيل",
+    "priority": "الأولوية",
+    "dueDate": "تاريخ الاستحقاق",
+    "status": "الحالة",
+    "assignee": "مسندة إلى",
+    "filterByStatus": "تصفية حسب الحالة",
+    "all": "الكل",
+    "delete": "حذف",
+    "deleteTitle": "حذف المهمة",
+    "deleteMessage": "حذف هذه المهمة؟ لا يمكن التراجع عن هذا الإجراء.",
+    "updateFailed": "تعذر تحديث المهمة.",
+    "saveFailed": "تعذر حفظ المهمة.",
+    "deleteFailed": "تعذر حذف المهمة.",
+    "statuses": {
+      "open": "مفتوحة",
+      "claimed": "محجوزة",
+      "done": "منجزة",
+      "cancelled": "ملغاة"
+    },
+    "priorities": {
+      "low": "منخفضة",
+      "normal": "عادية",
+      "high": "عالية"
+    }
+  },
+  "nav": {
+    "staffTasks": "مهام الفريق"
+  }
+}

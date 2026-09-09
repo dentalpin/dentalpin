@@ -69,7 +69,7 @@ const interactive = computed(() => !!props.to)
   <NuxtLink
     v-if="interactive"
     :to="to"
-    class="summary-card relative flex flex-col rounded-token-lg border border-default bg-surface overflow-hidden transition-colors hover:bg-surface-muted cursor-pointer before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1"
+    class="summary-card relative flex flex-col rounded-token-lg border border-default bg-surface overflow-hidden transition-colors hover:bg-surface-muted cursor-pointer before:absolute before:start-0 before:top-0 before:bottom-0 before:w-1"
     :class="severityStripe"
   >
     <header class="flex items-center gap-2 px-4 pt-3 pb-1">
@@ -117,7 +117,7 @@ const interactive = computed(() => !!props.to)
 
   <div
     v-else
-    class="summary-card relative flex flex-col rounded-token-lg border border-default bg-surface overflow-hidden before:absolute before:left-0 before:top-0 before:bottom-0 before:w-1"
+    class="summary-card relative flex flex-col rounded-token-lg border border-default bg-surface overflow-hidden before:absolute before:start-0 before:top-0 before:bottom-0 before:w-1"
     :class="severityStripe"
   >
     <header class="flex items-center gap-2 px-4 pt-3 pb-1">

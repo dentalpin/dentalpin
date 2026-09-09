@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
 - refactor(#309): the demo seed moved to the host seeds package (`app/seeds/patient_timeline_demo.py`) — the module deliberately declares only `patients`, and the seed's five cross-module imports had it on the isolation allowlist; all five entries drained.
 
 - feat(#287): subscribes the generic notification.sent/notification.failed events (all channels) instead of the legacy email.* pair — WhatsApp outbound now shows on the timeline.

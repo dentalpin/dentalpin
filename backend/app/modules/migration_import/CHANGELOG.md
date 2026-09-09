@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- feat(i18n): Arabic (ar) locale for the module's frontend layer.
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - feat(#131): German (de) locale for the module's frontend layer.

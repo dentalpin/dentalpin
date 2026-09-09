@@ -1,0 +1,124 @@
+{
+  "clinicalNotes": {
+    "types": {
+      "administrative": "إدارية",
+      "diagnosis": "تشخيص",
+      "treatment": "علاج",
+      "treatment_plan": "خطة",
+      "appointment_clinical": "سريرية",
+      "appointment_administrative": "إدارية"
+    },
+    "appointment": {
+      "addByType": "أضف ملاحظة {label}",
+      "empty": "لا ملاحظات على هذا الموعد بعد. استخدم الأزرار أعلاه لإضافة واحدة."
+    },
+    "feed": {
+      "filterLabel": "التصفية",
+      "filterAll": "الكل",
+      "filterClear": "مسح التصفية",
+      "filterStatus": "عرض {n} من {total} أنواع",
+      "addAdministrative": "ملاحظة إدارية",
+      "loadMore": "تحميل المزيد",
+      "empty": {
+        "title": "لا ملاحظات بعد",
+        "help": "ستظهر الملاحظات الإدارية والتشخيصية والعلاجية هنا بالترتيب الزمني."
+      }
+    },
+    "diagnosisSidebar": {
+      "title": "الملاحظات",
+      "addNote": "إضافة ملاحظة",
+      "empty": "لا ملاحظات في هذه الفئة."
+    },
+    "treatmentButton": {
+      "title": "ملاحظات العلاج",
+      "add": "إضافة ملاحظة",
+      "empty": "لا ملاحظات على هذا العلاج بعد.",
+      "aria": "ملاحظات العلاج ({n})"
+    },
+    "timeline": {
+      "addPlanNote": "ملاحظة الخطة",
+      "empty": "لا ملاحظات بعد.",
+      "emptyForFilter": "لا ملاحظات مطابقة للتصفية.",
+      "source": {
+        "plan": "خطة",
+        "treatment": "علاج",
+        "visit": "زيارة"
+      }
+    },
+    "byPlan": {
+      "empty": "لا ملاحظات سريرية مرتبطة بخطة لهذا المريض بعد.",
+      "planNotesLabel": "ملاحظات الخطة",
+      "unknownTreatment": "علاج",
+      "noNotesForTreatment": "لا ملاحظات على هذا العلاج بعد."
+    },
+    "composer": {
+      "placeholder": "اكتب الملاحظة…",
+      "templates": "القوالب",
+      "attach": "إرفاق صورة أو مستند",
+      "bindToTooth": "إرفاق بالسن {n}"
+    },
+    "linked": {
+      "tooth": "السن {n}",
+      "treatment": "علاج",
+      "treatmentOnTooth": "{label} (السن {n})",
+      "plan": "خطة",
+      "planNamed": "الخطة: {label}"
+    },
+    "actions": {
+      "showMore": "عرض المزيد",
+      "showLess": "عرض أقل",
+      "openLinked": "فتح السياق"
+    },
+    "author": {
+      "unknown": "كاتب غير معروف"
+    },
+    "time": {
+      "justNow": "للتو",
+      "minutesAgo": "قبل {n} دقيقة",
+      "hoursAgo": "قبل {n} ساعة",
+      "daysAgo": "قبل {n} يوم"
+    },
+    "toasts": {
+      "saved": "حُفظت الملاحظة",
+      "deleted": "حُذفت الملاحظة",
+      "saveFailed": "تعذر حفظ الملاحظة"
+    },
+    "confirms": {
+      "delete": "حذف هذه الملاحظة؟ تتطلب الاستعادة التواصل مع الدعم."
+    },
+    "templates": {
+      "endo": {
+        "singleVisit": "علاج جذور (زيارة واحدة)",
+        "multiVisit": "علاج جذور (زيارات متعددة)"
+      },
+      "perio": {
+        "scaling": "تنظيف وتجليخ جذور / RAR"
+      },
+      "implant": {
+        "placement": "تركيب غرسة"
+      },
+      "diagnosis": {
+        "caries": "تسوس",
+        "periapical": "آفة ذروانية"
+      },
+      "admin": {
+        "phoneCall": "مكالمة المريض",
+        "reschedule": "طلب إعادة جدولة"
+      },
+      "general": {
+        "followUp": "متابعة عامة"
+      }
+    },
+    "templateBodies": {
+      "endo_single_visit": "التشخيص: \nالتخدير: \nالقنوات المكتشفة: \nطول العمل: \nحشو الجذر: \nما بعد العملية: ",
+      "endo_multi_visit": "الجلسة: \nالقنوات المعالجة: \nالدواء داخل القناة: \nالموعد القادم: ",
+      "perio_scaling": "الأرباع المعالجة: \nعمق الفحص: \nنزيف عند الفحص: \nتعليمات النظافة: ",
+      "implant_placement": "الغرسة (الشركة / القطر / الطول): \nعزم الإحكام النهائي (Ncm): \nالثبات الأولى: \nالطعم: \nما بعد العملية: ",
+      "diagnosis_caries": "النتيجة: تسوس \nالعمق: \nالأعراض: \nاختبار الحيوية: \nالعلاج المقترح: ",
+      "diagnosis_periapical": "آفة ذروانية \nالسن: \nالأشعة: \nالفحوصات (القرع، الجس): \nالتشخيص: ",
+      "admin_phone_call": "مكالمة المريض: \nالسبب: \nالإجراء المتخذ: \nالمتابعة: ",
+      "admin_reschedule": "طلب إعادة الجدولة: \nالتاريخ الحالي: \nالاقتراح الجديد: ",
+      "general_follow_up": "النتائج: \nالإجراء المنفذ: \nتعليمات المريض: "
+    }
+  }
+}

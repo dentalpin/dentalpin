@@ -137,7 +137,7 @@ function whatsappPatient(row: PipelineRow) {
               <div class="min-w-0">
                 <button
                   type="button"
-                  class="block text-left font-medium hover:underline truncate"
+                  class="block text-start font-medium hover:underline truncate"
                   @click="openPlan(row)"
                 >
                   {{ patientName(row) }}
@@ -183,7 +183,7 @@ function whatsappPatient(row: PipelineRow) {
               </UBadge>
               <span
                 v-if="row.budget.total !== null"
-                class="ml-2"
+                class="ms-2"
               >
                 {{ row.budget.total.toFixed(2) }} €
               </span>

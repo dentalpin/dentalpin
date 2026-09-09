@@ -224,7 +224,7 @@ const linkedLabel = computed(() => {
           >
             <UIcon
               :name="meta.icon"
-              class="w-3 h-3 mr-1"
+              class="w-3 h-3 me-1"
             />
             {{ t(meta.labelKey) }}
           </UBadge>
@@ -350,17 +350,17 @@ const linkedLabel = computed(() => {
 
 .note-card--administrative,
 .note-card--appointment_administrative {
-  border-left: 3px solid var(--color-neutral, #94a3b8);
+  border-inline-start: 3px solid var(--color-neutral, #94a3b8);
 }
 .note-card--diagnosis,
 .note-card--appointment_clinical {
-  border-left: 3px solid var(--color-info-accent, #3b82f6);
+  border-inline-start: 3px solid var(--color-info-accent, #3b82f6);
 }
 .note-card--treatment {
-  border-left: 3px solid var(--color-success-accent, #22c55e);
+  border-inline-start: 3px solid var(--color-success-accent, #22c55e);
 }
 .note-card--treatment_plan {
-  border-left: 3px solid var(--color-secondary-accent, #a855f7);
+  border-inline-start: 3px solid var(--color-secondary-accent, #a855f7);
 }
 
 /* The full-card link button must stay underneath interactive children. */

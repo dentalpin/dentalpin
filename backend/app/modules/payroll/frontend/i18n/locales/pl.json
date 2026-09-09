@@ -1,0 +1,86 @@
+{
+  "payroll": {
+    "title": "Płace",
+    "subtitle": "Profile pracowników, okresy płacowe i raporty",
+    "nav": {
+      "profiles": "Profile",
+      "periods": "Okresy",
+      "reports": "Raporty"
+    },
+    "profiles": {
+      "title": "Profile",
+      "subtitle": "Warunki płacowe i szyfrowane dane bankowe pracowników",
+      "new": "Nowy profil",
+      "edit": "Edytuj profil",
+      "staff": "Pracownik",
+      "staffPlaceholder": "Wybierz",
+      "paymentType": "Rodzaj płatności",
+      "monthly": "Miesięczna",
+      "hourly": "Godzinowa",
+      "baseAmount": "Kwota bazowa",
+      "currency": "Waluta",
+      "bankAccount": "Konto bankowe",
+      "bankAccountPlaceholder": "Puste, aby zachować",
+      "taxId": "NIP",
+      "taxIdPlaceholder": "Puste, aby zachować",
+      "hasBank": "Konto bankowe zapisane",
+      "hasTax": "NIP zapisany",
+      "active": "Aktywny profil",
+      "inactive": "Nieaktywny",
+      "empty": "Brak profili"
+    },
+    "periods": {
+      "title": "Okresy",
+      "subtitle": "Miesięczne okresy płacowe i ich wpisy",
+      "open": "Otwórz okres",
+      "month": "Miesiąc (RRRR-MM)",
+      "status": "Status",
+      "draft": "Szkic",
+      "closed": "Zamknięty",
+      "paid": "Opłacony",
+      "close": "Zamknij okres",
+      "markPaid": "Oznacz jako opłacony",
+      "deleteConfirm": "Usunąć okres {month}? Tylko puste szkice.",
+      "transitionConfirm": "Przenieść {month} do {status}?",
+      "empty": "Brak okresów"
+    },
+    "entries": {
+      "title": "Wpisy",
+      "gross": "Brutto",
+      "deductions": "Potrącenia",
+      "net": "Netto",
+      "netMismatch": "Netto musi być równe brutto minus potrącenia",
+      "notes": "Notatki",
+      "add": "Dodaj wpis",
+      "edit": "Edytuj wpis",
+      "deleteConfirm": "Usunąć ten wpis? Tej operacji nie można cofnąć.",
+      "staff": "Pracownik",
+      "empty": "Brak wpisów"
+    },
+    "reports": {
+      "title": "Raporty",
+      "subtitle": "Sumy miesięczne i roczne w walucie kliniki",
+      "month": "Miesiąc",
+      "year": "Rok",
+      "monthly": "Raport miesięczny",
+      "annual": "Raport roczny",
+      "entryCount": "Wpisy",
+      "totalGross": "Brutto razem",
+      "totalDeductions": "Potrącenia razem",
+      "totalNet": "Netto razem",
+      "periodCount": "Okresy"
+    },
+    "common": {
+      "save": "Zapisz",
+      "cancel": "Anuluj",
+      "edit": "Edytuj",
+      "close": "Zamknij",
+      "delete": "Usuń",
+      "back": "Wstecz",
+      "retry": "Ponów",
+      "loadError": "Nie można załadować danych",
+      "saveError": "Nie można zapisać zmian",
+      "empty": "Na razie pusto"
+    }
+  }
+}

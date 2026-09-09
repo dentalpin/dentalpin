@@ -129,7 +129,7 @@ function goBack() {
                 {{ selectedPatient.last_name }}, {{ selectedPatient.first_name }}
               </p>
               <p class="text-caption text-subtle">
-                {{ selectedPatient.phone }}
+                <span dir="ltr">{{ selectedPatient.phone }}</span>
               </p>
             </div>
             <UButton
@@ -163,14 +163,14 @@ function goBack() {
                 v-for="patient in patients"
                 :key="patient.id"
                 type="button"
-                class="w-full px-4 py-2 text-left hover:bg-surface-muted"
+                class="w-full px-4 py-2 text-start hover:bg-surface-muted"
                 @click="selectPatient(patient)"
               >
                 <p class="font-medium">
                   {{ patient.last_name }}, {{ patient.first_name }}
                 </p>
                 <p class="text-caption text-subtle">
-                  {{ patient.phone }}
+                  <span dir="ltr">{{ patient.phone }}</span>
                 </p>
               </button>
             </div>

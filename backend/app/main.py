@@ -17,6 +17,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.core.auth.router import limiter
 from app.core.auth.router import router as auth_router
+from app.core.auth.router_roles import router as roles_router
 from app.core.log_context import (
     new_request_id,
     reset_request_context,
@@ -40,6 +41,16 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # during startup / module install also carries the bound fields
     # (defaults to ``-`` outside a request).
     setup_logging()
+
+    # Security posture (audit SEC-01): public budget sessions fall back to
+    # SECRET_KEY when BUDGET_PUBLIC_SECRET_KEY is unset. Warn once in
+    # production; behavior unchanged (hard-requiring would break existing
+    # deploys that rely on the fallback).
+    if settings.ENVIRONMENT == "production" and not settings.BUDGET_PUBLIC_SECRET_KEY:
+        logger.warning(
+            "BUDGET_PUBLIC_SECRET_KEY is unset: public budget sessions fall "
+            "back to SECRET_KEY. Set a dedicated key in production."
+        )
 
     # Startup — discover everything, settle DB state, then mount only what
     # is installed (issue #91). Order matters: the processor may install or
@@ -72,6 +83,18 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     logger.info(
         "Mounted %d/%d modules: %s", len(mounted), len(discovered), [m.name for m in mounted]
     )
+
+    # Seed the RBAC tables from the static grant map + installed modules so
+    # the roles API always has a populated catalog and DB-backed checks
+    # (require_permission / /me under settings.RBAC_FROM_DB, issue #46) have
+    # a source of truth. Idempotent and cheap, so it runs regardless of the flag.
+    try:
+        from app.core.auth.seed_rbac import seed_rbac
+
+        async with async_session_maker() as session:
+            await seed_rbac(session)
+    except Exception:
+        logger.exception("RBAC seeding failed at startup")
 
     # Initialize scheduler for background jobs (active modules only)
     init_scheduler()
@@ -198,6 +221,7 @@ async def global_exception_handler(request: Request, exc: Exception) -> JSONResp
 
 # Mount auth router
 app.include_router(auth_router, prefix="/api/v1")
+app.include_router(roles_router, prefix="/api/v1")
 
 # Mount module management router (install/uninstall/upgrade/restart).
 from app.core.plugins.router import router as modules_router  # noqa: E402
@@ -208,6 +232,11 @@ app.include_router(modules_router, prefix="/api/v1")
 from app.core.agents.router import router as agents_router  # noqa: E402
 
 app.include_router(agents_router, prefix="/api/v1")
+
+# CSP violation report sink (issue #355) — public, rate-limited, log-only.
+from app.core.security.router import router as security_router  # noqa: E402
+
+app.include_router(security_router, prefix="/api/v1")
 
 
 @app.get("/health")

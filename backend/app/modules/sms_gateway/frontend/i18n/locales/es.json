@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "Pasarela SMS",
+      "description": "Proveedor de SMS salientes de la clínica",
+      "provider": "Proveedor",
+      "fromNumber": "Número remitente",
+      "active": "Activado",
+      "activeHelp": "Solo un proveedor activado con fila guardada puede enviar.",
+      "placeholderNote": "El proveedor incluido solo registra los mensajes en el log del servidor. No se envía nada hasta configurar un backend real.",
+      "test": "Probar",
+      "testResult": "Configurado: {configured}. Enviaría: {wouldSend}."
+    },
+    "common": {
+      "save": "Guardar",
+      "saved": "Ajustes guardados",
+      "saveError": "No se pudieron guardar los ajustes",
+      "loadError": "No se pudieron cargar los ajustes",
+      "retry": "Reintentar"
+    }
+  }
+}

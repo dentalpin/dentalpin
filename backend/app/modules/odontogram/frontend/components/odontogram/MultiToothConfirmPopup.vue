@@ -125,7 +125,7 @@ function handleConfirm() {
             {{ tooth }}
             <span
               v-if="roleFor(tooth)"
-              class="ml-1 text-xs opacity-70"
+              class="ms-1 text-xs opacity-70"
             >
               ({{ t(`odontogram.multiTooth.${roleFor(tooth)}`) }})
             </span>

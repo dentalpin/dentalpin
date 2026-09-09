@@ -334,7 +334,7 @@ function goBack() {
           </UFormField>
         </template>
 
-        <div class="ml-auto flex items-center gap-2">
+        <div class="ms-auto flex items-center gap-2">
           <UButton
             v-if="hasActiveAnalyticsFilter"
             variant="ghost"
@@ -365,7 +365,7 @@ function goBack() {
           v-if="cabinetChips.length > 0"
           class="flex flex-wrap items-center gap-1.5"
         >
-          <span class="text-caption text-subtle mr-1">
+          <span class="text-caption text-subtle me-1">
             {{ t('reports.scheduling.filters.cabinet') }}
           </span>
           <FilterChip
@@ -387,7 +387,7 @@ function goBack() {
           v-if="professionals.length > 0"
           class="flex flex-wrap items-center gap-1.5"
         >
-          <span class="text-caption text-subtle mr-1">
+          <span class="text-caption text-subtle me-1">
             {{ t('reports.scheduling.filters.professional') }}
           </span>
           <FilterChip
@@ -543,8 +543,8 @@ function goBack() {
                   {{ t('reports.scheduling.labels.appointments') }}
                   <span class="mx-1 text-subtle">·</span>
                   <span class="text-success-accent tnum">{{ prof.completed_count }} ✓</span>
-                  <span class="text-danger-accent tnum ml-1">{{ prof.cancelled_count }} ✗</span>
-                  <span class="text-warning-accent tnum ml-1">{{ prof.no_show_count }} ⊘</span>
+                  <span class="text-danger-accent tnum ms-1">{{ prof.cancelled_count }} ✗</span>
+                  <span class="text-warning-accent tnum ms-1">{{ prof.no_show_count }} ⊘</span>
                 </template>
                 <template #meta>
                   <div class="flex flex-col items-end gap-1 w-24">
@@ -689,7 +689,7 @@ function goBack() {
                   />
                 </div>
               </div>
-              <span class="w-10 text-right text-ui text-default tnum">
+              <span class="w-10 text-end text-ui text-default tnum">
                 {{ day.appointment_count }}
               </span>
             </div>
@@ -736,7 +736,7 @@ function goBack() {
                   :style="{ width: `${row.widthPct}%` }"
                 />
               </div>
-              <span class="w-10 text-right text-ui text-default tnum">
+              <span class="w-10 text-end text-ui text-default tnum">
                 {{ row.count }}
               </span>
             </div>
@@ -848,7 +848,7 @@ function goBack() {
                   :style="{ width: `${(bucket.count / maxWaitBucket) * 100}%` }"
                 />
               </div>
-              <span class="w-10 text-right text-ui text-default tnum">
+              <span class="w-10 text-end text-ui text-default tnum">
                 {{ bucket.count }}
               </span>
             </div>
@@ -925,7 +925,7 @@ function goBack() {
                   :style="{ width: `${(bucket.count / maxPunctualityBucket) * 100}%` }"
                 />
               </div>
-              <span class="w-10 text-right text-ui text-default tnum">
+              <span class="w-10 text-end text-ui text-default tnum">
                 {{ bucket.count }}
               </span>
             </div>

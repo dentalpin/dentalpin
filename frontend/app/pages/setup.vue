@@ -144,9 +144,9 @@ function validateAccount(): boolean {
   else if (!EMAIL_RE.test(email)) errors.email = t('setup.emailInvalid')
   else errors.email = ''
 
-  // Mirror the backend strength check: 8+ chars with a letter and a digit.
+  // Mirror the backend strength check (#354): 12+ chars with a letter and a digit.
   if (!form.password) errors.password = t('setup.passwordRequired')
-  else if (form.password.length < 8) errors.password = t('setup.passwordTooShort')
+  else if (form.password.length < 12) errors.password = t('setup.passwordTooShort')
   else if (!/[a-zA-Z]/.test(form.password) || !/\d/.test(form.password)) {
     errors.password = t('setup.passwordWeak')
   } else errors.password = ''
@@ -479,7 +479,7 @@ async function onSubmit() {
         <div class="rounded-token-md border border-(--ui-border) overflow-hidden">
           <button
             type="button"
-            class="w-full flex items-center justify-between gap-2 px-3 py-2.5 min-h-11 text-left"
+            class="w-full flex items-center justify-between gap-2 px-3 py-2.5 min-h-11 text-start"
             :aria-expanded="showAddress"
             @click="showAddress = !showAddress"
           >
@@ -529,7 +529,7 @@ async function onSubmit() {
         <div class="rounded-token-md border border-(--ui-border) overflow-hidden">
           <button
             type="button"
-            class="w-full flex items-center justify-between gap-2 px-3 py-2.5 min-h-11 text-left"
+            class="w-full flex items-center justify-between gap-2 px-3 py-2.5 min-h-11 text-start"
             :aria-expanded="showAdvanced"
             @click="showAdvanced = !showAdvanced"
           >

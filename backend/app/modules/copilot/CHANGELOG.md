@@ -6,6 +6,10 @@
 
 - feat(#332): Anthropic joins OpenAI as a live LLM provider — per-clinic `copilot_settings.provider = "anthropic"` streams chat turns through `AnthropicProvider` (`app/core/llm/anthropic_provider.py`). The bridge now passes the provider-matching tool-schema dialect to the orchestrator, settings-save rejects `anthropic` when `ANTHROPIC_API_KEY` is missing, and switching provider without naming a model falls back to that provider's default (`COPILOT_MODEL_CHAT_ANTHROPIC`).
 
+- feat(i18n): Arabic (ar) locale for the module's frontend layer.
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
+
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - feat(#131): German (de) locale for the module's frontend layer.

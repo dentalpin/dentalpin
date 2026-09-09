@@ -232,12 +232,12 @@ function formatDate(dateString: string): string {
 }
 
 .treatment-planned {
-  border-left: 2px solid #fbbf24;
-  padding-left: 0.75rem;
+  border-inline-start: 2px solid #fbbf24;
+  padding-inline-start: 0.75rem;
 }
 
 .treatment-existing {
-  border-left: 2px solid #6b7280;
-  padding-left: 0.75rem;
+  border-inline-start: 2px solid #6b7280;
+  padding-inline-start: 0.75rem;
 }
 </style>

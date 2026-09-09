@@ -1,0 +1,36 @@
+{
+  "medicalReference": {
+    "settingsLabel": "قوائم المراجع الطبية",
+    "settingsDescription": "إدارة قوائم الحساسية والأدوية والأمراض المستخدمة في سجلات المرضى.",
+    "title": "قوائم المراجع الطبية",
+    "description": "تغذي هذه القوائم القوائم المنسدلة القابلة للبحث في التاريخ الطبي للمريض. إلغاء تفعيل عنصر يزيله من عمليات البحث المستقبلية دون التأثير على سجلات المرضى القائمة.",
+    "tabs": {
+      "allergies": "الحساسية",
+      "medications": "الأدوية",
+      "diseases": "الأمراض",
+      "surgeries": "العمليات الجراحية",
+      "interactions": "التفاعلات",
+      "contraindications": "موانع الاستخدام"
+    },
+    "name": "الاسم",
+    "status": "الحالة",
+    "active": "نشط",
+    "inactive": "غير نشط",
+    "showInactive": "إظهار غير النشطة",
+    "newItemPlaceholder": "اسم العنصر الجديد…",
+    "addSuccess": "تمت الإضافة",
+    "addError": "تعذرت إضافة العنصر",
+    "updateError": "تعذر تحديث العنصر",
+    "deactivate": "إلغاء التفعيل",
+    "deactivateError": "تعذر إلغاء تفعيل العنصر",
+    "itemCount": "{count} عنصر",
+    "medicationA": "الدواء أ",
+    "medicationB": "الدواء ب",
+    "riskNote": "الخطر",
+    "riskNotePlaceholder": "صِف الخطر…",
+    "flags": {
+      "interaction": "تفاعل {a} + {b}",
+      "contraindication": "{a}: ممنوع مع {b}"
+    }
+  }
+}

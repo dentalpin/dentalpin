@@ -314,7 +314,7 @@ const hasPendingTreatments = computed(() => {
             v-for="item in availableItems"
             :key="item.id"
             type="button"
-            class="text-left p-3 rounded-lg border border-default hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-soft)] transition-colors"
+            class="text-start p-3 rounded-lg border border-default hover:border-[var(--color-primary)] hover:bg-[var(--color-primary-soft)] transition-colors"
             @click="handleSelect(item)"
           >
             <div class="flex items-start justify-between gap-2">

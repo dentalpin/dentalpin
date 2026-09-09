@@ -1,0 +1,88 @@
+{
+  "schedules": {
+    "nav": {
+      "clinicHours": "ساعات عمل العيادة",
+      "professionalSchedules": "جداول الأطباء"
+    },
+    "settingsCards": {
+      "clinicHoursTitle": "ساعات عمل العيادة",
+      "clinicHoursDescription": "حدد ساعات عمل العيادة الأسبوعية والتواريخ الخاصة (العطلات، الساعات المخفضة).",
+      "professionalHoursTitle": "جداول الأطباء",
+      "professionalHoursDescription": "عيّن جداول فردية لكل طبيب وأدر الإجازات أو الفترات الأخرى غير المتاحة."
+    },
+    "clinicHours": {
+      "title": "ساعات عمل العيادة",
+      "subtitle": "حدد أوقات فتح العيادة في كل يوم من أيام الأسبوع.",
+      "weeklyTemplate": "القالب الأسبوعي",
+      "overrides": "تواريخ خاصة",
+      "addOverride": "إضافة تاريخ خاص",
+      "editOverride": "تعديل تاريخ خاص",
+      "save": "حفظ التغييرات",
+      "saved": "تم تحديث الجدول",
+      "savedError": "فشل حفظ الجدول"
+    },
+    "professionalHours": {
+      "title": "جداول الأطباء",
+      "selectProfessional": "اختر طبيبًا",
+      "weeklyTemplate": "الجدول الأسبوعي",
+      "overrides": "الغيابات والساعات الخاصة",
+      "addOverride": "إضافة غياب",
+      "editOverride": "تعديل غياب",
+      "save": "حفظ التغييرات",
+      "saved": "تم تحديث الجدول"
+    },
+    "weekday": {
+      "0": "الاثنين",
+      "1": "الثلاثاء",
+      "2": "الأربعاء",
+      "3": "الخميس",
+      "4": "الجمعة",
+      "5": "السبت",
+      "6": "الأحد",
+      "closed": "مغلق",
+      "addShift": "إضافة نوبة",
+      "removeShift": "إزالة نوبة",
+      "start": "البداية",
+      "end": "النهاية"
+    },
+    "overrides": {
+      "startDate": "تاريخ البداية",
+      "endDate": "تاريخ النهاية",
+      "kind": "النوع",
+      "reason": "السبب",
+      "reasonPlaceholder": "مثال: أعياد الميلاد، مؤتمر...",
+      "closed": "مغلق",
+      "customHours": "ساعات مخصصة",
+      "unavailable": "غير متاح",
+      "noOverrides": "لا تواريخ خاصة مجدولة",
+      "delete": "حذف",
+      "confirmDelete": "حذف هذه الفترة؟",
+      "add": "إضافة",
+      "save": "حفظ",
+      "cancel": "إلغاء"
+    },
+    "analytics": {
+      "occupancyTitle": "الإشغال حسب الغرفة",
+      "utilizationTitle": "الاستغلال حسب الطبيب",
+      "peakHoursTitle": "ساعات الذروة",
+      "bookedMinutes": "الدقائق المحجوزة",
+      "availableMinutes": "الدقائق المتاحة",
+      "rate": "الإشغال",
+      "noData": "لا بيانات في النطاق المحدد"
+    },
+    "availability": {
+      "clinicClosed": "العيادة مغلقة",
+      "professionalOff": "الطبيب غير متاح",
+      "outsideHours": "خارج الساعات المحددة",
+      "confirmOutside": "هذه الفترة خارج ساعات العمل. إنشاء الموعد على أي حال؟",
+      "confirm": "الإنشاء على أي حال",
+      "cancel": "إلغاء"
+    },
+    "onboarding": {
+      "hoursLabel": "ساعات عمل العيادة",
+      "hoursDescription": "الجدول مفتوح حاليًا على مدار الساعة 24/7. حدد ساعات فتحك الفعلية.",
+      "presetSplit": "الاثنين–الجمعة 9–14 و16–20",
+      "presetContinuous": "الاثنين–الجمعة 9–18"
+    }
+  }
+}

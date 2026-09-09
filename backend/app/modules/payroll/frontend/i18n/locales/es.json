@@ -1,0 +1,86 @@
+{
+  "payroll": {
+    "title": "Nómina",
+    "subtitle": "Perfiles del personal, períodos de pago e informes",
+    "nav": {
+      "profiles": "Perfiles",
+      "periods": "Períodos",
+      "reports": "Informes"
+    },
+    "profiles": {
+      "title": "Perfiles",
+      "subtitle": "Condiciones salariales y datos bancarios cifrados por empleado",
+      "new": "Nuevo perfil",
+      "edit": "Editar perfil",
+      "staff": "Miembro del personal",
+      "staffPlaceholder": "Seleccionar personal",
+      "paymentType": "Tipo de pago",
+      "monthly": "Mensual",
+      "hourly": "Por horas",
+      "baseAmount": "Importe base",
+      "currency": "Moneda",
+      "bankAccount": "Cuenta bancaria",
+      "bankAccountPlaceholder": "Vacío para mantener",
+      "taxId": "NIF",
+      "taxIdPlaceholder": "Vacío para mantener",
+      "hasBank": "Cuenta bancaria registrada",
+      "hasTax": "NIF registrado",
+      "active": "Perfil activo",
+      "inactive": "Inactivo",
+      "empty": "Aún no hay perfiles"
+    },
+    "periods": {
+      "title": "Períodos",
+      "subtitle": "Períodos de pago mensuales y sus movimientos",
+      "open": "Abrir período",
+      "month": "Mes (AAAA-MM)",
+      "status": "Estado",
+      "draft": "Borrador",
+      "closed": "Cerrado",
+      "paid": "Pagado",
+      "close": "Cerrar período",
+      "markPaid": "Marcar como pagado",
+      "deleteConfirm": "¿Eliminar el período {month}? Solo se pueden eliminar borradores vacíos.",
+      "transitionConfirm": "¿Mover {month} a {status}?",
+      "empty": "Aún no hay períodos"
+    },
+    "entries": {
+      "title": "Movimientos",
+      "gross": "Bruto",
+      "deductions": "Deducciones",
+      "net": "Neto",
+      "netMismatch": "El neto debe ser igual al bruto menos las deducciones",
+      "notes": "Notas",
+      "add": "Añadir movimiento",
+      "edit": "Editar movimiento",
+      "deleteConfirm": "¿Eliminar este movimiento? No se puede deshacer.",
+      "staff": "Miembro del personal",
+      "empty": "Aún no hay movimientos"
+    },
+    "reports": {
+      "title": "Informes",
+      "subtitle": "Totales mensuales y anuales en la moneda de la clínica",
+      "month": "Mes",
+      "year": "Año",
+      "monthly": "Informe mensual",
+      "annual": "Informe anual",
+      "entryCount": "Movimientos",
+      "totalGross": "Bruto total",
+      "totalDeductions": "Deducciones totales",
+      "totalNet": "Neto total",
+      "periodCount": "Períodos"
+    },
+    "common": {
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "edit": "Editar",
+      "close": "Cerrar",
+      "delete": "Eliminar",
+      "back": "Atrás",
+      "retry": "Reintentar",
+      "loadError": "No se pudieron cargar los datos",
+      "saveError": "No se pudieron guardar los cambios",
+      "empty": "Nada aquí todavía"
+    }
+  }
+}

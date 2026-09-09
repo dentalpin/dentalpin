@@ -4,6 +4,9 @@
 
 - refactor(#337): `AppointmentTreatment` moved to treatment_plan — agenda no longer declares the model or constructs link rows; booking, eager loading and the visit-note lookup go through the planned-work provider, and the last cross-module FK allowlist entry is drained.
 
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
+
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - refactor(#309): booking no longer imports treatment_plan — planned-item eager loading, validation and catalog snapshotting go through the new `PlannedWorkProvider` registry (`planned_work.py`); the import-allowlist entry is drained. The `planned_treatment_item_id` FK stays documented cycle-bound debt.

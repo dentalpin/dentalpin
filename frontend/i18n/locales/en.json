@@ -78,7 +78,7 @@
     "emailRequired": "Enter the email",
     "emailInvalid": "The email is not valid",
     "passwordRequired": "Enter a password",
-    "passwordTooShort": "Password must be at least 8 characters",
+    "passwordTooShort": "Password must be at least 12 characters",
     "passwordWeak": "Password must include letters and numbers",
     "passwordMismatch": "Passwords do not match",
     "clinicNameRequired": "Enter the clinic name",
@@ -2419,11 +2419,22 @@
       "whatsappUnavailableHint": "WhatsApp is not available until the clinic's number is connected.",
       "whatsappConnect": "Connect WhatsApp (Kapso)",
       "noEmail": "The patient has no email on file",
-      "noPhone": "The patient has no phone on file"
+      "noPhone": "The patient has no phone on file",
+      "sms": "SMS",
+      "smsUnavailableHint": "SMS is not available until an SMS provider is configured.",
+      "smsConnect": "Configure",
+      "smsDailyLimitLabel": "SMS daily limit",
+      "smsDailyLimitHelp": "Max outbound SMS per day for the clinic."
     },
     "channelSent": {
       "email": "Email sent successfully",
-      "whatsapp": "WhatsApp message sent successfully"
+      "whatsapp": "WhatsApp message sent successfully",
+      "sms": "SMS message sent successfully"
+    },
+    "prefs": {
+      "title": "Notification preferences",
+      "description": "Which channels may reach this patient. An opt-out blocks that channel even for forced sends.",
+      "saved": "Preferences saved"
     }
   },
   "invoice": {
@@ -2815,6 +2826,10 @@
       "missingNumbers": "Missing numbers:",
       "noData": "No data for selected period",
       "noOverdue": "No overdue invoices",
+      "invoiceAging": "Invoice aging",
+      "invoiceAgingDescription": "Outstanding issued totals per bucket. Not-yet-due invoices sit apart.",
+      "notDue": "Not due",
+      "issuedTrend": "Issued trend",
       "daysOverdue": "days overdue",
       "vatType": "VAT type",
       "base": "Base",

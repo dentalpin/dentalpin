@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "Gateway SMS",
+      "description": "Provedor de SMS de saída da clínica",
+      "provider": "Provedor",
+      "fromNumber": "Número remetente",
+      "active": "Ativado",
+      "activeHelp": "Só um provedor ativado com linha guardada pode enviar.",
+      "placeholderNote": "O provedor incluído apenas regista as mensagens no log do servidor. Nada é enviado até configurar um backend real.",
+      "test": "Testar",
+      "testResult": "Configurado: {configured}. Enviaria: {wouldSend}."
+    },
+    "common": {
+      "save": "Guardar",
+      "saved": "Definições guardadas",
+      "saveError": "Não foi possível guardar as definições",
+      "loadError": "Não foi possível carregar as definições",
+      "retry": "Tentar de novo"
+    }
+  }
+}

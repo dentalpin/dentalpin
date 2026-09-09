@@ -6,6 +6,9 @@
 
 - refactor(#126): agent-tool name resolution delegates to the shared `app.core.i18n_names.catalog_name` helper; all-empty name dicts now resolve to `None` instead of an empty string.
 
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
+
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - fix(#101): a failed catalog load shows an error banner with Retry instead of the 'no items' empty state (which even offered the seed CTA on a mere fetch failure).

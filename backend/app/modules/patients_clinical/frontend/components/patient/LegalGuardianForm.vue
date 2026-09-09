@@ -149,7 +149,7 @@ function clearGuardian() {
         >
           <template v-if="readonly">
             <p class="text-default">
-              {{ localGuardian.phone || '-' }}
+              <span dir="ltr">{{ localGuardian.phone || '-' }}</span>
             </p>
           </template>
           <template v-else>

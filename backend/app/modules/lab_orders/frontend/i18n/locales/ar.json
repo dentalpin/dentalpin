@@ -1,0 +1,50 @@
+{
+  "labOrders": {
+    "title": "طلبات عمل المختبر",
+    "add": "طلب مختبر جديد",
+    "patient": "المريض",
+    "lab": "المختبر",
+    "loading": "جارٍ التحميل…",
+    "selectPatient": "اختر المريض",
+    "selectLab": "اختر المختبر",
+    "workType": "نوع العمل",
+    "tooth": "السن / المرجع",
+    "impressionType": "الطبعة",
+    "antagonistInfo": "معلومات السن المقابل",
+    "shade": "درجة اللون",
+    "sentDate": "تاريخ الإرسال",
+    "expectedDate": "التاريخ المتوقع",
+    "status": "الحالة",
+    "notes": "ملاحظات",
+    "save": "إرسال الطلب",
+    "cancel": "إلغاء",
+    "noLabsHint": "أنشئ جهة اتصال مختبر أولًا في جهات الاتصال.",
+    "workTypes": {
+      "crown": "تلبيسة",
+      "bridge": "جسر",
+      "denture": "طقم أسنان",
+      "implant": "غرسة",
+      "veneer": "قشرة تجميلية",
+      "orthodontic": "تقويم",
+      "repair": "إصلاح",
+      "other": "أخرى"
+    },
+    "impressionTypes": {
+      "alginate": "ألجينات",
+      "pvs_silicone": "PVS / سيليكون",
+      "digital_scan": "مسح رقمي",
+      "other": "أخرى"
+    },
+    "statuses": {
+      "sent": "مُرسل",
+      "in_progress": "جارٍ التنفيذ",
+      "ready": "جاهز",
+      "received": "مستلَم",
+      "cancelled": "ملغى"
+    }
+  },
+  "nav": {
+    "labOrdersForm": "طلب مختبر جديد",
+    "labOrdersStatus": "طلبات المختبر"
+  }
+}

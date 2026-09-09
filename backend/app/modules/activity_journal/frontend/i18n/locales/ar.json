@@ -1,0 +1,20 @@
+{
+  "journal": {
+    "title": "سجل النشاط",
+    "subtitle": "سجل يُضاف إليه فقط يوثّق من فعل ماذا ومتى — يغذّى بأحداث الوحدات.",
+    "filterByType": "تصفية حسب نوع الحدث",
+    "filterByDateFrom": "من",
+    "filterByDateTo": "إلى",
+    "event": "الحدث",
+    "actor": "الفاعل",
+    "patient": "المريض",
+    "when": "متى",
+    "source": "المصدر",
+    "empty": "لا يوجد نشاط مسجل بعد.",
+    "total": "{total} إدخال",
+    "detailTitle": "حمولة الحدث",
+    "unattributed": "—",
+    "allEvents": "كل الأحداث",
+    "viewPayload": "عرض التفاصيل"
+  }
+}

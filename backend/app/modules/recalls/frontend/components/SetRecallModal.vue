@@ -260,7 +260,7 @@ function close() {
           />
           <p
             v-if="note.length > 400"
-            class="text-caption text-dimmed mt-1 text-right tnum"
+            class="text-caption text-dimmed mt-1 text-end tnum"
           >
             {{ note.length }} / 500
           </p>

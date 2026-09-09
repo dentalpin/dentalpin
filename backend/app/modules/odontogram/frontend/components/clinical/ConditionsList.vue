@@ -142,7 +142,7 @@ function isHighlighted(toothNumber: number): boolean {
         />
         <span class="font-medium">{{ t('clinical.diagnosis.generalConditions') }}</span>
       </div>
-      <ul class="ml-6 space-y-1">
+      <ul class="ms-6 space-y-1">
         <li
           v-for="condition in generalConditions"
           :key="condition.id"

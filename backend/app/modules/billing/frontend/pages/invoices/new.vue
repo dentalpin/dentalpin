@@ -214,7 +214,7 @@ function goBack() {
             >
               <UIcon
                 name="i-lucide-check"
-                class="w-3 h-3 mr-1"
+                class="w-3 h-3 me-1"
               />
               {{ t('invoice.billingDataComplete') }}
             </UBadge>
@@ -226,7 +226,7 @@ function goBack() {
             >
               <UIcon
                 name="i-lucide-alert-triangle"
-                class="w-3 h-3 mr-1"
+                class="w-3 h-3 me-1"
               />
               {{ t('invoice.billingDataIncomplete') }}
             </UBadge>
@@ -347,7 +347,7 @@ function goBack() {
                   {{ item.internal_code }}
                 </p>
               </div>
-              <div class="text-right">
+              <div class="text-end">
                 <p class="font-semibold text-default">
                   {{ formatCurrency(getItemTotal(item)) }}
                 </p>

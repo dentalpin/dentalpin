@@ -33,7 +33,7 @@ const html = computed(() => {
 .copilot-md :deep(ul),
 .copilot-md :deep(ol) {
   margin: 0.25rem 0;
-  padding-left: 1.25rem;
+  padding-inline-start: 1.25rem;
   list-style: revert;
 }
 .copilot-md :deep(li) {
@@ -76,7 +76,7 @@ const html = computed(() => {
 .copilot-md :deep(td) {
   border: 1px solid var(--ui-border);
   padding: 0.25rem 0.5rem;
-  text-align: left;
+  text-align: start;
 }
 .copilot-md :deep(h1),
 .copilot-md :deep(h2),
@@ -85,8 +85,8 @@ const html = computed(() => {
   margin: 0.5rem 0 0.25rem;
 }
 .copilot-md :deep(blockquote) {
-  border-left: 2px solid var(--ui-border);
-  padding-left: 0.6rem;
+  border-inline-start: 2px solid var(--ui-border);
+  padding-inline-start: 0.6rem;
   margin: 0.4rem 0;
   color: var(--ui-text-muted);
 }

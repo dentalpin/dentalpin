@@ -7,8 +7,11 @@ import type {
   ProfessionalBillingSummary,
   VatSummaryItem
 } from '~~/app/types'
+import type { InvoiceAgingBucket, IssuedTrendPoint } from '../../composables/useReports'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 const { t, locale } = useI18n()
+const { can } = usePermissions()
 const router = useRouter()
 const {
   fetchBillingSummary,
@@ -17,6 +20,8 @@ const {
   fetchBillingByProfessional,
   fetchVatSummary,
   fetchNumberingGaps,
+  fetchInvoiceAging,
+  fetchIssuedTrend,
   formatCurrency,
   getPaymentMethodLabel,
   fetchFailed,
@@ -31,6 +36,8 @@ const paymentMethods = ref<PaymentMethodSummary[]>([])
 const professionals = ref<ProfessionalBillingSummary[]>([])
 const vatSummary = ref<VatSummaryItem[]>([])
 const numberingGaps = ref<NumberingGap[]>([])
+const invoiceAging = ref<InvoiceAgingBucket[]>([])
+const issuedTrend = ref<IssuedTrendPoint[]>([])
 
 // Date range
 const today = new Date()
@@ -105,14 +112,20 @@ async function loadReports() {
       paymentMethodsData,
       professionalsData,
       vatData,
-      gapsData
+      gapsData,
+      agingData,
+      trendData
     ] = await Promise.all([
       fetchBillingSummary(dateFrom.value, dateTo.value),
       fetchOverdueInvoices(),
       fetchByPaymentMethod(dateFrom.value, dateTo.value),
       fetchBillingByProfessional(dateFrom.value, dateTo.value),
       fetchVatSummary(dateFrom.value, dateTo.value),
-      fetchNumberingGaps()
+      fetchNumberingGaps(),
+      can(PERMISSIONS.reports.financialRead) ? fetchInvoiceAging() : Promise.resolve([]),
+      can(PERMISSIONS.reports.financialRead)
+        ? fetchIssuedTrend(dateFrom.value, dateTo.value)
+        : Promise.resolve([])
     ])
 
     summary.value = summaryData
@@ -121,6 +134,8 @@ async function loadReports() {
     professionals.value = professionalsData
     vatSummary.value = vatData
     numberingGaps.value = gapsData
+    invoiceAging.value = agingData
+    issuedTrend.value = trendData
   } catch (e) {
     console.error('Failed to load reports:', e)
   } finally {
@@ -364,7 +379,7 @@ function goBack() {
                   {{ getPaymentMethodLabel(pm.payment_method) }}
                 </span>
               </div>
-              <div class="text-right">
+              <div class="text-end">
                 <p class="font-semibold text-default">
                   {{ formatCurrency(pm.total_amount) }}
                 </p>
@@ -397,16 +412,16 @@ function goBack() {
             <table class="min-w-full divide-y divide-[var(--color-border-subtle)]">
               <thead>
                 <tr>
-                  <th class="px-3 py-2 text-left text-xs font-medium text-subtle uppercase">
+                  <th class="px-3 py-2 text-start text-xs font-medium text-subtle uppercase">
                     {{ t('reports.billing.vatType') }}
                   </th>
-                  <th class="px-3 py-2 text-right text-xs font-medium text-subtle uppercase">
+                  <th class="px-3 py-2 text-end text-xs font-medium text-subtle uppercase">
                     {{ t('reports.billing.base') }}
                   </th>
-                  <th class="px-3 py-2 text-right text-xs font-medium text-subtle uppercase">
+                  <th class="px-3 py-2 text-end text-xs font-medium text-subtle uppercase">
                     {{ t('reports.billing.tax') }}
                   </th>
-                  <th class="px-3 py-2 text-right text-xs font-medium text-subtle uppercase">
+                  <th class="px-3 py-2 text-end text-xs font-medium text-subtle uppercase">
                     {{ t('invoice.total') }}
                   </th>
                 </tr>
@@ -419,13 +434,13 @@ function goBack() {
                   <td class="px-3 py-2 text-sm text-muted">
                     {{ vat.vat_name }} ({{ vat.vat_rate }}%)
                   </td>
-                  <td class="px-3 py-2 text-sm text-right text-muted">
+                  <td class="px-3 py-2 text-sm text-end text-muted">
                     {{ formatCurrency(vat.base_amount) }}
                   </td>
-                  <td class="px-3 py-2 text-sm text-right text-muted">
+                  <td class="px-3 py-2 text-sm text-end text-muted">
                     {{ formatCurrency(vat.tax_amount) }}
                   </td>
-                  <td class="px-3 py-2 text-sm text-right font-medium text-default">
+                  <td class="px-3 py-2 text-sm text-end font-medium text-default">
                     {{ formatCurrency(vat.total_amount) }}
                   </td>
                 </tr>
@@ -466,7 +481,7 @@ function goBack() {
                   {{ prof.professional_name }}
                 </span>
               </div>
-              <div class="text-right">
+              <div class="text-end">
                 <p class="font-semibold text-default">
                   {{ formatCurrency(prof.total_invoiced) }}
                 </p>
@@ -519,7 +534,7 @@ function goBack() {
                     {{ inv.patient_name }}
                   </p>
                 </div>
-                <div class="text-right">
+                <div class="text-end">
                   <p class="font-semibold text-danger-accent">
                     {{ formatCurrency(inv.balance_due) }}
                   </p>
@@ -545,6 +560,86 @@ function goBack() {
               {{ t('reports.billing.noOverdue') }}
             </p>
           </div>
+        </UCard>
+
+        <!-- Invoice aging (invoice axis only — not the earned-paid card) -->
+        <UCard v-if="can(PERMISSIONS.reports.financialRead)">
+          <template #header>
+            <h3 class="font-semibold text-default">
+              {{ t('reports.billing.invoiceAging') }}
+            </h3>
+          </template>
+          <p class="text-caption text-subtle mb-3">
+            {{ t('reports.billing.invoiceAgingDescription') }}
+          </p>
+
+          <div
+            v-if="invoiceAging.some(b => b.count > 0)"
+            class="space-y-3"
+          >
+            <div
+              v-for="bucket in invoiceAging"
+              :key="bucket.label"
+              class="flex items-center justify-between"
+            >
+              <span class="text-muted">
+                {{ bucket.label === 'not_due' ? t('reports.billing.notDue') : bucket.label }}
+              </span>
+              <div class="text-end">
+                <p class="font-semibold text-default">
+                  {{ formatCurrency(bucket.total) }}
+                </p>
+                <p class="text-caption text-subtle">
+                  {{ bucket.count }} {{ t('reports.billing.invoices') }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <p
+            v-else
+            class="text-subtle text-center py-4"
+          >
+            {{ t('reports.billing.noData') }}
+          </p>
+        </UCard>
+
+        <!-- Issued trend -->
+        <UCard v-if="can(PERMISSIONS.reports.financialRead)">
+          <template #header>
+            <h3 class="font-semibold text-default">
+              {{ t('reports.billing.issuedTrend') }}
+            </h3>
+          </template>
+
+          <div
+            v-if="issuedTrend.length > 0"
+            class="space-y-3"
+          >
+            <div
+              v-for="point in issuedTrend"
+              :key="point.month"
+              class="flex items-center justify-between"
+            >
+              <span
+                class="text-muted"
+                dir="ltr"
+              >{{ point.month }}</span>
+              <div class="text-end">
+                <p class="font-semibold text-default">
+                  {{ formatCurrency(point.total) }}
+                </p>
+                <p class="text-caption text-subtle">
+                  {{ point.count }} {{ t('reports.billing.invoices') }}
+                </p>
+              </div>
+            </div>
+          </div>
+          <p
+            v-else
+            class="text-subtle text-center py-4"
+          >
+            {{ t('reports.billing.noData') }}
+          </p>
         </UCard>
       </div>
     </template>

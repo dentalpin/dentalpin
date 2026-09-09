@@ -214,7 +214,7 @@ watch(() => props.open, (isOpen) => {
               <USelectMenu
                 v-model="form.discount_type"
                 :items="[
-                  { label: '-', value: '' },
+                  { label: '-', value: null },
                   { label: t('budget.percentage'), value: 'percentage' },
                   { label: t('budget.absolute'), value: 'absolute' }
                 ]"

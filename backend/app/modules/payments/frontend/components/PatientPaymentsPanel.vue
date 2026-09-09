@@ -488,7 +488,7 @@ function handleRefunded() {
     <!-- Mobile sticky CTA. Hidden on lg+ where the sidebar shows the button. -->
     <div
       v-if="canCollect"
-      class="lg:hidden fixed bottom-0 left-0 right-0 z-10 px-3 py-3 bg-default border-t border-default"
+      class="lg:hidden fixed bottom-0 start-0 end-0 z-10 px-3 py-3 bg-default border-t border-default"
     >
       <UButton
         block

@@ -1,0 +1,36 @@
+{
+  "medicalReference": {
+    "settingsLabel": "Listas de referência médica",
+    "settingsDescription": "Gere as listas de alergias, medicamentos e doenças usadas nos registos dos pacientes.",
+    "title": "Listas de referência médica",
+    "description": "Estas listas alimentam as pesquisas nos antecedentes médicos do paciente. Desativar um item remove-o das pesquisas futuras sem afetar os registos existentes.",
+    "tabs": {
+      "allergies": "Alergias",
+      "medications": "Medicamentos",
+      "diseases": "Doenças",
+      "surgeries": "Cirurgias",
+      "interactions": "Interações",
+      "contraindications": "Contraindicações"
+    },
+    "name": "Nome",
+    "status": "Estado",
+    "active": "Ativo",
+    "inactive": "Inativo",
+    "showInactive": "Mostrar inativos",
+    "newItemPlaceholder": "Nome do novo item…",
+    "addSuccess": "Adicionado",
+    "addError": "Não foi possível adicionar",
+    "updateError": "Não foi possível atualizar",
+    "deactivate": "Desativar",
+    "deactivateError": "Não foi possível desativar",
+    "itemCount": "{count} itens",
+    "medicationA": "Medicamento A",
+    "medicationB": "Medicamento B",
+    "riskNote": "Risco",
+    "riskNotePlaceholder": "Descreva o risco…",
+    "flags": {
+      "interaction": "interação {a} + {b}",
+      "contraindication": "{a}: contraindicado com {b}"
+    }
+  }
+}

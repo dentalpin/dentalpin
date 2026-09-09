@@ -141,9 +141,9 @@ const timerClass = computed(() => {
 })
 
 const cardStyle = computed(() => ({
-  borderLeftColor: statusColour(props.appointment.status),
-  borderLeftWidth: '4px',
-  borderLeftStyle: 'solid' as const
+  borderInlineStartColor: statusColour(props.appointment.status),
+  borderInlineStartWidth: '4px',
+  borderInlineStartStyle: 'solid' as const
 }))
 </script>
 

@@ -316,7 +316,7 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
               </div>
             </div>
           </div>
-          <div class="shrink-0 flex items-center gap-3 text-right">
+          <div class="shrink-0 flex items-center gap-3 text-end">
             <span class="hidden lg:inline text-caption text-subtle tnum">
               {{ formatDate(invoice.issue_date) }}
             </span>
@@ -326,7 +326,7 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
             >
               {{ formatDate(invoice.due_date) }}
             </span>
-            <div class="text-right">
+            <div class="text-end">
               <Money
                 :value="invoice.total"
                 strong
@@ -378,7 +378,7 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
                 {{ patientName(invoice) }}
               </div>
             </div>
-            <div class="text-right shrink-0">
+            <div class="text-end shrink-0">
               <Money
                 :value="invoice.total"
                 strong

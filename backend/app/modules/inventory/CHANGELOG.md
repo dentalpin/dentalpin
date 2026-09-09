@@ -5,6 +5,7 @@
 - `InventoryService._apply_movement` renamed to `apply_movement`: it is the
   non-committing, row-locked entry point dependents use to move stock inside
   their own transaction (first consumer: `purchase_orders` receiving).
+- feat(i18n): Arabic (ar) locale for the module's frontend layer.
 
 - fix(#226): auto-deduction idempotency — a duplicate delivery of the
   same treatment (same `reference_type`/`reference_id`/item) now bails

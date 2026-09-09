@@ -38,6 +38,12 @@ class Settings(BaseSettings):
 
     # Testing
     TESTING: bool = False
+    # RBAC source of truth. When False (default), permission checks use the
+    # legacy static grant map and custom roles cannot be assigned. When True,
+    # require_permission resolves through the DB-backed, clinic-aware tables
+    # (roles/role_permissions/permissions/clinic_role_overrides, issue #46)
+    # populated by the seed_rbac seeder at every boot.
+    RBAC_FROM_DB: bool = False
 
     # Module system
     DENTALPIN_DEV_MODULE_SCAN: bool = True  # Fallback filesystem scan for dev

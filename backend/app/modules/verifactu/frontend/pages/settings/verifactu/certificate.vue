@@ -275,7 +275,7 @@ onMounted(refresh)
 
             <div
               v-else
-              class="flex items-center justify-center gap-3 text-left"
+              class="flex items-center justify-center gap-3 text-start"
             >
               <UIcon
                 name="i-lucide-file-check-2"
@@ -349,7 +349,7 @@ onMounted(refresh)
         <p class="text-xs text-gray-500 leading-relaxed">
           <UIcon
             name="i-lucide-lock"
-            class="inline-block align-text-bottom mr-1"
+            class="inline-block align-text-bottom me-1"
           />
           {{ t('verifactu.certificate.encryptionNote') }}
         </p>
@@ -371,7 +371,7 @@ onMounted(refresh)
       </template>
       <div class="text-sm space-y-2 text-gray-700 dark:text-gray-300">
         <p>{{ t('verifactu.certificate.helpBody') }}</p>
-        <ul class="list-disc pl-5 space-y-1">
+        <ul class="list-disc ps-5 space-y-1">
           <li>{{ t('verifactu.certificate.helpItem1') }}</li>
           <li>{{ t('verifactu.certificate.helpItem2') }}</li>
           <li>{{ t('verifactu.certificate.helpItem3') }}</li>
@@ -413,7 +413,7 @@ onMounted(refresh)
           <span class="font-medium">{{ c.subject_cn }}</span>
           <span
             v-if="c.valid_until"
-            class="text-gray-500 ml-auto text-xs"
+            class="text-gray-500 ms-auto text-xs"
           >
             {{ t('verifactu.certificate.validUntil') }}: {{ new Date(c.valid_until).toLocaleDateString() }}
           </span>

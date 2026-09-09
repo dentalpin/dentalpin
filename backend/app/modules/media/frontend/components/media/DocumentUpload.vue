@@ -214,7 +214,7 @@ async function submit() {
           name="i-lucide-file-text"
           class="h-12 w-12"
         />
-        <div class="text-left">
+        <div class="text-start">
           <p class="text-sm font-semibold">
             PDF
           </p>
@@ -282,7 +282,7 @@ async function submit() {
           v-for="def in docTypes"
           :key="def.key"
           type="button"
-          class="group flex items-start gap-3 rounded-lg border p-3 text-left transition focus:outline-none focus:ring-2 focus:ring-primary"
+          class="group flex items-start gap-3 rounded-lg border p-3 text-start transition focus:outline-none focus:ring-2 focus:ring-primary"
           :class="documentType === def.key
             ? 'border-primary bg-primary/5 text-primary shadow-sm'
             : 'border-default bg-elevated hover:border-primary/40 hover:bg-default'"

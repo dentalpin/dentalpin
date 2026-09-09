@@ -63,7 +63,7 @@ const counts = computed(() => ({
             <p class="font-semibold">
               {{ t('settings.modules.doctor.orphans') }}
             </p>
-            <ul class="list-disc pl-5 text-subtle">
+            <ul class="list-disc ps-5 text-subtle">
               <li
                 v-for="name in report.orphans"
                 :key="`orphan-${name}`"
@@ -77,7 +77,7 @@ const counts = computed(() => ({
             <p class="font-semibold">
               {{ t('settings.modules.doctor.missingDeps') }}
             </p>
-            <ul class="list-disc pl-5 text-subtle">
+            <ul class="list-disc ps-5 text-subtle">
               <li
                 v-for="entry in report.missing_dependencies"
                 :key="`miss-${entry.module}-${entry.missing}`"
@@ -91,7 +91,7 @@ const counts = computed(() => ({
             <p class="font-semibold">
               {{ t('settings.modules.doctor.manifestErrors') }}
             </p>
-            <ul class="list-disc pl-5 text-subtle">
+            <ul class="list-disc ps-5 text-subtle">
               <li
                 v-for="entry in report.manifest_errors"
                 :key="`manifest-${entry.module}`"
@@ -105,7 +105,7 @@ const counts = computed(() => ({
             <p class="font-semibold">
               {{ t('settings.modules.doctor.errored') }}
             </p>
-            <ul class="list-disc pl-5 text-subtle">
+            <ul class="list-disc ps-5 text-subtle">
               <li
                 v-for="entry in report.errored_modules"
                 :key="`err-${entry.module}`"

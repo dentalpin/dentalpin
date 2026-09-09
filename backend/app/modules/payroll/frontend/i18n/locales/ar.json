@@ -1,0 +1,86 @@
+{
+  "payroll": {
+    "title": "الرواتب",
+    "subtitle": "ملفات الموظفين وفترات الدفع والتقارير",
+    "nav": {
+      "profiles": "الملفات",
+      "periods": "الفترات",
+      "reports": "التقارير"
+    },
+    "profiles": {
+      "title": "الملفات",
+      "subtitle": "شروط الأجور والبيانات البنكية المشفرة لكل موظف",
+      "new": "ملف جديد",
+      "edit": "تعديل الملف",
+      "staff": "الموظف",
+      "staffPlaceholder": "اختر",
+      "paymentType": "نوع الدفع",
+      "monthly": "شهري",
+      "hourly": "بالساعة",
+      "baseAmount": "المبلغ الأساسي",
+      "currency": "العملة",
+      "bankAccount": "الحساب البنكي",
+      "bankAccountPlaceholder": "اتركه فارغا للاحتفاظ",
+      "taxId": "الرقم الضريبي",
+      "taxIdPlaceholder": "اتركه فارغا للاحتفاظ",
+      "hasBank": "الحساب البنكي مسجل",
+      "hasTax": "الرقم الضريبي مسجل",
+      "active": "ملف نشط",
+      "inactive": "غير نشط",
+      "empty": "لا ملفات بعد"
+    },
+    "periods": {
+      "title": "الفترات",
+      "subtitle": "فترات الدفع الشهرية وقيودها",
+      "open": "فتح فترة",
+      "month": "الشهر (YYYY-MM)",
+      "status": "الحالة",
+      "draft": "مسودة",
+      "closed": "مغلقة",
+      "paid": "مدفوعة",
+      "close": "إغلاق الفترة",
+      "markPaid": "وضع علامة مدفوع",
+      "deleteConfirm": "حذف فترة {month}؟ المسودات الفارغة فقط.",
+      "transitionConfirm": "نقل {month} إلى {status}؟",
+      "empty": "لا فترات بعد"
+    },
+    "entries": {
+      "title": "القيود",
+      "gross": "الإجمالي",
+      "deductions": "الخصومات",
+      "net": "الصافي",
+      "netMismatch": "الصافي يجب أن يساوي الإجمالي ناقص الخصومات",
+      "notes": "ملاحظات",
+      "add": "إضافة قيد",
+      "edit": "تعديل القيد",
+      "deleteConfirm": "حذف هذا القيد؟ لا يمكن التراجع.",
+      "staff": "الموظف",
+      "empty": "لا قيود بعد"
+    },
+    "reports": {
+      "title": "التقارير",
+      "subtitle": "الإجماليات الشهرية والسنوية بعملة العيادة",
+      "month": "الشهر",
+      "year": "السنة",
+      "monthly": "تقرير شهري",
+      "annual": "تقرير سنوي",
+      "entryCount": "القيود",
+      "totalGross": "الإجمالي الكلي",
+      "totalDeductions": "الخصومات الكلية",
+      "totalNet": "الصافي الكلي",
+      "periodCount": "الفترات"
+    },
+    "common": {
+      "save": "حفظ",
+      "cancel": "إلغاء",
+      "edit": "تعديل",
+      "close": "إغلاق",
+      "delete": "حذف",
+      "back": "رجوع",
+      "retry": "إعادة",
+      "loadError": "تعذر تحميل البيانات",
+      "saveError": "تعذر حفظ التغييرات",
+      "empty": "لا شيء هنا بعد"
+    }
+  }
+}

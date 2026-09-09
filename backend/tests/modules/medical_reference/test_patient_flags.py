@@ -156,3 +156,28 @@ async def test_no_flags_for_unlinked_history(client: AsyncClient, auth_headers: 
 
     flags = await _get_flags(client, auth_headers, test_patient.id)
     assert flags == []
+
+
+@pytest.mark.asyncio
+async def test_archived_medications_do_not_flag(
+    client: AsyncClient, auth_headers: dict, test_patient
+):
+    """History saves archive superseded rows (pc_0003); flags must only
+    read the active set, otherwise a dropped medication keeps warning."""
+    med_a = await _create_reference_medication(client, auth_headers, "Warfarina")
+    med_b = await _create_reference_medication(client, auth_headers, "Aspirina")
+    res = await client.post(
+        "/api/v1/medical_reference/interactions",
+        json={"medication_a_id": med_a, "medication_b_id": med_b, "risk_note": "Sangrado"},
+        headers=auth_headers,
+    )
+    assert res.status_code == 201, res.text
+    meds = [
+        {"name": "Warfarina", "reference_id": med_a},
+        {"name": "Aspirina", "reference_id": med_b},
+    ]
+    await _save_history(client, auth_headers, test_patient.id, meds)
+    assert len(await _get_flags(client, auth_headers, test_patient.id)) == 1
+
+    await _save_history(client, auth_headers, test_patient.id, meds[:1])
+    assert await _get_flags(client, auth_headers, test_patient.id) == []

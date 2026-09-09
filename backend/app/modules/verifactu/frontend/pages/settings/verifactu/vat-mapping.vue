@@ -166,7 +166,7 @@ onMounted(refresh)
               {{ t('verifactu.vatMapping.rate') }}: {{ row.data.rate }}%
               <span
                 v-if="row.data.is_default"
-                class="ml-1"
+                class="ms-1"
               >· {{ t('verifactu.vatMapping.defaultBadge') }}</span>
             </p>
           </div>

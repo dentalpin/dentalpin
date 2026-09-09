@@ -83,7 +83,7 @@ onMounted(refresh)
       class="overflow-x-auto"
     >
       <table class="min-w-full text-sm">
-        <thead class="text-left text-gray-500">
+        <thead class="text-start text-gray-500">
           <tr>
             <th class="py-2 px-2">
               {{ t('verifactu.records.columns.createdAt') }}
@@ -94,7 +94,7 @@ onMounted(refresh)
             <th class="py-2 px-2">
               {{ t('verifactu.records.columns.serieNumero') }}
             </th>
-            <th class="py-2 px-2 text-right">
+            <th class="py-2 px-2 text-end">
               {{ t('verifactu.records.columns.importe') }}
             </th>
             <th class="py-2 px-2">
@@ -121,7 +121,7 @@ onMounted(refresh)
             <td class="py-2 px-2 font-mono">
               {{ r.serie_numero }}
             </td>
-            <td class="py-2 px-2 text-right">
+            <td class="py-2 px-2 text-end">
               {{ r.importe_total }}
             </td>
             <td class="py-2 px-2">

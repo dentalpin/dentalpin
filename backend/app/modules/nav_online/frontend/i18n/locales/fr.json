@@ -1,0 +1,58 @@
+{
+  "nav_online": {
+    "settings": {
+      "title": "NAV Online Számla",
+      "description": "Déclaration des factures en temps réel à l'administration fiscale hongroise (NAV)."
+    },
+    "connection": "Connexion",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "environment": "Environnement",
+    "env": {
+      "test": "Test (bac à sable)",
+      "prod": "Production"
+    },
+    "taxNumber": "Numéro fiscal",
+    "taxNumberHelp": "Törzsszám à 8 chiffres ou adószám complet à 11 chiffres.",
+    "login": "Utilisateur technique",
+    "password": "Mot de passe",
+    "signatureKey": "Clé de signature",
+    "exchangeKey": "Clé d'échange",
+    "exchangeKeyHelp": "Exactement 16 caractères, depuis le portail NAV Online Számla.",
+    "softwareId": "ID logiciel",
+    "softwareIdHelp": "18 caractères [0-9A-Z-], enregistré pour ce logiciel auprès de NAV.",
+    "devContact": "E-mail de contact du développeur",
+    "secretStored": "Enregistré — laisser vide pour conserver.",
+    "testConnection": "Tester la connexion",
+    "testOk": "Échange de jeton réussi",
+    "testFail": "Connexion échouée",
+    "enable": "Activer la déclaration",
+    "disable": "Désactiver la déclaration",
+    "saved": "Paramètres enregistrés",
+    "saveError": "Impossible d'enregistrer les paramètres",
+    "records": {
+      "title": "Envois NAV",
+      "description": "Chaque facture émise est déclarée à NAV ; suivez son statut ici.",
+      "allStates": "Tous les états",
+      "processNow": "Traiter maintenant",
+      "processed": "Traité : {sent} envoyés, {done} terminés, {rejected} rejetés, {failed} échoués",
+      "requeued": "Remis en file",
+      "empty": "Aucun envoi pour l'instant.",
+      "invoice": "Facture",
+      "operation": "Opération",
+      "state": "État",
+      "transaction": "Transaction",
+      "error": "Erreur",
+      "retry": "Réessayer"
+    },
+    "state": {
+      "pending": "En attente",
+      "sending": "Envoi",
+      "sent": "Envoyé",
+      "done": "Terminé",
+      "rejected": "Rejeté",
+      "failed": "Échoué",
+      "aborted": "Abandonné"
+    }
+  }
+}

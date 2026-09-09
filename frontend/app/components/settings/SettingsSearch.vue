@@ -90,7 +90,7 @@ function categoryLabel(catId: string): string {
         name="i-lucide-search"
         class="w-4 h-4"
       />
-      <span class="text-caption flex-1 text-left truncate">
+      <span class="text-caption flex-1 text-start truncate">
         {{ t('settings.search.placeholder') }}
       </span>
       <kbd class="hidden sm:inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-(--color-surface-muted) text-[10px] text-subtle ring-1 ring-[var(--color-border-subtle)]">
@@ -141,7 +141,7 @@ function categoryLabel(catId: string): string {
             >
               <button
                 type="button"
-                class="w-full flex items-center gap-3 px-4 py-2.5 text-left transition"
+                class="w-full flex items-center gap-3 px-4 py-2.5 text-start transition"
                 :class="index === activeIndex ? 'bg-(--color-primary-soft)' : 'hover:bg-(--color-surface-muted)'"
                 @mouseenter="activeIndex = index"
                 @click="go(entry)"

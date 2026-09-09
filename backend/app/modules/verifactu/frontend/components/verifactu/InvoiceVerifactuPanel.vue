@@ -46,15 +46,15 @@ const stateColor = computed<UiColor>(() => {
       </div>
       <div v-if="data.csv">
         <span class="text-gray-500">{{ t('verifactu.panel.csv') }}:</span>
-        <code class="ml-2 font-mono break-all">{{ data.csv }}</code>
+        <code class="ms-2 font-mono break-all">{{ data.csv }}</code>
       </div>
       <div v-if="data.huella">
         <span class="text-gray-500">{{ t('verifactu.panel.huella') }}:</span>
-        <code class="ml-2 font-mono text-xs break-all">{{ data.huella.slice(0, 24) }}…</code>
+        <code class="ms-2 font-mono text-xs break-all">{{ data.huella.slice(0, 24) }}…</code>
       </div>
       <div v-if="data.submitted_at">
         <span class="text-gray-500">{{ t('verifactu.panel.submittedAt') }}:</span>
-        <span class="ml-2">{{ new Date(data.submitted_at).toLocaleString() }}</span>
+        <span class="ms-2">{{ new Date(data.submitted_at).toLocaleString() }}</span>
       </div>
       <div v-else-if="data.state === 'pending'">
         <span class="text-gray-500">{{ t('verifactu.panel.stillPending') }}</span>

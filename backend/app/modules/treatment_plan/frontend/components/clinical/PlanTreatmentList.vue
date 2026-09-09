@@ -386,7 +386,7 @@ const { format: formatCurrency } = useCurrency()
              complete" button still drives the lifecycle for those. -->
         <div
           v-if="isMultiSession(item)"
-          class="mt-2 pl-8 space-y-1"
+          class="mt-2 ps-8 space-y-1"
           @click.stop
         >
           <PlanItemSessionRow

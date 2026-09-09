@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "telephonyCalls": "المكالمات"
+  },
+  "telephony": {
+    "settings": {
+      "title": "المهاتفة (CTI)",
+      "description": "إظهار المكالمات الواردة على الشاشة والاحتفاظ بسجل للمكالمات — أي PBX عبر webhook."
+    },
+    "gateway": "البوابة",
+    "receiving": "استقبال الأحداث",
+    "defaultCountry": "البلد الافتراضي",
+    "defaultCountryHelp": "رمز البلد المكوّن من حرفين المستخدم لتفسير أرقام الهواتف المحلية (مثل ES).",
+    "active": "مفعّل",
+    "rotateSecret": "تدوير السر",
+    "webhook": "ويبهوك الأحداث",
+    "webhookHelp": "اضبط PBX أو Zapier لإرسال أحداث المكالمات الموحّدة عبر POST إلى هذا URL، موقّعة بالسر.",
+    "secret": "سر التوقيع",
+    "secretShownOnce": "انسخ هذا السر الآن — يظهر مرة واحدة فقط. يوقّع PBX/الأتمتة كل حدث باستخدامه (X-DentalPin-Signature).",
+    "copy": "نسخ",
+    "copied": "تم النسخ إلى الحافظة",
+    "saved": "تم حفظ الإعدادات",
+    "saveError": "تعذّر حفظ الإعدادات",
+    "calls": {
+      "title": "سجل المكالمات",
+      "allStatuses": "كل الحالات",
+      "status": {
+        "ringing": "يرن",
+        "answered": "تم الرد",
+        "ended": "انتهت",
+        "missed": "فائتة"
+      },
+      "unknownCaller": "متصل غير معروف",
+      "openRecord": "فتح السجل",
+      "searchPatient": "بحث عن مريض",
+      "empty": "لا توجد مكالمات بعد.",
+      "when": "الوقت",
+      "caller": "المتصل",
+      "number": "الرقم",
+      "statusCol": "الحالة",
+      "duration": "المدة"
+    },
+    "pop": {
+      "incoming": "مكالمة واردة"
+    }
+  }
+}

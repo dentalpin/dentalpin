@@ -3,14 +3,17 @@ module: reports
 screen: billing
 route: /reports/billing
 related_endpoints:
+  - GET /api/v1/reports/billing/aging
   - GET /api/v1/reports/billing/by-payment-method
   - GET /api/v1/reports/billing/by-professional
   - GET /api/v1/reports/billing/gaps
+  - GET /api/v1/reports/billing/issued-trend
   - GET /api/v1/reports/billing/overdue
   - GET /api/v1/reports/billing/summary
   - GET /api/v1/reports/billing/vat-summary
 related_permissions:
   - reports.billing.read
+  - reports.financial.read
 related_paths:
   - backend/app/modules/reports/frontend/pages/reports/billing.vue
   - backend/app/modules/reports/router.py
@@ -40,6 +43,14 @@ reconciliation, and VAT filing.
   fiscal return.
 - **Overdue and gaps** — past-due invoices and numbering gaps in
   series, if any.
+- **Aging** — outstanding issued invoice totals per age bucket
+  (not-yet-due/"no vencidas" apart, then 0–30/31–60/61–90/90+ days
+  past due, issued amounts only). Labelled as invoice aging — a
+  different definition from the dashboard receivables card
+  (earned-minus-paid per patient). Append `?format=csv` to the
+  endpoint for the spreadsheet.
+- **Issued trend** — issued totals per month over the range
+  (`?format=csv` available).
 
 ## Drill-downs
 
@@ -61,6 +72,7 @@ which does not compare against `invoiced`.
 | What you see / can do | Permission |
 |-----------------------|------------|
 | View any of the sections | `reports.billing.read` |
+| View the invoice-aging and issued-trend sections | `reports.financial.read` |
 | Open the underlying invoice list (drill-down) | `billing.read` |
 
 ## Troubleshooting

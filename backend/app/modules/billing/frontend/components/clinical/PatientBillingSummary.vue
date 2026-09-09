@@ -266,19 +266,19 @@ watch(() => props.patientId, () => {
             <thead class="bg-surface-muted/50">
               <tr>
                 <th class="w-8 px-3 py-2" />
-                <th class="px-3 py-2 text-left text-xs font-medium text-muted uppercase">
+                <th class="px-3 py-2 text-start text-xs font-medium text-muted uppercase">
                   {{ t('invoice.invoiceNumber') }}
                 </th>
-                <th class="px-3 py-2 text-left text-xs font-medium text-muted uppercase">
+                <th class="px-3 py-2 text-start text-xs font-medium text-muted uppercase">
                   {{ t('common.date') }}
                 </th>
-                <th class="px-3 py-2 text-left text-xs font-medium text-muted uppercase">
+                <th class="px-3 py-2 text-start text-xs font-medium text-muted uppercase">
                   {{ t('budget.status.title') }}
                 </th>
-                <th class="px-3 py-2 text-right text-xs font-medium text-muted uppercase">
+                <th class="px-3 py-2 text-end text-xs font-medium text-muted uppercase">
                   {{ t('invoice.total') }}
                 </th>
-                <th class="px-3 py-2 text-right text-xs font-medium text-muted uppercase">
+                <th class="px-3 py-2 text-end text-xs font-medium text-muted uppercase">
                   {{ t('invoice.balance') }}
                 </th>
                 <th class="w-16 px-3 py-2" />
@@ -317,17 +317,17 @@ watch(() => props.patientId, () => {
                       {{ t(`invoice.status.${invoice.status}`) }}
                     </UBadge>
                   </td>
-                  <td class="px-3 py-3 text-right font-medium text-default">
+                  <td class="px-3 py-3 text-end font-medium text-default">
                     {{ formatCurrency(invoice.total) }}
                   </td>
-                  <td class="px-3 py-3 text-right">
+                  <td class="px-3 py-3 text-end">
                     <span
                       :class="invoice.balance_due > 0 ? 'text-warning font-medium' : 'text-muted'"
                     >
                       {{ formatCurrency(invoice.balance_due) }}
                     </span>
                   </td>
-                  <td class="px-3 py-3 text-right">
+                  <td class="px-3 py-3 text-end">
                     <NuxtLink
                       :to="`/invoices/${invoice.id}?from=patient&patientId=${patientId}`"
                       class="text-primary-accent hover:underline text-sm"
@@ -347,7 +347,7 @@ watch(() => props.patientId, () => {
                     <!-- Loading payments -->
                     <div
                       v-if="loadingPayments.has(invoice.id)"
-                      class="flex items-center gap-2 text-caption text-subtle pl-6"
+                      class="flex items-center gap-2 text-caption text-subtle ps-6"
                     >
                       <UIcon
                         name="i-lucide-loader-2"
@@ -359,7 +359,7 @@ watch(() => props.patientId, () => {
                     <!-- No payments -->
                     <div
                       v-else-if="!invoicePayments.get(invoice.id)?.length"
-                      class="text-sm text-muted pl-6"
+                      class="text-sm text-muted ps-6"
                     >
                       {{ t('invoice.payments.noPayments') }}
                     </div>
@@ -367,7 +367,7 @@ watch(() => props.patientId, () => {
                     <!-- Payments list -->
                     <div
                       v-else
-                      class="pl-6 space-y-2"
+                      class="ps-6 space-y-2"
                     >
                       <p class="text-xs font-medium text-muted uppercase mb-2">
                         {{ t('invoice.payments.title') }}

@@ -1,0 +1,53 @@
+{
+  "whatsapp_kapso": {
+    "settings": {
+      "title": "WhatsApp (Kapso)",
+      "description": "اربط رقم واتساب الخاص بالعيادة عبر Kapso لإرسال الرسائل واستقبالها."
+    },
+    "connection": "الاتصال",
+    "verified": "مُتحقق منه",
+    "notVerified": "غير مُتحقق منه",
+    "apiKey": "مفتاح Kapso API",
+    "phoneNumberId": "معرف رقم الهاتف",
+    "businessAccountId": "معرف الحساب التجاري",
+    "businessAccountHelp": "مطلوب لمزامنة القوالب المعتمدة.",
+    "displayPhone": "الرقم المعروض",
+    "webhookSecret": "سر الويب هوك",
+    "secretStored": "مخزَّن. اتركه فارغًا للإبقاء عليه دون تغيير.",
+    "webhook": "الويب هوك",
+    "webhookHelp": "الصق هذا الرابط في إعدادات الويب هوك لدى Kapso لاستقبال الحالات والردود.",
+    "copy": "نسخ",
+    "copied": "نُسخ الرابط",
+    "templates": "القوالب",
+    "sync": "مزامنة",
+    "noTemplates": "لا توجد قوالب معتمدة. أجرِ المزامنة لجلبها من Kapso.",
+    "notificationType": "نوع الإشعار",
+    "template": "القالب",
+    "map": "ربط",
+    "mapped": "رُبط القالب",
+    "mapError": "تعذّر ربط القالب",
+    "test": "إرسال تجريبي",
+    "sendTest": "إرسال تجريبي",
+    "testOk": "أُرسلت رسالة الاختبار",
+    "testFail": "فشل إرسال الاختبار",
+    "saved": "حُفظت الإعدادات",
+    "saveError": "تعذّر الحفظ",
+    "synced": "تمت مزامنة {n} قالبًا",
+    "syncError": "تعذّرت المزامنة",
+    "types": {
+      "appointment_confirmation": "تأكيد الموعد",
+      "appointment_reminder": "تذكير بالموعد",
+      "appointment_cancelled": "إلغاء الموعد",
+      "budget_sent": "أُرسل عرض السعر",
+      "budget_accepted": "قُبل عرض السعر",
+      "budget_reminder": "تذكير عرض السعر",
+      "invoice_sent": "أُرسلت الفاتورة",
+      "recall_reminder": "تذكير الاستدعاء",
+      "welcome": "ترحيب"
+    },
+    "onboarding": {
+      "label": "إرسال واتساب",
+      "description": "واتساب هو القناة المفضّلة لدى العيادة لكن Kapso غير متصل بعد. اربطه كي تتمكن الرسائل التلقائية من الخروج."
+    }
+  }
+}

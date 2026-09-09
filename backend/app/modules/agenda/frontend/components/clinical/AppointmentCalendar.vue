@@ -278,8 +278,8 @@ function getAppointmentColorStyle(appointment: Appointment): Record<string, stri
   return {
     '--cabinet-color': color,
     'backgroundColor': `rgba(${r}, ${g}, ${b}, 0.12)`,
-    'borderLeftColor': color,
-    'borderLeftWidth': '3px'
+    'borderInlineStartColor': color,
+    'borderInlineStartWidth': '3px'
   }
 }
 
@@ -698,13 +698,13 @@ const allAppointmentsWithDayIndex = computed(() => {
       <div class="min-w-[800px]">
         <!-- Day headers -->
         <div class="grid grid-cols-8 border-b border-default bg-surface-muted sticky top-0 z-10">
-          <div class="p-2 text-center text-caption text-subtle border-r border-subtle">
+          <div class="p-2 text-center text-caption text-subtle border-e border-subtle">
             <!-- Empty -->
           </div>
           <div
             v-for="day in weekDays"
             :key="day.toISOString()"
-            class="p-2 text-center border-r border-subtle last:border-r-0"
+            class="p-2 text-center border-e border-subtle last:border-e-0"
             :class="{ 'bg-[var(--color-primary-soft)]': isToday(day) }"
           >
             <span
@@ -724,7 +724,7 @@ const allAppointmentsWithDayIndex = computed(() => {
             class="grid grid-cols-8 border-b border-[var(--color-border-subtle)] h-[var(--density-slot-height,28px)]"
             :class="{ 'border-[var(--color-border)]': slotIndex % SLOTS_PER_HOUR === 0 }"
           >
-            <div class="p-1 text-right border-r border-subtle flex items-center justify-end pr-2">
+            <div class="p-1 text-end border-e border-subtle flex items-center justify-end pe-2">
               <span
                 v-if="slotIndex % SLOTS_PER_HOUR === 0"
                 class="text-caption text-subtle tnum"
@@ -735,7 +735,7 @@ const allAppointmentsWithDayIndex = computed(() => {
             <div
               v-for="(day, dayIdx) in weekDays"
               :key="`${day.toISOString()}-${slot}`"
-              class="border-r border-[var(--color-border-subtle)] last:border-r-0 cursor-cell hover:bg-[var(--color-primary-soft)]/50 transition-colors relative"
+              class="border-e border-[var(--color-border-subtle)] last:border-e-0 cursor-cell hover:bg-[var(--color-primary-soft)]/50 transition-colors relative"
               :class="{
                 'bg-[var(--color-primary-soft)]/40': isToday(day),
                 'border-[var(--color-border)]': slotIndex % SLOTS_PER_HOUR === 0
@@ -748,13 +748,13 @@ const allAppointmentsWithDayIndex = computed(() => {
           <div class="absolute inset-0 pointer-events-none">
             <div class="grid grid-cols-8 h-full">
               <!-- Time column spacer -->
-              <div class="border-r border-default" />
+              <div class="border-e border-default" />
 
               <!-- Day columns with appointments -->
               <div
                 v-for="(day, dayIndex) in weekDays"
                 :key="`appointments-${day.toISOString()}`"
-                class="relative border-r border-subtle last:border-r-0"
+                class="relative border-e border-subtle last:border-e-0"
               >
                 <!-- Blocked availability overlay (schedules module).
                      Per-day clinic_closed ranges — paints late-start
@@ -774,7 +774,7 @@ const allAppointmentsWithDayIndex = computed(() => {
                 <!-- Ghost block during drag-to-create -->
                 <div
                   v-if="createDragState && createDragState.dayIndex === dayIndex"
-                  class="absolute left-1 right-1 rounded border-2 border-dashed border-[var(--color-primary)] bg-[var(--color-primary-soft)] pointer-events-none z-40 flex items-start p-1"
+                  class="absolute start-1 end-1 rounded border-2 border-dashed border-[var(--color-primary)] bg-[var(--color-primary-soft)] pointer-events-none z-40 flex items-start p-1"
                   :style="{
                     top: `${createDragState.startSlot * getSlotHeight()}px`,
                     height: `${Math.max(1, createDragState.currentSlot - createDragState.startSlot + 1) * getSlotHeight()}px`,
@@ -807,7 +807,7 @@ const allAppointmentsWithDayIndex = computed(() => {
                     <!-- Professional badge -->
                     <div
                       v-if="professionals && professionals.length > 0"
-                      class="absolute top-0.5 right-0.5 w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-sm"
+                      class="absolute top-0.5 end-0.5 w-5 h-5 rounded-full flex items-center justify-center text-white text-[10px] font-bold shadow-sm"
                       :style="{ backgroundColor: getProfessionalColor(appointment.professional_id) }"
                       :title="getProfessionalFullName(appointment.professional_id)"
                     >
@@ -815,7 +815,7 @@ const allAppointmentsWithDayIndex = computed(() => {
                     </div>
                     <!-- Quick-action dropdown (shown on hover) -->
                     <div
-                      class="absolute top-0.5 left-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                      class="absolute top-0.5 start-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-20"
                       @click.stop
                       @mousedown.stop
                     >
@@ -824,7 +824,7 @@ const allAppointmentsWithDayIndex = computed(() => {
                         dense
                       />
                     </div>
-                    <div class="flex items-center gap-1 min-h-[18px] pr-5 pl-5">
+                    <div class="flex items-center gap-1 min-h-[18px] pe-5 ps-5">
                       <UIcon
                         v-if="getStatusIcon(appointment.status)"
                         :name="getStatusIcon(appointment.status)"
@@ -850,7 +850,7 @@ const allAppointmentsWithDayIndex = computed(() => {
 
                   <!-- Resize handle -->
                   <div
-                    class="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                    class="absolute bottom-0 start-0 end-0 h-2 cursor-ns-resize hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                     @mousedown.stop="startDrag(appointment, $event, 'resize')"
                   >
                     <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-current opacity-30 rounded" />

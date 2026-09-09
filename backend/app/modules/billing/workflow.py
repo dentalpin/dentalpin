@@ -376,8 +376,9 @@ class InvoiceWorkflowService:
             if hook is not None:
                 regenerated = await hook.regenerate_after_party_change(invoice, db)
                 if regenerated:
-                    invoice.compliance_data = invoice.compliance_data or {}
-                    invoice.compliance_data.update(regenerated)
+                    # New dict, not an in-place update: plain JSONB only
+                    # persists on reassignment.
+                    invoice.compliance_data = {**(invoice.compliance_data or {}), **regenerated}
 
         return invoice
 

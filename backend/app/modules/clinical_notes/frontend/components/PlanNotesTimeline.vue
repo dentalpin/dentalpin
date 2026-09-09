@@ -382,7 +382,7 @@ watch(() => props.planId, refresh, { immediate: true })
         v-for="entry in visibleEntries"
         :key="entry.note_id || `${entry.source}-${entry.owner_id}-${entry.created_at}`"
         class="rounded-md p-3 bg-surface border border-default transition-colors hover:bg-elevated/40 focus-within:bg-elevated/40"
-        :style="{ borderLeft: `3px solid ${sourceMeta(entry.source).borderColor}` }"
+        :style="{ borderInlineStart: `3px solid ${sourceMeta(entry.source).borderColor}` }"
         @mouseenter="handleEntryEnter(entry)"
         @mouseleave="handleEntryLeave()"
         @focusin="handleEntryEnter(entry)"
@@ -410,7 +410,7 @@ watch(() => props.planId, refresh, { immediate: true })
                 >
                   <UIcon
                     :name="sourceMeta(entry.source).icon"
-                    class="w-3 h-3 mr-1 shrink-0"
+                    class="w-3 h-3 me-1 shrink-0"
                   />
                   {{ sourceTypeLabel(entry.source) }}
                 </UBadge>

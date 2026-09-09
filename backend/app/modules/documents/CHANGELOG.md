@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Arabic (`ar`) locale for the module's frontend layer.
 - feat(#228): Initial documents module — prescriptions, medical
   certificates, referral letters and radiology requests as branded PDFs.
 - CRUD under `/api/v1/documents/` with patient/type/status filters,

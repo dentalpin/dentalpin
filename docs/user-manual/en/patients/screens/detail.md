@@ -117,6 +117,13 @@ The `do_not_contact` flag is the operational opt-out. When enabled:
 - The patient still appears in the list and can be opened normally —
   they just won't be pestered automatically.
 
+## Notification preferences
+
+The summary card carries per-patient channel preferences: preferred
+channel (email, WhatsApp or SMS), an SMS opt-in toggle (SMS sends only
+when enabled), and the UI language. `do_not_contact` overrides
+everything.
+
 ## Permissions
 
 | You see / can do | Permission |

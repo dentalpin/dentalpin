@@ -127,7 +127,7 @@ function onConfirm() {
             <p class="font-semibold">
               {{ t('settings.modules.confirmInstall.scheduled') }}
             </p>
-            <ul class="list-disc pl-5">
+            <ul class="list-disc ps-5">
               <li
                 v-for="dep in scheduled"
                 :key="dep"

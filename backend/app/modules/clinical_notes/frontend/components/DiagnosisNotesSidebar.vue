@@ -209,7 +209,7 @@ watch(
       @cancel="composerOpen = false"
     />
 
-    <div class="flex-1 overflow-y-auto pr-1 space-y-2">
+    <div class="flex-1 overflow-y-auto pe-1 space-y-2">
       <div
         v-if="loading"
         class="space-y-2"

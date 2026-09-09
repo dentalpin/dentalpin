@@ -111,7 +111,7 @@ function entryKey(e: TimelineEntry, i: number): string {
       <button
         v-if="isBusy(entry)"
         type="button"
-        class="w-full flex items-start gap-3 px-3 py-3 text-left hover:bg-surface-muted transition-colors min-h-[60px]"
+        class="w-full flex items-start gap-3 px-3 py-3 text-start hover:bg-surface-muted transition-colors min-h-[60px]"
         :class="{ 'bg-[var(--color-primary-soft)]/30': entry.appointment.id === highlightedAppointmentId }"
         @click="emit('appointment-click', entry.appointment)"
       >
@@ -181,7 +181,7 @@ function entryKey(e: TimelineEntry, i: number): string {
       <button
         v-else-if="isFree(entry) && entry.qualifies"
         type="button"
-        class="group w-full flex items-stretch gap-3 px-3 py-3 text-left transition-colors min-h-[64px] bg-[var(--color-primary-soft)]/40 hover:bg-[var(--color-primary-soft)]/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
+        class="group w-full flex items-stretch gap-3 px-3 py-3 text-start transition-colors min-h-[64px] bg-[var(--color-primary-soft)]/40 hover:bg-[var(--color-primary-soft)]/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]"
         :aria-label="freeAriaLabel(entry)"
         @click="emit('free-slot-tap', entry)"
       >
@@ -220,11 +220,11 @@ function entryKey(e: TimelineEntry, i: number): string {
       <button
         v-else-if="isFree(entry)"
         type="button"
-        class="w-full flex items-center gap-3 px-3 py-2 text-left text-caption text-muted opacity-60 hover:opacity-100 transition-opacity min-h-[44px]"
+        class="w-full flex items-center gap-3 px-3 py-2 text-start text-caption text-muted opacity-60 hover:opacity-100 transition-opacity min-h-[44px]"
         :aria-label="freeAriaLabel(entry)"
         @click="emit('free-slot-tap', entry)"
       >
-        <span class="w-14 text-right tnum">{{ formatTime(entry.start) }}</span>
+        <span class="w-14 text-end tnum">{{ formatTime(entry.start) }}</span>
         <span class="flex-1 truncate">
           {{ formatDuration(entry.durationMin) }}
           {{ t('appointments.freeSlots.freeSuffix', 'libre') }}
@@ -240,7 +240,7 @@ function entryKey(e: TimelineEntry, i: number): string {
         v-else-if="isBlocked(entry)"
         class="flex items-center gap-3 px-3 py-2 bg-surface-muted/40 text-caption text-subtle"
       >
-        <span class="w-14 text-right tnum">{{ formatTime(entry.start) }}</span>
+        <span class="w-14 text-end tnum">{{ formatTime(entry.start) }}</span>
         <UIcon
           v-if="entry.reason === 'clinic_closed'"
           name="i-lucide-lock"

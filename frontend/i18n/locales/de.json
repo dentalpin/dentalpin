@@ -78,7 +78,7 @@
     "emailRequired": "Geben Sie die E-Mail-Adresse ein",
     "emailInvalid": "Die E-Mail-Adresse ist ungültig",
     "passwordRequired": "Geben Sie ein Passwort ein",
-    "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein",
+    "passwordTooShort": "Das Passwort muss mindestens 12 Zeichen lang sein",
     "passwordWeak": "Das Passwort muss Buchstaben und Zahlen enthalten",
     "passwordMismatch": "Die Passwörter stimmen nicht überein",
     "clinicNameRequired": "Geben Sie den Praxisnamen ein",
@@ -2419,11 +2419,22 @@
       "whatsappUnavailableHint": "WhatsApp ist erst verfügbar, wenn die Nummer der Klinik verbunden ist.",
       "whatsappConnect": "WhatsApp (Kapso) verbinden",
       "noEmail": "Für den Patienten ist keine E-Mail hinterlegt",
-      "noPhone": "Für den Patienten ist keine Telefonnummer hinterlegt"
+      "noPhone": "Für den Patienten ist keine Telefonnummer hinterlegt",
+      "sms": "SMS",
+      "smsUnavailableHint": "SMS ist erst verfügbar, wenn ein SMS-Anbieter konfiguriert ist.",
+      "smsConnect": "Konfigurieren",
+      "smsDailyLimitLabel": "Tägliches SMS-Limit",
+      "smsDailyLimitHelp": "Maximal versendbare SMS pro Tag für die Klinik."
     },
     "channelSent": {
       "email": "E-Mail erfolgreich gesendet",
-      "whatsapp": "WhatsApp-Nachricht erfolgreich gesendet"
+      "whatsapp": "WhatsApp-Nachricht erfolgreich gesendet",
+      "sms": "SMS-Nachricht erfolgreich gesendet"
+    },
+    "prefs": {
+      "title": "Benachrichtigungseinstellungen",
+      "description": "Über welche Kanäle dieser Patient erreichbar ist. Eine Abmeldung blockiert den Kanal auch bei erzwungenen Sendungen.",
+      "saved": "Einstellungen gespeichert"
     }
   },
   "invoice": {
@@ -2815,6 +2826,10 @@
       "missingNumbers": "Fehlende Nummern:",
       "noData": "Keine Daten für den gewählten Zeitraum",
       "noOverdue": "Keine überfälligen Rechnungen",
+      "invoiceAging": "Rechnungsalter",
+      "invoiceAgingDescription": "Ausstehende Rechnungssummen je Altersgruppe. Noch nicht Fälliges separat.",
+      "notDue": "Nicht fällig",
+      "issuedTrend": "Ausstellungstrend",
       "daysOverdue": "Tage überfällig",
       "vatType": "Steuersatz",
       "base": "Bemessungsgrundlage",

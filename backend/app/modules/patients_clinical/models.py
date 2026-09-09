@@ -85,6 +85,10 @@ class Allergy(Base, TimestampMixin):
     # (see pc_0002 migration).
     reference_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
 
+    # Soft-delete (house rule: never hard-delete patient data). Deletes set
+    # this to "archived"; lists filter to "active", gets return the row.
+    status: Mapped[str] = mapped_column(String(20), default="active")
+
 
 class Medication(Base, TimestampMixin):
     """Medication the patient is currently taking (N:1)."""
@@ -106,6 +110,9 @@ class Medication(Base, TimestampMixin):
     notes: Mapped[str | None] = mapped_column(Text)
     # Loose (FK-less) link to medical_reference.ReferenceMedication.
     reference_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
+
+    # Soft-delete (house rule: never hard-delete patient data).
+    status: Mapped[str] = mapped_column(String(20), default="active")
 
 
 class SystemicDisease(Base, TimestampMixin):
@@ -131,6 +138,9 @@ class SystemicDisease(Base, TimestampMixin):
     # Loose (FK-less) link to medical_reference.ReferenceDisease.
     reference_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
 
+    # Soft-delete (house rule: never hard-delete patient data).
+    status: Mapped[str] = mapped_column(String(20), default="active")
+
 
 class SurgicalHistory(Base, TimestampMixin):
     """Past surgery / procedure (N:1)."""
@@ -152,6 +162,9 @@ class SurgicalHistory(Base, TimestampMixin):
     # Loose (FK-less) link to medical_reference.ReferenceSurgery.
     reference_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
 
+    # Soft-delete (house rule: never hard-delete patient data).
+    status: Mapped[str] = mapped_column(String(20), default="active")
+
 
 class EmergencyContact(Base, TimestampMixin):
     """Emergency contact (1:1)."""
@@ -170,6 +183,10 @@ class EmergencyContact(Base, TimestampMixin):
     phone: Mapped[str] = mapped_column(String(20))
     email: Mapped[str | None] = mapped_column(String(255))
     is_legal_guardian: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    # Soft-delete (house rule: never hard-delete patient data). Upserts
+    # revive an archived row (PK is patient_id, so no second row is possible).
+    status: Mapped[str] = mapped_column(String(20), default="active")
 
 
 class LegalGuardian(Base, TimestampMixin):
@@ -191,3 +208,7 @@ class LegalGuardian(Base, TimestampMixin):
     email: Mapped[str | None] = mapped_column(String(255))
     address: Mapped[str | None] = mapped_column(String(200))
     notes: Mapped[str | None] = mapped_column(Text)
+
+    # Soft-delete (house rule: never hard-delete patient data). Upserts
+    # revive an archived row (PK is patient_id, so no second row is possible).
+    status: Mapped[str] = mapped_column(String(20), default="active")

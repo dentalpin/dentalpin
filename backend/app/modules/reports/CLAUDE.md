@@ -8,13 +8,15 @@ Routes mounted at `/api/v1/reports/`.
 
 ## Dependencies
 
-`manifest.depends = ["patients", "agenda", "catalog", "budget", "billing"]`.
+`manifest.depends = ["patients", "agenda", "catalog", "budget", "billing", "payments"]`.
 Read-only consumer of every business module.
 
 ## Permissions
 
 `reports.billing.read`, `reports.budgets.read`,
-`reports.scheduling.read`.
+`reports.scheduling.read`, `reports.financial.read`,
+`reports.patient_stats.read`, `reports.operational.read` (v0.2.0;
+the last two are reserved for the next families).
 
 ## Tools exposed
 
@@ -25,6 +27,7 @@ Agent tools in `tools.py` (wrap the report services, no logic duplicated).
 | `billing_report` | READ | `BillingReportService.get_summary` | `reports.billing.read` |
 | `top_clients_by_billing` | READ | `BillingReportService.top_clients_by_billing` | `reports.billing.read` |
 | `scheduling_report` | READ | `SchedulingReportService.get_summary` | `reports.scheduling.read` |
+| `financial_report` | READ | `FinancialReportService` aging + trend | `reports.financial.read` |
 
 **Off-books boundary.** The billing tools expose the **invoice axis only**
 (gross invoiced amounts). They strip paid / pending / overdue, because

@@ -381,7 +381,7 @@ function goBack() {
                 </div>
 
                 <!-- Line total -->
-                <div class="text-right">
+                <div class="text-end">
                   <span
                     v-if="selectedItems.has(item.id)"
                     class="font-semibold text-default"

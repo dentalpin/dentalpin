@@ -127,20 +127,20 @@ const statusColor: Record<string, 'success' | 'warning' | 'error' | 'neutral'> =
         class="w-full text-sm"
       >
         <thead>
-          <tr class="text-left text-gray-500 border-b border-[var(--ui-border)]">
-            <th class="py-2 pr-2">
+          <tr class="text-start text-gray-500 border-b border-[var(--ui-border)]">
+            <th class="py-2 pe-2">
               {{ t('telephony.calls.when') }}
             </th>
-            <th class="py-2 pr-2">
+            <th class="py-2 pe-2">
               {{ t('telephony.calls.caller') }}
             </th>
-            <th class="py-2 pr-2">
+            <th class="py-2 pe-2">
               {{ t('telephony.calls.number') }}
             </th>
-            <th class="py-2 pr-2">
+            <th class="py-2 pe-2">
               {{ t('telephony.calls.statusCol') }}
             </th>
-            <th class="py-2 pr-2">
+            <th class="py-2 pe-2">
               {{ t('telephony.calls.duration') }}
             </th>
           </tr>
@@ -151,10 +151,10 @@ const statusColor: Record<string, 'success' | 'warning' | 'error' | 'neutral'> =
             :key="c.id"
             class="border-b border-[var(--ui-border)] last:border-0"
           >
-            <td class="py-2 pr-2 whitespace-nowrap">
+            <td class="py-2 pe-2 whitespace-nowrap">
               {{ new Date(c.started_at || c.created_at).toLocaleString() }}
             </td>
-            <td class="py-2 pr-2">
+            <td class="py-2 pe-2">
               <NuxtLink
                 v-if="c.patient_id && can(PERMISSIONS.patients.read)"
                 :to="`/patients/${c.patient_id}`"
@@ -167,10 +167,10 @@ const statusColor: Record<string, 'success' | 'warning' | 'error' | 'neutral'> =
                 class="text-gray-500"
               >{{ c.patient_name || t('telephony.calls.unknownCaller') }}</span>
             </td>
-            <td class="py-2 pr-2 font-mono text-xs">
+            <td class="py-2 pe-2 font-mono text-xs">
               {{ c.from_number }}
             </td>
-            <td class="py-2 pr-2">
+            <td class="py-2 pe-2">
               <UBadge
                 :color="statusColor[c.status] ?? 'neutral'"
                 variant="subtle"
@@ -178,7 +178,7 @@ const statusColor: Record<string, 'success' | 'warning' | 'error' | 'neutral'> =
                 {{ t(`telephony.calls.status.${c.status}`) }}
               </UBadge>
             </td>
-            <td class="py-2 pr-2">
+            <td class="py-2 pe-2">
               {{ durationLabel(c) }}
             </td>
           </tr>

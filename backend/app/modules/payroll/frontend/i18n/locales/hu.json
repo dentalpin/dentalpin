@@ -1,0 +1,86 @@
+{
+  "payroll": {
+    "title": "Bérszámfejtés",
+    "subtitle": "Munkatársi profilok, béridőszakok, jelentések",
+    "nav": {
+      "profiles": "Profilok",
+      "periods": "Időszakok",
+      "reports": "Jelentések"
+    },
+    "profiles": {
+      "title": "Profilok",
+      "subtitle": "Bérfeltételek, titkosított banki adatok munkatársanként",
+      "new": "Új profil",
+      "edit": "Profil szerkesztése",
+      "staff": "Munkatárs",
+      "staffPlaceholder": "Válassz",
+      "paymentType": "Fizetés típusa",
+      "monthly": "Havi",
+      "hourly": "Óradíjas",
+      "baseAmount": "Alapösszeg",
+      "currency": "Pénznem",
+      "bankAccount": "Bankszámla",
+      "bankAccountPlaceholder": "Megtartáshoz üresen",
+      "taxId": "Adószám",
+      "taxIdPlaceholder": "Megtartáshoz üresen",
+      "hasBank": "Bankszámla rögzítve",
+      "hasTax": "Adószám rögzítve",
+      "active": "Aktív profil",
+      "inactive": "Inaktív",
+      "empty": "Még nincsenek profilok"
+    },
+    "periods": {
+      "title": "Időszakok",
+      "subtitle": "Havi béridőszakok, könyvelési tételek",
+      "open": "Időszak nyitása",
+      "month": "Hónap (ÉÉÉÉ-HH)",
+      "status": "Állapot",
+      "draft": "Vázlat",
+      "closed": "Lezárt",
+      "paid": "Kifizetett",
+      "close": "Időszak lezárása",
+      "markPaid": "Megjelölés kifizetettként",
+      "deleteConfirm": "Törli a(z) {month} időszakot? Csak üres vázlatok.",
+      "transitionConfirm": "{month} áthelyezése ide: {status}?",
+      "empty": "Még nincsenek időszakok"
+    },
+    "entries": {
+      "title": "Tételek",
+      "gross": "Bruttó",
+      "deductions": "Levonások",
+      "net": "Nettó",
+      "netMismatch": "A nettó = bruttó mínusz levonások",
+      "notes": "Megjegyzések",
+      "add": "Tétel hozzáadása",
+      "edit": "Tétel szerkesztése",
+      "deleteConfirm": "Törli ezt a tételt? Nem vonható vissza.",
+      "staff": "Munkatárs",
+      "empty": "Még nincsenek tételek"
+    },
+    "reports": {
+      "title": "Jelentések",
+      "subtitle": "Havi és éves összesítők a klinika pénznemében",
+      "month": "Hónap",
+      "year": "Év",
+      "monthly": "Havi jelentés",
+      "annual": "Éves jelentés",
+      "entryCount": "Tételek",
+      "totalGross": "Bruttó összesen",
+      "totalDeductions": "Levonások összesen",
+      "totalNet": "Nettó összesen",
+      "periodCount": "Időszakok"
+    },
+    "common": {
+      "save": "Mentés",
+      "cancel": "Mégse",
+      "edit": "Szerkesztés",
+      "close": "Bezárás",
+      "delete": "Törlés",
+      "back": "Vissza",
+      "retry": "Újra",
+      "loadError": "Az adatok nem tölthetők be",
+      "saveError": "A módosítások nem menthetők",
+      "empty": "Itt még semmi sincs"
+    }
+  }
+}

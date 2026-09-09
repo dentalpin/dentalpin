@@ -119,6 +119,12 @@ está activo:
 - El paciente sigue apareciendo en el listado y se puede abrir con
   normalidad — solo deja de recibir contactos automatizados.
 
+## Preferencias de notificación
+
+La tarjeta de resumen lleva preferencias por paciente y canal: canal
+preferido (email, WhatsApp o SMS), interruptor de SMS (solo se envía
+con opt-in) e idioma. `do_not_contact` prevalece sobre todo.
+
 ## Permisos
 
 | Lo que ves / puedes hacer | Permiso |

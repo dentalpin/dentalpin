@@ -244,7 +244,7 @@ onMounted(refresh)
                 size="xs"
                 variant="soft"
                 trailing-icon="i-lucide-arrow-right"
-                class="ml-auto"
+                class="ms-auto"
               >
                 {{ t(item.ctaKey) }}
               </UButton>

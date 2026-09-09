@@ -4,6 +4,9 @@
 
 - fix(#326): the first-patient onboarding rule carries `permission: 'patients.read'`.
 
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
+
+
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - fix: `last_visit` (list sort and `get_recent_patients`) counts **completed** appointments only, matching the patient-summary last-visit card's definition — a future booking or a cancellation no longer ranks a patient as recently seen (PR #251 review follow-up).

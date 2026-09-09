@@ -1,0 +1,88 @@
+{
+  "documents": {
+    "title": "Documentos",
+    "subtitle": "Gerir prescrições, atestados, cartas de referenciação e pedidos de radiologia",
+    "newDocument": "Novo documento",
+    "editDocument": "Editar documento",
+    "filterType": "Filtrar por tipo",
+    "filterStatus": "Filtrar por estado",
+    "empty": "Ainda não há documentos. Crie o primeiro documento para começar.",
+    "patient": "Paciente",
+    "selectPatient": "Selecionar paciente",
+    "patientSearchEmpty": "Não foram encontrados pacientes para esta pesquisa",
+    "type": "Tipo de documento",
+    "selectType": "Selecionar tipo",
+    "titleLabel": "Título",
+    "titlePlaceholder": "ex. Prescrição de Amoxicilina",
+    "types": {
+      "all": "Todos os tipos",
+      "prescription": "Prescrição",
+      "medical_certificate": "Atestado médico",
+      "referral": "Carta de referenciação",
+      "radiology_request": "Pedido de radiologia"
+    },
+    "status": {
+      "all": "Todos os estados",
+      "draft": "Rascunho",
+      "generated": "Gerado",
+      "archived": "Arquivado"
+    },
+    "actions": {
+      "generate": "Gerar PDF",
+      "edit": "Editar",
+      "archive": "Arquivar",
+      "download": "Descarregar PDF"
+    },
+    "messages": {
+      "created": "Documento criado",
+      "updated": "Documento atualizado",
+      "generated": "Documento gerado com sucesso",
+      "archived": "Documento arquivado",
+      "downloaded": "PDF descarregado",
+      "downloadFailed": "Falha ao descarregar o PDF"
+    },
+    "content": {
+      "diagnosis": "Diagnóstico",
+      "diagnosisPlaceholder": "Introduza o diagnóstico...",
+      "medications": "Medicamentos",
+      "addMedication": "Adicionar medicamento",
+      "medName": "Nome do medicamento",
+      "medDose": "Dose",
+      "medFrequency": "Frequência",
+      "medDuration": "Duração",
+      "notes": "Notas",
+      "notesPlaceholder": "Notas adicionais...",
+      "description": "Descrição",
+      "recommendations": "Recomendações",
+      "referredTo": "Referenciado para",
+      "specialty": "Especialidade",
+      "reason": "Motivo da referenciação",
+      "clinicalSummary": "Resumo clínico",
+      "examType": "Tipo de exame",
+      "region": "Região",
+      "clinicalQuestion": "Questão clínica"
+    },
+    "settings": {
+      "cards": {
+        "letterhead": {
+          "title": "Cabeçalho dos documentos",
+          "description": "Imagem da clínica em prescrições, atestados, cartas de referenciação e pedidos de radiologia"
+        }
+      },
+      "letterhead": {
+        "help": "Estes campos substituem o perfil da clínica nos PDF gerados. Deixe um campo em branco para utilizar o nome, a morada e o número fiscal registados da clínica.",
+        "name": "Nome do cabeçalho",
+        "nameHint": "Por predefinição, o nome da clínica",
+        "address": "Morada do cabeçalho",
+        "phone": "Telefone do cabeçalho",
+        "email": "E-mail do cabeçalho",
+        "registrationNumber": "Número de registo / cédula",
+        "logo": "Logótipo",
+        "logoHint": "Apresentado no canto superior esquerdo de cada PDF. Recomendação: um PNG transparente quadrado inferior a 512&times;512 px.",
+        "chooseLogo": "Escolher imagem",
+        "save": "Guardar cabeçalho",
+        "saved": "Cabeçalho guardado"
+      }
+    }
+  }
+}

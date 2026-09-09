@@ -215,7 +215,7 @@ function selectOnFocus(e: FocusEvent) {
 
       <thead v-if="arch === 'upper'">
         <tr>
-          <th class="px-1 text-right font-medium text-muted" />
+          <th class="px-1 text-end font-medium text-muted" />
           <th
             v-for="tooth in orderedTeeth"
             :key="`fdi-${tooth.tooth_number}`"
@@ -235,7 +235,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.implant') }}
           </th>
@@ -260,7 +260,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.mobility') }}
           </th>
@@ -284,7 +284,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.prognosis') }}
           </th>
@@ -308,7 +308,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.furcaV') }}
           </th>
@@ -330,7 +330,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.furcaLP') }}
           </th>
@@ -354,7 +354,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.gingivalWidth') }}
           </th>
@@ -389,7 +389,7 @@ function selectOnFocus(e: FocusEvent) {
         >
           <th
             scope="row"
-            class="px-1 text-right font-medium text-amber-700 dark:text-amber-400"
+            class="px-1 text-end font-medium text-amber-700 dark:text-amber-400"
           >
             {{ row.label }} <span class="text-[9px] text-amber-500 dark:text-amber-300/80">V</span>
           </th>
@@ -458,7 +458,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr class="tooth-row">
           <th
             scope="row"
-            class="px-1 text-right text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 perio-row-anchor"
+            class="px-1 text-end text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 perio-row-anchor"
           >
             {{ t('periodontogram.arch.vestibular') }}
             <div
@@ -490,7 +490,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr class="tooth-row">
           <th
             scope="row"
-            class="px-1 text-right text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400 perio-row-anchor"
+            class="px-1 text-end text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400 perio-row-anchor"
           >
             {{ innerFaceLabel }}
             <div
@@ -531,7 +531,7 @@ function selectOnFocus(e: FocusEvent) {
         >
           <th
             scope="row"
-            class="px-1 text-right font-medium text-sky-700 dark:text-sky-400"
+            class="px-1 text-end font-medium text-sky-700 dark:text-sky-400"
           >
             {{ row.label }} <span class="text-[9px] text-sky-500 dark:text-sky-300/80">{{ innerFaceLabel.charAt(0) }}</span>
           </th>
@@ -611,7 +611,7 @@ function selectOnFocus(e: FocusEvent) {
         >
           <th
             scope="row"
-            class="px-1 text-right font-medium text-sky-700 dark:text-sky-400"
+            class="px-1 text-end font-medium text-sky-700 dark:text-sky-400"
           >
             {{ row.label }} <span class="text-[9px] text-sky-500 dark:text-sky-300/80">L</span>
           </th>
@@ -678,7 +678,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr class="tooth-row">
           <th
             scope="row"
-            class="px-1 text-right text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400 perio-row-anchor"
+            class="px-1 text-end text-[10px] font-semibold uppercase tracking-wide text-sky-700 dark:text-sky-400 perio-row-anchor"
           >
             {{ innerFaceLabel }}
             <div
@@ -711,7 +711,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr class="tooth-row">
           <th
             scope="row"
-            class="px-1 text-right text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 perio-row-anchor"
+            class="px-1 text-end text-[10px] font-semibold uppercase tracking-wide text-amber-700 dark:text-amber-400 perio-row-anchor"
           >
             {{ t('periodontogram.arch.vestibular') }}
             <div
@@ -752,7 +752,7 @@ function selectOnFocus(e: FocusEvent) {
         >
           <th
             scope="row"
-            class="px-1 text-right font-medium text-amber-700 dark:text-amber-400"
+            class="px-1 text-end font-medium text-amber-700 dark:text-amber-400"
           >
             {{ row.label }} <span class="text-[9px] text-amber-500 dark:text-amber-300/80">V</span>
           </th>
@@ -817,7 +817,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.gingivalWidth') }}
           </th>
@@ -841,7 +841,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.furcaLP') }}
           </th>
@@ -863,7 +863,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.furcaV') }}
           </th>
@@ -885,7 +885,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.prognosis') }}
           </th>
@@ -907,7 +907,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.mobility') }}
           </th>
@@ -929,7 +929,7 @@ function selectOnFocus(e: FocusEvent) {
         <tr>
           <th
             scope="row"
-            class="px-1 text-right font-medium text-muted"
+            class="px-1 text-end font-medium text-muted"
           >
             {{ t('periodontogram.arch.implant') }}
           </th>
@@ -953,7 +953,7 @@ function selectOnFocus(e: FocusEvent) {
 
       <tfoot v-if="arch === 'lower'">
         <tr>
-          <th class="px-1 text-right font-medium text-muted" />
+          <th class="px-1 text-end font-medium text-muted" />
           <th
             v-for="tooth in orderedTeeth"
             :key="`fdi-${tooth.tooth_number}`"

@@ -1,0 +1,22 @@
+{
+  "sms_gateway": {
+    "settings": {
+      "title": "SMS-Gateway",
+      "description": "Ausgehender SMS-Anbieter der Klinik",
+      "provider": "Anbieter",
+      "fromNumber": "Absendernummer",
+      "active": "Aktiviert",
+      "activeHelp": "Nur ein aktivierter Anbieter mit gespeicherter Zeile kann senden.",
+      "placeholderNote": "Der mitgelieferte Anbieter protokolliert Nachrichten nur im Server-Log. Es wird nichts versendet, bis ein echtes Backend konfiguriert ist.",
+      "test": "Testen",
+      "testResult": "Konfiguriert: {configured}. Würde senden: {wouldSend}."
+    },
+    "common": {
+      "save": "Speichern",
+      "saved": "Einstellungen gespeichert",
+      "saveError": "Einstellungen konnten nicht gespeichert werden",
+      "loadError": "Einstellungen konnten nicht geladen werden",
+      "retry": "Erneut versuchen"
+    }
+  }
+}

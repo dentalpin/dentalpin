@@ -1,0 +1,86 @@
+{
+  "payroll": {
+    "title": "Abrechnung",
+    "subtitle": "Mitarbeiterprofile, Abrechnungszeiträume und Berichte",
+    "nav": {
+      "profiles": "Profile",
+      "periods": "Zeiträume",
+      "reports": "Berichte"
+    },
+    "profiles": {
+      "title": "Profile",
+      "subtitle": "Gehaltskonditionen und verschlüsselte Bankdaten je Mitarbeiter",
+      "new": "Neues Profil",
+      "edit": "Profil bearbeiten",
+      "staff": "Mitarbeiter",
+      "staffPlaceholder": "Auswählen",
+      "paymentType": "Zahlungsart",
+      "monthly": "Monatlich",
+      "hourly": "Stündlich",
+      "baseAmount": "Grundbetrag",
+      "currency": "Währung",
+      "bankAccount": "Bankkonto",
+      "bankAccountPlaceholder": "Leer lassen zum Behalten",
+      "taxId": "Steuernummer",
+      "taxIdPlaceholder": "Leer lassen zum Behalten",
+      "hasBank": "Bankkonto hinterlegt",
+      "hasTax": "Steuernummer hinterlegt",
+      "active": "Aktives Profil",
+      "inactive": "Inaktiv",
+      "empty": "Noch keine Profile"
+    },
+    "periods": {
+      "title": "Zeiträume",
+      "subtitle": "Monatliche Abrechnungszeiträume und ihre Buchungen",
+      "open": "Zeitraum öffnen",
+      "month": "Monat (JJJJ-MM)",
+      "status": "Status",
+      "draft": "Entwurf",
+      "closed": "Abgeschlossen",
+      "paid": "Bezahlt",
+      "close": "Zeitraum abschließen",
+      "markPaid": "Als bezahlt markieren",
+      "deleteConfirm": "Zeitraum {month} löschen? Nur leere Entwürfe.",
+      "transitionConfirm": "{month} nach {status} verschieben?",
+      "empty": "Noch keine Zeiträume"
+    },
+    "entries": {
+      "title": "Buchungen",
+      "gross": "Brutto",
+      "deductions": "Abzüge",
+      "net": "Netto",
+      "netMismatch": "Netto muss Brutto minus Abzüge entsprechen",
+      "notes": "Notizen",
+      "add": "Buchung hinzufügen",
+      "edit": "Buchung bearbeiten",
+      "deleteConfirm": "Diese Buchung löschen? Kann nicht rückgängig gemacht werden.",
+      "staff": "Mitarbeiter",
+      "empty": "Noch keine Buchungen"
+    },
+    "reports": {
+      "title": "Berichte",
+      "subtitle": "Monats- und Jahrestotale in der Klinikwährung",
+      "month": "Monat",
+      "year": "Jahr",
+      "monthly": "Monatsbericht",
+      "annual": "Jahresbericht",
+      "entryCount": "Buchungen",
+      "totalGross": "Brutto gesamt",
+      "totalDeductions": "Abzüge gesamt",
+      "totalNet": "Netto gesamt",
+      "periodCount": "Zeiträume"
+    },
+    "common": {
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "edit": "Bearbeiten",
+      "close": "Schließen",
+      "delete": "Löschen",
+      "back": "Zurück",
+      "retry": "Erneut versuchen",
+      "loadError": "Daten konnten nicht geladen werden",
+      "saveError": "Änderungen konnten nicht gespeichert werden",
+      "empty": "Noch nichts hier"
+    }
+  }
+}

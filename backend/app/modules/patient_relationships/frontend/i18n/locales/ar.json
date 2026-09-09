@@ -1,0 +1,22 @@
+{
+  "patientRelationships": {
+    "title": "العائلة",
+    "emptyHint": "لا روابط عائلية في الملف.",
+    "relationships": {
+      "title": "الروابط العائلية",
+      "searchPatient": "ابحث عن مريض للربط…",
+      "addSuccess": "أُضيفت العلاقة",
+      "addError": "تعذر إضافة العلاقة",
+      "removeError": "تعذر إزالة العلاقة",
+      "types": {
+        "parent": "الأب/الأم",
+        "child": "الابن/الابنة",
+        "spouse": "الزوج/الزوجة",
+        "sibling": "الأخ/الأخت",
+        "guardian": "الولي",
+        "ward": "القاصر",
+        "other": "أخرى"
+      }
+    }
+  }
+}

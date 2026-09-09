@@ -1,0 +1,58 @@
+{
+  "nav_online": {
+    "settings": {
+      "title": "NAV Online Számla",
+      "description": "Comunicação de faturas em tempo real à autoridade tributária húngara (NAV)."
+    },
+    "connection": "Ligação",
+    "enabled": "Ativado",
+    "disabled": "Desativado",
+    "environment": "Ambiente",
+    "env": {
+      "test": "Teste (sandbox)",
+      "prod": "Produção"
+    },
+    "taxNumber": "Número fiscal",
+    "taxNumberHelp": "Törzsszám de 8 dígitos ou o adószám completo de 11.",
+    "login": "Utilizador técnico",
+    "password": "Palavra-passe",
+    "signatureKey": "Chave de assinatura",
+    "exchangeKey": "Chave de troca",
+    "exchangeKeyHelp": "Exatamente 16 caracteres, do portal NAV Online Számla.",
+    "softwareId": "ID do software",
+    "softwareIdHelp": "18 caracteres [0-9A-Z-], registado para este software na NAV.",
+    "devContact": "E-mail de contacto do programador",
+    "secretStored": "Guardado — deixe vazio para manter.",
+    "testConnection": "Testar ligação",
+    "testOk": "Troca de token bem-sucedida",
+    "testFail": "Ligação falhou",
+    "enable": "Ativar comunicação",
+    "disable": "Desativar comunicação",
+    "saved": "Definições guardadas",
+    "saveError": "Não foi possível guardar as definições",
+    "records": {
+      "title": "Envios NAV",
+      "description": "Cada fatura emitida é comunicada à NAV; acompanhe aqui o estado.",
+      "allStates": "Todos os estados",
+      "processNow": "Processar agora",
+      "processed": "Processado: {sent} enviados, {done} concluídos, {rejected} rejeitados, {failed} falhados",
+      "requeued": "Recolocado na fila",
+      "empty": "Ainda não há envios.",
+      "invoice": "Fatura",
+      "operation": "Operação",
+      "state": "Estado",
+      "transaction": "Transação",
+      "error": "Erro",
+      "retry": "Repetir"
+    },
+    "state": {
+      "pending": "Pendente",
+      "sending": "A enviar",
+      "sent": "Enviado",
+      "done": "Concluído",
+      "rejected": "Rejeitado",
+      "failed": "Falhado",
+      "aborted": "Abortado"
+    }
+  }
+}

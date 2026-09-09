@@ -1,0 +1,86 @@
+{
+  "payroll": {
+    "title": "Paie",
+    "subtitle": "Profils du personnel, périodes de paie et rapports",
+    "nav": {
+      "profiles": "Profils",
+      "periods": "Périodes",
+      "reports": "Rapports"
+    },
+    "profiles": {
+      "title": "Profils",
+      "subtitle": "Conditions salariales et données bancaires chiffrées par employé",
+      "new": "Nouveau profil",
+      "edit": "Modifier le profil",
+      "staff": "Membre du personnel",
+      "staffPlaceholder": "Sélectionner",
+      "paymentType": "Type de paie",
+      "monthly": "Mensuel",
+      "hourly": "Horaire",
+      "baseAmount": "Montant de base",
+      "currency": "Devise",
+      "bankAccount": "Compte bancaire",
+      "bankAccountPlaceholder": "Vide pour conserver",
+      "taxId": "NIF",
+      "taxIdPlaceholder": "Vide pour conserver",
+      "hasBank": "Compte bancaire enregistré",
+      "hasTax": "NIF enregistré",
+      "active": "Profil actif",
+      "inactive": "Inactif",
+      "empty": "Aucun profil pour le moment"
+    },
+    "periods": {
+      "title": "Périodes",
+      "subtitle": "Périodes de paie mensuelles et leurs écritures",
+      "open": "Ouvrir une période",
+      "month": "Mois (AAAA-MM)",
+      "status": "Statut",
+      "draft": "Brouillon",
+      "closed": "Clôturée",
+      "paid": "Payée",
+      "close": "Clôturer la période",
+      "markPaid": "Marquer comme payée",
+      "deleteConfirm": "Supprimer la période {month} ? Seuls les brouillons vides.",
+      "transitionConfirm": "Passer {month} à {status} ?",
+      "empty": "Aucune période pour le moment"
+    },
+    "entries": {
+      "title": "Écritures",
+      "gross": "Brut",
+      "deductions": "Déductions",
+      "net": "Net",
+      "netMismatch": "Le net doit égaler le brut moins les déductions",
+      "notes": "Notes",
+      "add": "Ajouter une écriture",
+      "edit": "Modifier l'écriture",
+      "deleteConfirm": "Supprimer cette écriture ? Irréversible.",
+      "staff": "Membre du personnel",
+      "empty": "Aucune écriture pour le moment"
+    },
+    "reports": {
+      "title": "Rapports",
+      "subtitle": "Totaux mensuels et annuels dans la devise de la clinique",
+      "month": "Mois",
+      "year": "Année",
+      "monthly": "Rapport mensuel",
+      "annual": "Rapport annuel",
+      "entryCount": "Écritures",
+      "totalGross": "Brut total",
+      "totalDeductions": "Déductions totales",
+      "totalNet": "Net total",
+      "periodCount": "Périodes"
+    },
+    "common": {
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "edit": "Modifier",
+      "close": "Fermer",
+      "delete": "Supprimer",
+      "back": "Retour",
+      "retry": "Réessayer",
+      "loadError": "Impossible de charger les données",
+      "saveError": "Impossible d'enregistrer les modifications",
+      "empty": "Rien ici pour le moment"
+    }
+  }
+}

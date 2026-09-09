@@ -91,7 +91,7 @@ onUnmounted(() => {
                 {{ document?.original_filename }}
               </p>
             </div>
-            <div class="flex items-center gap-2 ml-4">
+            <div class="flex items-center gap-2 ms-4">
               <UButton
                 icon="i-lucide-download"
                 :aria-label="t('common.download')"

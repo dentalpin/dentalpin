@@ -55,7 +55,7 @@ const pct = computed(() => {
   <component
     :is="clickable ? 'button' : 'div'"
     :type="clickable ? 'button' : undefined"
-    class="block w-full text-left group"
+    class="block w-full text-start group"
     :class="clickable ? 'cursor-pointer rounded-token-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)]' : ''"
     :aria-label="actionLabel"
     @click="clickable && $emit('click')"

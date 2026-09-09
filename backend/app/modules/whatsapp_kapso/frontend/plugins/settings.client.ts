@@ -36,7 +36,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'whatsapp_kapso.onboarding.label',
     descriptionKey: 'whatsapp_kapso.onboarding.description',
     icon: 'i-lucide-message-circle',
-    to: '/settings/whatsapp-kapso',
+    to: '/settings/integrations/whatsapp-kapso',
     permission: 'whatsapp_kapso.settings.read',
     order: 81,
     optional: true,

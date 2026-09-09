@@ -92,7 +92,7 @@ function relative(iso: string): string {
             {{ p.first_name }} {{ p.last_name }}
           </template>
           <template #subtitle>
-            {{ p.phone || p.email || '—' }}
+            <span dir="ltr">{{ p.phone || p.email || '—' }}</span>
           </template>
           <template #meta>
             <span class="text-caption text-subtle tnum">

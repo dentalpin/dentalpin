@@ -37,14 +37,17 @@ const channelForm = reactive<{
   preferred_channel: NotificationChannel
   fallback_enabled: boolean
   manual_channels: string[]
+  sms_daily_limit: number
 }>({
   preferred_channel: 'email',
   fallback_enabled: true,
-  manual_channels: ['email']
+  manual_channels: ['email'],
+  sms_daily_limit: 100
 })
 
 const availableChannels = computed<readonly string[]>(() => settings.value?.available_channels ?? ['email'])
 const whatsappAvailable = computed(() => availableChannels.value.includes('whatsapp'))
+const smsAvailable = computed(() => availableChannels.value.includes('sms'))
 
 const preferredOptions = computed(() => [
   { value: 'email', label: t('notifications.channels.email') },
@@ -52,6 +55,11 @@ const preferredOptions = computed(() => [
     value: 'whatsapp',
     label: t('notifications.channels.whatsapp'),
     disabled: !whatsappAvailable.value
+  },
+  {
+    value: 'sms',
+    label: t('notifications.channels.sms'),
+    disabled: !smsAvailable.value
   }
 ])
 
@@ -100,6 +108,7 @@ watch(settings, (newSettings) => {
     channelForm.preferred_channel = newSettings.preferred_channel ?? 'email'
     channelForm.fallback_enabled = newSettings.fallback_enabled ?? true
     channelForm.manual_channels = [...(newSettings.manual_channels ?? ['email'])]
+    channelForm.sms_daily_limit = newSettings.sms_daily_limit ?? 100
   }
 }, { immediate: true })
 
@@ -164,6 +173,7 @@ async function saveSettings() {
     preferred_channel: channelForm.preferred_channel,
     fallback_enabled: channelForm.fallback_enabled,
     manual_channels: channelForm.manual_channels,
+    sms_daily_limit: channelForm.sms_daily_limit,
     settings: localSettings.value
   })
   if (success) {
@@ -370,6 +380,21 @@ if (!isAdmin.value) {
             </div>
           </div>
 
+          <!-- SMS daily budget -->
+          <UFormField
+            :label="t('notifications.channels.smsDailyLimitLabel')"
+            :help="t('notifications.channels.smsDailyLimitHelp')"
+          >
+            <UInput
+              v-model="channelForm.sms_daily_limit"
+              type="number"
+              min="0"
+              step="1"
+              class="w-full sm:w-64"
+              @update:model-value="onSettingChange"
+            />
+          </UFormField>
+
           <!-- Manual send buttons -->
           <div>
             <p class="text-sm font-medium text-default mb-1">
@@ -389,6 +414,12 @@ if (!isAdmin.value) {
                 :label="t('notifications.channels.whatsapp')"
                 :disabled="!whatsappAvailable"
                 @update:model-value="(v: boolean | 'indeterminate') => toggleManualChannel('whatsapp', v === true)"
+              />
+              <UCheckbox
+                :model-value="channelForm.manual_channels.includes('sms')"
+                :label="t('notifications.channels.sms')"
+                :disabled="!smsAvailable"
+                @update:model-value="(v: boolean | 'indeterminate') => toggleManualChannel('sms', v === true)"
               />
             </div>
             <p
@@ -411,10 +442,30 @@ if (!isAdmin.value) {
             <p class="text-caption text-info">
               {{ t('notifications.channels.whatsappUnavailableHint') }}
               <NuxtLink
-                to="/settings/whatsapp-kapso"
+                to="/settings/integrations/whatsapp-kapso"
                 class="underline font-medium"
               >
                 {{ t('notifications.channels.whatsappConnect') }}
+              </NuxtLink>
+            </p>
+          </div>
+
+          <!-- SMS provider not configured hint -->
+          <div
+            v-if="!smsAvailable"
+            class="p-3 alert-surface-info rounded-lg flex items-start gap-2"
+          >
+            <UIcon
+              name="i-lucide-message-square-text"
+              class="w-4 h-4 text-info-accent flex-shrink-0 mt-0.5"
+            />
+            <p class="text-caption text-info">
+              {{ t('notifications.channels.smsUnavailableHint') }}
+              <NuxtLink
+                to="/settings/integrations/sms-gateway"
+                class="underline font-medium"
+              >
+                {{ t('notifications.channels.smsConnect') }}
               </NuxtLink>
             </p>
           </div>
@@ -443,7 +494,7 @@ if (!isAdmin.value) {
           <table class="w-full">
             <thead>
               <tr class="border-b border-default">
-                <th class="text-left py-3 px-4 font-medium text-muted dark:text-subtle">
+                <th class="text-start py-3 px-4 font-medium text-muted dark:text-subtle">
                   {{ t('notifications.notificationType') }}
                 </th>
                 <th class="text-center py-3 px-4 font-medium text-muted dark:text-subtle w-24">
@@ -595,21 +646,21 @@ if (!isAdmin.value) {
           >
             <div>
               <span class="text-muted">{{ t('notifications.smtp.host') }}:</span>
-              <span class="ml-2 text-default">{{ smtpSettings.host }}:{{ smtpSettings.port }}</span>
+              <span class="ms-2 text-default">{{ smtpSettings.host }}:{{ smtpSettings.port }}</span>
             </div>
             <div>
               <span class="text-muted">{{ t('notifications.smtp.fromEmail') }}:</span>
-              <span class="ml-2 text-default">{{ smtpSettings.from_email || '-' }}</span>
+              <span class="ms-2 text-default">{{ smtpSettings.from_email || '-' }}</span>
             </div>
             <div>
               <span class="text-muted">{{ t('notifications.smtp.security') }}:</span>
-              <span class="ml-2 text-default">
+              <span class="ms-2 text-default">
                 {{ smtpSettings.use_ssl ? 'SSL' : smtpSettings.use_tls ? 'TLS' : 'None' }}
               </span>
             </div>
             <div>
               <span class="text-muted">{{ t('notifications.smtp.username') }}:</span>
-              <span class="ml-2 text-default">{{ smtpSettings.username || '-' }}</span>
+              <span class="ms-2 text-default">{{ smtpSettings.username || '-' }}</span>
             </div>
           </div>
 

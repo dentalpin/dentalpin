@@ -151,7 +151,7 @@ watch(patients, () => {
           icon="i-lucide-x"
           :aria-label="t('common.clear')"
           size="xs"
-          class="-mr-2"
+          class="-me-2"
           @click.stop="clearSelection"
         />
       </template>
@@ -198,7 +198,7 @@ watch(patients, () => {
             {{ patient.last_name }}, {{ patient.first_name }}
           </p>
           <p class="text-sm text-muted truncate">
-            {{ patient.phone || patient.email || '-' }}
+            <span dir="ltr">{{ patient.phone || patient.email || '-' }}</span>
           </p>
         </div>
       </div>

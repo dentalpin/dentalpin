@@ -27,7 +27,7 @@ withDefaults(defineProps<Props>(), {
     v-if="to"
     :to="to"
     class="block rounded-[var(--radius-lg)] ring-1 ring-[var(--color-border)] bg-(--color-surface) transition hover:ring-(--color-primary)/40 hover:shadow-sm cursor-pointer"
-    :class="attention ? 'border-l-4 border-(--color-warning-accent)' : ''"
+    :class="attention ? 'border-s-4 border-(--color-warning-accent)' : ''"
   >
     <div class="p-4 sm:p-5">
       <div class="flex items-start gap-3">
@@ -80,7 +80,7 @@ withDefaults(defineProps<Props>(), {
   <div
     v-else
     class="block rounded-[var(--radius-lg)] ring-1 ring-[var(--color-border)] bg-(--color-surface) transition"
-    :class="attention ? 'border-l-4 border-(--color-warning-accent)' : ''"
+    :class="attention ? 'border-s-4 border-(--color-warning-accent)' : ''"
   >
     <div class="p-4 sm:p-5">
       <div class="flex items-start gap-3">

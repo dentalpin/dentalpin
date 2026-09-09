@@ -56,7 +56,7 @@ const { t } = useI18n()
       >
         <UIcon
           name="i-lucide-check"
-          class="w-3.5 h-3.5 mr-1"
+          class="w-3.5 h-3.5 me-1"
           aria-hidden="true"
         />
         {{ t('patients.billingComplete') }}
@@ -69,7 +69,7 @@ const { t } = useI18n()
       >
         <UIcon
           name="i-lucide-alert-triangle"
-          class="w-3.5 h-3.5 mr-1"
+          class="w-3.5 h-3.5 me-1"
           aria-hidden="true"
         />
         {{ t('patients.billingIncomplete') }}

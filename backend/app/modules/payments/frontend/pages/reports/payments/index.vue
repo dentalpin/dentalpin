@@ -473,7 +473,7 @@ const allReportsEmpty = computed(() => {
       <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
         <button
           type="button"
-          class="text-left rounded-token-md bg-surface border border-default p-3 hover:border-[var(--color-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition-colors"
+          class="text-start rounded-token-md bg-surface border border-default p-3 hover:border-[var(--color-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition-colors"
           @click="goToPaymentsList()"
         >
           <div class="text-caption text-muted">
@@ -495,7 +495,7 @@ const allReportsEmpty = computed(() => {
 
         <button
           type="button"
-          class="text-left rounded-token-md bg-surface border border-default p-3 hover:border-[var(--color-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition-colors"
+          class="text-start rounded-token-md bg-surface border border-default p-3 hover:border-[var(--color-primary)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] transition-colors"
           @click="goToPaymentsList({ has_refunds: 'true' })"
         >
           <div class="text-caption text-muted">

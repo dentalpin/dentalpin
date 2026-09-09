@@ -1,0 +1,58 @@
+{
+  "nav_online": {
+    "settings": {
+      "title": "NAV Online Számla",
+      "description": "Valós idejű számlaadat-szolgáltatás a NAV felé."
+    },
+    "connection": "Kapcsolat",
+    "enabled": "Bekapcsolva",
+    "disabled": "Kikapcsolva",
+    "environment": "Környezet",
+    "env": {
+      "test": "Teszt (sandbox)",
+      "prod": "Éles"
+    },
+    "taxNumber": "Adószám",
+    "taxNumberHelp": "8 jegyű törzsszám vagy a teljes 11 jegyű adószám.",
+    "login": "Technikai felhasználó",
+    "password": "Jelszó",
+    "signatureKey": "Aláírókulcs",
+    "exchangeKey": "Cserekulcs",
+    "exchangeKeyHelp": "Pontosan 16 karakter, az Online Számla portálról.",
+    "softwareId": "Szoftverazonosító",
+    "softwareIdHelp": "18 karakter [0-9A-Z-], a NAV-nál regisztrált szoftverhez.",
+    "devContact": "Fejlesztői kapcsolat e-mail",
+    "secretStored": "Tárolva — hagyd üresen a megtartáshoz.",
+    "testConnection": "Kapcsolat tesztelése",
+    "testOk": "A tokencsere sikerült",
+    "testFail": "A kapcsolat nem sikerült",
+    "enable": "Adatszolgáltatás bekapcsolása",
+    "disable": "Adatszolgáltatás kikapcsolása",
+    "saved": "Beállítások mentve",
+    "saveError": "A beállításokat nem sikerült menteni",
+    "records": {
+      "title": "NAV beküldések",
+      "description": "Minden kiállított számla beküldésre kerül a NAV-hoz; itt követhető az állapota.",
+      "allStates": "Minden állapot",
+      "processNow": "Feldolgozás most",
+      "processed": "Feldolgozva: {sent} beküldve, {done} kész, {rejected} elutasítva, {failed} hibás",
+      "requeued": "Újra sorba állítva",
+      "empty": "Még nincs beküldés.",
+      "invoice": "Számla",
+      "operation": "Művelet",
+      "state": "Állapot",
+      "transaction": "Tranzakció",
+      "error": "Hiba",
+      "retry": "Újra"
+    },
+    "state": {
+      "pending": "Függőben",
+      "sending": "Küldés",
+      "sent": "Beküldve",
+      "done": "Kész",
+      "rejected": "Elutasítva",
+      "failed": "Hibás",
+      "aborted": "Megszakítva"
+    }
+  }
+}

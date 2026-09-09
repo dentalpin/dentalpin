@@ -1,0 +1,58 @@
+{
+  "nav_online": {
+    "settings": {
+      "title": "NAV Online Számla",
+      "description": "Echtzeit-Rechnungsmeldung an die ungarische Steuerbehörde (NAV)."
+    },
+    "connection": "Verbindung",
+    "enabled": "Aktiviert",
+    "disabled": "Deaktiviert",
+    "environment": "Umgebung",
+    "env": {
+      "test": "Test (Sandbox)",
+      "prod": "Produktion"
+    },
+    "taxNumber": "Steuernummer",
+    "taxNumberHelp": "8-stellige törzsszám oder die vollständige 11-stellige adószám.",
+    "login": "Technischer Benutzer",
+    "password": "Passwort",
+    "signatureKey": "Signaturschlüssel",
+    "exchangeKey": "Austauschschlüssel",
+    "exchangeKeyHelp": "Genau 16 Zeichen, aus dem NAV-Online-Számla-Portal.",
+    "softwareId": "Software-ID",
+    "softwareIdHelp": "18 Zeichen [0-9A-Z-], bei NAV für diese Software registriert.",
+    "devContact": "Entwickler-Kontakt-E-Mail",
+    "secretStored": "Gespeichert — leer lassen, um zu behalten.",
+    "testConnection": "Verbindung testen",
+    "testOk": "Token-Austausch erfolgreich",
+    "testFail": "Verbindung fehlgeschlagen",
+    "enable": "Meldung aktivieren",
+    "disable": "Meldung deaktivieren",
+    "saved": "Einstellungen gespeichert",
+    "saveError": "Einstellungen konnten nicht gespeichert werden",
+    "records": {
+      "title": "NAV-Übermittlungen",
+      "description": "Jede ausgestellte Rechnung wird an NAV gemeldet; Status hier verfolgen.",
+      "allStates": "Alle Status",
+      "processNow": "Jetzt verarbeiten",
+      "processed": "Verarbeitet: {sent} gesendet, {done} fertig, {rejected} abgelehnt, {failed} fehlgeschlagen",
+      "requeued": "Erneut eingereiht",
+      "empty": "Noch keine Übermittlungen.",
+      "invoice": "Rechnung",
+      "operation": "Vorgang",
+      "state": "Status",
+      "transaction": "Transaktion",
+      "error": "Fehler",
+      "retry": "Erneut"
+    },
+    "state": {
+      "pending": "Ausstehend",
+      "sending": "Wird gesendet",
+      "sent": "Gesendet",
+      "done": "Fertig",
+      "rejected": "Abgelehnt",
+      "failed": "Fehlgeschlagen",
+      "aborted": "Abgebrochen"
+    }
+  }
+}

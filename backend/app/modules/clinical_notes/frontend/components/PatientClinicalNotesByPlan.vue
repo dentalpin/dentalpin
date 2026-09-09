@@ -157,13 +157,13 @@ const hasAny = computed(() =>
 
             <div
               v-if="tgroup.notes.length === 0"
-              class="text-caption text-subtle italic pl-6"
+              class="text-caption text-subtle italic ps-6"
             >
               {{ t('clinicalNotes.byPlan.noNotesForTreatment') }}
             </div>
             <div
               v-else
-              class="space-y-2 pl-6"
+              class="space-y-2 ps-6"
             >
               <article
                 v-for="note in tgroup.notes"

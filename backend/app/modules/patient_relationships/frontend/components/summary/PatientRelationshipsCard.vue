@@ -128,7 +128,7 @@ const extraRelationshipsCount = computed(() =>
         variant="ghost"
         color="neutral"
         size="xs"
-        class="ml-auto"
+        class="ms-auto"
         @click="isEditing = !isEditing"
       />
     </template>
@@ -160,7 +160,7 @@ const extraRelationshipsCount = computed(() =>
       </li>
       <li
         v-if="extraRelationshipsCount > 0"
-        class="text-subtle pl-5"
+        class="text-subtle ps-5"
       >
         +{{ extraRelationshipsCount }}
       </li>

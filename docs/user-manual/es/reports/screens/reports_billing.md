@@ -3,14 +3,17 @@ module: reports
 screen: billing
 route: /reports/billing
 related_endpoints:
+  - GET /api/v1/reports/billing/aging
   - GET /api/v1/reports/billing/by-payment-method
   - GET /api/v1/reports/billing/by-professional
   - GET /api/v1/reports/billing/gaps
+  - GET /api/v1/reports/billing/issued-trend
   - GET /api/v1/reports/billing/overdue
   - GET /api/v1/reports/billing/summary
   - GET /api/v1/reports/billing/vat-summary
 related_permissions:
   - reports.billing.read
+  - reports.financial.read
 related_paths:
   - backend/app/modules/reports/frontend/pages/reports/billing.vue
   - backend/app/modules/reports/router.py
@@ -40,6 +43,13 @@ preparación de IVA.
   fiscal del periodo.
 - **Vencidos y huecos** — facturas pasadas de fecha y series con
   saltos en la numeración (gaps), si los hay.
+- **Antigüedad** — totales emitidos pendientes por tramo
+  (no vencidas aparte, luego 0–30/31–60/61–90/90+ días, solo importes
+  emitidos). Etiquetado como antigüedad de facturas — definición
+  distinta de la tarjeta de cobros del panel (ganado-menos-cobrado
+  por paciente).
+- **Tendencia emitida** — totales emitidos por mes del rango
+  (`?format=csv` disponible).
 
 ## Drill-downs
 
@@ -62,6 +72,7 @@ no compara contra `invoiced`.
 | Lo que ves / puedes hacer | Permiso |
 |---------------------------|---------|
 | Ver cualquiera de las secciones | `reports.billing.read` |
+| Ver antigüedad de facturas y tendencia emitida | `reports.financial.read` |
 | Acceder al listado base de facturas (drill-down) | `billing.read` |
 
 ## Resolución de problemas

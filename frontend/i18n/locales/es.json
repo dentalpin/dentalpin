@@ -78,7 +78,7 @@
     "emailRequired": "Introduce el correo electrónico",
     "emailInvalid": "El correo electrónico no es válido",
     "passwordRequired": "Introduce una contraseña",
-    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres",
+    "passwordTooShort": "La contraseña debe tener al menos 12 caracteres",
     "passwordWeak": "La contraseña debe incluir letras y números",
     "passwordMismatch": "Las contraseñas no coinciden",
     "clinicNameRequired": "Introduce el nombre de la clínica",
@@ -2685,6 +2685,10 @@
       "missingNumbers": "Números faltantes:",
       "noData": "Sin datos para el período seleccionado",
       "noOverdue": "No hay facturas vencidas",
+      "invoiceAging": "Antigüedad de facturas",
+      "invoiceAgingDescription": "Totales emitidos pendientes por tramo. Lo no vencido va aparte.",
+      "notDue": "No vencidas",
+      "issuedTrend": "Emitido por mes",
       "daysOverdue": "días de retraso",
       "vatType": "Tipo IVA",
       "base": "Base",
@@ -2929,11 +2933,22 @@
       "whatsappUnavailableHint": "WhatsApp no está disponible hasta conectar el número de la clínica.",
       "whatsappConnect": "Conectar WhatsApp (Kapso)",
       "noEmail": "El paciente no tiene email en su ficha",
-      "noPhone": "El paciente no tiene teléfono en su ficha"
+      "noPhone": "El paciente no tiene teléfono en su ficha",
+      "sms": "SMS",
+      "smsUnavailableHint": "SMS no está disponible hasta que se configure un proveedor de SMS.",
+      "smsConnect": "Configurar",
+      "smsDailyLimitLabel": "Límite diario de SMS",
+      "smsDailyLimitHelp": "Máximo de SMS salientes al día para la clínica."
     },
     "channelSent": {
       "email": "Email enviado correctamente",
-      "whatsapp": "Mensaje de WhatsApp enviado correctamente"
+      "whatsapp": "Mensaje de WhatsApp enviado correctamente",
+      "sms": "Mensaje SMS enviado correctamente"
+    },
+    "prefs": {
+      "title": "Preferencias de notificaciones",
+      "description": "Qué canales pueden contactar a este paciente. Darse de baja bloquea ese canal incluso en envíos forzosos.",
+      "saved": "Preferencias guardadas"
     }
   },
   "invoiceSeries": {

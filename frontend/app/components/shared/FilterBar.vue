@@ -128,7 +128,7 @@ function onReset() {
         color="neutral"
         icon="i-lucide-sliders-horizontal"
         size="sm"
-        class="absolute inset-y-0 left-0 my-auto h-fit"
+        class="absolute inset-y-0 start-0 my-auto h-fit"
         @click="isOpen = true"
       >
         {{ activeCount ? t('lists.filter.moreCount', { count: activeCount }) : t('lists.filter.more') }}
@@ -156,7 +156,7 @@ function onReset() {
     <!-- Right region: sort, pinned right -->
     <div
       v-if="$slots.right"
-      class="shrink-0 ml-auto md:ml-0"
+      class="shrink-0 ms-auto md:ms-0"
     >
       <slot name="right" />
     </div>

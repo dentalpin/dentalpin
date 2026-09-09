@@ -58,16 +58,19 @@ Configuración de notificaciones de la clínica.
 La tarjeta **Canales** decide por qué vía habla la clínica con los
 pacientes:
 
-- **Canal preferido** — Email o WhatsApp; todos los mensajes
+- **Canal preferido** — Email, WhatsApp o SMS; todos los mensajes
   automáticos (confirmación de cita, recordatorio, bienvenida,
   presupuesto aceptado, …) salen primero por este canal. WhatsApp solo
-  se puede elegir cuando la integración de Kapso está conectada.
+  se puede elegir cuando la integración de Kapso está conectada; SMS
+  solo con un proveedor configurado (Ajustes → Integraciones → SMS).
 - **Alternativa** — si el canal preferido no puede entregar (sin
   teléfono, sin plantilla de WhatsApp aprobada), se intenta el otro
   canal configurado en lugar de omitir en silencio.
 - **Botones de envío** — qué botones de envío manual muestra el resto
   de la aplicación (cita, presupuesto, factura). Se requiere al menos
   uno.
+- **Límite diario de SMS** — máximo de SMS salientes al día por
+  clínica (100 por defecto); lo agotado espera al siguiente canal o día.
 
 ### Tipos de mensaje
 

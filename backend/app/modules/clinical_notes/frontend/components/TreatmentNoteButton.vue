@@ -155,7 +155,7 @@ watch(() => props.ctx?.treatmentId, loadCount, { immediate: true })
     >
       <span
         v-if="visibleCount > 0"
-        class="ml-1 text-caption tnum"
+        class="ms-1 text-caption tnum"
       >{{ visibleCount }}</span>
     </UButton>
     <template #content>
@@ -165,7 +165,7 @@ watch(() => props.ctx?.treatmentId, loadCount, { immediate: true })
             {{ t('clinicalNotes.treatmentButton.title') }}
             <span
               v-if="ctx?.toothNumber"
-              class="text-caption text-muted ml-1"
+              class="text-caption text-muted ms-1"
             >· {{ t('clinicalNotes.linked.tooth', { n: ctx.toothNumber }) }}</span>
           </h4>
           <UButton
@@ -209,7 +209,7 @@ watch(() => props.ctx?.treatmentId, loadCount, { immediate: true })
         </div>
         <div
           v-else
-          class="space-y-2 max-h-[40vh] overflow-y-auto pr-1"
+          class="space-y-2 max-h-[40vh] overflow-y-auto pe-1"
         >
           <NoteCard
             v-for="note in notes"

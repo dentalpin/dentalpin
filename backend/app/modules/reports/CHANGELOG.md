@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- feat(#230): financial family (reports v0.2.0). `GET
+  /billing/aging` (outstanding buckets 0-30/31-60/61-90/90+, invoice
+  axis only) + `GET /billing/issued-trend` (monthly issued totals),
+  both with `?format=csv`; new `reports.financial.read` (+ reserved
+  `patient_stats.read`/`operational.read` with the approved role
+  mapping); `financial_report` copilot tool (invoice axis only);
+  invoice-aging + issued-trend sections on `/reports/billing` (the
+  dashboard receivables card keeps its earned-paid definition);
+  off-books guard test pins the family source to the invoice
+  axis.
+- feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - fix(#101): report dashboards render an error banner with Retry on fetch failure instead of 0 € / empty charts (shared fetch-failed flag across the 24 fetchers + dashboard snapshot).

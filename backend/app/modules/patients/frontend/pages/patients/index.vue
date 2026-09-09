@@ -359,10 +359,10 @@ function patientCity(p: Patient): string {
                 />
               </div>
               <div class="text-caption text-subtle truncate">
-                <span v-if="patientCity(patient)">{{ patientCity(patient) }} · </span>{{ patient.phone || patient.email || '—' }}
+                <span v-if="patientCity(patient)">{{ patientCity(patient) }} · </span><span dir="ltr">{{ patient.phone || patient.email || '—' }}</span>
               </div>
             </div>
-            <div class="shrink-0 flex items-center gap-3 ml-auto">
+            <div class="shrink-0 flex items-center gap-3 ms-auto">
               <ModuleSlot
                 name="patients.list.row.financial"
                 :ctx="{ patient_id: patient.id, summary: debtSummaries[patient.id] ?? null }"
@@ -394,7 +394,7 @@ function patientCity(p: Patient): string {
                   />
                 </div>
                 <div class="text-caption text-subtle truncate">
-                  {{ patient.phone || patient.email || '—' }}
+                  <span dir="ltr">{{ patient.phone || patient.email || '—' }}</span>
                 </div>
               </div>
               <StatusBadge

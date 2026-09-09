@@ -423,7 +423,7 @@ const greeting = computed(() => {
           >
             <UIcon
               name="i-lucide-calendar-clock"
-              class="w-4 h-4 inline-block mr-1"
+              class="w-4 h-4 inline-block me-1"
             />
             {{ t('budget.public.validUntil', { date: formatDate(budget.valid_until) }) }}
           </p>
@@ -757,10 +757,10 @@ const greeting = computed(() => {
 
 .container {
   max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 16px;
-  padding-right: 16px;
+  margin-inline-start: auto;
+  margin-inline-end: auto;
+  padding-inline-start: 16px;
+  padding-inline-end: 16px;
 }
 
 /* ----- Hero --------------------------------------------------------- */
@@ -929,7 +929,7 @@ const greeting = computed(() => {
 }
 
 .treatments-money {
-  text-align: right;
+  text-align: end;
   flex-shrink: 0;
 }
 
@@ -943,7 +943,7 @@ const greeting = computed(() => {
   font-weight: 400;
   font-size: 0.85em;
   opacity: 0.6;
-  margin-right: 0.35rem;
+  margin-inline-end: 0.35rem;
 }
 
 .treatments-total {

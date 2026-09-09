@@ -156,6 +156,42 @@ class NotificationGateway:
             )
         channel, addr, resolved_kind, _provider_template = resolved
 
+        # Per-clinic SMS cost guard (flat-rate transports are uncapped). An
+        # exhausted cap behaves like an unreachable channel: the remaining
+        # channels in the order still get their turn (fallback), and only
+        # when none is viable is the skip labelled ``sms_rate_limited``.
+        if channel == Channel.SMS and not await NotificationGateway._sms_within_limit(
+            db, clinic_id
+        ):
+            rest = requested[requested.index(Channel.SMS.value) + 1 :]
+            resolved = (
+                await NotificationGateway._resolve_channel(
+                    db,
+                    clinic_id,
+                    notification_type,
+                    patient,
+                    prefs,
+                    locale,
+                    rest,
+                    to_address,
+                    message_kind,
+                )
+                if rest
+                else None
+            )
+            if resolved is None:
+                return await NotificationGateway._skip(
+                    db,
+                    clinic_id,
+                    notification_type,
+                    patient_id,
+                    addr,
+                    "sms_rate_limited",
+                    triggered_by_event,
+                    triggered_by_user_id,
+                )
+            channel, addr, resolved_kind, _provider_template = resolved
+
         # Subject is resolved now (email) for the logs view; the body is
         # (re)rendered at dispatch time. Session (free-form) sends carry the
         # literal text in body_text and need no template.
@@ -231,6 +267,31 @@ class NotificationGateway:
                 await db.rollback()
                 await NotificationGateway._mark_failed(db, msg, str(exc))
         return attempted
+
+    @staticmethod
+    async def _sms_within_limit(db: AsyncSession, clinic_id: UUID) -> bool:
+        """Per-clinic SMS daily cap (UTC day, skips don't consume)."""
+        settings = await NotificationService.get_clinic_settings(db, clinic_id)
+        limit = (
+            settings.sms_daily_limit if settings and settings.sms_daily_limit is not None else 100
+        )
+        if limit <= 0:
+            return False
+        day_start = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
+        used = (
+            await db.execute(
+                select(func.count())
+                .select_from(CommunicationMessage)
+                .where(
+                    CommunicationMessage.clinic_id == clinic_id,
+                    CommunicationMessage.channel == Channel.SMS.value,
+                    CommunicationMessage.direction == "outbound",
+                    CommunicationMessage.status != "skipped",
+                    CommunicationMessage.created_at >= day_start,
+                )
+            )
+        ).scalar_one()
+        return used < limit
 
     @staticmethod
     async def _supporting_adapter(db: AsyncSession, clinic_id, channel):
@@ -471,9 +532,14 @@ class NotificationGateway:
         preferred = settings.preferred_channel or "email"
         order = [preferred]
         if settings.fallback_enabled:
-            other = "whatsapp" if preferred == "email" else "email"
-            if await NotificationGateway._supporting_adapter(db, clinic_id, other) is not None:
-                order.append(other)
+            for channel in Channel:
+                if channel.value == preferred:
+                    continue
+                if (
+                    await NotificationGateway._supporting_adapter(db, clinic_id, channel)
+                    is not None
+                ):
+                    order.append(channel.value)
         return order
 
     @staticmethod
@@ -535,6 +601,21 @@ class NotificationGateway:
                 ):
                     continue
                 return channel, addr, "template", tmpl.provider_template_name
+
+            if channel == Channel.SMS:
+                # SMS rides patients.phone (E.164 single source of truth —
+                # no separate sms_phone column in v1). Text-only: no
+                # template approval, no session window, so both
+                # message kinds resolve directly.
+                addr = patient.phone if patient else None
+                if not addr:
+                    continue
+                # Opt-out like email/whatsapp: an explicit
+                # sms_enabled=False blocks (even force_send); a missing
+                # prefs row does not block.
+                if prefs is not None and not prefs.sms_enabled:
+                    continue
+                return channel, addr, requested_kind or "template", None
         return None
 
     @staticmethod

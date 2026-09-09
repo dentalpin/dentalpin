@@ -75,7 +75,7 @@ function formatToothInfo(treatment: ToothTreatmentView): string {
         >
           <div class="flex-1">
             <span class="font-medium">{{ getTreatmentLabel(change) }}</span>
-            <span class="text-sm text-muted ml-2">
+            <span class="text-sm text-muted ms-2">
               {{ formatToothInfo(change) }}
             </span>
           </div>
@@ -107,7 +107,7 @@ function formatToothInfo(treatment: ToothTreatmentView): string {
         >
           <div class="flex-1">
             <span class="font-medium">{{ getTreatmentLabel(change) }}</span>
-            <span class="text-caption text-muted ml-2">
+            <span class="text-caption text-muted ms-2">
               {{ formatToothInfo(change) }}
             </span>
           </div>

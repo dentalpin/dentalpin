@@ -244,7 +244,7 @@ async function submitCreate() {
           </UBadge>
         </p>
         <p class="text-sm text-muted truncate">
-          {{ selectedPatient.phone || selectedPatient.email || '-' }}
+          <span dir="ltr">{{ selectedPatient.phone || selectedPatient.email || '-' }}</span>
         </p>
       </div>
       <UButton
@@ -283,7 +283,7 @@ async function submitCreate() {
               {{ item.last_name }}, {{ item.first_name }}
             </p>
             <p class="text-xs text-muted truncate">
-              {{ item.phone || item.email || '-' }}
+              <span dir="ltr">{{ item.phone || item.email || '-' }}</span>
             </p>
           </div>
         </div>

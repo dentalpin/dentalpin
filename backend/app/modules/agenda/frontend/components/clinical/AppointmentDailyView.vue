@@ -206,8 +206,8 @@ function getProfessionalFill(hex: string): Record<string, string> {
   const b = parseInt(hex.slice(5, 7), 16)
   return {
     backgroundColor: `rgba(${r}, ${g}, ${b}, 0.12)`,
-    borderLeftColor: hex,
-    borderLeftWidth: '3px'
+    borderInlineStartColor: hex,
+    borderInlineStartWidth: '3px'
   }
 }
 
@@ -553,11 +553,11 @@ const appointmentsByProfIndex = computed(() => {
           class="grid border-b border-default bg-surface-muted sticky top-0 z-10"
           :style="{ gridTemplateColumns: `80px repeat(${professionals.length}, 1fr)` }"
         >
-          <div class="p-2 text-center text-caption text-subtle border-r border-subtle" />
+          <div class="p-2 text-center text-caption text-subtle border-e border-subtle" />
           <div
             v-for="prof in professionals"
             :key="prof.id"
-            class="p-2 text-center border-r border-subtle last:border-r-0"
+            class="p-2 text-center border-e border-subtle last:border-e-0"
           >
             <div class="flex items-center justify-center gap-2">
               <span
@@ -582,7 +582,7 @@ const appointmentsByProfIndex = computed(() => {
             :class="{ 'border-[var(--color-border)]': slotIndex % SLOTS_PER_HOUR === 0 }"
             :style="{ gridTemplateColumns: `80px repeat(${professionals.length}, 1fr)` }"
           >
-            <div class="p-1 text-right border-r border-subtle flex items-center justify-end pr-2">
+            <div class="p-1 text-end border-e border-subtle flex items-center justify-end pe-2">
               <span
                 v-if="slotIndex % SLOTS_PER_HOUR === 0"
                 class="text-caption text-subtle tnum"
@@ -593,7 +593,7 @@ const appointmentsByProfIndex = computed(() => {
             <div
               v-for="(prof, profIdx) in professionals"
               :key="`${prof.id}-${slot}`"
-              class="border-r border-[var(--color-border-subtle)] last:border-r-0 cursor-cell hover:bg-[var(--color-primary-soft)]/50 transition-colors relative"
+              class="border-e border-[var(--color-border-subtle)] last:border-e-0 cursor-cell hover:bg-[var(--color-primary-soft)]/50 transition-colors relative"
               :class="{ 'border-[var(--color-border)]': slotIndex % SLOTS_PER_HOUR === 0 }"
               @mousedown="startCreateDrag(prof.id, slot, profIdx, $event)"
             />
@@ -605,13 +605,13 @@ const appointmentsByProfIndex = computed(() => {
               class="grid h-full"
               :style="{ gridTemplateColumns: `80px repeat(${professionals.length}, 1fr)` }"
             >
-              <div class="border-r border-subtle" />
+              <div class="border-e border-subtle" />
 
               <!-- Professional columns -->
               <div
                 v-for="(prof, profIndex) in professionals"
                 :key="`appointments-${prof.id}`"
-                class="relative border-r border-subtle last:border-r-0"
+                class="relative border-e border-subtle last:border-e-0"
               >
                 <!-- Blocked availability overlay (schedules module) -->
                 <div
@@ -628,7 +628,7 @@ const appointmentsByProfIndex = computed(() => {
                 <!-- Ghost block during drag-to-create -->
                 <div
                   v-if="createDragState && createDragState.professionalIndex === profIndex"
-                  class="absolute left-1 right-1 rounded border-2 border-dashed border-[var(--color-primary)] bg-[var(--color-primary-soft)] pointer-events-none z-40 flex items-start p-1"
+                  class="absolute start-1 end-1 rounded border-2 border-dashed border-[var(--color-primary)] bg-[var(--color-primary-soft)] pointer-events-none z-40 flex items-start p-1"
                   :style="{
                     top: `${createDragState.startSlot * getSlotHeight()}px`,
                     height: `${Math.max(1, createDragState.currentSlot - createDragState.startSlot + 1) * getSlotHeight()}px`,
@@ -646,7 +646,7 @@ const appointmentsByProfIndex = computed(() => {
                 <div
                   v-for="appointment in (appointmentsByProfIndex.get(profIndex) ?? [])"
                   :key="appointment.id"
-                  class="group absolute rounded overflow-hidden pointer-events-auto select-none shadow-sm border-l-4"
+                  class="group absolute rounded overflow-hidden pointer-events-auto select-none shadow-sm border-s-4"
                   :class="[
                     getStatusClass(appointment.status),
                     dragState?.appointmentId === appointment.id ? 'cursor-grabbing ring-2 ring-primary-500' : 'cursor-grab hover:ring-2 hover:ring-primary-500',
@@ -664,7 +664,7 @@ const appointmentsByProfIndex = computed(() => {
                   <div class="px-1.5 h-full flex flex-col py-0.5 relative">
                     <!-- Quick-action dropdown (shown on hover) -->
                     <div
-                      class="absolute top-0.5 right-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-20"
+                      class="absolute top-0.5 end-0.5 opacity-0 group-hover:opacity-100 transition-opacity z-20"
                       @click.stop
                       @mousedown.stop
                     >
@@ -673,7 +673,7 @@ const appointmentsByProfIndex = computed(() => {
                         dense
                       />
                     </div>
-                    <div class="flex items-center gap-1 min-h-[18px] pr-6">
+                    <div class="flex items-center gap-1 min-h-[18px] pe-6">
                       <UIcon
                         v-if="getStatusIcon(appointment.status)"
                         :name="getStatusIcon(appointment.status)"
@@ -699,7 +699,7 @@ const appointmentsByProfIndex = computed(() => {
 
                   <!-- Resize handle -->
                   <div
-                    class="absolute bottom-0 left-0 right-0 h-2 cursor-ns-resize hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+                    class="absolute bottom-0 start-0 end-0 h-2 cursor-ns-resize hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
                     @mousedown.stop="startDrag(appointment, $event, 'resize')"
                   >
                     <div class="absolute bottom-0.5 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-current opacity-30 rounded" />

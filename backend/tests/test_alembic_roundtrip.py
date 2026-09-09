@@ -70,6 +70,10 @@ ONE_WAY_REVISIONS: frozenset[str] = frozenset(
         # filtered rows back. Pre-prod, treatment_media data lives in
         # media_attachments going forward — see the migration's docstring.
         "tp_0004",
+        # cn_0002: drops clinical_notes attachments into media (same
+        # consolidation shape as tp_0004). Listed now so the test cannot
+        # silently go strict on it once tp_0004 is resolved (audit 2026-09).
+        "cn_0002",
     }
 )
 

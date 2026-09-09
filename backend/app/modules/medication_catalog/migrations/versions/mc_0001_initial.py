@@ -16,6 +16,10 @@ from alembic import op
 revision = "mc_0001"
 down_revision = None
 branch_labels = ("medication_catalog",)
+# NOTE (audit ARCH-01, reverted 2026-09-06): see ajr_0001 — a
+# depends_on = ("0001",) edge breaks the M6 roundtrip helper's drag
+# closure (it expects tables gone that Alembic never drops). Ordering
+# risk stays documented-latent; bare-schema upgrade is deterministic.
 depends_on = None
 
 

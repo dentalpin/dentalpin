@@ -39,7 +39,7 @@ async function copy(value: string) {
     <div class="space-y-1 text-body">
       <button
         type="button"
-        class="flex items-center gap-2 w-full text-left hover:bg-surface rounded-token-sm px-2 py-1 transition-colors"
+        class="flex items-center gap-2 w-full text-start hover:bg-surface rounded-token-sm px-2 py-1 transition-colors"
         :aria-label="t('demo.copyEmail')"
         @click="copy(DEMO_EMAIL)"
       >
@@ -52,7 +52,7 @@ async function copy(value: string) {
       </button>
       <button
         type="button"
-        class="flex items-center gap-2 w-full text-left hover:bg-surface rounded-token-sm px-2 py-1 transition-colors"
+        class="flex items-center gap-2 w-full text-start hover:bg-surface rounded-token-sm px-2 py-1 transition-colors"
         :aria-label="t('demo.copyPassword')"
         @click="copy(DEMO_PASSWORD)"
       >

@@ -45,7 +45,7 @@ function categoryHref(cat: VisibleCategory): string {
       v-for="cat in registry.categories.value"
       :key="cat.id"
       :to="categoryHref(cat)"
-      class="group flex items-center gap-3 rounded-md px-3 py-2.5 min-h-[44px] transition border-l-2"
+      class="group flex items-center gap-3 rounded-md px-3 py-2.5 min-h-[44px] transition border-s-2"
       :class="[
         activeId === cat.id
           ? 'bg-(--color-primary-soft) border-(--color-primary) text-default'

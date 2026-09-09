@@ -19,8 +19,8 @@ test('fresh install: /setup creates an operative Spanish clinic and shows the ge
   await page.getByRole('textbox', { name: /nombre$|first name/i }).fill('Ana')
   await page.getByRole('textbox', { name: /apellidos|last name/i }).fill('Pérez')
   await page.getByRole('textbox', { name: /correo|email/i }).fill('ana@e2e.clinic')
-  await page.locator('input[name="password"]').fill('Secure123x')
-  await page.locator('input[name="passwordConfirm"]').fill('Secure123x')
+  await page.locator('input[name="password"]').fill('Secure123xyz')
+  await page.locator('input[name="passwordConfirm"]').fill('Secure123xyz')
   await page.getByRole('button', { name: /siguiente|next/i }).click()
 
   // Step 2 — clinic + country

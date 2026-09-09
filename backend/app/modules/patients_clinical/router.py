@@ -447,7 +447,8 @@ async def get_emergency_contact(
 ) -> ApiResponse[EmergencyContactResponse | None]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     contact = await PatientsClinicalService.get_emergency_contact(db, patient_id)
-    if contact is None:
+    # Archived (soft-deleted) rows stay in the table but read as "no contact".
+    if contact is None or contact.status != "active":
         return ApiResponse(data=None)
     return ApiResponse(data=EmergencyContactResponse.model_validate(contact))
 
@@ -507,7 +508,8 @@ async def get_legal_guardian(
 ) -> ApiResponse[LegalGuardianResponse | None]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     guardian = await PatientsClinicalService.get_legal_guardian(db, patient_id)
-    if guardian is None:
+    # Archived (soft-deleted) rows stay in the table but read as "no guardian".
+    if guardian is None or guardian.status != "active":
         return ApiResponse(data=None)
     return ApiResponse(data=LegalGuardianResponse.model_validate(guardian))
 

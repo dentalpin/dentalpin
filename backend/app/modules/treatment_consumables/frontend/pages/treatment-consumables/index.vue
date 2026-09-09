@@ -247,7 +247,7 @@ const columns = computed(() => [
         <span>{{ row.original.treatment_name }}</span>
         <span
           v-if="row.original.treatment_code"
-          class="text-xs text-subtle ml-1"
+          class="text-xs text-subtle ms-1"
         >({{ row.original.treatment_code }})</span>
       </template>
       <template #quantity-cell="{ row }">
@@ -260,7 +260,7 @@ const columns = computed(() => [
         </UBadge>
         <span
           v-if="row.original.item_unit"
-          class="text-xs text-subtle ml-1"
+          class="text-xs text-subtle ms-1"
         >{{ row.original.item_unit }}</span>
       </template>
       <template #note-cell="{ row }">
@@ -325,7 +325,7 @@ const columns = computed(() => [
                   v-for="tr in treatmentList"
                   :key="tr.id"
                   type="button"
-                  class="w-full text-left px-2 py-1 rounded text-sm hover:bg-elevated"
+                  class="w-full text-start px-2 py-1 rounded text-sm hover:bg-elevated"
                   :class="selectedTreatment?.id === tr.id ? 'bg-primary/10 font-medium' : ''"
                   @click="selectedTreatment = tr"
                 >
@@ -353,7 +353,7 @@ const columns = computed(() => [
                   v-for="it in itemList"
                   :key="it.id"
                   type="button"
-                  class="w-full text-left px-2 py-1 rounded text-sm hover:bg-elevated"
+                  class="w-full text-start px-2 py-1 rounded text-sm hover:bg-elevated"
                   :class="selectedItem?.id === it.id ? 'bg-primary/10 font-medium' : ''"
                   @click="selectedItem = it"
                 >

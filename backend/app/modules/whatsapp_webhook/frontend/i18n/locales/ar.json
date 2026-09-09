@@ -1,0 +1,26 @@
+{
+  "whatsapp_webhook": {
+    "settings": {
+      "title": "WhatsApp عبر webhook",
+      "description": "أرسل إشعارات WhatsApp عبر webhook الخاص بـ Zapier / Make / n8n — دون الحاجة إلى حساب مزوّد."
+    },
+    "connection": "الاتصال",
+    "targetUrl": "رابط Webhook",
+    "targetUrlHelp": "عنوان HTTPS يستقبل كل إشعار بصيغة JSON موقّعة (Zapier, Make, n8n…).",
+    "active": "مفعّل",
+    "delivering": "جارٍ التسليم",
+    "lastErrorBadge": "خطأ في التسليم",
+    "secret": "سرّ التوقيع",
+    "secretShownOnce": "انسخ هذا السرّ الآن — يُعرض مرة واحدة فقط. استخدمه للتحقق من ترويسة X-DentalPin-Signature في الأتمتة الخاصة بك.",
+    "rotateSecret": "تدوير السرّ",
+    "copy": "نسخ",
+    "copied": "تم النسخ إلى الحافظة",
+    "saved": "تم حفظ الإعدادات",
+    "saveError": "تعذّر حفظ الإعدادات",
+    "test": "اختبار التسليم",
+    "testHelp": "يرسل حمولة اختبار موقّعة إلى webhook الخاص بك لتتمكن من إعداد الأتمتة.",
+    "sendTest": "إرسال اختبار",
+    "testOk": "تم تسليم حمولة الاختبار",
+    "testFail": "فشل تسليم الاختبار"
+  }
+}

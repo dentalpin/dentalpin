@@ -49,11 +49,15 @@ async function copyValue() {
         <a
           v-if="hasValue && href"
           :href="href"
+          dir="ltr"
           class="text-primary-accent hover:underline"
         >
           {{ value }}
         </a>
-        <span v-else-if="hasValue">{{ value }}</span>
+        <span
+          v-else-if="hasValue"
+          dir="ltr"
+        >{{ value }}</span>
         <span
           v-else
           class="text-subtle"

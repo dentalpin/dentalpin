@@ -20,10 +20,10 @@ with it.
 | `purchase_order.status_changed` | `(clinic_id, order_id, supplier_id, from_status, status)` |
 | `purchase_order.received` | `(clinic_id, order_id, supplier_id, receipt_id, applied[{inventory_item_id, quantity}], fully_received)` |
 
-No bundled subscriber today. `inventory_reorder` (#227-4) is expected to
-subscribe to `purchase_order.received` to clear open replenishment
-suggestions; `supplier_ratings` (#227-5) is the venue for quality
-deductions derived from `applied`/quality.
+No bundled subscriber today. `inventory_reorder` (#227-4) does not
+subscribe: its suggestions are recomputed on demand from stock and open
+POs, so receipts self-correct the list. `supplier_ratings` (#227-5) is
+the venue for quality deductions derived from `applied`/quality.
 
 ## Subscribed
 

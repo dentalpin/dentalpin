@@ -2,11 +2,16 @@
 
 ## Unreleased
 
+- fix: getting-started rule links to `/settings/integrations/whatsapp-kapso` (was a 404).
+
 - fix(#326): the connect-WhatsApp onboarding rule carries `permission: 'whatsapp_kapso.settings.read'`.
 
 - fix(#126): de/it/pl locale parity with en (onboarding + message-type labels).
 
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
+
+- feat(i18n): Arabic (ar) locale for the module's frontend layer.
+
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
 - feat(#287): NOTIFICATION_TYPES gains invoice_sent/budget_reminder/recall_reminder (i18n labels); new getting-started rule warns when the clinic prefers WhatsApp but Kapso isn't connected.

@@ -238,7 +238,7 @@ async function handleReactivate(category: TreatmentCatalogCategory) {
 
               <!-- Row -->
               <template v-else>
-                <span class="w-8 text-caption text-subtle tabular-nums text-right">
+                <span class="w-8 text-caption text-subtle tabular-nums text-end">
                   {{ category.display_order }}
                 </span>
                 <span class="flex-1 truncate text-default">

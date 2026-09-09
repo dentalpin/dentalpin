@@ -6,7 +6,7 @@ This guide covers what happens the first time you open a fresh DentalPin install
 
 The first visit to a fresh installation opens the setup wizard. It takes about two minutes.
 
-1. **Administrator account** — your name, email and a password (8+ characters with letters and numbers). This is the clinic administrator. The **"I attend patients myself"** switch (on by default) marks you as a bookable professional — leave it on if you work alone, turn it off if you only manage the clinic.
+1. **Administrator account** — your name, email and a password (12+ characters with letters and numbers). This is the clinic administrator. The **"I attend patients myself"** switch (on by default) marks you as a bookable professional — leave it on if you work alone, turn it off if you only manage the clinic.
 2. **Clinic** — clinic name, **country** and tax id. The country sets timezone, currency and VAT for you (you can still change them under *Timezone and currency*). For Spain the wizard checks the NIF/CIF format and warns if the checksum looks wrong. The optional **Clinic address** block (street, postal code, city) fills in the address printed on budgets and invoices — filling it here checks off the *Clinic details* step right away.
 
 Press **Create my clinic**. DentalPin creates for you:

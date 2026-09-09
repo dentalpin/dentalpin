@@ -1165,7 +1165,7 @@ export interface NotificationTypeSettings {
   channels?: string[]
 }
 
-export type NotificationChannel = 'email' | 'whatsapp'
+export type NotificationChannel = 'email' | 'whatsapp' | 'sms'
 
 export interface ClinicNotificationSettings {
   id: string
@@ -1176,6 +1176,8 @@ export interface ClinicNotificationSettings {
   fallback_enabled: boolean
   /** Channels the app renders manual Send buttons for. */
   manual_channels: string[]
+  /** Max outbound SMS per clinic per day (sms_gateway budget). */
+  sms_daily_limit: number
   /** Computed server-side: channels whose adapter supports this clinic. */
   available_channels: string[]
   settings: Record<string, NotificationTypeSettings>
@@ -1187,6 +1189,7 @@ export interface ClinicNotificationSettingsUpdate {
   preferred_channel?: NotificationChannel
   fallback_enabled?: boolean
   manual_channels?: string[]
+  sms_daily_limit?: number
   settings?: Record<string, Partial<NotificationTypeSettings>>
 }
 

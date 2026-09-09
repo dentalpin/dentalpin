@@ -285,3 +285,20 @@ async def test_create_rejects_contact_without_supplier_row(
             SupplierItemCreate(supplier_id=contact.id, inventory_item_id=item.id),
         )
     assert exc.value.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_list_endpoint_returns_names(client, auth_headers, db_session, test_clinic: Clinic):
+    """HTTP list must serialise supplier/item names (regression: 500 on the joined rows)."""
+    _, supplier = await _make_supplier(db_session, test_clinic.id)
+    item = await _make_item(db_session, test_clinic.id)
+    await SupplierItemService.create_link(
+        db_session,
+        test_clinic.id,
+        SupplierItemCreate(supplier_id=supplier.id, inventory_item_id=item.id),
+    )
+    response = await client.get("/api/v1/supplier_items", headers=auth_headers)
+    assert response.status_code == 200, response.text
+    row = response.json()["data"][0]
+    assert row["supplier_name"] == "Acme Supplies"
+    assert row["item_name"] == "Composite A2"

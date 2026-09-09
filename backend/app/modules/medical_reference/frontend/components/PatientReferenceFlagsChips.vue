@@ -71,7 +71,7 @@ function flagTitle(flag: PatientFlag): string {
     >
       <UIcon
         name="i-lucide-alert-triangle"
-        class="w-3 h-3 mr-1 shrink-0"
+        class="w-3 h-3 me-1 shrink-0"
       />
       {{ flagTitle(flag) }}
     </UBadge>
