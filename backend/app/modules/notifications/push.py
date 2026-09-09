@@ -2,12 +2,21 @@
 
 from __future__ import annotations
 
-from uuid import UUID
+from datetime import UTC, datetime, timedelta
+from uuid import UUID, uuid4
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .models import PushSubscription
+from .models import PushSubscribeToken, PushSubscription
+
+
+def _require_https_endpoint(endpoint: str | None) -> None:
+    # The worker POSTs wherever it is pointed — refuse non-HTTPS so a
+    # staff typo (or worse) cannot turn the dispatcher into an
+    # intranet HTTP client.
+    if not endpoint or not endpoint.startswith("https://"):
+        raise ValueError("subscription endpoint must be an https:// URL")
 
 
 class PushSubscriptionService:
@@ -32,7 +41,8 @@ class PushSubscriptionService:
         ).scalar_one_or_none()
         if patient is None:
             raise LookupError("Patient not found")
-        if not endpoint or not isinstance(keys, dict) or "p256dh" not in keys or "auth" not in keys:
+        _require_https_endpoint(endpoint)
+        if not isinstance(keys, dict) or "p256dh" not in keys or "auth" not in keys:
             raise ValueError("subscription needs endpoint + keys.p256dh + keys.auth")
         existing = (
             await db.execute(
@@ -101,3 +111,75 @@ class PushSubscriptionService:
         """Subscriptions the adapter fans out to (existence = opted in;
         explicit opt-out lives on the preference row)."""
         return await PushSubscriptionService.list_for_patient(db, clinic_id, patient_id)
+
+
+class PushSubscribeTokenService:
+    """Single-use patient subscribe tokens (T6 patient flow).
+
+    Staff mints a token for a patient (``POST /push/subscribe-tokens``);
+    the patient's browser redeems it with its subscription
+    (``POST /push/patient-subscribe``). The token is the auth — random
+    UUID, 24 h expiry, single use — same shape as budget public links.
+    """
+
+    TOKEN_TTL_HOURS = 24
+
+    @staticmethod
+    async def mint(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> PushSubscribeToken:
+        from app.modules.patients.models import Patient
+
+        patient = (
+            await db.execute(
+                select(Patient).where(Patient.id == patient_id, Patient.clinic_id == clinic_id)
+            )
+        ).scalar_one_or_none()
+        if patient is None:
+            raise LookupError("Patient not found")
+        row = PushSubscribeToken(
+            clinic_id=clinic_id,
+            patient_id=patient_id,
+            token=uuid4(),
+            expires_at=datetime.now(UTC)
+            + timedelta(hours=PushSubscribeTokenService.TOKEN_TTL_HOURS),
+        )
+        db.add(row)
+        await db.flush()
+        return row
+
+    @staticmethod
+    async def redeem(
+        db: AsyncSession,
+        token: UUID,
+        endpoint: str,
+        keys: dict,
+        user_agent: str | None = None,
+    ) -> PushSubscription:
+        row = (
+            await db.execute(select(PushSubscribeToken).where(PushSubscribeToken.token == token))
+        ).scalar_one_or_none()
+        if row is None or row.used_at is not None or row.expires_at < datetime.now(UTC):
+            raise LookupError("Invalid or expired subscribe token")
+        subscription = await PushSubscriptionService.subscribe(
+            db, row.clinic_id, row.patient_id, endpoint, keys, user_agent=user_agent
+        )
+        row.used_at = datetime.now(UTC)
+        await db.flush()
+        return subscription
+
+    @staticmethod
+    async def validate(db: AsyncSession, token: UUID) -> dict | None:
+        """Token validity + consent-screen data, without consuming."""
+        from app.core.auth.models import Clinic
+
+        row = (
+            await db.execute(select(PushSubscribeToken).where(PushSubscribeToken.token == token))
+        ).scalar_one_or_none()
+        if row is None or row.used_at is not None or row.expires_at < datetime.now(UTC):
+            return None
+        clinic = (
+            await db.execute(select(Clinic.name).where(Clinic.id == row.clinic_id))
+        ).scalar_one_or_none()
+        return {
+            "clinic_name": clinic or "",
+            "expires_at": row.expires_at,
+        }

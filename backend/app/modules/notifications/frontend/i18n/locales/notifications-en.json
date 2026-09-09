@@ -1,12 +1,22 @@
 {
-  "notifications": {
-    "conversation": {
-      "title": "WhatsApp conversation",
-      "empty": "No messages yet.",
-      "placeholder": "Type a reply…",
-      "replyError": "Could not send the reply",
-      "windowClosed": "The 24h window is closed. Use a template to reopen the conversation.",
-      "send": "Send"
-    }
+ "notifications": {
+  "conversation": {
+   "title": "WhatsApp conversation",
+   "empty": "No messages yet.",
+   "placeholder": "Type a reply…",
+   "replyError": "Could not send the reply",
+   "windowClosed": "The 24h window is closed. Use a template to reopen the conversation.",
+   "send": "Send"
+  },
+  "pushSubscribe": {
+   "title": "Appointment reminders",
+   "clinicLine": "{clinic} would like to send you appointment reminders.",
+   "enable": "Enable notifications",
+   "enabled": "Notifications enabled. You can close this page.",
+   "denied": "Browser permission denied. Enable notifications in the browser settings and retry.",
+   "unsupported": "This browser does not support push notifications.",
+   "invalid": "This link is invalid or expired. Ask the clinic for a new one.",
+   "error": "Could not enable notifications. Retry."
   }
+ }
 }

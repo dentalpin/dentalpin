@@ -7,6 +7,16 @@
       "replyError": "Impossible d'envoyer la réponse",
       "windowClosed": "La fenêtre de 24h est fermée. Utilisez un modèle pour rouvrir la conversation.",
       "send": "Envoyer"
+    },
+    "pushSubscribe": {
+      "title": "Rappels de rendez-vous",
+      "clinicLine": "{clinic} souhaite vous envoyer des rappels de rendez-vous.",
+      "enable": "Activer les notifications",
+      "enabled": "Notifications activées. Vous pouvez fermer cette page.",
+      "denied": "Autorisation du navigateur refusée. Activez les notifications dans les paramètres du navigateur et réessayez.",
+      "unsupported": "Ce navigateur ne prend pas en charge les notifications push.",
+      "invalid": "Ce lien est invalide ou expiré. Demandez-en un nouveau à la clinique.",
+      "error": "Impossible d'activer les notifications. Réessayez."
     }
   }
 }

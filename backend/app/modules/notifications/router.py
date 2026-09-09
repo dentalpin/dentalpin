@@ -25,6 +25,8 @@ from .schemas import (
     ManualSendResponse,
     NotificationPreferenceResponse,
     NotificationPreferenceUpdate,
+    PushSubscribeTokenCreate,
+    PushSubscribeTokenResponse,
     PushSubscriptionCreate,
     PushSubscriptionResponse,
     SmtpSettingsResponse,
@@ -884,3 +886,32 @@ async def get_vapid_public_key(
             detail="WebPush is not configured (DENTALPIN_VAPID_PRIVATE_KEY)",
         )
     return ApiResponse(data={"public_key": public_key})
+
+
+# ============================================================================
+# Patient subscribe flow (T6): staff mints a single-use token here; the
+# patient's browser redeems it through the PUBLIC router
+# (./public_router.py) — no staff auth, the token is the auth, same
+# shape as budget public links (ADR 0006).
+# ============================================================================
+
+
+@router.post(
+    "/push/subscribe-tokens",
+    response_model=ApiResponse[PushSubscribeTokenResponse],
+    status_code=status.HTTP_201_CREATED,
+)
+async def mint_push_subscribe_token(
+    data: PushSubscribeTokenCreate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("notifications.push.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[PushSubscribeTokenResponse]:
+    """Mint a single-use subscribe token for a patient (staff only)."""
+    from .push import PushSubscribeTokenService
+
+    try:
+        row = await PushSubscribeTokenService.mint(db, ctx.clinic_id, data.patient_id)
+    except LookupError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
+    return ApiResponse(data=PushSubscribeTokenResponse.model_validate(row))

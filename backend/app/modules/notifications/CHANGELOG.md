@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- fix(#63 review): patient subscribe flow end to end — staff-minted
+  single-use tokens (`notif_0007`, 24 h expiry) redeemed by the
+  browser at `/p/push/<token>` (public page + `push-sw.js` service
+  worker, auth middleware exemption); async `webpush_async` send
+  (10 s timeout, 24 h TTL, 4 KB cap); `https://`-only endpoints;
+  settings-backed VAPID; `push:<n>` log recipients; top-level
+  `webpush` import with `status_code` pruning; model/migration index
+  parity; unused TS permission mirror dropped; cross-clinic tests.
 - fix: the "connect WhatsApp" / "configure SMS" hints on the settings page
   link to `/settings/integrations/<page>` (the registry route); the bare
   `/settings/<page>` form 404s.

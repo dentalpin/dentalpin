@@ -7,6 +7,16 @@
       "replyError": "Não foi possível enviar a resposta",
       "windowClosed": "A janela de 24 h está fechada. Use um modelo para reabrir a conversa.",
       "send": "Enviar"
+    },
+    "pushSubscribe": {
+      "title": "Lembretes de consultas",
+      "clinicLine": "{clinic} gostaria de lhe enviar lembretes de consultas.",
+      "enable": "Ativar notificações",
+      "enabled": "Notificações ativadas. Pode fechar esta página.",
+      "denied": "Permissão do navegador negada. Ative as notificações nas definições do navegador e tente novamente.",
+      "unsupported": "Este navegador não suporta notificações push.",
+      "invalid": "Este link é inválido ou expirou. Peça um novo à clínica.",
+      "error": "Não foi possível ativar as notificações. Tente novamente."
     }
   }
 }

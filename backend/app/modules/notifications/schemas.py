@@ -395,3 +395,36 @@ class PushSubscriptionResponse(BaseModel):
     updated_at: datetime
 
     model_config = {"from_attributes": True}
+
+
+class PushSubscribeTokenCreate(BaseModel):
+    """Staff mints a single-use subscribe token for a patient."""
+
+    patient_id: UUID
+
+
+class PushSubscribeTokenResponse(BaseModel):
+    """The token (shown once) — the patient redeems it with a browser."""
+
+    token: UUID
+    patient_id: UUID
+    expires_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class PushSubscribeTokenValidate(BaseModel):
+    """Token validity + consent-screen data (public, no auth)."""
+
+    valid: bool
+    clinic_name: str
+    expires_at: datetime
+    public_key: str
+
+
+class PushPatientRedeem(BaseModel):
+    """Browser redeems a path token with its subscription (no auth)."""
+
+    endpoint: str = Field(max_length=500)
+    keys: PushSubscriptionKeys
+    user_agent: str | None = Field(default=None, max_length=500)

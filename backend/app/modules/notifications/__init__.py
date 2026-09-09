@@ -14,6 +14,7 @@ from .models import (
     CommunicationMessage,
     NotificationPreference,
     NotificationTemplate,
+    PushSubscribeToken,
     PushSubscription,
 )
 from .router import router
@@ -98,11 +99,23 @@ class NotificationsModule(BaseModule):
             ClinicChannelSettings,
             ClinicSmtpSettings,
             CommunicationMessage,
+            PushSubscribeToken,
             PushSubscription,
         ]
 
     def get_router(self) -> APIRouter:
-        return router
+        from fastapi import APIRouter
+
+        from .public_router import public_router
+
+        # Compose authenticated + public sub-routers under one mount.
+        # Public endpoints sit under ``/public/push/...`` and carry no
+        # clinic-context dependency — the token is the auth (budget
+        # public_router precedent).
+        combined = APIRouter()
+        combined.include_router(router)
+        combined.include_router(public_router)
+        return combined
 
     def get_tools(self) -> list:
         from . import tools

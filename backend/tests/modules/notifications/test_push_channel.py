@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-import sys
-import types
 from uuid import uuid4
 
 import pytest
@@ -11,6 +9,7 @@ import pytest_asyncio
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.core.auth.models import Clinic
 from app.modules.notifications.channels import Channel, SendStatus, channel_registry
 from app.modules.notifications.channels.push_adapter import PushAdapter
@@ -26,13 +25,14 @@ async def push_adapter():
     adapter = PushAdapter()
     channel_registry.register(adapter)
     yield adapter
-    channel_registry.unregister("webpush")
+    # NOTE: no unregister — the adapter registers from on_activate in
+    # production; removing it here would break test ordering.
 
 
 @pytest.fixture()
 def vapid_env(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("DENTALPIN_VAPID_PRIVATE_KEY", _test_private_pem())
-    monkeypatch.setenv("DENTALPIN_VAPID_SUBJECT", "mailto:test@example.com")
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", _test_private_pem())
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_SUBJECT", "mailto:test@example.com")
 
 
 def _test_private_pem() -> str:
@@ -67,11 +67,9 @@ def test_vapid_public_key_derivation(vapid_env: None) -> None:
     import base64
 
     # Re-derive independently: the helper must match the raw uncompressed point.
-    import os
-
     from cryptography.hazmat.primitives import serialization
 
-    pem = os.environ["DENTALPIN_VAPID_PRIVATE_KEY"]
+    pem = settings.DENTALPIN_VAPID_PRIVATE_KEY
     key = serialization.load_pem_private_key(pem.encode(), password=None)
     nums = key.public_key().public_numbers()
     raw = b"\x04" + nums.x.to_bytes(32, "big") + nums.y.to_bytes(32, "big")
@@ -79,7 +77,7 @@ def test_vapid_public_key_derivation(vapid_env: None) -> None:
 
 
 def test_vapid_public_key_none_when_unconfigured(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.delenv("DENTALPIN_VAPID_PRIVATE_KEY", raising=False)
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", "")
     assert vapid_public_key() is None
 
 
@@ -87,30 +85,23 @@ def test_vapid_public_key_none_when_unconfigured(monkeypatch: pytest.MonkeyPatch
 
 
 def _stub_webpush(monkeypatch: pytest.MonkeyPatch, fail_with_status: int | None = None):
+    """Patch the top-level async import (hard dependency, no sys.modules stub)."""
+    import types
+
+    from pywebpush import WebPushException
+
+    import app.modules.notifications.channels.push_adapter as adapter_module
+
     calls: list[dict] = []
-    module = types.ModuleType("pywebpush")
 
-    class StubPushError(Exception):
-        def __init__(self, message: str = "", response=None) -> None:
-            super().__init__(message)
-            self.response = response
-
-    def webpush(subscription_info, data, vapid_private_key, vapid_claims):
-        calls.append(
-            {
-                "subscription_info": subscription_info,
-                "data": data,
-                "vapid_claims": vapid_claims,
-            }
-        )
+    async def webpush_async(subscription_info, **kwargs):
+        calls.append({"subscription_info": subscription_info, **kwargs})
         if fail_with_status is not None:
-            response = types.SimpleNamespace(status_code=fail_with_status)
-            raise StubPushError("gone", response=response)
-        return types.SimpleNamespace(status_code=201)
+            response = types.SimpleNamespace(status=fail_with_status, headers={})
+            raise WebPushException("gone", response=response)
+        return types.SimpleNamespace(status=201, headers={})
 
-    module.WebPushException = StubPushError
-    module.webpush = webpush
-    monkeypatch.setitem(sys.modules, "pywebpush", module)
+    monkeypatch.setattr(adapter_module, "webpush_async", webpush_async)
     return calls
 
 
@@ -119,9 +110,9 @@ async def test_adapter_supports_only_when_configured(
     test_clinic: Clinic, db_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     adapter = PushAdapter()
-    monkeypatch.delenv("DENTALPIN_VAPID_PRIVATE_KEY", raising=False)
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", "")
     assert await adapter.supports(db_session, test_clinic.id) is False
-    monkeypatch.setenv("DENTALPIN_VAPID_PRIVATE_KEY", "anything")
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", "anything")
     assert await adapter.supports(db_session, test_clinic.id) is True
 
 
@@ -156,6 +147,8 @@ async def test_adapter_sends_to_subscriptions(
     payload = json.loads(calls[0]["data"])
     assert payload == {"title": "Recordatorio", "body": "Su cita es mañana"}
     assert calls[0]["vapid_claims"] == {"sub": "mailto:test@example.com"}
+    assert calls[0]["ttl"] == 24 * 3600
+    assert calls[0]["timeout"] == 10.0
 
 
 @pytest.mark.asyncio
@@ -366,11 +359,118 @@ async def test_vapid_public_key_endpoint(
     test_clinic: Clinic,
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    monkeypatch.delenv("DENTALPIN_VAPID_PRIVATE_KEY", raising=False)
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", "")
     missing = await client.get("/api/v1/notifications/push/vapid-public-key", headers=auth_headers)
     assert missing.status_code == 503
 
-    monkeypatch.setenv("DENTALPIN_VAPID_PRIVATE_KEY", _test_private_pem())
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", _test_private_pem())
     present = await client.get("/api/v1/notifications/push/vapid-public-key", headers=auth_headers)
     assert present.status_code == 200
     assert len(present.json()["data"]["public_key"]) > 80
+
+
+# --- Patient subscribe flow + hardening --------------------------------------
+
+
+@pytest.mark.asyncio
+async def test_non_https_endpoint_422s(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic, test_patient: Patient
+) -> None:
+    response = await client.post(
+        "/api/v1/notifications/push/subscriptions",
+        json={
+            "patient_id": str(test_patient.id),
+            "endpoint": "http://10.0.0.5/worker",
+            "keys": {"p256dh": "p", "auth": "a"},
+        },
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_subscribe_token_flow(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", _test_private_pem())
+    minted = await client.post(
+        "/api/v1/notifications/push/subscribe-tokens",
+        json={"patient_id": str(test_patient.id)},
+        headers=auth_headers,
+    )
+    assert minted.status_code == 201, minted.text
+    token = minted.json()["data"]["token"]
+
+    # Validate without consuming.
+    validated = await client.get(f"/api/v1/notifications/public/push/subscribe/{token}")
+    assert validated.status_code == 200
+    assert validated.json()["data"]["valid"] is True
+    assert len(validated.json()["data"]["public_key"]) > 80
+
+    # Redeem with the browser subscription.
+    redeemed = await client.post(
+        f"/api/v1/notifications/public/push/subscribe/{token}",
+        json={
+            "endpoint": "https://push.example/patient-1",
+            "keys": {"p256dh": "p", "auth": "a"},
+        },
+    )
+    assert redeemed.status_code == 201, redeemed.text
+
+    # Single use: second redeem 404s, and so does validation now.
+    assert (
+        await client.post(
+            f"/api/v1/notifications/public/push/subscribe/{token}",
+            json={
+                "endpoint": "https://push.example/patient-2",
+                "keys": {"p256dh": "p", "auth": "a"},
+            },
+        )
+    ).status_code == 404
+    assert (
+        await client.get(f"/api/v1/notifications/public/push/subscribe/{token}")
+    ).status_code == 404
+
+    # Unknown token 404s.
+    assert (
+        await client.get(f"/api/v1/notifications/public/push/subscribe/{uuid4()}")
+    ).status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_cross_clinic_push_isolation(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+) -> None:
+    from app.core.auth.models import Clinic as ClinicModel
+
+    other = ClinicModel(
+        id=uuid4(),
+        name="Other Clinic",
+        tax_id="B99999991",
+        address={"street": "Calle Otra", "city": "Madrid"},
+        settings={"slot_duration_min": 15},
+    )
+    db_session.add(other)
+    await db_session.commit()
+
+    await _subscribe(db_session, test_clinic, test_patient)
+    # Another clinic sees nothing and deletes nothing.
+    assert (
+        await PushSubscriptionService.list_for_patient(db_session, other.id, test_patient.id) == []
+    )
+    assert (
+        await PushSubscriptionService.unsubscribe(
+            db_session,
+            other.id,
+            (
+                await PushSubscriptionService.list_for_patient(
+                    db_session, test_clinic.id, test_patient.id
+                )
+            )[0].id,
+        )
+        is False
+    )

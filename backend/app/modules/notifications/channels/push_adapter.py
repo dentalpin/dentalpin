@@ -1,6 +1,7 @@
 """Built-in WebPush adapter (browser push notifications).
 
-Delivers the ``push`` channel via the Web Push protocol (``pywebpush``):
+Delivers the ``push`` channel via the Web Push protocol (``pywebpush``,
+async path so one stalled push service never freezes the dispatcher):
 each of the patient's active subscriptions gets ``{"title", "body"}``.
 Endpoints answering 410/404 are pruned inline — dead browsers clean
 themselves up with no operator action. Contract: never raises for
@@ -13,6 +14,7 @@ import json
 import logging
 from uuid import UUID
 
+from pywebpush import WebPushException, webpush_async
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -22,6 +24,10 @@ from . import vapid as vapid_config
 from .base import AdapterResult, Channel, OutboundMessage, SendStatus
 
 logger = logging.getLogger(__name__)
+
+PUSH_TTL_SECONDS = 24 * 3600
+PUSH_MAX_BYTES = 4096
+PUSH_TIMEOUT_SECONDS = 10.0
 
 
 class PushAdapter:
@@ -67,19 +73,12 @@ class PushAdapter:
                 provider="webpush",
                 error_message="patient has no push subscriptions",
             )
-        try:
-            from pywebpush import webpush
-        except ImportError:
-            return AdapterResult(
-                status=SendStatus.FAILED,
-                provider="webpush",
-                error_message="pywebpush is not installed on the backend",
-            )
         payload = json.dumps({"title": msg.subject or msg.template_key, "body": body})
+        payload = _fit_payload(payload)
         sent, pruned = 0, 0
         for sub in subs:
             try:
-                webpush(
+                await webpush_async(
                     subscription_info={
                         "endpoint": sub.endpoint,
                         "keys": dict(sub.keys or {}),
@@ -87,14 +86,18 @@ class PushAdapter:
                     data=payload,
                     vapid_private_key=vapid_config.vapid_private_key(),
                     vapid_claims={"sub": vapid_config.vapid_subject()},
+                    ttl=PUSH_TTL_SECONDS,
+                    timeout=PUSH_TIMEOUT_SECONDS,
                 )
                 sent += 1
-            except Exception as exc:  # noqa: BLE001 — per-subscription best-effort
+            except WebPushException as exc:
                 if _is_gone(exc):
                     await db.delete(sub)
                     pruned += 1
                 else:
                     logger.warning("webpush send failed for %s: %s", sub.id, exc)
+            except Exception as exc:  # noqa: BLE001 — per-subscription best-effort
+                logger.warning("webpush send failed for %s: %s", sub.id, exc)
         await db.flush()
         if sent:
             return AdapterResult(status=SendStatus.SENT, provider="webpush")
@@ -109,8 +112,20 @@ class PushAdapter:
         )
 
 
-def _is_gone(exc: Exception) -> bool:
+def _fit_payload(payload: str) -> str:
+    """Cap the payload under 4 KB (push-service limit); truncate the body."""
+    raw = payload.encode("utf-8")
+    if len(raw) <= PUSH_MAX_BYTES:
+        return payload
+    data = json.loads(payload)
+    overflow = len(raw) - PUSH_MAX_BYTES
+    body = data.get("body", "")
+    cut = max(0, len(body.encode("utf-8")) - overflow - 3)
+    truncated = body.encode("utf-8")[:cut].decode("utf-8", "ignore") + "..."
+    data["body"] = truncated
+    return json.dumps(data)
+
+
+def _is_gone(exc: WebPushException) -> bool:
     """True for push-service responses meaning 'forget this subscription'."""
-    response = getattr(exc, "response", None)
-    status_code = getattr(response, "status_code", None)
-    return status_code in (404, 410)
+    return exc.status_code in (404, 410)

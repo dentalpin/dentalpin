@@ -58,9 +58,7 @@ export const PERMISSIONS = {
     logsRead: 'notifications.logs.read',
     send: 'notifications.send',
     settingsRead: 'notifications.settings.read',
-    settingsWrite: 'notifications.settings.write',
-    pushRead: 'notifications.push.read',
-    pushWrite: 'notifications.push.write'
+    settingsWrite: 'notifications.settings.write'
   },
   reports: {
     billingRead: 'reports.billing.read',

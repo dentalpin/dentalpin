@@ -7,6 +7,16 @@
       "replyError": "Nem sikerült elküldeni a választ",
       "windowClosed": "A 24 órás időablak lezárult. A beszélgetés újranyitásához használjon sablont.",
       "send": "Küldés"
+    },
+    "pushSubscribe": {
+      "title": "Időpont-emlékeztetők",
+      "clinicLine": "A(z) {clinic} időpont-emlékeztetőket szeretne küldeni Önnek.",
+      "enable": "Értesítések engedélyezése",
+      "enabled": "Az értesítések bekapcsolva. Bezárhatja ezt az oldalt.",
+      "denied": "A böngészőengedély megtagadva. Engedélyezze az értesítéseket a böngésző beállításaiban, majd próbálja újra.",
+      "unsupported": "Ez a böngésző nem támogatja a push értesítéseket.",
+      "invalid": "Ez a hivatkozás érvénytelen vagy lejárt. Kérjen újat a rendelőtől.",
+      "error": "Nem sikerült bekapcsolni az értesítéseket. Próbálja újra."
     }
   }
 }

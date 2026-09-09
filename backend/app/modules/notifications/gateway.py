@@ -620,8 +620,8 @@ class NotificationGateway:
                 # Viable when the patient holds at least one browser
                 # subscription; explicit push_enabled=False opts out (missing
                 # prefs row does not block, like email/WhatsApp). The row's
-                # to_address carries the patient email fallback — delivery
-                # itself fans out to subscriptions in the adapter.
+                # to_address is a count label — delivery itself fans out
+                # to subscriptions in the adapter.
                 from .push import PushSubscriptionService
 
                 if patient is None:
@@ -631,7 +631,7 @@ class NotificationGateway:
                     continue
                 if prefs is not None and not prefs.push_enabled:
                     continue
-                addr = (patient.email if patient else None) or to_address or f"push:{patient.id}"
+                addr = f"push:{len(subs)}"
                 return channel, addr, "template", None
         return None
 
