@@ -14,9 +14,16 @@ import json
 import logging
 from uuid import UUID
 
-from pywebpush import WebPushException, webpush_async
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+try:
+    # Hard dependency in production (locked in uv.lock); tolerant here
+    # so host tooling without the dep still imports the module.
+    from pywebpush import WebPushException, webpush_async
+except ImportError:  # pragma: no cover — host tooling without the dep
+    WebPushException = Exception  # type: ignore[assignment,misc]
+    webpush_async = None  # type: ignore[assignment]
 
 from app.modules.notifications.models import PushSubscription
 
@@ -73,6 +80,12 @@ class PushAdapter:
                 provider="webpush",
                 error_message="patient has no push subscriptions",
             )
+        if webpush_async is None:
+            return AdapterResult(
+                status=SendStatus.FAILED,
+                provider="webpush",
+                error_message="pywebpush is not installed on the backend",
+            )
         payload = json.dumps({"title": msg.subject or msg.template_key, "body": body})
         payload = _fit_payload(payload)
         sent, pruned = 0, 0
@@ -126,6 +139,6 @@ def _fit_payload(payload: str) -> str:
     return json.dumps(data)
 
 
-def _is_gone(exc: WebPushException) -> bool:
+def _is_gone(exc: BaseException) -> bool:
     """True for push-service responses meaning 'forget this subscription'."""
-    return exc.status_code in (404, 410)
+    return getattr(exc, "status_code", None) in (404, 410)
