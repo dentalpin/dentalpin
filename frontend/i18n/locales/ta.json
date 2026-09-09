@@ -35,6 +35,13 @@
     "menu": "மெனு",
     "openMenu": "மெனுவைத் திற",
     "close": "மூடு",
+    "sections": {
+      "clinical": "மருத்துவம்",
+      "lab": "ஆய்வகம்",
+      "financials": "நிதி",
+      "inventory": "சரக்கு",
+      "practice": "கிளினிக்"
+    },
     "toggleSidebar": "பக்கப்பட்டியை நிலைமாற்று",
     "documents": "ஆவணங்கள்"
   },

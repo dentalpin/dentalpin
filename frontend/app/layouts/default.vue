@@ -70,10 +70,20 @@ const settingsItem = computed(() => navigationItems.value.find(i => i.to === '/s
 const mainNavItems = computed(() => navigationItems.value.filter(i => i.to !== '/settings'))
 
 // Collapsible sidebar sections (issue #232): headers are expandable,
-// never links. Collapsed map persists for the session; every section
-// starts expanded. When the sidebar itself is collapsed, labels are
-// hidden anyway so items render flat as before.
-const collapsedSections = useState<Record<string, boolean>>('sidebar:nav:collapsed', () => ({}))
+// never links. Collapsed map persists in localStorage like the sidebar
+// itself (`sidebar:collapsed`); every section starts expanded. When the
+// sidebar itself is collapsed, labels are hidden anyway so items render
+// flat as before.
+const collapsedSections = useState<Record<string, boolean>>('sidebar:nav:collapsed', () => {
+  if (import.meta.client) {
+    try {
+      return JSON.parse(localStorage.getItem('sidebar:nav:collapsed') || '{}')
+    } catch {
+      return {}
+    }
+  }
+  return {}
+})
 const mainNavGroups = computed(() => groupNavigationItems(mainNavItems.value))
 // Flat entries (no section) for the drawer and the expanded sidebar;
 // the collapsed icon-only sidebar renders everything flat.
@@ -83,6 +93,9 @@ const sidebarItems = computed(
 )
 function toggleSection(key: string) {
   collapsedSections.value = { ...collapsedSections.value, [key]: !collapsedSections.value[key] }
+  if (import.meta.client) {
+    localStorage.setItem('sidebar:nav:collapsed', JSON.stringify(collapsedSections.value))
+  }
 }
 function sectionLabel(key: string): string {
   return t(`nav.sections.${key}`, key)
@@ -140,28 +153,15 @@ function isActive(to: string): boolean {
 
       <!-- Navigation -->
       <nav class="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
-        <NuxtLink
+        <NavRow
           v-for="item in sidebarItems"
           :key="item.to"
           :to="item.to"
-          class="group flex items-center gap-3 px-3 py-2 rounded-token-md text-ui transition-colors"
-          :class="[
-            isActive(item.to)
-              ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
-              : 'text-muted hover:bg-surface hover:text-default'
-          ]"
-        >
-          <UIcon
-            :name="item.icon"
-            class="w-[18px] h-[18px] shrink-0"
-          />
-          <span
-            v-if="!isSidebarCollapsed"
-            class="truncate"
-          >
-            {{ item.label }}
-          </span>
-        </NuxtLink>
+          :label="item.label"
+          :icon="item.icon"
+          :active="isActive(item.to)"
+          :hide-label="isSidebarCollapsed"
+        />
         <div
           v-for="group in mainNavGroups.groups"
           v-show="!isSidebarCollapsed"
@@ -171,10 +171,14 @@ function isActive(to: string): boolean {
           <button
             type="button"
             :aria-expanded="!collapsedSections[group.key]"
-            class="w-full flex items-center gap-2 px-3 pt-3 pb-1 text-caption text-subtle uppercase tracking-wide hover:text-default"
+            :aria-controls="`nav-section-${group.key}`"
+            class="w-full flex items-center gap-2 px-3 py-3 text-caption text-subtle uppercase tracking-wide hover:text-default"
             @click="toggleSection(group.key)"
           >
-            <span class="truncate">{{ sectionLabel(group.key) }}</span>
+            <span
+              :id="`nav-section-${group.key}-label`"
+              class="truncate"
+            >{{ sectionLabel(group.key) }}</span>
             <UIcon
               name="i-lucide-chevron-down"
               class="w-4 h-4 shrink-0 transition-transform"
@@ -183,27 +187,19 @@ function isActive(to: string): boolean {
           </button>
           <div
             v-show="!collapsedSections[group.key]"
+            :id="`nav-section-${group.key}`"
+            role="region"
+            :aria-labelledby="`nav-section-${group.key}-label`"
             class="space-y-1"
           >
-            <NuxtLink
+            <NavRow
               v-for="item in group.items"
               :key="item.to"
               :to="item.to"
-              class="group flex items-center gap-3 px-3 py-2 rounded-token-md text-ui transition-colors"
-              :class="[
-                isActive(item.to)
-                  ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
-                  : 'text-muted hover:bg-surface hover:text-default'
-              ]"
-            >
-              <UIcon
-                :name="item.icon"
-                class="w-[18px] h-[18px] shrink-0"
-              />
-              <span class="truncate">
-                {{ item.label }}
-              </span>
-            </NuxtLink>
+              :label="item.label"
+              :icon="item.icon"
+              :active="isActive(item.to)"
+            />
           </div>
         </div>
       </nav>
@@ -290,23 +286,15 @@ function isActive(to: string): boolean {
 
           <!-- Navigation -->
           <nav class="flex-1 px-2 py-2 space-y-1 overflow-y-auto">
-            <NuxtLink
+            <NavRow
               v-for="item in mainNavFlat"
               :key="item.to"
               :to="item.to"
-              class="group flex items-center gap-3 px-3 py-3 rounded-token-md text-ui transition-colors"
-              :class="[
-                isActive(item.to)
-                  ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
-                  : 'text-muted hover:bg-surface hover:text-default'
-              ]"
-            >
-              <UIcon
-                :name="item.icon"
-                class="w-5 h-5 shrink-0"
-              />
-              <span class="truncate">{{ item.label }}</span>
-            </NuxtLink>
+              :label="item.label"
+              :icon="item.icon"
+              :active="isActive(item.to)"
+              padded="roomy"
+            />
             <div
               v-for="group in mainNavGroups.groups"
               :key="group.key"
@@ -315,10 +303,14 @@ function isActive(to: string): boolean {
               <button
                 type="button"
                 :aria-expanded="!collapsedSections[group.key]"
-                class="w-full flex items-center gap-2 px-3 pt-3 pb-1 text-caption text-subtle uppercase tracking-wide"
+                :aria-controls="`nav-section-m-${group.key}`"
+                class="w-full flex items-center gap-2 px-3 py-3 text-caption text-subtle uppercase tracking-wide"
                 @click="toggleSection(group.key)"
               >
-                <span class="truncate">{{ sectionLabel(group.key) }}</span>
+                <span
+                  :id="`nav-section-m-${group.key}-label`"
+                  class="truncate"
+                >{{ sectionLabel(group.key) }}</span>
                 <UIcon
                   name="i-lucide-chevron-down"
                   class="w-4 h-4 shrink-0 transition-transform"
@@ -327,25 +319,20 @@ function isActive(to: string): boolean {
               </button>
               <div
                 v-show="!collapsedSections[group.key]"
+                :id="`nav-section-m-${group.key}`"
+                role="region"
+                :aria-labelledby="`nav-section-m-${group.key}-label`"
                 class="space-y-1"
               >
-                <NuxtLink
+                <NavRow
                   v-for="item in group.items"
                   :key="item.to"
                   :to="item.to"
-                  class="group flex items-center gap-3 px-3 py-3 rounded-token-md text-ui transition-colors"
-                  :class="[
-                    isActive(item.to)
-                      ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
-                      : 'text-muted hover:bg-surface hover:text-default'
-                  ]"
-                >
-                  <UIcon
-                    :name="item.icon"
-                    class="w-5 h-5 shrink-0"
-                  />
-                  <span class="truncate">{{ item.label }}</span>
-                </NuxtLink>
+                  :label="item.label"
+                  :icon="item.icon"
+                  :active="isActive(item.to)"
+                  padded="roomy"
+                />
               </div>
             </div>
           </nav>

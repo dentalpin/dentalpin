@@ -35,6 +35,13 @@
     "menu": "Menü",
     "openMenu": "Menü öffnen",
     "close": "Schließen",
+    "sections": {
+      "clinical": "Klinisch",
+      "lab": "Labor",
+      "financials": "Finanzen",
+      "inventory": "Inventar",
+      "practice": "Praxis"
+    },
     "toggleSidebar": "Seitenleiste umschalten",
     "documents": "Dokumente"
   },
