@@ -229,16 +229,32 @@ export function useTreatmentCatalog() {
   }
 
   /**
+   * Get treatment label directly from treatment object, prioritizing frontend i18n translations.
+   */
+  function getTreatmentLabel(
+    treatment: OdontogramTreatment | undefined,
+    overrideLocale?: string
+  ): string {
+    if (!treatment) return ''
+    const { t, te } = useI18n()
+    const codeKey = `odontogram.treatments.items.${treatment.internal_code}`
+    if (te(codeKey)) {
+      return t(codeKey)
+    }
+    const loc = overrideLocale || locale.value
+    return treatment.names[loc] || treatment.names.es || treatment.names.en || treatment.internal_code
+  }
+
+  /**
    * Get treatment name for display.
    */
   function getTreatmentName(
     treatmentType: string,
     overrideLocale?: string
   ): string {
-    const loc = overrideLocale || locale.value
     const treatment = getTreatmentByType(treatmentType)
     if (treatment) {
-      return treatment.names[loc] || treatment.names.es || treatment.names.en || treatmentType
+      return getTreatmentLabel(treatment, overrideLocale)
     }
     return treatmentType
   }
@@ -286,6 +302,12 @@ export function useTreatmentCatalog() {
   }
 
   function getCategoryLabel(categoryKey: string, overrideLocale?: string): string {
+    const { te, t } = useI18n()
+    const i18nKey = `odontogram.treatments.categories.${categoryKey}`
+    if (te(i18nKey)) {
+      return t(i18nKey)
+    }
+
     const loc = overrideLocale || locale.value
     if (useCatalog.value) {
       const first = treatmentsByCategory.value[categoryKey]?.[0]
@@ -296,7 +318,7 @@ export function useTreatmentCatalog() {
 
     // Fallback to constants
     const category = TREATMENT_CATEGORIES.find(c => c.key === categoryKey)
-    return category?.labelKey || categoryKey
+    return category?.labelKey ? t(category.labelKey) : categoryKey
   }
 
   function isCategoryDiagnostic(categoryKey: TreatmentClinicalCategory): boolean {
@@ -344,6 +366,7 @@ export function useTreatmentCatalog() {
     getTreatmentsForCategory,
     getTreatmentByType,
     getEffectiveTreatmentType,
+    getTreatmentLabel,
     getTreatmentName,
     getTreatmentPrice,
     treatmentRequiresSurfaces,

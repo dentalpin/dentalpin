@@ -203,7 +203,7 @@ function globalItemToBarItem(
   // type — fall back to the neutral 'other' icon/color; labels come from
   // the catalog names, which real catalog items always carry.
   const oType = c.odontogram_treatment_type ?? 'other'
-  const label = c.names[locale.value] || c.names.es || c.names.en || c.internal_code
+  const label = treatmentCatalog.getTreatmentLabel(c)
   const price = c.default_price != null ? Number(c.default_price) : Number.NaN
   const tooltip = Number.isFinite(price)
     ? `${label}  •  ${Number.isInteger(price) ? String(price) : price.toFixed(2)}`
@@ -238,7 +238,7 @@ const currentTreatments = computed<TreatmentBarItem[]>(() => {
         // Real catalog items carry localized names; fallback items have names
         // set to the raw type string, so translate via i18n instead.
         const label = isRealCatalogItem
-          ? (c.names[locale.value] || c.names.es || c.names.en || oType)
+          ? treatmentCatalog.getTreatmentLabel(c)
           : t(`odontogram.treatments.types.${oType}`, oType)
         const rangeLabel = formatSurfaceRangeLabel(c.surface_prices)
         const tooltip = rangeLabel
@@ -310,7 +310,7 @@ const showGlobalsFilter = computed(() =>
 function matchesGlobalsFilter(c: OdontogramTreatment): boolean {
   const query = globalsFilter.value.trim().toLowerCase()
   if (!query) return true
-  const name = c.names[locale.value] || c.names.es || c.names.en || ''
+  const name = treatmentCatalog.getTreatmentLabel(c)
   return name.toLowerCase().includes(query) || c.internal_code.toLowerCase().includes(query)
 }
 
@@ -782,7 +782,7 @@ function handleCreatePlan() {
       >
         <div class="arch-picker-label">
           {{ t('odontogram.globals.archPickerTitle', {
-            name: archPickerItem.names[locale] || archPickerItem.names.es || archPickerItem.internal_code
+            name: treatmentCatalog.getTreatmentLabel(archPickerItem)
           }) }}
         </div>
         <div class="arch-picker-buttons">
