@@ -33,6 +33,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.auth.models import Clinic, ClinicMembership, User
+from app.core.auth.rbac import resolve_role_id
 from app.core.auth.service import hash_password
 from app.database import async_session_maker
 from app.modules.agenda.models import Appointment
@@ -203,6 +204,9 @@ async def seed_clinic(db: AsyncSession) -> Clinic:
 
 async def seed_users(db: AsyncSession, password_hash: str) -> list[User]:
     """Create demo users with their clinic memberships."""
+    from app.core.auth.seed_rbac import seed_rbac
+
+    await seed_rbac(db)
     users: list[User] = []
     for user_data in get_users_data():
         user = User(
@@ -224,6 +228,7 @@ async def seed_users(db: AsyncSession, password_hash: str) -> list[User]:
                 user_id=user_data["id"],
                 clinic_id=CLINIC_ID,
                 role=user_data["role"],
+                role_id=await resolve_role_id(db, CLINIC_ID, user_data["role"]),
             )
         )
         print(f"  Created user: {user.email} ({user_data['role']})")

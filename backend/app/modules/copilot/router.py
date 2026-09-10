@@ -242,12 +242,11 @@ async def send_message(
     body: MessageCreate,
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("copilot.chat"))],
-    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> StreamingResponse:
     clinic_id, user_id, role = ctx.clinic_id, ctx.user_id, ctx.role
-    permissions = await granted_permissions_for(db, clinic_id, role)
 
     async def factory(db):
+        permissions = await granted_permissions_for(db, clinic_id, role)
         loaded = await _load_for_turn(db, clinic_id, conversation_id, user_id)
         if loaded is None:
             raise HTTPException(status_code=404, detail="Conversation not found")
@@ -274,13 +273,12 @@ async def confirm_tool(
     body: ConfirmRequest,
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("copilot.chat"))],
-    db: Annotated[AsyncSession, Depends(get_db)],
 ) -> StreamingResponse:
     clinic_id, user_id, role = ctx.clinic_id, ctx.user_id, ctx.role
-    permissions = await granted_permissions_for(db, clinic_id, role)
     approve = body.decision == "confirm"
 
     async def factory(db):
+        permissions = await granted_permissions_for(db, clinic_id, role)
         loaded = await _load_for_turn(db, clinic_id, conversation_id, user_id)
         if loaded is None:
             raise HTTPException(status_code=404, detail="Conversation not found")

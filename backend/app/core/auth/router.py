@@ -34,7 +34,6 @@ from .permissions import (
     PROFESSIONAL_ROLES,
     ROLES,
     expand_permissions,
-    get_role_permissions,
 )
 from .rbac import granted_permissions_for, resolve_role_id
 from .schemas import (
@@ -393,18 +392,16 @@ async def get_me(
         for m in memberships
     ]
 
-    # Compute effective permissions (use first clinic's role for MVP)
+    # Compute effective permissions (use first clinic's role for MVP).
+    # granted_permissions_for is flag-aware (DB when RBAC_FROM_DB is on,
+    # static merged map otherwise) — one call covers both.
     permissions: list[str] = []
     if memberships:
         role = memberships[0].role
         clinic_id = memberships[0].clinic.id
         all_perms = module_registry.get_all_permissions() + CORE_PERMISSIONS
-        if settings.RBAC_FROM_DB:
-            role_perms = await granted_permissions_for(db, clinic_id, role)
-            permissions = expand_permissions(role_perms, all_perms)
-        else:
-            role_perms = get_role_permissions(role)
-            permissions = expand_permissions(role_perms, all_perms)
+        role_perms = await granted_permissions_for(db, clinic_id, role)
+        permissions = expand_permissions(role_perms, all_perms)
 
     return ApiResponse(
         data=MeResponse(

@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.config import settings
+from app.core.auth.rbac import has_permission_for
 from app.core.log_context import set_request_context
 from app.database import get_db
 
@@ -158,8 +159,6 @@ def require_permission(permission: str) -> Callable:
         ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
         db: Annotated[AsyncSession, Depends(get_db)],
     ) -> None:
-        from app.core.auth.rbac import has_permission_for
-
         if not await has_permission_for(db, ctx.clinic_id, ctx.role, permission):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,

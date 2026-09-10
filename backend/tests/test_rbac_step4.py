@@ -17,7 +17,7 @@ from uuid import uuid4
 
 import pytest
 from fastapi import HTTPException
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from app.config import settings
 from app.core.auth.dependencies import ClinicContext
@@ -386,17 +386,29 @@ async def test_delete_role_blocked_by_role_id_holders(
             headers=auth_headers,
         )
     ).json()["data"]
-    user_id = (await client.get("/api/v1/auth/me", headers=auth_headers)).json()["data"]["user"][
-        "id"
-    ]
-    db_session.add(
-        ClinicMembership(
-            id=uuid4(),
-            user_id=user_id,
-            clinic_id=test_clinic.id,
-            role="receptionist",
-            role_id=created["id"],
+    # The FK holder is a SECOND user: adding a second membership row for
+    # the signed-in admin would make get_clinic_context resolve either
+    # row (unordered memberships[0]) and flake 403 vs 409.
+    holder = (
+        await client.post(
+            "/api/v1/auth/users",
+            json={
+                "email": "fkholder@test.clinic",
+                "password": "Str0ngPassw0rd!!",
+                "first_name": "F",
+                "last_name": "K",
+                "role": "receptionist",
+            },
+            headers=auth_headers,
         )
+    ).json()["data"]
+    await db_session.execute(
+        update(ClinicMembership)
+        .where(
+            ClinicMembership.clinic_id == test_clinic.id,
+            ClinicMembership.user_id == holder["id"],
+        )
+        .values(role_id=created["id"])
     )
     await db_session.commit()
     resp = await client.delete(f"/api/v1/roles/{created['id']}", headers=auth_headers)
