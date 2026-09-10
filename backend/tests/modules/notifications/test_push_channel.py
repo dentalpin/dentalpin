@@ -112,7 +112,7 @@ async def test_adapter_supports_only_when_configured(
     adapter = PushAdapter()
     monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", "")
     assert await adapter.supports(db_session, test_clinic.id) is False
-    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", "anything")
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", _test_private_pem())
     assert await adapter.supports(db_session, test_clinic.id) is True
 
 
