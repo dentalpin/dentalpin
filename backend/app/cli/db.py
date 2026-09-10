@@ -138,13 +138,14 @@ def _dsn_and_env(dsn: str) -> tuple[str, dict]:
     """Split the password out of the DSN into ``PGPASSWORD`` so the
     secret never appears in the process list (``ps``)."""
     import os
-    from urllib.parse import urlparse, urlunparse
+    from urllib.parse import unquote, urlparse, urlunparse
 
     parts = urlparse(dsn)
     env = dict(os.environ)
     password = parts.password or ""
     if password:
-        env["PGPASSWORD"] = password
+        # urlparse yields the percent-encoded form; libpq decodes.
+        env["PGPASSWORD"] = unquote(password)
         netloc = parts.hostname or ""
         if parts.port:
             netloc += f":{parts.port}"
@@ -159,7 +160,8 @@ def dump_database(dsn: str, target: Path) -> str | None:
     else a human-readable error (missing binary, failure, empty output).
 
     Streams to disk (never buffers the dump in memory) and passes the
-    password via ``PGPASSWORD``, never the command line.
+    password via ``PGPASSWORD``, never the command line. A failed run
+    never leaves a partial file behind.
     """
     if shutil.which("pg_dump") is None:
         return "pg_dump not found on PATH; cannot back up the database"
@@ -174,20 +176,32 @@ def dump_database(dsn: str, target: Path) -> str | None:
                 env=env,
             )
     except subprocess.TimeoutExpired:
+        target.unlink(missing_ok=True)
         return "pg_dump timed out after 3600 seconds"
     if proc.returncode != 0:
+        target.unlink(missing_ok=True)
         return f"pg_dump failed: {proc.stderr.decode(errors='replace').strip()}"
     if target.stat().st_size == 0:
+        target.unlink(missing_ok=True)
         return "pg_dump produced an empty backup"
     return None
 
 
 def snapshot_storage(storage_root: Path, target: Path, out_dir: Path) -> None:
     """Tarball the storage volume, excluding the backup destination
-    itself (it may live inside the volume — archiving it would recurse)."""
+    itself (it may live inside the volume at any depth — archiving it
+    would recurse)."""
+    out_resolved = out_dir.resolve()
     with tarfile.open(target, "w:gz") as tar:
         for child in sorted(storage_root.iterdir()):
-            if child == out_dir or child.name == "backups":
+            try:
+                # Skip the child that is (or contains) the backup
+                # destination at any depth.
+                out_resolved.relative_to(child.resolve())
+                continue
+            except ValueError:
+                pass
+            if child.name == "backups":
                 continue
             tar.add(child, arcname=child.name)
 

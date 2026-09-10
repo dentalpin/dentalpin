@@ -63,8 +63,10 @@ def test_dump_database_failure(monkeypatch, tmp_path: Path) -> None:
         "subprocess.run",
         lambda *a, **k: subprocess.CompletedProcess(a[0], 1, b"", b"boom"),
     )
-    error = db_cli.dump_database("postgresql://x", tmp_path / "full.dump")
+    target = tmp_path / "full.dump"
+    error = db_cli.dump_database("postgresql://x", target)
     assert error is not None and "boom" in error
+    assert not target.exists()
 
 
 def test_dump_database_timeout(monkeypatch, tmp_path: Path) -> None:
@@ -74,8 +76,10 @@ def test_dump_database_timeout(monkeypatch, tmp_path: Path) -> None:
         raise subprocess.TimeoutExpired(cmd=a[0], timeout=3600)
 
     monkeypatch.setattr("subprocess.run", _hang)
-    error = db_cli.dump_database("postgresql://x", tmp_path / "full.dump")
+    target = tmp_path / "full.dump"
+    error = db_cli.dump_database("postgresql://x", target)
     assert error is not None and "timed out" in error
+    assert not target.exists()
 
 
 def test_snapshot_storage_skips_backups_dir(tmp_path: Path) -> None:
@@ -101,6 +105,23 @@ def test_snapshot_storage_skips_out_dir_inside_root(tmp_path: Path) -> None:
     names = tarfile.open(target).getnames()
     assert "documents" in names
     assert "nightly" not in names
+
+
+def test_snapshot_storage_skips_nested_out_dir(tmp_path: Path) -> None:
+    (tmp_path / "documents").mkdir()
+    nested = tmp_path / "x" / "y"
+    nested.mkdir(parents=True)
+    (nested / "full_x.dump").write_bytes(b"x")
+    target = nested / "storage.tar.gz"
+    db_cli.snapshot_storage(tmp_path, target, nested)
+    names = tarfile.open(target).getnames()
+    assert "documents" in names
+    assert "x" not in names
+
+
+def test_cmd_backup_rejects_keep_zero(tmp_path: Path) -> None:
+    code = db_cli._cmd_backup(_args(out_dir=str(tmp_path), keep=0))
+    assert code == 2
 
 
 def test_cmd_backup_missing_pg_dump(monkeypatch, tmp_path: Path, capsys) -> None:
