@@ -179,6 +179,7 @@
       "name": "notifications",
       "path": "/module_layers/notifications/frontend",
       "routes": [
+        "/p/push/:token",
         "/settings/notifications"
       ]
     },

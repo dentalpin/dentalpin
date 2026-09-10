@@ -28,10 +28,12 @@ async function apiBase(): Promise<string> {
   return import.meta.server ? config.apiBaseUrlServer : config.public.apiBaseUrl
 }
 
-function urlsafeToUint8(base64url: string): Uint8Array {
+function urlsafeToUint8(base64url: string): Uint8Array<ArrayBuffer> {
   const padded = base64url.replace(/-/g, '+').replace(/_/g, '/')
   const raw = atob(padded + '='.repeat((4 - (padded.length % 4)) % 4))
-  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)))
+  const out = new Uint8Array(new ArrayBuffer(raw.length))
+  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i)!
+  return out
 }
 
 onMounted(async () => {
