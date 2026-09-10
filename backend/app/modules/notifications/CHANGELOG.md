@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- fix(#63 review round 2): cached `Vapid` instance (PEM strings fail
+  deserialization); schema-level `https://` validators; hard
+  `webpush` import; atomic single-use redeem returning
+  `{subscribed: true}`; budget-mirror rate limits on the public
+  router; 3990-byte wire cap; SW ready-gate + payload URL
+  forwarding; HTTP cross-clinic + pruning-isolation tests.
 - fix(#63 review): patient subscribe flow end to end — staff-minted
   single-use tokens (`notif_0007`, 24 h expiry) redeemed by the
   browser at `/p/push/<token>` (public page + `push-sw.js` service
