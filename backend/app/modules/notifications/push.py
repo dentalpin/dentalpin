@@ -154,15 +154,46 @@ class PushSubscribeTokenService:
         keys: dict,
         user_agent: str | None = None,
     ) -> PushSubscription:
+        from sqlalchemy import update
+
+        from app.modules.patients.models import Patient
+
+        _require_https_endpoint(endpoint)
+        if not isinstance(keys, dict) or "p256dh" not in keys or "auth" not in keys:
+            raise ValueError("subscription needs keys.p256dh + keys.auth")
+        # Resolve first (read-only): a malformed subscription must not
+        # burn the single-use token.
         row = (
             await db.execute(select(PushSubscribeToken).where(PushSubscribeToken.token == token))
         ).scalar_one_or_none()
         if row is None or row.used_at is not None or row.expires_at < datetime.now(UTC):
             raise LookupError("Invalid or expired subscribe token")
+        patient = (
+            await db.execute(
+                select(Patient).where(
+                    Patient.id == row.patient_id, Patient.clinic_id == row.clinic_id
+                )
+            )
+        ).scalar_one_or_none()
+        if patient is None:
+            raise LookupError("Invalid or expired subscribe token")
+        # Atomic single-use: exactly one concurrent redeem wins.
+        consumed = (
+            await db.execute(
+                update(PushSubscribeToken)
+                .where(
+                    PushSubscribeToken.id == row.id,
+                    PushSubscribeToken.used_at.is_(None),
+                )
+                .values(used_at=datetime.now(UTC))
+                .returning(PushSubscribeToken.id)
+            )
+        ).scalar_one_or_none()
+        if consumed is None:
+            raise LookupError("Invalid or expired subscribe token")
         subscription = await PushSubscriptionService.subscribe(
             db, row.clinic_id, row.patient_id, endpoint, keys, user_agent=user_agent
         )
-        row.used_at = datetime.now(UTC)
         await db.flush()
         return subscription
 

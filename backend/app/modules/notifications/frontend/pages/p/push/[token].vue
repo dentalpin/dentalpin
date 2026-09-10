@@ -69,6 +69,7 @@ async function enable() {
       `${base}/api/v1/notifications/public/push/subscribe/${token.value}`
     )
     const registration = await navigator.serviceWorker.register('/push-sw.js')
+    await navigator.serviceWorker.ready
     const subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: urlsafeToUint8(info.data.public_key)

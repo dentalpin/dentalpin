@@ -51,6 +51,25 @@ def _parsed_private_key(pem: str):  # noqa: ANN001, ANN202 — cryptography type
     return serialization.load_pem_private_key(pem.encode(), password=None)
 
 
+@lru_cache(maxsize=1)
+def vapid_instance():  # noqa: ANN202 — py_vapid types
+    """Cached ``Vapid`` instance for sending (parsed once).
+
+    Returns None when unconfigured or unparsable. Never pass the raw
+    PEM string to pywebpush — ``Vapid.from_string`` only accepts
+    base64url and raises on PEM (every send would fail silently).
+    """
+    from py_vapid import Vapid
+
+    pem, _subject = _settings()
+    if not pem:
+        return None
+    try:
+        return Vapid.from_pem(pem.encode())
+    except Exception:
+        return None
+
+
 def vapid_public_key() -> str | None:
     """Derive the base64url public key for ``PushManager.subscribe``.
 

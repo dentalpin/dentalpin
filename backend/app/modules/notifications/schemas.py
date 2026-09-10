@@ -375,11 +375,26 @@ class PushSubscriptionKeys(BaseModel):
     auth: str = Field(max_length=100)
 
 
+def _https_endpoint(value: str) -> str:
+    # The worker POSTs wherever it is pointed — refuse non-HTTPS so a
+    # staff typo (or worse) cannot turn the dispatcher into an
+    # intranet HTTP client. Mirrors the service-layer check.
+    if not value.startswith("https://"):
+        raise ValueError("subscription endpoint must be an https:// URL")
+    return value
+
+
 class PushSubscriptionCreate(BaseModel):
     """Register (or refresh) a patient's browser subscription."""
 
     patient_id: UUID
     endpoint: str = Field(max_length=500)
+
+    @field_validator("endpoint")
+    @classmethod
+    def _endpoint_https(cls, value: str) -> str:
+        return _https_endpoint(value)
+
     keys: PushSubscriptionKeys
     user_agent: str | None = Field(default=None, max_length=500)
 
@@ -426,5 +441,17 @@ class PushPatientRedeem(BaseModel):
     """Browser redeems a path token with its subscription (no auth)."""
 
     endpoint: str = Field(max_length=500)
+
+    @field_validator("endpoint")
+    @classmethod
+    def _endpoint_https(cls, value: str) -> str:
+        return _https_endpoint(value)
+
     keys: PushSubscriptionKeys
     user_agent: str | None = Field(default=None, max_length=500)
+
+
+class PushSubscribed(BaseModel):
+    """Minimal redeem receipt — no ids leak to the token holder."""
+
+    subscribed: bool = True

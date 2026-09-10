@@ -149,6 +149,20 @@ async def test_adapter_sends_to_subscriptions(
     assert calls[0]["vapid_claims"] == {"sub": "mailto:test@example.com"}
     assert calls[0]["ttl"] == 24 * 3600
     assert calls[0]["timeout"] == 10.0
+    # The VAPID auth must be a parsed instance, never the raw PEM
+    # string (pywebpush deserializes strings as base64url and fails).
+    from py_vapid import Vapid
+
+    assert isinstance(calls[0]["vapid_private_key"], Vapid)
+
+
+@pytest.mark.asyncio
+async def test_adapter_supports_depends_on_parsable_key(
+    test_clinic: Clinic, db_session: AsyncSession, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    adapter = PushAdapter()
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", "not-a-key")
+    assert await adapter.supports(db_session, test_clinic.id) is False
 
 
 @pytest.mark.asyncio
@@ -420,6 +434,7 @@ async def test_subscribe_token_flow(
         },
     )
     assert redeemed.status_code == 201, redeemed.text
+    assert redeemed.json()["data"] == {"subscribed": True}
 
     # Single use: second redeem 404s, and so does validation now.
     assert (
@@ -439,6 +454,34 @@ async def test_subscribe_token_flow(
     assert (
         await client.get(f"/api/v1/notifications/public/push/subscribe/{uuid4()}")
     ).status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_public_redeem_rejects_http_endpoint(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(settings, "DENTALPIN_VAPID_PRIVATE_KEY", _test_private_pem())
+    minted = await client.post(
+        "/api/v1/notifications/push/subscribe-tokens",
+        json={"patient_id": str(test_patient.id)},
+        headers=auth_headers,
+    )
+    token = minted.json()["data"]["token"]
+    bad = await client.post(
+        f"/api/v1/notifications/public/push/subscribe/{token}",
+        json={
+            "endpoint": "http://10.0.0.5/worker",
+            "keys": {"p256dh": "p", "auth": "a"},
+        },
+    )
+    assert bad.status_code == 422
+    # The rejected redeem must not burn the token.
+    again = await client.get(f"/api/v1/notifications/public/push/subscribe/{token}")
+    assert again.status_code == 200
 
 
 @pytest.mark.asyncio
@@ -473,4 +516,113 @@ async def test_cross_clinic_push_isolation(
             )[0].id,
         )
         is False
+    )
+
+
+@pytest.mark.asyncio
+async def test_cross_clinic_push_http_404s(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+) -> None:
+    from app.core.auth.models import Clinic as ClinicModel
+
+    other = ClinicModel(
+        id=uuid4(),
+        name="Other Clinic",
+        tax_id="B99999992",
+        address={"street": "Calle Otra", "city": "Madrid"},
+        settings={"slot_duration_min": 15},
+    )
+    db_session.add(other)
+    other_patient = Patient(
+        clinic_id=other.id, first_name="Otra", last_name="Clinica", status="active"
+    )
+    db_session.add(other_patient)
+    await db_session.commit()
+
+    # Other clinic's patient is not referenceable from here.
+    assert (
+        await client.post(
+            "/api/v1/notifications/push/subscriptions",
+            json={
+                "patient_id": str(other_patient.id),
+                "endpoint": "https://push.example/x",
+                "keys": {"p256dh": "p", "auth": "a"},
+            },
+            headers=auth_headers,
+        )
+    ).status_code == 404
+
+    # A's subscription row cannot be deleted through any B-scoped path:
+    # delete resolves the row in the caller's clinic first.
+    sub = await _subscribe(db_session, test_clinic, test_patient)
+    await db_session.commit()
+    assert (
+        await client.delete(
+            f"/api/v1/notifications/push/subscriptions/{sub.id}", headers=auth_headers
+        )
+    ).status_code == 204
+
+
+@pytest.mark.asyncio
+async def test_pruning_never_touches_other_clinic(
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    monkeypatch: pytest.MonkeyPatch,
+    vapid_env: None,
+) -> None:
+    from app.core.auth.models import Clinic as ClinicModel
+    from app.modules.notifications.channels.base import OutboundMessage
+
+    other = ClinicModel(
+        id=uuid4(),
+        name="Other Clinic",
+        tax_id="B99999993",
+        address={"street": "Calle Otra", "city": "Madrid"},
+        settings={"slot_duration_min": 15},
+    )
+    db_session.add(other)
+    await db_session.commit()
+
+    # Same endpoint string, two clinic scopes = two rows.
+    await _subscribe(db_session, test_clinic, test_patient)
+    other_patient = Patient(
+        clinic_id=other.id, first_name="Otra", last_name="Clinica", status="active"
+    )
+    db_session.add(other_patient)
+    await db_session.commit()
+    await PushSubscriptionService.subscribe(
+        db_session,
+        other.id,
+        other_patient.id,
+        "https://push.example/sub-1",
+        {"p256dh": "p256dh-key", "auth": "auth-secret"},
+    )
+    await db_session.commit()
+
+    _stub_webpush(monkeypatch, fail_with_status=410)
+    result = await PushAdapter().send(
+        db_session,
+        OutboundMessage(
+            channel=Channel.PUSH,
+            to_address="push",
+            clinic_id=test_clinic.id,
+            template_key="appointment_reminder",
+            patient_id=test_patient.id,
+            body_text="Hola",
+        ),
+    )
+    assert result.status == SendStatus.FAILED
+    assert (
+        await PushSubscriptionService.list_for_patient(db_session, test_clinic.id, test_patient.id)
+        == []
+    )
+    # B's row survives A's prune.
+    assert (
+        len(await PushSubscriptionService.list_for_patient(db_session, other.id, other_patient.id))
+        == 1
     )

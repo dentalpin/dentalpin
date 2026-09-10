@@ -33,7 +33,9 @@ from .base import AdapterResult, Channel, OutboundMessage, SendStatus
 logger = logging.getLogger(__name__)
 
 PUSH_TTL_SECONDS = 24 * 3600
-PUSH_MAX_BYTES = 4096
+# Wire-format cap: aes128gcm adds ~100 bytes over the JSON, so cap the
+# plaintext at 3990 to stay under the 4 KB push-service limit.
+PUSH_MAX_BYTES = 3990
 PUSH_TIMEOUT_SECONDS = 10.0
 
 
@@ -45,8 +47,10 @@ class PushAdapter:
 
     async def supports(self, db: AsyncSession, clinic_id: UUID) -> bool:
         # No per-clinic setup: one VAPID pair per deployment. Unconfigured
-        # deployments resolve no push channel (resolver skips us).
-        return vapid_config.vapid_configured()
+        # or unparsable deployments resolve no push channel (the public
+        # key derivation is the capability check — a non-empty but broken
+        # string must not mark us supported).
+        return vapid_config.vapid_public_key() is not None
 
     async def send(self, db: AsyncSession, msg: OutboundMessage) -> AdapterResult:
         if msg.patient_id is None:
@@ -86,7 +90,16 @@ class PushAdapter:
                 provider="webpush",
                 error_message="pywebpush is not installed on the backend",
             )
-        payload = json.dumps({"title": msg.subject or msg.template_key, "body": body})
+        vapid = vapid_config.vapid_instance()
+        if vapid is None:
+            return AdapterResult(
+                status=SendStatus.FAILED,
+                provider="webpush",
+                error_message="WebPush is not configured (DENTALPIN_VAPID_PRIVATE_KEY)",
+            )
+        payload = json.dumps(
+            {"title": msg.subject or msg.template_key, "body": body}, ensure_ascii=False
+        )
         payload = _fit_payload(payload)
         sent, pruned = 0, 0
         for sub in subs:
@@ -97,7 +110,7 @@ class PushAdapter:
                         "keys": dict(sub.keys or {}),
                     },
                     data=payload,
-                    vapid_private_key=vapid_config.vapid_private_key(),
+                    vapid_private_key=vapid,
                     vapid_claims={"sub": vapid_config.vapid_subject()},
                     ttl=PUSH_TTL_SECONDS,
                     timeout=PUSH_TIMEOUT_SECONDS,

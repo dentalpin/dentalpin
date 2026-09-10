@@ -12,16 +12,17 @@ from __future__ import annotations
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth.router import limiter
 from app.core.schemas import ApiResponse
 from app.database import get_db
 
 from .schemas import (
     PushPatientRedeem,
+    PushSubscribed,
     PushSubscribeTokenValidate,
-    PushSubscriptionResponse,
 )
 
 public_router = APIRouter(prefix="/public/push")
@@ -31,8 +32,10 @@ public_router = APIRouter(prefix="/public/push")
     "/subscribe/{token}",
     response_model=ApiResponse[PushSubscribeTokenValidate],
 )
+@limiter.limit("60/minute")
 async def validate_push_subscribe_token(
     token: UUID,
+    request: Request,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[PushSubscribeTokenValidate]:
     """Validate a subscribe token without consuming it (consent screen)."""
@@ -62,19 +65,26 @@ async def validate_push_subscribe_token(
 
 @public_router.post(
     "/subscribe/{token}",
-    response_model=ApiResponse[PushSubscriptionResponse],
+    response_model=ApiResponse[PushSubscribed],
     status_code=status.HTTP_201_CREATED,
 )
+@limiter.limit("5/15minute", key_func=lambda request: str(request.path_params.get("token")))
+@limiter.limit("20/hour")
 async def redeem_push_subscribe_token(
     token: UUID,
     data: PushPatientRedeem,
+    request: Request,
     db: Annotated[AsyncSession, Depends(get_db)],
-) -> ApiResponse[PushSubscriptionResponse]:
-    """Redeem a subscribe token with a browser subscription (no auth)."""
+) -> ApiResponse[PushSubscribed]:
+    """Redeem a subscribe token with a browser subscription (no auth).
+
+    Returns ``{subscribed: true}`` only — no ids leak to the token
+    holder. Single-use is enforced atomically in the UPDATE itself.
+    """
     from .push import PushSubscribeTokenService
 
     try:
-        row = await PushSubscribeTokenService.redeem(
+        await PushSubscribeTokenService.redeem(
             db, token, data.endpoint, data.keys.model_dump(), user_agent=data.user_agent
         )
     except LookupError:
@@ -83,4 +93,4 @@ async def redeem_push_subscribe_token(
         )
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))
-    return ApiResponse(data=PushSubscriptionResponse.model_validate(row))
+    return ApiResponse(data=PushSubscribed(subscribed=True))
