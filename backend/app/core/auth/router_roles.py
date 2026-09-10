@@ -297,10 +297,17 @@ async def update_role(
             )
         # Memberships reference the role by name this release, so a rename
         # must follow them or the holders end up with a role that resolves to
-        # nothing.
+        # nothing. Mirror the delete guard: match the string or the FK, so
+        # an FK-held membership with a drifted string is not left stale.
         await db.execute(
             update(ClinicMembership)
-            .where(ClinicMembership.clinic_id == ctx.clinic_id, ClinicMembership.role == role.name)
+            .where(
+                ClinicMembership.clinic_id == ctx.clinic_id,
+                or_(
+                    ClinicMembership.role == role.name,
+                    ClinicMembership.role_id == role.id,
+                ),
+            )
             .values(role=data.name)
         )
         role.name = data.name
