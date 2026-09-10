@@ -124,8 +124,8 @@ async def import_patients_csv(
     ``dry_run=false`` valid rows are created and per-row events fire.
     Rows matching an existing patient are reported as duplicates and
     skipped unless ``allow_duplicates`` is set."""
-    content = await read_upload_limited(file)
     try:
+        content = await read_upload_limited(file)
         valid, errors, total, lines = validate_patient_csv(content)
     except CsvImportError as exc:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))

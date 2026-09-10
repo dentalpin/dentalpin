@@ -129,7 +129,7 @@ class CsvRowError(BaseModel):
 
 class CsvRowDuplicate(BaseModel):
     row: int
-    patient_id: UUID
+    patient_id: UUID | None
     matched_on: str
 
 

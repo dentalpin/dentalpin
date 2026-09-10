@@ -154,37 +154,72 @@ def validate_patient_csv(content: bytes) -> tuple[list[PatientCreate], list[dict
 async def find_duplicate_lines(
     db: AsyncSession, clinic_id: UUID, valid: list[PatientCreate], lines: list[int]
 ) -> list[dict]:
-    """Flag rows matching an existing non-archived patient.
+    """Flag rows matching an existing non-archived patient — or each other.
 
     Match key: national_id, else email + date_of_birth. Returns
-    ``{"row", "patient_id", "matched_on"}`` per flagged row.
+    ``{"row", "patient_id", "matched_on"}`` per flagged row;
+    intra-file repeats carry ``patient_id: null`` and
+    ``matched_on: "same_file"``.
     """
     duplicates: list[dict] = []
+    seen_ids: dict[str, int] = {}
+    seen_emails: dict[tuple[str | None, object], int] = {}
     for row, line_number in zip(valid, lines):
+        if row.national_id:
+            if row.national_id in seen_ids:
+                duplicates.append(
+                    {
+                        "row": line_number,
+                        "patient_id": None,
+                        "matched_on": "same_file",
+                    }
+                )
+                continue
+            seen_ids[row.national_id] = line_number
+        elif row.email and row.date_of_birth:
+            key = (row.email, row.date_of_birth)
+            if key in seen_emails:
+                duplicates.append(
+                    {
+                        "row": line_number,
+                        "patient_id": None,
+                        "matched_on": "same_file",
+                    }
+                )
+                continue
+            seen_emails[key] = line_number
         match: Patient | None = None
         matched_on = ""
         if row.national_id:
             match = (
-                await db.execute(
-                    select(Patient).where(
-                        Patient.clinic_id == clinic_id,
-                        Patient.national_id == row.national_id,
-                        Patient.status != "archived",
+                (
+                    await db.execute(
+                        select(Patient).where(
+                            Patient.clinic_id == clinic_id,
+                            Patient.national_id == row.national_id,
+                            Patient.status != "archived",
+                        )
                     )
                 )
-            ).scalar_one_or_none()
+                .scalars()
+                .first()
+            )
             matched_on = "national_id"
         if match is None and row.email and row.date_of_birth:
             match = (
-                await db.execute(
-                    select(Patient).where(
-                        Patient.clinic_id == clinic_id,
-                        Patient.email == row.email,
-                        Patient.date_of_birth == row.date_of_birth,
-                        Patient.status != "archived",
+                (
+                    await db.execute(
+                        select(Patient).where(
+                            Patient.clinic_id == clinic_id,
+                            Patient.email == row.email,
+                            Patient.date_of_birth == row.date_of_birth,
+                            Patient.status != "archived",
+                        )
                     )
                 )
-            ).scalar_one_or_none()
+                .scalars()
+                .first()
+            )
             matched_on = "email+date_of_birth"
         if match is not None:
             duplicates.append(

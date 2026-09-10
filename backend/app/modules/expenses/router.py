@@ -82,8 +82,8 @@ async def import_expenses_csv(
 ) -> ApiResponse[ExpenseImportReport]:
     """Import expenses from CSV. Dry-run (default) validates only; with
     ``dry_run=false`` valid rows are created attributed to the caller."""
-    content = await read_upload_limited(file)
     try:
+        content = await read_upload_limited(file)
         valid, errors, total = validate_expense_csv(content)
     except CsvImportError as exc:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))

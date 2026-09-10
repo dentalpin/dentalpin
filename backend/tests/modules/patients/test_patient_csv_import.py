@@ -129,6 +129,22 @@ async def test_endpoint_rejects_garbage_csv(
 
 
 @pytest.mark.asyncio
+async def test_oversize_upload_422s_not_500s(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+) -> None:
+    from app.modules.patients.csv_import import MAX_CSV_BYTES
+
+    big = b"first_name,last_name\n" + b"A,B\n" * ((MAX_CSV_BYTES // 4) + 10)
+    assert len(big) > MAX_CSV_BYTES
+    response = await client.post(
+        "/api/v1/patients/import.csv",
+        files={"file": ("big.csv", big, "text/csv")},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+
+
+@pytest.mark.asyncio
 async def test_duplicates_flagged_and_skipped_unless_allowed(
     client: AsyncClient,
     auth_headers: dict,
@@ -168,3 +184,22 @@ async def test_duplicates_flagged_and_skipped_unless_allowed(
     )
     assert forced.status_code == 200, forced.text
     assert forced.json()["data"]["created"] == 2
+
+
+@pytest.mark.asyncio
+async def test_intra_file_duplicates_flagged(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+) -> None:
+    twin_csv = b"first_name,last_name,national_id\nAna,Garcia,11111111H\nEva,Lopez,11111111H\n"
+    dry = await client.post(
+        "/api/v1/patients/import.csv",
+        files={"file": ("twins.csv", twin_csv, "text/csv")},
+        headers=auth_headers,
+    )
+    assert dry.status_code == 200, dry.text
+    body = dry.json()["data"]
+    assert len(body["duplicates"]) == 1
+    assert body["duplicates"][0]["row"] == 3
+    assert body["duplicates"][0]["matched_on"] == "same_file"
