@@ -135,4 +135,7 @@ def test_every_ui_locale_renders_a_pdf() -> None:
         assert f'lang="{locale}"' in html
     assert "Rechnung" not in _html(_invoice(), _clinic(), locale="de")  # English fallback for now
     assert "60,00" in _html(_invoice(), _clinic(), locale="de")  # but German separators
+    html_ar = _html(_invoice(), _clinic(), locale="ar")
+    assert 'dir="rtl"' in html_ar
+    assert "فاتورة" in html_ar
     assert not re.match(PDF_LOCALE_PATTERN, "xx")

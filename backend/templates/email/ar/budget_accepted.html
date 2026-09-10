@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}تم قبول عرض السعر - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>تم قبول عرض السعر</h2>
+
+<p>مرحباً {{ patient_name }}،</p>
+
+<p>تم قبول عرض السعر <strong>#{{ budget_number }}</strong> من <strong>{{ clinic_name | default('DentalPin') }}</strong>.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div class="label">عرض السعر</div>
+        <div class="value">#{{ budget_number }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">تاريخ القبول</div>
+        <div class="value">{{ accepted_date }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">المجموع الإجمالي</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+</div>
+
+<p>سنتواصل معك قريباً لجدولة المواعيد الخاصة بخطتك العلاجية.</p>
+{% endblock %}

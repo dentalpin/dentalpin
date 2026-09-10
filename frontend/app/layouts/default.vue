@@ -1,5 +1,6 @@
 <script setup lang="ts">
-const { t } = useI18n()
+const { t, locale } = useI18n()
+const isRtl = computed(() => locale.value === 'ar')
 const auth = useAuth()
 const clinic = useClinic()
 const { navigationItems, ensureLoaded } = useModules()
@@ -190,7 +191,7 @@ function isActive(to: string): boolean {
     <!-- Mobile drawer nav -->
     <USlideover
       v-model:open="mobileNavOpen"
-      side="left"
+      :side="isRtl ? 'right' : 'left'"
       :title="t('nav.menu', 'Menú')"
       :ui="{ content: 'w-72 max-w-[80vw] bg-surface-muted' }"
     >
@@ -312,7 +313,7 @@ function isActive(to: string): boolean {
           variant="ghost"
           color="neutral"
           size="sm"
-          :icon="isSidebarCollapsed ? 'i-lucide-panel-left-open' : 'i-lucide-panel-left-close'"
+          :icon="isSidebarCollapsed ? (isRtl ? 'i-lucide-panel-right-open' : 'i-lucide-panel-left-open') : (isRtl ? 'i-lucide-panel-right-close' : 'i-lucide-panel-left-close')"
           :aria-label="t('nav.toggleSidebar', 'Alternar barra lateral')"
           @click="toggleSidebar"
         />

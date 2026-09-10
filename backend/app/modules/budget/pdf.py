@@ -15,7 +15,20 @@ if TYPE_CHECKING:
 from .models import Budget, BudgetSignature
 from .pricing import allocate_global_discount, net_line_total
 
-_LOCALE_BY_LANG = {"es": "es_ES", "en": "en_US"}
+PDF_LOCALES: tuple[str, ...] = ("es", "en", "ta", "fr", "pt", "de", "hu", "pl", "it", "ar")
+PDF_LOCALE_PATTERN = "^(" + "|".join(PDF_LOCALES) + ")$"
+_LOCALE_BY_LANG = {
+    "es": "es_ES",
+    "en": "en_US",
+    "ta": "en_IN",
+    "fr": "fr_FR",
+    "pt": "pt_PT",
+    "de": "de_DE",
+    "hu": "hu_HU",
+    "pl": "pl_PL",
+    "it": "it_IT",
+    "ar": "ar",
+}
 
 
 class BudgetPDFService:
@@ -247,9 +260,10 @@ class BudgetPDFService:
         )
 
         # Build HTML
+        dir_attr = ' dir="rtl"' if locale == "ar" else ""
         html = f"""
         <!DOCTYPE html>
-        <html lang="{locale}">
+        <html lang="{locale}"{dir_attr}>
         <head>
             <meta charset="UTF-8">
             <title>{labels["budget"]} {budget.budget_number}</title>
@@ -265,6 +279,23 @@ class BudgetPDFService:
                     line-height: 1.4;
                     color: #333;
                     padding: 20mm;
+                }}
+                html[dir="rtl"] body {{
+                    direction: rtl;
+                    text-align: right;
+                    font-family: 'Noto Sans Arabic', 'Cairo', 'Helvetica Neue', Arial, sans-serif;
+                }}
+                html[dir="rtl"] .budget-info {{
+                    text-align: left;
+                }}
+                html[dir="rtl"] th {{
+                    text-align: right;
+                }}
+                html[dir="rtl"] .totals .label {{
+                    text-align: right;
+                }}
+                html[dir="rtl"] .totals .value {{
+                    text-align: left;
                 }}
                 {watermark_style}
                 .header {{
@@ -718,4 +749,54 @@ class BudgetPDFService:
             },
         }
 
-        return labels_es if locale == "es" else labels_en
+        labels_ar = {
+            "budget": "عرض سعر",
+            "version": "النسخة",
+            "date": "التاريخ",
+            "draft": "مسودة",
+            "patient_info": "معلومات المريض",
+            "patient": "المريض",
+            "professional": "الطبيب المعالج",
+            "treatments": "العلاجات والخدمات",
+            "description": "الوصف",
+            "qty": "الكمية",
+            "unit_price": "سعر الوحدة",
+            "discount": "الخصم",
+            "total": "المجموع",
+            "subtotal": "المجموع الفرعي",
+            "total_discount": "إجمالي الخصم",
+            "tax": "الضريبة",
+            "grand_total": "الإجمالي الكلي",
+            "validity": "الصلاحية",
+            "from": "من",
+            "until": "إلى",
+            "no_expiry": "بدون تاريخ انتهاء",
+            "notes": "ملاحظات",
+            "patient_signature": "توقيع المريض",
+            "clinic_signature": "توقيع العيادة",
+            "signed_by": "تم التوقيع بواسطة",
+            "signed_at": "تاريخ التوقيع",
+            "signature_method": "القناة",
+            "signature_method_drawn": "توقيع يدوي",
+            "signature_method_click_accept": "موافقة إلكترونية",
+            "signature_method_external": "توقيع خارجي",
+            "document_hash": "رمز التحقق للوثيقة",
+            "generated_by": "تم الإنشاء بواسطة",
+            "status": {
+                "draft": "مسودة",
+                "sent": "تم الإرسال",
+                "accepted": "مقبول",
+                "in_progress": "قيد التنفيذ",
+                "completed": "مكتمل",
+                "invoiced": "تمت الفوترة",
+                "rejected": "مرفوض",
+                "expired": "منتهي الصلاحية",
+                "cancelled": "ملغى",
+            },
+        }
+
+        if locale == "ar":
+            return labels_ar
+        if locale == "es":
+            return labels_es
+        return labels_en

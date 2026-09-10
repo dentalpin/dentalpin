@@ -78,7 +78,7 @@ function categoryHref(cat: VisibleCategory): string {
       <UIcon
         v-if="fullWidth"
         name="i-lucide-chevron-right"
-        class="w-5 h-5 text-subtle shrink-0 lg:hidden"
+        class="w-5 h-5 text-subtle shrink-0 lg:hidden rtl:rotate-180"
       />
     </NuxtLink>
   </nav>

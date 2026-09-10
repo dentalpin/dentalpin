@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ locale | default('es') }}">
+<html lang="{{ locale | default('es') }}" dir="{% if locale == 'ar' %}rtl{% else %}ltr{% endif %}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -202,6 +202,23 @@
             color: #a1a1aa;
         }
 
+        /* RTL Support */
+        html[dir="rtl"] body {
+            direction: rtl;
+            text-align: right;
+            font-family: 'Cairo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        html[dir="rtl"] .alert {
+            border-left: none;
+            border-right: 4px solid #3b82f6;
+        }
+        html[dir="rtl"] .alert-info { border-right-color: #3b82f6; }
+        html[dir="rtl"] .alert-success { border-right-color: #22c55e; }
+        html[dir="rtl"] .alert-warning { border-right-color: #f59e0b; }
+        html[dir="rtl"] .alert-error { border-right-color: #ef4444; }
+        html[dir="rtl"] .info-box .label { text-align: right; }
+        html[dir="rtl"] .info-box .value { text-align: right; }
+
         /* Responsive */
         @media only screen and (max-width: 600px) {
             .email-container {
@@ -238,9 +255,13 @@
             <!-- Footer -->
             <div class="email-footer">
                 {% block footer %}
+                {% if locale == 'ar' %}
+                <p>{{ footer_sent_by | default('تم إرسال هذا البريد بواسطة ' ~ (clinic_name | default('DentalPin'))) }}</p>
+                {% else %}
                 <p>{{ footer_sent_by | default('Este email fue enviado por ' ~ (clinic_name | default('DentalPin'))) }}</p>
+                {% endif %}
                 {% if clinic_phone %}
-                <p>Tel: {{ clinic_phone }}</p>
+                <p>Tel: <span dir="ltr">{{ clinic_phone }}</span></p>
                 {% endif %}
                 {% if clinic_address %}
                 <p class="clinic-info">{{ clinic_address }}</p>

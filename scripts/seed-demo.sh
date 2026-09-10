@@ -9,5 +9,6 @@
 
 set -e
 
+export MSYS_NO_PATHCONV=1
 echo "Seeding demo data..."
-docker compose exec -T backend bash -c "PYTHONPATH=/app python /app/scripts/seed_demo.py $*"
+docker compose exec -T -e PYTHONPATH=/app backend python scripts/seed_demo.py "$@"

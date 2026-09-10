@@ -1,5 +1,6 @@
 # DentalPin
 
+[![ar](https://img.shields.io/badge/lang-ar-white.svg)](./README.ar.md)
 [![en](https://img.shields.io/badge/lang-en-red.svg)](./README.md)
 [![es](https://img.shields.io/badge/lang-es-yellow.svg)](./README.es.md)
 [![fr](https://img.shields.io/badge/lang-fr-blue.svg)](./README.fr.md)

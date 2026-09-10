@@ -55,6 +55,7 @@ _SUBJECT = {
     "hu": "Napi összefoglaló — {clinic_name}",
     "pl": "Poranne podsumowanie — {clinic_name}",
     "it": "Briefing del giorno — {clinic_name}",
+    "ar": "الموجز اليومي — {clinic_name}",
 }
 
 

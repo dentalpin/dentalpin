@@ -6,7 +6,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER:-dental}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env}
     ports:
-      - "5432:5432"
+      - "${DB_PORT:-5434}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:

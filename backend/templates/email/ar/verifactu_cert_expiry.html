@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}انتهاء صلاحية شهادة VeriFactu - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>شهادة VeriFactu الضريبية</h2>
+
+<p>مرحباً {{ admin_name }}،</p>
+
+{% if is_expired %}
+<div class="alert alert-error">
+    <strong>انتهت صلاحية شهادة VeriFactu الخاصة بك.</strong> يجب تجديدها في أقرب وقت ممكن لمواصلة إصدار الفواتير المتوافقة مع المتطلبات الضريبية.
+</div>
+{% else %}
+<div class="alert alert-warning">
+    <strong>ستنتهي صلاحية شهادة VeriFactu خلال {{ days_left }} يوماً.</strong> يرجى تجديدها قبل تاريخ الانتهاء لتجنب انقطاع إصدار الفواتير.
+</div>
+{% endif %}
+
+<div class="info-box">
+    {% if subject_cn %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">اسم صاحب الشهادة</div>
+            <div class="value">{{ subject_cn }}</div>
+        </div>
+    </div>
+    {% endif %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">تاريخ الانتهاء</div>
+            <div class="value">{{ valid_until }}</div>
+        </div>
+    </div>
+</div>
+
+<p>يمكنك إدارة وتجديد الشهادة من إعدادات VeriFactu الخاصة بعيادتك.</p>
+{% endblock %}

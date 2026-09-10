@@ -2,26 +2,23 @@
 const { t } = useI18n()
 const { settings, loading, saving, fetch, update } = useCommunicationsSettings()
 
-const language = ref<'es' | 'en' | 'fr' | 'pt' | 'ta' | 'de' | 'hu' | 'pl' | 'it'>('es')
+const language = ref<'ar' | 'es' | 'en' | 'fr' | 'pt' | 'ta'>('ar')
 
-const SUPPORTED = ['en', 'fr', 'pt', 'ta', 'de', 'hu', 'pl', 'it'] as const
+const SUPPORTED = ['ar', 'es', 'en', 'fr', 'pt', 'ta'] as const
 
 watch(settings, (s) => {
-  if (s) language.value = (SUPPORTED.includes(s.language as typeof SUPPORTED[number]) ? s.language as typeof language.value : 'es')
+  if (s) language.value = (SUPPORTED.includes(s.language as typeof SUPPORTED[number]) ? s.language as typeof language.value : 'ar')
 })
 
 onMounted(fetch)
 
 const options = [
+  { value: 'ar', label: 'العربية' },
   { value: 'es', label: 'Español' },
   { value: 'en', label: 'English' },
   { value: 'fr', label: 'Français' },
   { value: 'pt', label: 'Português' },
-  { value: 'ta', label: 'தமிழ்' },
-  { value: 'de', label: 'Deutsch' },
-  { value: 'hu', label: 'Magyar' },
-  { value: 'pl', label: 'Polski' },
-  { value: 'it', label: 'Italiano' }
+  { value: 'ta', label: 'தமிழ்' }
 ]
 
 async function save() {

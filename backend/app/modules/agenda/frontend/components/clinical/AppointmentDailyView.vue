@@ -333,7 +333,9 @@ function handleDragMove(event: MouseEvent) {
       const calendarWidth = calendarRef.value.offsetWidth
       const columnWidth = calendarWidth / (props.professionals.length + 1) // +1 for time column
       const profDelta = Math.round(deltaX / columnWidth)
-      const newProfIndex = Math.max(0, Math.min(props.professionals.length - 1, dragState.value.originalProfessionalIndex + profDelta))
+      const isRtl = window.getComputedStyle(calendarRef.value).direction === 'rtl'
+      const actualProfDelta = isRtl ? -profDelta : profDelta
+      const newProfIndex = Math.max(0, Math.min(props.professionals.length - 1, dragState.value.originalProfessionalIndex + actualProfDelta))
       dragState.value.currentProfessionalIndex = newProfIndex
     }
   }
