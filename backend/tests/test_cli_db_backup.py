@@ -39,6 +39,17 @@ def test_prune_backups_keeps_newest(tmp_path: Path) -> None:
     ]
 
 
+def test_prune_backups_floors_keep_and_protects_fresh_files(tmp_path: Path) -> None:
+    oldest = tmp_path / "full_20240101T000000Z.dump"
+    oldest.write_bytes(b"x")
+    (tmp_path / "full_20240102T000000Z.dump").write_bytes(b"x")
+    (tmp_path / "full_20240103T000000Z.dump").write_bytes(b"x")
+    # keep=0 floors to 1; the protected oldest file survives pruning.
+    pruned = db_cli.prune_backups(tmp_path, "full_", 0, protect={oldest})
+    assert [p.name for p in pruned] == ["full_20240102T000000Z.dump"]
+    assert oldest.exists()
+
+
 def test_dump_database_missing_binary(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr("shutil.which", lambda _: None)
     error = db_cli.dump_database("postgresql://x", tmp_path / "full.dump")
@@ -74,10 +85,22 @@ def test_snapshot_storage_skips_backups_dir(tmp_path: Path) -> None:
     (tmp_path / "backups" / "old.dump").write_bytes(b"old")
     target = tmp_path / "out" / "storage.tar.gz"
     target.parent.mkdir()
-    db_cli.snapshot_storage(tmp_path, target)
+    db_cli.snapshot_storage(tmp_path, target, tmp_path / "out")
     names = tarfile.open(target).getnames()
     assert "documents" in names
     assert not any(n.startswith("backups") for n in names)
+
+
+def test_snapshot_storage_skips_out_dir_inside_root(tmp_path: Path) -> None:
+    (tmp_path / "documents").mkdir()
+    out_dir = tmp_path / "nightly"
+    out_dir.mkdir()
+    (out_dir / "full_x.dump").write_bytes(b"x")
+    target = out_dir / "storage.tar.gz"
+    db_cli.snapshot_storage(tmp_path, target, out_dir)
+    names = tarfile.open(target).getnames()
+    assert "documents" in names
+    assert "nightly" not in names
 
 
 def test_cmd_backup_missing_pg_dump(monkeypatch, tmp_path: Path, capsys) -> None:
@@ -89,10 +112,12 @@ def test_cmd_backup_missing_pg_dump(monkeypatch, tmp_path: Path, capsys) -> None
 
 def test_cmd_backup_success(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr("shutil.which", lambda _: "/usr/bin/pg_dump")
-    monkeypatch.setattr(
-        "subprocess.run",
-        lambda *a, **k: subprocess.CompletedProcess(a[0], 0, b"DUMP", b""),
-    )
+
+    def _ok(*a, **k):
+        k["stdout"].write(b"DUMP")
+        return subprocess.CompletedProcess(a[0], 0, b"", b"")
+
+    monkeypatch.setattr("subprocess.run", _ok)
     storage = tmp_path / "storage"
     (storage / "documents").mkdir(parents=True)
     (storage / "documents" / "a.bin").write_bytes(b"data")

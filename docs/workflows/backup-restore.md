@@ -2,7 +2,10 @@
 
 > **Audience:** clinic operators and self-hosters (not DBAs). If you run
 > DentalPin with real patient data, this page is mandatory reading.
-> The one command that matters: `dentalpin db backup`.
+> The one command that matters: `python -m app.cli db backup` (run
+> as `docker compose exec -T backend python -m app.cli db backup`;
+> there is no `dentalpin` binary on PATH — the entrypoint and all
+> docs use the `python -m` form).
 
 DentalPin keeps **two kinds of data in two places**, and a backup that
 covers only one of them will lose patient files:
@@ -21,7 +24,7 @@ from a bad module removal, **not** from a dead disk.
 Inside the backend container (or via `docker compose exec backend`):
 
 ```bash
-dentalpin db backup
+docker compose exec -T backend python -m app.cli db backup
 # db backup: database -> /app/storage/backups/full_20260907T230000Z.dump
 # db backup: storage -> /app/storage/backups/storage_20260907T230000Z.tar.gz
 ```
@@ -38,7 +41,7 @@ dentalpin db backup
 Schedule it nightly (host cron hitting the container is enough):
 
 ```bash
-0 2 * * * docker compose -f /srv/dentalpin/docker-compose.yml exec -T backend dentalpin db backup >> /var/log/dentalpin-backup.log 2>&1
+0 2 * * * docker compose -f /srv/dentalpin/docker-compose.yml exec -T backend python -m app.cli db backup >> /var/log/dentalpin-backup.log 2>&1
 ```
 
 ## 2. Getting backups off the machine
@@ -65,9 +68,11 @@ ids, Verifactu certificates — are unrecoverable).
 ```bash
 # 1. Start only the database, with an empty volume.
 docker compose up -d db
-# 2. Restore the dump (custom format needs pg_restore).
+# 2. Restore the dump (custom format needs pg_restore). `--clean
+# --if-exists` avoids fatal "does not exist" noise on an empty DB;
+# `--no-owner` keeps the clinic role intact.
 docker compose exec -T db pg_restore -U dental -d dental_clinic \
-  -c < full_20260907T230000Z.dump
+  --clean --if-exists --no-owner < full_20260907T230000Z.dump
 # 3. Restore files over the fresh storage volume.
 docker compose exec -T backend tar -xz -C /app/storage < storage_20260907T230000Z.tar.gz
 # 4. Boot the stack; entrypoint runs `db upgrade` (no-op on a current dump).

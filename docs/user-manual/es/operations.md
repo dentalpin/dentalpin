@@ -235,7 +235,7 @@ después restaura los datos).
 ### Copia completa (base de datos + archivos)
 
 ```bash
-docker compose exec backend dentalpin db backup
+docker compose exec -T backend python -m app.cli db backup
 ```
 
 Genera `full_<fecha>.dump` (toda la base de datos) y

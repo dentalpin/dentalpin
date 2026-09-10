@@ -228,7 +228,7 @@ restore data).
 ### Full backup (database + files)
 
 ```bash
-docker compose exec backend dentalpin db backup
+docker compose exec -T backend python -m app.cli db backup
 ```
 
 Produces `full_<timestamp>.dump` (whole database) and

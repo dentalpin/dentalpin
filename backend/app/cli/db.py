@@ -116,46 +116,78 @@ def backup_out_dir(out_dir: str | None) -> Path:
     return Path(out_dir) if out_dir else Path(settings.STORAGE_LOCAL_PATH) / "backups"
 
 
-def prune_backups(out_dir: Path, prefix: str, keep: int) -> list[Path]:
+def prune_backups(
+    out_dir: Path, prefix: str, keep: int, protect: set[Path] = frozenset()
+) -> list[Path]:
     """Delete all but the newest ``keep`` files starting with ``prefix``.
 
-    Returns the pruned paths. Lexicographic order == chronological order
-    because every backup filename embeds a ``%Y%m%dT%H%M%SZ`` timestamp.
+    ``keep`` is floored at 1 and files in ``protect`` (just written by
+    this run) are never pruned. Returns the pruned paths.
+    Lexicographic order == chronological order because every backup
+    filename embeds a ``%Y%m%dT%H%M%SZ`` timestamp.
     """
+    keep = max(keep, 1)
     candidates = sorted(out_dir.glob(f"{prefix}*"))
-    pruned = candidates[: max(0, len(candidates) - keep)]
+    pruned = [p for p in candidates[: max(0, len(candidates) - keep)] if p not in protect]
     for path in pruned:
         path.unlink()
     return pruned
 
 
+def _dsn_and_env(dsn: str) -> tuple[str, dict]:
+    """Split the password out of the DSN into ``PGPASSWORD`` so the
+    secret never appears in the process list (``ps``)."""
+    import os
+    from urllib.parse import urlparse, urlunparse
+
+    parts = urlparse(dsn)
+    env = dict(os.environ)
+    password = parts.password or ""
+    if password:
+        env["PGPASSWORD"] = password
+        netloc = parts.hostname or ""
+        if parts.port:
+            netloc += f":{parts.port}"
+        if parts.username:
+            netloc = f"{parts.username}@{netloc}"
+        dsn = urlunparse(parts._replace(netloc=netloc))
+    return dsn, env
+
+
 def dump_database(dsn: str, target: Path) -> str | None:
-    """Run ``pg_dump --format=custom`` into ``target``. None on success,
-    else a human-readable error (missing binary, failure, empty output)."""
+    """Stream ``pg_dump --format=custom`` into ``target``. None on success,
+    else a human-readable error (missing binary, failure, empty output).
+
+    Streams to disk (never buffers the dump in memory) and passes the
+    password via ``PGPASSWORD``, never the command line.
+    """
     if shutil.which("pg_dump") is None:
         return "pg_dump not found on PATH; cannot back up the database"
+    clean_dsn, env = _dsn_and_env(dsn)
     try:
-        proc = subprocess.run(
-            ["pg_dump", "--format=custom", "--no-owner", dsn],
-            capture_output=True,
-            timeout=3600,
-        )
+        with target.open("wb") as handle:
+            proc = subprocess.run(
+                ["pg_dump", "--format=custom", "--no-owner", clean_dsn],
+                stdout=handle,
+                stderr=subprocess.PIPE,
+                timeout=3600,
+                env=env,
+            )
     except subprocess.TimeoutExpired:
         return "pg_dump timed out after 3600 seconds"
     if proc.returncode != 0:
         return f"pg_dump failed: {proc.stderr.decode(errors='replace').strip()}"
-    if not proc.stdout:
+    if target.stat().st_size == 0:
         return "pg_dump produced an empty backup"
-    target.write_bytes(proc.stdout)
     return None
 
 
-def snapshot_storage(storage_root: Path, target: Path) -> None:
-    """Tarball the storage volume, excluding the backups dir itself
-    (it lives inside the volume — archiving it would recurse)."""
+def snapshot_storage(storage_root: Path, target: Path, out_dir: Path) -> None:
+    """Tarball the storage volume, excluding the backup destination
+    itself (it may live inside the volume — archiving it would recurse)."""
     with tarfile.open(target, "w:gz") as tar:
         for child in sorted(storage_root.iterdir()):
-            if child.name == "backups":
+            if child == out_dir or child.name == "backups":
                 continue
             tar.add(child, arcname=child.name)
 
@@ -163,6 +195,9 @@ def snapshot_storage(storage_root: Path, target: Path) -> None:
 def _cmd_backup(args: argparse.Namespace) -> int:
     from app.core.plugins.processor import _pg_dump_dsn
 
+    if args.keep < 1:
+        print("db backup: --keep must be >= 1", flush=True)
+        return 2
     out_dir = backup_out_dir(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
@@ -173,15 +208,17 @@ def _cmd_backup(args: argparse.Namespace) -> int:
         print(f"db backup: {error}", flush=True)
         return 3
     print(f"db backup: database -> {db_target}")
+    written = {db_target}
 
     if not args.skip_storage:
         storage_target = out_dir / f"storage_{timestamp}.tar.gz"
-        snapshot_storage(Path(settings.STORAGE_LOCAL_PATH), storage_target)
+        snapshot_storage(Path(settings.STORAGE_LOCAL_PATH), storage_target, out_dir)
         print(f"db backup: storage -> {storage_target}")
-        pruned = prune_backups(out_dir, "storage_", args.keep)
+        written.add(storage_target)
+        pruned = prune_backups(out_dir, "storage_", args.keep, protect=written)
     else:
         pruned = []
-    pruned += prune_backups(out_dir, "full_", args.keep)
+    pruned += prune_backups(out_dir, "full_", args.keep, protect=written)
     for path in pruned:
         print(f"db backup: pruned {path.name}")
     return 0
