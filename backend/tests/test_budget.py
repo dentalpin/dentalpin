@@ -1237,3 +1237,18 @@ async def test_absolute_global_discount_total_and_net_lines_agree(
     assert Decimal(data["total"]) == Decimal("270.00")
     assert Decimal(data["total_discount"]) == Decimal("30.00")
     assert sum(Decimal(i["net_line_total"]) for i in data["items"]) == Decimal(data["total"])
+
+
+def test_every_ui_locale_accepted_on_budget_pdf() -> None:
+    """Issue #441: Every host UI locale must be accepted and render Budget PDF."""
+    import re
+    from app.modules.budget.pdf import PDF_LOCALES, PDF_LOCALE_PATTERN, BudgetPDFService
+
+    for loc in PDF_LOCALES:
+        assert re.match(PDF_LOCALE_PATTERN, loc)
+
+    assert not re.match(PDF_LOCALE_PATTERN, "invalid_locale")
+    labels_ar = BudgetPDFService._get_labels("ar")
+    assert labels_ar["budget"] == "عرض سعر"
+    assert labels_ar["status"]["accepted"] == "مقبول"
+

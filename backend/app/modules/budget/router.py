@@ -15,7 +15,7 @@ from app.core.events.types import EventType
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
-from .pdf import BudgetPDFService
+from .pdf import BudgetPDFService, PDF_LOCALE_PATTERN
 from .schemas import (
     BudgetAcceptRequest,
     BudgetCancelRequest,
@@ -732,7 +732,7 @@ async def download_budget_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("budget.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    locale: str = Query(default="es", pattern="^(es|en)$"),
+    locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Download budget as PDF."""
     budget = await BudgetService.get_budget(db, ctx.clinic_id, budget_id, include_items=True)
@@ -766,7 +766,7 @@ async def download_signed_budget_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("budget.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    locale: str = Query(default="es", pattern="^(es|en)$"),
+    locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Download the signed PDF for an accepted budget.
 
@@ -859,7 +859,7 @@ async def preview_budget_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("budget.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    locale: str = Query(default="es", pattern="^(es|en)$"),
+    locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Preview budget PDF (with watermark for drafts)."""
     budget = await BudgetService.get_budget(db, ctx.clinic_id, budget_id, include_items=True)
