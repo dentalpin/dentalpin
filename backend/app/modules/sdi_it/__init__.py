@@ -7,13 +7,15 @@ SDI**. Invoices to natural persons for healthcare services may not be
 electronic (art. 10-bis DL 119/2018); they stay analogue and are reported
 to the Sistema Tessera Sanitaria by a separate module (ADR 0026).
 
-Phase 1 (this module): FPR12 XML for TD01/TD04, manual transport
-(download the file, upload it to the SDI, import the receipt), receipt
-handling RC/NS/MC. PEC transport and the Nuxt layer follow in their own
-PRs. See ``CLAUDE.md`` and ``docs/modules/sdi_it.md``.
+Phase 1: FPR12 XML for TD01/TD04, manual transport (download the file,
+upload it to the SDI, import the receipt), receipt handling RC/NS/MC.
+Phase 2: PEC transport — the clinic's PEC mailbox sends the files and a
+worker picks the receipts up. The Nuxt layer follows in its own PR. See ``CLAUDE.md`` and ``docs/modules/sdi_it.md``.
 """
 
 from __future__ import annotations
+
+from typing import TYPE_CHECKING
 
 from fastapi import APIRouter
 
@@ -21,6 +23,9 @@ from app.core.plugins import BaseModule
 
 from .models import SdiItRecord, SdiItSettings
 from .router import router
+
+if TYPE_CHECKING:
+    from app.core.scheduling import ScheduledJob
 
 SDI_TABLES = {"sdi_it_settings", "sdi_it_records"}
 
@@ -51,6 +56,11 @@ class SdiItModule(BaseModule):
 
     def get_router(self) -> APIRouter:
         return router
+
+    def get_scheduled_jobs(self) -> list[ScheduledJob]:
+        from .tasks import scheduled_jobs
+
+        return scheduled_jobs()
 
     def get_permissions(self) -> list[str]:
         # Namespaced → sdi_it.settings.read / .configure, records.read / .manage

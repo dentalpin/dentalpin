@@ -960,3 +960,4 @@ class InvoicePDFService:
             return labels_ar
         # fr/pt/de/hu/pl/it: English labels until translated (#422).
         return labels_en
+

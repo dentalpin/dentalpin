@@ -231,13 +231,18 @@ def build_fattura(
         raise SdiBuildError("La fattura non ha una data di emissione.")
     lines = _lines(invoice)
 
-    # Riepilogo per (aliquota, natura)
-    groups: dict[tuple[Decimal, str | None], tuple[Decimal, Decimal]] = {}
+    # Riepilogo per (aliquota, natura). ``Imposta`` is the group's base × rate
+    # rounded once: the SDI check (code 00421) compares it with
+    # ImponibileImporto × AliquotaIVA within one cent, which a sum of
+    # per-line roundings can miss on many small lines.
+    bases: dict[tuple[Decimal, str | None], Decimal] = {}
     for ln in lines:
-        base, tax = groups.get((ln.aliquota, ln.natura), (Decimal(0), Decimal(0)))
-        base += ln.prezzo_totale
-        tax += (ln.prezzo_totale * ln.aliquota / 100).quantize(_Q2, rounding=ROUND_HALF_UP)
-        groups[(ln.aliquota, ln.natura)] = (base, tax)
+        key = (ln.aliquota, ln.natura)
+        bases[key] = bases.get(key, Decimal(0)) + ln.prezzo_totale
+    groups: dict[tuple[Decimal, str | None], tuple[Decimal, Decimal]] = {
+        (rate, natura): (base, (base * rate / 100).quantize(_Q2, rounding=ROUND_HALF_UP))
+        for (rate, natura), base in bases.items()
+    }
     exempt_total = sum((b for (_, n), (b, _) in groups.items() if n), Decimal(0))
     bollo = bool(bollo_virtuale and exempt_total > BOLLO_THRESHOLD)
     # The stamp is the issuer's cost: billing has no bollo line, so the

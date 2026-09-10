@@ -94,3 +94,92 @@ def parse_receipt(xml: str | bytes, *, receipt_file_name: str | None = None) -> 
 
 
 STATE_FOR_RECEIPT = {"RC": "delivered", "NS": "rejected", "MC": "undeliverable"}
+
+
+# --- applying a receipt to a record (shared by the API import and the PEC poller)
+
+from datetime import UTC, datetime  # noqa: E402
+from typing import TYPE_CHECKING  # noqa: E402
+
+from sqlalchemy import select  # noqa: E402
+
+if TYPE_CHECKING:
+    from uuid import UUID
+
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+    from ..models import SdiItRecord
+
+
+class ReceiptUnmatchedError(ReceiptError):
+    """No record of this clinic carries the ``NomeFile`` the receipt names."""
+
+
+class ReceiptAlreadyAppliedError(ReceiptError):
+    """The record already holds this receipt type in a terminal state."""
+
+
+_TERMINAL = {"delivered", "undeliverable"}
+
+
+async def apply_receipt(
+    db: AsyncSession,
+    clinic_id: UUID,
+    xml: str,
+    *,
+    receipt_file_name: str | None = None,
+) -> tuple[SdiItRecord, Receipt]:
+    """Parse ``xml`` and move the matching record to the receipt's state.
+
+    Matches by ``NomeFile`` (with or without the ``.p7m`` suffix), newest
+    record first so a requeued invoice resolves to its latest file. Does
+    not commit.
+    """
+    from ..models import SdiItRecord, SdiItSettings
+
+    receipt = parse_receipt(xml, receipt_file_name=receipt_file_name)
+    new_state = STATE_FOR_RECEIPT.get(receipt.type)
+    if new_state is None:
+        raise ReceiptError(f"Ricevuta {receipt.type} non applicabile a una fattura FPR12")
+    if not receipt.nome_file:
+        raise ReceiptError("La ricevuta non indica il NomeFile")
+    stem = receipt.nome_file.rsplit(".", 1)[0]
+    row = (
+        (
+            await db.execute(
+                select(SdiItRecord)
+                .where(
+                    SdiItRecord.clinic_id == clinic_id,
+                    SdiItRecord.file_name.in_(
+                        (receipt.nome_file, f"{stem}.xml", f"{stem}.xml.p7m")
+                    ),
+                )
+                .order_by(SdiItRecord.created_at.desc())
+            )
+        )
+        .scalars()
+        .first()
+    )
+    if row is None:
+        raise ReceiptUnmatchedError(f"Nessun record per il file {receipt.nome_file}")
+    if row.state in _TERMINAL and row.receipt_type == receipt.type:
+        raise ReceiptAlreadyAppliedError("Ricevuta già importata")
+    now = datetime.now(UTC)
+    row.state = new_state
+    row.receipt_type = receipt.type
+    row.receipt_xml = xml
+    row.receipt_at = now
+    row.sdi_identifier = receipt.identificativo_sdi or row.sdi_identifier
+    row.finished_at = now
+    if receipt.type == "NS":
+        row.error_code = ", ".join(c for c, _ in receipt.errors)[:60] or "NS"
+        row.error_message = "; ".join(f"{c}: {d}" for c, d in receipt.errors)[:2000] or receipt.note
+    else:
+        row.error_code = None
+        row.error_message = receipt.note if receipt.type == "MC" else None
+    settings = (
+        await db.execute(select(SdiItSettings).where(SdiItSettings.clinic_id == clinic_id))
+    ).scalar_one_or_none()
+    if settings is not None:
+        settings.last_receipt_at = now
+    return row, receipt

@@ -46,9 +46,11 @@ test.describe('invite link', () => {
     await expect(page.getByRole('alert')).toBeVisible()
     await ctx.close()
 
-    // Cleanup: delete the invitee
-    const token = (await loggedIn.context().cookies()).find(c => c.name === 'access_token')?.value
-    const headers = { Authorization: `Bearer ${token}` }
+    // Cleanup: delete the invitee. The admin session is an HttpOnly
+    // cookie (ADR 0023) the request context already carries; the unsafe
+    // DELETE needs the double-submit CSRF header from the readable cookie.
+    const csrf = (await loggedIn.context().cookies()).find(c => c.name === 'dp_csrf')?.value ?? ''
+    const headers = { 'X-CSRF-Token': csrf }
     const users = await loggedIn.request.get(`${API_BASE}/api/v1/auth/users`, { headers })
     const created = (await users.json()).data.find((u: { email: string }) => u.email === EMAIL)
     if (created) await loggedIn.request.delete(`${API_BASE}/api/v1/auth/users/${created.id}`, { headers })

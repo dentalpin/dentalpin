@@ -7,7 +7,6 @@ const route = useRoute()
 const router = useRouter()
 const { t } = useI18n()
 const registry = useSettingsRegistry()
-const { isDesktop } = useBreakpoint()
 
 const categoryId = computed(() => route.params.category as SettingsCategoryId)
 const category = computed(() => registry.findCategory(categoryId.value))
@@ -66,8 +65,8 @@ const showOnboarding = computed(() => categoryId.value === (registry.firstVisibl
 
       <!-- Mobile: full-screen category nav when on first-visible category landing -->
       <div
-        v-if="!isDesktop && showOnboarding"
-        class="mb-6"
+        v-if="showOnboarding"
+        class="mb-6 lg:hidden"
       >
         <h2 class="text-h2 text-default mb-3">
           {{ t('settings.allCategories') }}

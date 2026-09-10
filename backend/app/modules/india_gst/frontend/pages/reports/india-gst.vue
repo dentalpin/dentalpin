@@ -8,7 +8,6 @@ definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
 const api = useApi()
-const auth = useAuth()
 const config = useRuntimeConfig()
 const toast = useToast()
 const { can } = usePermissions()
@@ -70,9 +69,7 @@ onMounted(load)
 async function exportCsv() {
   try {
     const res = await fetch(`${config.public.apiBaseUrl}/api/v1/india_gst/reports/export`, {
-      headers: auth.accessToken.value
-        ? { Authorization: `Bearer ${auth.accessToken.value}` }
-        : {}
+      credentials: 'include'
     })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const blob = await res.blob()

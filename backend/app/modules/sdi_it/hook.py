@@ -68,6 +68,12 @@ async def build_record(
     cessionario = Party.from_recipient(
         tax_id=invoice.billing_tax_id, name=invoice.billing_name, address=invoice.billing_address
     )
+    # Two invoices issued at the same instant must not share a progressivo
+    # (and therefore a file name): lock the row *and* reload it. A plain
+    # ``SELECT … FOR UPDATE`` returns the identity-mapped instance with the
+    # value loaded earlier in this session, so the second request would
+    # bump the stale counter it read before the first one committed.
+    await db.refresh(settings, with_for_update=True)
     settings.progressivo_invio = (settings.progressivo_invio or 0) + 1
     result = build_fattura(
         invoice,

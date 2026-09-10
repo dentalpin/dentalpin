@@ -25,6 +25,11 @@ services:
       SECRET_KEY: ${SECRET_KEY}
       ENVIRONMENT: production
       ALLOWED_ORIGINS: ${FRONTEND_URL}
+      # App and API live on different hosts here, so the session cookies
+      # (ADR 0023) must be set on the shared parent domain, e.g.
+      # ".dentalpin.com" — host-only cookies of the API host would never
+      # reach the app (no dp_csrf → no CSRF header, no session on reload).
+      COOKIE_DOMAIN: ${COOKIE_DOMAIN:-}
       STORAGE_BACKEND: local
       STORAGE_LOCAL_PATH: /app/storage
       # Demo deployments set SEED_ON_STARTUP=1 in Coolify env so a wiped

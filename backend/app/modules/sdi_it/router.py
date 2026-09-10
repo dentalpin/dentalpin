@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.email.encryption import encrypt_password
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 from app.modules.billing.models import Invoice
@@ -25,18 +26,25 @@ from app.modules.billing.models import Invoice
 from .hook import get_settings, requeue
 from .models import SdiItRecord, SdiItSettings
 from .schemas import (
+    PecTestResult,
+    QueueProcessResult,
     ReceiptImport,
     ReceiptImportResult,
     SdiRecordResponse,
     SdiSettingsResponse,
     SdiSettingsUpdate,
 )
-from .services.receipts import STATE_FOR_RECEIPT, ReceiptError, parse_receipt
+from .services import submission_queue
+from .services.pec_transport import test_connection
+from .services.receipts import (
+    ReceiptAlreadyAppliedError,
+    ReceiptError,
+    ReceiptUnmatchedError,
+    apply_receipt,
+)
 from .services.xml_builder import SdiBuildError
 
 router = APIRouter()
-
-_TERMINAL = {"delivered", "undeliverable"}
 
 
 def _settings_response(s: SdiItSettings | None) -> SdiSettingsResponse:
@@ -51,6 +59,17 @@ def _settings_response(s: SdiItSettings | None) -> SdiSettingsResponse:
         progressivo_invio=s.progressivo_invio if s else 0,
         last_receipt_at=s.last_receipt_at if s else None,
         last_error=s.last_error if s else None,
+        pec_address=s.pec_address if s else None,
+        sdi_pec_address=s.sdi_pec_address if s else "sdi01@pec.fatturapa.it",
+        smtp_host=s.smtp_host if s else None,
+        smtp_port=s.smtp_port if s else 465,
+        smtp_username=s.smtp_username if s else None,
+        has_smtp_password=bool(s and s.smtp_password_encrypted),
+        imap_host=s.imap_host if s else None,
+        imap_port=s.imap_port if s else 993,
+        imap_folder=s.imap_folder if s else "INBOX",
+        last_pec_poll_at=s.last_pec_poll_at if s else None,
+        next_send_after=s.next_send_after if s else None,
     )
 
 
@@ -74,14 +93,35 @@ async def update_sdi_settings(
     if s is None:
         s = SdiItSettings(clinic_id=ctx.clinic_id, enabled=False)
         db.add(s)
-    for field in ("transport", "regime_fiscale", "bollo_virtuale", "riferimento_normativo"):
+    for field in (
+        "transport",
+        "regime_fiscale",
+        "bollo_virtuale",
+        "riferimento_normativo",
+        "pec_address",
+        "sdi_pec_address",
+        "smtp_host",
+        "smtp_port",
+        "smtp_username",
+        "imap_host",
+        "imap_port",
+        "imap_folder",
+    ):
         value = getattr(data, field)
         if value is not None:
             setattr(s, field, value)
+    if data.smtp_password:
+        s.smtp_password_encrypted = encrypt_password(data.smtp_password)
     if data.enabled is not None:
+        if data.enabled and s.transport == "pec" and submission_queue.credentials_for(s) is None:
+            raise HTTPException(
+                status.HTTP_400_BAD_REQUEST,
+                "Per il trasporto PEC servono indirizzo PEC, host SMTP e IMAP, utente e password.",
+            )
         s.enabled = data.enabled
         if data.enabled:
             s.last_error = None
+            s.next_send_after = None
     await db.commit()
     await db.refresh(s)
     return ApiResponse(data=_settings_response(s))
@@ -216,56 +256,15 @@ async def import_receipt(
 ) -> ApiResponse[ReceiptImportResult]:
     """Apply an SDI receipt (RC/NS/MC) to the record its ``NomeFile`` names."""
     try:
-        receipt = parse_receipt(data.xml, receipt_file_name=data.file_name)
+        row, receipt = await apply_receipt(
+            db, ctx.clinic_id, data.xml, receipt_file_name=data.file_name
+        )
+    except ReceiptUnmatchedError as exc:
+        raise HTTPException(status.HTTP_404_NOT_FOUND, str(exc)) from exc
+    except ReceiptAlreadyAppliedError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     except ReceiptError as exc:
         raise HTTPException(status.HTTP_400_BAD_REQUEST, str(exc)) from exc
-    new_state = STATE_FOR_RECEIPT.get(receipt.type)
-    if new_state is None:
-        raise HTTPException(
-            status.HTTP_400_BAD_REQUEST,
-            f"Ricevuta {receipt.type} non applicabile a una fattura FPR12",
-        )
-    if not receipt.nome_file:
-        raise HTTPException(status.HTTP_400_BAD_REQUEST, "La ricevuta non indica il NomeFile")
-    stem = receipt.nome_file.rsplit(".", 1)[0]
-    row = (
-        (
-            await db.execute(
-                select(SdiItRecord)
-                .where(
-                    SdiItRecord.clinic_id == ctx.clinic_id,
-                    SdiItRecord.file_name.in_(
-                        (receipt.nome_file, f"{stem}.xml", f"{stem}.xml.p7m")
-                    ),
-                )
-                .order_by(SdiItRecord.created_at.desc())
-            )
-        )
-        .scalars()
-        .first()
-    )
-    if row is None:
-        raise HTTPException(
-            status.HTTP_404_NOT_FOUND, f"Nessun record per il file {receipt.nome_file}"
-        )
-    if row.state in _TERMINAL and row.receipt_type == receipt.type:
-        raise HTTPException(status.HTTP_409_CONFLICT, "Ricevuta già importata")
-    now = datetime.now(UTC)
-    row.state = new_state
-    row.receipt_type = receipt.type
-    row.receipt_xml = data.xml
-    row.receipt_at = now
-    row.sdi_identifier = receipt.identificativo_sdi or row.sdi_identifier
-    row.finished_at = now
-    if receipt.type == "NS":
-        row.error_code = ", ".join(c for c, _ in receipt.errors)[:60] or "NS"
-        row.error_message = "; ".join(f"{c}: {d}" for c, d in receipt.errors)[:2000] or receipt.note
-    else:
-        row.error_code = None
-        row.error_message = receipt.note if receipt.type == "MC" else None
-    settings = await get_settings(db, ctx.clinic_id)
-    if settings is not None:
-        settings.last_receipt_at = now
     await db.commit()
     return ApiResponse(
         data=ReceiptImportResult(
@@ -275,3 +274,32 @@ async def import_receipt(
             errors=[{"code": c, "description": d} for c, d in receipt.errors],
         )
     )
+
+
+@router.post("/pec/test", response_model=ApiResponse[PecTestResult])
+async def test_pec(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("sdi_it.settings.configure"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[PecTestResult]:
+    """Log in to the configured SMTP and IMAP servers (no message is sent)."""
+    s = await get_settings(db, ctx.clinic_id)
+    creds = submission_queue.credentials_for(s) if s else None
+    if creds is None:
+        raise HTTPException(status.HTTP_400_BAD_REQUEST, "Credenziali PEC incomplete")
+    return ApiResponse(data=PecTestResult(**await test_connection(creds)))
+
+
+@router.post("/queue/process-now", response_model=ApiResponse[QueueProcessResult])
+async def process_queue_now(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("sdi_it.records.manage"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[QueueProcessResult]:
+    """Run one PEC tick for this clinic now instead of waiting for the worker."""
+    s = await get_settings(db, ctx.clinic_id)
+    if s is not None:
+        s.next_send_after = None
+        await db.commit()
+    counters = await submission_queue.process_clinic(db, ctx.clinic_id)
+    return ApiResponse(data=QueueProcessResult(**counters))
