@@ -144,11 +144,12 @@ config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Register main linear + discovered branches so Alembic can resolve heads
-# across all of them. ``version_path_separator = os`` in alembic.ini, so
-# join on ``os.pathsep``.
+# across all of them. Respect ``version_path_separator`` from alembic.ini.
+_sep_opt = config.get_main_option("version_path_separator", "os")
+_join_char = " " if _sep_opt == "space" else (_sep_opt if _sep_opt != "os" else os.pathsep)
 config.set_main_option(
     "version_locations",
-    os.pathsep.join(discover_version_locations(MAIN_LINEAR, MODULES_ROOT)),
+    _join_char.join(discover_version_locations(MAIN_LINEAR, MODULES_ROOT)),
 )
 
 if config.config_file_name is not None:

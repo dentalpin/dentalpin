@@ -89,7 +89,17 @@ _ROWS: list[tuple[str, str, str, str]] = [
     ("BR", "BRL", "America/Sao_Paulo", "pt"),
     ("US", "USD", "America/New_York", "en"),
     ("CA", "CAD", "America/Toronto", "en"),
-    # Others
+    # Others & Middle East / North Africa
+    ("SA", "SAR", "Asia/Riyadh", "ar"),
+    ("AE", "AED", "Asia/Dubai", "ar"),
+    ("EG", "EGP", "Africa/Cairo", "ar"),
+    ("QA", "QAR", "Asia/Qatar", "ar"),
+    ("KW", "KWD", "Asia/Kuwait", "ar"),
+    ("OM", "OMR", "Asia/Muscat", "ar"),
+    ("BH", "BHD", "Asia/Bahrain", "ar"),
+    ("JO", "JOD", "Asia/Amman", "ar"),
+    ("LB", "LBP", "Asia/Beirut", "ar"),
+    ("IQ", "IQD", "Asia/Baghdad", "ar"),
     ("MA", "MAD", "Africa/Casablanca", "fr"),
     ("IN", "INR", "Asia/Kolkata", "en"),
     ("AU", "AUD", "Australia/Sydney", "en"),

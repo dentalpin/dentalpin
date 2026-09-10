@@ -936,13 +936,13 @@ class _CommunicationsSettingsPatch(BaseModel):
 
 
 class _CommunicationsSettingsResponse(BaseModel):
-    language: str = "es"
+    language: str = "ar"
 
 
 def _read_communications_settings(raw: dict | None) -> _CommunicationsSettingsResponse:
     raw = raw or {}
     return _CommunicationsSettingsResponse(
-        language=str(raw.get("communication_language", "es")),
+        language=str(raw.get("communication_language", "ar")),
     )
 
 

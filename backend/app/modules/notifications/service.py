@@ -21,7 +21,7 @@ from .models import (
 # Default locale used for patient-facing communications when neither a
 # clinic preference nor a patient preference is set. Matches the
 # project's primary user base (Spain).
-DEFAULT_COMMUNICATION_LOCALE = "es"
+DEFAULT_COMMUNICATION_LOCALE = "ar"
 
 
 async def resolve_clinic_communication_locale(
