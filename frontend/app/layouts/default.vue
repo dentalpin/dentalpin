@@ -73,16 +73,17 @@ const mainNavItems = computed(() => navigationItems.value.filter(i => i.to !== '
 // never links. Collapsed map persists in localStorage like the sidebar
 // itself (`sidebar:collapsed`); every section starts expanded. When the
 // sidebar itself is collapsed, labels are hidden anyway so items render
-// flat as before.
-const collapsedSections = useState<Record<string, boolean>>('sidebar:nav:collapsed', () => {
-  if (import.meta.client) {
-    try {
-      return JSON.parse(localStorage.getItem('sidebar:nav:collapsed') || '{}')
-    } catch {
-      return {}
-    }
+// flat as before. Loaded in onMounted: the useState initializer runs on
+// the server during SSR and hydrates without re-running, so reading
+// localStorage there would forget the state on every reload.
+const collapsedSections = useState<Record<string, boolean>>('sidebar:nav:collapsed', () => ({}))
+onMounted(() => {
+  try {
+    const saved = JSON.parse(localStorage.getItem('sidebar:nav:collapsed') || '{}')
+    if (saved && typeof saved === 'object') collapsedSections.value = saved
+  } catch {
+    collapsedSections.value = {}
   }
-  return {}
 })
 const mainNavGroups = computed(() => groupNavigationItems(mainNavItems.value))
 // Flat entries (no section) for the drawer and the expanded sidebar;
