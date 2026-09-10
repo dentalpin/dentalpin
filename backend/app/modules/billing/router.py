@@ -16,6 +16,7 @@ from app.modules.payments.schemas import PaymentResponse
 
 from .hooks import BillingHookRegistry
 from .models import Invoice
+from .pdf import PDF_LOCALE_PATTERN
 from .schemas import (
     BillingPartyUpdate,
     BillingSettingsResponse,
@@ -1029,7 +1030,7 @@ async def download_invoice_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("billing.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    locale: str = Query(default="es", pattern="^(es|en|ta)$"),
+    locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Download invoice as PDF."""
     invoice = await InvoiceService.get_invoice(
@@ -1083,7 +1084,7 @@ async def preview_invoice_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("billing.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    locale: str = Query(default="es", pattern="^(es|en|ta)$"),
+    locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Preview invoice PDF (with watermark for drafts)."""
     invoice = await InvoiceService.get_invoice(

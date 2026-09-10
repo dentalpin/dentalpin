@@ -1,9 +1,10 @@
 """Core authentication and authorization models."""
 
+from datetime import datetime
 from typing import TYPE_CHECKING
 from uuid import uuid4
 
-from sqlalchemy import Boolean, ForeignKey, String, Text, UniqueConstraint, text
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, Text, UniqueConstraint, text
 from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -211,3 +212,26 @@ class ClinicMembership(Base, TimestampMixin):
     user: Mapped["User"] = relationship(back_populates="memberships")
     clinic: Mapped["Clinic"] = relationship(back_populates="memberships")
     role_ref: Mapped["Role | None"] = relationship(foreign_keys=[role_id])
+
+
+class RefreshToken(Base):
+    """One row per issued refresh token (ADR 0023): the server-side state
+    that makes rotation and per-token revocation possible.
+
+    ``id`` is the JWT's ``jti``; ``family_id`` groups the chain a login
+    started (rotation keeps the family, reuse of a revoked token burns
+    the whole family). ``token_version`` on the user stays the
+    log-out-everywhere hammer; this table is the scalpel.
+    """
+
+    __tablename__ = "auth_refresh_tokens"
+
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    user_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"), index=True)
+    family_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), index=True)
+    issued_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    revoked_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
+    replaced_by: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True), default=None)
+    user_agent_hash: Mapped[str | None] = mapped_column(String(64), default=None)
+    last_ip: Mapped[str | None] = mapped_column(String(64), default=None)

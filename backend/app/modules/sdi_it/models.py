@@ -42,6 +42,26 @@ class SdiItSettings(Base, TimestampMixin):
     last_receipt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
     last_error: Mapped[str | None] = mapped_column(Text, default=None)
 
+    # PEC transport (transport == "pec"): the clinic's own PEC mailbox sends
+    # the file to the SDI and receives the receipts. Passwords are Fernet-
+    # encrypted at rest (app.core.email.encryption). ``sdi_pec_address`` is
+    # the SDI mailbox: the first message goes to sdi01@pec.fatturapa.it and
+    # the SDI answers from the dedicated address it assigns (spec §1.3),
+    # which the poller stores here.
+    pec_address: Mapped[str | None] = mapped_column(String(255), default=None)
+    sdi_pec_address: Mapped[str] = mapped_column(
+        String(255), default="sdi01@pec.fatturapa.it", nullable=False
+    )
+    smtp_host: Mapped[str | None] = mapped_column(String(255), default=None)
+    smtp_port: Mapped[int] = mapped_column(Integer, default=465, nullable=False)
+    smtp_username: Mapped[str | None] = mapped_column(String(255), default=None)
+    smtp_password_encrypted: Mapped[str | None] = mapped_column(Text, default=None)
+    imap_host: Mapped[str | None] = mapped_column(String(255), default=None)
+    imap_port: Mapped[int] = mapped_column(Integer, default=993, nullable=False)
+    imap_folder: Mapped[str] = mapped_column(String(100), default="INBOX", nullable=False)
+    last_pec_poll_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
+    next_send_after: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
+
     clinic: Mapped["Clinic"] = relationship(foreign_keys=[clinic_id])
 
 
@@ -49,7 +69,7 @@ class SdiItRecord(Base):
     """One FPR12 file per issued B2B invoice / credit note.
 
     State machine (ADR 0025 §4): ``pending`` (built, not yet handed to the
-    SDI) → ``exported`` (downloaded / sent, awaiting a receipt) →
+    SDI) → ``exported`` (downloaded, or sent through PEC; awaiting a receipt) →
     ``delivered`` (RC) | ``undeliverable`` (MC, action: notify recipient)
     | ``rejected`` (NS, action: fix and requeue with the same number).
     """
@@ -74,6 +94,10 @@ class SdiItRecord(Base):
 
     state: Mapped[str] = mapped_column(String(20), default="pending", nullable=False, index=True)
     attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
+    # How the file reached the SDI: "manual" (download/upload) or "pec".
+    transport: Mapped[str | None] = mapped_column(String(10), default=None)
+    message_id: Mapped[str | None] = mapped_column(String(255), default=None)
 
     sdi_identifier: Mapped[str | None] = mapped_column(String(40), default=None, index=True)
     receipt_type: Mapped[str | None] = mapped_column(String(4), default=None)

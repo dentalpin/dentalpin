@@ -146,6 +146,12 @@ export const PERMISSIONS = {
     recordsRead: 'nav_online.records.read',
     queueManage: 'nav_online.queue.manage'
   },
+  sdiIt: {
+    settingsRead: 'sdi_it.settings.read',
+    settingsConfigure: 'sdi_it.settings.configure',
+    recordsRead: 'sdi_it.records.read',
+    recordsManage: 'sdi_it.records.manage'
+  },
   telephony: {
     settingsRead: 'telephony.settings.read',
     settingsWrite: 'telephony.settings.write',
