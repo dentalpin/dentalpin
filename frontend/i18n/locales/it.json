@@ -35,6 +35,13 @@
     "menu": "Menu",
     "openMenu": "Apri menu",
     "close": "Chiudi",
+    "sections": {
+      "clinical": "Clinica",
+      "lab": "Laboratorio",
+      "financials": "Finanze",
+      "inventory": "Magazzino",
+      "practice": "Studio"
+    },
     "toggleSidebar": "Mostra/nascondi barra laterale",
     "documents": "Documenti"
   },

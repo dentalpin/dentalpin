@@ -35,6 +35,13 @@
     "menu": "Menü",
     "openMenu": "Menü megnyitása",
     "close": "Bezárás",
+    "sections": {
+      "clinical": "Klinikai",
+      "lab": "Labor",
+      "financials": "Pénzügyek",
+      "inventory": "Készlet",
+      "practice": "Rendelő"
+    },
     "toggleSidebar": "Oldalsáv be/ki",
     "documents": "Dokumentumok"
   },
