@@ -484,7 +484,7 @@ function buildOcclusalPaths(
 
 // Incisor — wide mesio-distal, narrow bucco-lingual; rounded MD corners, flatter labial edge
 const INCISOR_OUTER: Quad = [
-  { x: 6, y: 14 }, { x: 44, y: 14 }, { x: 44, y: 36 }, { x: 6, y: 36 }
+  { x: 6, y: 6 }, { x: 44, y: 6 }, { x: 44, y: 44 }, { x: 6, y: 44 }
 ]
 const INCISOR_INNER: Quad = [
   { x: 19, y: 21 }, { x: 31, y: 21 }, { x: 31, y: 29 }, { x: 19, y: 29 }
@@ -520,7 +520,7 @@ const OCCLUSAL_CANINE = buildOcclusalPaths(
 
 // Premolar — BL-elongated oval with buccal + lingual cusp lobes and a waist
 const PREMOLAR_OUTER: Quad = [
-  { x: 10, y: 7 }, { x: 40, y: 7 }, { x: 40, y: 43 }, { x: 10, y: 43 }
+  { x: 10, y: 4 }, { x: 40, y: 4 }, { x: 40, y: 46 }, { x: 10, y: 46 }
 ]
 const PREMOLAR_INNER: Quad = [
   { x: 20, y: 20 }, { x: 30, y: 20 }, { x: 30, y: 30 }, { x: 20, y: 30 }
@@ -540,7 +540,7 @@ const OCCLUSAL_PREMOLAR = buildOcclusalPaths(
 
 // Molar — rounded square with four cusp bulges; short central fissure only (not a missing-tooth X)
 const MOLAR_OUTER: Quad = [
-  { x: 8, y: 8 }, { x: 42, y: 8 }, { x: 42, y: 42 }, { x: 8, y: 42 }
+  { x: 6, y: 6 }, { x: 44, y: 6 }, { x: 44, y: 44 }, { x: 6, y: 44 }
 ]
 const MOLAR_INNER: Quad = [
   { x: 19, y: 19 }, { x: 31, y: 19 }, { x: 31, y: 31 }, { x: 19, y: 31 }

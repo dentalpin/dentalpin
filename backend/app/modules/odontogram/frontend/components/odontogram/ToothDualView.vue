@@ -972,7 +972,7 @@ const hasPlannedLateralTreatments = computed(() => {
         <!-- Redraw outline stroke so the silhouette stays crisp over fills -->
         <path
           :d="occlusalPaths.outline"
-          class="tooth-occlusal"
+          class="tooth-occlusal-edge"
           fill="none"
           stroke-width="1"
           stroke-linecap="round"
@@ -1119,6 +1119,13 @@ const hasPlannedLateralTreatments = computed(() => {
   fill: var(--odontogram-fill);
   stroke: var(--odontogram-outline);
   transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+/* Outline redrawn over treatment fills — stroke only, never repaint the fill. */
+.tooth-occlusal-edge {
+  fill: none;
+  stroke: var(--odontogram-outline);
+  transition: stroke 0.15s ease;
 }
 
 .tooth-root {

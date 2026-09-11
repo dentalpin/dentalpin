@@ -68,16 +68,25 @@ const occlusalGroupTransform = computed(() => {
 
 // Get correct X position for M label based on quadrant
 // M (mesial) is always toward midline: left side of view for right teeth, right side for left teeth
-const mLabelX = computed(() => isLeftSide.value ? 43 : 4)
-// Get correct X position for D label based on quadrant
-const dLabelX = computed(() => isLeftSide.value ? 4 : 43)
-
-// Get correct Y position for V label based on arch
-// V (vestibular) faces outward: top for upper teeth, bottom for lower teeth
-const vLabelY = computed(() => isLower.value ? 47 : 8)
-// Get correct Y position for L label based on arch
-// L (lingual) faces inward: bottom for upper teeth, top for lower teeth
-const lLabelY = computed(() => isLower.value ? 8 : 47)
+// M/D/V/L/O labels sit at their surface centers, which stay inside the anatomical
+// outline. The labels render outside the mirror group, so apply the same quadrant
+// mirror the group transform applies.
+const labelAnchors = computed(() => {
+  const centers = occlusalPaths.value.surfaceCenters
+  const mirror = (point: { x: number, y: number }) => ({
+    x: isLeftSide.value ? 50 - point.x : point.x,
+    y: isLower.value ? 50 - point.y : point.y
+  })
+  const anchor = (surface: string, fallback: { x: number, y: number }) =>
+    mirror(centers[surface] ?? fallback)
+  return {
+    M: anchor('M', { x: 12, y: 25 }),
+    D: anchor('D', { x: 38, y: 25 }),
+    V: anchor('V', { x: 25, y: 12 }),
+    L: anchor('L', { x: 25, y: 38 }),
+    O: anchor('O', { x: 25, y: 25 })
+  }
+})
 const toothName = computed(() => {
   const nameKey = getToothNameKey(props.toothNumber)
   const positionKeys = getToothPositionKeys(props.toothNumber)
@@ -294,32 +303,32 @@ watch(() => props.open, (isOpen) => {
 
               <!-- Surface labels (outside transform to remain readable) -->
               <text
-                :x="mLabelX"
-                y="27"
+                :x="labelAnchors.M.x"
+                :y="labelAnchors.M.y"
                 class="surface-label"
                 @click="toggleSurface('M')"
               >M</text>
               <text
-                :x="dLabelX"
-                y="27"
+                :x="labelAnchors.D.x"
+                :y="labelAnchors.D.y"
                 class="surface-label"
                 @click="toggleSurface('D')"
               >D</text>
               <text
-                x="24"
-                :y="vLabelY"
+                :x="labelAnchors.V.x"
+                :y="labelAnchors.V.y"
                 class="surface-label"
                 @click="toggleSurface('V')"
               >V</text>
               <text
-                x="24"
-                :y="lLabelY"
+                :x="labelAnchors.L.x"
+                :y="labelAnchors.L.y"
                 class="surface-label"
                 @click="toggleSurface('L')"
               >L</text>
               <text
-                x="24"
-                y="28"
+                :x="labelAnchors.O.x"
+                :y="labelAnchors.O.y"
                 class="surface-label-center"
                 @click="toggleSurface('O')"
               >O</text>
