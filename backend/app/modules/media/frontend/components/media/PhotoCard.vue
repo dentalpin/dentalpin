@@ -9,11 +9,7 @@ interface Props {
 const props = defineProps<Props>()
 defineEmits<{ open: [Document], select: [Document] }>()
 
-const config = useRuntimeConfig()
-
-const apiBaseUrl = computed(() =>
-  import.meta.server ? config.apiBaseUrlServer : config.public.apiBaseUrl
-)
+const api = useApi()
 
 // Build a fully-qualified, auth-aware thumb URL. The server returns a
 // relative `/api/v1/...` path; we render it with an Authorization header
@@ -24,13 +20,10 @@ async function loadThumb() {
   const path = props.document.thumb_url ?? props.document.full_url
   if (!path) return
   try {
-    const response = await $fetch<Blob>(path, {
-      baseURL: apiBaseUrl.value,
-      credentials: 'include',
-      responseType: 'blob'
-    })
+    const response = await api.raw(path)
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
     if (thumbBlobUrl.value) URL.revokeObjectURL(thumbBlobUrl.value)
-    thumbBlobUrl.value = URL.createObjectURL(response)
+    thumbBlobUrl.value = URL.createObjectURL(await response.blob())
   } catch {
     thumbBlobUrl.value = null
   }

@@ -127,21 +127,21 @@ function onChanged(updated: Recall) {
 
 const conversionPct = computed(() => stats.value ? Math.round(stats.value.conversion_rate * 100) : 0)
 
-const config = useRuntimeConfig()
+const api = useApi()
 const isExporting = ref(false)
 
 async function downloadCsv() {
   if (isExporting.value) return
   isExporting.value = true
   try {
-    const url = config.public.apiBaseUrl + recallsApi.exportCsvUrl({
+    const path = recallsApi.exportCsvUrl({
       month: month.value || undefined,
       reason: reason.value === ANY ? undefined : reason.value || undefined,
       status: status.value === ANY ? undefined : status.value || undefined,
       priority: priority.value === ANY ? undefined : priority.value || undefined,
       overdue: overdue.value || undefined
     })
-    const res = await fetch(url, { credentials: 'include' })
+    const res = await api.raw(path)
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const blob = await res.blob()
     const blobUrl = URL.createObjectURL(blob)

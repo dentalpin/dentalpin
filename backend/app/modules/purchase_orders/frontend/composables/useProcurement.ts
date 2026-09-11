@@ -182,7 +182,6 @@ function defined<T>(value: T | undefined | null | ''): T | undefined {
 
 export function useProcurement() {
   const api = useApi()
-  const config = useRuntimeConfig()
 
   // --- suppliers -------------------------------------------------------
   async function listSuppliers(params: SupplierListParams = {}): Promise<PaginatedResponse<ProcurementSupplier>> {
@@ -258,12 +257,11 @@ export function useProcurement() {
   }
 
   async function downloadPurchaseOrderPdf(id: string, locale = 'es'): Promise<void> {
-    // Raw fetch: the PDF needs the bearer token and comes back as a blob, so
-    // it cannot be a plain link (same pattern as billing's downloadPDF).
+    // The PDF comes back as a blob and needs the session, so it cannot be
+    // a plain link; api.raw carries the cookies and refreshes on 401.
     const pdfLocale = locale === 'en' ? 'en' : 'es'
-    const response = await fetch(
-      `${config.public.apiBaseUrl}/api/v1/purchase_orders/${id}/pdf?locale=${pdfLocale}`,
-      { credentials: 'include' }
+    const response = await api.raw(
+      `/api/v1/purchase_orders/${id}/pdf?locale=${pdfLocale}`
     )
     if (!response.ok) {
       const body = await response.json().catch(() => null)

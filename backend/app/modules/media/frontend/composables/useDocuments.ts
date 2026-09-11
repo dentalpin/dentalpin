@@ -18,6 +18,7 @@ export function useDocuments() {
   const uploadProgress = ref<UploadProgress | null>(null)
   const total = ref(0)
 
+  const api = useApi()
   const apiBaseUrl = computed(() =>
     import.meta.server ? config.apiBaseUrlServer : config.public.apiBaseUrl
   )
@@ -119,17 +120,13 @@ export function useDocuments() {
 
   async function downloadDocument(documentId: string, filename: string) {
     try {
-      const response = await $fetch<Blob>(
-        `/api/v1/media/documents/${documentId}/download`,
-        {
-          baseURL: apiBaseUrl.value,
-          credentials: 'include',
-          responseType: 'blob'
-        }
-      )
+      // api.raw carries the session cookies and refreshes once on 401, so
+      // a download after a long idle still works (#440).
+      const response = await api.raw(`/api/v1/media/documents/${documentId}/download`)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
       // Create download link
-      const url = window.URL.createObjectURL(response)
+      const url = window.URL.createObjectURL(await response.blob())
       const link = document.createElement('a')
       link.href = url
       link.download = filename
@@ -153,15 +150,9 @@ export function useDocuments() {
    */
   async function getDocumentBlobUrl(documentId: string): Promise<string | null> {
     try {
-      const response = await $fetch<Blob>(
-        `/api/v1/media/documents/${documentId}/download`,
-        {
-          baseURL: apiBaseUrl.value,
-          credentials: 'include',
-          responseType: 'blob'
-        }
-      )
-      return URL.createObjectURL(response)
+      const response = await api.raw(`/api/v1/media/documents/${documentId}/download`)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      return URL.createObjectURL(await response.blob())
     } catch (error) {
       console.error('Error fetching document blob:', error)
       toast.add({

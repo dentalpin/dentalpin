@@ -104,12 +104,7 @@ export function useManagedDocuments() {
    * ``Content-Disposition`` filename preserved.
    */
   async function downloadDocument(document_id: string): Promise<void> {
-    const baseUrl = useRuntimeConfig().public.apiBaseUrl
-
-    const response = await fetch(
-      `${baseUrl}/api/v1/documents/${document_id}/download`,
-      { credentials: 'include' }
-    )
+    const response = await api.raw(`/api/v1/documents/${document_id}/download`)
 
     if (!response.ok) {
       const body = await response.json().catch(() => null)

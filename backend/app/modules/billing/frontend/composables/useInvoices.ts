@@ -467,11 +467,7 @@ export function useInvoices() {
   // ============================================================================
 
   async function downloadPDF(id: string, locale: string = 'es'): Promise<void> {
-    const baseUrl = config.public.apiBaseUrl
-    const response = await fetch(
-      `${baseUrl}/api/v1/billing/invoices/${id}/pdf?locale=${locale}`,
-      { credentials: 'include' }
-    )
+    const response = await api.raw(`/api/v1/billing/invoices/${id}/pdf?locale=${locale}`)
 
     if (!response.ok) {
       // Raw fetch (blob response) bypasses useApi's error shaping — read

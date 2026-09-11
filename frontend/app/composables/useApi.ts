@@ -182,14 +182,30 @@ export function useApi() {
    * Raw ``fetch`` against the API with the session cookies attached —
    * for blob downloads and streams where ``$fetch``'s JSON handling gets
    * in the way. Returns the ``Response``; the caller checks ``ok``.
+   *
+   * A 401 is refreshed and retried once, exactly like ``$api``: a blob
+   * download is a plain fetch, so without this an idle longer than the
+   * access cookie's lifetime turns "Download PDF" into "Not
+   * authenticated" while the rest of the page recovers silently (#440).
    */
   async function raw(path: string, init: RequestInit = {}): Promise<Response> {
     const method = (init.method || 'GET').toUpperCase()
-    return await fetch(`${apiBaseUrl.value}${path}`, {
+    const send = () => fetch(`${apiBaseUrl.value}${path}`, {
       ...init,
       credentials: 'include',
-      headers: { ...csrfHeaders(method), ...(init.headers as Record<string, string> | undefined) }
+      headers: {
+        ...csrfHeaders(method),
+        ...cookieHeaders(),
+        ...(init.headers as Record<string, string> | undefined)
+      }
     })
+    const response = await send()
+    if (response.status !== 401) return response
+    if (await auth.refresh()) return await send()
+    // The family is gone: end the session as $api does, and hand the 401
+    // back so the caller still shows its own message.
+    await auth.logout()
+    return response
   }
 
   // Convenience methods

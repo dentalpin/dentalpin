@@ -8,7 +8,6 @@ definePageMeta({ layout: 'default' })
 
 const { t } = useI18n()
 const api = useApi()
-const config = useRuntimeConfig()
 const toast = useToast()
 const { can } = usePermissions()
 
@@ -63,14 +62,11 @@ async function load() {
 
 onMounted(load)
 
-// Authenticated blob download (JWT goes in a header, so window.open /
-// a plain <a href> would come back 401) — same pattern as
-// accounting_export's useAccountingExport.download().
+// Authenticated blob download (window.open or a plain <a href> would come
+// back 401) — same pattern as accounting_export's download().
 async function exportCsv() {
   try {
-    const res = await fetch(`${config.public.apiBaseUrl}/api/v1/india_gst/reports/export`, {
-      credentials: 'include'
-    })
+    const res = await api.raw('/api/v1/india_gst/reports/export')
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const blob = await res.blob()
     const blobUrl = URL.createObjectURL(blob)

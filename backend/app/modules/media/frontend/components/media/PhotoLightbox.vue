@@ -18,10 +18,7 @@ const emit = defineEmits<{
 const { t } = useI18n()
 const { pairPhotos, unpair } = usePhotos()
 
-const config = useRuntimeConfig()
-const apiBaseUrl = computed(() =>
-  import.meta.server ? config.apiBaseUrlServer : config.public.apiBaseUrl
-)
+const api = useApi()
 
 const index = ref(0)
 
@@ -51,12 +48,9 @@ const partnerBlobUrl = ref<string | null>(null)
 
 async function fetchBlob(path: string): Promise<string | null> {
   try {
-    const response = await $fetch<Blob>(path, {
-      baseURL: apiBaseUrl.value,
-      credentials: 'include',
-      responseType: 'blob'
-    })
-    return URL.createObjectURL(response)
+    const response = await api.raw(path)
+    if (!response.ok) return null
+    return URL.createObjectURL(await response.blob())
   } catch {
     return null
   }

@@ -354,8 +354,7 @@ export function useBudgets() {
   }
 
   async function downloadPDFAt(path: string, fallbackName: string): Promise<void> {
-    const baseUrl = config.public.apiBaseUrl
-    const response = await fetch(`${baseUrl}${path}`, { credentials: 'include' })
+    const response = await api.raw(path)
 
     if (!response.ok) {
       // This path uses raw fetch (blob response), so it bypasses useApi
