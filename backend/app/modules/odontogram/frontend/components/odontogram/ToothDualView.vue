@@ -2,6 +2,7 @@
 import type { Surface, ToothTreatmentView, TreatmentStatus } from '~~/app/types'
 import {
   getOcclusalPath,
+  getOcclusalSurfaceCenter,
   getLateralPath,
   getToothTransform,
   getToothDisplayConfig,
@@ -229,6 +230,7 @@ function getPulpFillOpacity(): number {
 
 // Unique clip-path ID for this tooth
 const pulpClipId = computed(() => `pulp-clip-${props.toothNumber}`)
+const occlusalClipId = computed(() => `occlusal-clip-${props.toothNumber}`)
 
 // Parse viewBox to get dimensions for clip-path calculation
 const viewBoxDimensions = computed(() => {
@@ -770,6 +772,11 @@ const hasPlannedLateralTreatments = computed(() => {
       >
         <!-- SVG Patterns and Gradients Definition -->
         <defs v-html="PATTERN_DEFINITIONS" />
+        <defs>
+          <clipPath :id="occlusalClipId">
+            <path :d="occlusalPaths.outline" />
+          </clipPath>
+        </defs>
 
         <!-- Background - pointer-events none to let clicks pass through to surfaces -->
         <rect
@@ -792,22 +799,11 @@ const hasPlannedLateralTreatments = computed(() => {
           :opacity="toothOpacity"
         />
 
-        <!-- Highlight details (fissures, ridges) -->
-        <path
-          v-for="(highlightPath, idx) in occlusalPaths.highlight"
-          :key="`occlusal-highlight-${idx}`"
-          :d="highlightPath"
-          class="tooth-highlight"
-          stroke-width="0.6"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          fill="none"
-          pointer-events="none"
-          :opacity="toothOpacity"
-        />
-
-        <!-- Treatment overlays on occlusal view -->
-        <g class="treatment-overlays">
+        <!-- Treatment overlays on occlusal view (clipped to anatomical outline) -->
+        <g
+          class="treatment-overlays"
+          :clip-path="`url(#${occlusalClipId})`"
+        >
           <!-- Rule 2: Occlusal surface treatments (solid fill, dot, outline) -->
           <template
             v-for="treatment in occlusalSurfaceTreatments"
@@ -845,8 +841,8 @@ const hasPlannedLateralTreatments = computed(() => {
                   <circle
                     v-for="surface in treatment.surfaces"
                     :key="`${treatment.id}-${surface}-dot`"
-                    :cx="surface === 'O' ? 25 : surface === 'M' ? 12 : surface === 'D' ? 38 : surface === 'V' ? 25 : 25"
-                    :cy="surface === 'O' ? 25 : surface === 'M' ? 25 : surface === 'D' ? 25 : surface === 'V' ? 12 : 38"
+                    :cx="getOcclusalSurfaceCenter(toothNumber, surface).x"
+                    :cy="getOcclusalSurfaceCenter(toothNumber, surface).y"
                     r="4"
                     :fill="getTreatmentColor(treatment.treatment_type)"
                     :fill-opacity="STATUS_STYLES[treatment.status]?.opacity ?? 1"
@@ -954,6 +950,36 @@ const hasPlannedLateralTreatments = computed(() => {
             </g>
           </template>
         </g>
+
+        <!-- Highlight details (fissures, ridges) — after fills so they stay visible; clipped to outline -->
+        <g
+          :clip-path="`url(#${occlusalClipId})`"
+          pointer-events="none"
+        >
+          <path
+            v-for="(highlightPath, idx) in occlusalPaths.highlight"
+            :key="`occlusal-highlight-${idx}`"
+            :d="highlightPath"
+            class="tooth-highlight"
+            stroke-width="0.6"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            fill="none"
+            :opacity="toothOpacity"
+          />
+        </g>
+
+        <!-- Redraw outline stroke so the silhouette stays crisp over fills -->
+        <path
+          :d="occlusalPaths.outline"
+          class="tooth-occlusal-edge"
+          fill="none"
+          stroke-width="1"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          pointer-events="none"
+          :opacity="toothOpacity"
+        />
 
         <!-- Missing tooth X overlay -->
         <g
@@ -1093,6 +1119,13 @@ const hasPlannedLateralTreatments = computed(() => {
   fill: var(--odontogram-fill);
   stroke: var(--odontogram-outline);
   transition: fill 0.15s ease, stroke 0.15s ease;
+}
+
+/* Outline redrawn over treatment fills — stroke only, never repaint the fill. */
+.tooth-occlusal-edge {
+  fill: none;
+  stroke: var(--odontogram-outline);
+  transition: stroke 0.15s ease;
 }
 
 .tooth-root {

@@ -7,6 +7,7 @@
 
 - feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
 
+- feat(#48): realistic per-category occlusal outlines (incisor / canine / premolar / molar) with cusp-aware silhouettes; surface fills clipped to the outline; distal (D) sector is a full quad; molar fissures shortened to the central O so they no longer read as a missing-tooth overlay.
 
 - fix(#101): the module's frontend adopts the useApi error contract — 400/409/422 failures the UI used to swallow now toast the backend's message; calls whose surrounding code already presents the error pass `errorToast: false` (single toast), and hand-built error reads use the shared `errorMessage`/`errorDetail` helpers.
 
