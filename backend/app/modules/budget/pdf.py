@@ -7,6 +7,7 @@ from decimal import Decimal
 from io import BytesIO
 from typing import TYPE_CHECKING
 
+from app.core.pdf_locales import LOCALE_BY_LANG as _LOCALE_BY_LANG
 from app.core.utils.currency import format_currency as _fmt_currency
 
 if TYPE_CHECKING:
@@ -15,7 +16,8 @@ if TYPE_CHECKING:
 from .models import Budget, BudgetSignature
 from .pricing import allocate_global_discount, net_line_total
 
-_LOCALE_BY_LANG = {"es": "es_ES", "en": "en_US"}
+# Every UI locale renders (#441): labels are es/en with English as the
+# fallback, but amounts and dates follow the viewer's own locale.
 
 
 class BudgetPDFService:
@@ -54,7 +56,7 @@ class BudgetPDFService:
             budget: The budget to generate PDF for
             clinic: The clinic for branding
             is_preview: If True, adds DRAFT watermark
-            locale: Language for labels (es/en)
+            locale: UI language; labels are es/en (English fallback)
             signature: Optional accepted signature. When set, the PDF
                 replaces the empty patient signature line with the
                 captured PNG (for ``signature_method='drawn'``) and

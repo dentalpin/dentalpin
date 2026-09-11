@@ -9,6 +9,7 @@ from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.pdf_locales import PDF_LOCALE_PATTERN
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 from app.modules.budget.service import lookup_linked_plan
@@ -16,7 +17,6 @@ from app.modules.payments.schemas import PaymentResponse
 
 from .hooks import BillingHookRegistry
 from .models import Invoice
-from .pdf import PDF_LOCALE_PATTERN
 from .schemas import (
     BillingPartyUpdate,
     BillingSettingsResponse,

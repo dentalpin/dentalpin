@@ -11,33 +11,13 @@ from zoneinfo import ZoneInfo
 
 from babel.numbers import format_decimal as _babel_format_decimal
 
+from app.core.pdf_locales import LOCALE_BY_LANG as _LOCALE_BY_LANG
 from app.core.utils.currency import format_currency as _fmt_currency
 
 if TYPE_CHECKING:
     from app.core.auth.models import Clinic
 
 from .models import Invoice
-
-# Every UI locale is accepted for the PDF (the download button sends the
-# user's language, and a 422 on "Download PDF" is a silent failure in
-# every language the labels are not translated for yet). Labels exist in
-# es/en/ta and fall back to English; amounts and dates use the locale's
-# own separators either way. Keep in sync with the host ``i18n.locales``
-# in frontend/nuxt.config.ts — a test guards it.
-PDF_LOCALES: tuple[str, ...] = ("es", "en", "ta", "fr", "pt", "de", "hu", "pl", "it", "ar")
-PDF_LOCALE_PATTERN = "^(" + "|".join(PDF_LOCALES) + ")$"
-_LOCALE_BY_LANG = {
-    "es": "es_ES",
-    "en": "en_US",
-    "ta": "en_IN",
-    "fr": "fr_FR",
-    "pt": "pt_PT",
-    "de": "de_DE",
-    "hu": "hu_HU",
-    "pl": "pl_PL",
-    "it": "it_IT",
-    "ar": "ar",
-}
 
 
 class InvoicePDFService:

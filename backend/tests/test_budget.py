@@ -1237,3 +1237,22 @@ async def test_absolute_global_discount_total_and_net_lines_agree(
     assert Decimal(data["total"]) == Decimal("270.00")
     assert Decimal(data["total_discount"]) == Decimal("30.00")
     assert sum(Decimal(i["net_line_total"]) for i in data["items"]) == Decimal(data["total"])
+
+
+@pytest.mark.asyncio
+async def test_budget_pdf_endpoints_accept_every_ui_language(
+    client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict
+):
+    """#441: the pages send the viewer's language, so a locale the app ships
+    must not be refused before the budget is even looked up. A missing budget
+    answers 404 — what matters is that it is not a 422 from validation."""
+    missing = uuid4()
+    for path in (
+        f"/api/v1/budget/budgets/{missing}/pdf",
+        f"/api/v1/budget/budgets/{missing}/pdf/signed",
+        f"/api/v1/budget/budgets/{missing}/pdf/preview",
+    ):
+        for locale in ("es", "en", "de", "hu", "ar"):
+            resp = await client.get(f"{path}?locale={locale}", headers=auth_headers)
+            assert resp.status_code == 404, (path, locale, resp.status_code)
+        assert (await client.get(f"{path}?locale=xx", headers=auth_headers)).status_code == 422
