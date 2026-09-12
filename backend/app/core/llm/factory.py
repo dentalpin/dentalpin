@@ -52,8 +52,6 @@ def get_provider(name: str, *, api_key: str | None = None) -> Provider:
     spec = llm_provider_registry.get(name)
     if spec is None:
         supported = ", ".join(item.name for item in llm_provider_registry.list()) or "none"
-        raise LLMConfigError(
-            f"Unsupported LLM provider: {name!r} (supported: {supported})"
-        )
+        raise LLMConfigError(f"Unsupported LLM provider: {name!r} (supported: {supported})")
 
     return spec.factory(ProviderConfig(api_key=api_key))

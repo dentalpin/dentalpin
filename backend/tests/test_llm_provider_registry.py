@@ -3,9 +3,10 @@
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
+from dataclasses import replace
 
 from app.core.llm.base import ProviderEvent
-from app.core.llm.factory import get_provider
+from app.core.llm.factory import ANTHROPIC_SPEC, OPENAI_SPEC, get_provider
 from app.core.llm.registry import ProviderRegistry, llm_provider_registry
 from app.core.llm.spec import ProviderConfig, ProviderSpec
 from app.modules.copilot import CopilotModule
@@ -64,14 +65,36 @@ def test_registry_registration_is_idempotent() -> None:
     assert registry.list() == [spec]
 
 
+def test_registry_registration_overrides_different_spec() -> None:
+    registry = ProviderRegistry()
+    original = _spec()
+    override = replace(original, label="Replacement")
+
+    registry.register(original)
+    registry.register(override)
+
+    assert registry.get("fake") is override
+    assert registry.list() == [override]
+
+
 def test_copilot_activation_registers_builtin_providers() -> None:
     llm_provider_registry.unregister("openai")
     llm_provider_registry.unregister("anthropic")
 
-    CopilotModule().on_activate()
+    try:
+        module = CopilotModule()
+        module.on_activate()
 
-    assert llm_provider_registry.get("openai") is not None
-    assert llm_provider_registry.get("anthropic") is not None
+        assert llm_provider_registry.get("openai") is OPENAI_SPEC
+        assert llm_provider_registry.get("anthropic") is ANTHROPIC_SPEC
+
+        module.on_activate()
+
+        assert llm_provider_registry.get("openai") is OPENAI_SPEC
+        assert llm_provider_registry.get("anthropic") is ANTHROPIC_SPEC
+    finally:
+        llm_provider_registry.unregister("openai")
+        llm_provider_registry.unregister("anthropic")
 
 
 def test_factory_resolves_registered_provider() -> None:
