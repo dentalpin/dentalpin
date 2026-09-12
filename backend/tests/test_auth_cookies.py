@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import logging
+
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import select
@@ -295,3 +297,73 @@ async def test_reuse_inside_grace_window_returns_live_successor(
     assert third.status_code == 200, third.text
     rows = await _family_rows(db_session, old_refresh)
     assert any(r.revoked_at is None for r in rows)
+
+
+@pytest.mark.asyncio
+async def test_split_host_login_warns_with_the_cookie_domain_to_set(
+    client: AsyncClient, monkeypatch, caplog
+) -> None:
+    """#444: host-only cookies never reach a separately hosted app, and the
+    only symptom is that every page reload lands on /login. Say it once, at
+    login, with the value to set."""
+    from app.config import settings
+    from app.core.auth import cookies
+
+    await _bootstrap(client)
+    monkeypatch.setattr(cookies, "_HOST_ONLY_WARNED", False)
+    monkeypatch.setattr(settings, "COOKIE_DOMAIN", "")
+    with caplog.at_level(logging.WARNING, logger="app.core.auth.cookies"):
+        resp = await client.post(
+            LOGIN,
+            data={"username": "admin@example.com", "password": "SecurePass1234"},
+            headers={"Host": "api-demo.example.com", "Origin": "https://demo.example.com"},
+        )
+    assert resp.status_code == 200, resp.text
+    assert "COOKIE_DOMAIN=.example.com" in caplog.text
+
+
+@pytest.mark.asyncio
+async def test_no_warning_for_one_host_or_when_cookie_domain_is_set(
+    client: AsyncClient, monkeypatch, caplog
+) -> None:
+    from app.config import settings
+    from app.core.auth import cookies
+
+    await _bootstrap(client)
+    creds = {"username": "admin@example.com", "password": "SecurePass1234"}
+
+    # Same host for app and API: nothing to warn about.
+    monkeypatch.setattr(cookies, "_HOST_ONLY_WARNED", False)
+    monkeypatch.setattr(settings, "COOKIE_DOMAIN", "")
+    with caplog.at_level(logging.WARNING, logger="app.core.auth.cookies"):
+        resp = await client.post(
+            LOGIN,
+            data=creds,
+            headers={"Host": "app.example.com", "Origin": "https://app.example.com"},
+        )
+    assert resp.status_code == 200, resp.text
+    assert "COOKIE_DOMAIN" not in caplog.text
+
+    # Split hosts, but the deployment already widened the cookies.
+    caplog.clear()
+    monkeypatch.setattr(cookies, "_HOST_ONLY_WARNED", False)
+    monkeypatch.setattr(settings, "COOKIE_DOMAIN", ".example.com")
+    with caplog.at_level(logging.WARNING, logger="app.core.auth.cookies"):
+        resp = await client.post(
+            LOGIN,
+            data=creds,
+            headers={"Host": "api.example.com", "Origin": "https://app.example.com"},
+        )
+    assert resp.status_code == 200, resp.text
+    assert "COOKIE_DOMAIN" not in caplog.text
+
+
+def test_shared_parent_needs_two_common_labels() -> None:
+    from app.core.auth.cookies import _shared_parent
+
+    assert _shared_parent("demo.dentalpin.com", "api-demo.dentalpin.com") == ".dentalpin.com"
+    assert (
+        _shared_parent("app.clinic.example.org", "api.clinic.example.org") == ".clinic.example.org"
+    )
+    assert _shared_parent("app.example.com", "api.example.net") is None
+    assert _shared_parent("app.com", "api.com") is None  # a public suffix is not a parent

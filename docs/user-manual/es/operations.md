@@ -16,6 +16,14 @@ Cubre los comandos que ejecuta un operador — no los internos de Python.
 - Repositorio de DentalPin clonado (o artefactos de despliegue equivalentes).
 - `.env` rellenado con `POSTGRES_PASSWORD`, `SECRET_KEY`, etc.
 - Un stack en marcha: `docker compose up -d`.
+- **¿La aplicación y la API en hosts distintos?** Entonces deben ser
+  hermanos de un mismo dominio padre y `.env` debe fijar `COOKIE_DOMAIN` a
+  ese padre (`COOKIE_DOMAIN=.example.com` para `app.example.com` +
+  `api.example.com`). Sin eso las cookies de sesión son de host único, las
+  páginas renderizadas en el servidor no ven la sesión, cada recarga
+  cierra la sesión del usuario y toda escritura falla con "CSRF token
+  missing" porque la aplicación tampoco puede leer la cookie `dp_csrf`.
+  El backend avisa en el log con el valor a poner.
 
 Comprobación rápida:
 
@@ -339,6 +347,8 @@ DELETE FROM alembic_version;
 | Página de módulo comunitario 404 | Falta la ruta de la capa en `modules.json` | `./bin/dentalpin modules sync-frontend` + reconstruir el frontend |
 | Desinstalación bloqueada: "no Alembic branch" | Módulo legacy de la Fase A | No soportado; esperar a la Fase B |
 | Desinstalación bloqueada: "required by ..." | Existe una dependencia inversa | Desinstalar primero los dependientes, o `--force` |
+| Sesión cerrada en cada recarga, aunque navegar funciona | Aplicación y API en hosts distintos con `COOKIE_DOMAIN` vacío: las cookies de sesión nunca llegan a la aplicación | Fijar `COOKIE_DOMAIN` al dominio padre compartido (p. ej. `.example.com`) y reiniciar el backend |
+| Cada guardado responde `403 CSRF token missing or invalid`, aunque leer funciona | La misma causa: la aplicación no puede leer la cookie `dp_csrf`, así que nunca envía la cabecera `X-CSRF-Token` | La misma solución: fijar `COOKIE_DOMAIN` al dominio padre compartido |
 
 ---
 

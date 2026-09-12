@@ -312,6 +312,7 @@ async def _start_session(
         access_token=access_token,
         refresh_token=refresh_token,
         csrf_token=new_csrf_token(),
+        request=request,
     )
     return TokenResponse(access_token=access_token, refresh_token=refresh_token)
 
@@ -429,6 +430,7 @@ async def refresh_token(
         access_token=access_token,
         refresh_token=new_refresh_token,
         csrf_token=request.cookies.get(CSRF_COOKIE) or new_csrf_token(),
+        request=request,
     )
 
     return AuthResponse(
