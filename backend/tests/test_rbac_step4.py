@@ -413,3 +413,62 @@ async def test_delete_role_blocked_by_role_id_holders(
     await db_session.commit()
     resp = await client.delete(f"/api/v1/roles/{created['id']}", headers=auth_headers)
     assert resp.status_code == 409
+
+
+async def test_update_role_rename_follows_role_id_holders(
+    client, auth_headers, test_clinic, db_session
+):
+    """A rename follows FK-held memberships even when their string drifted."""
+    await _seeded(db_session)
+    created = (
+        await client.post(
+            "/api/v1/roles",
+            json={"name": "fkrename", "permissions": []},
+            headers=auth_headers,
+        )
+    ).json()["data"]
+    # The FK holder is a SECOND user: adding a second membership row for
+    # the signed-in admin would make get_clinic_context resolve either
+    # row (unordered memberships[0]) and flake 403 vs 200.
+    holder = (
+        await client.post(
+            "/api/v1/auth/users",
+            json={
+                "email": "fkrenameholder@test.clinic",
+                "password": "Str0ngPassw0rd!!",
+                "first_name": "F",
+                "last_name": "R",
+                "role": "receptionist",
+            },
+            headers=auth_headers,
+        )
+    ).json()["data"]
+    # Drift the string so only the role_id arm of the rename matches.
+    await db_session.execute(
+        update(ClinicMembership)
+        .where(
+            ClinicMembership.clinic_id == test_clinic.id,
+            ClinicMembership.user_id == holder["id"],
+        )
+        .values(role_id=created["id"], role="receptionist")
+    )
+    await db_session.commit()
+    resp = await client.put(
+        f"/api/v1/roles/{created['id']}",
+        json={"name": "fkrenamed"},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 200
+    membership = (
+        (
+            await db_session.execute(
+                select(ClinicMembership).where(
+                    ClinicMembership.clinic_id == test_clinic.id,
+                    ClinicMembership.user_id == holder["id"],
+                )
+            )
+        )
+        .scalars()
+        .one()
+    )
+    assert membership.role == "fkrenamed"
