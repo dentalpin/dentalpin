@@ -24,6 +24,7 @@ class EventType:
     PATIENT_CREATED = "patient.created"
     PATIENT_UPDATED = "patient.updated"
     PATIENT_ARCHIVED = "patient.archived"
+    PATIENT_RESTORED = "patient.restored"
     PATIENT_MEDICAL_UPDATED = "patient.medical_updated"
 
     # Appointment events

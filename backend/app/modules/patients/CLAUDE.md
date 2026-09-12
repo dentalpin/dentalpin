@@ -11,6 +11,10 @@ Routes mounted at `/api/v1/patients/`.
 - `GET    /patients`        — list (paginated); `patients.read`
 - `GET    /patients/{id}`   — detail; `patients.read`
 - `POST   /patients`        — create; `patients.write`
+- `POST   /patients/import.csv` — CSV import (dry-run default, `dry_run=false`
+  commits; validation reuses `PatientCreate`); `patients.write`
+- `POST   /patients/{id}/restore` — restore a soft-archived patient (no-op
+  when active); `patients.write`
 - `PUT    /patients/{id}`   — update; `patients.write`
 - `DELETE /patients/{id}`   — soft-archive (status → archived); `patients.write`
 
@@ -37,7 +41,8 @@ Agent tools in `tools.py` (wrap `PatientService`, no logic duplicated).
 | `update_patient` | WRITE | `PatientService.update_patient` | `patients.write` |
 
 `update_patient` covers contact data only (phone, email) — identity
-fields stay manual.
+fields stay manual. CSV import is HTTP-only (no agent tool — the LLM
+must never emit 1,000 PII rows as an argument).
 
 ## Events emitted
 
@@ -46,6 +51,7 @@ fields stay manual.
 | `patient.created` | `PatientService.create` succeeds | `patient_id`, `clinic_id` |
 | `patient.updated` | `PatientService.update` succeeds | `patient_id`, `clinic_id`, `changes` |
 | `patient.archived` | `PatientService.archive` (soft-delete) | `patient_id`, `clinic_id` |
+| `patient.restored` | `PatientService.restore` (status → active) | `patient_id`, `clinic_id` |
 
 See `service.py:113`, `service.py:131`, `service.py:142`.
 

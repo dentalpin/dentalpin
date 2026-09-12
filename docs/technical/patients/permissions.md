@@ -11,7 +11,7 @@ permission registry namespaces them as `patients.<name>`).
 | Permission | Allows | Required by |
 |------------|--------|-------------|
 | `patients.read` | Read patient identity rows (list, recent, detail, extended GET). | `GET /api/v1/patients`, `GET /api/v1/patients/recent`, `GET /api/v1/patients/{id}`, `GET /api/v1/patients/{id}/extended` |
-| `patients.write` | Create, update, archive, edit extended demographics. | `POST /api/v1/patients`, `PUT /api/v1/patients/{id}`, `DELETE /api/v1/patients/{id}`, `PUT /api/v1/patients/{id}/extended` |
+| `patients.write` | Create, update, archive, edit extended demographics. | `POST /api/v1/patients`, `PUT /api/v1/patients/{id}`, `DELETE /api/v1/patients/{id}`, `PUT /api/v1/patients/{id}/extended`, `POST /api/v1/patients/import.csv`, `POST /api/v1/patients/{id}/restore` |
 
 ## Role assignment
 

@@ -11,6 +11,8 @@ Routes mounted at `/api/v1/expenses/`.
 - `GET    /expenses`                  — list, filterable by category/date range; `expenses.read`
 - `GET    /expenses/monthly-totals`   — totals per category for a given year+month; `expenses.read`
 - `POST   /expenses`                  — create; `expenses.write`
+- `POST   /expenses/import.csv`        — CSV import (dry-run default,
+  `dry_run=false` commits); `expenses.write`
 - `PATCH  /expenses/{id}`             — edit; `expenses.write`
 - `DELETE /expenses/{id}`             — delete; `expenses.write`
 
@@ -32,6 +34,9 @@ the module admin UI) if e.g. reception should record supplies.
 | `list_expenses` | READ | `ExpenseService.list_expenses` | `expenses.read` |
 | `create_expense` | WRITE | `ExpenseService.create_expense` | `expenses.write` |
 | `expense_monthly_totals` | READ | `ExpenseService.monthly_totals_by_category` | `expenses.read` |
+
+CSV import is HTTP-only (no agent tool — same PII-volume reason as
+patients).
 
 `list_expenses` and `create_expense` return the user-entered `description`
 (free prose, may name employees) and are marked `exposes_free_text=True`,

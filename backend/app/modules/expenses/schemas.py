@@ -54,3 +54,17 @@ class ExpenseMonthlyTotal(BaseModel):
 
     category: ExpenseCategory
     total: Decimal
+
+
+class CsvRowError(BaseModel):
+    row: int
+    message: str
+
+
+class ExpenseImportReport(BaseModel):
+    """Dry-run validation or commit result for an expenses CSV upload."""
+
+    total: int
+    valid: int
+    created: int
+    errors: list[CsvRowError]

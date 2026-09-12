@@ -65,6 +65,7 @@ through `attachment_registry`.
 ## Events consumed
 
 - `patient.archived` → cascade soft-archive of associated documents.
+- `patient.restored` → reverse the cascade (documents back to active).
 
 ## Lifecycle
 

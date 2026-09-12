@@ -304,3 +304,25 @@ class PatientService:
             db=db,
         )
         return patient
+
+    @staticmethod
+    async def restore_patient(db: AsyncSession, patient: Patient) -> Patient:
+        """Restore a soft-archived patient. No-op when already active.
+
+        Publishes ``patient.restored`` (transactional) so the media
+        cascade reverses and consumers refresh off a dedicated contract.
+        """
+        if patient.status != "archived":
+            return patient
+        patient.status = "active"
+        await db.flush()
+
+        await event_bus.publish(
+            EventType.PATIENT_RESTORED,
+            {
+                "patient_id": str(patient.id),
+                "clinic_id": str(patient.clinic_id),
+            },
+            db=db,
+        )
+        return patient

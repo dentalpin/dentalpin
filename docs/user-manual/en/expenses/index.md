@@ -19,3 +19,19 @@ UI.
 
 - [Expense list](./screens/index.md): category filter, expense
   creation, monthly per-category totals and delete with confirmation.
+
+## Importing from CSV
+
+`POST /api/v1/expenses/import.csv` (multipart `file`, `expenses.write`):
+
+```bash
+curl -X POST "https://clinic/api/v1/expenses/import.csv?dry_run=false" \
+  -H "Authorization: Bearer $TOKEN" -F file=@expenses.csv
+```
+
+Columns: `category*` (rent|utilities|salaries|supplies|equipment|
+insurance|maintenance|other), `amount*` (decimal > 0),
+`expense_date*` (YYYY-MM-DD or DD/MM/YYYY), `description`.
+Delimiter `,` or `;` (auto-detected), UTF-8, max 1000 rows / 1 MiB.
+Commit is all-or-nothing. Report shape: `{total, valid, created,
+errors}`.

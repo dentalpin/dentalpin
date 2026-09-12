@@ -41,3 +41,24 @@ quedan ocultas del listado y la búsqueda por defecto.
 - **Agenda** — agenda citas para el paciente.
 
 Para instrucciones paso a paso, sigue las guías por pantalla.
+
+## Importar desde CSV
+
+`POST /api/v1/patients/import.csv` (multipart `file`, `patients.write`):
+
+```bash
+curl -X POST "https://clinica/api/v1/patients/import.csv?dry_run=false" \
+  -H "Authorization: Bearer $TOKEN" -F file=@pacientes.csv
+```
+
+Columnas: `first_name*`, `last_name*`, `phone`, `email`,
+`date_of_birth` (AAAA-MM-DD o DD/MM/AAAA), `notes`,
+`do_not_contact`, `national_id`, `national_id_type`,
+`billing_name`, `billing_tax_id`. Separador `,` o `;`
+(autodetectado), UTF-8, máximo 1000 filas / 1 MiB. La prueba
+(defecto) solo valida y devuelve errores por fila más
+`duplicates` (filas que coinciden con un paciente existente por
+documento, o email + nacimiento; las filas repetidas dentro del
+fichero devuelven `matched_on: "same_file"` con `patient_id` nulo);
+al confirmar se omiten salvo `allow_duplicates=true`. Respuesta: `{total, valid, created,
+skipped, errors, duplicates}`.

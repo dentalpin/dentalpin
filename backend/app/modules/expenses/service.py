@@ -35,6 +35,37 @@ class ExpenseService:
         return expense
 
     @staticmethod
+    async def bulk_create(
+        db: AsyncSession,
+        clinic_id: UUID,
+        rows: list[ExpenseCreate],
+        created_by: UUID | None,
+    ) -> list[Expense]:
+        """Create many expenses with a single flush (all-or-nothing).
+
+        Unlike :meth:`create_expense` (which commits per call for the
+        single-create endpoint), this flushes only — the request
+        transaction commits, so a mid-import failure rolls everything
+        back instead of partially persisting.
+        """
+        expenses = [
+            Expense(
+                clinic_id=clinic_id,
+                category=row.category,
+                amount=row.amount,
+                expense_date=row.expense_date,
+                description=row.description,
+                created_by=created_by,
+            )
+            for row in rows
+        ]
+        db.add_all(expenses)
+        await db.flush()
+        for expense in expenses:
+            await db.refresh(expense)
+        return expenses
+
+    @staticmethod
     async def list_expenses(
         db: AsyncSession,
         clinic_id: UUID,

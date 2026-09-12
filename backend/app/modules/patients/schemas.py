@@ -120,3 +120,25 @@ class PatientExtendedUpdate(PatientUpdate):
     preferred_language: str | None = Field(default=None, max_length=10)
     address: PatientAddress | None = None
     photo_url: str | None = Field(default=None, max_length=500)
+
+
+class CsvRowError(BaseModel):
+    row: int
+    message: str
+
+
+class CsvRowDuplicate(BaseModel):
+    row: int
+    patient_id: UUID | None
+    matched_on: str
+
+
+class PatientImportReport(BaseModel):
+    """Dry-run validation or commit result for a patients CSV upload."""
+
+    total: int
+    valid: int
+    created: int
+    skipped: int = 0
+    errors: list[CsvRowError]
+    duplicates: list[CsvRowDuplicate] = []
