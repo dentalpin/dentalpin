@@ -36,6 +36,7 @@ export type ModuleCategory = 'official' | 'community'
 export interface ModuleInfo {
   name: string
   version: string
+  installed_version: string | null
   state: ModuleState
   category: ModuleCategory
   removable: boolean
@@ -49,6 +50,8 @@ export interface ModuleInfo {
   summary: string
   depends: string[]
   in_disk: boolean
+  installable: boolean
+  upgrade_available: boolean
 }
 
 export interface ModuleStatus {

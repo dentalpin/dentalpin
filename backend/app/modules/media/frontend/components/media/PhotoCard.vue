@@ -10,7 +10,6 @@ const props = defineProps<Props>()
 defineEmits<{ open: [Document], select: [Document] }>()
 
 const config = useRuntimeConfig()
-const auth = useAuth()
 
 const apiBaseUrl = computed(() =>
   import.meta.server ? config.apiBaseUrlServer : config.public.apiBaseUrl
@@ -27,7 +26,7 @@ async function loadThumb() {
   try {
     const response = await $fetch<Blob>(path, {
       baseURL: apiBaseUrl.value,
-      headers: { Authorization: `Bearer ${auth.accessToken.value}` },
+      credentials: 'include',
       responseType: 'blob'
     })
     if (thumbBlobUrl.value) URL.revokeObjectURL(thumbBlobUrl.value)

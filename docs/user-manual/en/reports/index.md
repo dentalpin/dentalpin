@@ -32,6 +32,22 @@ the dashboard through the `reports.categories` slot — for example,
 | See budget reports | `reports.budgets.read` |
 | See agenda reports | `reports.scheduling.read` |
 | See payment reports (contributed by `payments`) | `payments.reports.read` |
+| See financial aging + trend | `reports.financial.read` |
+| See patient demographics + visits | `reports.patient_stats.read` |
+| See operational productivity | `reports.operational.read` |
+
+## New in v0.2.0 — report families
+
+- **Financial** (`reports.financial.read`): outstanding aging buckets
+  and monthly issued totals, invoice axis only, with `?format=csv`.
+  The dashboard aging card reads these numbers.
+- **Patient stats** (`reports.patient_stats.read`): as-of-now
+  demographics (age bands, gender, area with explicit unknowns) and
+  new-vs-returning visit frequency, with `?format=csv`. No dedicated
+  screen yet — ask the copilot or export the CSV.
+- **Operational** (`reports.operational.read`): completed
+  appointments per professional and cabinet plus the treatment-plan
+  pipeline, with `?format=csv`. No dedicated screen yet.
 
 ## Related modules
 

@@ -127,7 +127,6 @@ function onChanged(updated: Recall) {
 
 const conversionPct = computed(() => stats.value ? Math.round(stats.value.conversion_rate * 100) : 0)
 
-const auth = useAuth()
 const config = useRuntimeConfig()
 const isExporting = ref(false)
 
@@ -142,11 +141,7 @@ async function downloadCsv() {
       priority: priority.value === ANY ? undefined : priority.value || undefined,
       overdue: overdue.value || undefined
     })
-    const res = await fetch(url, {
-      headers: auth.accessToken.value
-        ? { Authorization: `Bearer ${auth.accessToken.value}` }
-        : {}
-    })
+    const res = await fetch(url, { credentials: 'include' })
     if (!res.ok) throw new Error(`HTTP ${res.status}`)
     const blob = await res.blob()
     const blobUrl = URL.createObjectURL(blob)

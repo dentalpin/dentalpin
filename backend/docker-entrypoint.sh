@@ -33,14 +33,18 @@ fi
 if [ "${SEED_ON_STARTUP:-0}" = "1" ]; then
   (
     SEED_LANG_ARG="${SEED_LANG:-es}"
+    # Country variant for the demo clinic (generic | in). 'in' seeds the
+    # India GST clinic — Chennai address, GSTIN, CGST/SGST/IGST invoices,
+    # INR — in the chosen SEED_LANG. Only en and ta support it today.
+    SEED_COUNTRY_ARG="${SEED_COUNTRY:-generic}"
     for i in $(seq 1 60); do
       if python -c "import urllib.request,sys
 try:
     sys.exit(0 if urllib.request.urlopen('http://localhost:8000/health', timeout=1).status == 200 else 1)
 except Exception:
     sys.exit(1)" 2>/dev/null; then
-        echo "[entrypoint] Backend healthy — running seed (lang=$SEED_LANG_ARG)"
-        PYTHONPATH=/app python /app/scripts/seed_demo.py --lang "$SEED_LANG_ARG" || echo "[entrypoint] Seed failed (non-fatal)"
+        echo "[entrypoint] Backend healthy — running seed (lang=$SEED_LANG_ARG country=$SEED_COUNTRY_ARG)"
+        PYTHONPATH=/app python /app/scripts/seed_demo.py --lang "$SEED_LANG_ARG" --country "$SEED_COUNTRY_ARG" || echo "[entrypoint] Seed failed (non-fatal)"
         exit 0
       fi
       sleep 1

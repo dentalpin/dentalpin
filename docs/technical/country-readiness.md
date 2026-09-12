@@ -46,7 +46,7 @@ templates are contributed.
 | United States | ✅ `en` | ✅ | ✅ patient invoicing works as-is | ❌ CDT coding, X12 837D claims; HIPAA gap analysis | #137 |
 | Mexico | ✅ `es` | ✅ | ❌ CFDI stamping through a PAC | n/a | #138 |
 | Brazil | ✅ `pt` | ✅ | ❌ NFS-e | ❌ TISS | #139 |
-| Germany | ✅ `de` | ❌ | ❌ BEMA / GOZ, KZV submission | ❓ Telematikinfrastruktur feasibility | #135, #136 |
+| Germany | ✅ `de` | ❌ | ❌ GOZ private invoicing: `de_goz` module pending (no approval needed); statutory BEMA/KZV billing not possible for a self-hosted, modifiable program — the KZBV Eignungsfeststellung is per system and version and the submission files come from KZBV modules (Anlage 1 BMV-Z; ADR 0031) — bill the KZV with a KZBV-listed PVS | ❌ TI: DentalPin talks to the practice's gematik-approved Konnektor/TI-Gateway, never is one; `de_ti` (VSDM first, KIM transport second) pending; EBZ/E-Rezept/ePA stay with the approved PVS (ADR 0032) | #135, #136 (answered) |
 | Italy | ✅ `it` | ❌ | ❌ FatturaPA / SDI for B2B/B2G invoices only — patient invoices may not go through the SDI (art. 10-bis DL 119/2018; ADR 0025, spec accepted, module pending) | ❌ Sistema Tessera Sanitaria (ADR 0026, spec accepted, module pending) | #133, #134 |
 | Poland | ✅ `pl` | ❌ | ❌ KSeF | ❌ P1 / EDM | #143 |
 | Hungary | ✅ `hu` | ❌ | ✅ `nav_online` module (NAV Online Számla 3.0 real-time reporting, phase 1: CREATE/STORNO) | n/a | #341 |

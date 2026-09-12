@@ -21,6 +21,12 @@ const logError = ref<string | null>(null)
 
 const manifestJson = computed(() => JSON.stringify(props.module, null, 2))
 
+const stateLabel = computed(() => {
+  const state = props.module?.state ?? ''
+  const camel = state.replace(/_(.)/g, (_, c: string) => c.toUpperCase())
+  return t(`settings.modules.state.${camel}`)
+})
+
 async function fetchLog() {
   if (!props.module) {
     return
@@ -110,7 +116,7 @@ function statusColor(status: string): UiColor {
                 {{ t('settings.modules.detail.state') }}
               </p>
               <p class="text-default">
-                {{ module.state }}
+                {{ stateLabel }}
               </p>
             </div>
             <div>

@@ -1,0 +1,101 @@
+{
+  "sdi_it": {
+    "settings": {
+      "title": "Facturation électronique (SDI)",
+      "description": "Fichiers FatturaPA des factures aux entreprises, envoyés au Sistema di Interscambio."
+    },
+    "scope": {
+      "title": "Seules les factures aux entreprises passent par le SDI",
+      "text": "Les factures de soins aux particuliers ne peuvent pas être électroniques (art. 10-bis DL 119/2018) : elles restent en PDF et sont déclarées au Sistema Tessera Sanitaria. Une facture devient un fichier SDI seulement si le destinataire a une partita IVA."
+    },
+    "invoiceData": "Données de facture",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "regime": "Régime fiscal (RegimeFiscale)",
+    "regimeHelp": "RF01 ordinaire, RF19 forfaitaire.",
+    "riferimento": "Référence de l'exonération",
+    "riferimentoHelp": "Imprimée dans le récapitulatif exonéré (Natura N4), p. ex. Esente IVA art. 10 n. 18 DPR 633/72.",
+    "bollo": "Timbre virtuel (2 €) au-delà de 77,47 € exonérés",
+    "bolloHelp": "Déclare DatiBollo sur les factures exonérées au-dessus du seuil ; le montant n'est pas ajouté au total.",
+    "progressivo": "Fichiers générés à ce jour : {n}",
+    "transportLabel": "Transmission au SDI",
+    "transport": {
+      "manual": "dépôt manuel",
+      "pec": "PEC"
+    },
+    "transportOpt": {
+      "manual": "Manuel — vous téléchargez le fichier, le déposez vous-même, importez le reçu",
+      "manualHelp": "Vous téléchargez chaque XML depuis la page des fichiers, le déposez dans Fatture e Corrispettivi ou l'envoyez depuis votre client PEC, puis importez le reçu renvoyé par le SDI.",
+      "pec": "PEC — la messagerie certifiée du cabinet envoie et reçoit",
+      "pecHelp": "Toutes les deux minutes le système envoie les fichiers en attente depuis votre PEC au SDI et lit les reçus renvoyés. Aucun agrément nécessaire."
+    },
+    "pec": {
+      "address": "Adresse PEC du cabinet",
+      "sdiAddress": "Boîte du SDI",
+      "sdiAddressHelp": "sdi01{'@'}pec.fatturapa.it pour le premier fichier ; le SDI répond depuis une adresse dédiée, enregistrée ici automatiquement.",
+      "smtpHost": "Serveur SMTP",
+      "imapHost": "Serveur IMAP",
+      "port": "Port",
+      "username": "Identifiant",
+      "password": "Mot de passe",
+      "folder": "Dossier IMAP",
+      "lastPoll": "Dernière vérification de la boîte : {at}"
+    },
+    "secretStored": "Enregistré — laissez vide pour conserver.",
+    "testConnection": "Tester la boîte",
+    "testOk": "Connexion SMTP et IMAP réussie",
+    "testFail": "Le test de la boîte a échoué",
+    "enable": "Activer",
+    "disable": "Désactiver",
+    "saved": "Paramètres enregistrés",
+    "saveError": "Impossible d'enregistrer les paramètres",
+    "records": {
+      "title": "Fichiers SDI",
+      "description": "Chaque facture à une entreprise devient un fichier FPR12 ; suivez-le de la génération au reçu du SDI.",
+      "allStates": "Tous les états",
+      "processNow": "Envoyer maintenant",
+      "processedTitle": "Cycle PEC terminé",
+      "processed": "Envoyés {sent}, échoués {failed}, reçus {receipts}, non appariés {unmatched}",
+      "empty": "Aucun fichier SDI pour l'instant.",
+      "invoice": "Facture",
+      "recipient": "Destinataire",
+      "file": "Fichier",
+      "state": "État",
+      "receipt": "Reçu"
+    },
+    "panel": {
+      "title": "Sistema di Interscambio",
+      "notApplicable": "Facture à un particulier : non envoyée au SDI (art. 10-bis DL 119/2018). Émise en PDF ; la dépense est déclarée au Sistema Tessera Sanitaria.",
+      "buildError": "Le fichier SDI n'a pas pu être généré",
+      "noRecord": "Pas encore de fichier SDI pour cette facture.",
+      "file": "Fichier",
+      "recipient": "Destinataire",
+      "transport": "Envoyé via",
+      "receipt": "Reçu",
+      "download": "Télécharger le XML",
+      "markExported": "Marquer comme déposé",
+      "importReceipt": "Importer le reçu",
+      "receiptHelp": "Choisissez le XML renvoyé par le SDI (…_RC_…, …_NS_…, …_MC_…) ou collez son contenu.",
+      "receiptImported": "Reçu appliqué",
+      "requeue": "Régénérer et renvoyer",
+      "requeued": "Nouveau fichier généré avec le même numéro",
+      "downloaded": "Fichier téléchargé",
+      "markedExported": "Marqué comme déposé — en attente du reçu",
+      "actionFailed": "L'action a échoué",
+      "undeliverableHint": "Le SDI n'a pas pu remettre le fichier : il est dans l'espace réservé du destinataire. Prévenez-le par un autre moyen.",
+      "rejectedHint": "Rejetée par le SDI. Corrigez les données de la facture puis régénérez : le nouveau fichier garde le même numéro et la même date."
+    },
+    "badge": {
+      "short": "SDI",
+      "error": "Fichier SDI non généré"
+    },
+    "state": {
+      "pending": "À envoyer",
+      "exported": "Envoyé, reçu attendu",
+      "delivered": "Remis",
+      "undeliverable": "Non remis",
+      "rejected": "Rejeté",
+      "failed": "Échoué"
+    }
+  }
+}

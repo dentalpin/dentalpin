@@ -1,0 +1,101 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "Encaissez les paiements par UPI, QR, carte et lien de paiement."
+    },
+    "settings": {
+      "title": "Paramètres Razorpay",
+      "description": "Configurez la passerelle de paiement Razorpay pour cette clinique.",
+      "credentials": "Identifiants API",
+      "mode": "Mode",
+      "modeHint": "Utilisez le mode test jusqu'à ce que tout fonctionne de bout en bout.",
+      "modeTest": "Test",
+      "modeLive": "Production",
+      "keyId": "ID de clé",
+      "keyIdHint": "Depuis le tableau de bord Razorpay — peut être exposé au navigateur sans risque.",
+      "keySecret": "Clé secrète",
+      "keySecretHint": "Depuis le tableau de bord Razorpay. Ne sera plus affichée après l'enregistrement.",
+      "keySecretConfiguredHint": "Une clé secrète est déjà configurée. Laissez vide pour la conserver.",
+      "keySecretPlaceholder": "Saisissez la clé secrète",
+      "isActive": "Actif",
+      "isActiveHint": "Seules les configurations actives sont proposées à la réception comme méthode d'encaissement.",
+      "webhook": "Webhook",
+      "webhookUrl": "URL du webhook",
+      "webhookUrlHint": "Collez ceci dans les paramètres de webhook de Razorpay pour cette clinique.",
+      "webhookSecret": "Secret du webhook",
+      "webhookSecretHint": "Le secret avec lequel Razorpay signe les événements du webhook.",
+      "webhookSecretConfiguredHint": "Un secret de webhook est déjà configuré. Laissez vide pour le conserver.",
+      "webhookSecretPlaceholder": "Saisissez le secret du webhook",
+      "lastWebhookReceived": "Dernier webhook reçu",
+      "lastWebhookProcessed": "Dernier webhook traité",
+      "lastWebhookEventType": "Dernier type d'événement",
+      "lastWebhookError": "Dernière erreur de webhook",
+      "never": "Jamais",
+      "professionalNotice": "Confirmez la configuration de votre compte Razorpay et les détails de règlement avec le support Razorpay ou votre comptable. DentalPin ne gère ni le règlement ni la déclaration fiscale.",
+      "saved": "Paramètres enregistrés",
+      "saveError": "Impossible d'enregistrer les paramètres",
+      "loadError": "Impossible de charger les paramètres",
+      "webhookCopied": "URL du webhook copiée"
+    },
+    "collect": {
+      "notConfiguredHint": "Razorpay n'est pas encore configuré pour cette clinique. Demandez à un administrateur de le configurer dans les paramètres.",
+      "waiting": "En attente du paiement…",
+      "checkStatus": "Vérifier le statut",
+      "openCheckout": "Ouvrir le paiement Razorpay",
+      "scanQr": "Demandez au patient de scanner ce code QR avec n'importe quelle application UPI",
+      "linkCopied": "Lien de paiement copié",
+      "authorizing": "Paiement autorisé — finalisation…",
+      "success": "Paiement reçu",
+      "tryAgain": "Réessayer",
+      "createError": "Impossible de démarrer le paiement",
+      "checkoutLoadError": "Impossible de charger le paiement Razorpay — vérifiez votre connexion et réessayez",
+      "states": {
+        "failed": "Paiement échoué",
+        "expired": "Paiement expiré",
+        "cancelled": "Paiement annulé"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "QR",
+        "card": "Carte",
+        "payment_link": "Lien de paiement"
+      },
+      "railUpiQr": "QR UPI",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "Lien de paiement"
+    },
+    "detail": {
+      "title": "Transaction Razorpay",
+      "auditTrail": "Détails",
+      "method": "Méthode",
+      "status": "Statut",
+      "providerReference": "ID de paiement Razorpay",
+      "initiated": "Initié",
+      "confirmed": "Confirmé",
+      "allocation": "Affectation",
+      "refundHistory": "Remboursements",
+      "refundAction": "Rembourser via Razorpay",
+      "refundPermissionDenied": "Vous n'avez pas la permission d'effectuer des remboursements",
+      "maxRefundable": "Jusqu'à {amount}",
+      "noRefunds": "Ce paiement n'a pas encore de remboursement.",
+      "refundRequested": "Remboursement demandé",
+      "refundError": "Impossible de démarrer le remboursement",
+      "states": {
+        "pending": "En attente",
+        "awaiting_customer_action": "En attente de paiement",
+        "authorised_awaiting_capture": "Autorisation en cours",
+        "succeeded": "Réussi",
+        "failed": "Échoué",
+        "expired": "Expiré",
+        "cancelled": "Annulé"
+      },
+      "refundStates": {
+        "requested": "Demandé",
+        "processing": "En cours",
+        "completed": "Terminé",
+        "failed": "Échoué"
+      }
+    }
+  }
+}

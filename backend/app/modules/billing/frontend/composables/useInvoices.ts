@@ -55,7 +55,6 @@ export function patientBillingEditPath(patientId: string, returnTo: string): str
 export function useInvoices() {
   const api = useApi()
   const config = useRuntimeConfig()
-  const auth = useAuth()
   const { t } = useI18n()
 
   // State
@@ -469,22 +468,24 @@ export function useInvoices() {
 
   async function downloadPDF(id: string, locale: string = 'es'): Promise<void> {
     const baseUrl = config.public.apiBaseUrl
-    const token = auth.accessToken.value
-
     const response = await fetch(
       `${baseUrl}/api/v1/billing/invoices/${id}/pdf?locale=${locale}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      }
+      { credentials: 'include' }
     )
 
     if (!response.ok) {
       // Raw fetch (blob response) bypasses useApi's error shaping — read
       // the server's message instead of a hardcoded English string.
       const body = await response.json().catch(() => null)
-      throw new Error(body?.message || body?.detail || 'Failed to download PDF')
+      // FastAPI's 422 puts a list of validation objects in ``detail``;
+      // stringifying that reads "[object Object]" in the toast.
+      const detail: unknown = body?.message ?? body?.detail
+      const message = typeof detail === 'string'
+        ? detail
+        : Array.isArray(detail)
+          ? detail.map(d => (d as { msg?: string })?.msg).filter(Boolean).join('; ')
+          : ''
+      throw new Error(message || `Failed to download PDF (HTTP ${response.status})`)
     }
 
     const blob = await response.blob()

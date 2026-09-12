@@ -1,0 +1,101 @@
+{
+  "sdi_it": {
+    "settings": {
+      "title": "Faturação eletrónica (SDI)",
+      "description": "Ficheiros FatturaPA das faturas a empresas, enviados ao Sistema di Interscambio."
+    },
+    "scope": {
+      "title": "Só as faturas a empresas passam pelo SDI",
+      "text": "As faturas de saúde a particulares não podem ser eletrónicas (art. 10-bis DL 119/2018): ficam em PDF e são comunicadas ao Sistema Tessera Sanitaria. Uma fatura só se torna ficheiro SDI se o destinatário tiver partita IVA."
+    },
+    "invoiceData": "Dados da fatura",
+    "enabled": "Ativo",
+    "disabled": "Inativo",
+    "regime": "Regime fiscal (RegimeFiscale)",
+    "regimeHelp": "RF01 ordinário, RF19 forfettario.",
+    "riferimento": "Referência da isenção",
+    "riferimentoHelp": "Impressa no resumo isento (Natura N4), p. ex. Esente IVA art. 10 n. 18 DPR 633/72.",
+    "bollo": "Selo virtual (2 €) acima de 77,47 € isentos",
+    "bolloHelp": "Declara DatiBollo nas faturas isentas acima do limite; o valor não é somado ao total.",
+    "progressivo": "Ficheiros gerados até agora: {n}",
+    "transportLabel": "Envio ao SDI",
+    "transport": {
+      "manual": "carregamento manual",
+      "pec": "PEC"
+    },
+    "transportOpt": {
+      "manual": "Manual — descarrega o ficheiro, carrega-o e importa o recibo",
+      "manualHelp": "Descarrega cada XML na página de ficheiros, carrega-o em Fatture e Corrispettivi ou envia-o do seu cliente PEC, e importa o recibo devolvido pelo SDI.",
+      "pec": "PEC — a caixa certificada da clínica envia e recebe",
+      "pecHelp": "A cada dois minutos o sistema envia os ficheiros pendentes da sua PEC ao SDI e lê os recibos devolvidos. Sem acreditação."
+    },
+    "pec": {
+      "address": "Endereço PEC da clínica",
+      "sdiAddress": "Caixa do SDI",
+      "sdiAddressHelp": "sdi01{'@'}pec.fatturapa.it para o primeiro ficheiro; o SDI responde de um endereço dedicado, guardado aqui automaticamente.",
+      "smtpHost": "Servidor SMTP",
+      "imapHost": "Servidor IMAP",
+      "port": "Porta",
+      "username": "Utilizador",
+      "password": "Palavra-passe",
+      "folder": "Pasta IMAP",
+      "lastPoll": "Última verificação da caixa: {at}"
+    },
+    "secretStored": "Guardada — deixe vazio para manter.",
+    "testConnection": "Testar caixa",
+    "testOk": "Acesso SMTP e IMAP com sucesso",
+    "testFail": "O teste da caixa falhou",
+    "enable": "Ativar",
+    "disable": "Desativar",
+    "saved": "Definições guardadas",
+    "saveError": "Não foi possível guardar as definições",
+    "records": {
+      "title": "Ficheiros SDI",
+      "description": "Cada fatura a empresa torna-se um ficheiro FPR12; acompanhe-o da geração ao recibo do SDI.",
+      "allStates": "Todos os estados",
+      "processNow": "Enviar agora",
+      "processedTitle": "Ciclo PEC concluído",
+      "processed": "Enviados {sent}, falhados {failed}, recibos {receipts}, sem correspondência {unmatched}",
+      "empty": "Ainda não há ficheiros SDI.",
+      "invoice": "Fatura",
+      "recipient": "Destinatário",
+      "file": "Ficheiro",
+      "state": "Estado",
+      "receipt": "Recibo"
+    },
+    "panel": {
+      "title": "Sistema di Interscambio",
+      "notApplicable": "Fatura a particular: não enviada ao SDI (art. 10-bis DL 119/2018). Emitida em PDF; a despesa é comunicada ao Sistema Tessera Sanitaria.",
+      "buildError": "Não foi possível gerar o ficheiro SDI",
+      "noRecord": "Esta fatura ainda não tem ficheiro SDI.",
+      "file": "Ficheiro",
+      "recipient": "Destinatário",
+      "transport": "Enviado por",
+      "receipt": "Recibo",
+      "download": "Descarregar XML",
+      "markExported": "Marcar como carregado",
+      "importReceipt": "Importar recibo",
+      "receiptHelp": "Escolha o XML devolvido pelo SDI (…_RC_…, …_NS_…, …_MC_…) ou cole o seu conteúdo.",
+      "receiptImported": "Recibo aplicado",
+      "requeue": "Regenerar e reenviar",
+      "requeued": "Novo ficheiro gerado com o mesmo número",
+      "downloaded": "Ficheiro descarregado",
+      "markedExported": "Marcado como carregado — à espera do recibo",
+      "actionFailed": "A ação falhou",
+      "undeliverableHint": "O SDI não conseguiu entregar o ficheiro: está na área reservada do destinatário. Avise-o por outro meio.",
+      "rejectedHint": "Rejeitada pelo SDI. Corrija os dados da fatura e regenere: o novo ficheiro mantém número e data."
+    },
+    "badge": {
+      "short": "SDI",
+      "error": "Ficheiro SDI não gerado"
+    },
+    "state": {
+      "pending": "Por enviar",
+      "exported": "Enviado, à espera do recibo",
+      "delivered": "Entregue",
+      "undeliverable": "Não entregável",
+      "rejected": "Rejeitado",
+      "failed": "Falhado"
+    }
+  }
+}

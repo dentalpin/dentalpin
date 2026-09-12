@@ -25,6 +25,7 @@ from app.modules.billing.hooks import BillingComplianceHook
 from app.modules.billing.models import Invoice
 
 from .models import SdiItRecord, SdiItSettings
+from .services.invoice_state import compliance_block
 from .services.tax_ids import PartitaIva, is_business_recipient
 from .services.xml_builder import Party, SdiBuildError, build_fattura, progressivo_invio
 
@@ -68,6 +69,12 @@ async def build_record(
     cessionario = Party.from_recipient(
         tax_id=invoice.billing_tax_id, name=invoice.billing_name, address=invoice.billing_address
     )
+    # Two invoices issued at the same instant must not share a progressivo
+    # (and therefore a file name): lock the row *and* reload it. A plain
+    # ``SELECT … FOR UPDATE`` returns the identity-mapped instance with the
+    # value loaded earlier in this session, so the second request would
+    # bump the stale counter it read before the first one committed.
+    await db.refresh(settings, with_for_update=True)
     settings.progressivo_invio = (settings.progressivo_invio or 0) + 1
     result = build_fattura(
         invoice,
@@ -143,15 +150,7 @@ async def original_invoice(db: AsyncSession, invoice: Invoice) -> Invoice | None
 
 
 def _queued(record: SdiItRecord) -> dict[str, Any]:
-    return {
-        "IT": {
-            "sdi": "queued",
-            "record_id": str(record.id),
-            "tipo_documento": record.tipo_documento,
-            "file_name": record.file_name,
-            "state": record.state,
-        }
-    }
+    return {"IT": compliance_block(record)}
 
 
 class SdiItHook(BillingComplianceHook):

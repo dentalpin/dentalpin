@@ -1,0 +1,101 @@
+{
+  "sdi_it": {
+    "settings": {
+      "title": "الفوترة الإلكترونية (SDI)",
+      "description": "ملفات FatturaPA لفواتير الشركات، تُرسل إلى Sistema di Interscambio."
+    },
+    "scope": {
+      "title": "فواتير الشركات فقط تمر عبر SDI",
+      "text": "لا يجوز أن تكون الفواتير الصحية للأفراد إلكترونية (المادة 10-bis من المرسوم DL 119/2018): تبقى بصيغة PDF ويُبلَّغ عنها إلى Sistema Tessera Sanitaria. تصبح الفاتورة ملف SDI فقط إذا كان للمستلم رقم partita IVA."
+    },
+    "invoiceData": "بيانات الفاتورة",
+    "enabled": "مفعّل",
+    "disabled": "معطّل",
+    "regime": "النظام الضريبي (RegimeFiscale)",
+    "regimeHelp": "RF01 عادي، RF19 الجزافي (forfettario).",
+    "riferimento": "مرجع الإعفاء",
+    "riferimentoHelp": "يُطبع في ملخص الإعفاء (Natura N4)، مثلاً Esente IVA art. 10 n. 18 DPR 633/72.",
+    "bollo": "رسم الطابع الافتراضي (2 €) فوق 77.47 € معفاة",
+    "bolloHelp": "يُعلن DatiBollo في الفواتير المعفاة فوق الحد؛ لا يُضاف المبلغ إلى الإجمالي.",
+    "progressivo": "الملفات المُنشأة حتى الآن: {n}",
+    "transportLabel": "الإرسال إلى SDI",
+    "transport": {
+      "manual": "رفع يدوي",
+      "pec": "PEC"
+    },
+    "transportOpt": {
+      "manual": "يدوي — تنزّل الملف وترفعه بنفسك وتستورد الإيصال",
+      "manualHelp": "تنزّل كل ملف XML من صفحة الملفات، وترفعه في Fatture e Corrispettivi أو ترسله من برنامج PEC الخاص بك، ثم تستورد الإيصال الذي يعيده SDI.",
+      "pec": "PEC — صندوق البريد المعتمد للعيادة يرسل ويستقبل",
+      "pecHelp": "كل دقيقتين يرسل النظام الملفات المعلّقة من صندوق PEC الخاص بك إلى SDI ويقرأ الإيصالات المعادة. لا حاجة إلى اعتماد."
+    },
+    "pec": {
+      "address": "عنوان PEC للعيادة",
+      "sdiAddress": "صندوق بريد SDI",
+      "sdiAddressHelp": "sdi01{'@'}pec.fatturapa.it للملف الأول؛ يردّ SDI من عنوان مخصص يُحفظ هنا تلقائياً.",
+      "smtpHost": "خادم SMTP",
+      "imapHost": "خادم IMAP",
+      "port": "المنفذ",
+      "username": "اسم المستخدم",
+      "password": "كلمة المرور",
+      "folder": "مجلد IMAP",
+      "lastPoll": "آخر فحص لصندوق البريد: {at}"
+    },
+    "secretStored": "محفوظة — اتركها فارغة للإبقاء عليها.",
+    "testConnection": "اختبار صندوق البريد",
+    "testOk": "نجح تسجيل الدخول إلى SMTP وIMAP",
+    "testFail": "فشل اختبار صندوق البريد",
+    "enable": "تفعيل",
+    "disable": "تعطيل",
+    "saved": "تم حفظ الإعدادات",
+    "saveError": "تعذّر حفظ الإعدادات",
+    "records": {
+      "title": "ملفات SDI",
+      "description": "تصبح كل فاتورة شركة ملف FPR12؛ تابعه من الإنشاء حتى إيصال SDI.",
+      "allStates": "كل الحالات",
+      "processNow": "أرسل الآن",
+      "processedTitle": "اكتملت دورة PEC",
+      "processed": "أُرسل {sent}، فشل {failed}، إيصالات {receipts}، غير مطابقة {unmatched}",
+      "empty": "لا توجد ملفات SDI بعد.",
+      "invoice": "الفاتورة",
+      "recipient": "المستلم",
+      "file": "الملف",
+      "state": "الحالة",
+      "receipt": "الإيصال"
+    },
+    "panel": {
+      "title": "Sistema di Interscambio",
+      "notApplicable": "فاتورة لفرد: لا تُرسل إلى SDI (المادة 10-bis من DL 119/2018). صدرت بصيغة PDF؛ يُبلَّغ عن المصروف إلى Sistema Tessera Sanitaria.",
+      "buildError": "تعذّر إنشاء ملف SDI",
+      "noRecord": "لا يوجد ملف SDI لهذه الفاتورة بعد.",
+      "file": "الملف",
+      "recipient": "المستلم",
+      "transport": "أُرسل عبر",
+      "receipt": "الإيصال",
+      "download": "تنزيل XML",
+      "markExported": "وضع علامة «تم الرفع»",
+      "importReceipt": "استيراد الإيصال",
+      "receiptHelp": "اختر ملف XML الذي أعاده SDI (…_RC_…، …_NS_…، …_MC_…) أو الصق محتواه.",
+      "receiptImported": "تم تطبيق الإيصال",
+      "requeue": "إعادة الإنشاء وإعادة الإرسال",
+      "requeued": "أُنشئ ملف جديد بالرقم نفسه",
+      "downloaded": "تم تنزيل الملف",
+      "markedExported": "وُضعت علامة «تم الرفع» — بانتظار الإيصال",
+      "actionFailed": "فشل الإجراء",
+      "undeliverableHint": "لم يتمكن SDI من تسليم الملف: إنه في المنطقة المحجوزة للمستلم. أبلغ المستلم بوسيلة أخرى.",
+      "rejectedHint": "رفضه SDI. صحّح بيانات الفاتورة ثم أعد الإنشاء: يحتفظ الملف الجديد بالرقم والتاريخ نفسيهما."
+    },
+    "badge": {
+      "short": "SDI",
+      "error": "لم يُنشأ ملف SDI"
+    },
+    "state": {
+      "pending": "للإرسال",
+      "exported": "أُرسل، بانتظار الإيصال",
+      "delivered": "تم التسليم",
+      "undeliverable": "تعذّر التسليم",
+      "rejected": "مرفوض",
+      "failed": "فشل"
+    }
+  }
+}

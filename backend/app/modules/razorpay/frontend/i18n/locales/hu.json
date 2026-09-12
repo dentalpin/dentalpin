@@ -1,0 +1,101 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "Fogadjon fizetéseket UPI, QR, kártya és fizetési link segítségével."
+    },
+    "settings": {
+      "title": "Razorpay beállítások",
+      "description": "Állítsa be a Razorpay fizetési átjárót ehhez a klinikához.",
+      "credentials": "API hitelesítő adatok",
+      "mode": "Mód",
+      "modeHint": "Használja a teszt módot, amíg meg nem győződik róla, hogy minden végponttól végpontig működik.",
+      "modeTest": "Teszt",
+      "modeLive": "Éles",
+      "keyId": "Kulcs azonosító",
+      "keyIdHint": "A Razorpay irányítópultról — biztonságosan megjeleníthető a böngészőben.",
+      "keySecret": "Titkos kulcs",
+      "keySecretHint": "A Razorpay irányítópultról. Mentés után többé nem jelenik meg.",
+      "keySecretConfiguredHint": "Már van beállítva titkos kulcs. Hagyja üresen a megtartásához.",
+      "keySecretPlaceholder": "Adja meg a titkos kulcsot",
+      "isActive": "Aktív",
+      "isActiveHint": "Csak az aktív konfigurációk jelennek meg a recepción fizetési módként.",
+      "webhook": "Webhook",
+      "webhookUrl": "Webhook URL",
+      "webhookUrlHint": "Illessze be ezt a Razorpay webhook-beállításaiba ehhez a klinikához.",
+      "webhookSecret": "Webhook titkos kulcs",
+      "webhookSecretHint": "A titkos kulcs, amellyel a Razorpay aláírja a webhook eseményeket.",
+      "webhookSecretConfiguredHint": "Már van beállítva webhook titkos kulcs. Hagyja üresen a megtartásához.",
+      "webhookSecretPlaceholder": "Adja meg a webhook titkos kulcsot",
+      "lastWebhookReceived": "Utoljára fogadott webhook",
+      "lastWebhookProcessed": "Utoljára feldolgozott webhook",
+      "lastWebhookEventType": "Utolsó eseménytípus",
+      "lastWebhookError": "Utolsó webhook hiba",
+      "never": "Soha",
+      "professionalNotice": "Egyeztesse a Razorpay fiók beállítását és az elszámolási adatokat a Razorpay ügyfélszolgálatával vagy könyvelőjével. A DentalPin nem kezeli az elszámolást vagy a jogszabályi jelentéstételt.",
+      "saved": "Beállítások mentve",
+      "saveError": "A beállításokat nem sikerült menteni",
+      "loadError": "A beállításokat nem sikerült betölteni",
+      "webhookCopied": "Webhook URL másolva"
+    },
+    "collect": {
+      "notConfiguredHint": "A Razorpay még nincs beállítva ehhez a klinikához. Kérje meg az adminisztrátort, hogy állítsa be a Beállításokban.",
+      "waiting": "Fizetésre várakozás…",
+      "checkStatus": "Állapot ellenőrzése",
+      "openCheckout": "Razorpay fizetés megnyitása",
+      "scanQr": "Kérje meg a pácienst, hogy szkennelje be ezt a QR-kódot bármely UPI alkalmazással",
+      "linkCopied": "Fizetési link másolva",
+      "authorizing": "Fizetés jóváhagyva — véglegesítés…",
+      "success": "Fizetés beérkezett",
+      "tryAgain": "Próbálja újra",
+      "createError": "A fizetést nem sikerült elindítani",
+      "checkoutLoadError": "A Razorpay fizetést nem sikerült betölteni — ellenőrizze a kapcsolatot, és próbálja újra",
+      "states": {
+        "failed": "Sikertelen fizetés",
+        "expired": "Lejárt fizetés",
+        "cancelled": "Törölt fizetés"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "QR",
+        "card": "Kártya",
+        "payment_link": "Fizetési link"
+      },
+      "railUpiQr": "UPI QR",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "Fizetési link"
+    },
+    "detail": {
+      "title": "Razorpay tranzakció",
+      "auditTrail": "Részletek",
+      "method": "Mód",
+      "status": "Állapot",
+      "providerReference": "Razorpay fizetési azonosító",
+      "initiated": "Elindítva",
+      "confirmed": "Megerősítve",
+      "allocation": "Hozzárendelés",
+      "refundHistory": "Visszatérítések",
+      "refundAction": "Visszatérítés Razorpay-n keresztül",
+      "refundPermissionDenied": "Nincs jogosultsága visszatérítés indításához",
+      "maxRefundable": "Legfeljebb {amount}",
+      "noRefunds": "Ehhez a fizetéshez még nincs visszatérítés.",
+      "refundRequested": "Visszatérítés kérve",
+      "refundError": "A visszatérítést nem sikerült elindítani",
+      "states": {
+        "pending": "Függőben",
+        "awaiting_customer_action": "Fizetésre vár",
+        "authorised_awaiting_capture": "Jóváhagyás folyamatban",
+        "succeeded": "Sikeres",
+        "failed": "Sikertelen",
+        "expired": "Lejárt",
+        "cancelled": "Törölve"
+      },
+      "refundStates": {
+        "requested": "Kérve",
+        "processing": "Feldolgozás alatt",
+        "completed": "Befejezve",
+        "failed": "Sikertelen"
+      }
+    }
+  }
+}

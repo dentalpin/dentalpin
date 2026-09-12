@@ -16,7 +16,7 @@ describe('useAuth composable', () => {
 
       // Check returned properties exist
       expect(auth).toHaveProperty('user')
-      expect(auth).toHaveProperty('accessToken')
+      expect(auth).toHaveProperty('hasSession')
       expect(auth).toHaveProperty('isAuthenticated')
       expect(auth).toHaveProperty('login')
       expect(auth).toHaveProperty('logout')

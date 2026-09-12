@@ -14,12 +14,38 @@
  * disclosure so the modal looks like a one-tap "cobrar" by default.
  */
 
+import type { Component } from 'vue'
 import type {
   Patient,
   PaymentAllocationCreate,
   PaymentMethod,
   PaymentRecord
 } from '~~/app/types'
+
+/**
+ * A collection rail contributed by a gateway module through the
+ * `payments.create.methods` slot (#263). The module's slot component
+ * renders its own chips (they reuse the unscoped `.method-chip` style
+ * below) and calls `ctx.select(rail)` when one is picked. On submit
+ * this modal validates patient/amount/allocations exactly as for a
+ * manual method, then hands the form to `rail.panel` — waiting for the
+ * provider, expiry, retries all live in that panel, never here. The
+ * panel emits `created` with the resulting Payment, or `back`.
+ */
+export interface ModuleRail {
+  id: string
+  label: string
+  panel: Component
+  panelProps?: Record<string, unknown>
+}
+
+/** What a rail's panel receives as its `form` prop. */
+export interface HandoffForm {
+  patient_id: string
+  patient_name: string
+  amount: number
+  allocations: PaymentAllocationCreate[]
+}
 
 const props = withDefaults(defineProps<{
   open: boolean
@@ -76,6 +102,7 @@ const PRIMARY_METHODS: MethodOption[] = [
 // India-only methods (#365 / #263): shown to clinics whose server-side
 // country is IN, same gate india_gst uses (never a client-editable field).
 const clinicCountry = useClinicCountry()
+const { currentClinic } = useClinic()
 const INDIA_METHODS: MethodOption[] = [
   { value: 'upi', icon: 'i-lucide-smartphone-nfc' },
   { value: 'netbanking', icon: 'i-lucide-landmark' }
@@ -128,6 +155,15 @@ const showAdvanced = ref(false)
 const showSecondaryMethods = ref(false)
 const splitManually = ref(false)
 const amountInputRef = ref<HTMLInputElement | null>(null)
+// Gateway rail picked through `payments.create.methods` (null = manual
+// method) and whether the modal has handed the form to its panel.
+const moduleRail = ref<ModuleRail | null>(null)
+const handoff = ref(false)
+const methodsCtx = computed(() => ({
+  clinic: currentClinic.value,
+  selectedId: moduleRail.value?.id ?? null,
+  select: (rail: ModuleRail) => { moduleRail.value = rail }
+}))
 
 // Reset whenever the modal opens — keeps state from leaking between calls.
 watch(() => props.open, async (isOpen) => {
@@ -139,6 +175,8 @@ watch(() => props.open, async (isOpen) => {
     showAdvanced.value = false
     showSecondaryMethods.value = false
     splitManually.value = false
+    moduleRail.value = null
+    handoff.value = false
     await nextTick()
     amountInputRef.value?.focus()
     amountInputRef.value?.select()
@@ -211,6 +249,28 @@ function applySuggestion() {
 
 function pickMethod(method: PaymentMethod) {
   form.value.method = method
+  moduleRail.value = null
+}
+
+function buildAllocations(): PaymentAllocationCreate[] {
+  return form.value.allocations.map(a => ({
+    target_type: a.target_type,
+    target_id: a.target_type === 'budget' ? a.target_id : undefined,
+    amount: Number(a.amount)
+  }))
+}
+
+const handoffForm = computed<HandoffForm>(() => ({
+  patient_id: form.value.patient_id,
+  patient_name: props.defaultPatientName
+    || [selectedPatient.value?.first_name, selectedPatient.value?.last_name].filter(Boolean).join(' '),
+  amount: Number(form.value.amount),
+  allocations: buildAllocations()
+}))
+
+function onModuleCreated(payment: PaymentRecord) {
+  emit('created', payment)
+  emit('update:open', false)
 }
 
 function addAllocation() {
@@ -247,6 +307,11 @@ async function submit() {
     return
   }
 
+  if (moduleRail.value) {
+    handoff.value = true
+    return
+  }
+
   isSubmitting.value = true
   try {
     const created = await create({
@@ -256,11 +321,7 @@ async function submit() {
       payment_date: form.value.payment_date,
       reference: form.value.reference || undefined,
       notes: form.value.notes || undefined,
-      allocations: form.value.allocations.map(a => ({
-        target_type: a.target_type,
-        target_id: a.target_type === 'budget' ? a.target_id : undefined,
-        amount: Number(a.amount)
-      }))
+      allocations: buildAllocations()
     })
     if (created) {
       emit('created', created)
@@ -274,7 +335,7 @@ async function submit() {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === 'Enter' && !e.shiftKey && canSubmit.value) {
+  if (e.key === 'Enter' && !e.shiftKey && canSubmit.value && !handoff.value) {
     e.preventDefault()
     submit()
   }
@@ -288,7 +349,18 @@ function handleKeydown(e: KeyboardEvent) {
     @update:open="emit('update:open', $event)"
   >
     <template #body>
+      <!-- Gateway hand-off: the rail's own panel replaces the form until
+           it reports `created` (modal closes) or `back`. -->
+      <component
+        :is="moduleRail.panel"
+        v-if="handoff && moduleRail"
+        v-bind="moduleRail.panelProps"
+        :form="handoffForm"
+        @created="onModuleCreated"
+        @back="handoff = false"
+      />
       <div
+        v-else
         class="space-y-5"
         @keydown="handleKeydown"
       >
@@ -397,7 +469,7 @@ function handleKeydown(e: KeyboardEvent) {
               :key="m.value"
               type="button"
               class="method-chip"
-              :class="{ active: form.method === m.value }"
+              :class="{ active: !moduleRail && form.method === m.value }"
               @click="pickMethod(m.value)"
             >
               <UIcon
@@ -406,6 +478,11 @@ function handleKeydown(e: KeyboardEvent) {
               />
               <span>{{ t(`payments.methods.${m.value}`) }}</span>
             </button>
+            <!-- Gateway rails (razorpay, …) — nothing on a clean install. -->
+            <ModuleSlot
+              name="payments.create.methods"
+              :ctx="methodsCtx"
+            />
             <button
               v-if="!showSecondaryMethods && !SECONDARY_METHODS.some(m => m.value === form.method)"
               type="button"
@@ -424,7 +501,7 @@ function handleKeydown(e: KeyboardEvent) {
               :key="m.value"
               type="button"
               class="method-chip"
-              :class="{ active: form.method === m.value }"
+              :class="{ active: !moduleRail && form.method === m.value }"
               @click="pickMethod(m.value)"
             >
               <UIcon
@@ -567,7 +644,10 @@ function handleKeydown(e: KeyboardEvent) {
       </div>
     </template>
 
-    <template #footer>
+    <template
+      v-if="!handoff"
+      #footer
+    >
       <div class="flex justify-end gap-2">
         <UButton
           variant="ghost"
@@ -577,15 +657,17 @@ function handleKeydown(e: KeyboardEvent) {
         </UButton>
         <UButton
           color="primary"
-          icon="i-lucide-check"
+          :icon="moduleRail ? 'i-lucide-arrow-right' : 'i-lucide-check'"
           :loading="isSubmitting"
           :disabled="!canSubmit"
           @click="submit"
         >
           {{
-            amountValid
-              ? t('payments.new.submitWithAmount', { amount: formatCurrency(form.amount) })
-              : t('payments.new.submit')
+            moduleRail
+              ? moduleRail.label
+              : amountValid
+                ? t('payments.new.submitWithAmount', { amount: formatCurrency(form.amount) })
+                : t('payments.new.submit')
           }}
         </UButton>
       </div>
@@ -593,7 +675,10 @@ function handleKeydown(e: KeyboardEvent) {
   </UModal>
 </template>
 
-<style scoped>
+<!-- Unscoped on purpose: chips a gateway module registers into
+     `payments.create.methods` render inside this row and must look the
+     same. Namespaced enough not to collide. -->
+<style>
 .method-chip {
   display: inline-flex;
   align-items: center;
@@ -624,6 +709,13 @@ function handleKeydown(e: KeyboardEvent) {
   color: var(--color-text-muted, #6B7280);
 }
 
+.method-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</style>
+
+<style scoped>
 .tnum {
   font-variant-numeric: tabular-nums;
 }

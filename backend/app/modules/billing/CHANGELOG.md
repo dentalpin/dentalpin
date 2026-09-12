@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: `GET /invoices/{id}/pdf` (and `/pdf/preview`) accept every UI locale instead of `es|en|ta` only — a pt/pl/it/de/hu/fr/ar UI got a 422 on "Download PDF". Labels fall back to English until translated (#422); amounts and dates use the locale's separators.
+
 - fix: invoice send options exclude SMS via the shared
   `documentButtonsForPatient` composable (documents travel over
   email/WhatsApp only); the predicate lives in notifications so every

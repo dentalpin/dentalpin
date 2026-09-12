@@ -28,8 +28,6 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 const { t } = useI18n()
-const { isDesktop } = useBreakpoint()
-
 const headerTitle = computed(() => props.title ?? t('settings.title'))
 </script>
 
@@ -65,9 +63,12 @@ const headerTitle = computed(() => props.title ?? t('settings.title'))
     </header>
 
     <div class="flex gap-6">
+      <!-- Desktop rail. Gated by CSS, not by the media-query ref: useMediaQuery
+           is false during SSR, so a v-if here rendered a comment on the server
+           and an <aside> on the client (hydration mismatch on every settings page). -->
       <aside
-        v-if="!hideRail && isDesktop"
-        class="w-60 shrink-0"
+        v-if="!hideRail"
+        class="hidden lg:block w-60 shrink-0"
       >
         <SettingsCategoryNav :active-id="activeId" />
       </aside>
