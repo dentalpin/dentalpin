@@ -1,0 +1,101 @@
+{
+  "sdi_it": {
+    "settings": {
+      "title": "Elektronikus számlázás (SDI)",
+      "description": "FatturaPA-fájlok a céges számlákhoz, a Sistema di Interscambióba küldve."
+    },
+    "scope": {
+      "title": "Csak a céges számlák mennek az SDI-be",
+      "text": "Magánszemélynek kiállított egészségügyi számla nem lehet elektronikus (DL 119/2018 10-bis cikk): PDF marad, és a Sistema Tessera Sanitariának kerül bejelentésre. Egy számla csak akkor lesz SDI-fájl, ha a címzettnek van partita IVA-ja."
+    },
+    "invoiceData": "Számlaadatok",
+    "enabled": "Bekapcsolva",
+    "disabled": "Kikapcsolva",
+    "regime": "Adózási rend (RegimeFiscale)",
+    "regimeHelp": "RF01 általános, RF19 átalány (forfettario).",
+    "riferimento": "Mentesség jogszabályi hivatkozása",
+    "riferimentoHelp": "Az adómentes összesítőbe kerül (Natura N4), pl. Esente IVA art. 10 n. 18 DPR 633/72.",
+    "bollo": "Virtuális illetékbélyeg (2 €) 77,47 € adómentes fölött",
+    "bolloHelp": "A küszöb feletti adómentes számlákon DatiBollo-t jelöl; az összeg nem adódik a végösszeghez.",
+    "progressivo": "Eddig előállított fájlok: {n}",
+    "transportLabel": "Továbbítás az SDI felé",
+    "transport": {
+      "manual": "kézi feltöltés",
+      "pec": "PEC"
+    },
+    "transportOpt": {
+      "manual": "Kézi — letöltöd a fájlt, te töltöd fel, importálod a nyugtát",
+      "manualHelp": "Minden XML-t a fájlok oldalról töltesz le, a Fatture e Corrispettivi felületen töltöd fel vagy a PEC-klienseddel küldöd, és importálod az SDI válasznyugtáját.",
+      "pec": "PEC — a rendelő hitelesített postafiókja küld és fogad",
+      "pecHelp": "A rendszer kétpercenként elküldi a várakozó fájlokat a PEC-fiókodból az SDI-nek, és beolvassa a visszaküldött nyugtákat. Nem kell akkreditáció."
+    },
+    "pec": {
+      "address": "A rendelő PEC-címe",
+      "sdiAddress": "SDI-postafiók",
+      "sdiAddressHelp": "Az első fájlhoz sdi01{'@'}pec.fatturapa.it; az SDI dedikált címről válaszol, amit a rendszer ide automatikusan elment.",
+      "smtpHost": "SMTP-szerver",
+      "imapHost": "IMAP-szerver",
+      "port": "Port",
+      "username": "Felhasználónév",
+      "password": "Jelszó",
+      "folder": "IMAP-mappa",
+      "lastPoll": "Postafiók utoljára ellenőrizve: {at}"
+    },
+    "secretStored": "Elmentve — hagyd üresen a megtartásához.",
+    "testConnection": "Postafiók tesztje",
+    "testOk": "SMTP- és IMAP-bejelentkezés sikeres",
+    "testFail": "A postafiók tesztje sikertelen",
+    "enable": "Bekapcsolás",
+    "disable": "Kikapcsolás",
+    "saved": "Beállítások mentve",
+    "saveError": "A beállításokat nem sikerült menteni",
+    "records": {
+      "title": "SDI-fájlok",
+      "description": "Minden céges számlából FPR12-fájl lesz; kövesd az előállítástól az SDI-nyugtáig.",
+      "allStates": "Minden állapot",
+      "processNow": "Küldés most",
+      "processedTitle": "PEC-ciklus lefutott",
+      "processed": "Elküldve {sent}, sikertelen {failed}, nyugta {receipts}, nem párosított {unmatched}",
+      "empty": "Még nincs SDI-fájl.",
+      "invoice": "Számla",
+      "recipient": "Címzett",
+      "file": "Fájl",
+      "state": "Állapot",
+      "receipt": "Nyugta"
+    },
+    "panel": {
+      "title": "Sistema di Interscambio",
+      "notApplicable": "Magánszemélynek szóló számla: nem megy az SDI-be (DL 119/2018 10-bis cikk). PDF-ként kiállítva; a kiadás a Sistema Tessera Sanitariának kerül bejelentésre.",
+      "buildError": "Az SDI-fájl nem állítható elő",
+      "noRecord": "Ehhez a számlához még nincs SDI-fájl.",
+      "file": "Fájl",
+      "recipient": "Címzett",
+      "transport": "Küldés módja",
+      "receipt": "Nyugta",
+      "download": "XML letöltése",
+      "markExported": "Feltöltöttnek jelöl",
+      "importReceipt": "Nyugta importálása",
+      "receiptHelp": "Válaszd ki az SDI által visszaküldött XML-t (…_RC_…, …_NS_…, …_MC_…) vagy illeszd be a tartalmát.",
+      "receiptImported": "Nyugta alkalmazva",
+      "requeue": "Újragenerálás és újraküldés",
+      "requeued": "Új fájl készült ugyanazzal a számlaszámmal",
+      "downloaded": "Fájl letöltve",
+      "markedExported": "Feltöltöttnek jelölve — várakozás a nyugtára",
+      "actionFailed": "A művelet nem sikerült",
+      "undeliverableHint": "Az SDI nem tudta kézbesíteni a fájlt: a címzett zárt területén van. Értesítsd a címzettet más úton.",
+      "rejectedHint": "Az SDI elutasította. Javítsd a számla adatait, majd generáld újra: az új fájl megtartja a számot és a dátumot."
+    },
+    "badge": {
+      "short": "SDI",
+      "error": "Az SDI-fájl nem készült el"
+    },
+    "state": {
+      "pending": "Küldendő",
+      "exported": "Elküldve, nyugtára vár",
+      "delivered": "Kézbesítve",
+      "undeliverable": "Nem kézbesíthető",
+      "rejected": "Elutasítva",
+      "failed": "Sikertelen"
+    }
+  }
+}

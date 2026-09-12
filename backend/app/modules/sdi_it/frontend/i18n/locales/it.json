@@ -1,0 +1,101 @@
+{
+  "sdi_it": {
+    "settings": {
+      "title": "Fatturazione elettronica (SDI)",
+      "description": "File FatturaPA per le fatture a soggetti IVA, inviati al Sistema di Interscambio."
+    },
+    "scope": {
+      "title": "Solo le fatture verso soggetti IVA passano dallo SDI",
+      "text": "Le fatture sanitarie a persone fisiche non possono essere elettroniche (art. 10-bis DL 119/2018): restano in PDF e vengono comunicate al Sistema Tessera Sanitaria. Una fattura diventa un file SDI solo se il destinatario ha una partita IVA."
+    },
+    "invoiceData": "Dati fattura",
+    "enabled": "Attivo",
+    "disabled": "Non attivo",
+    "regime": "Regime fiscale",
+    "regimeHelp": "RF01 ordinario, RF19 forfettario.",
+    "riferimento": "Riferimento normativo esenzione",
+    "riferimentoHelp": "Stampato nel riepilogo esente (Natura N4), es. Esente IVA art. 10 n. 18 DPR 633/72.",
+    "bollo": "Bollo virtuale (€2) sopra €77,47 esenti",
+    "bolloHelp": "Dichiara DatiBollo sulle fatture esenti oltre soglia; l'importo non si somma al totale.",
+    "progressivo": "File generati finora: {n}",
+    "transportLabel": "Trasmissione allo SDI",
+    "transport": {
+      "manual": "caricamento manuale",
+      "pec": "PEC"
+    },
+    "transportOpt": {
+      "manual": "Manuale — scarichi il file, lo carichi tu, importi la ricevuta",
+      "manualHelp": "Scarichi ogni XML dalla pagina dei file, lo carichi in Fatture e Corrispettivi o lo invii dal tuo client PEC, e importi la ricevuta che lo SDI restituisce.",
+      "pec": "PEC — la casella certificata dello studio invia e riceve",
+      "pecHelp": "Ogni due minuti il sistema invia i file in attesa dalla tua PEC allo SDI e legge le ricevute di ritorno. Nessun accreditamento necessario."
+    },
+    "pec": {
+      "address": "Indirizzo PEC dello studio",
+      "sdiAddress": "Casella SDI",
+      "sdiAddressHelp": "sdi01{'@'}pec.fatturapa.it per il primo file; lo SDI risponde da un indirizzo dedicato, memorizzato qui automaticamente.",
+      "smtpHost": "Server SMTP",
+      "imapHost": "Server IMAP",
+      "port": "Porta",
+      "username": "Utente",
+      "password": "Password",
+      "folder": "Cartella IMAP",
+      "lastPoll": "Ultimo controllo casella: {at}"
+    },
+    "secretStored": "Memorizzata — lascia vuoto per mantenerla.",
+    "testConnection": "Prova casella",
+    "testOk": "Accesso SMTP e IMAP riuscito",
+    "testFail": "Prova casella fallita",
+    "enable": "Attiva",
+    "disable": "Disattiva",
+    "saved": "Impostazioni salvate",
+    "saveError": "Impossibile salvare le impostazioni",
+    "records": {
+      "title": "File SDI",
+      "description": "Ogni fattura a soggetto IVA diventa un file FPR12; seguilo dalla generazione alla ricevuta SDI.",
+      "allStates": "Tutti gli stati",
+      "processNow": "Invia ora",
+      "processedTitle": "Ciclo PEC completato",
+      "processed": "Inviati {sent}, falliti {failed}, ricevute {receipts}, non abbinate {unmatched}",
+      "empty": "Nessun file SDI.",
+      "invoice": "Fattura",
+      "recipient": "Destinatario",
+      "file": "File",
+      "state": "Stato",
+      "receipt": "Ricevuta"
+    },
+    "panel": {
+      "title": "Sistema di Interscambio",
+      "notApplicable": "Fattura a persona fisica: non inviata allo SDI (art. 10-bis DL 119/2018). Emessa in PDF; la spesa è comunicata al Sistema Tessera Sanitaria.",
+      "buildError": "Impossibile generare il file SDI",
+      "noRecord": "Nessun file SDI per questa fattura.",
+      "file": "File",
+      "recipient": "Destinatario",
+      "transport": "Inviato via",
+      "receipt": "Ricevuta",
+      "download": "Scarica XML",
+      "markExported": "Segna come caricato",
+      "importReceipt": "Importa ricevuta",
+      "receiptHelp": "Scegli l'XML restituito dallo SDI (…_RC_…, …_NS_…, …_MC_…) o incollane il contenuto.",
+      "receiptImported": "Ricevuta applicata",
+      "requeue": "Rigenera e reinvia",
+      "requeued": "Nuovo file generato con lo stesso numero",
+      "downloaded": "File scaricato",
+      "markedExported": "Segnato come caricato — in attesa della ricevuta",
+      "actionFailed": "Operazione non riuscita",
+      "undeliverableHint": "Lo SDI non ha potuto recapitare il file: è nell'area riservata del destinatario. Avvisa il destinatario con altri mezzi.",
+      "rejectedHint": "Scartata dallo SDI. Correggi i dati della fattura e rigenera: il nuovo file mantiene numero e data."
+    },
+    "badge": {
+      "short": "SDI",
+      "error": "File SDI non generato"
+    },
+    "state": {
+      "pending": "Da inviare",
+      "exported": "Inviato, in attesa di ricevuta",
+      "delivered": "Consegnato",
+      "undeliverable": "Non recapitabile",
+      "rejected": "Scartato",
+      "failed": "Fallito"
+    }
+  }
+}

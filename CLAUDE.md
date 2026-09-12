@@ -184,7 +184,7 @@ Composables:
 |------------|---------|
 | `useAuth` | `user`, `permissions`, `login()`, `logout()` |
 | `usePermissions` | `can()`, `canAny()`, `isAdmin` |
-| `useApi` | HTTP client with auth + token refresh |
+| `useApi` | HTTP client — session cookies (HttpOnly, ADR 0023) + CSRF header + refresh/retry; `raw()` for blob downloads |
 | `useClinic` | `currentClinic`, `cabinets` |
 | `useModules` | Navigation (filtered by permissions) |
 | `useUsers` | User management (admin) |

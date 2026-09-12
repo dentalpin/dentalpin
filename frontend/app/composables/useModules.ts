@@ -48,7 +48,7 @@ export function useModules() {
   const lastLoadedAt = useState<number>('modules:active:at', () => 0)
 
   async function ensureLoaded(force = false): Promise<void> {
-    if (!auth.accessToken.value) return
+    if (!auth.hasSession.value) return
     if (loading.value) return
 
     const age = Date.now() - lastLoadedAt.value

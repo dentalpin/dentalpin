@@ -1,0 +1,121 @@
+{
+  "sistema_ts": {
+    "settings": {
+      "title": "Sistema Tessera Sanitaria",
+      "description": "Comunica le spese sanitarie dei pazienti al Sistema TS per la dichiarazione precompilata."
+    },
+    "scope": {
+      "title": "Solo fatture ai pazienti",
+      "text": "Ogni fattura pagata a persona fisica viene inviata automaticamente al Sistema TS (note di credito come rimborsi, annulli come cancellazioni). Le fatture alle aziende passano dallo SDI. Il paziente che si oppone viene comunicato comunque, senza codice fiscale."
+    },
+    "enabled": "Attivo",
+    "disabled": "Non attivo",
+    "credentials": "Accesso al Sistema TS",
+    "environment": "Ambiente",
+    "env": {
+      "test": "Test (invioSS730pTest)",
+      "prod": "Produzione (invioSS730p)"
+    },
+    "username": "Utente",
+    "usernameHelp": "Il codice fiscale del soggetto inviante come registrato su sistemats.it.",
+    "password": "Password",
+    "pincode": "Pincode",
+    "pincodeHelp": "Il codice a 10 cifre rilasciato dal Sistema TS; cifrato prima di ogni invio.",
+    "certificate": "Certificato Sistema TS",
+    "certificateVendored": "In uso il certificato dell'Agenzia delle Entrate fornito con il modulo (valido fino al {at}). Carica il nuovo quando il portale lo rigenera.",
+    "certificateCustom": "Certificato personalizzato in uso (valido fino al {at}).",
+    "certificateReset": "Usa il certificato fornito",
+    "identity": "Identità del soggetto inviante",
+    "cfProprietario": "Codice fiscale del proprietario",
+    "cfProprietarioHelp": "Il codice fiscale del professionista (o del titolare della struttura); inviato cifrato come cfProprietario.",
+    "codiceRegione": "Codice regione",
+    "codiceAsl": "Codice ASL",
+    "codiceSsa": "Codice struttura (SSA)",
+    "structureHelp": "Regione, ASL e codice struttura riguardano solo le strutture accreditate/autorizzate; come professionista lasciali vuoti.",
+    "dispositivo": "Numero dispositivo",
+    "dispositivoHelp": "numDocumentoFiscale.dispositivo; 1 per le fatture.",
+    "defaultTipoSpesa": "Tipo di spesa predefinito",
+    "syncFrom": "Comunica le fatture emesse dal",
+    "syncFromHelp": "Vuoto per comunicare tutto il pagato dall'inizio.",
+    "secretStored": "Memorizzato — lascia vuoto per mantenerlo.",
+    "enable": "Attiva",
+    "disable": "Disattiva",
+    "saved": "Impostazioni salvate",
+    "saveError": "Impossibile salvare le impostazioni",
+    "year": {
+      "title": "Anno {year}",
+      "deadline": "Scadenza",
+      "unsent": "Da inviare",
+      "accepted": "Accolti",
+      "rejected": "Scartati",
+      "lastResponse": "Ultima risposta del Sistema TS: {at}"
+    },
+    "itemTypes": {
+      "title": "Tipo di spesa per prestazione",
+      "help": "Le prestazioni senza scelta usano il predefinito ({default}). SR = prestazioni sanitarie; IC = estetica (non detraibile); AD = dispositivi medici venduti.",
+      "empty": "Nessuna prestazione a listino.",
+      "item": "Prestazione",
+      "tipoSpesa": "Tipo di spesa"
+    },
+    "tipoSpesa": {
+      "SR": "prestazione sanitaria",
+      "IC": "prestazione estetica",
+      "AD": "dispositivo medico",
+      "PI": "protesica e integrativa",
+      "SP": "prestazione sanitaria (professionista)",
+      "AA": "altre spese",
+      "TK": "ticket",
+      "FC": "farmaco / dispositivo CE",
+      "AS": "farmacia dei servizi",
+      "CT": "cure termali"
+    },
+    "documents": {
+      "title": "Invii al Sistema TS",
+      "description": "Ogni fattura pagata a paziente come inviata al Sistema TS, con il protocollo.",
+      "allStates": "Tutti gli stati",
+      "processNow": "Invia ora",
+      "processed": "In coda {queued}, accolti {accepted}, scartati {rejected}, falliti {failed}",
+      "empty": "Nessun invio per quest'anno.",
+      "document": "Documento",
+      "operation": "Operazione",
+      "state": "Stato",
+      "protocollo": "Protocollo",
+      "retry": "Riprova",
+      "requeued": "Rimesso in coda",
+      "actionFailed": "Operazione non riuscita",
+      "traceable": "pagamento tracciato",
+      "cash": "contanti"
+    },
+    "operation": {
+      "inserimento": "Inserimento",
+      "variazione": "Variazione",
+      "cancellazione": "Cancellazione",
+      "rimborso": "Rimborso"
+    },
+    "state": {
+      "pending": "Da inviare",
+      "sending": "In invio",
+      "accepted": "Accolto",
+      "accepted_with_warnings": "Accolto con segnalazioni",
+      "rejected": "Scartato",
+      "failed": "Fallito"
+    },
+    "panel": {
+      "title": "Sistema Tessera Sanitaria",
+      "waiting": "Fattura pagata a paziente: sarà comunicata al Sistema TS al prossimo ciclo."
+    },
+    "opposition": {
+      "title": "Opposizione Sistema TS",
+      "help": "Il paziente può opporsi all'invio delle sue spese all'Agenzia delle Entrate. I documenti vengono comunicati comunque, senza codice fiscale.",
+      "opposed": "Si oppone",
+      "notOpposed": "Non si oppone",
+      "since": "Dal {date}",
+      "record": "Registra opposizione",
+      "revoke": "Revoca opposizione",
+      "notePlaceholder": "Nota (facoltativa)",
+      "recorded": "Opposizione registrata; i documenti accolti saranno reinviati in forma anonima",
+      "revoked": "Opposizione revocata; i documenti accolti saranno reinviati con il codice fiscale",
+      "failed": "Impossibile aggiornare l'opposizione"
+    }
+  }
+}

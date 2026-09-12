@@ -355,3 +355,43 @@ docker compose logs backend --tail 100
 
 Para reportes de seguridad contacta con los mantenedores en privado en
 lugar de abrir un issue público.
+
+---
+
+## 13. Interfaz de gestión de módulos (`/settings/modules`)
+
+Todo lo descrito en §§2–6 también está disponible como página web de
+administración — sin necesidad de acceso a la terminal. Abre
+**Ajustes → Módulos** (`/settings/modules`).
+
+- **Permisos:** ver la página requiere `admin.clinic.read`; los botones
+  Instalar / Desinstalar / Actualizar / Aplicar requieren
+  `admin.clinic.write`. Otros roles ven un mensaje de acceso denegado.
+- **Lista de módulos:** todos los módulos descubiertos con su estado
+  (`installed`, `uninstalled`, `to_install`, `to_upgrade`,
+  `to_remove`, `disabled`, `error`), versión, insignia de categoría
+  (oficial/comunitario), dependencias y resumen.
+- **Instalar:** disponible para módulos desinstalados e instalables
+  presentes en disco. El modal de confirmación muestra la cadena
+  transitiva de dependencias que se programará.
+- **Actualizar:** disponible para módulos instalados cuyo manifiesto en
+  disco difiere de la versión instalada (se muestra como
+  "instalada → en disco"). El modal programa la actualización; como
+  las instalaciones, necesita Aplicar + reinicio (abajo) para
+  ejecutarse. La alcanzabilidad de dependencias la impone Instalar,
+  no esta señal.
+- **Desinstalar:** disponible para módulos instalados y removibles. El
+  modal avisa de la copia de seguridad `pg_dump` automática (§8).
+  Cuando dependencias inversas bloquean la eliminación, el error se
+  muestra en el propio modal con opción de reintentar forzando.
+- **Aplicar cambios:** las operaciones programadas quedan pendientes
+  hasta pulsar **Aplicar**. El backend se reinicia, la página consulta
+  `GET /-/status` hasta que `pending=[]` y refresca la lista y la barra
+  lateral. Un aviso superior muestra siempre los módulos pendientes.
+- **Aviso de diagnóstico:** cuando `GET /-/doctor` reporta huérfanos,
+  dependencias faltantes, errores de manifiesto o módulos en error, un
+  aviso los resume al inicio de la página.
+- **Panel de detalle:** por módulo, datos clave (estado, categoría,
+  fecha de instalación, revisiones), el mensaje de error si lo hay, el
+  registro reciente de operaciones (migrate → seed → lifecycle →
+  finalize por operación) y el manifiesto en bruto.

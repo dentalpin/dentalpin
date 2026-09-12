@@ -1,6 +1,6 @@
 # 0023 — HttpOnly cookie sessions with rotating, revocable refresh tokens
 
-- **Status:** proposed
+- **Status:** accepted (implemented in the PR that flips this line; see issue #353)
 - **Date:** 2026-09-05
 - **Deciders:** maintainers (@martinezsalmeron)
 - **Tags:** security, auth, frontend

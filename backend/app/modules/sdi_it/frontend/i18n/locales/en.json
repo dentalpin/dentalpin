@@ -1,0 +1,101 @@
+{
+  "sdi_it": {
+    "settings": {
+      "title": "Electronic invoicing (SDI)",
+      "description": "FatturaPA files for business invoices, sent to the Sistema di Interscambio."
+    },
+    "scope": {
+      "title": "Only invoices to businesses go through the SDI",
+      "text": "Healthcare invoices to private persons may not be electronic (art. 10-bis DL 119/2018): they stay as PDF and are reported to the Sistema Tessera Sanitaria. An invoice becomes an SDI file only when its recipient has a partita IVA."
+    },
+    "invoiceData": "Invoice data",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "regime": "Tax regime (RegimeFiscale)",
+    "regimeHelp": "RF01 ordinary, RF19 flat-rate (forfettario).",
+    "riferimento": "Exemption reference",
+    "riferimentoHelp": "Printed in the exempt summary (Natura N4), e.g. Esente IVA art. 10 n. 18 DPR 633/72.",
+    "bollo": "Virtual stamp duty (€2) above €77.47 exempt",
+    "bolloHelp": "Declares DatiBollo on exempt invoices over the threshold; the amount is not added to the invoice total.",
+    "progressivo": "Files generated so far: {n}",
+    "transportLabel": "Transport",
+    "transport": {
+      "manual": "manual upload",
+      "pec": "PEC"
+    },
+    "transportOpt": {
+      "manual": "Manual — download the file, upload it yourself, import the receipt",
+      "manualHelp": "You download each XML from the records page, upload it in Fatture e Corrispettivi or send it from your PEC client, and import the receipt the SDI returns.",
+      "pec": "PEC — the practice's certified mailbox sends and receives",
+      "pecHelp": "Every two minutes the system sends pending files from your PEC mailbox to the SDI and reads the receipts it sends back. No accreditation needed."
+    },
+    "pec": {
+      "address": "Practice PEC address",
+      "sdiAddress": "SDI mailbox",
+      "sdiAddressHelp": "sdi01{'@'}pec.fatturapa.it for the first file; the SDI answers from a dedicated address, which is stored here automatically.",
+      "smtpHost": "SMTP server",
+      "imapHost": "IMAP server",
+      "port": "Port",
+      "username": "Username",
+      "password": "Password",
+      "folder": "IMAP folder",
+      "lastPoll": "Mailbox last checked: {at}"
+    },
+    "secretStored": "Stored — leave empty to keep.",
+    "testConnection": "Test mailbox",
+    "testOk": "SMTP and IMAP login succeeded",
+    "testFail": "Mailbox test failed",
+    "enable": "Enable",
+    "disable": "Disable",
+    "saved": "Settings saved",
+    "saveError": "Could not save the settings",
+    "records": {
+      "title": "SDI files",
+      "description": "Every business invoice becomes an FPR12 file; follow it from generation to the SDI receipt.",
+      "allStates": "All states",
+      "processNow": "Send now",
+      "processedTitle": "PEC tick finished",
+      "processed": "Sent {sent}, failed {failed}, receipts {receipts}, unmatched {unmatched}",
+      "empty": "No SDI files yet.",
+      "invoice": "Invoice",
+      "recipient": "Recipient",
+      "file": "File",
+      "state": "State",
+      "receipt": "Receipt"
+    },
+    "panel": {
+      "title": "Sistema di Interscambio",
+      "notApplicable": "Invoice to a private person: not sent to the SDI (art. 10-bis DL 119/2018). Issued as PDF; the expense is reported to the Sistema Tessera Sanitaria.",
+      "buildError": "The SDI file could not be built",
+      "noRecord": "No SDI file for this invoice yet.",
+      "file": "File",
+      "recipient": "Recipient",
+      "transport": "Sent via",
+      "receipt": "Receipt",
+      "download": "Download XML",
+      "markExported": "Mark as uploaded",
+      "importReceipt": "Import receipt",
+      "receiptHelp": "Pick the XML the SDI returned (…_RC_…, …_NS_…, …_MC_…) or paste its contents.",
+      "receiptImported": "Receipt applied",
+      "requeue": "Regenerate and resend",
+      "requeued": "New file generated with the same number",
+      "downloaded": "File downloaded",
+      "markedExported": "Marked as uploaded — waiting for the receipt",
+      "actionFailed": "The action failed",
+      "undeliverableHint": "The SDI could not deliver the file: it is in the recipient's reserved area. Tell the recipient by other means.",
+      "rejectedHint": "Rejected by the SDI. Correct the invoice data, then regenerate: the new file keeps the same number and date."
+    },
+    "badge": {
+      "short": "SDI",
+      "error": "SDI file could not be built"
+    },
+    "state": {
+      "pending": "To send",
+      "exported": "Sent, awaiting receipt",
+      "delivered": "Delivered",
+      "undeliverable": "Not deliverable",
+      "rejected": "Rejected",
+      "failed": "Failed"
+    }
+  }
+}

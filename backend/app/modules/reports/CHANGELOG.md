@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- feat(#230): patient-stats + operational families. `GET
+  /patients/demographics` (age bands, gender, area with explicit
+  unknowns), `/patients/visits` (new-vs-returning + frequency) and
+  `/operational/productivity` (completed per professional/cabinet +
+  plan pipeline), all with `?format=csv`; `patient_stats_report` +
+  `operational_report` copilot tools; manual index en+es.
 - feat(#230): financial family (reports v0.2.0). `GET
   /billing/aging` (outstanding buckets 0-30/31-60/61-90/90+, invoice
   axis only) + `GET /billing/issued-trend` (monthly issued totals),

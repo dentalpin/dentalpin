@@ -6,6 +6,8 @@
 
 - feat(#365): payment-gateway prerequisites — `upi` + `netbanking` methods (IN-gated chip in the create modal, labels in all 9 locales); four `payments.*` extension slots (`collect.actions`, `list.row.meta`, `ledger.row.meta`, `detail.sections`) rendering nothing by default; `idempotency_key` on `record_payment` / `POST /payments` / the agent tool with a per-clinic partial unique index (`pay_0005`). The IN gate also covers the list's method filter (`useClinicCountry`), and the refund modal always offers the source payment's method.
 
+- feat(#263): `payments.create.methods` slot — a gateway module (e.g. `razorpay`) adds its own method chips to `PaymentCreateModal` and, on submit, receives the validated form in its own hand-off panel (`created`/`back` contract). The modal itself never learns about provider waiting/expiry states. `payments.list.row.meta` `ctx` now also carries `clinic` for provider country gating, and the desktop row renders it too (it used to exist only in the mobile card).
+
 - fix(#126): ledger treatment names had a bare es → en fallback — items named only in other locales degraded to nothing; now resolved through the shared `app.core.i18n_names.catalog_name` chain with an any-non-empty catch-all.
 
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.

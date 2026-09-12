@@ -14,8 +14,8 @@ Returned by `ReportsModule.get_permissions()`
 | `reports.budgets.read` | Budget summaries and breakdowns | `GET /api/v1/reports/budgets/summary`, `/budgets/by-professional`, `/budgets/by-treatment`, `/budgets/by-status` |
 | `reports.scheduling.read` | Scheduling summaries and analytics | `GET /api/v1/reports/scheduling/*` |
 | `reports.financial.read` | Outstanding aging buckets + issued trend (invoice axis only) | `GET /api/v1/reports/billing/aging`, `/billing/issued-trend` |
-| `reports.patient_stats.read` | Patient demographics family (next) | reserved, no endpoints yet |
-| `reports.operational.read` | Operational KPI family (next) | reserved, no endpoints yet |
+| `reports.patient_stats.read` | Patient demographics + visits | `GET /api/v1/reports/patients/demographics`, `/patients/visits` |
+| `reports.operational.read` | Operational KPIs (visits/productivity) | `GET /api/v1/reports/operational/productivity` |
 
 ## Role assignment
 

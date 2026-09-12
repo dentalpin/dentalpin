@@ -19,7 +19,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // list — load it (idempotent, 1-min cache) so a deep link to an
   // uninstalled module's page can't slip through the null window.
   const auth = useAuth()
-  if (auth.accessToken.value && useActiveModulesState().value === null) {
+  if (auth.hasSession.value && useActiveModulesState().value === null) {
     try {
       await useModules().ensureLoaded()
     } catch {

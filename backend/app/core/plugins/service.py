@@ -40,6 +40,7 @@ class ModuleInfo:
 
     name: str
     version: str
+    installed_version: str | None
     state: ModuleState
     category: ModuleCategory
     removable: bool
@@ -53,11 +54,14 @@ class ModuleInfo:
     summary: str
     depends: list[str]
     in_disk: bool
+    installable: bool
+    upgrade_available: bool
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
             "version": self.version,
+            "installed_version": self.installed_version,
             "state": self.state.value,
             "category": self.category.value,
             "removable": self.removable,
@@ -71,6 +75,8 @@ class ModuleInfo:
             "summary": self.summary,
             "depends": self.depends,
             "in_disk": self.in_disk,
+            "installable": self.installable,
+            "upgrade_available": self.upgrade_available,
         }
 
 
@@ -201,12 +207,14 @@ class ModuleService:
 
             if record.version != manifest.version:
                 logger.info(
-                    "Reconciled: %s version %s -> %s",
+                    "Reconciled: %s installed version %s drifts from disk %s (awaiting upgrade)",
                     manifest.name,
                     record.version,
                     manifest.version,
                 )
-                record.version = manifest.version
+                # NOTE: record.version intentionally keeps the last-applied
+                # version — it is the upgrade signal (see `upgrade()` and
+                # `upgrade_available`). Only the upgrade finalize advances it.
 
             # Always refresh the snapshot so DB stays in sync with disk.
             record.manifest_snapshot = manifest.to_snapshot()
@@ -282,6 +290,7 @@ class ModuleService:
                 ModuleInfo(
                     name=name,
                     version=version,
+                    installed_version=record.version if record else None,
                     state=state,
                     category=category,
                     removable=record.removable if record else True,
@@ -295,6 +304,21 @@ class ModuleService:
                     summary=summary,
                     depends=depends,
                     in_disk=module is not None,
+                    installable=(
+                        manifest.installable
+                        if manifest is not None
+                        else (
+                            (record.manifest_snapshot or {}).get("installable", True)
+                            if record
+                            else True
+                        )
+                    ),
+                    upgrade_available=(
+                        record is not None
+                        and state == ModuleState.INSTALLED
+                        and manifest is not None
+                        and manifest.version != record.version
+                    ),
                 )
             )
 
@@ -543,8 +567,11 @@ class ModuleService:
         if record.version == manifest.version:
             return False
 
+        # NOTE: record.version intentionally keeps the last-APPLIED
+        # version here. Only the upgrade finalize advances it, so a
+        # failed upgrade still reports upgrade_available and
+        # post_upgrade receives the true previous version.
         record.state = ModuleState.TO_UPGRADE.value
-        record.version = manifest.version
         record.manifest_snapshot = manifest.to_snapshot()
         record.last_state_change = datetime.now(UTC)
         record.error_message = None

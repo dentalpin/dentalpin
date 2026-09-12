@@ -40,7 +40,7 @@ def test_sdi_it_uninstall_roundtrip_is_branch_scoped() -> None:
     _alembic("upgrade", "heads")
     before = asyncio.run(_tables_async())
     assert SDI_TABLES.issubset(before)
-    _alembic("downgrade", "sdi_it@-1")
+    _alembic("downgrade", "sdi_it@-2")  # both revisions of the branch
     after = asyncio.run(_tables_async())
     assert SDI_TABLES.isdisjoint(after) and after == before - SDI_TABLES
     _alembic("upgrade", "heads")

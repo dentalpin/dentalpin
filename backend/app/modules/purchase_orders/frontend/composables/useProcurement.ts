@@ -182,7 +182,6 @@ function defined<T>(value: T | undefined | null | ''): T | undefined {
 
 export function useProcurement() {
   const api = useApi()
-  const auth = useAuth()
   const config = useRuntimeConfig()
 
   // --- suppliers -------------------------------------------------------
@@ -264,7 +263,7 @@ export function useProcurement() {
     const pdfLocale = locale === 'en' ? 'en' : 'es'
     const response = await fetch(
       `${config.public.apiBaseUrl}/api/v1/purchase_orders/${id}/pdf?locale=${pdfLocale}`,
-      { headers: { Authorization: `Bearer ${auth.accessToken.value}` } }
+      { credentials: 'include' }
     )
     if (!response.ok) {
       const body = await response.json().catch(() => null)

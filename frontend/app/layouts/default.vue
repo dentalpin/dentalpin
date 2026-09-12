@@ -20,9 +20,9 @@ if (import.meta.server) {
 }
 
 watch(
-  () => auth.accessToken.value,
-  (token) => {
-    if (token) ensureLoaded(true)
+  () => auth.isAuthenticated.value,
+  (authed) => {
+    if (authed) ensureLoaded(true)
   }
 )
 

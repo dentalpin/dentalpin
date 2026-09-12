@@ -1,0 +1,121 @@
+{
+  "sistema_ts": {
+    "settings": {
+      "title": "Sistema Tessera Sanitaria",
+      "description": "Reports patient healthcare expenses to the Sistema TS for the pre-filled tax return."
+    },
+    "scope": {
+      "title": "Patient invoices only",
+      "text": "Every paid invoice to a private person is sent to the Sistema TS automatically (credit notes as refunds, voids as cancellations). Invoices to companies go through the SDI instead. A patient who opposes is still reported, without their codice fiscale."
+    },
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "credentials": "Sistema TS access",
+    "environment": "Environment",
+    "env": {
+      "test": "Test (invioSS730pTest)",
+      "prod": "Production (invioSS730p)"
+    },
+    "username": "Username",
+    "usernameHelp": "The codice fiscale of the sender as registered on sistemats.it.",
+    "password": "Password",
+    "pincode": "Pincode",
+    "pincodeHelp": "The 10-digit code issued by the Sistema TS; encrypted before every request.",
+    "certificate": "Sistema TS certificate",
+    "certificateVendored": "Using the Agenzia delle Entrate certificate shipped with the module (valid until {at}). Upload the new one when the portal regenerates it.",
+    "certificateCustom": "Custom certificate in use (valid until {at}).",
+    "certificateReset": "Use the shipped certificate",
+    "identity": "Sender identity",
+    "cfProprietario": "Codice fiscale of the owner",
+    "cfProprietarioHelp": "The professional's codice fiscale (or the structure owner's); sent encrypted as cfProprietario.",
+    "codiceRegione": "Region code",
+    "codiceAsl": "ASL code",
+    "codiceSsa": "Structure code (SSA)",
+    "structureHelp": "Region, ASL and structure codes apply to accredited/authorised structures only; leave them empty as a professional.",
+    "dispositivo": "Device number",
+    "dispositivoHelp": "numDocumentoFiscale.dispositivo; 1 for invoices.",
+    "defaultTipoSpesa": "Default expense type",
+    "syncFrom": "Report invoices issued from",
+    "syncFromHelp": "Leave empty to report everything paid since the beginning.",
+    "secretStored": "Stored — leave empty to keep.",
+    "enable": "Enable",
+    "disable": "Disable",
+    "saved": "Settings saved",
+    "saveError": "Could not save the settings",
+    "year": {
+      "title": "Year {year}",
+      "deadline": "Deadline",
+      "unsent": "Not yet sent",
+      "accepted": "Accepted",
+      "rejected": "Rejected",
+      "lastResponse": "Last answer from the Sistema TS: {at}"
+    },
+    "itemTypes": {
+      "title": "Expense type per treatment",
+      "help": "Items without a choice use the default ({default}). SR = healthcare services; IC = cosmetic (not deductible); AD = medical devices sold.",
+      "empty": "No catalog items.",
+      "item": "Treatment",
+      "tipoSpesa": "Expense type"
+    },
+    "tipoSpesa": {
+      "SR": "healthcare service",
+      "IC": "cosmetic procedure",
+      "AD": "medical device",
+      "PI": "prosthetic / supplementary",
+      "SP": "healthcare service (professional)",
+      "AA": "other expense",
+      "TK": "ticket",
+      "FC": "medicine / CE device",
+      "AS": "pharmacy services",
+      "CT": "spa treatment"
+    },
+    "documents": {
+      "title": "Sistema TS submissions",
+      "description": "Every paid patient invoice as sent to the Sistema TS, with its protocollo.",
+      "allStates": "All states",
+      "processNow": "Send now",
+      "processed": "Queued {queued}, accepted {accepted}, rejected {rejected}, failed {failed}",
+      "empty": "No submissions for this year.",
+      "document": "Document",
+      "operation": "Operation",
+      "state": "State",
+      "protocollo": "Protocollo",
+      "retry": "Retry",
+      "requeued": "Put back in the queue",
+      "actionFailed": "The action failed",
+      "traceable": "traceable payment",
+      "cash": "cash"
+    },
+    "operation": {
+      "inserimento": "Submission",
+      "variazione": "Change",
+      "cancellazione": "Cancellation",
+      "rimborso": "Refund"
+    },
+    "state": {
+      "pending": "To send",
+      "sending": "Sending",
+      "accepted": "Accepted",
+      "accepted_with_warnings": "Accepted with warnings",
+      "rejected": "Rejected",
+      "failed": "Failed"
+    },
+    "panel": {
+      "title": "Sistema Tessera Sanitaria",
+      "waiting": "Paid patient invoice: it will be reported to the Sistema TS on the next run."
+    },
+    "opposition": {
+      "title": "Sistema TS opposition",
+      "help": "The patient may object to their expenses reaching the Agenzia delle Entrate. Documents are still reported, without the codice fiscale.",
+      "opposed": "Opposes",
+      "notOpposed": "Does not oppose",
+      "since": "Since {date}",
+      "record": "Record opposition",
+      "revoke": "Revoke opposition",
+      "notePlaceholder": "Note (optional)",
+      "recorded": "Opposition recorded; accepted documents will be re-sent anonymised",
+      "revoked": "Opposition revoked; accepted documents will be re-sent with the codice fiscale",
+      "failed": "Could not update the opposition"
+    }
+  }
+}

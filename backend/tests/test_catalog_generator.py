@@ -25,12 +25,27 @@ def _load_generator():
     # the container). Pin the roots to the actual ``app`` package so the
     # source scan works regardless of layout.
     backend_root = Path(app.__file__).resolve().parents[1]
+    prev_backend_root = os.environ.get("DENTALPIN_BACKEND_ROOT")
+    prev_repo_root = os.environ.get("DENTALPIN_REPO_ROOT")
     os.environ["DENTALPIN_BACKEND_ROOT"] = str(backend_root)
     os.environ["DENTALPIN_REPO_ROOT"] = str(backend_root.parent)
-    spec = importlib.util.spec_from_file_location("_gen_catalogs", _SCRIPT)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module
+    try:
+        spec = importlib.util.spec_from_file_location("_gen_catalogs", _SCRIPT)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+    finally:
+        # Restore rather than leak the override — other tests in the same
+        # session (e.g. test_module_docs.py's docs_coverage fixture) read
+        # this same env var and must not see it repointed at "/".
+        if prev_backend_root is None:
+            os.environ.pop("DENTALPIN_BACKEND_ROOT", None)
+        else:
+            os.environ["DENTALPIN_BACKEND_ROOT"] = prev_backend_root
+        if prev_repo_root is None:
+            os.environ.pop("DENTALPIN_REPO_ROOT", None)
+        else:
+            os.environ["DENTALPIN_REPO_ROOT"] = prev_repo_root
 
 
 def test_dynamic_and_enum_publishers_are_attributed() -> None:

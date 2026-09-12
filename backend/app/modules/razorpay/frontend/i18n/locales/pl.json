@@ -1,0 +1,101 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "Przyjmuj płatności przez UPI, kod QR, karty i linki płatnicze."
+    },
+    "settings": {
+      "title": "Ustawienia Razorpay",
+      "description": "Skonfiguruj bramkę płatności Razorpay dla tej kliniki.",
+      "credentials": "Dane uwierzytelniające API",
+      "mode": "Tryb",
+      "modeHint": "Używaj trybu testowego, dopóki nie potwierdzisz, że wszystko działa od początku do końca.",
+      "modeTest": "Test",
+      "modeLive": "Produkcyjny",
+      "keyId": "ID klucza",
+      "keyIdHint": "Z panelu Razorpay — bezpieczne do wyświetlenia w przeglądarce.",
+      "keySecret": "Klucz tajny",
+      "keySecretHint": "Z panelu Razorpay. Nie zostanie ponownie wyświetlony po zapisaniu.",
+      "keySecretConfiguredHint": "Klucz tajny jest już skonfigurowany. Pozostaw puste, aby go zachować.",
+      "keySecretPlaceholder": "Wprowadź klucz tajny",
+      "isActive": "Aktywny",
+      "isActiveHint": "Tylko aktywne konfiguracje są oferowane recepcji jako metoda pobierania płatności.",
+      "webhook": "Webhook",
+      "webhookUrl": "URL webhooka",
+      "webhookUrlHint": "Wklej to w ustawieniach webhooka Razorpay dla tej kliniki.",
+      "webhookSecret": "Tajny klucz webhooka",
+      "webhookSecretHint": "Tajny klucz, którym Razorpay podpisuje zdarzenia webhooka.",
+      "webhookSecretConfiguredHint": "Tajny klucz webhooka jest już skonfigurowany. Pozostaw puste, aby go zachować.",
+      "webhookSecretPlaceholder": "Wprowadź tajny klucz webhooka",
+      "lastWebhookReceived": "Ostatni otrzymany webhook",
+      "lastWebhookProcessed": "Ostatni przetworzony webhook",
+      "lastWebhookEventType": "Ostatni typ zdarzenia",
+      "lastWebhookError": "Ostatni błąd webhooka",
+      "never": "Nigdy",
+      "professionalNotice": "Potwierdź konfigurację konta Razorpay i szczegóły rozliczeń z pomocą techniczną Razorpay lub księgowym. DentalPin nie zarządza rozliczeniami ani raportowaniem podatkowym.",
+      "saved": "Ustawienia zapisane",
+      "saveError": "Nie udało się zapisać ustawień",
+      "loadError": "Nie udało się wczytać ustawień",
+      "webhookCopied": "URL webhooka skopiowany"
+    },
+    "collect": {
+      "notConfiguredHint": "Razorpay nie jest jeszcze skonfigurowany dla tej kliniki. Poproś administratora o skonfigurowanie go w Ustawieniach.",
+      "waiting": "Oczekiwanie na płatność…",
+      "checkStatus": "Sprawdź status",
+      "openCheckout": "Otwórz płatność Razorpay",
+      "scanQr": "Poproś pacjenta o zeskanowanie tego kodu QR dowolną aplikacją UPI",
+      "linkCopied": "Link płatności skopiowany",
+      "authorizing": "Płatność autoryzowana — finalizowanie…",
+      "success": "Płatność otrzymana",
+      "tryAgain": "Spróbuj ponownie",
+      "createError": "Nie udało się rozpocząć płatności",
+      "checkoutLoadError": "Nie udało się załadować płatności Razorpay — sprawdź połączenie i spróbuj ponownie",
+      "states": {
+        "failed": "Płatność nieudana",
+        "expired": "Płatność wygasła",
+        "cancelled": "Płatność anulowana"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "QR",
+        "card": "Karta",
+        "payment_link": "Link płatności"
+      },
+      "railUpiQr": "QR UPI",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "Link do płatności"
+    },
+    "detail": {
+      "title": "Transakcja Razorpay",
+      "auditTrail": "Szczegóły",
+      "method": "Metoda",
+      "status": "Status",
+      "providerReference": "ID płatności Razorpay",
+      "initiated": "Rozpoczęto",
+      "confirmed": "Potwierdzono",
+      "allocation": "Przypisanie",
+      "refundHistory": "Zwroty",
+      "refundAction": "Zwróć przez Razorpay",
+      "refundPermissionDenied": "Nie masz uprawnień do dokonywania zwrotów",
+      "maxRefundable": "Do {amount}",
+      "noRefunds": "Ta płatność nie ma jeszcze żadnych zwrotów.",
+      "refundRequested": "Zwrot zażądany",
+      "refundError": "Nie udało się rozpocząć zwrotu",
+      "states": {
+        "pending": "Oczekujące",
+        "awaiting_customer_action": "Oczekuje na płatność",
+        "authorised_awaiting_capture": "Autoryzowanie",
+        "succeeded": "Udane",
+        "failed": "Nieudane",
+        "expired": "Wygasłe",
+        "cancelled": "Anulowane"
+      },
+      "refundStates": {
+        "requested": "Zażądano",
+        "processing": "W trakcie przetwarzania",
+        "completed": "Zakończono",
+        "failed": "Nieudane"
+      }
+    }
+  }
+}

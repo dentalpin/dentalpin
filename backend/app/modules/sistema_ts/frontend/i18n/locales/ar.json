@@ -1,0 +1,121 @@
+{
+  "sistema_ts": {
+    "settings": {
+      "title": "Sistema Tessera Sanitaria",
+      "description": "يبلّغ عن النفقات الصحية للمرضى إلى Sistema TS للإقرار الضريبي المعبأ مسبقاً."
+    },
+    "scope": {
+      "title": "فواتير المرضى فقط",
+      "text": "كل فاتورة مدفوعة لفرد تُرسل تلقائياً إلى Sistema TS (إشعارات الدائن كاستردادات، والإلغاءات كحذف). فواتير الشركات تمر عبر SDI. المريض المعترض يُبلَّغ عنه أيضاً، بدون codice fiscale."
+    },
+    "enabled": "مفعّل",
+    "disabled": "معطّل",
+    "credentials": "الوصول إلى Sistema TS",
+    "environment": "البيئة",
+    "env": {
+      "test": "اختبار (invioSS730pTest)",
+      "prod": "إنتاج (invioSS730p)"
+    },
+    "username": "اسم المستخدم",
+    "usernameHelp": "codice fiscale للمرسل كما هو مسجّل في sistemats.it.",
+    "password": "كلمة المرور",
+    "pincode": "Pincode",
+    "pincodeHelp": "الرمز المكوّن من 10 أرقام الصادر عن Sistema TS؛ يُشفّر قبل كل إرسال.",
+    "certificate": "شهادة Sistema TS",
+    "certificateVendored": "تُستخدم شهادة Agenzia delle Entrate المرفقة بالوحدة (صالحة حتى {at}). ارفع الجديدة عندما تجدّدها البوابة.",
+    "certificateCustom": "شهادة مخصصة قيد الاستخدام (صالحة حتى {at}).",
+    "certificateReset": "استخدام الشهادة المرفقة",
+    "identity": "هوية المرسل",
+    "cfProprietario": "codice fiscale للمالك",
+    "cfProprietarioHelp": "codice fiscale للطبيب (أو مالك المنشأة)؛ يُرسل مشفراً باسم cfProprietario.",
+    "codiceRegione": "رمز الإقليم",
+    "codiceAsl": "رمز ASL",
+    "codiceSsa": "رمز المنشأة (SSA)",
+    "structureHelp": "الإقليم وASL والمنشأة تخص المنشآت المعتمدة/المرخصة فقط؛ كطبيب مستقل اتركها فارغة.",
+    "dispositivo": "رقم الجهاز",
+    "dispositivoHelp": "numDocumentoFiscale.dispositivo؛ 1 للفواتير.",
+    "defaultTipoSpesa": "نوع النفقة الافتراضي",
+    "syncFrom": "الإبلاغ عن الفواتير الصادرة من",
+    "syncFromHelp": "اتركه فارغاً للإبلاغ عن كل ما دُفع منذ البداية.",
+    "secretStored": "محفوظ — اتركه فارغاً للإبقاء عليه.",
+    "enable": "تفعيل",
+    "disable": "تعطيل",
+    "saved": "تم حفظ الإعدادات",
+    "saveError": "تعذّر حفظ الإعدادات",
+    "year": {
+      "title": "السنة {year}",
+      "deadline": "الموعد النهائي",
+      "unsent": "لم تُرسل بعد",
+      "accepted": "مقبولة",
+      "rejected": "مرفوضة",
+      "lastResponse": "آخر رد من Sistema TS: {at}"
+    },
+    "itemTypes": {
+      "title": "نوع النفقة لكل علاج",
+      "help": "العلاجات بلا اختيار تستخدم الافتراضي ({default}). SR = خدمة صحية؛ IC = تجميلي (غير قابل للخصم)؛ AD = أجهزة طبية مباعة.",
+      "empty": "لا توجد عناصر في الكتالوج.",
+      "item": "العلاج",
+      "tipoSpesa": "نوع النفقة"
+    },
+    "tipoSpesa": {
+      "SR": "خدمة صحية",
+      "IC": "إجراء تجميلي",
+      "AD": "جهاز طبي",
+      "PI": "تعويضي / تكميلي",
+      "SP": "خدمة صحية (مستقل)",
+      "AA": "نفقة أخرى",
+      "TK": "تذكرة",
+      "FC": "دواء / جهاز CE",
+      "AS": "خدمات الصيدلية",
+      "CT": "علاج بالمنتجعات"
+    },
+    "documents": {
+      "title": "إرسالات Sistema TS",
+      "description": "كل فاتورة مريض مدفوعة كما أُرسلت إلى Sistema TS، مع رقم protocollo.",
+      "allStates": "كل الحالات",
+      "processNow": "أرسل الآن",
+      "processed": "في الطابور {queued}، مقبولة {accepted}، مرفوضة {rejected}، فاشلة {failed}",
+      "empty": "لا توجد إرسالات هذه السنة.",
+      "document": "المستند",
+      "operation": "العملية",
+      "state": "الحالة",
+      "protocollo": "Protocollo",
+      "retry": "إعادة المحاولة",
+      "requeued": "أُعيد إلى الطابور",
+      "actionFailed": "فشل الإجراء",
+      "traceable": "دفع قابل للتتبع",
+      "cash": "نقداً"
+    },
+    "operation": {
+      "inserimento": "إرسال",
+      "variazione": "تعديل",
+      "cancellazione": "إلغاء",
+      "rimborso": "استرداد"
+    },
+    "state": {
+      "pending": "للإرسال",
+      "sending": "جارٍ الإرسال",
+      "accepted": "مقبول",
+      "accepted_with_warnings": "مقبول مع تنبيهات",
+      "rejected": "مرفوض",
+      "failed": "فشل"
+    },
+    "panel": {
+      "title": "Sistema Tessera Sanitaria",
+      "waiting": "فاتورة مريض مدفوعة: سيُبلَّغ عنها إلى Sistema TS في الدورة التالية."
+    },
+    "opposition": {
+      "title": "اعتراض Sistema TS",
+      "help": "يمكن للمريض الاعتراض على وصول نفقاته إلى Agenzia delle Entrate. تُبلَّغ المستندات مع ذلك، بدون codice fiscale.",
+      "opposed": "يعترض",
+      "notOpposed": "لا يعترض",
+      "since": "منذ {date}",
+      "record": "تسجيل الاعتراض",
+      "revoke": "إلغاء الاعتراض",
+      "notePlaceholder": "ملاحظة (اختياري)",
+      "recorded": "سُجّل الاعتراض؛ ستُعاد إرسال المستندات المقبولة مجهولة الهوية",
+      "revoked": "أُلغي الاعتراض؛ ستُعاد إرسال المستندات المقبولة مع codice fiscale",
+      "failed": "تعذّر تحديث الاعتراض"
+    }
+  }
+}

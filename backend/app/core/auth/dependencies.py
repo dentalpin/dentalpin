@@ -1,10 +1,11 @@
 """Authentication dependencies for FastAPI."""
 
+import hmac
 from collections.abc import Callable
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError
 from sqlalchemy import select
@@ -15,12 +16,51 @@ from app.config import settings
 from app.core.log_context import set_request_context
 from app.database import get_db
 
+from .cookies import ACCESS_COOKIE, CSRF_COOKIE, CSRF_HEADER, SAFE_METHODS
 from .models import Clinic, ClinicMembership, User
 from .permissions import has_permission
 from .rbac import has_permission_in_clinic
 from .service import decode_token
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
+# auto_error=False: a missing bearer header is not a 401 by itself any
+# more — the session cookie is the other accepted credential (ADR 0023).
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login", auto_error=False)
+
+
+async def get_auth_token(
+    request: Request,
+    bearer: Annotated[str | None, Depends(oauth2_scheme)],
+) -> str:
+    """The access token from ``Authorization: Bearer`` **or** the
+    ``dp_access`` cookie (header wins).
+
+    Cookie-authenticated *unsafe* requests must also echo the JS-readable
+    ``dp_csrf`` cookie in ``X-CSRF-Token`` (double-submit, ADR 0023) —
+    bearer clients (scripts, Zapier tokens, the e2e API context) are
+    CSRF-immune by construction and skip the check.
+    """
+    if bearer:
+        request.state.auth_via_cookie = False
+        return bearer
+
+    cookie_token = request.cookies.get(ACCESS_COOKIE)
+    if cookie_token:
+        if request.method.upper() not in SAFE_METHODS:
+            header = request.headers.get(CSRF_HEADER, "")
+            expected = request.cookies.get(CSRF_COOKIE, "")
+            if not header or not expected or not hmac.compare_digest(header, expected):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="CSRF token missing or invalid",
+                )
+        request.state.auth_via_cookie = True
+        return cookie_token
+
+    raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Not authenticated",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
 
 
 class ClinicContext:
@@ -35,7 +75,7 @@ class ClinicContext:
 
 
 async def get_current_user(
-    token: Annotated[str, Depends(oauth2_scheme)],
+    token: Annotated[str, Depends(get_auth_token)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> User:
     """Get current authenticated user from JWT token."""

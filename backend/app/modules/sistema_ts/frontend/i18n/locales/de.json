@@ -1,0 +1,121 @@
+{
+  "sistema_ts": {
+    "settings": {
+      "title": "Sistema Tessera Sanitaria",
+      "description": "Meldet die Gesundheitsausgaben der Patienten an das Sistema TS für die vorausgefüllte Steuererklärung."
+    },
+    "scope": {
+      "title": "Nur Patientenrechnungen",
+      "text": "Jede bezahlte Rechnung an eine Privatperson wird automatisch an das Sistema TS gesendet (Gutschriften als Erstattungen, Stornos als Löschungen). Rechnungen an Unternehmen gehen über das SDI. Ein widersprechender Patient wird trotzdem gemeldet, ohne codice fiscale."
+    },
+    "enabled": "Aktiv",
+    "disabled": "Inaktiv",
+    "credentials": "Zugang zum Sistema TS",
+    "environment": "Umgebung",
+    "env": {
+      "test": "Test (invioSS730pTest)",
+      "prod": "Produktion (invioSS730p)"
+    },
+    "username": "Benutzername",
+    "usernameHelp": "Der codice fiscale des Absenders, wie auf sistemats.it registriert.",
+    "password": "Passwort",
+    "pincode": "Pincode",
+    "pincodeHelp": "Der 10-stellige Code des Sistema TS; wird vor jedem Versand verschlüsselt.",
+    "certificate": "Sistema-TS-Zertifikat",
+    "certificateVendored": "Das mit dem Modul gelieferte Zertifikat der Agenzia delle Entrate ist in Gebrauch (gültig bis {at}). Laden Sie das neue hoch, wenn das Portal es erneuert.",
+    "certificateCustom": "Eigenes Zertifikat in Gebrauch (gültig bis {at}).",
+    "certificateReset": "Geliefertes Zertifikat verwenden",
+    "identity": "Identität des Absenders",
+    "cfProprietario": "Codice fiscale des Inhabers",
+    "cfProprietarioHelp": "Der codice fiscale des Behandlers (oder des Struktur-Inhabers); wird verschlüsselt als cfProprietario gesendet.",
+    "codiceRegione": "Regionscode",
+    "codiceAsl": "ASL-Code",
+    "codiceSsa": "Strukturcode (SSA)",
+    "structureHelp": "Region, ASL und Struktur gelten nur für akkreditierte/zugelassene Strukturen; als Freiberufler leer lassen.",
+    "dispositivo": "Gerätenummer",
+    "dispositivoHelp": "numDocumentoFiscale.dispositivo; 1 für Rechnungen.",
+    "defaultTipoSpesa": "Standard-Ausgabenart",
+    "syncFrom": "Rechnungen melden ab Ausstellungsdatum",
+    "syncFromHelp": "Leer lassen, um alles Bezahlte von Anfang an zu melden.",
+    "secretStored": "Gespeichert — leer lassen, um es zu behalten.",
+    "enable": "Aktivieren",
+    "disable": "Deaktivieren",
+    "saved": "Einstellungen gespeichert",
+    "saveError": "Einstellungen konnten nicht gespeichert werden",
+    "year": {
+      "title": "Jahr {year}",
+      "deadline": "Frist",
+      "unsent": "Noch nicht gesendet",
+      "accepted": "Angenommen",
+      "rejected": "Abgelehnt",
+      "lastResponse": "Letzte Antwort des Sistema TS: {at}"
+    },
+    "itemTypes": {
+      "title": "Ausgabenart je Behandlung",
+      "help": "Behandlungen ohne Auswahl verwenden den Standard ({default}). SR = Gesundheitsleistung; IC = ästhetisch (nicht absetzbar); AD = verkaufte Medizinprodukte.",
+      "empty": "Keine Katalogpositionen.",
+      "item": "Behandlung",
+      "tipoSpesa": "Ausgabenart"
+    },
+    "tipoSpesa": {
+      "SR": "Gesundheitsleistung",
+      "IC": "ästhetischer Eingriff",
+      "AD": "Medizinprodukt",
+      "PI": "Prothetik / ergänzend",
+      "SP": "Gesundheitsleistung (Freiberufler)",
+      "AA": "sonstige Ausgabe",
+      "TK": "Ticket",
+      "FC": "Arzneimittel / CE-Produkt",
+      "AS": "Apothekendienste",
+      "CT": "Kurbehandlung"
+    },
+    "documents": {
+      "title": "Meldungen an das Sistema TS",
+      "description": "Jede bezahlte Patientenrechnung, wie an das Sistema TS gesendet, mit ihrem protocollo.",
+      "allStates": "Alle Zustände",
+      "processNow": "Jetzt senden",
+      "processed": "Eingereiht {queued}, angenommen {accepted}, abgelehnt {rejected}, fehlgeschlagen {failed}",
+      "empty": "Keine Meldungen in diesem Jahr.",
+      "document": "Beleg",
+      "operation": "Vorgang",
+      "state": "Zustand",
+      "protocollo": "Protocollo",
+      "retry": "Erneut senden",
+      "requeued": "Wieder eingereiht",
+      "actionFailed": "Aktion fehlgeschlagen",
+      "traceable": "nachverfolgbare Zahlung",
+      "cash": "bar"
+    },
+    "operation": {
+      "inserimento": "Meldung",
+      "variazione": "Änderung",
+      "cancellazione": "Löschung",
+      "rimborso": "Erstattung"
+    },
+    "state": {
+      "pending": "Zu senden",
+      "sending": "Wird gesendet",
+      "accepted": "Angenommen",
+      "accepted_with_warnings": "Angenommen mit Hinweisen",
+      "rejected": "Abgelehnt",
+      "failed": "Fehlgeschlagen"
+    },
+    "panel": {
+      "title": "Sistema Tessera Sanitaria",
+      "waiting": "Bezahlte Patientenrechnung: wird beim nächsten Durchlauf an das Sistema TS gemeldet."
+    },
+    "opposition": {
+      "title": "Widerspruch Sistema TS",
+      "help": "Der Patient kann widersprechen, dass seine Ausgaben an die Agenzia delle Entrate gelangen. Die Belege werden trotzdem gemeldet, ohne codice fiscale.",
+      "opposed": "Widerspricht",
+      "notOpposed": "Widerspricht nicht",
+      "since": "Seit {date}",
+      "record": "Widerspruch erfassen",
+      "revoke": "Widerspruch zurücknehmen",
+      "notePlaceholder": "Notiz (optional)",
+      "recorded": "Widerspruch erfasst; angenommene Belege werden anonymisiert neu gesendet",
+      "revoked": "Widerspruch zurückgenommen; angenommene Belege werden mit codice fiscale neu gesendet",
+      "failed": "Widerspruch konnte nicht aktualisiert werden"
+    }
+  }
+}

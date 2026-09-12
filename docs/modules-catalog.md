@@ -38,15 +38,18 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 35 | yes |
 | `patients` | 0.1.0 | official | — | auto | no | 2 | 3 | 0 | yes |
 | `patients_clinical` | 0.1.0 | official | patients | auto | no | 4 | 1 | 0 | yes |
+| `payment_gateways` | 0.1.0 | official | patients, budget, payments | manual | yes | 0 | 0 | 0 | no |
 | `payments` | 0.1.0 | official | patients, budget | auto | no | 4 | 3 | 2 | yes |
 | `payroll` | 0.1.0 | official | — | manual | yes | 3 | 2 | 0 | yes |
 | `periodontogram` | 0.1.0 | official | patients, odontogram | manual | yes | 2 | 1 | 2 | yes |
 | `purchase_orders` | 0.1.0 | official | contacts, inventory, suppliers | manual | yes | 2 | 3 | 0 | yes |
+| `razorpay` | 0.1.0 | official | payment_gateways | manual | yes | 2 | 0 | 0 | yes |
 | `recall_reminders` | 0.1.0 | community | recalls, notifications, patients | manual | yes | 0 | 0 | 1 | yes |
 | `recalls` | 0.1.0 | official | patients, agenda | auto | yes | 3 | 4 | 5 | yes |
-| `reports` | 0.2.0 | official | patients, agenda, catalog, budget, billing, payments | auto | no | 6 | 0 | 0 | yes |
+| `reports` | 0.2.0 | official | patients, agenda, catalog, budget, billing, payments, treatment_plan | auto | no | 6 | 0 | 0 | yes |
 | `schedules` | 0.1.0 | official | agenda | auto | yes | 8 | 0 | 4 | yes |
-| `sdi_it` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | no |
+| `sdi_it` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
+| `sistema_ts` | 0.1.0 | official | billing, patients, catalog, payments | manual | yes | 6 | 0 | 0 | yes |
 | `sms_gateway` | 0.1.0 | community | notifications | manual | yes | 2 | 0 | 0 | yes |
 | `staff_tasks` | 0.1.0 | community | — | manual | yes | 2 | 2 | 0 | yes |
 | `supplier_items` | 0.1.0 | official | contacts, inventory, suppliers | manual | yes | 2 | 0 | 0 | no |
@@ -732,6 +735,21 @@ Normalized medical history, allergies, medications, emergency contacts.
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/patients_clinical/CLAUDE.md`](../backend/app/modules/patients_clinical/CLAUDE.md)
 
+### `payment_gateways` — v0.1.0
+
+Provider-neutral payment gateway contract, registry, and PaymentRequest lifecycle.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `patients`, `budget`, `payments`
+- **Frontend layer:** —
+- **Permissions:** —
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/payment_gateways/CLAUDE.md`](../backend/app/modules/payment_gateways/CLAUDE.md)
+
 ### `payments` — v0.1.0
 
 Patient-centric collections, allocations to budgets / on-account, refunds, patient ledger, and dental payment reports.
@@ -816,6 +834,23 @@ Purchase orders with receiving, quality checks and PDF export.
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/purchase_orders/CLAUDE.md`](../backend/app/modules/purchase_orders/CLAUDE.md)
 
+### `razorpay` — v0.1.0
+
+Razorpay payment gateway — UPI, QR, cards, and payment links for India clinics.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `payment_gateways`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `razorpay.settings.read`
+  - `razorpay.settings.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/razorpay/CLAUDE.md`](../backend/app/modules/razorpay/CLAUDE.md)
+
 ### `recall_reminders` — v0.1.0
 
 Connects recalls to the notifications gateway — auto-reminds patients when a recall is created.
@@ -867,7 +902,7 @@ Cross-module reporting: billing, budgets, scheduling.
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
-- **Depends:** `patients`, `agenda`, `catalog`, `budget`, `billing`, `payments`
+- **Depends:** `patients`, `agenda`, `catalog`, `budget`, `billing`, `payments`, `treatment_plan`
 - **Frontend layer:** `frontend`
 - **Permissions:**
   - `reports.billing.read`
@@ -916,7 +951,7 @@ FatturaPA / SDI — fatturazione elettronica B2B per l'Italia.
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
 - **Depends:** `billing`
-- **Frontend layer:** —
+- **Frontend layer:** `frontend`
 - **Permissions:**
   - `sdi_it.records.manage`
   - `sdi_it.records.read`
@@ -925,6 +960,27 @@ FatturaPA / SDI — fatturazione elettronica B2B per l'Italia.
 - **Events emitted:** —
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/sdi_it/CLAUDE.md`](../backend/app/modules/sdi_it/CLAUDE.md)
+
+### `sistema_ts` — v0.1.0
+
+Sistema Tessera Sanitaria — invio delle spese sanitarie dei pazienti (IT).
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `billing`, `patients`, `catalog`, `payments`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `sistema_ts.documents.manage`
+  - `sistema_ts.documents.read`
+  - `sistema_ts.opposition.read`
+  - `sistema_ts.opposition.write`
+  - `sistema_ts.settings.configure`
+  - `sistema_ts.settings.read`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/sistema_ts/CLAUDE.md`](../backend/app/modules/sistema_ts/CLAUDE.md)
 
 ### `sms_gateway` — v0.1.0
 

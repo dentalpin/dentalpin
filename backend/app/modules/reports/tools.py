@@ -23,6 +23,8 @@ from app.core.agents import AgentContext, Tool, ToolCategory
 from .services import (
     BillingReportService,
     FinancialReportService,
+    OperationalReportService,
+    PatientStatsService,
     SchedulingReportService,
 )
 
@@ -65,6 +67,34 @@ async def _scheduling_report(ctx: AgentContext, params: PeriodArgs) -> dict:
     return await SchedulingReportService.get_summary(
         ctx.db, ctx.clinic_id, params.date_from, params.date_to
     )
+
+
+async def _patient_stats_report(ctx: AgentContext, params: PeriodArgs) -> dict:
+    demo = await PatientStatsService.demographics(ctx.db, ctx.clinic_id)
+    visits = await PatientStatsService.visit_frequency(
+        ctx.db, ctx.clinic_id, params.date_from, params.date_to
+    )
+    return {
+        "total_patients": demo["total_patients"],
+        "age_bands": demo["age_bands"],
+        "visits": visits,
+    }
+
+
+async def _operational_report(ctx: AgentContext, params: PeriodArgs) -> dict:
+    data = await OperationalReportService.productivity(
+        ctx.db, ctx.clinic_id, params.date_from, params.date_to
+    )
+    return {
+        "date_from": params.date_from,
+        "date_to": params.date_to,
+        "completed_total": data["completed_total"],
+        "by_professional": [
+            {"name": p["professional_name"], "completed": p["completed"]}
+            for p in data["by_professional"]
+        ],
+        "by_cabinet": data["by_cabinet"],
+    }
 
 
 async def _financial_report(ctx: AgentContext, params: PeriodArgs) -> dict:
@@ -124,6 +154,22 @@ def get_tools() -> list[Tool]:
             parameters=PeriodArgs,
             handler=_financial_report,
             permissions=["reports.financial.read"],
+            category=ToolCategory.READ,
+        ),
+        Tool(
+            name="patient_stats_report",
+            description=("Demografía de pacientes y frecuencia de visitas de un periodo."),
+            parameters=PeriodArgs,
+            handler=_patient_stats_report,
+            permissions=["reports.patient_stats.read"],
+            category=ToolCategory.READ,
+        ),
+        Tool(
+            name="operational_report",
+            description=("Productividad: completadas por profesional y gabinete en un periodo."),
+            parameters=PeriodArgs,
+            handler=_operational_report,
+            permissions=["reports.operational.read"],
             category=ToolCategory.READ,
         ),
     ]
