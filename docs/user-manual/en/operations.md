@@ -358,6 +358,11 @@ access needed. Open **Settings → Modules** (`/settings/modules`).
   (`installed`, `uninstalled`, `to_install`, `to_upgrade`,
   `to_remove`, `disabled`, `error`), version, category badge
   (official/community), dependencies and summary.
+- **Find & paginate:** the list has a search box and a state filter
+  (installed / uninstalled / pending / disabled / error), showing
+  twenty modules per page. The query (`?q=…`, `?states=…`, `?page=…`)
+  is synced to the URL, so a filtered view can be bookmarked or
+  linked.
 - **Install:** offered for uninstalled, installable modules present on
   disk. The confirmation modal previews the transitive dependency
   chain that will be scheduled.

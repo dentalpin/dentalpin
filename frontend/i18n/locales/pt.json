@@ -1190,6 +1190,8 @@
       "title": "Módulos",
       "subtitle": "Instale, desinstale e atualize os módulos da clínica.",
       "description": "Faça a gestão dos módulos ativos na sua clínica.",
+      "searchPlaceholder": "Pesquisar módulos…",
+      "filterState": "Estado",
       "deps": "Dependências",
       "noDeps": "Sem dependências",
       "state": {

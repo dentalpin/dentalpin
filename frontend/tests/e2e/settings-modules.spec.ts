@@ -17,6 +17,10 @@ test.describe('admin sees module manager', () => {
       loggedIn.getByRole('heading', { level: 1, name: /módulos|modules/i })
     ).toBeVisible()
 
+    // Search for "patients" — modules are alphabetical and there are
+    // ~50 of them, so patients lands on page 2 at PAGE_SIZE = 20.
+    await loggedIn.getByPlaceholder(/buscar módulos|search modules/i).fill('patients')
+
     // At least one of the core modules must be listed — they are always
     // discovered, so this is a deterministic smoke check.
     await expect(

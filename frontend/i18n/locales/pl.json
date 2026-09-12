@@ -1190,6 +1190,8 @@
       "title": "Moduły",
       "subtitle": "Instaluj, odinstalowuj i aktualizuj moduły gabinetu.",
       "description": "Zarządzaj modułami aktywnymi w Twoim gabinecie.",
+      "searchPlaceholder": "Szukaj modułów…",
+      "filterState": "Stan",
       "deps": "Zależności",
       "noDeps": "Brak zależności",
       "state": {

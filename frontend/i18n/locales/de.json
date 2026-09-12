@@ -1190,6 +1190,8 @@
       "title": "Module",
       "subtitle": "Module der Praxis installieren, deinstallieren und aktualisieren.",
       "description": "Verwalten Sie, welche Module in Ihrer Praxis aktiv sind.",
+      "searchPlaceholder": "Module suchen…",
+      "filterState": "Status",
       "deps": "Abhängigkeiten",
       "noDeps": "Keine Abhängigkeiten",
       "state": {

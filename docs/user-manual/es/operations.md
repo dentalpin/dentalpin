@@ -371,6 +371,11 @@ administración — sin necesidad de acceso a la terminal. Abre
   (`installed`, `uninstalled`, `to_install`, `to_upgrade`,
   `to_remove`, `disabled`, `error`), versión, insignia de categoría
   (oficial/comunitario), dependencias y resumen.
+- **Buscar y paginar:** la lista tiene un buscador y un filtro por
+  estado (instalado / desinstalado / pendiente / deshabilitado /
+  error), y muestra veinte módulos por página. La consulta
+  (`?q=…`, `?states=…`, `?page=…`) está sincronizada con la URL, por lo
+  que una vista filtrada puede guardarse en marcadores o enlazarse.
 - **Instalar:** disponible para módulos desinstalados e instalables
   presentes en disco. El modal de confirmación muestra la cadena
   transitiva de dependencias que se programará.

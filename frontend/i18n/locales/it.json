@@ -1190,6 +1190,8 @@
       "title": "Moduli",
       "subtitle": "Installa, disinstalla e aggiorna i moduli dello studio.",
       "description": "Gestisci quali moduli sono attivi nel tuo studio.",
+      "searchPlaceholder": "Cerca moduli…",
+      "filterState": "Stato",
       "deps": "Dipendenze",
       "noDeps": "Nessuna dipendenza",
       "state": {

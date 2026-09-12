@@ -1190,6 +1190,8 @@
       "title": "Modules",
       "subtitle": "Install, uninstall and upgrade clinic modules.",
       "description": "Manage which modules are active in your clinic.",
+      "searchPlaceholder": "Search modules…",
+      "filterState": "State",
       "deps": "Dependencies",
       "noDeps": "No dependencies",
       "state": {

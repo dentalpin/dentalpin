@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ModuleInfo } from '~/types'
+import type { ModuleInfo, ModuleState } from '~/types'
 import { PERMISSIONS } from '~/config/permissions'
 import { errorMessage } from '~/utils/error'
 
@@ -35,6 +35,178 @@ const pendingModules = computed(() =>
 )
 
 const hasDoctorIssues = computed(() => admin.doctor.value?.ok === false)
+
+// --- List state (search / filter / pagination, URL-synced) --------------
+const route = useRoute()
+const router = useRouter()
+
+const PAGE_SIZE = 20
+const isSyncingFromUrl = ref(false)
+
+const STATE_KEYS: ModuleState[] = [
+  'installed',
+  'uninstalled',
+  'to_install',
+  'to_upgrade',
+  'to_remove',
+  'disabled',
+  'error'
+]
+const STATE_I18N_KEY: Record<string, string> = {
+  to_install: 'toInstall',
+  to_upgrade: 'toUpgrade',
+  to_remove: 'toRemove'
+}
+
+const search = ref(String(route.query.q ?? ''))
+const stateFilter = ref<string[]>(
+  typeof route.query.states === 'string'
+    ? route.query.states.split(',').filter(Boolean)
+    : []
+)
+const page = ref(Number(route.query.page) > 0 ? Number(route.query.page) : 1)
+
+const stateItems = computed(() =>
+  STATE_KEYS.map(key => ({
+    value: key,
+    label: t(`settings.modules.state.${STATE_I18N_KEY[key] ?? key}`)
+  }))
+)
+
+const filteredModules = computed(() => {
+  const q = search.value.trim().toLowerCase()
+  const states = stateFilter.value
+  return admin.modules.value.filter((m) => {
+    if (q && !m.name.toLowerCase().includes(q) && !m.summary.toLowerCase().includes(q)) {
+      return false
+    }
+    if (states.length > 0 && !states.includes(m.state)) {
+      return false
+    }
+    return true
+  })
+})
+
+const totalPages = computed(() => Math.max(1, Math.ceil(filteredModules.value.length / PAGE_SIZE)))
+
+const paginatedModules = computed(() => {
+  const start = (page.value - 1) * PAGE_SIZE
+  return filteredModules.value.slice(start, start + PAGE_SIZE)
+})
+
+// Keep the URL page in range when filters shrink the result set.
+watch([filteredModules, page], () => {
+  if (page.value > totalPages.value) {
+    page.value = totalPages.value
+  }
+})
+
+// Track whether the next page change is caused by a search/filter reset
+// (so we use router.replace instead of router.push — see pushPage/pushUrl).
+let fromSearchOrFilterReset = false
+
+function pushUrl() {
+  const next = { ...route.query }
+  delete next.q
+  delete next.states
+  delete next.page
+  const q = search.value.trim()
+  if (q) next.q = q
+  if (stateFilter.value.length) next.states = stateFilter.value.join(',')
+  if (page.value > 1) next.page = String(page.value)
+
+  const cur = route.query
+  let changed = false
+  const allKeys = new Set([...Object.keys(cur), ...Object.keys(next)])
+  for (const key of allKeys) {
+    const a = next[key] ?? ''
+    const b = (Array.isArray(cur[key]) ? (cur[key] as string[]).join(',') : (cur[key] as string)) ?? ''
+    if (a !== b) {
+      changed = true
+      break
+    }
+  }
+  if (changed) router.replace({ query: next })
+}
+
+function pushPage() {
+  const next = { ...route.query }
+  delete next.q
+  delete next.states
+  delete next.page
+  const q = search.value.trim()
+  if (q) next.q = q
+  if (stateFilter.value.length) next.states = stateFilter.value.join(',')
+  if (page.value > 1) next.page = String(page.value)
+
+  const cur = route.query
+  let changed = false
+  const allKeys = new Set([...Object.keys(cur), ...Object.keys(next)])
+  for (const key of allKeys) {
+    const a = next[key] ?? ''
+    const b = (Array.isArray(cur[key]) ? (cur[key] as string[]).join(',') : (cur[key] as string)) ?? ''
+    if (a !== b) {
+      changed = true
+      break
+    }
+  }
+  if (changed) router.push({ query: next })
+}
+
+// Reset page to 1 on search input, but skip if updating from URL back/forward navigation
+watch(search, () => {
+  if (isSyncingFromUrl.value) return
+  fromSearchOrFilterReset = true
+  page.value = 1
+})
+
+// Reset page to 1 and update URL on filter change
+watch(stateFilter, () => {
+  if (isSyncingFromUrl.value) return
+  fromSearchOrFilterReset = true
+  page.value = 1
+  pushUrl()
+})
+
+watch(page, () => {
+  if (!isSyncingFromUrl.value) {
+    if (fromSearchOrFilterReset) {
+      pushUrl()
+      fromSearchOrFilterReset = false
+    } else {
+      pushPage()
+    }
+  }
+})
+
+// Restore state from URL without triggering watchers
+watch(
+  () => route.query,
+  async (q) => {
+    isSyncingFromUrl.value = true
+
+    const parsedSearch = String(q.q ?? '')
+    if (parsedSearch !== search.value) search.value = parsedSearch
+
+    const parsedStates = typeof q.states === 'string' ? q.states.split(',').filter(Boolean) : []
+    if (JSON.stringify(parsedStates) !== JSON.stringify(stateFilter.value)) {
+      stateFilter.value = parsedStates
+    }
+
+    const nextPage = Number(q.page) > 0 ? Number(q.page) : 1
+    if (nextPage !== page.value) page.value = nextPage
+
+    await nextTick()
+    isSyncingFromUrl.value = false
+  },
+  { deep: true }
+)
+
+function resetFilters() {
+  search.value = ''
+  stateFilter.value = []
+  page.value = 1
+}
 
 onMounted(async () => {
   if (!canRead.value) {
@@ -289,16 +461,55 @@ function computeInstallPreview(name: string): string[] {
         v-else
         class="space-y-3"
       >
-        <ModuleCard
-          v-for="module in admin.modules.value"
-          :key="module.name"
-          :module="module"
-          :can-write="canWrite"
-          @install="openInstallConfirm"
-          @uninstall="openUninstallConfirm"
-          @upgrade="openUpgradeConfirm"
-          @view-details="viewDetails"
-        />
+        <!-- Search + state filter -->
+        <FilterBar
+          :active-count="stateFilter.length"
+          @reset="resetFilters"
+        >
+          <template #search>
+            <SearchBar
+              v-model="search"
+              :placeholder="t('settings.modules.searchPlaceholder')"
+              max-width="max-w-xs"
+            />
+          </template>
+          <FilterChipMulti
+            v-model="stateFilter"
+            :items="stateItems"
+            :label="t('settings.modules.filterState')"
+            icon="i-lucide-circle-dot"
+          />
+        </FilterBar>
+
+        <!-- Empty result set -->
+        <div
+          v-if="filteredModules.length === 0"
+          class="rounded-md border border-default p-8 text-center text-sm text-muted"
+        >
+          {{ t('lists.empty.description') }}
+        </div>
+
+        <!-- Paginated cards -->
+        <template v-else>
+          <ModuleCard
+            v-for="module in paginatedModules"
+            :key="module.name"
+            :module="module"
+            :can-write="canWrite"
+            @install="openInstallConfirm"
+            @uninstall="openUninstallConfirm"
+            @upgrade="openUpgradeConfirm"
+            @view-details="viewDetails"
+          />
+
+          <PaginationBar
+            :page="page"
+            :total-pages="totalPages"
+            :total="filteredModules.length"
+            :page-size="PAGE_SIZE"
+            @update:page="(v) => (page = v)"
+          />
+        </template>
       </div>
     </template>
 

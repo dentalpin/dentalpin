@@ -1190,6 +1190,8 @@
       "title": "Modulok",
       "subtitle": "A rendelő moduljainak telepítése, eltávolítása és frissítése.",
       "description": "Kezelje, mely modulok aktívak a rendelőjében.",
+      "searchPlaceholder": "Modulok keresése…",
+      "filterState": "Állapot",
       "deps": "Függőségek",
       "noDeps": "Nincs függőség",
       "state": {

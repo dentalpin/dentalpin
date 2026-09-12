@@ -11,6 +11,12 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Added
+
+- **Settings → Modules**: the module list now supports text search, a
+  per-state filter (installed / uninstalled / pending / disabled / error)
+  and pagination, synced to the URL so results can be linked.
+
 ## [2.6.0] - 2026-09-07
 
 ### Added
