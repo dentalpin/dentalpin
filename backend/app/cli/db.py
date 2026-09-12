@@ -187,23 +187,44 @@ def dump_database(dsn: str, target: Path) -> str | None:
     return None
 
 
-def snapshot_storage(storage_root: Path, target: Path, out_dir: Path) -> None:
+def snapshot_storage(storage_root: Path, target: Path, out_dir: Path) -> str | None:
     """Tarball the storage volume, excluding the backup destination
     itself (it may live inside the volume at any depth — archiving it
-    would recurse)."""
+    would recurse) and the tarball being written (``--out-dir`` may be
+    the storage root itself). None on success, else a human-readable
+    error. Like :func:`dump_database`, a failed run never leaves a
+    partial file behind."""
     out_resolved = out_dir.resolve()
-    with tarfile.open(target, "w:gz") as tar:
-        for child in sorted(storage_root.iterdir()):
-            try:
-                # Skip the child that is (or contains) the backup
-                # destination at any depth.
-                out_resolved.relative_to(child.resolve())
-                continue
-            except ValueError:
-                pass
-            if child.name == "backups":
-                continue
-            tar.add(child, arcname=child.name)
+    target_resolved = target.resolve()
+    failed: tuple[str, OSError] | None = None
+    try:
+        with tarfile.open(target, "w:gz") as tar:
+            for child in sorted(storage_root.iterdir()):
+                if child.resolve() == target_resolved:
+                    continue
+                try:
+                    # Skip the child that is (or contains) the backup
+                    # destination at any depth.
+                    out_resolved.relative_to(child.resolve())
+                    continue
+                except ValueError:
+                    pass
+                if child.name == "backups":
+                    continue
+                try:
+                    tar.add(child, arcname=child.name)
+                except OSError as exc:
+                    # Unlink below, once the with-block has closed
+                    # the handle (Windows locks open files).
+                    failed = (child.name, exc)
+                    break
+    except OSError as exc:
+        target.unlink(missing_ok=True)
+        return f"storage snapshot failed: {exc}"
+    if failed is not None:
+        target.unlink(missing_ok=True)
+        return f"storage snapshot failed on {failed[0]}: {failed[1]}"
+    return None
 
 
 def _cmd_backup(args: argparse.Namespace) -> int:
@@ -226,12 +247,15 @@ def _cmd_backup(args: argparse.Namespace) -> int:
 
     if not args.skip_storage:
         storage_target = out_dir / f"storage_{timestamp}.tar.gz"
-        snapshot_storage(Path(settings.STORAGE_LOCAL_PATH), storage_target, out_dir)
+        error = snapshot_storage(Path(settings.STORAGE_LOCAL_PATH), storage_target, out_dir)
+        if error is not None:
+            print(f"db backup: {error}", flush=True)
+            return 4
         print(f"db backup: storage -> {storage_target}")
         written.add(storage_target)
-        pruned = prune_backups(out_dir, "storage_", args.keep, protect=written)
-    else:
-        pruned = []
+    # Prune both kinds even when --skip-storage: without this a cron
+    # switched to dump-only keeps every old tarball forever.
+    pruned = prune_backups(out_dir, "storage_", args.keep, protect=written)
     pruned += prune_backups(out_dir, "full_", args.keep, protect=written)
     for path in pruned:
         print(f"db backup: pruned {path.name}")

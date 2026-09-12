@@ -73,8 +73,9 @@ docker compose up -d db
 # `--no-owner` keeps the clinic role intact.
 docker compose exec -T db pg_restore -U dental -d dental_clinic \
   --clean --if-exists --no-owner < full_20260907T230000Z.dump
-# 3. Restore files over the fresh storage volume.
-docker compose exec -T backend tar -xz -C /app/storage < storage_20260907T230000Z.tar.gz
+# 3. Restore files over the fresh storage volume (`run`, not `exec`:
+# the backend container is not running yet at this point).
+docker compose run --rm -T backend tar -xz -C /app/storage < storage_20260907T230000Z.tar.gz
 # 4. Boot the stack; entrypoint runs `db upgrade` (no-op on a current dump).
 docker compose up -d
 # 5. Sanity: log in, open a patient with documents, check an X-ray renders.
@@ -88,11 +89,13 @@ Postgres versions — dump + restore is the portable path.
 1. `docker compose up -d` and watch `docker compose logs backend`.
 2. Postgres replays its WAL on start; if it refuses, restore last
    night's dump (step 3 above) rather than hand-editing data files.
-3. Confirm Alembic state matches the tree:
-   `docker compose exec backend python -m app.cli db upgrade`
-   must print no targets (a no-op). If it wants to apply migrations,
-   the dump predates the code — upgrade forward, never downgrade
-   production data.
+3. Confirm Alembic state matches the tree (dry-run prints the
+   target list and exits 0 without applying anything):
+   `docker compose exec backend python -m app.cli db upgrade --dry-run`
+   must print a non-empty target list and exit 0 (upgrading to an
+   already-applied head is a no-op). If it exits 1 with "no Alembic
+   targets", the migration state is unreadable — stop and
+   investigate; never downgrade production data.
 4. Spot-check storage vs DB: a recently uploaded document must open;
    if files are newer than the dump (uploaded after 02:00), re-upload
    from the source device.

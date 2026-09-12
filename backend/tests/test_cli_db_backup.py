@@ -119,6 +119,96 @@ def test_snapshot_storage_skips_nested_out_dir(tmp_path: Path) -> None:
     assert "x" not in names
 
 
+def test_snapshot_storage_skips_target_in_storage_root(tmp_path: Path) -> None:
+    (tmp_path / "documents").mkdir()
+    (tmp_path / "documents" / "a.bin").write_bytes(b"data")
+    target = tmp_path / "storage_20240101T000000Z.tar.gz"
+    assert db_cli.snapshot_storage(tmp_path, target, tmp_path) is None
+    names = tarfile.open(target).getnames()
+    assert "documents" in names
+    assert target.name not in names
+
+
+def test_snapshot_storage_open_failure(monkeypatch, tmp_path: Path) -> None:
+    def _boom(*a, **k):
+        raise OSError("disk full")
+
+    monkeypatch.setattr("tarfile.open", _boom)
+    target = tmp_path / "storage.tar.gz"
+    error = db_cli.snapshot_storage(tmp_path, target, tmp_path)
+    assert error is not None and "disk full" in error
+    assert not target.exists()
+
+
+def test_snapshot_storage_add_failure_removes_partial(monkeypatch, tmp_path: Path) -> None:
+    (tmp_path / "documents").mkdir()
+    (tmp_path / "documents" / "a.bin").write_bytes(b"data")
+
+    def _boom(self, *a, **k):
+        raise OSError("vanished mid-run")
+
+    monkeypatch.setattr("tarfile.TarFile.add", _boom)
+    target = tmp_path / "storage.tar.gz"
+    error = db_cli.snapshot_storage(tmp_path, target, tmp_path)
+    assert error is not None and "vanished mid-run" in error
+    assert not target.exists()
+
+
+def test_cmd_backup_storage_failure_exits_four(monkeypatch, tmp_path: Path, capsys) -> None:
+    monkeypatch.setattr("shutil.which", lambda _: "/usr/bin/pg_dump")
+
+    def _ok(*a, **k):
+        k["stdout"].write(b"DUMP")
+        return subprocess.CompletedProcess(a[0], 0, b"", b"")
+
+    monkeypatch.setattr("subprocess.run", _ok)
+    monkeypatch.setattr("tarfile.open", lambda *a, **k: (_ for _ in ()).throw(OSError("no space")))
+    storage = tmp_path / "storage"
+    (storage / "documents").mkdir(parents=True)
+    monkeypatch.setattr("app.cli.db.settings", _Settings(storage, tmp_path / "backups"))
+    code = db_cli._cmd_backup(_args())
+    assert code == 4
+    assert "no space" in capsys.readouterr().out
+    assert list((storage / "backups").glob("storage_*.tar.gz")) == []
+
+
+def test_cmd_backup_skip_storage_still_prunes_storage(monkeypatch, tmp_path: Path) -> None:
+    monkeypatch.setattr("shutil.which", lambda _: "/usr/bin/pg_dump")
+
+    def _ok(*a, **k):
+        k["stdout"].write(b"DUMP")
+        return subprocess.CompletedProcess(a[0], 0, b"", b"")
+
+    monkeypatch.setattr("subprocess.run", _ok)
+    for name in (
+        "storage_20240101T000000Z.tar.gz",
+        "storage_20240102T000000Z.tar.gz",
+        "storage_20240103T000000Z.tar.gz",
+    ):
+        (tmp_path / name).write_bytes(b"old")
+    monkeypatch.setattr("app.cli.db.settings", _Settings(tmp_path, tmp_path))
+    code = db_cli._cmd_backup(_args(out_dir=str(tmp_path), keep=2, skip_storage=True))
+    assert code == 0
+    remaining = sorted(p.name for p in tmp_path.glob("storage_*.tar.gz"))
+    assert remaining == [
+        "storage_20240102T000000Z.tar.gz",
+        "storage_20240103T000000Z.tar.gz",
+    ]
+
+
+def test_dsn_and_env_splits_encoded_password() -> None:
+    clean, env = db_cli._dsn_and_env("postgresql://dental:p%40ss%3Aw0rd@db:5432/dental_clinic")
+    assert env["PGPASSWORD"] == "p@ss:w0rd"
+    assert "p%40ss" not in clean and "@db:5432" in clean
+
+
+def test_dsn_and_env_without_password(monkeypatch) -> None:
+    monkeypatch.delenv("PGPASSWORD", raising=False)
+    clean, env = db_cli._dsn_and_env("postgresql://dental@db:5432/dental_clinic")
+    assert clean == "postgresql://dental@db:5432/dental_clinic"
+    assert "PGPASSWORD" not in env
+
+
 def test_cmd_backup_rejects_keep_zero(tmp_path: Path) -> None:
     code = db_cli._cmd_backup(_args(out_dir=str(tmp_path), keep=0))
     assert code == 2
