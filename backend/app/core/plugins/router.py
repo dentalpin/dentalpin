@@ -25,7 +25,8 @@ from app.core.auth.dependencies import (
     get_clinic_context,
     require_permission,
 )
-from app.core.auth.permissions import has_permission
+from app.core.auth.permissions import permission_matches
+from app.core.auth.rbac import granted_permissions_for
 from app.core.schemas import ApiResponse
 from app.database import get_db
 
@@ -90,6 +91,9 @@ async def active_modules(
     """
     svc = ModuleService(db)
     active: list[dict[str, Any]] = []
+    # Resolve the caller's grant set once (flag-aware); per-item matching
+    # below is in-memory so nav filtering stays a single DB round-trip.
+    granted = await granted_permissions_for(db, ctx.clinic_id, ctx.role)
 
     for info in await svc.list_modules():
         if info.state != ModuleState.INSTALLED or not module_registry.is_active(info.name):
@@ -101,7 +105,7 @@ async def active_modules(
             continue
 
         nav = list(manifest.frontend.get("navigation") or [])
-        filtered_nav = [item for item in nav if _nav_visible(item, ctx.role)]
+        filtered_nav = [item for item in nav if _nav_visible(item, granted)]
 
         active.append(
             {
@@ -123,11 +127,11 @@ async def active_modules(
     return ApiResponse(data=active)
 
 
-def _nav_visible(item: dict[str, Any], role: str) -> bool:
+def _nav_visible(item: dict[str, Any], granted: list[str]) -> bool:
     perm = item.get("permission")
     if not perm:
         return True
-    return has_permission(role, perm)
+    return any(permission_matches(perm, g) for g in granted)
 
 
 @router.get("/-/doctor")

@@ -41,6 +41,7 @@ from uuid import UUID, uuid4
 from sqlalchemy import select
 
 from app.core.auth.models import ClinicMembership, User
+from app.core.auth.rbac import resolve_role_id
 
 from .base import MapperContext
 
@@ -100,6 +101,7 @@ class UserMapper:
                     clinic_id=ctx.clinic_id,
                     user_id=user.id,
                     role="receptionist",
+                    role_id=await resolve_role_id(ctx.db, ctx.clinic_id, "receptionist"),
                 )
             )
             await ctx.db.flush()

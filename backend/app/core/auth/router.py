@@ -42,8 +42,8 @@ from .permissions import (
     PROFESSIONAL_ROLES,
     ROLES,
     expand_permissions,
-    get_role_permissions,
 )
+from .rbac import granted_permissions_for, resolve_role_id
 from .schemas import (
     AuthResponse,
     ClinicMetadataResponse,
@@ -226,6 +226,7 @@ async def setup(
             user_id=user.id,
             clinic_id=clinic.id,
             role="admin",
+            role_id=await resolve_role_id(db, clinic.id, "admin"),
             is_professional=data.admin_is_professional,
         )
     )
@@ -462,20 +463,16 @@ async def get_me(
         for m in memberships
     ]
 
-    # Compute effective permissions (use first clinic's role for MVP)
+    # Compute effective permissions (use first clinic's role for MVP).
+    # granted_permissions_for is flag-aware (DB when RBAC_FROM_DB is on,
+    # static merged map otherwise) — one call covers both.
     permissions: list[str] = []
     if memberships:
         role = memberships[0].role
         clinic_id = memberships[0].clinic.id
         all_perms = module_registry.get_all_permissions() + CORE_PERMISSIONS
-        if settings.RBAC_FROM_DB:
-            from .rbac import resolve_granted_permissions
-
-            role_perms = await resolve_granted_permissions(db, clinic_id, role)
-            permissions = expand_permissions(role_perms, all_perms)
-        else:
-            role_perms = get_role_permissions(role)
-            permissions = expand_permissions(role_perms, all_perms)
+        role_perms = await granted_permissions_for(db, clinic_id, role)
+        permissions = expand_permissions(role_perms, all_perms)
 
     return ApiResponse(
         data=MeResponse(
@@ -592,6 +589,7 @@ async def create_user(
         user_id=user.id,
         clinic_id=clinic_id,
         role=data.role,
+        role_id=await resolve_role_id(db, clinic_id, data.role),
         is_professional=(
             data.is_professional
             if data.is_professional is not None
@@ -739,6 +737,7 @@ async def update_user(
     # Update role in membership
     if data.role is not None:
         membership.role = data.role
+        membership.role_id = await resolve_role_id(db, membership.clinic_id, data.role)
 
     # Explicit flag wins; a role-only change re-derives it so switching
     # someone to dentist keeps them schedulable without a second click.

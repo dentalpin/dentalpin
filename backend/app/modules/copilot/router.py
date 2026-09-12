@@ -29,7 +29,7 @@ from app.core.agents.orchestrator import (
 )
 from app.core.agents.service import AgentService
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
-from app.core.auth.permissions import get_role_permissions, has_permission
+from app.core.auth.rbac import granted_permissions_for, has_permission_for
 from app.core.events import EventType, event_bus
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import async_session_maker, get_db
@@ -150,7 +150,11 @@ async def list_sessions(
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
 ) -> PaginatedApiResponse[ConversationResponse]:
-    user_filter = None if has_permission(ctx.role, "copilot.history.read_all") else ctx.user_id
+    user_filter = (
+        None
+        if await has_permission_for(db, ctx.clinic_id, ctx.role, "copilot.history.read_all")
+        else ctx.user_id
+    )
     items, total = await ConversationService.list(
         db, ctx.clinic_id, user_id=user_filter, page=page, page_size=page_size
     )
@@ -171,7 +175,11 @@ async def list_messages(
     _: Annotated[None, Depends(require_permission("copilot.history.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[list[MessageResponse]]:
-    user_filter = None if has_permission(ctx.role, "copilot.history.read_all") else ctx.user_id
+    user_filter = (
+        None
+        if await has_permission_for(db, ctx.clinic_id, ctx.role, "copilot.history.read_all")
+        else ctx.user_id
+    )
     conv = await ConversationService.get(db, ctx.clinic_id, conversation_id, user_id=user_filter)
     if conv is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Conversation not found")
@@ -236,9 +244,9 @@ async def send_message(
     _: Annotated[None, Depends(require_permission("copilot.chat"))],
 ) -> StreamingResponse:
     clinic_id, user_id, role = ctx.clinic_id, ctx.user_id, ctx.role
-    permissions = get_role_permissions(role)
 
     async def factory(db):
+        permissions = await granted_permissions_for(db, clinic_id, role)
         loaded = await _load_for_turn(db, clinic_id, conversation_id, user_id)
         if loaded is None:
             raise HTTPException(status_code=404, detail="Conversation not found")
@@ -267,10 +275,10 @@ async def confirm_tool(
     _: Annotated[None, Depends(require_permission("copilot.chat"))],
 ) -> StreamingResponse:
     clinic_id, user_id, role = ctx.clinic_id, ctx.user_id, ctx.role
-    permissions = get_role_permissions(role)
     approve = body.decision == "confirm"
 
     async def factory(db):
+        permissions = await granted_permissions_for(db, clinic_id, role)
         loaded = await _load_for_turn(db, clinic_id, conversation_id, user_id)
         if loaded is None:
             raise HTTPException(status_code=404, detail="Conversation not found")

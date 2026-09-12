@@ -297,6 +297,11 @@ All routes under `/api/v1/roles`, scoped to the caller's clinic.
 | PUT | `/roles/{id}/overrides` | `admin.roles.write` | Per-clinic grant/revoke on a system role; `admin` never accepts revokes. |
 
 Custom roles are assignable to members only with `RBAC_FROM_DB=true`.
+Membership writes persist the `roles`-row FK (`role_id`) alongside the role
+string; role deletion 409s while any member holds the role by string or FK.
+Under the flag, the schedules professional gate, verifactu promote check,
+copilot history/nudges/agent contexts, and sidebar nav filtering all resolve
+through the DB (ADR 0029); with the flag off they use the static map.
 
 ---
 

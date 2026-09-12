@@ -110,7 +110,7 @@ class CopilotSettingsService:
         """Reject recipient ids that aren't active members of the clinic.
 
         A digest recipient must have a clinic role — the task scopes their
-        email to ``get_role_permissions(role)``. Importing the core
+        email to their effective grant set (flag-aware). Importing the core
         membership model is allowed (it's core, not another module).
         """
         if not user_ids:
@@ -168,8 +168,10 @@ class NudgeService:
     @staticmethod
     async def list_active(db: AsyncSession, clinic_id: UUID, *, role: str) -> list[CopilotNudge]:
         """Pending, non-expired nudges the viewer's role is allowed to act on."""
-        from app.core.auth.permissions import has_permission
+        from app.core.auth.permissions import permission_matches
+        from app.core.auth.rbac import granted_permissions_for
 
+        granted = await granted_permissions_for(db, clinic_id, role)
         rows = (
             (
                 await db.execute(
@@ -189,7 +191,8 @@ class NudgeService:
         return [
             n
             for n in rows
-            if n.required_permission is None or has_permission(role, n.required_permission)
+            if n.required_permission is None
+            or any(permission_matches(n.required_permission, g) for g in granted)
         ]
 
     @staticmethod
@@ -219,7 +222,7 @@ class PendingService:
         from app.core.agents.models import AgentSession
         from app.core.agents.service import AgentService
         from app.core.agents.tools.registry import tool_registry
-        from app.core.auth.permissions import get_role_permissions
+        from app.core.auth.rbac import granted_permissions_for
 
         from .bridge import COPILOT_GUARDRAILS
 
@@ -253,7 +256,7 @@ class PendingService:
             session_id=session.id,
             clinic_id=clinic_id,
             mode=AgentMode.AUTONOMOUS,
-            permissions=get_role_permissions(role),
+            permissions=await granted_permissions_for(db, clinic_id, role),
             tools=tool_registry,
             db=db,
             supervisor_id=user_id,

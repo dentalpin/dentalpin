@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
 from app.core.auth.models import Clinic
-from app.core.auth.permissions import has_permission
+from app.core.auth.rbac import has_permission_for
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
@@ -144,7 +144,9 @@ async def update_settings(
         # ``verifactu.environment.promote`` grant on top of the
         # general ``settings.configure`` permission.
         is_promoting_to_prod = body.environment == "prod" and s.environment != "prod"
-        if is_promoting_to_prod and not has_permission(ctx.role, "verifactu.environment.promote"):
+        if is_promoting_to_prod and not await has_permission_for(
+            db, ctx.clinic_id, ctx.role, "verifactu.environment.promote"
+        ):
             raise HTTPException(
                 status_code=403,
                 detail=(

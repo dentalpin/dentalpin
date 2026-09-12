@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- feat(#46): the professional-hours gate resolves flag-aware (`RBAC_FROM_DB`
+  on: custom roles and per-clinic overrides apply; off: static map as before).
+
 - fix(#326): the clinic-hours onboarding rule carries `permission: 'schedules.clinic_hours.read'`.
 
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.

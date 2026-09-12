@@ -11,6 +11,9 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+- **Auth RBAC step 4** (#46): `role_id` writes on membership/user
+  endpoints with flag-aware callers; demo seeder persists the FK.
+
 ## [2.6.0] - 2026-09-07
 
 ### Added

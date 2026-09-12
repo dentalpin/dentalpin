@@ -17,7 +17,7 @@ from app.core.auth.dependencies import (
     get_clinic_context,
     require_permission,
 )
-from app.core.auth.permissions import has_permission
+from app.core.auth.rbac import has_permission_for
 from app.core.schemas import ApiResponse
 from app.database import get_db
 
@@ -141,13 +141,15 @@ def _professional_override_to_response(
     )
 
 
-def _require_professional_access(ctx: ClinicContext, user_id: UUID, action: str) -> None:
+async def _require_professional_access(
+    db: AsyncSession, ctx: ClinicContext, user_id: UUID, action: str
+) -> None:
     """Raise 403 if the user lacks rights to read/write someone else's schedule."""
     perm_general = f"schedules.professional.{action}"
     perm_own = f"schedules.professional.own.{action}"
-    if has_permission(ctx.role, perm_general):
+    if await has_permission_for(db, ctx.clinic_id, ctx.role, perm_general):
         return
-    if has_permission(ctx.role, perm_own) and user_id == ctx.user_id:
+    if await has_permission_for(db, ctx.clinic_id, ctx.role, perm_own) and user_id == ctx.user_id:
         return
     raise HTTPException(
         status_code=status.HTTP_403_FORBIDDEN,
@@ -292,7 +294,7 @@ async def get_professional_hours(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ProfessionalHoursResponse]:
-    _require_professional_access(ctx, user_id, "read")
+    await _require_professional_access(db, ctx, user_id, "read")
     if not await ProfessionalHoursService.is_professional(db, ctx.clinic_id, user_id):
         raise HTTPException(status_code=404, detail="Professional not found")
     weekly = await ProfessionalHoursService.get_or_create_weekly(db, ctx.clinic_id, user_id)
@@ -309,7 +311,7 @@ async def update_professional_hours(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ProfessionalHoursResponse]:
-    _require_professional_access(ctx, user_id, "write")
+    await _require_professional_access(db, ctx, user_id, "write")
     if not await ProfessionalHoursService.is_professional(db, ctx.clinic_id, user_id):
         raise HTTPException(status_code=404, detail="Professional not found")
     weekly = await ProfessionalHoursService.get_or_create_weekly(db, ctx.clinic_id, user_id)
@@ -338,7 +340,7 @@ async def list_professional_overrides(
     start: date | None = None,
     end: date | None = None,
 ) -> ApiResponse[list[ProfessionalOverrideResponse]]:
-    _require_professional_access(ctx, user_id, "read")
+    await _require_professional_access(db, ctx, user_id, "read")
     if not await ProfessionalHoursService.is_professional(db, ctx.clinic_id, user_id):
         raise HTTPException(status_code=404, detail="Professional not found")
     overrides = await ProfessionalHoursService.list_overrides(
@@ -358,7 +360,7 @@ async def create_professional_override(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ProfessionalOverrideResponse]:
-    _require_professional_access(ctx, user_id, "write")
+    await _require_professional_access(db, ctx, user_id, "write")
     if not await ProfessionalHoursService.is_professional(db, ctx.clinic_id, user_id):
         raise HTTPException(status_code=404, detail="Professional not found")
     override = await ProfessionalHoursService.create_override(
@@ -389,7 +391,7 @@ async def update_professional_override(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ProfessionalOverrideResponse]:
-    _require_professional_access(ctx, user_id, "write")
+    await _require_professional_access(db, ctx, user_id, "write")
     override = await ProfessionalHoursService.get_override(db, ctx.clinic_id, user_id, override_id)
     if override is None:
         raise HTTPException(status_code=404, detail="Override not found")
@@ -419,7 +421,7 @@ async def delete_professional_override(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> None:
-    _require_professional_access(ctx, user_id, "write")
+    await _require_professional_access(db, ctx, user_id, "write")
     override = await ProfessionalHoursService.get_override(db, ctx.clinic_id, user_id, override_id)
     if override is None:
         raise HTTPException(status_code=404, detail="Override not found")
