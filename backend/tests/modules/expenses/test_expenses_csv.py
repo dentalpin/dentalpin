@@ -98,3 +98,21 @@ async def test_endpoint_dry_run_writes_nothing_then_commits(
     )
     assert commit.status_code == 200, commit.text
     assert commit.json()["data"]["created"] == 2
+
+
+@pytest.mark.asyncio
+async def test_oversize_upload_422s_not_500s(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+) -> None:
+    from app.modules.expenses.csv_import import MAX_CSV_BYTES
+
+    big = b"category,amount,expense_date\n" + b"rent,1.00,2026-08-01\n" * (
+        (MAX_CSV_BYTES // 20) + 10
+    )
+    assert len(big) > MAX_CSV_BYTES
+    response = await client.post(
+        "/api/v1/expenses/import.csv",
+        files={"file": ("big.csv", big, "text/csv")},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422

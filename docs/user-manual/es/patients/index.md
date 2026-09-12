@@ -58,6 +58,7 @@ Columnas: `first_name*`, `last_name*`, `phone`, `email`,
 (autodetectado), UTF-8, máximo 1000 filas / 1 MiB. La prueba
 (defecto) solo valida y devuelve errores por fila más
 `duplicates` (filas que coinciden con un paciente existente por
-documento, o email + nacimiento); al confirmar se omiten salvo
-`allow_duplicates=true`. Respuesta: `{total, valid, created,
+documento, o email + nacimiento; las filas repetidas dentro del
+fichero devuelven `matched_on: "same_file"` con `patient_id` nulo);
+al confirmar se omiten salvo `allow_duplicates=true`. Respuesta: `{total, valid, created,
 skipped, errors, duplicates}`.

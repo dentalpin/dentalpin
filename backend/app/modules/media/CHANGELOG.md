@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#431 review round 3): `unarchive_patient_documents` docstring
+  says every archived document is restored (matches the query).
 - fix(#431 review): `patient.restored` handler reverses the document
   archive cascade (transactional).
 - feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).

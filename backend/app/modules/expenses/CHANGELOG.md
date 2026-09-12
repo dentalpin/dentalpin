@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#431 review round 3): oversize-upload 422 test mirrored from
+  patients (expenses `read_upload_limited` path now covered).
 - fix(#431 review): all-or-nothing bulk commit for CSV import;
   `,`/`;` sniffing + DD/MM/YYYY dates; bounded upload reads; CSV
   agent tool dropped (HTTP-only).

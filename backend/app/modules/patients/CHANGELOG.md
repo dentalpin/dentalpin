@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#431 review round 3): intra-file repeats report
+  `matched_on: "same_file"` with a null `patient_id` (documented
+  en+es).
 - fix(#431 review): `patient.restored` event (reverses the media
   archive cascade); duplicate detection (national id, else email +
   birth date) with `allow_duplicates` commit flag; `,`/`;` sniffing

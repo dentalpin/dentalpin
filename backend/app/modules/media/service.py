@@ -254,8 +254,8 @@ class DocumentService:
         clinic_id: UUID,
         patient_id: UUID,
     ) -> int:
-        """Reverse of :meth:`archive_patient_documents` — restores the
-        documents archived with the patient (patient.restored cascade)."""
+        """Reverse of :meth:`archive_patient_documents` — restores every
+        archived document of the patient (patient.restored cascade)."""
         result = await db.execute(
             select(Document).where(
                 Document.clinic_id == clinic_id,
