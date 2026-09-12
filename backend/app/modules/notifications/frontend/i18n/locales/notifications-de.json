@@ -7,6 +7,16 @@
       "replyError": "Antwort konnte nicht gesendet werden",
       "windowClosed": "Das 24-Stunden-Fenster ist geschlossen. Verwenden Sie eine Vorlage, um die Unterhaltung erneut zu eröffnen.",
       "send": "Senden"
+    },
+    "pushSubscribe": {
+      "title": "Terminerinnerungen",
+      "clinicLine": "{clinic} möchte Ihnen Terminerinnerungen senden.",
+      "enable": "Benachrichtigungen aktivieren",
+      "enabled": "Benachrichtigungen aktiviert. Sie können diese Seite schließen.",
+      "denied": "Browser-Berechtigung verweigert. Aktivieren Sie Benachrichtigungen in den Browser-Einstellungen und versuchen Sie es erneut.",
+      "unsupported": "Dieser Browser unterstützt keine Push-Benachrichtigungen.",
+      "invalid": "Dieser Link ist ungültig oder abgelaufen. Bitten Sie die Praxis um einen neuen.",
+      "error": "Benachrichtigungen konnten nicht aktiviert werden. Bitte erneut versuchen."
     }
   }
 }

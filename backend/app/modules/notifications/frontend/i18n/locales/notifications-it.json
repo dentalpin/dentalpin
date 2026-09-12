@@ -7,6 +7,16 @@
       "replyError": "Impossibile inviare la risposta",
       "windowClosed": "La finestra di 24 ore è chiusa. Usa un modello per riaprire la conversazione.",
       "send": "Invia"
+    },
+    "pushSubscribe": {
+      "title": "Promemoria appuntamenti",
+      "clinicLine": "{clinic} desidera inviarle promemoria per gli appuntamenti.",
+      "enable": "Attiva le notifiche",
+      "enabled": "Notifiche attivate. Puoi chiudere questa pagina.",
+      "denied": "Autorizzazione del browser negata. Attiva le notifiche nelle impostazioni del browser e riprova.",
+      "unsupported": "Questo browser non supporta le notifiche push.",
+      "invalid": "Questo link non è valido o è scaduto. Chiedi un nuovo link alla clinica.",
+      "error": "Impossibile attivare le notifiche. Riprova."
     }
   }
 }

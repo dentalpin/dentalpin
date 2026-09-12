@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+- fix(#63 review round 3): dropped the `ImportError` fallback (plain
+  top-level `webpush` import, no runtime branch); `_fit_payload`
+  re-serialises with `ensure_ascii=False` (accented bodies stay under
+  the 3990-byte cap) with a regression test; cross-clinic HTTP test
+  now asserts B's row is invisible/untouchable from A; sign-path
+  test runs the real `webpush_async` (only HTTP stubbed) to cover
+  `Vapid.sign`; token minting documented as API-only (en+es);
+  `push-sw.js` moved into the module layer `frontend/public/`.
+- fix(#63 review round 2): cached `Vapid` instance (PEM strings fail
+  deserialization); schema-level `https://` validators; hard
+  `webpush` import; atomic single-use redeem returning
+  `{subscribed: true}`; budget-mirror rate limits on the public
+  router; 3990-byte wire cap; SW ready-gate + payload URL
+  forwarding; HTTP cross-clinic + pruning-isolation tests.
+- fix(#63 review): patient subscribe flow end to end — staff-minted
+  single-use tokens (`notif_0007`, 24 h expiry) redeemed by the
+  browser at `/p/push/<token>` (public page + `push-sw.js` service
+  worker, auth middleware exemption); async `webpush_async` send
+  (10 s timeout, 24 h TTL, 4 KB cap); `https://`-only endpoints;
+  settings-backed VAPID; `push:<n>` log recipients; top-level
+  `webpush` import with `status_code` pruning; model/migration index
+  parity; unused TS permission mirror dropped; cross-clinic tests.
 - fix: the "connect WhatsApp" / "configure SMS" hints on the settings page
   link to `/settings/integrations/<page>` (the registry route); the bare
   `/settings/<page>` form 404s.
@@ -25,6 +47,12 @@
   next channel in the order (fallback) and only skips with
   `sms_rate_limited` when nothing else is viable; inbound rows never
   consume the cap; `sms_daily_limit` is echoed back by `/settings`.
+- feat: WebPush channel (T6) — `PushAdapter` + `notification_push_subscriptions`
+  table (`notif_0006`, chained on the SMS `notif_0005`) + `push_enabled`
+  preference + `push.read`/`push.write`
+  permissions + subscription endpoints + VAPID public-key endpoint. One VAPID
+  pair per deployment (`DENTALPIN_VAPID_PRIVATE_KEY`, env only). Dead
+  endpoints (410/404) prune on send. Browser service worker is a follow-up.
 - fix(#326): the SMTP onboarding rule carries `permission: 'notifications.settings.read'`.
 
 - refactor(#126): budget_sent treatment names resolve through the shared `app.core.i18n_names.catalog_name` helper (was es → en → first value).

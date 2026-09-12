@@ -7,6 +7,16 @@
       "replyError": "Nie udało się wysłać odpowiedzi",
       "windowClosed": "Okno 24 godzin jest zamknięte. Użyj szablonu, aby wznowić rozmowę.",
       "send": "Wyślij"
+    },
+    "pushSubscribe": {
+      "title": "Przypomnienia o wizytach",
+      "clinicLine": "{clinic} chce wysyłać Ci przypomnienia o wizytach.",
+      "enable": "Włącz powiadomienia",
+      "enabled": "Powiadomienia włączone. Możesz zamknąć tę stronę.",
+      "denied": "Odmówiono uprawnień przeglądarki. Włącz powiadomienia w ustawieniach przeglądarki i spróbuj ponownie.",
+      "unsupported": "Ta przeglądarka nie obsługuje powiadomień push.",
+      "invalid": "Ten link jest nieprawidłowy lub wygasł. Poproś klinikę o nowy.",
+      "error": "Nie udało się włączyć powiadomień. Spróbuj ponownie."
     }
   }
 }

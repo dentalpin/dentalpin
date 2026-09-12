@@ -65,6 +65,7 @@ class NotificationPreferenceBase(BaseModel):
     email_enabled: bool = True
     whatsapp_enabled: bool = True
     sms_enabled: bool = True
+    push_enabled: bool = True
     preferences: dict = Field(
         default_factory=lambda: {
             "appointment_confirmation": True,
@@ -91,6 +92,7 @@ class NotificationPreferenceUpdate(BaseModel):
     email_enabled: bool | None = None
     whatsapp_enabled: bool | None = None
     sms_enabled: bool | None = None
+    push_enabled: bool | None = None
     preferences: dict | None = None
     preferred_locale: str | None = Field(default=None, max_length=5)
 
@@ -364,3 +366,92 @@ class SmtpTestRequest(BaseModel):
     use_ssl: bool = False
     from_email: str = Field(..., max_length=255)
     to_email: str = Field(..., max_length=255)
+
+
+class PushSubscriptionKeys(BaseModel):
+    """Browser-generated WebPush keys (p256dh + auth)."""
+
+    p256dh: str = Field(max_length=200)
+    auth: str = Field(max_length=100)
+
+
+def _https_endpoint(value: str) -> str:
+    # The worker POSTs wherever it is pointed — refuse non-HTTPS so a
+    # staff typo (or worse) cannot turn the dispatcher into an
+    # intranet HTTP client. Mirrors the service-layer check.
+    if not value.startswith("https://"):
+        raise ValueError("subscription endpoint must be an https:// URL")
+    return value
+
+
+class PushSubscriptionCreate(BaseModel):
+    """Register (or refresh) a patient's browser subscription."""
+
+    patient_id: UUID
+    endpoint: str = Field(max_length=500)
+
+    @field_validator("endpoint")
+    @classmethod
+    def _endpoint_https(cls, value: str) -> str:
+        return _https_endpoint(value)
+
+    keys: PushSubscriptionKeys
+    user_agent: str | None = Field(default=None, max_length=500)
+
+
+class PushSubscriptionResponse(BaseModel):
+    """A registered subscription (keys never leave the server)."""
+
+    id: UUID
+    clinic_id: UUID
+    patient_id: UUID
+    endpoint: str
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class PushSubscribeTokenCreate(BaseModel):
+    """Staff mints a single-use subscribe token for a patient."""
+
+    patient_id: UUID
+
+
+class PushSubscribeTokenResponse(BaseModel):
+    """The token (shown once) — the patient redeems it with a browser."""
+
+    token: UUID
+    patient_id: UUID
+    expires_at: datetime
+
+    model_config = {"from_attributes": True}
+
+
+class PushSubscribeTokenValidate(BaseModel):
+    """Token validity + consent-screen data (public, no auth)."""
+
+    valid: bool
+    clinic_name: str
+    expires_at: datetime
+    public_key: str
+
+
+class PushPatientRedeem(BaseModel):
+    """Browser redeems a path token with its subscription (no auth)."""
+
+    endpoint: str = Field(max_length=500)
+
+    @field_validator("endpoint")
+    @classmethod
+    def _endpoint_https(cls, value: str) -> str:
+        return _https_endpoint(value)
+
+    keys: PushSubscriptionKeys
+    user_agent: str | None = Field(default=None, max_length=500)
+
+
+class PushSubscribed(BaseModel):
+    """Minimal redeem receipt — no ids leak to the token holder."""
+
+    subscribed: bool = True

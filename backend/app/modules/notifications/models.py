@@ -123,6 +123,10 @@ class NotificationPreference(Base, TimestampMixin):
     # consent trail.
     sms_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
     sms_opt_in_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
+    # WebPush uses the patient's registered browser subscriptions.
+    # Opt-out, like email/WhatsApp: explicit False blocks; a missing
+    # row means the patient is reachable (if they have a subscription).
+    push_enabled: Mapped[bool] = mapped_column(Boolean, default=True)
     # Last inbound message timestamp — opens the 24h free-form session window.
     last_inbound_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
 
@@ -350,4 +354,62 @@ class CommunicationMessage(Base, TimestampMixin):
             unique=True,
             postgresql_where=text("dedup_key IS NOT NULL"),
         ),
+    )
+
+
+class PushSubscription(Base, TimestampMixin):
+    """A patient's browser push subscription (WebPush).
+
+    Registered from the patient's device (endpoint + p256dh/auth keys);
+    the adapter fans a push message out to every active subscription.
+    Endpoints that answer 410/404 are pruned on the next send — no manual
+    cleanup. One row per (clinic, endpoint).
+    """
+
+    __tablename__ = "notification_push_subscriptions"
+
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"))
+    patient_id: Mapped[UUID] = mapped_column(ForeignKey("patients.id"))
+
+    endpoint: Mapped[str] = mapped_column(String(500))
+    keys: Mapped[dict] = mapped_column(JSONB, default=dict)  # {"p256dh": ..., "auth": ...}
+    user_agent: Mapped[str | None] = mapped_column(String(500), default=None)
+
+    # Index names must match notif_0006 exactly (auto index=True names
+    # do not) — patient lookups use the composite index.
+    __table_args__ = (
+        Index("ix_push_subscriptions_clinic_id", "clinic_id"),
+        Index("ix_push_subscriptions_clinic_patient", "clinic_id", "patient_id"),
+        Index(
+            "uq_push_subscriptions_clinic_endpoint",
+            "clinic_id",
+            "endpoint",
+            unique=True,
+        ),
+    )
+
+
+class PushSubscribeToken(Base, TimestampMixin):
+    """Single-use patient subscribe token (WebPush patient flow).
+
+    Minted by staff, redeemed once by the patient's browser with its
+    subscription. Random UUID + 24 h expiry + used_at — the token is
+    the auth, same shape as budget public links.
+    """
+
+    __tablename__ = "notification_push_subscribe_tokens"
+
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid4)
+    clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"))
+    patient_id: Mapped[UUID] = mapped_column(ForeignKey("patients.id"))
+    token: Mapped[UUID] = mapped_column(UUID(as_uuid=True), default=uuid4)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    used_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+    # Index names must match notif_0007 exactly.
+    __table_args__ = (
+        Index("ix_push_subscribe_tokens_clinic_id", "clinic_id"),
+        Index("ix_push_subscribe_tokens_patient_id", "patient_id"),
+        Index("uq_push_subscribe_tokens_token", "token", unique=True),
     )

@@ -7,6 +7,16 @@
       "replyError": "No se pudo enviar la respuesta",
       "windowClosed": "La ventana de 24h está cerrada. Usa una plantilla para reabrir la conversación.",
       "send": "Enviar"
+    },
+    "pushSubscribe": {
+      "title": "Recordatorios de citas",
+      "clinicLine": "{clinic} desea enviarle recordatorios de citas.",
+      "enable": "Activar notificaciones",
+      "enabled": "Notificaciones activadas. Puede cerrar esta página.",
+      "denied": "Permiso del navegador denegado. Active las notificaciones en los ajustes del navegador e inténtelo de nuevo.",
+      "unsupported": "Este navegador no admite notificaciones push.",
+      "invalid": "Este enlace no es válido o ha caducado. Pida a la clínica uno nuevo.",
+      "error": "No se pudieron activar las notificaciones. Inténtelo de nuevo."
     }
   }
 }

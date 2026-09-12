@@ -11,6 +11,11 @@ Heavy subscriber + now a publisher. See ADR 0016.
 - `channels/` — the **public contract** vendor modules import:
   `ChannelAdapter` protocol, `OutboundMessage`/`AdapterResult`, `Channel`
   enum, and the idempotent `channel_registry` (pre-loads `EmailAdapter`).
+- `channels/push_adapter.py` + `channels/vapid.py` — built-in WebPush
+  channel (T6): VAPID-gated `supports`, fan-out to the patient's
+  subscriptions, 410/404 prune. Registered from `on_activate` like email.
+- `push.py` — `PushSubscriptionService`: subscription registry (upsert by
+  endpoint).
   A vendor module `depends=["notifications"]` and calls
   `channel_registry.register(...)` from its `on_activate()` (ADR 0020 — never at import time, #325). The built-in EmailAdapter registers the same way from `NotificationsModule.on_activate`; the loader activates `notifications` before its vendors, so email is still always present first.
 - `gateway.py` — `NotificationGateway.enqueue` (consent gate → channel
@@ -40,6 +45,7 @@ settings, logs).
 `notifications.send`,
 `notifications.templates.{read,write}`,
 `notifications.preferences.{read,write}`,
+`notifications.push.{read,write}`,
 `notifications.settings.{read,write}`,
 `notifications.logs.read`.
 

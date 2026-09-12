@@ -63,6 +63,12 @@ class Settings(BaseSettings):
     # populated by the seed_rbac seeder at every boot.
     RBAC_FROM_DB: bool = False
 
+    # WebPush (notifications push channel). One VAPID pair per deployment:
+    # set DENTALPIN_VAPID_PRIVATE_KEY (PEM, env only) + DENTALPIN_VAPID_SUBJECT
+    # (mailto contact). Unset = push channel resolves nothing.
+    DENTALPIN_VAPID_PRIVATE_KEY: str = ""
+    DENTALPIN_VAPID_SUBJECT: str = "mailto:admin@localhost"
+
     # Module system
     DENTALPIN_DEV_MODULE_SCAN: bool = True  # Fallback filesystem scan for dev
     # Host-mounted path where `frontend/modules.json` lives. The backend
