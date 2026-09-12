@@ -1,0 +1,101 @@
+{
+  "sdi_it": {
+    "settings": {
+      "title": "Fakturowanie elektroniczne (SDI)",
+      "description": "Pliki FatturaPA dla faktur na firmy, wysyłane do Sistema di Interscambio."
+    },
+    "scope": {
+      "title": "Przez SDI przechodzą tylko faktury na firmy",
+      "text": "Faktury za usługi zdrowotne dla osób prywatnych nie mogą być elektroniczne (art. 10-bis DL 119/2018): pozostają w PDF i są zgłaszane do Sistema Tessera Sanitaria. Faktura staje się plikiem SDI tylko wtedy, gdy odbiorca ma partita IVA."
+    },
+    "invoiceData": "Dane faktury",
+    "enabled": "Włączone",
+    "disabled": "Wyłączone",
+    "regime": "Reżim podatkowy (RegimeFiscale)",
+    "regimeHelp": "RF01 zwykły, RF19 ryczałtowy (forfettario).",
+    "riferimento": "Podstawa zwolnienia",
+    "riferimentoHelp": "Drukowana w podsumowaniu zwolnionym (Natura N4), np. Esente IVA art. 10 n. 18 DPR 633/72.",
+    "bollo": "Wirtualna opłata skarbowa (2 €) powyżej 77,47 € zwolnionych",
+    "bolloHelp": "Deklaruje DatiBollo na fakturach zwolnionych powyżej progu; kwota nie jest dodawana do sumy.",
+    "progressivo": "Dotychczas wygenerowane pliki: {n}",
+    "transportLabel": "Przesyłanie do SDI",
+    "transport": {
+      "manual": "ręczne wgranie",
+      "pec": "PEC"
+    },
+    "transportOpt": {
+      "manual": "Ręcznie — pobierasz plik, sam go wysyłasz, importujesz potwierdzenie",
+      "manualHelp": "Pobierasz każdy XML ze strony plików, wgrywasz go w Fatture e Corrispettivi lub wysyłasz ze swojego klienta PEC i importujesz potwierdzenie zwrócone przez SDI.",
+      "pec": "PEC — certyfikowana skrzynka gabinetu wysyła i odbiera",
+      "pecHelp": "Co dwie minuty system wysyła oczekujące pliki z Twojej skrzynki PEC do SDI i odczytuje zwrócone potwierdzenia. Bez akredytacji."
+    },
+    "pec": {
+      "address": "Adres PEC gabinetu",
+      "sdiAddress": "Skrzynka SDI",
+      "sdiAddressHelp": "sdi01{'@'}pec.fatturapa.it dla pierwszego pliku; SDI odpowiada z dedykowanego adresu, zapisywanego tu automatycznie.",
+      "smtpHost": "Serwer SMTP",
+      "imapHost": "Serwer IMAP",
+      "port": "Port",
+      "username": "Użytkownik",
+      "password": "Hasło",
+      "folder": "Folder IMAP",
+      "lastPoll": "Ostatnie sprawdzenie skrzynki: {at}"
+    },
+    "secretStored": "Zapisane — zostaw puste, aby zachować.",
+    "testConnection": "Testuj skrzynkę",
+    "testOk": "Logowanie SMTP i IMAP powiodło się",
+    "testFail": "Test skrzynki nie powiódł się",
+    "enable": "Włącz",
+    "disable": "Wyłącz",
+    "saved": "Ustawienia zapisane",
+    "saveError": "Nie udało się zapisać ustawień",
+    "records": {
+      "title": "Pliki SDI",
+      "description": "Każda faktura na firmę staje się plikiem FPR12; śledź go od wygenerowania po potwierdzenie SDI.",
+      "allStates": "Wszystkie stany",
+      "processNow": "Wyślij teraz",
+      "processedTitle": "Cykl PEC zakończony",
+      "processed": "Wysłane {sent}, nieudane {failed}, potwierdzenia {receipts}, niedopasowane {unmatched}",
+      "empty": "Brak plików SDI.",
+      "invoice": "Faktura",
+      "recipient": "Odbiorca",
+      "file": "Plik",
+      "state": "Stan",
+      "receipt": "Potwierdzenie"
+    },
+    "panel": {
+      "title": "Sistema di Interscambio",
+      "notApplicable": "Faktura dla osoby prywatnej: nie wysyłana do SDI (art. 10-bis DL 119/2018). Wystawiona jako PDF; wydatek zgłaszany do Sistema Tessera Sanitaria.",
+      "buildError": "Nie udało się wygenerować pliku SDI",
+      "noRecord": "Ta faktura nie ma jeszcze pliku SDI.",
+      "file": "Plik",
+      "recipient": "Odbiorca",
+      "transport": "Wysłano przez",
+      "receipt": "Potwierdzenie",
+      "download": "Pobierz XML",
+      "markExported": "Oznacz jako wgrany",
+      "importReceipt": "Importuj potwierdzenie",
+      "receiptHelp": "Wybierz XML zwrócony przez SDI (…_RC_…, …_NS_…, …_MC_…) lub wklej jego treść.",
+      "receiptImported": "Potwierdzenie zastosowane",
+      "requeue": "Wygeneruj ponownie i wyślij",
+      "requeued": "Nowy plik wygenerowany z tym samym numerem",
+      "downloaded": "Plik pobrany",
+      "markedExported": "Oznaczono jako wgrany — oczekiwanie na potwierdzenie",
+      "actionFailed": "Akcja nie powiodła się",
+      "undeliverableHint": "SDI nie mógł doręczyć pliku: jest w strefie zastrzeżonej odbiorcy. Powiadom odbiorcę inną drogą.",
+      "rejectedHint": "Odrzucona przez SDI. Popraw dane faktury i wygeneruj ponownie: nowy plik zachowuje numer i datę."
+    },
+    "badge": {
+      "short": "SDI",
+      "error": "Plik SDI nie został wygenerowany"
+    },
+    "state": {
+      "pending": "Do wysłania",
+      "exported": "Wysłany, oczekuje na potwierdzenie",
+      "delivered": "Doręczony",
+      "undeliverable": "Niedoręczalny",
+      "rejected": "Odrzucony",
+      "failed": "Nieudany"
+    }
+  }
+}

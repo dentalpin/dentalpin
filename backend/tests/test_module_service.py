@@ -45,25 +45,6 @@ async def test_reconcile_empty_db_inserts_all_modules(db_session: AsyncSession) 
 
 
 @pytest.mark.asyncio
-async def test_reconcile_updates_version_change(db_session: AsyncSession) -> None:
-    svc = ModuleService(db_session)
-    await svc.reconcile_with_db()
-
-    # Tamper with a version to simulate an out-of-date row.
-    record = (
-        await db_session.execute(select(ModuleRecord).where(ModuleRecord.name == "patients"))
-    ).scalar_one()
-    record.version = "0.0.1-old"
-    await db_session.commit()
-
-    await svc.reconcile_with_db()
-    refreshed = (
-        await db_session.execute(select(ModuleRecord).where(ModuleRecord.name == "patients"))
-    ).scalar_one()
-    assert refreshed.version != "0.0.1-old"
-
-
-@pytest.mark.asyncio
 async def test_list_modules_combines_disk_and_db(db_session: AsyncSession) -> None:
     svc = ModuleService(db_session)
     await svc.reconcile_with_db()

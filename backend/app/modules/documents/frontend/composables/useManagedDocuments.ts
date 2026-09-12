@@ -105,15 +105,10 @@ export function useManagedDocuments() {
    */
   async function downloadDocument(document_id: string): Promise<void> {
     const baseUrl = useRuntimeConfig().public.apiBaseUrl
-    const auth = useAuth()
 
     const response = await fetch(
       `${baseUrl}/api/v1/documents/${document_id}/download`,
-      {
-        headers: {
-          Authorization: `Bearer ${auth.accessToken.value}`
-        }
-      }
+      { credentials: 'include' }
     )
 
     if (!response.ok) {

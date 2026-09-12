@@ -29,10 +29,13 @@
     "/module_layers/payroll/frontend",
     "/module_layers/periodontogram/frontend",
     "/module_layers/purchase_orders/frontend",
+    "/module_layers/razorpay/frontend",
     "/module_layers/recall_reminders/frontend",
     "/module_layers/recalls/frontend",
     "/module_layers/reports/frontend",
     "/module_layers/schedules/frontend",
+    "/module_layers/sdi_it/frontend",
+    "/module_layers/sistema_ts/frontend",
     "/module_layers/sms_gateway/frontend",
     "/module_layers/staff_tasks/frontend",
     "/module_layers/telephony/frontend",
@@ -245,6 +248,13 @@
       ]
     },
     {
+      "name": "razorpay",
+      "path": "/module_layers/razorpay/frontend",
+      "routes": [
+        "/settings/razorpay"
+      ]
+    },
+    {
       "name": "recall_reminders",
       "path": "/module_layers/recall_reminders/frontend",
       "routes": []
@@ -269,6 +279,16 @@
     {
       "name": "schedules",
       "path": "/module_layers/schedules/frontend",
+      "routes": []
+    },
+    {
+      "name": "sdi_it",
+      "path": "/module_layers/sdi_it/frontend",
+      "routes": []
+    },
+    {
+      "name": "sistema_ts",
+      "path": "/module_layers/sistema_ts/frontend",
       "routes": []
     },
     {

@@ -1,0 +1,101 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "Collect payments via UPI, QR, cards and payment links."
+    },
+    "settings": {
+      "title": "Razorpay settings",
+      "description": "Configure the Razorpay payment gateway for this clinic.",
+      "credentials": "API credentials",
+      "mode": "Mode",
+      "modeHint": "Use test mode until you've verified everything works end to end.",
+      "modeTest": "Test",
+      "modeLive": "Live",
+      "keyId": "Key ID",
+      "keyIdHint": "From the Razorpay dashboard — safe to expose to the browser.",
+      "keySecret": "Key secret",
+      "keySecretHint": "From the Razorpay dashboard. Never shown again after saving.",
+      "keySecretConfiguredHint": "A key secret is already configured. Leave blank to keep it.",
+      "keySecretPlaceholder": "Enter key secret",
+      "isActive": "Active",
+      "isActiveHint": "Only active configurations are offered to reception as a collection method.",
+      "webhook": "Webhook",
+      "webhookUrl": "Webhook URL",
+      "webhookUrlHint": "Paste this into the Razorpay dashboard's webhook settings for this clinic.",
+      "webhookSecret": "Webhook secret",
+      "webhookSecretHint": "The secret Razorpay signs webhook events with.",
+      "webhookSecretConfiguredHint": "A webhook secret is already configured. Leave blank to keep it.",
+      "webhookSecretPlaceholder": "Enter webhook secret",
+      "lastWebhookReceived": "Last webhook received",
+      "lastWebhookProcessed": "Last webhook processed",
+      "lastWebhookEventType": "Last event type",
+      "lastWebhookError": "Last webhook error",
+      "never": "Never",
+      "professionalNotice": "Confirm your Razorpay account setup and settlement details with Razorpay support or your accountant. DentalPin does not manage settlement or statutory reporting.",
+      "saved": "Settings saved",
+      "saveError": "Could not save settings",
+      "loadError": "Could not load settings",
+      "webhookCopied": "Webhook URL copied"
+    },
+    "collect": {
+      "notConfiguredHint": "Razorpay isn't configured for this clinic yet. Ask an admin to set it up in Settings.",
+      "waiting": "Waiting for payment…",
+      "checkStatus": "Check status",
+      "openCheckout": "Open Razorpay checkout",
+      "scanQr": "Ask the patient to scan this QR code with any UPI app",
+      "linkCopied": "Payment link copied",
+      "authorizing": "Payment authorized — finalizing…",
+      "success": "Payment received",
+      "tryAgain": "Try again",
+      "createError": "Could not start the payment",
+      "checkoutLoadError": "Could not load the Razorpay checkout — check your connection and try again",
+      "states": {
+        "failed": "Payment failed",
+        "expired": "Payment expired",
+        "cancelled": "Payment cancelled"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "QR",
+        "card": "Card",
+        "payment_link": "Payment link"
+      },
+      "railUpiQr": "UPI QR",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "Payment link"
+    },
+    "detail": {
+      "title": "Razorpay transaction",
+      "auditTrail": "Details",
+      "method": "Method",
+      "status": "Status",
+      "providerReference": "Razorpay payment ID",
+      "initiated": "Initiated",
+      "confirmed": "Confirmed",
+      "allocation": "Allocation",
+      "refundHistory": "Refunds",
+      "refundAction": "Refund via Razorpay",
+      "refundPermissionDenied": "You don't have permission to issue refunds",
+      "maxRefundable": "Up to {amount}",
+      "noRefunds": "No refunds on this payment yet.",
+      "refundRequested": "Refund requested",
+      "refundError": "Could not start the refund",
+      "states": {
+        "pending": "Pending",
+        "awaiting_customer_action": "Awaiting payment",
+        "authorised_awaiting_capture": "Authorizing",
+        "succeeded": "Succeeded",
+        "failed": "Failed",
+        "expired": "Expired",
+        "cancelled": "Cancelled"
+      },
+      "refundStates": {
+        "requested": "Requested",
+        "processing": "Processing",
+        "completed": "Completed",
+        "failed": "Failed"
+      }
+    }
+  }
+}

@@ -33,6 +33,22 @@ informe de cobros (ver
 | Ver informes de presupuestos | `reports.budgets.read` |
 | Ver informes de agenda | `reports.scheduling.read` |
 | Ver informes de cobros (los aporta `payments`) | `payments.reports.read` |
+| Ver antigüedad y tendencia | `reports.financial.read` |
+| Ver demografía y visitas | `reports.patient_stats.read` |
+| Ver productividad | `reports.operational.read` |
+
+## Novedades en v0.2.0 — familias de informes
+
+- **Financiera** (`reports.financial.read`): tramos de antigüedad y
+  totales emitidos mensuales, solo eje factura, con `?format=csv`. La
+  tarjeta del panel lee estos números.
+- **Pacientes** (`reports.patient_stats.read`): demografía actual
+  (edad, género, zona con desconocidos explícitos) y frecuencia de
+  visitas, con `?format=csv`. Sin pantalla propia todavía — pregunta
+  al copiloto o exporta el CSV.
+- **Operativa** (`reports.operational.read`): completadas por
+  profesional y gabinete más el estado de planes, con `?format=csv`.
+  Sin pantalla propia todavía.
 
 ## Módulos relacionados
 

@@ -35,6 +35,30 @@ invoices to persone fisiche may not be electronic (art. 10-bis DL
 4. `POST /records/{id}/requeue` after a scarto: same number and date,
    new progressivo, old record kept as history.
 
+## PEC transport (phase 2)
+
+`services/pec_transport.py` (stdlib `smtplib`/`imaplib` in the default
+executor, no new dependency): `send_file` attaches the FPR12 to a message
+for the SDI mailbox; `poll_receipts` reads unseen messages from
+`pec.fatturapa.it`, extracts receipt attachments (XML or inside a zip),
+marks them seen and reports the SDI's dedicated reply address.
+`services/submission_queue.process_clinic` drains one clinic (rows locked
+`FOR UPDATE SKIP LOCKED`, commit before every network call, backoff per
+row, clinic paused ten minutes on mailbox errors) and applies receipts via
+`services/receipts.apply_receipt`, shared with the API import.
+`tasks.py` schedules it every 120 s.
+
+## Frontend layer (phase 3)
+
+`frontend/plugins/settings.client.ts` registers two Settings → Billing
+pages (`SdiItSettingsPage.vue`, `SdiItRecordsPage.vue`);
+`frontend/plugins/slots.client.ts` mounts `InvoiceSdiSlot.vue` in
+`invoice.detail.compliance` and `SdiBadge.vue` in `invoice.list.row.meta`
+/ `invoice.detail.header.meta`, gated on the clinic country `IT` or an
+`IT` block in `compliance_data`. `composables/useSdiIt.ts` wraps the API;
+the XML download uses `useApi().raw` (blob). Permissions in
+`frontend/app/config/permissions.ts` → `sdiIt`.
+
 ## API surface
 
 - `GET /api/v1/sdi_it/settings`, `PUT /api/v1/sdi_it/settings`
@@ -43,6 +67,9 @@ invoices to persone fisiche may not be electronic (art. 10-bis DL
 - `POST /api/v1/sdi_it/records/{record_id}/exported`
 - `POST /api/v1/sdi_it/records/{record_id}/requeue`
 - `POST /api/v1/sdi_it/receipts`
+- `GET /api/v1/sdi_it/records/by-invoice/{invoice_id}`
+- `POST /api/v1/sdi_it/pec/test`
+- `POST /api/v1/sdi_it/queue/process-now`
 
 ## Tests
 
@@ -52,7 +79,7 @@ credit notes, router lifecycle, Alembic round-trip uninstall.
 
 ## Not yet
 
-PEC transport, SdICoop, digital signature, `Allegati`, Nuxt layer.
+SdICoop, digital signature, `Allegati`.
 
 ## See also
 

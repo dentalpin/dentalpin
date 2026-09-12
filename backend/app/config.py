@@ -18,6 +18,24 @@ class Settings(BaseSettings):
     SECRET_KEY: str
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    # Session cookies (ADR 0023) are host-only by default, which is what a
+    # single-host deployment and the e2e stack need. Split-host topologies
+    # (app on demo.example.com, API on api-demo.example.com) set the shared
+    # parent domain, e.g. ".example.com", so the browser sends the cookies
+    # to both hosts and the app can read ``dp_csrf``.
+    COOKIE_DOMAIN: str = ""
+    # Sistema Tessera Sanitaria (sistema_ts module): the *test* service
+    # (invioSS730pTest) presents a certificate issued by the private "Sogei
+    # Certification Authority Test", which no public trust store carries, so
+    # TLS verification fails until the operator points this at a PEM bundle
+    # holding that CA (downloadable from the Sistema TS portal). Production
+    # (invioSS730p) chains to a public CA and needs nothing. Empty = the
+    # default certifi bundle.
+    SISTEMA_TS_CA_BUNDLE: str = ""
+    # Presenting a refresh token revoked less than this many seconds ago
+    # (two tabs refreshing at once, a Nuxt error re-render) answers with the
+    # live successor instead of burning the family (#421). 0 disables.
+    REFRESH_REUSE_GRACE_SECONDS: int = 30
     ALGORITHM: str = "HS256"
     # Independent secret used to sign the public-budget verification
     # cookies (ADR 0006). Falls back to ``SECRET_KEY`` for local/dev

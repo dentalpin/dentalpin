@@ -1,0 +1,121 @@
+{
+  "sistema_ts": {
+    "settings": {
+      "title": "Sistema Tessera Sanitaria",
+      "description": "A páciensek egészségügyi kiadásait jelenti a Sistema TS-nek az előre kitöltött adóbevalláshoz."
+    },
+    "scope": {
+      "title": "Csak a páciensszámlák",
+      "text": "Minden kifizetett, magánszemélynek szóló számla automatikusan a Sistema TS-be kerül (jóváíró számla visszatérítésként, sztornó törlésként). A céges számlák az SDI-n mennek. Az ellenző pácienst is jelentjük, adószám (codice fiscale) nélkül."
+    },
+    "enabled": "Bekapcsolva",
+    "disabled": "Kikapcsolva",
+    "credentials": "Sistema TS-hozzáférés",
+    "environment": "Környezet",
+    "env": {
+      "test": "Teszt (invioSS730pTest)",
+      "prod": "Éles (invioSS730p)"
+    },
+    "username": "Felhasználónév",
+    "usernameHelp": "A küldő codice fiscaléja, ahogy a sistemats.it-en regisztrálták.",
+    "password": "Jelszó",
+    "pincode": "Pincode",
+    "pincodeHelp": "A Sistema TS által kiadott 10 jegyű kód; minden küldés előtt titkosítva.",
+    "certificate": "Sistema TS-tanúsítvány",
+    "certificateVendored": "A modullal szállított Agenzia delle Entrate-tanúsítvány van használatban (érvényes: {at}). Töltsd fel az újat, ha a portál újat ad ki.",
+    "certificateCustom": "Saját tanúsítvány használatban (érvényes: {at}).",
+    "certificateReset": "Szállított tanúsítvány használata",
+    "identity": "Küldő azonossága",
+    "cfProprietario": "A tulajdonos codice fiscaléja",
+    "cfProprietarioHelp": "A fogorvos (vagy a struktúra tulajdonosának) codice fiscaléja; titkosítva megy cfProprietario-ként.",
+    "codiceRegione": "Régiókód",
+    "codiceAsl": "ASL-kód",
+    "codiceSsa": "Struktúrakód (SSA)",
+    "structureHelp": "Régió, ASL és struktúrakód csak akkreditált/engedélyezett struktúráknál; magánpraxisként hagyd üresen.",
+    "dispositivo": "Eszközszám",
+    "dispositivoHelp": "numDocumentoFiscale.dispositivo; számláknál 1.",
+    "defaultTipoSpesa": "Alapértelmezett kiadástípus",
+    "syncFrom": "Számlák jelentése ettől a kiállítási dátumtól",
+    "syncFromHelp": "Üresen minden kifizetett számla megy a kezdetektől.",
+    "secretStored": "Elmentve — hagyd üresen a megtartásához.",
+    "enable": "Bekapcsolás",
+    "disable": "Kikapcsolás",
+    "saved": "Beállítások mentve",
+    "saveError": "A beállításokat nem sikerült menteni",
+    "year": {
+      "title": "{year}. év",
+      "deadline": "Határidő",
+      "unsent": "Még nem küldött",
+      "accepted": "Elfogadva",
+      "rejected": "Elutasítva",
+      "lastResponse": "A Sistema TS utolsó válasza: {at}"
+    },
+    "itemTypes": {
+      "title": "Kiadástípus kezelésenként",
+      "help": "A nem választott tételek az alapértelmezettet kapják ({default}). SR = egészségügyi szolgáltatás; IC = esztétikai (nem levonható); AD = eladott orvostechnikai eszköz.",
+      "empty": "Nincs katalógustétel.",
+      "item": "Kezelés",
+      "tipoSpesa": "Kiadástípus"
+    },
+    "tipoSpesa": {
+      "SR": "egészségügyi szolgáltatás",
+      "IC": "esztétikai beavatkozás",
+      "AD": "orvostechnikai eszköz",
+      "PI": "protetikai / kiegészítő",
+      "SP": "egészségügyi szolgáltatás (magánpraxis)",
+      "AA": "egyéb kiadás",
+      "TK": "ticket",
+      "FC": "gyógyszer / CE-eszköz",
+      "AS": "gyógyszertári szolgáltatás",
+      "CT": "gyógyfürdő-kezelés"
+    },
+    "documents": {
+      "title": "Sistema TS-beküldések",
+      "description": "Minden kifizetett páciensszámla, ahogy a Sistema TS-nek elment, a protocollóval.",
+      "allStates": "Minden állapot",
+      "processNow": "Küldés most",
+      "processed": "Sorba állítva {queued}, elfogadva {accepted}, elutasítva {rejected}, sikertelen {failed}",
+      "empty": "Ebben az évben nincs beküldés.",
+      "document": "Bizonylat",
+      "operation": "Művelet",
+      "state": "Állapot",
+      "protocollo": "Protocollo",
+      "retry": "Újra",
+      "requeued": "Visszakerült a sorba",
+      "actionFailed": "A művelet nem sikerült",
+      "traceable": "nyomon követhető fizetés",
+      "cash": "készpénz"
+    },
+    "operation": {
+      "inserimento": "Beküldés",
+      "variazione": "Módosítás",
+      "cancellazione": "Törlés",
+      "rimborso": "Visszatérítés"
+    },
+    "state": {
+      "pending": "Küldendő",
+      "sending": "Küldés folyamatban",
+      "accepted": "Elfogadva",
+      "accepted_with_warnings": "Elfogadva figyelmeztetéssel",
+      "rejected": "Elutasítva",
+      "failed": "Sikertelen"
+    },
+    "panel": {
+      "title": "Sistema Tessera Sanitaria",
+      "waiting": "Kifizetett páciensszámla: a következő futáskor megy a Sistema TS-nek."
+    },
+    "opposition": {
+      "title": "Sistema TS-ellenzés",
+      "help": "A páciens tiltakozhat az ellen, hogy a kiadásai az Agenzia delle Entratéhoz kerüljenek. A bizonylatok így is mennek, codice fiscale nélkül.",
+      "opposed": "Ellenzi",
+      "notOpposed": "Nem ellenzi",
+      "since": "Ettől: {date}",
+      "record": "Ellenzés rögzítése",
+      "revoke": "Ellenzés visszavonása",
+      "notePlaceholder": "Megjegyzés (nem kötelező)",
+      "recorded": "Ellenzés rögzítve; az elfogadott bizonylatok anonimizálva mennek újra",
+      "revoked": "Ellenzés visszavonva; az elfogadott bizonylatok codice fiscaléval mennek újra",
+      "failed": "Az ellenzést nem sikerült frissíteni"
+    }
+  }
+}

@@ -225,7 +225,7 @@ class PendingProcessor:
         if module is None:
             raise RuntimeError(f"Cannot upgrade {record.name}: not in in-memory registry")
 
-        previous_version = record.manifest_snapshot.get("version", record.version)
+        previous_version = record.version or (record.manifest_snapshot or {}).get("version")
 
         migrate_log = await self._op_log.started(
             module_name=record.name, operation="upgrade", step="migrate"
@@ -261,6 +261,7 @@ class PendingProcessor:
                 raise RuntimeError(f"Record {record.name} vanished mid-upgrade")
             db_record.state = ModuleState.INSTALLED.value
             db_record.applied_revision = applied_revision
+            db_record.version = module.get_manifest().version
             db_record.last_state_change = datetime.now(UTC)
             db_record.error_message = None
             db_record.error_at = None

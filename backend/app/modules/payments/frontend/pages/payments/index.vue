@@ -18,6 +18,9 @@ definePageMeta({ middleware: 'auth' })
 const { t, locale } = useI18n()
 const api = useApi()
 const { can } = usePermissions()
+// Passed as `ctx.clinic` to `payments.list.row.meta` — the shape the
+// country-gated slots (india_gst / verifactu / razorpay) already expect.
+const { currentClinic } = useClinic()
 
 interface PatientBrief {
   id: string
@@ -368,6 +371,12 @@ function formatDate(s: string | undefined): string {
                   class="truncate max-w-[160px]"
                   :title="p.reference"
                 >· {{ p.reference }}</span>
+                <!-- Desktop row: gateway badge (the #card template below
+                     carries the same slot for the mobile layout). -->
+                <ModuleSlot
+                  name="payments.list.row.meta"
+                  :ctx="{ payment: p, clinic: currentClinic }"
+                />
               </div>
             </div>
             <div class="shrink-0 hidden sm:flex flex-col items-end gap-0.5 max-w-[200px]">
@@ -419,7 +428,7 @@ function formatDate(s: string | undefined): string {
                 <!-- Provider badge / settlement state from a gateway module (#365). -->
                 <ModuleSlot
                   name="payments.list.row.meta"
-                  :ctx="{ payment: p }"
+                  :ctx="{ payment: p, clinic: currentClinic }"
                 />
               </div>
               <div class="text-end shrink-0">

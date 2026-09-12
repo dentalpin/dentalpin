@@ -8,7 +8,7 @@ interface UploadProgress {
 
 export function useDocuments() {
   const config = useRuntimeConfig()
-  const auth = useAuth()
+  const { csrfHeaders } = useSessionRequest()
   const { t } = useI18n()
   const toast = useToast()
 
@@ -41,9 +41,7 @@ export function useDocuments() {
 
       const response = await $fetch<PaginatedResponse<Document>>(url, {
         baseURL: apiBaseUrl.value,
-        headers: {
-          Authorization: `Bearer ${auth.accessToken.value}`
-        }
+        credentials: 'include'
       })
 
       documents.value = response.data
@@ -85,9 +83,8 @@ export function useDocuments() {
           baseURL: apiBaseUrl.value,
           method: 'POST',
           body: formData,
-          headers: {
-            Authorization: `Bearer ${auth.accessToken.value}`
-          },
+          credentials: 'include',
+          headers: csrfHeaders('POST'),
           // No Content-Type: ofetch leaves it unset for FormData bodies so
           // the browser adds the multipart boundary.
           onRequestError() {
@@ -126,9 +123,7 @@ export function useDocuments() {
         `/api/v1/media/documents/${documentId}/download`,
         {
           baseURL: apiBaseUrl.value,
-          headers: {
-            Authorization: `Bearer ${auth.accessToken.value}`
-          },
+          credentials: 'include',
           responseType: 'blob'
         }
       )
@@ -162,9 +157,7 @@ export function useDocuments() {
         `/api/v1/media/documents/${documentId}/download`,
         {
           baseURL: apiBaseUrl.value,
-          headers: {
-            Authorization: `Bearer ${auth.accessToken.value}`
-          },
+          credentials: 'include',
           responseType: 'blob'
         }
       )
@@ -187,9 +180,8 @@ export function useDocuments() {
         {
           baseURL: apiBaseUrl.value,
           method: 'DELETE',
-          headers: {
-            Authorization: `Bearer ${auth.accessToken.value}`
-          }
+          credentials: 'include',
+          headers: csrfHeaders('DELETE')
         }
       )
 
@@ -225,8 +217,9 @@ export function useDocuments() {
           baseURL: apiBaseUrl.value,
           method: 'PUT',
           body: data,
+          credentials: 'include',
           headers: {
-            'Authorization': `Bearer ${auth.accessToken.value}`,
+            ...csrfHeaders('PUT'),
             'Content-Type': 'application/json'
           }
         }

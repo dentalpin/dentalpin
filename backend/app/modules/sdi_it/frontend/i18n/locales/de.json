@@ -1,0 +1,101 @@
+{
+  "sdi_it": {
+    "settings": {
+      "title": "Elektronische Rechnung (SDI)",
+      "description": "FatturaPA-Dateien für Rechnungen an Unternehmen, gesendet an das Sistema di Interscambio."
+    },
+    "scope": {
+      "title": "Nur Rechnungen an Unternehmen gehen über das SDI",
+      "text": "Gesundheitsrechnungen an Privatpersonen dürfen nicht elektronisch sein (Art. 10-bis DL 119/2018): sie bleiben PDF und werden an das Sistema Tessera Sanitaria gemeldet. Eine Rechnung wird nur dann zur SDI-Datei, wenn der Empfänger eine Partita IVA hat."
+    },
+    "invoiceData": "Rechnungsdaten",
+    "enabled": "Aktiv",
+    "disabled": "Inaktiv",
+    "regime": "Steuerregime (RegimeFiscale)",
+    "regimeHelp": "RF01 ordentlich, RF19 Pauschalregime (forfettario).",
+    "riferimento": "Verweis auf die Befreiung",
+    "riferimentoHelp": "Wird in der befreiten Zusammenfassung (Natura N4) gedruckt, z. B. Esente IVA art. 10 n. 18 DPR 633/72.",
+    "bollo": "Virtuelle Stempelsteuer (2 €) über 77,47 € befreit",
+    "bolloHelp": "Meldet DatiBollo auf befreiten Rechnungen über der Schwelle; der Betrag wird nicht zum Total addiert.",
+    "progressivo": "Bisher erzeugte Dateien: {n}",
+    "transportLabel": "Übermittlung an das SDI",
+    "transport": {
+      "manual": "manueller Upload",
+      "pec": "PEC"
+    },
+    "transportOpt": {
+      "manual": "Manuell — Datei herunterladen, selbst hochladen, Quittung importieren",
+      "manualHelp": "Sie laden jedes XML von der Dateiseite herunter, laden es in Fatture e Corrispettivi hoch oder senden es aus Ihrem PEC-Client und importieren die Quittung, die das SDI zurückschickt.",
+      "pec": "PEC — das zertifizierte Postfach der Praxis sendet und empfängt",
+      "pecHelp": "Alle zwei Minuten sendet das System wartende Dateien aus Ihrem PEC-Postfach an das SDI und liest die zurückgesendeten Quittungen. Keine Akkreditierung nötig."
+    },
+    "pec": {
+      "address": "PEC-Adresse der Praxis",
+      "sdiAddress": "SDI-Postfach",
+      "sdiAddressHelp": "sdi01{'@'}pec.fatturapa.it für die erste Datei; das SDI antwortet von einer eigenen Adresse, die hier automatisch gespeichert wird.",
+      "smtpHost": "SMTP-Server",
+      "imapHost": "IMAP-Server",
+      "port": "Port",
+      "username": "Benutzername",
+      "password": "Passwort",
+      "folder": "IMAP-Ordner",
+      "lastPoll": "Postfach zuletzt geprüft: {at}"
+    },
+    "secretStored": "Gespeichert — leer lassen, um es zu behalten.",
+    "testConnection": "Postfach testen",
+    "testOk": "SMTP- und IMAP-Anmeldung erfolgreich",
+    "testFail": "Postfachtest fehlgeschlagen",
+    "enable": "Aktivieren",
+    "disable": "Deaktivieren",
+    "saved": "Einstellungen gespeichert",
+    "saveError": "Einstellungen konnten nicht gespeichert werden",
+    "records": {
+      "title": "SDI-Dateien",
+      "description": "Jede Unternehmensrechnung wird zu einer FPR12-Datei; verfolgen Sie sie von der Erzeugung bis zur SDI-Quittung.",
+      "allStates": "Alle Zustände",
+      "processNow": "Jetzt senden",
+      "processedTitle": "PEC-Durchlauf beendet",
+      "processed": "Gesendet {sent}, fehlgeschlagen {failed}, Quittungen {receipts}, nicht zugeordnet {unmatched}",
+      "empty": "Noch keine SDI-Dateien.",
+      "invoice": "Rechnung",
+      "recipient": "Empfänger",
+      "file": "Datei",
+      "state": "Zustand",
+      "receipt": "Quittung"
+    },
+    "panel": {
+      "title": "Sistema di Interscambio",
+      "notApplicable": "Rechnung an eine Privatperson: nicht an das SDI gesendet (Art. 10-bis DL 119/2018). Als PDF ausgestellt; die Ausgabe wird an das Sistema Tessera Sanitaria gemeldet.",
+      "buildError": "SDI-Datei konnte nicht erzeugt werden",
+      "noRecord": "Noch keine SDI-Datei zu dieser Rechnung.",
+      "file": "Datei",
+      "recipient": "Empfänger",
+      "transport": "Gesendet über",
+      "receipt": "Quittung",
+      "download": "XML herunterladen",
+      "markExported": "Als hochgeladen markieren",
+      "importReceipt": "Quittung importieren",
+      "receiptHelp": "Wählen Sie das vom SDI zurückgesendete XML (…_RC_…, …_NS_…, …_MC_…) oder fügen Sie den Inhalt ein.",
+      "receiptImported": "Quittung übernommen",
+      "requeue": "Neu erzeugen und erneut senden",
+      "requeued": "Neue Datei mit derselben Nummer erzeugt",
+      "downloaded": "Datei heruntergeladen",
+      "markedExported": "Als hochgeladen markiert — Quittung ausstehend",
+      "actionFailed": "Aktion fehlgeschlagen",
+      "undeliverableHint": "Das SDI konnte die Datei nicht zustellen: sie liegt im reservierten Bereich des Empfängers. Informieren Sie den Empfänger auf anderem Weg.",
+      "rejectedHint": "Vom SDI abgelehnt. Rechnungsdaten korrigieren und neu erzeugen: die neue Datei behält Nummer und Datum."
+    },
+    "badge": {
+      "short": "SDI",
+      "error": "SDI-Datei nicht erzeugt"
+    },
+    "state": {
+      "pending": "Zu senden",
+      "exported": "Gesendet, Quittung ausstehend",
+      "delivered": "Zugestellt",
+      "undeliverable": "Nicht zustellbar",
+      "rejected": "Abgelehnt",
+      "failed": "Fehlgeschlagen"
+    }
+  }
+}

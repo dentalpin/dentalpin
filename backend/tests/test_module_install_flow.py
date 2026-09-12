@@ -152,4 +152,67 @@ async def test_upgrade_marks_to_upgrade_when_version_diverges(
         await db_session.execute(select(ModuleRecord).where(ModuleRecord.name == "billing"))
     ).scalar_one()
     assert refreshed.state == ModuleState.TO_UPGRADE.value
-    assert refreshed.version != "0.0.0"  # bumped to manifest version
+    assert refreshed.version == "0.0.0"  # version advances only on finalize
+
+
+@pytest.mark.asyncio
+async def test_reconcile_keeps_installed_version_on_drift(
+    db_session: AsyncSession,
+) -> None:
+    """Reconcile must NOT absorb a disk version bump into ``record.version``.
+
+    The stored version is the last-applied version — the upgrade signal.
+    A second reconcile with drift keeps the old version and the installed
+    state, so the upgrade path stays reachable (issue #47)."""
+    await _reconcile(db_session)
+
+    billing = (
+        await db_session.execute(select(ModuleRecord).where(ModuleRecord.name == "billing"))
+    ).scalar_one()
+    billing.version = "0.0.0"
+    await db_session.commit()
+
+    await _reconcile(db_session)
+
+    refreshed = (
+        await db_session.execute(select(ModuleRecord).where(ModuleRecord.name == "billing"))
+    ).scalar_one()
+    assert refreshed.version == "0.0.0"
+    assert refreshed.state == ModuleState.INSTALLED.value
+
+
+@pytest.mark.asyncio
+async def test_list_signals_upgrade_available_on_drift(
+    db_session: AsyncSession,
+) -> None:
+    await _reconcile(db_session)
+
+    billing = (
+        await db_session.execute(select(ModuleRecord).where(ModuleRecord.name == "billing"))
+    ).scalar_one()
+    billing.version = "0.0.0"
+    await db_session.commit()
+
+    svc = ModuleService(db_session)
+    info = await svc.get_info("billing")
+    assert info is not None
+    assert info.upgrade_available is True
+    assert info.installable is True
+    assert info.installed_version == "0.0.0"
+    assert info.version != "0.0.0"
+    payload = info.to_dict()
+    assert payload["upgrade_available"] is True
+    assert payload["installable"] is True
+    assert payload["installed_version"] == "0.0.0"
+
+
+@pytest.mark.asyncio
+async def test_no_upgrade_signal_when_in_sync(
+    db_session: AsyncSession,
+) -> None:
+    await _reconcile(db_session)
+
+    svc = ModuleService(db_session)
+    info = await svc.get_info("billing")
+    assert info is not None
+    assert info.upgrade_available is False

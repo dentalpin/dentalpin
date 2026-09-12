@@ -58,7 +58,6 @@ const STATUS_COLORS: Record<BudgetStatus, string> = {
 export function useBudgets() {
   const api = useApi()
   const config = useRuntimeConfig()
-  const auth = useAuth()
 
   // State
   const budgets = useState<BudgetListItem[]>('budgets:list', () => [])
@@ -356,11 +355,7 @@ export function useBudgets() {
 
   async function downloadPDFAt(path: string, fallbackName: string): Promise<void> {
     const baseUrl = config.public.apiBaseUrl
-    const token = auth.accessToken.value
-
-    const response = await fetch(`${baseUrl}${path}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    })
+    const response = await fetch(`${baseUrl}${path}`, { credentials: 'include' })
 
     if (!response.ok) {
       // This path uses raw fetch (blob response), so it bypasses useApi

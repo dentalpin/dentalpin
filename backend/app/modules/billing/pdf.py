@@ -18,7 +18,26 @@ if TYPE_CHECKING:
 
 from .models import Invoice
 
-_LOCALE_BY_LANG = {"es": "es_ES", "en": "en_US", "ta": "en_IN"}
+# Every UI locale is accepted for the PDF (the download button sends the
+# user's language, and a 422 on "Download PDF" is a silent failure in
+# every language the labels are not translated for yet). Labels exist in
+# es/en/ta and fall back to English; amounts and dates use the locale's
+# own separators either way. Keep in sync with the host ``i18n.locales``
+# in frontend/nuxt.config.ts — a test guards it.
+PDF_LOCALES: tuple[str, ...] = ("es", "en", "ta", "fr", "pt", "de", "hu", "pl", "it", "ar")
+PDF_LOCALE_PATTERN = "^(" + "|".join(PDF_LOCALES) + ")$"
+_LOCALE_BY_LANG = {
+    "es": "es_ES",
+    "en": "en_US",
+    "ta": "en_IN",
+    "fr": "fr_FR",
+    "pt": "pt_PT",
+    "de": "de_DE",
+    "hu": "hu_HU",
+    "pl": "pl_PL",
+    "it": "it_IT",
+    "ar": "ar",
+}
 
 
 class InvoicePDFService:
@@ -881,4 +900,5 @@ class InvoicePDFService:
             return labels_es
         if locale == "ta":
             return labels_ta
+        # fr/pt/de/hu/pl/it/ar: English labels until translated (#422).
         return labels_en

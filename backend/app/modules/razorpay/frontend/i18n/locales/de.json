@@ -1,0 +1,101 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "Zahlungen per UPI, QR, Karte und Zahlungslink entgegennehmen."
+    },
+    "settings": {
+      "title": "Razorpay-Einstellungen",
+      "description": "Konfigurieren Sie das Razorpay-Zahlungsgateway für diese Klinik.",
+      "credentials": "API-Anmeldedaten",
+      "mode": "Modus",
+      "modeHint": "Verwenden Sie den Testmodus, bis alles einwandfrei funktioniert.",
+      "modeTest": "Test",
+      "modeLive": "Live",
+      "keyId": "Schlüssel-ID",
+      "keyIdHint": "Aus dem Razorpay-Dashboard — kann sicher im Browser angezeigt werden.",
+      "keySecret": "Schlüsselgeheimnis",
+      "keySecretHint": "Aus dem Razorpay-Dashboard. Wird nach dem Speichern nicht erneut angezeigt.",
+      "keySecretConfiguredHint": "Es ist bereits ein Schlüsselgeheimnis konfiguriert. Leer lassen, um es beizubehalten.",
+      "keySecretPlaceholder": "Schlüsselgeheimnis eingeben",
+      "isActive": "Aktiv",
+      "isActiveHint": "Nur aktive Konfigurationen werden der Rezeption als Zahlungsmethode angeboten.",
+      "webhook": "Webhook",
+      "webhookUrl": "Webhook-URL",
+      "webhookUrlHint": "Fügen Sie dies in die Webhook-Einstellungen von Razorpay für diese Klinik ein.",
+      "webhookSecret": "Webhook-Geheimnis",
+      "webhookSecretHint": "Das Geheimnis, mit dem Razorpay Webhook-Ereignisse signiert.",
+      "webhookSecretConfiguredHint": "Es ist bereits ein Webhook-Geheimnis konfiguriert. Leer lassen, um es beizubehalten.",
+      "webhookSecretPlaceholder": "Webhook-Geheimnis eingeben",
+      "lastWebhookReceived": "Letzter empfangener Webhook",
+      "lastWebhookProcessed": "Letzter verarbeiteter Webhook",
+      "lastWebhookEventType": "Letzter Ereignistyp",
+      "lastWebhookError": "Letzter Webhook-Fehler",
+      "never": "Nie",
+      "professionalNotice": "Bestätigen Sie die Einrichtung Ihres Razorpay-Kontos und die Abrechnungsdetails mit dem Razorpay-Support oder Ihrem Steuerberater. DentalPin verwaltet weder die Abrechnung noch die gesetzliche Berichterstattung.",
+      "saved": "Einstellungen gespeichert",
+      "saveError": "Einstellungen konnten nicht gespeichert werden",
+      "loadError": "Einstellungen konnten nicht geladen werden",
+      "webhookCopied": "Webhook-URL kopiert"
+    },
+    "collect": {
+      "notConfiguredHint": "Razorpay ist für diese Klinik noch nicht konfiguriert. Bitten Sie einen Administrator, es in den Einstellungen einzurichten.",
+      "waiting": "Warten auf Zahlung…",
+      "checkStatus": "Status prüfen",
+      "openCheckout": "Razorpay-Kasse öffnen",
+      "scanQr": "Bitten Sie den Patienten, diesen QR-Code mit einer beliebigen UPI-App zu scannen",
+      "linkCopied": "Zahlungslink kopiert",
+      "authorizing": "Zahlung autorisiert — wird abgeschlossen…",
+      "success": "Zahlung erhalten",
+      "tryAgain": "Erneut versuchen",
+      "createError": "Zahlung konnte nicht gestartet werden",
+      "checkoutLoadError": "Razorpay-Kasse konnte nicht geladen werden — überprüfen Sie Ihre Verbindung und versuchen Sie es erneut",
+      "states": {
+        "failed": "Zahlung fehlgeschlagen",
+        "expired": "Zahlung abgelaufen",
+        "cancelled": "Zahlung storniert"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "QR",
+        "card": "Karte",
+        "payment_link": "Zahlungslink"
+      },
+      "railUpiQr": "UPI-QR",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "Zahlungslink"
+    },
+    "detail": {
+      "title": "Razorpay-Transaktion",
+      "auditTrail": "Details",
+      "method": "Methode",
+      "status": "Status",
+      "providerReference": "Razorpay-Zahlungs-ID",
+      "initiated": "Gestartet",
+      "confirmed": "Bestätigt",
+      "allocation": "Zuweisung",
+      "refundHistory": "Erstattungen",
+      "refundAction": "Über Razorpay erstatten",
+      "refundPermissionDenied": "Sie haben keine Berechtigung, Erstattungen vorzunehmen",
+      "maxRefundable": "Bis zu {amount}",
+      "noRefunds": "Für diese Zahlung liegen noch keine Erstattungen vor.",
+      "refundRequested": "Erstattung angefordert",
+      "refundError": "Erstattung konnte nicht gestartet werden",
+      "states": {
+        "pending": "Ausstehend",
+        "awaiting_customer_action": "Wartet auf Zahlung",
+        "authorised_awaiting_capture": "Wird autorisiert",
+        "succeeded": "Erfolgreich",
+        "failed": "Fehlgeschlagen",
+        "expired": "Abgelaufen",
+        "cancelled": "Storniert"
+      },
+      "refundStates": {
+        "requested": "Angefordert",
+        "processing": "In Bearbeitung",
+        "completed": "Abgeschlossen",
+        "failed": "Fehlgeschlagen"
+      }
+    }
+  }
+}

@@ -175,3 +175,15 @@ def test_progressivo_and_file_name():
     assert progressivo_invio(36) == "00010"
     assert progressivo_invio(36**5 - 1) == "ZZZZZ"
     assert file_name("01234567897", "0000Z") == "IT01234567897_0000Z.xml"
+
+
+def test_imposta_is_base_times_rate_rounded_once():
+    # Nine lines of 0.99 at 22 %: per-line rounding gives 9 × 0.22 = 1.98,
+    # base × rate gives 8.91 × 0.22 = 1.9602 → 1.96 (what the SDI checks).
+    items = [_item(f"Voce {i}", "0.99", rate=22.0, order=i) for i in range(9)]
+    res = build_fattura(_invoice(items), cedente=CEDENTE, cessionario=INSURER, progressivo="00009")
+    doc = _validate(res.xml)
+    riepilogo = doc.find("FatturaElettronicaBody/DatiBeniServizi/DatiRiepilogo")
+    assert riepilogo.find("ImponibileImporto").text == "8.91"
+    assert riepilogo.find("Imposta").text == "1.96"
+    assert res.gross_amount == Decimal("10.87")

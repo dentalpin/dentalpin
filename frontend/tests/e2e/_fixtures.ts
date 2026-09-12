@@ -22,8 +22,8 @@ const API_BASE = process.env.E2E_API_BASE || 'http://localhost:8000'
  * We bypass the browser form for two reasons:
  * 1. Chromium's preflight interaction with Nuxt's client-side fetch
  *    flakes in Playwright (the form works fine in a real browser).
- * 2. Auth state lives in a ``useCookie`` named ``access_token``;
- *    setting it directly is the same thing the login handler does.
+ * 2. Auth state is the HttpOnly session cookie set the backend returned
+ *    on /login (ADR 0023) — the API request shares the page's cookie jar.
  *
  * After this, a regular ``page.goto(...)`` hits the auth middleware
  * with the token already present and skips the redirect to ``/login``.
@@ -42,17 +42,13 @@ export async function login(page: Page, role: Role): Promise<void> {
   if (!response.ok()) {
     throw new Error(`login failed: ${response.status()} ${await response.text()}`)
   }
-  const body = (await response.json()) as { access_token: string }
-
-  // Mirror Nuxt's useCookie: default scope is the whole site, plain
-  // serialization, not httpOnly (so client JS can read it).
+  // ADR 0023: the backend answered with HttpOnly session cookies. The
+  // browser context's request client shares the context's cookie jar,
+  // and cookies are host-scoped (not port-scoped), so the `localhost`
+  // cookies set by the :8000 API are sent to the :3000 app as well —
+  // nothing to copy by hand any more.
   const origin = page.url() !== 'about:blank' ? new URL(page.url()).origin : 'http://localhost:3000'
   await ctx.addCookies([
-    {
-      name: 'access_token',
-      value: body.access_token,
-      url: origin
-    },
     {
       // Pin the UI language. SSR and hydration then agree from the
       // first paint, so text locators never race a post-hydration

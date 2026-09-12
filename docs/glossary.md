@@ -80,6 +80,18 @@ ADRs) for the full story.
 | Payment | Pago | Money received against an invoice. Can be partial. |
 | Catalog | Catálogo | Module that holds priced services and products. |
 
+## Payment gateways (India)
+
+| EN (code) | ES (UI) | Definition |
+|---|---|---|
+| Payment gateway | Pasarela de pago | A provider (Razorpay first; PhonePe/Stripe planned) that collects money electronically on the clinic's behalf. See `payment_gateways`/`razorpay` modules, ADR 0029. |
+| Payment request | Solicitud de pago | The pre-payment async lifecycle of one gateway collection attempt (`payment_gateways.PaymentRequest`) — never itself a source of financial truth; becomes one only once it links to a real `Payment` at confirmation. |
+| Gateway refund request | Solicitud de reembolso de pasarela | The async lifecycle of one gateway refund attempt (`payment_gateways.GatewayRefundRequest`) — a core `Refund` is created only once the provider reports completion. |
+| UPI | UPI | Unified Payments Interface — India's real-time bank-to-bank payment rail (the most common Indian consumer instant-payment method). |
+| QR collection | Cobro por QR | A dynamic QR code the patient scans with any UPI app to pay a fixed amount. |
+| Payment link | Enlace de pago | A hosted Razorpay checkout URL sent to the patient instead of collecting in person. |
+| Netbanking | Netbanking | India-specific direct online-banking payment method, distinct from a generic bank transfer. |
+
 ## Compliance (ES)
 
 | Term | Definition |

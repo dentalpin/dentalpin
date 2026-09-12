@@ -20,22 +20,19 @@ export function useAuth() {
   // State
   const user = useState<User | null>('auth:user', () => null)
   const permissions = useState<string[]>('auth:permissions', () => [])
-  // Cookie lifetime matches refresh token; JWT expiry is enforced by the
-  // backend, and a 401 triggers refresh in useApi. Matching the access
-  // cookie's maxAge to the 15min JWT TTL caused premature logouts.
-  const accessToken = useCookie('access_token', {
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-    secure: import.meta.env.PROD,
-    sameSite: 'lax'
-  })
-  const refreshToken = useCookie('refresh_token', {
-    maxAge: 60 * 60 * 24 * 7, // 7 days
-    secure: import.meta.env.PROD,
-    sameSite: 'lax'
+  // ADR 0023: the tokens are HttpOnly cookies set by the backend — JS
+  // never sees them. ``dp_csrf`` (readable) doubles as the "a session
+  // probably exists" hint, so anonymous visitors don't cost a /me call.
+  const { csrfHeaders, hasSession } = useSessionRequest()
+  // SSR forwards the (possibly rotated) cookie jar per call, see useSsrCookies.
+  const { cookieHeaders, applySetCookies } = useSsrCookies()
+  const sessionHeaders = (method = 'GET'): Record<string, string> => ({
+    ...csrfHeaders(method),
+    ...cookieHeaders()
   })
 
   // Computed
-  const isAuthenticated = computed(() => !!accessToken.value && !!user.value)
+  const isAuthenticated = computed(() => !!user.value)
 
   // Actions
   async function login(credentials: LoginCredentials): Promise<void> {
@@ -44,28 +41,41 @@ export function useAuth() {
     formData.append('username', credentials.email)
     formData.append('password', credentials.password)
 
-    const response = await $fetch<AuthResponse>('/api/v1/auth/login', {
+    await $fetch<AuthResponse>('/api/v1/auth/login', {
       baseURL: apiBaseUrl.value,
       method: 'POST',
       body: formData,
+      credentials: 'include',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     })
 
-    await applyTokens(response.access_token, response.refresh_token)
+    // The backend set the session cookies; load the user through them.
+    await fetchUser()
   }
 
-  /** Store a token pair obtained out-of-band (e.g. invite set-password) and load the user. */
-  async function applyTokens(access: string, refresh: string): Promise<void> {
-    accessToken.value = access
-    refreshToken.value = refresh
+  /** The backend already set the session cookies on the out-of-band call
+   *  (e.g. invite set-password); just load the user. The token arguments
+   *  stay for call-site compatibility during the transition release. */
+  async function applyTokens(_access?: string, _refresh?: string): Promise<void> {
     await fetchUser()
   }
 
   async function logout(): Promise<void> {
-    accessToken.value = null
-    refreshToken.value = null
+    if (import.meta.client) {
+      try {
+        await $fetch('/api/v1/auth/logout', {
+          baseURL: apiBaseUrl.value,
+          method: 'POST',
+          credentials: 'include',
+          headers: sessionHeaders('POST')
+        })
+      } catch {
+        // Cookies are cleared server-side on success; on failure the
+        // access cookie simply expires — state is cleared below either way.
+      }
+    }
     user.value = null
     permissions.value = []
     // SSR: skip router.push — calling it from middleware can crash the
@@ -84,7 +94,7 @@ export function useAuth() {
   // module-level slot (see top of file) — putting a Promise into
   // useState() breaks SSR payload serialization.
   async function refresh(): Promise<boolean> {
-    if (!refreshToken.value) {
+    if (!hasSession.value) {
       return false
     }
 
@@ -94,23 +104,33 @@ export function useAuth() {
 
     const run = (async (): Promise<boolean> => {
       try {
-        const response = await $fetch<AuthResponse>('/api/v1/auth/refresh', {
+        // The browser (or SSR, forwarding the page request's jar) presents
+        // the refresh cookie; the backend rotates it and re-sets the cookies.
+        const raw = await $fetch.raw<AuthResponse>('/api/v1/auth/refresh', {
           baseURL: apiBaseUrl.value,
           method: 'POST',
-          body: { refresh_token: refreshToken.value }
+          credentials: 'include',
+          headers: sessionHeaders('POST')
         })
-
-        accessToken.value = response.access_token
-        refreshToken.value = response.refresh_token
+        // SSR: the rotated cookies came back on the *backend* response.
+        // Relay them onto the Nuxt response (or the browser keeps the old,
+        // now revoked refresh token and burns the family next time) and
+        // switch this render's forwarded jar to them, so every later
+        // backend call in the same render uses the live session.
+        if (import.meta.server) {
+          applySetCookies(raw.headers.getSetCookie?.() ?? [])
+        }
+        const response = raw._data as AuthResponse
         user.value = response.user
 
         // /auth/refresh returns user but not the expanded permissions list,
-        // so pull /me with the new token. Without this, callers that wake
-        // up from an expired access token end up with empty permissions
-        // and the sidebar/home strip every permission-gated entry.
+        // so pull /me with the new session. Without this, callers that
+        // wake up from an expired access token end up with empty
+        // permissions and the sidebar/home strip every gated entry.
         const me = await $fetch<ApiResponse<MeResponse>>('/api/v1/auth/me', {
           baseURL: apiBaseUrl.value,
-          headers: { Authorization: `Bearer ${response.access_token}` }
+          credentials: 'include',
+          headers: cookieHeaders()
         })
         user.value = me.data.user
         permissions.value = me.data.permissions
@@ -134,16 +154,11 @@ export function useAuth() {
   }
 
   async function fetchUser(): Promise<void> {
-    if (!accessToken.value) {
-      return
-    }
-
     try {
       const response = await $fetch<ApiResponse<MeResponse>>('/api/v1/auth/me', {
         baseURL: apiBaseUrl.value,
-        headers: {
-          Authorization: `Bearer ${accessToken.value}`
-        }
+        credentials: 'include',
+        headers: sessionHeaders()
       })
       user.value = response.data.user
       permissions.value = response.data.permissions
@@ -170,15 +185,11 @@ export function useAuth() {
   // auth state so the middleware can route to /login.
   async function init(): Promise<void> {
     try {
-      if (accessToken.value && !user.value) {
+      if (hasSession.value && !user.value) {
+        // /me on a 401 (expired access cookie) falls through to refresh.
         await fetchUser()
-      } else if (!accessToken.value && refreshToken.value) {
-        // Access cookie gone but refresh still valid — recover session.
-        await refresh()
       }
     } catch {
-      accessToken.value = null
-      refreshToken.value = null
       user.value = null
       permissions.value = []
     }
@@ -187,7 +198,7 @@ export function useAuth() {
   return {
     user: readonly(user),
     permissions: readonly(permissions),
-    accessToken: readonly(accessToken),
+    hasSession,
     isAuthenticated,
     login,
     applyTokens,

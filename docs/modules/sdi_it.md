@@ -1,6 +1,6 @@
 # sdi_it — FatturaPA / SDI e-invoicing (Italy)
 
-**Status:** phase 1 (manual transport). Issue #133, ADR 0025.
+**Status:** phase 3 (manual + PEC transport, Nuxt layer). Issue #133, ADR 0025.
 
 ## What it does
 
@@ -25,6 +25,35 @@ Sanitaria module (ADR 0026). The hook records
 `compliance_data["IT"] = {"sdi": "not_applicable", "reason": "b2c_healthcare_art_10bis"}`
 on those invoices so the UI can say why.
 
+## PEC transport
+
+With `transport = pec` the clinic's own PEC mailbox is the channel (spec
+§1.3): every `pending` file is sent as an XML attachment to the SDI
+mailbox (`sdi01@pec.fatturapa.it` for the first message; the SDI answers
+from a dedicated `sdiNN@pec.fatturapa.it` address, which the poller stores
+and uses from then on), and the receipts come back as attachments to the
+same mailbox. A worker runs every two minutes: send due files, then read
+unseen SDI messages, apply RC/NS/MC (also from `.zip` attachments) and mark
+them seen. Failures back off per file (2 min → 1 h, eight attempts, then
+`failed`) and a mailbox-level error pauses the clinic for ten minutes with
+the message in `last_error`. Settings: `pec_address`, `smtp_host`/`port`
+(465 SSL or STARTTLS), `smtp_username`, `smtp_password` (write-only,
+encrypted at rest), `imap_host`/`port`/`folder`; `POST /pec/test` logs in
+to both servers without sending; `POST /queue/process-now` runs one tick.
+Every Italian professional already has a PEC mailbox (obligatory for the
+albo), so nothing needs accrediting.
+
+## Screens
+
+Settings → Billing and taxes → **Electronic invoicing (SDI)** (regime,
+exemption reference, bollo, transport with PEC mailbox and test) and **SDI
+files** (list with states and receipts; download, mark uploaded, import
+receipt, regenerate after a scarto, send now). The invoice page gets an
+SDI panel (`invoice.detail.compliance` slot) and an `SDI` chip in the list
+and header (`invoice.list.row.meta`, `invoice.detail.header.meta`); patient
+invoices show the art. 10-bis note instead. User manual:
+`docs/user-manual/{en,es}/sdi_it/index.md`.
+
 ## Configuration (`/api/v1/sdi_it/settings`)
 
 - `enabled`, `transport` (`manual`), `regime_fiscale` (`RF01` ordinario,
@@ -48,9 +77,9 @@ on those invoices so the UI can say why.
 
 `GET/PUT /settings`, `GET /records`, `GET /records/{id}/xml`,
 `POST /records/{id}/exported`, `POST /records/{id}/requeue`,
-`POST /receipts` (`{xml, file_name?}`).
+`POST /receipts` (`{xml, file_name?}`), `POST /pec/test`, `POST /queue/process-now`,
+`GET /records/by-invoice/{invoice_id}`.
 
-## Not in phase 1
+## Not yet
 
-PEC transport (SMTP/IMAP automation), SdICoop, digital signature,
-`Allegati` (PDF copy inside the XML), the Nuxt layer.
+SdICoop, digital signature, `Allegati` (PDF copy inside the XML).

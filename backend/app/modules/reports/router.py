@@ -14,9 +14,11 @@ from app.core.schemas import ApiResponse
 from app.database import get_db
 
 from .schemas import (
+    AgeBand,
     AgingBucket,
     AgingReport,
     AppointmentFunnel,
+    AreaSplit,
     BillingSummary,
     BudgetByProfessional,
     BudgetByStatus,
@@ -24,18 +26,25 @@ from .schemas import (
     BudgetSummary,
     CabinetUtilization,
     DayOfWeekStats,
+    Demographics,
     DurationVarianceStats,
     FirstVisitsSummary,
+    GenderSplit,
     HoursByProfessional,
     IssuedTrend,
     NumberingGap,
     OverdueInvoice,
     PaymentMethodSummary,
+    PlanPipelineItem,
+    Productivity,
+    ProductivityCabinet,
+    ProductivityProfessional,
     ProfessionalBillingSummary,
     PunctualityStats,
     SchedulingSummary,
     TrendPoint,
     VatSummaryItem,
+    VisitFrequency,
     WaitingTimeStats,
 )
 from .services import (
@@ -43,6 +52,8 @@ from .services import (
     BillingReportService,
     BudgetReportService,
     FinancialReportService,
+    OperationalReportService,
+    PatientStatsService,
     SchedulingReportService,
 )
 
@@ -490,3 +501,102 @@ async def get_appointment_funnel(
 
         raise HTTPException(status_code=http_status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
     return ApiResponse(data=AppointmentFunnel(**data))
+
+
+# ============================================================================
+# Patient-stats + operational families (v0.2.0)
+# ============================================================================
+
+
+@router.get("/patients/demographics")
+async def get_demographics(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("reports.patient_stats.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    format: str = Query(default="json", pattern="^(json|csv)$"),
+):
+    """As-of-now demographics: age bands, gender split, area split.
+
+    Unknown birth dates and unparseable addresses group under explicit
+    ``unknown`` buckets rather than being guessed.
+    """
+    data = await PatientStatsService.demographics(db, ctx.clinic_id)
+    if format == "csv":
+        rows = (
+            [["dimension", "key", "count"]]
+            + [["age", b["band"], b["count"]] for b in data["age_bands"]]
+            + [["gender", g["gender"], g["count"]] for g in data["genders"]]
+            + [["area", a["area"], a["count"]] for a in data["areas"]]
+        )
+        return _csv_response("demographics.csv", rows[0], rows[1:])
+    return ApiResponse(
+        data=Demographics(
+            total_patients=data["total_patients"],
+            age_bands=[AgeBand(**b) for b in data["age_bands"]],
+            genders=[GenderSplit(**g) for g in data["genders"]],
+            areas=[AreaSplit(**a) for a in data["areas"]],
+        )
+    )
+
+
+@router.get("/patients/visits")
+async def get_visit_frequency(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("reports.patient_stats.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    date_from: date = Query(...),
+    date_to: date = Query(...),
+    format: str = Query(default="json", pattern="^(json|csv)$"),
+):
+    """New-vs-returning patients + visits per patient (date_to inclusive).
+
+    Cancelled and no-show appointments never count as visits.
+    """
+    data = await PatientStatsService.visit_frequency(db, ctx.clinic_id, date_from, date_to)
+    if format == "csv":
+        return _csv_response(
+            "visits.csv",
+            ["new_patients", "returning_patients", "total_visits", "visits_per_patient"],
+            [
+                [
+                    data["new_patients"],
+                    data["returning_patients"],
+                    data["total_visits"],
+                    data["visits_per_patient"],
+                ]
+            ],
+        )
+    return ApiResponse(data=VisitFrequency(**data))
+
+
+@router.get("/operational/productivity")
+async def get_productivity(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("reports.operational.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    date_from: date = Query(...),
+    date_to: date = Query(...),
+    format: str = Query(default="json", pattern="^(json|csv)$"),
+):
+    """Completed-appointment productivity per professional and cabinet,
+    plus the treatment-plan pipeline snapshot (date_to inclusive)."""
+    data = await OperationalReportService.productivity(db, ctx.clinic_id, date_from, date_to)
+    if format == "csv":
+        return _csv_response(
+            "productivity.csv",
+            ["scope", "key", "completed"],
+            [["total", "all", data["completed_total"]]]
+            + [
+                ["professional", p["professional_name"], p["completed"]]
+                for p in data["by_professional"]
+            ]
+            + [["cabinet", c["cabinet"], c["completed"]] for c in data["by_cabinet"]],
+        )
+    return ApiResponse(
+        data=Productivity(
+            completed_total=data["completed_total"],
+            by_professional=[ProductivityProfessional(**p) for p in data["by_professional"]],
+            by_cabinet=[ProductivityCabinet(**c) for c in data["by_cabinet"]],
+            plan_pipeline=[PlanPipelineItem(**p) for p in data["plan_pipeline"]],
+        )
+    )

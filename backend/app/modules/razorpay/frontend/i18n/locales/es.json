@@ -1,0 +1,101 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "Cobra pagos mediante UPI, código QR, tarjetas y enlaces de pago."
+    },
+    "settings": {
+      "title": "Configuración de Razorpay",
+      "description": "Configura la pasarela de pago Razorpay para esta clínica.",
+      "credentials": "Credenciales de la API",
+      "mode": "Modo",
+      "modeHint": "Usa el modo de prueba hasta comprobar que todo funciona de principio a fin.",
+      "modeTest": "Prueba",
+      "modeLive": "Producción",
+      "keyId": "ID de clave",
+      "keyIdHint": "Desde el panel de Razorpay — seguro para exponer en el navegador.",
+      "keySecret": "Clave secreta",
+      "keySecretHint": "Desde el panel de Razorpay. No se vuelve a mostrar después de guardar.",
+      "keySecretConfiguredHint": "Ya hay una clave secreta configurada. Déjalo en blanco para mantenerla.",
+      "keySecretPlaceholder": "Introduce la clave secreta",
+      "isActive": "Activo",
+      "isActiveHint": "Solo las configuraciones activas se ofrecen a recepción como método de cobro.",
+      "webhook": "Webhook",
+      "webhookUrl": "URL del webhook",
+      "webhookUrlHint": "Pega esto en la configuración de webhooks de Razorpay para esta clínica.",
+      "webhookSecret": "Secreto del webhook",
+      "webhookSecretHint": "El secreto con el que Razorpay firma los eventos del webhook.",
+      "webhookSecretConfiguredHint": "Ya hay un secreto de webhook configurado. Déjalo en blanco para mantenerlo.",
+      "webhookSecretPlaceholder": "Introduce el secreto del webhook",
+      "lastWebhookReceived": "Último webhook recibido",
+      "lastWebhookProcessed": "Último webhook procesado",
+      "lastWebhookEventType": "Último tipo de evento",
+      "lastWebhookError": "Último error de webhook",
+      "never": "Nunca",
+      "professionalNotice": "Confirma la configuración de tu cuenta de Razorpay y los detalles de liquidación con el soporte de Razorpay o tu asesor contable. DentalPin no gestiona la liquidación ni la contabilidad fiscal.",
+      "saved": "Configuración guardada",
+      "saveError": "No se pudo guardar la configuración",
+      "loadError": "No se pudo cargar la configuración",
+      "webhookCopied": "URL del webhook copiada"
+    },
+    "collect": {
+      "notConfiguredHint": "Razorpay aún no está configurado para esta clínica. Pide a un administrador que lo configure en Ajustes.",
+      "waiting": "Esperando el pago…",
+      "checkStatus": "Comprobar estado",
+      "openCheckout": "Abrir pago de Razorpay",
+      "scanQr": "Pide al paciente que escanee este código QR con cualquier app UPI",
+      "linkCopied": "Enlace de pago copiado",
+      "authorizing": "Pago autorizado — finalizando…",
+      "success": "Pago recibido",
+      "tryAgain": "Intentar de nuevo",
+      "createError": "No se pudo iniciar el pago",
+      "checkoutLoadError": "No se pudo cargar el pago de Razorpay — comprueba tu conexión e inténtalo de nuevo",
+      "states": {
+        "failed": "Pago fallido",
+        "expired": "Pago caducado",
+        "cancelled": "Pago cancelado"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "QR",
+        "card": "Tarjeta",
+        "payment_link": "Enlace de pago"
+      },
+      "railUpiQr": "QR UPI",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "Enlace de pago"
+    },
+    "detail": {
+      "title": "Transacción de Razorpay",
+      "auditTrail": "Detalles",
+      "method": "Método",
+      "status": "Estado",
+      "providerReference": "ID de pago en Razorpay",
+      "initiated": "Iniciado",
+      "confirmed": "Confirmado",
+      "allocation": "Asignación",
+      "refundHistory": "Reembolsos",
+      "refundAction": "Reembolsar con Razorpay",
+      "refundPermissionDenied": "No tienes permiso para hacer reembolsos",
+      "maxRefundable": "Hasta {amount}",
+      "noRefunds": "Este pago todavía no tiene reembolsos.",
+      "refundRequested": "Reembolso solicitado",
+      "refundError": "No se pudo iniciar el reembolso",
+      "states": {
+        "pending": "Pendiente",
+        "awaiting_customer_action": "Esperando el pago",
+        "authorised_awaiting_capture": "Autorizando",
+        "succeeded": "Correcto",
+        "failed": "Fallido",
+        "expired": "Caducado",
+        "cancelled": "Cancelado"
+      },
+      "refundStates": {
+        "requested": "Solicitado",
+        "processing": "En proceso",
+        "completed": "Completado",
+        "failed": "Fallido"
+      }
+    }
+  }
+}
