@@ -15,8 +15,8 @@ related_paths:
 # Suscripción push (paciente)
 
 Página pública de consentimiento (sin login — el token de un solo
-uso es la autenticación). El personal genera el token desde la ficha
-del paciente; el paciente abre el enlace, ve qué clínica lo pide y
-pulsa Activar. El navegador registra el service worker y canjea el
+uso es la autenticación). La generación del token es solo por API
+por ahora (POST subscribe-tokens); el paciente abre el enlace, ve
+qué clínica lo pide y pulsa Activar. El navegador registra el service worker y canjea el
 token con su suscripción. Los enlaces caducados/usados muestran un
 mensaje con instrucciones para pedir uno nuevo a la clínica.

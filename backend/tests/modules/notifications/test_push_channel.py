@@ -234,6 +234,104 @@ async def test_adapter_skips_empty_body_and_missing_subscriptions(
     assert calls == []
 
 
+@pytest.mark.asyncio
+async def test_adapter_truncation_keeps_accented_body_under_cap(
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    monkeypatch: pytest.MonkeyPatch,
+    vapid_env: None,
+) -> None:
+    """Truncation must measure wire bytes: re-serialising with ASCII
+    escaping would inflate an accented body past the cap (413s)."""
+    import json
+
+    from app.modules.notifications.channels.base import OutboundMessage
+    from app.modules.notifications.channels.push_adapter import (
+        PUSH_MAX_BYTES,
+        _fit_payload,
+    )
+
+    body = "ñandú " * 700
+    payload = json.dumps({"title": "t", "body": body}, ensure_ascii=False)
+    assert len(payload.encode("utf-8")) > PUSH_MAX_BYTES
+    assert len(_fit_payload(payload).encode("utf-8")) <= PUSH_MAX_BYTES
+
+    calls = _stub_webpush(monkeypatch)
+    await _subscribe(db_session, test_clinic, test_patient)
+    result = await PushAdapter().send(
+        db_session,
+        OutboundMessage(
+            channel=Channel.PUSH,
+            to_address="push",
+            clinic_id=test_clinic.id,
+            template_key="x",
+            patient_id=test_patient.id,
+            subject="t",
+            body_text=body,
+        ),
+    )
+    assert result.status == SendStatus.SENT
+    assert len(calls[0]["data"].encode("utf-8")) <= PUSH_MAX_BYTES
+
+
+@pytest.mark.asyncio
+async def test_adapter_signs_through_real_webpush_path(
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    monkeypatch: pytest.MonkeyPatch,
+    vapid_env: None,
+) -> None:
+    """Real webpush_async with only the HTTP transport stubbed.
+
+    Exercises the isinstance(vapid_private_key, Vapid01) branch and
+    Vapid.sign end to end — the path that broke when a raw PEM string
+    was passed (pywebpush deserializes strings as base64url).
+    """
+    import base64
+    import types
+
+    from cryptography.hazmat.primitives.asymmetric import ec
+
+    from app.modules.notifications.channels.base import OutboundMessage
+
+    key = ec.generate_private_key(ec.SECP256R1())
+    nums = key.public_key().public_numbers()
+    raw_point = b"\x04" + nums.x.to_bytes(32, "big") + nums.y.to_bytes(32, "big")
+    await PushSubscriptionService.subscribe(
+        db_session,
+        test_clinic.id,
+        test_patient.id,
+        "https://push.example/sign-path",
+        {
+            "p256dh": base64.urlsafe_b64encode(raw_point).rstrip(b"=").decode(),
+            "auth": base64.urlsafe_b64encode(b"\x01" * 16).rstrip(b"=").decode(),
+        },
+    )
+    seen: dict = {}
+
+    async def fake_send_async(self, data, headers, **kwargs):
+        seen.update(data=data, headers=headers)
+        return types.SimpleNamespace(status=201)
+
+    monkeypatch.setattr("pywebpush.WebPusher.send_async", fake_send_async)
+    result = await PushAdapter().send(
+        db_session,
+        OutboundMessage(
+            channel=Channel.PUSH,
+            to_address="push",
+            clinic_id=test_clinic.id,
+            template_key="x",
+            patient_id=test_patient.id,
+            subject="t",
+            body_text="Hola",
+        ),
+    )
+    assert result.status == SendStatus.SENT
+    assert seen["headers"]["Authorization"].startswith("vapid t=")
+
+
 # --- Resolver + consent -----------------------------------------------------
 
 
@@ -556,8 +654,27 @@ async def test_cross_clinic_push_http_404s(
         )
     ).status_code == 404
 
-    # A's subscription row cannot be deleted through any B-scoped path:
-    # delete resolves the row in the caller's clinic first.
+    # B's subscription row is invisible and untouchable from A: without the
+    # clinic filter the GET below would list it and the DELETE would 204.
+    other_sub = await _subscribe(
+        db_session, other, other_patient, endpoint="https://push.example/sub-b"
+    )
+    await db_session.commit()
+    assert (
+        await client.get(
+            "/api/v1/notifications/push/subscriptions",
+            params={"patient_id": str(other_patient.id)},
+            headers=auth_headers,
+        )
+    ).json()["data"] == []
+    assert (
+        await client.delete(
+            f"/api/v1/notifications/push/subscriptions/{other_sub.id}",
+            headers=auth_headers,
+        )
+    ).status_code == 404
+
+    # A's own subscription row deletes normally through the A-scoped path.
     sub = await _subscribe(db_session, test_clinic, test_patient)
     await db_session.commit()
     assert (

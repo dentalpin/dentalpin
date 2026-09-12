@@ -30,12 +30,14 @@ channel preferences, clinic settings, delivery logs, and a single
 - **push** (issue #63) — browser WebPush via `pywebpush` (async send,
   10 s timeout, 24 h TTL, 4 KB payload cap). One VAPID pair per
   deployment (`DENTALPIN_VAPID_PRIVATE_KEY`, env only). Patient flow:
-  staff mints a single-use token
+  a single-use token is minted via API
   (`POST /push/subscribe-tokens`, 24 h expiry); the patient opens
   `/p/push/<token>` and the browser redeems it with its subscription
   (`GET`/`POST /public/push/subscribe/<token>`, no auth — the token
   is the auth). 410/404 endpoints prune on send; logs show
-  `push:<n>` recipients. Service worker: `frontend/public/push-sw.js`.
+  `push:<n>` recipients. Service worker:
+  `backend/app/modules/notifications/frontend/public/push-sw.js`
+  (served at `/push-sw.js`; uninstalling the module drops it).
 
 ## API surface
 

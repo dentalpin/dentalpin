@@ -15,7 +15,6 @@ from .base import (
     SendStatus,
 )
 from .email_adapter import EmailAdapter
-from .push_adapter import PushAdapter
 from .registry import ChannelRegistry, channel_registry
 
 __all__ = [
@@ -29,3 +28,20 @@ __all__ = [
     "SendStatus",
     "channel_registry",
 ]
+
+
+def __getattr__(name: str):
+    """Defer the WebPush import to first use (PEP 562).
+
+    ``push_adapter`` hard-imports ``pywebpush`` (locked prod dep, no
+    fallback branch by design). Host tooling (manifest/loader gates)
+    runs without it, so binding ``PushAdapter`` here would break
+    module discovery off-container. ``from .channels import
+    PushAdapter`` keeps working everywhere; touching it without the
+    dep raises ``ImportError`` loudly instead of degrading silently.
+    """
+    if name == "PushAdapter":
+        from .push_adapter import PushAdapter
+
+        return PushAdapter
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

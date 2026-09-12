@@ -86,9 +86,19 @@ class NotificationsModule(BaseModule):
         # on it.
         from .channels import channel_registry
         from .channels.email_adapter import EmailAdapter
-        from .channels.push_adapter import PushAdapter
 
         channel_registry.register(EmailAdapter())
+        try:
+            # WebPush needs the locked pywebpush dep (uv.lock; CI
+            # installs .[dev]). Host tooling (manifest/loader gates)
+            # activates modules without it — skip push registration
+            # there. Production behaviour is unchanged: the dep is
+            # always present, and push_adapter itself has no fallback
+            # branch, so a genuinely missing dep fails loudly at this
+            # import, never as a silent degraded send.
+            from .channels.push_adapter import PushAdapter
+        except ImportError:
+            return
         channel_registry.register(PushAdapter())
 
     def get_models(self) -> list:

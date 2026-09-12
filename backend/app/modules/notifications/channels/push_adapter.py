@@ -14,16 +14,9 @@ import json
 import logging
 from uuid import UUID
 
+from pywebpush import WebPushException, webpush_async
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-
-try:
-    # Hard dependency in production (locked in uv.lock); tolerant here
-    # so host tooling without the dep still imports the module.
-    from pywebpush import WebPushException, webpush_async
-except ImportError:  # pragma: no cover — host tooling without the dep
-    WebPushException = Exception  # type: ignore[assignment,misc]
-    webpush_async = None  # type: ignore[assignment]
 
 from app.modules.notifications.models import PushSubscription
 
@@ -84,12 +77,6 @@ class PushAdapter:
                 provider="webpush",
                 error_message="patient has no push subscriptions",
             )
-        if webpush_async is None:
-            return AdapterResult(
-                status=SendStatus.FAILED,
-                provider="webpush",
-                error_message="pywebpush is not installed on the backend",
-            )
         vapid = vapid_config.vapid_instance()
         if vapid is None:
             return AdapterResult(
@@ -149,7 +136,9 @@ def _fit_payload(payload: str) -> str:
     cut = max(0, len(body.encode("utf-8")) - overflow - 3)
     truncated = body.encode("utf-8")[:cut].decode("utf-8", "ignore") + "..."
     data["body"] = truncated
-    return json.dumps(data)
+    # ensure_ascii=False: the wire bytes are UTF-8, so re-serialising with
+    # the default ASCII escaping would inflate accented bodies past the cap.
+    return json.dumps(data, ensure_ascii=False)
 
 
 def _is_gone(exc: BaseException) -> bool:

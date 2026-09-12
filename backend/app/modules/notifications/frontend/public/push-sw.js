@@ -1,5 +1,7 @@
 /* DentalPin WebPush service worker (notifications module, T6).
  *
+ * Lives in the module layer (backend/app/modules/notifications/frontend/
+ * public/) so uninstalling the module drops it from the next build.
  * Served from the site root as /push-sw.js (push services require a
  * same-origin worker). The patient subscribe page registers it with
  * the /p/push/<token> page as its scope owner.

@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- fix(#63 review round 3): dropped the `ImportError` fallback (plain
+  top-level `webpush` import, no runtime branch); `_fit_payload`
+  re-serialises with `ensure_ascii=False` (accented bodies stay under
+  the 3990-byte cap) with a regression test; cross-clinic HTTP test
+  now asserts B's row is invisible/untouchable from A; sign-path
+  test runs the real `webpush_async` (only HTTP stubbed) to cover
+  `Vapid.sign`; token minting documented as API-only (en+es);
+  `push-sw.js` moved into the module layer `frontend/public/`.
 - fix(#63 review round 2): cached `Vapid` instance (PEM strings fail
   deserialization); schema-level `https://` validators; hard
   `webpush` import; atomic single-use redeem returning

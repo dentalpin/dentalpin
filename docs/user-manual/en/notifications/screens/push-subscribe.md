@@ -15,8 +15,8 @@ related_paths:
 # Push subscribe (patient)
 
 Public consent page (no login — the single-use token is the auth).
-Staff mints the token from the patient file; the patient opens the
-link, sees which clinic asks, and taps Enable. The browser registers
+Token minting is API-only for now (POST subscribe-tokens); the patient
+opens the link, sees which clinic asks, and taps Enable. The browser registers
 the service worker and redeems the token with its subscription.
 Expired/used links show an invalid-link message with instructions to
 ask the clinic for a new one.
