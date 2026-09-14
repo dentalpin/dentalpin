@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- refactor(#332): resolve LLM providers through a process-wide registry;
+  Copilot registers the existing OpenAI and Anthropic specifications from
+  `on_activate()` so only an installed module affects runtime. Settings and
+  the bridge now read default models, API-key requirements and tool dialects
+  from the registered specification instead of provider-name branches.
+
 - feat(#46): history scoping, nudge visibility, and agent-context grant sets
   resolve flag-aware (`RBAC_FROM_DB` on: custom roles and per-clinic
   overrides apply to chat, digest, pendientes, and tool calls).

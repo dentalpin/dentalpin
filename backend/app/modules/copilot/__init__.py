@@ -52,6 +52,15 @@ class CopilotModule(BaseModule):
         },
     }
 
+    def on_activate(self) -> None:
+        # Re-attach built-in providers on every boot while copilot is
+        # installed. In-memory registrations belong here per ADR 0020.
+        from app.core.llm.factory import ANTHROPIC_SPEC, OPENAI_SPEC
+        from app.core.llm.registry import llm_provider_registry
+
+        llm_provider_registry.register(OPENAI_SPEC)
+        llm_provider_registry.register(ANTHROPIC_SPEC)
+
     def get_models(self) -> list:
         return [CopilotConversation, CopilotMessage, CopilotNudge, CopilotSettings]
 
