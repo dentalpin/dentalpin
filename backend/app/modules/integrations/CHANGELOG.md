@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Shared token lookup helper
+
+- `IntegrationsService.authenticate_token(db, plaintext)` — resolves a
+  `dp_` plaintext to its active (unrevoked) `ApiToken` row, or `None`
+  (unknown prefix / unknown hash / revoked). Factors out the hash query so
+  token consumers beyond `public.py` (e.g. the `mcp` module) share the same
+  semantics instead of duplicating it.
+
 ### CI hygiene (ruff 0.16.5 drift)
 
 - Reformatted the two multi-line `client.get(...)` calls in

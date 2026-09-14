@@ -3,8 +3,8 @@
 .env.local
 .env.*.local
 
-# Claude Code
-.claude/
+# Claude Code (skills are shared via the repo)
+.claude/settings.local.json
 
 # Python
 __pycache__/
@@ -66,3 +66,5 @@ proyecto_open_source_dental.docx
 *.dpm
 *.dpmf
 test-results/
+/.kilo/plans
+/.vs

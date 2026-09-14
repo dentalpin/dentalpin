@@ -163,3 +163,24 @@ class IntegrationsService:
         await db.commit()
         await db.refresh(token)
         return token
+
+    @staticmethod
+    async def authenticate_token(db: AsyncSession, plaintext: str) -> ApiToken | None:
+        """Resolve an API-token plaintext to its active (unrevoked) row.
+
+        Returns ``None`` for an unknown prefix, an unknown hash, or a
+        revoked token — callers decide how to surface rejection. Mirrors
+        the lookup inside ``public.py``'s ``get_api_token_context`` so any
+        token consumer (webhooks-adjacent public API, the mcp module, ...)
+        shares the same token semantics without duplicating the hash query.
+        """
+        if not isinstance(plaintext, str) or not plaintext.startswith(_TOKEN_PREFIX):
+            return None
+        token = (
+            await db.execute(
+                select(ApiToken).where(ApiToken.token_hash == _hash_token(plaintext))
+            )
+        ).scalar_one_or_none()
+        if token is None or token.revoked_at is not None:
+            return None
+        return token

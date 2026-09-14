@@ -1,0 +1,29 @@
+// Kilo Code project config — DentalPin.
+// MCP servers are declared under the top-level `mcp` key (project scope;
+// project config overrides global `~/.config/kilo/kilo.jsonc`).
+//
+// Skills: reuse the Claude skill via `skills.paths` — avoids the
+// undocumented "Claude Code Compatibility" toggle and keeps a single
+// SKILL.md source of truth in `.claude/skills/mint-dp-token/`.
+//
+// Getting the token: use the `mint-dp-token` skill — it logs in, mints
+// a `dp_...` token scoped `patients:read`, and optionally revokes it.
+// Replace the placeholder below; never commit a real token. See
+// `docs/technical/mcp/overview.md`.
+{
+  "$schema": "https://app.kilo.ai/config.json",
+  "mcp": {
+    "dentalpin": {
+      "type": "remote",
+      "url": "http://localhost:8000/api/v1/mcp/",
+      "headers": {
+        "Authorization": "Bearer xxxGetFromSKillx"
+      },
+      "enabled": true,
+      "timeout": 15000
+    }
+  },
+  "skills": {
+    "paths": [".claude/skills"]
+  }
+}
