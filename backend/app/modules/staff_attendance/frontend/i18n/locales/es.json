@@ -1,0 +1,19 @@
+{
+  "staffAttendance": {
+    "nav": { "title": "Asistencia" },
+    "title": "Asistencia del personal",
+    "clockTitle": "Fichar entrada / salida",
+    "member": "Miembro del personal",
+    "pickMember": "Elige un miembro",
+    "note": "Nota",
+    "notePlaceholder": "Nota opcional",
+    "clockIn": "Fichar entrada",
+    "clockOut": "Fichar salida",
+    "today": "Hoy",
+    "noEvents": "Sin fichajes este día.",
+    "report": "Informe diario",
+    "openShift": "sigue dentro",
+    "in": "Dentro",
+    "out": "Fuera"
+  }
+}

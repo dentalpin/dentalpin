@@ -52,6 +52,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `sdi_it` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
 | `sistema_ts` | 0.1.0 | official | billing, patients, catalog, payments | manual | yes | 6 | 0 | 0 | yes |
 | `sms_gateway` | 0.1.0 | community | notifications | manual | yes | 2 | 0 | 0 | yes |
+| `staff_attendance` | 0.1.0 | community | — | manual | yes | 2 | 0 | 0 | yes |
 | `staff_tasks` | 0.1.0 | community | — | manual | yes | 2 | 2 | 0 | yes |
 | `supplier_items` | 0.1.0 | official | contacts, inventory, suppliers | manual | yes | 2 | 0 | 0 | no |
 | `supplier_ratings` | 0.1.0 | official | contacts, purchase_orders | manual | yes | 2 | 0 | 0 | no |
@@ -1018,6 +1019,23 @@ SMS delivery for notifications via pluggable providers.
 - **Events emitted:** —
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/sms_gateway/CLAUDE.md`](../backend/app/modules/sms_gateway/CLAUDE.md)
+
+### `staff_attendance` — v0.1.0
+
+Clock in/out events, current state, and daily pairing report.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** —
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `staff_attendance.read`
+  - `staff_attendance.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/staff_attendance/CLAUDE.md`](../backend/app/modules/staff_attendance/CLAUDE.md)
 
 ### `staff_tasks` — v0.1.0
 

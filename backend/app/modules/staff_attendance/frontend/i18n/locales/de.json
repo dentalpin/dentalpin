@@ -1,0 +1,19 @@
+{
+  "staffAttendance": {
+    "nav": { "title": "Anwesenheit" },
+    "title": "Personalanwesenheit",
+    "clockTitle": "Ein- / Ausstempeln",
+    "member": "Mitarbeiter",
+    "pickMember": "Mitarbeiter wählen",
+    "note": "Notiz",
+    "notePlaceholder": "Optionale Notiz",
+    "clockIn": "Einstempeln",
+    "clockOut": "Ausstempeln",
+    "today": "Heute",
+    "noEvents": "Keine Buchungen an diesem Tag.",
+    "report": "Tagesbericht",
+    "openShift": "noch da",
+    "in": "Da",
+    "out": "Weg"
+  }
+}

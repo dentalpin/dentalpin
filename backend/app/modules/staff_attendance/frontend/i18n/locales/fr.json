@@ -1,0 +1,19 @@
+{
+  "staffAttendance": {
+    "nav": { "title": "Présence" },
+    "title": "Présence du personnel",
+    "clockTitle": "Pointer entrée / sortie",
+    "member": "Membre du personnel",
+    "pickMember": "Choisir un membre",
+    "note": "Note",
+    "notePlaceholder": "Note optionnelle",
+    "clockIn": "Pointer l'entrée",
+    "clockOut": "Pointer la sortie",
+    "today": "Aujourd'hui",
+    "noEvents": "Aucun pointage ce jour.",
+    "report": "Rapport quotidien",
+    "openShift": "toujours présent",
+    "in": "Entrée",
+    "out": "Sortie"
+  }
+}
