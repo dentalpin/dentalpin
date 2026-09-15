@@ -1,0 +1,39 @@
+{
+  "prescriptions": {
+    "nav": { "title": "Prescrizioni" },
+    "title": "Prescrizioni",
+    "openAll": "Vedi tutte",
+    "emptyHint": "Nessuna prescrizione.",
+    "items": "voci",
+    "newPrescription": "Nuova prescrizione",
+    "safetyTitle": "Verifica prima di emettere",
+    "edit": "Modifica",
+    "issue": "Emetti",
+    "cancel": "Annulla",
+    "downloadPdf": "PDF",
+    "editorTitle": "Bozza di prescrizione",
+    "medicationName": "Farmaco",
+    "dosage": "Dose",
+    "unit": "Unità",
+    "frequency": "Frequenza",
+    "duration": "Durata",
+    "instructions": "Istruzioni",
+    "removeLine": "Rimuovi riga",
+    "notes": "Note",
+    "templateName": "Nome modello",
+    "saveTemplate": "Salva come modello",
+    "save": "Salva",
+    "noTemplates": "Nessun modello. Salvane uno da una bozza.",
+    "rename": "Rinomina",
+    "deleteTemplate": "Elimina modello",
+    "addLine": "Aggiungi riga",
+    "pickPatient": "Apri con un paziente selezionato per vedere le sue prescrizioni.",
+    "settingsLabel": "Modelli di prescrizione",
+    "settingsDescription": "Combinazioni di farmaci preferite per bozze di prescrizione con un clic.",
+    "status": {
+      "draft": "Bozza",
+      "issued": "Emessa",
+      "cancelled": "Annullata"
+    }
+  }
+}

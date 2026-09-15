@@ -29,6 +29,7 @@
     "/module_layers/payments/frontend",
     "/module_layers/payroll/frontend",
     "/module_layers/periodontogram/frontend",
+    "/module_layers/prescriptions/frontend",
     "/module_layers/purchase_orders/frontend",
     "/module_layers/razorpay/frontend",
     "/module_layers/recall_reminders/frontend",
@@ -242,6 +243,13 @@
       "name": "periodontogram",
       "path": "/module_layers/periodontogram/frontend",
       "routes": []
+    },
+    {
+      "name": "prescriptions",
+      "path": "/module_layers/prescriptions/frontend",
+      "routes": [
+        "/prescriptions"
+      ]
     },
     {
       "name": "purchase_orders",

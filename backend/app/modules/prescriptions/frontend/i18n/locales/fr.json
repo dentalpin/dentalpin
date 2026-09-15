@@ -1,0 +1,39 @@
+{
+  "prescriptions": {
+    "nav": { "title": "Ordonnances" },
+    "title": "Ordonnances",
+    "openAll": "Tout voir",
+    "emptyHint": "Aucune ordonnance pour le moment.",
+    "items": "éléments",
+    "newPrescription": "Nouvelle ordonnance",
+    "safetyTitle": "Vérifier avant d'émettre",
+    "edit": "Modifier",
+    "issue": "Émettre",
+    "cancel": "Annuler",
+    "downloadPdf": "PDF",
+    "editorTitle": "Brouillon d'ordonnance",
+    "medicationName": "Médicament",
+    "dosage": "Dose",
+    "unit": "Unité",
+    "frequency": "Fréquence",
+    "duration": "Durée",
+    "instructions": "Instructions",
+    "removeLine": "Supprimer la ligne",
+    "notes": "Notes",
+    "templateName": "Nom du modèle",
+    "saveTemplate": "Enregistrer comme modèle",
+    "save": "Enregistrer",
+    "noTemplates": "Aucun modèle pour le moment. Enregistrez-en un depuis un brouillon.",
+    "rename": "Renommer",
+    "deleteTemplate": "Supprimer le modèle",
+    "addLine": "Ajouter une ligne",
+    "pickPatient": "Ouvrez avec un patient sélectionné pour voir ses ordonnances.",
+    "settingsLabel": "Modèles d'ordonnances",
+    "settingsDescription": "Combinaisons de médicaments favorites pour créer des brouillons d'ordonnances en un clic.",
+    "status": {
+      "draft": "Brouillon",
+      "issued": "Émise",
+      "cancelled": "Annulée"
+    }
+  }
+}

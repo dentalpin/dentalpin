@@ -1,0 +1,39 @@
+{
+  "prescriptions": {
+    "nav": { "title": "الوصفات الطبية" },
+    "title": "الوصفات الطبية",
+    "openAll": "عرض الكل",
+    "emptyHint": "لا توجد وصفات طبية بعد.",
+    "items": "عناصر",
+    "newPrescription": "وصفة جديدة",
+    "safetyTitle": "تحقق قبل الإصدار",
+    "edit": "تعديل",
+    "issue": "إصدار",
+    "cancel": "إلغاء",
+    "downloadPdf": "PDF",
+    "editorTitle": "مسودة وصفة طبية",
+    "medicationName": "الدواء",
+    "dosage": "الجرعة",
+    "unit": "الوحدة",
+    "frequency": "التكرار",
+    "duration": "المدة",
+    "instructions": "التعليمات",
+    "removeLine": "إزالة السطر",
+    "notes": "ملاحظات",
+    "templateName": "اسم القالب",
+    "saveTemplate": "حفظ كقالب",
+    "save": "حفظ",
+    "noTemplates": "لا توجد قوالب بعد. احفظ قالبا من مسودة.",
+    "rename": "إعادة تسمية",
+    "deleteTemplate": "حذف القالب",
+    "addLine": "إضافة سطر",
+    "pickPatient": "افتح مع تحديد مريض لعرض وصفاته الطبية.",
+    "settingsLabel": "قوالب الوصفات الطبية",
+    "settingsDescription": "تركيبات الأدوية المفضلة لإنشاء مسودات الوصفات بنقرة واحدة.",
+    "status": {
+      "draft": "مسودة",
+      "issued": "صادرة",
+      "cancelled": "ملغاة"
+    }
+  }
+}
