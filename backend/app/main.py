@@ -22,6 +22,7 @@ from app.core.log_context import (
     new_request_id,
     reset_request_context,
     set_request_context,
+    setup_error_tracking,
     setup_logging,
 )
 from app.core.plugins.loader import mount_modules, register_discovered
@@ -51,6 +52,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             "BUDGET_PUBLIC_SECRET_KEY is unset: public budget sessions fall "
             "back to SECRET_KEY. Set a dedicated key in production."
         )
+    # Error tracking is DSN-gated (SENTRY_DSN env, never committed) and
+    # never raises — boot continues unreported when unconfigured.
+    setup_error_tracking(
+        dsn=settings.SENTRY_DSN,
+        traces_sample_rate=settings.SENTRY_TRACES_SAMPLE_RATE,
+    )
 
     # Startup — discover everything, settle DB state, then mount only what
     # is installed (issue #91). Order matters: the processor may install or

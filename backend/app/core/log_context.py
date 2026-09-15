@@ -130,3 +130,33 @@ def setup_logging(level: int | str = logging.INFO) -> None:
         handler.setFormatter(formatter)
         handler.addFilter(filt)
         root.addHandler(handler)
+
+
+def setup_error_tracking(dsn: str = "", traces_sample_rate: float = 0.1) -> bool:
+    """Attach Sentry (or any Sentry-protocol backend, e.g. self-hosted
+    GlitchTip) when a DSN is configured. Returns True when attached.
+
+    No-op (False) without a DSN or without ``sentry_sdk`` installed, and
+    never raises — error reporting must not break boot. PII is never
+    attached (``send_default_pii=False``): clinic data stays out of
+    error payloads by construction.
+    """
+    if not dsn:
+        return False
+    try:
+        import sentry_sdk
+    except ImportError:
+        logging.getLogger(__name__).warning(
+            "SENTRY_DSN is set but sentry_sdk is not installed; error tracking off"
+        )
+        return False
+    try:
+        sentry_sdk.init(
+            dsn=dsn,
+            send_default_pii=False,
+            traces_sample_rate=traces_sample_rate,
+        )
+    except Exception:
+        logging.getLogger(__name__).exception("sentry_sdk.init failed; error tracking off")
+        return False
+    return True
