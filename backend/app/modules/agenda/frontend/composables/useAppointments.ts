@@ -189,6 +189,28 @@ export function useAppointments() {
     }
   }
 
+  /** Mint a short-lived QR check-in token for an appointment. */
+  async function mintCheckinToken(id: string): Promise<{ token: string, expires_at: string }> {
+    const response = await api.post<ApiResponse<{ token: string, expires_at: string }>>(
+      `/api/v1/agenda/appointments/${id}/check-in-token`
+    )
+    return response.data
+  }
+
+  /**
+   * Fetch the check-in QR PNG as an object URL. Uses `useApi.raw`
+   * (session-cookie auth + refresh/retry + CSRF) because `<img>` needs
+   * bytes and the download should authenticate like every other call.
+   */
+  async function fetchCheckinQr(id: string): Promise<string> {
+    const origin = import.meta.client ? window.location.origin : ''
+    const response = await api.raw(
+      `/api/v1/agenda/appointments/${id}/check-in-qr?origin=${encodeURIComponent(origin)}`
+    )
+    if (!response.ok) throw new Error(`check-in QR: ${response.status}`)
+    return URL.createObjectURL(await response.blob())
+  }
+
   return {
     // shallowReadonly: consumers cannot swap the list, while elements keep
     // their `Appointment` type — the deep `readonly()` view forces
@@ -202,6 +224,8 @@ export function useAppointments() {
     cancelAppointment,
     updateAppointmentStatus,
     transition,
-    assignCabinet
+    assignCabinet,
+    mintCheckinToken,
+    fetchCheckinQr
   }
 }

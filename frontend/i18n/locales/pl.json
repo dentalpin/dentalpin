@@ -826,6 +826,14 @@
   },
   "appointments": {
     "title": "Terminarz",
+    "checkin": {
+      "qr": "Kod QR meldowania",
+      "hint": "Pacjent skanuje ten kod, aby się zameldować. Wygasa 15 minut po utworzeniu.",
+      "copyLink": "Kopiuj link meldowania",
+      "openTitle": "Meldowanie w klinice",
+      "success": "Zameldowano. Proszę usiąść.",
+      "invalid": "Ten kod meldowania jest nieprawidłowy lub wygasł. Poproś recepcję o nowy."
+    },
     "create": "Nowa wizyta",
     "edit": "Edytuj wizytę",
     "today": "Dzisiaj",

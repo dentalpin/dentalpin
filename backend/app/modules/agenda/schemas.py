@@ -42,6 +42,26 @@ class AppointmentTreatmentNoteUpdate(BaseModel):
     completed_in_appointment: bool | None = None
 
 
+class CheckinTokenResponse(BaseModel):
+    """Minted QR check-in token (15-minute TTL, single appointment)."""
+
+    token: str
+    expires_at: datetime
+
+
+class CheckinRequest(BaseModel):
+    """Public check-in body — the scanned token, nothing else."""
+
+    token: str = Field(min_length=1, max_length=2000)
+
+
+class CheckinResultResponse(BaseModel):
+    """Outcome of a public check-in (minimal PII by design)."""
+
+    appointment_id: UUID
+    status: str
+
+
 class AppointmentTreatmentResponse(BaseModel):
     """Response for a single AppointmentTreatment (visit bridge row)."""
 

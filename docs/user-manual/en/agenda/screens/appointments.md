@@ -14,6 +14,7 @@ related_endpoints:
   - PATCH /api/v1/agenda/appointment-treatments/{appointment_treatment_id}
   - PATCH /api/v1/agenda/appointments/{appointment_id}/cabinet
   - POST /api/v1/agenda/appointments
+  - POST /api/v1/agenda/appointments/{appointment_id}/check-in-token
   - POST /api/v1/agenda/appointments/{appointment_id}/transitions
   - POST /api/v1/agenda/cabinets
   - PUT /api/v1/agenda/appointments/{appointment_id}
@@ -109,6 +110,19 @@ planned work instead of a free-text reason.
 3. When transitioning to **completed** a follow-up modal appears with
    actions contributed by sibling modules (e.g. *Schedule recall*).
    The modal stays hidden when no module contributes to it.
+
+## QR check-in
+
+> Requires `agenda.appointments.write` to mint; scanning needs no account.
+
+1. On a scheduled or confirmed appointment, open **Quick actions** and
+   press the QR button. A dialog shows the code (valid 15 minutes) plus
+   a copyable check-in link.
+2. The patient scans it with their phone camera and lands on a public
+   page that checks them in — no login. Re-scanning the same code
+   simply confirms the current status.
+3. The transition flows through the normal status machine, so the
+   calendar, timeline, and reminders all update as usual.
 
 ## Permissions
 

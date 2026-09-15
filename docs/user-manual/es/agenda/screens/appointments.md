@@ -14,6 +14,7 @@ related_endpoints:
   - PATCH /api/v1/agenda/appointment-treatments/{appointment_treatment_id}
   - PATCH /api/v1/agenda/appointments/{appointment_id}/cabinet
   - POST /api/v1/agenda/appointments
+  - POST /api/v1/agenda/appointments/{appointment_id}/check-in-token
   - POST /api/v1/agenda/appointments/{appointment_id}/transitions
   - POST /api/v1/agenda/cabinets
   - PUT /api/v1/agenda/appointments/{appointment_id}
@@ -113,6 +114,20 @@ escrito a mano.
 3. Al transicionar a **completada** aparece un modal de seguimiento
    con acciones de módulos hermanos (p. ej. *Programar recall*). El
    modal solo se muestra si hay módulos que lo aporten.
+
+## Registro con QR
+
+> Requiere `agenda.appointments.write` para generarlo; escanear no
+> necesita cuenta.
+
+1. En una cita programada o confirmada, abre **Acciones rápidas** y
+   pulsa el botón QR. Un diálogo muestra el código (válido 15 minutos)
+   más un enlace copiable.
+2. El paciente lo escanea con la cámara del móvil y accede a una
+   página pública que lo registra — sin login. Reescanear el mismo
+   código simplemente confirma el estado actual.
+3. La transición usa la máquina de estados normal, así que el
+   calendario, la cronología y los recordatorios se actualizan igual.
 
 ## Permisos
 

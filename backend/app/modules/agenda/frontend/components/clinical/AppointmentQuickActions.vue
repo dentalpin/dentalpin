@@ -21,6 +21,11 @@ const { nextTransitions, statusIcon } = useAppointmentStatus()
 const isBusy = ref(false)
 const pendingDescriptor = ref<TransitionDescriptor | null>(null)
 const pendingNote = ref('')
+const showCheckinQr = ref(false)
+
+const canCheckin = computed(
+  () => props.appointment.status === 'scheduled' || props.appointment.status === 'confirmed'
+)
 
 // Post-completion follow-up modal is hosted once at the agenda page
 // level (`CompletionFollowupHost.vue`) so it stays consistent across
@@ -88,6 +93,15 @@ const confirmMessage = computed(() => {
 </script>
 
 <template>
+  <UButton
+    v-if="canCheckin"
+    icon="i-lucide-qr-code"
+    :size="props.dense ? 'xs' : 'sm'"
+    color="neutral"
+    variant="ghost"
+    :aria-label="t('appointments.checkin.qr')"
+    @click.stop="showCheckinQr = true"
+  />
   <UDropdownMenu
     v-if="hasActions"
     :items="dropdownItems()"
@@ -146,4 +160,10 @@ const confirmMessage = computed(() => {
 
   <!-- Post-completion modal lives once in `CompletionFollowupHost`
        at the page level, not here. -->
+  <CheckinQrDialog
+    v-if="showCheckinQr"
+    :appointment-id="props.appointment.id"
+    :open="showCheckinQr"
+    @close="showCheckinQr = false"
+  />
 </template>
