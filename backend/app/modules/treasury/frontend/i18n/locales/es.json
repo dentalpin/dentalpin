@@ -1,0 +1,28 @@
+{
+  "treasury": {
+    "nav": { "title": "Tesorería" },
+    "title": "Tesorería",
+    "newAccount": "Nueva cuenta",
+    "transfer": "Transferir",
+    "accounts": "Cuentas",
+    "noAccounts": "Aún no hay cuentas.",
+    "statement": "Movimientos",
+    "noEntries": "Aún no hay movimientos.",
+    "accountName": "Nombre de la cuenta",
+    "accountKind": "Tipo",
+    "kindCash": "Efectivo",
+    "kindBank": "Banco",
+    "create": "Crear",
+    "fromAccount": "Cuenta origen",
+    "toAccount": "Cuenta destino",
+    "amount": "Importe",
+    "memo": "Concepto (opcional)",
+    "kind": {
+      "transfer_out": "Salida por transferencia",
+      "transfer_in": "Entrada por transferencia",
+      "correction_in": "Corrección de entrada",
+      "correction_out": "Corrección de salida",
+      "opening": "Apertura"
+    }
+  }
+}

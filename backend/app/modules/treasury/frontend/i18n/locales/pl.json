@@ -1,0 +1,28 @@
+{
+  "treasury": {
+    "nav": { "title": "Kasa" },
+    "title": "Kasa",
+    "newAccount": "Nowe konto",
+    "transfer": "Przelej",
+    "accounts": "Konta",
+    "noAccounts": "Brak kont.",
+    "statement": "Operacje",
+    "noEntries": "Brak ruchów.",
+    "accountName": "Nazwa konta",
+    "accountKind": "Rodzaj",
+    "kindCash": "Gotówka",
+    "kindBank": "Bank",
+    "create": "Utwórz",
+    "fromAccount": "Konto źródłowe",
+    "toAccount": "Konto docelowe",
+    "amount": "Kwota",
+    "memo": "Opis (opcjonalnie)",
+    "kind": {
+      "transfer_out": "Przelew wychodzący",
+      "transfer_in": "Przelew przychodzący",
+      "correction_in": "Korekta przychodu",
+      "correction_out": "Korekta rozchodu",
+      "opening": "Otwarcie"
+    }
+  }
+}

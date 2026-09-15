@@ -57,6 +57,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `supplier_ratings` | 0.1.0 | official | contacts, purchase_orders | manual | yes | 2 | 0 | 0 | no |
 | `suppliers` | 0.1.0 | official | contacts | manual | yes | 2 | 0 | 0 | no |
 | `telephony` | 0.1.0 | community | patients | manual | yes | 4 | 5 | 0 | yes |
+| `treasury` | 0.1.0 | community | — | manual | yes | 2 | 0 | 0 | yes |
 | `treatment_consumables` | 0.1.0 | community | catalog, inventory | manual | yes | 2 | 0 | 1 | yes |
 | `treatment_plan` | 0.1.0 | official | patients, agenda, odontogram, catalog, budget, media | auto | no | 5 | 13 | 7 | yes |
 | `verifactu` | 0.1.0 | official | billing, catalog | manual | yes | 5 | 1 | 2 | yes |
@@ -1112,6 +1113,23 @@ CTI: aviso en pantalla de llamadas entrantes + registro de llamadas.
   - `call.unknown_caller`
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/telephony/CLAUDE.md`](../backend/app/modules/telephony/CLAUDE.md)
+
+### `treasury` — v0.1.0
+
+Cash/bank accounts, transfers, and manual corrections.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** —
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `treasury.read`
+  - `treasury.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/treasury/CLAUDE.md`](../backend/app/modules/treasury/CLAUDE.md)
 
 ### `treatment_consumables` — v0.1.0
 

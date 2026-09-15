@@ -1,0 +1,28 @@
+{
+  "treasury": {
+    "nav": { "title": "Treasury" },
+    "title": "Treasury",
+    "newAccount": "New account",
+    "transfer": "Transfer",
+    "accounts": "Accounts",
+    "noAccounts": "No accounts yet.",
+    "statement": "Statement",
+    "noEntries": "No movements yet.",
+    "accountName": "Account name",
+    "accountKind": "Kind",
+    "kindCash": "Cash",
+    "kindBank": "Bank",
+    "create": "Create",
+    "fromAccount": "From account",
+    "toAccount": "To account",
+    "amount": "Amount",
+    "memo": "Memo (optional)",
+    "kind": {
+      "transfer_out": "Transfer out",
+      "transfer_in": "Transfer in",
+      "correction_in": "Correction in",
+      "correction_out": "Correction out",
+      "opening": "Opening"
+    }
+  }
+}
