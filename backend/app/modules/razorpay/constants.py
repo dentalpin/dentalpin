@@ -9,6 +9,11 @@ RAZORPAY_API_BASE = "https://api.razorpay.com/v1"
 # payment_gateways.constants.GATEWAY_METHODS.
 SUPPORTED_METHODS = ("upi", "qr", "card", "payment_link")
 
+# Razorpay settles in INR only — checked against the clinic's own
+# currency in PaymentRequestService.create_and_initiate before ever
+# calling the provider.
+SUPPORTED_CURRENCIES = ("INR",)
+
 MODES = ("test", "live")
 
 # Razorpay's own `payment.entity.method` values -> our core

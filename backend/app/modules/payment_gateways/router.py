@@ -23,6 +23,7 @@ from app.database import get_db
 from app.modules.payments.service import PaymentService
 
 from .schemas import (
+    GatewayInfoBatchRequest,
     GatewayInfoResponse,
     GatewayRefundRequestCreate,
     GatewayRefundRequestResponse,
@@ -97,7 +98,11 @@ async def refresh_request(
     "payment succeeded" claim."""
     from .adapters import gateway_registry
 
-    request = await PaymentRequestService.get(db, ctx.clinic_id, request_id)
+    # Row-locked: a webhook delivery landing on this same request while
+    # this refresh is in flight must serialize behind it (or vice
+    # versa) rather than race on confirm()'s "already succeeded?"
+    # check — see PaymentRequestService.get_locked.
+    request = await PaymentRequestService.get_locked(db, ctx.clinic_id, request_id)
     if request is None:
         raise HTTPException(status_code=404, detail="Payment request not found")
 
@@ -162,6 +167,37 @@ async def gateway_info_for_payment(
                 GatewayRefundRequestResponse.model_validate(r) for r in request.refund_requests
             ],
         )
+    )
+
+
+@router.post(
+    "/payments/gateway-info/batch", response_model=ApiResponse[dict[str, GatewayInfoResponse]]
+)
+async def gateway_info_batch(
+    payload: GatewayInfoBatchRequest,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("payments.record.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[dict[str, GatewayInfoResponse]]:
+    """One call for a page of the payments list instead of one
+    ``/gateway-info`` round trip per gateway-collected row (#439/#445
+    review follow-up). Keyed by payment id (as a string — JSON object
+    keys can't be UUIDs); a payment id with no gateway request (manually
+    recorded) is simply absent from the result, same as the single
+    endpoint returning ``request: null``."""
+    requests = await PaymentRequestService.get_for_payments_batch(
+        db, ctx.clinic_id, payload.payment_ids
+    )
+    return ApiResponse(
+        data={
+            str(payment_id): GatewayInfoResponse(
+                request=PaymentRequestResponse.from_model(request),
+                refund_requests=[
+                    GatewayRefundRequestResponse.model_validate(r) for r in request.refund_requests
+                ],
+            )
+            for payment_id, request in requests.items()
+        }
     )
 
 

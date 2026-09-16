@@ -60,6 +60,7 @@ def test_razorpay_module_on_activate_registers_adapter():
         assert isinstance(adapter, RazorpayAdapter)
         assert adapter.provider_key == "razorpay"
         assert set(adapter.supported_methods) == {"upi", "qr", "card", "payment_link"}
+        assert adapter.supported_currencies == ("INR",)
     finally:
         gateway_registry.unregister("razorpay")
 

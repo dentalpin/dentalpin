@@ -73,7 +73,12 @@ async def update_settings(
     _: Annotated[None, Depends(require_permission("razorpay.settings.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[RazorpaySettingsResponse]:
-    settings = await RazorpaySettingsService.upsert_settings(db, ctx.clinic_id, data.model_dump())
+    try:
+        settings = await RazorpaySettingsService.upsert_settings(
+            db, ctx.clinic_id, data.model_dump()
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc))
     return ApiResponse(data=_settings_response(settings))
 
 
@@ -100,6 +105,13 @@ async def webhook(
     signature = request.headers.get("X-Razorpay-Signature", "")
     if not RazorpaySettingsService.verify_signature(settings, raw, signature):
         await RazorpaySettingsService.record_webhook_error(db, settings, "invalid signature")
+        # Commit now: record_webhook_error only flush()es, and get_db()
+        # rolls back the whole session on ANY raised exception —
+        # without this, the health bookkeeping below would vanish along
+        # with the 401, leaving no trail to diagnose a misconfigured
+        # webhook secret (same reasoning as payment_gateways.service's
+        # pre-raise commits).
+        await db.commit()
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid signature")
 
     try:
@@ -128,7 +140,26 @@ async def webhook(
         return {"ok": True}
     except Exception as exc:  # noqa: BLE001 - transient failure: let Razorpay retry
         logger.exception("razorpay webhook processing failed for clinic %s", clinic_id)
-        await RazorpaySettingsService.record_webhook_error(db, settings, str(exc)[:500])
+        # Roll back first: by this point in the request `confirm()` may
+        # already have flushed a Payment + allocations (or a
+        # PaymentRequest state change) before failing later on, and a
+        # plain commit here would persist that half-applied confirmation
+        # alongside the error record — a retry would then land on
+        # partially-committed state instead of a clean one (review
+        # follow-up, PR #470). Rolling back expires every ORM instance
+        # from this transaction, including `settings`, so it must not be
+        # touched again — re-fetch a fresh row instead.
+        await db.rollback()
+        fresh_settings = await RazorpaySettingsService.get_settings(db, clinic_id)
+        if fresh_settings is not None:
+            # Re-apply the received bookkeeping too — it was flushed
+            # earlier in this same (now rolled-back) transaction, so it
+            # needs the same fresh-row treatment as the error record.
+            await RazorpaySettingsService.record_webhook_received(db, fresh_settings, event_type)
+            await RazorpaySettingsService.record_webhook_error(db, fresh_settings, str(exc)[:500])
+            # Commit only this clean error-recording work — never the
+            # failed confirmation attempt rolled back above.
+            await db.commit()
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="internal error"
         )

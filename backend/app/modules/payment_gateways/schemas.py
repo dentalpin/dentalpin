@@ -139,3 +139,12 @@ class GatewayInfoResponse(BaseModel):
 
     request: PaymentRequestResponse | None = None
     refund_requests: list[GatewayRefundRequestResponse] = []
+
+
+class GatewayInfoBatchRequest(BaseModel):
+    """One call for a page of the payments list instead of one
+    ``/gateway-info`` round trip per gateway-collected row (#439/#445
+    review follow-up). Capped at a typical page size — this isn't a
+    general-purpose bulk export."""
+
+    payment_ids: list[UUID] = Field(min_length=1, max_length=100)

@@ -2,6 +2,26 @@
 
 ## Unreleased
 
+- feat(#439/#445): India follow-ups — `useGatewayInfoBatch` batches
+  the payments list's per-row gateway-info lookups into one call
+  (chunked at 100 ids to match the endpoint's cap), `RazorpayPaymentBadge`/
+  `RazorpayCollectPanel` consume it, and Arabic (`ar.json`) joins the
+  module's locales (ten host locales total).
+- fix(#470 review): `PUT /settings` validates the key prefix against
+  the selected mode (`rzp_live_`/`rzp_test_`) on the merged effective
+  settings, so a mode/key mismatch is rejected before it ever reaches
+  the provider; the settings page repeats the same check client-side
+  and disables Save while it fails.
+- fix(#470 review): a webhook failure that hits after `confirm()` has
+  already flushed a `Payment`/allocations now rolls back that partial
+  confirmation before recording the error, instead of committing both
+  together — a retry now always lands on clean state. The invalid-
+  signature `401` path is unchanged.
+- fix(#470 review): the `GatewayAdapter` Protocol no longer declares
+  `verify_webhook_signature` — `RazorpayAdapter` never implemented it
+  (the webhook route verifies via `RazorpaySettingsService.verify_signature`
+  directly), so the unused contract method was dead weight on every
+  future adapter.
 - Initial implementation (#263, PR 1 of #365): `RazorpayAdapter`
   implementing `payment_gateways.adapters.GatewayAdapter`. UPI intent/
   checkout and cards via the Orders API (`payment_capture=1`), dynamic

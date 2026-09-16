@@ -14,6 +14,8 @@
       "modeLive": "Produkcyjny",
       "keyId": "ID klucza",
       "keyIdHint": "Z panelu Razorpay — bezpieczne do wyświetlenia w przeglądarce.",
+      "modeKeyMismatchLive": "Tryb Live wymaga klucza zaczynającego się od \"rzp_live_\". Twój obecny klucz zaczyna się od \"rzp_test_\".",
+      "modeKeyMismatchTest": "Tryb testowy wymaga klucza zaczynającego się od \"rzp_test_\". Twój obecny klucz zaczyna się od \"rzp_live_\".",
       "keySecret": "Klucz tajny",
       "keySecretHint": "Z panelu Razorpay. Nie zostanie ponownie wyświetlony po zapisaniu.",
       "keySecretConfiguredHint": "Klucz tajny jest już skonfigurowany. Pozostaw puste, aby go zachować.",
@@ -41,6 +43,8 @@
     "collect": {
       "notConfiguredHint": "Razorpay nie jest jeszcze skonfigurowany dla tej kliniki. Poproś administratora o skonfigurowanie go w Ustawieniach.",
       "waiting": "Oczekiwanie na płatność…",
+      "pollTimeout": "Nie udało się automatycznie potwierdzić płatności. Sprawdź status płatności lub skontaktuj się z pomocą techniczną.",
+      "checkoutDismissed": "Okno płatności zostało zamknięte. Spróbuj ponownie lub sprawdź status poniżej.",
       "checkStatus": "Sprawdź status",
       "openCheckout": "Otwórz płatność Razorpay",
       "scanQr": "Poproś pacjenta o zeskanowanie tego kodu QR dowolną aplikacją UPI",

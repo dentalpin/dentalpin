@@ -1,0 +1,105 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "تحصيل المدفوعات عبر UPI ورمز QR والبطاقات وروابط الدفع."
+    },
+    "settings": {
+      "title": "إعدادات Razorpay",
+      "description": "قم بإعداد بوابة الدفع Razorpay لهذه العيادة.",
+      "credentials": "بيانات اعتماد API",
+      "mode": "الوضع",
+      "modeHint": "استخدم وضع الاختبار حتى تتأكد من أن كل شيء يعمل من البداية إلى النهاية.",
+      "modeTest": "اختبار",
+      "modeLive": "مباشر",
+      "keyId": "معرّف المفتاح",
+      "keyIdHint": "من لوحة تحكم Razorpay — آمن للعرض في المتصفح.",
+      "modeKeyMismatchLive": "يتطلب الوضع المباشر مفتاحًا يبدأ بـ \"rzp_live_\". مفتاحك الحالي يبدأ بـ \"rzp_test_\".",
+      "modeKeyMismatchTest": "يتطلب وضع الاختبار مفتاحًا يبدأ بـ \"rzp_test_\". مفتاحك الحالي يبدأ بـ \"rzp_live_\".",
+      "keySecret": "المفتاح السري",
+      "keySecretHint": "من لوحة تحكم Razorpay. لن يُعرض مرة أخرى بعد الحفظ.",
+      "keySecretConfiguredHint": "تم بالفعل إعداد مفتاح سري. اتركه فارغًا للإبقاء عليه.",
+      "keySecretPlaceholder": "أدخل المفتاح السري",
+      "isActive": "نشط",
+      "isActiveHint": "تُعرض على الاستقبال كطريقة تحصيل فقط الإعدادات النشطة.",
+      "webhook": "الويب هوك",
+      "webhookUrl": "رابط الويب هوك",
+      "webhookUrlHint": "الصق هذا في إعدادات الويب هوك بلوحة تحكم Razorpay لهذه العيادة.",
+      "webhookSecret": "سر الويب هوك",
+      "webhookSecretHint": "السر الذي يوقّع به Razorpay أحداث الويب هوك.",
+      "webhookSecretConfiguredHint": "تم بالفعل إعداد سر للويب هوك. اتركه فارغًا للإبقاء عليه.",
+      "webhookSecretPlaceholder": "أدخل سر الويب هوك",
+      "lastWebhookReceived": "آخر ويب هوك مستلم",
+      "lastWebhookProcessed": "آخر ويب هوك تمت معالجته",
+      "lastWebhookEventType": "نوع آخر حدث",
+      "lastWebhookError": "آخر خطأ في الويب هوك",
+      "never": "أبدًا",
+      "professionalNotice": "تأكد من إعداد حساب Razorpay وتفاصيل التسوية مع دعم Razorpay أو محاسبك. لا تدير DentalPin عمليات التسوية أو التقارير القانونية.",
+      "saved": "تم حفظ الإعدادات",
+      "saveError": "تعذّر حفظ الإعدادات",
+      "loadError": "تعذّر تحميل الإعدادات",
+      "webhookCopied": "تم نسخ رابط الويب هوك"
+    },
+    "collect": {
+      "notConfiguredHint": "لم يتم إعداد Razorpay لهذه العيادة بعد. اطلب من أحد المسؤولين إعداده في الإعدادات.",
+      "waiting": "في انتظار الدفع…",
+      "pollTimeout": "تعذّر علينا تأكيد دفعتك تلقائيًا. يُرجى التحقق من حالة الدفع أو التواصل مع الدعم.",
+      "checkoutDismissed": "تم إغلاق نافذة الدفع. حاول مرة أخرى أو تحقق من الحالة أدناه.",
+      "checkStatus": "التحقق من الحالة",
+      "openCheckout": "فتح صفحة دفع Razorpay",
+      "scanQr": "اطلب من المريض مسح رمز QR هذا باستخدام أي تطبيق UPI",
+      "linkCopied": "تم نسخ رابط الدفع",
+      "authorizing": "تمت الموافقة على الدفع — جارٍ الإنهاء…",
+      "success": "تم استلام الدفعة",
+      "tryAgain": "حاول مرة أخرى",
+      "createError": "تعذّر بدء عملية الدفع",
+      "checkoutLoadError": "تعذّر تحميل صفحة دفع Razorpay — تحقق من اتصالك وحاول مرة أخرى",
+      "states": {
+        "failed": "فشلت الدفعة",
+        "expired": "انتهت صلاحية الدفعة",
+        "cancelled": "تم إلغاء الدفعة"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "رمز QR",
+        "card": "بطاقة",
+        "payment_link": "رابط دفع"
+      },
+      "railUpiQr": "رمز UPI QR",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "رابط دفع"
+    },
+    "detail": {
+      "title": "معاملة Razorpay",
+      "auditTrail": "التفاصيل",
+      "method": "الطريقة",
+      "status": "الحالة",
+      "providerReference": "معرّف دفعة Razorpay",
+      "initiated": "بدأت",
+      "confirmed": "تم التأكيد",
+      "allocation": "التخصيص",
+      "refundHistory": "المبالغ المستردة",
+      "refundAction": "استرداد عبر Razorpay",
+      "refundPermissionDenied": "ليس لديك صلاحية لإصدار المبالغ المستردة",
+      "maxRefundable": "حتى {amount}",
+      "noRefunds": "لا توجد مبالغ مستردة لهذه الدفعة بعد.",
+      "refundRequested": "تم طلب الاسترداد",
+      "refundError": "تعذّر بدء عملية الاسترداد",
+      "states": {
+        "pending": "قيد الانتظار",
+        "awaiting_customer_action": "بانتظار الدفع",
+        "authorised_awaiting_capture": "جارٍ التفويض",
+        "succeeded": "تمت بنجاح",
+        "failed": "فشلت",
+        "expired": "منتهية الصلاحية",
+        "cancelled": "ملغاة"
+      },
+      "refundStates": {
+        "requested": "مطلوب",
+        "processing": "قيد المعالجة",
+        "completed": "مكتمل",
+        "failed": "فشل"
+      }
+    }
+  }
+}

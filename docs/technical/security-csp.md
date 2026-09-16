@@ -29,7 +29,7 @@ Mode is `NUXT_CSP_MODE`:
 Only HTML documents get the header — `/_nuxt/*` assets and `/api/*`
 passthroughs are skipped.
 
-## Inventory (production build, 2026-09-05)
+## Inventory (production build, 2026-09-05; razorpay external origin added 2026-09-16)
 
 Rendered `/login` from `nuxt build` output, then grepped:
 
@@ -40,21 +40,30 @@ Rendered `/login` from `nuxt build` output, then grepped:
 | plain inline `<script>` (Nuxt bootstrap / config) | 2 | **needs `'unsafe-inline'`** or nonces — see gap below |
 | `<style id="nuxt-ui-colors">` + one more `<style>` | 2 | `style-src 'unsafe-inline'` |
 | `style="…"` attributes | 2 on /login, 58 components repo-wide | `style-src 'unsafe-inline'` (attributes can't be nonced) |
-| external `src=`/`href=` origins | 0 | `default-src 'self'` holds |
 | inline `on*=` handlers | 0 | nothing to allow |
 | API + copilot SSE | `fetch()` to the API origin | `connect-src 'self' <api origin>` |
 | avatars / uploads / QR previews | `data:` and `blob:` URLs | `img-src 'self' data: blob:` |
 | icons | pre-bundled (`icon.clientBundle`), no runtime CDN | `'self'` |
 | docs portal (`NUXT_PUBLIC_DOCS_URL`) | embedded in an `<iframe>` by `HelpButton.vue` (contextual help drawer) | `frame-src <docs origin>` |
 | PDF preview (`media/PDFViewer.vue`) | `<iframe src="blob:…">` | `frame-src blob:` |
+| Razorpay checkout (`razorpay` module, India clinics) | `RazorpayCollectPanel.vue` loads `checkout.razorpay.com/v1/checkout.js` as a `<script>` tag only when a Razorpay rail is picked; the widget it opens both calls out to and frames that same origin | `script-src`/`connect-src`/`frame-src https://checkout.razorpay.com` |
+
+The Razorpay origin is the one external `src=`/`href=` in the app —
+everything else stays `default-src 'self'`. It's hardcoded in the
+middleware (not derived from runtime config like `apiOrigin`/
+`docsOrigin`) since it's Razorpay's own fixed domain, not something a
+deployment configures; a future gateway provider (PhonePe/Stripe) would
+add its own origin the same way, only for clinics where that module is
+active.
 
 Resulting policy (see the middleware for the source of truth):
 
 ```
-default-src 'self'; script-src 'self' 'unsafe-inline';
+default-src 'self';
+script-src 'self' 'unsafe-inline' https://checkout.razorpay.com;
 style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:;
-font-src 'self' data:; connect-src 'self' <api-origin>;
-worker-src 'self' blob:; frame-src 'self' blob: <docs-origin>;
+font-src 'self' data:; connect-src 'self' <api-origin> https://checkout.razorpay.com;
+worker-src 'self' blob:; frame-src 'self' blob: <docs-origin> https://checkout.razorpay.com;
 frame-ancestors 'self'; base-uri 'self'; form-action 'self'; object-src 'none';
 report-uri <api-origin>/api/v1/security/csp-report
 ```

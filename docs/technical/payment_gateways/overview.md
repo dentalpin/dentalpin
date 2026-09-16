@@ -1,6 +1,6 @@
 ---
 module: payment_gateways
-last_verified_commit: 8b8e9375
+last_verified_commit: 00c3aadc
 ---
 
 # payment_gateways — overview
@@ -25,9 +25,10 @@ email/WhatsApp. Official, installable/removable. Issue #263, PR 1 of
   `payments.workflow.record_payment`/`refund_payment` from a gateway
   flow.
 - **`router.py`** — `POST /requests`, `GET/POST .../refresh|cancel`,
-  `GET /payments/{id}/gateway-info`, `POST /refunds`, `GET /refunds/{id}`,
-  `GET /payments/{id}/refunds`. Reuses `payments.record.*` permissions
-  (no permissions of its own).
+  `GET /payments/{id}/gateway-info`, `POST /payments/gateway-info/batch`
+  (same lookup, batched for a page of the payments list — capped at 100
+  ids), `POST /refunds`, `GET /refunds/{id}`, `GET /payments/{id}/refunds`.
+  Reuses `payments.record.*` permissions (no permissions of its own).
 - **`constants.py`** — the `PaymentRequestState`/`GatewayRefundState`
   StrEnums and their validated transition tables.
 

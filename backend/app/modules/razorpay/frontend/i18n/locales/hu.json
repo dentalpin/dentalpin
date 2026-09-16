@@ -14,6 +14,8 @@
       "modeLive": "Éles",
       "keyId": "Kulcs azonosító",
       "keyIdHint": "A Razorpay irányítópultról — biztonságosan megjeleníthető a böngészőben.",
+      "modeKeyMismatchLive": "Az élő (Live) módhoz \"rzp_live_\" kezdetű kulcs szükséges. A jelenlegi kulcsod \"rzp_test_\" kezdetű.",
+      "modeKeyMismatchTest": "A teszt módhoz \"rzp_test_\" kezdetű kulcs szükséges. A jelenlegi kulcsod \"rzp_live_\" kezdetű.",
       "keySecret": "Titkos kulcs",
       "keySecretHint": "A Razorpay irányítópultról. Mentés után többé nem jelenik meg.",
       "keySecretConfiguredHint": "Már van beállítva titkos kulcs. Hagyja üresen a megtartásához.",
@@ -41,6 +43,8 @@
     "collect": {
       "notConfiguredHint": "A Razorpay még nincs beállítva ehhez a klinikához. Kérje meg az adminisztrátort, hogy állítsa be a Beállításokban.",
       "waiting": "Fizetésre várakozás…",
+      "pollTimeout": "Nem sikerült automatikusan megerősíteni a fizetést. Kérjük, ellenőrizze a fizetés állapotát, vagy forduljon az ügyfélszolgálathoz.",
+      "checkoutDismissed": "A fizetési ablak bezárult. Próbálja újra, vagy ellenőrizze az állapotot alább.",
       "checkStatus": "Állapot ellenőrzése",
       "openCheckout": "Razorpay fizetés megnyitása",
       "scanQr": "Kérje meg a pácienst, hogy szkennelje be ezt a QR-kódot bármely UPI alkalmazással",

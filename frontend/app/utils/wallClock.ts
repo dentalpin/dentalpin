@@ -51,3 +51,21 @@ export function clinicNow(timeZone: string | null | undefined): Date {
     return now
   }
 }
+
+/**
+ * Today's date in the clinic's timezone, as `YYYY-MM-DD` — for
+ * `<input type="date">` v-model and API payloads like `payment_date`
+ * (#439/#445 review follow-up). `clinicNow(tz).toISOString()` would
+ * re-shift the wall-clock Date through the *browser's own* offset and
+ * silently roll to the wrong calendar day near local midnight when the
+ * device and the clinic disagree — read the Y-M-D fields directly off
+ * the wall-clock Date instead. Falls back to the browser's own local
+ * date when the timezone is unknown (same fallback as `clinicNow`).
+ */
+export function clinicToday(timeZone: string | null | undefined): string {
+  const d = clinicNow(timeZone)
+  const yyyy = d.getFullYear()
+  const mm = String(d.getMonth() + 1).padStart(2, '0')
+  const dd = String(d.getDate()).padStart(2, '0')
+  return `${yyyy}-${mm}-${dd}`
+}

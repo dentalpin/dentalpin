@@ -5,11 +5,13 @@ Uses ``FakeAdapter`` (conftest) — no network, no real provider.
 
 from __future__ import annotations
 
+from datetime import UTC, date, datetime
 from decimal import Decimal
 
 import pytest
 from sqlalchemy import func, select
 
+from app.modules.payment_gateways.adapters import GatewayConfirmation
 from app.modules.payment_gateways.constants import (
     PaymentRequestState,
     PaymentRequestTransitionError,
@@ -61,6 +63,21 @@ async def test_create_rejects_allocation_sum_mismatch(
             gateway_patient,
             gateway_user_id,
             allocations=[{"target_type": "on_account", "amount": "1.00"}],
+        )
+    assert len(fake_adapter.initiate_calls) == 0  # never even reaches the provider
+
+
+async def test_create_rejects_unsupported_currency(
+    db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
+):
+    with pytest.raises(GatewayError, match="does not support currency"):
+        await _create(
+            db_session,
+            fake_adapter,
+            gateway_clinic,
+            gateway_patient,
+            gateway_user_id,
+            currency="USD",
         )
     assert len(fake_adapter.initiate_calls) == 0  # never even reaches the provider
 
@@ -176,6 +193,37 @@ async def test_confirm_creates_exactly_one_payment(
     assert payment.patient_id == gateway_patient.id
 
 
+async def test_confirm_books_payment_date_on_clinic_local_calendar_day(
+    db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
+):
+    """A capture just after midnight in the clinic's own timezone must
+    book on that local calendar date, not the UTC date it still is at
+    that instant (review follow-up, PR #470)."""
+    gateway_clinic.timezone = "Asia/Kolkata"
+    await db_session.flush()
+
+    request = await _create(
+        db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
+    )
+    # 2026-01-01 18:45:00+00:00 == 2026-01-02 00:15 IST.
+    confirmation = GatewayConfirmation(
+        provider_payment_reference="fake_pay_tz",
+        confirmed_method="upi",
+        amount=Decimal("500.00"),
+        currency="INR",
+        captured_at=datetime(2026, 1, 1, 18, 45, 0, tzinfo=UTC),
+    )
+
+    confirmed = await PaymentRequestService.confirm(
+        db_session, request=request, confirmation=confirmation
+    )
+
+    payment = (
+        await db_session.execute(select(Payment).where(Payment.id == confirmed.payment_id))
+    ).scalar_one()
+    assert payment.payment_date == date(2026, 1, 2)
+
+
 async def test_confirm_is_idempotent_duplicate_webhook_never_double_pays(
     db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
 ):
@@ -213,6 +261,29 @@ async def test_confirm_rejects_amount_mismatch_and_creates_no_payment(
     with pytest.raises(GatewayError, match="does not match"):
         await PaymentRequestService.confirm(
             db_session, request=request, confirmation=wrong_amount_confirmation
+        )
+
+    total = (
+        await db_session.execute(
+            select(func.count())
+            .select_from(Payment)
+            .where(Payment.patient_id == gateway_patient.id)
+        )
+    ).scalar()
+    assert total == 0
+
+
+async def test_confirm_rejects_currency_mismatch_and_creates_no_payment(
+    db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
+):
+    request = await _create(
+        db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
+    )
+    wrong_currency_confirmation = make_confirmation(amount=Decimal("500.00"), currency="USD")
+
+    with pytest.raises(GatewayError, match="does not match"):
+        await PaymentRequestService.confirm(
+            db_session, request=request, confirmation=wrong_currency_confirmation
         )
 
     total = (

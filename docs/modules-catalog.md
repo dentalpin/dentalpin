@@ -759,7 +759,7 @@ Normalized medical history, allergies, medications, emergency contacts.
 
 Provider-neutral payment gateway contract, registry, and PaymentRequest lifecycle.
 
-- **Author:** DentalPin Core Team
+- **Author:** tresundios
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -858,7 +858,7 @@ Purchase orders with receiving, quality checks and PDF export.
 
 Razorpay payment gateway — UPI, QR, cards, and payment links for India clinics.
 
-- **Author:** DentalPin Core Team
+- **Author:** tresundios
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True

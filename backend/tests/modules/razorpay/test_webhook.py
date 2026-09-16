@@ -19,6 +19,7 @@ from app.modules.payment_gateways.constants import GatewayRefundState, PaymentRe
 from app.modules.payment_gateways.models import GatewayRefundRequest, PaymentRequest
 from app.modules.payments.models import Payment, Refund
 from app.modules.razorpay.models import RazorpaySettings
+from app.modules.razorpay.service import RazorpaySettingsService
 
 from .conftest import sign
 
@@ -105,6 +106,120 @@ async def test_webhook_rejects_invalid_signature(
 
     await db_session.refresh(request)
     assert request.state == PaymentRequestState.AWAITING_CUSTOMER_ACTION  # untouched
+
+    # record_webhook_error only flush()es; without an explicit commit
+    # before the 401 is raised, get_db() rolling back the session would
+    # wipe this out along with everything else, leaving no trail for
+    # diagnosing a misconfigured/rotated webhook secret.
+    await db_session.refresh(razorpay_settings)
+    assert razorpay_settings.last_webhook_error is not None
+    assert razorpay_settings.last_webhook_error_at is not None
+
+
+async def test_webhook_processing_error_persists_webhook_health_before_500(
+    client: AsyncClient,
+    db_session: AsyncSession,
+    razorpay_settings: RazorpaySettings,
+    test_clinic,
+):
+    """A genuine processing exception (not a GatewayError, e.g. a
+    malformed provider payload) still answers 500 so Razorpay retries —
+    but the webhook-health bookkeeping recorded on the way there must
+    survive that response, same reasoning as the 401 path above."""
+    body, sig = sign(_captured_payload("order_BOOM", "pay_BOOM", amount_paise="not-a-number"))
+
+    resp = await client.post(
+        f"/api/v1/razorpay/webhook/{test_clinic.id}",
+        content=body,
+        headers={"X-Razorpay-Signature": sig, "Content-Type": "application/json"},
+    )
+    assert resp.status_code == 500
+
+    await db_session.refresh(razorpay_settings)
+    assert razorpay_settings.last_webhook_error is not None
+    assert razorpay_settings.last_webhook_error_at is not None
+
+
+async def test_webhook_failure_after_confirm_rolls_back_payment_and_persists_error(
+    client: AsyncClient,
+    db_session: AsyncSession,
+    razorpay_settings: RazorpaySettings,
+    test_clinic,
+    test_patient,
+    auth_headers,
+    monkeypatch,
+):
+    """A failure that hits *after* ``confirm()`` has already flushed a
+    Payment + allocations (here simulated via a broken
+    ``record_webhook_processed`` call) must roll back that partial
+    confirmation before recording the webhook error — a plain commit at
+    that point would otherwise persist a half-applied confirmation
+    alongside the error record, and a Razorpay retry would land on
+    partially-committed state instead of a clean one (review follow-up,
+    PR #470)."""
+    me = await client.get("/api/v1/auth/me", headers=auth_headers)
+    user_id = me.json()["data"]["user"]["id"]
+    request = await _make_request(
+        db_session,
+        clinic=test_clinic,
+        patient=test_patient,
+        user_id=user_id,
+        provider_reference="order_ROLLBACK1",
+    )
+    # `db.rollback()` inside the handler under test expires every object
+    # in this (shared, per-test) session, including `test_clinic` itself
+    # — capture the plain id up front rather than touching the ORM
+    # instance again after the first request.
+    clinic_id = test_clinic.id
+    body, sig = sign(_captured_payload("order_ROLLBACK1", "pay_ROLLBACK1"))
+    headers = {"X-Razorpay-Signature": sig, "Content-Type": "application/json"}
+
+    async def _boom(db, settings):
+        raise RuntimeError("simulated failure after confirmation flush")
+
+    monkeypatch.setattr(RazorpaySettingsService, "record_webhook_processed", _boom)
+
+    resp = await client.post(f"/api/v1/razorpay/webhook/{clinic_id}", content=body, headers=headers)
+    assert resp.status_code == 500
+
+    # The confirmation that had already been flushed (PaymentRequest ->
+    # succeeded, Payment + allocations) must not have survived.
+    await db_session.refresh(request)
+    assert request.state == PaymentRequestState.AWAITING_CUSTOMER_ACTION
+    assert request.payment_id is None
+    count = (
+        await db_session.execute(
+            select(func.count())
+            .select_from(Payment)
+            .where(Payment.reference == "razorpay:pay_ROLLBACK1")
+        )
+    ).scalar()
+    assert count == 0
+
+    # But the webhook error was recorded against a fresh, clean row.
+    await db_session.refresh(razorpay_settings)
+    assert razorpay_settings.last_webhook_error is not None
+    assert "simulated failure" in razorpay_settings.last_webhook_error
+    assert razorpay_settings.last_webhook_error_at is not None
+
+    # A retry from this clean state processes normally.
+    monkeypatch.undo()
+    resp2 = await client.post(
+        f"/api/v1/razorpay/webhook/{clinic_id}", content=body, headers=headers
+    )
+    assert resp2.status_code == 200
+
+    await db_session.refresh(request)
+    assert request.state == PaymentRequestState.SUCCEEDED
+    assert request.payment_id is not None
+    count = (
+        await db_session.execute(
+            select(func.count())
+            .select_from(Payment)
+            .where(Payment.reference == "razorpay:pay_ROLLBACK1")
+        )
+    ).scalar()
+    assert count == 1
 
 
 async def test_webhook_unknown_clinic_accepts_and_ignores(client: AsyncClient):

@@ -20,6 +20,12 @@ test.describe('content security policy', () => {
     expect(policy).toContain('frame-ancestors \'self\'')
     expect(policy).toContain('object-src \'none\'')
     expect(policy).toMatch(/frame-src 'self' blob:/)
+    // Razorpay's Checkout.js needs all three (#439/#445 review follow-up)
+    // or the gateway silently breaks once this policy is enforced.
+    expect(policy).toContain('https://checkout.razorpay.com')
+    expect(policy).toMatch(/script-src[^;]*https:\/\/checkout\.razorpay\.com/)
+    expect(policy).toMatch(/connect-src[^;]*https:\/\/checkout\.razorpay\.com/)
+    expect(policy).toMatch(/frame-src[^;]*https:\/\/checkout\.razorpay\.com/)
   })
 
   test('login page and dashboard render without violations', async ({ page }) => {

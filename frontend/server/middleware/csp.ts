@@ -14,9 +14,18 @@
  * Inventory the policy is derived from (prod build, 2026-09-05, see
  * docs/technical/security-csp.md): two Nuxt bootstrap inline scripts +
  * the JSON payload script, one `<style id="nuxt-ui-colors">` block and
- * inline `style=""` attributes, no external origins, SSE + API on the
- * configured API origin. `'unsafe-inline'` on script-src is the known
- * gap — nonces need a render-hook module; tracked in the doc.
+ * inline `style=""` attributes, SSE + API on the configured API origin.
+ * `'unsafe-inline'` on script-src is the known gap — nonces need a
+ * render-hook module; tracked in the doc.
+ *
+ * One external origin: `checkout.razorpay.com` (razorpay module,
+ * India clinics only, #439/#445 review follow-up). `RazorpayCollectPanel`
+ * loads `checkout.razorpay.com/v1/checkout.js` as a plain `<script>` tag
+ * and the widget it opens both calls out to and frames that same origin
+ * — script-src/connect-src/frame-src all need it or the gateway silently
+ * breaks under `enforce`. Hardcoded (not derived from runtime config)
+ * since it's Razorpay's own fixed domain, not something a deployment
+ * configures.
  */
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig(event)
@@ -34,7 +43,10 @@ export default defineEventHandler((event) => {
   } catch {
     apiOrigin = ''
   }
-  const connect = ['\'self\'', apiOrigin].filter(Boolean).join(' ')
+  // Razorpay's own fixed checkout domain — not a runtime-configured
+  // origin like apiOrigin/docsOrigin above (#439/#445 review follow-up).
+  const RAZORPAY_CHECKOUT_ORIGIN = 'https://checkout.razorpay.com'
+  const connect = ['\'self\'', apiOrigin, RAZORPAY_CHECKOUT_ORIGIN].filter(Boolean).join(' ')
   // HelpButton embeds the docs portal in an <iframe>; media's PDFViewer
   // embeds blob: URLs. Without frame-src both fall back to default-src.
   let docsOrigin = ''
@@ -44,13 +56,15 @@ export default defineEventHandler((event) => {
   } catch {
     docsOrigin = ''
   }
-  const frame = ['\'self\'', 'blob:', docsOrigin].filter(Boolean).join(' ')
+  const frame = ['\'self\'', 'blob:', docsOrigin, RAZORPAY_CHECKOUT_ORIGIN].filter(Boolean).join(' ')
   const reportUri = `${apiOrigin || ''}/api/v1/security/csp-report`
 
   const policy = [
     'default-src \'self\'',
     // Nuxt's bootstrap scripts are inline; nonces are the follow-up (#355).
-    'script-src \'self\' \'unsafe-inline\'',
+    // checkout.razorpay.com: Razorpay's Checkout.js, loaded dynamically
+    // only when a Razorpay rail is picked (RazorpayCollectPanel).
+    `script-src 'self' 'unsafe-inline' ${RAZORPAY_CHECKOUT_ORIGIN}`,
     // Nuxt UI theme block + Tailwind-driven style attributes.
     'style-src \'self\' \'unsafe-inline\'',
     'img-src \'self\' data: blob:',

@@ -26,6 +26,7 @@ india_gst reusing `billing.write`).
 | `/requests/{id}/refresh` | POST | `payments.record.write` |
 | `/requests/{id}/cancel` | POST | `payments.record.write` |
 | `/payments/{payment_id}/gateway-info` | GET | `payments.record.read` |
+| `/payments/gateway-info/batch` | POST | `payments.record.read` |
 | `/refunds` | POST | `payments.record.refund` |
 | `/refunds/{id}` | GET | `payments.record.read` |
 | `/payments/{payment_id}/refunds` | GET | `payments.record.read` |

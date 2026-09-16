@@ -57,6 +57,24 @@ class RazorpaySettingsService:
         if "is_active" in data and data["is_active"] is not None:
             settings.is_active = data["is_active"]
 
+        # Checked against the *merged* (persisted + incoming) state, not
+        # just the incoming payload — a request that only changes `mode`
+        # must still be checked against whatever `key_id` is already
+        # saved. Razorpay's own key prefix already encodes the
+        # environment, so a mismatch here would silently collect in test
+        # mode while the UI claims live (or vice versa).
+        if settings.key_id:
+            if settings.mode == "live" and settings.key_id.startswith("rzp_test_"):
+                raise ValueError(
+                    "Live mode requires a key starting with 'rzp_live_'. "
+                    "Your current key starts with 'rzp_test_'."
+                )
+            if settings.mode == "test" and settings.key_id.startswith("rzp_live_"):
+                raise ValueError(
+                    "Test mode requires a key starting with 'rzp_test_'. "
+                    "Your current key starts with 'rzp_live_'."
+                )
+
         # Credential change resets verification — mirrors KapsoService:
         # a new key pair hasn't been proven to work yet.
         if data.get("key_secret") or data.get("key_id") or data.get("mode"):

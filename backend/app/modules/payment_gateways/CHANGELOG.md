@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- feat(#439/#445): `POST /payments/gateway-info/batch` — the same
+  `get_for_payment` lookup as `GET /payments/{id}/gateway-info`, batched
+  for a page of the payments list (up to 100 ids per call) instead of
+  one round trip per gateway-collected row.
+- fix(#470 review): `PaymentRequestService.confirm()` now books
+  `payment_date` on the clinic's own calendar date — converting
+  `confirmation.captured_at` into the clinic's timezone before calling
+  `.date()`, instead of the capture instant's raw UTC date (a capture
+  just after midnight local time was landing on the previous day).
 - Initial implementation (#263, PR 1 of #365): provider-neutral gateway
   adapter contract (`GatewayAdapter` Protocol + typed request/result
   dataclasses) and process-wide registry, mirroring

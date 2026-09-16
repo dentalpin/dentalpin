@@ -21,6 +21,7 @@ import type {
   PaymentMethod,
   PaymentRecord
 } from '~~/app/types'
+import { clinicToday } from '~~/app/utils/wallClock'
 
 /**
  * A collection rail contributed by a gateway module through the
@@ -130,7 +131,9 @@ function buildInitialForm() {
     patient_id: props.defaultPatientId || '',
     amount: Number(props.defaultAmount ?? 0),
     method: 'cash' as PaymentMethod,
-    payment_date: new Date().toISOString().slice(0, 10),
+    // Clinic-local calendar date, not the browser's UTC date (#439/#445
+    // review follow-up) — `currentClinic` is already resolved above.
+    payment_date: clinicToday(currentClinic.value?.timezone),
     reference: '',
     notes: '',
     allocations: buildInitialAllocations()
@@ -239,7 +242,7 @@ const suggestedDiffers = computed(() => {
 })
 
 const isToday = computed(() =>
-  form.value.payment_date === new Date().toISOString().slice(0, 10)
+  form.value.payment_date === clinicToday(currentClinic.value?.timezone)
 )
 
 function applySuggestion() {

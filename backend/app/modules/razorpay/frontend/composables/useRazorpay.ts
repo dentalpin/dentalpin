@@ -143,6 +143,17 @@ export function useRazorpay() {
     return res.data
   }
 
+  // Keyed by payment id (string) — payments with no gateway request
+  // (manually recorded) are simply absent from the result, same as
+  // `getGatewayInfo` returning `{ request: null, refund_requests: [] }`.
+  async function getGatewayInfoBatch(paymentIds: string[]) {
+    const res = await api.post<ApiResponse<Record<string, GatewayInfo>>>(
+      '/api/v1/payment_gateways/payments/gateway-info/batch',
+      { payment_ids: paymentIds }
+    )
+    return res.data
+  }
+
   async function createGatewayRefund(payload: {
     payment_id: string
     amount: number
@@ -166,6 +177,7 @@ export function useRazorpay() {
     refreshPaymentRequest,
     cancelPaymentRequest,
     getGatewayInfo,
+    getGatewayInfoBatch,
     createGatewayRefund,
     getGatewayRefund
   }

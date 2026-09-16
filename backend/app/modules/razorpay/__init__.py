@@ -39,7 +39,7 @@ class RazorpayModule(BaseModule):
         "name": "razorpay",
         "version": "0.1.0",
         "summary": "Razorpay payment gateway — UPI, QR, cards, and payment links for India clinics.",
-        "author": "DentalPin Core Team",
+        "author": "tresundios",
         "license": "BSL-1.1",
         "category": "official",
         "depends": ["payment_gateways"],

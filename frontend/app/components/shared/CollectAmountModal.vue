@@ -11,6 +11,7 @@
  */
 
 import type { PaymentMethod } from '~~/app/types'
+import { clinicToday } from '~~/app/utils/wallClock'
 
 interface Props {
   open: boolean
@@ -68,7 +69,11 @@ const METHODS = computed<MethodOption[]>(() => [
   { value: 'other', icon: 'i-lucide-more-horizontal' }
 ])
 
-const todayIso = () => new Date().toISOString().slice(0, 10)
+// Clinic-local calendar date, not the browser's UTC date (#439/#445
+// review follow-up) — a UTC-based default can silently roll to the
+// wrong day near local midnight when device and clinic timezone differ.
+const { currentClinic } = useClinic()
+const todayIso = () => clinicToday(currentClinic.value?.timezone)
 
 const buildInitial = () => ({
   amount: Math.max(0, Number(props.pendingAmount || 0)),
