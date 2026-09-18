@@ -2,6 +2,29 @@
 
 ## Unreleased
 
+### `patients:write` token scope
+
+- `SUPPORTED_TOKEN_SCOPES` now also admits `patients:write`
+  (`triggers.py`). First consumer is the MCP module
+  (`mcp` `create_patient`); the public REST API stays read-only.
+  This line supersedes the original "patients:read only" note below.
+
+### Shared token authentication
+
+- `IntegrationsService.authenticate_token(db, plaintext)` — the single
+  shared entry point for every `dp_` token consumer. Resolves a plaintext
+  to its active (unrevoked) `ApiToken` row, or `None` (unknown prefix /
+  unknown hash / revoked); on success it enforces the per-token
+  fixed-window rate limit (60/min + 1000/day, in-process; raises the new
+  `RateLimitError` when over) and stamps `last_used_at`. The caller owns
+  the commit.
+- `public.py`'s `get_api_token_context` now delegates to the helper
+  (removing its inline hash lookup) and maps `RateLimitError` to 429 with
+  `X-RateLimit-*` headers from the shared limiter.
+- The `mcp` module authenticates through the same helper, so MCP traffic
+  is rate-limited per token and shows up in `last_used_at` too (see the
+  `mcp` CHANGELOG).
+
 ### CI hygiene (ruff 0.16.5 drift)
 
 - Reformatted the two multi-line `client.get(...)` calls in

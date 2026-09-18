@@ -40,6 +40,10 @@ Authenticated with `Authorization: Bearer dp_...` against the token's
 - `GET /api/v1/integrations/public/patients/{patient_id}` — get one.
   Requires scope: `patients:read`.
 
+Tokens may also carry `patients:write`, which is consumed by the MCP
+module (`create_patient` — see `docs/technical/mcp/overview.md`) rather
+than any endpoint under `/public/`.
+
 Response: `PublicPatientResponse` — curated PII subset (id, names, contact,
 national_id, date_of_birth, status; no billing fields, no notes).
 

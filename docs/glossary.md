@@ -133,5 +133,7 @@ ADRs) for the full story.
 | Event type | A constant in `backend/app/core/events/types.py` `EventType`. Naming convention `entity.action` (e.g. `patient.created`). |
 | Tool | An action a module exposes to AI agents via `get_tools()`. Mandatory for write-capable modules. Namespaced as `<module>.<tool_name>`. |
 | Agent | A `BaseAgent` subclass a module ships, registered via `get_agents()`. |
+| API token (`dp_`) | Machine credential issued by the integrations module (SHA-256 hashed, scoped, revocable). Authenticates the public data API and the MCP surface — never a staff JWT. |
+| MCP | Model Context Protocol. The `mcp` module mounts a streamable-HTTP MCP server at `/api/v1/mcp/` re-exposing curated registry tools (read via `patients:read`, create via `patients:write`) behind `dp_` tokens. See `docs/technical/mcp/overview.md`, ADR 0037. |
 | Reference module | A module marked as canonical example others should copy. Today: `patients` (foundational), `schedules` (removable, isolation-critical), `treatment_plan` (heavy deps). |
 | Frontend layer | The `frontend/` subdir inside a backend module. Loaded as a Nuxt layer. |

@@ -8,8 +8,10 @@ against the token's scopes and read clinic data without a staff account.
 Design notes:
 - Scope enforcement is a dependency factory (``require_scope``) mirroring
   ``require_permission``'s shutdown — a token missing the scope gets 403.
-- Rate limiting is a per-token fixed window (per-minute + per-day),
-  surfaced in ``X-RateLimit-*`` response headers and enforced with 429.
+- Token *authentication* (lookup, revoked check, per-token fixed-window
+  rate limit, ``last_used_at`` stamp) is shared with the MCP module via
+  ``IntegrationsService.authenticate_token``; this router surfaces the
+  ``X-RateLimit-*`` headers and maps the shared ``RateLimitExceeded`` to 429.
   In-memory per claim-process — a multi-worker deployment shares nothing
   here; documented limitation, same as any other in-process limiter.
 - Read paths reuse ``PatientService`` (patients is in ``manifest.depends``)
@@ -19,8 +21,6 @@ Design notes:
 
 from __future__ import annotations
 
-import time
-from datetime import UTC, datetime
 from typing import Annotated
 from uuid import UUID
 
@@ -35,32 +35,9 @@ from ..patients.models import Patient
 from ..patients.service import PatientService
 from .models import ApiToken
 from .schemas import PublicPatientResponse, PublicTokenInfo
-from .service import _TOKEN_PREFIX, _hash_token
+from .service import IntegrationsService, RateLimitError
 
 public_router = APIRouter()
-
-# Per-token fixed-window rate limits (issue #65 §2: "per token, per minute
-# + per day, surfaced in headers"). In-memory per process — see module
-# docstring.
-RATE_LIMIT_PER_MINUTE = 60
-RATE_LIMIT_PER_DAY = 1000
-
-_WINDOW_SECONDS_MINUTE = 60
-_WINDOW_SECONDS_DAY = 86400
-
-
-class _RateWindow:
-    __slots__ = ("start", "count")
-
-    def __init__(self) -> None:
-        self.start = int(time.time())
-        self.count = 0
-
-
-# token_id -> per-window counters. Bounded by the number of tokens a clinic
-# issues; entries are reset (not deleted) on window rollover so this never
-# grows unboundedly.
-_rate_windows: dict[UUID, dict[str, _RateWindow]] = {}
 
 
 class PublicTokenContext:
@@ -71,38 +48,6 @@ class PublicTokenContext:
         self.clinic_id = token.clinic_id
         self.scopes = token.scopes or []
         self.rate_headers = rate_headers
-
-
-def _rate_limit(token_id: UUID) -> dict[str, str]:
-    """Fixed-window check; raises 429 when over. Returns header values."""
-    now = int(time.time())
-    windows = _rate_windows.setdefault(token_id, {})
-
-    minute = windows.setdefault("minute", _RateWindow())
-    day = windows.setdefault("day", _RateWindow())
-
-    if now - minute.start >= _WINDOW_SECONDS_MINUTE:
-        minute.start, minute.count = now, 0
-    if now - day.start >= _WINDOW_SECONDS_DAY:
-        day.start, day.count = now, 0
-
-    minute.count += 1
-    day.count += 1
-
-    if minute.count > RATE_LIMIT_PER_MINUTE or day.count > RATE_LIMIT_PER_DAY:
-        raise HTTPException(
-            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
-            detail="Rate limit exceeded for this API token.",
-            headers={"Retry-After": str(_WINDOW_SECONDS_MINUTE)},
-        )
-
-    return {
-        "X-RateLimit-Limit-Minute": str(RATE_LIMIT_PER_MINUTE),
-        "X-RateLimit-Remaining-Minute": str(RATE_LIMIT_PER_MINUTE - minute.count),
-        "X-RateLimit-Limit-Day": str(RATE_LIMIT_PER_DAY),
-        "X-RateLimit-Remaining-Day": str(RATE_LIMIT_PER_DAY - day.count),
-        "X-RateLimit-Reset": str(minute.start + _WINDOW_SECONDS_MINUTE),
-    }
 
 
 async def get_api_token_context(
@@ -117,29 +62,25 @@ async def get_api_token_context(
             headers={"WWW-Authenticate": "Bearer"},
         )
     plaintext = authorization.removeprefix("Bearer ").strip()
-    if not plaintext.startswith(_TOKEN_PREFIX):
+
+    try:
+        auth = await IntegrationsService.authenticate_token(db, plaintext)
+    except RateLimitError as exc:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid token.",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+            status_code=status.HTTP_429_TOO_MANY_REQUESTS,
+            detail="Rate limit exceeded for this API token.",
+            headers={"Retry-After": str(exc.retry_after_seconds)},
+        ) from exc
 
-    token = (
-        await db.execute(select(ApiToken).where(ApiToken.token_hash == _hash_token(plaintext)))
-    ).scalar_one_or_none()
-
-    if token is None or token.revoked_at is not None:
+    if auth is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid or revoked token.",
             headers={"WWW-Authenticate": "Bearer"},
         )
-
-    rate_headers = _rate_limit(token.id)
-    # Usage tracking for the admin token list — committed with the
-    # request's session on success.
-    token.last_used_at = datetime.now(UTC)
-    return PublicTokenContext(token=token, rate_headers=rate_headers)
+    # ``last_used_at`` stamping happens inside the helper; it is committed
+    # with the request's session on success.
+    return PublicTokenContext(token=auth.token, rate_headers=auth.rate_headers)
 
 
 def require_scope(scope: str):

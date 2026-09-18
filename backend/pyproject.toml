@@ -56,6 +56,7 @@ dependencies = [
     "sentry-sdk>=2.0.0",
     # WebPush channel (notifications): push delivery to patient browsers.
     "pywebpush>=1.14.0",
+    "mcp>=1.0",
 ]
 
 [project.optional-dependencies]
@@ -90,6 +91,7 @@ patient_relationships = "app.modules.patient_relationships:PatientRelationshipsM
 recall_reminders = "app.modules.recall_reminders:RecallRemindersModule"
 contacts = "app.modules.contacts:ContactsModule"
 integrations = "app.modules.integrations:IntegrationsModule"
+mcp = "app.modules.mcp:MCPModule"
 staff_tasks = "app.modules.staff_tasks:StaffTasksModule"
 medical_reference = "app.modules.medical_reference:MedicalReferenceModule"
 inventory = "app.modules.inventory:InventoryModule"
