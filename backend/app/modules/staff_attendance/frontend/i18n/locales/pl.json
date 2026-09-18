@@ -1,0 +1,19 @@
+{
+  "staffAttendance": {
+    "nav": { "title": "Obecność" },
+    "title": "Obecność personelu",
+    "clockTitle": "Zamelduj wejście / wyjście",
+    "member": "Członek personelu",
+    "pickMember": "Wybierz osobę",
+    "note": "Notatka",
+    "notePlaceholder": "Opcjonalna notatka",
+    "clockIn": "Zamelduj wejście",
+    "clockOut": "Zamelduj wyjście",
+    "today": "Dziś",
+    "noEvents": "Brak meldunków tego dnia.",
+    "report": "Raport dzienny",
+    "openShift": "wciąż na miejscu",
+    "in": "Wejście",
+    "out": "Wyjście"
+  }
+}

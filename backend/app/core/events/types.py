@@ -288,6 +288,12 @@ class EventType:
     STAFF_TASK_CREATED = "staff_task.created"
     STAFF_TASK_STATUS_CHANGED = "staff_task.status_changed"
 
+    # Staff attendance events (staff_attendance module — clock in/out).
+    # STAFF_ATTENDANCE_CLOCKED fires on every punch, published in the
+    # same transaction (ADR 0019, db=db). Payload: (clinic_id, event_id,
+    # user_id, kind, created_by).
+    STAFF_ATTENDANCE_CLOCKED = "staff_attendance.clocked"
+
     # Purchase order events (purchase_orders module — procurement execution
     # layer, roadmap #227). PUBLISHED in the same transaction as the change
     # (ADR 0019). No bundled subscriber today; `inventory_reorder` (#227-4)

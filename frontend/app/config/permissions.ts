@@ -255,5 +255,9 @@ export const PERMISSIONS = {
   patientSegments: {
     read: 'patient_segments.read',
     write: 'patient_segments.write'
+  },
+  staffAttendance: {
+    read: 'staff_attendance.read',
+    write: 'staff_attendance.write'
   }
 } as const

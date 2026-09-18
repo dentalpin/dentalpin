@@ -11,7 +11,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | Module | Version | Category | Depends | Install | Removable | Permissions | Emits | Consumes | FE layer |
 |--------|---------|----------|---------|---------|-----------|-------------|-------|----------|----------|
 | `accounting_export` | 0.1.0 | official | billing, payments | manual | yes | 2 | 0 | 0 | yes |
-| `activity_journal` | 0.1.0 | community | — | manual | yes | 1 | 0 | 26 | yes |
+| `activity_journal` | 0.1.0 | community | — | manual | yes | 1 | 0 | 27 | yes |
 | `agenda` | 0.4.0 | official | patients, catalog, odontogram | auto | no | 4 | 11 | 1 | yes |
 | `billing` | 0.1.0 | official | patients, catalog, budget, payments | auto | no | 3 | 3 | 3 | yes |
 | `budget` | 0.1.0 | official | patients, catalog, odontogram | auto | no | 5 | 9 | 3 | yes |
@@ -52,6 +52,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `sdi_it` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
 | `sistema_ts` | 0.1.0 | official | billing, patients, catalog, payments | manual | yes | 6 | 0 | 0 | yes |
 | `sms_gateway` | 0.1.0 | community | notifications | manual | yes | 2 | 0 | 0 | yes |
+| `staff_attendance` | 0.1.0 | community | — | manual | yes | 2 | 1 | 0 | yes |
 | `staff_tasks` | 0.1.0 | community | — | manual | yes | 2 | 2 | 0 | yes |
 | `supplier_items` | 0.1.0 | official | contacts, inventory, suppliers | manual | yes | 2 | 0 | 0 | no |
 | `supplier_ratings` | 0.1.0 | official | contacts, purchase_orders | manual | yes | 2 | 0 | 0 | no |
@@ -118,6 +119,7 @@ Append-only staff activity log recorded from module events.
   - `payment.allocated`
   - `payment.refunded`
   - `recall.created`
+  - `staff_attendance.clocked`
   - `treatment_plan.budget_sync_requested`
   - `treatment_plan.item_session_completed`
   - `treatment_plan.treatment_added`
@@ -1018,6 +1020,24 @@ SMS delivery for notifications via pluggable providers.
 - **Events emitted:** —
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/sms_gateway/CLAUDE.md`](../backend/app/modules/sms_gateway/CLAUDE.md)
+
+### `staff_attendance` — v0.1.0
+
+Clock in/out events, current state, and daily pairing report.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** —
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `staff_attendance.read`
+  - `staff_attendance.write`
+- **Events emitted:**
+  - `staff_attendance.clocked`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/staff_attendance/CLAUDE.md`](../backend/app/modules/staff_attendance/CLAUDE.md)
 
 ### `staff_tasks` — v0.1.0
 

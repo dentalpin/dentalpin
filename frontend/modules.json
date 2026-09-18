@@ -38,6 +38,7 @@
     "/module_layers/sdi_it/frontend",
     "/module_layers/sistema_ts/frontend",
     "/module_layers/sms_gateway/frontend",
+    "/module_layers/staff_attendance/frontend",
     "/module_layers/staff_tasks/frontend",
     "/module_layers/telephony/frontend",
     "/module_layers/treatment_consumables/frontend",
@@ -302,6 +303,13 @@
       "name": "sms_gateway",
       "path": "/module_layers/sms_gateway/frontend",
       "routes": []
+    },
+    {
+      "name": "staff_attendance",
+      "path": "/module_layers/staff_attendance/frontend",
+      "routes": [
+        "/attendance"
+      ]
     },
     {
       "name": "staff_tasks",

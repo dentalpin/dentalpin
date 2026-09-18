@@ -58,6 +58,8 @@ _SUBSCRIBED = [
     EventType.TREATMENT_PLAN_BUDGET_SYNC_REQUESTED,
     # Documents — generated PDFs (publisher passes db=db).
     EventType.DOCUMENT_GENERATED,
+    # Staff attendance — clock punches (publisher passes db=db).
+    EventType.STAFF_ATTENDANCE_CLOCKED,
 ]
 
 

@@ -112,6 +112,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `recall.created` | `EventType.RECALL_CREATED` | `recalls` | `activity_journal`, `recall_reminders` |
 | `recall.due` | `EventType.RECALL_DUE` | — | — |
 | `recall.snoozed` | `EventType.RECALL_SNOOZED` | `recalls` | — |
+| `staff_attendance.clocked` | `EventType.STAFF_ATTENDANCE_CLOCKED` | `staff_attendance` | `activity_journal` |
 | `staff_task.created` | `EventType.STAFF_TASK_CREATED` | `staff_tasks` | — |
 | `staff_task.status_changed` | `EventType.STAFF_TASK_STATUS_CHANGED` | `staff_tasks` | — |
 | `tenant.resolved` | `EventType.TENANT_RESOLVED` | — | — |
@@ -930,6 +931,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Publishers:**
   - `recalls` — `backend/app/modules/recalls/service.py`
 - **Subscribers:** —
+
+### `staff_attendance.clocked`
+
+- **Constant:** `EventType.STAFF_ATTENDANCE_CLOCKED`
+- **Publishers:**
+  - `staff_attendance` — `backend/app/modules/staff_attendance/service.py`
+- **Subscribers:**
+  - `activity_journal`
 
 ### `staff_task.created`
 
