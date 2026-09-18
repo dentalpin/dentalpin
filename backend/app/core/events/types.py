@@ -165,6 +165,11 @@ class EventType:
     PAIR_CREATED = "media.pair_created"
     PAIR_REMOVED = "media.pair_removed"
 
+    # Clinical prescriptions (issue #269). Payload: (prescription_id,
+    # clinic_id, patient_id). Consumed by patient_timeline.
+    PRESCRIPTION_ISSUED = "prescription.issued"
+    PRESCRIPTION_CANCELLED = "prescription.cancelled"
+
     # Treatment plan events
     TREATMENT_PLAN_CREATED = "treatment_plan.created"
     TREATMENT_PLAN_STATUS_CHANGED = "treatment_plan.status_changed"

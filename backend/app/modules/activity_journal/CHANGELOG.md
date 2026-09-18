@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Subscribe to `prescription.issued` / `prescription.cancelled` (the
+  prescriptions module publishes both transactionally with `db=db`),
+  so issue/cancel lifecycle lands in the journal.
+
 - feat(#232): sidebar entry grouped under the Practice header (`nav.section` "practice").
 - Subscribe to `document.generated` (the documents module publishes it
   transactionally with `db=db`), so generated PDFs land in the journal

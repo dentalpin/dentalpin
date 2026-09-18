@@ -28,6 +28,7 @@ ADRs) for the full story.
 | Dentist | Dentista | Role with full clinical access. |
 | Assistant | Asistente | Operative role; full patient + appointment access, no clinical writes. |
 | Receptionist | Recepcionista | Front-desk role; patients + appointments. |
+| Prescription | Receta | A clinical medication order: draft → issued → cancelled, with prescriber snapshot, safety warnings and locale-aware PDF. No hard deletes. |
 
 ## Imaging (issue #55)
 

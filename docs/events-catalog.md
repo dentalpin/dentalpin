@@ -104,6 +104,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `payroll.period.status_changed` | `EventType.PAYROLL_PERIOD_STATUS_CHANGED` | `payroll` | — |
 | `payroll.profile.updated` | `EventType.PAYROLL_PROFILE_UPDATED` | `payroll` | — |
 | `periodontogram.snapshot.closed` | `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED` | `periodontogram` | — |
+| `prescription.cancelled` | `EventType.PRESCRIPTION_CANCELLED` | `prescriptions` | `activity_journal`, `patient_timeline` |
+| `prescription.issued` | `EventType.PRESCRIPTION_ISSUED` | `prescriptions` | `activity_journal`, `patient_timeline` |
 | `purchase_order.created` | `EventType.PURCHASE_ORDER_CREATED` | `purchase_orders` | — |
 | `purchase_order.received` | `EventType.PURCHASE_ORDER_RECEIVED` | `purchase_orders` | — |
 | `purchase_order.status_changed` | `EventType.PURCHASE_ORDER_STATUS_CHANGED` | `purchase_orders` | — |
@@ -873,6 +875,24 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Publishers:**
   - `periodontogram` — `backend/app/modules/periodontogram/service.py`
 - **Subscribers:** —
+
+### `prescription.cancelled`
+
+- **Constant:** `EventType.PRESCRIPTION_CANCELLED`
+- **Publishers:**
+  - `prescriptions` — `backend/app/modules/prescriptions/service.py`
+- **Subscribers:**
+  - `activity_journal`
+  - `patient_timeline`
+
+### `prescription.issued`
+
+- **Constant:** `EventType.PRESCRIPTION_ISSUED`
+- **Publishers:**
+  - `prescriptions` — `backend/app/modules/prescriptions/service.py`
+- **Subscribers:**
+  - `activity_journal`
+  - `patient_timeline`
 
 ### `purchase_order.created`
 

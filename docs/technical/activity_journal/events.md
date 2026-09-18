@@ -23,6 +23,7 @@ re-run it whenever adding events.
 | `lab_order.*` | `status_changed` |
 | `treatment_plan.*` | `treatment_added`, `treatment_removed`, `item_session_completed`, `budget_sync_requested` |
 | `document.*` | `generated` |
+| `prescription.*` | `issued`, `cancelled` |
 
 ## Deliberately NOT subscribed
 
