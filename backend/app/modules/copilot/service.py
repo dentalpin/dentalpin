@@ -11,18 +11,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings as app_settings
 from app.core.agents.models import Agent, AgentAuditLog
-from app.core.llm.base import ContentBlock
+from app.core.llm.base import ContentBlock, LLMConfigError
+from app.core.llm.factory import get_configured_api_key, get_provider_spec
 
 from .models import CopilotConversation, CopilotMessage, CopilotNudge, CopilotSettings
 from .serde import content_to_json
 
 # agent_audit_logs.status values that count as a failed tool call.
 _FAILED_STATUSES = ("FAILED", "BLOCKED")
-
-_DEFAULT_MODEL_BY_PROVIDER = {
-    "openai": app_settings.COPILOT_MODEL_CHAT_OPENAI,
-    "anthropic": app_settings.COPILOT_MODEL_CHAT_ANTHROPIC,
-}
 
 
 class CopilotSettingsService:
@@ -33,10 +29,11 @@ class CopilotSettingsService:
         row = await db.get(CopilotSettings, clinic_id)
         if row is not None:
             return CopilotSettingsService._roll_period(row)
+        default_spec = get_provider_spec(app_settings.COPILOT_PROVIDER_DEFAULT)
         row = CopilotSettings(
             clinic_id=clinic_id,
-            provider=app_settings.COPILOT_PROVIDER_DEFAULT,
-            model=app_settings.COPILOT_MODEL_CHAT_OPENAI,
+            provider=default_spec.name,
+            model=default_spec.default_model,
             redaction_enabled=app_settings.COPILOT_REDACTION_DEFAULT,
             period_start=datetime.now(UTC).date().replace(day=1),
         )
@@ -66,19 +63,20 @@ class CopilotSettingsService:
         # Validate only when the caller is changing the provider; otherwise a
         # digest-only PATCH would fail on clinics whose stored provider is
         # "openai" but whose deployment has no key (the digest is no-LLM).
-        if data.get("provider") == "openai" and not app_settings.OPENAI_API_KEY:
-            raise ValueError("OpenAI provider selected but OPENAI_API_KEY is not configured")
-        if data.get("provider") == "anthropic" and not app_settings.ANTHROPIC_API_KEY:
-            raise ValueError("Anthropic provider selected but ANTHROPIC_API_KEY is not configured")
-        # Switching provider without naming a model would leave the other
-        # vendor's model id behind — fall back to the new provider's default.
-        if (
-            data.get("provider")
-            and data["provider"] != row.provider
-            and not data.get("model")
-            and data["provider"] in _DEFAULT_MODEL_BY_PROVIDER
-        ):
-            data = {**data, "model": _DEFAULT_MODEL_BY_PROVIDER[data["provider"]]}
+        provider_name = data.get("provider")
+        if provider_name is not None:
+            try:
+                spec = get_provider_spec(provider_name)
+            except LLMConfigError as exc:
+                raise ValueError(str(exc)) from exc
+            if spec.needs_api_key and not get_configured_api_key(spec):
+                raise ValueError(
+                    f"{spec.label} provider selected but {spec.api_key_setting} is not configured"
+                )
+            # Switching provider without naming a model would leave the other
+            # vendor's model id behind — use the registered provider's default.
+            if provider_name != row.provider and not data.get("model"):
+                data = {**data, "model": spec.default_model}
         for field in (
             "provider",
             "model",

@@ -11,6 +11,7 @@ fixtures must be committed before invoking it.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from datetime import UTC, datetime
 
 import pytest
@@ -19,8 +20,11 @@ from httpx import AsyncClient
 from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings as app_settings
 from app.core.events import event_bus
 from app.core.events.types import EventType
+from app.core.llm.factory import ANTHROPIC_SPEC
+from app.core.llm.registry import llm_provider_registry
 from app.database import engine
 from app.modules.copilot.service import CopilotSettingsService
 from app.modules.copilot.tasks import send_morning_digests
@@ -70,8 +74,6 @@ async def test_settings_patch_digest_only_does_not_require_openai_key(
     client: AsyncClient, auth_headers: dict, test_clinic, monkeypatch
 ) -> None:
     """Digest opt-in is no-LLM: must work even when OPENAI_API_KEY is unset."""
-    from app.config import settings as app_settings
-
     monkeypatch.setattr(app_settings, "OPENAI_API_KEY", "")
     res = await client.patch(
         "/api/v1/copilot/settings",
@@ -85,8 +87,6 @@ async def test_settings_patch_digest_only_does_not_require_openai_key(
 async def test_settings_patch_provider_change_requires_openai_key(
     client: AsyncClient, auth_headers: dict, test_clinic, monkeypatch
 ) -> None:
-    from app.config import settings as app_settings
-
     monkeypatch.setattr(app_settings, "OPENAI_API_KEY", "")
     res = await client.patch(
         "/api/v1/copilot/settings",
@@ -101,8 +101,6 @@ async def test_settings_patch_provider_change_requires_openai_key(
 async def test_settings_patch_provider_change_requires_anthropic_key(
     client: AsyncClient, auth_headers: dict, test_clinic, monkeypatch
 ) -> None:
-    from app.config import settings as app_settings
-
     monkeypatch.setattr(app_settings, "ANTHROPIC_API_KEY", "")
     res = await client.patch(
         "/api/v1/copilot/settings",
@@ -118,8 +116,6 @@ async def test_settings_patch_provider_switch_defaults_model(
     client: AsyncClient, auth_headers: dict, test_clinic, monkeypatch
 ) -> None:
     """Switching provider without naming a model must not keep the other vendor's model id."""
-    from app.config import settings as app_settings
-
     monkeypatch.setattr(app_settings, "ANTHROPIC_API_KEY", "test-key")
     res = await client.patch(
         "/api/v1/copilot/settings",
@@ -130,6 +126,41 @@ async def test_settings_patch_provider_switch_defaults_model(
     body = res.json()["data"]
     assert body["provider"] == "anthropic"
     assert body["model"] == app_settings.COPILOT_MODEL_CHAT_ANTHROPIC
+
+
+@pytest.mark.asyncio
+async def test_settings_patch_uses_registered_provider_metadata(
+    client: AsyncClient, auth_headers: dict, test_clinic, monkeypatch
+) -> None:
+    spec = replace(
+        ANTHROPIC_SPEC,
+        name="registry-test",
+        label="Registry Test",
+        default_model="registry-default-model",
+    )
+    llm_provider_registry.register(spec)
+    monkeypatch.setattr(app_settings, "ANTHROPIC_API_KEY", "")
+
+    try:
+        response = await client.patch(
+            "/api/v1/copilot/settings",
+            json={"provider": spec.name},
+            headers=auth_headers,
+        )
+        assert response.status_code == 400
+        assert spec.api_key_setting is not None
+        assert spec.api_key_setting in response.text
+
+        monkeypatch.setattr(app_settings, "ANTHROPIC_API_KEY", "test-key")
+        response = await client.patch(
+            "/api/v1/copilot/settings",
+            json={"provider": spec.name},
+            headers=auth_headers,
+        )
+        assert response.status_code == 200, response.text
+        assert response.json()["data"]["model"] == spec.default_model
+    finally:
+        llm_provider_registry.unregister(spec.name)
 
 
 @pytest.mark.asyncio
