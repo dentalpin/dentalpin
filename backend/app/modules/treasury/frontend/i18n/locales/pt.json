@@ -1,0 +1,30 @@
+{
+  "treasury": {
+    "nav": { "title": "Tesouraria" },
+    "title": "Tesouraria",
+    "newAccount": "Nova conta",
+    "transfer": "Transferir",
+    "correct": "Corrigir",
+    "correctionDirection": "Direção",
+    "accounts": "Contas",
+    "noAccounts": "Ainda sem contas.",
+    "statement": "Movimentos",
+    "noEntries": "Ainda sem movimentos.",
+    "accountName": "Nome da conta",
+    "accountKind": "Tipo",
+    "kindCash": "Numerário",
+    "kindBank": "Banco",
+    "create": "Criar",
+    "fromAccount": "Conta de origem",
+    "toAccount": "Conta de destino",
+    "amount": "Montante",
+    "memo": "Descrição (opcional)",
+    "kind": {
+      "transfer_out": "Saída por transferência",
+      "transfer_in": "Entrada por transferência",
+      "correction_in": "Correção de entrada",
+      "correction_out": "Correção de saída",
+      "opening": "Abertura"
+    }
+  }
+}

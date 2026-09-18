@@ -1,0 +1,30 @@
+{
+  "treasury": {
+    "nav": { "title": "கருவூலம்" },
+    "title": "கருவூலம்",
+    "newAccount": "புதிய கணக்கு",
+    "transfer": "மாற்று",
+    "correct": "திருத்து",
+    "correctionDirection": "திசை",
+    "accounts": "கணக்குகள்",
+    "noAccounts": "கணக்குகள் இல்லை.",
+    "statement": "பரிவர்த்தனைகள்",
+    "noEntries": "நகர்வுகள் இல்லை.",
+    "accountName": "கணக்குப் பெயர்",
+    "accountKind": "வகை",
+    "kindCash": "ரொக்கம்",
+    "kindBank": "வங்கி",
+    "create": "உருவாக்கு",
+    "fromAccount": "மூலக் கணக்கு",
+    "toAccount": "இலக்குக் கணக்கு",
+    "amount": "தொகை",
+    "memo": "குறிப்பு (விருப்பம்)",
+    "kind": {
+      "transfer_out": "மாற்று வெளியேற்றம்",
+      "transfer_in": "மாற்று உள்வரவு",
+      "correction_in": "திருத்த உள்வரவு",
+      "correction_out": "திருத்த வெளியேற்றம்",
+      "opening": "தொடக்கம்"
+    }
+  }
+}

@@ -255,5 +255,9 @@ export const PERMISSIONS = {
   patientSegments: {
     read: 'patient_segments.read',
     write: 'patient_segments.write'
+  },
+  treasury: {
+    read: 'treasury.read',
+    write: 'treasury.write'
   }
 } as const

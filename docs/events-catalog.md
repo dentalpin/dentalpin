@@ -115,6 +115,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `staff_task.created` | `EventType.STAFF_TASK_CREATED` | `staff_tasks` | — |
 | `staff_task.status_changed` | `EventType.STAFF_TASK_STATUS_CHANGED` | `staff_tasks` | — |
 | `tenant.resolved` | `EventType.TENANT_RESOLVED` | — | — |
+| `treasury.corrected` | `EventType.TREASURY_CORRECTED` | `treasury` | `activity_journal` |
+| `treasury.transferred` | `EventType.TREASURY_TRANSFERRED` | `treasury` | `activity_journal` |
 | `treatment.completed` | `EventType.TREATMENT_COMPLETED` | — | — |
 | `treatment_plan.budget_sync_requested` | `EventType.TREATMENT_PLAN_BUDGET_SYNC_REQUESTED` | `treatment_plan` | `activity_journal`, `budget` |
 | `treatment_plan.closed` | `EventType.TREATMENT_PLAN_CLOSED` | `treatment_plan` | `patient_timeline` |
@@ -950,6 +952,22 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.TENANT_RESOLVED`
 - **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
+
+### `treasury.corrected`
+
+- **Constant:** `EventType.TREASURY_CORRECTED`
+- **Publishers:**
+  - `treasury` — `backend/app/modules/treasury/service.py`
+- **Subscribers:**
+  - `activity_journal`
+
+### `treasury.transferred`
+
+- **Constant:** `EventType.TREASURY_TRANSFERRED`
+- **Publishers:**
+  - `treasury` — `backend/app/modules/treasury/service.py`
+- **Subscribers:**
+  - `activity_journal`
 
 ### `treatment.completed`
 

@@ -1,0 +1,30 @@
+{
+  "treasury": {
+    "nav": { "title": "Kasse" },
+    "title": "Kasse",
+    "newAccount": "Neues Konto",
+    "transfer": "Umbuchen",
+    "correct": "Korrigieren",
+    "correctionDirection": "Richtung",
+    "accounts": "Konten",
+    "noAccounts": "Noch keine Konten.",
+    "statement": "Buchungen",
+    "noEntries": "Noch keine Bewegungen.",
+    "accountName": "Kontoname",
+    "accountKind": "Art",
+    "kindCash": "Bargeld",
+    "kindBank": "Bank",
+    "create": "Anlegen",
+    "fromAccount": "Quellkonto",
+    "toAccount": "Zielkonto",
+    "amount": "Betrag",
+    "memo": "Vermerk (optional)",
+    "kind": {
+      "transfer_out": "Umbuchung Ausgang",
+      "transfer_in": "Umbuchung Eingang",
+      "correction_in": "Korrektur Eingang",
+      "correction_out": "Korrektur Ausgang",
+      "opening": "Eröffnung"
+    }
+  }
+}

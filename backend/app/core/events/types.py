@@ -297,6 +297,13 @@ class EventType:
     PURCHASE_ORDER_STATUS_CHANGED = "purchase_order.status_changed"
     PURCHASE_ORDER_RECEIVED = "purchase_order.received"
 
+    # Treasury events (treasury module — cash/bank movements).
+    # Published in the same transaction (ADR 0019, db=db). Payload:
+    # (clinic_id, account_id, amount, created_by); transfers also carry
+    # group_id, corrections carry direction + memo.
+    TREASURY_TRANSFERRED = "treasury.transferred"
+    TREASURY_CORRECTED = "treasury.corrected"
+
     # Telephony events (telephony module — CTI screen-pop + call log,
     # issue #64). Fired by the inbound CTI webhook after normalization
     # and caller→patient matching. Payload: (clinic_id, call_log_id,
