@@ -65,7 +65,8 @@
       "name": "agenda",
       "path": "/module_layers/agenda/frontend",
       "routes": [
-        "/appointments"
+        "/appointments",
+        "/p/check-in/:token"
       ]
     },
     {

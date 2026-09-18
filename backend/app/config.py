@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     # convenience, but production deploys must set it explicitly so a
     # leak of one key does not compromise the other.
     BUDGET_PUBLIC_SECRET_KEY: str = ""
+    # Independent secret used to sign QR check-in tokens (agenda). Falls
+    # back to ``SECRET_KEY`` for local/dev convenience, but production
+    # deploys must set it explicitly so a printed token never shares a
+    # key with the session tokens.
+    AGENDA_PUBLIC_SECRET_KEY: str = ""
 
     # Environment
     ENVIRONMENT: str = "development"

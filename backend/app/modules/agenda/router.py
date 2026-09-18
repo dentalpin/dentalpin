@@ -9,17 +9,26 @@ into their own table + permission namespace.
 from datetime import date as date_type
 from datetime import datetime
 from typing import Annotated
+from urllib.parse import urlparse
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.auth.router import limiter
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
+from .checkin import (
+    CheckinTokenError,
+    mint_checkin_token,
+    render_checkin_qr,
+    verify_checkin_token,
+)
 from .kanban_service import KanbanDayService
 from .models import Appointment
 from .schemas import (
@@ -35,6 +44,8 @@ from .schemas import (
     CabinetCreate,
     CabinetResponse,
     CabinetUpdate,
+    CheckinResultResponse,
+    CheckinTokenResponse,
     KanbanDaySnapshot,
 )
 from .service import (
@@ -580,3 +591,137 @@ async def update_appointment_treatment_note(
     if row is None:
         raise HTTPException(status_code=404, detail="Appointment treatment not found")
     return ApiResponse(data=AppointmentTreatmentResponse.model_validate(row))
+
+
+# --- QR check-in ---------------------------------------------------------
+# Signed short-lived tokens let patients check themselves in by scanning
+# a QR code — no account, no login. Minting/QR render stay behind
+# appointments.write; only the single-purpose consume endpoint is public
+# (rate-limited, minimal-PII response).
+
+
+def _checkin_base_url() -> str:
+    """Public origin check-in links and QR codes are built from.
+
+    Single source: the first configured ``ALLOWED_ORIGINS`` entry, so a
+    copied link and its QR can never point at different hosts. 422 when
+    unset or not an http(s) origin.
+    """
+    origins = settings.allowed_origins_list
+    if not origins:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="Set ALLOWED_ORIGINS to render check-in QR codes",
+        )
+    parsed = urlparse(origins[0])
+    if parsed.scheme not in ("http", "https") or not parsed.netloc:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail="ALLOWED_ORIGINS must hold http(s) origins",
+        )
+    return f"{parsed.scheme}://{parsed.netloc}"
+
+
+@router.post(
+    "/appointments/{appointment_id}/check-in-token",
+    response_model=ApiResponse[CheckinTokenResponse],
+)
+async def mint_appointment_checkin_token(
+    appointment_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("agenda.appointments.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[CheckinTokenResponse]:
+    """Mint a 15-minute QR check-in token for an appointment.
+
+    Returns the token plus the patient-facing URL, built server-side
+    with the same origin logic as the QR — the frontend builds no
+    check-in URLs at all, so link and QR cannot diverge.
+    """
+    appointment = await AppointmentService.get_appointment(db, ctx.clinic_id, appointment_id)
+    if appointment is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Appointment not found",
+        )
+    token, expires_at = mint_checkin_token(appointment.id, ctx.clinic_id)
+    url = f"{_checkin_base_url()}/p/check-in/{token}"
+    return ApiResponse(data=CheckinTokenResponse(token=token, expires_at=expires_at, url=url))
+
+
+@router.get("/appointments/{appointment_id}/check-in-qr")
+async def appointment_checkin_qr(
+    appointment_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("agenda.appointments.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> Response:
+    """Render the check-in QR as PNG.
+
+    The URL is built server-side from the first configured
+    ``ALLOWED_ORIGINS`` entry with the token as a path segment (never a
+    query string — proxies and Referer headers must not see it). The
+    mint endpoint returns the identical URL, so QR and copied link
+    always match.
+    """
+    appointment = await AppointmentService.get_appointment(db, ctx.clinic_id, appointment_id)
+    if appointment is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Appointment not found",
+        )
+    token, _ = mint_checkin_token(appointment.id, ctx.clinic_id)
+    png = render_checkin_qr(f"{_checkin_base_url()}/p/check-in/{token}")
+    return Response(content=png, media_type="image/png")
+
+
+@router.post(
+    "/public/check-in/{token}",
+    response_model=ApiResponse[CheckinResultResponse],
+)
+@limiter.limit("20/minute")
+@limiter.limit(
+    "5/15minute",
+    key_func=lambda request: str(request.path_params.get("token")),
+)
+async def public_appointment_checkin(
+    token: str,
+    request: Request,
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[CheckinResultResponse]:
+    """Consume a QR check-in token (unauthenticated, rate-limited).
+
+    The token rides the path (never a query string) so proxies and
+    Referer headers cannot pick it up. Per-IP and per-token limits apply.
+    Transitions scheduled/confirmed → checked_in through the canonical
+    status machine so events fire. Re-scanning an already checked-in
+    appointment returns 200 with the current status (never an error) —
+    the token stays replayable for its full fifteen minutes, which is
+    defensible for an idempotent ``checked_in`` write and stated here
+    rather than left implicit; wrong-state tokens answer 422, bad/expired
+    tokens 401, unknown appointments 404 (no oracle beyond what the
+    token already encodes).
+    """
+    try:
+        appointment_id, clinic_id = verify_checkin_token(token)
+    except CheckinTokenError as e:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail=str(e),
+        ) from e
+    try:
+        appointment = await AppointmentService.public_checkin(db, appointment_id, clinic_id)
+    except KeyError:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Appointment not found",
+        ) from None
+    except (InvalidTransitionError, CabinetRequiredError) as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=str(e),
+        ) from e
+    await db.commit()
+    return ApiResponse(
+        data=CheckinResultResponse(appointment_id=appointment.id, status=appointment.status)
+    )

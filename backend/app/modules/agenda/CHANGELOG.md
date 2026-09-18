@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- feat: QR check-in - signed 15-minute tokens mint a QR (or link) that
+  lets patients check themselves in with no account (`POST
+  /appointments/{id}/check-in-token`, `GET .../check-in-qr`,
+  unauthenticated rate-limited `POST /public/check-in/{token}`, public
+  `/p/check-in/<token>` page with `layout: public`). The mint endpoint
+  returns the patient-facing URL built server-side from
+  `ALLOWED_ORIGINS`, so the copied link and the QR can never diverge.
+  Dedicated `AGENDA_PUBLIC_SECRET_KEY` (falls back to `SECRET_KEY`
+  outside production); `note="qr-checkin"` attribution; lean resolve
+  in `AppointmentService.public_checkin`; per-IP + per-token limits.
+  Consumes through the canonical status machine.
+
 - refactor(#337): `AppointmentTreatment` moved to treatment_plan — agenda no longer declares the model or constructs link rows; booking, eager loading and the visit-note lookup go through the planned-work provider, and the last cross-module FK allowlist entry is drained.
 
 - feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
