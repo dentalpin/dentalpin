@@ -27,6 +27,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `inventory` | 0.2.0 | community | — | manual | yes | 2 | 1 | 0 | yes |
 | `inventory_reorder` | 0.1.0 | official | contacts, inventory, suppliers, supplier_items, purchase_orders | manual | yes | 2 | 0 | 0 | no |
 | `lab_orders` | 0.1.0 | community | patients, contacts | manual | yes | 2 | 1 | 0 | yes |
+| `leads` | 0.1.0 | official | patients, recalls | manual | yes | 4 | 0 | 0 | yes |
 | `media` | 0.2.0 | official | patients | auto | no | 4 | 7 | 2 | yes |
 | `medical_reference` | 0.4.0 | community | patients_clinical, patients | manual | yes | 2 | 0 | 0 | yes |
 | `medication_catalog` | 0.1.0 | community | — | manual | yes | 2 | 0 | 1 | yes |
@@ -457,6 +458,25 @@ Track lab work orders per patient — from sent to received.
   - `lab_order.status_changed`
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/lab_orders/CLAUDE.md`](../backend/app/modules/lab_orders/CLAUDE.md)
+
+### `leads` — v0.1.0
+
+Inbound leads from external forms: new enquiries become leads, known patients become recalls.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `patients`, `recalls`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `leads.read`
+  - `leads.settings.read`
+  - `leads.settings.write`
+  - `leads.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/leads/CLAUDE.md`](../backend/app/modules/leads/CLAUDE.md)
 
 ### `media` — v0.2.0
 

@@ -14,6 +14,7 @@
     "/module_layers/india_gst/frontend",
     "/module_layers/inventory/frontend",
     "/module_layers/lab_orders/frontend",
+    "/module_layers/leads/frontend",
     "/module_layers/media/frontend",
     "/module_layers/medical_reference/frontend",
     "/module_layers/medication_catalog/frontend",
@@ -152,6 +153,13 @@
       "routes": [
         "/lab-orders",
         "/lab-orders/new"
+      ]
+    },
+    {
+      "name": "leads",
+      "path": "/module_layers/leads/frontend",
+      "routes": [
+        "/leads"
       ]
     },
     {
