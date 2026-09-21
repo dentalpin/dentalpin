@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(i18n): Use `Sobrenome` instead of `Apelido` for Portuguese `last-name` labels.
+
 - Dropped the unused `nav.copilot` locale key (sidebar entry removed in #467).
 
 - feat(#232): no standalone sidebar entry — the assistant launcher is the app-overlay floating button; manifest `navigation` is empty.
