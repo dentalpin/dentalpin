@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(#485): quote PDF labels for every UI locale (fr/pt/de/hu/pl/it/ar/ta, lifted from the host `budget.*` strings); Arabic renders `dir="rtl"` with logical table alignment.
 - feat(#232): sidebar entry grouped under the Financials header (`nav.section` "financials").
 - fix(#441): `GET /budgets/{id}/pdf`, `/pdf/signed` and `/pdf/preview` accept every UI locale instead of `es|en` only — a de/hu/fr/pt/pl/it/ta/ar UI got a 422 on "Download PDF". Labels fall back to English; amounts and dates use the locale's separators. The locale list now lives in `app/core/pdf_locales.py`, shared with billing.
 

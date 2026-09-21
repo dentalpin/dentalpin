@@ -17,7 +17,7 @@ Routes mounted at `/api/v1/purchase_orders/`.
 - `POST   /purchase_orders/{id}/receive` — batch receive; only `good` lines move stock; `purchase_orders.write`
 - `GET    /purchase_orders/{id}/receipts`          — receipt batches; `purchase_orders.read`
 - `GET    /purchase_orders/{id}/receipts/{rid}`    — one batch with line quality; `purchase_orders.read`
-- `GET    /purchase_orders/{id}/pdf`   — WeasyPrint PDF (self-contained, en/es, clinic currency); `purchase_orders.read`
+- `GET    /purchase_orders/{id}/pdf`   — WeasyPrint PDF (self-contained, all ten UI locales, clinic currency); `purchase_orders.read`
 
 ### Status lifecycle
 

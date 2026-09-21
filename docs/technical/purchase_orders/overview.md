@@ -25,7 +25,7 @@ Routes:
 - `POST /api/v1/purchase_orders/{id}/receive` — batch receive; only `good` lines move stock
 - `GET /api/v1/purchase_orders/{id}/receipts` — receipt batches
 - `GET /api/v1/purchase_orders/{id}/receipts/{rid}` — one batch with line quality
-- `GET /api/v1/purchase_orders/{id}/pdf` — WeasyPrint PDF (en/es, clinic currency)
+- `GET /api/v1/purchase_orders/{id}/pdf` — WeasyPrint PDF (all ten UI locales, clinic currency)
 
 ### Status lifecycle
 

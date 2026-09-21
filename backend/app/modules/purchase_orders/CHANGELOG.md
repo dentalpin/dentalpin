@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(#485): purchase-order PDF labels for every UI locale (lifted from the layer `procurement.*` strings); route accepts all ten locales; money follows the locale map; Arabic renders `dir="rtl"` with logical table alignment.
 - feat(#232): sidebar entries grouped under the Inventory header (`nav.section` "inventory").
 - feat(i18n): full locale set for the shared procurement frontend
   (fr, de, pl, it, ta, hu, ar, pt alongside en/es).

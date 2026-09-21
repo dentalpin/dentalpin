@@ -381,3 +381,65 @@ async def test_update_metadata_and_lock_after_received(
             PurchaseOrderUpdate(notes="Too late"),
         )
     assert exc.value.status_code == 409
+
+
+def _po_response() -> dict:
+    from datetime import UTC, datetime
+
+    return {
+        "id": uuid4(),
+        "status": "sent",
+        "supplier_name": "Acme",
+        "expected_date": datetime(2026, 6, 4, tzinfo=UTC),
+        "created_at": datetime(2026, 5, 4, tzinfo=UTC),
+        "notes": None,
+        "lines": [
+            {
+                "item_name": "Guantes",
+                "unit_price": Decimal("12.50"),
+                "quantity_ordered": 4,
+                "quantity_received": 0,
+            }
+        ],
+    }
+
+
+def _po_clinic() -> Clinic:
+    return Clinic(
+        id=uuid4(),
+        name="Test Clinic",
+        tax_id="B1",
+        address={},
+        settings={},
+        currency="EUR",
+        timezone="Europe/Madrid",
+    )
+
+
+def test_each_locale_renders_own_po_heading() -> None:
+    from app.modules.purchase_orders.pdf import PurchaseOrderPDFService
+
+    headings = {
+        "es": "Orden de Compra",
+        "en": "Purchase Order",
+        "fr": "Commande",
+        "pt": "Encomenda",
+        "de": "Bestellung",
+        "hu": "Megrendelés",
+        "pl": "Zamówienie",
+        "it": "Ordine",
+        "ar": "طلب شراء",
+        "ta": "கொள்முதல் ஆணை",
+    }
+    for locale, heading in headings.items():
+        html = PurchaseOrderPDFService._generate_html(_po_response(), _po_clinic(), locale)
+        assert heading in html
+
+
+def test_arabic_po_pdf_is_rtl() -> None:
+    from app.modules.purchase_orders.pdf import PurchaseOrderPDFService
+
+    html = PurchaseOrderPDFService._generate_html(_po_response(), _po_clinic(), "ar")
+    assert 'dir="rtl"' in html
+    html = PurchaseOrderPDFService._generate_html(_po_response(), _po_clinic(), "es")
+    assert 'dir="rtl"' not in html

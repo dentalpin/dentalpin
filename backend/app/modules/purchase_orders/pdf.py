@@ -9,6 +9,7 @@ from html import escape
 from io import BytesIO
 from typing import TYPE_CHECKING
 
+from app.core.pdf_locales import LOCALE_BY_LANG as _LOCALE_BY_LANG
 from app.core.utils.currency import format_currency as _fmt_currency
 
 if TYPE_CHECKING:
@@ -61,6 +62,190 @@ _LABELS = {
             "cancelled": "Cancelled",
         },
     },
+    "fr": {
+        "po": "Commande",
+        "draft": "Brouillon",
+        "supplier": "Fournisseur",
+        "status": "Statut",
+        "expected_date": "Date prévue",
+        "created_at": "Date",
+        "notes": "Notes",
+        "item": "Article",
+        "qty_ordered": "Commandé",
+        "qty_received": "Reçu",
+        "unit_price": "Prix unitaire",
+        "total": "Total",
+        "line_total": "Montant",
+        "generated_by": "Créé par",
+        "status_label": {
+            "draft": "Brouillon",
+            "sent": "Envoyée",
+            "confirmed": "Confirmée",
+            "received": "Reçue",
+            "cancelled": "Annulée",
+        },
+    },
+    "pt": {
+        "po": "Encomenda",
+        "draft": "Rascunho",
+        "supplier": "Fornecedor",
+        "status": "Estado",
+        "expected_date": "Data prevista",
+        "created_at": "Data",
+        "notes": "Notas",
+        "item": "Artigo",
+        "qty_ordered": "Pedido",
+        "qty_received": "Recebido",
+        "unit_price": "Preço unitário",
+        "total": "Total",
+        "line_total": "Valor",
+        "generated_by": "Criada por",
+        "status_label": {
+            "draft": "Rascunho",
+            "sent": "Enviado",
+            "confirmed": "Confirmado",
+            "received": "Recebido",
+            "cancelled": "Cancelado",
+        },
+    },
+    "de": {
+        "po": "Bestellung",
+        "draft": "Entwurf",
+        "supplier": "Lieferant",
+        "status": "Status",
+        "expected_date": "Erwartetes Datum",
+        "created_at": "Datum",
+        "notes": "Notizen",
+        "item": "Artikel",
+        "qty_ordered": "Bestellt",
+        "qty_received": "Erhalten",
+        "unit_price": "Stückpreis",
+        "total": "Gesamt",
+        "line_total": "Betrag",
+        "generated_by": "Erstellt von",
+        "status_label": {
+            "draft": "Entwurf",
+            "sent": "Gesendet",
+            "confirmed": "Bestätigt",
+            "received": "Erhalten",
+            "cancelled": "Storniert",
+        },
+    },
+    "hu": {
+        "po": "Megrendelés",
+        "draft": "Vázlat",
+        "supplier": "Beszállító",
+        "status": "Állapot",
+        "expected_date": "Várható dátum",
+        "created_at": "Dátum",
+        "notes": "Megjegyzések",
+        "item": "Tétel",
+        "qty_ordered": "Rendelt",
+        "qty_received": "Átvett",
+        "unit_price": "Egységár",
+        "total": "Összesen",
+        "line_total": "Összeg",
+        "generated_by": "Létrehozta",
+        "status_label": {
+            "draft": "Vázlat",
+            "sent": "Elküldve",
+            "confirmed": "Megerősítve",
+            "received": "Átvéve",
+            "cancelled": "Törölve",
+        },
+    },
+    "pl": {
+        "po": "Zamówienie",
+        "draft": "Szkic",
+        "supplier": "Dostawca",
+        "status": "Status",
+        "expected_date": "Termin oczekiwany",
+        "created_at": "Data",
+        "notes": "Notatki",
+        "item": "Artykuł",
+        "qty_ordered": "Zamówiono",
+        "qty_received": "Odebrano",
+        "unit_price": "Cena jednostkowa",
+        "total": "Razem",
+        "line_total": "Kwota",
+        "generated_by": "Utworzone przez",
+        "status_label": {
+            "draft": "Szkic",
+            "sent": "Wysłane",
+            "confirmed": "Potwierdzone",
+            "received": "Odebrane",
+            "cancelled": "Anulowane",
+        },
+    },
+    "it": {
+        "po": "Ordine",
+        "draft": "Bozza",
+        "supplier": "Fornitore",
+        "status": "Stato",
+        "expected_date": "Data prevista",
+        "created_at": "Data",
+        "notes": "Note",
+        "item": "Articolo",
+        "qty_ordered": "Ordinato",
+        "qty_received": "Ricevuto",
+        "unit_price": "Prezzo unitario",
+        "total": "Totale",
+        "line_total": "Importo",
+        "generated_by": "Creata da",
+        "status_label": {
+            "draft": "Bozza",
+            "sent": "Inviato",
+            "confirmed": "Confermato",
+            "received": "Ricevuto",
+            "cancelled": "Annullato",
+        },
+    },
+    "ar": {
+        "po": "طلب شراء",
+        "draft": "مسودة",
+        "supplier": "المورّد",
+        "status": "الحالة",
+        "expected_date": "التاريخ المتوقع",
+        "created_at": "التاريخ",
+        "notes": "ملاحظات",
+        "item": "الصنف",
+        "qty_ordered": "المطلوب",
+        "qty_received": "المستلم",
+        "unit_price": "سعر الوحدة",
+        "total": "الإجمالي",
+        "line_total": "المبلغ",
+        "generated_by": "أنشأها",
+        "status_label": {
+            "draft": "مسودة",
+            "sent": "مُرسل",
+            "confirmed": "مؤكَّد",
+            "received": "مستلم",
+            "cancelled": "ملغى",
+        },
+    },
+    "ta": {
+        "po": "கொள்முதல் ஆணை",
+        "draft": "வரைவு",
+        "supplier": "சப்ளையர்",
+        "status": "நிலை",
+        "expected_date": "எதிர்பார்க்கும் தேதி",
+        "created_at": "தேதி",
+        "notes": "குறிப்புகள்",
+        "item": "பொருள்",
+        "qty_ordered": "ஆணையிட்டது",
+        "qty_received": "பெற்றது",
+        "unit_price": "அலகு விலை",
+        "total": "மொத்தம்",
+        "line_total": "தொகை",
+        "generated_by": "உருவாக்கியது",
+        "status_label": {
+            "draft": "வரைவு",
+            "sent": "அனுப்பப்பட்டது",
+            "confirmed": "உறுதியானது",
+            "received": "பெறப்பட்டது",
+            "cancelled": "ரத்தானது",
+        },
+    },
 }
 
 
@@ -74,10 +259,10 @@ class PurchaseOrderPDFService:
 
     @staticmethod
     def _generate_html(response: dict, clinic: Clinic, locale: str) -> str:
-        labels = _LABELS.get(locale, _LABELS["es"])
+        labels = _LABELS.get(locale, _LABELS["en"])
         status_label = labels["status_label"].get(response["status"], response["status"])
         currency = clinic.currency if clinic else "EUR"
-        money_locale = "es_ES" if locale == "es" else "en_US"
+        money_locale = _LOCALE_BY_LANG.get(locale, "es_ES")
 
         def money(amount: Decimal) -> str:
             return _fmt_currency(amount, currency, locale=money_locale)
@@ -114,8 +299,9 @@ class PurchaseOrderPDFService:
             else ""
         )
 
+        rtl_attr = ' dir="rtl"' if locale == "ar" else ""
         return f"""<!DOCTYPE html>
-        <html lang="{locale}">
+        <html lang="{locale}"{rtl_attr}>
         <head>
         <meta charset="UTF-8">
         <style>
@@ -155,18 +341,18 @@ class PurchaseOrderPDFService:
             }}
             table {{ width: 100%; border-collapse: collapse; }}
             th {{
-                background: #f3f4f6; padding: 10px 8px; text-align: left;
+                background: #f3f4f6; padding: 10px 8px; text-align: start;
                 font-size: 9pt; font-weight: 600; color: #374151;
                 border-bottom: 2px solid #e5e7eb;
             }}
             td {{ padding: 10px 8px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }}
             .number {{ width: 30px; text-align: center; }}
             .qty {{ width: 70px; text-align: center; }}
-            .price {{ width: 110px; text-align: right; }}
+            .price {{ width: 110px; text-align: end; }}
             .totals {{ float: right; width: 300px; margin-top: 20px; }}
             .totals td {{ border-bottom: none; padding: 6px 8px; }}
-            .totals .label {{ text-align: left; color: #666; }}
-            .totals .value {{ text-align: right; font-weight: 500; }}
+            .totals .label {{ text-align: start; color: #666; }}
+            .totals .value {{ text-align: end; font-weight: 500; }}
             .totals .grand-total {{ font-size: 13pt; font-weight: bold; color: #1e40af; }}
             .notes-section {{ clear: both; padding-top: 20px; margin-top: 20px; }}
             .notes-content {{
