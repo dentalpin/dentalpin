@@ -280,14 +280,14 @@ if (!isAdmin.value) {
     <div class="flex items-center justify-between">
       <div>
         <div class="flex items-center gap-2 mb-1">
-          <NuxtLink
-            to="/settings"
-            class="text-subtle hover:text-muted dark:text-subtle dark:hover:text-subtle"
-          >
-            <UIcon
-              name="i-lucide-arrow-left"
-              class="w-5 h-5"
-            />
+          <NuxtLink to="/settings">
+            <UButton
+              icon="i-lucide-arrow-left"
+              variant="ghost"
+              color="neutral"
+            >
+              {{ t('settings.title') }}
+            </UButton>
           </NuxtLink>
           <h1 class="text-display text-default">
             {{ t('notifications.title') }}

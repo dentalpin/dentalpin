@@ -236,13 +236,24 @@ const categoryOptions = computed(() => [
   <div class="space-y-6">
     <!-- Page header -->
     <div class="flex items-center justify-between">
-      <div>
-        <h1 class="text-display text-default">
-          {{ t('catalog.title') }}
-        </h1>
-        <p class="text-caption text-subtle mt-1">
-          {{ t('catalog.description') }}
-        </p>
+      <div class="flex items-center gap-4">
+        <NuxtLink to="/settings">
+          <UButton
+            icon="i-lucide-arrow-left"
+            variant="ghost"
+            color="neutral"
+          >
+            {{ t('settings.title') }}
+          </UButton>
+        </NuxtLink>
+        <div>
+          <h1 class="text-display text-default">
+            {{ t('catalog.title') }}
+          </h1>
+          <p class="text-caption text-subtle mt-1">
+            {{ t('catalog.description') }}
+          </p>
+        </div>
       </div>
       <div class="flex items-center gap-2">
         <UButton
@@ -260,14 +271,6 @@ const categoryOptions = computed(() => [
         >
           {{ t('catalog.newItem') }}
         </UButton>
-        <NuxtLink to="/settings">
-          <UButton
-            variant="ghost"
-            icon="i-lucide-arrow-left"
-          >
-            {{ t('common.back') }}
-          </UButton>
-        </NuxtLink>
       </div>
     </div>
 

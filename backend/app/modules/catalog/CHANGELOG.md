@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#469): settings back-navigation follows the shared convention
+  (left pre-title ghost button with the parent label) on the catalog
+  and VAT-types pages.
 - fix(#326): the catalog onboarding rule carries `permission: 'catalog.read'` (module-activation-aware gating).
 
 - refactor(#126): agent-tool name resolution delegates to the shared `app.core.i18n_names.catalog_name` helper; all-empty name dicts now resolve to `None` instead of an empty string.

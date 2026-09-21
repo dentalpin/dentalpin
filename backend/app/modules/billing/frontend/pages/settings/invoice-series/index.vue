@@ -191,10 +191,11 @@ function getSeriesTypeLabel(type: string): string {
         <NuxtLink to="/settings">
           <UButton
             icon="i-lucide-arrow-left"
-            :aria-label="t('common.back')"
             variant="ghost"
             color="neutral"
-          />
+          >
+            {{ t('settings.title') }}
+          </UButton>
         </NuxtLink>
         <div>
           <h1 class="text-display text-default">

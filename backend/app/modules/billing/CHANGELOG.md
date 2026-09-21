@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#469): invoice-series settings back-navigation follows the
+  shared convention (left pre-title ghost button with the parent label).
 - feat(#232): sidebar entry grouped under the Financials header (`nav.section` "financials").
 - refactor(#441): `PDF_LOCALES` / `PDF_LOCALE_PATTERN` / the Babel locale map moved to `app/core/pdf_locales.py` so budget can share them without depending on billing. No behaviour change.
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#469): settings back-navigation is a real labeled button
+  (was a bare icon) following the shared convention.
 - fix(#63 maintainer review): `notif_0008` seeds system push templates
   (title + body, es/en, one per notification type, `smg_0002` shape) —
   without a `channel='push'` row every template-kind push failed at
