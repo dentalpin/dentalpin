@@ -56,7 +56,7 @@ watch(() => props.patientId, () => {
         v-if="cases.length > 0"
         :model-value="selectedId"
         :options="cases.map(c => ({ label: `${t(`orthodontics.appliance.${c.appliance_type}`)} · ${c.start_date}`, value: c.id }))"
-          @update:model-value="selectedId = ($event as string | undefined) ?? null"
+        @update:model-value="selectedId = ($event as string | undefined) ?? null"
       />
       <UButton
         v-if="canWrite"
