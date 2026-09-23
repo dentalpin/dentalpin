@@ -1,0 +1,22 @@
+{
+  "nav": {
+    "imagingAi": "Imagem IA"
+  },
+  "imagingAi": {
+    "list": {
+      "title": "Trabalhos de segmentação IA",
+      "empty": "Ainda sem trabalhos IA para este paciente.",
+      "noPatient": "Nenhum paciente selecionado",
+      "noPatientHint": "Abra esta página com ?patient_id=<uuid>, p. ex. a partir da ficha do paciente.",
+      "queueHint": "Coloque uma execução em fila a partir da vista de estudo; os resultados aparecem aqui.",
+      "visualizationNote": "A saída IA é apenas ajuda visual — nunca um diagnóstico."
+    },
+    "status": {
+      "queued": "Em fila",
+      "running": "Em curso",
+      "done": "Concluído",
+      "failed": "Falhado",
+      "cancelled": "Cancelado"
+    }
+  }
+}

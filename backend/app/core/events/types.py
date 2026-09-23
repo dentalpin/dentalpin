@@ -164,6 +164,9 @@ class EventType:
     # timeline can render the comparison inline.
     PAIR_CREATED = "media.pair_created"
     PAIR_REMOVED = "media.pair_removed"
+    # An AI segmentation job reached a terminal state. Payload:
+    # (job_id, clinic_id, patient_id, study_id, status).
+    IMAGING_AI_JOB_DONE = "imaging.ai_job_done"
 
     # Clinical prescriptions (issue #269). Payload: (prescription_id,
     # clinic_id, patient_id). Consumed by patient_timeline.

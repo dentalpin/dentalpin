@@ -11,6 +11,7 @@
     "/module_layers/copilot/frontend",
     "/module_layers/documents/frontend",
     "/module_layers/expenses/frontend",
+    "/module_layers/imaging_ai/frontend",
     "/module_layers/india_gst/frontend",
     "/module_layers/inventory/frontend",
     "/module_layers/lab_orders/frontend",
@@ -134,6 +135,13 @@
       "path": "/module_layers/expenses/frontend",
       "routes": [
         "/expenses"
+      ]
+    },
+    {
+      "name": "imaging_ai",
+      "path": "/module_layers/imaging_ai/frontend",
+      "routes": [
+        "/imaging-ai"
       ]
     },
     {

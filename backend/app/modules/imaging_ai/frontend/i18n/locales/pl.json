@@ -1,0 +1,22 @@
+{
+  "nav": {
+    "imagingAi": "Obrazowanie AI"
+  },
+  "imagingAi": {
+    "list": {
+      "title": "Zadania segmentacji AI",
+      "empty": "Brak zadań AI dla tego pacjenta.",
+      "noPatient": "Nie wybrano pacjenta",
+      "noPatientHint": "Otwórz tę stronę z ?patient_id=<uuid>, np. z karty pacjenta.",
+      "queueHint": "Uruchom zadanie z widoku badania; wyniki pojawią się tutaj.",
+      "visualizationNote": "Wynik AI to wyłącznie pomoc wizualna — nigdy diagnoza."
+    },
+    "status": {
+      "queued": "W kolejce",
+      "running": "W trakcie",
+      "done": "Ukończone",
+      "failed": "Nieudane",
+      "cancelled": "Anulowane"
+    }
+  }
+}

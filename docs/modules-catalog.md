@@ -22,6 +22,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `documents` | 0.1.0 | official | patients | manual | yes | 2 | 1 | 0 | yes |
 | `expenses` | 0.1.0 | community | — | manual | yes | 2 | 0 | 0 | yes |
 | `gdpr` | 0.1.0 | official | patients | manual | yes | 9 | 6 | 0 | no |
+| `imaging_ai` | 0.1.0 | official | media, patients | manual | yes | 2 | 1 | 0 | yes |
 | `india_gst` | 0.1.0 | official | billing, catalog | manual | yes | 4 | 0 | 0 | yes |
 | `integrations` | 0.1.0 | official | patients | manual | yes | 4 | 0 | 8 | no |
 | `inventory` | 0.2.0 | community | — | manual | yes | 2 | 1 | 0 | yes |
@@ -367,6 +368,24 @@ Data-subject rights, consents, retention and breach reporting (GDPR).
   - `gdpr.request.status_changed`
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/gdpr/CLAUDE.md`](../backend/app/modules/gdpr/CLAUDE.md)
+
+### `imaging_ai` — v0.1.0
+
+On-demand AI segmentation jobs over imaging studies.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `media`, `patients`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `imaging_ai.jobs.read`
+  - `imaging_ai.jobs.write`
+- **Events emitted:**
+  - `imaging.ai_job_done`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/imaging_ai/CLAUDE.md`](../backend/app/modules/imaging_ai/CLAUDE.md)
 
 ### `india_gst` — v0.1.0
 

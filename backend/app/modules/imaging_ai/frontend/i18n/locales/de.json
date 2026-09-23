@@ -1,0 +1,22 @@
+{
+  "nav": {
+    "imagingAi": "KI-Bildgebung"
+  },
+  "imagingAi": {
+    "list": {
+      "title": "KI-Segmentierungsaufträge",
+      "empty": "Noch keine KI-Aufträge für diesen Patienten.",
+      "noPatient": "Kein Patient ausgewählt",
+      "noPatientHint": "Diese Seite mit ?patient_id=<uuid> öffnen, z. B. aus der Patientenakte.",
+      "queueHint": "Einen Lauf aus der Studienansicht starten; Ergebnisse erscheinen hier.",
+      "visualizationNote": "KI-Ausgabe ist nur Visualisierungshilfe — niemals eine Diagnose."
+    },
+    "status": {
+      "queued": "Wartend",
+      "running": "Läuft",
+      "done": "Fertig",
+      "failed": "Fehlgeschlagen",
+      "cancelled": "Abgebrochen"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "nav": {
+    "imagingAi": "AI imaging"
+  },
+  "imagingAi": {
+    "list": {
+      "title": "AI segmentation jobs",
+      "empty": "No AI jobs for this patient yet.",
+      "noPatient": "No patient selected",
+      "noPatientHint": "Open this page with ?patient_id=<uuid>, e.g. from the patient record.",
+      "queueHint": "Queue a run from the study view; results appear here.",
+      "visualizationNote": "AI output is a visualization aid only — never a diagnosis."
+    },
+    "status": {
+      "queued": "Queued",
+      "running": "Running",
+      "done": "Done",
+      "failed": "Failed",
+      "cancelled": "Cancelled"
+    }
+  }
+}
