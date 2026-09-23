@@ -2,7 +2,7 @@
 module: orthodontics
 screen: orthodontics
 route: /orthodontics
-last_verified_commit: HEAD
+last_verified_commit: bc75d5a0cf1e15b70cd4f3ddf4e4ffdd78174fc8
 related_endpoints:
   - GET /api/v1/orthodontics/cases
   - POST /api/v1/orthodontics/cases
