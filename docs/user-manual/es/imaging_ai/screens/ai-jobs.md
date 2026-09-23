@@ -10,7 +10,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/imaging_ai/router.py
   - backend/app/modules/imaging_ai/frontend/pages/imaging-ai/index.vue
-last_verified_commit: 0000000
+last_verified_commit: 1b7995366fee99533f24c738823708168bf4aedb
 screenshots: []
 ---
 
