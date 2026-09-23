@@ -169,10 +169,10 @@ onMounted(load)
         >
           <line
             v-if="a.kind === 'ruler'"
-            :x1="(a.payload.points[0][0] as number) * 100"
-            :y1="(a.payload.points[0][1] as number) * 100"
-            :x2="(a.payload.points[1][0] as number) * 100"
-            :y2="(a.payload.points[1][1] as number) * 100"
+            :x1="(a.payload.points[0]?.[0] as number) * 100"
+            :y1="(a.payload.points[0]?.[1] as number) * 100"
+            :x2="(a.payload.points[1]?.[0] as number) * 100"
+            :y2="(a.payload.points[1]?.[1] as number) * 100"
             stroke="#22c55e"
             stroke-width="0.6"
             vector-effect="non-scaling-stroke"
@@ -187,8 +187,8 @@ onMounted(load)
           />
           <circle
             v-else
-            :cx="(a.payload.points[0][0] as number) * 100"
-            :cy="(a.payload.points[0][1] as number) * 100"
+            :cx="(a.payload.points[0]?.[0] as number) * 100"
+            :cy="(a.payload.points[0]?.[1] as number) * 100"
             r="1.2"
             fill="#f59e0b"
           />
@@ -206,7 +206,7 @@ onMounted(load)
       />
       <UButton
         :disabled="!noteText.trim()"
-          @click="save('note', [noteAt], noteText)"
+        @click="save('note', [noteAt], noteText)"
       >
         {{ t('imagingViewer.annotations.saveNote') }}
       </UButton>
