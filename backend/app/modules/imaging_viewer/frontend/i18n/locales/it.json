@@ -7,7 +7,7 @@
       "title": "Immagini DICOM",
       "empty": "Nessuno studio visualizzabile per questo paziente.",
       "noPatient": "Nessun paziente selezionato",
-      "noPatientHint": "Apri questa pagina con ?patient_id=<uuid>, ad es. dalla scheda del paziente.",
+      "noPatientHint": "Apri questa pagina con ?patient_id=..., ad es. dalla scheda del paziente.",
       "unknownModality": "Modalità sconosciuta"
     },
     "viewer": {

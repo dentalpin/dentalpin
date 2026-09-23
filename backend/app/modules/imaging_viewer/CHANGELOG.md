@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix: current `useApi` contract (`api.del`, `{ query }`) + `noUncheckedIndexedAccess`
+  (`[noteAt]`, first-study guard) in the layer; `noPatientHint` drops the
+  `<uuid>` placeholder (vue-i18n build rejects HTML-like messages).
 - fix: standalone `patient_id`/`document_id`/`study_id` indexes mirrored in
   `iv_0001`–`iv_0003` (model↔migration parity, L33); full 10-locale layer
   (fr/de/pl/it/ta/hu/ar/pt); `numpy` deferred to the `imaging_ai` PR.

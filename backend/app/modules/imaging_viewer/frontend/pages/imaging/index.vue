@@ -32,7 +32,8 @@ async function load() {
     const res = await fetchStudies(patientId.value)
     studies.value = res.data
     total.value = res.total
-    if (!selectedId.value && res.data.length > 0) selectedId.value = res.data[0].id
+    const first = res.data[0]
+    if (!selectedId.value && first) selectedId.value = first.id
   } finally {
     loading.value = false
   }

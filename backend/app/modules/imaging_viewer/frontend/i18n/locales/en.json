@@ -7,7 +7,7 @@
       "title": "DICOM imaging",
       "empty": "No viewable studies for this patient yet.",
       "noPatient": "No patient selected",
-      "noPatientHint": "Open this page with ?patient_id=<uuid>, e.g. from the patient record.",
+      "noPatientHint": "Open this page with ?patient_id=..., e.g. from the patient record.",
       "unknownModality": "Unknown modality"
     },
     "viewer": {

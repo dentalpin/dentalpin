@@ -5,7 +5,7 @@
  * stored normalized 0-1; the original bytes are never touched. Overlays are
  * visualization aids, never diagnoses.
  */
-import { useImagingViewer, type StudyAnnotation } from '../../composables/useImagingViewer'
+import { useImagingViewer, type StudyAnnotation } from '../composables/useImagingViewer'
 import { PERMISSIONS } from '~~/app/config/permissions'
 
 const props = defineProps<{ studyId: string }>()
@@ -206,7 +206,7 @@ onMounted(load)
       />
       <UButton
         :disabled="!noteText.trim()"
-        @click="save('note', noteAt as [number, number][], noteText)"
+          @click="save('note', [noteAt], noteText)"
       >
         {{ t('imagingViewer.annotations.saveNote') }}
       </UButton>

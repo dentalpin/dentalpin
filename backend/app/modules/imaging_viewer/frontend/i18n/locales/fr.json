@@ -7,7 +7,7 @@
       "title": "Imagerie DICOM",
       "empty": "Aucune étude visualisable pour ce patient pour le moment.",
       "noPatient": "Aucun patient sélectionné",
-      "noPatientHint": "Ouvrez cette page avec ?patient_id=<uuid>, par ex. depuis le dossier patient.",
+      "noPatientHint": "Ouvrez cette page avec ?patient_id=..., par ex. depuis le dossier patient.",
       "unknownModality": "Modalité inconnue"
     },
     "viewer": {

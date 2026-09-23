@@ -7,7 +7,7 @@
       "title": "تصوير DICOM",
       "empty": "لا توجد دراسات قابلة للعرض لهذا المريض بعد.",
       "noPatient": "لم يتم اختيار مريض",
-      "noPatientHint": "افتح هذه الصفحة مع ?patient_id=<uuid>، مثلاً من ملف المريض.",
+      "noPatientHint": "افتح هذه الصفحة مع ?patient_id=...، مثلاً من ملف المريض.",
       "unknownModality": "النمط غير معروف"
     },
     "viewer": {

@@ -56,7 +56,7 @@ export function useImagingViewer() {
   }
 
   async function deleteAnnotation(annotationId: string) {
-    await api.delete(`/api/v1/imaging_viewer/annotations/${annotationId}`)
+    await api.del(`/api/v1/imaging_viewer/annotations/${annotationId}`)
   }
 
   return { fetchStudies, fetchStudy, frameUrl, fetchAnnotations, createAnnotation, deleteAnnotation }
@@ -140,7 +140,7 @@ export function useRvgImport() {
   }
 
   async function deleteLink(linkId: string) {
-    await api.delete(`/api/v1/imaging_viewer/rvg/links/${linkId}`)
+    await api.del(`/api/v1/imaging_viewer/rvg/links/${linkId}`)
   }
 
   return { fetchImports, triggerScan, approveImport, rejectImport, fetchLinks, deleteLink }

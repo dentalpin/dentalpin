@@ -7,7 +7,7 @@
       "title": "Obrazowanie DICOM",
       "empty": "Brak dostępnych badań tego pacjenta.",
       "noPatient": "Nie wybrano pacjenta",
-      "noPatientHint": "Otwórz tę stronę z ?patient_id=<uuid>, np. z karty pacjenta.",
+      "noPatientHint": "Otwórz tę stronę z ?patient_id=..., np. z karty pacjenta.",
       "unknownModality": "Nieznana modalność"
     },
     "viewer": {

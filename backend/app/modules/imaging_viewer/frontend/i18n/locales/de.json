@@ -7,7 +7,7 @@
       "title": "DICOM-Bildgebung",
       "empty": "Noch keine darstellbaren Studien für diesen Patienten.",
       "noPatient": "Kein Patient ausgewählt",
-      "noPatientHint": "Diese Seite mit ?patient_id=<uuid> öffnen, z. B. aus der Patientenakte.",
+      "noPatientHint": "Diese Seite mit ?patient_id=... öffnen, z. B. aus der Patientenakte.",
       "unknownModality": "Unbekannte Modalität"
     },
     "viewer": {
