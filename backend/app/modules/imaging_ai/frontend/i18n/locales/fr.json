@@ -7,7 +7,7 @@
       "title": "Travaux de segmentation IA",
       "empty": "Aucun travail IA pour ce patient pour le moment.",
       "noPatient": "Aucun patient sélectionné",
-      "noPatientHint": "Ouvrez cette page avec ?patient_id=<uuid>, par ex. depuis le dossier patient.",
+      "noPatientHint": "Ouvrez cette page avec ?patient_id=..., par ex. depuis le dossier patient.",
       "queueHint": "Lancez une exécution depuis la vue d'étude ; les résultats apparaissent ici.",
       "visualizationNote": "La sortie IA est une aide visuelle uniquement — jamais un diagnostic."
     },

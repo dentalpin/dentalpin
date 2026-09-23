@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: `noPatientHint` drops the `<uuid>` placeholder (vue-i18n build
+  rejects HTML-like messages).
 - fix: standalone `patient_id`/`study_id` indexes mirrored in `aij_0001`
   (model↔migration parity, L33); full 10-locale layer.
 

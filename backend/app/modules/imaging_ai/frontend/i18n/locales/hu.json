@@ -7,7 +7,7 @@
       "title": "MI szegmentálási feladatok",
       "empty": "Ehhez a beteghez még nincsenek MI-feladatok.",
       "noPatient": "Nincs beteg kiválasztva",
-      "noPatientHint": "Nyissa meg ezt az oldalt a ?patient_id=<uuid> paraméterrel, pl. a betegkartotékból.",
+      "noPatientHint": "Nyissa meg ezt az oldalt a ?patient_id=... paraméterrel, pl. a betegkartotékból.",
       "queueHint": "Indítson futtatást a vizsgálati nézetből; az eredmények itt jelennek meg.",
       "visualizationNote": "Az MI-kimenet csak megjelenítési segédlet — soha nem diagnózis."
     },
