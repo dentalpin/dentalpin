@@ -136,6 +136,10 @@ ADRs) for the full story.
 | Agent | A `BaseAgent` subclass a module ships, registered via `get_agents()`. |
 | Reference module | A module marked as canonical example others should copy. Today: `patients` (foundational), `schedules` (removable, isolation-critical), `treatment_plan` (heavy deps). |
 | Frontend layer | The `frontend/` subdir inside a backend module. Loaded as a Nuxt layer. |
+| Arco / Archwire | The orthodontic wire currently in mouth per arch (upper/lower). Selected from the clinic chip catalog in each control. |
+| Cadeneta / Power chain | Elastic chain procedure chip in orthodontic controls. |
+| Mensualidad / Installment | Monthly orthodontics payment collected through treatment-plan sessions (slice-b). |
+| Aparatologia / Appliance | Orthodontic appliance type (metal/esthetic/self-ligating brackets, aligners, functional, retention). |
 
 ## Leads (inbound enquiries)
 

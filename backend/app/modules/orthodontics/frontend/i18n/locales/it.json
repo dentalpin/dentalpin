@@ -1,0 +1,72 @@
+{
+  "tab": { "label": "Ortodonzia" },
+  "nav": { "title": "Ortodonzia" },
+  "appliance": {
+    "brackets_metal": "Bracket metallici",
+    "brackets_esthetic": "Bracket estetici",
+    "self_ligating": "Autoleganti",
+    "aligners": "Allineatori",
+    "functional": "Funzionale",
+    "retention": "Contenzione"
+  },
+  "status": {
+    "active": "Attivo",
+    "paused": "In pausa",
+    "finished": "Terminato",
+    "transferred_out": "Trasferito"
+  },
+  "inbox": {
+    "title": "Ortodonzia",
+    "active": "Attivi",
+    "overdue": "Controllo scaduto",
+    "unscheduled": "Senza prossimo controllo",
+    "finished": "Terminati",
+    "new": "Nuovo caso",
+    "empty": "Nessun caso in questa vista",
+    "nextDue": "Prossimo controllo",
+    "monthOf": "Mese {x} di ~{n}"
+  },
+  "case": {
+    "new": "Nuovo caso ortodontico",
+    "appliance": "Apparecchio",
+    "professional": "Ortodontista",
+    "startDate": "Data di inizio",
+    "estimatedMonths": "Mesi stimati",
+    "notes": "Diagnosi / obiettivi",
+    "create": "Apri caso",
+    "inMouthNow": "In bocca ora",
+    "upper": "Superiore",
+    "lower": "Inferiore",
+    "noWire": "Nessun arco registrato",
+    "changeStatus": "Cambia stato",
+    "statusNote": "Motivo (facoltativo)",
+    "save": "Salva"
+  },
+  "control": {
+    "new": "Registra controllo",
+    "wires": "Archi (nessuna modifica di default)",
+    "procedures": "Procedure",
+    "proceduresOther": "Altre procedure",
+    "hygiene": "Igiene",
+    "hygiene_good": "Buona",
+    "hygiene_fair": "Discreta",
+    "hygiene_poor": "Scarsa",
+    "alignerNumber": "Numero di allineatore",
+    "notes": "Osservazioni / istruzioni",
+    "nextControl": "Prossimo controllo",
+    "weeks": "{n} settimane",
+    "noNext": "Senza prossimo controllo",
+    "save": "Salva controllo",
+    "history": "Controlli",
+    "empty": "Ancora nessun controllo"
+  },
+  "card": {
+    "title": "Ortodonzia",
+    "noCase": "Nessun caso attivo",
+    "view": "Apri"
+  },
+  "photos": {
+    "title": "Foto ({n})",
+    "upload": "Aggiungi foto"
+  }
+}

@@ -35,9 +35,10 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `nav_online` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
 | `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 10 | 7 | 7 | yes |
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
+| `orthodontics` | 0.1.0 | official | patients, media | manual | yes | 4 | 3 | 0 | yes |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_segments` | 0.1.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
-| `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 37 | yes |
+| `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 40 | yes |
 | `patients` | 0.1.0 | official | — | auto | no | 2 | 4 | 0 | yes |
 | `patients_clinical` | 0.1.0 | official | patients | auto | no | 4 | 1 | 0 | yes |
 | `payment_gateways` | 0.1.0 | official | patients, budget, payments | manual | yes | 0 | 0 | 0 | no |
@@ -657,6 +658,28 @@ Dental charting, tooth state, clinical treatments.
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/odontogram/CLAUDE.md`](../backend/app/modules/odontogram/CLAUDE.md)
 
+### `orthodontics` — v0.1.0
+
+Orthodontic case tracking — monthly controls, wires, photo evolution.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `patients`, `media`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `orthodontics.cases.read`
+  - `orthodontics.cases.write`
+  - `orthodontics.controls.write`
+  - `orthodontics.settings.manage`
+- **Events emitted:**
+  - `orthodontics.case_created`
+  - `orthodontics.case_status_changed`
+  - `orthodontics.control_registered`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/orthodontics/CLAUDE.md`](../backend/app/modules/orthodontics/CLAUDE.md)
+
 ### `patient_relationships` — v0.2.0
 
 Patient family relationships (Lien de Parentée).
@@ -733,6 +756,9 @@ Patient timeline — unified activity log.
   - `notification.reply_received`
   - `notification.sent`
   - `odontogram.treatment.performed`
+  - `orthodontics.case_created`
+  - `orthodontics.case_status_changed`
+  - `orthodontics.control_registered`
   - `patient.medical_updated`
   - `prescription.cancelled`
   - `prescription.issued`

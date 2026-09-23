@@ -123,6 +123,7 @@ patient_segments = "app.modules.patient_segments:PatientSegmentsModule"
 leads = "app.modules.leads:LeadsModule"
 staff_attendance = "app.modules.staff_attendance:StaffAttendanceModule"
 treasury = "app.modules.treasury:TreasuryModule"
+orthodontics = "app.modules.orthodontics:OrthodonticsModule"
 
 [tool.setuptools.packages.find]
 where = ["."]

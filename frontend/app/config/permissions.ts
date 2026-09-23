@@ -274,5 +274,11 @@ export const PERMISSIONS = {
   treasury: {
     read: 'treasury.read',
     write: 'treasury.write'
+  },
+  orthodontics: {
+    casesRead: 'orthodontics.cases.read',
+    casesWrite: 'orthodontics.cases.write',
+    controlsWrite: 'orthodontics.controls.write',
+    settingsManage: 'orthodontics.settings.manage'
   }
 } as const

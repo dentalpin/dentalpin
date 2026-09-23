@@ -1,0 +1,72 @@
+{
+  "tab": { "label": "Fogszabályozás" },
+  "nav": { "title": "Fogszabályozás" },
+  "appliance": {
+    "brackets_metal": "Fém bracketek",
+    "brackets_esthetic": "Esztétikus bracketek",
+    "self_ligating": "Önligírozó",
+    "aligners": "Alignerek",
+    "functional": "Funkcionális",
+    "retention": "Retenció"
+  },
+  "status": {
+    "active": "Aktív",
+    "paused": "Szüneteltetett",
+    "finished": "Befejezett",
+    "transferred_out": "Átirányítva"
+  },
+  "inbox": {
+    "title": "Fogszabályozás",
+    "active": "Aktív",
+    "overdue": "Lejárt kontroll",
+    "unscheduled": "Nincs következő kontroll",
+    "finished": "Befejezett",
+    "new": "Új eset",
+    "empty": "Nincs eset ebben a nézetben",
+    "nextDue": "Következő kontroll",
+    "monthOf": "{x}. hónap / ~{n}"
+  },
+  "case": {
+    "new": "Új fogszabályozási eset",
+    "appliance": "Készülék",
+    "professional": "Fogszabályozó szakorvos",
+    "startDate": "Kezdés dátuma",
+    "estimatedMonths": "Becsült hónapok",
+    "notes": "Diagnózis / célok",
+    "create": "Eset megnyitása",
+    "inMouthNow": "Most szájban",
+    "upper": "Felső",
+    "lower": "Alsó",
+    "noWire": "Nincs rögzített ív",
+    "changeStatus": "Státusz módosítása",
+    "statusNote": "Indok (opcionális)",
+    "save": "Mentés"
+  },
+  "control": {
+    "new": "Kontroll rögzítése",
+    "wires": "Ívek (alapértelmezetten nincs változás)",
+    "procedures": "Beavatkozások",
+    "proceduresOther": "Egyéb beavatkozások",
+    "hygiene": "Higiénia",
+    "hygiene_good": "Jó",
+    "hygiene_fair": "Közepes",
+    "hygiene_poor": "Rossz",
+    "alignerNumber": "Aligner sorszáma",
+    "notes": "Megfigyelések / utasítások",
+    "nextControl": "Következő kontroll",
+    "weeks": "{n} hét",
+    "noNext": "Nincs következő kontroll",
+    "save": "Kontroll mentése",
+    "history": "Kontrollok",
+    "empty": "Még nincs kontroll"
+  },
+  "card": {
+    "title": "Fogszabályozás",
+    "noCase": "Nincs aktív eset",
+    "view": "Megnyitás"
+  },
+  "photos": {
+    "title": "Fotók ({n})",
+    "upload": "Fotó hozzáadása"
+  }
+}
