@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "imagingViewer": "Imagerie"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "Imagerie DICOM",
+      "empty": "Aucune étude visualisable pour ce patient pour le moment.",
+      "noPatient": "Aucun patient sélectionné",
+      "noPatientHint": "Ouvrez cette page avec ?patient_id=<uuid>, par ex. depuis le dossier patient.",
+      "unknownModality": "Modalité inconnue"
+    },
+    "viewer": {
+      "title": "Visualiseur DICOM",
+      "unavailable": "Visualiseur interactif indisponible",
+      "fallbackHint": "Vous pouvez toujours télécharger le fichier DICOM original ci-dessous.",
+      "downloadOriginal": "Télécharger l'original",
+      "visualizationNote": "Aide à la visualisation uniquement - ne constitue jamais un diagnostic."
+    },
+    "rvg": {
+      "title": "File d'import RVG ({total} en attente)",
+      "empty": "Aucun fichier RVG en attente. Les nouveaux fichiers du capteur apparaissent ici après chaque acquisition.",
+      "scanNow": "Analyser maintenant",
+      "approveSuggestion": "Approuver la suggestion",
+      "approveCurrentPatient": "Attribuer au patient actuel",
+      "reject": "Rejeter",
+      "suggested": "Patient suggéré (score {score})",
+      "ambiguous": "Correspondance ambiguë - choisissez le patient explicitement",
+      "noSuggestion": "Aucune correspondance - ouvrez avec ?patient_id= pour attribuer",
+      "loadFailed": "Impossible de charger la file RVG.",
+      "scanFailed": "Échec de l'analyse. Le dossier surveillé est-il configuré ?",
+      "actionFailed": "Échec de l'action. La ligne a peut-être déjà été traitée."
+    },
+    "annotations": {
+      "title": "Annotations",
+      "ruler": "Règle",
+      "freehand": "Dessiner",
+      "note": "Note",
+      "notePlaceholder": "Texte de l'annotation…",
+      "saveNote": "Enregistrer la note",
+      "mm": "{mm} mm",
+      "noSpacing": "pas d'espacement pixel — mm indisponibles",
+      "kind_ruler": "Règle",
+      "kind_freehand": "Dessin",
+      "kind_note": "Note",
+      "loadFailed": "Impossible de charger les annotations.",
+      "actionFailed": "Échec de l'action. Veuillez réessayer.",
+      "aidNote": "Les superpositions sont des aides visuelles uniquement — jamais un diagnostic."
+    }
+  }
+}

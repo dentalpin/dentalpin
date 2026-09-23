@@ -20,6 +20,11 @@ _PHOTO_MIME_EXTRA = frozenset(
     }
 )
 
+# DICOM radiology uploads for the imaging_viewer module (study index +
+# viewer proxy). Same rationale as above: accepted without per-clinic
+# config changes once the module is installed.
+_DICOM_MIME_EXTRA = frozenset({"application/dicom"})
+
 
 def validate_file_size(file: UploadFile, content_length: int | None = None) -> None:
     """Validate file size against limit.
@@ -52,7 +57,7 @@ def validate_mime_type(file: UploadFile) -> str:
     Raises:
         HTTPException: If MIME type not allowed
     """
-    allowed = set(settings.storage_allowed_mime_types_list) | _PHOTO_MIME_EXTRA
+    allowed = set(settings.storage_allowed_mime_types_list) | _PHOTO_MIME_EXTRA | _DICOM_MIME_EXTRA
     content_type = file.content_type or "application/octet-stream"
 
     if content_type not in allowed:

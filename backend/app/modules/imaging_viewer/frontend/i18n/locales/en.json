@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "imagingViewer": "Imaging"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "DICOM imaging",
+      "empty": "No viewable studies for this patient yet.",
+      "noPatient": "No patient selected",
+      "noPatientHint": "Open this page with ?patient_id=<uuid>, e.g. from the patient record.",
+      "unknownModality": "Unknown modality"
+    },
+    "viewer": {
+      "title": "DICOM viewer",
+      "unavailable": "Interactive viewer unavailable",
+      "fallbackHint": "You can still download the original DICOM file below.",
+      "downloadOriginal": "Download original",
+      "visualizationNote": "Visualization aid only - never a diagnosis."
+    },
+    "rvg": {
+      "title": "RVG import queue ({total} pending)",
+      "empty": "No pending RVG files. New sensor files appear here after each scan.",
+      "scanNow": "Scan now",
+      "approveSuggestion": "Approve suggestion",
+      "approveCurrentPatient": "Assign to current patient",
+      "reject": "Reject",
+      "suggested": "Suggested patient (score {score})",
+      "ambiguous": "Ambiguous match - pick the patient explicitly",
+      "noSuggestion": "No match - open with ?patient_id= to assign",
+      "loadFailed": "Could not load the RVG queue.",
+      "scanFailed": "Scan failed. Is the watch folder configured?",
+      "actionFailed": "Action failed. The row may already be decided."
+    },
+    "annotations": {
+      "title": "Annotations",
+      "ruler": "Ruler",
+      "freehand": "Draw",
+      "note": "Note",
+      "notePlaceholder": "Annotation text…",
+      "saveNote": "Save note",
+      "mm": "{mm} mm",
+      "noSpacing": "no pixel spacing — mm unavailable",
+      "kind_ruler": "Ruler",
+      "kind_freehand": "Drawing",
+      "kind_note": "Note",
+      "loadFailed": "Could not load annotations.",
+      "actionFailed": "Action failed. Please retry.",
+      "aidNote": "Overlays are visualization aids only — never a diagnosis."
+    }
+  }
+}

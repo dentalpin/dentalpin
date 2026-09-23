@@ -61,6 +61,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `gdpr.erasure.executed` | `EventType.GDPR_ERASURE_EXECUTED` | `gdpr` | — |
 | `gdpr.request.created` | `EventType.GDPR_REQUEST_CREATED` | `gdpr` | — |
 | `gdpr.request.status_changed` | `EventType.GDPR_REQUEST_STATUS_CHANGED` | `gdpr` | — |
+| `imaging.study_indexed` | `EventType.IMAGING_STUDY_INDEXED` | `imaging_viewer` | — |
 | `inventory.low_stock` | `EventType.INVENTORY_STOCK_LOW` | `inventory` | — |
 | `invoice.cancelled` | `EventType.INVOICE_CANCELLED` | — | — |
 | `invoice.created` | `EventType.INVOICE_CREATED` | — | — |
@@ -74,7 +75,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `media.attachment_unlinked` | `EventType.ATTACHMENT_UNLINKED` | `media` | — |
 | `media.pair_created` | `EventType.PAIR_CREATED` | `media` | `patient_timeline` |
 | `media.pair_removed` | `EventType.PAIR_REMOVED` | `media` | — |
-| `media.photo_uploaded` | `EventType.PHOTO_UPLOADED` | `media` | `patient_timeline` |
+| `media.photo_uploaded` | `EventType.PHOTO_UPLOADED` | `media` | `imaging_viewer`, `patient_timeline` |
 | `migration.binary.resolved` | `EventType.MIGRATION_BINARY_RESOLVED` | `migration_import` | — |
 | `migration.entity.persisted` | `EventType.MIGRATION_ENTITY_PERSISTED` | `migration_import` | — |
 | `migration.job.completed` | `EventType.MIGRATION_JOB_COMPLETED` | `migration_import` | — |
@@ -92,7 +93,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `odontogram.treatment.deleted` | `EventType.ODONTOGRAM_TREATMENT_DELETED` | `odontogram` | — |
 | `odontogram.treatment.performed` | `EventType.ODONTOGRAM_TREATMENT_PERFORMED` | `odontogram` | `activity_journal`, `patient_timeline`, `payments`, `periodontogram`, `treatment_consumables`, `treatment_plan` |
 | `odontogram.treatment.status_changed` | `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED` | `odontogram` | — |
-| `patient.archived` | `EventType.PATIENT_ARCHIVED` | `patients` | `activity_journal`, `media`, `periodontogram`, `recalls` |
+| `patient.archived` | `EventType.PATIENT_ARCHIVED` | `patients` | `activity_journal`, `imaging_viewer`, `media`, `periodontogram`, `recalls` |
 | `patient.created` | `EventType.PATIENT_CREATED` | `patients` | `activity_journal`, `integrations`, `notifications` |
 | `patient.medical_updated` | `EventType.PATIENT_MEDICAL_UPDATED` | `patients_clinical` | `patient_timeline` |
 | `patient.restored` | `EventType.PATIENT_RESTORED` | `patients` | `media` |
@@ -553,6 +554,13 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `gdpr` — `backend/app/modules/gdpr/service.py`
 - **Subscribers:** —
 
+### `imaging.study_indexed`
+
+- **Constant:** `EventType.IMAGING_STUDY_INDEXED`
+- **Publishers:**
+  - `imaging_viewer` — `backend/app/modules/imaging_viewer/service.py`
+- **Subscribers:** —
+
 ### `inventory.low_stock`
 
 - **Constant:** `EventType.INVENTORY_STOCK_LOW`
@@ -653,6 +661,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Publishers:**
   - `media` — `backend/app/modules/media/service.py`
 - **Subscribers:**
+  - `imaging_viewer`
   - `patient_timeline`
 
 ### `migration.binary.resolved`
@@ -790,6 +799,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `patients` — `backend/app/modules/patients/service.py`
 - **Subscribers:**
   - `activity_journal`
+  - `imaging_viewer`
   - `media`
   - `periodontogram`
   - `recalls`

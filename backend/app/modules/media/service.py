@@ -176,6 +176,7 @@ class DocumentService:
                 "media_category": media_category,
                 "media_subtype": media_subtype,
             },
+            db=db,
         )
         if is_image_kind:
             await event_bus.publish(
@@ -190,6 +191,7 @@ class DocumentService:
                     "media_subtype": media_subtype,
                     "captured_at": captured_at.isoformat() if captured_at else None,
                 },
+                db=db,
             )
 
         await db.refresh(document, ["uploader"])

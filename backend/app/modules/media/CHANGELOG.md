@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(events): `create_document` publishes `document.uploaded` /
+  `media.photo_uploaded` transactionally (`db=db`, ADR 0019) — any
+  subscriber declaring a `db` handler (e.g. imaging_viewer's DICOM
+  auto-index) previously crashed every photo/X-ray upload with
+  RuntimeError; the index now shares the upload's session.
 - fix(#452): the document list, delete and update go through `useApi` (401 → refresh → retry, CSRF, SSR cookies); the upload stays on `$fetch` for FormData/progress and retries once after `auth.refresh()` on 401, ending the session when the refresh fails.
 
 - fix(#431 review round 3): `unarchive_patient_documents` docstring

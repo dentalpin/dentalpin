@@ -1,0 +1,51 @@
+{
+  "nav": {
+    "imagingViewer": "Imagem"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "Imagem DICOM",
+      "empty": "Ainda não há estudos visíveis para este paciente.",
+      "noPatient": "Nenhum paciente selecionado",
+      "noPatientHint": "Abra esta página com ?patient_id=<uuid>, p. ex. a partir da ficha do paciente.",
+      "unknownModality": "Modalidade desconhecida"
+    },
+    "viewer": {
+      "title": "Visualizador DICOM",
+      "unavailable": "Visualizador interativo indisponível",
+      "fallbackHint": "Pode sempre descarregar o ficheiro DICOM original abaixo.",
+      "downloadOriginal": "Descarregar original",
+      "visualizationNote": "Apenas ajuda visual — nunca um diagnóstico."
+    },
+    "rvg": {
+      "title": "Fila de importação RVG ({total} pendentes)",
+      "empty": "Sem ficheiros RVG pendentes. Os novos ficheiros do sensor aparecem aqui após cada digitalização.",
+      "scanNow": "Digitalizar agora",
+      "approveSuggestion": "Aprovar sugestão",
+      "approveCurrentPatient": "Atribuir ao paciente atual",
+      "reject": "Rejeitar",
+      "suggested": "Paciente sugerido (pontuação {score})",
+      "ambiguous": "Correspondência ambígua — escolha o paciente explicitamente",
+      "noSuggestion": "Sem correspondência — abra com ?patient_id= para atribuir",
+      "loadFailed": "Não foi possível carregar a fila RVG.",
+      "scanFailed": "A digitalização falhou. A pasta monitorizada está configurada?",
+      "actionFailed": "A ação falhou. A linha já pode ter sido decidida."
+    },
+    "annotations": {
+      "title": "Anotações",
+      "ruler": "Régua",
+      "freehand": "Desenhar",
+      "note": "Nota",
+      "notePlaceholder": "Texto da anotação…",
+      "saveNote": "Guardar nota",
+      "mm": "{mm} mm",
+      "noSpacing": "sem espaçamento de píxel — mm indisponível",
+      "kind_ruler": "Régua",
+      "kind_freehand": "Desenho",
+      "kind_note": "Nota",
+      "loadFailed": "Não foi possível carregar as anotações.",
+      "actionFailed": "A ação falhou. Tente novamente.",
+      "aidNote": "As sobreposições são apenas ajuda visual — nunca um diagnóstico."
+    }
+  }
+}
