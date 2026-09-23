@@ -3,9 +3,9 @@
  * /orthodontics inbox: active / overdue / unscheduled / finished tabs,
  * case sheet inline. Deep-linkable via ?case_id=.
  */
-import type { OrthoCase } from '../composables/useOrthodontics'
+import type { OrthoCase } from '../../composables/useOrthodontics'
 import { PERMISSIONS } from '~~/app/config/permissions'
-import OrthoCaseSheet from '../components/OrthoCaseSheet.vue'
+import OrthoCaseSheet from '../../components/OrthoCaseSheet.vue'
 
 const { t, locale } = useI18n()
 const { can } = usePermissions()

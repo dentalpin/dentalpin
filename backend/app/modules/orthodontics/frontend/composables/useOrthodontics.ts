@@ -46,7 +46,7 @@ export function useOrthodontics() {
   const api = useApi()
 
   async function listCases(params?: { patient_id?: string, status?: string }): Promise<OrthoCase[]> {
-    const response = await api.get<ApiResponse<OrthoCase[]>>('/api/v1/orthodontics/cases', { params })
+    const response = await api.get<ApiResponse<OrthoCase[]>>('/api/v1/orthodontics/cases', { query: params })
     return response.data
   }
 

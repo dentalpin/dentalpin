@@ -24,7 +24,8 @@ const notes = ref('')
 
 async function refresh() {
   cases.value = await listCases({ patient_id: props.patientId })
-  if (!selectedId.value && cases.value.length > 0) selectedId.value = cases.value[0].id
+  const first = cases.value[0]
+  if (!selectedId.value && first) selectedId.value = first.id
 }
 
 async function save() {
@@ -55,7 +56,7 @@ watch(() => props.patientId, () => {
         v-if="cases.length > 0"
         :model-value="selectedId"
         :options="cases.map(c => ({ label: `${t(`orthodontics.appliance.${c.appliance_type}`)} · ${c.start_date}`, value: c.id }))"
-        @update:model-value="selectedId = $event"
+          @update:model-value="selectedId = ($event as string | undefined) ?? null"
       />
       <UButton
         v-if="canWrite"

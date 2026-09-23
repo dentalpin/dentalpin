@@ -58,7 +58,7 @@ async function refresh() {
     if (canAttach.value) {
       const res = await api.get<{ data: { id: string, document: { id: string } | null }[] }>(
         '/api/v1/media/attachments',
-        { params: { owner_type: 'ortho_case', owner_id: props.caseId } }
+        { query: { owner_type: 'ortho_case', owner_id: props.caseId } }
       )
       attachments.value = res.data
     }
