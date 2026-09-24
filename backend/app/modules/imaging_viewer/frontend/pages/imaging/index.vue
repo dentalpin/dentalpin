@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useImagingViewer, useRvgImport, type ImagingStudy, type RvgImport } from '../../composables/useImagingViewer'
+import type { ApiResponse, PaginatedResponse } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
 
 definePageMeta({ middleware: 'auth' })
@@ -7,8 +8,58 @@ definePageMeta({ middleware: 'auth' })
 const { t } = useI18n()
 const { can } = usePermissions()
 const route = useRoute()
+const router = useRouter()
 const { fetchStudies } = useImagingViewer()
 const { fetchImports, triggerScan, approveImport, rejectImport } = useRvgImport()
+const api = useApi()
+
+const studies = ref<ImagingStudy[]>([])
+const total = ref(0)
+const loading = ref(false)
+const selectedId = ref<string | null>(null)
+const patientId = computed(() => String(route.query.patient_id ?? ''))
+
+interface PatientOption { label: string, value: string }
+const patientOptions = ref<PatientOption[]>([])
+const canListPatients = computed(() => can(PERMISSIONS.patients.read))
+
+async function searchPatients(term: string) {
+  if (!canListPatients.value) return
+  try {
+    const res = await api.get<PaginatedResponse<{ id: string, first_name: string, last_name: string }>>(
+      '/api/v1/patients',
+      { query: { search: term || undefined, page: 1, page_size: 20 }, errorToast: false }
+    )
+    patientOptions.value = res.data.map(p => ({
+      label: `${p.last_name}, ${p.first_name}`,
+      value: p.id
+    }))
+  } catch {
+    patientOptions.value = []
+  }
+}
+
+async function resolvePickedName(id: string) {
+  try {
+    const res = await api.get<ApiResponse<{ id: string, first_name: string, last_name: string }>>(
+      `/api/v1/patients/${id}`,
+      { errorToast: false }
+    )
+    patientOptions.value = [{
+      label: `${res.data.last_name}, ${res.data.first_name}`,
+      value: res.data.id
+    }]
+  } catch {
+    patientOptions.value = [{ label: id, value: id }]
+  }
+}
+
+function pickPatient(id: string | undefined) {
+  void router.replace({ query: { ...route.query, patient_id: id || undefined } })
+}
+
+if (patientId.value) void resolvePickedName(patientId.value)
+else void searchPatients('')
 
 const studies = ref<ImagingStudy[]>([])
 const total = ref(0)
@@ -111,9 +162,22 @@ onMounted(loadQueue)
 
 <template>
   <div class="flex flex-col gap-4 p-4">
-    <h1 class="text-xl font-semibold">
-      {{ t('imagingViewer.list.title') }}
-    </h1>
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h1 class="text-xl font-semibold">
+        {{ t('imagingViewer.list.title') }}
+      </h1>
+      <USelectMenu
+        v-if="canListPatients"
+        :model-value="patientId || undefined"
+        :items="patientOptions"
+        value-key="value"
+        :placeholder="t('imagingViewer.list.pickPatient')"
+        :search-input="{ placeholder: t('imagingViewer.list.searchPatients') }"
+        class="w-72"
+        @update:model-value="pickPatient($event as string | undefined)"
+        @update:search-term="searchPatients"
+      />
+    </div>
 
     <UAlert
       v-if="!patientId"

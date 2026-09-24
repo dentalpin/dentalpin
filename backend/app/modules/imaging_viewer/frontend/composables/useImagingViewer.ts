@@ -31,8 +31,8 @@ export function useImagingViewer() {
     return res.data
   }
 
-  function frameUrl(studyId: string) {
-    return `/api/v1/imaging_viewer/studies/${studyId}/frame`
+  function renderUrl(studyId: string) {
+    return `/api/v1/imaging_viewer/studies/${studyId}/render`
   }
 
   async function fetchAnnotations(studyId: string) {
@@ -59,7 +59,7 @@ export function useImagingViewer() {
     await api.del(`/api/v1/imaging_viewer/annotations/${annotationId}`)
   }
 
-  return { fetchStudies, fetchStudy, frameUrl, fetchAnnotations, createAnnotation, deleteAnnotation }
+  return { fetchStudies, fetchStudy, renderUrl, fetchAnnotations, createAnnotation, deleteAnnotation }
 }
 
 export interface StudyAnnotation {

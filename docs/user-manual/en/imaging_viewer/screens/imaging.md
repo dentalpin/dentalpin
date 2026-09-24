@@ -5,7 +5,7 @@ route: /imaging
 related_endpoints:
   - GET /api/v1/imaging_viewer/patients/{patient_id}/studies
   - GET /api/v1/imaging_viewer/studies/{study_id}
-  - GET /api/v1/imaging_viewer/studies/{study_id}/frame
+  - GET /api/v1/imaging_viewer/studies/{study_id}/render
 related_permissions:
   - imaging_viewer.studies.read
 related_paths:
@@ -17,18 +17,15 @@ screenshots: []
 
 # Imaging
 
-The imaging page lists a patient's viewable DICOM studies. Selecting a
-study opens it in the embedded viewer.
-
-## Opening the page
-
-Open `/imaging?patient_id=<uuid>` — for example from the patient record.
-Without a patient selected, the page explains how to open it.
+The imaging page lists a patient's viewable DICOM studies. Pick a
+patient in the header (or open `/imaging?patient_id=...` from the
+patient record); selecting a study shows its rendered image with
+annotation overlays on top.
 
 ## Viewer
 
-The viewer renders the study from the clinic's own archive. If the
-interactive viewer cannot load, the page offers the original DICOM file
-for download instead.
+The image is rendered server-side (windowing applied) from the
+clinic's own archive. If a study cannot be rendered, the page says so
+instead of showing a broken image.
 
 Studies shown here are a visualization aid only — never a diagnosis.

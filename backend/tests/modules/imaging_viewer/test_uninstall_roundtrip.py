@@ -3,9 +3,9 @@
 Install -> uninstall -> reinstall must drop ONLY the module's tables
 (``imaging_studies``, ``imaging_rvg_links``, ``imaging_rvg_imports``) and
 leave every other module untouched. The branch-scoped downgrade target is
-``imaging_viewer@-3`` — one step per revision on the branch
-(iv_0001/iv_0002/iv_0003); the ``-N`` count must grow with the branch
-(never ``@base``: it resolves across branches). Marked
+``imaging_viewer@-1`` — the branch is a single revision (``iv_0001``;
+``iv_0002``/``iv_0003`` folded back in); the ``-N`` count must grow with
+the branch (never ``@base``: it resolves across branches). Marked
 ``alembic_roundtrip`` and excluded from the default run.
 """
 
@@ -67,7 +67,7 @@ def test_imaging_viewer_uninstall_roundtrip_is_branch_scoped() -> None:
     before = _list_tables()
     assert IMAGING_VIEWER_TABLES.issubset(before), "imaging tables missing after upgrade"
 
-    _alembic("downgrade", "imaging_viewer@-3")
+    _alembic("downgrade", "imaging_viewer@-1")
     after_down = _list_tables()
     assert IMAGING_VIEWER_TABLES.isdisjoint(after_down), (
         "imaging tables still present after downgrade"

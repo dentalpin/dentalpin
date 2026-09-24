@@ -6,6 +6,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -23,7 +24,13 @@ from .schemas import (
     RvgScanRequest,
     StudyIndexRequest,
 )
-from .service import AnnotationService, ImagingStudyService, RvgConflictError, RvgService
+from .service import (
+    AnnotationService,
+    ImagingStudyService,
+    RvgConflictError,
+    RvgService,
+    UnrenderableStudyError,
+)
 
 router = APIRouter()
 
@@ -81,9 +88,9 @@ async def index_study(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("imaging_viewer.studies.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-) -> ApiResponse[ImagingStudyResponse]:
+) -> ApiResponse[ImagingStudyResponse] | JSONResponse:
     try:
-        study = await ImagingStudyService.index_study(
+        study, created = await ImagingStudyService.index_study(
             db,
             ctx.clinic_id,
             patient_id,
@@ -93,28 +100,38 @@ async def index_study(
         )
     except LookupError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Document not found")
+    if not created:
+        # Idempotent re-index: same document, same row — 200, not 201.
+        return JSONResponse(
+            status_code=status.HTTP_200_OK,
+            content=ApiResponse(data=ImagingStudyResponse.model_validate(study)).model_dump(
+                mode="json"
+            ),
+        )
     return ApiResponse(data=ImagingStudyResponse.model_validate(study))
 
 
-@router.get("/studies/{study_id}/frame")
-async def get_study_frame(
+@router.get("/studies/{study_id}/render")
+async def render_study(
     study_id: UUID,
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("imaging_viewer.studies.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> Response:
-    """Serve the study's DICOM bytes to the embedded viewer.
+    """Render the study to PNG for the viewer + annotation canvas.
 
-    Same-clinic only: a foreign study id resolves to 404 (LookupError), never
-    a cross-tenant oracle. No PHI in the URL beyond the opaque study id.
+    Same-clinic only (LookupError → 404, never a cross-tenant oracle).
+    Undecodable pixels → 422 (re-upload, don't retry).
     """
     try:
-        content, mime_type = await ImagingStudyService.get_frame_bytes(db, ctx.clinic_id, study_id)
+        content = await ImagingStudyService.render_study_png(db, ctx.clinic_id, study_id)
     except LookupError:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
+    except UnrenderableStudyError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))
     return Response(
         content=content,
-        media_type=mime_type,
+        media_type="image/png",
         headers={"Content-Length": str(len(content))},
     )
 
@@ -130,54 +147,6 @@ async def archive_study(
     if not study:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
     await ImagingStudyService.archive_study(db, study)
-
-
-# ---------------------------------------------------------------------------
-# DICOMweb-minimal façade for the embedded OHIF viewer (Stream 2).
-# QIDO-RS study list + WADO-RS frame path, both clinic-scoped under the same
-# studies.read gate. Series/instance segments are opaque single-frame paths.
-# ---------------------------------------------------------------------------
-
-
-@router.get("/dicomweb/studies")
-async def qido_studies(
-    patient_id: UUID,
-    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
-    _: Annotated[None, Depends(require_permission("imaging_viewer.studies.read"))],
-    db: Annotated[AsyncSession, Depends(get_db)],
-) -> Response:
-    import json
-
-    studies = await ImagingStudyService.qido_studies(db, ctx.clinic_id, patient_id)
-    return Response(
-        content=json.dumps(studies),
-        media_type="application/dicom+json",
-    )
-
-
-@router.get(
-    "/dicomweb/studies/{study_uid}/series/{series_uid}/instances/{instance_uid}/frames/{frame}"
-)
-async def wado_frame(
-    study_uid: str,
-    series_uid: str,
-    instance_uid: str,
-    frame: int,
-    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
-    _: Annotated[None, Depends(require_permission("imaging_viewer.studies.read"))],
-    db: Annotated[AsyncSession, Depends(get_db)],
-) -> Response:
-    try:
-        content, mime_type = await ImagingStudyService.get_frame_bytes_by_uid(
-            db, ctx.clinic_id, study_uid
-        )
-    except LookupError:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
-    return Response(
-        content=content,
-        media_type=mime_type,
-        headers={"Content-Length": str(len(content))},
-    )
 
 
 # ---------------------------------------------------------------------------
@@ -203,7 +172,7 @@ def _rvg_watch_path(ctx: ClinicContext) -> str:
 async def rvg_scan(
     data: RvgScanRequest,
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
-    _: Annotated[None, Depends(require_permission("imaging_viewer.rvg.read"))],
+    _: Annotated[None, Depends(require_permission("imaging_viewer.rvg.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[dict]:
     """Scan the clinic's watch folder now (scheduler-independent trigger)."""

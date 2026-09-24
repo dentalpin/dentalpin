@@ -7,14 +7,15 @@
       "title": "Imagerie DICOM",
       "empty": "Aucune étude visualisable pour ce patient pour le moment.",
       "noPatient": "Aucun patient sélectionné",
-      "noPatientHint": "Ouvrez cette page avec ?patient_id=..., par ex. depuis le dossier patient.",
+      "noPatientHint": "Sélectionnez un patient ci-dessus, ou ouvrez cette page avec ?patient_id=..., par ex. depuis le dossier patient.",
+      "pickPatient": "Sélectionner un patient",
+      "searchPatients": "Rechercher des patients",
       "unknownModality": "Modalité inconnue"
     },
     "viewer": {
       "title": "Visualiseur DICOM",
-      "unavailable": "Visualiseur interactif indisponible",
-      "fallbackHint": "Vous pouvez toujours télécharger le fichier DICOM original ci-dessous.",
-      "downloadOriginal": "Télécharger l'original",
+      "unavailable": "Aperçu indisponible",
+      "fallbackHint": "L'étude n'a pas pu être affichée. Essayez de renvoyer le fichier.",
       "visualizationNote": "Aide à la visualisation uniquement - ne constitue jamais un diagnostic."
     },
     "rvg": {

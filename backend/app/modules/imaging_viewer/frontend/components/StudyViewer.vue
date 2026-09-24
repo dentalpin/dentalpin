@@ -1,17 +1,19 @@
 <script setup lang="ts">
 /**
- * Embedded DICOM viewer (OHIF build served from this layer's public dir).
- * The iframe stays same-origin so the host session (JWT) rides along;
- * study bytes come only from our clinic-scoped frame proxy.
+ * Study viewer: backend-rendered PNG (server-side windowing) with the
+ * study metadata below. The <img> fires @error natively, so the alert
+ * below actually shows when a render fails — unlike the old iframe
+ * fallback, which silently embedded the Nuxt 404 page.
  */
 const props = defineProps<{ studyId: string }>()
 
 const { t } = useI18n()
-const { frameUrl } = useImagingViewer()
+const { renderUrl } = useImagingViewer()
 
-const viewerSrc = computed(() => `/ohif/viewer?study=${props.studyId}`)
-const fallbackSrc = computed(() => frameUrl(props.studyId))
 const failed = ref(false)
+watch(() => props.studyId, () => {
+  failed.value = false
+})
 </script>
 
 <template>
@@ -22,21 +24,14 @@ const failed = ref(false)
       :title="t('imagingViewer.viewer.unavailable')"
       :description="t('imagingViewer.viewer.fallbackHint')"
     />
-    <iframe
+    <img
       v-if="!failed"
-      :src="viewerSrc"
-      class="h-[70vh] w-full rounded-lg border"
-      :title="t('imagingViewer.viewer.title')"
+      :src="renderUrl(props.studyId)"
+      class="w-full rounded-lg border"
+      :alt="t('imagingViewer.viewer.title')"
+      draggable="false"
       @error="failed = true"
-    />
-    <UButton
-      icon="i-lucide-download"
-      variant="soft"
-      :to="fallbackSrc"
-      target="_blank"
     >
-      {{ t('imagingViewer.viewer.downloadOriginal') }}
-    </UButton>
     <p class="text-xs text-gray-500">
       {{ t('imagingViewer.viewer.visualizationNote') }}
     </p>

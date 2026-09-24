@@ -7,14 +7,15 @@
       "title": "Obrazowanie DICOM",
       "empty": "Brak dostępnych badań tego pacjenta.",
       "noPatient": "Nie wybrano pacjenta",
-      "noPatientHint": "Otwórz tę stronę z ?patient_id=..., np. z karty pacjenta.",
+      "noPatientHint": "Wybierz pacjenta powyżej lub otwórz tę stronę z ?patient_id=..., np. z karty pacjenta.",
+      "pickPatient": "Wybierz pacjenta",
+      "searchPatients": "Szukaj pacjentów",
       "unknownModality": "Nieznana modalność"
     },
     "viewer": {
       "title": "Przeglądarka DICOM",
-      "unavailable": "Interaktywna przeglądarka niedostępna",
-      "fallbackHint": "Poniżej możesz nadal pobrać oryginalny plik DICOM.",
-      "downloadOriginal": "Pobierz oryginał",
+      "unavailable": "Podgląd niedostępny",
+      "fallbackHint": "Nie można wyświetlić badania. Spróbuj przesłać plik ponownie.",
       "visualizationNote": "Tylko pomoc wizualna - nigdy diagnoza."
     },
     "rvg": {

@@ -22,7 +22,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `documents` | 0.1.0 | official | patients | manual | yes | 2 | 1 | 0 | yes |
 | `expenses` | 0.1.0 | community | — | manual | yes | 2 | 0 | 0 | yes |
 | `gdpr` | 0.1.0 | official | patients | manual | yes | 9 | 6 | 0 | no |
-| `imaging_viewer` | 0.1.0 | official | media, patients | manual | yes | 4 | 1 | 2 | yes |
+| `imaging_viewer` | 0.1.0 | official | media, patients | manual | yes | 4 | 2 | 2 | yes |
 | `india_gst` | 0.1.0 | official | billing, catalog | manual | yes | 4 | 0 | 0 | yes |
 | `integrations` | 0.1.0 | official | patients | manual | yes | 4 | 0 | 8 | no |
 | `inventory` | 0.2.0 | community | — | manual | yes | 2 | 1 | 0 | yes |
@@ -38,7 +38,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_segments` | 0.1.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
-| `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 37 | yes |
+| `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 38 | yes |
 | `patients` | 0.1.0 | official | — | auto | no | 2 | 4 | 0 | yes |
 | `patients_clinical` | 0.1.0 | official | patients | auto | no | 4 | 1 | 0 | yes |
 | `payment_gateways` | 0.1.0 | official | patients, budget, payments | manual | yes | 0 | 0 | 0 | no |
@@ -371,7 +371,7 @@ Data-subject rights, consents, retention and breach reporting (GDPR).
 
 ### `imaging_viewer` — v0.1.0
 
-In-app DICOM study viewer (OHIF) indexed on media documents.
+In-app DICOM study viewer (PNG render) indexed on media documents.
 
 - **Author:** DentalPin Core Team
 - **License:** BSL-1.1
@@ -748,6 +748,7 @@ Patient timeline — unified activity log.
   - `clinical_notes.plan_created`
   - `clinical_notes.treatment_created`
   - `document.uploaded`
+  - `imaging.study_indexed`
   - `invoice.issued`
   - `invoice.paid`
   - `media.pair_created`

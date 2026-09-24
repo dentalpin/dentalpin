@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- Review round 2: backend PNG render (`GET /studies/{id}/render`,
+  server-side windowing, 422 when undecodable) replaces the OHIF
+  iframe + DICOMweb façade + frame proxy (all removed with their
+  tests); annotation canvas draws over the PNG. Indexing is
+  idempotent (unique clinic+document, 201 new / 200 existing);
+  the upload handler is flush-only inside a savepoint with a single
+  byte fetch (ADR 0019) and sniffs `DICM` for octet-stream uploads;
+  RVG watch moves handled files to `processed/`; `/imaging` has a
+  patient picker; `rvg/scan` requires `rvg.write`; `study_date`
+  parses from tags; timeline subscribes to `imaging.study_indexed`.
 - fix: current `useApi` contract (`api.del`, `{ query }`) + `noUncheckedIndexedAccess`
   (`[noteAt]`, first-study guard) in the layer; `noPatientHint` drops the
   `<uuid>` placeholder (vue-i18n build rejects HTML-like messages).

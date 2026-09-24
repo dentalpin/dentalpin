@@ -1,4 +1,4 @@
-"""imaging_viewer module — in-app DICOM study viewer (OHIF embed)."""
+"""imaging_viewer module — in-app DICOM study viewer (backend PNG render)."""
 
 from __future__ import annotations
 
@@ -11,14 +11,20 @@ from fastapi import APIRouter
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.events import EventType
+from app.core.events import EventType, event_bus
 from app.core.plugins import BaseModule
 from app.core.scheduling import ScheduledJob
 from app.modules.media.models import Document
 
 from .models import ImagingAnnotation, ImagingStudy, RvgImport, RvgLink
 from .router import router
-from .service import ImagingStudyService, RvgService
+from .service import (
+    DICOM_MIME_TYPES,
+    ImagingStudyService,
+    RvgService,
+    fetch_document_bytes,
+    is_dicom_bytes,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -48,18 +54,17 @@ async def rvg_watch_tick() -> None:
 
 
 class ImagingViewerModule(BaseModule):
-    """DICOM study index + viewer proxy on top of media documents.
+    """DICOM study index + PNG renderer on top of media documents.
 
     Pixel data stays in the referenced media ``Document``; this module owns
-    the study index row and the clinic-scoped frame proxy feeding the
-    embedded OHIF viewer (iframe). Viewer build: OHIF/Viewers ``v3.12.14``
-    (MIT — notice preserved, see NOTICE.md).
+    the study index row and the clinic-scoped PNG render (server-side
+    windowing) feeding the viewer and the annotation canvas.
     """
 
     manifest = {
         "name": "imaging_viewer",
         "version": "0.1.0",
-        "summary": "In-app DICOM study viewer (OHIF) indexed on media documents.",
+        "summary": "In-app DICOM study viewer (PNG render) indexed on media documents.",
         "author": "DentalPin Core Team",
         "license": "BSL-1.1",
         "category": "official",
@@ -123,9 +128,14 @@ class ImagingViewerModule(BaseModule):
     async def _on_photo_uploaded(self, data: dict, *, db: AsyncSession) -> None:
         """Auto-index DICOM uploads as viewable studies (best-effort).
 
-        Only documents whose stored mime type is DICOM are indexed — JPEG
-        photos/X-rays stay gallery-only. Never raises: a failed index must
-        not break the media upload that published this event.
+        Runs inside the media upload's transaction (ADR 0019): flush-only,
+        no commit, and the bytes are fetched exactly once and reused for
+        the magic-byte sniff and the tag parse — never re-read. Documents
+        whose mime is neither DICOM nor sniffed-DICOM stay gallery-only.
+        Never raises, and never poisons the borrowed session: the index
+        runs in a savepoint, so even a failed flush rolls back only the
+        index while the upload commits normally. The insert path itself
+        is deterministic (idempotency pre-check first).
         """
         try:
             document_id = data.get("document_id")
@@ -141,14 +151,33 @@ class ImagingViewerModule(BaseModule):
                     )
                 )
             ).scalar_one_or_none()
-            if document is None or document.mime_type != "application/dicom":
+            if document is None or document.mime_type not in DICOM_MIME_TYPES:
                 return
-            await ImagingStudyService.index_study(
-                db,
-                UUID(str(clinic_id)),
-                UUID(str(patient_id)),
-                UUID(str(document_id)),
-            )
+            raw = await fetch_document_bytes(document)
+            if document.mime_type != "application/dicom" and not is_dicom_bytes(raw):
+                return
+            # Savepoint: a failed index rolls back only itself — the media
+            # upload holding this session commits normally afterwards.
+            async with db.begin_nested():
+                study, _created = await ImagingStudyService.index_core(
+                    db,
+                    UUID(str(clinic_id)),
+                    UUID(str(patient_id)),
+                    document,
+                    raw,
+                )
+                await db.flush()
+                await event_bus.publish(
+                    EventType.IMAGING_STUDY_INDEXED,
+                    {
+                        "study_id": str(study.id),
+                        "clinic_id": str(clinic_id),
+                        "patient_id": str(patient_id),
+                        "document_id": str(document_id),
+                        "study_uid": study.study_uid,
+                    },
+                    db=db,
+                )
         except Exception:  # noqa: BLE001 — best-effort indexing, log and continue
             logger.exception("imaging_viewer._on_photo_uploaded: auto-index failed")
 

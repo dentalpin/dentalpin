@@ -61,7 +61,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `gdpr.erasure.executed` | `EventType.GDPR_ERASURE_EXECUTED` | `gdpr` | — |
 | `gdpr.request.created` | `EventType.GDPR_REQUEST_CREATED` | `gdpr` | — |
 | `gdpr.request.status_changed` | `EventType.GDPR_REQUEST_STATUS_CHANGED` | `gdpr` | — |
-| `imaging.study_indexed` | `EventType.IMAGING_STUDY_INDEXED` | `imaging_viewer` | — |
+| `imaging.study_indexed` | `EventType.IMAGING_STUDY_INDEXED` | `imaging_viewer` | `patient_timeline` |
 | `inventory.low_stock` | `EventType.INVENTORY_STOCK_LOW` | `inventory` | — |
 | `invoice.cancelled` | `EventType.INVOICE_CANCELLED` | — | — |
 | `invoice.created` | `EventType.INVOICE_CREATED` | — | — |
@@ -558,8 +558,10 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.IMAGING_STUDY_INDEXED`
 - **Publishers:**
+  - `imaging_viewer` — `backend/app/modules/imaging_viewer/__init__.py`
   - `imaging_viewer` — `backend/app/modules/imaging_viewer/service.py`
-- **Subscribers:** —
+- **Subscribers:**
+  - `patient_timeline`
 
 ### `inventory.low_stock`
 

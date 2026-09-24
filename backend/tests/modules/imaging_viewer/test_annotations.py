@@ -66,9 +66,10 @@ async def _study_inner(db, clinic, patient, storage):
     )
     db.add(doc)
     await db.flush()
-    return await ImagingStudyService.index_study(
+    study, _created = await ImagingStudyService.index_study(
         db, clinic.id, patient.id, doc.id, study_uid=f"9.9.{uuid4().int % 100000}"
     )
+    return study
 
 
 async def _user_id(db: AsyncSession):

@@ -7,14 +7,15 @@
       "title": "DICOM imaging",
       "empty": "No viewable studies for this patient yet.",
       "noPatient": "No patient selected",
-      "noPatientHint": "Open this page with ?patient_id=..., e.g. from the patient record.",
+      "noPatientHint": "Select a patient above, or open this page with ?patient_id=..., e.g. from the patient record.",
+      "pickPatient": "Select patient",
+      "searchPatients": "Search patients",
       "unknownModality": "Unknown modality"
     },
     "viewer": {
       "title": "DICOM viewer",
-      "unavailable": "Interactive viewer unavailable",
-      "fallbackHint": "You can still download the original DICOM file below.",
-      "downloadOriginal": "Download original",
+      "unavailable": "Preview unavailable",
+      "fallbackHint": "The study could not be rendered. Try re-uploading the file.",
       "visualizationNote": "Visualization aid only - never a diagnosis."
     },
     "rvg": {

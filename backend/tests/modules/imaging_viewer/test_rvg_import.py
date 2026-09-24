@@ -275,3 +275,27 @@ async def test_cross_clinic_isolation(
     items, total = await RvgService.list_imports(db_session, other_clinic.id)
     assert total == 1
     assert items[0].id == theirs.id
+
+
+@pytest.mark.asyncio
+async def test_scan_watch_dir_moves_processed_and_drains_past_limit(
+    test_clinic: Clinic, db_session: AsyncSession, tmp_path
+) -> None:
+    """A folder holding more than the batch limit drains over successive
+    ticks: handled files move to processed/ (rows keep the audit), so
+    later-sorting files are reached and ticks never re-hash."""
+    from pathlib import Path
+
+    watch = Path(str(tmp_path)) / "watch"
+    watch.mkdir()
+    for i in range(55):
+        (watch / f"f{i:03d}.dcm").write_bytes(b"not-dicom-%d" % i)
+    counts = await RvgService.scan_watch_dir(db_session, test_clinic.id, str(watch))
+    assert counts["scanned"] == 50
+    assert sorted(p.name for p in watch.iterdir() if p.is_file()) == [
+        f"f{i:03d}.dcm" for i in range(50, 55)
+    ]
+    assert len(list((watch / "processed").iterdir())) == 50
+    counts2 = await RvgService.scan_watch_dir(db_session, test_clinic.id, str(watch))
+    assert counts2["scanned"] == 5
+    assert [p for p in watch.iterdir() if p.is_file()] == []

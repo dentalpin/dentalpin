@@ -7,14 +7,15 @@
       "title": "DICOM képalkotás",
       "empty": "Ehhez a beteghez még nincsenek megtekinthető vizsgálatok.",
       "noPatient": "Nincs beteg kiválasztva",
-      "noPatientHint": "Nyissa meg ezt az oldalt a ?patient_id=... paraméterrel, pl. a betegkartotékból.",
+      "noPatientHint": "Válasszon beteget fent, vagy nyissa meg ezt az oldalt a ?patient_id=... paraméterrel, pl. a betegkartotékból.",
+      "pickPatient": "Beteg kiválasztása",
+      "searchPatients": "Betegek keresése",
       "unknownModality": "Ismeretlen modalitás"
     },
     "viewer": {
       "title": "DICOM megjelenítő",
-      "unavailable": "Az interaktív megjelenítő nem érhető el",
-      "fallbackHint": "Az eredeti DICOM-fájlt alább továbbra is letöltheti.",
-      "downloadOriginal": "Eredeti letöltése",
+      "unavailable": "Előnézet nem érhető el",
+      "fallbackHint": "A vizsgálat nem jeleníthető meg. Próbálja meg újból feltölteni a fájlt.",
       "visualizationNote": "Csak megjelenítési segédlet - soha nem diagnózis."
     },
     "rvg": {

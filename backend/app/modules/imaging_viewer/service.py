@@ -3,11 +3,14 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import logging
 import os
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import EventType, event_bus
@@ -23,6 +26,43 @@ logger = logging.getLogger(__name__)
 DICOM_MIME_TYPES = frozenset({"application/dicom", "application/octet-stream"})
 
 
+def is_dicom_bytes(raw: bytes) -> bool:
+    """Magic-byte sniff: Part-10 `DICM` prefix at offset 128.
+
+    Browsers usually upload `.dcm` as `application/octet-stream`, so the
+    mime type alone misses most radiology uploads — sniff the bytes.
+    """
+    return len(raw) > 132 and raw[128:132] == b"DICM"
+
+
+class UnrenderableStudyError(ValueError):
+    """DICOM bytes exist but cannot be rendered to PNG (missing pixel
+    libraries or undecodable pixels). The router maps this to 422 —
+    re-upload, don't retry."""
+
+
+async def fetch_document_bytes(document: Document) -> bytes:
+    """Read a document's bytes from storage.
+
+    Single call site for all reads (index, render, handler sniff) so tests
+    fake storage in exactly one place: the ``get_storage_backend`` global
+    of THIS module (looked up at call time, monkeypatch-friendly).
+    """
+    storage = get_storage_backend()
+    return await storage.retrieve(document.storage_path)
+
+
+def _parse_study_date(value: str | None) -> datetime | None:
+    """DICOM StudyDate (`YYYYMMDD`) → UTC midnight. Never raises: garbage
+    means unknown, and indexing must not fail over a date."""
+    if not value:
+        return None
+    try:
+        return datetime(int(value[0:4]), int(value[4:6]), int(value[6:8]), tzinfo=UTC)
+    except (ValueError, IndexError):
+        return None
+
+
 def extract_dicom_tags(raw: bytes) -> dict:
     """Extract identity tags from DICOM bytes. Empty dict when unparsable.
 
@@ -35,7 +75,7 @@ def extract_dicom_tags(raw: bytes) -> dict:
     except ImportError:
         return {}
     try:
-        ds = pydicom.dcmread(__import__("io").BytesIO(raw), stop_before_pixels=True)
+        ds = pydicom.dcmread(io.BytesIO(raw), stop_before_pixels=True)
     except Exception:  # noqa: BLE001 — any malformed input maps to "no tags"
         return {}
     tags: dict = {}
@@ -68,12 +108,20 @@ class ImagingStudyService:
         document_id: UUID,
         study_uid: str | None = None,
         modality: str | None = None,
-    ) -> ImagingStudy:
+        raw: bytes | None = None,
+    ) -> tuple[ImagingStudy, bool]:
         """Index a media document as a viewable DICOM study.
 
         The document must belong to the same clinic + patient; anything else
         raises ``LookupError`` (the router maps it to 404 — no cross-tenant
         oracle). Pixel data is never copied: the study points at the document.
+
+        Idempotent: a document that already has an active study returns that
+        row with ``created=False`` (second element) instead of duplicating —
+        shared StudyInstanceUIDs across RVG frames must never 500 a lookup.
+        This is the request-session path: storage I/O, commit, and publish
+        all happen here. Transactional callers (event handlers inside
+        someone else's session) must use ``index_core`` instead — ADR 0019.
         """
         document = (
             await db.execute(
@@ -88,21 +136,36 @@ class ImagingStudyService:
         if document is None:
             raise LookupError("Document not found")
 
-        storage = get_storage_backend()
-        raw = await storage.retrieve(document.storage_path)
-        tags = extract_dicom_tags(raw)
-        resolved_uid = study_uid or tags.get("StudyInstanceUID") or str(document.id)
-        resolved_modality = modality or tags.get("Modality")
-
-        study = ImagingStudy(
-            clinic_id=clinic_id,
-            patient_id=patient_id,
-            document_id=document.id,
-            study_uid=resolved_uid,
-            modality=resolved_modality,
-            dicom_metadata=tags,
-        )
-        db.add(study)
+        if raw is None:
+            raw = await fetch_document_bytes(document)
+        try:
+            study, created = await ImagingStudyService.index_core(
+                db,
+                clinic_id,
+                patient_id,
+                document,
+                raw,
+                study_uid=study_uid,
+                modality=modality,
+            )
+        except IntegrityError:
+            # Lost a concurrent double-index race (pre-check passed on both
+            # sides): roll back and return the winner instead of 500ing.
+            # Own session only — transactional callers never reach this
+            # branch with a borrowed session (their except handles it).
+            await db.rollback()
+            study = (
+                await db.execute(
+                    select(ImagingStudy).where(
+                        ImagingStudy.clinic_id == clinic_id,
+                        ImagingStudy.document_id == document.id,
+                        ImagingStudy.status == "active",
+                    )
+                )
+            ).scalar_one_or_none()
+            if study is None:
+                raise
+            created = False
         await db.commit()
         await db.refresh(study)
 
@@ -113,10 +176,58 @@ class ImagingStudyService:
                 "clinic_id": str(clinic_id),
                 "patient_id": str(patient_id),
                 "document_id": str(document.id),
-                "study_uid": resolved_uid,
+                "study_uid": study.study_uid,
             },
         )
-        return study
+        return study, created
+
+    @staticmethod
+    async def index_core(
+        db: AsyncSession,
+        clinic_id: UUID,
+        patient_id: UUID,
+        document: Document,
+        raw: bytes | None,
+        study_uid: str | None = None,
+        modality: str | None = None,
+    ) -> tuple[ImagingStudy, bool]:
+        """Flush-only index core for transactional callers (ADR 0019).
+
+        No storage I/O (bytes arrive as ``raw`` — ``None`` means unparsed,
+        tags stay empty and fill in nowhere: callers that need metadata
+        pass bytes), no commit, no publish. Returns ``(study, created)``;
+        an existing active study for the same document short-circuits with
+        ``created=False`` so the flush path is deterministic — the caller
+        is usually borrowing someone else's session, where a surprise
+        ``IntegrityError`` would poison it.
+        """
+        existing = (
+            await db.execute(
+                select(ImagingStudy).where(
+                    ImagingStudy.clinic_id == clinic_id,
+                    ImagingStudy.document_id == document.id,
+                    ImagingStudy.status == "active",
+                )
+            )
+        ).scalar_one_or_none()
+        if existing is not None:
+            return existing, False
+
+        tags = extract_dicom_tags(raw) if raw is not None else {}
+        resolved_uid = study_uid or tags.get("StudyInstanceUID") or str(document.id)
+        study = ImagingStudy(
+            clinic_id=clinic_id,
+            patient_id=patient_id,
+            document_id=document.id,
+            study_uid=resolved_uid,
+            modality=modality or tags.get("Modality"),
+            study_date=_parse_study_date(tags.get("StudyDate")),
+            dicom_metadata=tags,
+        )
+        db.add(study)
+        await db.flush()
+        await db.refresh(study)
+        return study, True
 
     @staticmethod
     async def get_study(db: AsyncSession, clinic_id: UUID, study_id: UUID) -> ImagingStudy | None:
@@ -165,50 +276,10 @@ class ImagingStudyService:
         return study
 
     @staticmethod
-    async def qido_studies(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> list[dict]:
-        """Minimal QIDO-RS study list for the embedded viewer.
-
-        One entry per active study; single-frame studies report a single
-        related instance. UIDs are opaque — the viewer must echo them back
-        into the WADO paths below, never interpret them.
-        """
-        items, _ = await ImagingStudyService.list_studies(
-            db, clinic_id, patient_id, page=1, page_size=100
-        )
-        return [
-            {
-                "StudyInstanceUID": s.study_uid,
-                "Modality": s.modality or "OT",
-                "StudyDate": s.study_date.strftime("%Y%m%d") if s.study_date else "",
-                "NumberOfStudyRelatedInstances": 1,
-            }
-            for s in items
-        ]
-
-    @staticmethod
-    async def get_frame_bytes_by_uid(
-        db: AsyncSession, clinic_id: UUID, study_uid: str
-    ) -> tuple[bytes, str]:
-        """WADO-RS minimal frame resolution. Series/instance segments are
-        accepted opaque (single-frame studies); the study UID is the key."""
-        study = (
-            await db.execute(
-                select(ImagingStudy).where(
-                    ImagingStudy.clinic_id == clinic_id,
-                    ImagingStudy.study_uid == study_uid,
-                    ImagingStudy.status == "active",
-                )
-            )
-        ).scalar_one_or_none()
-        if study is None:
-            raise LookupError("Study not found")
-        return await ImagingStudyService.get_frame_bytes(db, clinic_id, study.id)
-
-    @staticmethod
     async def get_frame_bytes(
         db: AsyncSession, clinic_id: UUID, study_id: UUID
     ) -> tuple[bytes, str]:
-        """Resolve the study's DICOM bytes for the viewer proxy.
+        """Resolve the study's DICOM bytes for rendering.
 
         Both the study and the backing document are re-checked against the
         clinic: a study id from another clinic resolves to ``LookupError``.
@@ -230,6 +301,64 @@ class ImagingStudyService:
             raise LookupError("Study not found")
         storage = get_storage_backend()
         return await storage.retrieve(document.storage_path), document.mime_type
+
+    @staticmethod
+    async def render_study_png(db: AsyncSession, clinic_id: UUID, study_id: UUID) -> bytes:
+        """Render one study to PNG bytes for the viewer + annotation canvas.
+
+        Same clinic re-checks as the byte path (LookupError → 404).
+        Undecodable pixels or missing pixel libraries raise
+        ``UnrenderableStudyError`` (the router maps it to 422).
+        """
+        raw, _mime = await ImagingStudyService.get_frame_bytes(db, clinic_id, study_id)
+        return render_dicom_png(raw)
+
+
+def render_dicom_png(raw: bytes) -> bytes:
+    """Render DICOM pixel data to grayscale PNG bytes.
+
+    Basic windowing: explicit WindowCenter/WindowWidth when present
+    (first value of multi-valued), else a min/max stretch. MONOCHROME1
+    is inverted so bones read bright. Raises ``UnrenderableStudyError``
+    when the pixel libraries are missing or the pixels don't decode —
+    callers map that to 422, never 500.
+    """
+    try:
+        import numpy as np
+        import pydicom
+        from PIL import Image
+    except ImportError as exc:
+        raise UnrenderableStudyError(f"pixel libraries unavailable: {exc}") from exc
+    try:
+        ds = pydicom.dcmread(io.BytesIO(raw))
+        arr = ds.pixel_array
+    except Exception as exc:
+        raise UnrenderableStudyError(f"pixels do not decode: {exc}") from exc
+    try:
+        pixels = np.asarray(arr, dtype="float64")
+        center = ds.get("WindowCenter", None)
+        width = ds.get("WindowWidth", None)
+        if isinstance(center, (list, tuple)):
+            center = center[0] if len(center) else None
+        if isinstance(width, (list, tuple)):
+            width = width[0] if len(width) else None
+        if center not in (None, "") and width not in (None, ""):
+            lo = float(center) - float(width) / 2.0
+            hi = float(center) + float(width) / 2.0
+        else:
+            lo, hi = float(pixels.min()), float(pixels.max())
+        if hi <= lo:
+            hi = lo + 1.0
+        scaled = ((pixels - lo) / (hi - lo) * 255.0).clip(0, 255).astype("uint8")
+        if str(ds.get("PhotometricInterpretation", "")).upper() == "MONOCHROME1":
+            scaled = 255 - scaled
+        buf = io.BytesIO()
+        Image.fromarray(scaled, mode="L").save(buf, format="PNG")
+        return buf.getvalue()
+    except UnrenderableStudyError:
+        raise
+    except Exception as exc:
+        raise UnrenderableStudyError(f"pixels do not render: {exc}") from exc
 
 
 class RvgConflictError(Exception):
@@ -253,7 +382,7 @@ def extract_identity_tags(raw: bytes) -> dict:
     except ImportError:
         return {}
     try:
-        ds = pydicom.dcmread(__import__("io").BytesIO(raw), stop_before_pixels=True)
+        ds = pydicom.dcmread(io.BytesIO(raw), stop_before_pixels=True)
     except Exception:  # noqa: BLE001 — any malformed input maps to "no tags"
         return {}
     tags: dict = {}
@@ -379,7 +508,7 @@ class RvgService:
         ).scalar_one_or_none()
         if existing_study is not None:
             return document, existing_study
-        study = await ImagingStudyService.index_study(
+        study, _created = await ImagingStudyService.index_study(
             db,
             clinic_id,
             patient_id,
@@ -524,17 +653,26 @@ class RvgService:
         """Scan up to ``limit`` files from a watch dir, best-effort per file.
 
         A broken file records a failed row — it never aborts the tick.
-        Returns counts ``{scanned, created, approved, pending, failed}``.
+        Handled files move to a ``processed/`` subdir afterwards (failed
+        rows keep their error for audit; re-drop the file to retry), so a
+        folder holding more than ``limit`` files drains over successive
+        ticks instead of stalling on the first page, and ticks never
+        re-hash the same files. Returns counts
+        ``{scanned, created, approved, pending, failed}``.
         """
         counts = {"scanned": 0, "created": 0, "approved": 0, "pending": 0, "failed": 0}
         try:
             names = sorted(os.listdir(path))
         except OSError:
             return counts
-        for name in names[:limit]:
+        try:
+            os.makedirs(os.path.join(path, "processed"), exist_ok=True)
+        except OSError:
+            logger.exception("RvgService.scan_watch_dir: cannot create processed/ in %s", path)
+            return counts
+        files = [n for n in names if os.path.isfile(os.path.join(path, n))]
+        for name in files[:limit]:
             full = os.path.join(path, name)
-            if not os.path.isfile(full):
-                continue
             counts["scanned"] += 1
             try:
                 with open(full, "rb") as fh:
@@ -548,6 +686,7 @@ class RvgService:
             if created:
                 counts["created"] += 1
             counts[row.status if row.status in counts else "pending"] += 1
+            _move_to_processed(path, name)
         return counts
 
     @staticmethod
@@ -717,6 +856,27 @@ def _spacing_mm(tags: dict) -> float | None:
         if value > 0:
             return value
     return None
+
+
+def _move_to_processed(path: str, name: str) -> None:
+    """Move a handled watch file into ``processed/`` (collision-safe).
+
+    Best-effort: a move failure only logs — the row already records the
+    outcome, and the next tick re-handles the file idempotently.
+    """
+    try:
+        dest = os.path.join(path, "processed", name)
+        if os.path.exists(dest):
+            stem, dot, ext = name.partition(".")
+            n = 1
+            while os.path.exists(dest):
+                n += 1
+                dest = os.path.join(
+                    path, "processed", f"{stem}.{n}{dot}{ext}" if dot else f"{stem}.{n}"
+                )
+        os.replace(os.path.join(path, name), dest)
+    except OSError:
+        logger.exception("RvgService.scan_watch_dir: cannot move %s to processed/", name)
 
 
 class AnnotationService:

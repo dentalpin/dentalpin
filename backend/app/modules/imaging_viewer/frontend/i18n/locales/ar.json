@@ -7,14 +7,15 @@
       "title": "تصوير DICOM",
       "empty": "لا توجد دراسات قابلة للعرض لهذا المريض بعد.",
       "noPatient": "لم يتم اختيار مريض",
-      "noPatientHint": "افتح هذه الصفحة مع ?patient_id=...، مثلاً من ملف المريض.",
+      "noPatientHint": "اختر مريضًا أعلاه، أو افتح هذه الصفحة مع ?patient_id=...، مثلاً من ملف المريض.",
+      "pickPatient": "اختر مريضًا",
+      "searchPatients": "ابحث عن المرضى",
       "unknownModality": "النمط غير معروف"
     },
     "viewer": {
       "title": "عارض DICOM",
-      "unavailable": "العارض التفاعلي غير متاح",
-      "fallbackHint": "يمكنك تنزيل ملف DICOM الأصلي أدناه.",
-      "downloadOriginal": "تنزيل الأصل",
+      "unavailable": "المعاينة غير متوفرة",
+      "fallbackHint": "تعذّر عرض الدراسة. حاول رفع الملف مجددًا.",
       "visualizationNote": "مساعدة بصرية فقط - وليست تشخيصاً أبداً."
     },
     "rvg": {

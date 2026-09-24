@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import DateTime, ForeignKey, Index, String
+from sqlalchemy import DateTime, ForeignKey, Index, String, text
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 from sqlalchemy.orm import Mapped, mapped_column
@@ -41,6 +41,17 @@ class ImagingStudy(Base, TimestampMixin):
     __table_args__ = (
         Index("ix_imaging_studies_clinic_patient", "clinic_id", "patient_id"),
         Index("ix_imaging_studies_study_uid", "clinic_id", "study_uid"),
+        # Idempotent indexing: one ACTIVE row per document (a shared
+        # StudyInstanceUID across RVG frames must never duplicate rows).
+        # Partial so archived rows keep their history; index_core
+        # pre-checks the active row first (pay_0005 precedent).
+        Index(
+            "uq_imaging_studies_clinic_document",
+            "clinic_id",
+            "document_id",
+            unique=True,
+            postgresql_where=text("status = 'active'"),
+        ),
     )
 
 

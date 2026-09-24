@@ -6,8 +6,8 @@ last_verified_commit: 0000000
 # imaging_viewer — technical overview
 
 In-app DICOM study viewer. Indexes media documents holding DICOM bytes as
-viewable studies and serves their frames to an embedded OHIF viewer (iframe,
-pinned build `v3.12.14`, MIT — see module `NOTICE.md`).
+viewable studies and renders them to PNG (server-side windowing) for the
+viewer and the annotation canvas.
 
 > _Scaffolded stub — replace with proper documentation when this module is next touched._
 
@@ -20,7 +20,7 @@ the scaffold could not infer.
 - `GET /api/v1/imaging_viewer/patients/{patient_id}/studies`
 - `GET /api/v1/imaging_viewer/studies/{study_id}`
 - `POST /api/v1/imaging_viewer/patients/{patient_id}/studies/index`
-- `GET /api/v1/imaging_viewer/studies/{study_id}/frame`
+- `GET /api/v1/imaging_viewer/studies/{study_id}/render`
 - `DELETE /api/v1/imaging_viewer/studies/{study_id}`
 - `POST /api/v1/imaging_viewer/rvg/scan` — scan the clinic watch folder now
 - `GET /api/v1/imaging_viewer/rvg/imports` (+ `{id}`) — approval queue

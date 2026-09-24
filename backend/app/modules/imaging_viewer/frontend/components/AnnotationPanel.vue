@@ -12,7 +12,7 @@ const props = defineProps<{ studyId: string }>()
 
 const { t } = useI18n()
 const { can } = usePermissions()
-const { frameUrl, fetchAnnotations, createAnnotation, deleteAnnotation } = useImagingViewer()
+const { renderUrl, fetchAnnotations, createAnnotation, deleteAnnotation } = useImagingViewer()
 
 const annotations = ref<StudyAnnotation[]>([])
 const tool = ref<'ruler' | 'freehand' | 'note' | null>(null)
@@ -149,7 +149,7 @@ onMounted(load)
     />
     <div class="relative select-none">
       <img
-        :src="frameUrl(studyId)"
+        :src="renderUrl(studyId)"
         class="w-full rounded"
         alt=""
         draggable="false"

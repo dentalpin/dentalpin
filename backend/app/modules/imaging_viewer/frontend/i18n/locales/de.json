@@ -7,14 +7,15 @@
       "title": "DICOM-Bildgebung",
       "empty": "Noch keine darstellbaren Studien für diesen Patienten.",
       "noPatient": "Kein Patient ausgewählt",
-      "noPatientHint": "Diese Seite mit ?patient_id=... öffnen, z. B. aus der Patientenakte.",
+      "noPatientHint": "Wählen Sie oben einen Patienten, oder öffnen Sie diese Seite mit ?patient_id=..., z. B. aus der Patientenakte.",
+      "pickPatient": "Patient wählen",
+      "searchPatients": "Patienten suchen",
       "unknownModality": "Unbekannte Modalität"
     },
     "viewer": {
       "title": "DICOM-Viewer",
-      "unavailable": "Interaktiver Viewer nicht verfügbar",
-      "fallbackHint": "Sie können die DICOM-Originaldatei unten weiterhin herunterladen.",
-      "downloadOriginal": "Original herunterladen",
+      "unavailable": "Vorschau nicht verfügbar",
+      "fallbackHint": "Die Studie konnte nicht dargestellt werden. Bitte laden Sie die Datei erneut hoch.",
       "visualizationNote": "Nur Visualisierungshilfe - niemals eine Diagnose."
     },
     "rvg": {
