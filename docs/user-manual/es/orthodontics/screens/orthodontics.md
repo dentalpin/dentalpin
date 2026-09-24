@@ -2,7 +2,7 @@
 module: orthodontics
 screen: orthodontics
 route: /orthodontics
-last_verified_commit: bc75d5a0cf1e15b70cd4f3ddf4e4ffdd78174fc8
+last_verified_commit: 023e296c2a73a8c08e545eb3a2dfdf2b2adcd043
 related_endpoints:
   - GET /api/v1/orthodontics/cases
   - POST /api/v1/orthodontics/cases
@@ -25,4 +25,8 @@ vencido, sin próximo control y finalizados. Cada ficha muestra el
 aparato "en boca ahora", el progreso "Mes X de ~N", la evolución de
 fotos y el botón "+ Registrar control". El control se rellena con
 chips (arcos por arcada, procedimientos, higiene) y propone el
-próximo control en 3/4/6/8 semanas.
+próximo control en 3/4/6/8 semanas. El diálogo de estado solo ofrece
+los movimientos legales según el estado actual (un caso finalizado
+solo puede reabrirse a activo; un caso transferido no tiene
+movimientos), y reabrir un caso finalizado conserva su fecha de
+finalización original.
