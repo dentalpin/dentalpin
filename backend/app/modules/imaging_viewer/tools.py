@@ -86,7 +86,7 @@ async def _get_study(ctx: AgentContext, params: GetStudyArgs) -> dict:
 
 async def _index_study(ctx: AgentContext, params: IndexStudyArgs) -> dict:
     try:
-        study = await ImagingStudyService.index_study(
+        study, _created = await ImagingStudyService.index_study(
             ctx.db,
             ctx.clinic_id,
             UUID(params.patient_id),

@@ -61,12 +61,6 @@ function pickPatient(id: string | undefined) {
 if (patientId.value) void resolvePickedName(patientId.value)
 else void searchPatients('')
 
-const studies = ref<ImagingStudy[]>([])
-const total = ref(0)
-const loading = ref(false)
-const selectedId = ref<string | null>(null)
-const patientId = computed(() => String(route.query.patient_id ?? ''))
-
 const queue = ref<RvgImport[]>([])
 const queueTotal = ref(0)
 const queueLoading = ref(false)

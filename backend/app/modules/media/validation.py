@@ -61,10 +61,15 @@ def validate_mime_type(file: UploadFile) -> str:
     content_type = file.content_type or "application/octet-stream"
 
     if content_type not in allowed:
-        raise HTTPException(
-            status_code=400,
-            detail=f"File type '{content_type}' not allowed. Allowed: {', '.join(sorted(allowed))}",
-        )
+        # Browsers upload `.dcm` as octet-stream: accept by extension so the
+        # viewer's DICM magic-byte sniff (not the mime) decides radiology.
+        # Anything else stays rejected — the allowlist is not widened.
+        filename = (file.filename or "").lower()
+        if content_type != "application/octet-stream" or not filename.endswith(".dcm"):
+            raise HTTPException(
+                status_code=400,
+                detail=f"File type '{content_type}' not allowed. Allowed: {', '.join(sorted(allowed))}",
+            )
 
     return content_type
 

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix: `application/octet-stream` uploads pass validation when the
+  filename ends in `.dcm` (browsers sniff DICOM that way) — the
+  viewer's `DICM` magic check, not the mime, decides radiology.
+  Anything else stays rejected.
 - fix(events): `create_document` publishes `document.uploaded` /
   `media.photo_uploaded` transactionally (`db=db`, ADR 0019) — any
   subscriber declaring a `db` handler (e.g. imaging_viewer's DICOM

@@ -171,6 +171,41 @@ def test_dicom_mime_accepted_for_upload() -> None:
     assert validate_mime_type(upload) == "application/dicom"
 
 
+def test_octet_stream_accepted_only_for_dcm_extension() -> None:
+    """Browsers upload `.dcm` as octet-stream: accepted by extension so the
+    viewer's DICM sniff (not the mime) decides radiology. Anything else
+    stays rejected — the allowlist is not widened."""
+    import io
+
+    from fastapi import HTTPException, UploadFile
+    from starlette.datastructures import Headers
+
+    from app.modules.media.validation import validate_mime_type
+
+    dcm = UploadFile(
+        filename="cbct.dcm",
+        file=io.BytesIO(b"fake"),
+        headers=Headers({"content-type": "application/octet-stream"}),
+    )
+    assert validate_mime_type(dcm) == "application/octet-stream"
+    other = UploadFile(
+        filename="notes.bin",
+        file=io.BytesIO(b"fake"),
+        headers=Headers({"content-type": "application/octet-stream"}),
+    )
+    with pytest.raises(HTTPException):
+        validate_mime_type(other)
+    # The mime conjunct matters too: a disallowed mime must fail even
+    # with a .dcm name (pins both sides of the `or`, L76).
+    zipped = UploadFile(
+        filename="cbct.dcm",
+        file=io.BytesIO(b"fake"),
+        headers=Headers({"content-type": "application/zip"}),
+    )
+    with pytest.raises(HTTPException):
+        validate_mime_type(zipped)
+
+
 @pytest.mark.asyncio
 async def test_study_date_parsed_from_tags(
     test_clinic: Clinic,
