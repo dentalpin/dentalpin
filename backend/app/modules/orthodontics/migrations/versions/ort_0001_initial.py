@@ -10,7 +10,10 @@ from alembic import op
 revision: str = "ort_0001"
 down_revision: str | None = None
 branch_labels: str | Sequence[str] | None = ("orthodontics",)
-depends_on: str | Sequence[str] | None = None
+# Cross-module FK to patients.id: order after the patients head (newest
+# precedent: prescriptions, patient_relationships). See issue #507 for the
+# convention discussion; this follows the current practice.
+depends_on: str | Sequence[str] | None = ("pat_0003",)
 
 
 def upgrade() -> None:

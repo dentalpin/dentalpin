@@ -32,7 +32,7 @@ tracking only — no money code (see Later).
 | Event | When | Payload keys |
 |---|---|---|
 | `orthodontics.case_created` | case created | `case_id`, `clinic_id`, `patient_id`, `appliance_type` |
-| `orthodontics.case_status_changed` | status transition | `case_id`, `clinic_id`, `patient_id`, `previous_status`, `status` |
+| `orthodontics.case_status_changed` | status transition | `case_id`, `clinic_id`, `patient_id`, `previous_status`, `status`, `previous_finished_at` |
 | `orthodontics.control_registered` | control registered | `case_id`, `control_id`, `clinic_id`, `patient_id`, wires, `procedures`, `next_due` |
 
 Consumed by `patient_timeline` (payload-only rows).
@@ -64,7 +64,11 @@ None in slice-a (copilot tools are a slice-b follow-up).
 ## Gotchas
 
 - **Controls refused on terminal cases** (`finished`,
-  `transferred_out`) — corrections need reopening to `active`/`paused`.
+  `transferred_out`) — corrections need reopening a finished case to
+  `active` (a transferred-out case has no exit).
+- **Status machine is explicit** (`VALID_TRANSITIONS` in service.py):
+  `transferred_out` terminal, `finished` reopens only to `active`.
+  `finished_at` is set once, never cleared; reopen stamps `reopened_at`.
 - **Wire names are chips, not gates** — unknown labels allowed
   (free-text escape hatch); length capped at 40.
 - **`performed_by` defaults to the caller** (`ctx.user_id`), membership

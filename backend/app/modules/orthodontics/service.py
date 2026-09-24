@@ -22,6 +22,24 @@ from .schemas import (
 
 TERMINAL_STATUSES = ("finished", "transferred_out")
 
+# Explicit status machine (issue #505 review): every transition not listed
+# here is refused. ``finished`` reopens only to ``active`` (patients come
+# back); ``transferred_out`` is terminal (the patient left the practice).
+# Same-status is accepted as a note update, not a transition.
+VALID_TRANSITIONS: dict[str, list[str]] = {
+    "active": ["paused", "finished", "transferred_out"],
+    "paused": ["active", "finished", "transferred_out"],
+    "finished": ["active"],
+    "transferred_out": [],
+}
+
+
+def can_transition(current_status: str, new_status: str) -> bool:
+    """Check if a status transition is valid (same-status is a note update)."""
+    if new_status == current_status:
+        return True
+    return new_status in VALID_TRANSITIONS.get(current_status, [])
+
 
 async def _require_patient(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> Patient:
     result = await db.execute(
@@ -185,9 +203,18 @@ class OrthoCaseService:
         if case is None:
             return None
         previous = case.status
+        if not can_transition(previous, status):
+            raise ValueError(f"Cannot move case from '{previous}' to '{status}'")
+        previous_finished_at = case.finished_at
         case.status = status
         case.status_note = note
-        case.finished_at = datetime.now(UTC) if status in TERMINAL_STATUSES else None
+        if status in TERMINAL_STATUSES and case.finished_at is None:
+            # finished_at is set once and never cleared: the record of when
+            # treatment ended survives any later reopen.
+            case.finished_at = datetime.now(UTC)
+        if previous == "finished" and status == "active":
+            # Explicit reopen path: stamps the reopen, keeps finished_at.
+            case.reopened_at = datetime.now(UTC)
         await db.flush()
         await event_bus.publish(
             EventType.ORTHODONTICS_CASE_STATUS_CHANGED,
@@ -197,6 +224,9 @@ class OrthoCaseService:
                 "patient_id": str(case.patient_id),
                 "previous_status": previous,
                 "status": status,
+                "previous_finished_at": (
+                    previous_finished_at.isoformat() if previous_finished_at is not None else None
+                ),
             },
         )
         return case, await _annotate_case(db, case)

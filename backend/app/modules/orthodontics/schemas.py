@@ -60,6 +60,7 @@ class OrthoCaseResponse(BaseModel):
     current_upper_wire: str | None
     current_lower_wire: str | None
     finished_at: datetime | None
+    reopened_at: datetime | None = None
     status_note: str | None
     control_count: int = 0
     last_control_at: datetime | None = None

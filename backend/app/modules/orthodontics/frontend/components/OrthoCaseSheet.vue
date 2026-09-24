@@ -39,6 +39,20 @@ const showStatus = ref(false)
 const newStatus = ref('')
 const statusNote = ref('')
 
+/** Mirror of backend VALID_TRANSITIONS: only offer legal moves (plus the
+ *  current status, accepted as a note update). Illegal clicks used to 400. */
+const VALID_TRANSITIONS: Record<string, string[]> = {
+  active: ['paused', 'finished', 'transferred_out'],
+  paused: ['active', 'finished', 'transferred_out'],
+  finished: ['active'],
+  transferred_out: []
+}
+const allowedStatuses = computed(() => {
+  const current = item.value?.status
+  if (!current) return []
+  return [current, ...VALID_TRANSITIONS[current].filter(s => s !== current)]
+})
+
 function formatDate(iso: string | null): string {
   if (!iso) return '—'
   return new Intl.DateTimeFormat(locale.value, { dateStyle: 'medium' }).format(new Date(iso))
@@ -379,7 +393,7 @@ watch(() => props.caseId, refresh, { immediate: true })
       <template #body>
         <div class="flex flex-wrap gap-1">
           <UButton
-            v-for="s in ['active', 'paused', 'finished', 'transferred_out']"
+            v-for="s in allowedStatuses"
             :key="s"
             size="sm"
             :variant="newStatus === s ? 'solid' : 'soft'"

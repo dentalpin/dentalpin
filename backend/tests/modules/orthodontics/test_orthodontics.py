@@ -184,3 +184,65 @@ async def test_http_codes(client, auth_headers, test_patient):
 
     response = await client.get(f"/api/v1/orthodontics/cases/{uuid4()}", headers=auth_headers)
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_illegal_transition_refused(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    await db_session.commit()
+    await OrthoCaseService.change_status(
+        db_session, test_clinic.id, case.id, "transferred_out", None
+    )
+    await db_session.commit()
+    with pytest.raises(ValueError, match="Cannot move case from 'transferred_out' to 'paused'"):
+        await OrthoCaseService.change_status(db_session, test_clinic.id, case.id, "paused", None)
+
+
+@pytest.mark.asyncio
+async def test_reopen_keeps_finished_at(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    await db_session.commit()
+    finished, _ = await OrthoCaseService.change_status(
+        db_session, test_clinic.id, case.id, "finished", None
+    )
+    await db_session.commit()
+    first_finish = finished.finished_at
+    assert first_finish is not None
+
+    reopened, _ = await OrthoCaseService.change_status(
+        db_session, test_clinic.id, case.id, "active", "patient returned"
+    )
+    await db_session.commit()
+    assert reopened.status == "active"
+    assert reopened.finished_at == first_finish
+    assert reopened.reopened_at is not None
+    assert reopened.reopened_at >= first_finish
+
+
+@pytest.mark.asyncio
+async def test_http_illegal_transition_is_400(client, auth_headers, test_patient):
+    response = await client.post(
+        "/api/v1/orthodontics/cases",
+        json={"patient_id": str(test_patient.id), "appliance_type": "aligners"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 201
+    case_id = response.json()["data"]["id"]
+
+    response = await client.post(
+        f"/api/v1/orthodontics/cases/{case_id}/status",
+        json={"status": "transferred_out"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 200
+
+    response = await client.post(
+        f"/api/v1/orthodontics/cases/{case_id}/status",
+        json={"status": "paused"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 400

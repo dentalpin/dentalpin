@@ -11,6 +11,14 @@ No money code in slice-a. Installments, recall upsert, the
 treatment-plan/appointment links, copilot tools, and the settings UI
 are slice-b / follow-ups (see Later below and the module CLAUDE.md).
 
+## Status machine
+
+`active` ↔ `paused`; either may finish or transfer out. `finished`
+reopens only to `active` (explicit reopen path); `transferred_out` is
+terminal. `finished_at` is set on the first terminal entry and never
+cleared; a reopen stamps `reopened_at` instead, so the end-of-treatment
+record survives. Same-status posts are accepted as note updates.
+
 ## Later (slice-b + follow-ups, user-approved 2026-09-08)
 
 - **Slice-b:** optional plan link (`treatment_plan_id` + `plan_item_id`,

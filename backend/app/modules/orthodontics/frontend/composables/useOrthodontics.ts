@@ -13,6 +13,7 @@ export interface OrthoCase {
   current_upper_wire: string | null
   current_lower_wire: string | null
   finished_at: string | null
+  reopened_at: string | null
   status_note: string | null
   control_count: number
   last_control_at: string | null
