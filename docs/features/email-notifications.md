@@ -492,9 +492,9 @@ async def send_budget(db, clinic_id, budget_id):
 # notifications/handlers.py
 class NotificationHandlers:
     @staticmethod
-    async def on_prescription_created(data: dict) -> None:
+    async def on_prescription_issued(data: dict) -> None:
         await NotificationHandlers._send_notification(
-            notification_type="prescription_created",
+            notification_type="prescription_issued",
             data=data,
         )
 ```
@@ -506,14 +506,14 @@ class NotificationHandlers:
 def get_event_handlers(self) -> dict:
     return {
         # ... existing handlers
-        "prescription.created": NotificationHandlers.on_prescription_created,
+        "prescription.issued": NotificationHandlers.on_prescription_issued,
     }
 ```
 
 3. **Add template:**
 
 ```html
-<!-- templates/email/es/prescription_created.html -->
+<!-- templates/email/es/prescription_issued.html -->
 <h1>Nueva receta</h1>
 <p>Hola {{ patient_name }},</p>
 <p>Tu receta está lista para recoger.</p>
@@ -522,7 +522,7 @@ def get_event_handlers(self) -> dict:
 4. **Publish from your module:**
 
 ```python
-event_bus.publish("prescription.created", {
+event_bus.publish("prescription.issued", {
     "clinic_id": str(clinic_id),
     "patient_id": str(patient.id),
     "patient_email": patient.email,

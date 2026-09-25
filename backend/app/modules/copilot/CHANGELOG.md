@@ -2,10 +2,19 @@
 
 ## Unreleased
 
+- feat: Arabic subject for the morning digest email ("الملخص اليومي", same
+  wording as the `ar/` template title; from #426 by @dev-7aider).
+
 - Dropped the unused `nav.copilot` locale key (sidebar entry removed in #467).
 
 - feat(#232): no standalone sidebar entry — the assistant launcher is the app-overlay floating button; manifest `navigation` is empty.
 - fix(#452): the chat stream refreshes the session once and replays the turn when the first response is a 401; a failed refresh shows `copilot.sessionExpired` (all locales) and ends the session instead of dropping `HTTP 401` into the chat.
+
+- refactor(#332): resolve LLM providers through a process-wide registry;
+  Copilot registers the existing OpenAI and Anthropic specifications from
+  `on_activate()` so only an installed module affects runtime. Settings and
+  the bridge now read default models, API-key requirements and tool dialects
+  from the registered specification instead of provider-name branches.
 
 - feat(#46): history scoping, nudge visibility, and agent-context grant sets
   resolve flag-aware (`RBAC_FROM_DB` on: custom roles and per-clinic

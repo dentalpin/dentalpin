@@ -368,18 +368,11 @@ function computeInstallPreview(name: string): string[] {
 
 <template>
   <div class="space-y-6">
-    <div class="flex items-center gap-3">
-      <UButton
-        to="/settings"
-        variant="ghost"
-        size="sm"
-        icon="i-lucide-arrow-left"
-      >
-        {{ t('settings.title') }}
-      </UButton>
-    </div>
-
     <div>
+      <SettingsBackLink
+        to="/settings"
+        :label="t('settings.title')"
+      />
       <h1 class="text-display text-default">
         {{ t('settings.modules.title') }}
       </h1>

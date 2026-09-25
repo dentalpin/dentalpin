@@ -1,6 +1,4 @@
 # Environment
-.env
-.env.local
 .env.*.local
 
 # Claude Code
@@ -41,7 +39,6 @@ dist/
 
 # IDE
 .idea/
-.vscode/
 *.swp
 *.swo
 *~
@@ -67,3 +64,4 @@ proyecto_open_source_dental.docx
 *.dpmf
 test-results/
 /.vs
+config.bat

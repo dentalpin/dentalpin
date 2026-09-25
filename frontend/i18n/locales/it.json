@@ -826,6 +826,14 @@
   },
   "appointments": {
     "title": "Agenda",
+    "checkin": {
+      "qr": "QR di accettazione",
+      "hint": "Il paziente scansiona questo codice per registrarsi. Scade 15 minuti dopo la creazione.",
+      "copyLink": "Copia link di registrazione",
+      "openTitle": "Accettazione in clinica",
+      "success": "Registrazione completata. Prego, si accomodi.",
+      "invalid": "Questo codice di registrazione non è valido o è scaduto. Chiedine uno nuovo alla reception."
+    },
     "create": "Nuovo appuntamento",
     "edit": "Modifica appuntamento",
     "today": "Oggi",

@@ -1,0 +1,115 @@
+{
+  "leads": {
+    "nav": {
+      "leads": "Solicitudes entrantes"
+    },
+    "title": "Solicitudes entrantes",
+    "subtitle": "Solicitudes recibidas desde el formulario web",
+    "empty": "No hay solicitudes nuevas",
+    "emptyHint": "Las solicitudes de personas que ya son pacientes van directamente a Recordatorios: míralo ahí antes de pensar que el formulario no funciona.",
+    "emptyAction": "Añadir una solicitud manualmente",
+    "searchPlaceholder": "Buscar por nombre, teléfono o email",
+    "filterStatus": "Estado",
+    "filters": {
+      "showAll": "Ver todos los estados"
+    },
+    "receivedAt": "Recibido",
+    "availability": "Disponibilidad",
+    "newLead": "Nueva solicitud",
+    "websiteForm": "Formulario web",
+    "status": {
+      "new": "Nuevo",
+      "contacted": "Contactado",
+      "converted": "Convertido",
+      "discarded": "Descartado"
+    },
+    "fields": {
+      "fullName": "Nombre completo",
+      "phone": "Teléfono",
+      "email": "Email",
+      "motive": "Motivo",
+      "description": "Descripción",
+      "availability": "Disponibilidad",
+      "status": "Estado",
+      "availabilityHint": "¿Qué días podemos llamarle?"
+    },
+    "actions": {
+      "edit": "Editar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "discard": "Descartar",
+      "markContacted": "Marcar como contactado"
+    },
+    "convert": {
+      "title": "Convertir en paciente",
+      "subtitle": "Revisa la solicitud y completa la ficha del paciente",
+      "enquiry": "Solicitud",
+      "patient": "Paciente",
+      "createPatient": "Crear paciente",
+      "created": "Paciente creado",
+      "openPatient": "Abrir paciente",
+      "alreadyConverted": "Esta solicitud ya se ha convertido en paciente.",
+      "duplicateWarning": "Ya existe un paciente con este teléfono",
+      "duplicateOpen": "Abrir ese paciente"
+    },
+    "validation": {
+      "required": "Este campo es obligatorio",
+      "email": "Introduce un email válido, por ejemplo nombre{'@'}example.com",
+      "phone": "Introduce un teléfono válido (al menos 6 dígitos)",
+      "dateOfBirth": "La fecha de nacimiento no puede estar en el futuro",
+      "fixErrors": "Revisa los campos marcados"
+    },
+    "slots": {
+      "any": "Cualquier hora",
+      "morning": "Mañanas",
+      "afternoon": "Tardes",
+      "evening": "Noches"
+    },
+    "routing": {
+      "explainer": "Las solicitudes cuyo teléfono o email ya pertenece a un paciente no crean una solicitud nueva: se añaden a Recordatorios como llamada pendiente.",
+      "recallQueued": "{name} ya es paciente — se ha añadido una llamada a Recordatorios.",
+      "openRecalls": "Abrir Recordatorios"
+    },
+    "settings": {
+      "title": "Formulario web",
+      "description": "Clave de entrada y límite diario para las solicitudes que tu web envía a DentalPin.",
+      "capLabel": "Límite diario",
+      "capHint": "Máximo de solicitudes aceptadas al día. 0 = sin límite.",
+      "capSave": "Guardar límite",
+      "capSaved": "Límite diario guardado",
+      "volume": "{count} de {cap} hoy",
+      "unlimited": "{count} hoy (sin límite)",
+      "atLimit": "La entrada está en pausa hasta mañana: se ha alcanzado el límite de hoy.",
+      "capLoweredWarning": "Bajar el límite por debajo del número de hoy bloquea la entrada al instante.",
+      "keyTitle": "Clave de entrada",
+      "keyConfigured": "Configurada",
+      "keyMissing": "Todavía no hay clave: la entrada está cerrada hasta que crees una.",
+      "keyPrefix": "Prefijo",
+      "keyActive": "Activa",
+      "keyInactive": "Desactivada",
+      "lastUsed": "Último uso",
+      "never": "Nunca",
+      "rotate": "Generar / rotar clave",
+      "rotateWarning": "Rotar la clave corta al instante una clave filtrada. Acuérdate de pegar la nueva clave en tu web: el formulario fallará hasta que lo hagas.",
+      "rotateCopyOnce": "Copia esta clave ahora: solo se muestra una vez.",
+      "copied": "Copiado",
+      "activate": "Activar entrada",
+      "deactivate": "Desactivar entrada",
+      "intakeUrl": "URL de entrada",
+      "example": "Ejemplo de petición",
+      "routingNote": "Las solicitudes cuyo teléfono o email ya pertenece a un paciente no crean una solicitud nueva: se añaden a Recordatorios para llamar.",
+      "readOnly": "No tienes permiso para cambiar esta configuración.",
+      "noPermission": "No tienes permiso para ver esta configuración.",
+      "copy": "Copiar"
+    },
+    "errors": {
+      "load": "No se han podido cargar las solicitudes",
+      "save": "No se ha podido guardar el contacto",
+      "convert": "No se ha podido crear el paciente",
+      "settingsLoad": "No se ha podido cargar la configuración",
+      "settingsSave": "No se ha podido guardar la configuración",
+      "rotate": "No se ha podido rotar la clave",
+      "copy": "El portapapeles no está disponible: selecciona el texto y cópialo a mano"
+    }
+  }
+}

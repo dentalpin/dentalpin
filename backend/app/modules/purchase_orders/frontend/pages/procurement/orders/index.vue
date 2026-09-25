@@ -396,12 +396,16 @@ async function fetchOrders() {
 }
 
 async function loadOptions() {
-  const [suppliers, items] = await Promise.all([
-    listSuppliers({ page: 1, page_size: 100 }),
-    listInventoryItems({ page: 1, page_size: 100 })
-  ])
-  supplierOptions.value = suppliers.data.map(s => ({ label: s.name, value: s.id }))
-  itemOptions.value = items.data.map(i => ({ label: i.name, value: i.id }))
+  try {
+    const [suppliers, items] = await Promise.all([
+      listSuppliers({ page: 1, page_size: 100 }),
+      listInventoryItems({ page: 1, page_size: 100 })
+    ])
+    supplierOptions.value = suppliers.data.map(s => ({ label: s.name, value: s.id }))
+    itemOptions.value = items.data.map(i => ({ label: i.name, value: i.id }))
+  } catch (e) {
+    toast.add({ title: t('procurement.common.loadError'), description: errorMessage(e, ''), color: 'error' })
+  }
 }
 
 async function saveOrder() {
@@ -505,6 +509,6 @@ async function submitReceive() {
 
 watch(currentPage, fetchOrders)
 onMounted(async () => {
-  await Promise.all([fetchOrders(), loadOptions().catch(() => undefined)])
+  await Promise.all([fetchOrders(), loadOptions()])
 })
 </script>

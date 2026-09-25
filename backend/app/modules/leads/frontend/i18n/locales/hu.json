@@ -1,0 +1,115 @@
+{
+  "leads": {
+    "nav": {
+      "leads": "Érdeklődések"
+    },
+    "title": "Érdeklődések",
+    "subtitle": "A weboldali űrlapon beérkezett érdeklődések",
+    "empty": "Nincs új érdeklődés",
+    "emptyHint": "A már páciensként szereplő személyek érdeklődései egyenesen a Visszahívások közé kerülnek — ott nézze meg, mielőtt arra gondolna, hogy az űrlap nem működik.",
+    "emptyAction": "Érdeklődés felvétele kézzel",
+    "searchPlaceholder": "Keresés név, telefonszám vagy e-mail alapján",
+    "filterStatus": "Állapot",
+    "filters": {
+      "showAll": "Összes állapot megjelenítése"
+    },
+    "receivedAt": "Beérkezett",
+    "availability": "Elérhetőség",
+    "newLead": "Új érdeklődés",
+    "websiteForm": "Weboldali űrlap",
+    "status": {
+      "new": "Új",
+      "contacted": "Megkeresve",
+      "converted": "Átalakítva",
+      "discarded": "Elvetve"
+    },
+    "fields": {
+      "fullName": "Teljes név",
+      "phone": "Telefon",
+      "email": "E-mail",
+      "motive": "Ok",
+      "description": "Leírás",
+      "availability": "Elérhetőség",
+      "status": "Állapot",
+      "availabilityHint": "Mely napokon hívhatjuk?"
+    },
+    "actions": {
+      "edit": "Szerkesztés",
+      "save": "Mentés",
+      "cancel": "Mégse",
+      "discard": "Elvetés",
+      "markContacted": "Megjelölés megkeresettként"
+    },
+    "convert": {
+      "title": "Átalakítás pácienssé",
+      "subtitle": "Ellenőrizze az érdeklődést, és egészítse ki a páciens adatait",
+      "enquiry": "Érdeklődés",
+      "patient": "Páciens",
+      "createPatient": "Páciens létrehozása",
+      "created": "Páciens létrehozva",
+      "openPatient": "Páciens megnyitása",
+      "alreadyConverted": "Ez az érdeklődés már pácienssé lett alakítva.",
+      "duplicateWarning": "Már létezik páciens ezzel a telefonszámmal",
+      "duplicateOpen": "A páciens megnyitása"
+    },
+    "validation": {
+      "required": "Ez a mező kötelező",
+      "email": "Adjon meg érvényes e-mail-címet, például nev{'@'}example.com",
+      "phone": "Adjon meg érvényes telefonszámot (legalább 6 számjegy)",
+      "dateOfBirth": "A születési dátum nem lehet a jövőben",
+      "fixErrors": "Ellenőrizze a megjelölt mezőket"
+    },
+    "slots": {
+      "any": "Bármikor",
+      "morning": "Délelőtt",
+      "afternoon": "Délután",
+      "evening": "Este"
+    },
+    "routing": {
+      "explainer": "Ha egy érdeklődés telefonszáma vagy e-mail-címe már egy pácienshez tartozik, nem jön létre új érdeklődés — helyette visszahívás kerül a Visszahívások közé.",
+      "recallQueued": "{name} már páciens — egy visszahívás bekerült a Visszahívások közé.",
+      "openRecalls": "Visszahívások megnyitása"
+    },
+    "settings": {
+      "title": "Weboldali űrlap",
+      "description": "Beküldési kulcs és napi limit a weboldaláról a DentalPinba érkező érdeklődésekhez.",
+      "capLabel": "Napi limit",
+      "capHint": "Naponta elfogadott érdeklődések maximális száma. 0 = nincs korlát.",
+      "capSave": "Limit mentése",
+      "capSaved": "Napi limit elmentve",
+      "volume": "Ma {count} / {cap}",
+      "unlimited": "Ma {count} (korlát nélkül)",
+      "atLimit": "A beküldés holnapig szünetel: elértük a mai limitet.",
+      "capLoweredWarning": "Ha a limitet a mai darabszám alá csökkenti, a beküldés azonnal leáll.",
+      "keyTitle": "Beküldési kulcs",
+      "keyConfigured": "Beállítva",
+      "keyMissing": "Még nincs kulcs — a beküldés zárva van, amíg nem hoz létre egyet.",
+      "keyPrefix": "Előtag",
+      "keyActive": "Aktív",
+      "keyInactive": "Letiltva",
+      "lastUsed": "Utolsó használat",
+      "never": "Soha",
+      "rotate": "Kulcs létrehozása / cseréje",
+      "rotateWarning": "A kulcs cseréje azonnal leállítja a kiszivárgott kulcsot. Ne felejtse el beilleszteni az új kulcsot a weboldalára — addig az űrlap nem fog működni.",
+      "rotateCopyOnce": "Másolja ki most ezt a kulcsot: csak egyszer jelenik meg.",
+      "copied": "Másolva",
+      "activate": "Beküldés engedélyezése",
+      "deactivate": "Beküldés letiltása",
+      "intakeUrl": "Beküldési URL",
+      "example": "Példakérés",
+      "routingNote": "Ha egy érdeklődés telefonszáma vagy e-mail-címe már egy pácienshez tartozik, nem jön létre új érdeklődés — visszahívásként bekerül a Visszahívások közé.",
+      "readOnly": "Nincs jogosultsága e beállítások módosításához.",
+      "noPermission": "Nincs jogosultsága e beállítások megtekintéséhez.",
+      "copy": "Másolás"
+    },
+    "errors": {
+      "load": "Az érdeklődéseket nem sikerült betölteni",
+      "save": "Az érdeklődést nem sikerült elmenteni",
+      "convert": "A pácienst nem sikerült létrehozni",
+      "settingsLoad": "A beállításokat nem sikerült betölteni",
+      "settingsSave": "A beállításokat nem sikerült elmenteni",
+      "rotate": "A kulcsot nem sikerült lecserélni",
+      "copy": "A vágólap nem érhető el — jelölje ki a szöveget, és másolja ki manuálisan"
+    }
+  }
+}

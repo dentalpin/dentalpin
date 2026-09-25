@@ -1,0 +1,115 @@
+{
+  "leads": {
+    "nav": {
+      "leads": "Pedidos recebidos"
+    },
+    "title": "Pedidos recebidos",
+    "subtitle": "Pedidos recebidos pelo formulário do site",
+    "empty": "Sem pedidos novos",
+    "emptyHint": "Os pedidos de pessoas que já são pacientes vão diretamente para Reconvocações — veja aí antes de assumir que o formulário não está a funcionar.",
+    "emptyAction": "Adicionar um pedido manualmente",
+    "searchPlaceholder": "Procurar por nome, telefone ou email",
+    "filterStatus": "Estado",
+    "filters": {
+      "showAll": "Mostrar todos os estados"
+    },
+    "receivedAt": "Recebido",
+    "availability": "Disponibilidade",
+    "newLead": "Novo pedido",
+    "websiteForm": "Formulário web",
+    "status": {
+      "new": "Novo",
+      "contacted": "Contactado",
+      "converted": "Convertido",
+      "discarded": "Descartado"
+    },
+    "fields": {
+      "fullName": "Nome completo",
+      "phone": "Telefone",
+      "email": "Email",
+      "motive": "Motivo",
+      "description": "Descrição",
+      "availability": "Disponibilidade",
+      "status": "Estado",
+      "availabilityHint": "Em que dias podemos ligar?"
+    },
+    "actions": {
+      "edit": "Editar",
+      "save": "Guardar",
+      "cancel": "Cancelar",
+      "discard": "Descartar",
+      "markContacted": "Marcar como contactado"
+    },
+    "convert": {
+      "title": "Converter em paciente",
+      "subtitle": "Reveja o pedido e complete a ficha do paciente",
+      "enquiry": "Pedido",
+      "patient": "Paciente",
+      "createPatient": "Criar paciente",
+      "created": "Paciente criado",
+      "openPatient": "Abrir paciente",
+      "alreadyConverted": "Este pedido já foi convertido em paciente.",
+      "duplicateWarning": "Já existe um paciente com este telefone",
+      "duplicateOpen": "Abrir esse paciente"
+    },
+    "validation": {
+      "required": "Este campo é obrigatório",
+      "email": "Introduza um email válido, por exemplo nome{'@'}example.com",
+      "phone": "Introduza um telefone válido (pelo menos 6 dígitos)",
+      "dateOfBirth": "A data de nascimento não pode estar no futuro",
+      "fixErrors": "Verifique os campos assinalados"
+    },
+    "slots": {
+      "any": "Qualquer hora",
+      "morning": "Manhãs",
+      "afternoon": "Tardes",
+      "evening": "Noites"
+    },
+    "routing": {
+      "explainer": "Os pedidos cujo telefone ou email já pertence a um paciente não criam um pedido novo — são adicionados às Reconvocações como uma chamada de retorno.",
+      "recallQueued": "{name} já é paciente — foi adicionada uma chamada de retorno às Reconvocações.",
+      "openRecalls": "Abrir Reconvocações"
+    },
+    "settings": {
+      "title": "Formulário web",
+      "description": "Chave de receção e limite diário para os pedidos que o seu site envia para o DentalPin.",
+      "capLabel": "Limite diário",
+      "capHint": "Máximo de pedidos aceites por dia. 0 = sem limite.",
+      "capSave": "Guardar limite",
+      "capSaved": "Limite diário guardado",
+      "volume": "{count} de {cap} hoje",
+      "unlimited": "{count} hoje (sem limite)",
+      "atLimit": "A receção de pedidos está em pausa até amanhã: o limite de hoje foi atingido.",
+      "capLoweredWarning": "Baixar o limite para menos do que o número de hoje bloqueia de imediato a receção de pedidos.",
+      "keyTitle": "Chave de receção de pedidos",
+      "keyConfigured": "Configurada",
+      "keyMissing": "Ainda não existe chave — a receção de pedidos está fechada até criar uma.",
+      "keyPrefix": "Prefixo",
+      "keyActive": "Ativa",
+      "keyInactive": "Desativada",
+      "lastUsed": "Última utilização",
+      "never": "Nunca",
+      "rotate": "Gerar / renovar chave",
+      "rotateWarning": "Renovar a chave anula de imediato uma chave comprometida. Não se esqueça de colar a nova chave no seu site — o formulário falha até o fazer.",
+      "rotateCopyOnce": "Copie esta chave agora: só é apresentada uma vez.",
+      "copied": "Copiado",
+      "activate": "Ativar receção de pedidos",
+      "deactivate": "Desativar receção de pedidos",
+      "intakeUrl": "URL de receção",
+      "example": "Exemplo de pedido",
+      "routingNote": "Os pedidos cujo telefone ou email já pertence a um paciente não criam um pedido novo — são adicionados às Reconvocações para uma chamada de retorno.",
+      "readOnly": "Não tem permissão para alterar estas definições.",
+      "noPermission": "Não tem permissão para ver estas definições.",
+      "copy": "Copiar"
+    },
+    "errors": {
+      "load": "Não foi possível carregar os pedidos",
+      "save": "Não foi possível guardar o pedido",
+      "convert": "Não foi possível criar o paciente",
+      "settingsLoad": "Não foi possível carregar as definições",
+      "settingsSave": "Não foi possível guardar as definições",
+      "rotate": "Não foi possível renovar a chave",
+      "copy": "A área de transferência não está disponível — selecione o texto e copie-o manualmente"
+    }
+  }
+}

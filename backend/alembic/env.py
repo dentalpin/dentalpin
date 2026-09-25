@@ -65,6 +65,11 @@ from app.modules.catalog.models import (  # noqa: F401
     VatType,
 )
 from app.modules.documents.models import GeneratedDocument  # noqa: F401
+from app.modules.leads.models import (  # noqa: F401
+    Lead,
+    LeadIntakeKey,
+    LeadSettings,
+)
 from app.modules.media.models import Document, MediaAttachment  # noqa: F401
 from app.modules.nav_online.models import (  # noqa: F401
     NavOnlineRecord,

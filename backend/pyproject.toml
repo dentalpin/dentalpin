@@ -117,10 +117,14 @@ gdpr = "app.modules.gdpr:GdprModule"
 inventory_reorder = "app.modules.inventory_reorder:InventoryReorderModule"
 supplier_ratings = "app.modules.supplier_ratings:SupplierRatingsModule"
 payroll = "app.modules.payroll:PayrollModule"
+prescriptions = "app.modules.prescriptions:PrescriptionsModule"
 payment_gateways = "app.modules.payment_gateways:PaymentGatewaysModule"
 razorpay = "app.modules.razorpay:RazorpayModule"
 sms_gateway = "app.modules.sms_gateway:SmsGatewayModule"
 patient_segments = "app.modules.patient_segments:PatientSegmentsModule"
+leads = "app.modules.leads:LeadsModule"
+staff_attendance = "app.modules.staff_attendance:StaffAttendanceModule"
+treasury = "app.modules.treasury:TreasuryModule"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -1,0 +1,19 @@
+{
+  "staffAttendance": {
+    "nav": { "title": "Presenze" },
+    "title": "Presenze del personale",
+    "clockTitle": "Timbra entrata / uscita",
+    "member": "Membro dello staff",
+    "pickMember": "Scegli un membro",
+    "note": "Nota",
+    "notePlaceholder": "Nota opzionale",
+    "clockIn": "Timbra entrata",
+    "clockOut": "Timbra uscita",
+    "today": "Oggi",
+    "noEvents": "Nessuna timbratura in questo giorno.",
+    "report": "Rapporto giornaliero",
+    "openShift": "ancora dentro",
+    "in": "Dentro",
+    "out": "Fuori"
+  }
+}

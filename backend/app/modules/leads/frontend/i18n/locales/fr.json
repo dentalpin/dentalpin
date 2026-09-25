@@ -1,0 +1,115 @@
+{
+  "leads": {
+    "nav": {
+      "leads": "Demandes"
+    },
+    "title": "Demandes",
+    "subtitle": "Demandes reçues depuis le formulaire web",
+    "empty": "Aucune nouvelle demande",
+    "emptyHint": "Les demandes de personnes qui sont déjà patients partent directement dans Rappels — vérifiez-y avant de penser que le formulaire ne fonctionne pas.",
+    "emptyAction": "Ajouter une demande manuellement",
+    "searchPlaceholder": "Rechercher par nom, téléphone ou e-mail",
+    "filterStatus": "Statut",
+    "filters": {
+      "showAll": "Afficher tous les statuts"
+    },
+    "receivedAt": "Reçu",
+    "availability": "Disponibilité",
+    "newLead": "Nouvelle demande",
+    "websiteForm": "Formulaire web",
+    "status": {
+      "new": "Nouveau",
+      "contacted": "Contacté",
+      "converted": "Converti",
+      "discarded": "Écarté"
+    },
+    "fields": {
+      "fullName": "Nom complet",
+      "phone": "Téléphone",
+      "email": "E-mail",
+      "motive": "Motif",
+      "description": "Description",
+      "availability": "Disponibilité",
+      "status": "Statut",
+      "availabilityHint": "Quels jours pouvons-nous l'appeler ?"
+    },
+    "actions": {
+      "edit": "Modifier",
+      "save": "Enregistrer",
+      "cancel": "Annuler",
+      "discard": "Écarter",
+      "markContacted": "Marquer comme contacté"
+    },
+    "convert": {
+      "title": "Convertir en patient",
+      "subtitle": "Vérifiez la demande et complétez la fiche du patient",
+      "enquiry": "Demande",
+      "patient": "Patient",
+      "createPatient": "Créer le patient",
+      "created": "Patient créé",
+      "openPatient": "Ouvrir le patient",
+      "alreadyConverted": "Cette demande a déjà été convertie en patient.",
+      "duplicateWarning": "Un patient avec ce téléphone existe déjà",
+      "duplicateOpen": "Ouvrir ce patient"
+    },
+    "validation": {
+      "required": "Ce champ est obligatoire",
+      "email": "Saisissez une adresse e-mail valide, par exemple nom{'@'}example.com",
+      "phone": "Saisissez un numéro de téléphone valide (au moins 6 chiffres)",
+      "dateOfBirth": "La date de naissance ne peut pas être dans le futur",
+      "fixErrors": "Vérifiez les champs signalés"
+    },
+    "slots": {
+      "any": "N'importe quand",
+      "morning": "Matinées",
+      "afternoon": "Après-midis",
+      "evening": "Soirées"
+    },
+    "routing": {
+      "explainer": "Les demandes dont le téléphone ou l'e-mail appartient déjà à un patient ne créent pas de nouvelle demande — elles sont ajoutées aux Rappels sous forme d'appel à effectuer.",
+      "recallQueued": "{name} est déjà patient — un appel a été ajouté aux Rappels.",
+      "openRecalls": "Ouvrir les Rappels"
+    },
+    "settings": {
+      "title": "Formulaire web",
+      "description": "Clé d'entrée et limite quotidienne pour les demandes que votre site web envoie à DentalPin.",
+      "capLabel": "Limite quotidienne",
+      "capHint": "Nombre maximum de demandes acceptées par jour. 0 = sans limite.",
+      "capSave": "Enregistrer la limite",
+      "capSaved": "Limite quotidienne enregistrée",
+      "volume": "{count} sur {cap} aujourd'hui",
+      "unlimited": "{count} aujourd'hui (sans limite)",
+      "atLimit": "L'entrée est en pause jusqu'à demain : la limite du jour est atteinte.",
+      "capLoweredWarning": "Abaisser la limite en dessous du nombre du jour bloque l'entrée immédiatement.",
+      "keyTitle": "Clé d'entrée",
+      "keyConfigured": "Configurée",
+      "keyMissing": "Pas encore de clé : l'entrée est fermée jusqu'à ce que vous en créiez une.",
+      "keyPrefix": "Préfixe",
+      "keyActive": "Active",
+      "keyInactive": "Désactivée",
+      "lastUsed": "Dernière utilisation",
+      "never": "Jamais",
+      "rotate": "Générer / renouveler la clé",
+      "rotateWarning": "Renouveler la clé coupe immédiatement une clé divulguée. Pensez à coller la nouvelle clé dans votre site web : le formulaire échouera tant que ce n'est pas fait.",
+      "rotateCopyOnce": "Copiez cette clé maintenant : elle ne s'affiche qu'une seule fois.",
+      "copied": "Copié",
+      "activate": "Activer l'entrée",
+      "deactivate": "Désactiver l'entrée",
+      "intakeUrl": "URL d'entrée",
+      "example": "Exemple de requête",
+      "routingNote": "Les demandes dont le téléphone ou l'e-mail appartient déjà à un patient ne créent pas de nouvelle demande — elles sont ajoutées aux Rappels pour un appel à effectuer.",
+      "readOnly": "Vous n'avez pas la permission de modifier ces paramètres.",
+      "noPermission": "Vous n'avez pas la permission de consulter ces paramètres.",
+      "copy": "Copier"
+    },
+    "errors": {
+      "load": "Les demandes n'ont pas pu être chargées",
+      "save": "La demande n'a pas pu être enregistrée",
+      "convert": "Le patient n'a pas pu être créé",
+      "settingsLoad": "Les paramètres n'ont pas pu être chargés",
+      "settingsSave": "Les paramètres n'ont pas pu être enregistrés",
+      "rotate": "La clé n'a pas pu être renouvelée",
+      "copy": "Le presse-papiers n'est pas disponible — sélectionnez le texte et copiez-le manuellement"
+    }
+  }
+}

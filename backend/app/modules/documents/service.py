@@ -22,13 +22,6 @@ from app.modules.patients.service import PatientService
 from .models import DocumentStatus, GeneratedDocument
 from .pdf import DocumentPDFService
 
-TEMPLATE_MAP = {
-    "prescription": "prescriptions",
-    "medical_certificate": "certificates",
-    "referral": "referrals",
-    "radiology_request": "radiology-requests",
-}
-
 
 def _documents_root() -> Path:
     """Filesystem root where rendered PDFs are persisted.

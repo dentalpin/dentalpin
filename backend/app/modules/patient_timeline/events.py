@@ -736,3 +736,32 @@ async def on_item_completed_without_note(data: dict) -> None:
         event_data={"plan_id": data.get("plan_id")},
         created_by_key="user_id",
     )
+
+
+# ---------------------------------------------------------------------------
+# Prescriptions
+# ---------------------------------------------------------------------------
+
+
+async def on_prescription_issued(data: dict) -> None:
+    data = {**data, "source_id": data.get("prescription_id")}
+    await _record(
+        event_type=EventType.PRESCRIPTION_ISSUED,
+        event_category="treatment",
+        source_table="prescriptions",
+        data=data,
+        source_id_key="source_id",
+        title="Receta emitida",
+    )
+
+
+async def on_prescription_cancelled(data: dict) -> None:
+    data = {**data, "source_id": data.get("prescription_id")}
+    await _record(
+        event_type=EventType.PRESCRIPTION_CANCELLED,
+        event_category="treatment",
+        source_table="prescriptions",
+        data=data,
+        source_id_key="source_id",
+        title="Receta cancelada",
+    )

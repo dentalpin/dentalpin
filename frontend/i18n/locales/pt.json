@@ -826,6 +826,14 @@
   },
   "appointments": {
     "title": "Agenda",
+    "checkin": {
+      "qr": "QR de check-in",
+      "hint": "O paciente digitaliza este código para fazer check-in. Expira 15 minutos após a criação.",
+      "copyLink": "Copiar ligação de check-in",
+      "openTitle": "Check-in na clínica",
+      "success": "Check-in concluído. Queira sentar-se, por favor.",
+      "invalid": "Este código de check-in é inválido ou expirou. Peça um novo na receção."
+    },
     "create": "Nova consulta",
     "edit": "Editar consulta",
     "today": "Hoje",
