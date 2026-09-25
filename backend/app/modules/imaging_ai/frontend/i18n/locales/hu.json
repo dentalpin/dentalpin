@@ -8,7 +8,7 @@
       "empty": "Ehhez a beteghez még nincsenek MI-feladatok.",
       "noPatient": "Nincs beteg kiválasztva",
       "noPatientHint": "Nyissa meg ezt az oldalt a ?patient_id=... paraméterrel, pl. a betegkartotékból.",
-      "queueHint": "Indítson futtatást a vizsgálati nézetből; az eredmények itt jelennek meg.",
+      "queueHint": "Queue a run below; results appear here once the scheduler picks it up.",
       "visualizationNote": "Az MI-kimenet csak megjelenítési segédlet — soha nem diagnózis."
     },
     "status": {
@@ -16,7 +16,31 @@
       "running": "Fut",
       "done": "Kész",
       "failed": "Sikertelen",
-      "cancelled": "Törölve"
+      "cancelled": "Törölve",
+      "proposed": "Proposed"
+    },
+    "queue": {
+      "patient": "Patient",
+      "searchPatients": "Search patients by name...",
+      "title": "Queue an AI run",
+      "noDicom": "No DICOM documents for this patient yet.",
+      "backend": "Backend",
+      "submit": "Queue run",
+      "seriesHint": "First checked file is the primary document; check the rest of the series for volumetric (nnU-Net) runs.",
+      "search": "Search"
+    },
+    "backends": {
+      "pano": "Pano findings (single frame)",
+      "nnunet": "nnU-Net volume (DICOM series)"
+    },
+    "review": {
+      "pending_review": "Draft - awaiting review",
+      "confirmed": "Reviewed"
+    },
+    "job": {
+      "artifacts": "Draft artifacts",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
     }
   }
 }

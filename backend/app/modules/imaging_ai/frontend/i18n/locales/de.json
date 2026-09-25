@@ -8,7 +8,7 @@
       "empty": "Noch keine KI-Aufträge für diesen Patienten.",
       "noPatient": "Kein Patient ausgewählt",
       "noPatientHint": "Diese Seite mit ?patient_id=... öffnen, z. B. aus der Patientenakte.",
-      "queueHint": "Einen Lauf aus der Studienansicht starten; Ergebnisse erscheinen hier.",
+      "queueHint": "Starten Sie unten eine Analyse; die Ergebnisse erscheinen hier, sobald der Planer sie abholt.",
       "visualizationNote": "KI-Ausgabe ist nur Visualisierungshilfe — niemals eine Diagnose."
     },
     "status": {
@@ -16,7 +16,31 @@
       "running": "Läuft",
       "done": "Fertig",
       "failed": "Fehlgeschlagen",
-      "cancelled": "Abgebrochen"
+      "cancelled": "Abgebrochen",
+      "proposed": "Vorgeschlagen"
+    },
+    "queue": {
+      "patient": "Patient",
+      "searchPatients": "Patienten nach Namen suchen...",
+      "title": "KI-Analyse starten",
+      "noDicom": "Noch keine DICOM-Dokumente für diesen Patienten.",
+      "backend": "Backend",
+      "submit": "Analyse starten",
+      "seriesHint": "Die erste markierte Datei ist das Hauptdokument; für Volumenanalysen (nnU-Net) die restliche Serie markieren.",
+      "search": "Suchen"
+    },
+    "backends": {
+      "pano": "Pano-Befunde (Einzelbild)",
+      "nnunet": "nnU-Net-Volumen (DICOM-Serie)"
+    },
+    "review": {
+      "pending_review": "Entwurf - wartet auf Prüfung",
+      "confirmed": "Geprüft"
+    },
+    "job": {
+      "artifacts": "Entwürfe",
+      "confirm": "Bestätigen",
+      "cancel": "Abbrechen"
     }
   }
 }

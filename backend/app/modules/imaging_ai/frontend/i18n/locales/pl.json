@@ -8,7 +8,7 @@
       "empty": "Brak zadań AI dla tego pacjenta.",
       "noPatient": "Nie wybrano pacjenta",
       "noPatientHint": "Otwórz tę stronę z ?patient_id=..., np. z karty pacjenta.",
-      "queueHint": "Uruchom zadanie z widoku badania; wyniki pojawią się tutaj.",
+      "queueHint": "Queue a run below; results appear here once the scheduler picks it up.",
       "visualizationNote": "Wynik AI to wyłącznie pomoc wizualna — nigdy diagnoza."
     },
     "status": {
@@ -16,7 +16,31 @@
       "running": "W trakcie",
       "done": "Ukończone",
       "failed": "Nieudane",
-      "cancelled": "Anulowane"
+      "cancelled": "Anulowane",
+      "proposed": "Proposed"
+    },
+    "queue": {
+      "patient": "Patient",
+      "searchPatients": "Search patients by name...",
+      "title": "Queue an AI run",
+      "noDicom": "No DICOM documents for this patient yet.",
+      "backend": "Backend",
+      "submit": "Queue run",
+      "seriesHint": "First checked file is the primary document; check the rest of the series for volumetric (nnU-Net) runs.",
+      "search": "Search"
+    },
+    "backends": {
+      "pano": "Pano findings (single frame)",
+      "nnunet": "nnU-Net volume (DICOM series)"
+    },
+    "review": {
+      "pending_review": "Draft - awaiting review",
+      "confirmed": "Reviewed"
+    },
+    "job": {
+      "artifacts": "Draft artifacts",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
     }
   }
 }

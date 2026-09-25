@@ -165,8 +165,11 @@ class EventType:
     PAIR_CREATED = "media.pair_created"
     PAIR_REMOVED = "media.pair_removed"
     # An AI segmentation job reached a terminal state. Payload:
-    # (job_id, clinic_id, patient_id, study_id, status).
+    # (job_id, clinic_id, patient_id, status).
     IMAGING_AI_JOB_DONE = "imaging.ai_job_done"
+    # A clinician confirmed AI draft artifacts for review. Payload:
+    # (job_id, clinic_id, patient_id, confirmed_by).
+    IMAGING_AI_JOB_CONFIRMED = "imaging.ai_job_confirmed"
 
     # Clinical prescriptions (issue #269). Payload: (prescription_id,
     # clinic_id, patient_id). Consumed by patient_timeline.

@@ -9,27 +9,43 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class AiJobQueueRequest(BaseModel):
-    """Queue an AI run over a study's document bytes."""
+    """Queue (or, unattributed, propose) an AI run over patient documents."""
 
-    study_id: UUID
     document_id: UUID
-    backend: str = Field(default="nnunet", max_length=40)
+    series_document_ids: list[UUID] = Field(default_factory=list, max_length=500)
+    backend: str = Field(default="pano", max_length=40)
+
+
+class DicomDocumentResponse(BaseModel):
+    """One DICOM candidate for the series picker."""
+
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID
+    original_filename: str
+    mime_type: str
+    file_size: int
+    created_at: datetime
 
 
 class AiJobResponse(BaseModel):
-    """AI job with lifecycle status and artifact links."""
+    """AI job with lifecycle status, draft review, and artifact links."""
 
     model_config = ConfigDict(from_attributes=True)
 
     id: UUID
     clinic_id: UUID
     patient_id: UUID
-    study_id: UUID
     document_id: UUID
+    series_document_ids: list
     backend: str
     model_id: str
     model_version: str
     status: str
+    review_status: str
+    confirmed_by: UUID | None
+    confirmed_at: datetime | None
+    queued_by: UUID | None = None
     log_excerpt: str | None
     error: str | None
     artifact_document_ids: list

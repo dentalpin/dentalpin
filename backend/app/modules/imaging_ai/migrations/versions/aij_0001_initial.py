@@ -5,10 +5,9 @@ Tables:
 
 Lives on its own Alembic branch (``imaging_ai``) per ADR 0002.
 Depends on ``media`` (``med_0002`` head): artifacts land as media documents.
-``study_id``/``document_id`` stay FK-free UUIDs (no dependency on the
-local-only ``imaging_viewer`` branch): resolution is clinic-scoped at
-execution time. A post-merge follow-up may add the FK once
-``imaging_viewer`` is on main.
+``document_id`` / ``series_document_ids`` stay FK-free UUIDs (no dependency
+on the local-only ``imaging_viewer`` branch): resolution is clinic-scoped
+at execution time.
 
 Revision ID: aij_0001
 Revises:
@@ -34,18 +33,30 @@ def upgrade() -> None:
         sa.Column("id", sa.UUID(), nullable=False),
         sa.Column("clinic_id", sa.UUID(), nullable=False),
         sa.Column("patient_id", sa.UUID(), nullable=False),
-        sa.Column("study_id", sa.UUID(), nullable=False),
         sa.Column("document_id", sa.UUID(), nullable=False),
-        sa.Column("backend", sa.String(length=40), nullable=False, server_default="nnunet"),
+        sa.Column(
+            "series_document_ids",
+            postgresql.JSONB(astext_type=sa.Text()),
+            nullable=False,
+            server_default="[]",
+        ),
+        sa.Column("backend", sa.String(length=40), nullable=False, server_default="pano"),
         sa.Column(
             "model_id",
             sa.String(length=200),
             nullable=False,
-            server_default="Dataset112_DentalSegmentator",
+            server_default="dental-pano-ai",
         ),
-        sa.Column("model_version", sa.String(length=40), nullable=False, server_default="v100"),
+        sa.Column(
+            "model_version", sa.String(length=40), nullable=False, server_default="s3-weights"
+        ),
         sa.Column("status", sa.String(length=20), nullable=False, server_default="queued"),
         sa.Column("queued_by", sa.UUID(), nullable=True),
+        sa.Column(
+            "review_status", sa.String(length=20), nullable=False, server_default="pending_review"
+        ),
+        sa.Column("confirmed_by", sa.UUID(), nullable=True),
+        sa.Column("confirmed_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("log_excerpt", sa.String(length=4000), nullable=True),
         sa.Column("error", sa.String(length=1000), nullable=True),
         sa.Column(
@@ -63,11 +74,11 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["clinic_id"], ["clinics.id"]),
         sa.ForeignKeyConstraint(["patient_id"], ["patients.id"]),
         sa.ForeignKeyConstraint(["queued_by"], ["users.id"]),
+        sa.ForeignKeyConstraint(["confirmed_by"], ["users.id"]),
         sa.PrimaryKeyConstraint("id"),
     )
     op.create_index("ix_imaging_ai_jobs_clinic_id", "imaging_ai_jobs", ["clinic_id"])
     op.create_index("ix_imaging_ai_jobs_patient_id", "imaging_ai_jobs", ["patient_id"])
-    op.create_index("ix_imaging_ai_jobs_study_id", "imaging_ai_jobs", ["study_id"])
     op.create_index(
         "ix_imaging_ai_jobs_clinic_patient",
         "imaging_ai_jobs",
@@ -83,7 +94,6 @@ def upgrade() -> None:
 def downgrade() -> None:
     op.drop_index("ix_imaging_ai_jobs_status", table_name="imaging_ai_jobs")
     op.drop_index("ix_imaging_ai_jobs_clinic_patient", table_name="imaging_ai_jobs")
-    op.drop_index("ix_imaging_ai_jobs_study_id", table_name="imaging_ai_jobs")
     op.drop_index("ix_imaging_ai_jobs_patient_id", table_name="imaging_ai_jobs")
     op.drop_index("ix_imaging_ai_jobs_clinic_id", table_name="imaging_ai_jobs")
     op.drop_table("imaging_ai_jobs")

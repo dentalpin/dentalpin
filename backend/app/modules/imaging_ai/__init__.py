@@ -1,10 +1,11 @@
-"""imaging_ai module — on-demand AI segmentation jobs (nnU-Net CLI wrap)."""
+"""imaging_ai module — on-demand AI segmentation jobs (Runner protocol)."""
 
 from __future__ import annotations
 
 from fastapi import APIRouter
 
 from app.core.plugins import BaseModule
+from app.core.scheduling import ScheduledJob
 
 from .models import AiJob
 from .router import router
@@ -13,10 +14,12 @@ from .router import router
 class ImagingAiModule(BaseModule):
     """AI job queue over imaging studies.
 
-    v1 executes via a local ``nnUNetv2_predict`` subprocess behind the
-    ``Runner`` protocol (``runner.py``); torch/CUDA stay out of the backend
-    image. Weights are operator-provided (Zenodo CC-BY-4.0 — see NOTICE.md).
-    A future external worker implements the same protocol without callers.
+    Default backend ``pano`` runs end to end on single-frame input;
+    ``nnunet`` takes a DICOM series volume plus operator weights, both
+    behind the ``Runner`` protocol (``runner.py``); torch/CUDA stay out
+    of the backend image. Queued jobs execute on the scheduler tick
+    (``tasks.py``) — the HTTP route only records them; the agent path
+    only proposes them until a clinician confirms.
     """
 
     manifest = {
@@ -61,6 +64,11 @@ class ImagingAiModule(BaseModule):
         from .tools import get_all_tools
 
         return get_all_tools()
+
+    def get_scheduled_jobs(self) -> list[ScheduledJob]:
+        from .tasks import scheduled_jobs
+
+        return scheduled_jobs()
 
     def get_permissions(self) -> list[str]:
         return ["jobs.read", "jobs.write"]

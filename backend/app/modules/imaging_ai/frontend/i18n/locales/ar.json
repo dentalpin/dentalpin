@@ -8,7 +8,7 @@
       "empty": "لا توجد مهام ذكاء اصطناعي لهذا المريض بعد.",
       "noPatient": "لم يتم اختيار مريض",
       "noPatientHint": "افتح هذه الصفحة مع ?patient_id=...، مثلاً من ملف المريض.",
-      "queueHint": "ضع تشغيلاً في قائمة الانتظار من عرض الدراسة؛ تظهر النتائج هنا.",
+      "queueHint": "Queue a run below; results appear here once the scheduler picks it up.",
       "visualizationNote": "مخرجات الذكاء الاصطناعي مساعدة بصرية فقط — وليست تشخيصاً أبداً."
     },
     "status": {
@@ -16,7 +16,31 @@
       "running": "قيد التشغيل",
       "done": "اكتمل",
       "failed": "فشل",
-      "cancelled": "ملغي"
+      "cancelled": "ملغي",
+      "proposed": "Proposed"
+    },
+    "queue": {
+      "patient": "Patient",
+      "searchPatients": "Search patients by name...",
+      "title": "Queue an AI run",
+      "noDicom": "No DICOM documents for this patient yet.",
+      "backend": "Backend",
+      "submit": "Queue run",
+      "seriesHint": "First checked file is the primary document; check the rest of the series for volumetric (nnU-Net) runs.",
+      "search": "Search"
+    },
+    "backends": {
+      "pano": "Pano findings (single frame)",
+      "nnunet": "nnU-Net volume (DICOM series)"
+    },
+    "review": {
+      "pending_review": "Draft - awaiting review",
+      "confirmed": "Reviewed"
+    },
+    "job": {
+      "artifacts": "Draft artifacts",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
     }
   }
 }

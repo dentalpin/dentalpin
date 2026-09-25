@@ -1,14 +1,16 @@
-"""Runner backends for AI jobs: subprocess nnU-Net today, external workers later.
+"""Runner backends for AI jobs: pano by default, nnU-Net for volumes.
 
 The ``Runner`` protocol is the only seam between DentalPin and the heavy
-ML stack (torch/nnU-Net/CUDA stay OUT of the backend image). v1 shells out
-to ``nnUNetv2_predict`` locally; a future worker-based runner implements the
-same protocol without touching callers.
+ML stack (torch/nnU-Net/CUDA stay OUT of the backend image). Runners are
+clinic-agnostic pure functions of (input bytes, work dir); tenancy lives
+in the service. Every failure encodes into ``RunnerResult(ok=False, ...)``
+— a runner never raises.
 """
 
 from __future__ import annotations
 
 import asyncio
+import os
 import shutil
 import sys
 from dataclasses import dataclass, field
@@ -34,19 +36,47 @@ class Runner(Protocol):
 
     name: str
 
-    async def run(self, dicom_bytes: bytes, work_dir: Path) -> RunnerResult:
-        """Run inference over one study's DICOM bytes. Never raises: encode
+    async def run(self, input_bytes: bytes, work_dir: Path) -> RunnerResult:
+        """Run inference over one job's input bytes. Never raises: encode
         every failure mode into ``RunnerResult(ok=False, ...)``."""
         ...
 
 
-class SubprocessNnunetRunner:
-    """v1 runner: local ``nnUNetv2_predict`` subprocess.
+def build_nnunet_cmd(
+    binary: str, in_dir: Path, out_dir: Path, *, weights: bool, allow_cpu: bool
+) -> list[str]:
+    """Pure nnU-Net argv builder (pinned by tests — this is how CLI-contract
+    drift slipped through before). ``-d 112 -c 3d_fullres`` selects the
+    DentalSegmentator weights; ``-device cpu`` only on explicit opt-in."""
+    cmd = [binary, "-i", str(in_dir), "-o", str(out_dir)]
+    if weights:
+        cmd += ["-d", "112", "-c", "3d_fullres"]
+    if allow_cpu:
+        cmd += ["-device", "cpu"]
+    return cmd
 
-    Weights are operator-provided (Zenodo ``Dataset112_DentalSegmentator``,
-    CC-BY-4.0 — see NOTICE.md) via the ``DENTALPIN_NNUNET_WEIGHTS`` dir.
-    Refuses loudly (no silent CPU crawl) when the operator has not opted
-    into CPU execution and no CUDA device is present.
+
+def build_pano_cmd(python_exe: str, app_main: Path, input_png: Path, out_dir: Path) -> list[str]:
+    """Pure pano argv builder (pinned by tests)."""
+    return [python_exe, str(app_main), "--input", str(input_png), "--output", str(out_dir)]
+
+
+def _has_cuda() -> bool:
+    """CUDA presence without importing torch (which never enters the image)."""
+    return shutil.which("nvidia-smi") is not None
+
+
+class SubprocessNnunetRunner:
+    """Volumetric runner: local ``nnUNetv2_predict`` subprocess.
+
+    Input is a ready ``.nii.gz`` volume (the service stacks the job's
+    DICOM series via :mod:`volume` first — a lone frame fails there with
+    an actionable message, never here). Weights are operator-provided
+    (Zenodo ``Dataset112_DentalSegmentator``, CC-BY-4.0 — see NOTICE.md)
+    via the ``DENTALPIN_NNUNET_WEIGHTS`` dir, and the runner refuses
+    without them (nnUNet requires ``-d``/``-c``). Without CUDA the runner
+    refuses unless the operator explicitly opts into CPU via
+    ``DENTALPIN_NNUNET_ALLOW_CPU=1`` (no silent CPU crawl).
     """
 
     name = "nnunet"
@@ -61,7 +91,7 @@ class SubprocessNnunetRunner:
         self.allow_cpu = allow_cpu
         self.timeout_seconds = timeout_seconds
 
-    async def run(self, dicom_bytes: bytes, work_dir: Path) -> RunnerResult:
+    async def run(self, input_bytes: bytes, work_dir: Path) -> RunnerResult:
         nnunet = shutil.which("nnUNetv2_predict")
         if nnunet is None:
             return RunnerResult(
@@ -69,18 +99,25 @@ class SubprocessNnunetRunner:
                 error="nnUNetv2_predict not found on PATH — install nnU-Net v2 "
                 "on the AI host (see NOTICE.md)",
             )
-        if self.weights_dir is not None and not self.weights_dir.exists():
+        if self.weights_dir is None or not self.weights_dir.exists():
             return RunnerResult(
                 ok=False,
-                error=f"weights dir missing: {self.weights_dir} "
-                "(download Dataset112_DentalSegmentator, see NOTICE.md)",
+                error="nnU-Net weights missing: set DENTALPIN_NNUNET_WEIGHTS to the "
+                "Dataset112_DentalSegmentator dir (see NOTICE.md)",
+            )
+        if not self.allow_cpu and not _has_cuda():
+            return RunnerResult(
+                ok=False,
+                error="no CUDA device found and CPU not opted in: set "
+                "DENTALPIN_NNUNET_ALLOW_CPU=1 to run on CPU (slow) or use "
+                "the pano backend for single frames",
             )
         work_dir.mkdir(parents=True, exist_ok=True)
-        input_path = work_dir / "input.dcm"
-        input_path.write_bytes(dicom_bytes)
-        cmd = [nnunet, "-i", str(work_dir), "-o", str(work_dir / "out")]
-        if self.weights_dir is not None:
-            cmd += ["-d", "112", "-c", "3d_fullres"]
+        in_dir, out_dir = work_dir / "in", work_dir / "out"
+        in_dir.mkdir(exist_ok=True)
+        out_dir.mkdir(exist_ok=True)
+        (in_dir / "case_0000.nii.gz").write_bytes(input_bytes)
+        cmd = build_nnunet_cmd(nnunet, in_dir, out_dir, weights=True, allow_cpu=self.allow_cpu)
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -100,7 +137,6 @@ class SubprocessNnunetRunner:
                     ok=False, log_excerpt=log, error=f"nnU-Net exited {proc.returncode}"
                 )
             artifacts: dict[str, bytes] = {}
-            out_dir = work_dir / "out"
             if out_dir.exists():
                 for child in sorted(out_dir.iterdir()):
                     if child.is_file() and child.suffix.lower() in {
@@ -144,10 +180,12 @@ def dicom_to_png(dicom_bytes: bytes) -> bytes:
 class PanoRunner:
     """Pano detection backend: ``dental-pano-ai`` (MIT) ``main.py`` CLI.
 
-    Weights are operator-provided (S3 tarball, no stated terms — see
-    NOTICE.md); the checkout path comes from ``DENTALPIN_PANO_APP``.
-    DICOM input is rendered to PNG first (single-frame panos). Results dir
-    PNGs become overlay artifacts.
+    Weights are operator-provided (S3 tarball, no stated terms — the
+    clinic must confirm the license before production use, see NOTICE.md);
+    the checkout path comes from ``DENTALPIN_PANO_APP``. DICOM input is
+    rendered to PNG first (single-frame panos). Results dir PNGs become
+    overlay artifacts. This is the default backend: the one path that
+    runs end to end on single-frame input.
     """
 
     name = "pano"
@@ -162,7 +200,7 @@ class PanoRunner:
         self.python_exe = python_exe
         self.timeout_seconds = timeout_seconds
 
-    async def run(self, dicom_bytes: bytes, work_dir: Path) -> RunnerResult:
+    async def run(self, input_bytes: bytes, work_dir: Path) -> RunnerResult:
         if self.app_dir is None or not (self.app_dir / "main.py").exists():
             return RunnerResult(
                 ok=False,
@@ -170,7 +208,7 @@ class PanoRunner:
                 "to the app dir with downloaded weights (see NOTICE.md)",
             )
         try:
-            png = dicom_to_png(dicom_bytes)
+            png = dicom_to_png(input_bytes)
         except RuntimeError as exc:
             return RunnerResult(ok=False, error=str(exc))
         work_dir.mkdir(parents=True, exist_ok=True)
@@ -178,14 +216,9 @@ class PanoRunner:
         in_dir.mkdir(exist_ok=True)
         out_dir.mkdir(exist_ok=True)
         (in_dir / "study.png").write_bytes(png)
-        cmd = [
-            self.python_exe,
-            str(self.app_dir / "main.py"),
-            "--input",
-            str(in_dir / "study.png"),
-            "--output",
-            str(out_dir),
-        ]
+        cmd = build_pano_cmd(
+            self.python_exe, self.app_dir / "main.py", in_dir / "study.png", out_dir
+        )
         try:
             proc = await asyncio.create_subprocess_exec(
                 *cmd,
@@ -215,67 +248,9 @@ class PanoRunner:
             return RunnerResult(ok=False, error=f"runner crashed: {exc}")
 
 
-class OcrRunner:
-    """Receipt/text OCR backend: ``tesseract`` CLI (Apache-2.0) sidecar.
-
-    The binary is operator-provided (``DENTALPIN_TESSERACT_BIN`` override,
-    else ``tesseract`` on PATH); languages via ``DENTALPIN_TESSERACT_LANG``
-    (default ``eng``). Input is any image bytes (receipt photos, scanned
-    referral letters); output is an ``ocr.txt`` transcript artifact. A blank
-    image is a successful run with no artifacts, never an error.
-    """
-
-    name = "ocr"
-
-    def __init__(
-        self,
-        tesseract_bin: str | None = None,
-        lang: str = "eng",
-        timeout_seconds: int = 300,
-    ) -> None:
-        self.tesseract_bin = tesseract_bin or "tesseract"
-        self.lang = lang
-        self.timeout_seconds = timeout_seconds
-
-    async def run(self, dicom_bytes: bytes, work_dir: Path) -> RunnerResult:
-        binary = shutil.which(self.tesseract_bin)
-        if binary is None:
-            return RunnerResult(
-                ok=False,
-                error="tesseract not found on PATH — install Tesseract OCR "
-                "on the AI host (see NOTICE.md)",
-            )
-        work_dir.mkdir(parents=True, exist_ok=True)
-        input_path = work_dir / "input.png"
-        input_path.write_bytes(dicom_bytes)
-        out_base = work_dir / "out"
-        cmd = [binary, str(input_path), str(out_base), "-l", self.lang]
-        try:
-            proc = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.STDOUT,
-            )
-            try:
-                out, _ = await asyncio.wait_for(proc.communicate(), timeout=self.timeout_seconds)
-            except TimeoutError:
-                proc.kill()
-                return RunnerResult(ok=False, error=f"OCR timed out after {self.timeout_seconds}s")
-            log = (out or b"").decode(errors="replace")[-3000:]
-            if proc.returncode != 0:
-                return RunnerResult(
-                    ok=False, log_excerpt=log, error=f"tesseract exited {proc.returncode}"
-                )
-            text_path = out_base.with_suffix(".txt")
-            text = (
-                text_path.read_text(encoding="utf-8", errors="replace").strip()
-                if text_path.exists()
-                else ""
-            )
-            if not text:
-                return RunnerResult(ok=True, log_excerpt=(log + "\nno text detected").strip())
-            return RunnerResult(
-                ok=True, artifacts={"ocr.txt": text.encode("utf-8")}, log_excerpt=log
-            )
-        except Exception as exc:  # noqa: BLE001 — runner never raises
-            return RunnerResult(ok=False, error=f"runner crashed: {exc}")
+def nnunet_env() -> tuple[Path | None, bool]:
+    """Read the nnU-Net operator env (single place — docs mirror this)."""
+    raw_dir = os.environ.get("DENTALPIN_NNUNET_WEIGHTS")
+    weights = Path(raw_dir) if raw_dir else None
+    allow_cpu = os.environ.get("DENTALPIN_NNUNET_ALLOW_CPU") == "1"
+    return weights, allow_cpu

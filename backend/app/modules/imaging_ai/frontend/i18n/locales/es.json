@@ -8,7 +8,7 @@
       "empty": "Aún no hay trabajos de IA para este paciente.",
       "noPatient": "Ningún paciente seleccionado",
       "noPatientHint": "Abre esta página con ?patient_id=..., p. ej. desde la ficha del paciente.",
-      "queueHint": "Lanza un análisis desde la vista del estudio; los resultados aparecen aquí.",
+      "queueHint": "Lanza un análisis abajo; los resultados aparecen aquí cuando el planificador lo recoja.",
       "visualizationNote": "La salida de la IA es solo una ayuda visual — nunca un diagnóstico."
     },
     "status": {
@@ -16,7 +16,31 @@
       "running": "En curso",
       "done": "Terminado",
       "failed": "Fallido",
-      "cancelled": "Cancelado"
+      "cancelled": "Cancelado",
+      "proposed": "Propuesto"
+    },
+    "queue": {
+      "patient": "Paciente",
+      "searchPatients": "Buscar pacientes por nombre...",
+      "title": "Lanzar un análisis de IA",
+      "noDicom": "Aún no hay documentos DICOM para este paciente.",
+      "backend": "Motor",
+      "submit": "Lanzar análisis",
+      "seriesHint": "El primer archivo marcado es el documento principal; marca el resto de la serie para análisis volumétricos (nnU-Net).",
+      "search": "Buscar"
+    },
+    "backends": {
+      "pano": "Hallazgos en pano (imagen única)",
+      "nnunet": "Volumen nnU-Net (serie DICOM)"
+    },
+    "review": {
+      "pending_review": "Borrador - pendiente de revisión",
+      "confirmed": "Revisado"
+    },
+    "job": {
+      "artifacts": "Borradores",
+      "confirm": "Confirmar",
+      "cancel": "Cancelar"
     }
   }
 }
