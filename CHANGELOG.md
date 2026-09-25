@@ -13,6 +13,13 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Added
 
+- Arabic (`ar`) as a clinic communication language: the 14 email templates
+  under `backend/templates/email/ar/` (authored by Haider Habeeb,
+  @dev-7aider, in #426), `ar` accepted by the setup and clinic-language
+  endpoints, and RTL layout in the shared email `base.html`. Email
+  templates now receive `locale`, so `<html lang>` matches the sent
+  language instead of always `es`.
+
 - **Sidebar super-sections + Settings super-groups** (#232): module nav
   items now self-place under five stable headers — `clinical`, `lab`,
   `financials`, `inventory`, `practice` — declared via a `section` key

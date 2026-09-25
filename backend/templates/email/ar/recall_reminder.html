@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}موعد فحصك الدوري القادم في {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>حان موعد فحصك الدوري</h2>
+
+<p>مرحباً {{ patient_name }}،</p>
+
+<p>تمت جدولة موعد فحصك الدوري{% if due_month %} لشهر <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} في <strong>{{ clinic_name | default('DentalPin') }}</strong>.</p>
+
+<p>يرجى التواصل معنا لحجز الموعد المناسب لك.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">حجز موعدي الآن</a>
+</div>
+{% endif %}
+
+<p>إذا كانت لديك أي استفسارات، لا تتردد في التواصل معنا.</p>
+{% endblock %}

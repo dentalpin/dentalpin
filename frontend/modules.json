@@ -14,6 +14,7 @@
     "/module_layers/india_gst/frontend",
     "/module_layers/inventory/frontend",
     "/module_layers/lab_orders/frontend",
+    "/module_layers/leads/frontend",
     "/module_layers/media/frontend",
     "/module_layers/medical_reference/frontend",
     "/module_layers/medication_catalog/frontend",
@@ -29,6 +30,7 @@
     "/module_layers/payments/frontend",
     "/module_layers/payroll/frontend",
     "/module_layers/periodontogram/frontend",
+    "/module_layers/prescriptions/frontend",
     "/module_layers/purchase_orders/frontend",
     "/module_layers/razorpay/frontend",
     "/module_layers/recall_reminders/frontend",
@@ -38,8 +40,10 @@
     "/module_layers/sdi_it/frontend",
     "/module_layers/sistema_ts/frontend",
     "/module_layers/sms_gateway/frontend",
+    "/module_layers/staff_attendance/frontend",
     "/module_layers/staff_tasks/frontend",
     "/module_layers/telephony/frontend",
+    "/module_layers/treasury/frontend",
     "/module_layers/treatment_consumables/frontend",
     "/module_layers/treatment_plan/frontend",
     "/module_layers/verifactu/frontend",
@@ -65,7 +69,8 @@
       "name": "agenda",
       "path": "/module_layers/agenda/frontend",
       "routes": [
-        "/appointments"
+        "/appointments",
+        "/p/check-in/:token"
       ]
     },
     {
@@ -152,6 +157,13 @@
       "routes": [
         "/lab-orders",
         "/lab-orders/new"
+      ]
+    },
+    {
+      "name": "leads",
+      "path": "/module_layers/leads/frontend",
+      "routes": [
+        "/leads"
       ]
     },
     {
@@ -244,6 +256,13 @@
       "routes": []
     },
     {
+      "name": "prescriptions",
+      "path": "/module_layers/prescriptions/frontend",
+      "routes": [
+        "/prescriptions"
+      ]
+    },
+    {
       "name": "purchase_orders",
       "path": "/module_layers/purchase_orders/frontend",
       "routes": [
@@ -304,6 +323,13 @@
       "routes": []
     },
     {
+      "name": "staff_attendance",
+      "path": "/module_layers/staff_attendance/frontend",
+      "routes": [
+        "/attendance"
+      ]
+    },
+    {
       "name": "staff_tasks",
       "path": "/module_layers/staff_tasks/frontend",
       "routes": [
@@ -315,6 +341,13 @@
       "path": "/module_layers/telephony/frontend",
       "routes": [
         "/calls"
+      ]
+    },
+    {
+      "name": "treasury",
+      "path": "/module_layers/treasury/frontend",
+      "routes": [
+        "/treasury"
       ]
     },
     {

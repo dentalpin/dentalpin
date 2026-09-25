@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}الملخص اليومي - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>ملخص اليوم {{ today }}</h2>
+
+{% if appointments is not none %}
+<h3>مواعيد اليوم ({{ appointments | length }})</h3>
+{% if appointments %}
+<div class="info-box">
+    {% for a in appointments %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ a.start_time[11:16] if a.start_time else '' }}</div>
+            <div class="value">{{ a.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">الحالة</div>
+            <div class="value">{{ a.status }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>لا توجد مواعيد مجدولة لهذا اليوم.</p>
+{% endif %}
+{% endif %}
+
+{% if recalls is not none %}
+<h3>متابعات متأخرة ({{ recalls | length }})</h3>
+{% if recalls %}
+<div class="info-box">
+    {% for r in recalls %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ r.reason }}</div>
+            <div class="value">{{ r.patient_name or '—' }}{% if r.phone %} · {{ r.phone }}{% endif %}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">الأولوية</div>
+            <div class="value">{{ r.priority }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>لا توجد متابعات متأخرة.</p>
+{% endif %}
+{% endif %}
+
+{% if budgets is not none %}
+<h3>عروض أسعار بانتظار الرد ({{ budgets | length }})</h3>
+{% if budgets %}
+<div class="info-box">
+    {% for b in budgets %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ b.number }}</div>
+            <div class="value">{{ b.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">المبلغ</div>
+            <div class="value">{{ b.total }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>لا توجد عروض أسعار بانتظار الرد.</p>
+{% endif %}
+{% endif %}
+
+<p style="color: #71717a; font-size: 14px;">
+    ملخص تلقائي تم إنشاؤه بواسطة مساعد DentalPin. يمكنك إيقافه أو تغيير توقيت إرساله من الإعدادات ← المساعد الذكي (Copilot).
+</p>
+{% endblock %}

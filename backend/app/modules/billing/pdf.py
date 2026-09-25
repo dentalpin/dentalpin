@@ -283,9 +283,10 @@ class InvoicePDFService:
             """
 
         # Build HTML
+        rtl_attr = ' dir="rtl"' if locale == "ar" else ""
         html = f"""
         <!DOCTYPE html>
-        <html lang="{locale}">
+        <html lang="{locale}"{rtl_attr}>
         <head>
             <meta charset="UTF-8">
             <title>{doc_title} {doc_number}</title>
@@ -296,7 +297,7 @@ class InvoicePDFService:
                     box-sizing: border-box;
                 }}
                 body {{
-                    font-family: 'Helvetica Neue', Arial, 'Noto Sans Tamil', sans-serif;
+                    font-family: 'Helvetica Neue', Arial, 'Noto Sans Tamil', 'Noto Sans Arabic', sans-serif;
                     font-size: 11pt;
                     line-height: 1.4;
                     color: #333;
@@ -395,7 +396,7 @@ class InvoicePDFService:
                 th {{
                     background: #f3f4f6;
                     padding: 10px 8px;
-                    text-align: left;
+                    text-align: start;
                     font-size: 9pt;
                     font-weight: 600;
                     color: #374151;
@@ -412,10 +413,10 @@ class InvoicePDFService:
                 .number {{ width: 30px; text-align: center; }}
                 .description {{ width: auto; }}
                 .quantity {{ width: 50px; text-align: center; }}
-                .price {{ width: 90px; text-align: right; }}
-                .discount {{ width: 80px; text-align: right; color: #059669; }}
+                .price {{ width: 90px; text-align: end; }}
+                .discount {{ width: 80px; text-align: end; color: #059669; }}
                 .vat {{ width: 50px; text-align: center; }}
-                .total {{ width: 100px; text-align: right; font-weight: 500; }}
+                .total {{ width: 100px; text-align: end; font-weight: 500; }}
                 .code {{ color: #6b7280; }}
                 .tooth {{ color: #9ca3af; }}
 
@@ -876,9 +877,295 @@ class InvoicePDFService:
             },
         }
 
+        labels_fr = {
+            "invoice": "Facture",
+            "credit_note": "Avoir",
+            "credit_note_for": "Avoir pour",
+            "draft": "Brouillon",
+            "issue_date": "Date d'émission",
+            "due_date": "Date d'échéance",
+            "billing_info": "Données de facturation",
+            "billing_name": "Nom de facturation",
+            "tax_id": "Identifiant fiscal",
+            "address": "Adresse",
+            "patient": "Patient",
+            "items": "Lignes",
+            "description": "Description",
+            "qty": "Quantité",
+            "unit_price": "Prix unitaire",
+            "discount": "Remise",
+            "vat": "TVA",
+            "total": "Total",
+            "subtotal": "Sous-total",
+            "total_discount": "Remise totale",
+            "tax": "Taxe",
+            "grand_total": "TOTAL",
+            "total_paid": "Total payé",
+            "balance_due": "Montant dû",
+            "notes": "Notes",
+            "payment_terms": "Conditions de paiement",
+            "days": "jours",
+            "generated_by": "Créé par",
+            "status": {
+                "draft": "Brouillon",
+                "issued": "Émise",
+                "partial": "Partiellement payée",
+                "paid": "Payée",
+                "cancelled": "Annulée",
+                "voided": "Annulée",
+            },
+        }
+
+        labels_pt = {
+            "invoice": "Fatura",
+            "credit_note": "Nota de crédito",
+            "credit_note_for": "Nota de crédito de",
+            "draft": "Rascunho",
+            "issue_date": "Data de emissão",
+            "due_date": "Data de vencimento",
+            "billing_info": "Dados de faturação",
+            "billing_name": "Nome de faturação",
+            "tax_id": "NIF",
+            "address": "Morada",
+            "patient": "Paciente",
+            "items": "Linhas",
+            "description": "Descrição",
+            "qty": "Quantidade",
+            "unit_price": "Preço unitário",
+            "discount": "Desconto",
+            "vat": "IVA",
+            "total": "Total",
+            "subtotal": "Subtotal",
+            "total_discount": "Desconto total",
+            "tax": "Imposto",
+            "grand_total": "TOTAL",
+            "total_paid": "Total pago",
+            "balance_due": "Saldo em dívida",
+            "notes": "Notas",
+            "payment_terms": "Condições de pagamento",
+            "days": "dias",
+            "generated_by": "Criada por",
+            "status": {
+                "draft": "Rascunho",
+                "issued": "Emitida",
+                "partial": "Parcialmente paga",
+                "paid": "Paga",
+                "cancelled": "Cancelada",
+                "voided": "Anulada",
+            },
+        }
+
+        labels_de = {
+            "invoice": "Rechnung",
+            "credit_note": "Rechnungskorrektur",
+            "credit_note_for": "Rechnungskorrektur zu",
+            "draft": "Entwurf",
+            "issue_date": "Ausstellungsdatum",
+            "due_date": "Fälligkeitsdatum",
+            "billing_info": "Rechnungsdaten",
+            "billing_name": "Rechnungsname",
+            "tax_id": "Steuernummer",
+            "address": "Adresse",
+            "patient": "Patient",
+            "items": "Positionen",
+            "description": "Beschreibung",
+            "qty": "Menge",
+            "unit_price": "Einzelpreis",
+            "discount": "Rabatt",
+            "vat": "MwSt.",
+            "total": "Gesamt",
+            "subtotal": "Zwischensumme",
+            "total_discount": "Gesamtrabatt",
+            "tax": "Steuer",
+            "grand_total": "GESAMTBETRAG",
+            "total_paid": "Gesamt bezahlt",
+            "balance_due": "Offener Betrag",
+            "notes": "Notizen",
+            "payment_terms": "Zahlungsbedingungen",
+            "days": "Tage",
+            "generated_by": "Erstellt von",
+            "status": {
+                "draft": "Entwurf",
+                "issued": "Ausgestellt",
+                "partial": "Teilweise bezahlt",
+                "paid": "Bezahlt",
+                "cancelled": "Storniert",
+                "voided": "Annulliert",
+            },
+        }
+
+        labels_hu = {
+            "invoice": "Számla",
+            "credit_note": "Helyesbítő számla",
+            "credit_note_for": "Az eredeti számla",
+            "draft": "Piszkozat",
+            "issue_date": "Kiállítás dátuma",
+            "due_date": "Fizetési határidő",
+            "billing_info": "Számlázási adatok",
+            "billing_name": "Számlázási név",
+            "tax_id": "Adószám",
+            "address": "Cím",
+            "patient": "Páciens",
+            "items": "Tételek",
+            "description": "Megnevezés",
+            "qty": "Mennyiség",
+            "unit_price": "Egységár",
+            "discount": "Kedvezmény",
+            "vat": "Áfa",
+            "total": "Összesen",
+            "subtotal": "Részösszeg",
+            "total_discount": "Összes kedvezmény",
+            "tax": "Adó",
+            "grand_total": "VÉGÖSSZEG",
+            "total_paid": "Befizetett összeg",
+            "balance_due": "Fizetendő összeg",
+            "notes": "Megjegyzések",
+            "payment_terms": "Fizetési feltételek",
+            "days": "nap",
+            "generated_by": "Létrehozta",
+            "status": {
+                "draft": "Piszkozat",
+                "issued": "Kiállítva",
+                "partial": "Részben fizetve",
+                "paid": "Fizetve",
+                "cancelled": "Törölve",
+                "voided": "Érvénytelenítve",
+            },
+        }
+
+        labels_pl = {
+            "invoice": "Faktura",
+            "credit_note": "Faktura korygująca",
+            "credit_note_for": "Korekta do",
+            "draft": "Wersja robocza",
+            "issue_date": "Data wystawienia",
+            "due_date": "Termin płatności",
+            "billing_info": "Dane do faktury",
+            "billing_name": "Nazwa na fakturze",
+            "tax_id": "NIP",
+            "address": "Adres",
+            "patient": "Pacjent",
+            "items": "Pozycje",
+            "description": "Opis",
+            "qty": "Ilość",
+            "unit_price": "Cena jednostkowa",
+            "discount": "Rabat",
+            "vat": "VAT",
+            "total": "Razem",
+            "subtotal": "Suma częściowa",
+            "total_discount": "Suma rabatów",
+            "tax": "Podatek",
+            "grand_total": "RAZEM DO ZAPŁATY",
+            "total_paid": "Zapłacono łącznie",
+            "balance_due": "Do zapłaty",
+            "notes": "Notatki",
+            "payment_terms": "Warunki płatności",
+            "days": "dni",
+            "generated_by": "Utworzone przez",
+            "status": {
+                "draft": "Wersja robocza",
+                "issued": "Wystawiona",
+                "partial": "Częściowo opłacona",
+                "paid": "Opłacona",
+                "cancelled": "Anulowana",
+                "voided": "Unieważniona",
+            },
+        }
+
+        labels_it = {
+            "invoice": "Fattura",
+            "credit_note": "Nota di credito",
+            "credit_note_for": "Nota di credito per",
+            "draft": "Bozza",
+            "issue_date": "Data di emissione",
+            "due_date": "Scadenza",
+            "billing_info": "Dati di fatturazione",
+            "billing_name": "Intestazione fattura",
+            "tax_id": "Codice fiscale / P. IVA",
+            "address": "Indirizzo",
+            "patient": "Paziente",
+            "items": "Voci",
+            "description": "Descrizione",
+            "qty": "Quantità",
+            "unit_price": "Prezzo unitario",
+            "discount": "Sconto",
+            "vat": "IVA",
+            "total": "Totale",
+            "subtotal": "Subtotale",
+            "total_discount": "Sconto totale",
+            "tax": "Imposta",
+            "grand_total": "TOTALE",
+            "total_paid": "Totale pagato",
+            "balance_due": "Saldo dovuto",
+            "notes": "Note",
+            "payment_terms": "Termini di pagamento",
+            "days": "giorni",
+            "generated_by": "Creata da",
+            "status": {
+                "draft": "Bozza",
+                "issued": "Emessa",
+                "partial": "Parzialmente pagata",
+                "paid": "Pagata",
+                "cancelled": "Annullata",
+                "voided": "Stornata",
+            },
+        }
+
+        labels_ar = {
+            "invoice": "فاتورة",
+            "credit_note": "إشعار دائن",
+            "credit_note_for": "إشعار دائن عن",
+            "draft": "مسودة",
+            "issue_date": "تاريخ الإصدار",
+            "due_date": "تاريخ الاستحقاق",
+            "billing_info": "بيانات الفوترة",
+            "billing_name": "اسم الفوترة",
+            "tax_id": "الرقم الضريبي",
+            "address": "العنوان",
+            "patient": "المريض",
+            "items": "البنود",
+            "description": "الوصف",
+            "qty": "الكمية",
+            "unit_price": "سعر الوحدة",
+            "discount": "الخصم",
+            "vat": "ضريبة القيمة المضافة",
+            "total": "الإجمالي",
+            "subtotal": "المجموع الفرعي",
+            "total_discount": "إجمالي الخصم",
+            "tax": "الضريبة",
+            "grand_total": "المجموع الإجمالي",
+            "total_paid": "إجمالي المدفوع",
+            "balance_due": "الرصيد المستحق",
+            "notes": "ملاحظات",
+            "payment_terms": "شروط الدفع",
+            "days": "أيام",
+            "generated_by": "أنشأها",
+            "status": {
+                "draft": "مسودة",
+                "issued": "صادرة",
+                "partial": "مدفوعة جزئيًا",
+                "paid": "مدفوعة",
+                "cancelled": "ملغاة",
+                "voided": "ملغاة قانونًا",
+            },
+        }
+
         if locale == "es":
             return labels_es
         if locale == "ta":
             return labels_ta
-        # fr/pt/de/hu/pl/it/ar: English labels until translated (#422).
+        if locale == "fr":
+            return labels_fr
+        if locale == "pt":
+            return labels_pt
+        if locale == "de":
+            return labels_de
+        if locale == "hu":
+            return labels_hu
+        if locale == "pl":
+            return labels_pl
+        if locale == "it":
+            return labels_it
+        if locale == "ar":
+            return labels_ar
         return labels_en

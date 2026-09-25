@@ -696,6 +696,34 @@ class AppointmentService:
         return appointment
 
     @staticmethod
+    async def public_checkin(
+        db: AsyncSession, appointment_id: UUID, clinic_id: UUID
+    ) -> Appointment:
+        """Consume a QR check-in token: resolve, transition, attribute.
+
+        Keeps the resolve → transition → commit sequence in the service
+        layer (routers stay thin). Fetches the appointment row lean — the
+        public response only needs id/status, so the patient/professional
+        graph is not eager-loaded here. Already-checked-in is idempotent
+        (no error); wrong-state raises, unknown id raises KeyError.
+        """
+        row = (
+            await db.execute(
+                select(Appointment).where(
+                    Appointment.id == appointment_id,
+                    Appointment.clinic_id == clinic_id,
+                )
+            )
+        ).scalar_one_or_none()
+        if row is None:
+            raise KeyError("Appointment not found")
+        try:
+            await AppointmentService.transition(db, row, "checked_in", note="qr-checkin")
+        except AlreadyInStateError:
+            pass
+        return row
+
+    @staticmethod
     async def assign_cabinet(
         db: AsyncSession,
         appointment: Appointment,

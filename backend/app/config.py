@@ -42,6 +42,11 @@ class Settings(BaseSettings):
     # convenience, but production deploys must set it explicitly so a
     # leak of one key does not compromise the other.
     BUDGET_PUBLIC_SECRET_KEY: str = ""
+    # Independent secret used to sign QR check-in tokens (agenda). Falls
+    # back to ``SECRET_KEY`` for local/dev convenience, but production
+    # deploys must set it explicitly so a printed token never shares a
+    # key with the session tokens.
+    AGENDA_PUBLIC_SECRET_KEY: str = ""
 
     # Environment
     ENVIRONMENT: str = "development"
@@ -53,6 +58,14 @@ class Settings(BaseSettings):
     # Rate limiting
     LOGIN_RATE_LIMIT: str = "5/minute"
     REGISTER_RATE_LIMIT: str = "3/hour"
+
+    # Leads module — public intake endpoint (/api/v1/leads/public/intake).
+    # Only the request size ceiling lives here: it is an operator concern, not
+    # a business decision. The daily cap is a per-clinic leads_settings column
+    # edited at Settings → Integrations → "Formulario web" — deliberately not
+    # an env var (two sources of truth guarantee a support call where the UI
+    # says 200 and the process says 50).
+    LEADS_INTAKE_MAX_BODY_KB: int = 8
 
     # Testing
     TESTING: bool = False

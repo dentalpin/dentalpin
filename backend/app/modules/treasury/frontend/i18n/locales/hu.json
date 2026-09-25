@@ -1,0 +1,35 @@
+{
+  "treasury": {
+    "nav": { "title": "Pénztár" },
+    "title": "Pénztár",
+    "newAccount": "Új számla",
+    "transfer": "Átvezetés",
+    "correct": "Helyesbít",
+    "correctionDirection": "Irány",
+    "accounts": "Számlák",
+    "noAccounts": "Még nincsenek számlák.",
+    "statement": "Mozgások",
+    "noEntries": "Még nincsenek mozgások.",
+    "accountName": "Számla neve",
+    "accountKind": "Típus",
+    "kindCash": "Készpénz",
+    "kindBank": "Bank",
+    "create": "Létrehozás",
+    "openingBalance": "Nyitóegyenleg",
+    "deactivate": "Deaktiválás",
+    "activate": "Újraaktiválás",
+    "inactive": "Inaktív",
+    "fromAccount": "Forrásszámla",
+    "toAccount": "Célszámla",
+    "amount": "Összeg",
+    "memo": "Megjegyzés (opcionális)",
+    "correctMemo": "Megjegyzés (kötelező)",
+    "kind": {
+      "transfer_out": "Átvezetés ki",
+      "transfer_in": "Átvezetés be",
+      "correction_in": "Korrekció be",
+      "correction_out": "Korrekció ki",
+      "opening": "Nyitás"
+    }
+  }
+}

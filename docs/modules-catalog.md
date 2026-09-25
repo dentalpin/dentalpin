@@ -11,7 +11,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | Module | Version | Category | Depends | Install | Removable | Permissions | Emits | Consumes | FE layer |
 |--------|---------|----------|---------|---------|-----------|-------------|-------|----------|----------|
 | `accounting_export` | 0.1.0 | official | billing, payments | manual | yes | 2 | 0 | 0 | yes |
-| `activity_journal` | 0.1.0 | community | — | manual | yes | 1 | 0 | 26 | yes |
+| `activity_journal` | 0.1.0 | community | — | manual | yes | 1 | 0 | 31 | yes |
 | `agenda` | 0.4.0 | official | patients, catalog, odontogram | auto | no | 4 | 11 | 1 | yes |
 | `billing` | 0.1.0 | official | patients, catalog, budget, payments | auto | no | 3 | 3 | 3 | yes |
 | `budget` | 0.1.0 | official | patients, catalog, odontogram | auto | no | 5 | 9 | 3 | yes |
@@ -27,8 +27,9 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `inventory` | 0.2.0 | community | — | manual | yes | 2 | 1 | 0 | yes |
 | `inventory_reorder` | 0.1.0 | official | contacts, inventory, suppliers, supplier_items, purchase_orders | manual | yes | 2 | 0 | 0 | no |
 | `lab_orders` | 0.1.0 | community | patients, contacts | manual | yes | 2 | 1 | 0 | yes |
-| `mcp` | 0.1.0 | official | patients, integrations | manual | yes | 0 | 0 | 0 | no |
-| `media` | 0.2.0 | official | patients | auto | no | 4 | 7 | 1 | yes |
+| `leads` | 0.1.0 | community | patients, recalls | manual | yes | 4 | 0 | 0 | yes |
+| `media` | 0.2.0 | official | patients | auto | no | 4 | 7 | 2 | yes |
+| `mcp` | 0.1.0 | official | patients, integrations | manual | yes | 0 | 0 | 0 | no | 
 | `medical_reference` | 0.4.0 | community | patients_clinical, patients | manual | yes | 2 | 0 | 0 | yes |
 | `medication_catalog` | 0.1.0 | community | — | manual | yes | 2 | 0 | 1 | yes |
 | `migration_import` | 0.1.0 | official | patients, patients_clinical, clinical_notes, agenda, schedules, recalls, catalog, budget, odontogram, treatment_plan, billing, payments, media | manual | yes | 4 | 5 | 0 | yes |
@@ -37,13 +38,14 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_segments` | 0.1.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
-| `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 35 | yes |
+| `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 37 | yes |
 | `patients` | 0.1.0 | official | — | auto | no | 2 | 4 | 0 | yes |
 | `patients_clinical` | 0.1.0 | official | patients | auto | no | 4 | 1 | 0 | yes |
 | `payment_gateways` | 0.1.0 | official | patients, budget, payments | manual | yes | 0 | 0 | 0 | no |
 | `payments` | 0.1.0 | official | patients, budget | auto | no | 4 | 3 | 2 | yes |
 | `payroll` | 0.1.0 | official | — | manual | yes | 3 | 2 | 0 | yes |
 | `periodontogram` | 0.1.0 | official | patients, odontogram | manual | yes | 2 | 1 | 2 | yes |
+| `prescriptions` | 0.1.0 | official | patients, patients_clinical, medical_reference | manual | yes | 3 | 2 | 0 | yes |
 | `purchase_orders` | 0.1.0 | official | contacts, inventory, suppliers | manual | yes | 2 | 3 | 0 | yes |
 | `razorpay` | 0.1.0 | official | payment_gateways | manual | yes | 2 | 0 | 0 | yes |
 | `recall_reminders` | 0.1.0 | community | recalls, notifications, patients | manual | yes | 0 | 0 | 1 | yes |
@@ -53,11 +55,13 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `sdi_it` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
 | `sistema_ts` | 0.1.0 | official | billing, patients, catalog, payments | manual | yes | 6 | 0 | 0 | yes |
 | `sms_gateway` | 0.1.0 | community | notifications | manual | yes | 2 | 0 | 0 | yes |
+| `staff_attendance` | 0.1.0 | community | — | manual | yes | 2 | 1 | 0 | yes |
 | `staff_tasks` | 0.1.0 | community | — | manual | yes | 2 | 2 | 0 | yes |
 | `supplier_items` | 0.1.0 | official | contacts, inventory, suppliers | manual | yes | 2 | 0 | 0 | no |
 | `supplier_ratings` | 0.1.0 | official | contacts, purchase_orders | manual | yes | 2 | 0 | 0 | no |
 | `suppliers` | 0.1.0 | official | contacts | manual | yes | 2 | 0 | 0 | no |
 | `telephony` | 0.1.0 | community | patients | manual | yes | 4 | 5 | 0 | yes |
+| `treasury` | 0.1.0 | community | — | manual | yes | 2 | 2 | 0 | yes |
 | `treatment_consumables` | 0.1.0 | community | catalog, inventory | manual | yes | 2 | 0 | 1 | yes |
 | `treatment_plan` | 0.1.0 | official | patients, agenda, odontogram, catalog, budget, media | auto | no | 5 | 13 | 7 | yes |
 | `verifactu` | 0.1.0 | official | billing, catalog | manual | yes | 5 | 1 | 2 | yes |
@@ -118,7 +122,12 @@ Append-only staff activity log recorded from module events.
   - `patient.created`
   - `payment.allocated`
   - `payment.refunded`
+  - `prescription.cancelled`
+  - `prescription.issued`
   - `recall.created`
+  - `staff_attendance.clocked`
+  - `treasury.corrected`
+  - `treasury.transferred`
   - `treatment_plan.budget_sync_requested`
   - `treatment_plan.item_session_completed`
   - `treatment_plan.treatment_added`
@@ -459,6 +468,25 @@ Track lab work orders per patient — from sent to received.
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/lab_orders/CLAUDE.md`](../backend/app/modules/lab_orders/CLAUDE.md)
 
+### `leads` — v0.1.0
+
+Inbound leads from external forms: new enquiries become leads, known patients become recalls.
+
+- **Author:** Valeriooooh
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `patients`, `recalls`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `leads.read`
+  - `leads.settings.read`
+  - `leads.settings.write`
+  - `leads.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/leads/CLAUDE.md`](../backend/app/modules/leads/CLAUDE.md)
+
 ### `mcp` — v0.1.0
 
 MCP server exposing curated DentalPin tools to external AI clients.
@@ -722,6 +750,8 @@ Patient timeline — unified activity log.
   - `notification.sent`
   - `odontogram.treatment.performed`
   - `patient.medical_updated`
+  - `prescription.cancelled`
+  - `prescription.issued`
   - `treatment_plan.closed`
   - `treatment_plan.confirmed`
   - `treatment_plan.created`
@@ -849,6 +879,26 @@ SEPA periodontal charting — snapshots, probing sites, BoP/PI/CAL indices.
   - `odontogram.treatment.performed`
   - `patient.archived`
 - **Module CLAUDE.md:** [`backend/app/modules/periodontogram/CLAUDE.md`](../backend/app/modules/periodontogram/CLAUDE.md)
+
+### `prescriptions` — v0.1.0
+
+Clinical prescriptions with per-country compliance hooks.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `patients`, `patients_clinical`, `medical_reference`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `prescriptions.issue`
+  - `prescriptions.read`
+  - `prescriptions.write`
+- **Events emitted:**
+  - `prescription.cancelled`
+  - `prescription.issued`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/prescriptions/CLAUDE.md`](../backend/app/modules/prescriptions/CLAUDE.md)
 
 ### `purchase_orders` — v0.1.0
 
@@ -1035,6 +1085,24 @@ SMS delivery for notifications via pluggable providers.
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/sms_gateway/CLAUDE.md`](../backend/app/modules/sms_gateway/CLAUDE.md)
 
+### `staff_attendance` — v0.1.0
+
+Clock in/out events, current state, and daily pairing report.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** —
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `staff_attendance.read`
+  - `staff_attendance.write`
+- **Events emitted:**
+  - `staff_attendance.clocked`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/staff_attendance/CLAUDE.md`](../backend/app/modules/staff_attendance/CLAUDE.md)
+
 ### `staff_tasks` — v0.1.0
 
 Staff handoff board — internal tasks and handoffs between team members.
@@ -1128,6 +1196,25 @@ CTI: aviso en pantalla de llamadas entrantes + registro de llamadas.
   - `call.unknown_caller`
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/telephony/CLAUDE.md`](../backend/app/modules/telephony/CLAUDE.md)
+
+### `treasury` — v0.1.0
+
+Cash/bank accounts, transfers, and manual corrections.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** —
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `treasury.read`
+  - `treasury.write`
+- **Events emitted:**
+  - `treasury.corrected`
+  - `treasury.transferred`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/treasury/CLAUDE.md`](../backend/app/modules/treasury/CLAUDE.md)
 
 ### `treatment_consumables` — v0.1.0
 

@@ -9,6 +9,7 @@ from html import escape
 from io import BytesIO
 from typing import TYPE_CHECKING
 
+from app.core.pdf_locales import LOCALE_BY_LANG as _LOCALE_BY_LANG
 from app.core.utils.currency import format_currency as _fmt_currency
 
 if TYPE_CHECKING:
@@ -24,6 +25,7 @@ _LABELS = {
         "created_at": "Fecha",
         "notes": "Observaciones",
         "item": "Artículo",
+        "items": "Artículos",
         "qty_ordered": "Cant. pedida",
         "qty_received": "Cant. recibida",
         "unit_price": "Precio unit.",
@@ -47,6 +49,7 @@ _LABELS = {
         "created_at": "Date",
         "notes": "Notes",
         "item": "Item",
+        "items": "Items",
         "qty_ordered": "Qty ordered",
         "qty_received": "Qty received",
         "unit_price": "Unit price",
@@ -59,6 +62,198 @@ _LABELS = {
             "confirmed": "Confirmed",
             "received": "Received",
             "cancelled": "Cancelled",
+        },
+    },
+    "fr": {
+        "po": "Bon de commande",
+        "draft": "BROUILLON",
+        "supplier": "Fournisseur",
+        "status": "Statut",
+        "expected_date": "Date prévue",
+        "created_at": "Date",
+        "notes": "Observations",
+        "item": "Article",
+        "items": "Articles",
+        "qty_ordered": "Qté commandée",
+        "qty_received": "Qté reçue",
+        "unit_price": "Prix unitaire",
+        "total": "Total",
+        "line_total": "Montant",
+        "generated_by": "Créé par",
+        "status_label": {
+            "draft": "Brouillon",
+            "sent": "Envoyée",
+            "confirmed": "Confirmée",
+            "received": "Reçue",
+            "cancelled": "Annulée",
+        },
+    },
+    "pt": {
+        "po": "Nota de encomenda",
+        "draft": "RASCUNHO",
+        "supplier": "Fornecedor",
+        "status": "Estado",
+        "expected_date": "Data prevista",
+        "created_at": "Data",
+        "notes": "Observações",
+        "item": "Artigo",
+        "items": "Artigos",
+        "qty_ordered": "Qtd. encomendada",
+        "qty_received": "Qtd. recebida",
+        "unit_price": "Preço unitário",
+        "total": "Total",
+        "line_total": "Montante",
+        "generated_by": "Criado por",
+        "status_label": {
+            "draft": "Rascunho",
+            "sent": "Enviada",
+            "confirmed": "Confirmada",
+            "received": "Recebida",
+            "cancelled": "Cancelada",
+        },
+    },
+    "de": {
+        "po": "Bestellung",
+        "draft": "ENTWURF",
+        "supplier": "Lieferant",
+        "status": "Status",
+        "expected_date": "Liefertermin",
+        "created_at": "Datum",
+        "notes": "Anmerkungen",
+        "item": "Artikel",
+        "items": "Artikel",
+        "qty_ordered": "Bestellmenge",
+        "qty_received": "Erhaltene Menge",
+        "unit_price": "Einzelpreis",
+        "total": "Gesamt",
+        "line_total": "Betrag",
+        "generated_by": "Erstellt von",
+        "status_label": {
+            "draft": "Entwurf",
+            "sent": "Gesendet",
+            "confirmed": "Bestätigt",
+            "received": "Erhalten",
+            "cancelled": "Storniert",
+        },
+    },
+    "hu": {
+        "po": "Megrendelés",
+        "draft": "PISZKOZAT",
+        "supplier": "Szállító",
+        "status": "Állapot",
+        "expected_date": "Várható dátum",
+        "created_at": "Dátum",
+        "notes": "Megjegyzések",
+        "item": "Cikk",
+        "items": "Tételek",
+        "qty_ordered": "Rendelt mennyiség",
+        "qty_received": "Beérkezett mennyiség",
+        "unit_price": "Egységár",
+        "total": "Összesen",
+        "line_total": "Érték",
+        "generated_by": "Létrehozta",
+        "status_label": {
+            "draft": "Piszkozat",
+            "sent": "Elküldve",
+            "confirmed": "Visszaigazolva",
+            "received": "Beérkezett",
+            "cancelled": "Törölve",
+        },
+    },
+    "pl": {
+        "po": "Zamówienie",
+        "draft": "WERSJA ROBOCZA",
+        "supplier": "Dostawca",
+        "status": "Status",
+        "expected_date": "Przewidywana data",
+        "created_at": "Data",
+        "notes": "Uwagi",
+        "item": "Pozycja",
+        "items": "Pozycje",
+        "qty_ordered": "Ilość zamówiona",
+        "qty_received": "Ilość otrzymana",
+        "unit_price": "Cena jednostkowa",
+        "total": "Razem",
+        "line_total": "Wartość",
+        "generated_by": "Utworzone przez",
+        "status_label": {
+            "draft": "Wersja robocza",
+            "sent": "Wysłane",
+            "confirmed": "Potwierdzone",
+            "received": "Otrzymane",
+            "cancelled": "Anulowane",
+        },
+    },
+    "it": {
+        "po": "Ordine di acquisto",
+        "draft": "BOZZA",
+        "supplier": "Fornitore",
+        "status": "Stato",
+        "expected_date": "Data prevista",
+        "created_at": "Data",
+        "notes": "Note",
+        "item": "Articolo",
+        "items": "Articoli",
+        "qty_ordered": "Qtà ordinata",
+        "qty_received": "Qtà ricevuta",
+        "unit_price": "Prezzo unitario",
+        "total": "Totale",
+        "line_total": "Importo",
+        "generated_by": "Creato da",
+        "status_label": {
+            "draft": "Bozza",
+            "sent": "Inviato",
+            "confirmed": "Confermato",
+            "received": "Ricevuto",
+            "cancelled": "Annullato",
+        },
+    },
+    "ar": {
+        "po": "أمر شراء",
+        "draft": "مسودة",
+        "supplier": "المورّد",
+        "status": "الحالة",
+        "expected_date": "التاريخ المتوقع",
+        "created_at": "التاريخ",
+        "notes": "ملاحظات",
+        "item": "الصنف",
+        "items": "الأصناف",
+        "qty_ordered": "الكمية المطلوبة",
+        "qty_received": "الكمية المستلمة",
+        "unit_price": "سعر الوحدة",
+        "total": "الإجمالي",
+        "line_total": "المبلغ",
+        "generated_by": "أنشأها",
+        "status_label": {
+            "draft": "مسودة",
+            "sent": "مُرسل",
+            "confirmed": "مؤكد",
+            "received": "مستلم",
+            "cancelled": "ملغي",
+        },
+    },
+    "ta": {
+        "po": "கொள்முதல் ஆணை",
+        "draft": "வரைவு",
+        "supplier": "வழங்குநர்",
+        "status": "நிலை",
+        "expected_date": "எதிர்பார்க்கும் தேதி",
+        "created_at": "தேதி",
+        "notes": "குறிப்புகள்",
+        "item": "பொருள்",
+        "items": "பொருட்கள்",
+        "qty_ordered": "ஆர்டர் அளவு",
+        "qty_received": "பெறப்பட்ட அளவு",
+        "unit_price": "அலகு விலை",
+        "total": "மொத்தம்",
+        "line_total": "தொகை",
+        "generated_by": "உருவாக்கியது",
+        "status_label": {
+            "draft": "வரைவு",
+            "sent": "அனுப்பப்பட்டது",
+            "confirmed": "உறுதிசெய்யப்பட்டது",
+            "received": "பெறப்பட்டது",
+            "cancelled": "ரத்து செய்யப்பட்டது",
         },
     },
 }
@@ -75,9 +270,13 @@ class PurchaseOrderPDFService:
     @staticmethod
     def _generate_html(response: dict, clinic: Clinic, locale: str) -> str:
         labels = _LABELS.get(locale, _LABELS["es"])
+        # Arabic mirrors the document; every other host locale is LTR (#485).
+        rtl_attr = ' dir="rtl"' if locale == "ar" else ""
         status_label = labels["status_label"].get(response["status"], response["status"])
         currency = clinic.currency if clinic else "EUR"
-        money_locale = "es_ES" if locale == "es" else "en_US"
+        # One map for every PDF (#441): a German order printed 1,234.56
+        # while its invoice printed 1.234,56 (#485).
+        money_locale = _LOCALE_BY_LANG.get(locale, "es_ES")
 
         def money(amount: Decimal) -> str:
             return _fmt_currency(amount, currency, locale=money_locale)
@@ -115,7 +314,7 @@ class PurchaseOrderPDFService:
         )
 
         return f"""<!DOCTYPE html>
-        <html lang="{locale}">
+        <html lang="{locale}"{rtl_attr}>
         <head>
         <meta charset="UTF-8">
         <style>
@@ -136,7 +335,7 @@ class PurchaseOrderPDFService:
             }}
             .clinic-name {{ font-size: 18pt; font-weight: bold; color: #1e40af; margin-bottom: 5px; }}
             .clinic-details {{ font-size: 9pt; color: #666; }}
-            .po-info {{ text-align: right; }}
+            .po-info {{ text-align: end; }}
             .po-number {{ font-size: 14pt; font-weight: bold; color: #1e40af; }}
             .po-meta {{ font-size: 9pt; color: #666; margin-top: 5px; }}
             .status-badge {{
@@ -155,18 +354,21 @@ class PurchaseOrderPDFService:
             }}
             table {{ width: 100%; border-collapse: collapse; }}
             th {{
-                background: #f3f4f6; padding: 10px 8px; text-align: left;
+                /* Logical, not physical: a physical ``left`` puts the header
+               at the far edge of a wide column when the document is
+               right-to-left (#485). */
+                background: #f3f4f6; padding: 10px 8px; text-align: start;
                 font-size: 9pt; font-weight: 600; color: #374151;
                 border-bottom: 2px solid #e5e7eb;
             }}
             td {{ padding: 10px 8px; border-bottom: 1px solid #e5e7eb; vertical-align: top; }}
             .number {{ width: 30px; text-align: center; }}
             .qty {{ width: 70px; text-align: center; }}
-            .price {{ width: 110px; text-align: right; }}
+            .price {{ width: 110px; text-align: end; }}
             .totals {{ float: right; width: 300px; margin-top: 20px; }}
             .totals td {{ border-bottom: none; padding: 6px 8px; }}
-            .totals .label {{ text-align: left; color: #666; }}
-            .totals .value {{ text-align: right; font-weight: 500; }}
+            .totals .label {{ text-align: start; color: #666; }}
+            .totals .value {{ text-align: end; font-weight: 500; }}
             .totals .grand-total {{ font-size: 13pt; font-weight: bold; color: #1e40af; }}
             .notes-section {{ clear: both; padding-top: 20px; margin-top: 20px; }}
             .notes-content {{
@@ -204,7 +406,7 @@ class PurchaseOrderPDFService:
             </div>
 
             <div class="section">
-                <div class="section-title">{labels["item"]}s</div>
+                <div class="section-title">{labels["items"]}</div>
                 <table>
                     <thead>
                         <tr>

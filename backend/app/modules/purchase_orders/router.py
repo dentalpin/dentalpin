@@ -10,6 +10,7 @@ from fastapi.responses import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.pdf_locales import PDF_LOCALE_PATTERN
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
@@ -154,7 +155,7 @@ async def download_purchase_order_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("purchase_orders.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    locale: str = Query(default="es", pattern="^(es|en)$"),
+    locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Download a purchase order as PDF (export, no signature section)."""
     await PurchaseOrderService.get_order(db, ctx.clinic_id, order_id)  # 404 mapping

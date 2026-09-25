@@ -15,7 +15,7 @@ from pathlib import Path
 
 from app.core.email.service import TEMPLATES_DIR
 
-EXPECTED_LOCALES = {"es", "en", "fr", "pt", "ta", "de", "hu", "pl", "it"}
+EXPECTED_LOCALES = {"es", "en", "fr", "pt", "ta", "de", "hu", "pl", "it", "ar"}
 
 
 def _locale_dirs() -> dict[str, Path]:

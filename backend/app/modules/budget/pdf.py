@@ -248,10 +248,14 @@ class BudgetPDFService:
             budget.valid_until.strftime("%d/%m/%Y") if budget.valid_until else labels["no_expiry"]
         )
 
+        # Arabic mirrors the whole document; every other host locale is
+        # left-to-right (#485, same treatment as the invoice in #484).
+        rtl_attr = ' dir="rtl"' if locale == "ar" else ""
+
         # Build HTML
         html = f"""
         <!DOCTYPE html>
-        <html lang="{locale}">
+        <html lang="{locale}"{rtl_attr}>
         <head>
             <meta charset="UTF-8">
             <title>{labels["budget"]} {budget.budget_number}</title>
@@ -290,7 +294,7 @@ class BudgetPDFService:
                     color: #666;
                 }}
                 .budget-info {{
-                    text-align: right;
+                    text-align: end;
                 }}
                 .budget-number {{
                     font-size: 14pt;
@@ -352,7 +356,10 @@ class BudgetPDFService:
                 th {{
                     background: #f3f4f6;
                     padding: 10px 8px;
-                    text-align: left;
+                    /* Logical, not physical: in a right-to-left document a physical
+                       ``left`` puts the header at the opposite edge of a
+                       wide column from its own cells (#485). */
+                    text-align: start;
                     font-size: 9pt;
                     font-weight: 600;
                     color: #374151;
@@ -369,9 +376,9 @@ class BudgetPDFService:
                 .number {{ width: 30px; text-align: center; }}
                 .description {{ width: auto; }}
                 .quantity {{ width: 60px; text-align: center; }}
-                .price {{ width: 100px; text-align: right; }}
-                .discount {{ width: 100px; text-align: right; color: #059669; }}
-                .total {{ width: 100px; text-align: right; font-weight: 500; }}
+                .price {{ width: 100px; text-align: end; }}
+                .discount {{ width: 100px; text-align: end; color: #059669; }}
+                .total {{ width: 100px; text-align: end; font-weight: 500; }}
                 .tooth {{ color: #6b7280; }}
                 .notes {{ color: #9ca3af; font-style: italic; }}
 
@@ -388,11 +395,11 @@ class BudgetPDFService:
                     border-bottom: none;
                 }}
                 .totals .label {{
-                    text-align: left;
+                    text-align: start;
                     color: #666;
                 }}
                 .totals .value {{
-                    text-align: right;
+                    text-align: end;
                     font-weight: 500;
                 }}
                 .totals .grand-total {{
@@ -720,4 +727,388 @@ class BudgetPDFService:
             },
         }
 
-        return labels_es if locale == "es" else labels_en
+        labels_fr = {
+            "budget": "Devis",
+            "version": "Version",
+            "date": "Date",
+            "draft": "BROUILLON",
+            "patient_info": "Informations du patient",
+            "patient": "Patient",
+            "professional": "Praticien",
+            "treatments": "Traitements",
+            "description": "Description",
+            "qty": "Quantité",
+            "unit_price": "Prix unitaire",
+            "discount": "Remise",
+            "total": "Total",
+            "subtotal": "Sous-total",
+            "total_discount": "Remise totale",
+            "tax": "TVA",
+            "grand_total": "TOTAL",
+            "validity": "Validité",
+            "from": "du",
+            "until": "au",
+            "no_expiry": "sans date d'expiration",
+            "notes": "Observations",
+            "patient_signature": "Signature du patient",
+            "clinic_signature": "Signature du cabinet",
+            "signed_by": "Signé par",
+            "signed_at": "Signé le",
+            "signature_method": "Canal",
+            "signature_method_drawn": "Signature manuscrite",
+            "signature_method_click_accept": "Acceptation numérique",
+            "signature_method_external": "Signature externe",
+            "document_hash": "Empreinte du document",
+            "generated_by": "Créé par",
+            "status": {
+                "draft": "Brouillon",
+                "sent": "Envoyé",
+                "accepted": "Accepté",
+                "in_progress": "En cours",
+                "completed": "Terminé",
+                "invoiced": "Facturé",
+                "rejected": "Refusé",
+                "expired": "Expiré",
+                "cancelled": "Annulé",
+            },
+        }
+
+        labels_pt = {
+            "budget": "Orçamento",
+            "version": "Versão",
+            "date": "Data",
+            "draft": "RASCUNHO",
+            "patient_info": "Informação do paciente",
+            "patient": "Paciente",
+            "professional": "Profissional",
+            "treatments": "Tratamentos",
+            "description": "Descrição",
+            "qty": "Quantidade",
+            "unit_price": "Preço unitário",
+            "discount": "Desconto",
+            "total": "Total",
+            "subtotal": "Subtotal",
+            "total_discount": "Desconto total",
+            "tax": "IVA",
+            "grand_total": "TOTAL",
+            "validity": "Validade",
+            "from": "de",
+            "until": "até",
+            "no_expiry": "sem data de validade",
+            "notes": "Observações",
+            "patient_signature": "Assinatura do paciente",
+            "clinic_signature": "Assinatura da clínica",
+            "signed_by": "Assinado por",
+            "signed_at": "Assinado em",
+            "signature_method": "Canal",
+            "signature_method_drawn": "Assinatura manuscrita",
+            "signature_method_click_accept": "Aceitação digital",
+            "signature_method_external": "Assinatura externa",
+            "document_hash": "Hash do documento",
+            "generated_by": "Criado por",
+            "status": {
+                "draft": "Rascunho",
+                "sent": "Enviado",
+                "accepted": "Aceite",
+                "in_progress": "Em curso",
+                "completed": "Concluído",
+                "invoiced": "Faturado",
+                "rejected": "Recusado",
+                "expired": "Expirado",
+                "cancelled": "Cancelado",
+            },
+        }
+
+        labels_de = {
+            "budget": "Kostenvoranschlag",
+            "version": "Version",
+            "date": "Datum",
+            "draft": "ENTWURF",
+            "patient_info": "Patientendaten",
+            "patient": "Patient",
+            "professional": "Behandler",
+            "treatments": "Behandlungen",
+            "description": "Beschreibung",
+            "qty": "Menge",
+            "unit_price": "Einzelpreis",
+            "discount": "Rabatt",
+            "total": "Gesamt",
+            "subtotal": "Zwischensumme",
+            "total_discount": "Gesamtrabatt",
+            "tax": "MwSt.",
+            "grand_total": "GESAMTBETRAG",
+            "validity": "Gültigkeit",
+            "from": "von",
+            "until": "bis",
+            "no_expiry": "ohne Ablaufdatum",
+            "notes": "Anmerkungen",
+            "patient_signature": "Unterschrift des Patienten",
+            "clinic_signature": "Unterschrift der Praxis",
+            "signed_by": "Unterschrieben von",
+            "signed_at": "Unterschrieben am",
+            "signature_method": "Kanal",
+            "signature_method_drawn": "Handschriftliche Unterschrift",
+            "signature_method_click_accept": "Digitale Zustimmung",
+            "signature_method_external": "Externe Unterschrift",
+            "document_hash": "Dokument-Hash",
+            "generated_by": "Erstellt von",
+            "status": {
+                "draft": "Entwurf",
+                "sent": "Gesendet",
+                "accepted": "Angenommen",
+                "in_progress": "In Bearbeitung",
+                "completed": "Abgeschlossen",
+                "invoiced": "Abgerechnet",
+                "rejected": "Abgelehnt",
+                "expired": "Abgelaufen",
+                "cancelled": "Storniert",
+            },
+        }
+
+        labels_hu = {
+            "budget": "Árajánlat",
+            "version": "Verzió",
+            "date": "Dátum",
+            "draft": "PISZKOZAT",
+            "patient_info": "Páciens adatai",
+            "patient": "Páciens",
+            "professional": "Kezelőorvos",
+            "treatments": "Kezelések",
+            "description": "Megnevezés",
+            "qty": "Mennyiség",
+            "unit_price": "Egységár",
+            "discount": "Kedvezmény",
+            "total": "Összesen",
+            "subtotal": "Részösszeg",
+            "total_discount": "Összes kedvezmény",
+            "tax": "Áfa",
+            "grand_total": "VÉGÖSSZEG",
+            "validity": "Érvényesség",
+            "from": "ettől",
+            "until": "eddig",
+            "no_expiry": "nincs lejárati dátum",
+            "notes": "Megjegyzések",
+            "patient_signature": "Páciens aláírása",
+            "clinic_signature": "Rendelő aláírása",
+            "signed_by": "Aláírta",
+            "signed_at": "Aláírás dátuma",
+            "signature_method": "Csatorna",
+            "signature_method_drawn": "Kézzel írt aláírás",
+            "signature_method_click_accept": "Digitális elfogadás",
+            "signature_method_external": "Külső aláírás",
+            "document_hash": "Dokumentum hash",
+            "generated_by": "Létrehozta",
+            "status": {
+                "draft": "Piszkozat",
+                "sent": "Elküldve",
+                "accepted": "Elfogadva",
+                "in_progress": "Folyamatban",
+                "completed": "Befejezve",
+                "invoiced": "Kiszámlázva",
+                "rejected": "Elutasítva",
+                "expired": "Lejárt",
+                "cancelled": "Törölve",
+            },
+        }
+
+        labels_pl = {
+            "budget": "Kosztorys",
+            "version": "Wersja",
+            "date": "Data",
+            "draft": "WERSJA ROBOCZA",
+            "patient_info": "Dane pacjenta",
+            "patient": "Pacjent",
+            "professional": "Lekarz prowadzący",
+            "treatments": "Zabiegi",
+            "description": "Opis",
+            "qty": "Ilość",
+            "unit_price": "Cena jednostkowa",
+            "discount": "Rabat",
+            "total": "Razem",
+            "subtotal": "Suma częściowa",
+            "total_discount": "Suma rabatów",
+            "tax": "VAT",
+            "grand_total": "RAZEM DO ZAPŁATY",
+            "validity": "Ważność",
+            "from": "od",
+            "until": "do",
+            "no_expiry": "bez daty ważności",
+            "notes": "Uwagi",
+            "patient_signature": "Podpis pacjenta",
+            "clinic_signature": "Podpis kliniki",
+            "signed_by": "Podpisano przez",
+            "signed_at": "Data podpisu",
+            "signature_method": "Kanał",
+            "signature_method_drawn": "Podpis odręczny",
+            "signature_method_click_accept": "Akceptacja cyfrowa",
+            "signature_method_external": "Podpis zewnętrzny",
+            "document_hash": "Skrót dokumentu",
+            "generated_by": "Utworzone przez",
+            "status": {
+                "draft": "Wersja robocza",
+                "sent": "Wysłany",
+                "accepted": "Zaakceptowany",
+                "in_progress": "W trakcie",
+                "completed": "Zakończony",
+                "invoiced": "Zafakturowany",
+                "rejected": "Odrzucony",
+                "expired": "Wygasły",
+                "cancelled": "Anulowany",
+            },
+        }
+
+        labels_it = {
+            "budget": "Preventivo",
+            "version": "Versione",
+            "date": "Data",
+            "draft": "BOZZA",
+            "patient_info": "Informazioni del paziente",
+            "patient": "Paziente",
+            "professional": "Professionista",
+            "treatments": "Trattamenti",
+            "description": "Descrizione",
+            "qty": "Quantità",
+            "unit_price": "Prezzo unitario",
+            "discount": "Sconto",
+            "total": "Totale",
+            "subtotal": "Subtotale",
+            "total_discount": "Sconto totale",
+            "tax": "IVA",
+            "grand_total": "TOTALE",
+            "validity": "Validità",
+            "from": "dal",
+            "until": "al",
+            "no_expiry": "senza data di scadenza",
+            "notes": "Note",
+            "patient_signature": "Firma del paziente",
+            "clinic_signature": "Firma dello studio",
+            "signed_by": "Firmato da",
+            "signed_at": "Firmato il",
+            "signature_method": "Canale",
+            "signature_method_drawn": "Firma autografa",
+            "signature_method_click_accept": "Accettazione digitale",
+            "signature_method_external": "Firma esterna",
+            "document_hash": "Hash del documento",
+            "generated_by": "Creato da",
+            "status": {
+                "draft": "Bozza",
+                "sent": "Inviato",
+                "accepted": "Accettato",
+                "in_progress": "In corso",
+                "completed": "Completato",
+                "invoiced": "Fatturato",
+                "rejected": "Rifiutato",
+                "expired": "Scaduto",
+                "cancelled": "Annullato",
+            },
+        }
+
+        labels_ar = {
+            "budget": "عرض أسعار",
+            "version": "الإصدار",
+            "date": "التاريخ",
+            "draft": "مسودة",
+            "patient_info": "بيانات المريض",
+            "patient": "المريض",
+            "professional": "الطبيب المعالج",
+            "treatments": "العلاجات",
+            "description": "الوصف",
+            "qty": "الكمية",
+            "unit_price": "سعر الوحدة",
+            "discount": "الخصم",
+            "total": "الإجمالي",
+            "subtotal": "المجموع الفرعي",
+            "total_discount": "إجمالي الخصم",
+            "tax": "ضريبة القيمة المضافة",
+            "grand_total": "المجموع الإجمالي",
+            "validity": "الصلاحية",
+            "from": "من",
+            "until": "إلى",
+            "no_expiry": "بدون تاريخ انتهاء",
+            "notes": "ملاحظات",
+            "patient_signature": "توقيع المريض",
+            "clinic_signature": "توقيع العيادة",
+            "signed_by": "وقّع بواسطة",
+            "signed_at": "تاريخ التوقيع",
+            "signature_method": "القناة",
+            "signature_method_drawn": "توقيع بخط اليد",
+            "signature_method_click_accept": "قبول رقمي",
+            "signature_method_external": "توقيع خارجي",
+            "document_hash": "بصمة المستند",
+            "generated_by": "أنشأها",
+            "status": {
+                "draft": "مسودة",
+                "sent": "مُرسل",
+                "accepted": "مقبول",
+                "in_progress": "قيد التنفيذ",
+                "completed": "مكتمل",
+                "invoiced": "تمت فوترته",
+                "rejected": "مرفوض",
+                "expired": "منتهي الصلاحية",
+                "cancelled": "ملغي",
+            },
+        }
+
+        labels_ta = {
+            "budget": "மதிப்பீடு",
+            "version": "பதிப்பு",
+            "date": "தேதி",
+            "draft": "வரைவு",
+            "patient_info": "நோயாளி விவரங்கள்",
+            "patient": "நோயாளி",
+            "professional": "மருத்துவர்",
+            "treatments": "சிகிச்சைகள்",
+            "description": "விளக்கம்",
+            "qty": "அளவு",
+            "unit_price": "அலகு விலை",
+            "discount": "தள்ளுபடி",
+            "total": "மொத்தம்",
+            "subtotal": "இடைத்தொகை",
+            "total_discount": "மொத்தத் தள்ளுபடி",
+            "tax": "வரி",
+            "grand_total": "இறுதித் தொகை",
+            "validity": "செல்லுபடியாகும் காலம்",
+            "from": "முதல்",
+            "until": "வரை",
+            "no_expiry": "காலாவதி தேதி இல்லை",
+            "notes": "குறிப்புகள்",
+            "patient_signature": "நோயாளி கையொப்பம்",
+            "clinic_signature": "மருத்துவமனை கையொப்பம்",
+            "signed_by": "கையொப்பமிட்டவர்",
+            "signed_at": "கையொப்பமிட்ட தேதி",
+            "signature_method": "வழி",
+            "signature_method_drawn": "கையால் எழுதிய கையொப்பம்",
+            "signature_method_click_accept": "இணையவழி ஒப்புதல்",
+            "signature_method_external": "வெளிப்புற கையொப்பம்",
+            "document_hash": "ஆவண ஹாஷ்",
+            "generated_by": "உருவாக்கியது",
+            "status": {
+                "draft": "வரைவு",
+                "sent": "அனுப்பப்பட்டது",
+                "accepted": "ஏற்கப்பட்டது",
+                "in_progress": "நடைபெறுகிறது",
+                "completed": "நிறைவடைந்தது",
+                "invoiced": "விலைப்பட்டியல் வழங்கப்பட்டது",
+                "rejected": "நிராகரிக்கப்பட்டது",
+                "expired": "காலாவதியானது",
+                "cancelled": "ரத்து செய்யப்பட்டது",
+            },
+        }
+
+        # English is the fallback for a locale we have not translated yet
+        # (#485): the route accepts every host locale, so returning the
+        # Spanish set for everything non-es printed a Spanish quote to a
+        # German clinic, and English to everyone else.
+        by_locale = {
+            "es": labels_es,
+            "en": labels_en,
+            "fr": labels_fr,
+            "pt": labels_pt,
+            "de": labels_de,
+            "hu": labels_hu,
+            "pl": labels_pl,
+            "it": labels_it,
+            "ar": labels_ar,
+            "ta": labels_ta,
+        }
+        return by_locale.get(locale, labels_en)

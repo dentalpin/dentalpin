@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Follow-up: drop dead `TEMPLATE_MAP` (service.py) / `_DOC_NAMES`
+  (pdf.py); roundtrip test docstring states the real `depends_on`.
 - feat(#232): sidebar entry grouped under the Clinical header (`nav.section` "clinical").
 - feat(i18n): Arabic (`ar`) locale for the module's frontend layer.
 - feat(#228): Initial documents module — prescriptions, medical

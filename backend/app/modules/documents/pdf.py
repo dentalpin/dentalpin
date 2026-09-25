@@ -82,13 +82,6 @@ _LABELS = {
     },
 }
 
-_DOC_NAMES = {
-    "prescription": "prescription",
-    "medical_certificate": "medical_certificate",
-    "referral": "referral",
-    "radiology_request": "radiology_request",
-}
-
 
 class DocumentPDFService:
     """Service for generating branded PDFs of clinical documents."""

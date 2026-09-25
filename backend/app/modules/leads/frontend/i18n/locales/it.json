@@ -1,0 +1,115 @@
+{
+  "leads": {
+    "nav": {
+      "leads": "Richieste ricevute"
+    },
+    "title": "Richieste ricevute",
+    "subtitle": "Richieste ricevute dal modulo del sito",
+    "empty": "Nessuna nuova richiesta",
+    "emptyHint": "Le richieste di persone che sono già pazienti vanno direttamente in Richiami — controlla lì prima di pensare che il modulo non funzioni.",
+    "emptyAction": "Aggiungi una richiesta manualmente",
+    "searchPlaceholder": "Cerca per nome, telefono o e-mail",
+    "filterStatus": "Stato",
+    "filters": {
+      "showAll": "Mostra tutti gli stati"
+    },
+    "receivedAt": "Ricevuta",
+    "availability": "Disponibilità",
+    "newLead": "Nuova richiesta",
+    "websiteForm": "Modulo web",
+    "status": {
+      "new": "Nuovo",
+      "contacted": "Contattato",
+      "converted": "Convertito",
+      "discarded": "Scartato"
+    },
+    "fields": {
+      "fullName": "Nome completo",
+      "phone": "Telefono",
+      "email": "E-mail",
+      "motive": "Motivo",
+      "description": "Descrizione",
+      "availability": "Disponibilità",
+      "status": "Stato",
+      "availabilityHint": "In quali giorni possiamo chiamare?"
+    },
+    "actions": {
+      "edit": "Modifica",
+      "save": "Salva",
+      "cancel": "Annulla",
+      "discard": "Scarta",
+      "markContacted": "Segna come contattato"
+    },
+    "convert": {
+      "title": "Converti in paziente",
+      "subtitle": "Controlla la richiesta e completa la scheda del paziente",
+      "enquiry": "Richiesta",
+      "patient": "Paziente",
+      "createPatient": "Crea paziente",
+      "created": "Paziente creato",
+      "openPatient": "Apri paziente",
+      "alreadyConverted": "Questa richiesta è già stata convertita in paziente.",
+      "duplicateWarning": "Esiste già un paziente con questo telefono",
+      "duplicateOpen": "Apri quel paziente"
+    },
+    "validation": {
+      "required": "Questo campo è obbligatorio",
+      "email": "Inserisci un indirizzo email valido, ad esempio nome{'@'}example.com",
+      "phone": "Inserisci un numero di telefono valido (almeno 6 cifre)",
+      "dateOfBirth": "La data di nascita non può essere nel futuro",
+      "fixErrors": "Controlla i campi evidenziati"
+    },
+    "slots": {
+      "any": "Qualsiasi ora",
+      "morning": "Mattine",
+      "afternoon": "Pomeriggi",
+      "evening": "Sere"
+    },
+    "routing": {
+      "explainer": "Le richieste il cui telefono o e-mail appartiene già a un paziente non creano una nuova richiesta — vengono aggiunte ai Richiami come richiamata.",
+      "recallQueued": "{name} è già un paziente — è stata aggiunta una richiamata ai Richiami.",
+      "openRecalls": "Apri Richiami"
+    },
+    "settings": {
+      "title": "Modulo web",
+      "description": "Chiave di ricezione e limite giornaliero per le richieste che il tuo sito invia a DentalPin.",
+      "capLabel": "Limite giornaliero",
+      "capHint": "Numero massimo di richieste accettate al giorno. 0 = nessun limite.",
+      "capSave": "Salva limite",
+      "capSaved": "Limite giornaliero salvato",
+      "volume": "{count} su {cap} oggi",
+      "unlimited": "{count} oggi (nessun limite)",
+      "atLimit": "La ricezione è in pausa fino a domani: il limite di oggi è stato raggiunto.",
+      "capLoweredWarning": "Abbassare il limite sotto il numero di oggi blocca subito la ricezione.",
+      "keyTitle": "Chiave di ricezione",
+      "keyConfigured": "Configurata",
+      "keyMissing": "Nessuna chiave ancora — la ricezione è chiusa finché non ne crei una.",
+      "keyPrefix": "Prefisso",
+      "keyActive": "Attiva",
+      "keyInactive": "Disattivata",
+      "lastUsed": "Ultimo utilizzo",
+      "never": "Mai",
+      "rotate": "Genera / rinnova chiave",
+      "rotateWarning": "Rinnovare la chiave disattiva subito una chiave compromessa. Ricorda di incollare la nuova chiave nel tuo sito — il modulo non funziona finché non lo fai.",
+      "rotateCopyOnce": "Copia questa chiave adesso: viene mostrata una sola volta.",
+      "copied": "Copiato",
+      "activate": "Attiva ricezione",
+      "deactivate": "Disattiva ricezione",
+      "intakeUrl": "URL di ricezione",
+      "example": "Richiesta di esempio",
+      "routingNote": "Le richieste il cui telefono o e-mail appartiene già a un paziente non creano una nuova richiesta — vengono aggiunte ai Richiami per una richiamata.",
+      "readOnly": "Non hai il permesso di modificare queste impostazioni.",
+      "noPermission": "Non hai il permesso di vedere queste impostazioni.",
+      "copy": "Copia"
+    },
+    "errors": {
+      "load": "Impossibile caricare le richieste",
+      "save": "Impossibile salvare la richiesta",
+      "convert": "Impossibile creare il paziente",
+      "settingsLoad": "Impossibile caricare le impostazioni",
+      "settingsSave": "Impossibile salvare le impostazioni",
+      "rotate": "Impossibile rinnovare la chiave",
+      "copy": "Gli appunti non sono disponibili — seleziona il testo e copialo manualmente"
+    }
+  }
+}

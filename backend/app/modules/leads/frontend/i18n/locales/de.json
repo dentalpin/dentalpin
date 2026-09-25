@@ -1,0 +1,115 @@
+{
+  "leads": {
+    "nav": {
+      "leads": "Anfragen"
+    },
+    "title": "Anfragen",
+    "subtitle": "Anfragen aus dem Website-Formular",
+    "empty": "Keine neuen Anfragen",
+    "emptyHint": "Anfragen von Personen, die bereits Patienten sind, gehen direkt an Recalls — prüfen Sie dort nach, bevor Sie annehmen, dass das Formular nicht funktioniert.",
+    "emptyAction": "Anfrage manuell hinzufügen",
+    "searchPlaceholder": "Nach Name, Telefon oder E-Mail suchen",
+    "filterStatus": "Status",
+    "filters": {
+      "showAll": "Alle Status anzeigen"
+    },
+    "receivedAt": "Eingegangen",
+    "availability": "Verfügbarkeit",
+    "newLead": "Neue Anfrage",
+    "websiteForm": "Website-Formular",
+    "status": {
+      "new": "Neu",
+      "contacted": "Kontaktiert",
+      "converted": "Umgewandelt",
+      "discarded": "Verworfen"
+    },
+    "fields": {
+      "fullName": "Vollständiger Name",
+      "phone": "Telefon",
+      "email": "E-Mail",
+      "motive": "Grund",
+      "description": "Beschreibung",
+      "availability": "Verfügbarkeit",
+      "status": "Status",
+      "availabilityHint": "An welchen Tagen können wir anrufen?"
+    },
+    "actions": {
+      "edit": "Bearbeiten",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "discard": "Verwerfen",
+      "markContacted": "Als kontaktiert markieren"
+    },
+    "convert": {
+      "title": "In einen Patienten umwandeln",
+      "subtitle": "Prüfen Sie die Anfrage und vervollständigen Sie die Patientenakte",
+      "enquiry": "Anfrage",
+      "patient": "Patient",
+      "createPatient": "Patienten anlegen",
+      "created": "Patient angelegt",
+      "openPatient": "Patienten öffnen",
+      "alreadyConverted": "Diese Anfrage wurde bereits in einen Patienten umgewandelt.",
+      "duplicateWarning": "Ein Patient mit dieser Telefonnummer existiert bereits",
+      "duplicateOpen": "Diesen Patienten öffnen"
+    },
+    "validation": {
+      "required": "Dieses Feld ist erforderlich",
+      "email": "Geben Sie eine gültige E-Mail-Adresse ein, z. B. name{'@'}example.com",
+      "phone": "Geben Sie eine gültige Telefonnummer ein (mindestens 6 Ziffern)",
+      "dateOfBirth": "Das Geburtsdatum kann nicht in der Zukunft liegen",
+      "fixErrors": "Prüfen Sie die markierten Felder"
+    },
+    "slots": {
+      "any": "Jederzeit",
+      "morning": "Vormittags",
+      "afternoon": "Nachmittags",
+      "evening": "Abends"
+    },
+    "routing": {
+      "explainer": "Anfragen, deren Telefonnummer oder E-Mail bereits zu einem Patienten gehören, werden nicht als neue Anfrage angelegt — sie landen als Rückruf in Recalls.",
+      "recallQueued": "{name} ist bereits Patient — ein Rückruf wurde in Recalls eingetragen.",
+      "openRecalls": "Recalls öffnen"
+    },
+    "settings": {
+      "title": "Website-Formular",
+      "description": "Zugangsschlüssel und Tageslimit für die Anfragen, die Ihre Website an DentalPin sendet.",
+      "capLabel": "Tageslimit",
+      "capHint": "Maximale Anzahl akzeptierter Anfragen pro Tag. 0 = kein Limit.",
+      "capSave": "Limit speichern",
+      "capSaved": "Tageslimit gespeichert",
+      "volume": "{count} von {cap} heute",
+      "unlimited": "{count} heute (kein Limit)",
+      "atLimit": "Der Eingang ist bis morgen pausiert: das heutige Limit ist erreicht.",
+      "capLoweredWarning": "Ein Limit unterhalb des heutigen Zählerstands blockiert den Eingang sofort.",
+      "keyTitle": "Eingangsschlüssel",
+      "keyConfigured": "Konfiguriert",
+      "keyMissing": "Noch kein Schlüssel — der Eingang ist geschlossen, bis Sie einen erstellen.",
+      "keyPrefix": "Präfix",
+      "keyActive": "Aktiv",
+      "keyInactive": "Deaktiviert",
+      "lastUsed": "Zuletzt verwendet",
+      "never": "Nie",
+      "rotate": "Schlüssel erzeugen / erneuern",
+      "rotateWarning": "Das Erneuern sperrt einen geleakten Schlüssel sofort. Denken Sie daran, den neuen Schlüssel auf Ihrer Website einzutragen — das Formular schlägt sonst fehl, bis Sie das getan haben.",
+      "rotateCopyOnce": "Kopieren Sie diesen Schlüssel jetzt: er wird nur einmal angezeigt.",
+      "copied": "Kopiert",
+      "activate": "Eingang aktivieren",
+      "deactivate": "Eingang deaktivieren",
+      "intakeUrl": "Eingangs-URL",
+      "example": "Beispielanfrage",
+      "routingNote": "Anfragen, deren Telefonnummer oder E-Mail bereits zu einem Patienten gehören, werden nicht als neue Anfrage angelegt — sie werden in Recalls für einen Rückruf eingetragen.",
+      "readOnly": "Sie haben keine Berechtigung, diese Einstellungen zu ändern.",
+      "noPermission": "Sie haben keine Berechtigung, diese Einstellungen einzusehen.",
+      "copy": "Kopieren"
+    },
+    "errors": {
+      "load": "Die Anfragen konnten nicht geladen werden",
+      "save": "Die Anfrage konnte nicht gespeichert werden",
+      "convert": "Der Patient konnte nicht angelegt werden",
+      "settingsLoad": "Die Einstellungen konnten nicht geladen werden",
+      "settingsSave": "Die Einstellungen konnten nicht gespeichert werden",
+      "rotate": "Der Schlüssel konnte nicht erneuert werden",
+      "copy": "Die Zwischenablage ist nicht verfügbar — markieren Sie den Text und kopieren Sie ihn manuell"
+    }
+  }
+}

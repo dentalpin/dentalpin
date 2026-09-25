@@ -1,0 +1,115 @@
+{
+  "leads": {
+    "nav": {
+      "leads": "Leads"
+    },
+    "title": "Leads",
+    "subtitle": "Enquiries received from the website form",
+    "empty": "No new enquiries",
+    "emptyHint": "Enquiries from people who are already patients go straight to Recalls — check there before assuming the form is not working.",
+    "emptyAction": "Add a lead manually",
+    "searchPlaceholder": "Search by name, phone or email",
+    "filterStatus": "Status",
+    "filters": {
+      "showAll": "Show all statuses"
+    },
+    "receivedAt": "Received",
+    "availability": "Availability",
+    "newLead": "New lead",
+    "websiteForm": "Website form",
+    "status": {
+      "new": "New",
+      "contacted": "Contacted",
+      "converted": "Converted",
+      "discarded": "Discarded"
+    },
+    "fields": {
+      "fullName": "Full name",
+      "phone": "Phone",
+      "email": "Email",
+      "motive": "Motive",
+      "description": "Description",
+      "availability": "Availability",
+      "status": "Status",
+      "availabilityHint": "Which days can we call them?"
+    },
+    "actions": {
+      "edit": "Edit",
+      "save": "Save",
+      "cancel": "Cancel",
+      "discard": "Discard",
+      "markContacted": "Mark as contacted"
+    },
+    "convert": {
+      "title": "Convert into a patient",
+      "subtitle": "Review the enquiry and complete the patient record",
+      "enquiry": "Enquiry",
+      "patient": "Patient",
+      "createPatient": "Create patient",
+      "created": "Patient created",
+      "openPatient": "Open patient",
+      "alreadyConverted": "This lead has already been converted into a patient.",
+      "duplicateWarning": "A patient with this phone already exists",
+      "duplicateOpen": "Open that patient"
+    },
+    "validation": {
+      "required": "This field is required",
+      "email": "Enter a valid email address, for example name{'@'}example.com",
+      "phone": "Enter a valid phone number (at least 6 digits)",
+      "dateOfBirth": "The date of birth cannot be in the future",
+      "fixErrors": "Check the highlighted fields"
+    },
+    "slots": {
+      "any": "Any time",
+      "morning": "Mornings",
+      "afternoon": "Afternoons",
+      "evening": "Evenings"
+    },
+    "routing": {
+      "explainer": "Enquiries whose phone or email already belongs to a patient do not create a lead — they are added to Recalls as a call-back.",
+      "recallQueued": "{name} is already a patient — a call-back has been added to Recalls.",
+      "openRecalls": "Open Recalls"
+    },
+    "settings": {
+      "title": "Website form",
+      "description": "Intake key and daily limit for the enquiries your website sends to DentalPin.",
+      "capLabel": "Daily limit",
+      "capHint": "Maximum enquiries accepted per day. 0 = no limit.",
+      "capSave": "Save limit",
+      "capSaved": "Daily limit saved",
+      "volume": "{count} of {cap} today",
+      "unlimited": "{count} today (no limit)",
+      "atLimit": "Intake is paused until tomorrow: today's limit has been reached.",
+      "capLoweredWarning": "Lowering the limit below today's count blocks intake immediately.",
+      "keyTitle": "Intake key",
+      "keyConfigured": "Configured",
+      "keyMissing": "No key yet — intake is closed until you create one.",
+      "keyPrefix": "Prefix",
+      "keyActive": "Active",
+      "keyInactive": "Disabled",
+      "lastUsed": "Last used",
+      "never": "Never",
+      "rotate": "Generate / rotate key",
+      "rotateWarning": "Rotating stops a leaked key immediately. Remember to paste the new key into your website — the form will fail until you do.",
+      "rotateCopyOnce": "Copy this key now: it is shown only once.",
+      "copied": "Copied",
+      "activate": "Enable intake",
+      "deactivate": "Disable intake",
+      "intakeUrl": "Intake URL",
+      "example": "Example request",
+      "routingNote": "Enquiries whose phone or email already belongs to a patient do not create a lead — they are added to Recalls for a call-back.",
+      "readOnly": "You do not have permission to change these settings.",
+      "noPermission": "You do not have permission to view these settings.",
+      "copy": "Copy"
+    },
+    "errors": {
+      "load": "The enquiries could not be loaded",
+      "save": "The lead could not be saved",
+      "convert": "The patient could not be created",
+      "settingsLoad": "The settings could not be loaded",
+      "settingsSave": "The settings could not be saved",
+      "rotate": "The key could not be rotated",
+      "copy": "The clipboard is not available — select the text and copy it manually"
+    }
+  }
+}
