@@ -1,6 +1,6 @@
 ---
 module: imaging_ai
-last_verified_commit: 0000000
+last_verified_commit: ad339611ade2847809b6478a60a7a1354990b432
 ---
 
 # imaging_ai — events
