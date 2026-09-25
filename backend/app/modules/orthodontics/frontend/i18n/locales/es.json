@@ -1,0 +1,72 @@
+{
+  "tab": { "label": "Ortodoncia" },
+  "nav": { "title": "Ortodoncia" },
+  "appliance": {
+    "brackets_metal": "Brackets metálicos",
+    "brackets_esthetic": "Brackets estéticos",
+    "self_ligating": "Autoligado",
+    "aligners": "Alineadores",
+    "functional": "Funcional",
+    "retention": "Retención"
+  },
+  "status": {
+    "active": "Activo",
+    "paused": "En pausa",
+    "finished": "Finalizado",
+    "transferred_out": "Derivado"
+  },
+  "inbox": {
+    "title": "Ortodoncia",
+    "active": "Activos",
+    "overdue": "Control vencido",
+    "unscheduled": "Sin próximo control",
+    "finished": "Finalizados",
+    "new": "Nuevo caso",
+    "empty": "No hay casos en esta vista",
+    "nextDue": "Próximo control",
+    "monthOf": "Mes {x} de ~{n}"
+  },
+  "case": {
+    "new": "Nuevo caso de ortodoncia",
+    "appliance": "Aparato",
+    "professional": "Ortodoncista",
+    "startDate": "Fecha de inicio",
+    "estimatedMonths": "Meses estimados",
+    "notes": "Diagnóstico / objetivos",
+    "create": "Abrir caso",
+    "inMouthNow": "En boca actualmente",
+    "upper": "Superior",
+    "lower": "Inferior",
+    "noWire": "Sin arco registrado",
+    "changeStatus": "Cambiar estado",
+    "statusNote": "Motivo (opcional)",
+    "save": "Guardar"
+  },
+  "control": {
+    "new": "Registrar control",
+    "wires": "Arcos (sin cambios por defecto)",
+    "procedures": "Procedimientos",
+    "proceduresOther": "Otros procedimientos",
+    "hygiene": "Higiene",
+    "hygiene_good": "Buena",
+    "hygiene_fair": "Regular",
+    "hygiene_poor": "Deficiente",
+    "alignerNumber": "Número de alineador",
+    "notes": "Observaciones / indicaciones",
+    "nextControl": "Próximo control",
+    "weeks": "{n} semanas",
+    "noNext": "Sin próximo control",
+    "save": "Guardar control",
+    "history": "Controles",
+    "empty": "Aún no hay controles"
+  },
+  "card": {
+    "title": "Ortodoncia",
+    "noCase": "Sin caso activo",
+    "view": "Abrir"
+  },
+  "photos": {
+    "title": "Fotos ({n})",
+    "upload": "Añadir foto"
+  }
+}

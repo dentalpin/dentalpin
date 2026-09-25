@@ -1,0 +1,72 @@
+{
+  "tab": { "label": "Kieferorthopädie" },
+  "nav": { "title": "Kieferorthopädie" },
+  "appliance": {
+    "brackets_metal": "Metallbrackets",
+    "brackets_esthetic": "Ästhetische Brackets",
+    "self_ligating": "Selbstligierend",
+    "aligners": "Aligner",
+    "functional": "Funktional",
+    "retention": "Retention"
+  },
+  "status": {
+    "active": "Aktiv",
+    "paused": "Pausiert",
+    "finished": "Abgeschlossen",
+    "transferred_out": "Überwiesen"
+  },
+  "inbox": {
+    "title": "Kieferorthopädie",
+    "active": "Aktiv",
+    "overdue": "Überfällige Kontrolle",
+    "unscheduled": "Keine nächste Kontrolle",
+    "finished": "Abgeschlossen",
+    "new": "Neuer Fall",
+    "empty": "Keine Fälle in dieser Ansicht",
+    "nextDue": "Nächste Kontrolle",
+    "monthOf": "Monat {x} von ~{n}"
+  },
+  "case": {
+    "new": "Neuer kieferorthopädischer Fall",
+    "appliance": "Apparatur",
+    "professional": "Kieferorthopäde",
+    "startDate": "Startdatum",
+    "estimatedMonths": "Voraussichtliche Monate",
+    "notes": "Diagnose / Ziele",
+    "create": "Fall eröffnen",
+    "inMouthNow": "Derzeit im Mund",
+    "upper": "Oberkiefer",
+    "lower": "Unterkiefer",
+    "noWire": "Kein Bogen dokumentiert",
+    "changeStatus": "Status ändern",
+    "statusNote": "Grund (optional)",
+    "save": "Speichern"
+  },
+  "control": {
+    "new": "Kontrolle erfassen",
+    "wires": "Bögen (standardmäßig unverändert)",
+    "procedures": "Maßnahmen",
+    "proceduresOther": "Weitere Maßnahmen",
+    "hygiene": "Mundhygiene",
+    "hygiene_good": "Gut",
+    "hygiene_fair": "Mittelmäßig",
+    "hygiene_poor": "Schlecht",
+    "alignerNumber": "Aligner-Nummer",
+    "notes": "Befund / Anweisungen",
+    "nextControl": "Nächste Kontrolle",
+    "weeks": "{n} Wochen",
+    "noNext": "Keine nächste Kontrolle",
+    "save": "Kontrolle speichern",
+    "history": "Kontrollen",
+    "empty": "Noch keine Kontrollen"
+  },
+  "card": {
+    "title": "Kieferorthopädie",
+    "noCase": "Kein aktiver Fall",
+    "view": "Öffnen"
+  },
+  "photos": {
+    "title": "Fotos ({n})",
+    "upload": "Foto hinzufügen"
+  }
+}

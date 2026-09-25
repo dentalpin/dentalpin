@@ -1,0 +1,72 @@
+{
+  "tab": { "label": "Orthodontics" },
+  "nav": { "title": "Orthodontics" },
+  "appliance": {
+    "brackets_metal": "Metal brackets",
+    "brackets_esthetic": "Esthetic brackets",
+    "self_ligating": "Self-ligating",
+    "aligners": "Aligners",
+    "functional": "Functional",
+    "retention": "Retention"
+  },
+  "status": {
+    "active": "Active",
+    "paused": "Paused",
+    "finished": "Finished",
+    "transferred_out": "Transferred out"
+  },
+  "inbox": {
+    "title": "Orthodontics",
+    "active": "Active",
+    "overdue": "Overdue control",
+    "unscheduled": "No next control",
+    "finished": "Finished",
+    "new": "New case",
+    "empty": "No cases in this view",
+    "nextDue": "Next control",
+    "monthOf": "Month {x} of ~{n}"
+  },
+  "case": {
+    "new": "New orthodontic case",
+    "appliance": "Appliance",
+    "professional": "Orthodontist",
+    "startDate": "Start date",
+    "estimatedMonths": "Estimated months",
+    "notes": "Diagnosis / objectives",
+    "create": "Open case",
+    "inMouthNow": "In mouth now",
+    "upper": "Upper",
+    "lower": "Lower",
+    "noWire": "No wire recorded",
+    "changeStatus": "Change status",
+    "statusNote": "Reason (optional)",
+    "save": "Save"
+  },
+  "control": {
+    "new": "Register control",
+    "wires": "Archwires (no change by default)",
+    "procedures": "Procedures",
+    "proceduresOther": "Other procedures",
+    "hygiene": "Hygiene",
+    "hygiene_good": "Good",
+    "hygiene_fair": "Fair",
+    "hygiene_poor": "Poor",
+    "alignerNumber": "Aligner number",
+    "notes": "Observations / instructions",
+    "nextControl": "Next control",
+    "weeks": "{n} weeks",
+    "noNext": "No next control",
+    "save": "Save control",
+    "history": "Controls",
+    "empty": "No controls yet"
+  },
+  "card": {
+    "title": "Orthodontics",
+    "noCase": "No active case",
+    "view": "Open"
+  },
+  "photos": {
+    "title": "Photos ({n})",
+    "upload": "Add photo"
+  }
+}

@@ -1,0 +1,72 @@
+{
+  "tab": { "label": "Ortodoncja" },
+  "nav": { "title": "Ortodoncja" },
+  "appliance": {
+    "brackets_metal": "Zamki metalowe",
+    "brackets_esthetic": "Zamki estetyczne",
+    "self_ligating": "Samoligaturujące",
+    "aligners": "Alignery",
+    "functional": "Czynnościowy",
+    "retention": "Retencja"
+  },
+  "status": {
+    "active": "Aktywny",
+    "paused": "Wstrzymany",
+    "finished": "Zakończony",
+    "transferred_out": "Przekazany dalej"
+  },
+  "inbox": {
+    "title": "Ortodoncja",
+    "active": "Aktywny",
+    "overdue": "Zaległa kontrola",
+    "unscheduled": "Brak następnej kontroli",
+    "finished": "Zakończony",
+    "new": "Nowy przypadek",
+    "empty": "Brak przypadków w tym widoku",
+    "nextDue": "Następna kontrola",
+    "monthOf": "Miesiąc {x} z ~{n}"
+  },
+  "case": {
+    "new": "Nowy przypadek ortodontyczny",
+    "appliance": "Aparat",
+    "professional": "Ortodonta",
+    "startDate": "Data rozpoczęcia",
+    "estimatedMonths": "Szacowana liczba miesięcy",
+    "notes": "Rozpoznanie / cele",
+    "create": "Otwórz przypadek",
+    "inMouthNow": "Obecnie w ustach",
+    "upper": "Górny",
+    "lower": "Dolny",
+    "noWire": "Nie odnotowano łuku",
+    "changeStatus": "Zmień status",
+    "statusNote": "Powód (opcjonalnie)",
+    "save": "Zapisz"
+  },
+  "control": {
+    "new": "Zarejestruj kontrolę",
+    "wires": "Łuki (domyślnie bez zmian)",
+    "procedures": "Zabiegi",
+    "proceduresOther": "Inne zabiegi",
+    "hygiene": "Higiena",
+    "hygiene_good": "Dobra",
+    "hygiene_fair": "Średnia",
+    "hygiene_poor": "Zła",
+    "alignerNumber": "Numer alignera",
+    "notes": "Obserwacje / zalecenia",
+    "nextControl": "Następna kontrola",
+    "weeks": "{n} tygodni",
+    "noNext": "Brak następnej kontroli",
+    "save": "Zapisz kontrolę",
+    "history": "Kontrole",
+    "empty": "Brak kontroli"
+  },
+  "card": {
+    "title": "Ortodoncja",
+    "noCase": "Brak aktywnego przypadku",
+    "view": "Otwórz"
+  },
+  "photos": {
+    "title": "Zdjęcia ({n})",
+    "upload": "Dodaj zdjęcie"
+  }
+}

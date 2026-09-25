@@ -1,0 +1,72 @@
+{
+  "tab": { "label": "Orthodontie" },
+  "nav": { "title": "Orthodontie" },
+  "appliance": {
+    "brackets_metal": "Brackets métalliques",
+    "brackets_esthetic": "Brackets esthétiques",
+    "self_ligating": "Auto-ligaturants",
+    "aligners": "Aligneurs",
+    "functional": "Fonctionnel",
+    "retention": "Contention"
+  },
+  "status": {
+    "active": "Actif",
+    "paused": "En pause",
+    "finished": "Terminé",
+    "transferred_out": "Transféré"
+  },
+  "inbox": {
+    "title": "Orthodontie",
+    "active": "Actifs",
+    "overdue": "Contrôle en retard",
+    "unscheduled": "Sans prochain contrôle",
+    "finished": "Terminés",
+    "new": "Nouveau cas",
+    "empty": "Aucun cas dans cette vue",
+    "nextDue": "Prochain contrôle",
+    "monthOf": "Mois {x} sur ~{n}"
+  },
+  "case": {
+    "new": "Nouveau cas orthodontique",
+    "appliance": "Appareil",
+    "professional": "Orthodontiste",
+    "startDate": "Date de début",
+    "estimatedMonths": "Mois estimés",
+    "notes": "Diagnostic / objectifs",
+    "create": "Ouvrir le cas",
+    "inMouthNow": "En bouche actuellement",
+    "upper": "Supérieur",
+    "lower": "Inférieur",
+    "noWire": "Aucun arc enregistré",
+    "changeStatus": "Changer le statut",
+    "statusNote": "Motif (facultatif)",
+    "save": "Enregistrer"
+  },
+  "control": {
+    "new": "Enregistrer un contrôle",
+    "wires": "Arcs (inchangés par défaut)",
+    "procedures": "Actes",
+    "proceduresOther": "Autres actes",
+    "hygiene": "Hygiène",
+    "hygiene_good": "Bonne",
+    "hygiene_fair": "Moyenne",
+    "hygiene_poor": "Mauvaise",
+    "alignerNumber": "Numéro d'aligneur",
+    "notes": "Observations / consignes",
+    "nextControl": "Prochain contrôle",
+    "weeks": "{n} semaines",
+    "noNext": "Sans prochain contrôle",
+    "save": "Enregistrer le contrôle",
+    "history": "Contrôles",
+    "empty": "Aucun contrôle pour l'instant"
+  },
+  "card": {
+    "title": "Orthodontie",
+    "noCase": "Aucun cas actif",
+    "view": "Ouvrir"
+  },
+  "photos": {
+    "title": "Photos ({n})",
+    "upload": "Ajouter une photo"
+  }
+}

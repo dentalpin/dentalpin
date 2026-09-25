@@ -1,0 +1,72 @@
+{
+  "tab": { "label": "تقويم الأسنان" },
+  "nav": { "title": "تقويم الأسنان" },
+  "appliance": {
+    "brackets_metal": "حاصرات معدنية",
+    "brackets_esthetic": "حاصرات تجميلية",
+    "self_ligating": "ذاتي الربط",
+    "aligners": "مقومات شفافة",
+    "functional": "وظيفي",
+    "retention": "تثبيت"
+  },
+  "status": {
+    "active": "نشط",
+    "paused": "متوقف مؤقتًا",
+    "finished": "منتهٍ",
+    "transferred_out": "محوَّل"
+  },
+  "inbox": {
+    "title": "تقويم الأسنان",
+    "active": "نشط",
+    "overdue": "متابعة متأخرة",
+    "unscheduled": "لا توجد متابعة قادمة",
+    "finished": "منتهٍ",
+    "new": "حالة جديدة",
+    "empty": "لا توجد حالات في هذا العرض",
+    "nextDue": "المتابعة القادمة",
+    "monthOf": "الشهر {x} من ~{n}"
+  },
+  "case": {
+    "new": "حالة تقويم أسنان جديدة",
+    "appliance": "الجهاز",
+    "professional": "أخصائي تقويم الأسنان",
+    "startDate": "تاريخ البدء",
+    "estimatedMonths": "الأشهر المقدرة",
+    "notes": "التشخيص / الأهداف",
+    "create": "فتح الحالة",
+    "inMouthNow": "في الفم حاليًا",
+    "upper": "علوي",
+    "lower": "سفلي",
+    "noWire": "لا يوجد قوس مسجل",
+    "changeStatus": "تغيير الحالة",
+    "statusNote": "السبب (اختياري)",
+    "save": "حفظ"
+  },
+  "control": {
+    "new": "تسجيل متابعة",
+    "wires": "أقواس (لا تغيير افتراضيًا)",
+    "procedures": "الإجراءات",
+    "proceduresOther": "إجراءات أخرى",
+    "hygiene": "النظافة",
+    "hygiene_good": "جيدة",
+    "hygiene_fair": "متوسطة",
+    "hygiene_poor": "ضعيفة",
+    "alignerNumber": "رقم المقوم الشفاف",
+    "notes": "ملاحظات / تعليمات",
+    "nextControl": "المتابعة القادمة",
+    "weeks": "{n} أسابيع",
+    "noNext": "لا توجد متابعة قادمة",
+    "save": "حفظ المتابعة",
+    "history": "المتابعات",
+    "empty": "لا توجد متابعات بعد"
+  },
+  "card": {
+    "title": "تقويم الأسنان",
+    "noCase": "لا توجد حالة نشطة",
+    "view": "فتح"
+  },
+  "photos": {
+    "title": "الصور ({n})",
+    "upload": "إضافة صورة"
+  }
+}

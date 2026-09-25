@@ -765,3 +765,44 @@ async def on_prescription_cancelled(data: dict) -> None:
         source_id_key="source_id",
         title="Receta cancelada",
     )
+
+
+# ---------------------------------------------------------------------------
+# Orthodontics
+# ---------------------------------------------------------------------------
+
+
+async def on_ortho_case_created(data: dict) -> None:
+    data = {**data, "source_id": data.get("case_id")}
+    await _record(
+        event_type=EventType.ORTHODONTICS_CASE_CREATED,
+        event_category="treatment",
+        source_table="ortho_cases",
+        data=data,
+        source_id_key="source_id",
+        title="Caso de ortodoncia abierto",
+    )
+
+
+async def on_ortho_case_status_changed(data: dict) -> None:
+    data = {**data, "source_id": data.get("case_id")}
+    await _record(
+        event_type=EventType.ORTHODONTICS_CASE_STATUS_CHANGED,
+        event_category="treatment",
+        source_table="ortho_cases",
+        data=data,
+        source_id_key="source_id",
+        title="Estado de ortodoncia actualizado",
+    )
+
+
+async def on_ortho_control_registered(data: dict) -> None:
+    data = {**data, "source_id": data.get("control_id")}
+    await _record(
+        event_type=EventType.ORTHODONTICS_CONTROL_REGISTERED,
+        event_category="treatment",
+        source_table="ortho_controls",
+        data=data,
+        source_id_key="source_id",
+        title="Control de ortodoncia",
+    )
