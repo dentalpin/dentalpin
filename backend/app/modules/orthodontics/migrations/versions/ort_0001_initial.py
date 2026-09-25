@@ -1,4 +1,11 @@
-"""Orthodontics initial schema (issue #270, slice-a: cases + controls + settings)."""
+"""Orthodontics initial schema (issue #270, slice-a: cases + controls + settings).
+
+Single revision on purpose: the module is unshipped, so the reopen audit
+column (``reopened_at``) is created inline rather than in a follow-up
+migration, matching what the team did for staff_attendance and treasury
+before their releases. Squashing is free before release and impossible
+after it.
+"""
 
 from collections.abc import Sequence
 
@@ -31,6 +38,10 @@ def upgrade() -> None:
         sa.Column("current_upper_wire", sa.String(length=40), nullable=True),
         sa.Column("current_lower_wire", sa.String(length=40), nullable=True),
         sa.Column("finished_at", sa.DateTime(timezone=True), nullable=True),
+        # Reopen audit: a finished case may only be reopened to `active`,
+        # and that stamps `reopened_at` instead of clearing the finish date
+        # (the end-of-treatment record is never destroyed).
+        sa.Column("reopened_at", sa.DateTime(timezone=True), nullable=True),
         sa.Column("status_note", sa.Text(), nullable=True),
         sa.Column(
             "created_at",
