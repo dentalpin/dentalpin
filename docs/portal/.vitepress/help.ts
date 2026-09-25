@@ -74,13 +74,23 @@ function parseFrontmatter(text: string): { fm: Frontmatter; body: string } {
 }
 
 export function routeToSlug(route: string): string {
-  const trimmed = route.replace(/^\/+|\/+$/g, "");
-  if (!trimmed) return "index";
+  // A screen's `route:` may carry a query string (the periodontogram view
+  // deep-links `?clinicalMode=diagnosis&diagnosisView=periodontogram`).
+  // Two reasons to keep the path only: the help drawer asks for the
+  // fragment using `route.path`, which never includes a query, so writing
+  // the query into the filename produced a file the app never requested
+  // (silently falling back to the "not documented" fragment); and `?` is
+  // an illegal filename character on Windows, so the build died with a bare
+  // ENOENT there while Linux CI stayed green. The frontend's `routeToSlug`
+  // (frontend/app/composables/useHelp.ts) is the matching half of this rule.
+  const [pathOnly = ''] = route.split(/[?#]/)
+  const trimmed = pathOnly.replace(/^\/+|\/+$/g, "")
+  if (!trimmed) return "index"
   // Strip `[` `]` so the source MD filename does not collide with
   // VitePress' dynamic-route convention (`*[*].md` would expect a
   // companion `.paths.{js,ts}` file). The route itself keeps the
   // brackets — only the slug used as filename / fragment URL drops them.
-  return trimmed.replace(/\//g, "_").replace(/[[\]]/g, "");
+  return trimmed.replace(/\//g, "_").replace(/[[\]]/g, "")
 }
 
 async function collectScreens(): Promise<
