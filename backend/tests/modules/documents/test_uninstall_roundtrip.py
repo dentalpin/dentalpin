@@ -44,8 +44,9 @@ def test_documents_uninstall_roundtrip_is_branch_scoped() -> None:
     """install → uninstall → reinstall drops only documents' tables.
 
     ``documents`` is a leaf branch chained off the core ``0001`` anchor
-    (no ``depends_on``), so the teardown set is exactly the module's own
-    table(s).
+    with ``depends_on = ("pat_0003",)`` (ordering only — downgrading
+    this branch never drags the patients chain down), so the teardown
+    set is exactly the module's own table(s).
     """
     _alembic("upgrade", "heads")
     before = asyncio.run(_tables())

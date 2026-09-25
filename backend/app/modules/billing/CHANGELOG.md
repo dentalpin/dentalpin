@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(#422): invoice PDF labels for every UI locale (fr/pt/de/hu/pl/it/ar, lifted from the layer `invoice.*` strings so PDF and screen agree); Arabic renders `dir="rtl"`.
 - feat(#232): sidebar entry grouped under the Financials header (`nav.section` "financials").
 - refactor(#441): `PDF_LOCALES` / `PDF_LOCALE_PATTERN` / the Babel locale map moved to `app/core/pdf_locales.py` so budget can share them without depending on billing. No behaviour change.
 

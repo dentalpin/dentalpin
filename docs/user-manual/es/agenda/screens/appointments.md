@@ -8,14 +8,17 @@ related_endpoints:
   - GET /api/v1/agenda/appointments
   - GET /api/v1/agenda/appointments/{appointment_id}
   - GET /api/v1/agenda/appointments/{appointment_id}/cabinet-history
+  - GET /api/v1/agenda/appointments/{appointment_id}/check-in-qr
   - GET /api/v1/agenda/appointments/{appointment_id}/transitions
   - GET /api/v1/agenda/cabinets
   - GET /api/v1/agenda/kanban/day
   - PATCH /api/v1/agenda/appointment-treatments/{appointment_treatment_id}
   - PATCH /api/v1/agenda/appointments/{appointment_id}/cabinet
   - POST /api/v1/agenda/appointments
+  - POST /api/v1/agenda/appointments/{appointment_id}/check-in-token
   - POST /api/v1/agenda/appointments/{appointment_id}/transitions
   - POST /api/v1/agenda/cabinets
+  - POST /api/v1/agenda/public/check-in/{token}
   - PUT /api/v1/agenda/appointments/{appointment_id}
   - PUT /api/v1/agenda/cabinets/{cabinet_id}
 related_permissions:
@@ -25,8 +28,9 @@ related_permissions:
   - agenda.cabinets.write
 related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
+  - backend/app/modules/agenda/frontend/pages/p/check-in/[token].vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: 0cce028b
+last_verified_commit: 3f08dd038cc70b5d2d988e49b8029c06f42ad5b3
 ---
 
 # Citas
@@ -113,6 +117,20 @@ escrito a mano.
 3. Al transicionar a **completada** aparece un modal de seguimiento
    con acciones de módulos hermanos (p. ej. *Programar recall*). El
    modal solo se muestra si hay módulos que lo aporten.
+
+## Registro con QR
+
+> Requiere `agenda.appointments.write` para generarlo; escanear no
+> necesita cuenta.
+
+1. En una cita programada o confirmada, abre **Acciones rápidas** y
+   elige **QR de registro**. Un diálogo muestra el código (válido
+   15 minutos) más un enlace copiable.
+2. El paciente lo escanea con la cámara del móvil y accede a una
+   página pública que lo registra — sin login. Reescanear el mismo
+   código simplemente confirma el estado actual.
+3. La transición usa la máquina de estados normal, así que el
+   calendario, la cronología y los recordatorios se actualizan igual.
 
 ## Permisos
 

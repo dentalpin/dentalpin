@@ -187,15 +187,11 @@ function getSeriesTypeLabel(type: string): string {
   <div class="space-y-6">
     <!-- Header with back button -->
     <div class="flex items-center justify-between">
-      <div class="flex items-center gap-4">
-        <NuxtLink to="/settings">
-          <UButton
-            icon="i-lucide-arrow-left"
-            :aria-label="t('common.back')"
-            variant="ghost"
-            color="neutral"
-          />
-        </NuxtLink>
+      <div>
+        <SettingsBackLink
+          to="/settings/billing"
+          :label="t('settings.categories.billing.label')"
+        />
         <div>
           <h1 class="text-display text-default">
             {{ t('invoiceSeries.title') }}

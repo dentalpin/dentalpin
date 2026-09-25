@@ -1,0 +1,115 @@
+{
+  "leads": {
+    "nav": {
+      "leads": "Zgłoszenia"
+    },
+    "title": "Zgłoszenia",
+    "subtitle": "Zgłoszenia otrzymane przez formularz na stronie",
+    "empty": "Brak nowych zgłoszeń",
+    "emptyHint": "Zgłoszenia od osób, które są już pacjentami, trafiają od razu do Wizyt kontrolnych — sprawdź je tam, zanim uznasz, że formularz nie działa.",
+    "emptyAction": "Dodaj zgłoszenie ręcznie",
+    "searchPlaceholder": "Szukaj po imieniu, telefonie lub e-mailu",
+    "filterStatus": "Status",
+    "filters": {
+      "showAll": "Pokaż wszystkie statusy"
+    },
+    "receivedAt": "Otrzymano",
+    "availability": "Dostępność",
+    "newLead": "Nowe zgłoszenie",
+    "websiteForm": "Formularz na stronie",
+    "status": {
+      "new": "Nowe",
+      "contacted": "Skontaktowano się",
+      "converted": "Przekształcone",
+      "discarded": "Odrzucone"
+    },
+    "fields": {
+      "fullName": "Imię i nazwisko",
+      "phone": "Telefon",
+      "email": "E-mail",
+      "motive": "Powód",
+      "description": "Opis",
+      "availability": "Dostępność",
+      "status": "Status",
+      "availabilityHint": "W których dniach możemy zadzwonić?"
+    },
+    "actions": {
+      "edit": "Edytuj",
+      "save": "Zapisz",
+      "cancel": "Anuluj",
+      "discard": "Odrzuć",
+      "markContacted": "Oznacz jako skontaktowane"
+    },
+    "convert": {
+      "title": "Przekształć w pacjenta",
+      "subtitle": "Sprawdź zgłoszenie i uzupełnij kartę pacjenta",
+      "enquiry": "Zgłoszenie",
+      "patient": "Pacjent",
+      "createPatient": "Utwórz pacjenta",
+      "created": "Pacjent utworzony",
+      "openPatient": "Otwórz kartę pacjenta",
+      "alreadyConverted": "To zgłoszenie zostało już przekształcone w pacjenta.",
+      "duplicateWarning": "Pacjent o tym numerze telefonu już istnieje",
+      "duplicateOpen": "Otwórz tego pacjenta"
+    },
+    "validation": {
+      "required": "To pole jest wymagane",
+      "email": "Podaj prawidłowy adres e-mail, na przykład nazwa{'@'}example.com",
+      "phone": "Podaj prawidłowy numer telefonu (co najmniej 6 cyfr)",
+      "dateOfBirth": "Data urodzenia nie może być w przyszłości",
+      "fixErrors": "Sprawdź zaznaczone pola"
+    },
+    "slots": {
+      "any": "Dowolna pora",
+      "morning": "Przedpołudnia",
+      "afternoon": "Popołudnia",
+      "evening": "Wieczory"
+    },
+    "routing": {
+      "explainer": "Jeśli numer telefonu lub e-mail ze zgłoszenia należy już do pacjenta, nowe zgłoszenie nie powstaje — zamiast tego do Wizyt kontrolnych trafia telefon do wykonania.",
+      "recallQueued": "{name} jest już pacjentem — do Wizyt kontrolnych dodano telefon do wykonania.",
+      "openRecalls": "Otwórz Wizyty kontrolne"
+    },
+    "settings": {
+      "title": "Formularz na stronie",
+      "description": "Klucz przyjmowania zgłoszeń i dzienny limit dla zgłoszeń, które Twoja strona wysyła do DentalPin.",
+      "capLabel": "Dzienny limit",
+      "capHint": "Maksymalna liczba zgłoszeń przyjmowanych dziennie. 0 = bez limitu.",
+      "capSave": "Zapisz limit",
+      "capSaved": "Dzienny limit zapisany",
+      "volume": "{count} z {cap} dzisiaj",
+      "unlimited": "{count} dzisiaj (bez limitu)",
+      "atLimit": "Przyjmowanie zgłoszeń jest wstrzymane do jutra: dzisiejszy limit został osiągnięty.",
+      "capLoweredWarning": "Obniżenie limitu poniżej dzisiejszej liczby natychmiast zablokuje przyjmowanie zgłoszeń.",
+      "keyTitle": "Klucz przyjmowania zgłoszeń",
+      "keyConfigured": "Skonfigurowany",
+      "keyMissing": "Nie ma jeszcze klucza — przyjmowanie zgłoszeń jest wyłączone, dopóki go nie utworzysz.",
+      "keyPrefix": "Prefiks",
+      "keyActive": "Aktywny",
+      "keyInactive": "Wyłączony",
+      "lastUsed": "Ostatnie użycie",
+      "never": "Nigdy",
+      "rotate": "Wygeneruj / zmień klucz",
+      "rotateWarning": "Zmiana klucza natychmiast blokuje stary, ujawniony klucz. Pamiętaj, aby wkleić nowy klucz na swojej stronie — do tego czasu formularz nie będzie działać.",
+      "rotateCopyOnce": "Skopiuj ten klucz teraz: pokazujemy go tylko raz.",
+      "copied": "Skopiowano",
+      "activate": "Włącz przyjmowanie zgłoszeń",
+      "deactivate": "Wyłącz przyjmowanie zgłoszeń",
+      "intakeUrl": "URL przyjmowania zgłoszeń",
+      "example": "Przykładowe żądanie",
+      "routingNote": "Jeśli numer telefonu lub e-mail ze zgłoszenia należy już do pacjenta, nowe zgłoszenie nie powstaje — trafia ono do Wizyt kontrolnych jako telefon do wykonania.",
+      "readOnly": "Nie masz uprawnień do zmiany tych ustawień.",
+      "noPermission": "Nie masz uprawnień do przeglądania tych ustawień.",
+      "copy": "Kopiuj"
+    },
+    "errors": {
+      "load": "Nie udało się wczytać zgłoszeń",
+      "save": "Nie udało się zapisać zgłoszenia",
+      "convert": "Nie udało się utworzyć pacjenta",
+      "settingsLoad": "Nie udało się wczytać ustawień",
+      "settingsSave": "Nie udało się zapisać ustawień",
+      "rotate": "Nie udało się zmienić klucza",
+      "copy": "Schowek jest niedostępny — zaznacz tekst i skopiuj go ręcznie"
+    }
+  }
+}

@@ -330,7 +330,8 @@ class EmailService:
         for template_path in template_paths:
             try:
                 template = self._jinja_env.get_template(template_path)
-                return template.render(context)
+                # base.html reads ``locale`` for ``lang``/``dir``.
+                return template.render({"locale": locale, **context})
             except Exception:
                 continue
 

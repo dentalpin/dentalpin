@@ -1,0 +1,19 @@
+{
+  "staffAttendance": {
+    "nav": { "title": "Attendance" },
+    "title": "Staff attendance",
+    "clockTitle": "Clock in / out",
+    "member": "Staff member",
+    "pickMember": "Pick a member",
+    "note": "Note",
+    "notePlaceholder": "Optional note",
+    "clockIn": "Clock in",
+    "clockOut": "Clock out",
+    "today": "Today",
+    "noEvents": "No punches on this day.",
+    "report": "Daily report",
+    "openShift": "still in",
+    "in": "In",
+    "out": "Out"
+  }
+}

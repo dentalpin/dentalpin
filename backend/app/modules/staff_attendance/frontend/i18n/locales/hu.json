@@ -1,0 +1,19 @@
+{
+  "staffAttendance": {
+    "nav": { "title": "Jelenlét" },
+    "title": "Dolgozói jelenlét",
+    "clockTitle": "Be- / kijelentkezés",
+    "member": "Munkatárs",
+    "pickMember": "Válassz munkatársat",
+    "note": "Megjegyzés",
+    "notePlaceholder": "Opcionális megjegyzés",
+    "clockIn": "Bejelentkezés",
+    "clockOut": "Kijelentkezés",
+    "today": "Ma",
+    "noEvents": "Ezen a napon nincs bejegyzés.",
+    "report": "Napi jelentés",
+    "openShift": "még bent",
+    "in": "Bent",
+    "out": "Kint"
+  }
+}

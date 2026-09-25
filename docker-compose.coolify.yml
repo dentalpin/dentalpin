@@ -33,6 +33,8 @@ services:
       SISTEMA_TS_CA_BUNDLE: ${SISTEMA_TS_CA_BUNDLE:-}
       # Optional Sentry/GlitchTip DSN (see .env.example). Empty = off.
       SENTRY_DSN: ${SENTRY_DSN:-}
+      # Traces stay off unless explicitly enabled (backend default 0.0).
+      SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.0}
       STORAGE_BACKEND: local
       STORAGE_LOCAL_PATH: /app/storage
       # Demo deployments set SEED_ON_STARTUP=1 in Coolify env so a wiped

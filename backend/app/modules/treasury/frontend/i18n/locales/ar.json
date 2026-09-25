@@ -1,0 +1,35 @@
+{
+  "treasury": {
+    "nav": { "title": "الخزينة" },
+    "title": "الخزينة",
+    "newAccount": "حساب جديد",
+    "transfer": "تحويل",
+    "correct": "تصحيح",
+    "correctionDirection": "الاتجاه",
+    "accounts": "الحسابات",
+    "noAccounts": "لا توجد حسابات بعد.",
+    "statement": "الحركات",
+    "noEntries": "لا توجد حركات بعد.",
+    "accountName": "اسم الحساب",
+    "accountKind": "النوع",
+    "kindCash": "نقدي",
+    "kindBank": "بنكي",
+    "create": "إنشاء",
+    "openingBalance": "الرصيد الافتتاحي",
+    "deactivate": "تعطيل",
+    "activate": "إعادة تفعيل",
+    "inactive": "غير نشطة",
+    "fromAccount": "الحساب المصدر",
+    "toAccount": "الحساب الهدف",
+    "amount": "المبلغ",
+    "memo": "البيان (اختياري)",
+    "correctMemo": "البيان (مطلوب)",
+    "kind": {
+      "transfer_out": "تحويل صادر",
+      "transfer_in": "تحويل وارد",
+      "correction_in": "تسوية واردة",
+      "correction_out": "تسوية صادرة",
+      "opening": "افتتاحي"
+    }
+  }
+}

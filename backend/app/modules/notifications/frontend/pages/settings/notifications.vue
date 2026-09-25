@@ -279,20 +279,13 @@ if (!isAdmin.value) {
     <!-- Page header -->
     <div class="flex items-center justify-between">
       <div>
-        <div class="flex items-center gap-2 mb-1">
-          <NuxtLink
-            to="/settings"
-            class="text-subtle hover:text-muted dark:text-subtle dark:hover:text-subtle"
-          >
-            <UIcon
-              name="i-lucide-arrow-left"
-              class="w-5 h-5"
-            />
-          </NuxtLink>
-          <h1 class="text-display text-default">
-            {{ t('notifications.title') }}
-          </h1>
-        </div>
+        <SettingsBackLink
+          to="/settings/communications"
+          :label="t('settings.categories.communications.label')"
+        />
+        <h1 class="text-display text-default">
+          {{ t('notifications.title') }}
+        </h1>
         <p class="text-muted">
           {{ t('notifications.pageDescription') }}
         </p>

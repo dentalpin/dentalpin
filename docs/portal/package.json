@@ -5,8 +5,8 @@
   "description": "VitePress portal for the DentalPin documentation under /docs.",
   "type": "module",
   "scripts": {
-    "dev": "vitepress dev",
-    "build": "vitepress build",
+    "dev": "node init && vitepress dev",
+    "build": "node init && vitepress build",
     "preview": "vitepress preview"
   },
   "devDependencies": {

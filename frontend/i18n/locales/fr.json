@@ -826,6 +826,14 @@
   },
   "appointments": {
     "title": "Agenda",
+    "checkin": {
+      "qr": "QR d'enregistrement",
+      "hint": "Le patient scanne ce code pour s'enregistrer. Il expire 15 minutes après sa création.",
+      "copyLink": "Copier le lien d'enregistrement",
+      "openTitle": "Enregistrement à la clinique",
+      "success": "Vous êtes enregistré. Veuillez prendre place.",
+      "invalid": "Ce code d'enregistrement est invalide ou expiré. Demandez-en un nouveau à l'accueil."
+    },
     "create": "Nouveau rendez-vous",
     "edit": "Modifier le rendez-vous",
     "today": "Aujourd'hui",

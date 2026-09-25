@@ -114,4 +114,7 @@ class PatientTimelineModule(BaseModule):
             EventType.TREATMENT_PLAN_ITEM_COMPLETED_WITHOUT_NOTE: (
                 events.on_item_completed_without_note
             ),
+            # Prescriptions (prescriptions module — payload-only, no import).
+            EventType.PRESCRIPTION_ISSUED: events.on_prescription_issued,
+            EventType.PRESCRIPTION_CANCELLED: events.on_prescription_cancelled,
         }

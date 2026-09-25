@@ -104,6 +104,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `payroll.period.status_changed` | `EventType.PAYROLL_PERIOD_STATUS_CHANGED` | `payroll` | — |
 | `payroll.profile.updated` | `EventType.PAYROLL_PROFILE_UPDATED` | `payroll` | — |
 | `periodontogram.snapshot.closed` | `EventType.PERIODONTOGRAM_SNAPSHOT_CLOSED` | `periodontogram` | — |
+| `prescription.cancelled` | `EventType.PRESCRIPTION_CANCELLED` | `prescriptions` | `activity_journal`, `patient_timeline` |
+| `prescription.issued` | `EventType.PRESCRIPTION_ISSUED` | `prescriptions` | `activity_journal`, `patient_timeline` |
 | `purchase_order.created` | `EventType.PURCHASE_ORDER_CREATED` | `purchase_orders` | — |
 | `purchase_order.received` | `EventType.PURCHASE_ORDER_RECEIVED` | `purchase_orders` | — |
 | `purchase_order.status_changed` | `EventType.PURCHASE_ORDER_STATUS_CHANGED` | `purchase_orders` | — |
@@ -112,9 +114,12 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `recall.created` | `EventType.RECALL_CREATED` | `recalls` | `activity_journal`, `recall_reminders` |
 | `recall.due` | `EventType.RECALL_DUE` | — | — |
 | `recall.snoozed` | `EventType.RECALL_SNOOZED` | `recalls` | — |
+| `staff_attendance.clocked` | `EventType.STAFF_ATTENDANCE_CLOCKED` | `staff_attendance` | `activity_journal` |
 | `staff_task.created` | `EventType.STAFF_TASK_CREATED` | `staff_tasks` | — |
 | `staff_task.status_changed` | `EventType.STAFF_TASK_STATUS_CHANGED` | `staff_tasks` | — |
 | `tenant.resolved` | `EventType.TENANT_RESOLVED` | — | — |
+| `treasury.corrected` | `EventType.TREASURY_CORRECTED` | `treasury` | `activity_journal` |
+| `treasury.transferred` | `EventType.TREASURY_TRANSFERRED` | `treasury` | `activity_journal` |
 | `treatment.completed` | `EventType.TREATMENT_COMPLETED` | — | — |
 | `treatment_plan.budget_sync_requested` | `EventType.TREATMENT_PLAN_BUDGET_SYNC_REQUESTED` | `treatment_plan` | `activity_journal`, `budget` |
 | `treatment_plan.closed` | `EventType.TREATMENT_PLAN_CLOSED` | `treatment_plan` | `patient_timeline` |
@@ -874,6 +879,24 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `periodontogram` — `backend/app/modules/periodontogram/service.py`
 - **Subscribers:** —
 
+### `prescription.cancelled`
+
+- **Constant:** `EventType.PRESCRIPTION_CANCELLED`
+- **Publishers:**
+  - `prescriptions` — `backend/app/modules/prescriptions/service.py`
+- **Subscribers:**
+  - `activity_journal`
+  - `patient_timeline`
+
+### `prescription.issued`
+
+- **Constant:** `EventType.PRESCRIPTION_ISSUED`
+- **Publishers:**
+  - `prescriptions` — `backend/app/modules/prescriptions/service.py`
+- **Subscribers:**
+  - `activity_journal`
+  - `patient_timeline`
+
 ### `purchase_order.created`
 
 - **Constant:** `EventType.PURCHASE_ORDER_CREATED`
@@ -931,6 +954,14 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `recalls` — `backend/app/modules/recalls/service.py`
 - **Subscribers:** —
 
+### `staff_attendance.clocked`
+
+- **Constant:** `EventType.STAFF_ATTENDANCE_CLOCKED`
+- **Publishers:**
+  - `staff_attendance` — `backend/app/modules/staff_attendance/service.py`
+- **Subscribers:**
+  - `activity_journal`
+
 ### `staff_task.created`
 
 - **Constant:** `EventType.STAFF_TASK_CREATED`
@@ -950,6 +981,22 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.TENANT_RESOLVED`
 - **Publishers:** _none in tree — declared but unused_
 - **Subscribers:** —
+
+### `treasury.corrected`
+
+- **Constant:** `EventType.TREASURY_CORRECTED`
+- **Publishers:**
+  - `treasury` — `backend/app/modules/treasury/service.py`
+- **Subscribers:**
+  - `activity_journal`
+
+### `treasury.transferred`
+
+- **Constant:** `EventType.TREASURY_TRANSFERRED`
+- **Publishers:**
+  - `treasury` — `backend/app/modules/treasury/service.py`
+- **Subscribers:**
+  - `activity_journal`
 
 ### `treatment.completed`
 

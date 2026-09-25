@@ -28,6 +28,7 @@ ADRs) for the full story.
 | Dentist | Dentista | Role with full clinical access. |
 | Assistant | Asistente | Operative role; full patient + appointment access, no clinical writes. |
 | Receptionist | Recepcionista | Front-desk role; patients + appointments. |
+| Prescription | Receta | A clinical medication order: draft → issued → cancelled, with prescriber snapshot, safety warnings and locale-aware PDF. No hard deletes. |
 
 ## Imaging (issue #55)
 
@@ -137,3 +138,17 @@ ADRs) for the full story.
 | MCP | Model Context Protocol. The `mcp` module mounts a streamable-HTTP MCP server at `/api/v1/mcp/` re-exposing curated registry tools (read via `patients:read`, create via `patients:write`) behind `dp_` tokens. See `docs/technical/mcp/overview.md`, ADR 0037. |
 | Reference module | A module marked as canonical example others should copy. Today: `patients` (foundational), `schedules` (removable, isolation-critical), `treatment_plan` (heavy deps). |
 | Frontend layer | The `frontend/` subdir inside a backend module. Loaded as a Nuxt layer. |
+
+## Leads (inbound enquiries)
+
+| EN (code) | ES (UI) | Definition |
+|---|---|---|
+| Lead | Solicitud entrante | An inbound enquiry from the clinic website form that matched no existing patient. Owned by the `leads` module and worked on `/leads`; convertible into a patient. |
+| Intake (web form intake) | Entrada del formulario web | The unauthenticated `POST /api/v1/leads/public/intake` endpoint the clinic website posts enquiries to. |
+| Intake key | Clave del formulario web | The per-clinic secret (`lk_…`) sent in the `X-Lead-Key` header — one per clinic, stored hashed, shown once when rotated. It **is** the authentication of the intake endpoint. |
+| Matched enquiry → recall | Consulta de paciente conocido → Recordatorios | An enquiry whose phone **or** email already belongs to a non-archived patient: it never becomes a lead, it queues a call-back in Recalls. |
+| Convert (a lead) | Convertir (una solicitud) | Turning a lead into a patient record from the convert drawer; the lead is kept with `status="converted"` and linked to the patient it produced. |
+| Availability days | Días disponibles | The days an enquirer can be called, stored as `mon`..`sun` codes (`leads.availability_days`) and shown to staff as a week strip. Structured, not free text: the website form sends codes. |
+| Availability slot | Franja horaria | Optional preference inside those days — `morning`, `afternoon` or `evening` (`leads.availability_slot`). Absent means "any time". |
+| Daily intake cap | Límite diario de solicitudes | Per-clinic ceiling on enquiries accepted per day (`leads_settings.daily_cap`, `0` = unlimited), edited at Settings → Integrations → *Formulario web*. |
+| Honeypot | Campo trampa | The hidden `website` field of the intake form: filled in means a bot, and the submission is accepted silently and never stored. |
