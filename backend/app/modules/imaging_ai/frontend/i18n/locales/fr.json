@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "imagingAi": "Imagerie IA"
+  },
+  "imagingAi": {
+    "list": {
+      "title": "Travaux de segmentation IA",
+      "empty": "Aucun travail IA pour ce patient pour le moment.",
+      "noPatient": "Aucun patient sélectionné",
+      "noPatientHint": "Ouvrez cette page avec ?patient_id=..., par ex. depuis le dossier patient.",
+      "queueHint": "Lancez une analyse ci-dessous ; les résultats apparaissent ici dès que le planificateur la prend en charge.",
+      "visualizationNote": "La sortie IA est une aide visuelle uniquement — jamais un diagnostic."
+    },
+    "status": {
+      "queued": "En file",
+      "running": "En cours",
+      "done": "Terminé",
+      "failed": "Échoué",
+      "cancelled": "Annulé",
+      "proposed": "Proposé"
+    },
+    "queue": {
+      "patient": "Patient",
+      "searchPatients": "Rechercher des patients par nom...",
+      "title": "Lancer une analyse IA",
+      "noDicom": "Aucun document DICOM pour ce patient pour le moment.",
+      "backend": "Moteur",
+      "submit": "Lancer l'analyse",
+      "seriesHint": "Le premier fichier coché est le document principal ; cochez le reste de la série pour les analyses volumiques (nnU-Net).",
+      "search": "Rechercher"
+    },
+    "backends": {
+      "pano": "Résultats pano (image unique)",
+      "nnunet": "Volume nnU-Net (série DICOM)"
+    },
+    "review": {
+      "pending_review": "Brouillon - en attente de relecture",
+      "confirmed": "Relu"
+    },
+    "job": {
+      "artifacts": "Brouillons",
+      "cancel": "Annuler",
+      "authorize": "Autoriser l'exécution",
+      "markReviewed": "Marquer comme relu"
+    }
+  }
+}

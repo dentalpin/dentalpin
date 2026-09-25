@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "imagingAi": "Immagini IA"
+  },
+  "imagingAi": {
+    "list": {
+      "title": "Lavori di segmentazione IA",
+      "empty": "Nessun lavoro IA per questo paziente.",
+      "noPatient": "Nessun paziente selezionato",
+      "noPatientHint": "Apri questa pagina con ?patient_id=..., ad es. dalla scheda del paziente.",
+      "queueHint": "Avvia un analisi qui sotto; i risultati appaiono qui quando lo scheduler la prende in carico.",
+      "visualizationNote": "L'output IA è solo un ausilio visivo — mai una diagnosi."
+    },
+    "status": {
+      "queued": "In coda",
+      "running": "In corso",
+      "done": "Completato",
+      "failed": "Non riuscito",
+      "cancelled": "Annullato",
+      "proposed": "Proposto"
+    },
+    "queue": {
+      "patient": "Paziente",
+      "searchPatients": "Cerca pazienti per nome...",
+      "title": "Avvia un'analisi IA",
+      "noDicom": "Ancora nessun documento DICOM per questo paziente.",
+      "backend": "Motore",
+      "submit": "Avvia analisi",
+      "seriesHint": "Il primo file selezionato è il documento principale; seleziona il resto della serie per le analisi volumetriche (nnU-Net).",
+      "search": "Cerca"
+    },
+    "backends": {
+      "pano": "Reperti pano (singola immagine)",
+      "nnunet": "Volume nnU-Net (serie DICOM)"
+    },
+    "review": {
+      "pending_review": "Bozza - in attesa di revisione",
+      "confirmed": "Revisionato"
+    },
+    "job": {
+      "artifacts": "Bozze",
+      "cancel": "Annulla",
+      "authorize": "Autorizza esecuzione",
+      "markReviewed": "Segna come rivisto"
+    }
+  }
+}

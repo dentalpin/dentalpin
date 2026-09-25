@@ -1,0 +1,47 @@
+{
+  "nav": {
+    "imagingAi": "AI imaging"
+  },
+  "imagingAi": {
+    "list": {
+      "title": "AI segmentation jobs",
+      "empty": "No AI jobs for this patient yet.",
+      "noPatient": "No patient selected",
+      "noPatientHint": "Open this page with ?patient_id=..., e.g. from the patient record.",
+      "queueHint": "Queue a run below; results appear here once the scheduler picks it up.",
+      "visualizationNote": "AI output is a visualization aid only — never a diagnosis."
+    },
+    "status": {
+      "queued": "Queued",
+      "running": "Running",
+      "done": "Done",
+      "failed": "Failed",
+      "cancelled": "Cancelled",
+      "proposed": "Proposed"
+    },
+    "queue": {
+      "patient": "Patient",
+      "searchPatients": "Search patients by name...",
+      "title": "Queue an AI run",
+      "noDicom": "No DICOM documents for this patient yet.",
+      "backend": "Backend",
+      "submit": "Queue run",
+      "seriesHint": "First checked file is the primary document; check the rest of the series for volumetric (nnU-Net) runs.",
+      "search": "Search"
+    },
+    "backends": {
+      "pano": "Pano findings (single frame)",
+      "nnunet": "nnU-Net volume (DICOM series)"
+    },
+    "review": {
+      "pending_review": "Draft - awaiting review",
+      "confirmed": "Reviewed"
+    },
+    "job": {
+      "artifacts": "Draft artifacts",
+      "cancel": "Cancel",
+      "authorize": "Authorize run",
+      "markReviewed": "Mark reviewed"
+    }
+  }
+}

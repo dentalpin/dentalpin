@@ -51,6 +51,12 @@ dependencies = [
     "anthropic>=0.40",
     # telephony module: E.164 normalization of caller numbers (issue #64).
     "phonenumbers>=8.13",
+    # imaging_ai pano backend: DICOM→PNG rendering needs pydicom pixel ops
+    # + numpy. Declared explicitly so the runner contract holds on stock
+    # installs (pydicom degrades gracefully for tag extraction, but the
+    # pano path requires both).
+    "pydicom>=3.0",
+    "numpy>=1.26",
     # Error tracking: Sentry SDK (also speaks to self-hosted GlitchTip).
     # Only activated when SENTRY_DSN is set; see setup_error_tracking.
     "sentry-sdk>=2.0.0",
@@ -123,6 +129,7 @@ patient_segments = "app.modules.patient_segments:PatientSegmentsModule"
 leads = "app.modules.leads:LeadsModule"
 staff_attendance = "app.modules.staff_attendance:StaffAttendanceModule"
 treasury = "app.modules.treasury:TreasuryModule"
+imaging_ai = "app.modules.imaging_ai:ImagingAiModule"
 
 [tool.setuptools.packages.find]
 where = ["."]

@@ -274,5 +274,11 @@ export const PERMISSIONS = {
   treasury: {
     read: 'treasury.read',
     write: 'treasury.write'
+  },
+  imagingAi: {
+    jobs: {
+      read: 'imaging_ai.jobs.read',
+      write: 'imaging_ai.jobs.write'
+    }
   }
 } as const
