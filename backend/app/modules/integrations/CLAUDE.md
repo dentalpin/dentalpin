@@ -112,11 +112,16 @@ mirrors `WebhookSubscription`'s own `disabled_at`/`disabled_reason`
 shape (`revoked_at`/`revoked_reason`, soft, not delete). `scopes` is
 validated against a closed catalog (`SUPPORTED_TOKEN_SCOPES` in
 `triggers.py`, same pattern as `SUPPORTED_EVENT_TYPES`) at create time.
-The public data-read API (`public.py`) is the first consumer of those
-tokens: it enforces scopes via `require_scope()`, rate-limits per token
-(in-process fixed window, 60/min + 1000/day), and surfaces
-`X-RateLimit-*` headers. Single-process rate limiting — documented
-limitation.
+The public data-read API (`public.py`) and the MCP module (`mcp`) are the
+consumers of those token scopes. Both authenticate through the single
+shared entry point `IntegrationsService.authenticate_token`, which enforces
+the per-token fixed-window rate limit (60/min + 1000/day) and stamps
+`last_used_at` on every successful auth; `public.py` surfaces the
+`X-RateLimit-*` headers and maps the shared `RateLimitError` to 429,
+while the MCP middleware returns its own 429 JSON. The public API enforces
+scopes per-endpoint via `require_scope()`; the MCP server translates the
+same scopes into RBAC grants and lists tools accordingly.
+Single-process rate limiting — documented limitation.
 
 ## Dependencies
 

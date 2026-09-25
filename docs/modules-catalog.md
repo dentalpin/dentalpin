@@ -29,6 +29,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `lab_orders` | 0.1.0 | community | patients, contacts | manual | yes | 2 | 1 | 0 | yes |
 | `leads` | 0.1.0 | community | patients, recalls | manual | yes | 4 | 0 | 0 | yes |
 | `media` | 0.2.0 | official | patients | auto | no | 4 | 7 | 2 | yes |
+| `mcp` | 0.1.0 | official | patients, integrations | manual | yes | 0 | 0 | 0 | no | 
 | `medical_reference` | 0.4.0 | community | patients_clinical, patients | manual | yes | 2 | 0 | 0 | yes |
 | `medication_catalog` | 0.1.0 | community | — | manual | yes | 2 | 0 | 1 | yes |
 | `migration_import` | 0.1.0 | official | patients, patients_clinical, clinical_notes, agenda, schedules, recalls, catalog, budget, odontogram, treatment_plan, billing, payments, media | manual | yes | 4 | 5 | 0 | yes |
@@ -485,6 +486,21 @@ Inbound leads from external forms: new enquiries become leads, known patients be
 - **Events emitted:** —
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/leads/CLAUDE.md`](../backend/app/modules/leads/CLAUDE.md)
+
+### `mcp` — v0.1.0
+
+MCP server exposing curated DentalPin tools to external AI clients.
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `patients`, `integrations`
+- **Frontend layer:** —
+- **Permissions:** —
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/mcp/CLAUDE.md`](../backend/app/modules/mcp/CLAUDE.md)
 
 ### `media` — v0.2.0
 

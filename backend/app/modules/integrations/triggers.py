@@ -17,7 +17,8 @@ of silently accepting one that never fires.
 
 ``SUPPORTED_TOKEN_SCOPES`` is the same idea for API tokens. The public
 data-read API (Phase 2) enforces them per endpoint; ``patients:read``
-is the first scope a token can actually use.
+gates the read surface and ``patients:write`` the write surface. The
+MCP module consumes both (see ``docs/technical/mcp/overview.md``).
 """
 
 from app.core.events import EventType
@@ -40,4 +41,4 @@ SUPPORTED_EVENT_TYPES: frozenset[str] = frozenset(
     }
 )
 
-SUPPORTED_TOKEN_SCOPES: frozenset[str] = frozenset({"patients:read"})
+SUPPORTED_TOKEN_SCOPES: frozenset[str] = frozenset({"patients:read", "patients:write"})

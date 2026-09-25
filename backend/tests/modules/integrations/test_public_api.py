@@ -116,6 +116,27 @@ async def test_rate_limit_headers_present(client: AsyncClient, auth_headers: dic
 
 
 @pytest.mark.asyncio
+async def test_rate_limit_exceeded_returns_429(
+    client: AsyncClient, auth_headers: dict, test_clinic, monkeypatch
+):
+    from app.modules.integrations import service as integrations_service
+
+    token = await _create_token(client, auth_headers, ["patients:read"])
+    monkeypatch.setattr(integrations_service, "RATE_LIMIT_PER_MINUTE", 2)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    first = await client.get(f"{PUBLIC_BASE}/ping", headers=headers)
+    second = await client.get(f"{PUBLIC_BASE}/ping", headers=headers)
+    assert first.status_code == 200
+    assert second.status_code == 200
+
+    third = await client.get(f"{PUBLIC_BASE}/ping", headers=headers)
+    assert third.status_code == 429
+    assert third.json()["detail"] == "Rate limit exceeded for this API token."
+    assert "Retry-After" in third.headers
+
+
+@pytest.mark.asyncio
 async def test_no_token_returns_401(client: AsyncClient, auth_headers: dict, test_clinic):
     resp = await client.get(f"{PUBLIC_BASE}/patients")
     assert resp.status_code == 401
