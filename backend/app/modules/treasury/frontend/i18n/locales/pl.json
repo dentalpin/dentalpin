@@ -1,0 +1,35 @@
+{
+  "treasury": {
+    "nav": { "title": "Kasa" },
+    "title": "Kasa",
+    "newAccount": "Nowe konto",
+    "transfer": "Przelej",
+    "correct": "Koryguj",
+    "correctionDirection": "Kierunek",
+    "accounts": "Konta",
+    "noAccounts": "Brak kont.",
+    "statement": "Operacje",
+    "noEntries": "Brak ruchów.",
+    "accountName": "Nazwa konta",
+    "accountKind": "Rodzaj",
+    "kindCash": "Gotówka",
+    "kindBank": "Bank",
+    "create": "Utwórz",
+    "openingBalance": "Saldo początkowe",
+    "deactivate": "Dezaktywuj",
+    "activate": "Reaktywuj",
+    "inactive": "Nieaktywne",
+    "fromAccount": "Konto źródłowe",
+    "toAccount": "Konto docelowe",
+    "amount": "Kwota",
+    "memo": "Opis (opcjonalnie)",
+    "correctMemo": "Opis (wymagany)",
+    "kind": {
+      "transfer_out": "Przelew wychodzący",
+      "transfer_in": "Przelew przychodzący",
+      "correction_in": "Korekta przychodu",
+      "correction_out": "Korekta rozchodu",
+      "opening": "Otwarcie"
+    }
+  }
+}

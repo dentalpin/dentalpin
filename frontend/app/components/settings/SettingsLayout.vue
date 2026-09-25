@@ -35,17 +35,12 @@ const headerTitle = computed(() => props.title ?? t('settings.title'))
   <div class="space-y-6">
     <header class="flex items-start justify-between gap-3 flex-wrap">
       <div class="min-w-0 flex-1">
-        <NuxtLink
+        <SettingsBackLink
           v-if="backTo"
           :to="backTo"
-          class="inline-flex items-center gap-1 text-caption text-muted hover:text-default lg:hidden"
-        >
-          <UIcon
-            name="i-lucide-arrow-left"
-            class="w-4 h-4"
-          />
-          {{ backLabel ?? t('settings.title') }}
-        </NuxtLink>
+          :label="backLabel"
+          class="lg:hidden"
+        />
         <h1 class="text-display text-default text-pretty">
           {{ headerTitle }}
         </h1>

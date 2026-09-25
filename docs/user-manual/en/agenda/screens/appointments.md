@@ -8,14 +8,17 @@ related_endpoints:
   - GET /api/v1/agenda/appointments
   - GET /api/v1/agenda/appointments/{appointment_id}
   - GET /api/v1/agenda/appointments/{appointment_id}/cabinet-history
+  - GET /api/v1/agenda/appointments/{appointment_id}/check-in-qr
   - GET /api/v1/agenda/appointments/{appointment_id}/transitions
   - GET /api/v1/agenda/cabinets
   - GET /api/v1/agenda/kanban/day
   - PATCH /api/v1/agenda/appointment-treatments/{appointment_treatment_id}
   - PATCH /api/v1/agenda/appointments/{appointment_id}/cabinet
   - POST /api/v1/agenda/appointments
+  - POST /api/v1/agenda/appointments/{appointment_id}/check-in-token
   - POST /api/v1/agenda/appointments/{appointment_id}/transitions
   - POST /api/v1/agenda/cabinets
+  - POST /api/v1/agenda/public/check-in/{token}
   - PUT /api/v1/agenda/appointments/{appointment_id}
   - PUT /api/v1/agenda/cabinets/{cabinet_id}
 related_permissions:
@@ -25,8 +28,9 @@ related_permissions:
   - agenda.cabinets.write
 related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
+  - backend/app/modules/agenda/frontend/pages/p/check-in/[token].vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: 0cce028b
+last_verified_commit: 3f08dd038cc70b5d2d988e49b8029c06f42ad5b3
 ---
 
 # Appointments
@@ -109,6 +113,19 @@ planned work instead of a free-text reason.
 3. When transitioning to **completed** a follow-up modal appears with
    actions contributed by sibling modules (e.g. *Schedule recall*).
    The modal stays hidden when no module contributes to it.
+
+## QR check-in
+
+> Requires `agenda.appointments.write` to mint; scanning needs no account.
+
+1. On a scheduled or confirmed appointment, open **Quick actions** and
+   choose **Check-in QR**. A dialog shows the code (valid 15 minutes)
+   plus a copyable check-in link.
+2. The patient scans it with their phone camera and lands on a public
+   page that checks them in — no login. Re-scanning the same code
+   simply confirms the current status.
+3. The transition flows through the normal status machine, so the
+   calendar, timeline, and reminders all update as usual.
 
 ## Permissions
 

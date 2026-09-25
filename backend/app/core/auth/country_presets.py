@@ -23,7 +23,7 @@ class CountryPreset:
     code: str  # ISO2, "" for the generic fallback
     currency: str  # ISO 4217
     timezone: str  # IANA — main zone of the country
-    language: str  # es|en|fr|pt|ta|de|hu|pl|it — communication_language default
+    language: str  # es|en|fr|pt|ta|de|hu|pl|it|ar — communication_language default
     vat_preset: str = "generic"  # consumed by catalog: "es" | "generic"
     tax_id_label: str = "Tax ID"
     tax_id_pattern: str | None = None  # server-side format check (normalized upper, no separators)

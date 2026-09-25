@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- Follow-up: single error toast on the procurement pages — the
+  composable passes `errorToast: false` on every call the pages
+  already surface themselves, including `listSuppliers` /
+  `listInventoryItems`: the option-picker loaders (`loadOptions`)
+  catch and toast instead of swallowing (review round 2).
+- fix(#485): the order PDF renders its own labels in all ten host
+  locales, the route accepts the shared `PDF_LOCALE_PATTERN` instead of
+  `es|en`, amounts follow `LOCALE_BY_LANG` (a German order printed
+  `1,234.56` next to an invoice printing `1.234,56`), and Arabic
+  mirrors the document.
 - feat(#232): sidebar entries grouped under the Inventory header (`nav.section` "inventory").
 - feat(i18n): full locale set for the shared procurement frontend
   (fr, de, pl, it, ta, hu, ar, pt alongside en/es).

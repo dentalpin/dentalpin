@@ -826,6 +826,14 @@
   },
   "appointments": {
     "title": "Időpontnaptár",
+    "checkin": {
+      "qr": "Bejelentkezési QR",
+      "hint": "A beteg ezzel a kóddal jelentkezik be. A létrehozás után 15 perccel lejár.",
+      "copyLink": "Bejelentkezési link másolása",
+      "openTitle": "Klinikai bejelentkezés",
+      "success": "Bejelentkezés kész. Kérjük, foglaljon helyet.",
+      "invalid": "Ez a bejelentkezési kód érvénytelen vagy lejárt. Kérjen újat a recepción."
+    },
     "create": "Új időpont",
     "edit": "Időpont szerkesztése",
     "today": "Ma",

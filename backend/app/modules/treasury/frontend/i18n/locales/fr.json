@@ -1,0 +1,35 @@
+{
+  "treasury": {
+    "nav": { "title": "Trésorerie" },
+    "title": "Trésorerie",
+    "newAccount": "Nouveau compte",
+    "transfer": "Transférer",
+    "correct": "Corriger",
+    "correctionDirection": "Direction",
+    "accounts": "Comptes",
+    "noAccounts": "Aucun compte pour le moment.",
+    "statement": "Relevé",
+    "noEntries": "Aucun mouvement pour le moment.",
+    "accountName": "Nom du compte",
+    "accountKind": "Type",
+    "kindCash": "Espèces",
+    "kindBank": "Banque",
+    "create": "Créer",
+    "openingBalance": "Solde initial",
+    "deactivate": "Désactiver",
+    "activate": "Réactiver",
+    "inactive": "Inactive",
+    "fromAccount": "Compte source",
+    "toAccount": "Compte destinataire",
+    "amount": "Montant",
+    "memo": "Motif (optionnel)",
+    "correctMemo": "Motif (requis)",
+    "kind": {
+      "transfer_out": "Sortie par virement",
+      "transfer_in": "Entrée par virement",
+      "correction_in": "Correction d'entrée",
+      "correction_out": "Correction de sortie",
+      "opening": "Ouverture"
+    }
+  }
+}

@@ -21,7 +21,7 @@ from app.core.agents.redaction import Redactor
 from app.core.agents.tools.registry import tool_registry
 from app.core.auth.permissions import permission_matches
 from app.core.llm.base import ProviderMessage, Role, TextBlock, ToolResultBlock, ToolUseBlock
-from app.core.llm.factory import get_provider
+from app.core.llm.factory import get_provider, get_provider_spec
 
 from .models import CopilotConversation, CopilotSettings
 from .serde import message_from_row
@@ -118,7 +118,7 @@ def _build_context(
 
 def _dialect_for(provider_name: str) -> str:
     """Tool-schema dialect for the conversation's provider."""
-    return "anthropic" if provider_name == "anthropic" else "openai"
+    return get_provider_spec(provider_name).tool_dialect
 
 
 def _redactor_for(conv: CopilotConversation, settings_row: CopilotSettings) -> Redactor:

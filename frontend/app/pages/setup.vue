@@ -34,7 +34,7 @@ const { currentLocale, availableLocales, changeLocale } = useLocale()
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 // Languages the backend accepts as clinic communication language
 // (mirrors the `language` pattern on SystemSetup).
-const COMM_LANGUAGES = ['es', 'en', 'fr', 'pt', 'ta', 'de', 'hu', 'pl', 'it']
+const COMM_LANGUAGES = ['es', 'en', 'fr', 'pt', 'ta', 'de', 'hu', 'pl', 'it', 'ar']
 
 const step = ref<1 | 2>(1)
 const isLoading = ref(false)

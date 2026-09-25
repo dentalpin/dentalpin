@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}عرض السعر بانتظار ردك - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>تذكير بخصوص عرض السعر</h2>
+
+<p>مرحباً {{ patient_name }}،</p>
+
+<p>نود تذكيرك بأن عرض سعر خطتك العلاجية <strong>#{{ budget_number }}</strong> من <strong>{{ clinic_name | default('DentalPin') }}</strong> ما زال بانتظار ردك وموافقتك.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">عرض السعر</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        {% if total %}
+        <div style="flex: 1; text-align: left;">
+            <div class="label">المجموع الإجمالي</div>
+            <div class="value">{{ total }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if valid_until %}
+<div class="alert alert-warning">
+    <strong>الصلاحية:</strong> هذا العرض صالح حتى {{ valid_until }}.
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">مراجعة عرض السعر</a>
+</div>
+{% endif %}
+
+<p>إذا اتخذت قرارك أو كانت لديك أي استفسارات، يرجى التواصل معنا — يسعدنا دائماً مساعدتك.</p>
+{% endblock %}

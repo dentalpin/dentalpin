@@ -237,6 +237,10 @@ const categoryOptions = computed(() => [
     <!-- Page header -->
     <div class="flex items-center justify-between">
       <div>
+        <SettingsBackLink
+          to="/settings/clinical"
+          :label="t('settings.categories.clinical.label')"
+        />
         <h1 class="text-display text-default">
           {{ t('catalog.title') }}
         </h1>
@@ -260,14 +264,6 @@ const categoryOptions = computed(() => [
         >
           {{ t('catalog.newItem') }}
         </UButton>
-        <NuxtLink to="/settings">
-          <UButton
-            variant="ghost"
-            icon="i-lucide-arrow-left"
-          >
-            {{ t('common.back') }}
-          </UButton>
-        </NuxtLink>
       </div>
     </div>
 

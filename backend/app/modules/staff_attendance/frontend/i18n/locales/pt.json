@@ -1,0 +1,19 @@
+{
+  "staffAttendance": {
+    "nav": { "title": "Presenças" },
+    "title": "Presença da equipa",
+    "clockTitle": "Registar entrada / saída",
+    "member": "Membro da equipa",
+    "pickMember": "Escolher um membro",
+    "note": "Nota",
+    "notePlaceholder": "Nota opcional",
+    "clockIn": "Registar entrada",
+    "clockOut": "Registar saída",
+    "today": "Hoje",
+    "noEvents": "Sem registos neste dia.",
+    "report": "Relatório diário",
+    "openShift": "ainda dentro",
+    "in": "Dentro",
+    "out": "Fora"
+  }
+}

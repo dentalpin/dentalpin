@@ -1,0 +1,35 @@
+{
+  "treasury": {
+    "nav": { "title": "Cassa" },
+    "title": "Cassa",
+    "newAccount": "Nuovo conto",
+    "transfer": "Trasferisci",
+    "correct": "Correggi",
+    "correctionDirection": "Direzione",
+    "accounts": "Conti",
+    "noAccounts": "Nessun conto.",
+    "statement": "Movimenti",
+    "noEntries": "Nessun movimento.",
+    "accountName": "Nome del conto",
+    "accountKind": "Tipo",
+    "kindCash": "Contanti",
+    "kindBank": "Banca",
+    "create": "Crea",
+    "openingBalance": "Saldo iniziale",
+    "deactivate": "Disattiva",
+    "activate": "Riattiva",
+    "inactive": "Inattiva",
+    "fromAccount": "Conto di origine",
+    "toAccount": "Conto di destinazione",
+    "amount": "Importo",
+    "memo": "Causale (opzionale)",
+    "correctMemo": "Causale (obbligatoria)",
+    "kind": {
+      "transfer_out": "Uscita per trasferimento",
+      "transfer_in": "Entrata per trasferimento",
+      "correction_in": "Rettifica in entrata",
+      "correction_out": "Rettifica in uscita",
+      "opening": "Apertura"
+    }
+  }
+}

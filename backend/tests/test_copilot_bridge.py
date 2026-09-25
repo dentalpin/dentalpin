@@ -7,6 +7,7 @@ the conversation-state machine that backs the chat surface.
 from __future__ import annotations
 
 from collections.abc import AsyncIterator
+from dataclasses import replace
 
 import pytest
 from sqlalchemy import func, select
@@ -16,7 +17,9 @@ from app.core.agents.models import Agent, AgentSession
 from app.core.agents.orchestrator import ConfirmationRequired, Final, Token, ToolCallFinished
 from app.core.auth.models import User
 from app.core.llm.base import Done, ProviderEvent, TextDelta, ToolUse, Usage
-from app.modules.copilot.bridge import _tool_names_for, drive_turn, resume_turn
+from app.core.llm.factory import ANTHROPIC_SPEC
+from app.core.llm.registry import llm_provider_registry
+from app.modules.copilot.bridge import _dialect_for, _tool_names_for, drive_turn, resume_turn
 from app.modules.copilot.models import CopilotMessage
 from app.modules.copilot.service import ConversationService, CopilotSettingsService
 from app.modules.patients.models import Patient
@@ -83,6 +86,15 @@ def test_tool_names_respect_permissions() -> None:
     read_only = _tool_names_for(["patients.read"])
     assert "patients.search_patients" in read_only
     assert "patients.create_patient" not in read_only  # WRITE needs patients.write
+
+
+def test_tool_dialect_comes_from_registered_provider_spec() -> None:
+    spec = replace(ANTHROPIC_SPEC, name="registry-dialect-test")
+    llm_provider_registry.register(spec)
+    try:
+        assert _dialect_for(spec.name) == "anthropic"
+    finally:
+        llm_provider_registry.unregister(spec.name)
 
 
 def test_system_prompt_keeps_offbooks_rule_and_playbooks() -> None:

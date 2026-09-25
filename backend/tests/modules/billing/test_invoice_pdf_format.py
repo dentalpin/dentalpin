@@ -106,9 +106,8 @@ def test_legal_notices_render_the_vat_clause() -> None:
 
 def test_every_ui_locale_renders_a_pdf() -> None:
     """The download button sends the UI language; every locale the host
-    ships must render (labels fall back to English where untranslated).
-    That the list covers the host's languages is guarded in
-    tests/test_pdf_locales.py, next to the list itself."""
+    ships must render. That the list covers the host's languages is
+    guarded in tests/test_pdf_locales.py, next to the list itself."""
     import re
 
     from app.core.pdf_locales import PDF_LOCALE_PATTERN, PDF_LOCALES
@@ -117,6 +116,48 @@ def test_every_ui_locale_renders_a_pdf() -> None:
         assert re.match(PDF_LOCALE_PATTERN, locale)
         html = _html(_invoice(), _clinic(), locale=locale)
         assert f'lang="{locale}"' in html
-    assert "Rechnung" not in _html(_invoice(), _clinic(), locale="de")  # English fallback for now
-    assert "60,00" in _html(_invoice(), _clinic(), locale="de")  # but German separators
+    assert "60,00" in _html(_invoice(), _clinic(), locale="de")  # German separators
     assert not re.match(PDF_LOCALE_PATTERN, "xx")
+
+
+def test_each_locale_renders_own_invoice_heading() -> None:
+    """Every UI locale renders its own "Invoice" heading (#422)."""
+    headings = {
+        "es": "Factura",
+        "en": "Invoice",
+        "ta": "விலைப்பட்டியல்",
+        "fr": "Facture",
+        "pt": "Fatura",
+        "de": "Rechnung",
+        "hu": "Számla",
+        "pl": "Faktura",
+        "it": "Fattura",
+        "ar": "فاتورة",
+    }
+    for locale, heading in headings.items():
+        assert heading in _html(_invoice(), _clinic(), locale=locale)
+
+
+def test_arabic_pdf_is_rtl() -> None:
+    html = _html(_invoice(), _clinic(), locale="ar")
+    assert 'dir="rtl"' in html
+    html = _html(_invoice(), _clinic(), locale="es")
+    assert 'dir="rtl"' not in html
+
+
+def test_each_locale_renders_own_grand_total() -> None:
+    """The biggest label on the page must be native too, not just the heading (#484)."""
+    totals = {
+        "es": "TOTAL",
+        "en": "TOTAL",
+        "ta": "மொத்தம்",
+        "fr": "TOTAL",
+        "pt": "TOTAL",
+        "de": "GESAMTBETRAG",
+        "hu": "VÉGÖSSZEG",
+        "pl": "RAZEM DO ZAPŁATY",
+        "it": "TOTALE",
+        "ar": "المجموع الإجمالي",
+    }
+    for locale, total in totals.items():
+        assert total in _html(_invoice(), _clinic(), locale=locale)

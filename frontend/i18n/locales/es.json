@@ -826,6 +826,14 @@
   },
   "appointments": {
     "title": "Agenda",
+    "checkin": {
+      "qr": "QR de registro",
+      "hint": "El paciente escanea este código para registrarse. Caduca 15 minutos después de crearse.",
+      "copyLink": "Copiar enlace de registro",
+      "openTitle": "Registro en clínica",
+      "success": "Registro completado. Tome asiento, por favor.",
+      "invalid": "Este código de registro no es válido o ha caducado. Pida uno nuevo en recepción."
+    },
     "create": "Nueva cita",
     "edit": "Editar cita",
     "today": "Hoy",

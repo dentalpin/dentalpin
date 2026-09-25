@@ -826,6 +826,14 @@
   },
   "appointments": {
     "title": "Terminkalender",
+    "checkin": {
+      "qr": "Check-in-QR",
+      "hint": "Der Patient scannt diesen Code zum Einchecken. Er läuft 15 Minuten nach Erstellung ab.",
+      "copyLink": "Check-in-Link kopieren",
+      "openTitle": "Check-in in der Praxis",
+      "success": "Sie sind eingecheckt. Bitte nehmen Sie Platz.",
+      "invalid": "Dieser Check-in-Code ist ungültig oder abgelaufen. Bitte an der Rezeption einen neuen anfordern."
+    },
     "create": "Neuer Termin",
     "edit": "Termin bearbeiten",
     "today": "Heute",

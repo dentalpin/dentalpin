@@ -826,6 +826,14 @@
   },
   "appointments": {
     "title": "Schedule",
+    "checkin": {
+      "qr": "Check-in QR",
+      "hint": "The patient scans this code to check in. It expires 15 minutes after minting.",
+      "copyLink": "Copy check-in link",
+      "openTitle": "Clinic check-in",
+      "success": "You are checked in. Please take a seat.",
+      "invalid": "This check-in code is invalid or expired. Please ask reception for a new one."
+    },
     "create": "New appointment",
     "edit": "Edit appointment",
     "today": "Today",

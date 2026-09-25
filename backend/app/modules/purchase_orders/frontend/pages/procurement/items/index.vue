@@ -216,12 +216,16 @@ async function fetchLinks() {
 }
 
 async function loadOptions() {
-  const [suppliers, items] = await Promise.all([
-    listSuppliers({ page: 1, page_size: 100 }),
-    listInventoryItems({ page: 1, page_size: 100 })
-  ])
-  supplierOptions.value = suppliers.data.map(s => ({ label: s.name, value: s.id }))
-  itemOptions.value = items.data.map(i => ({ label: i.name, value: i.id }))
+  try {
+    const [suppliers, items] = await Promise.all([
+      listSuppliers({ page: 1, page_size: 100 }),
+      listInventoryItems({ page: 1, page_size: 100 })
+    ])
+    supplierOptions.value = suppliers.data.map(s => ({ label: s.name, value: s.id }))
+    itemOptions.value = items.data.map(i => ({ label: i.name, value: i.id }))
+  } catch (e) {
+    toast.add({ title: t('procurement.common.loadError'), description: errorMessage(e, ''), color: 'error' })
+  }
 }
 
 async function save() {
@@ -266,6 +270,6 @@ async function delist() {
 
 watch(currentPage, fetchLinks)
 onMounted(async () => {
-  await Promise.all([fetchLinks(), loadOptions().catch(() => undefined)])
+  await Promise.all([fetchLinks(), loadOptions()])
 })
 </script>

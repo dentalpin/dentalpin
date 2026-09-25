@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat: `العربية` in the clinic communication-language selector (templates
+  from #426 by @dev-7aider).
 - fix(#63 maintainer review): `notif_0008` seeds system push templates
   (title + body, es/en, one per notification type, `smg_0002` shape) —
   without a `channel='push'` row every template-kind push failed at

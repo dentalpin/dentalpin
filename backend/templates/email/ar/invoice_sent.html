@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}الفاتورة - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>الفاتورة</h2>
+
+<p>مرحباً {{ patient_name }}،</p>
+
+<p>تجد أدناه تفاصيل الفاتورة <strong>#{{ invoice_number }}</strong> من <strong>{{ clinic_name | default('DentalPin') }}</strong>:</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">رقم الفاتورة</div>
+            <div class="value">#{{ invoice_number }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">التاريخ</div>
+            <div class="value">{{ invoice_date or '—' }}</div>
+        </div>
+    </div>
+    {% if due_date %}
+    <div class="info-row">
+        <div class="label">تاريخ الاستحقاق</div>
+        <div class="value">{{ due_date }}</div>
+    </div>
+    {% endif %}
+</div>
+
+{% if items %}
+<div class="info-box">
+    {% for item in items %}
+    <div class="info-row">
+        <div style="flex: 3;">
+            <div class="label">{{ item.description }}{% if item.quantity > 1 %} × {{ item.quantity }}{% endif %}</div>
+        </div>
+        <div style="flex: 1; text-align: left;">
+            <div class="value">{{ item.line_total }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="info-box">
+    {% if total_discount %}
+    <div class="info-row">
+        <div class="label">المجموع الفرعي</div>
+        <div class="value">{{ subtotal }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">الخصم</div>
+        <div class="value">-{{ total_discount }}</div>
+    </div>
+    {% endif %}
+    {% if total_tax %}
+    <div class="info-row">
+        <div class="label">الضريبة</div>
+        <div class="value">{{ total_tax }}</div>
+    </div>
+    {% endif %}
+    <div class="info-row">
+        <div class="label">المجموع الإجمالي</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+    {% if balance_due and balance_due != total %}
+    <div class="info-row">
+        <div class="label">المبلغ المستحق</div>
+        <div class="value" style="color: #ef4444; font-weight: 700;">{{ balance_due }}</div>
+    </div>
+    {% endif %}
+</div>
+
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+<p>يرجى التواصل معنا إذا كانت لديك أي استفسارات حول هذه الفاتورة.</p>
+{% endblock %}

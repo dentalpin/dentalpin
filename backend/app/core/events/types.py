@@ -165,6 +165,11 @@ class EventType:
     PAIR_CREATED = "media.pair_created"
     PAIR_REMOVED = "media.pair_removed"
 
+    # Clinical prescriptions (issue #269). Payload: (prescription_id,
+    # clinic_id, patient_id). Consumed by patient_timeline.
+    PRESCRIPTION_ISSUED = "prescription.issued"
+    PRESCRIPTION_CANCELLED = "prescription.cancelled"
+
     # Treatment plan events
     TREATMENT_PLAN_CREATED = "treatment_plan.created"
     TREATMENT_PLAN_STATUS_CHANGED = "treatment_plan.status_changed"
@@ -288,6 +293,12 @@ class EventType:
     STAFF_TASK_CREATED = "staff_task.created"
     STAFF_TASK_STATUS_CHANGED = "staff_task.status_changed"
 
+    # Staff attendance events (staff_attendance module — clock in/out).
+    # STAFF_ATTENDANCE_CLOCKED fires on every punch, published in the
+    # same transaction (ADR 0019, db=db). Payload: (clinic_id, event_id,
+    # user_id, kind, created_by).
+    STAFF_ATTENDANCE_CLOCKED = "staff_attendance.clocked"
+
     # Purchase order events (purchase_orders module — procurement execution
     # layer, roadmap #227). PUBLISHED in the same transaction as the change
     # (ADR 0019). No bundled subscriber today; `inventory_reorder` (#227-4)
@@ -296,6 +307,13 @@ class EventType:
     PURCHASE_ORDER_CREATED = "purchase_order.created"
     PURCHASE_ORDER_STATUS_CHANGED = "purchase_order.status_changed"
     PURCHASE_ORDER_RECEIVED = "purchase_order.received"
+
+    # Treasury events (treasury module — cash/bank movements).
+    # Published in the same transaction (ADR 0019, db=db). Payload:
+    # (clinic_id, account_id, amount, created_by); transfers also carry
+    # group_id, corrections carry direction + memo.
+    TREASURY_TRANSFERRED = "treasury.transferred"
+    TREASURY_CORRECTED = "treasury.corrected"
 
     # Telephony events (telephony module — CTI screen-pop + call log,
     # issue #64). Fired by the inbound CTI webhook after normalization

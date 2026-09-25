@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ locale | default('es') }}">
+<html lang="{{ locale | default('es') }}" dir="{{ 'rtl' if locale == 'ar' else 'ltr' }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -202,6 +202,18 @@
             color: #a1a1aa;
         }
 
+        /* RTL (ar) */
+        html[dir="rtl"] body {
+            direction: rtl;
+            text-align: right;
+        }
+        html[dir="rtl"] .alert-info { border-left: none; border-right: 4px solid #3b82f6; }
+        html[dir="rtl"] .alert-success { border-left: none; border-right: 4px solid #22c55e; }
+        html[dir="rtl"] .alert-warning { border-left: none; border-right: 4px solid #f59e0b; }
+        html[dir="rtl"] .alert-error { border-left: none; border-right: 4px solid #ef4444; }
+        html[dir="rtl"] .info-box .label,
+        html[dir="rtl"] .info-box .value { text-align: right; }
+
         /* Responsive */
         @media only screen and (max-width: 600px) {
             .email-container {
@@ -240,7 +252,7 @@
                 {% block footer %}
                 <p>{{ footer_sent_by | default('Este email fue enviado por ' ~ (clinic_name | default('DentalPin'))) }}</p>
                 {% if clinic_phone %}
-                <p>Tel: {{ clinic_phone }}</p>
+                <p>Tel: <span dir="ltr">{{ clinic_phone }}</span></p>
                 {% endif %}
                 {% if clinic_address %}
                 <p class="clinic-info">{{ clinic_address }}</p>
