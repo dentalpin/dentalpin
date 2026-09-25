@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import EventType, event_bus
@@ -28,7 +28,7 @@ from .models import (
     REVIEW_PENDING,
     AiJob,
 )
-from .runner import PanoRunner, Runner, SubprocessNnunetRunner, nnunet_env
+from .runner import PanoRunner, Runner, SubprocessNnunetRunner, nnunet_env, pano_env
 from .volume import VolumeError, dicom_series_to_nifti
 
 logger = logging.getLogger(__name__)
@@ -47,10 +47,8 @@ MIN_NNUNET_SLICES = 2
 def get_runner(backend: str = "pano") -> Runner:
     """Runner factory seam (monkeypatch in tests — never import torch here)."""
     if backend == "pano":
-        from os import environ
-
-        app_dir = environ.get("DENTALPIN_PANO_APP")
-        return PanoRunner(app_dir=Path(app_dir) if app_dir else None)
+        app_dir, python_exe = pano_env()
+        return PanoRunner(app_dir=app_dir, python_exe=python_exe)
     if backend == "nnunet":
         weights_dir, allow_cpu = nnunet_env()
         return SubprocessNnunetRunner(weights_dir=weights_dir, allow_cpu=allow_cpu)
@@ -195,20 +193,25 @@ class AiJobService:
     async def list_dicom_documents(
         db: AsyncSession, clinic_id: UUID, patient_id: UUID
     ) -> list[Document]:
-        """DICOM candidates for the series picker (clinic + patient scoped)."""
-        return list(
-            (
-                await db.execute(
-                    select(Document).where(
-                        Document.clinic_id == clinic_id,
-                        Document.patient_id == patient_id,
-                        Document.status == "active",
-                    )
-                )
-            )
-            .scalars()
-            .all()
+        """DICOM candidates for the series picker (clinic + patient scoped).
+
+        The DICOM predicate lives in SQL, not in the router: loading every
+        document of the patient and filtering by mime/extension afterwards
+        meant a patient with a full gallery shipped rows the picker can
+        never show. The declared DICOM mime and a ``.dcm`` filename are both
+        matched, so an octet-stream upload the media layer accepts as
+        sniffed DICOM still appears.
+        """
+        stmt = select(Document).where(
+            Document.clinic_id == clinic_id,
+            Document.patient_id == patient_id,
+            Document.status == "active",
+            or_(
+                Document.mime_type == "application/dicom",
+                func.lower(Document.original_filename).like("%.dcm"),
+            ),
         )
+        return list((await db.execute(stmt)).scalars().all())
 
     @staticmethod
     async def cancel_job(db: AsyncSession, job: AiJob) -> AiJob:
@@ -260,7 +263,24 @@ class AiJobService:
                 else:
                     artifact_ids: list[str] = []
                     for name, data in result.artifacts.items():
-                        is_text = name.lower().endswith(".txt")
+                        lowered = name.lower()
+                        is_text = lowered.endswith(".txt")
+                        # dental-pano-ai's per-FDI findings table is CSV, and
+                        # is the clinically useful output of a run: it is
+                        # ingested as a text draft so a clinician can open
+                        # it during review. Kept as text/plain (not
+                        # text/csv) because that is the module's existing
+                        # text-artifact mime.
+                        is_csv = lowered.endswith(".csv")
+                        is_jpeg = lowered.endswith((".jpg", ".jpeg"))
+                        if is_text or is_csv:
+                            mime_type = "text/plain"
+                        elif lowered.endswith(".png"):
+                            mime_type = "image/png"
+                        elif is_jpeg:
+                            mime_type = "image/jpeg"
+                        else:
+                            mime_type = "application/octet-stream"
                         # Drafts, never records (§4): kind ``document`` keeps
                         # artifacts out of the photo/xray gallery rail and
                         # fires no photo event; source linkage lives on the
@@ -271,23 +291,23 @@ class AiJobService:
                             job.patient_id,
                             job.queued_by,
                             data,
-                            original_filename=f"ai_{job.id}_{name}",
-                            mime_type="text/plain"
-                            if is_text
-                            else (
-                                "image/png"
-                                if name.lower().endswith(".png")
-                                else "application/octet-stream"
-                            ),
+                            original_filename=f"ai_{job.id}_{name.rsplit('/', 1)[-1]}",
+                            mime_type=mime_type,
                             document_type="other",
-                            title=f"AI draft transcript {name}"
+                            title=f"AI draft findings {name.rsplit('/', 1)[-1]}"
+                            if is_csv
+                            else f"AI draft transcript {name.rsplit('/', 1)[-1]}"
                             if is_text
-                            else f"AI draft overlay {name}",
+                            else f"AI draft overlay {name.rsplit('/', 1)[-1]}",
                             media_kind="document",
                             media_category=None,
                             tags=[
                                 "ai-draft",
-                                "ai-transcript" if is_text else "ai-overlay",
+                                "ai-findings"
+                                if is_csv
+                                else "ai-transcript"
+                                if is_text
+                                else "ai-overlay",
                                 job.backend,
                             ],
                         )

@@ -302,7 +302,11 @@ onMounted(async () => {
                 size="xs"
                 @click="onConfirm(j)"
               >
-                {{ t('imagingAi.job.confirm') }}
+                <!-- One endpoint, two meanings: "authorize the run"
+                     (proposed -> queued) and "I reviewed the drafts"
+                     (done -> reviewed). The label says which, so the
+                     compliance §4 review step is explicit in the UI. -->
+                {{ j.status === 'proposed' ? t('imagingAi.job.authorize') : t('imagingAi.job.markReviewed') }}
               </UButton>
               <UButton
                 v-if="canQueue && canCancel(j)"

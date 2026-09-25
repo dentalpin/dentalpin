@@ -39,8 +39,9 @@
     },
     "job": {
       "artifacts": "Borradores",
-      "confirm": "Confirmar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "authorize": "Autorizar ejecución",
+      "markReviewed": "Marcar revisado"
     }
   }
 }

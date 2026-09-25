@@ -5,9 +5,10 @@ Tables:
 
 Lives on its own Alembic branch (``imaging_ai``) per ADR 0002.
 Depends on ``media`` (``med_0002`` head): artifacts land as media documents.
-``document_id`` / ``series_document_ids`` stay FK-free UUIDs (no dependency
-on the local-only ``imaging_viewer`` branch): resolution is clinic-scoped
-at execution time.
+``document_id`` is a real FK to ``documents`` (media is a declared
+dependency, so the constraint adds no new ``depends_on``); the remaining
+ids in ``series_document_ids`` stay FK-free JSONB (resolution is
+clinic-scoped at queue time).
 
 Revision ID: aij_0001
 Revises:
@@ -73,6 +74,7 @@ def upgrade() -> None:
         ),
         sa.ForeignKeyConstraint(["clinic_id"], ["clinics.id"]),
         sa.ForeignKeyConstraint(["patient_id"], ["patients.id"]),
+        sa.ForeignKeyConstraint(["document_id"], ["documents.id"]),
         sa.ForeignKeyConstraint(["queued_by"], ["users.id"]),
         sa.ForeignKeyConstraint(["confirmed_by"], ["users.id"]),
         sa.PrimaryKeyConstraint("id"),

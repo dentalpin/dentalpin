@@ -39,8 +39,9 @@
     },
     "job": {
       "artifacts": "Entwürfe",
-      "confirm": "Bestätigen",
-      "cancel": "Abbrechen"
+      "cancel": "Abbrechen",
+      "authorize": "Lauf freigeben",
+      "markReviewed": "Als geprüft markieren"
     }
   }
 }

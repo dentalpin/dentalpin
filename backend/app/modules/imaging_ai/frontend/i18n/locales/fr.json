@@ -39,8 +39,9 @@
     },
     "job": {
       "artifacts": "Brouillons",
-      "confirm": "Confirmer",
-      "cancel": "Annuler"
+      "cancel": "Annuler",
+      "authorize": "Autoriser l'exécution",
+      "markReviewed": "Marquer comme relu"
     }
   }
 }

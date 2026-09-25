@@ -74,7 +74,7 @@ async def confirm_job(
         job = await AiJobService.confirm_job(db, job, ctx.user_id)
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
-    return ApiResponse(data=job)
+    return ApiResponse(data=AiJobResponse.model_validate(job))
 
 
 @router.get(
@@ -87,15 +87,13 @@ async def dicom_documents(
     _: Annotated[None, Depends(require_permission("imaging_ai.jobs.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[list[DicomDocumentResponse]]:
-    """DICOM candidates for the series picker (clinic + patient scoped)."""
+    """DICOM candidates for the series picker (clinic + patient scoped).
+
+    The DICOM predicate is applied in SQL by the service, so this endpoint
+    maps rows without re-filtering in Python.
+    """
     docs = await AiJobService.list_dicom_documents(db, ctx.clinic_id, patient_id)
-    return ApiResponse(
-        data=[
-            d
-            for d in (DicomDocumentResponse.model_validate(x) for x in docs)
-            if d.mime_type == "application/dicom" or d.original_filename.lower().endswith(".dcm")
-        ]
-    )
+    return ApiResponse(data=[DicomDocumentResponse.model_validate(d) for d in docs])
 
 
 @router.get(

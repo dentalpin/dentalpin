@@ -39,8 +39,9 @@
     },
     "job": {
       "artifacts": "Bozze",
-      "confirm": "Conferma",
-      "cancel": "Annulla"
+      "cancel": "Annulla",
+      "authorize": "Autorizza esecuzione",
+      "markReviewed": "Segna come rivisto"
     }
   }
 }

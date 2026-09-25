@@ -26,16 +26,21 @@ REVIEW_CONFIRMED = "confirmed"
 class AiJob(Base, TimestampMixin):
     """One on-demand AI run over a patient's DICOM bytes.
 
-    ``document_id`` is an FK-free UUID (no dependency on the local-only
-    ``imaging_viewer`` branch); ``series_document_ids`` holds the rest of
-    the volume for volumetric backends (nnU-Net needs a DICOM series, not
-    a single frame). All resolve clinic-scoped at execution time; a
-    resolution miss fails the job, never leaks across tenants.
+    ``document_id`` is a real FK to ``media``'s ``documents`` table, which
+    is a declared dependency: the database, not just the service, now
+    refuses a job pointing at a document that does not exist.
+    ``series_document_ids`` holds the rest of the volume for volumetric
+    backends (nnU-Net needs a DICOM series, not a single frame); it stays a
+    JSONB list of ids and is validated clinic-scoped at queue time. All
+    resolution is clinic-scoped; a miss fails the job, never leaks across
+    tenants.
 
-    Lifecycle: the agent path only *proposes* (``queued_by`` null);
-    a clinician's confirm moves ``proposed`` -> ``queued`` stamped with
-    their id, and the scheduler executes queued jobs. Artifacts ingest
-    as ``document``-kind media rows (never gallery ``xray``) linked via
+    Lifecycle: an unsupervised agent session only *proposes*
+    (``queued_by`` null); a clinician's confirm moves ``proposed`` ->
+    ``queued`` stamped with their id, and a supervised agent session
+    queues directly (its tool call was already human-confirmed). The
+    scheduler executes queued jobs. Artifacts ingest as ``document``-kind
+    media rows (never gallery ``xray``) linked via
     ``artifact_document_ids`` only — no media pairing is touched — and
     stay drafts (``review_status``) until a clinician confirms them.
     Job rows are never hard-deleted (audit trail over patient data).
@@ -46,7 +51,7 @@ class AiJob(Base, TimestampMixin):
     id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True, default=uuid4)
     clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"), index=True)
     patient_id: Mapped[UUID] = mapped_column(ForeignKey("patients.id"), index=True)
-    document_id: Mapped[UUID] = mapped_column(PG_UUID(as_uuid=True))
+    document_id: Mapped[UUID] = mapped_column(ForeignKey("documents.id"))
 
     # Extra slices of the same series for volumetric backends
     # (nnU-Net). Empty for single-frame backends (pano).

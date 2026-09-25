@@ -39,8 +39,9 @@
     },
     "job": {
       "artifacts": "Draft artifacts",
-      "confirm": "Confirm",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "authorize": "செயல்பாட்டை அனுமதி",
+      "markReviewed": "மதிப்பாய்வு செய்ததாகக் குறி"
     }
   }
 }

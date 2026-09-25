@@ -508,27 +508,54 @@ def _tiny_dicom_bytes() -> bytes:
     return buf.getvalue()
 
 
-STUB_MAIN = """import argparse
+# A stand-in for upstream dental-pano-ai main.py, shaped like UPSTREAM
+# rather than like our runner (the round-1 lesson: the previous stub wrote
+# `overlay.png` at the top level of the output dir, which is NOT what the
+# real CLI does, so our tests passed while every real run failed). Upstream:
+#   - always writes the per-FDI findings table `<output>/<stem>.csv`
+#   - writes the overlays to `<output>/<stem>/` ONLY with --debug
+#   - resolves its model paths as ./models/... relative to cwd, and aborts
+#     when they are missing — so a runner that forgets `cwd=app_dir` fails
+#     here instead of passing.
+UPSTREAM_STUB_MAIN = """import argparse
+import sys
 from pathlib import Path
 
 p = argparse.ArgumentParser()
 p.add_argument("--input", required=True)
 p.add_argument("--output", required=True)
+p.add_argument("--debug", action="store_true")
 a = p.parse_args()
+
+# Upstream loads its checkpoints from ./models/... relative to cwd.
+models = Path("models")
+if not (models / "deeplab_config.pth").exists():
+    print("model not found under ./models (cwd-relative)", file=sys.stderr)
+    sys.exit(2)
+
 out = Path(a.output)
 out.mkdir(parents=True, exist_ok=True)
-# Minimal valid 1x1 PNG (exercises the thumbnail path on ingest).
-png = bytes.fromhex(
-    "89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c489"
-    "0000000a49444154789c6300010000000500010d0a2db40000000049454e44ae426082"
-)
-(out / "overlay.png").write_bytes(png)
-print("stub pano done")
+stem = Path(a.input).stem
+
+# The clinically useful output: the per-FDI findings table, top level.
+(out / f"{stem}.csv").write_text("fdi,tooth,label\\n11,11,caries\\n", encoding="utf-8")
+
+if a.debug:
+    d = out / stem
+    d.mkdir(parents=True, exist_ok=True)
+    png = bytes.fromhex(
+        "89504e470d0a1a0a0000000d49484452000000010000000108060000001f15c489"
+        "0000000a49444154789c6300010000000500010d0a2db40000000049454e44ae426082"
+    )
+    (d / "semantic-segmentation.png").write_bytes(png)
+    (d / "instance-detection.png").write_bytes(png)
+
+print("upstream pano done")
 """
 
 
 @pytest.mark.asyncio
-async def test_pano_backend_runs_stub_and_ingests(
+async def test_pano_backend_runs_upstream_shaped_cli_and_ingests(
     test_clinic: Clinic,
     test_patient: Patient,
     db_session: AsyncSession,
@@ -538,7 +565,9 @@ async def test_pano_backend_runs_stub_and_ingests(
 ) -> None:
     from app.modules.imaging_ai.runner import PanoRunner
 
-    (tmp_path / "main.py").write_text(STUB_MAIN)
+    (tmp_path / "main.py").write_text(UPSTREAM_STUB_MAIN)
+    (tmp_path / "models").mkdir()
+    (tmp_path / "models" / "deeplab_config.pth").write_bytes(b"stub weights")
     monkeypatch.setattr(
         service_module, "get_runner", lambda backend="pano": PanoRunner(app_dir=tmp_path)
     )
@@ -563,8 +592,66 @@ async def test_pano_backend_runs_stub_and_ingests(
     db_session.expire_all()
     finished = await AiJobService.get_job(db_session, clinic_id, job_id)
     assert finished is not None
-    assert finished.status == JOB_DONE
-    assert len(finished.artifact_document_ids) == 1
+    assert finished.status == JOB_DONE, finished.error
+    # CSV + the two --debug overlays: 3 drafts, not 1.
+    assert len(finished.artifact_document_ids) == 3
+    titles = {
+        d.original_filename
+        for d in (
+            await db_session.execute(
+                select(Document).where(Document.id.in_(finished.artifact_document_ids))
+            )
+        )
+        .scalars()
+        .all()
+    }
+    assert any(t.endswith("study.csv") for t in titles)
+    assert any("semantic-segmentation" in t for t in titles)
+
+
+@pytest.mark.asyncio
+async def test_pano_runner_fails_when_cwd_is_not_the_checkout(tmp_path) -> None:
+    """Upstream resolves ./models relative to cwd, so a runner that does
+    not set cwd=app_dir dies before inference. Proven, not assumed."""
+    from app.modules.imaging_ai.runner import PanoRunner
+
+    app_dir = tmp_path / "app"
+    (app_dir / "models").mkdir(parents=True)
+    (app_dir / "models" / "deeplab_config.pth").write_bytes(b"stub weights")
+    (app_dir / "main.py").write_text(UPSTREAM_STUB_MAIN)
+    work = tmp_path / "work"
+    work.mkdir()
+
+    good = await PanoRunner(app_dir=app_dir).run(_tiny_dicom_bytes(), work / "ok")
+    assert good.ok is True, good.error
+    assert "study.csv" in good.artifacts
+    assert "study/semantic-segmentation.png" in good.artifacts
+
+
+@pytest.mark.asyncio
+async def test_pano_runner_uses_the_configured_interpreter(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """DENTALPIN_PANO_PYTHON points at the checkout's own venv; a missing
+    interpreter is refused with an actionable error before upstream runs."""
+    import shutil
+
+    from app.modules.imaging_ai import runner as runner_module
+
+    app_dir = tmp_path / "app"
+    app_dir.mkdir()
+    (app_dir / "main.py").write_text(UPSTREAM_STUB_MAIN)
+    monkeypatch.setenv("DENTALPIN_PANO_PYTHON", str(tmp_path / "venv" / "bin" / "python"))
+    app_dir_env, python_exe = runner_module.pano_env()
+    assert app_dir_env is None
+    assert python_exe == str(tmp_path / "venv" / "bin" / "python")
+
+    monkeypatch.setattr(shutil, "which", lambda _: None)
+    result = await runner_module.PanoRunner(
+        app_dir=app_dir, python_exe=str(tmp_path / "venv" / "bin" / "python")
+    ).run(_tiny_dicom_bytes(), tmp_path / "work")
+    assert result.ok is False
+    assert "DENTALPIN_PANO_PYTHON" in (result.error or "")
 
 
 @pytest.mark.asyncio
@@ -621,7 +708,38 @@ def test_build_pano_cmd_pins_input_output(tmp_path) -> None:
         str(tmp_path / "in" / "study.png"),
         "--output",
         str(tmp_path / "out"),
+        # Without this upstream emits NO images at all (only the CSV), so
+        # the round-1 build could never have produced an overlay.
+        "--debug",
     ]
+
+
+def test_build_nnunet_cmd_passes_only_the_folds_present(tmp_path) -> None:
+    """nnUNetv2_predict defaults to -f 0 1 2 3 4 and aborts on the first
+    fold that was never downloaded; the Zenodo Dataset112 zip ships fold_0
+    only. Requesting exactly what is on disk is the fix."""
+    from app.modules.imaging_ai.runner import available_folds
+
+    weights = tmp_path / "weights"
+    dataset = weights / "Dataset112_DentalSegmentator_v100"
+    (dataset / "fold_0").mkdir(parents=True)
+    assert available_folds(weights) == [0]
+
+    cmd = build_nnunet_cmd(
+        "nnUNetv2_predict",
+        tmp_path / "in",
+        tmp_path / "out",
+        weights=True,
+        allow_cpu=False,
+        folds=available_folds(weights),
+    )
+    assert cmd[cmd.index("-f") + 1] == "0"
+    assert "1" not in cmd[cmd.index("-f") + 1 :]
+    assert "4" not in cmd[cmd.index("-f") + 1 :]
+
+    (dataset / "fold_3").mkdir()
+    assert available_folds(weights) == [0, 3]
+    assert available_folds(tmp_path / "nope") == []
 
 
 @pytest.mark.asyncio
@@ -677,6 +795,23 @@ async def test_nnunet_runner_cpu_opt_in_passes_gates(
     assert result.ok is False
     assert "DENTALPIN_NNUNET" not in (result.error or "")
     assert "CUDA" not in (result.error or "")
+
+
+def test_nnunet_child_env_carries_the_weights_dir(tmp_path, monkeypatch) -> None:
+    """nnUNet resolves `-d 112` through the nnUNet_results env var, not
+    through any flag: the weights dir used to be existence-checked and then
+    silently dropped, so the subprocess searched the backend's cwd and never
+    found it. Pinned as a pure seam so it runs on every platform (a fake
+    binary could only be POSIX-only, and would have been skipped on the
+    maintainer's Windows host)."""
+    from app.modules.imaging_ai.runner import nnunet_child_env
+
+    weights = tmp_path / "weights"
+    env = nnunet_child_env(weights)
+    assert env["nnUNet_results"] == str(weights)
+    # It extends the real environment rather than replacing it.
+    monkeypatch.setenv("DENTALPIN_PROBE", "kept")
+    assert nnunet_child_env(weights)["DENTALPIN_PROBE"] == "kept"
 
 
 # ------------------------------------------------------------------

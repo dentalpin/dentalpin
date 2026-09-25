@@ -28,6 +28,21 @@ Pano-findings backend (`PanoRunner` shells to its `main.py`; the default
 backend). Bring your own checkout via `DENTALPIN_PANO_APP` plus its S3
 weights tarball — neither is vendored.
 
+The checkout needs its own interpreter: its `main.py` imports torch,
+detectron2 and ultralytics (ultralytics is AGPL-3.0) and pins
+`pillow==9.5.0`, none of which belong in the backend image. Point
+`DENTALPIN_PANO_PYTHON` at the python of a virtualenv prepared from that
+checkout's requirements (for example
+`<venv>/bin/python`); unset, the backend's own interpreter is used, which
+only works for a checkout that happens to share its site-packages. The
+runner executes `main.py` with the checkout as the working directory,
+because upstream resolves its model paths as `./models/...` relative to it.
+
+Upstream's own output layout is what the runner reads: the per-FDI
+findings table `<output>/<stem>.csv`, and with `--debug` the overlay images
+in `<output>/<stem>/`. Both are ingested as draft artifacts; without
+`--debug` a run yields the CSV only.
+
 > License warning: the S3 weights tarball carries no stated terms. The
 > clinic must confirm the weight license before any production use; until
 > then treat pano runs as evaluation-only. If you use the model, cite:

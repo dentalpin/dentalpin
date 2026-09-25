@@ -39,8 +39,9 @@
     },
     "job": {
       "artifacts": "Draft artifacts",
-      "confirm": "Confirm",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "authorize": "Futtatás engedélyezése",
+      "markReviewed": "Markolva jelölése"
     }
   }
 }

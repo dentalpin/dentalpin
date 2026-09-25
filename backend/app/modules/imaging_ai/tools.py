@@ -51,15 +51,17 @@ def _job_summary(job) -> dict:
 
 
 async def _queue_ai_job(ctx: AgentContext, params: QueueAiJobArgs) -> dict:
+    # Attribution: a supervised session already carries the human's
+    # confirmation inline (the tool card had to be confirmed to call the
+    # tool), so proposing here would ask the same clinician for a second
+    # "yes" and leave the run waiting on nobody. An autonomous session
+    # proposes instead, and the clinician confirms.
     try:
         job = await AiJobService.queue_job(
             ctx.db,
             ctx.clinic_id,
             UUID(params.patient_id),
-            # No authenticated identity on the agent path: this only
-            # proposes. A clinician confirms (authorizing the run and
-            # fixing artifact attribution) via the confirm tool/endpoint.
-            None,
+            ctx.supervisor_id,
             UUID(params.document_id),
             series_document_ids=[UUID(i) for i in params.series_document_ids],
             backend=params.backend,

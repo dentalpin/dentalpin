@@ -76,7 +76,10 @@ agents get an explicit error, never silent attribution.
 - **Runner never raises**: every failure mode encodes into `RunnerResult(ok=False, ...)`; missing binary/weights/CUDA surface as clear job errors, not tracebacks.
 - **Artifacts are drafts** (compliance §4): kind `document` keeps them out of the photo/xray gallery rail and fires no photo event; source linkage lives in `artifact_document_ids` — media pairing is never written. Confirm records the review on the job; it never rewrites media rows.
 - **nnU-Net needs a volume**: queue validates ≥2 slices of one series; execution stacks to `<case>_0000.nii.gz` via `volume.py` (identity orientation — sanity-check overlays on first use). Single frames belong to pano.
-- **CLI contracts are pinned**: `build_nnunet_cmd` / `build_pano_cmd` are pure argv builders with tests — assert the command line, not just the exit code.
+- **CLI contracts are pinned**: `build_nnunet_cmd` / `build_pano_cmd` are pure argv builders with tests — assert the command line, not just the exit code. The test doubles mimic UPSTREAM's layout, not ours: the round-1 lesson was a stub that wrote an overlay at the top level while the real CLI writes a CSV there and the images in a subdirectory.
+- **Never trust a weight dir you only existence-checked**: nnU-Net finds its model through the `nnUNet_results` env var (`nnunet_child_env`), not through a flag, and it defaults to folds 0-4, so `available_folds()` asks for what the operator actually downloaded.
+- **The pano checkout runs on its own interpreter** (`DENTALPIN_PANO_PYTHON`) with `cwd=app_dir`; its torch/detectron2/ultralytics deps never enter the backend image.
+- **Drafts are drafts until reviewed** (§4): confirmed drafts keep their `ai-draft` tag and title, and unconfirmed drafts stay listed in the patient's documents indefinitely — that is the intended v1 lifecycle, not a leak.
 - **AI output is visualization aid, never diagnosis** (compliance §4 posture).
 
 ## CHANGELOG

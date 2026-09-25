@@ -39,8 +39,9 @@
     },
     "job": {
       "artifacts": "Rascunhos",
-      "confirm": "Confirmar",
-      "cancel": "Cancelar"
+      "cancel": "Cancelar",
+      "authorize": "Autorizar execução",
+      "markReviewed": "Marcar como revisto"
     }
   }
 }

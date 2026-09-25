@@ -16,9 +16,30 @@ input; BYO checkout + weights, see `NOTICE.md` for the license
 warning); `nnunet` for DICOM-series volumes stacked to NIfTI
 (`DENTALPIN_NNUNET_WEIGHTS` + CUDA or explicit CPU opt-in).
 
-Agent runs only propose; a clinician confirm authorizes execution and
-fixes artifact attribution. The scheduler tick executes queued jobs
-from every path and reaps stale runs.
+Both backends shell out to operator-provided tooling, so both take their
+whole environment from configuration rather than from the backend image:
+
+| Var | Backend | Meaning |
+|---|---|---|
+| `DENTALPIN_PANO_APP` | pano | Path to the `dental-pano-ai` checkout (its `main.py` must exist there) |
+| `DENTALPIN_PANO_PYTHON` | pano | Interpreter for that checkout's venv. Its deps (torch, detectron2, ultralytics AGPL) never enter the backend image; unset means the backend's own python |
+| `DENTALPIN_NNUNET_WEIGHTS` | nnunet | Results root containing `Dataset112_*`; passed to the subprocess as `nnUNet_results`, which is how nnU-Net resolves `-d 112` |
+| `DENTALPIN_NNUNET_ALLOW_CPU` | nnunet | `1` opts into CPU-only (slow) execution |
+
+The pano runner executes upstream with the checkout as its working
+directory (upstream resolves `./models/...` relative to cwd) and reads
+upstream's real output layout: the per-FDI findings CSV plus, with
+`--debug`, the overlays in `<output>/<stem>/`. The nnU-Net runner asks
+for exactly the folds present under the weights dir, because
+`nnUNetv2_predict` otherwise defaults to `-f 0 1 2 3 4` and aborts on the
+first fold the operator never downloaded (the public Zenodo zip ships
+`fold_0` only).
+
+Agent runs only propose unless the session is supervised: an autonomous
+session creates a `proposed` job that a clinician confirms, while a
+supervised session (the tool call was already human-confirmed) queues
+directly, stamped with the supervisor. Either way the scheduler executes
+queued jobs and reaps stale runs.
 
 ## API surface
 
