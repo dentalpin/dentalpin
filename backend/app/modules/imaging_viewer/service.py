@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import asyncio
 import hashlib
 import io
 import logging
@@ -24,6 +25,29 @@ from .models import ImagingAnnotation, ImagingStudy, RvgImport, RvgLink
 logger = logging.getLogger(__name__)
 
 DICOM_MIME_TYPES = frozenset({"application/dicom", "application/octet-stream"})
+
+# Render ceiling, in pixels, checked from Rows x Columns before any array is
+# materialized. pydicom decodes into float64 in the windowing path, so a
+# single frame costs rows*columns*8 bytes before Pillow sees it: a
+# crafted 50k x 50k header would otherwise take the worker out with an
+# OOM kill (SIGKILL, no traceback, no 422). 80 MP covers a generous
+# panoramic/stitched study (a 6k x 13k pano is 78 MP) and rejects the
+# memory-exhaustion shape with a clean 422. Lower it only with evidence
+# from real studies.
+MAX_RENDER_PIXELS = 80_000_000
+
+# Watch-folder subdirectories. A row awaiting a human decision is parked in
+# pending/ so approve can still read its bytes; once decided, the file is
+# retired to processed/ (the tick only ever reads the clinic root, so a
+# leftover pending/ file is never re-hashed).
+WATCH_PENDING_DIR = "pending"
+WATCH_PROCESSED_DIR = "processed"
+
+
+def _watch_clinic_dir(clinic_id: UUID) -> str | None:
+    """Configured clinic watch dir, or None when the watch is unset."""
+    root = os.environ.get("DENTALPIN_RVG_WATCH_DIR", "").strip()
+    return os.path.join(root, str(clinic_id)) if root else None
 
 
 def is_dicom_bytes(raw: bytes) -> bool:
@@ -311,7 +335,7 @@ class ImagingStudyService:
         ``UnrenderableStudyError`` (the router maps it to 422).
         """
         raw, _mime = await ImagingStudyService.get_frame_bytes(db, clinic_id, study_id)
-        return render_dicom_png(raw)
+        return await asyncio.to_thread(render_dicom_png, raw)
 
 
 def render_dicom_png(raw: bytes) -> bytes:
@@ -331,7 +355,17 @@ def render_dicom_png(raw: bytes) -> bytes:
         raise UnrenderableStudyError(f"pixel libraries unavailable: {exc}") from exc
     try:
         ds = pydicom.dcmread(io.BytesIO(raw))
+        rows = _positive_int(ds.get("Rows", None))
+        columns = _positive_int(ds.get("Columns", None))
+        if rows is None or columns is None:
+            raise UnrenderableStudyError("image dimensions missing or invalid")
+        if rows * columns > MAX_RENDER_PIXELS:
+            raise UnrenderableStudyError(
+                f"image too large to render: {rows}x{columns} exceeds {MAX_RENDER_PIXELS} pixels"
+            )
         arr = ds.pixel_array
+    except UnrenderableStudyError:
+        raise
     except Exception as exc:
         raise UnrenderableStudyError(f"pixels do not decode: {exc}") from exc
     try:
@@ -653,11 +687,14 @@ class RvgService:
         """Scan up to ``limit`` files from a watch dir, best-effort per file.
 
         A broken file records a failed row — it never aborts the tick.
-        Handled files move to a ``processed/`` subdir afterwards (failed
-        rows keep their error for audit; re-drop the file to retry), so a
-        folder holding more than ``limit`` files drains over successive
-        ticks instead of stalling on the first page, and ticks never
-        re-hash the same files. Returns counts
+        Handled files are filed by outcome: a row still awaiting a human
+        decision moves to ``pending/`` (approve reads the bytes from
+        there, then retires the file to ``processed/``), and everything
+        decided by the tick itself (auto-imported, rejected, failed) moves
+        to ``processed/`` (failed rows keep their error for audit; re-drop
+        the file to retry). So a folder holding more than ``limit`` files
+        drains over successive ticks instead of stalling on the first
+        page, and ticks never re-hash the same files. Returns counts
         ``{scanned, created, approved, pending, failed}``.
         """
         counts = {"scanned": 0, "created": 0, "approved": 0, "pending": 0, "failed": 0}
@@ -666,11 +703,17 @@ class RvgService:
         except OSError:
             return counts
         try:
-            os.makedirs(os.path.join(path, "processed"), exist_ok=True)
+            os.makedirs(os.path.join(path, WATCH_PROCESSED_DIR), exist_ok=True)
+            os.makedirs(os.path.join(path, WATCH_PENDING_DIR), exist_ok=True)
         except OSError:
-            logger.exception("RvgService.scan_watch_dir: cannot create processed/ in %s", path)
+            logger.exception("RvgService.scan_watch_dir: cannot create watch subdirs in %s", path)
             return counts
-        files = [n for n in names if os.path.isfile(os.path.join(path, n))]
+        files = [
+            n
+            for n in names
+            if os.path.isfile(os.path.join(path, n))
+            and n not in (WATCH_PENDING_DIR, WATCH_PROCESSED_DIR)
+        ]
         for name in files[:limit]:
             full = os.path.join(path, name)
             counts["scanned"] += 1
@@ -686,8 +729,73 @@ class RvgService:
             if created:
                 counts["created"] += 1
             counts[row.status if row.status in counts else "pending"] += 1
-            _move_to_processed(path, name)
+            _move_watch_file(
+                path,
+                name,
+                WATCH_PENDING_DIR if row.status == "pending" else WATCH_PROCESSED_DIR,
+            )
         return counts
+
+    @staticmethod
+    def read_source_bytes(clinic_id: UUID, filename: str) -> bytes | None:
+        """Read a queued import's source bytes, wherever the scan filed it.
+
+        A pending row's bytes live in ``pending/``; rows decided by an
+        earlier tick sit in ``processed/`` and the pre-``pending/`` layout
+        left them in the clinic root, so all three are probed in that
+        order. ``filename`` is re-stripped to a basename: it came from
+        ``os.listdir``, and the row is ours, but a stored name must never
+        be able to walk out of the watch dir.
+        """
+        clinic_dir = _watch_clinic_dir(clinic_id)
+        if clinic_dir is None:
+            return None
+        safe = os.path.basename(filename)
+        for sub in (WATCH_PENDING_DIR, WATCH_PROCESSED_DIR, ""):
+            candidate = (
+                os.path.join(clinic_dir, sub, safe) if sub else os.path.join(clinic_dir, safe)
+            )
+            if not os.path.isfile(candidate):
+                continue
+            try:
+                with open(candidate, "rb") as fh:
+                    return fh.read()
+            except OSError:
+                logger.exception("RvgService.read_source_bytes: cannot read %s", candidate)
+                return None
+        return None
+
+    @staticmethod
+    def retire_source_file(clinic_id: UUID, filename: str) -> None:
+        """Move a decided import's file from ``pending/`` to ``processed/``.
+
+        Best-effort and silent on failure: the import row is already
+        decided and owns the durable outcome, and a leftover pending file
+        is never re-hashed (the tick only reads the clinic root).
+        """
+        clinic_dir = _watch_clinic_dir(clinic_id)
+        if clinic_dir is None:
+            return
+        safe = os.path.basename(filename)
+        source = os.path.join(clinic_dir, WATCH_PENDING_DIR, safe)
+        if not os.path.isfile(source):
+            return
+        try:
+            os.makedirs(os.path.join(clinic_dir, WATCH_PROCESSED_DIR), exist_ok=True)
+            dest = os.path.join(clinic_dir, WATCH_PROCESSED_DIR, safe)
+            if os.path.exists(dest):
+                stem, dot, ext = safe.partition(".")
+                n = 1
+                while os.path.exists(dest):
+                    n += 1
+                    dest = os.path.join(
+                        clinic_dir,
+                        WATCH_PROCESSED_DIR,
+                        f"{stem}.{n}{dot}{ext}" if dot else f"{stem}.{n}",
+                    )
+            os.replace(source, dest)
+        except OSError:
+            logger.exception("RvgService.retire_source_file: cannot retire %s", safe)
 
     @staticmethod
     async def list_imports(
@@ -843,40 +951,98 @@ ANNOTATION_MAX_POINTS = 500
 ANNOTATION_MAX_TEXT = 500
 
 
-def _spacing_mm(tags: dict) -> float | None:
-    """First pixel-spacing value in mm, or None when the study has none."""
+def _pixel_spacing_mm(tags: dict) -> tuple[float, float] | None:
+    """(row_spacing, column_spacing) in mm, or None when the study has none.
+
+    DICOM PixelSpacing (0028,0030) is ``[row_spacing\\column_spacing]``:
+    the first value is the distance between row centres (vertical), the
+    second between column centres (horizontal). Returning them unnamed is
+    the bug this replaces, so the order is explicit and documented here.
+    """
     for key in ("ImagerPixelSpacing", "PixelSpacing"):
         raw = (tags or {}).get(key)
         if not raw:
             continue
         try:
-            value = float(str(raw).replace("\\", " ").split()[0])
-        except (ValueError, IndexError):
+            parts = [float(p) for p in str(raw).replace("\\", " ").split()]
+        except ValueError:
             continue
-        if value > 0:
-            return value
+        if len(parts) == 1:
+            parts = [parts[0], parts[0]]
+        if len(parts) < 2:
+            continue
+        row_spacing, column_spacing = parts[0], parts[1]
+        if row_spacing > 0 and column_spacing > 0:
+            return row_spacing, column_spacing
     return None
 
 
-def _move_to_processed(path: str, name: str) -> None:
-    """Move a handled watch file into ``processed/`` (collision-safe).
+def _spacing_mm(tags: dict) -> float | None:
+    """First pixel-spacing value in mm, or None when the study has none.
+
+    Kept for display (the annotation's ``spacing_mm`` column shows what the
+    measurement was based on); ``_ruler_mm`` uses the full pair.
+    """
+    spacing = _pixel_spacing_mm(tags)
+    return spacing[0] if spacing else None
+
+
+def _ruler_mm(points: list, tags: dict) -> float | None:
+    """Ruler length in mm for two normalized (0-1) points, or None.
+
+    Normalized coordinates are fractions of the image, so the pixel delta
+    on each axis is the normalized delta times that axis's pixel count, and
+    the millimetre distance applies the per-axis spacing:
+
+        dx_px = (x2 - x1) * Columns
+        dy_px = (y2 - y1) * Rows
+        mm    = hypot(dx_px * column_spacing, dy_px * row_spacing)
+
+    Multiplying the normalized distance by a single spacing value (the
+    previous behaviour) ignores the image's aspect ratio and reported a
+    plausible-looking but wrong number. Returns None when Rows/Columns or
+    PixelSpacing are missing: a measurement is never guessed.
+    """
+    spacing = _pixel_spacing_mm(tags)
+    rows = _positive_int((tags or {}).get("Rows"))
+    columns = _positive_int((tags or {}).get("Columns"))
+    if not spacing or not rows or not columns:
+        return None
+    (x1, y1), (x2, y2) = points
+    row_spacing, column_spacing = spacing
+    dx_px = (x2 - x1) * columns
+    dy_px = (y2 - y1) * rows
+    return round(
+        ((dx_px * column_spacing) ** 2 + (dy_px * row_spacing) ** 2) ** 0.5,
+        2,
+    )
+
+
+def _positive_int(raw: object) -> int | None:
+    try:
+        value = int(str(raw).strip())
+    except (TypeError, ValueError):
+        return None
+    return value if value > 0 else None
+
+
+def _move_watch_file(path: str, name: str, subdir: str) -> None:
+    """Move a watch file into ``path/subdir`` (collision-safe).
 
     Best-effort: a move failure only logs — the row already records the
     outcome, and the next tick re-handles the file idempotently.
     """
     try:
-        dest = os.path.join(path, "processed", name)
+        dest = os.path.join(path, subdir, name)
         if os.path.exists(dest):
             stem, dot, ext = name.partition(".")
             n = 1
             while os.path.exists(dest):
                 n += 1
-                dest = os.path.join(
-                    path, "processed", f"{stem}.{n}{dot}{ext}" if dot else f"{stem}.{n}"
-                )
+                dest = os.path.join(path, subdir, f"{stem}.{n}{dot}{ext}" if dot else f"{stem}.{n}")
         os.replace(os.path.join(path, name), dest)
     except OSError:
-        logger.exception("RvgService.scan_watch_dir: cannot move %s to processed/", name)
+        logger.exception("RvgService.scan_watch_dir: cannot move %s to %s/", name, subdir)
 
 
 class AnnotationService:
@@ -947,9 +1113,10 @@ class AnnotationService:
             raise LookupError("Study not found")
         clean = AnnotationService._validate(kind, payload)
         spacing = _spacing_mm(study.dicom_metadata)
-        if kind == "ruler" and spacing:
-            (x1, y1), (x2, y2) = clean["points"]
-            clean["mm"] = round((((x2 - x1) ** 2 + (y2 - y1) ** 2) ** 0.5) * spacing, 2)
+        if kind == "ruler":
+            measured = _ruler_mm(clean["points"], study.dicom_metadata)
+            if measured is not None:
+                clean["mm"] = measured
         row = ImagingAnnotation(
             clinic_id=clinic_id,
             patient_id=study.patient_id,

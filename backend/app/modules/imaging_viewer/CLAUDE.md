@@ -46,6 +46,9 @@ Matching scores national_id +60, DOB +25, name-token overlap up to +30;
 threshold 40, ties stay suggestion-less. A 90s scheduler tick
 (`get_scheduled_jobs` → `rvg_watch_tick`) scans
 `<DENTALPIN_RVG_WATCH_DIR>/<clinic_id>/`; unset root is a silent no-op.
+Handled files are filed by outcome: rows still awaiting a decision go to
+`pending/` (approve reads the bytes from there, then retires the file to
+`processed/`), rows the tick decided itself go to `processed/`.
 Design: `docs/technical/rvg-import-design.md`.
 
 Annotation overlays (T2): `ImagingAnnotation` rows hold normalized
@@ -99,6 +102,18 @@ through the declared dependency. No other cross-module coupling.
 
 - **Render re-checks both rows** (study + document) against `clinic_id` —
   a study id alone is never trusted.
+- **The render PNG must be fetched through `api.raw()` + an object URL**, not
+  a relative `<img src>`: the API is on another origin in docker-compose and
+  Coolify, so a relative path 404s (and cannot carry the session). The media
+  layer's `getDocumentBlobUrl` is the pattern; revoke the URL on change/unmount.
+- **Rendered pixels are bounded** (`MAX_RENDER_PIXELS`, 80 MP, checked from
+  Rows x Columns *before* decoding) and rendering is off the event loop
+  (`asyncio.to_thread`). A crafted header without the bound is an OOM kill,
+  not a 422.
+- **Ruler mm needs image dimensions**: normalized points are image fractions,
+  so `dx = (x2-x1)*Columns`, `dy = (y2-y1)*Rows`, and `PixelSpacing` is
+  `[row\column]`. Scaling the normalized distance by one spacing value is
+  wrong whenever the image is not square.
 - **No PHI in render URLs** beyond the opaque study id.
 - **Viewer output is visualization, never diagnosis** (Slicer-license §4 posture).
 - `pydicom` + `numpy` are backend dependencies of this module (`pyproject.toml`);

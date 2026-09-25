@@ -10,6 +10,11 @@
    90s). The tick scans `<DENTALPIN_RVG_WATCH_DIR>/<clinic_id>/` per clinic
    (per-clinic subdir = isolation by layout; a clinic without a dir is
    skipped). A manual `POST /rvg/scan` covers setups without the scheduler.
+   Handled files are filed by outcome: a row still waiting for a human goes
+   to `pending/`, a row the tick decided itself to `processed/`. The split
+   matters because approve needs the bytes and the tick is the only thing
+   that moves files — the original "everything to `processed/`" layout left
+   every queued approval unable to find its file (404).
 2. **Fingerprint.** Every file is hashed (SHA-256). A row with the same
    `(clinic_id, content_hash)` is never re-imported — re-scans are no-ops,
    failed files stay discoverable with their error and can be retried.
@@ -25,8 +30,10 @@
 5. **Approve (human).** Creates the media `Document` (xray/xray, DICOM mime —
    thumbnail-safe via the `is_thumbnailable` gate), indexes the study
    (publishes the existing `imaging.study_indexed`), and upserts the
-   `RvgLink` so future files from that DICOM identity auto-import.
-   Reject keeps the row for audit with an optional reason.
+   `RvgLink` so future files from that DICOM identity auto-import. The source
+   file is read from `pending/` (with `processed/` and the clinic root probed
+   for rows created by an earlier scan) and retired to `processed/` once the
+   row is decided. Reject keeps the row for audit with an optional reason.
 
 ## Decisions
 

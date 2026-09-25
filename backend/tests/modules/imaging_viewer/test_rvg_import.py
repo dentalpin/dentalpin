@@ -278,12 +278,80 @@ async def test_cross_clinic_isolation(
 
 
 @pytest.mark.asyncio
-async def test_scan_watch_dir_moves_processed_and_drains_past_limit(
+async def test_scan_then_approve_over_http(
+    client,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+    fake_storage: _FakeStorage,
+    canned_tags: dict,
+) -> None:
+    """The real RVG flow over HTTP: scan parks the file in pending/, the
+    approval queue lists it, and approve reads its bytes from there.
+
+    Regression: the scan moved every handled file to processed/ while
+    approve only looked in the clinic root, so a queued file could never be
+    approved (404 'Source file no longer in the watch folder') and the
+    button in the queue was dead.
+    """
+    from pathlib import Path
+
+    watch_root = Path(str(tmp_path)) / "rvg-root"
+    clinic_dir = watch_root / str(test_clinic.id)
+    clinic_dir.mkdir(parents=True)
+    (clinic_dir / "scan.dcm").write_bytes(b"fake-dicom-bytes")
+    monkeypatch.setenv("DENTALPIN_RVG_WATCH_DIR", str(watch_root))
+
+    scanned = await client.post(
+        "/api/v1/imaging_viewer/rvg/scan",
+        json={"retry_failed": False},
+        headers=auth_headers,
+    )
+    assert scanned.status_code == 200, scanned.text
+    assert scanned.json()["data"]["pending"] == 1
+    assert (clinic_dir / "pending" / "scan.dcm").is_file()
+
+    queue = await client.get(
+        "/api/v1/imaging_viewer/rvg/imports",
+        params={"status": "pending"},
+        headers=auth_headers,
+    )
+    assert queue.status_code == 200, queue.text
+    rows = queue.json()["data"]
+    assert len(rows) == 1
+    assert rows[0]["filename"] == "scan.dcm"
+
+    approved = await client.post(
+        f"/api/v1/imaging_viewer/rvg/imports/{rows[0]['id']}/approve",
+        json={"patient_id": str(test_patient.id)},
+        headers=auth_headers,
+    )
+    assert approved.status_code == 200, approved.text
+    assert approved.json()["data"]["status"] == "approved"
+    assert any(p == b"fake-dicom-bytes" for p in fake_storage.files.values())
+    # Decided -> retired out of pending/, and the queue no longer lists it.
+    assert not (clinic_dir / "pending" / "scan.dcm").exists()
+    assert (clinic_dir / "processed" / "scan.dcm").is_file()
+    again = await client.post(
+        f"/api/v1/imaging_viewer/rvg/imports/{rows[0]['id']}/approve",
+        json={"patient_id": str(test_patient.id)},
+        headers=auth_headers,
+    )
+    assert again.status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_scan_watch_dir_files_by_outcome_and_drains_past_limit(
     test_clinic: Clinic, db_session: AsyncSession, tmp_path
 ) -> None:
     """A folder holding more than the batch limit drains over successive
-    ticks: handled files move to processed/ (rows keep the audit), so
-    later-sorting files are reached and ticks never re-hash."""
+    ticks. A row still awaiting a human decision is parked in pending/ so
+    approve can read its bytes; a row the tick decided itself (here: a
+    failed parse) goes to processed/. Either way later-sorting files are
+    reached and ticks never re-hash."""
     from pathlib import Path
 
     watch = Path(str(tmp_path)) / "watch"
@@ -292,10 +360,12 @@ async def test_scan_watch_dir_moves_processed_and_drains_past_limit(
         (watch / f"f{i:03d}.dcm").write_bytes(b"not-dicom-%d" % i)
     counts = await RvgService.scan_watch_dir(db_session, test_clinic.id, str(watch))
     assert counts["scanned"] == 50
+    assert counts["failed"] == 50
     assert sorted(p.name for p in watch.iterdir() if p.is_file()) == [
         f"f{i:03d}.dcm" for i in range(50, 55)
     ]
     assert len(list((watch / "processed").iterdir())) == 50
+    assert list((watch / "pending").iterdir()) == []
     counts2 = await RvgService.scan_watch_dir(db_session, test_clinic.id, str(watch))
     assert counts2["scanned"] == 5
     assert [p for p in watch.iterdir() if p.is_file()] == []

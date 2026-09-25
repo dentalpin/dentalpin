@@ -12,9 +12,12 @@ const props = defineProps<{ studyId: string }>()
 
 const { t } = useI18n()
 const { can } = usePermissions()
-const { renderUrl, fetchAnnotations, createAnnotation, deleteAnnotation } = useImagingViewer()
+const { fetchRenderBlobUrl, fetchAnnotations, createAnnotation, deleteAnnotation } = useImagingViewer()
 
 const annotations = ref<StudyAnnotation[]>([])
+const renderBlobUrl = ref<string | null>(null)
+const renderError = ref<string | null>(null)
+const renderToken = ref(0)
 const tool = ref<'ruler' | 'freehand' | 'note' | null>(null)
 const draft = ref<Array<[number, number]>>([])
 const drawing = ref(false)
@@ -24,6 +27,8 @@ const actionError = ref<string | null>(null)
 const svgEl = ref<SVGSVGElement | null>(null)
 
 const canWrite = computed(() => can(PERMISSIONS.imagingViewer.studies.write))
+/** The render failure wins: without the image the panel cannot be used at all. */
+const shownError = computed(() => renderError.value ?? actionError.value)
 
 async function load() {
   actionError.value = null
@@ -33,6 +38,33 @@ async function load() {
     actionError.value = t('imagingViewer.annotations.loadFailed')
   }
 }
+
+/** One render per study: the panel is the only surface that shows the PNG. */
+async function loadRender() {
+  // Token guard: clicking through studies faster than the network answers
+  // would otherwise let a slow earlier response overwrite a newer render and
+  // orphan its object URL.
+  const token = ++renderToken.value
+  renderError.value = null
+  if (renderBlobUrl.value) URL.revokeObjectURL(renderBlobUrl.value)
+  const url = await fetchRenderBlobUrl(props.studyId)
+  if (token !== renderToken.value) {
+    if (url) URL.revokeObjectURL(url)
+    return
+  }
+  renderBlobUrl.value = url
+  if (!url) {
+    renderError.value = t('imagingViewer.viewer.unavailable')
+  }
+}
+
+onMounted(() => {
+  void load()
+  void loadRender()
+})
+onBeforeUnmount(() => {
+  if (renderBlobUrl.value) URL.revokeObjectURL(renderBlobUrl.value)
+})
 
 function toNorm(e: PointerEvent): [number, number] {
   const rect = (svgEl.value as SVGSVGElement).getBoundingClientRect()
@@ -101,9 +133,9 @@ watch(() => props.studyId, () => {
   tool.value = null
   draft.value = []
   noteAt.value = null
-  load()
+  void load()
+  void loadRender()
 })
-onMounted(load)
 </script>
 
 <template>
@@ -143,17 +175,29 @@ onMounted(load)
       </div>
     </template>
     <UAlert
-      v-if="actionError"
+      v-if="shownError"
       color="error"
-      :title="actionError"
+      :title="shownError"
     />
     <div class="relative select-none">
       <img
-        :src="renderUrl(studyId)"
+        v-if="renderBlobUrl"
+        :src="renderBlobUrl"
         class="w-full rounded"
         alt=""
         draggable="false"
       >
+      <div
+        v-else
+        class="flex h-32 flex-col items-center justify-center gap-1 rounded bg-gray-100 px-4 text-center"
+      >
+        <p class="text-sm font-medium text-gray-600">
+          {{ t('imagingViewer.viewer.unavailable') }}
+        </p>
+        <p class="text-xs text-gray-500">
+          {{ t('imagingViewer.viewer.fallbackHint') }}
+        </p>
+      </div>
       <svg
         ref="svgEl"
         class="absolute inset-0 h-full w-full"

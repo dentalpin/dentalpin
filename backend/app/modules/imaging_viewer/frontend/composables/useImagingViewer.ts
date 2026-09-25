@@ -31,8 +31,24 @@ export function useImagingViewer() {
     return res.data
   }
 
-  function renderUrl(studyId: string) {
-    return `/api/v1/imaging_viewer/studies/${studyId}/render`
+  /**
+   * Rendered PNG as an object URL.
+   *
+   * NOT a relative path: in docker-compose and Coolify the API lives on
+   * another origin (NUXT_PUBLIC_API_BASE_URL / BACKEND_URL), so a plain
+   * `<img src="/api/...">` hits the Nuxt origin and 404s. `api.raw()` is the
+   * media-module pattern (getDocumentBlobUrl): it carries the session
+   * cookies and the 401 -> refresh path, and the blob is same-origin-safe.
+   * Caller must revokeObjectURL() when the view is torn down.
+   */
+  async function fetchRenderBlobUrl(studyId: string): Promise<string | null> {
+    try {
+      const response = await api.raw(`/api/v1/imaging_viewer/studies/${studyId}/render`)
+      if (!response.ok) throw new Error(`HTTP ${response.status}`)
+      return URL.createObjectURL(await response.blob())
+    } catch {
+      return null
+    }
   }
 
   async function fetchAnnotations(studyId: string) {
@@ -59,7 +75,7 @@ export function useImagingViewer() {
     await api.del(`/api/v1/imaging_viewer/annotations/${annotationId}`)
   }
 
-  return { fetchStudies, fetchStudy, renderUrl, fetchAnnotations, createAnnotation, deleteAnnotation }
+  return { fetchStudies, fetchStudy, fetchRenderBlobUrl, fetchAnnotations, createAnnotation, deleteAnnotation }
 }
 
 export interface StudyAnnotation {

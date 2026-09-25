@@ -77,18 +77,28 @@ async def _user_id(db: AsyncSession):
 
 
 @pytest.mark.asyncio
-async def test_ruler_mm_computed_from_spacing(
+async def test_ruler_mm_scales_by_pixels_per_axis(
     test_clinic: Clinic,
     test_patient: Patient,
     db_session: AsyncSession,
     fake_storage: _FakeStorage,
 ) -> None:
+    """Normalized points are image fractions, so each axis is scaled by its
+    own pixel count before the per-axis spacing is applied. A 100x200 image
+    with 0.5\\0.5 spacing measured corner-to-corner is hypot(50, 100) mm.
+    The old math (normalized distance x one spacing value) reported 0.35 mm
+    for the same image."""
     study = await _study(
         db_session,
         test_clinic,
         test_patient,
         fake_storage,
-        tags={"StudyInstanceUID": "1.1.1", "PixelSpacing": "0.5\\0.5"},
+        tags={
+            "StudyInstanceUID": "1.1.1",
+            "Rows": 200,
+            "Columns": 100,
+            "PixelSpacing": "0.5\\0.5",
+        },
     )
     row = await AnnotationService.create(
         db_session,
@@ -96,10 +106,51 @@ async def test_ruler_mm_computed_from_spacing(
         study.id,
         await _user_id(db_session),
         "ruler",
-        {"points": [[0, 0], [0.6, 0.8]]},
+        {"points": [[0, 0], [1, 1]]},
     )
-    assert row.payload["mm"] == 0.5
+    assert row.payload["mm"] == 111.8
     assert row.spacing_mm == 0.5
+
+
+@pytest.mark.asyncio
+async def test_ruler_mm_uses_row_and_column_spacing_separately(
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    fake_storage: _FakeStorage,
+) -> None:
+    """PixelSpacing is [row_spacing\\column_spacing]: a horizontal run is
+    governed by the column value only."""
+    study = await _study(
+        db_session,
+        test_clinic,
+        test_patient,
+        fake_storage,
+        tags={
+            "StudyInstanceUID": "1.1.2",
+            "Rows": 100,
+            "Columns": 100,
+            "PixelSpacing": "0.5\\0.25",
+        },
+    )
+    horizontal = await AnnotationService.create(
+        db_session,
+        test_clinic.id,
+        study.id,
+        await _user_id(db_session),
+        "ruler",
+        {"points": [[0, 0], [1, 0]]},
+    )
+    vertical = await AnnotationService.create(
+        db_session,
+        test_clinic.id,
+        study.id,
+        await _user_id(db_session),
+        "ruler",
+        {"points": [[0, 0], [0, 1]]},
+    )
+    assert horizontal.payload["mm"] == 25.0
+    assert vertical.payload["mm"] == 50.0
 
 
 @pytest.mark.asyncio
@@ -120,6 +171,34 @@ async def test_ruler_without_spacing_has_no_mm(
     )
     assert "mm" not in row.payload
     assert row.spacing_mm is None
+
+
+@pytest.mark.asyncio
+async def test_ruler_spacing_without_dimensions_has_no_mm(
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    fake_storage: _FakeStorage,
+) -> None:
+    """Pixel spacing without Rows/Columns cannot be converted to a length,
+    so no mm is guessed (the row keeps its spacing for display)."""
+    study = await _study(
+        db_session,
+        test_clinic,
+        test_patient,
+        fake_storage,
+        tags={"StudyInstanceUID": "1.1.3", "PixelSpacing": "0.5\\0.5"},
+    )
+    row = await AnnotationService.create(
+        db_session,
+        test_clinic.id,
+        study.id,
+        await _user_id(db_session),
+        "ruler",
+        {"points": [[0, 0], [1, 1]]},
+    )
+    assert "mm" not in row.payload
+    assert row.spacing_mm == 0.5
 
 
 @pytest.mark.asyncio

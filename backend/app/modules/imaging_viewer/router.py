@@ -229,18 +229,10 @@ async def rvg_approve_import(
 ) -> ApiResponse[RvgImportResponse]:
     """Approve a pending import: document + study are created, the DICOM
     identity is linked so future files auto-import."""
-    import os
-
     row = await RvgService.get_import(db, ctx.clinic_id, import_id)
     if row is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Import not found")
-    raw: bytes | None = None
-    watch_root = os.environ.get("DENTALPIN_RVG_WATCH_DIR", "")
-    if watch_root:
-        candidate = os.path.join(watch_root, str(ctx.clinic_id), row.filename)
-        if os.path.isfile(candidate):
-            with open(candidate, "rb") as fh:
-                raw = fh.read()
+    raw = RvgService.read_source_bytes(ctx.clinic_id, row.filename)
     try:
         decided = await RvgService.approve(
             db, ctx.clinic_id, import_id, data.patient_id, ctx.user_id, raw=raw
@@ -249,6 +241,7 @@ async def rvg_approve_import(
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     except LookupError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    RvgService.retire_source_file(ctx.clinic_id, decided.filename)
     return ApiResponse(data=RvgImportResponse.model_validate(decided))
 
 

@@ -369,6 +369,47 @@ async def test_render_png_rejects_garbage_and_foreign_clinic(
         await ImagingStudyService.render_study_png(db_session, uuid4(), study.id)
 
 
+def test_render_rejects_oversized_pixel_grid_before_decoding() -> None:
+    """A crafted header claiming 50k x 50k pixels must answer 422, not take
+    the worker out. The check runs off Rows x Columns before any array is
+    materialized: decoding first is what gets the process OOM-killed
+    (SIGKILL, no traceback, no response), so this test builds a header with
+    a huge declared grid and a small PixelData and asserts the guard fires
+    without ever reading the pixels."""
+    pydicom = pytest.importorskip("pydicom")
+    from pydicom.dataset import Dataset, FileDataset
+    from pydicom.uid import ExplicitVRLittleEndian, generate_uid
+
+    from app.modules.imaging_viewer.service import (
+        MAX_RENDER_PIXELS,
+        UnrenderableStudyError,
+        render_dicom_png,
+    )
+
+    file_meta = Dataset()
+    file_meta.MediaStorageSOPClassUID = generate_uid()
+    file_meta.MediaStorageSOPInstanceUID = generate_uid()
+    file_meta.TransferSyntaxUID = ExplicitVRLittleEndian
+    ds = FileDataset(None, {}, file_meta=file_meta, preamble=b"\0" * 128)
+    ds.SOPClassUID = file_meta.MediaStorageSOPClassUID
+    ds.SOPInstanceUID = file_meta.MediaStorageSOPInstanceUID
+    ds.Rows, ds.Columns = 50_000, 50_000
+    ds.BitsAllocated = 16
+    ds.BitsStored = 12
+    ds.HighBit = 11
+    ds.PixelRepresentation = 0
+    ds.SamplesPerPixel = 1
+    ds.PhotometricInterpretation = "MONOCHROME2"
+    ds.PixelData = b"\0\0"
+    buf = io.BytesIO()
+    pydicom.dcmwrite(buf, ds)
+    raw = buf.getvalue()
+
+    assert 50_000 * 50_000 > MAX_RENDER_PIXELS
+    with pytest.raises(UnrenderableStudyError, match="too large"):
+        render_dicom_png(raw)
+
+
 @pytest.mark.asyncio
 async def test_handler_indexes_dicom_and_sniffs_octet_stream(
     test_clinic: Clinic,

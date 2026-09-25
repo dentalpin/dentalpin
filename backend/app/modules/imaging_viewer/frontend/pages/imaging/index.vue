@@ -210,14 +210,15 @@ onMounted(loadQueue)
         </UCard>
       </div>
 
-      <StudyViewer
+      <div
         v-if="selectedId && can(PERMISSIONS.imagingViewer.studies.read)"
-        :study-id="selectedId"
-      />
-      <AnnotationPanel
-        v-if="selectedId && can(PERMISSIONS.imagingViewer.studies.read)"
-        :study-id="selectedId"
-      />
+        class="flex flex-col gap-2"
+      >
+        <AnnotationPanel :study-id="selectedId" />
+        <p class="text-xs text-gray-500">
+          {{ t('imagingViewer.viewer.visualizationNote') }}
+        </p>
+      </div>
     </template>
 
     <UCard v-if="canRvgRead">
