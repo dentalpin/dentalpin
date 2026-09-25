@@ -50,7 +50,7 @@ const VALID_TRANSITIONS: Record<string, string[]> = {
 const allowedStatuses = computed(() => {
   const current = item.value?.status
   if (!current) return []
-  return [current, ...VALID_TRANSITIONS[current].filter(s => s !== current)]
+  return [current, ...(VALID_TRANSITIONS[current] ?? []).filter(s => s !== current)]
 })
 
 function formatDate(iso: string | null): string {
