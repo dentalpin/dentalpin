@@ -55,7 +55,7 @@ export function useImagingAi() {
   }
 
   async function cancelJob(jobId: string) {
-    await api.delete(`/api/v1/imaging_ai/ai-jobs/${jobId}`)
+    await api.del(`/api/v1/imaging_ai/ai-jobs/${jobId}`)
   }
 
   async function fetchJobs(patientId: string, page = 1, pageSize = 20) {

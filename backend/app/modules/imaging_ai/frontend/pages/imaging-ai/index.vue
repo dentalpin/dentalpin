@@ -18,8 +18,9 @@ const queueing = ref(false)
 const queueError = ref('')
 
 const patientId = ref(String(route.query.patient_id ?? ''))
-const selectedPatient = ref<(PatientOption & { label: string }) | null>(null)
-const patientOptions = ref<(PatientOption & { label: string })[]>([])
+type PatientChoice = PatientOption & { label: string }
+const selectedPatient = ref<PatientChoice | undefined>(undefined)
+const patientOptions = ref<PatientChoice[]>([])
 const patientSearch = ref('')
 const searching = ref(false)
 
@@ -41,7 +42,7 @@ async function runPatientSearch() {
   }
 }
 
-async function pickPatient(p: (PatientOption & { label: string }) | null) {
+async function pickPatient(p: PatientChoice | null | undefined) {
   if (!p) return
   patientId.value = p.id
   selectedDocs.value = []
@@ -197,8 +198,8 @@ onMounted(async () => {
             :key="d.id"
             :model-value="selectedDocs.includes(d.id)"
             :label="d.original_filename"
-            @update:model-value="(v: boolean) => {
-              selectedDocs = v
+            @update:model-value="(v: boolean | 'indeterminate') => {
+              selectedDocs = v === true
                 ? [...selectedDocs, d.id]
                 : selectedDocs.filter(x => x !== d.id)
             }"
