@@ -1,6 +1,6 @@
 ---
 module: payment_gateways
-last_verified_commit: 8b8e9375
+last_verified_commit: b4bd7a45
 ---
 
 # payment_gateways — permissions
@@ -15,7 +15,7 @@ payments' role grants (same precedent as india_gst reusing
 
 | Permission (owned by `payments`) | Gates | Endpoints |
 |------------|-------|-----------|
-| `payments.record.read` | View a request/refund's status, gateway info for a payment | `GET /requests/{id}`, `GET /payments/{id}/gateway-info`, `GET /refunds/{id}`, `GET /payments/{id}/refunds` |
+| `payments.record.read` | View a request/refund's status, gateway info for a payment (single or batched) | `GET /requests/{id}`, `GET /payments/{id}/gateway-info`, `POST /payments/gateway-info/batch`, `GET /refunds/{id}`, `GET /payments/{id}/refunds` |
 | `payments.record.write` | Start a collection, refresh status, cancel | `POST /requests`, `POST /requests/{id}/refresh`, `POST /requests/{id}/cancel` |
 | `payments.record.refund` | Start a gateway refund | `POST /refunds` |
 

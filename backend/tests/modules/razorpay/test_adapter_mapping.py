@@ -1,10 +1,16 @@
-"""Pure logic: amount conversion + provider-method mapping + webhook
-signature verification + payload parsing. No network, no DB."""
+"""Pure logic: amount conversion + provider-method mapping + payload
+parsing. No network, no DB.
+
+Webhook signature verification is tested in
+``tests/modules/razorpay/test_settings.py`` against
+``RazorpaySettingsService.verify_signature`` — the implementation the
+webhook route actually calls. ``RazorpayAdapter`` doesn't implement
+``verify_webhook_signature`` (see the comment in ``adapter.py``); it
+would have been a second, unused copy of the same HMAC check.
+"""
 
 from __future__ import annotations
 
-import hashlib
-import hmac
 from datetime import datetime
 from decimal import Decimal
 
@@ -51,42 +57,6 @@ def test_from_paise_round_trips(paise, expected_amount):
 )
 def test_map_provider_method(razorpay_method, expected):
     assert map_provider_method(razorpay_method) == expected
-
-
-class TestVerifyWebhookSignature:
-    adapter = RazorpayAdapter()
-    secret = "shh"
-
-    def _sign(self, body: bytes) -> str:
-        return hmac.new(self.secret.encode(), body, hashlib.sha256).hexdigest()
-
-    def test_valid_signature_accepted(self):
-        body = b'{"event": "payment.captured"}'
-        signature = self._sign(body)
-        assert self.adapter.verify_webhook_signature(
-            raw_body=body, headers={"x-razorpay-signature": signature}, secret=self.secret
-        )
-
-    def test_tampered_body_rejected(self):
-        body = b'{"event": "payment.captured"}'
-        signature = self._sign(body)
-        tampered = b'{"event": "payment.captured", "extra": "field"}'
-        assert not self.adapter.verify_webhook_signature(
-            raw_body=tampered, headers={"x-razorpay-signature": signature}, secret=self.secret
-        )
-
-    def test_missing_signature_header_rejected(self):
-        body = b'{"event": "payment.captured"}'
-        assert not self.adapter.verify_webhook_signature(
-            raw_body=body, headers={}, secret=self.secret
-        )
-
-    def test_wrong_secret_rejected(self):
-        body = b'{"event": "payment.captured"}'
-        signature = self._sign(body)
-        assert not self.adapter.verify_webhook_signature(
-            raw_body=body, headers={"x-razorpay-signature": signature}, secret="wrong-secret"
-        )
 
 
 class TestParseWebhookEvent:

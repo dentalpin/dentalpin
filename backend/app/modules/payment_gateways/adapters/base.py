@@ -172,6 +172,13 @@ class GatewayAdapter(Protocol):
 
     provider_key: str  # unique, e.g. "razorpay"
     supported_methods: tuple[str, ...]  # subset of constants.GATEWAY_METHODS
+    # ISO 4217 codes this provider can settle in, e.g. ("INR",) for
+    # Razorpay. Checked by PaymentRequestService.create_and_initiate
+    # against the clinic's own currency before ever calling the
+    # provider — a gateway account configured for one currency silently
+    # accepting a request in another is a data-integrity bug, not
+    # something to discover from a provider-side rejection.
+    supported_currencies: tuple[str, ...]
 
     async def supports(self, db: AsyncSession, clinic_id: UUID) -> bool:
         """Is this provider configured and active for the clinic?"""
@@ -198,11 +205,14 @@ class GatewayAdapter(Protocol):
         confirmation path (that's the webhook)."""
         ...
 
-    def verify_webhook_signature(
-        self, *, raw_body: bytes, headers: dict[str, str], secret: str
-    ) -> bool:
-        """Pure, synchronous signature check — no I/O, no DB."""
-        ...
+    # No verify_webhook_signature here — signature verification is not
+    # part of the adapter contract. The webhook route verifies against
+    # the provider settings row it already has loaded (e.g.
+    # RazorpaySettingsService.verify_signature), which is the only place
+    # that has the encrypted secret to decrypt in the first place; a
+    # second, adapter-level copy of the same check would be unused dead
+    # code that could silently drift from the one actually guarding the
+    # webhook (see razorpay.adapter's own note).
 
     async def parse_webhook_event(
         self, db: AsyncSession, *, clinic_id: UUID, payload: dict

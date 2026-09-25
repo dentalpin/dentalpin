@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- fix(#473): clearing the status filter no longer springs back to
+  Active, and an empty selection now means "no status restriction"
+  (archived included) instead of silently staying filtered to active.
+  The cleared state counts towards the active-filter badge, since it
+  does change the result set.
+
 - feat(#232): sidebar entry grouped under the Clinical header (`nav.section` "clinical").
 - fix(#431 review round 3): intra-file repeats report
   `matched_on: "same_file"` with a null `patient_id` (documented

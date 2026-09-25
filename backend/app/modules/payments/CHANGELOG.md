@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix(#470 review): `PaymentCreateModal`'s default/"today" date now
+  reads `clinicToday()` (clinic-local calendar date) instead of the
+  browser's UTC date — matches the same clinic-local booking the
+  gateway confirmation path now uses for `payment_date`.
 - feat(#232): sidebar entry grouped under the Financials header (`nav.section` "financials").
 - fix(#365): the two post-merge follow-ups from #370 — two *concurrent* `record_payment` calls with one `idempotency_key` no longer 500 on the unique index (savepoint + `IntegrityError` → the loser adopts the winner's row), and the shared `CollectAmountModal` (budget / invoice collect flows) offers `upi` / `netbanking` behind the same IN gate; `useClinicCountry()` moved to the host so host and layer components share one gate.
 

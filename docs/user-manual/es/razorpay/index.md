@@ -1,6 +1,6 @@
 ---
 module: razorpay
-last_verified_commit: 8b8e9375
+last_verified_commit: 8fb8f8cb
 ---
 
 # Razorpay
@@ -37,14 +37,22 @@ que este módulo añade a esa vista.
 
 ## Pantallas relacionadas
 
-- `/payments` — aparece un botón "Cobrar con Razorpay" junto a "Nuevo
-  pago" para clínicas en India con una configuración de Razorpay
-  activa. Los pagos cobrados mediante la pasarela muestran una
-  pequeña insignia tipo "Razorpay · UPI" que abre el detalle de la
+- `/payments` — pulsa **Nuevo pago** como siempre. Para clínicas en
+  India con una configuración de Razorpay activa, la fila de métodos
+  dentro de ese mismo modal ofrece tres chips adicionales junto a
+  efectivo/tarjeta/transferencia/etc.: **UPI QR**, **Razorpay** (pago
+  con tarjeta) y **Enlace de pago**. No existe un botón de Razorpay
+  aparte junto a "Nuevo pago" — al elegir uno de los tres chips, el
+  modal cambia al panel de cobro (código QR / Checkout.js / enlace
+  copiable), que consulta el estado hasta que Razorpay confirma el pago
+  y solo entonces cierra el modal. Los pagos cobrados mediante la
+  pasarela muestran una pequeña insignia tipo "Razorpay · UPI" bajo la
+  línea de fecha/método de la fila, que abre el detalle de la
   transacción (registro de auditoría, asignación e historial de
   reembolsos).
-- Ficha del paciente → pestaña Pagos — la misma acción "Cobrar con
-  Razorpay" aparece debajo del botón manual "Cobrar".
+- Ficha del paciente → pestaña Pagos — los mismos tres chips aparecen
+  dentro del modal "Cobrar" de esa pestaña, junto a los métodos
+  manuales.
 
 ## Referencias técnicas
 

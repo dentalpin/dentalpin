@@ -14,6 +14,8 @@
       "modeLive": "Live",
       "keyId": "Key ID",
       "keyIdHint": "From the Razorpay dashboard — safe to expose to the browser.",
+      "modeKeyMismatchLive": "Live mode requires a key starting with \"rzp_live_\". Your current key starts with \"rzp_test_\".",
+      "modeKeyMismatchTest": "Test mode requires a key starting with \"rzp_test_\". Your current key starts with \"rzp_live_\".",
       "keySecret": "Key secret",
       "keySecretHint": "From the Razorpay dashboard. Never shown again after saving.",
       "keySecretConfiguredHint": "A key secret is already configured. Leave blank to keep it.",
@@ -41,6 +43,8 @@
     "collect": {
       "notConfiguredHint": "Razorpay isn't configured for this clinic yet. Ask an admin to set it up in Settings.",
       "waiting": "Waiting for payment…",
+      "pollTimeout": "We couldn't confirm your payment automatically. Please check your payment status or contact support.",
+      "checkoutDismissed": "Payment window closed. Try again or check status below.",
       "checkStatus": "Check status",
       "openCheckout": "Open Razorpay checkout",
       "scanQr": "Ask the patient to scan this QR code with any UPI app",

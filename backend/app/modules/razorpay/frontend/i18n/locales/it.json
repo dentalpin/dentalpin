@@ -14,6 +14,8 @@
       "modeLive": "Produzione",
       "keyId": "ID chiave",
       "keyIdHint": "Dalla dashboard Razorpay — sicuro da esporre nel browser.",
+      "modeKeyMismatchLive": "La modalità Live richiede una chiave che inizi con \"rzp_live_\". La tua chiave attuale inizia con \"rzp_test_\".",
+      "modeKeyMismatchTest": "La modalità Test richiede una chiave che inizi con \"rzp_test_\". La tua chiave attuale inizia con \"rzp_live_\".",
       "keySecret": "Chiave segreta",
       "keySecretHint": "Dalla dashboard Razorpay. Non verrà più mostrata dopo il salvataggio.",
       "keySecretConfiguredHint": "È già configurata una chiave segreta. Lascia vuoto per mantenerla.",
@@ -41,6 +43,8 @@
     "collect": {
       "notConfiguredHint": "Razorpay non è ancora configurato per questa clinica. Chiedi a un amministratore di configurarlo nelle Impostazioni.",
       "waiting": "In attesa del pagamento…",
+      "pollTimeout": "Non siamo riusciti a confermare automaticamente il pagamento. Controlla lo stato del pagamento o contatta l'assistenza.",
+      "checkoutDismissed": "La finestra di pagamento è stata chiusa. Riprova o controlla lo stato qui sotto.",
       "checkStatus": "Controlla stato",
       "openCheckout": "Apri il pagamento Razorpay",
       "scanQr": "Chiedi al paziente di scansionare questo codice QR con qualsiasi app UPI",

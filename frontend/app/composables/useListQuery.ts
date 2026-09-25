@@ -139,9 +139,21 @@ export function useListQuery<F extends FiltersBag, R>(
   // ---- URL sync --------------------------------------------------------
   function pushUrl() {
     const next: Record<string, string> = {}
+    const defaultsDict = cfg.defaults as Record<string, unknown>
     for (const [k, v] of Object.entries(filters.value)) {
       const s = serialize(v as FilterPrimitive)
-      if (s !== null) next[k] = s
+      if (s !== null) {
+        next[k] = s
+      } else if (serialize(defaultsDict[k] as FilterPrimitive) !== null) {
+        // "Empty" and "absent" are the same in a URL, but they mean
+        // different things when the default is not empty: dropping the
+        // key makes the next parse fall back to the default, so an
+        // explicitly cleared filter springs back (issue #473 — clear
+        // the patients status filter and it returns to Active). Write
+        // the empty marker so the cleared state survives the round
+        // trip; ``parseInto`` already maps "" to the empty value.
+        next[k] = ''
+      }
     }
     if (page.value > 1) next.page = String(page.value)
     if (sort.value && sort.value !== cfg.defaultSort) next.sort = sort.value

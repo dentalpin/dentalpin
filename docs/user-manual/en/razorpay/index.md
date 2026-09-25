@@ -1,6 +1,6 @@
 ---
 module: razorpay
-last_verified_commit: 8b8e9375
+last_verified_commit: 8fb8f8cb
 ---
 
 # Razorpay
@@ -34,13 +34,19 @@ to it.
 
 ## Related screens
 
-- `/payments` — a "Collect via Razorpay" button appears next to "New
-  payment" for India clinics with an active Razorpay configuration.
+- `/payments` — click **New payment** as usual. For India clinics with
+  an active Razorpay configuration, the method row inside that same
+  modal offers three extra chips alongside cash/card/bank
+  transfer/etc.: **UPI QR**, **Razorpay** (card checkout), and
+  **Payment link**. There is no separate Razorpay button next to "New
+  payment" — picking one of the three chips swaps the modal into the
+  collection panel (QR code / Checkout.js / copyable link), which polls
+  until Razorpay confirms the payment and only then closes the modal.
   Gateway-collected payments show a small "Razorpay · UPI"-style badge
-  that opens the transaction detail (audit trail, allocation, and
-  refund history).
-- Patient detail → Pagos tab — the same "Collect via Razorpay" action
-  appears below the manual "Cobrar" button.
+  under the row's date/method line that opens the transaction detail
+  (audit trail, allocation, and refund history).
+- Patient detail → Pagos tab — the same three chips appear inside that
+  tab's own "Cobrar" modal, next to the manual methods.
 
 ## Technical references
 

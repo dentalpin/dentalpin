@@ -18,7 +18,6 @@ during its own migration and is missing in offline ``--sql`` mode).
 """
 
 import asyncio
-import os
 from logging.config import fileConfig
 from pathlib import Path
 
@@ -150,11 +149,12 @@ config = context.config
 config.set_main_option("sqlalchemy.url", settings.DATABASE_URL)
 
 # Register main linear + discovered branches so Alembic can resolve heads
-# across all of them. ``version_path_separator = os`` in alembic.ini, so
-# join on ``os.pathsep``.
+# across all of them. ``alembic.ini`` declares a literal ``:`` separator
+# (``version_path_separator = :``), so join on ``:`` on every platform —
+# ``os.pathsep`` would be ``;`` on Windows and break resolution.
 config.set_main_option(
     "version_locations",
-    os.pathsep.join(discover_version_locations(MAIN_LINEAR, MODULES_ROOT)),
+    ":".join(discover_version_locations(MAIN_LINEAR, MODULES_ROOT)),
 )
 
 if config.config_file_name is not None:

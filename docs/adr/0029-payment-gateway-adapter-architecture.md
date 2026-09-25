@@ -2,7 +2,8 @@
 
 - **Status:** accepted
 - **Date:** 2026-09-03
-- **Deciders:** DentalPin Core Team
+- **Deciders:** martinezsalmeron
+- **Author:** tresundios
 - **Tags:** modules, payments, india, finance, security
 
 ## Context

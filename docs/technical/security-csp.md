@@ -71,6 +71,20 @@ so it deserves its own PR after Report-Only has run in prod for a while
 and the *rest* of the policy is proven clean. Everything except inline
 scripts is already strict.
 
+## Known gap: module-contributed external origins (razorpay)
+
+The `razorpay` module is the first module that needs external origins:
+Checkout.js is loaded from `https://checkout.razorpay.com`, frames
+`https://api.razorpay.com/v1/checkout/public`, injects a script from
+`https://cdn.razorpay.com` and posts telemetry to
+`https://lumberjack.razorpay.com`. None of them is in the policy — core
+does not hardcode vendor domains for a module most deployments never
+install. Under `report` the card checkout works and logs violations;
+**under `enforce` it is blocked**. Closing this needs a way for an
+installed module to contribute origins to the policy (decision pending,
+PR #474 review) — do not flip an India deployment to `enforce` before
+that lands.
+
 ## Rollout
 
 1. **Report-Only in prod** — `NUXT_CSP_MODE=report` (the compose

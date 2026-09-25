@@ -165,8 +165,8 @@ returned by `GET`/`PUT /settings` — only `has_key_secret`/
   date, reference/notes and the allocation editor stay its own.
 - **Pages**: `/settings/razorpay`. Permission-gated with
   `usePermissions().can()`.
-- **i18n**: all nine host locales (`frontend/i18n/locales/`): de, en, es,
-  fr, hu, it, pl, pt, ta.
+- **i18n**: all ten host locales (`frontend/i18n/locales/`): ar, de, en,
+  es, fr, hu, it, pl, pt, ta.
 - **Checkout.js**: loaded dynamically (`<script src="https://checkout.razorpay.com/v1/checkout.js">`)
   only when the Razorpay rail is chosen — never eagerly on page load.
 - **Never treats the browser `handler` callback as confirmation** — it

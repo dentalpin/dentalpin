@@ -8,6 +8,7 @@ grant that references a non-existent module permission, etc.
 from __future__ import annotations
 
 from configparser import ConfigParser
+from pathlib import Path
 
 from fastapi import APIRouter
 
@@ -26,6 +27,28 @@ def test_every_shipped_module_passes_validation() -> None:
     modules = discover_modules()
     issues = validate_modules(modules)
     assert issues == [], "\n".join(f"{i.code}: {i.module_name}: {i.message}" for i in issues)
+
+
+def _modules_missing_from_version_locations(modules_root: Path, registered: set[str]) -> list[str]:
+    """Return the module migrations dirs under ``modules_root`` not in ``registered``."""
+    missing: list[str] = []
+    for module_dir in sorted(modules_root.iterdir()):
+        if not module_dir.is_dir() or module_dir.name.startswith("_"):
+            continue
+        # Only real packages count, the same criterion discovery uses
+        # (``pkgutil.iter_modules`` + ``ispkg``). Switching away from a
+        # branch that added a module leaves its ignored ``__pycache__``
+        # directories behind, so ``app/modules/<gone>/migrations/versions``
+        # can still exist with no source in it — and this guard would then
+        # ask for an alembic.ini entry for a module that is not there.
+        if not (module_dir / "__init__.py").is_file():
+            continue
+        if not (module_dir / "migrations" / "versions").is_dir():
+            continue
+        expected = f"app/modules/{module_dir.name}/migrations/versions"
+        if expected not in registered:
+            missing.append(expected)
+    return missing
 
 
 def test_every_module_migrations_dir_is_registered_in_alembic_ini() -> None:
@@ -47,22 +70,40 @@ def test_every_module_migrations_dir_is_registered_in_alembic_ini() -> None:
         loc.strip() for loc in config.get("alembic", "version_locations").split(":") if loc.strip()
     }
 
-    modules_root = cfg_path.parent / "app" / "modules"
-    missing: list[str] = []
-    for module_dir in sorted(modules_root.iterdir()):
-        if not module_dir.is_dir() or module_dir.name.startswith("_"):
-            continue
-        versions = module_dir / "migrations" / "versions"
-        if not versions.is_dir():
-            continue
-        expected = f"app/modules/{module_dir.name}/migrations/versions"
-        if expected not in registered:
-            missing.append(expected)
+    missing = _modules_missing_from_version_locations(
+        cfg_path.parent / "app" / "modules", registered
+    )
 
     assert missing == [], (
         "Modules with migrations not registered in [alembic] version_locations "
         f"of {cfg_path.name}: {missing}. Append "
         "':app/modules/<name>/migrations/versions' to the version_locations line."
+    )
+
+
+def test_version_locations_guard_ignores_leftover_pycache_dirs(tmp_path: Path) -> None:
+    """A source-less leftover directory is not a module and must not be reported.
+
+    ``git`` leaves ignored ``__pycache__`` behind when you switch away from
+    a branch that added a module, so ``app/modules/<gone>/migrations/versions``
+    survives with nothing but ``.pyc`` files in it.
+    """
+    live = tmp_path / "live_module"
+    (live / "migrations" / "versions").mkdir(parents=True)
+    (live / "__init__.py").touch()
+
+    leftover = tmp_path / "removed_module"
+    (leftover / "migrations" / "versions" / "__pycache__").mkdir(parents=True)
+    (leftover / "migrations" / "versions" / "__pycache__" / "x.cpython-313.pyc").touch()
+
+    assert _modules_missing_from_version_locations(tmp_path, set()) == [
+        "app/modules/live_module/migrations/versions"
+    ]
+    assert (
+        _modules_missing_from_version_locations(
+            tmp_path, {"app/modules/live_module/migrations/versions"}
+        )
+        == []
     )
 
 

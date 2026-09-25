@@ -96,7 +96,14 @@ async function fetcher(q: {
   if (q.filters.do_not_contact !== null) {
     params.set('do_not_contact', q.filters.do_not_contact ? 'true' : 'false')
   }
-  if (q.filters.status.includes('archived')) params.set('include_archived', 'true')
+  // An empty selection means "no status restriction", so it must not
+  // keep filtering to active — that would show an unfiltered chip over
+  // a filtered list (#473). The API has no archived-only mode, only
+  // ``include_archived``, so "archived selected" and "nothing selected"
+  // both map to the unrestricted query.
+  if (!q.filters.status.length || q.filters.status.includes('archived')) {
+    params.set('include_archived', 'true')
+  }
   if (patientIdsIntersect) {
     for (const id of patientIdsIntersect) params.append('patient_ids', id)
   }
@@ -161,7 +168,10 @@ const sortOptions = computed(() => [
 
 const activeFilterCount = computed(() => {
   let n = 0
-  if (filters.value.status.length && filters.value.status.join(',') !== 'active') n++
+  // Any selection other than the default changes the result set —
+  // including the empty one, which now widens it to archived patients
+  // too, so it has to count as a filter rather than read as "none".
+  if (filters.value.status.join(',') !== 'active') n++
   if (filters.value.city) n++
   if (filters.value.do_not_contact !== null) n++
   if (filters.value.with_debt) n++

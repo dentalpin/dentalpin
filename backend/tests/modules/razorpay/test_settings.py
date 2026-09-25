@@ -1,14 +1,19 @@
 """razorpay settings: per-clinic isolation, test/live mode, secrets
-never returned in API responses."""
+never returned in API responses, webhook signature verification."""
 
 from __future__ import annotations
 
+import hashlib
+import hmac
 from uuid import uuid4
 
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership
+from app.core.email.encryption import encrypt_password
+from app.modules.razorpay.models import RazorpaySettings
+from app.modules.razorpay.service import RazorpaySettingsService
 
 
 async def test_get_settings_defaults_when_unconfigured(
@@ -21,6 +26,46 @@ async def test_get_settings_defaults_when_unconfigured(
     assert data["has_key_secret"] is False
     assert data["has_webhook_secret"] is False
     assert data["is_active"] is False
+
+
+async def test_update_settings_rejects_live_mode_with_test_key(
+    client: AsyncClient, auth_headers, test_clinic: Clinic
+):
+    resp = await client.put(
+        "/api/v1/razorpay/settings",
+        json={"mode": "live", "key_id": "rzp_test_ABC123"},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 400
+    assert "rzp_live_" in resp.json()["message"]
+
+
+async def test_update_settings_rejects_test_mode_with_live_key(
+    client: AsyncClient, auth_headers, test_clinic: Clinic
+):
+    resp = await client.put(
+        "/api/v1/razorpay/settings",
+        json={"mode": "test", "key_id": "rzp_live_ABC123"},
+        headers=auth_headers,
+    )
+    assert resp.status_code == 400
+    assert "rzp_test_" in resp.json()["message"]
+
+
+async def test_update_settings_rejects_mismatch_against_already_saved_key(
+    client: AsyncClient, auth_headers, test_clinic: Clinic
+):
+    """Mode-only change must still be checked against the persisted
+    key_id — not just whatever the current request happens to include."""
+    await client.put(
+        "/api/v1/razorpay/settings",
+        json={"key_id": "rzp_test_ABC123"},
+        headers=auth_headers,
+    )
+    resp = await client.put(
+        "/api/v1/razorpay/settings", json={"mode": "live"}, headers=auth_headers
+    )
+    assert resp.status_code == 400
 
 
 async def test_update_settings_never_echoes_secrets(
@@ -144,6 +189,42 @@ async def test_update_settings_strips_whitespace_from_credentials(
     from app.core.email.encryption import decrypt_password
 
     assert decrypt_password(settings.webhook_secret_encrypted) == "another-secret-value"
+
+
+class TestVerifySignature:
+    """Coverage for ``RazorpaySettingsService.verify_signature`` — the
+    implementation the webhook route actually calls (moved here from
+    ``test_adapter_mapping.py``'s ``TestVerifyWebhookSignature`` when
+    the unused ``RazorpayAdapter.verify_webhook_signature`` duplicate
+    was removed)."""
+
+    secret = "shh"
+
+    def _settings(self) -> RazorpaySettings:
+        return RazorpaySettings(webhook_secret_encrypted=encrypt_password(self.secret))
+
+    def _sign(self, body: bytes) -> str:
+        return hmac.new(self.secret.encode(), body, hashlib.sha256).hexdigest()
+
+    def test_valid_signature_accepted(self):
+        body = b'{"event": "payment.captured"}'
+        assert RazorpaySettingsService.verify_signature(self._settings(), body, self._sign(body))
+
+    def test_tampered_body_rejected(self):
+        body = b'{"event": "payment.captured"}'
+        signature = self._sign(body)
+        tampered = b'{"event": "payment.captured", "extra": "field"}'
+        assert not RazorpaySettingsService.verify_signature(self._settings(), tampered, signature)
+
+    def test_missing_signature_rejected(self):
+        body = b'{"event": "payment.captured"}'
+        assert not RazorpaySettingsService.verify_signature(self._settings(), body, "")
+
+    def test_wrong_secret_rejected(self):
+        body = b'{"event": "payment.captured"}'
+        signature = self._sign(body)
+        other = RazorpaySettings(webhook_secret_encrypted=encrypt_password("wrong-secret"))
+        assert not RazorpaySettingsService.verify_signature(other, body, signature)
 
 
 async def test_settings_endpoints_require_permission(

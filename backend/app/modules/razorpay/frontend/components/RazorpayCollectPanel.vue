@@ -39,6 +39,19 @@ const isRefreshing = ref(false)
 const TERMINAL = ['succeeded', 'failed', 'expired', 'cancelled']
 let pollTimer: ReturnType<typeof setInterval> | null = null
 
+// Poll cap (#439/#445 review follow-up): a webhook that never arrives
+// (misconfigured secret, Razorpay outage) must not leave this panel
+// polling silently forever — 5 minutes at the existing 3s interval.
+const POLL_INTERVAL_MS = 3000
+const MAX_POLL_ATTEMPTS = Math.ceil((5 * 60 * 1000) / POLL_INTERVAL_MS)
+let pollAttempts = 0
+const pollTimedOut = ref(false)
+// Razorpay's own Checkout.js popup (card rail only) was closed without
+// completing payment — stop polling until the customer retries or asks
+// for a manual check, rather than keep polling unattended in the
+// background (#439/#445 review follow-up).
+const checkoutDismissed = ref(false)
+
 function stopPolling() {
   if (pollTimer) clearInterval(pollTimer)
   pollTimer = null
@@ -59,13 +72,27 @@ async function settle(fresh: PaymentRequest) {
 
 function startPolling(id: string) {
   stopPolling()
+  pollAttempts = 0
+  pollTimedOut.value = false
   pollTimer = setInterval(async () => {
+    pollAttempts++
+    if (pollAttempts > MAX_POLL_ATTEMPTS) {
+      // The webhook is the authoritative path and normally lands in
+      // seconds — past the cap it's not coming (or is stuck), so stop
+      // spending requests and let the customer/reception act instead of
+      // polling unattended forever. The request itself is left exactly
+      // as-is server-side: "Check status" below still works, and a late
+      // webhook still resolves it if one eventually arrives.
+      stopPolling()
+      pollTimedOut.value = true
+      return
+    }
     try {
       await settle(await getPaymentRequest(id))
     } catch {
       // transient poll failure — next tick retries
     }
-  }, 3000)
+  }, POLL_INTERVAL_MS)
 }
 
 let checkoutJs: Promise<void> | null = null
@@ -90,11 +117,22 @@ async function openCheckout(req: PaymentRequest) {
     toast.add({ title: t('common.error'), description: t('razorpay.collect.checkoutLoadError'), color: 'error' })
     return
   }
+  checkoutDismissed.value = false
   interface RazorpayCtor { new (options: Record<string, unknown>): { open: () => void } }
   const Ctor = (window as unknown as { Razorpay: RazorpayCtor }).Razorpay
   new Ctor({
     ...req.checkout.checkout_payload,
-    handler: () => startPolling(req.id) // browser callback — cue to poll, never authoritative
+    handler: () => startPolling(req.id), // browser callback — cue to poll, never authoritative
+    modal: {
+      // Closed without completing payment: stop polling in the
+      // background rather than keep it running unattended — the
+      // "Open Razorpay checkout" / "Check status" actions below still
+      // work, and either one resumes normal polling.
+      ondismiss: () => {
+        stopPolling()
+        checkoutDismissed.value = true
+      }
+    }
   }).open()
 }
 
@@ -118,9 +156,17 @@ onBeforeUnmount(stopPolling)
 
 async function refresh() {
   if (!request.value) return
+  const id = request.value.id
   isRefreshing.value = true
   try {
-    await settle(await refreshPaymentRequest(request.value.id))
+    await settle(await refreshPaymentRequest(id))
+    // A manual check is a clear "still waiting" signal — give it a
+    // fresh polling window instead of leaving the customer to keep
+    // clicking by hand after a timeout/dismissal.
+    if (request.value && !TERMINAL.includes(request.value.state)) {
+      checkoutDismissed.value = false
+      startPolling(id)
+    }
   } finally {
     isRefreshing.value = false
   }
@@ -210,7 +256,30 @@ async function copyLink() {
           {{ t('razorpay.collect.openCheckout') }}
         </UButton>
       </div>
-      <div class="flex items-center justify-center gap-2 text-caption text-subtle">
+      <div
+        v-if="pollTimedOut"
+        class="flex items-start gap-2 text-caption text-warning-accent"
+      >
+        <UIcon
+          name="i-lucide-alert-triangle"
+          class="w-4 h-4 shrink-0 mt-0.5"
+        />
+        {{ t('razorpay.collect.pollTimeout') }}
+      </div>
+      <div
+        v-else-if="checkoutDismissed"
+        class="flex items-center justify-center gap-2 text-caption text-subtle"
+      >
+        <UIcon
+          name="i-lucide-circle-pause"
+          class="w-4 h-4"
+        />
+        {{ t('razorpay.collect.checkoutDismissed') }}
+      </div>
+      <div
+        v-else
+        class="flex items-center justify-center gap-2 text-caption text-subtle"
+      >
         <UIcon
           name="i-lucide-loader-2"
           class="animate-spin w-4 h-4"

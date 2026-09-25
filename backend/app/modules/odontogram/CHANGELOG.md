@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- fix(#459): the "Add to plan" dropdown in `TreatmentBar` was built from
+  `UDropdownMenuItem`/`Group`/`Separator`, which Nuxt UI does not ship, so
+  its body could only ever resolve to nothing. Rebuilt on the supported
+  `:items` API. The block is unreachable today — nothing passes
+  `treatmentPlans` to the bar — so this changes no shipped screen; it stops
+  the markup from being a trap for whoever wires the selector up.
+
 - i18n(ar): chart grid pinned `dir="ltr"` so FDI tooth numbering stays
   left-to-right under a right-to-left document (Arabic).
 

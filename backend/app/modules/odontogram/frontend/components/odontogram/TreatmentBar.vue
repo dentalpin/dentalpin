@@ -574,6 +574,29 @@ function selectPlan(planId: string | null) {
 function handleCreatePlan() {
   emit('createPlan')
 }
+
+// Nuxt UI renders a dropdown from `:items`; there are no
+// `UDropdownMenuItem`/`Group`/`Separator` components, so the previous
+// markup resolved to nothing and the menu came up empty (#459). Nested
+// arrays are rendered as groups with a separator between them.
+const planMenuItems = computed(() => [
+  planOptions.value.map(option => ({
+    // `checkbox` gives the selected plan the check indicator for free;
+    // `onSelect` still fires, so selection stays a single handler.
+    type: 'checkbox' as const,
+    label: option.label,
+    icon: option.icon,
+    checked: props.selectedPlanId === option.value,
+    ui: option.isActive ? { itemLeadingIcon: 'text-warning-accent' } : undefined,
+    onSelect: () => selectPlan(option.value)
+  })),
+  [{
+    label: t('odontogram.createNewPlan'),
+    icon: 'i-lucide-plus',
+    color: 'primary' as const,
+    onSelect: () => handleCreatePlan()
+  }]
+])
 </script>
 
 <template>
@@ -643,7 +666,7 @@ function handleCreatePlan() {
           class="plan-selector"
         >
           <span class="plan-selector-label">{{ t('odontogram.addToPlan') }}:</span>
-          <UDropdownMenu>
+          <UDropdownMenu :items="planMenuItems">
             <UButton
               variant="soft"
               color="neutral"
@@ -658,42 +681,6 @@ function handleCreatePlan() {
               />
               <span class="truncate max-w-[120px]">{{ selectedPlanLabel }}</span>
             </UButton>
-            <template #content>
-              <UDropdownMenuGroup>
-                <UDropdownMenuItem
-                  v-for="option in planOptions"
-                  :key="option.value ?? 'no-plan'"
-                  @click="selectPlan(option.value)"
-                >
-                  <template #leading>
-                    <UIcon
-                      v-if="option.icon"
-                      :name="option.icon"
-                      class="w-4 h-4"
-                      :class="option.isActive ? 'text-warning-accent' : 'text-subtle'"
-                    />
-                  </template>
-                  <span :class="option.isActive ? 'font-medium' : ''">{{ option.label }}</span>
-                  <template #trailing>
-                    <UIcon
-                      v-if="selectedPlanId === option.value"
-                      name="i-lucide-check"
-                      class="w-4 h-4 text-primary-accent"
-                    />
-                  </template>
-                </UDropdownMenuItem>
-              </UDropdownMenuGroup>
-              <UDropdownMenuSeparator />
-              <UDropdownMenuItem @click="handleCreatePlan">
-                <template #leading>
-                  <UIcon
-                    name="i-lucide-plus"
-                    class="w-4 h-4 text-primary-accent"
-                  />
-                </template>
-                <span class="text-primary-accent">{{ t('odontogram.createNewPlan') }}</span>
-              </UDropdownMenuItem>
-            </template>
           </UDropdownMenu>
         </div>
       </Transition>

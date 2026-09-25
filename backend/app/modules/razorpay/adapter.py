@@ -36,6 +36,7 @@ from .constants import (
     EVENT_QR_CODE_CREDITED,
     EVENT_REFUND_FAILED,
     EVENT_REFUND_PROCESSED,
+    SUPPORTED_CURRENCIES,
     SUPPORTED_METHODS,
     map_provider_method,
 )
@@ -57,6 +58,7 @@ def _epoch_to_datetime(value) -> datetime:
 class RazorpayAdapter:
     provider_key = "razorpay"
     supported_methods = SUPPORTED_METHODS
+    supported_currencies = SUPPORTED_CURRENCIES
 
     async def supports(self, db: AsyncSession, clinic_id: UUID) -> bool:
         return await RazorpaySettingsService.get_active_settings(db, clinic_id) is not None
@@ -202,17 +204,12 @@ class RazorpayAdapter:
             return GatewayStatusResult(state=request.state, error_message=str(exc)[:300])
         return GatewayStatusResult(state=request.state)
 
-    def verify_webhook_signature(
-        self, *, raw_body: bytes, headers: dict[str, str], secret: str
-    ) -> bool:
-        import hashlib
-        import hmac
-
-        signature = headers.get("x-razorpay-signature", "")
-        if not secret or not signature:
-            return False
-        expected = hmac.new(secret.encode(), raw_body, hashlib.sha256).hexdigest()
-        return hmac.compare_digest(signature, expected)
+    # No verify_webhook_signature here — it isn't part of the
+    # GatewayAdapter Protocol (removed as unused dead code, review
+    # follow-up on PR #470): the router never called it — it calls
+    # RazorpaySettingsService.verify_signature(settings, raw, sig)
+    # directly, since that's the only place that has the encrypted
+    # RazorpaySettings row to decrypt in the first place.
 
     async def parse_webhook_event(
         self, db: AsyncSession, *, clinic_id: UUID, payload: dict

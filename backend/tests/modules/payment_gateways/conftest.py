@@ -39,6 +39,7 @@ class FakeAdapter:
 
     provider_key = "fake"
     supported_methods = ("upi", "qr", "card", "payment_link")
+    supported_currencies = ("INR",)
 
     def __init__(self) -> None:
         self.unsupported_clinics: set[UUID] = set()
@@ -50,6 +51,7 @@ class FakeAdapter:
         self.initiate_should_raise: Exception | None = None
         self.refund_should_raise: Exception | None = None
         self.next_refund_result: GatewayRefundInitResult | None = None
+        self.next_status_result: GatewayStatusResult | None = None
 
     async def supports(self, db, clinic_id) -> bool:
         return clinic_id not in self.unsupported_clinics
@@ -68,10 +70,9 @@ class FakeAdapter:
         )
 
     async def verify_payment_status(self, db, *, request) -> GatewayStatusResult:
+        if self.next_status_result is not None:
+            return self.next_status_result
         return GatewayStatusResult(state=request.state)
-
-    def verify_webhook_signature(self, *, raw_body, headers, secret) -> bool:
-        return True
 
     async def parse_webhook_event(self, db, *, clinic_id, payload):
         return None

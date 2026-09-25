@@ -17,7 +17,7 @@ interface Ctx {
 const props = defineProps<{ ctx: Ctx }>()
 
 const { t } = useI18n()
-const { getGatewayInfo } = useRazorpay()
+const { requestGatewayInfo } = useGatewayInfoBatch()
 
 const info = ref<GatewayInfo | null>(null)
 const isLoading = ref(true)
@@ -26,13 +26,16 @@ const showDetail = ref(false)
 onMounted(async () => {
   // `reference` is "razorpay:<payment id>" for every gateway-collected
   // payment (set by PaymentRequestService.confirm) — skip the round trip
-  // for the manual rows so a 20-row page costs 0 extra requests, not 20.
+  // for the manual rows so they never even join the batch.
   if (!props.ctx.payment.reference?.startsWith('razorpay:')) {
     isLoading.value = false
     return
   }
   try {
-    info.value = await getGatewayInfo(props.ctx.payment.id)
+    // Queued and resolved from one batched `gateway-info/batch` call
+    // shared with every other gateway-collected row on the page
+    // (#439/#445 review follow-up) — never a per-row round trip.
+    info.value = await requestGatewayInfo(props.ctx.payment.id)
   } catch {
     info.value = null
   } finally {

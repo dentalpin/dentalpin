@@ -41,6 +41,22 @@ function formatDate(s: string | null): string {
   return new Date(s).toLocaleString()
 }
 
+// Razorpay's key prefix already encodes the environment — a mismatch
+// here would silently collect in test mode while the UI claims live
+// (or vice versa). Checked client-side for immediate feedback; the
+// backend re-checks the merged (persisted + incoming) state as a
+// backstop.
+const modeKeyMismatch = computed(() => {
+  const keyId = form.value.key_id.trim()
+  if (form.value.mode === 'live' && keyId.startsWith('rzp_test_')) {
+    return t('razorpay.settings.modeKeyMismatchLive')
+  }
+  if (form.value.mode === 'test' && keyId.startsWith('rzp_live_')) {
+    return t('razorpay.settings.modeKeyMismatchTest')
+  }
+  return null
+})
+
 onMounted(async () => {
   try {
     settings.value = await getSettings()
@@ -59,6 +75,10 @@ onMounted(async () => {
 })
 
 async function save() {
+  if (modeKeyMismatch.value) {
+    toast.add({ title: t('common.error'), description: modeKeyMismatch.value, color: 'error' })
+    return
+  }
   isSaving.value = true
   try {
     const payload: Record<string, unknown> = {
@@ -139,6 +159,13 @@ async function copyWebhookUrl() {
               :disabled="!canManage"
             />
           </UFormField>
+          <UAlert
+            v-if="modeKeyMismatch"
+            color="error"
+            variant="subtle"
+            icon="i-lucide-triangle-alert"
+            :description="modeKeyMismatch"
+          />
           <UFormField
             :label="t('razorpay.settings.keySecret')"
             :hint="settings?.has_key_secret ? t('razorpay.settings.keySecretConfiguredHint') : t('razorpay.settings.keySecretHint')"
@@ -245,6 +272,7 @@ async function copyWebhookUrl() {
         block
         color="primary"
         :loading="isSaving"
+        :disabled="!!modeKeyMismatch"
         @click="save"
       >
         {{ t('common.save') }}

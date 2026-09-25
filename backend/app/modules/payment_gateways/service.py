@@ -13,11 +13,13 @@ from __future__ import annotations
 from datetime import UTC, datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.core.auth.models import Clinic
 from app.modules.patients.models import Patient
 from app.modules.payments.models import Payment, Refund
 from app.modules.payments.service import PaymentService
@@ -47,6 +49,29 @@ def new_idempotency_key() -> str:
     return uuid4().hex
 
 
+# Clinic-timezone resolution for booking a captured payment on the
+# clinic's own calendar date (not the capture instant's UTC date) —
+# mirrors agenda.tz.safe_zone/get_clinic_tz exactly. Duplicated locally
+# rather than cross-imported: agenda is not in this module's
+# manifest.depends, and every other module needing clinic-local dates
+# (schedules.ClinicHoursService, billing/verifactu's PDF footers)
+# resolves ``Clinic.timezone`` the same way rather than reaching across
+# a module boundary for it.
+_DEFAULT_TIMEZONE = "Europe/Madrid"
+
+
+def _safe_zone(tz_name: str | None) -> ZoneInfo:
+    try:
+        return ZoneInfo(tz_name or _DEFAULT_TIMEZONE)
+    except ZoneInfoNotFoundError:
+        return ZoneInfo(_DEFAULT_TIMEZONE)
+
+
+async def _get_clinic_tz(db: AsyncSession, clinic_id: UUID) -> ZoneInfo:
+    result = await db.execute(select(Clinic.timezone).where(Clinic.id == clinic_id))
+    return _safe_zone(result.scalar_one_or_none())
+
+
 class PaymentRequestService:
     """Create, initiate, and confirm/fail/expire/cancel a ``PaymentRequest``."""
 
@@ -74,6 +99,28 @@ class PaymentRequestService:
         return result.scalar_one_or_none()
 
     @staticmethod
+    async def get_for_payments_batch(
+        db: AsyncSession, clinic_id: UUID, payment_ids: list[UUID]
+    ) -> dict[UUID, PaymentRequest]:
+        """Same lookup as :meth:`get_for_payment`, batched into one query
+        for the payments list page instead of one round trip per
+        gateway-collected row (#439/#445 review follow-up). Payment ids
+        with no gateway request (manually-recorded payments) are simply
+        absent from the returned dict — callers treat a missing key the
+        same as ``get_for_payment`` returning ``None``."""
+        if not payment_ids:
+            return {}
+        result = await db.execute(
+            select(PaymentRequest)
+            .where(
+                PaymentRequest.clinic_id == clinic_id,
+                PaymentRequest.payment_id.in_(payment_ids),
+            )
+            .options(selectinload(PaymentRequest.refund_requests))
+        )
+        return {request.payment_id: request for request in result.scalars().all()}
+
+    @staticmethod
     async def get_locked_by_provider_reference(
         db: AsyncSession, clinic_id: UUID, provider_key: str, provider_reference: str
     ) -> PaymentRequest | None:
@@ -87,6 +134,23 @@ class PaymentRequestService:
                 PaymentRequest.provider_key == provider_key,
                 PaymentRequest.provider_reference == provider_reference,
             )
+            .with_for_update()
+        )
+        return result.scalar_one_or_none()
+
+    @staticmethod
+    async def get_locked(
+        db: AsyncSession, clinic_id: UUID, request_id: UUID
+    ) -> PaymentRequest | None:
+        """Row-locked fetch by id — for the manual ``/refresh`` endpoint,
+        so it serializes against a webhook delivery landing on the same
+        request concurrently instead of racing it on the "already
+        succeeded?" check (same reason as
+        :meth:`get_locked_by_provider_reference`, just keyed by id since
+        a manual refresh is always initiated from a known request)."""
+        result = await db.execute(
+            select(PaymentRequest)
+            .where(PaymentRequest.id == request_id, PaymentRequest.clinic_id == clinic_id)
             .with_for_update()
         )
         return result.scalar_one_or_none()
@@ -137,6 +201,12 @@ class PaymentRequestService:
             raise GatewayError(f"Unknown or inactive payment gateway provider {provider_key!r}")
         if method not in adapter.supported_methods:
             raise GatewayError(f"{provider_key} does not support method {method!r}")
+        if currency not in adapter.supported_currencies:
+            # Fail before ever touching the provider or reserving the
+            # idempotency key — a clinic on a currency this gateway
+            # account can't settle in is a configuration problem, not
+            # something to surface as a confusing provider-side error.
+            raise GatewayError(f"{provider_key} does not support currency {currency!r}")
         if not await adapter.supports(db, clinic_id):
             raise GatewayError(f"{provider_key} is not configured for this clinic")
 
@@ -261,10 +331,31 @@ class PaymentRequestService:
                 f"Confirmed amount {confirmation.amount} does not match "
                 f"requested amount {request.requested_amount}"
             )
+        if confirmation.currency != request.currency:
+            # Same reasoning as the amount check above — record_payment
+            # is never told the confirmed currency, only request.currency
+            # (see the call below), so a silent mismatch here would book
+            # the payment in the wrong currency without anyone noticing.
+            raise GatewayError(
+                f"Confirmed currency {confirmation.currency!r} does not match "
+                f"requested currency {request.currency!r}"
+            )
 
         validate_payment_request_transition(
             PaymentRequestState(request.state), PaymentRequestState.SUCCEEDED
         )
+
+        # Book the payment on the clinic's own calendar date, not the
+        # capture instant's UTC date — a capture at 00:15 IST is still
+        # 18:45 UTC the *previous* day, and `.date()` on the raw UTC
+        # instant would silently book it a day early (review follow-up,
+        # PR #470). `captured_at` is an instant (see the dataclass
+        # docstring); treat a naive value defensively as UTC rather than
+        # the server's own local time before converting.
+        captured_at = confirmation.captured_at
+        if captured_at.tzinfo is None:
+            captured_at = captured_at.replace(tzinfo=UTC)
+        clinic_tz = await _get_clinic_tz(db, request.clinic_id)
 
         try:
             payment = await record_payment(
@@ -274,7 +365,7 @@ class PaymentRequestService:
                 patient_id=request.patient_id,
                 amount=request.requested_amount,
                 method=confirmation.confirmed_method,
-                payment_date=confirmation.captured_at.date(),
+                payment_date=captured_at.astimezone(clinic_tz).date(),
                 recorded_by=recorded_by or request.created_by,
                 allocations=request.allocation_input,
                 reference=f"{request.provider_key}:{confirmation.provider_payment_reference}"[:100],
