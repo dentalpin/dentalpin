@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "imagingViewer": "Képalkotás"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "DICOM képalkotás",
+      "empty": "Ehhez a beteghez még nincsenek megtekinthető vizsgálatok.",
+      "noPatient": "Nincs beteg kiválasztva",
+      "noPatientHint": "Válasszon beteget fent, vagy nyissa meg ezt az oldalt a ?patient_id=... paraméterrel, pl. a betegkartotékból.",
+      "pickPatient": "Beteg kiválasztása",
+      "searchPatients": "Betegek keresése",
+      "unknownModality": "Ismeretlen modalitás",
+      "noStudyDate": "Nincs vizsgálati dátum"
+    },
+    "viewer": {
+      "title": "DICOM megjelenítő",
+      "unavailable": "Előnézet nem érhető el",
+      "fallbackHint": "A vizsgálat nem jeleníthető meg. Próbálja meg újból feltölteni a fájlt.",
+      "visualizationNote": "Csak megjelenítési segédlet - soha nem diagnózis."
+    },
+    "rvg": {
+      "title": "RVG importálási sor ({total} függőben)",
+      "empty": "Nincsenek függőben lévő RVG-fájlok. Minden szkennelés után itt jelennek meg az új szenzorfájlok.",
+      "scanNow": "Szkennelés most",
+      "approveSuggestion": "Javaslat jóváhagyása",
+      "approveCurrentPatient": "Hozzárendelés az aktuális beteghez",
+      "reject": "Elutasítás",
+      "suggested": "Javasolt beteg (pontszám {score})",
+      "ambiguous": "Nem egyértelmű egyezés - válassza ki a beteget kézzel",
+      "noSuggestion": "Nincs egyezés - a hozzárendeléshez nyissa meg a ?patient_id= paraméterrel",
+      "loadFailed": "Az RVG-sor betöltése nem sikerült.",
+      "scanFailed": "A szkennelés nem sikerült. Be van állítva a figyelt mappa?",
+      "actionFailed": "A művelet nem sikerült. Lehet, hogy a sor már el van döntve."
+    },
+    "annotations": {
+      "title": "Annotációk",
+      "ruler": "Vonalzó",
+      "freehand": "Rajzolás",
+      "note": "Megjegyzés",
+      "notePlaceholder": "Annotáció szövege…",
+      "saveNote": "Megjegyzés mentése",
+      "mm": "{mm} mm",
+      "noSpacing": "nincs pixel-távolság — mm nem érhető el",
+      "kind_ruler": "Vonalzó",
+      "kind_freehand": "Rajz",
+      "kind_note": "Megjegyzés",
+      "loadFailed": "Az annotációk betöltése nem sikerült.",
+      "actionFailed": "A művelet nem sikerült. Kérjük, próbálja újra.",
+      "aidNote": "Az átfedések csak megjelenítési segédletek — soha nem diagnózis."
+    }
+  }
+}

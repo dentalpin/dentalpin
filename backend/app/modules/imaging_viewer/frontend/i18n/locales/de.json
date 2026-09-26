@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "imagingViewer": "Bildgebung"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "DICOM-Bildgebung",
+      "empty": "Noch keine darstellbaren Studien für diesen Patienten.",
+      "noPatient": "Kein Patient ausgewählt",
+      "noPatientHint": "Wählen Sie oben einen Patienten, oder öffnen Sie diese Seite mit ?patient_id=..., z. B. aus der Patientenakte.",
+      "pickPatient": "Patient wählen",
+      "searchPatients": "Patienten suchen",
+      "unknownModality": "Unbekannte Modalität",
+      "noStudyDate": "Kein Studienatum"
+    },
+    "viewer": {
+      "title": "DICOM-Viewer",
+      "unavailable": "Vorschau nicht verfügbar",
+      "fallbackHint": "Die Studie konnte nicht dargestellt werden. Bitte laden Sie die Datei erneut hoch.",
+      "visualizationNote": "Nur Visualisierungshilfe - niemals eine Diagnose."
+    },
+    "rvg": {
+      "title": "RVG-Importwarteschlange ({total} ausstehend)",
+      "empty": "Keine ausstehenden RVG-Dateien. Neue Sensordateien erscheinen hier nach jedem Scan.",
+      "scanNow": "Jetzt scannen",
+      "approveSuggestion": "Vorschlag bestätigen",
+      "approveCurrentPatient": "Aktuellem Patienten zuordnen",
+      "reject": "Ablehnen",
+      "suggested": "Vorgeschlagener Patient (Score {score})",
+      "ambiguous": "Mehrdeutige Zuordnung - Patient explizit wählen",
+      "noSuggestion": "Kein Treffer - mit ?patient_id= öffnen zum Zuordnen",
+      "loadFailed": "RVG-Warteschlange konnte nicht geladen werden.",
+      "scanFailed": "Scan fehlgeschlagen. Ist der Überwachungsordner konfiguriert?",
+      "actionFailed": "Aktion fehlgeschlagen. Die Zeile wurde möglicherweise bereits entschieden."
+    },
+    "annotations": {
+      "title": "Annotationen",
+      "ruler": "Lineal",
+      "freehand": "Zeichnen",
+      "note": "Notiz",
+      "notePlaceholder": "Annotationstext…",
+      "saveNote": "Notiz speichern",
+      "mm": "{mm} mm",
+      "noSpacing": "kein Pixelabstand — mm nicht verfügbar",
+      "kind_ruler": "Lineal",
+      "kind_freehand": "Zeichnung",
+      "kind_note": "Notiz",
+      "loadFailed": "Annotationen konnten nicht geladen werden.",
+      "actionFailed": "Aktion fehlgeschlagen. Bitte erneut versuchen.",
+      "aidNote": "Overlays sind nur Visualisierungshilfen — niemals eine Diagnose."
+    }
+  }
+}

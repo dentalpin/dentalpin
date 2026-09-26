@@ -51,6 +51,12 @@ dependencies = [
     "anthropic>=0.40",
     # telephony module: E.164 normalization of caller numbers (issue #64).
     "phonenumbers>=8.13",
+    # imaging_viewer module: DICOM tag extraction for the study index,
+    # plus numpy for PNG rendering (windowing). The service degrades
+    # gracefully without them (empty tags; render answers 422), but the
+    # module declares them so installs get full functionality.
+    "pydicom>=3.0",
+    "numpy>=1.26",
     # Error tracking: Sentry SDK (also speaks to self-hosted GlitchTip).
     # Only activated when SENTRY_DSN is set; see setup_error_tracking.
     "sentry-sdk>=2.0.0",
@@ -123,6 +129,7 @@ patient_segments = "app.modules.patient_segments:PatientSegmentsModule"
 leads = "app.modules.leads:LeadsModule"
 staff_attendance = "app.modules.staff_attendance:StaffAttendanceModule"
 treasury = "app.modules.treasury:TreasuryModule"
+imaging_viewer = "app.modules.imaging_viewer:ImagingViewerModule"
 
 [tool.setuptools.packages.find]
 where = ["."]

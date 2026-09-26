@@ -765,3 +765,15 @@ async def on_prescription_cancelled(data: dict) -> None:
         source_id_key="source_id",
         title="Receta cancelada",
     )
+
+
+async def on_imaging_study_indexed(data: dict) -> None:
+    data = {**data, "source_id": data.get("study_id")}
+    await _record(
+        event_type=EventType.IMAGING_STUDY_INDEXED,
+        event_category="treatment",
+        source_table="imaging_studies",
+        data=data,
+        source_id_key="source_id",
+        title="Estudio de imagen",
+    )

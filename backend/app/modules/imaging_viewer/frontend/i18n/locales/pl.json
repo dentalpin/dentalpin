@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "imagingViewer": "Obrazowanie"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "Obrazowanie DICOM",
+      "empty": "Brak dostępnych badań tego pacjenta.",
+      "noPatient": "Nie wybrano pacjenta",
+      "noPatientHint": "Wybierz pacjenta powyżej lub otwórz tę stronę z ?patient_id=..., np. z karty pacjenta.",
+      "pickPatient": "Wybierz pacjenta",
+      "searchPatients": "Szukaj pacjentów",
+      "unknownModality": "Nieznana modalność",
+      "noStudyDate": "Brak daty badania"
+    },
+    "viewer": {
+      "title": "Przeglądarka DICOM",
+      "unavailable": "Podgląd niedostępny",
+      "fallbackHint": "Nie można wyświetlić badania. Spróbuj przesłać plik ponownie.",
+      "visualizationNote": "Tylko pomoc wizualna - nigdy diagnoza."
+    },
+    "rvg": {
+      "title": "Kolejka importu RVG ({total} oczekujących)",
+      "empty": "Brak oczekujących plików RVG. Nowe pliki z sensora pojawią się tutaj po każdym skanowaniu.",
+      "scanNow": "Skanuj teraz",
+      "approveSuggestion": "Zatwierdź sugestię",
+      "approveCurrentPatient": "Przypisz do bieżącego pacjenta",
+      "reject": "Odrzuć",
+      "suggested": "Sugerowany pacjent (wynik {score})",
+      "ambiguous": "Niejednoznaczne dopasowanie - wybierz pacjenta ręcznie",
+      "noSuggestion": "Brak dopasowania - otwórz z ?patient_id=, aby przypisać",
+      "loadFailed": "Nie można wczytać kolejki RVG.",
+      "scanFailed": "Skanowanie nie powiodło się. Czy folder obserwowany jest skonfigurowany?",
+      "actionFailed": "Akcja nie powiodła się. Wiersz mógł już zostać rozstrzygnięty."
+    },
+    "annotations": {
+      "title": "Adnotacje",
+      "ruler": "Linijka",
+      "freehand": "Rysuj",
+      "note": "Notatka",
+      "notePlaceholder": "Tekst adnotacji…",
+      "saveNote": "Zapisz notatkę",
+      "mm": "{mm} mm",
+      "noSpacing": "brak informacji o odstępie pikseli — mm niedostępne",
+      "kind_ruler": "Linijka",
+      "kind_freehand": "Rysunek",
+      "kind_note": "Notatka",
+      "loadFailed": "Nie można wczytać adnotacji.",
+      "actionFailed": "Akcja nie powiodła się. Spróbuj ponownie.",
+      "aidNote": "Nakładki służą wyłącznie jako pomoc wizualna — nigdy jako diagnoza."
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "imagingViewer": "Imagen"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "Imagen DICOM",
+      "empty": "Aún no hay estudios visibles para este paciente.",
+      "noPatient": "Ningún paciente seleccionado",
+      "noPatientHint": "Selecciona un paciente arriba, o abre esta página con ?patient_id=..., p. ej. desde la ficha del paciente.",
+      "pickPatient": "Seleccionar paciente",
+      "searchPatients": "Buscar pacientes",
+      "unknownModality": "Modalidad desconocida",
+      "noStudyDate": "Sin fecha de estudio"
+    },
+    "viewer": {
+      "title": "Visor DICOM",
+      "unavailable": "Vista previa no disponible",
+      "fallbackHint": "No se pudo mostrar el estudio. Prueba a subir el archivo de nuevo.",
+      "visualizationNote": "Solo ayuda visual — nunca un diagnóstico."
+    },
+    "rvg": {
+      "title": "Cola de importación RVG ({total} pendientes)",
+      "empty": "No hay archivos RVG pendientes. Los nuevos archivos del sensor aparecen aquí tras cada escaneo.",
+      "scanNow": "Escanear ahora",
+      "approveSuggestion": "Aprobar sugerencia",
+      "approveCurrentPatient": "Asignar al paciente actual",
+      "reject": "Rechazar",
+      "suggested": "Paciente sugerido (puntuación {score})",
+      "ambiguous": "Coincidencia ambigua — elige el paciente explícitamente",
+      "noSuggestion": "Sin coincidencia — abre con ?patient_id= para asignar",
+      "loadFailed": "No se pudo cargar la cola RVG.",
+      "scanFailed": "Falló el escaneo. ¿Está configurada la carpeta de vigilancia?",
+      "actionFailed": "Falló la acción. La fila puede estar ya decidida."
+    },
+    "annotations": {
+      "title": "Anotaciones",
+      "ruler": "Regla",
+      "freehand": "Dibujar",
+      "note": "Nota",
+      "notePlaceholder": "Texto de la anotación…",
+      "saveNote": "Guardar nota",
+      "mm": "{mm} mm",
+      "noSpacing": "sin espaciado de píxel — mm no disponible",
+      "kind_ruler": "Regla",
+      "kind_freehand": "Dibujo",
+      "kind_note": "Nota",
+      "loadFailed": "No se pudieron cargar las anotaciones.",
+      "actionFailed": "Falló la acción. Inténtalo de nuevo.",
+      "aidNote": "Las anotaciones son solo ayuda visual — nunca un diagnóstico."
+    }
+  }
+}

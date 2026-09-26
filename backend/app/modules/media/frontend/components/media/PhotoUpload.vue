@@ -203,13 +203,13 @@ async function submit() {
           {{ t('photoGallery.dropHere', 'Arrastra una foto o haz clic') }}
         </p>
         <p class="text-xs text-muted mt-1">
-          JPG · PNG · HEIC · WebP — {{ t('common.maxFileSize', 'hasta 10 MB') }}
+          JPG · PNG · HEIC · WebP · DICOM — {{ t('common.maxFileSize', 'hasta 10 MB') }}
         </p>
       </div>
       <input
         ref="fileInputRef"
         type="file"
-        accept="image/*"
+        accept="image/*,.dcm,application/dicom"
         capture="environment"
         class="absolute inset-0 cursor-pointer opacity-0"
         @change="onSelect"
@@ -255,7 +255,7 @@ async function submit() {
       <input
         ref="fileInputRef"
         type="file"
-        accept="image/*"
+        accept="image/*,.dcm,application/dicom"
         class="hidden"
         @change="onSelect"
       >

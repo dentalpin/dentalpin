@@ -46,6 +46,7 @@ ADRs) for the full story.
 | Bitewing | Bitewing / Aleta de mordida | Inter-proximal X-ray showing crowns + alveolar crests. |
 | Cephalometric | Cefalométrica | Lateral or postero-anterior skull X-ray (`cephalometric_lateral` / `cephalometric_pa`). |
 | CBCT | CBCT / TC de haz cónico | Cone-beam computed tomography. |
+| DICOM | DICOM | Digital Imaging and Communications in Medicine — the standard file/protocol format for radiology studies. |
 | Before / After | Antes / Después | Paired clinical photos linked via `paired_document_id`. |
 | Attachment | Adjunto | A `MediaAttachment` row linking a Document to an arbitrary owner (`patient`, `treatment`, `plan`, `plan_item`, `appointment_treatment`, `clinical_note`). |
 | Owner registry | Registro de dueños | The `media.attachment_registry` global. Each consumer module registers its own `owner_type` strings + a resolver. See ADR 0007. |

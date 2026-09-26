@@ -117,4 +117,6 @@ class PatientTimelineModule(BaseModule):
             # Prescriptions (prescriptions module — payload-only, no import).
             EventType.PRESCRIPTION_ISSUED: events.on_prescription_issued,
             EventType.PRESCRIPTION_CANCELLED: events.on_prescription_cancelled,
+            # Imaging (imaging_viewer module — payload-only, no import).
+            EventType.IMAGING_STUDY_INDEXED: events.on_imaging_study_indexed,
         }

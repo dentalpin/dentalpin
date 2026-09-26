@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "imagingViewer": "التصوير"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "تصوير DICOM",
+      "empty": "لا توجد دراسات قابلة للعرض لهذا المريض بعد.",
+      "noPatient": "لم يتم اختيار مريض",
+      "noPatientHint": "اختر مريضًا أعلاه، أو افتح هذه الصفحة مع ?patient_id=...، مثلاً من ملف المريض.",
+      "pickPatient": "اختر مريضًا",
+      "searchPatients": "ابحث عن المرضى",
+      "unknownModality": "النمط غير معروف",
+      "noStudyDate": "لا يوجد تاريخ للدراسة"
+    },
+    "viewer": {
+      "title": "عارض DICOM",
+      "unavailable": "المعاينة غير متوفرة",
+      "fallbackHint": "تعذّر عرض الدراسة. حاول رفع الملف مجددًا.",
+      "visualizationNote": "مساعدة بصرية فقط - وليست تشخيصاً أبداً."
+    },
+    "rvg": {
+      "title": "قائمة استيراد RVG ({total} قيد الانتظار)",
+      "empty": "لا توجد ملفات RVG قيد الانتظار. تظهر ملفات الحساس الجديدة هنا بعد كل مسح.",
+      "scanNow": "بدء المسح الآن",
+      "approveSuggestion": "اعتماد الاقتراح",
+      "approveCurrentPatient": "إسناد إلى المريض الحالي",
+      "reject": "رفض",
+      "suggested": "المريض المقترح (الدرجة {score})",
+      "ambiguous": "تطابق غامض - حدد المريض صراحة",
+      "noSuggestion": "لا يوجد تطابق - افتح مع ?patient_id= للإسناد",
+      "loadFailed": "تعذر تحميل قائمة RVG.",
+      "scanFailed": "فشل المسح. هل مجلد المراقبة مهيأ؟",
+      "actionFailed": "فشل الإجراء. ربما تم حسم الصف مسبقاً."
+    },
+    "annotations": {
+      "title": "الشروحات",
+      "ruler": "مسطرة",
+      "freehand": "ارسم",
+      "note": "ملاحظة",
+      "notePlaceholder": "نص الشرح…",
+      "saveNote": "حفظ الملاحظة",
+      "mm": "{mm} مم",
+      "noSpacing": "لا يوجد تباعد البكسل — مم غير متوفر",
+      "kind_ruler": "مسطرة",
+      "kind_freehand": "رسم",
+      "kind_note": "ملاحظة",
+      "loadFailed": "تعذر تحميل الشروحات.",
+      "actionFailed": "فشل الإجراء. يرجى إعادة المحاولة.",
+      "aidNote": "التراكبات مساعدات بصرية فقط — وليست تشخيصاً أبداً."
+    }
+  }
+}

@@ -164,6 +164,10 @@ class EventType:
     # timeline can render the comparison inline.
     PAIR_CREATED = "media.pair_created"
     PAIR_REMOVED = "media.pair_removed"
+    # A media document was indexed as a viewable DICOM study. Payload:
+    # (study_id, clinic_id, patient_id, document_id, study_uid).
+    # Consumed by patient_timeline for audit entries.
+    IMAGING_STUDY_INDEXED = "imaging.study_indexed"
 
     # Clinical prescriptions (issue #269). Payload: (prescription_id,
     # clinic_id, patient_id). Consumed by patient_timeline.

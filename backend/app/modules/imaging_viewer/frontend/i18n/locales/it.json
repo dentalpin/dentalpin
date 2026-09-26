@@ -1,0 +1,53 @@
+{
+  "nav": {
+    "imagingViewer": "Immagini"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "Immagini DICOM",
+      "empty": "Nessuno studio visualizzabile per questo paziente.",
+      "noPatient": "Nessun paziente selezionato",
+      "noPatientHint": "Seleziona un paziente qui sopra, oppure apri questa pagina con ?patient_id=..., ad es. dalla scheda del paziente.",
+      "pickPatient": "Seleziona paziente",
+      "searchPatients": "Cerca pazienti",
+      "unknownModality": "Modalità sconosciuta",
+      "noStudyDate": "Nessuna data dello studio"
+    },
+    "viewer": {
+      "title": "Visualizzatore DICOM",
+      "unavailable": "Anteprima non disponibile",
+      "fallbackHint": "Impossibile mostrare lo studio. Prova a caricare di nuovo il file.",
+      "visualizationNote": "Solo ausilio visivo - mai una diagnosi."
+    },
+    "rvg": {
+      "title": "Coda di importazione RVG ({total} in attesa)",
+      "empty": "Nessun file RVG in attesa. I nuovi file del sensore appaiono qui dopo ogni scansione.",
+      "scanNow": "Scansiona ora",
+      "approveSuggestion": "Approva suggerimento",
+      "approveCurrentPatient": "Assegna al paziente corrente",
+      "reject": "Rifiuta",
+      "suggested": "Paziente suggerito (punteggio {score})",
+      "ambiguous": "Corrispondenza ambigua - seleziona il paziente esplicitamente",
+      "noSuggestion": "Nessuna corrispondenza - apri con ?patient_id= per assegnare",
+      "loadFailed": "Impossibile caricare la coda RVG.",
+      "scanFailed": "Scansione non riuscita. La cartella monitorata è configurata?",
+      "actionFailed": "Azione non riuscita. La riga potrebbe essere già stata decisa."
+    },
+    "annotations": {
+      "title": "Annotazioni",
+      "ruler": "Righello",
+      "freehand": "Disegna",
+      "note": "Nota",
+      "notePlaceholder": "Testo dell'annotazione…",
+      "saveNote": "Salva nota",
+      "mm": "{mm} mm",
+      "noSpacing": "nessuna spaziatura pixel — mm non disponibili",
+      "kind_ruler": "Righello",
+      "kind_freehand": "Disegno",
+      "kind_note": "Nota",
+      "loadFailed": "Impossibile caricare le annotazioni.",
+      "actionFailed": "Azione non riuscita. Riprova.",
+      "aidNote": "Le sovrapposizioni sono solo ausili visivi — mai una diagnosi."
+    }
+  }
+}
