@@ -3,6 +3,7 @@ import { computed, onMounted, ref } from 'vue'
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { errorMessage } from '~~/app/utils/error'
 import { useLeadsSettings, type LeadSettings } from '../../composables/useLeadsSettings'
+import RotateKeyConfirmModal from './RotateKeyConfirmModal.vue'
 
 /**
  * Settings -> Integrations -> "Formulario web".
@@ -44,7 +45,8 @@ const settings = ref<LeadSettings | null>(null)
 const capInput = ref<number>(200)
 // Plaintext of a freshly rotated key: local state only, never re-fetched.
 const freshKey = ref<string | null>(null)
-
+const showRotateConfirm = ref(false)
+const rotateError = ref<string | null>(null)
 const CAP_MAX = 5000
 
 onMounted(async () => {
@@ -139,15 +141,18 @@ async function saveCap() {
 
 async function rotate() {
   rotating.value = true
+  rotateError.value = null
   try {
     const response = await rotateIntakeKey()
     freshKey.value = response.data.key
     await load()
+    showRotateConfirm.value = false
     toast.add({ title: t('leads.settings.rotate'), color: 'success' })
   } catch (e: unknown) {
+    rotateError.value = errorMessage(e, t('leads.errors.rotate'))
     toast.add({
       title: t('common.error'),
-      description: errorMessage(e, t('leads.errors.rotate')),
+      description: rotateError.value,
       color: 'error'
     })
   } finally {
@@ -342,8 +347,7 @@ function lastUsedLabel(iso: string | null): string {
               class="mt-4"
               variant="outline"
               icon="i-lucide-key-round"
-              :loading="rotating"
-              @click="rotate"
+              @click="showRotateConfirm = true"
             >
               {{ t('leads.settings.rotate') }}
             </UButton>
@@ -352,6 +356,13 @@ function lastUsedLabel(iso: string | null): string {
             </p>
           </template>
         </UCard>
+
+        <RotateKeyConfirmModal
+          v-model:open="showRotateConfirm"
+          :loading="rotating"
+          :error="rotateError"
+          @confirm="rotate"
+        />
 
         <!-- The freshly rotated key: shown once, kept only in local state. -->
         <UCard v-if="freshKey">
@@ -422,7 +433,8 @@ function lastUsedLabel(iso: string | null): string {
             <pre
               class="text-caption bg-surface-muted rounded-token-md p-3 overflow-x-auto whitespace-pre"
               dir="ltr"
-            >{{ curlExample }}</pre>
+            >{{
+            curlExample }}</pre>
           </div>
 
           <UAlert

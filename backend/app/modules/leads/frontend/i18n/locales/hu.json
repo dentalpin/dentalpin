@@ -91,6 +91,10 @@
       "never": "Soha",
       "rotate": "Kulcs létrehozása / cseréje",
       "rotateWarning": "A kulcs cseréje azonnal leállítja a kiszivárgott kulcsot. Ne felejtse el beilleszteni az új kulcsot a weboldalára — addig az űrlap nem fog működni.",
+      "confirmRotate": {
+        "title": "Rotálja az intake kulcsot?",
+        "message": "A jelenlegi kulcs azonnal leáll. Minden weboldal, amely még használja, meghiúsul, amíg be nem illeszti az új kulcsot."
+      },
       "rotateCopyOnce": "Másolja ki most ezt a kulcsot: csak egyszer jelenik meg.",
       "copied": "Másolva",
       "activate": "Beküldés engedélyezése",

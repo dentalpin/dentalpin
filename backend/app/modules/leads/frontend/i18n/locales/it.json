@@ -91,6 +91,10 @@
       "never": "Mai",
       "rotate": "Genera / rinnova chiave",
       "rotateWarning": "Rinnovare la chiave disattiva subito una chiave compromessa. Ricorda di incollare la nuova chiave nel tuo sito — il modulo non funziona finché non lo fai.",
+      "confirmRotate": {
+        "title": "Ruotare la chiave di acquisizione?",
+        "message": "La chiave attuale smette di funzionare immediatamente. Qualsiasi sito web che la utilizzi ancora fallirà finché non incolli la nuova chiave."
+      },
       "rotateCopyOnce": "Copia questa chiave adesso: viene mostrata una sola volta.",
       "copied": "Copiato",
       "activate": "Attiva ricezione",

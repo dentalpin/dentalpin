@@ -91,6 +91,10 @@
       "never": "Nunca",
       "rotate": "Gerar / renovar chave",
       "rotateWarning": "Renovar a chave anula de imediato uma chave comprometida. Não se esqueça de colar a nova chave no seu site — o formulário falha até o fazer.",
+      "confirmRotate": {
+        "title": "Rotacionar a chave de captação?",
+        "message": "A chave atual para de funcionar imediatamente. Qualquer site que ainda a use falhará até que você cole a nova chave."
+      },
       "rotateCopyOnce": "Copie esta chave agora: só é apresentada uma vez.",
       "copied": "Copiado",
       "activate": "Ativar receção de pedidos",

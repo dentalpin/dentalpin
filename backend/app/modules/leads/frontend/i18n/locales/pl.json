@@ -91,6 +91,10 @@
       "never": "Nigdy",
       "rotate": "Wygeneruj / zmień klucz",
       "rotateWarning": "Zmiana klucza natychmiast blokuje stary, ujawniony klucz. Pamiętaj, aby wkleić nowy klucz na swojej stronie — do tego czasu formularz nie będzie działać.",
+      "confirmRotate": {
+        "title": "Zrotować klucz pozyskiwania?",
+        "message": "Obecny klucz przestaje działać natychmiast. Każda strona internetowa, która go jeszcze używa, będzie działać nieprawidłowo, dopóki nie wkleisz nowego klucza."
+      },
       "rotateCopyOnce": "Skopiuj ten klucz teraz: pokazujemy go tylko raz.",
       "copied": "Skopiowano",
       "activate": "Włącz przyjmowanie zgłoszeń",
