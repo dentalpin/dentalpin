@@ -10,7 +10,8 @@
       "noPatientHint": "Válasszon beteget fent, vagy nyissa meg ezt az oldalt a ?patient_id=... paraméterrel, pl. a betegkartotékból.",
       "pickPatient": "Beteg kiválasztása",
       "searchPatients": "Betegek keresése",
-      "unknownModality": "Ismeretlen modalitás"
+      "unknownModality": "Ismeretlen modalitás",
+      "noStudyDate": "Nincs vizsgálati dátum"
     },
     "viewer": {
       "title": "DICOM megjelenítő",

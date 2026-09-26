@@ -248,6 +248,11 @@ def _dicom_bytes(
     study_date: str | None = None,
     window: tuple[int, int] | None = None,
     mono1: bool = False,
+    rescale: tuple[float, float] | None = None,
+    modality_lut: tuple[int, float] | None = None,
+    frames: int | None = None,
+    photometric: str | None = None,
+    samples: int = 1,
 ) -> bytes:
     """Minimal valid DICOM (Explicit VR Little Endian, uncompressed)."""
     pydicom = pytest.importorskip("pydicom")
@@ -255,7 +260,8 @@ def _dicom_bytes(
     from pydicom.dataset import Dataset, FileDataset
     from pydicom.uid import ExplicitVRLittleEndian, generate_uid
 
-    arr = (np.arange(rows * cols, dtype=np.uint16).reshape(rows, cols) % 4096).astype(np.uint16)
+    shape = (frames, rows, cols) if frames else (rows, cols)
+    arr = (np.arange(int(np.prod(shape)), dtype=np.uint16).reshape(shape) % 4096).astype(np.uint16)
     file_meta = Dataset()
     file_meta.MediaStorageSOPClassUID = generate_uid()
     file_meta.MediaStorageSOPInstanceUID = generate_uid()
@@ -273,27 +279,51 @@ def _dicom_bytes(
     ds.BitsStored = 12
     ds.HighBit = 11
     ds.PixelRepresentation = 0
-    ds.SamplesPerPixel = 1
-    ds.PhotometricInterpretation = "MONOCHROME1" if mono1 else "MONOCHROME2"
+    ds.SamplesPerPixel = samples
+    ds.PhotometricInterpretation = photometric or ("MONOCHROME1" if mono1 else "MONOCHROME2")
+    if frames:
+        ds.NumberOfFrames = frames
     if window is not None:
         ds.WindowCenter, ds.WindowWidth = window
+    if rescale is not None:
+        ds.RescaleSlope, ds.RescaleIntercept = rescale
+    if modality_lut is not None:
+        length, first_value = modality_lut
+        item = Dataset()
+        # 16-bit entries packed as bytes: pydicom writes the payload with
+        # the VR it chose (OW for bytes) and reads it back with the same
+        # width, so the descriptor and the packing have to agree.
+        item.LUTDescriptor = [length, 0, 16]
+        item.LUTData = np.arange(first_value, first_value + length, dtype=np.uint16).tobytes()
+        item.RescaleIntercept = 0
+        item.RescaleSlope = 1
+        ds.ModalityLUTSequence = [item]
     ds.PixelData = arr.tobytes()
     buf = io.BytesIO()
     pydicom.dcmwrite(buf, ds)
     return buf.getvalue()
 
 
-async def _renderable_study(db_session, test_clinic, test_patient, fake_storage, **kwargs):
+async def _renderable_study(db_session, clinic_id, patient_id, fake_storage, **kwargs):
+    """Index a synthetic study and render it.
+
+    Takes PLAIN clinic/patient ids, not ORM rows: render_study_png ends its
+    transaction before the storage read (the point of that change), which
+    expires everything the shared test session has loaded, so a later
+    ``test_clinic.id`` would try to refresh outside the greenlet
+    (MissingGreenlet). The conftest deliberately shares one session across a
+    test, so tests capture ids first.
+    """
     from app.modules.imaging_viewer.service import ImagingStudyService
 
     storage = fake_storage
-    path = f"{test_clinic.id}/{test_patient.id}/2026-09/{uuid4()}.dcm"
+    path = f"{clinic_id}/{patient_id}/2026-09/{uuid4()}.dcm"
     raw = _dicom_bytes(**kwargs)
     storage.files[path] = raw
     user_id = (await db_session.execute(select(User))).scalars().first().id
     doc2 = Document(
-        clinic_id=test_clinic.id,
-        patient_id=test_patient.id,
+        clinic_id=clinic_id,
+        patient_id=patient_id,
         document_type="other",
         title="DX",
         original_filename="dx.dcm",
@@ -305,10 +335,12 @@ async def _renderable_study(db_session, test_clinic, test_patient, fake_storage,
     db_session.add(doc2)
     await db_session.flush()
     study, _ = await ImagingStudyService.index_study(
-        db_session, test_clinic.id, test_patient.id, doc2.id, raw=raw
+        db_session, clinic_id, patient_id, doc2.id, raw=raw
     )
-    png = await ImagingStudyService.render_study_png(db_session, test_clinic.id, study.id)
-    return study, png
+    # Return the plain id, never the ORM row (same expiry reason).
+    study_id = study.id
+    png = await ImagingStudyService.render_study_png(db_session, clinic_id, study_id)
+    return study_id, png
 
 
 @pytest.mark.asyncio
@@ -319,7 +351,8 @@ async def test_render_png_returns_valid_image(
     fake_storage: _FakeStorage,
 ) -> None:
     pytest.importorskip("PIL")
-    _study, png = await _renderable_study(db_session, test_clinic, test_patient, fake_storage)
+    clinic_id, patient_id = test_clinic.id, test_patient.id
+    _study, png = await _renderable_study(db_session, clinic_id, patient_id, fake_storage)
     assert png[:8] == b"\x89PNG\r\n\x1a\n"
     from PIL import Image
 
@@ -336,13 +369,14 @@ async def test_render_png_windowing_and_mono1(
     fake_storage: _FakeStorage,
 ) -> None:
     pytest.importorskip("PIL")
-    _study, plain = await _renderable_study(db_session, test_clinic, test_patient, fake_storage)
+    clinic_id, patient_id = test_clinic.id, test_patient.id
+    _study, plain = await _renderable_study(db_session, clinic_id, patient_id, fake_storage)
     _study2, windowed = await _renderable_study(
-        db_session, test_clinic, test_patient, fake_storage, window=(2000, 400)
+        db_session, clinic_id, patient_id, fake_storage, window=(2000, 400)
     )
     assert plain != windowed
     _study3, inverted = await _renderable_study(
-        db_session, test_clinic, test_patient, fake_storage, mono1=True
+        db_session, clinic_id, patient_id, fake_storage, mono1=True
     )
     assert inverted != plain
 
@@ -363,10 +397,15 @@ async def test_render_png_rejects_garbage_and_foreign_clinic(
     study, _ = await ImagingStudyService.index_study(
         db_session, test_clinic.id, test_patient.id, doc.id
     )
+    # Capture plain ids: render_study_png ends its transaction before the
+    # storage read, which expires loaded ORM objects, so a later attribute
+    # access would try to refresh outside the greenlet (MissingGreenlet).
+    study_id = study.id
+    clinic_id = test_clinic.id
     with pytest.raises(UnrenderableStudyError):
-        await ImagingStudyService.render_study_png(db_session, test_clinic.id, study.id)
+        await ImagingStudyService.render_study_png(db_session, clinic_id, study_id)
     with pytest.raises(LookupError):
-        await ImagingStudyService.render_study_png(db_session, uuid4(), study.id)
+        await ImagingStudyService.render_study_png(db_session, uuid4(), study_id)
 
 
 def test_render_rejects_oversized_pixel_grid_before_decoding() -> None:
@@ -408,6 +447,95 @@ def test_render_rejects_oversized_pixel_grid_before_decoding() -> None:
     assert 50_000 * 50_000 > MAX_RENDER_PIXELS
     with pytest.raises(UnrenderableStudyError, match="too large"):
         render_dicom_png(raw)
+
+
+def _png_luma(png: bytes) -> list[int]:
+    """Decode a rendered PNG back to per-pixel luminance, 0-255."""
+    import numpy as np
+    from PIL import Image
+
+    return list(np.asarray(Image.open(io.BytesIO(png)).convert("L")).flatten())
+
+
+def test_render_applies_rescale_slope_and_intercept() -> None:
+    """RescaleSlope/RescaleIntercept map stored values into the modality's
+    units and were ignored entirely before, so a CT-style slope shifted the
+    whole window and the render was clinically wrong. Proof: with a window
+    that saturates part of the image, doubling the slope must push MORE
+    pixels into the saturated end (the conversion happens before windowing)."""
+    from app.modules.imaging_viewer.service import render_dicom_png
+
+    plain = _png_luma(render_dicom_png(_dicom_bytes(rows=4, cols=4, window=(0, 8))))
+    shifted = _png_luma(
+        render_dicom_png(_dicom_bytes(rows=4, cols=4, window=(0, 8), rescale=(2.0, 0.0)))
+    )
+    assert shifted.count(255) > plain.count(255)
+
+
+def test_render_applies_a_modality_lut() -> None:
+    """A study carrying a Modality LUT Sequence is corrected through it
+    before windowing (order: modality LUT, then VOI LUT, then window)."""
+    from app.modules.imaging_viewer.service import render_dicom_png
+
+    plain = _dicom_bytes(rows=4, cols=4, window=(0, 8))
+    # A 4-entry LUT that doubles every stored value.
+    with_lut = _dicom_bytes(rows=4, cols=4, window=(0, 8), modality_lut=(4, 0))
+    assert _png_luma(render_dicom_png(plain)) != _png_luma(render_dicom_png(with_lut))
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "expected"),
+    [
+        ({"frames": 3}, "multi-frame"),
+        ({"samples": 3, "photometric": "RGB"}, "colour"),
+    ],
+)
+def test_render_refuses_unsupported_geometry_with_an_actionable_reason(
+    kwargs: dict, expected: str
+) -> None:
+    """Multi-frame and colour studies answer 422 with a reason and a
+    remedy, not the generic 'pixels do not render' the old path produced
+    when Pillow choked on a 3D array."""
+    from app.modules.imaging_viewer.service import UnrenderableStudyError, render_dicom_png
+
+    with pytest.raises(UnrenderableStudyError, match=expected):
+        render_dicom_png(_dicom_bytes(**kwargs))
+
+
+def test_render_refuses_encapsulated_transfer_syntax() -> None:
+    """A compressed transfer syntax (JPEG-Lossless and friends) needs a
+    decoder plugin that is deliberately not in the backend image; the 422
+    says so instead of surfacing a pydicom NotImplementedError."""
+    pydicom = pytest.importorskip("pydicom")
+    from pydicom.dataset import Dataset, FileDataset
+    from pydicom.encaps import encapsulate
+    from pydicom.uid import JPEGBaseline8Bit, generate_uid
+
+    from app.modules.imaging_viewer.service import UnrenderableStudyError, render_dicom_png
+
+    file_meta = Dataset()
+    file_meta.MediaStorageSOPClassUID = generate_uid()
+    file_meta.MediaStorageSOPInstanceUID = generate_uid()
+    file_meta.TransferSyntaxUID = JPEGBaseline8Bit
+    ds = FileDataset(None, {}, file_meta=file_meta, preamble=b"\0" * 128)
+    ds.SOPClassUID = file_meta.MediaStorageSOPClassUID
+    ds.SOPInstanceUID = file_meta.MediaStorageSOPInstanceUID
+    ds.Rows, ds.Columns = 4, 4
+    ds.BitsAllocated = 8
+    ds.BitsStored = 8
+    ds.HighBit = 7
+    ds.PixelRepresentation = 0
+    ds.SamplesPerPixel = 1
+    ds.PhotometricInterpretation = "MONOCHROME2"
+    # A compressed transfer syntax REQUIRES encapsulated pixel data, so the
+    # bytes are encapsulated (the payload is never decoded: the guard fires
+    # on the transfer syntax before any decode attempt).
+    ds.PixelData = encapsulate([b"\x00" * 16])
+    buf = io.BytesIO()
+    pydicom.dcmwrite(buf, ds)
+
+    with pytest.raises(UnrenderableStudyError, match="compressed transfer syntax"):
+        render_dicom_png(buf.getvalue())
 
 
 @pytest.mark.asyncio

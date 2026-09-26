@@ -72,8 +72,15 @@ async def fetch_document_bytes(document: Document) -> bytes:
     fake storage in exactly one place: the ``get_storage_backend`` global
     of THIS module (looked up at call time, monkeypatch-friendly).
     """
+    return await fetch_storage_bytes(document.storage_path)
+
+
+async def fetch_storage_bytes(storage_path: str) -> bytes:
+    """Read storage bytes by path, through the same seam as the document
+    variant. The render path resolves the path first and closes its
+    transaction before reading, so it cannot use the Document row."""
     storage = get_storage_backend()
-    return await storage.retrieve(document.storage_path)
+    return await storage.retrieve(storage_path)
 
 
 def _parse_study_date(value: str | None) -> datetime | None:
@@ -309,6 +316,24 @@ class ImagingStudyService:
         clinic: a study id from another clinic resolves to ``LookupError``.
         Returns ``(bytes, mime_type)``.
         """
+        storage_path, mime_type = await ImagingStudyService.get_frame_source(
+            db, clinic_id, study_id
+        )
+        return await fetch_storage_bytes(storage_path), mime_type
+
+    @staticmethod
+    async def get_frame_source(
+        db: AsyncSession, clinic_id: UUID, study_id: UUID
+    ) -> tuple[str, str]:
+        """Resolve where a study's bytes live, without reading them.
+
+        Split from :meth:`get_frame_bytes` so the caller can close its
+        database transaction before touching storage: a filesystem round
+        trip (or an object-store fetch) held open inside a request's
+        transaction pins a connection and holds a snapshot for the whole
+        read, which is the wrong place to wait on I/O we do not need the
+        database for. Returns ``(storage_path, mime_type)``.
+        """
         study = await ImagingStudyService.get_study(db, clinic_id, study_id)
         if study is None or study.status != "active":
             raise LookupError("Study not found")
@@ -323,8 +348,7 @@ class ImagingStudyService:
         ).scalar_one_or_none()
         if document is None:
             raise LookupError("Study not found")
-        storage = get_storage_backend()
-        return await storage.retrieve(document.storage_path), document.mime_type
+        return document.storage_path, document.mime_type
 
     @staticmethod
     async def render_study_png(db: AsyncSession, clinic_id: UUID, study_id: UUID) -> bytes:
@@ -334,21 +358,93 @@ class ImagingStudyService:
         Undecodable pixels or missing pixel libraries raise
         ``UnrenderableStudyError`` (the router maps it to 422).
         """
-        raw, _mime = await ImagingStudyService.get_frame_bytes(db, clinic_id, study_id)
+        storage_path, _mime = await ImagingStudyService.get_frame_source(db, clinic_id, study_id)
+        # Release the connection before the storage read and the CPU-bound
+        # render: the row is already loaded, and both the fetch and the
+        # decode are I/O and CPU we should not hold a transaction for.
+        await db.rollback()
+        raw = await fetch_storage_bytes(storage_path)
         return await asyncio.to_thread(render_dicom_png, raw)
+
+
+def _reject_unsupported_geometry(ds) -> None:
+    """Refuse pixel layouts the viewer cannot honestly draw (422).
+
+    Each refusal names the reason and the remedy, because a generic
+    "pixels do not render" leaves a clinician with nothing to act on:
+
+    - multi-frame: the first frame would silently misrepresent a study, so
+      the frame picker is the honest answer and it does not exist yet.
+    - colour (SamplesPerPixel > 1 / RGB): the canvas, the windowing maths
+      and the ruler are all single-channel; mapping RGB to luminance here
+      would be a guess about clinical intent.
+    - encapsulated pixel data: a compressed transfer syntax (JPEG-Lossless,
+      JPEG 2000, RLE) needs a decoder plugin that is deliberately not in
+      the backend image, so this is an operator-side fix.
+    """
+    frames = _positive_int(ds.get("NumberOfFrames", None))
+    if frames is not None and frames > 1:
+        raise UnrenderableStudyError(
+            f"multi-frame study ({frames} frames) is not renderable yet; "
+            "the viewer shows single-frame studies only"
+        )
+    samples = _positive_int(ds.get("SamplesPerPixel", None)) or 1
+    photometric = str(ds.get("PhotometricInterpretation", "")).upper()
+    if samples > 1 or photometric.startswith("RGB") or photometric == "PALETTE COLOR":
+        raise UnrenderableStudyError(
+            "colour study is not renderable: the DICOM viewer draws single-channel images only"
+        )
+    transfer_syntax = getattr(getattr(ds, "file_meta", None), "TransferSyntaxUID", None)
+    if transfer_syntax is not None and transfer_syntax.is_encapsulated:
+        raise UnrenderableStudyError(
+            f"compressed transfer syntax {transfer_syntax} needs a decoder "
+            "plugin that is not installed on the server; convert the study "
+            "to an uncompressed transfer syntax"
+        )
+
+
+def _apply_modality_lut(ds, arr):
+    """Modality LUT then VOI LUT when the study carries them.
+
+    Order is the DICOM one (PS3.3 C.11.1) and it is load-bearing: the
+    modality LUT maps stored values to modality-specific units and indexes
+    with them, so it must run on the INTEGER array, before the float
+    conversion, the rescale and the window. Skipping it (or running a VOI
+    LUT over raw stored values) is what produced plausible-looking but
+    clinically wrong greys, and ``RescaleSlope``/``RescaleIntercept`` were
+    ignored entirely before.
+    """
+    import numpy as np
+    from pydicom.pixels import apply_modality_lut, apply_voi_lut
+
+    pixels = arr
+    if "ModalityLUTSequence" in ds:
+        pixels = apply_modality_lut(pixels, ds)
+    pixels = np.asarray(pixels, dtype="float64")
+    slope = _float_or_none(ds.get("RescaleSlope", None))
+    intercept = _float_or_none(ds.get("RescaleIntercept", None))
+    if slope is not None or intercept is not None:
+        pixels = pixels * (slope if slope is not None else 1.0) + (
+            intercept if intercept is not None else 0.0
+        )
+    if "VOILUTSequence" in ds:
+        pixels = apply_voi_lut(pixels, ds)
+    return pixels
 
 
 def render_dicom_png(raw: bytes) -> bytes:
     """Render DICOM pixel data to grayscale PNG bytes.
 
-    Basic windowing: explicit WindowCenter/WindowWidth when present
-    (first value of multi-valued), else a min/max stretch. MONOCHROME1
-    is inverted so bones read bright. Raises ``UnrenderableStudyError``
-    when the pixel libraries are missing or the pixels don't decode —
-    callers map that to 422, never 500.
+    Pipeline: decode → modality LUT + VOI LUT when present (plus
+    RescaleSlope/Intercept, which are applied to the stored values first) →
+    window. The window is explicit WindowCenter/WindowWidth when present
+    (first value of multi-valued), else a min/max stretch of the corrected
+    values. MONOCHROME1 is inverted so bones read bright. Raises
+    ``UnrenderableStudyError`` when the pixel libraries are missing, the
+    geometry is unsupported, or the pixels do not decode — callers map that
+    to 422, never 500.
     """
     try:
-        import numpy as np
         import pydicom
         from PIL import Image
     except ImportError as exc:
@@ -363,13 +459,14 @@ def render_dicom_png(raw: bytes) -> bytes:
             raise UnrenderableStudyError(
                 f"image too large to render: {rows}x{columns} exceeds {MAX_RENDER_PIXELS} pixels"
             )
+        _reject_unsupported_geometry(ds)
         arr = ds.pixel_array
     except UnrenderableStudyError:
         raise
     except Exception as exc:
         raise UnrenderableStudyError(f"pixels do not decode: {exc}") from exc
     try:
-        pixels = np.asarray(arr, dtype="float64")
+        pixels = _apply_modality_lut(ds, arr)
         center = ds.get("WindowCenter", None)
         width = ds.get("WindowWidth", None)
         if isinstance(center, (list, tuple)):
@@ -1024,6 +1121,24 @@ def _positive_int(raw: object) -> int | None:
     except (TypeError, ValueError):
         return None
     return value if value > 0 else None
+
+
+def _float_or_none(raw: object) -> float | None:
+    """Parse a DICOM decimal-string tag, or None when absent/garbage.
+
+    DS values arrive as strings (or ``DSfloat``), and a multi-valued one
+    keeps only its first entry, matching how the window tags are read.
+    """
+    if raw is None:
+        return None
+    if isinstance(raw, (list, tuple)):
+        raw = raw[0] if len(raw) else None
+    if raw is None:
+        return None
+    try:
+        return float(str(raw).strip())
+    except (TypeError, ValueError):
+        return None
 
 
 def _move_watch_file(path: str, name: str, subdir: str) -> None:

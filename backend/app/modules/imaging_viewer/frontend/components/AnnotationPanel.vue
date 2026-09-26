@@ -200,7 +200,7 @@ watch(() => props.studyId, () => {
       </div>
       <svg
         ref="svgEl"
-        class="absolute inset-0 h-full w-full"
+        class="absolute inset-0 h-full w-full touch-none"
         viewBox="0 0 100 100"
         preserveAspectRatio="none"
         @pointerdown="onPointerDown"

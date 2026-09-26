@@ -10,7 +10,8 @@
       "noPatientHint": "Seleziona un paziente qui sopra, oppure apri questa pagina con ?patient_id=..., ad es. dalla scheda del paziente.",
       "pickPatient": "Seleziona paziente",
       "searchPatients": "Cerca pazienti",
-      "unknownModality": "Modalità sconosciuta"
+      "unknownModality": "Modalità sconosciuta",
+      "noStudyDate": "Nessuna data dello studio"
     },
     "viewer": {
       "title": "Visualizzatore DICOM",

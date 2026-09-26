@@ -10,7 +10,8 @@
       "noPatientHint": "Wählen Sie oben einen Patienten, oder öffnen Sie diese Seite mit ?patient_id=..., z. B. aus der Patientenakte.",
       "pickPatient": "Patient wählen",
       "searchPatients": "Patienten suchen",
-      "unknownModality": "Unbekannte Modalität"
+      "unknownModality": "Unbekannte Modalität",
+      "noStudyDate": "Kein Studienatum"
     },
     "viewer": {
       "title": "DICOM-Viewer",

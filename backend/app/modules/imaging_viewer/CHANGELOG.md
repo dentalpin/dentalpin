@@ -2,6 +2,28 @@
 
 ## Unreleased
 
+- fix: the render now applies the DICOM value pipeline before windowing:
+  Modality LUT, then `RescaleSlope`/`RescaleIntercept`, then a VOI LUT
+  (PS3.3 C.11.1 order). `RescaleSlope`/`RescaleIntercept` were ignored
+  entirely before, so a study carrying them was windowed in the wrong
+  units, and a Modality LUT Sequence was skipped. The modality LUT runs on
+  the integer array, before the float conversion, because it indexes with
+  the stored values.
+- fix: multi-frame, colour and compressed studies answer 422 with the
+  reason and the remedy ("multi-frame study (12 frames) is not renderable
+  yet", "colour study is not renderable", "compressed transfer syntax
+  ... needs a decoder plugin that is not installed on the server") instead
+  of the generic "pixels do not render" that Pillow's 3D-array failure
+  produced. No new codec dependency is added to the backend image for this.
+- fix: the study card shows the study date (with a "No study date"
+  fallback, 10 locales) instead of the raw `study_uid`; the uid stays
+  available as a tooltip, since it is a machine identifier.
+- fix: the annotation canvas sets `touch-action: none`, so drawing a
+  measurement with a finger no longer scrolls the page instead.
+- perf: the render resolves the document's storage path first and ends its
+  transaction before the storage read and the CPU-bound decode, so a slow
+  fetch no longer holds a pooled connection and a snapshot. The study and
+  document are still re-checked against the clinic.
 - fix: the viewer fetched the render through a relative `<img src>`, which
   404s whenever the API is on another origin (docker-compose, Coolify). The
   PNG now arrives as an object URL via `api.raw()`, the credentialed

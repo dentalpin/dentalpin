@@ -10,7 +10,8 @@
       "noPatientHint": "اختر مريضًا أعلاه، أو افتح هذه الصفحة مع ?patient_id=...، مثلاً من ملف المريض.",
       "pickPatient": "اختر مريضًا",
       "searchPatients": "ابحث عن المرضى",
-      "unknownModality": "النمط غير معروف"
+      "unknownModality": "النمط غير معروف",
+      "noStudyDate": "لا يوجد تاريخ للدراسة"
     },
     "viewer": {
       "title": "عارض DICOM",

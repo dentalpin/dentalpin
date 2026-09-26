@@ -204,8 +204,22 @@ onMounted(loadQueue)
           <template #header>
             <span class="font-medium">{{ modalityLabel(s) }}</span>
           </template>
-          <p class="text-sm text-gray-500">
-            {{ s.study_uid }}
+          <!-- The study date is what a clinician recognises; the opaque
+               study_uid is a machine identifier and stays a tooltip, so
+               the card reads as a study rather than a hash. -->
+          <UTooltip
+            v-if="s.study_uid"
+            :text="s.study_uid"
+          >
+            <p class="text-sm text-gray-500">
+              {{ s.study_date ?? t('imagingViewer.list.noStudyDate') }}
+            </p>
+          </UTooltip>
+          <p
+            v-else
+            class="text-sm text-gray-500"
+          >
+            {{ t('imagingViewer.list.noStudyDate') }}
           </p>
         </UCard>
       </div>

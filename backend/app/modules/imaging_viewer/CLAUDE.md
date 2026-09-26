@@ -110,6 +110,14 @@ through the declared dependency. No other cross-module coupling.
   Rows x Columns *before* decoding) and rendering is off the event loop
   (`asyncio.to_thread`). A crafted header without the bound is an OOM kill,
   not a 422.
+- **The render applies the DICOM value pipeline in order**: Modality LUT on
+  the integer array → float → `RescaleSlope`/`RescaleIntercept` → VOI LUT →
+  window. The modality LUT indexes with stored values, so it must run
+  before the float conversion; reordering it silently corrupts the greys.
+- **Unsupported geometry is refused by name** (multi-frame, colour,
+  encapsulated transfer syntax) with the remedy in the 422 body. Adding a
+  codec dependency to the backend image for compressed syntaxes is an
+  explicit product decision, not a fix.
 - **Ruler mm needs image dimensions**: normalized points are image fractions,
   so `dx = (x2-x1)*Columns`, `dy = (y2-y1)*Rows`, and `PixelSpacing` is
   `[row\column]`. Scaling the normalized distance by one spacing value is
