@@ -56,9 +56,10 @@ guessing:
 | `counter` | auto-submits on load | a human scanned it in the clinic, presence is proven |
 | `reminder` | renders "I'm here", POSTs on press | a scanner pre-fetch only loads an inert page |
 | `kiosk` | renders the identifier form, no transition | a clinic-scoped row, not an appointment |
-| `absent` | renders "I'm here", POSTs on press | legacy or incomplete tokens must fail safe, so missing `source` cannot auto-submit |
 
-The invariant is therefore **only a token explicitly carrying `source: counter` auto-submits**. A token with no `source` is treated as `reminder`, so the safe behaviour is the default rather than the permissive one.
+A missing or unrecognised `source` is treated as `reminder`. Legacy or incomplete tokens must fail safe, so missing `source` cannot auto-submit.
+
+The invariant is therefore one auditable branch: only explicit `source: counter` auto-submits.
 
 The token is the existing signed JWT. `agenda/checkin.py` already mints a
 `payload` carrying `exp`, `appointment_id`, `clinic_id` and
