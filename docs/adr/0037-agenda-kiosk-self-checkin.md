@@ -56,9 +56,9 @@ guessing:
 | `counter` | auto-submits on load | a human scanned it in the clinic, presence is proven |
 | `reminder` | renders "I'm here", POSTs on press | a scanner pre-fetch only loads an inert page |
 | `kiosk` | renders the identifier form, no transition | a clinic-scoped row, not an appointment |
+| `absent` | renders "I'm here", POSTs on press | legacy or incomplete tokens must fail safe, so missing `source` cannot auto-submit |
 
-The invariant is therefore **only `counter` auto-submits**, auditable by
-reading one branch rather than three special cases.
+The invariant is therefore **only a token explicitly carrying `source: counter` auto-submits**. A token with no `source` is treated as `reminder`, so the safe behaviour is the default rather than the permissive one.
 
 The token is the existing signed JWT. `agenda/checkin.py` already mints a
 `payload` carrying `exp`, `appointment_id`, `clinic_id` and
@@ -88,9 +88,11 @@ new configuration, and no change to `manifest.depends`.
   a pre-start window, so the worst case is someone checking in from the
   car park, which reception already handles by calling names.
 - One extra claim in the token, so the reminder and counter tokens become
-  distinguishable. That is the point, but it does mean a token minted
-  before this ships has no `source` and must keep defaulting to today's
-  behaviour.
+  distinguishable. A token minted before this ships has no `source` and is
+  therefore treated as `reminder`. The only tokens in flight are 15-minute
+  counter QRs, so the worst case is one manual tap; a future mint path or
+  refactor that drops the claim degrades to manual confirmation rather than
+  auto-submit.
 - Nothing here proves presence. That is option C, deliberately deferred; it
   bolts onto B without changing the token model.
 
