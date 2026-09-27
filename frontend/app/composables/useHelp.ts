@@ -41,12 +41,7 @@ function collapseDynamicSegments(path: string, matchedRoute: string | undefined)
 }
 
 function routeToSlug(route: string): string {
-  // Keep the path only. `route.path` never carries a query, but a screen's
-  // `route:` in the user manual can (e.g. the periodontogram deep link), and
-  // the portal's `routeToSlug` drops it there — `?` is an illegal filename
-  // character and the fragment filename must match on both sides.
-  const [pathOnly = ''] = route.split(/[?#]/)
-  const trimmed = pathOnly.replace(/^\/+|\/+$/g, '')
+  const trimmed = route.replace(/^\/+|\/+$/g, '')
   if (!trimmed) return 'index'
   // Strip `[` `]` to match the portal's `routeToSlug` (filenames with
   // brackets clash with VitePress' dynamic-route convention).
