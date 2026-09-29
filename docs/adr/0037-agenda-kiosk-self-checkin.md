@@ -1,6 +1,6 @@
 # 0037 — Agenda kiosk self check-in: identification and the confirm-before-submit rule
 
-- **Status:** proposed
+- **Status:** accepted
 - **Date:** 2026-09-26
 - **Deciders:** maintainers (@martinezsalmeron)
 - **Tags:** agenda, security, tokens, kiosk
@@ -55,11 +55,19 @@ guessing:
 |---|---|---|
 | `counter` | auto-submits on load | a human scanned it in the clinic, presence is proven |
 | `reminder` | renders "I'm here", POSTs on press | a scanner pre-fetch only loads an inert page |
-| `kiosk` | renders the identifier form, no transition | a clinic-scoped row, not an appointment |
+| `kiosk` | renders the identifier form, no transition | a clinic-scoped row, not an appointment (phase 2, enrolled tablets only) |
 
 A missing or unrecognised `source` is treated as `reminder`. Legacy or incomplete tokens must fail safe, so missing `source` cannot auto-submit.
 
 The invariant is therefore one auditable branch: only explicit `source: counter` auto-submits.
+
+Phase 1 ships `counter` and `reminder` only. A `reminder` token is valid
+for the appointment's clinic-local day, and every source is accepted only
+inside a window around `start_time` and only from `scheduled`/`confirmed`.
+The `kiosk` row is phase 2: a fixed QR printed on the counter can be
+photographed and opened from anywhere, so an identifier form behind it is
+option A on the open web, which this ADR rejects. It ships only together
+with enrolled tablets.
 
 The token is the existing signed JWT. `agenda/checkin.py` already mints a
 `payload` carrying `exp`, `appointment_id`, `clinic_id` and
@@ -80,8 +88,6 @@ new configuration, and no change to `manifest.depends`.
 - The `start_time` window lands as a side effect and closes the missing
   date guard noted on #464. With a tap step, "too early, your appointment is
   at 16:30" becomes a message on the page instead of a silent 422.
-- Chords and the cheatsheet are unaffected; this only governs the public
-  surface.
 
 ### Bad
 
@@ -99,8 +105,10 @@ new configuration, and no change to `manifest.depends`.
 
 ### Neutral
 
-- Reminders reach patients through the event bus or a slot, never by
-  importing `notifications`, so the module boundary is unchanged.
+- `notifications` owns the appointment reminder cron and already lists
+  `agenda` in `manifest.depends`, so it mints the reminder link by calling
+  `agenda.checkin` directly. `agenda` never imports `notifications`, so the
+  module boundary is unchanged.
 - Check-ins continue to move through the canonical status machine with
   `changed_by=NULL` and `note="kiosk-checkin"`, distinct from `qr-checkin`,
   so kanban, timeline and events behave as they do today.
@@ -114,9 +122,9 @@ the kiosk, and no geofencing.
 
 ## Open follow-ups
 
-- The clinic-scoped kiosk row is revocable by an admin without a redeploy,
-  which means a database row rather than a bare JWT, matching the fixed-QR
-  pattern. Its issuance and revocation endpoints are part of phase 1.
+- The clinic-scoped kiosk row (phase 2) is revocable by an admin without a
+  redeploy, which means a database row rather than a bare JWT. Its issuance
+  and revocation endpoints ship with the enrolled-tablet work, not phase 1.
 - `docs/technical/country-readiness.md` and the module docs are updated by
   the implementation PR, not by this ADR.
 
@@ -127,8 +135,7 @@ the kiosk, and no geofencing.
   auto-submit on load that motivates the `source` claim)
 - `backend/app/modules/agenda/checkin.py` (`mint_checkin_token`,
   `verify_checkin_token`)
-- `backend/app/modules/billing/hooks.py` (the
-  `BillingComplianceHook` / `BillingHookRegistry` seam this module pattern
-  follows)
+- `backend/app/modules/notifications/tasks.py`
+  (`process_appointment_reminders`, where the reminder link is minted)
 - `backend/app/modules/agenda/service.py` (`public_checkin`, the
   `transition(..., note=...)` call that stays authoritative)
