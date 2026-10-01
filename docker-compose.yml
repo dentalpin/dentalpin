@@ -65,7 +65,10 @@ services:
       # .env (plus the same origin in ALLOWED_ORIGINS) to reach the app
       # from a phone or another machine.
       NUXT_PUBLIC_API_BASE_URL: ${API_BASE_URL:-http://localhost:8000}
-      NODE_OPTIONS: --max-old-space-size=4096
+      # Dev SSR needs more heap than the 4096 that sufficed when the app
+      # was smaller: vite-node dies tracelessly (IPC closed) past ~4GB
+      # with 50+ layers loaded. Matches Dockerfile.prod (6144).
+      NODE_OPTIONS: --max-old-space-size=6144
       # Set NUXT_DEVTOOLS=false for a stable local e2e run — devtools
       # full-page reloads abort Playwright navigation (#260).
       NUXT_DEVTOOLS: ${NUXT_DEVTOOLS:-true}
