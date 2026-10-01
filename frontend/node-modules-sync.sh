@@ -9,7 +9,7 @@ set -e
 STAMP=/app/node_modules/.package-lock.sha256
 CURRENT=$(sha256sum /app/package-lock.json | cut -d' ' -f1)
 if [ ! -f "$STAMP" ] || [ "$(cat "$STAMP")" != "$CURRENT" ]; then
-  echo "docker-entrypoint: lockfile moved, re-syncing node_modules..."
+  echo "node-modules-sync: lockfile moved, re-syncing node_modules..."
   npm ci --no-audit --no-fund
   echo "$CURRENT" > "$STAMP"
 fi
