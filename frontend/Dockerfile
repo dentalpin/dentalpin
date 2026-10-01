@@ -14,6 +14,13 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm install
 
+# Self-healing entrypoint (see file): the anonymous /app/node_modules
+# volume shadows this image's modules with whatever was seeded first —
+# re-sync on lockfile drift. Lives outside /app so the bind mount
+# (./frontend:/app) cannot shadow it.
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+ENTRYPOINT ["sh", "/usr/local/bin/docker-entrypoint.sh"]
+
 ENV HOST=0.0.0.0
 ENV PORT=3000
 
