@@ -33,7 +33,10 @@
       "loadFailed": "RVG-Warteschlange konnte nicht geladen werden.",
       "scanFailed": "Scan fehlgeschlagen. Ist der Überwachungsordner konfiguriert?",
       "scanSummary": "Scan abgeschlossen: {scanned} gescannt, {created} neu, {approved} automatisch freigegeben, {failed} fehlgeschlagen",
-      "actionFailed": "Aktion fehlgeschlagen. Die Zeile wurde möglicherweise bereits entschieden."
+      "actionFailed": "Aktion fehlgeschlagen. Die Zeile wurde möglicherweise bereits entschieden.",
+      "linksTitle": "Verknüpfte Sensor-Identitäten",
+      "linksEmpty": "Keine verknüpften Sensor-Identitäten.",
+      "unlink": "Verknüpfung lösen"
     },
     "annotations": {
       "title": "Annotationen",

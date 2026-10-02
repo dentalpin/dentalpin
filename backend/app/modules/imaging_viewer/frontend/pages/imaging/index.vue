@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useImagingViewer, useRvgImport, type ImagingStudy, type RvgImport } from '../../composables/useImagingViewer'
+import { useImagingViewer, useRvgImport, type ImagingStudy, type RvgImport, type RvgLink } from '../../composables/useImagingViewer'
 import type { ApiResponse, PaginatedResponse } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
 
@@ -10,7 +10,7 @@ const { can } = usePermissions()
 const route = useRoute()
 const router = useRouter()
 const { fetchStudies } = useImagingViewer()
-const { fetchImports, triggerScan, approveImport, rejectImport } = useRvgImport()
+const { fetchImports, triggerScan, approveImport, rejectImport, fetchLinks, deleteLink } = useRvgImport()
 const toast = useToast()
 const api = useApi()
 
@@ -71,6 +71,7 @@ else void searchPatients('')
 const queue = ref<RvgImport[]>([])
 const queueTotal = ref(0)
 const queueLoading = ref(false)
+const links = ref<RvgLink[]>([])
 const scanning = ref(false)
 const actionError = ref<string | null>(null)
 
@@ -153,6 +154,7 @@ async function approve(row: RvgImport, targetPatientId: string | null) {
   try {
     await approveImport(row.id, targetPatientId)
     await loadQueue()
+    await loadLinks()
   } catch {
     actionError.value = t('imagingViewer.rvg.actionFailed')
   }
@@ -176,7 +178,60 @@ function suggestionLabel(row: RvgImport) {
   return t('imagingViewer.rvg.noSuggestion')
 }
 
-onMounted(loadQueue)
+const linkPatientNames = ref<Record<string, string>>({})
+
+async function loadLinks() {
+  if (!canRvgRead.value) return
+  try {
+    links.value = await fetchLinks()
+    // Resolve each linked patient once so the row shows which pairing is
+    // wrong; unresolvable ids fall back to the human-readable label.
+    if (canListPatients.value) {
+      for (const link of links.value) {
+        if (linkPatientNames.value[link.patient_id] === undefined) {
+          try {
+            const res = await api.get<ApiResponse<{ first_name: string, last_name: string }>>(
+              `/api/v1/patients/${link.patient_id}`,
+              { errorToast: false }
+            )
+            linkPatientNames.value[link.patient_id] = `${res.data.last_name}, ${res.data.first_name}`
+          } catch {
+            linkPatientNames.value[link.patient_id] = t('imagingViewer.list.unknownPatient')
+          }
+        }
+      }
+    }
+  } catch {
+    actionError.value = t('imagingViewer.rvg.loadFailed')
+  }
+}
+
+function linkLabel(l: RvgLink) {
+  const name = linkPatientNames.value[l.patient_id]
+  if (name === undefined) return l.dicom_patient_id
+  return `${l.dicom_patient_id} → ${name}`
+}
+
+function formatLinkDate(l: RvgLink) {
+  const d = new Date(l.created_at)
+  if (Number.isNaN(d.getTime())) return l.created_at
+  return d.toLocaleDateString(locale.value)
+}
+
+async function unlink(id: string) {
+  actionError.value = null
+  try {
+    await deleteLink(id)
+    await loadLinks()
+  } catch {
+    actionError.value = t('imagingViewer.rvg.actionFailed')
+  }
+}
+
+onMounted(() => {
+  void loadQueue()
+  void loadLinks()
+})
 </script>
 
 <template>
@@ -336,6 +391,38 @@ onMounted(loadQueue)
           </div>
         </li>
       </ul>
+      <div class="mt-4 border-t border-gray-100 pt-3">
+        <p class="text-sm font-medium">
+          {{ t('imagingViewer.rvg.linksTitle') }}
+        </p>
+        <p
+          v-if="links.length === 0"
+          class="text-xs text-gray-500"
+        >
+          {{ t('imagingViewer.rvg.linksEmpty') }}
+        </p>
+        <ul
+          v-else
+          class="mt-1 flex flex-col gap-1"
+        >
+          <li
+            v-for="l in links"
+            :key="l.id"
+            class="flex flex-wrap items-center justify-between gap-2 text-sm"
+          >
+            <span>{{ linkLabel(l) }} · {{ formatLinkDate(l) }}</span>
+            <UButton
+              v-if="canRvgWrite"
+              size="xs"
+              color="error"
+              variant="soft"
+              @click="unlink(l.id)"
+            >
+              {{ t('imagingViewer.rvg.unlink') }}
+            </UButton>
+          </li>
+        </ul>
+      </div>
     </UCard>
   </div>
 </template>

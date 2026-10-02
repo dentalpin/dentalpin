@@ -33,7 +33,10 @@
       "loadFailed": "Nie można wczytać kolejki RVG.",
       "scanFailed": "Skanowanie nie powiodło się. Czy folder obserwowany jest skonfigurowany?",
       "scanSummary": "Skanowanie zakończone: zeskanowane {scanned}, nowe {created}, zatwierdzone automatycznie {approved}, nieudane {failed}",
-      "actionFailed": "Akcja nie powiodła się. Wiersz mógł już zostać rozstrzygnięty."
+      "actionFailed": "Akcja nie powiodła się. Wiersz mógł już zostać rozstrzygnięty.",
+      "linksTitle": "Powiązane tożsamości czujników",
+      "linksEmpty": "Brak powiązanych tożsamości czujników.",
+      "unlink": "Odepnij"
     },
     "annotations": {
       "title": "Adnotacje",

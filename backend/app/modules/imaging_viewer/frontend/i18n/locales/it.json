@@ -33,7 +33,10 @@
       "loadFailed": "Impossibile caricare la coda RVG.",
       "scanFailed": "Scansione non riuscita. La cartella monitorata è configurata?",
       "scanSummary": "Scansione completata: {scanned} scansionati, {created} nuovi, {approved} approvati automaticamente, {failed} non riusciti",
-      "actionFailed": "Azione non riuscita. La riga potrebbe essere già stata decisa."
+      "actionFailed": "Azione non riuscita. La riga potrebbe essere già stata decisa.",
+      "linksTitle": "Identità sensore collegate",
+      "linksEmpty": "Nessuna identità sensore collegata.",
+      "unlink": "Scollega"
     },
     "annotations": {
       "title": "Annotazioni",

@@ -33,7 +33,10 @@
       "loadFailed": "Impossible de charger la file RVG.",
       "scanFailed": "Échec de l'analyse. Le dossier surveillé est-il configuré ?",
       "scanSummary": "Analyse terminée : {scanned} analysés, {created} nouveaux, {approved} approuvés automatiquement, {failed} en échec",
-      "actionFailed": "Échec de l'action. La ligne a peut-être déjà été traitée."
+      "actionFailed": "Échec de l'action. La ligne a peut-être déjà été traitée.",
+      "linksTitle": "Identités de capteur liées",
+      "linksEmpty": "Aucune identité de capteur liée.",
+      "unlink": "Dissocier"
     },
     "annotations": {
       "title": "Annotations",

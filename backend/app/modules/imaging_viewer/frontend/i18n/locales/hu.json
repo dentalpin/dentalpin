@@ -33,7 +33,10 @@
       "loadFailed": "Az RVG-sor betöltése nem sikerült.",
       "scanFailed": "A szkennelés nem sikerült. Be van állítva a figyelt mappa?",
       "scanSummary": "Szkennelés kész: {scanned} szkennelve, {created} új, {approved} automatikusan jóváhagyva, {failed} sikertelen",
-      "actionFailed": "A művelet nem sikerült. Lehet, hogy a sor már el van döntve."
+      "actionFailed": "A művelet nem sikerült. Lehet, hogy a sor már el van döntve.",
+      "linksTitle": "Összekapcsolt szenzorazonosítók",
+      "linksEmpty": "Nincsenek összekapcsolt szenzorazonosítók.",
+      "unlink": "Leválasztás"
     },
     "annotations": {
       "title": "Annotációk",
