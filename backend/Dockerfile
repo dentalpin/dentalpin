@@ -39,6 +39,13 @@ RUN uv sync --frozen --no-dev --no-install-project
 COPY . .
 RUN uv sync --frozen --no-dev
 
+# Seed pip into the venv (#571). uv seeds no pip and ensurepip is absent
+# from the slim base, so without this any in-container `pip install`
+# lands in the system python, invisible to the /opt/venv interpreter
+# that runs the app and the tests. Pinned like the uv binary above;
+# refresh deliberately. Must run before USER appuser (writes /opt/venv).
+RUN uv pip install --python /opt/venv/bin/python "pip==26.2.1"
+
 # Create non-root user and storage directory
 RUN useradd -m -u 1000 appuser \
     && mkdir -p /app/storage \

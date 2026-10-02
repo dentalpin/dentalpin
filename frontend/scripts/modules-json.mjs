@@ -28,6 +28,13 @@ const base = prefix ?? root
 const names = readdirSync(root)
   .filter(name => existsSync(`${root}/${name}/frontend/nuxt.config.ts`))
   .sort()
+// Fail loudly on zero layers (#544): an empty directory would emit an
+// empty modules.json and every layer-enumerating gate would pass
+// vacuously. (A file in place of the directory already throws ENOTDIR.)
+if (names.length === 0) {
+  console.error(`modules-json: no layers with frontend/nuxt.config.ts under ${root} - refusing to write an empty modules.json`)
+  process.exit(1)
+}
 // Route paths each layer contributes (issue #326): walk pages/ and turn
 // files into route patterns ("[id]" → ":param"). The module-gate route
 // middleware uses these to 404 pages of baked-but-uninstalled modules.
