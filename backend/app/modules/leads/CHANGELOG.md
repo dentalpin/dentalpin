@@ -10,6 +10,8 @@
 - Edit modal success toast no longer shows the "Status" label as its message.
 - Leads list now refetches when the copilot creates, updates or converts a
   lead, instead of staying stale until a manual reload.
+- Key "last used" timestamp now formats with the active UI locale,
+  matching every other date in the module.
 
 ### Changed
 
