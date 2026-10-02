@@ -211,8 +211,8 @@ async def get_public_budget_meta(
 
     patient_row = (
         await db.execute(
-            _text("SELECT first_name FROM patients WHERE id = :id"),
-            {"id": budget.patient_id},
+            _text("SELECT first_name FROM patients WHERE id = :id AND clinic_id = :clinic_id"),
+            {"id": budget.patient_id, "clinic_id": budget.clinic_id},
         )
     ).first()
     patient_first_name = patient_row.first_name if patient_row else None

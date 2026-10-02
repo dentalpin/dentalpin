@@ -198,6 +198,17 @@ async def test_budget_cookie_for_other_budget_401(
 
 
 @pytest.mark.asyncio
+async def test_budget_meta_returns_scoped_patient_name(client: AsyncClient, t1_setup: dict) -> None:
+    """The /meta patient lookup is clinic-scoped: the budget's own patient
+    resolves, so the checklist point-3 filter cannot silently blank the
+    name on a same-clinic row."""
+    budget = t1_setup["budget"]
+    response = await client.get(f"{BUDGET}/{budget.public_token}/meta")
+    assert response.status_code == 200, response.text
+    assert response.json()["data"]["patient_first_name"] == "Pub"
+
+
+@pytest.mark.asyncio
 async def test_budget_none_method_needs_no_cookie(
     client: AsyncClient, db_session: AsyncSession, t1_setup: dict
 ) -> None:
