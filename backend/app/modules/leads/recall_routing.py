@@ -58,6 +58,7 @@ _IDENTITY_LABELS: dict[str, str] = {
     "en": "Web form — submitted as",
     "fr": "Formulaire web — envoyé en tant que",
     "pt": "Formulário web — enviado como",
+    "pt-BR": "Formulário web — enviado como",
     "it": "Modulo web — inviato come",
     "de": "Webformular — gesendet als",
     "pl": "Formularz internetowy — wysłano jako",

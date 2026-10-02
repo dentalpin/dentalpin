@@ -16,12 +16,16 @@ import { resolve } from 'node:path'
  * more, wired up via pluralRules in i18n.config.ts), but a pipe in a
  * non-plural key would render literally, so those must stay single.
  *
+ * Overlay locales (e.g. `pt-BR.json`, #509) are host-only deltas
+ * that fall back to base locale (`pt`).
+ *
  * Runs in plain Node on purpose: it reads JSON straight off the
  * repository tree, so no Nuxt context (and no module-layer bootstrap)
  * is required.
  *
  * When a new locale ships, it joins automatically: drop the file next
- * to the others and this test holds it to full parity.
+ * to the others and this test holds it to full parity. Overlay locales
+ * use a region-tagged filename (`xx-YY.json`).
  */
 
 const HOST_LOCALES = resolve(__dirname, '../../i18n/locales')
@@ -31,6 +35,9 @@ const HOST_LOCALES = resolve(__dirname, '../../i18n/locales')
 const MODULES_ROOT = existsSync('/module_layers')
   ? '/module_layers'
   : resolve(__dirname, '../../../backend/app/modules')
+
+/** Host-only overlay locales. */
+const OVERLAY_LOCALES = new Set(['pt-BR.json'])
 
 type Tree = Record<string, unknown>
 
@@ -49,6 +56,20 @@ function flatten(obj: Tree, prefix = ''): Map<string, string> {
 
 function loadJson(path: string): Tree {
   return JSON.parse(readFileSync(path, 'utf-8')) as Tree
+}
+
+function deepMerge(base: Tree, override: Tree): Tree {
+  const out: Tree = { ...base }
+  for (const [key, value] of Object.entries(override)) {
+    const current = out[key]
+    out[key] = (
+      current !== null && typeof current === 'object' && !Array.isArray(current)
+      && value !== null && typeof value === 'object' && !Array.isArray(value)
+    )
+      ? deepMerge(current as Tree, value as Tree)
+      : value
+  }
+  return out
 }
 
 function placeholders(message: string): string[] {
@@ -86,14 +107,63 @@ function comparePair(name: string, enPath: string, xxPath: string) {
   expect(problems, `${name}:\n${problems.join('\n')}`).toEqual([])
 }
 
+/** Overlay: no missing-key check; orphans/placeholders/plurals vs merged en. */
+function compareOverlay(name: string, enFlat: Map<string, string>, xxPath: string) {
+  const xx = flatten(loadJson(xxPath))
+  const problems: string[] = []
+  for (const [key, value] of xx) {
+    const enValue = enFlat.get(key)
+    if (enValue === undefined) {
+      problems.push(`orphan (not in en — translate everywhere or delete): ${key}`)
+      continue
+    }
+    const expected = placeholders(enValue)
+    const actual = placeholders(value)
+    if (expected.join(',') !== actual.join(',')) {
+      problems.push(`${key}: placeholders [${actual}] != en [${expected}]`)
+    }
+    const enVariants = pluralVariants(enValue)
+    const variants = pluralVariants(value)
+    if (enVariants === 1 ? variants !== 1 : variants < 2) {
+      problems.push(`${key}: ${variants} plural variants vs en ${enVariants}`)
+    }
+  }
+  expect(problems, `${name}:\n${problems.join('\n')}`).toEqual([])
+}
+
 describe('locale key parity', () => {
   const hostEn = resolve(HOST_LOCALES, 'en.json')
   const hostLocales = readdirSync(HOST_LOCALES).filter(f => f.endsWith('.json') && f !== 'en.json')
 
-  it('host app: every locale matches en.json exactly', () => {
-    expect(hostLocales.length).toBeGreaterThan(0)
-    for (const file of hostLocales) {
+  it('host app: every full locale matches en.json exactly', () => {
+    const full = hostLocales.filter(f => !OVERLAY_LOCALES.has(f))
+    expect(full.length).toBeGreaterThan(0)
+    for (const file of full) {
       comparePair(`host/${file}`, hostEn, resolve(HOST_LOCALES, file))
+    }
+  })
+
+  it('host app: overlay locales are deltas (no missing-key, orphans/placeholders/plurals vs merged en)', () => {
+    const overlays = hostLocales.filter(f => OVERLAY_LOCALES.has(f))
+    expect(overlays.length).toBeGreaterThan(0)
+
+    // Merged English tree: host + every module layer (overlays may override
+    // module namespaces from the host file — #509).
+    let mergedEn = loadJson(hostEn)
+    for (const mod of readdirSync(MODULES_ROOT)) {
+      const i18nDir = resolve(MODULES_ROOT, mod, 'frontend/i18n/locales')
+      if (!existsSync(i18nDir)) continue
+      for (const file of readdirSync(i18nDir)) {
+        if (!file.endsWith('.json')) continue
+        // notifications-en.json, en.json, …
+        if (file !== 'en.json' && !file.endsWith('-en.json')) continue
+        mergedEn = deepMerge(mergedEn, loadJson(resolve(i18nDir, file)))
+      }
+    }
+    const enFlat = flatten(mergedEn)
+
+    for (const file of overlays) {
+      compareOverlay(`host/${file}`, enFlat, resolve(HOST_LOCALES, file))
     }
   })
 
@@ -103,11 +173,19 @@ describe('locale key parity', () => {
     for (const mod of modules) {
       const i18nDir = resolve(MODULES_ROOT, mod, 'frontend/i18n/locales')
       if (!existsSync(i18nDir)) continue
-      const moduleEn = resolve(i18nDir, 'en.json')
-      if (!existsSync(moduleEn)) continue
       for (const file of readdirSync(i18nDir)) {
-        if (!file.endsWith('.json') || file === 'en.json') continue
-        comparePair(`${mod}/${file}`, moduleEn, resolve(i18nDir, file))
+        if (!file.endsWith('.json')) continue
+        // Overlay locales live only on the host (#509).
+        if (OVERLAY_LOCALES.has(file)) continue
+        // English sources are the reference, not compared against themselves.
+        if (file === 'en.json' || file.endsWith('-en.json')) continue
+        // notifications-pt.json → notifications-en.json; pt.json → en.json
+        const resolvedEn = file.includes('-')
+          ? file.replace(/-([a-z]{2})(?:-[A-Z]{2})?\.json$/, '-en.json')
+          : 'en.json'
+        const enPath = resolve(i18nDir, resolvedEn)
+        if (!existsSync(enPath)) continue
+        comparePair(`${mod}/${file}`, enPath, resolve(i18nDir, file))
         compared++
       }
     }

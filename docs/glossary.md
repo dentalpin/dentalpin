@@ -155,3 +155,10 @@ ADRs) for the full story.
 | Availability slot | Franja horaria | Optional preference inside those days — `morning`, `afternoon` or `evening` (`leads.availability_slot`). Absent means "any time". |
 | Daily intake cap | Límite diario de solicitudes | Per-clinic ceiling on enquiries accepted per day (`leads_settings.daily_cap`, `0` = unlimited), edited at Settings → Integrations → *Formulario web*. |
 | Honeypot | Campo trampa | The hidden `website` field of the intake form: filled in means a bot, and the submission is accepted silently and never stored. |
+
+## Locales (i18n)
+
+| Code    | Variant              | Notes                                                                                                                                                                                     |
+|---------|----------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `pt`    | European Portuguese  | Full locale across host + every module layer. Babel `pt_PT` on PDFs.                                                                                                                      |
+| `pt-BR` | Brazilian Portuguese | Host-only **overlay** on `pt` (#509): `frontend/i18n/locales/pt-BR.json` contains only differing keys. Missing keys fall back through `pt` then `en`. Modules do not ship a `pt-BR.json`. |

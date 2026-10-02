@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}A sua próxima consulta na {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>Está quase na hora da sua próxima consulta</h2>
+
+<p>Olá {{ patient_name }},</p>
+
+<p>Marcámos a sua próxima consulta{% if due_month %} para <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} na <strong>{{ clinic_name | default('DentalPin') }}</strong>.</p>
+
+<p>Entre em contato conosco para marcar um horário que lhe seja conveniente.</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">Marcar a minha consulta</a>
+</div>
+{% endif %}
+
+<p>Não hesite em entrar em contato conosco se tiver alguma dúvida.</p>
+{% endblock %}

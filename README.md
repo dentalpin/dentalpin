@@ -186,7 +186,7 @@ See [docs/user-manual/en/demo.md](docs/user-manual/en/demo.md) for full details 
 
 ### User Experience
 - **Visual Selectors** — Smart dropdowns showing recent patients and popular treatments
-- **Ten-Language Interface** — English, Spanish, French, Portuguese, Tamil, German, Hungarian, Polish, Italian and Arabic — core app and every module
+- **Ten-Language Interface** — English, Spanish, French, Portuguese (Portugal + Brazilian overlay), Tamil, German, Hungarian, Polish, Italian and Arabic — core app and every module
 - **Dark Mode** — System-aware theme switching
 - **Responsive Design** — Works on desktop and tablet
 
@@ -198,14 +198,14 @@ See [docs/user-manual/en/demo.md](docs/user-manual/en/demo.md) for full details 
 
 ## Languages
 
-The interface ships in **ten languages** — English, Español, Français, Português,
+The interface ships in **ten languages** — English, Español, Français, Português(Portugal and Brazilian),
 தமிழ் (Tamil), Deutsch, Magyar, Polski, Italiano and العربية (Arabic) — covering the core app **and
 every module layer**, with a CI-enforced key-parity test so locales can't silently
 drift. Polish uses its full three-form plural rules.
 
 Patient-facing communications (email templates, PDFs) currently render in
-**five languages** (es, en, fr, pt, ta); each clinic picks its communication
-language independently of the staff UI language.
+**five languages** (es, en, fr, pt, ta)(pt-BR reuses some pt templates, only shipping those differing from pt);
+each clinic picks its communication language independently of the staff UI language.
 
 Want your language? Adding one is a translation-only contribution — see the
 [i18n issues](https://github.com/dentalpin/dentalpin/issues?q=label%3Ai18n) or

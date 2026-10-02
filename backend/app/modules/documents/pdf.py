@@ -313,6 +313,8 @@ _LABELS = {
         "radiology_request": "طلب أشعة",
     },
 }
+# pt-BR reuses pt labels as there is no differing words so far.
+_LABELS["pt-BR"] = _LABELS["pt"]
 
 
 class DocumentPDFService:

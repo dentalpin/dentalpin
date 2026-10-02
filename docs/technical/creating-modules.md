@@ -600,6 +600,14 @@ and namespace every top-level key under your module name
 (e.g. `"inventory": { "nav": { "items": "Items" } }`) to avoid
 collisions with the host and with other modules.
 
+**Locale overlays** (e.g. Brazilian Portuguese `pt-BR`, issue #509) are
+**host-only**. The host ships a small delta file
+(`frontend/i18n/locales/pt-BR.json`) and a `fallbackLocale` chain
+(`pt-BR` → `pt` → `en`). Module layers must **not** add a `pt-BR.json`
+or register `pt-BR` in their `nuxt.config.ts` — missing keys resolve 
+through the base locale messages. Put any module-namespace wording 
+that differs for Brazil in the host overlay.
+
 TypeScript aliases inside layer files: `~~` (rootDir, = host frontend
 root) reaches shared host code. `~` is a trap: Vite rewrites it to the
 layer at build time (`nuxt:layer-aliasing`), but `vue-tsc` maps it to

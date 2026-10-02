@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#509): the prescription PDF for `pt-BR` reuses the `pt` labels.
+
 - fix: editor rows typed as `DraftItem` (nullable API `route`
   normalized to string by `blankLine`); fixes TS2322 on the new route
   input in CI typecheck.

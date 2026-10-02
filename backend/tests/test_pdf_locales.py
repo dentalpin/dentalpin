@@ -27,7 +27,8 @@ def _host_locales() -> set[str]:
     if nuxt_config is None:
         pytest.skip("host frontend not reachable from here")
     i18n_block = nuxt_config.read_text().split("i18n: {", 1)[1].split("defaultLocale", 1)[0]
-    return set(re.findall(r"code: '([a-z]{2})'", i18n_block))
+    # Accept both two-letter codes (`pt`) and region overlays (`pt-BR`).
+    return set(re.findall(r"code: '([a-z]{2}(?:-[A-Z]{2})?)'", i18n_block))
 
 
 def test_every_host_language_is_an_accepted_pdf_locale() -> None:

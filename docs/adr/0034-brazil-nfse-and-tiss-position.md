@@ -522,7 +522,7 @@ relevance triggers at once: sensitive data and professional secrecy.
 
 ## Readiness matrix row
 
-| Brazil | ✅ `pt` (pt-BR wording tracked separately) | ✅ | ❌ NFS-e: feasible, no software certification exists — the practice emits from its own software with an ICP-Brasil e-CNPJ (Res. CGNFS-e 3/2023 art. 3º § único); `br_nfse` pending, targeting the SEFIN Nacional API with the `IBSCBS` groups (ADR 0034) | ❌ TISS: feasible — "qualquer solução tecnológica poderá ser utilizada" (RN 501/2022, CO item 139); `br_tiss` pending, one protocol and N per-operadora connections, Comunicação 04.03.00; DentalPin never talks to ANS (ADR 0034) | #139 (answered) |
+| Brazil | ✅ `pt` (pt-BR overlay on `pt` #509) | ✅ | ❌ NFS-e: feasible, no software certification exists — the practice emits from its own software with an ICP-Brasil e-CNPJ (Res. CGNFS-e 3/2023 art. 3º § único); `br_nfse` pending, targeting the SEFIN Nacional API with the `IBSCBS` groups (ADR 0034) | ❌ TISS: feasible — "qualquer solução tecnológica poderá ser utilizada" (RN 501/2022, CO item 139); `br_tiss` pending, one protocol and N per-operadora connections, Comunicação 04.03.00; DentalPin never talks to ANS (ADR 0034) | #139 (answered) |
 
 ## References
 

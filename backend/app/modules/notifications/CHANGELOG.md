@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- feat(#509): communication-language picker offers both Português (Portugal) `pt`
+  and Português (Brasil) `pt-BR`.
+
 - fix(#527): a manual `budget_sent` send no longer raises
   `AttributeError`. `router.py` read `catalog_item.name`; the model has
   no such attribute, only a per-locale `names` dict — and because

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#509): the managed-document PDF for `pt-BR` reuses the `pt` labels.
+
 - fix(#524): the managed-document PDF renders in every host locale.
   `_LABELS` held only `es`/`en`, the endpoint's pattern was `^(es|en)$`
   and the frontend sent no `locale` at all — so every clinic, in every

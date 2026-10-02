@@ -1,0 +1,777 @@
+{
+  "actions": {
+    "save": "Salvar"
+  },
+  "clinical": {
+    "plans": {
+      "emptyDraft": {
+        "title": "Planeje os tratamentos"
+      },
+      "steps": {
+        "plan": "Planejar"
+      }
+    }
+  },
+  "clinicalNotes": {
+    "toasts": {
+      "saved": "Nota salva",
+      "saveFailed": "Não foi possível salvar a nota"
+    }
+  },
+  "imagingViewer": {
+    "annotations": {
+      "saveNote": "Salvar nota"
+    }
+  },
+  "odontogram": {
+    "actions": {
+      "save": "Salvar"
+    },
+    "status": {
+      "planned": "Planejado"
+    },
+    "treatments": {
+      "status": {
+        "planned": "Planejado"
+      }
+    },
+    "planning": "Planejamento",
+    "multiTooth": {
+      "willBePlanned": "O grupo será marcado como planejado."
+    }
+  },
+  "orthodontics": {
+    "case": {
+      "save": "Salvar"
+    },
+    "control": {
+      "save": "Salvar controle"
+    },
+    "errors": {
+      "saveFailed": "Não foi possível salvar. Tente novamente."
+    }
+  },
+  "periodontogram": {
+    "saveState": {
+      "saving": "Salvando…",
+      "dirty": "Alterações não salvas",
+      "saved": "Alterações salvas"
+    },
+    "errors": {
+      "saveFailed": "Não foi possível salvar a alteração.",
+      "closeAborted": "Algumas medições ainda não foram salvas — o exame não foi fechado. Verifique a sua ligação e tente novamente."
+    }
+  },
+  "prescriptions": {
+    "saveTemplate": "Salvar como modelo",
+    "save": "Salvar",
+    "emptyDraft": "Adicione pelo menos uma linha antes de salvar."
+  },
+  "sms_gateway": {
+    "settings": {
+      "activeHelp": "Só um provedor ativado com linha salva pode enviar."
+    },
+    "common": {
+      "save": "Salvar",
+      "saved": "Definições salvas",
+      "saveError": "Não foi possível salvar as definições"
+    }
+  },
+  "whatsapp_kapso": {
+    "secretStored": "Salvo. Deixe vazio para o manter inalterado.",
+    "saved": "Definições salvas",
+    "saveError": "Não foi possível salvar"
+  },
+  "whatsapp_webhook": {
+    "saved": "Definições salvas",
+    "saveError": "Não foi possível salvar as definições"
+  },
+  "demo": {
+    "bannerMessage": "Demonstração pública — não digite dados reais de pacientes. A base de dados é reposta periodicamente.",
+    "copyPassword": "Copiar senha"
+  },
+  "nav": {
+    "recalls": "Reagendamentos",
+    "contacts": "Contatos"
+  },
+  "auth": {
+    "password": "Senha",
+    "invalidCredentials": "Email ou senha incorretos",
+    "emailRequired": "Digite o seu email",
+    "passwordRequired": "Digite a sua senha"
+  },
+  "setup": {
+    "lastName": "Sobrenome",
+    "password": "Senha",
+    "passwordConfirm": "Confirmar senha",
+    "firstNameRequired": "Digite o nome",
+    "lastNameRequired": "Digite o sobrenome",
+    "emailRequired": "Digite o email",
+    "passwordRequired": "Digite uma senha",
+    "passwordTooShort": "A senha deve ter pelo menos 12 caracteres",
+    "passwordWeak": "A senha deve incluir letras e números",
+    "clinicNameRequired": "Digite o nome da clínica",
+    "taxIdRequired": "Digite o CPF/CNPJ",
+    "willSeed": "Criaremos por si o catálogo de tratamentos, os tipos de IVA, uma série de faturas, um consultório e um horário de segunda a sexta. Tudo pode ser alterado depois.",
+    "taxId": "CPF/CNPJ",
+    "taxIdLooksInvalid": "Não parece um CPF/CNPJ válido. Verifique antes de faturar."
+  },
+  "patients": {
+    "lastName": "Sobrenome",
+    "billingSection": "Dados de faturamento",
+    "editingBillingForInvoice": "A editar dados de faturamento. As alterações serão refletidas na fatura.",
+    "billingName": "Nome de faturamento",
+    "billingEmail": "Email de faturamento",
+    "billingAddress": "Endereço de faturamento",
+    "columns": {
+      "contact": "Contato"
+    },
+    "sort": {
+      "lastName": "Sobrenome"
+    },
+    "emergencyContact": {
+      "title": "Contato de emergência",
+      "hasContact": "Tem contato de emergência",
+      "noContact": "Nenhum contato de emergência registado",
+      "namePlaceholder": "Nome do contato",
+      "phonePlaceholder": "Telefone do contato",
+      "emailPlaceholder": "Email do contato",
+      "remove": "Remover contato"
+    },
+    "editEmergencyContact": "Editar contato de emergência",
+    "editBilling": "Editar dados de faturamento",
+    "contactInfo": {
+      "title": "Contato",
+      "address": "Endereço",
+      "addEmergency": "Adicionar contato de emergência"
+    },
+    "timeline": {
+      "meta": {
+        "cabinet": "Consultório {name}"
+      }
+    },
+    "billingTaxId": "CPF/CNPJ",
+    "medicalHistory": {
+      "save": "Salvar história",
+      "saveSuccess": "História clínica salva",
+      "saveError": "Erro ao salvar a história clínica"
+    }
+  },
+  "patientDetail": {
+    "tabs": {
+      "billing": "Faturamento"
+    }
+  },
+  "settings": {
+    "categories": {
+      "people": {
+        "description": "Usuários, perfis e convites."
+      },
+      "billing": {
+        "label": "Faturamento e impostos"
+      },
+      "account": {
+        "description": "O seu perfil, senha e idioma."
+      },
+      "workspace": {
+        "description": "Consultórios, horários e disponibilidade."
+      }
+    },
+    "comingSoon": {
+      "subtitle": "Estamos a trabalhar nesta secção. Entretanto, pode gerenciar isto através da API."
+    },
+    "onboarding": {
+      "items": {
+        "clinicInfo": {
+          "description": "O nome, o CPF/CNPJ e a endereço aparecem nos orçamentos e nas faturas."
+        },
+        "cabinets": {
+          "label": "Crie pelo menos um consultório",
+          "description": "Sem consultórios não é possível agendar consultas."
+        }
+      }
+    },
+    "legalNameHelp": "Denominação social da entidade paro faturamento. Deixe em branco para usar o nome da clínica.",
+    "street": "Endereço",
+    "users": "Usuários da clínica",
+    "newUser": "Novo usuário",
+    "createUser": "Criar usuário",
+    "editUser": "Editar usuário",
+    "deleteUser": "Eliminar usuário",
+    "deleteUserNote": "O usuário perderá o acesso a esta clínica, mas a sua conta não será eliminada.",
+    "noUsers": "Nenhum usuário registado",
+    "userActive": "Usuário ativo",
+    "errors": {
+      "loadUsers": "Erro ao carregar os usuários",
+      "createUser": "Erro ao criar o usuário",
+      "updateUser": "Erro ao atualizar o usuário",
+      "deleteUser": "Erro ao eliminar o usuário",
+      "userNotFound": "Usuário não encontrado"
+    },
+    "messages": {
+      "userCreated": "Usuário criado com sucesso",
+      "userUpdated": "Usuário atualizado com sucesso",
+      "userDeleted": "Usuário removido da clínica"
+    },
+    "invite": {
+      "linkHelp": "Envie esta ligação a {name} para escolher a senha. Expira a {date} e só funciona uma vez.",
+      "shareText": "Olá {name}, aqui está o seu acesso ao DentalPin. Abra e escolha a sua senha: {url}",
+      "secretNote": "Trate-a como uma senha: quem tiver a ligação pode entrar nesta conta.",
+      "setPasswordTitle": "Escolha a sua senha",
+      "setPasswordSubtitle": "Foi convidado para o DentalPin. Crie a sua senha para entrar.",
+      "setPasswordSubmit": "Salvar e entrar"
+    },
+    "saveChanges": "Salvar alterações",
+    "subtitle": "Faça a gestão da sua clínica, equipe e módulos.",
+    "cabinets": "Consultórios",
+    "noCabinets": "Nenhum consultório configurado",
+    "newCabinet": "Novo consultório",
+    "editCabinet": "Editar consultório",
+    "deleteCabinet": "Eliminar consultório",
+    "deleteCabinetConfirm": "Tem a certeza de que pretende eliminar o consultório",
+    "deleteCabinetNote": "As consultas existentes neste consultório não serão afetadas.",
+    "createCabinet": "Criar consultório",
+    "taxId": "CPF/CNPJ",
+    "postalCode": "CEP"
+  },
+  "patientSelector": {
+    "createForm": {
+      "lastName": "Sobrenome"
+    }
+  },
+  "common": {
+    "lastName": "Sobrenome",
+    "password": "Senha",
+    "save": "Salvar"
+  },
+  "validation": {
+    "email": "Digite um email válido",
+    "phone": "Digite um número de telefone válido"
+  },
+  "catalog": {
+    "sessions": {
+      "title": "Sessões (faturamento fracionada)"
+    },
+    "manageCategories": "Gerenciar categorias"
+  },
+  "treatmentPlans": {
+    "actions": {
+      "logContact": "Registar contato"
+    },
+    "contactLogged": "Contato registado",
+    "modals": {
+      "contactLog": {
+        "title": "Registar contato",
+        "description": "Regista o contato sem alterar o estado do plano."
+      }
+    },
+    "fields": {
+      "internalNotesPlaceholder": "Notas visíveis apenas para a equipe..."
+    },
+    "confirmations": {
+      "cancelDescription": "O plano passará ao estado cancelado e os tratamentos planejados não realizados serão removidos do odontograma. O histórico do plano é mantido."
+    },
+    "notes": {
+      "saved": "Nota salva"
+    },
+    "visitNote": {
+      "save": "Salvar nota",
+      "saved": "Nota salva"
+    }
+  },
+  "budget": {
+    "public": {
+      "already_accepted": "Já aceitou este orçamento. A clínica entrará em contato para agendar a sua primeira consulta.",
+      "accept": {
+        "success": "Feito! A clínica entrará em contato para agendar a sua primeira consulta."
+      }
+    },
+    "internalNotesPlaceholder": "Notas visíveis apenas para a equipe...",
+    "modals": {
+      "setPublicCode": {
+        "submit": "Salvar código"
+      }
+    },
+    "settings": {
+      "expiry": {
+        "save": "Salvar"
+      },
+      "reminders": {
+        "save": "Salvar"
+      },
+      "publicLink": {
+        "save": "Salvar"
+      },
+      "saved": "Definições salvas"
+    }
+  },
+  "notifications": {
+    "communications": {
+      "language": {
+        "help": "Aplica-se à vista do orçamento destinada ao paciente e aos modelos automáticos de email/WhatsApp. A interface da equipe mantém a preferência de idioma de cada usuário.",
+        "save": "Salvar",
+        "saved": "Idioma salvo"
+      }
+    },
+    "autoVsManualDescription": "Defina que notificações são enviadas automaticamente quando ocorre um evento e quais exigem que o usuário as envie manualmente.",
+    "smtp": {
+      "username": "Nome de usuário",
+      "password": "Senha",
+      "passwordHint": "Deixe vazio para manter a senha atual",
+      "testConnectionTitle": "Testar a configuração antes de salvar",
+      "settings_saved": "Definições SMTP salvas",
+      "errors": {
+        "save_failed": "Erro ao salvar as definições SMTP"
+      }
+    },
+    "channels": {
+      "cardDescription": "Como a clínica contacta os pacientes: o canal das mensagens automáticas e os botões de envio que a equipe vê."
+    },
+    "settings_saved": "Definições salvas",
+    "errors": {
+      "save_failed": "Erro ao salvar as definições"
+    },
+    "prefs": {
+      "saved": "Preferências salvas"
+    }
+  },
+  "invoice": {
+    "description": "Faça a gestão das faturas e do faturamento",
+    "billingData": "Dados de faturamento",
+    "billingName": "Nome de faturamento",
+    "billingEmail": "Email de faturamento",
+    "billingAddress": "Endereço de faturamento",
+    "billingDataIncompleteHint": "Faltam alguns dados de faturamento do paciente.",
+    "billingFromPatientHint": "Estes dados provêm da ficha do paciente. Para os alterar, edite os dados de faturamento do paciente.",
+    "noBillingData": "Sem dados de faturamento",
+    "criticalBanner": {
+      "billingIncomplete": {
+        "title": "Dados de faturamento incompletos"
+      }
+    },
+    "prompts": {
+      "voidPaymentReason": "Digite o motivo da anulação deste pagamento"
+    },
+    "series": {
+      "title": "Séries de faturamento"
+    },
+    "reports": {
+      "title": "Relatórios de faturamento"
+    },
+    "internalNotesPlaceholder": "Notas visíveis apenas para a equipe...",
+    "taxId": "CPF/CNPJ",
+    "postalCode": "CEP",
+    "newItemsPending": "Novas linhas não salvas"
+  },
+  "reports": {
+    "billing": {
+      "title": "Faturamento"
+    },
+    "scheduling": {
+      "features": {
+        "cabinetUtilization": "Ocupação dos consultórios",
+        "cabinetUtilizationDesc": "Utilização de cada consultório"
+      },
+      "filters": {
+        "cabinet": "Consultório"
+      }
+    }
+  },
+  "invoiceSeries": {
+    "title": "Séries de faturamento"
+  },
+  "documents": {
+    "dropzone": {
+      "hint": "Arraste um arquivo para aqui ou clique para selecionar"
+    },
+    "viewer": {
+      "unsupported": "Pré-visualização não disponível para este tipo de arquivo"
+    },
+    "errors": {
+      "mime": "Tipo de arquivo não permitido. Apenas PDF, JPG ou PNG.",
+      "size": "O arquivo excede 10 MB."
+    },
+    "uploadHelp": "Classifique o arquivo para que apareça na categoria correta.",
+    "subtitle": "Gerenciar prescrições, atestados, cartas de referenciação e pedidos de radiologia",
+    "content": {
+      "diagnosisPlaceholder": "Digite o diagnóstico..."
+    },
+    "settings": {
+      "letterhead": {
+        "help": "Estes campos substituem o perfil da clínica nos PDF gerados. Deixe um campo em branco para utilizar o nome, a endereço e o número fiscal registados da clínica.",
+        "address": "Endereço do cabeçalho",
+        "save": "Salvar cabeçalho",
+        "saved": "Cabeçalho salvo"
+      }
+    }
+  },
+  "contacts": {
+    "title": "Contatos",
+    "add": "Adicionar contato",
+    "edit": "Editar contato",
+    "delete": "Eliminar contato",
+    "address": "Endereço",
+    "search": "Pesquisar contatos"
+  },
+  "copilot": {
+    "pending": {
+      "group": {
+        "recall": "Reagendamentos a seguir"
+      }
+    },
+    "nudge": {
+      "appointmentCancelled": {
+        "prompt": "A consulta das {time} foi cancelada. Encontra pacientes com reagendamento que possam ocupar essa vaga."
+      }
+    },
+    "suggest": {
+      "cat": {
+        "recalls": "Reagendamentos"
+      },
+      "dueRecalls": "Reagendamentos a vencer",
+      "prompt": {
+        "dailyBriefing": "Dá-me o resumo diário: consultas de hoje, reagendamentos em atraso e orçamentos sem resposta",
+        "dueRecalls": "Que reagendamentos vencem este mês?"
+      }
+    },
+    "confirm": {
+      "field": {
+        "last_name": "Sobrenome",
+        "cabinet_id": "Consultório",
+        "cabinet": "Consultório"
+      }
+    },
+    "settings": {
+      "digest": {
+        "description": "Todas as manhãs: consultas de hoje, reagendamentos em atraso e orçamentos sem resposta.",
+        "recipientsPlaceholder": "Selecionar membros da equipe…"
+      },
+      "metrics": {
+        "toolNames": {
+          "recalls_list_due_recalls": "Reagendamentos em atraso"
+        }
+      },
+      "saved": "Definições salvas"
+    }
+  },
+  "indiaGst": {
+    "einvoice": {
+      "notRequiredHint": "A sua clínica está abaixo do limite de faturamento configurado nas definições, pelo que esta fatura não é enviada ao portal de faturamento eletrónica.",
+      "notConfiguredHint": "O faturamento eletrónica aplica-se a clínicas acima do limite de faturamento definido nas definições de GST Índia. Nada é enviado para esta fatura."
+    },
+    "form": {
+      "save": "Salvar detalhes GST",
+      "saved": "Detalhes GST salvos",
+      "saveError": "Não foi possível salvar os detalhes GST"
+    },
+    "settings": {
+      "description": "Configure os detalhes GST e os valores predefinidos de faturamento desta clínica.",
+      "nonRegularNotice": "O cálculo do GST está inativo paro faturamento neste tipo de registo.",
+      "einvoiceProfessionalNotice": "Confirme a elegibilidade e as obrigações regulamentares com um profissional fiscal indiano qualificado antes de ativar o faturamento eletrónica. O Dentalpin não determina se ela se aplica à sua clínica.",
+      "turnoverThreshold": "Limite de faturamento",
+      "turnoverThresholdHint": "Clínicas acima deste limite estão sujeitas à faturamento eletrónica",
+      "creditNoteWorkflowDescription": "Qualquer correção a uma fatura emitida é feita por anulação ou nota de crédito, e mantém-se rastreável até ao usuário que a fez.",
+      "saved": "Definições salvas",
+      "saveError": "Não foi possível salvar as definições"
+    }
+  },
+  "labOrders": {
+    "noLabsHint": "Crie primeiro um contato de laboratório em Contatos."
+  },
+  "leads": {
+    "emptyHint": "Os pedidos de pessoas que já são pacientes vão diretamente para Reagendamentos — veja lá antes de assumir que o formulário não está funcionando.",
+    "actions": {
+      "save": "Salvar"
+    },
+    "routing": {
+      "explainer": "Os pedidos cujo telefone ou email já pertence a um paciente não criam um pedido novo — são adicionados aos Reagendamentos como uma chamada de retorno.",
+      "recallQueued": "{name} já é paciente — foi adicionada uma chamada de retorno aos Reagendamentos.",
+      "openRecalls": "Abrir Reagendamentos"
+    },
+    "settings": {
+      "routingNote": "Os pedidos cujo telefone ou email já pertence a um paciente não criam um pedido novo — são adicionados aos Reagendamentos para uma chamada de retorno.",
+      "capSave": "Salvar limite",
+      "capSaved": "Limite diário salvo"
+    },
+    "validation": {
+      "email": "Digite um email válido, por exemplo nome{'@'}example.com",
+      "phone": "Digite um telefone válido (pelo menos 6 dígitos)"
+    },
+    "errors": {
+      "save": "Não foi possível salvar o pedido",
+      "settingsSave": "Não foi possível salvar as definições"
+    }
+  },
+  "migrationImport": {
+    "settingsCard": {
+      "description": "Importe um arquivo DPMF produzido pelo dental-bridge (pacientes, consultas, orçamentos, pagamentos, documentos)."
+    },
+    "upload": {
+      "dropFile": "Largue aqui o arquivo .dpm ou clique para escolher um",
+      "passphrase": "Frase-passe (apenas para arquivos encriptados)"
+    },
+    "validate": {
+      "running": "A verificar o arquivo…",
+      "ok": "O arquivo é válido"
+    },
+    "preview": {
+      "files": "Arquivos anexos",
+      "verifactuHelp": "Preserva os hashes legais (Verifactu) nas faturas. Só está disponível quando o módulo Verifactu está instalado e o arquivo contém esses dados."
+    },
+    "filters": {
+      "description": "Os profissionais filtrados são importados como inativos (mantidos para referências históricas, mas ocultos na agenda). Pode reativá-los mais tarde em Definições → Usuários."
+    }
+  },
+  "nav_online": {
+    "login": "Usuário técnico",
+    "password": "Senha",
+    "devContact": "E-mail de contato do programador",
+    "secretStored": "Salvo — deixe vazio para manter.",
+    "saved": "Definições salvas",
+    "saveError": "Não foi possível salvar as definições"
+  },
+  "patientSegments": {
+    "add": "Gerenciar grupos"
+  },
+  "payments": {
+    "new": {
+      "errAmount": "Digite um montante superior a 0"
+    },
+    "patientPanel": {
+      "timeline": {
+        "treatmentStatus": {
+          "planned": "Planejado"
+        }
+      }
+    }
+  },
+  "procurement": {
+    "suppliers": {
+      "subtitle": "Contatos de fornecedor com condições de compra",
+      "address": "Endereço"
+    },
+    "common": {
+      "save": "Salvar"
+    },
+    "ratings": {
+      "saved": "Avaliação salva."
+    }
+  },
+  "recalls": {
+    "title": "Reagendamentos",
+    "noRecallsThisMonth": "Sem reagendamentos pendentes este mês",
+    "setRecall": "Definir reagendamento",
+    "setRecallShort": "Reagendamento",
+    "history": "Histórico de reagendamentos",
+    "pillNext": "Próximo reagendamento: {month} · {reason}",
+    "pillNone": "Sem reagendamento ativo",
+    "confirms": {
+      "cancel": "Cancelar o reagendamento de {name}? Esta ação não pode ser desfeita.",
+      "done": "Marcar o reagendamento de {name} como concluído? Ele fica encerrado para este ciclo."
+    },
+    "closeoutPrompt": {
+      "title": "Agendar um reagendamento?"
+    },
+    "modal": {
+      "title": "Definir reagendamento",
+      "subtitle": "Sinalize o paciente para um contato futuro",
+      "duplicateGuard": "Já existe um reagendamento pendente para este paciente e motivo. Será atualizado."
+    },
+    "doNotContact": {
+      "cannotSchedule": "Este paciente está assinalado como \"Não contatar\". Não é possível agendar reagendamentos. Altere a preferência nos dados demográficos para voltar a permitir o contato."
+    },
+    "activeRecallHint": "Reagendamento ativo · toque para gerenciar",
+    "actions": {
+      "save": "Salvar"
+    },
+    "settings": {
+      "title": "Reagendamentos",
+      "autoSuggest": "Sugerir um reagendamento quando um tratamento é concluído",
+      "autoLink": "Associar uma consulta agendada a um reagendamento pendente",
+      "saved": "Definições salvas"
+    },
+    "dashboard": {
+      "title": "Reagendamentos"
+    },
+    "suggestion": {
+      "title": "Reagendamento sugerido",
+      "body": "Após este tratamento sugerimos um reagendamento em {month} ({reason}).",
+      "create": "Criar reagendamento"
+    }
+  },
+  "sdi_it": {
+    "secretStored": "Salva — deixe vazio para manter.",
+    "saved": "Definições salvas",
+    "saveError": "Não foi possível salvar as definições",
+    "settings": {
+      "title": "Faturamento eletrónica (SDI)",
+      "description": "Arquivos FatturaPA das faturas a empresas, enviados ao Sistema di Interscambio."
+    },
+    "scope": {
+      "text": "As faturas de saúde a particulares não podem ser eletrónicas (art. 10-bis DL 119/2018): ficam em PDF e são comunicadas ao Sistema Tessera Sanitaria. Uma fatura só se torna arquivo SDI se o destinatário tiver partita IVA."
+    },
+    "progressivo": "Arquivos gerados até agora: {n}",
+    "transportOpt": {
+      "manual": "Manual — descarrega o arquivo, carrega-o e importa o recibo",
+      "manualHelp": "Descarrega cada XML na página de arquivos, carrega-o em Fatture e Corrispettivi ou envia-o do seu cliente PEC, e importa o recibo devolvido pelo SDI.",
+      "pecHelp": "A cada dois minutos o sistema envia os arquivos pendentes da sua PEC ao SDI e lê os recibos devolvidos. Sem acreditação."
+    },
+    "pec": {
+      "sdiAddressHelp": "sdi01{'@'}pec.fatturapa.it para o primeiro arquivo; o SDI responde de um endereço dedicado, salvo aqui automaticamente.",
+      "username": "Usuário",
+      "password": "Senha"
+    },
+    "records": {
+      "title": "Arquivos SDI",
+      "description": "Cada fatura a empresa torna-se um arquivo FPR12; acompanhe-o da geração ao recibo do SDI.",
+      "empty": "Ainda não há arquivos SDI.",
+      "file": "Arquivo"
+    },
+    "panel": {
+      "buildError": "Não foi possível gerar o arquivo SDI",
+      "noRecord": "Esta fatura ainda não tem arquivo SDI.",
+      "file": "Arquivo",
+      "requeued": "Novo arquivo gerado com o mesmo número",
+      "downloaded": "Arquivo descarregado",
+      "undeliverableHint": "O SDI não conseguiu entregar o arquivo: está na área reservada do destinatário. Avise-o por outro meio.",
+      "rejectedHint": "Rejeitada pelo SDI. Corrija os dados da fatura e regenere: o novo arquivo mantém número e data."
+    },
+    "badge": {
+      "error": "Arquivo SDI não gerado"
+    }
+  },
+  "sistema_ts": {
+    "username": "Usuário",
+    "password": "Senha",
+    "secretStored": "Salvo — deixe vazio para manter.",
+    "saved": "Definições salvas",
+    "saveError": "Não foi possível salvar as definições"
+  },
+  "telephony": {
+    "settings": {
+      "description": "Mostra as chamadas recebidas no tela e mantém um registo — qualquer PBX via webhook."
+    },
+    "saved": "Definições salvas",
+    "saveError": "Não foi possível salvar as definições"
+  },
+  "verifactu": {
+    "settingsCards": {
+      "description": "Conformidade de faturamento eletrónica espanhola. Faça a gestão do certificado, do produtor SIF, da fila de envio e do registo fiscal."
+    },
+    "subtitle": "Conformidade de faturamento eletrónica espanhola (RRSIF / Veri*Factu).",
+    "cards": {
+      "manage": "Gerenciar"
+    },
+    "vatMapping": {
+      "save": "Salvar",
+      "saved": "Classificação salva.",
+      "saveFailed": "Não foi possível salvar a classificação."
+    },
+    "settings": {
+      "save": "Salvar",
+      "saved": "Definições salvas"
+    },
+    "certificate": {
+      "uploadFile": "Arquivo do certificado",
+      "password": "Senha do certificado",
+      "passwordHint": "A senha que protege o arquivo. Nunca é salva em texto simples.",
+      "togglePassword": "Mostrar/ocultar senha",
+      "invalidFormat": "Formato inválido. Carregue um arquivo .pfx ou .p12.",
+      "dropzoneSubtitle": "ou clique para escolher um arquivo",
+      "removeFile": "Remover arquivo",
+      "encryptionNote": "O arquivo e a senha são encriptados com a chave do servidor. Nunca são salvos em texto simples."
+    },
+    "billingParty": {
+      "fields": {
+        "address": "Endereço"
+      },
+      "save": "Salvar e reenviar",
+      "saved": "Salvo. O Verifactu voltará a enviar o registo automaticamente.",
+      "saveFailed": "Não foi possível salvar."
+    },
+    "producer": {
+      "process": {
+        "s2": "Ler a declaración responsable e assiná-la eletronicamente (passo 2). O sistema sela a data e o usuário signatário como prova.",
+        "legalNote": "A assinatura eletrónica salva no sistema é prova suficiente numa auditoria da AEAT. O PDF é um documento informativo derivado dessa assinatura."
+      },
+      "step2": {
+        "description": "Leia o texto com atenção. Quando estiver de acordo, assinale a caixa e clique em Assinar eletronicamente. A assinatura é selada no sistema com a data e o usuário."
+      },
+      "declaration": {
+        "item2": "O sistema garante a integridade, conservação, acessibilidade, legibilidade, rastreabilidade e inalterabilidade dos registos de faturamento."
+      },
+      "signNote": "Ao clicar no botão, a assinatura fica registada com a data e o seu usuário. A ação não pode ser anulada a partir da interface.",
+      "saveDraft": "Salvar sem assinar",
+      "draftSaved": "Rascunho salvo (assinatura pendente).",
+      "saveFailed": "Não foi possível salvar a informação do produtor."
+    }
+  },
+  "onboarding": {
+    "items": {
+      "team": {
+        "label": "A sua equipe"
+      }
+    }
+  },
+  "appointments": {
+    "cabinet": "Consultório",
+    "whereWho": "Consultório e profissional",
+    "cabinetAssignment": {
+      "assign": "Atribuir consultório",
+      "reassign": "Reatribuir consultório",
+      "unassign": "Remover consultório",
+      "requiredForTreatment": "Atribua um consultório antes de passar ao tratamento"
+    },
+    "overlapCabinet": "O consultório tem {count} consulta(s) a esta hora",
+    "freeSlots": {
+      "byCabinet": "Consultório"
+    },
+    "saved": "Consulta salva"
+  },
+  "cabinet": {
+    "toast": {
+      "created": "Consultório criado",
+      "updated": "Consultório atualizado",
+      "deleted": "Consultório eliminado",
+      "duplicateName": "Já existe um consultório com este nome",
+      "notFound": "Consultório não encontrado",
+      "createFailed": "Falha ao criar o consultório",
+      "updateFailed": "Falha ao atualizar o consultório",
+      "deleteFailed": "Falha ao eliminar o consultório"
+    }
+  },
+  "schedules": {
+    "analytics": {
+      "occupancyTitle": "Ocupação por consultório"
+    },
+    "clinicHours": {
+      "save": "Salvar alterações",
+      "savedError": "Falha ao salvar o horário"
+    },
+    "professionalHours": {
+      "save": "Salvar alterações"
+    },
+    "overrides": {
+      "save": "Salvar"
+    }
+  },
+  "staffAttendance": {
+    "title": "Presença da equipe",
+    "member": "Membro da equipe"
+  },
+  "payroll": {
+    "profiles": {
+      "taxId": "CPF/CNPJ",
+      "hasTax": "CPF/CNPJ registado"
+    },
+    "common": {
+      "save": "Salvar",
+      "saveError": "Não foi possível salvar as alterações"
+    }
+  },
+  "accountingExport": {
+    "cols": {
+      "nif": "CPF/CNPJ"
+    }
+  }
+}

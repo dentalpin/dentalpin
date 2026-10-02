@@ -320,12 +320,19 @@ class EmailService:
             logger.warning("Jinja2 environment not initialized")
             return None
 
-        # Try locale-specific template first, then fallback to default
+        # Try locale-specific template first, then base locale(if overlay locale),
+        # then fallback to default
         template_paths = [
             f"{locale}/{template_key}.{extension}",
-            f"default/{template_key}.{extension}",
-            f"{template_key}.{extension}",
         ]
+        if locale == "pt-BR":
+            template_paths.append(f"pt/{template_key}.{extension}")
+        template_paths.extend(
+            [
+                f"default/{template_key}.{extension}",
+                f"{template_key}.{extension}",
+            ]
+        )
 
         for template_path in template_paths:
             try:

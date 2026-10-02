@@ -225,6 +225,7 @@ def _get_labels(locale: str) -> dict[str, str]:
         "en": labels_en,
         "fr": labels_fr,
         "pt": labels_pt,
+        "pt-BR": labels_pt,
         "de": labels_de,
         "hu": labels_hu,
         "pl": labels_pl,

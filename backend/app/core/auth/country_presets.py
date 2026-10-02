@@ -23,7 +23,7 @@ class CountryPreset:
     code: str  # ISO2, "" for the generic fallback
     currency: str  # ISO 4217
     timezone: str  # IANA — main zone of the country
-    language: str  # es|en|fr|pt|ta|de|hu|pl|it|ar — communication_language default
+    language: str  # es|en|fr|pt|pt-BR|ta|de|hu|pl|it|ar — communication_language default
     vat_preset: str = "generic"  # consumed by catalog: "es" | "generic"
     tax_id_label: str = "Tax ID"
     tax_id_pattern: str | None = None  # server-side format check (normalized upper, no separators)
@@ -86,7 +86,7 @@ _ROWS: list[tuple[str, str, str, str]] = [
     ("CR", "CRC", "America/Costa_Rica", "es"),
     ("PA", "PAB", "America/Panama", "es"),
     ("GT", "GTQ", "America/Guatemala", "es"),
-    ("BR", "BRL", "America/Sao_Paulo", "pt"),
+    ("BR", "BRL", "America/Sao_Paulo", "pt-BR"),
     ("US", "USD", "America/New_York", "en"),
     ("CA", "CAD", "America/Toronto", "en"),
     # Others
