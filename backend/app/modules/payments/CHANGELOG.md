@@ -15,6 +15,9 @@
   writes a record while picking a gateway starts a collection. The second
   group does not render when no gateway module is installed.
 
+- feat(#270): `/payments` honors `?patient_id=` on mount (preselects
+  the patient filter) so sibling modules can deep-link collection
+  (orthodontics "Collect installment").
 - fix(#470 review): `PaymentCreateModal`'s default/"today" date now
   reads `clinicToday()` (clinic-local calendar date) instead of the
   browser's UTC date — matches the same clinic-local booking the

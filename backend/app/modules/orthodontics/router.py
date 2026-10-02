@@ -6,6 +6,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import (
@@ -24,7 +25,11 @@ from .schemas import (
     OrthoControlCreate,
     OrthoControlResponse,
     OrthoControlUpdate,
+    OrthoInstallmentsResponse,
+    OrthoPlanLink,
+    OrthoScheduleCreate,
     OrthoSettingsResponse,
+    OrthoSettingsUpdate,
 )
 from .service import (
     OrthoCaseService,
@@ -41,6 +46,7 @@ def _case_response(case, annotation: dict) -> OrthoCaseResponse:
     response.control_count = annotation["control_count"]
     response.last_control_at = annotation["last_control_at"]
     response.next_due = annotation["next_due"]
+    response.plan_close_suggested = annotation.get("plan_close_suggested", False)
     return response
 
 
@@ -199,3 +205,106 @@ async def get_settings(
 ) -> ApiResponse[OrthoSettingsResponse]:
     settings = await OrthoSettingsService.get_or_seed(db, ctx.clinic_id)
     return ApiResponse(data=OrthoSettingsResponse.model_validate(settings))
+
+
+@router.put("/settings", response_model=ApiResponse[OrthoSettingsResponse])
+async def update_settings(
+    data: OrthoSettingsUpdate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("orthodontics.settings.manage"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[OrthoSettingsResponse]:
+    settings = await OrthoSettingsService.update(db, ctx.clinic_id, data.wires, data.procedures)
+    return ApiResponse(data=OrthoSettingsResponse.model_validate(settings))
+
+
+# ---------------------------------------------------------------------------
+# Slice-b: plan link + installments (read-only over plan money).
+# ---------------------------------------------------------------------------
+
+
+@router.post("/cases/{case_id}/plan-link", response_model=ApiResponse[OrthoCaseResponse])
+async def link_plan(
+    case_id: UUID,
+    data: OrthoPlanLink,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("orthodontics.cases.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[OrthoCaseResponse]:
+    try:
+        found = await OrthoCaseService.link_plan(
+            db, ctx.clinic_id, case_id, data.treatment_plan_id, data.plan_item_id
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except IntegrityError as exc:
+        raise HTTPException(
+            status_code=409, detail="Treatment plan already linked to another case"
+        ) from exc
+    if found is None:
+        raise HTTPException(status_code=404, detail="Case not found")
+    case, annotation = found
+    return ApiResponse(data=_case_response(case, annotation))
+
+
+@router.delete("/cases/{case_id}/plan-link", response_model=ApiResponse[OrthoCaseResponse])
+async def unlink_plan(
+    case_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("orthodontics.cases.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[OrthoCaseResponse]:
+    found = await OrthoCaseService.unlink_plan(db, ctx.clinic_id, case_id)
+    if found is None:
+        raise HTTPException(status_code=404, detail="Case not found")
+    case, annotation = found
+    return ApiResponse(data=_case_response(case, annotation))
+
+
+@router.post(
+    "/cases/{case_id}/schedule",
+    response_model=ApiResponse[OrthoInstallmentsResponse],
+    status_code=201,
+)
+async def generate_schedule(
+    case_id: UUID,
+    data: OrthoScheduleCreate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("orthodontics.cases.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[OrthoInstallmentsResponse]:
+    try:
+        result = await OrthoCaseService.generate_schedule(
+            db,
+            ctx.clinic_id,
+            case_id,
+            data.down_payment,
+            data.months,
+            data.monthly_amount,
+            data.down_payment_label,
+            data.installment_labels,
+        )
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return ApiResponse(data=OrthoInstallmentsResponse.model_validate(result))
+
+
+@router.get(
+    "/cases/{case_id}/installments",
+    response_model=ApiResponse[OrthoInstallmentsResponse],
+)
+async def get_installments(
+    case_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("orthodontics.cases.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[OrthoInstallmentsResponse]:
+    try:
+        result = await OrthoCaseService.installments(db, ctx.clinic_id, case_id)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    return ApiResponse(data=OrthoInstallmentsResponse.model_validate(result))

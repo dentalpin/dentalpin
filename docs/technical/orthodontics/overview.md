@@ -7,28 +7,21 @@ hygiene + next-control interval, "in mouth now" wire state,
 start-vs-current photo evolution via media attachments, chip-catalog
 settings seeds, inbox page, patient sub-tab + summary card.
 
-No money code in slice-a. Installments, recall upsert, the
-treatment-plan/appointment links, copilot tools, and the settings UI
-are slice-b / follow-ups (see Later below and the module CLAUDE.md).
+Slice-b adds the money loop without new billing primitives: optional
+plan link (nullable for transfer patients), installment schedule
+generation through the plan session API, read-only installments widget
+(counts only, ADR 0010), deep-link-only "Collect installment" to
+`/payments?patient_id=`, recall upsert (`ortho_review`, paused freezes
+generation), appointment link + session audit pointer on controls,
+`transferred_out` plan-close suggestion.
 
-## Status machine
+## Later (v2, separate issues)
 
-`active` ↔ `paused`; either may finish or transfer out. `finished`
+<`active` ↔ `paused`; either may finish or transfer out. `finished`
 reopens only to `active` (explicit reopen path); `transferred_out` is
 terminal. `finished_at` is stamped on each entry into a terminal state
 and never cleared; a reopen stamps `reopened_at` instead, so the
 end-of-treatment record survives (the replaced value travels in the
 event's `previous_finished_at`). Same-status posts are accepted as note updates.
 
-## Later (slice-b + follow-ups, user-approved 2026-09-08)
-
-- **Slice-b:** optional plan link (`treatment_plan_id` + `plan_item_id`,
-  nullable for transfer patients), recall upsert (`ortho_review`;
-  paused freezes generation), appointment link, `session_id` audit
-  pointer, installments widget + deep-link-only "Collect installment"
-  (ADR 0010: collection stays in the payments screen), `transferred_out`
-  plan-close prompt.
-- **Follow-ups:** chip-catalog settings UI (seed-only now), copilot
-  tools (`get_ortho_case_status`, `list_overdue_ortho_controls`,
-  `register_ortho_control`), v2 items from the issue (open-ended
-  monthly pricing, per-tray aligner tracking, WhatsApp summary).
+- Open-ended monthly pricing, per-tray aligner tracking, WhatsApp summary.

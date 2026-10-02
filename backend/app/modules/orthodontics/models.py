@@ -1,9 +1,7 @@
-"""Orthodontic case + control models (issue #270, slice-a).
+"""Orthodontic case + control models (issue #270).
 
-Slice-a covers clinical tracking only: cases, per-visit controls,
-photo evolution via media attachments, chip-catalog settings seeds.
-Slice-b (separate PR) adds the treatment-plan installment link, recall
-upsert, and the appointment link — see ``docs/technical/orthodontics/overview.md``.
+Slice-a: clinical tracking. Slice-b: optional treatment-plan link
+(one quote, monthly collection), appointment link, session pointer.
 """
 
 from __future__ import annotations
@@ -54,6 +52,12 @@ class OrthoCase(Base):
     finished_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     reopened_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     status_note: Mapped[str | None] = mapped_column(Text, nullable=True)
+    treatment_plan_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("treatment_plans.id"), nullable=True, unique=True
+    )
+    plan_item_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("planned_treatment_items.id"), nullable=True
+    )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )
@@ -89,6 +93,10 @@ class OrthoControl(Base):
     hygiene: Mapped[str | None] = mapped_column(String(10), nullable=True)
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     next_control_weeks: Mapped[int | None] = mapped_column(nullable=True)
+    appointment_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True), ForeignKey("appointments.id"), nullable=True
+    )
+    session_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), nullable=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False
     )

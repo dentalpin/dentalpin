@@ -107,6 +107,14 @@ const {
   fetcher
 })
 
+// Preselect the patient when deep-linked with ?patient_id= (e.g. the
+// orthodontics "Collect installment" action, issue #270).
+const route = useRoute()
+onMounted(() => {
+  const pid = route.query.patient_id
+  if (typeof pid === 'string' && pid) setFilter('patient_id', pid)
+})
+
 const clinicCountry = useClinicCountry()
 // upi / netbanking (#365) only for IN clinics, same gate as the create modal.
 const PAYMENT_METHODS = computed<PaymentMethod[]>(() => [

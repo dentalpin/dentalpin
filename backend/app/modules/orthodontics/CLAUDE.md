@@ -1,8 +1,8 @@
 # Orthodontics module
 
 Orthodontic case tracking: monthly controls, archwires, photo
-evolution (issue #270). **Optional, removable**. Slice-a is clinical
-tracking only — no money code (see Later).
+evolution, one-quote monthly collection (issue #270). **Optional,
+removable**.
 
 ## Public API
 
@@ -16,11 +16,17 @@ tracking only — no money code (see Later).
   - `GET    /cases/{id}/controls` — `orthodontics.cases.read`
   - `PATCH  /controls/{id}` — `orthodontics.controls.write`
   - `GET    /settings` — `orthodontics.cases.read` (lazy-seeds chip catalogs)
+  - `POST   /cases/{id}/plan-link` — `orthodontics.cases.write`
+  - `DELETE /cases/{id}/plan-link` — `orthodontics.cases.write`
+  - `POST   /cases/{id}/schedule` — `orthodontics.cases.write` (201)
+  - `GET    /cases/{id}/installments` — `orthodontics.cases.read`
+  - `PUT    /settings` — `orthodontics.settings.manage` (chip catalogs)
 
 ## Dependencies
 
-`manifest.depends = ["patients", "media"]`. Slice-b extends to
-`["patients", "agenda", "media", "recalls", "treatment_plan"]`.
+`manifest.depends = ["patients", "agenda", "media", "recalls", "treatment_plan"]`.
+Plan sessions are written only through `TreatmentPlanService`;
+recalls only through `RecallService.create` (duplicate-guarded).
 
 ## Permissions
 
@@ -39,20 +45,18 @@ Consumed by `patient_timeline` (payload-only rows).
 
 ## Tools exposed
 
-None in slice-a (copilot tools are a slice-b follow-up).
+| Tool | Category | Wraps | Permission |
+|---|---|---|---|
+| `get_ortho_case_status` | READ | `OrthoCaseService.get` | `orthodontics.cases.read` |
+| `list_overdue_ortho_controls` | READ | `OrthoCaseService.list_overdue` | `orthodontics.cases.read` |
+| `register_ortho_control` | WRITE | `OrthoControlService.register` | `orthodontics.controls.write` |
 
-## Later (slice-b + follow-ups, user-approved 2026-09-08)
+Readers omit free-text notes (cloud-eligible); registration also
+drives the recall upsert.
 
-- **Slice-b PR:** treatment-plan installment link (`treatment_plan_id` +
-  `plan_item_id`, optional for transfer patients), recall upsert
-  (`ortho_review`, paused freezes generation per Q3), appointment link
-  (`appointment_id` FK + agenda dep), `session_id` audit pointer,
-  installments widget + deep-link-only "Collect installment" (Q2, ADR
-  0010), `transferred_out` plan-close prompt (Q3).
-- **Follow-ups:** chip-catalog settings UI (seed-only now, Q4), copilot
-  tools `get_ortho_case_status` / `list_overdue_ortho_controls` /
-  `register_ortho_control` (Q5), v2 items from the issue (open-ended
-  pricing, per-tray aligner tracking, WhatsApp summary).
+## Later (v2, separate issues)
+
+- Open-ended monthly pricing, per-tray aligner tracking, WhatsApp summary.
 
 ## Lifecycle
 
@@ -71,10 +75,14 @@ None in slice-a (copilot tools are a slice-b follow-up).
   `finished_at` is stamped on each entry into a terminal state and never cleared; reopen stamps `reopened_at`.
 - **Wire names are chips, not gates** — unknown labels allowed
   (free-text escape hatch); length capped at 40.
-- **`performed_by` defaults to the caller** (`ctx.user_id`), membership
-  validated as professional (L32).
+- **`performed_by` defaults to the caller** (`ctx.user_id`), clinic
+  membership validated (L32); only the case's named orthodontist
+  needs the professional flag.
 - **Next-due is computed, not stored** — inbox overdue tab derives from
-  the latest control; no Recall rows until slice-b.
+  the latest control; the `ortho_review` recall upsert (duplicate-guarded)
+  fires on control save except while paused.
+- **Collection never happens here** — the widget deep-links to
+  `/payments?patient_id=`; session completion books the money (ADR 0010).
 
 ## CHANGELOG
 

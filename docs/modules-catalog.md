@@ -37,7 +37,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `nav_online` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
 | `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 10 | 7 | 7 | yes |
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
-| `orthodontics` | 0.1.0 | official | patients, media | manual | yes | 4 | 3 | 0 | yes |
+| `orthodontics` | 0.1.0 | official | patients, agenda, media, recalls, treatment_plan | manual | yes | 4 | 3 | 0 | yes |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_segments` | 0.1.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 41 | yes |
@@ -709,7 +709,7 @@ Orthodontic case tracking — monthly controls, wires, photo evolution.
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
-- **Depends:** `patients`, `media`
+- **Depends:** `patients`, `agenda`, `media`, `recalls`, `treatment_plan`
 - **Frontend layer:** `frontend`
 - **Permissions:**
   - `orthodontics.cases.read`

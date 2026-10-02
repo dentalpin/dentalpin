@@ -18,7 +18,9 @@
       "active": "Actif",
       "paused": "En pause",
       "finished": "Terminé",
-      "transferred_out": "Transféré"
+      "transferred_out": "Transféré",
+      "session_pending": "En attente",
+      "session_completed": "Terminée"
     },
     "inbox": {
       "title": "Orthodontie",
@@ -64,7 +66,10 @@
       "noNext": "Sans prochain contrôle",
       "save": "Enregistrer le contrôle",
       "history": "Contrôles",
-      "empty": "Aucun contrôle pour l'instant"
+      "empty": "Aucun contrôle pour l'instant",
+      "appointment": "Rendez-vous",
+      "session": "Séance liée",
+      "sessionHint": "Référence uniquement - l'encaissement se fait dans Paiements."
     },
     "card": {
       "title": "Orthodontie",
@@ -94,6 +99,28 @@
     "errors": {
       "saveFailed": "Échec de l'enregistrement. Veuillez réessayer.",
       "loadFailed": "Impossible de charger les données d'orthodontie."
+    },
+    "plan": {
+      "title": "Plan de traitement",
+      "link": "Lier le plan",
+      "unlink": "Dissocier le plan",
+      "noLink": "Aucun plan lié (les patients transférés peuvent être suivis sans plan)",
+      "completed": "{n} terminées",
+      "pending": "{n} en attente",
+      "generate": "Générer les échéances",
+      "collect": "Encaisser l'échéance",
+      "confirmUnlink": "Dissocier le plan de traitement ?",
+      "downPayment": "Acompte",
+      "installmentN": "Mensualité {n}",
+      "months": "Mois",
+      "monthlyAmount": "Montant mensuel",
+      "closeSuggested": "Cas transféré avec un plan lié : envisagez de clore le plan."
+    },
+    "settings": {
+      "title": "Catalogues de chips",
+      "wires": "Arcs (un par ligne)",
+      "procedures": "Actes (un par ligne)",
+      "save": "Enregistrer les catalogues"
     }
   }
 }

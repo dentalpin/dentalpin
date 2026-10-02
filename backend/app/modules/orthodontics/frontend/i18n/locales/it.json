@@ -18,7 +18,9 @@
       "active": "Attivo",
       "paused": "In pausa",
       "finished": "Terminato",
-      "transferred_out": "Trasferito"
+      "transferred_out": "Trasferito",
+      "session_pending": "In attesa",
+      "session_completed": "Completata"
     },
     "inbox": {
       "title": "Ortodonzia",
@@ -64,7 +66,10 @@
       "noNext": "Senza prossimo controllo",
       "save": "Salva controllo",
       "history": "Controlli",
-      "empty": "Ancora nessun controllo"
+      "empty": "Ancora nessun controllo",
+      "appointment": "Appuntamento",
+      "session": "Sessione collegata",
+      "sessionHint": "Solo riferimento - l'incasso avviene in Pagamenti."
     },
     "card": {
       "title": "Ortodonzia",
@@ -94,6 +99,28 @@
     "errors": {
       "saveFailed": "Salvataggio non riuscito. Riprova.",
       "loadFailed": "Impossibile caricare i dati ortodontici."
+    },
+    "plan": {
+      "title": "Piano di trattamento",
+      "link": "Collega piano",
+      "unlink": "Scollega piano",
+      "noLink": "Nessun piano collegato (i pazienti trasferiti possono essere seguiti senza piano)",
+      "completed": "{n} completate",
+      "pending": "{n} in attesa",
+      "generate": "Genera rate",
+      "collect": "Incassa rata",
+      "confirmUnlink": "Scollegare il piano di trattamento?",
+      "downPayment": "Acconto",
+      "installmentN": "Rata {n}",
+      "months": "Mesi",
+      "monthlyAmount": "Importo mensile",
+      "closeSuggested": "Caso trasferito con piano collegato: valutare la chiusura del piano."
+    },
+    "settings": {
+      "title": "Cataloghi chip",
+      "wires": "Archi (uno per riga)",
+      "procedures": "Procedure (una per riga)",
+      "save": "Salva cataloghi"
     }
   }
 }

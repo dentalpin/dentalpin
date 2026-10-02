@@ -1,8 +1,9 @@
-"""Orthodontics schemas (issue #270, slice-a)."""
+"""Orthodontics schemas (issue #270, slices a+b)."""
 
 from __future__ import annotations
 
 from datetime import date, datetime
+from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
@@ -61,9 +62,12 @@ class OrthoCaseResponse(BaseModel):
     reopened_at: datetime | None = None
     status_note: str | None
     patient_name: str | None = None
+    treatment_plan_id: UUID | None = None
+    plan_item_id: UUID | None = None
     control_count: int = 0
     last_control_at: datetime | None = None
     next_due: date | None = None
+    plan_close_suggested: bool = False
 
 
 class OrthoControlCreate(BaseModel):
@@ -76,6 +80,8 @@ class OrthoControlCreate(BaseModel):
     hygiene: Hygiene | None = None
     notes: str | None = Field(default=None, max_length=5000)
     next_control_weeks: int | None = Field(default=None, ge=1, le=52)
+    appointment_id: UUID | None = None
+    session_id: UUID | None = None
 
 
 class OrthoControlUpdate(BaseModel):
@@ -87,6 +93,8 @@ class OrthoControlUpdate(BaseModel):
     hygiene: Hygiene | None = None
     notes: str | None = Field(default=None, max_length=5000)
     next_control_weeks: int | None = Field(default=None, ge=1, le=52)
+    appointment_id: UUID | None = None
+    session_id: UUID | None = None
 
 
 class OrthoControlResponse(BaseModel):
@@ -106,6 +114,8 @@ class OrthoControlResponse(BaseModel):
     notes: str | None
     next_control_weeks: int | None
     next_due: date | None = None
+    appointment_id: UUID | None = None
+    session_id: UUID | None = None
 
 
 class OrthoSettingsResponse(BaseModel):
@@ -114,3 +124,40 @@ class OrthoSettingsResponse(BaseModel):
     clinic_id: UUID
     wires: list[str]
     procedures: list[str]
+
+
+class OrthoSettingsUpdate(BaseModel):
+    wires: list[str] = Field(max_length=100)
+    procedures: list[str] = Field(max_length=100)
+
+
+class OrthoPlanLink(BaseModel):
+    treatment_plan_id: UUID
+    plan_item_id: UUID
+
+
+class OrthoScheduleCreate(BaseModel):
+    down_payment: Decimal = Field(ge=0)
+    months: int = Field(ge=1, le=60)
+    monthly_amount: Decimal = Field(ge=0)
+    # Session labels in the caller's language (the UI's own strings), so
+    # generated rows never store English fallback text. Absent labels keep
+    # the legacy English ones for older API clients.
+    down_payment_label: str | None = Field(default=None, max_length=120)
+    installment_labels: list[str] | None = None
+
+
+class OrthoSessionBrief(BaseModel):
+    id: UUID
+    sequence: int
+    label: str | None
+    amount: Decimal
+    status: str
+
+
+class OrthoInstallmentsResponse(BaseModel):
+    treatment_plan_id: UUID
+    plan_item_id: UUID
+    sessions: list[OrthoSessionBrief]
+    completed_count: int
+    pending_count: int

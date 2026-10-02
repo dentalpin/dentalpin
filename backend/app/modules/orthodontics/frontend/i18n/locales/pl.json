@@ -18,7 +18,9 @@
       "active": "Aktywny",
       "paused": "Wstrzymany",
       "finished": "Zakończony",
-      "transferred_out": "Przekazany dalej"
+      "transferred_out": "Przekazany dalej",
+      "session_pending": "Oczekująca",
+      "session_completed": "Ukończona"
     },
     "inbox": {
       "title": "Ortodoncja",
@@ -64,7 +66,10 @@
       "noNext": "Brak następnej kontroli",
       "save": "Zapisz kontrolę",
       "history": "Kontrole",
-      "empty": "Brak kontroli"
+      "empty": "Brak kontroli",
+      "appointment": "Wizyta",
+      "session": "Powiązana sesja",
+      "sessionHint": "Tylko poglądowo - pobór następuje w Płatnościach."
     },
     "card": {
       "title": "Ortodoncja",
@@ -94,6 +99,28 @@
     "errors": {
       "saveFailed": "Nie udało się zapisać. Spróbuj ponownie.",
       "loadFailed": "Nie udało się wczytać danych ortodontycznych."
+    },
+    "plan": {
+      "title": "Plan leczenia",
+      "link": "Powiąż plan",
+      "unlink": "Odepnij plan",
+      "noLink": "Brak powiązanego planu (pacjentów przekazanych można prowadzić bez planu)",
+      "completed": "{n} ukończonych",
+      "pending": "{n} oczekujących",
+      "generate": "Generuj raty",
+      "collect": "Pobierz ratę",
+      "confirmUnlink": "Odpiąć plan leczenia?",
+      "downPayment": "Zaliczka",
+      "installmentN": "Rata {n}",
+      "months": "Miesiące",
+      "monthlyAmount": "Kwota miesięczna",
+      "closeSuggested": "Przypadek przekazany dalej z powiązanym planem: rozważ zamknięcie planu."
+    },
+    "settings": {
+      "title": "Katalogi chipów",
+      "wires": "Łuki (jeden na wiersz)",
+      "procedures": "Zabiegi (jeden na wiersz)",
+      "save": "Zapisz katalogi"
     }
   }
 }

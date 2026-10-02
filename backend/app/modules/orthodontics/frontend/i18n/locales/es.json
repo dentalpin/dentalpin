@@ -18,7 +18,9 @@
       "active": "Activo",
       "paused": "En pausa",
       "finished": "Finalizado",
-      "transferred_out": "Derivado"
+      "transferred_out": "Derivado",
+      "session_pending": "Pendiente",
+      "session_completed": "Completada"
     },
     "inbox": {
       "title": "Ortodoncia",
@@ -64,7 +66,10 @@
       "noNext": "Sin próximo control",
       "save": "Guardar control",
       "history": "Controles",
-      "empty": "Aún no hay controles"
+      "empty": "Aún no hay controles",
+      "appointment": "Cita",
+      "session": "Sesión vinculada",
+      "sessionHint": "Solo referencia - el cobro se hace en Pagos."
     },
     "card": {
       "title": "Ortodoncia",
@@ -94,6 +99,28 @@
     "errors": {
       "saveFailed": "No se pudo guardar. Inténtalo de nuevo.",
       "loadFailed": "No se pudieron cargar los datos de ortodoncia."
+    },
+    "plan": {
+      "title": "Plan de tratamiento",
+      "link": "Vincular plan",
+      "unlink": "Desvincular plan",
+      "noLink": "Sin plan vinculado (los pacientes derivados pueden seguirse sin uno)",
+      "completed": "{n} completadas",
+      "pending": "{n} pendientes",
+      "generate": "Generar cuotas",
+      "collect": "Cobrar cuota",
+      "confirmUnlink": "¿Desvincular el plan de tratamiento?",
+      "downPayment": "Pago inicial",
+      "installmentN": "Mensualidad {n}",
+      "months": "Meses",
+      "monthlyAmount": "Importe mensual",
+      "closeSuggested": "Caso derivado con plan vinculado: considere cerrar el plan."
+    },
+    "settings": {
+      "title": "Catálogos de chips",
+      "wires": "Arcos (uno por línea)",
+      "procedures": "Procedimientos (uno por línea)",
+      "save": "Guardar catálogos"
     }
   }
 }

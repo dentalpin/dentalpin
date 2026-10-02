@@ -22,7 +22,7 @@ class OrthodonticsModule(BaseModule):
         "author": "DentalPin Core Team",
         "license": "BSL-1.1",
         "category": "official",
-        "depends": ["patients", "media"],
+        "depends": ["patients", "agenda", "media", "recalls", "treatment_plan"],
         "installable": True,
         "auto_install": False,
         "removable": True,
@@ -55,6 +55,11 @@ class OrthodonticsModule(BaseModule):
 
     def get_permissions(self) -> list[str]:
         return ["cases.read", "cases.write", "controls.write", "settings.manage"]
+
+    def get_tools(self) -> list:
+        from .tools import get_tools
+
+        return get_tools()
 
     def on_activate(self) -> None:
         from .owner_resolvers import register as register_attachment_owners

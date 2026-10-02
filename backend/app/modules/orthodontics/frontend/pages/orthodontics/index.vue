@@ -11,14 +11,19 @@ const { t, locale } = useI18n()
 const { can } = usePermissions()
 const route = useRoute()
 const toast = useToast()
-const { listCases } = useOrthodontics()
+const { listCases, getSettings, updateSettings } = useOrthodontics()
 
 const canRead = computed(() => can(PERMISSIONS.orthodontics.casesRead))
+const canSettings = computed(() => can(PERMISSIONS.orthodontics.settingsManage))
 
 const tab = ref<'active' | 'overdue' | 'unscheduled' | 'finished'>('active')
 const rows = ref<OrthoCase[]>([])
 const selectedId = ref<string | null>((route.query.case_id as string) || null)
 const isLoading = ref(false)
+
+const showSettings = ref(false)
+const editWires = ref('')
+const editProcedures = ref('')
 
 function formatDate(iso: string | null): string {
   if (!iso) return '—'
@@ -55,6 +60,25 @@ async function refresh() {
   }
 }
 
+async function openSettings() {
+  const s = await getSettings()
+  editWires.value = s.wires.join('\n')
+  editProcedures.value = s.procedures.join('\n')
+  showSettings.value = true
+}
+
+async function saveSettings() {
+  try {
+    await updateSettings(
+      editWires.value.split('\n'),
+      editProcedures.value.split('\n')
+    )
+    showSettings.value = false
+  } catch {
+    toast.add({ title: t('orthodontics.errors.saveFailed'), color: 'error' })
+  }
+}
+
 onMounted(refresh)
 </script>
 
@@ -66,6 +90,16 @@ onMounted(refresh)
     <h1 class="mb-3 text-xl font-semibold">
       {{ t('orthodontics.inbox.title') }}
     </h1>
+    <div class="mb-3">
+      <UButton
+        v-if="canSettings"
+        size="sm"
+        variant="soft"
+        @click="openSettings()"
+      >
+        {{ t('orthodontics.settings.title') }}
+      </UButton>
+    </div>
     <div class="grid gap-4 md:grid-cols-[320px_1fr]">
       <div>
         <div class="mb-2 flex flex-wrap gap-1">
@@ -114,5 +148,38 @@ onMounted(refresh)
         />
       </div>
     </div>
+
+    <UModal
+      v-model:open="showSettings"
+      :title="t('orthodontics.settings.title')"
+    >
+      <template #body>
+        <div class="space-y-3">
+          <div>
+            <div class="mb-1 text-sm font-medium">
+              {{ t('orthodontics.settings.wires') }}
+            </div>
+            <UTextarea
+              v-model="editWires"
+              :rows="6"
+            />
+          </div>
+          <div>
+            <div class="mb-1 text-sm font-medium">
+              {{ t('orthodontics.settings.procedures') }}
+            </div>
+            <UTextarea
+              v-model="editProcedures"
+              :rows="6"
+            />
+          </div>
+        </div>
+      </template>
+      <template #footer>
+        <UButton @click="saveSettings()">
+          {{ t('orthodontics.settings.save') }}
+        </UButton>
+      </template>
+    </UModal>
   </div>
 </template>

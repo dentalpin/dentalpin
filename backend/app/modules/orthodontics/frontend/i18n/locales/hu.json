@@ -18,7 +18,9 @@
       "active": "Aktív",
       "paused": "Szüneteltetett",
       "finished": "Befejezett",
-      "transferred_out": "Átirányítva"
+      "transferred_out": "Átirányítva",
+      "session_pending": "Függőben",
+      "session_completed": "Befejezve"
     },
     "inbox": {
       "title": "Fogszabályozás",
@@ -64,7 +66,10 @@
       "noNext": "Nincs következő kontroll",
       "save": "Kontroll mentése",
       "history": "Kontrollok",
-      "empty": "Még nincs kontroll"
+      "empty": "Még nincs kontroll",
+      "appointment": "Időpont",
+      "session": "Kapcsolt alkalom",
+      "sessionHint": "Csak referencia - a beszedés a Kifizetésekben történik."
     },
     "card": {
       "title": "Fogszabályozás",
@@ -94,6 +99,28 @@
     "errors": {
       "saveFailed": "A mentés nem sikerült. Próbálja újra.",
       "loadFailed": "A fogszabályozási adatok betöltése nem sikerült."
+    },
+    "plan": {
+      "title": "Kezelési terv",
+      "link": "Terv összekapcsolása",
+      "unlink": "Terv leválasztása",
+      "noLink": "Nincs kapcsolt terv (az átirányított páciensek terv nélkül is követhetők)",
+      "completed": "{n} befejezve",
+      "pending": "{n} függőben",
+      "generate": "Részletek generálása",
+      "collect": "Részlet beszedése",
+      "confirmUnlink": "Leválasztja a kezelési tervet?",
+      "downPayment": "Előleg",
+      "installmentN": "{n}. törlesztőrészlet",
+      "months": "Hónapok",
+      "monthlyAmount": "Havi összeg",
+      "closeSuggested": "Az eset átirányítva, kapcsolt tervvel: fontolja meg a terv lezárását."
+    },
+    "settings": {
+      "title": "Chip-katalógusok",
+      "wires": "Ívek (soronként egy)",
+      "procedures": "Beavatkozások (soronként egy)",
+      "save": "Katalógusok mentése"
     }
   }
 }
