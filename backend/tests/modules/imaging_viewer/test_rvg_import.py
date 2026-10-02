@@ -210,6 +210,48 @@ async def test_approve_twice_conflicts_and_unknown_patient_404s(
 
 
 @pytest.mark.asyncio
+async def test_import_counts_by_status_over_http(
+    client,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    fake_storage: _FakeStorage,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """GET /rvg/imports/counts (registered before /{import_id} so the
+    literal is not swallowed as an id): per-status totals, clinic-scoped."""
+
+    # Distinct identity per file: approving one scan links its PatientID,
+    # and any later scan with the same tags would auto-approve off that
+    # link instead of staying pending.
+    def _tags(raw: bytes) -> dict:
+        marker = "C1" if raw == b"one" else ("C2" if raw == b"two" else "C3")
+        return {"PatientID": f"T3-COUNT-{marker}", "PatientName": "Count^Test"}
+
+    monkeypatch.setattr(service_module, "extract_identity_tags", _tags)
+    user_id = await _user_id(db_session)
+    pending, _ = await RvgService.scan_bytes(db_session, test_clinic.id, "c1.dcm", b"one")
+    approved, _ = await RvgService.scan_bytes(db_session, test_clinic.id, "c2.dcm", b"two")
+    await RvgService.approve(
+        db_session, test_clinic.id, approved.id, test_patient.id, user_id, raw=b"two"
+    )
+    rejected, _ = await RvgService.scan_bytes(db_session, test_clinic.id, "c3.dcm", b"three")
+    await RvgService.reject(db_session, test_clinic.id, rejected.id, reason="blurry")
+    other_clinic = await _second_clinic(db_session)
+    await RvgService.scan_bytes(db_session, other_clinic.id, "c4.dcm", b"four")
+
+    response = await client.get("/api/v1/imaging_viewer/rvg/imports/counts", headers=auth_headers)
+    assert response.status_code == 200, response.text
+    assert response.json()["data"] == {
+        "pending": 1,
+        "approved": 1,
+        "rejected": 1,
+        "failed": 0,
+    }
+
+
+@pytest.mark.asyncio
 async def test_reject_keeps_row_for_audit(
     test_clinic: Clinic,
     test_patient: Patient,

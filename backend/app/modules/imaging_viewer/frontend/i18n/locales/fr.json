@@ -21,8 +21,8 @@
       "visualizationNote": "Aide à la visualisation uniquement - ne constitue jamais un diagnostic."
     },
     "rvg": {
-      "title": "File d'import RVG ({total} en attente)",
-      "empty": "Aucun fichier RVG en attente. Les nouveaux fichiers du capteur apparaissent ici après chaque acquisition.",
+      "title": "File d'import RVG",
+      "empty": "Aucune importation dans cette vue.",
       "scanNow": "Analyser maintenant",
       "approveSuggestion": "Approuver la suggestion",
       "approveCurrentPatient": "Attribuer au patient actuel",
@@ -33,7 +33,13 @@
       "loadFailed": "Impossible de charger la file RVG.",
       "scanFailed": "Échec de l'analyse. Le dossier surveillé est-il configuré ?",
       "scanSummary": "Analyse terminée : {scanned} analysés, {created} nouveaux, {approved} approuvés automatiquement, {failed} en échec",
-      "actionFailed": "Échec de l'action. La ligne a peut-être déjà été traitée."
+      "actionFailed": "Échec de l'action. La ligne a peut-être déjà été traitée.",
+      "status": {
+        "pending": "En attente",
+        "approved": "Approuvés",
+        "rejected": "Rejetés",
+        "failed": "Échoués"
+      }
     },
     "annotations": {
       "title": "Annotations",

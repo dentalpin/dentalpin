@@ -203,6 +203,15 @@ async def rvg_list_imports(
     )
 
 
+@router.get("/rvg/imports/counts", response_model=ApiResponse[dict[str, int]])
+async def rvg_import_counts(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("imaging_viewer.rvg.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[dict[str, int]]:
+    return ApiResponse(data=await RvgService.count_by_status(db, ctx.clinic_id))
+
+
 @router.get("/rvg/imports/{import_id}", response_model=ApiResponse[RvgImportResponse])
 async def rvg_get_import(
     import_id: UUID,

@@ -21,8 +21,8 @@
       "visualizationNote": "Tylko pomoc wizualna - nigdy diagnoza."
     },
     "rvg": {
-      "title": "Kolejka importu RVG ({total} oczekujących)",
-      "empty": "Brak oczekujących plików RVG. Nowe pliki z sensora pojawią się tutaj po każdym skanowaniu.",
+      "title": "Kolejka importu RVG",
+      "empty": "Brak importów w tym widoku.",
       "scanNow": "Skanuj teraz",
       "approveSuggestion": "Zatwierdź sugestię",
       "approveCurrentPatient": "Przypisz do bieżącego pacjenta",
@@ -33,7 +33,13 @@
       "loadFailed": "Nie można wczytać kolejki RVG.",
       "scanFailed": "Skanowanie nie powiodło się. Czy folder obserwowany jest skonfigurowany?",
       "scanSummary": "Skanowanie zakończone: zeskanowane {scanned}, nowe {created}, zatwierdzone automatycznie {approved}, nieudane {failed}",
-      "actionFailed": "Akcja nie powiodła się. Wiersz mógł już zostać rozstrzygnięty."
+      "actionFailed": "Akcja nie powiodła się. Wiersz mógł już zostać rozstrzygnięty.",
+      "status": {
+        "pending": "Oczekujące",
+        "approved": "Zatwierdzone",
+        "rejected": "Odrzucone",
+        "failed": "Nieudane"
+      }
     },
     "annotations": {
       "title": "Adnotacje",

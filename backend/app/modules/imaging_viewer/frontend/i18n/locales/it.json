@@ -21,8 +21,8 @@
       "visualizationNote": "Solo ausilio visivo - mai una diagnosi."
     },
     "rvg": {
-      "title": "Coda di importazione RVG ({total} in attesa)",
-      "empty": "Nessun file RVG in attesa. I nuovi file del sensore appaiono qui dopo ogni scansione.",
+      "title": "Coda di importazione RVG",
+      "empty": "Nessuna importazione in questa vista.",
       "scanNow": "Scansiona ora",
       "approveSuggestion": "Approva suggerimento",
       "approveCurrentPatient": "Assegna al paziente corrente",
@@ -33,7 +33,13 @@
       "loadFailed": "Impossibile caricare la coda RVG.",
       "scanFailed": "Scansione non riuscita. La cartella monitorata è configurata?",
       "scanSummary": "Scansione completata: {scanned} scansionati, {created} nuovi, {approved} approvati automaticamente, {failed} non riusciti",
-      "actionFailed": "Azione non riuscita. La riga potrebbe essere già stata decisa."
+      "actionFailed": "Azione non riuscita. La riga potrebbe essere già stata decisa.",
+      "status": {
+        "pending": "In attesa",
+        "approved": "Approvate",
+        "rejected": "Rifiutate",
+        "failed": "Non riuscite"
+      }
     },
     "annotations": {
       "title": "Annotazioni",

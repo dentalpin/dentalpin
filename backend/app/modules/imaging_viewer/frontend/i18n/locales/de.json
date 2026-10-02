@@ -21,8 +21,8 @@
       "visualizationNote": "Nur Visualisierungshilfe - niemals eine Diagnose."
     },
     "rvg": {
-      "title": "RVG-Importwarteschlange ({total} ausstehend)",
-      "empty": "Keine ausstehenden RVG-Dateien. Neue Sensordateien erscheinen hier nach jedem Scan.",
+      "title": "RVG-Importwarteschlange",
+      "empty": "Keine Importe in dieser Ansicht.",
       "scanNow": "Jetzt scannen",
       "approveSuggestion": "Vorschlag bestätigen",
       "approveCurrentPatient": "Aktuellem Patienten zuordnen",
@@ -33,7 +33,13 @@
       "loadFailed": "RVG-Warteschlange konnte nicht geladen werden.",
       "scanFailed": "Scan fehlgeschlagen. Ist der Überwachungsordner konfiguriert?",
       "scanSummary": "Scan abgeschlossen: {scanned} gescannt, {created} neu, {approved} automatisch freigegeben, {failed} fehlgeschlagen",
-      "actionFailed": "Aktion fehlgeschlagen. Die Zeile wurde möglicherweise bereits entschieden."
+      "actionFailed": "Aktion fehlgeschlagen. Die Zeile wurde möglicherweise bereits entschieden.",
+      "status": {
+        "pending": "Ausstehend",
+        "approved": "Freigegeben",
+        "rejected": "Abgelehnt",
+        "failed": "Fehlgeschlagen"
+      }
     },
     "annotations": {
       "title": "Annotationen",

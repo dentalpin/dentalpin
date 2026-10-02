@@ -21,8 +21,8 @@
       "visualizationNote": "Csak megjelenítési segédlet - soha nem diagnózis."
     },
     "rvg": {
-      "title": "RVG importálási sor ({total} függőben)",
-      "empty": "Nincsenek függőben lévő RVG-fájlok. Minden szkennelés után itt jelennek meg az új szenzorfájlok.",
+      "title": "RVG importálási sor",
+      "empty": "Nincs megjeleníthető importálás.",
       "scanNow": "Szkennelés most",
       "approveSuggestion": "Javaslat jóváhagyása",
       "approveCurrentPatient": "Hozzárendelés az aktuális beteghez",
@@ -33,7 +33,13 @@
       "loadFailed": "Az RVG-sor betöltése nem sikerült.",
       "scanFailed": "A szkennelés nem sikerült. Be van állítva a figyelt mappa?",
       "scanSummary": "Szkennelés kész: {scanned} szkennelve, {created} új, {approved} automatikusan jóváhagyva, {failed} sikertelen",
-      "actionFailed": "A művelet nem sikerült. Lehet, hogy a sor már el van döntve."
+      "actionFailed": "A művelet nem sikerült. Lehet, hogy a sor már el van döntve.",
+      "status": {
+        "pending": "Függőben",
+        "approved": "Jóváhagyva",
+        "rejected": "Elutasítva",
+        "failed": "Sikertelen"
+      }
     },
     "annotations": {
       "title": "Annotációk",

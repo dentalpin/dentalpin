@@ -126,6 +126,13 @@ export function useRvgImport() {
     })
   }
 
+  async function fetchImportCounts() {
+    const res = await api.get<ApiResponse<Record<string, number>>>(
+      '/api/v1/imaging_viewer/rvg/imports/counts'
+    )
+    return res.data
+  }
+
   async function triggerScan(retryFailed = false) {
     const res = await api.post<ApiResponse<Record<string, number>>>(
       '/api/v1/imaging_viewer/rvg/scan',
@@ -159,5 +166,5 @@ export function useRvgImport() {
     await api.del(`/api/v1/imaging_viewer/rvg/links/${linkId}`)
   }
 
-  return { fetchImports, triggerScan, approveImport, rejectImport, fetchLinks, deleteLink }
+  return { fetchImports, fetchImportCounts, triggerScan, approveImport, rejectImport, fetchLinks, deleteLink }
 }

@@ -21,8 +21,8 @@
       "visualizationNote": "Visualization aid only - never a diagnosis."
     },
     "rvg": {
-      "title": "RVG import queue ({total} pending)",
-      "empty": "No pending RVG files. New sensor files appear here after each scan.",
+      "title": "RVG import queue",
+      "empty": "No imports in this view.",
       "scanNow": "Scan now",
       "approveSuggestion": "Approve suggestion",
       "approveCurrentPatient": "Assign to current patient",
@@ -33,7 +33,13 @@
       "loadFailed": "Could not load the RVG queue.",
       "scanFailed": "Scan failed. Is the watch folder configured?",
       "scanSummary": "Scan complete: {scanned} scanned, {created} new, {approved} auto-approved, {failed} failed",
-      "actionFailed": "Action failed. The row may already be decided."
+      "actionFailed": "Action failed. The row may already be decided.",
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "failed": "Failed"
+      }
     },
     "annotations": {
       "title": "Annotations",

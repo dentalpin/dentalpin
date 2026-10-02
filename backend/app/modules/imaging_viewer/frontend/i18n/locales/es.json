@@ -21,8 +21,8 @@
       "visualizationNote": "Solo ayuda visual — nunca un diagnóstico."
     },
     "rvg": {
-      "title": "Cola de importación RVG ({total} pendientes)",
-      "empty": "No hay archivos RVG pendientes. Los nuevos archivos del sensor aparecen aquí tras cada escaneo.",
+      "title": "Cola de importación RVG",
+      "empty": "Sin importaciones en esta vista.",
       "scanNow": "Escanear ahora",
       "approveSuggestion": "Aprobar sugerencia",
       "approveCurrentPatient": "Asignar al paciente actual",
@@ -33,7 +33,13 @@
       "loadFailed": "No se pudo cargar la cola RVG.",
       "scanFailed": "Falló el escaneo. ¿Está configurada la carpeta de vigilancia?",
       "scanSummary": "Escaneo completo: {scanned} escaneados, {created} nuevos, {approved} autoaprobados, {failed} fallidos",
-      "actionFailed": "Falló la acción. La fila puede estar ya decidida."
+      "actionFailed": "Falló la acción. La fila puede estar ya decidida.",
+      "status": {
+        "pending": "Pendientes",
+        "approved": "Aprobadas",
+        "rejected": "Rechazadas",
+        "failed": "Fallidas"
+      }
     },
     "annotations": {
       "title": "Anotaciones",

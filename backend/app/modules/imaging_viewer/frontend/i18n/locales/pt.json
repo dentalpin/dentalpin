@@ -21,8 +21,8 @@
       "visualizationNote": "Apenas ajuda visual — nunca um diagnóstico."
     },
     "rvg": {
-      "title": "Fila de importação RVG ({total} pendentes)",
-      "empty": "Sem ficheiros RVG pendentes. Os novos ficheiros do sensor aparecem aqui após cada digitalização.",
+      "title": "Fila de importação RVG",
+      "empty": "Nenhuma importação nesta visualização.",
       "scanNow": "Digitalizar agora",
       "approveSuggestion": "Aprovar sugestão",
       "approveCurrentPatient": "Atribuir ao paciente atual",
@@ -33,7 +33,13 @@
       "loadFailed": "Não foi possível carregar a fila RVG.",
       "scanFailed": "A digitalização falhou. A pasta monitorizada está configurada?",
       "scanSummary": "Digitalização concluída: {scanned} digitalizados, {created} novos, {approved} aprovados automaticamente, {failed} com falha",
-      "actionFailed": "A ação falhou. A linha já pode ter sido decidida."
+      "actionFailed": "A ação falhou. A linha já pode ter sido decidida.",
+      "status": {
+        "pending": "Pendentes",
+        "approved": "Aprovadas",
+        "rejected": "Rejeitadas",
+        "failed": "Falhadas"
+      }
     },
     "annotations": {
       "title": "Anotações",
