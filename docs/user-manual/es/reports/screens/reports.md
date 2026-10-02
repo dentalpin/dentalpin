@@ -3,23 +3,17 @@ module: reports
 screen: dashboard
 route: /reports
 related_endpoints:
-  - GET /api/v1/payments/reports/summary
-  - GET /api/v1/payments/reports/trends
-  - GET /api/v1/payments/reports/by-method
-  - GET /api/v1/payments/reports/by-professional
-  - GET /api/v1/payments/reports/aging-receivables
   - GET /api/v1/reports/scheduling/first-visits
   - GET /api/v1/reports/scheduling/funnel
 related_permissions:
   - reports.billing.read
   - reports.budgets.read
   - reports.scheduling.read
-  - payments.reports.read
 related_paths:
   - backend/app/modules/reports/frontend/pages/reports/index.vue
   - backend/app/modules/reports/frontend/composables/useDashboardSnapshot.ts
   - backend/app/modules/reports/frontend/components/dashboard/
-last_verified_commit: bdfaa83
+last_verified_commit: 2195ad0e
 ---
 
 # Dashboard de la clínica
@@ -66,7 +60,7 @@ Ambas llevan el badge `Hoy` para evitar lecturas erróneas.
 
 | Lo que ves | Permiso requerido |
 |------------|-------------------|
-| Caja cobrada, saldo a favor, producción, formas de pago, gráficos, ticket medio cobrado, cuentas por cobrar | `payments.reports.read` |
+| Caja cobrada, saldo a favor, producción, formas de pago, gráficos, ticket medio cobrado, cuentas por cobrar | `payments.reports.read` (detalle: la pantalla de informes de pagos) |
 | Pacientes nuevos, tasa de no-show | `reports.scheduling.read` |
 | Drilldown a Facturación | `reports.billing.read` |
 | Drilldown a Presupuestos | `reports.budgets.read` |

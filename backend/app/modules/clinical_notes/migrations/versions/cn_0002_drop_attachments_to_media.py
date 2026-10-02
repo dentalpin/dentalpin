@@ -10,9 +10,11 @@ This revision:
    the note still surfaces its attached documents in the new model.
 3. Drops the legacy table and its indexes.
 
-App is pre-production; no rollback path is required and the downgrade
-is best-effort (recreates an empty table — historical rows can be
-recovered from media_attachments by inverting the backfill).
+App is pre-production; no rollback path is required. The downgrade is
+deliberately a wall (raises NotImplementedError): reversing would
+silently lose the second-row provenance backfill, and the data lives
+in media_attachments going forward. Registered in ONE_WAY_REVISIONS
+(tests/test_alembic_roundtrip.py); keep both in sync (#548).
 
 Sits on the ``clinical_notes`` branch and declares ``depends_on=
 ("med_0002",)`` so ``media_attachments`` exists before we INSERT into

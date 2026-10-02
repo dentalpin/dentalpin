@@ -24,6 +24,11 @@ Revision ID: tp_0004
 Revises: tp_0003
 Create Date: 2026-05-02
 
+One-way revision by design (#547): the downgrade raises
+NotImplementedError — pre-prod, treatment_media data lives in
+media_attachments going forward. Registered in ONE_WAY_REVISIONS
+(tests/test_alembic_roundtrip.py); keep both in sync if this is ever
+implemented or the chain squashed.
 """
 
 from collections.abc import Sequence
