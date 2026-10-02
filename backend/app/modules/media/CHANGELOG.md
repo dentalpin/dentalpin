@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix: the download `Content-Disposition` filename is sanitized (quotes,
+  backslashes and control characters stripped, `document` fallback) — the
+  stored name comes from the uploader and must never reach the header
+  verbatim.
 - fix: gallery and photo-upload preview render a generic placeholder for
   non-image files (e.g. DICOM) instead of a broken `<img>`.
 - fix: `application/octet-stream` uploads pass validation when the

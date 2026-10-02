@@ -5,6 +5,8 @@ House rule: never hard-delete patient data. Deletes archive the row
 the archived row for historical reference (M2); contact upserts revive.
 """
 
+from uuid import uuid4
+
 import pytest
 from httpx import AsyncClient
 
@@ -56,14 +58,29 @@ async def test_delete_archives_row_lists_exclude_get_returns(db_session, test_pa
     row_id = row.id
     assert row.status == "active"
 
-    fetched = await get(db_session, row_id)
+    fetched = await get(db_session, test_patient.clinic_id, row_id)
     assert fetched is not None
     await delete(db_session, fetched)
 
-    assert (await get(db_session, row_id)) is not None
-    assert (await get(db_session, row_id)).status == "archived"
+    assert (await get(db_session, test_patient.clinic_id, row_id)) is not None
+    assert (await get(db_session, test_patient.clinic_id, row_id)).status == "archived"
     remaining = await list_all(db_session, test_patient.id)
     assert all(r.id != row_id for r in remaining)
+
+
+@pytest.mark.asyncio
+async def test_getters_are_clinic_scoped(db_session, test_patient):
+    """A row from clinic A is invisible to a clinic B lookup (#537)."""
+    row = await PatientsClinicalService.create_allergy(
+        db_session,
+        test_patient.clinic_id,
+        test_patient.id,
+        {"name": "Penicilina", "severity": "critical"},
+    )
+    assert (await PatientsClinicalService.get_allergy(db_session, uuid4(), row.id)) is None
+    assert (
+        await PatientsClinicalService.get_allergy(db_session, test_patient.clinic_id, row.id)
+    ) is not None
 
 
 @pytest.mark.asyncio
@@ -77,13 +94,17 @@ async def test_archived_allergy_stops_alerting(db_session, test_patient):
     )
     assert any(
         a["type"] == "allergy"
-        for a in await PatientsClinicalService.compute_alerts(db_session, test_patient.id)
+        for a in await PatientsClinicalService.compute_alerts(
+            db_session, test_patient.clinic_id, test_patient.id
+        )
     )
 
     await PatientsClinicalService.delete_allergy(db_session, row)
     assert not any(
         a["type"] == "allergy"
-        for a in await PatientsClinicalService.compute_alerts(db_session, test_patient.id)
+        for a in await PatientsClinicalService.compute_alerts(
+            db_session, test_patient.clinic_id, test_patient.id
+        )
     )
 
 
@@ -130,7 +151,7 @@ async def test_replace_preserves_history(db_session, test_patient):
     current = await PatientsClinicalService.list_allergies(db_session, test_patient.id)
     assert [a.name for a in current] == ["Latex"]
     # The superseded row survives, archived, instead of being destroyed.
-    kept = await PatientsClinicalService.get_allergy(db_session, old_row.id)
+    kept = await PatientsClinicalService.get_allergy(db_session, test_patient.clinic_id, old_row.id)
     assert kept is not None and kept.status == "archived" and kept.name == "Penicilina"
 
 

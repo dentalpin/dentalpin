@@ -64,6 +64,16 @@ def _decorate(doc) -> DocumentResponse:
     return response
 
 
+def _safe_filename(name: str | None) -> str:
+    """Strip header-breaking characters from a stored filename.
+
+    The name comes from the uploader, so quotes, backslashes and control
+    characters must never reach Content-Disposition verbatim (#560).
+    """
+    cleaned = "".join(c for c in (name or "") if c.isprintable() and c not in '"\\')
+    return cleaned.strip() or "document"
+
+
 # ---------------------------------------------------------------------------
 # Document upload — generic / administrative path (PDFs, consent, ...).
 # ---------------------------------------------------------------------------
@@ -310,7 +320,9 @@ async def download_document(
 
     headers = {"Content-Length": str(len(content))}
     if variant == "full":
-        headers["Content-Disposition"] = f'attachment; filename="{document.original_filename}"'
+        headers["Content-Disposition"] = (
+            f'attachment; filename="{_safe_filename(document.original_filename)}"'
+        )
     return Response(content=content, media_type=media_type, headers=headers)
 
 

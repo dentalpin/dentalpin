@@ -35,9 +35,14 @@ class PatientsClinicalService:
     # --- Medical context (1:1) -----------------------------------------
 
     @staticmethod
-    async def get_medical_context(db: AsyncSession, patient_id: UUID) -> MedicalContext | None:
+    async def get_medical_context(
+        db: AsyncSession, clinic_id: UUID, patient_id: UUID
+    ) -> MedicalContext | None:
         result = await db.execute(
-            select(MedicalContext).where(MedicalContext.patient_id == patient_id)
+            select(MedicalContext).where(
+                MedicalContext.clinic_id == clinic_id,
+                MedicalContext.patient_id == patient_id,
+            )
         )
         return result.scalar_one_or_none()
 
@@ -49,7 +54,7 @@ class PatientsClinicalService:
         data: dict[str, Any],
         user_id: UUID | None,
     ) -> MedicalContext:
-        existing = await PatientsClinicalService.get_medical_context(db, patient_id)
+        existing = await PatientsClinicalService.get_medical_context(db, clinic_id, patient_id)
         now = datetime.now(UTC)
 
         if existing is None:
@@ -91,8 +96,10 @@ class PatientsClinicalService:
         return allergy
 
     @staticmethod
-    async def get_allergy(db: AsyncSession, allergy_id: UUID) -> Allergy | None:
-        result = await db.execute(select(Allergy).where(Allergy.id == allergy_id))
+    async def get_allergy(db: AsyncSession, clinic_id: UUID, allergy_id: UUID) -> Allergy | None:
+        result = await db.execute(
+            select(Allergy).where(Allergy.clinic_id == clinic_id, Allergy.id == allergy_id)
+        )
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -129,8 +136,14 @@ class PatientsClinicalService:
         return med
 
     @staticmethod
-    async def get_medication(db: AsyncSession, medication_id: UUID) -> Medication | None:
-        result = await db.execute(select(Medication).where(Medication.id == medication_id))
+    async def get_medication(
+        db: AsyncSession, clinic_id: UUID, medication_id: UUID
+    ) -> Medication | None:
+        result = await db.execute(
+            select(Medication).where(
+                Medication.clinic_id == clinic_id, Medication.id == medication_id
+            )
+        )
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -167,8 +180,14 @@ class PatientsClinicalService:
         return disease
 
     @staticmethod
-    async def get_systemic_disease(db: AsyncSession, disease_id: UUID) -> SystemicDisease | None:
-        result = await db.execute(select(SystemicDisease).where(SystemicDisease.id == disease_id))
+    async def get_systemic_disease(
+        db: AsyncSession, clinic_id: UUID, disease_id: UUID
+    ) -> SystemicDisease | None:
+        result = await db.execute(
+            select(SystemicDisease).where(
+                SystemicDisease.clinic_id == clinic_id, SystemicDisease.id == disease_id
+            )
+        )
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -207,8 +226,14 @@ class PatientsClinicalService:
         return surgery
 
     @staticmethod
-    async def get_surgical_history(db: AsyncSession, surgery_id: UUID) -> SurgicalHistory | None:
-        result = await db.execute(select(SurgicalHistory).where(SurgicalHistory.id == surgery_id))
+    async def get_surgical_history(
+        db: AsyncSession, clinic_id: UUID, surgery_id: UUID
+    ) -> SurgicalHistory | None:
+        result = await db.execute(
+            select(SurgicalHistory).where(
+                SurgicalHistory.clinic_id == clinic_id, SurgicalHistory.id == surgery_id
+            )
+        )
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -291,9 +316,9 @@ class PatientsClinicalService:
     # --- Aggregated views ----------------------------------------------
 
     @staticmethod
-    async def build_medical_history(db: AsyncSession, patient_id: UUID) -> dict:
+    async def build_medical_history(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> dict:
         """Return the legacy JSONB-shaped medical history payload."""
-        context = await PatientsClinicalService.get_medical_context(db, patient_id)
+        context = await PatientsClinicalService.get_medical_context(db, clinic_id, patient_id)
         allergies = await PatientsClinicalService.list_allergies(db, patient_id)
         medications = await PatientsClinicalService.list_medications(db, patient_id)
         diseases = await PatientsClinicalService.list_systemic_diseases(db, patient_id)
@@ -327,9 +352,9 @@ class PatientsClinicalService:
         }
 
     @staticmethod
-    async def compute_alerts(db: AsyncSession, patient_id: UUID) -> list[dict]:
+    async def compute_alerts(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> list[dict]:
         """Compute active alerts from normalized clinical rows."""
-        context = await PatientsClinicalService.get_medical_context(db, patient_id)
+        context = await PatientsClinicalService.get_medical_context(db, clinic_id, patient_id)
         allergies = await PatientsClinicalService.list_allergies(db, patient_id)
         diseases = await PatientsClinicalService.list_systemic_diseases(db, patient_id)
 

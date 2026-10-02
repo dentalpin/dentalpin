@@ -103,3 +103,23 @@ def test_rate_limit_is_scoped_per_session():
     assert check(ctx_b, _tool("r"), "m.r", cfg) is GuardrailDecision.ALLOW
     # Same session as A — now over budget.
     assert check(ctx_a, _tool("r"), "m.r", cfg) is GuardrailDecision.BLOCK
+
+
+def test_session_cap_is_lifetime_not_minute():
+    ctx = _make_ctx()
+    cfg = GuardrailConfig(max_actions_per_minute=1000, max_actions_per_session=3)
+    for _ in range(3):
+        assert check(ctx, _tool("r"), "m.r", cfg) is GuardrailDecision.ALLOW
+    # Fourth action in the same session is blocked even though the
+    # minute window is nowhere near full.
+    assert check(ctx, _tool("r"), "m.r", cfg) is GuardrailDecision.BLOCK
+
+
+def test_leading_wildcard_delete_pattern_matches():
+    ctx = _make_ctx()
+    # Default config carries "*.delete": a WRITE tool named *.delete
+    # needs approval even though it is not DESTRUCTIVE.
+    decision = check(ctx, _tool("purge", ToolCategory.WRITE), "media.delete", None)
+    assert decision is GuardrailDecision.REQUIRE_APPROVAL
+    # ... but a non-delete tool in the same module stays allowed.
+    assert check(ctx, _tool("r"), "media.read", None) is GuardrailDecision.ALLOW

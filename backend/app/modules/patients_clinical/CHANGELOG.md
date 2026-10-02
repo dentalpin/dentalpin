@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix: the five clinical getters (`get_medical_context`, `get_allergy`,
+  `get_medication`, `get_systemic_disease`, `get_surgical_history`) now
+  filter by `clinic_id` (signatures take it explicitly); the aggregates
+  `build_medical_history` / `compute_alerts` thread it through.
 - feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).
 
 - fix(data): deletes are now soft-deletes (audit DATA-01). `delete_*`

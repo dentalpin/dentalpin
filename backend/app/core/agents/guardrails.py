@@ -37,8 +37,9 @@ class GuardrailConfig:
     """Policy knobs enforced by :func:`check`.
 
     All values are per-session. ``require_approval_for`` and
-    ``blocked_tools`` accept the same wildcard grammar as RBAC
-    (``module.*``, ``module.resource.*``, ``*``).
+    ``blocked_tools`` accept the RBAC wildcard grammar
+    (``module.*``, ``module.resource.*``, ``*``) plus a guardrails-only
+    leading wildcard (``*.delete`` matches any ``<module>.delete`` tool).
     """
 
     max_actions_per_minute: int = 10
@@ -56,6 +57,10 @@ default_config = GuardrailConfig()
 # Per-session rate-limit windows: session_id -> deque of timestamps.
 _windows: dict[UUID, deque[float]] = {}
 
+# Per-session lifetime totals: session_id -> action count. Never pruned:
+# the session cap is a real session counter, not a second minute window.
+_totals: dict[UUID, int] = {}
+
 
 def _window_for(session_id: UUID) -> deque[float]:
     window = _windows.get(session_id)
@@ -68,10 +73,25 @@ def _window_for(session_id: UUID) -> deque[float]:
 def reset_counters() -> None:
     """Clear all per-session counters. Test-only."""
     _windows.clear()
+    _totals.clear()
+
+
+def _record(session_id: UUID, window: deque[float], now: float) -> None:
+    window.append(now)
+    _totals[session_id] = _totals.get(session_id, 0) + 1
 
 
 def _matches_any(qualified_name: str, patterns: list[str]) -> bool:
-    return any(permission_matches(qualified_name, pattern) for pattern in patterns)
+    for pattern in patterns:
+        # Guardrails-only leading wildcard: "*.delete" matches any
+        # "<module>.delete". RBAC itself has no such form, so this lives
+        # here instead of permission_matches.
+        if pattern.startswith("*."):
+            if qualified_name.endswith(pattern[1:]):
+                return True
+        elif permission_matches(qualified_name, pattern):
+            return True
+    return False
 
 
 def check(
@@ -93,21 +113,21 @@ def check(
         window.popleft()
     if len(window) >= cfg.max_actions_per_minute:
         return GuardrailDecision.BLOCK
-    if len(window) >= cfg.max_actions_per_session:
+    if _totals.get(ctx.session_id, 0) >= cfg.max_actions_per_session:
         return GuardrailDecision.BLOCK
 
     # In supervised mode, every write action is human-reviewed.
     if ctx.mode.value == "supervised" and tool.category is not ToolCategory.READ:
-        window.append(now)
+        _record(ctx.session_id, window, now)
         return GuardrailDecision.REQUIRE_APPROVAL
 
     if cfg.auto_require_approval_for_destructive and tool.category is ToolCategory.DESTRUCTIVE:
-        window.append(now)
+        _record(ctx.session_id, window, now)
         return GuardrailDecision.REQUIRE_APPROVAL
 
     if _matches_any(qualified_name, cfg.require_approval_for):
-        window.append(now)
+        _record(ctx.session_id, window, now)
         return GuardrailDecision.REQUIRE_APPROVAL
 
-    window.append(now)
+    _record(ctx.session_id, window, now)
     return GuardrailDecision.ALLOW
