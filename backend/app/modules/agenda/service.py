@@ -312,11 +312,13 @@ class AppointmentService:
         db: AsyncSession, clinic_id: UUID, professional_id: UUID
     ) -> bool:
         result = await db.execute(
-            select(ClinicMembership.id).where(
+            select(ClinicMembership.id)
+            .where(
                 ClinicMembership.user_id == professional_id,
                 ClinicMembership.clinic_id == clinic_id,
                 ClinicMembership.is_professional.is_(True),
             )
+            .limit(1)
         )
         return result.scalar_one_or_none() is not None
 

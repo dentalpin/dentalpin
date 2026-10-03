@@ -32,11 +32,13 @@ async def _validate_professional_in_clinic(
     line with the other validation errors in this module.
     """
     result = await db.execute(
-        select(ClinicMembership.id).where(
+        select(ClinicMembership.id)
+        .where(
             ClinicMembership.clinic_id == clinic_id,
             ClinicMembership.user_id == user_id,
             ClinicMembership.is_professional.is_(True),
         )
+        .limit(1)
     )
     if result.scalar_one_or_none() is None:
         raise ValueError("Invalid professional for this clinic")

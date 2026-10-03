@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(#590): `ProfessionalHoursService.is_professional` tolerates
+  duplicated membership rows (`.limit(1)` existence read, same fix as
+  #598 for orthodontics). `clinic_memberships` has no unique
+  `(clinic_id, user_id)` constraint, so a duplicate used to 500 with
+  `MultipleResultsFound`.
 - fix(#522): the clinic-hours and professional-schedule pages defaulted
   `start_date` / `end_date` and computed "today" from the UTC day. Now use
   `toISODate`.

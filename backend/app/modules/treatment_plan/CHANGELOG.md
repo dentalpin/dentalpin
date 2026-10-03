@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix(#590): the professional-membership validation tolerates duplicated
+  membership rows (`.limit(1)` existence read, same fix as #598 for
+  orthodontics). `clinic_memberships` has no unique `(clinic_id, user_id)`
+  constraint, so a duplicate used to 500 with `MultipleResultsFound`.
 - feat(#232): sidebar entry grouped under the Clinical header (`nav.section` "clinical").
 - refactor(#337): owns `AppointmentTreatment` (`appointment_treatments`) — the NOT NULL planned-item FK always made it the plan's visit bridge; the model's backref installs `Appointment.treatments`, the provider gained `attach_planned_items`/`visit_note_row`, and all three of the table's FKs are now declarable. No schema migration; future ALTERs live on the tp branch.
 

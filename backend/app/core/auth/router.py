@@ -538,11 +538,13 @@ async def create_user(
     clinic_id = data.clinic_id if data.clinic_id else ctx.clinic_id
     if clinic_id != ctx.clinic_id:
         caller_is_admin = await db.execute(
-            select(ClinicMembership.id).where(
+            select(ClinicMembership.id)
+            .where(
                 ClinicMembership.user_id == ctx.user_id,
                 ClinicMembership.clinic_id == clinic_id,
                 ClinicMembership.role == "admin",
             )
+            .limit(1)
         )
         if caller_is_admin.scalar_one_or_none() is None:
             raise HTTPException(

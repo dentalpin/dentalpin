@@ -23,11 +23,13 @@ class ProfessionalHoursService:
     @staticmethod
     async def is_professional(db: AsyncSession, clinic_id: UUID, user_id: UUID) -> bool:
         result = await db.execute(
-            select(ClinicMembership.id).where(
+            select(ClinicMembership.id)
+            .where(
                 ClinicMembership.clinic_id == clinic_id,
                 ClinicMembership.user_id == user_id,
                 ClinicMembership.is_professional.is_(True),
             )
+            .limit(1)
         )
         return result.scalar_one_or_none() is not None
 
