@@ -2,6 +2,14 @@
 
 import pytest
 from httpx import AsyncClient
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.config import settings
+from app.core.auth.models import User
+from app.core.auth.rbac import invalidate_rbac_cache
+from app.core.auth.seed_rbac import seed_rbac
+from app.core.auth.service import create_access_token
 
 
 @pytest.mark.asyncio
@@ -132,3 +140,77 @@ async def test_me_without_auth(client: AsyncClient) -> None:
     """Test /me endpoint requires authentication."""
     response = await client.get("/api/v1/auth/me")
     assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_update_user_cannot_change_own_role(
+    client: AsyncClient, auth_headers: dict[str, str], test_clinic
+) -> None:
+    """PUT role on your own membership is rejected (#556)."""
+    me = (await client.get("/api/v1/auth/me", headers=auth_headers)).json()["data"]
+    response = await client.put(
+        f"/api/v1/auth/users/{me['user']['id']}",
+        json={"role": "receptionist"},
+        headers=auth_headers,
+    )
+    assert response.status_code == 400, response.text
+    assert "own role" in response.text
+
+
+@pytest.mark.asyncio
+async def test_update_user_cannot_demote_last_admin(
+    client: AsyncClient,
+    auth_headers: dict[str, str],
+    test_clinic,
+    db_session: AsyncSession,
+) -> None:
+    """A non-admin holding admin.users.write still cannot demote the
+    clinic's sole admin (#556)."""
+    me = (await client.get("/api/v1/auth/me", headers=auth_headers)).json()["data"]
+    settings.RBAC_FROM_DB = True
+    try:
+        invalidate_rbac_cache()
+        await seed_rbac(db_session)
+        created_role = await client.post(
+            "/api/v1/roles",
+            json={"name": "usermanager", "permissions": ["admin.users.write"]},
+            headers=auth_headers,
+        )
+        assert created_role.status_code == 201, created_role.text
+        role = created_role.json()["data"]
+        assert role["name"] == "usermanager"
+        created = await client.post(
+            "/api/v1/auth/users",
+            json={
+                "email": "manager@test.clinic",
+                "password": "Str0ngPassw0rd!!",
+                "first_name": "M",
+                "last_name": "G",
+                "role": "usermanager",
+            },
+            headers=auth_headers,
+        )
+        assert created.status_code == 201, created.text
+        manager = (
+            await db_session.execute(select(User).where(User.email == "manager@test.clinic"))
+        ).scalar_one()
+        token = create_access_token(manager.id, token_version=manager.token_version)
+        response = await client.put(
+            f"/api/v1/auth/users/{me['user']['id']}",
+            json={"role": "receptionist"},
+            headers={"Authorization": f"Bearer {token}"},
+        )
+        assert response.status_code == 400, response.text
+        assert "last admin" in response.text
+    finally:
+        settings.RBAC_FROM_DB = False
+        invalidate_rbac_cache()
+
+
+@pytest.mark.asyncio
+async def test_list_users_lives_under_read(
+    client: AsyncClient, auth_headers: dict[str, str], test_clinic
+) -> None:
+    """GET /users is gated by admin.users.read, not .write (#556)."""
+    response = await client.get("/api/v1/auth/users", headers=auth_headers)
+    assert response.status_code == 200, response.text

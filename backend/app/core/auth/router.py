@@ -488,7 +488,7 @@ async def get_me(
 @router.get("/users", response_model=PaginatedApiResponse[UserWithRoleResponse])
 async def list_users(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
-    _: Annotated[None, Depends(require_permission("admin.users.write"))],
+    _: Annotated[None, Depends(require_permission("admin.users.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> PaginatedApiResponse[UserWithRoleResponse]:
     """List all users in the current clinic (admin only)."""
@@ -737,7 +737,29 @@ async def update_user(
             user.token_version += 1
 
     # Update role in membership
-    if data.role is not None:
+    if data.role is not None and data.role != membership.role:
+        # Prevent admins from demoting themselves out of the role.
+        if user.id == ctx.user_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Cannot change your own role",
+            )
+        # Prevent demoting the clinic's last admin.
+        if membership.role == "admin":
+            remaining_admins = await db.scalar(
+                select(func.count())
+                .select_from(ClinicMembership)
+                .where(
+                    ClinicMembership.clinic_id == ctx.clinic_id,
+                    ClinicMembership.role == "admin",
+                    ClinicMembership.user_id != user.id,
+                )
+            )
+            if not remaining_admins:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Cannot demote the clinic's last admin",
+                )
         membership.role = data.role
         membership.role_id = await resolve_role_id(db, membership.clinic_id, data.role)
 
