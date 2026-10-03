@@ -91,6 +91,10 @@
       "never": "Nunca",
       "rotate": "Generar / rotar clave",
       "rotateWarning": "Rotar la clave corta al instante una clave filtrada. Acuérdate de pegar la nueva clave en tu web: el formulario fallará hasta que lo hagas.",
+      "confirmRotate": {
+        "title": "¿Rotar la clave de captación?",
+        "message": "La clave actual dejará de funcionar de inmediato. Cualquier sitio web que aún la use fallará hasta que pegues la nueva clave."
+      },
       "rotateCopyOnce": "Copia esta clave ahora: solo se muestra una vez.",
       "copied": "Copiado",
       "activate": "Activar entrada",

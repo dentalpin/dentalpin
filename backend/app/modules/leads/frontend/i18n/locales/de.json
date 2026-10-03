@@ -91,6 +91,10 @@
       "never": "Nie",
       "rotate": "Schlüssel erzeugen / erneuern",
       "rotateWarning": "Das Erneuern sperrt einen geleakten Schlüssel sofort. Denken Sie daran, den neuen Schlüssel auf Ihrer Website einzutragen — das Formular schlägt sonst fehl, bis Sie das getan haben.",
+      "confirmRotate": {
+        "title": "Intake-Schlüssel rotieren?",
+        "message": "Der aktuelle Schlüssel funktioniert sofort nicht mehr. Jede Website, die ihn noch verwendet, schlägt fehl, bis Sie den neuen Schlüssel einfügen."
+      },
       "rotateCopyOnce": "Kopieren Sie diesen Schlüssel jetzt: er wird nur einmal angezeigt.",
       "copied": "Kopiert",
       "activate": "Eingang aktivieren",

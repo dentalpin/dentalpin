@@ -91,6 +91,10 @@
       "never": "Never",
       "rotate": "Generate / rotate key",
       "rotateWarning": "Rotating stops a leaked key immediately. Remember to paste the new key into your website — the form will fail until you do.",
+      "confirmRotate": {
+        "title": "Rotate intake key?",
+        "message": "The current key stops working immediately. Any website still using it will fail until you paste the new key in."
+      },
       "rotateCopyOnce": "Copy this key now: it is shown only once.",
       "copied": "Copied",
       "activate": "Enable intake",

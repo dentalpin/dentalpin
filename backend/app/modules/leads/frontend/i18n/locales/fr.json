@@ -91,6 +91,10 @@
       "never": "Jamais",
       "rotate": "Générer / renouveler la clé",
       "rotateWarning": "Renouveler la clé coupe immédiatement une clé divulguée. Pensez à coller la nouvelle clé dans votre site web : le formulaire échouera tant que ce n'est pas fait.",
+      "confirmRotate": {
+        "title": "Régénérer la clé de réception ?",
+        "message": "La clé actuelle cessera de fonctionner immédiatement. Tout site web qui l'utilise encore échouera jusqu'à ce que vous colliez la nouvelle clé."
+      },
       "rotateCopyOnce": "Copiez cette clé maintenant : elle ne s'affiche qu'une seule fois.",
       "copied": "Copié",
       "activate": "Activer l'entrée",
