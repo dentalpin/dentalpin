@@ -280,7 +280,7 @@ async def readiness_check(
         logger.error("Readiness check failed: %s", exc)
         return JSONResponse(
             status_code=503,
-            content={"status": "unready", "version": "2.0.0", "error": str(exc)},
+            content={"status": "unready", "version": "2.0.0"},
         )
     return JSONResponse(content={"status": "ready", "version": "2.0.0"})
 

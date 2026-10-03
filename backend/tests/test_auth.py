@@ -1,7 +1,12 @@
 """Tests for authentication endpoints."""
 
+from collections.abc import AsyncGenerator
+
 import pytest
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
+
+from app.database import get_db
+from app.main import app
 
 
 @pytest.mark.asyncio
@@ -10,6 +15,31 @@ async def test_health_check(client: AsyncClient) -> None:
     response = await client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
+
+
+@pytest.mark.asyncio
+async def test_readiness_check_hides_database_error() -> None:
+    """Readiness failures keep database details out of the public body."""
+
+    class FailingSession:
+        async def execute(self, _query: object) -> None:
+            raise RuntimeError("db.internal:5432 SELECT secret FROM users")
+
+    async def override_get_db() -> AsyncGenerator[FailingSession, None]:
+        yield FailingSession()
+
+    try:
+        app.dependency_overrides[get_db] = override_get_db
+        transport = ASGITransport(app=app)
+        async with AsyncClient(transport=transport, base_url="http://test") as client:
+            response = await client.get("/health/ready")
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 503
+    assert response.json() == {"status": "unready", "version": "2.0.0"}
+    assert "db.internal" not in response.text
+    assert "SELECT secret" not in response.text
 
 
 _SETUP_PAYLOAD = {
