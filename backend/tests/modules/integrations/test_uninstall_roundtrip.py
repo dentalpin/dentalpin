@@ -2,14 +2,12 @@
 
 Mirrors patient_relationships/recalls/schedules/whatsapp_kapso: install
 -> uninstall -> reinstall must drop ONLY the integrations tables and
-leave every other module untouched. The module now owns two revisions
-(int_0001, int_0002 — added api_tokens — and int_0003 — added
-    ``event_id`` to webhook_deliveries), so the branch-scoped downgrade
-    target is ``integrations@-3`` — the same form ``_downgrade_target_for``
-resolves for the real uninstall path (``_count_owned_revisions``
-tracks this dynamically; this test's target is hardcoded and must be
-bumped whenever a revision is added to this branch). Marked
-``alembic_roundtrip`` and excluded from the default pytest run.
+leave every other module untouched. The branch-scoped downgrade target
+is resolved against the branch via ``_downgrade_target_for`` (#553) —
+the same form the real uninstall path uses (``_count_owned_revisions``
+tracks the revision count dynamically, so no bump is needed when a
+revision is added). Marked ``alembic_roundtrip`` and excluded from the
+default pytest run.
 """
 
 from __future__ import annotations
@@ -22,6 +20,7 @@ import asyncpg
 import pytest
 
 from app.config import settings
+from app.core.plugins.processor import _downgrade_target_for
 
 pytestmark = pytest.mark.alembic_roundtrip
 
@@ -63,7 +62,7 @@ def test_integrations_uninstall_roundtrip_is_branch_scoped() -> None:
     )
     baseline_other = before - INTEGRATIONS_TABLES
 
-    _alembic("downgrade", "integrations@-3")
+    _alembic("downgrade", _downgrade_target_for("integrations", "int_0001"))
     after_down = _list_tables()
     assert INTEGRATIONS_TABLES.isdisjoint(after_down), (
         f"integrations tables survived downgrade: {INTEGRATIONS_TABLES & after_down}"

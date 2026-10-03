@@ -10,6 +10,7 @@ import asyncpg
 import pytest
 
 from app.config import settings
+from app.core.plugins.processor import _downgrade_target_for
 
 pytestmark = pytest.mark.alembic_roundtrip
 
@@ -40,7 +41,9 @@ def test_sdi_it_uninstall_roundtrip_is_branch_scoped() -> None:
     _alembic("upgrade", "heads")
     before = asyncio.run(_tables_async())
     assert SDI_TABLES.issubset(before)
-    _alembic("downgrade", "sdi_it@-2")  # both revisions of the branch
+    # Branch-scoped target resolved against the branch (#553): tracks
+    # the revision count dynamically instead of a hardcoded @-N.
+    _alembic("downgrade", _downgrade_target_for("sdi_it", "sdi_0001"))
     after = asyncio.run(_tables_async())
     assert SDI_TABLES.isdisjoint(after) and after == before - SDI_TABLES
     _alembic("upgrade", "heads")

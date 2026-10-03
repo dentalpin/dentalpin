@@ -3,7 +3,8 @@
 Install, uninstall, reinstall must drop ONLY this module's tables and
 leave every other module untouched — including ``recalls``, which leads
 declares as a dependency and must never take down with it. The
-branch-scoped downgrade target is ``leads@-2`` (the branch has two revisions).
+branch-scoped downgrade target is resolved against the branch via
+``_downgrade_target_for`` (#553) instead of a hardcoded count.
 Marked ``alembic_roundtrip`` and excluded from the default run.
 """
 
@@ -18,6 +19,7 @@ import asyncpg
 import pytest
 
 from app.config import settings
+from app.core.plugins.processor import _downgrade_target_for
 from app.modules.leads import LEAD_TABLES
 
 pytestmark = pytest.mark.alembic_roundtrip
@@ -67,7 +69,7 @@ def test_leads_uninstall_roundtrip_is_branch_scoped() -> None:
 
     # Branch-scoped form (<label>@-N): plain <label>@base would downgrade
     # every branch to the shared ancestor.
-    _alembic("downgrade", "leads@-2")  # the branch has two revisions now
+    _alembic("downgrade", _downgrade_target_for("leads", "leads_0001"))
     after_down = _list_tables()
     assert LEAD_TABLES.isdisjoint(after_down), "leads tables still present after downgrade"
     assert DEPENDENCY_TABLES.issubset(after_down), "downgrade leaked into the recalls branch"

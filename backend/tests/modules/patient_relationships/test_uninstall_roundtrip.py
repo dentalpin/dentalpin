@@ -2,9 +2,9 @@
 
 Mirrors recalls/schedules/whatsapp_kapso: install → uninstall → reinstall
 must drop ONLY the patient_relationships tables and leave every other module
-untouched. The module owns two revisions (prel_0001, prel_0002), so the
-branch-scoped downgrade target is ``patient_relationships@-2`` — the same form
-``_downgrade_target_for`` resolves for the real uninstall path. Marked
+untouched. The branch-scoped downgrade target is resolved against the
+branch via ``_downgrade_target_for`` (#553) — the same form the real
+uninstall path uses — instead of a hardcoded count. Marked
 ``alembic_roundtrip`` and excluded from the default pytest run.
 """
 
@@ -18,6 +18,7 @@ import asyncpg
 import pytest
 
 from app.config import settings
+from app.core.plugins.processor import _downgrade_target_for
 
 pytestmark = pytest.mark.alembic_roundtrip
 
@@ -61,7 +62,7 @@ def test_patient_relationships_uninstall_roundtrip_is_branch_scoped() -> None:
     )
     baseline_other = before - PADM_TABLES
 
-    _alembic("downgrade", "patient_relationships@-2")
+    _alembic("downgrade", _downgrade_target_for("patient_relationships", "prel_0001"))
     after_down = _list_tables()
     assert PADM_TABLES.isdisjoint(after_down), (
         f"patient_relationships tables survived downgrade: {PADM_TABLES & after_down}"
