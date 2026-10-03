@@ -55,6 +55,10 @@ class CopilotConversation(Base, TimestampMixin):
     )
     title: Mapped[str | None] = mapped_column(String(200), nullable=True)
     context: Mapped[dict] = mapped_column(JSONB, nullable=False, default=dict)
+    # Per-conversation redaction salt (#586). Beside the context blob,
+    # never inside it: the blob is seeded into the redactor and logged,
+    # the salt must be neither. Generated on first redactor build.
+    redaction_salt: Mapped[str | None] = mapped_column(String(64), nullable=True)
     provider: Mapped[str] = mapped_column(String(20), nullable=False, default="openai")
     model: Mapped[str] = mapped_column(String(100), nullable=False)
     status: Mapped[str] = mapped_column(String(20), nullable=False, default="active")

@@ -311,6 +311,38 @@ def test_redactor_tokenizes_date_of_birth() -> None:
     assert r.rehydrate(content["date_of_birth"]) == "1985-03-14"
 
 
+def test_salted_tokens_are_stable_for_one_salt() -> None:
+    """Turn-to-turn stability: same salt + value rebuilds the same token."""
+    first = Redactor(enabled=True, salt="aa" * 16).table.tokenize("1985-03-14", "DOB")
+    second = Redactor(enabled=True, salt="aa" * 16).table.tokenize("1985-03-14", "DOB")
+    assert first == second
+
+
+def test_salted_tokens_differ_across_salts() -> None:
+    """Cross-conversation unlinkability (#586)."""
+    a = Redactor(enabled=True, salt="aa" * 16).table.tokenize("1985-03-14", "DOB")
+    b = Redactor(enabled=True, salt="bb" * 16).table.tokenize("1985-03-14", "DOB")
+    assert a != b
+
+
+def test_salted_token_is_12_hex() -> None:
+    import re
+
+    token = Redactor(enabled=True, salt="aa" * 16).table.tokenize("600123123", "PHONE")
+    assert re.fullmatch(r"PHONE_[0-9a-f]{12}", token), token
+
+
+def test_salted_round_trip() -> None:
+    r = Redactor(enabled=True, salt="cc" * 16)
+    msg = ProviderMessage(
+        Role.TOOL,
+        [ToolResultBlock("c1", {"full_name": "María González"})],
+    )
+    token = r.redact_outgoing([msg])[0].content[0].content["full_name"]
+    assert token != "María González"
+    assert r.rehydrate(token) == "María González"
+
+
 # --- factory -------------------------------------------------------------
 
 

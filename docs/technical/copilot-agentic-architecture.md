@@ -340,11 +340,13 @@ tokenization means under GDPR.
    `expenses` (grep `exposes_free_text=True`); those tools are simply
    unavailable to the model while redaction is on.
 
-5. **Deterministic tokens** — the same real value always maps to the
-   same token (`SHA-1(real)[:6]`, unsalted), within a session *and*
-   across sessions, so the model can reason about "the same patient"
-   across turns without seeing the real value, and a resumed
-   conversation can rebuild its symbol table by re-redacting history.
+5. **Deterministic-per-conversation tokens** — the same real value
+   always maps to the same token *within one conversation*
+   (`SHA-256(salt:real)[:12]`, salted per conversation), so the model
+   can reason about "the same patient" across turns without seeing the
+   real value, and a resumed conversation can rebuild its symbol table
+   by re-redacting history. The salt lives on the conversation row
+   (never in the context blob or logs) and is minted on first use.
 
 ### What is NOT guaranteed
 
@@ -355,23 +357,19 @@ tokenization means under GDPR.
    values only; novel identifiers pass through to the provider in
    cleartext.  NER is deferred to a later milestone.
 
-2. **Anonymization** — tokens are deterministic short hashes, not
-   random nonces.  This is **pseudonymization** under GDPR Article
-   4(5), not anonymization.  A party that possesses the symbol table
-   (i.e. the DentalPin server) can reverse every token.  There is no
-   secret or salt in the hash: the cloud provider receives only the
-   tokenized form and holds no table, but a party with a candidate
-   list (common names, phone-number ranges) can confirm a guess by
-   hashing it.  Tokens reduce identifiability; they do not remove it.
+2. **Anonymization** — tokens are salted hashes, not random nonces.
+   This is **pseudonymization** under GDPR Article 4(5), not
+   anonymization.  A party that possesses the symbol table plus the
+   conversation salt (i.e. the DentalPin server) can reverse every
+   token.  The cloud provider receives only the tokenized form and
+   holds neither table nor salt, so dictionary attacks over the
+   value space do not apply to it (#586).
 
-3. **Cross-session correlation** — because tokens are unsalted and
-   deterministic, the same patient yields the same token in every
-   conversation, every session and every clinic on the server.  A cloud
-   provider observing many sessions can therefore link a token across
-   conversations and build frequency patterns.  The per-session symbol
-   table bounds what the server rehydrates, not what the provider can
-   correlate.  A per-clinic salt would confine correlation to one
-   clinic without breaking resume; it is not implemented.
+3. **Cross-session correlation** — tokens are salted per conversation,
+   so the same patient yields unrelated tokens in different
+   conversations: a provider observing many sessions cannot link them
+   or build frequency patterns.  (Pre-salt history is real-valued
+   server-side, so there is nothing to migrate.)
 
 ### GDPR and deployment guidance
 

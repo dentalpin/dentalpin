@@ -9,6 +9,7 @@ the router frames as SSE. Provider is injectable for tests.
 
 from __future__ import annotations
 
+import secrets
 from collections.abc import AsyncIterator
 from uuid import UUID
 
@@ -121,8 +122,24 @@ def _dialect_for(provider_name: str) -> str:
     return get_provider_spec(provider_name).tool_dialect
 
 
-def _redactor_for(conv: CopilotConversation, settings_row: CopilotSettings) -> Redactor:
-    r = Redactor(enabled=settings_row.redaction_enabled)
+async def _ensure_redaction_salt(db: AsyncSession, conv: CopilotConversation) -> str:
+    """Per-conversation token salt (#586), persisted beside the context.
+
+    Generated once on first redactor build and never rotated: tokens the
+    model saw in earlier turns must keep resolving. Stored as a column,
+    never inside the context blob (which is seeded and logged) and never
+    emitted anywhere.
+    """
+    if not conv.redaction_salt:
+        conv.redaction_salt = secrets.token_hex(16)
+        await db.flush()
+    return conv.redaction_salt
+
+
+def _redactor_for(
+    conv: CopilotConversation, settings_row: CopilotSettings, salt: str | None
+) -> Redactor:
+    r = Redactor(enabled=settings_row.redaction_enabled, salt=salt)
     r.seed(conv.context)
     return r
 
@@ -158,7 +175,8 @@ async def drive_turn(
     history.append(user_msg)
 
     provider = provider or get_provider(conv.provider)
-    redactor = _redactor_for(conv, settings_row)
+    salt = await _ensure_redaction_salt(db, conv)
+    redactor = _redactor_for(conv, settings_row, salt)
     budget = ClinicBudgetGuard(settings_row, conv)
     ctx = _build_context(
         db=db,
@@ -206,7 +224,8 @@ async def resume_turn(
         return
 
     provider = provider or get_provider(conv.provider)
-    redactor = _redactor_for(conv, settings_row)
+    salt = await _ensure_redaction_salt(db, conv)
+    redactor = _redactor_for(conv, settings_row, salt)
     budget = ClinicBudgetGuard(settings_row, conv)
     ctx = _build_context(
         db=db,
