@@ -258,6 +258,16 @@ async def _graceful_exit() -> None:
     try:
         os.kill(1, signal.SIGTERM)
     except PermissionError:
-        # Fallback: signal self. Works in prod where we are PID 1.
-        logger.warning("No permission to signal PID 1; signalling self instead")
-        os.kill(os.getpid(), signal.SIGTERM)
+        # No supervisor will respawn us: PermissionError is reachable
+        # only when we are NOT PID 1 (a process may always signal
+        # itself, so PID 1 would have succeeded). Killing ourselves
+        # here would take the backend down with pending module
+        # operations still unapplied — they are durable and apply on
+        # the next boot, so leave the process up and let the operator
+        # restart it (#526).
+        logger.error(
+            "Cannot signal PID 1 (not supervised) — backend left running; "
+            "pending module operations will apply on the next restart. "
+            "Restart the backend yourself to apply them now."
+        )
+        return
