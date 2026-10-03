@@ -204,6 +204,7 @@ async def resume_turn(
     pending = _find_pending(history, call_id)
     if pending is None:
         return
+    already = _find_result(history, call_id)
 
     provider = provider or get_provider(conv.provider)
     redactor = _redactor_for(conv, settings_row)
@@ -218,17 +219,25 @@ async def resume_turn(
     )
 
     if approve:
-        res = await ctx.tools.call(ctx, pending.name, pending.input)
-        payload = res.data if res.ok else {"error": res.error}
-        is_error = not res.ok
-        yield ToolCallFinished(call_id, pending.name, res.ok, payload)
+        if already is not None:
+            # Idempotent re-confirm (#532): a retry or double click
+            # replays the stored result instead of re-executing the
+            # write. Nothing is appended — the original result is
+            # already in history and persisted.
+            yield ToolCallFinished(call_id, pending.name, not already.is_error, already.content)
+        else:
+            res = await ctx.tools.call(ctx, pending.name, pending.input)
+            payload = res.data if res.ok else {"error": res.error}
+            is_error = not res.ok
+            yield ToolCallFinished(call_id, pending.name, res.ok, payload)
+            tool_msg = ProviderMessage(Role.TOOL, [ToolResultBlock(call_id, payload, is_error)])
+            history.append(tool_msg)
+            await ConversationService.append_message(db, conv, role="tool", blocks=tool_msg.content)
     else:
         payload = {"status": "cancelled_by_user"}
-        is_error = False
-
-    tool_msg = ProviderMessage(Role.TOOL, [ToolResultBlock(call_id, payload, is_error)])
-    history.append(tool_msg)
-    await ConversationService.append_message(db, conv, role="tool", blocks=tool_msg.content)
+        tool_msg = ProviderMessage(Role.TOOL, [ToolResultBlock(call_id, payload, False)])
+        history.append(tool_msg)
+        await ConversationService.append_message(db, conv, role="tool", blocks=tool_msg.content)
 
     start = len(history)
     async for ev in run_turn(
@@ -252,6 +261,17 @@ def _find_pending(history: list[ProviderMessage], call_id: str) -> ToolUseBlock 
         if msg.role is Role.ASSISTANT:
             for block in msg.content:
                 if isinstance(block, ToolUseBlock) and block.id == call_id:
+                    return block
+    return None
+
+
+def _find_result(history: list[ProviderMessage], call_id: str) -> ToolResultBlock | None:
+    # Oldest first: reject appends "cancelled" markers under the same id,
+    # and a later approve must replay the execution result, not a marker.
+    for msg in history:
+        if msg.role is Role.TOOL:
+            for block in msg.content:
+                if isinstance(block, ToolResultBlock) and block.tool_call_id == call_id:
                     return block
     return None
 

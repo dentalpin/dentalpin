@@ -206,6 +206,66 @@ async def test_write_suspends_then_resume_executes(db_session, test_clinic) -> N
 
 
 @pytest.mark.asyncio
+async def test_double_confirm_replays_without_reexecuting(db_session, test_clinic) -> None:
+    """A retry/double-click on confirm replays the stored result (#532)."""
+    conv, settings_row, user_id, agent_id, session_id = await _setup(db_session, test_clinic.id)
+    p1 = _FakeProvider(
+        [
+            [
+                ToolUse(
+                    "c1",
+                    "patients.create_patient",
+                    {"first_name": "María", "last_name": "González"},
+                ),
+                Done("tool_calls"),
+            ]
+        ]
+    )
+    events = await _drive(
+        db_session, conv, settings_row, user_id, agent_id, session_id, p1, "crea a María"
+    )
+    assert isinstance(events[-1], ConfirmationRequired)
+
+    async def _resume(provider):
+        return [
+            ev
+            async for ev in resume_turn(
+                db=db_session,
+                conv=conv,
+                settings_row=settings_row,
+                permissions=["*"],
+                user_id=user_id,
+                agent_id=agent_id,
+                session_id=session_id,
+                call_id="c1",
+                approve=True,
+                provider=provider,
+            )
+        ]
+
+    p2 = _FakeProvider([[TextDelta("Hecho."), Done("stop")]])
+    first = await _resume(p2)
+    assert any(isinstance(e, ToolCallFinished) and e.ok for e in first)
+
+    async def _count_marias() -> int:
+        return int(
+            await db_session.scalar(
+                select(func.count())
+                .select_from(Patient)
+                .where(Patient.clinic_id == test_clinic.id, Patient.first_name == "María")
+            )
+        )
+
+    assert await _count_marias() == 1
+
+    # Second confirm of the same call: replayed, not executed.
+    p3 = _FakeProvider([[TextDelta("Hecho de nuevo."), Done("stop")]])
+    second = await _resume(p3)
+    assert any(isinstance(e, ToolCallFinished) and e.ok for e in second)
+    assert await _count_marias() == 1
+
+
+@pytest.mark.asyncio
 async def test_reject_does_not_execute(db_session, test_clinic) -> None:
     conv, settings_row, user_id, agent_id, session_id = await _setup(db_session, test_clinic.id)
     p1 = _FakeProvider(

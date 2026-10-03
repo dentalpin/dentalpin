@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#532): re-confirming an approved write replays the stored result
+  instead of executing the tool again (retry/double-click safe).
 - fix: a confirmed write tool now publishes its module namespace on the data
   bus. The confirmation stream only returns `tool_result` (no `tool_call`), so
   the old lookup of a tool message never matched and no page refetched (#568).

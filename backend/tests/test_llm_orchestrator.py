@@ -136,6 +136,33 @@ async def test_simple_text_turn_yields_final_and_usage() -> None:
 
 
 @pytest.mark.asyncio
+async def test_turn_bound_fails_closed_without_budget() -> None:
+    """An endless tool loop ends in BudgetExceeded, not a hang (#536)."""
+    reg = _FakeRegistry({"m.echo": _tool("echo", ToolCategory.READ)})
+    scripts = [[ToolUse(f"t{i}", "m.echo", {}), Done("tool_calls")] for i in range(4)]
+    provider = _FakeProvider(scripts)
+    history = [ProviderMessage(Role.USER, [TextBlock("hi")])]
+
+    events = await _collect(
+        run_turn(
+            ctx=_ctx(reg),
+            provider=provider,
+            system="s",
+            history=history,
+            tool_names=["m.echo"],
+            redactor=Redactor(enabled=False),
+            model="gpt-4.1",
+            budget=None,
+            max_iterations=3,
+        )
+    )
+
+    assert len(provider.calls) == 3
+    assert isinstance(events[-1], BudgetExceeded)
+    assert not any(isinstance(e, Final) for e in events)
+
+
+@pytest.mark.asyncio
 async def test_read_tool_executes_then_answers() -> None:
     reg = _FakeRegistry({"m.echo": _tool("echo", ToolCategory.READ)})
     provider = _FakeProvider(

@@ -137,6 +137,12 @@ def _effective_tools(ctx: AgentContext, tool_names: list[str], redactor: Redacto
     return out
 
 
+#: Hard cap on provider round-trips per turn (#536). Independent of
+#: the token budget: with no configured limit nothing else bounds the
+#: loop, so exhaustion fails closed with BudgetExceeded.
+MAX_TURN_ITERATIONS = 25
+
+
 async def run_turn(
     *,
     ctx: AgentContext,
@@ -149,9 +155,10 @@ async def run_turn(
     max_tokens: int = 4096,
     budget: BudgetGuard | None = None,
     dialect: str = "openai",
+    max_iterations: int = MAX_TURN_ITERATIONS,
 ) -> AsyncIterator[TurnEvent]:
     """Run one user turn to completion, a tool result, or a confirmation."""
-    while True:
+    for _ in range(max_iterations):
         if budget is not None and not budget.check():
             yield BudgetExceeded()
             return
@@ -239,3 +246,5 @@ async def run_turn(
         # The assistant message (with this tool_use) is already in history.
         yield ConfirmationRequired(tu.id, tu.name, real_args)
         return
+
+    yield BudgetExceeded()
