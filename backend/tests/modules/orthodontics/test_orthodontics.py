@@ -276,3 +276,26 @@ async def test_editing_a_control_refreshes_in_mouth_wires(
     await db_session.refresh(case)
     assert case.current_upper_wire == "NiTi .016"
     assert case.current_lower_wire == "NiTi .014"
+
+
+@pytest.mark.asyncio
+async def test_duplicate_membership_does_not_500_control_registration(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    """clinic_memberships has no unique (clinic_id, user_id) constraint,
+    so a duplicated row must not 500 the membership check (#590)."""
+    doc = await _professional(db_session, test_clinic.id)
+    db_session.add(
+        ClinicMembership(id=uuid4(), user_id=doc.id, clinic_id=test_clinic.id, role="dentist")
+    )
+    await db_session.commit()
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    control = await OrthoControlService.register(
+        db_session,
+        test_clinic.id,
+        case.id,
+        OrthoControlCreate(procedures=["checkup"], next_control_weeks=4),
+        performed_by=doc.id,
+    )
+    await db_session.commit()
+    assert control.id is not None

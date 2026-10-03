@@ -57,11 +57,13 @@ async def _require_professional_member(db: AsyncSession, clinic_id: UUID, user_i
     from app.core.auth.models import ClinicMembership
 
     result = await db.execute(
-        select(ClinicMembership.id).where(
+        select(ClinicMembership.id)
+        .where(
             ClinicMembership.clinic_id == clinic_id,
             ClinicMembership.user_id == user_id,
             ClinicMembership.is_professional.is_(True),
         )
+        .limit(1)
     )
     if result.scalar_one_or_none() is None:
         raise ValueError("Invalid professional for this clinic")
@@ -74,10 +76,12 @@ async def _require_member(db: AsyncSession, clinic_id: UUID, user_id: UUID) -> N
     from app.core.auth.models import ClinicMembership
 
     result = await db.execute(
-        select(ClinicMembership.id).where(
+        select(ClinicMembership.id)
+        .where(
             ClinicMembership.clinic_id == clinic_id,
             ClinicMembership.user_id == user_id,
         )
+        .limit(1)
     )
     if result.scalar_one_or_none() is None:
         raise ValueError("Invalid member for this clinic")
