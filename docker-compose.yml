@@ -23,6 +23,9 @@ services:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-dental}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-dental_clinic}
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
       ENVIRONMENT: ${ENVIRONMENT:-development}
+      # Explicit test opt-out for rate limiting and friends (#530).
+      # Empty default parses as False; CI e2e sets TESTING=true.
+      TESTING: ${TESTING:-}
       ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-}
       STORAGE_BACKEND: ${STORAGE_BACKEND:-local}
       STORAGE_LOCAL_PATH: ${STORAGE_LOCAL_PATH:-/app/storage}

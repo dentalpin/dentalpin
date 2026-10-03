@@ -320,6 +320,11 @@ jobs:
           POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
           SECRET_KEY=${SECRET_KEY}
           ENVIRONMENT=development
+          # E2E logs in far above 5/minute: explicit test opt-out for
+          # rate limiting (#530). No other TESTING-gated behavior is
+          # exercised by the current specs (scheduler, mailer, temp
+          # storage roots).
+          TESTING=true
           EOF
 
       - name: Boot db + backend

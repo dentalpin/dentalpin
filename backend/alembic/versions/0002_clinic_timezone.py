@@ -12,8 +12,13 @@ from the JSONB key when present; the JSONB key is left intact for
 now so a rollback is lossless.
 
 Revision ID: 0002
-Revises: sch_0001
+Revises: notif_0001
 Create Date: 2026-04-21
+
+Legacy threading (#533): core 0002..0008 descend from the
+notifications branch, so any downgrade crossing notif_0001 drags them
+along. Safe only because every module on that spine is
+removable=False (pinned by test_core_spine_modules_are_not_removable).
 """
 
 from collections.abc import Sequence

@@ -2,6 +2,7 @@
 
 import warnings
 from pathlib import Path
+from typing import ClassVar
 
 from pydantic import model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -221,6 +222,22 @@ class Settings(BaseSettings):
             if self.ENVIRONMENT == "production":
                 raise ValueError(message)
             warnings.warn(message, stacklevel=2)
+        return self
+
+    #: Valid ENVIRONMENT values (#530). Anything else (a typo like
+    #: "prod", "staging") fails fast at boot instead of silently
+    #: degrading production-only behavior (docs, secure cookies,
+    #: limiters) to development defaults.
+    VALID_ENVIRONMENTS: ClassVar[tuple[str, ...]] = ("development", "test", "production")
+
+    @model_validator(mode="after")
+    def _validate_environment(self) -> "Settings":
+        """Reject unknown ENVIRONMENT values at boot."""
+        if self.ENVIRONMENT not in self.VALID_ENVIRONMENTS:
+            raise ValueError(
+                f"ENVIRONMENT must be one of {list(self.VALID_ENVIRONMENTS)}, "
+                f"got {self.ENVIRONMENT!r}."
+            )
         return self
 
     @model_validator(mode="after")

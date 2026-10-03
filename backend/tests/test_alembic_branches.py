@@ -122,6 +122,69 @@ def test_alembic_scripts_see_branch_heads(tmp_path: Path) -> None:
     assert branch_head.revision == "smpl0001"
 
 
+def test_core_spine_modules_are_not_removable() -> None:
+    """#533: core 0002..0008 descend from a module revision, so every
+    module on that spine must be removable=False — otherwise
+    uninstalling it would drag the core chain down with it."""
+    from app.core.plugins.alembic_paths import _load_script_directory
+    from app.core.plugins.loader import discover_modules
+
+    backend_root = Path(__file__).resolve().parents[1]
+    core_dir = (backend_root / "alembic" / "versions").resolve()
+    modules_root = (backend_root / "app" / "modules").resolve()
+
+    script = _load_script_directory()
+    by_rev = {rev.revision: rev for rev in script.walk_revisions()}
+
+    def _module_of(rev) -> str | None:
+        path = getattr(rev, "path", None)
+        if not path:
+            return None
+        try:
+            rel = Path(path).resolve().relative_to(modules_root)
+        except ValueError:
+            return None
+        return rel.parts[0]
+
+    def _is_core(rev) -> bool:
+        path = getattr(rev, "path", None)
+        if not path:
+            return False
+        try:
+            Path(path).resolve().relative_to(core_dir)
+        except ValueError:
+            return False
+        return True
+
+    spine_modules: set[str] = set()
+    for rev in by_rev.values():
+        if not _is_core(rev):
+            continue
+        seen: set[str] = set()
+        stack = [rev.revision]
+        while stack:
+            current = stack.pop()
+            if current in seen:
+                continue
+            seen.add(current)
+            node = by_rev.get(current)
+            if node is None:
+                continue
+            module = _module_of(node)
+            if module is not None:
+                spine_modules.add(module)
+            down = node.down_revision
+            if isinstance(down, str):
+                stack.append(down)
+            elif down:
+                stack.extend(down)
+
+    assert spine_modules, "expected at least one module on the core spine"
+    manifests = {m.manifest["name"]: m.manifest for m in discover_modules()}
+    for name in sorted(spine_modules):
+        assert manifests[name].get("removable") is False, name
+
+
 # --- Helpers --------------------------------------------------------------
 
 
