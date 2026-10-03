@@ -210,6 +210,37 @@ async def test_approve_twice_conflicts_and_unknown_patient_404s(
 
 
 @pytest.mark.asyncio
+async def test_approve_missing_source_stays_retryable(
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    fake_storage: _FakeStorage,
+    canned_tags: dict,
+) -> None:
+    """A pending row whose file vanished answers 404 but stays pending,
+    so re-dropping the same bytes heals it: the tick returns the same
+    row and the next approve succeeds."""
+    user_id = await _user_id(db_session)
+    row, _ = await RvgService.scan_bytes(db_session, test_clinic.id, "gone.dcm", b"gone")
+    assert row.status == "pending"
+    with pytest.raises(LookupError):
+        await RvgService.approve(
+            db_session, test_clinic.id, row.id, test_patient.id, user_id, raw=None
+        )
+    await db_session.refresh(row)
+    assert row.status == "pending"
+    redropped, created = await RvgService.scan_bytes(
+        db_session, test_clinic.id, "gone.dcm", b"gone"
+    )
+    assert created is False
+    assert redropped.id == row.id
+    decided = await RvgService.approve(
+        db_session, test_clinic.id, row.id, test_patient.id, user_id, raw=b"gone"
+    )
+    assert decided.status == "approved"
+
+
+@pytest.mark.asyncio
 async def test_reject_keeps_row_for_audit(
     test_clinic: Clinic,
     test_patient: Patient,

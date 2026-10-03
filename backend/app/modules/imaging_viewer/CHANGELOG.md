@@ -2,8 +2,12 @@
 
 ## Unreleased
 
-- feat: manual scans surface a summary toast (scanned / new / auto-approved /
+<- feat: manual scans surface a summary toast (scanned / new / auto-approved /
   failed counts).
+- fix: a failed approve reloads the queue and surfaces the backend's reason
+  instead of the generic failure line, so a vanished file reads as what it
+  is and re-dropping it retries cleanly (rows stay pending; Reject still
+  removes stuck rows).
 - fix: patient selector shows a loading state while resolving `?patient_id=`
   and falls back to an "Unknown patient" label instead of the raw UUID.
 - fix: study cards render the date in the clinic locale instead of raw ISO;

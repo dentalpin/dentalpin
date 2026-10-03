@@ -949,6 +949,10 @@ class RvgService:
         if patient is None:
             raise LookupError("Patient not found")
         if raw is None:
+            # The row stays pending: a stuck queue entry is removed with
+            # Reject, while a merely missing file heals itself — re-drop
+            # the file and approve again. Failing the row here would make
+            # re-drop unretryable (the tick never retries failed rows).
             raise LookupError("Source file no longer in the watch folder")
 
         document, study = await RvgService._materialize(
