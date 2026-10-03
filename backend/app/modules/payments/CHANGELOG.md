@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - fix(#522): the payments report mixed two date frames. `new Date("YYYY-MM-DD")`
   is UTC midnight per spec while `setDate` and `toLocaleDateString` read local
   fields, so the previous-period range and the trend chart's bucket labels

@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}అపాయింట్‌మెంట్ రిమైండర్ - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>అపాయింట్‌మెంట్ రిమైండర్</h2>
+
+<p>నమస్కారం {{ patient_name }},</p>
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> లో మీ రాబోయే అపాయింట్‌మెంట్ గురించి స్నేహపూర్వక గుర్తు:</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">తేదీ</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">సమయం</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">వైద్యుడు</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<p>దయచేసి కొన్ని నిమిషాలు ముందుగా రండి. సమయం మార్చాలంటే, వీలైనంత త్వరగా మమ్మల్ని సంప్రదించండి.</p>
+{% endblock %}

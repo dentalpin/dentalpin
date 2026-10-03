@@ -1,0 +1,27 @@
+{
+  "labOrders": {
+    "title": "ల్యాబ్ వర్క్ ఆర్డర్లు",
+    "add": "కొత్త ల్యాబ్ ఆర్డర్",
+    "patient": "రోగి",
+    "lab": "ప్రయోగశాల (ల్యాబ్)",
+    "loading": "లోడ్ అవుతోంది…",
+    "selectPatient": "రోగిని ఎంచుకోండి",
+    "selectLab": "ల్యాబ్‌ను ఎంచుకోండి",
+    "workType": "పని రకం",
+    "tooth": "దంతం / సూచన",
+    "impressionType": "ఇంప్రెషన్ (impression)",
+    "antagonistInfo": "ఎదురు దంతాల సమాచారం (antagonist)",
+    "shade": "రంగు (shade)",
+    "sentDate": "పంపిన తేదీ",
+    "expectedDate": "అంచనా తేదీ",
+    "status": "స్థితి",
+    "notes": "గమనికలు",
+    "save": "ఆర్డర్ పంపండి",
+    "cancel": "రద్దు చేయండి",
+    "noLabsHint": "ముందుగా కాంటాక్టులలో ల్యాబ్ కాంటాక్ట్‌ను సృష్టించండి.",
+    "workTypes": {"crown":"క్రౌన్ (crown)","bridge":"బ్రిడ్జ్ (bridge)","denture":"కట్టుడు పళ్ళు (denture)","implant":"ఇంప్లాంట్ (implant)","veneer":"వెనీర్ (veneer)","orthodontic":"ఆర్థోడాంటిక్","repair":"మరమ్మత్తు","other":"ఇతర"},
+    "impressionTypes": {"alginate":"ఆల్జినేట్ (alginate)","pvs_silicone":"PVS / సిలికాన్","digital_scan":"డిజిటల్ స్కాన్","other":"ఇతర"},
+    "statuses": {"sent":"పంపబడింది","in_progress":"పురోగతిలో ఉంది","ready":"సిద్ధంగా ఉంది","received":"అందింది","cancelled":"రద్దు చేయబడింది"}
+  },
+  "nav": {"labOrdersForm":"కొత్త ల్యాబ్ ఆర్డర్","labOrdersStatus":"ల్యాబ్ ఆర్డర్లు"}
+}

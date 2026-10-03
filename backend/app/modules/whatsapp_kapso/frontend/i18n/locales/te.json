@@ -1,0 +1,53 @@
+{
+  "whatsapp_kapso": {
+    "settings": {
+      "title": "WhatsApp (Kapso)",
+      "description": "సందేశాలు పంపడానికి, స్వీకరించడానికి క్లినిక్ WhatsApp నంబర్‌ను Kapso ద్వారా కనెక్ట్ చేయండి."
+    },
+    "connection": "కనెక్షన్",
+    "verified": "ధృవీకరించబడింది",
+    "notVerified": "ధృవీకరించబడలేదు",
+    "apiKey": "Kapso API కీ",
+    "phoneNumberId": "ఫోన్ నంబర్ ID",
+    "businessAccountId": "బిజినెస్ ఖాతా ID",
+    "businessAccountHelp": "ఆమోదించిన టెంప్లేట్లను సింక్ చేయడానికి అవసరం.",
+    "displayPhone": "ప్రదర్శించే నంబర్",
+    "webhookSecret": "వెబ్‌హుక్ రహస్యం",
+    "secretStored": "నిల్వ చేయబడింది. మార్చకూడదంటే ఖాళీగా ఉంచండి.",
+    "webhook": "వెబ్‌హుక్",
+    "webhookHelp": "స్థితులు మరియు సమాధానాలు అందుకోవడానికి ఈ URL ను Kapso వెబ్‌హుక్ సెట్టింగ్‌లలో అతికించండి.",
+    "copy": "కాపీ",
+    "copied": "URL కాపీ అయింది",
+    "templates": "టెంప్లేట్లు",
+    "sync": "సింక్ చేయండి",
+    "noTemplates": "ఆమోదించిన టెంప్లేట్లు లేవు. Kapso నుండి తీసుకురావడానికి సింక్ చేయండి.",
+    "notificationType": "నోటిఫికేషన్ రకం",
+    "template": "టెంప్లేట్",
+    "map": "మ్యాప్ చేయండి",
+    "mapped": "టెంప్లేట్ మ్యాప్ అయింది",
+    "mapError": "టెంప్లేట్‌ను మ్యాప్ చేయలేకపోయాము",
+    "test": "పరీక్షగా పంపండి",
+    "sendTest": "పరీక్ష పంపండి",
+    "testOk": "పరీక్ష సందేశం పంపబడింది",
+    "testFail": "పరీక్ష పంపడం విఫలమైంది",
+    "saved": "సెట్టింగ్‌లు సేవ్ అయ్యాయి",
+    "saveError": "సేవ్ చేయలేకపోయాము",
+    "synced": "{n} టెంప్లేట్లు సింక్ అయ్యాయి",
+    "syncError": "సింక్ చేయలేకపోయాము",
+    "types": {
+      "appointment_confirmation": "అపాయింట్‌మెంట్ నిర్ధారణ",
+      "appointment_reminder": "అపాయింట్‌మెంట్ రిమైండర్",
+      "appointment_cancelled": "అపాయింట్‌మెంట్ రద్దు",
+      "budget_sent": "అంచనా పంపబడింది",
+      "budget_accepted": "అంచనా అంగీకరించబడింది",
+      "budget_reminder": "అంచనా రిమైండర్",
+      "invoice_sent": "ఇన్‌వాయిస్ పంపబడింది",
+      "recall_reminder": "రీకాల్ రిమైండర్",
+      "welcome": "స్వాగతం"
+    },
+    "onboarding": {
+      "label": "WhatsApp ద్వారా పంపడం",
+      "description": "WhatsApp క్లినిక్‌కు ఇష్టమైన మాధ్యమం, కానీ Kapso ఇంకా కనెక్ట్ కాలేదు. ఆటోమేటిక్ సందేశాలు వెళ్ళేలా దాన్ని కనెక్ట్ చేయండి."
+    }
+  }
+}

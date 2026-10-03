@@ -256,6 +256,30 @@ _LABELS = {
             "cancelled": "ரத்து செய்யப்பட்டது",
         },
     },
+    "te": {
+        "po": "కొనుగోలు ఆర్డర్",
+        "draft": "డ్రాఫ్ట్",
+        "supplier": "సరఫరాదారు",
+        "status": "స్థితి",
+        "expected_date": "అంచనా తేదీ",
+        "created_at": "తేదీ",
+        "notes": "గమనికలు",
+        "item": "వస్తువు",
+        "items": "వస్తువులు",
+        "qty_ordered": "ఆర్డర్ పరిమాణం",
+        "qty_received": "అందిన పరిమాణం",
+        "unit_price": "యూనిట్ ధర",
+        "total": "మొత్తం",
+        "line_total": "మొత్తం",
+        "generated_by": "రూపొందించినవారు",
+        "status_label": {
+            "draft": "డ్రాఫ్ట్",
+            "sent": "పంపబడింది",
+            "confirmed": "నిర్ధారించబడింది",
+            "received": "అందింది",
+            "cancelled": "రద్దు చేయబడింది",
+        },
+    },
 }
 
 

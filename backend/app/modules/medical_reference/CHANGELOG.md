@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - fix: patient flags read only `active` clinical rows — since patients_clinical soft-deletes (`pc_0003`), an archived medication or disease must stop raising interaction/contraindication warnings.
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
 

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - fix: patient block is a single searchable select initialized from
   `?patient_id=`; job list polls on the scheduler-tick cadence; failed and
   cancelled jobs carry review state `not_applicable` instead of `pending_review`.

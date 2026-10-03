@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - fix(#522): every date preset (`currentMonth`, `previousMonth`,
   `currentQuarter`, `previousQuarter`, `yearToDate`) built its bounds from a
   local midnight and rendered them with `toISOString()`, i.e. in UTC — so a

@@ -1095,6 +1095,52 @@ class BudgetPDFService:
             },
         }
 
+        labels_te = {
+            "budget": "అంచనా",
+            "version": "వెర్షన్",
+            "date": "తేదీ",
+            "draft": "డ్రాఫ్ట్",
+            "patient_info": "రోగి వివరాలు",
+            "patient": "రోగి",
+            "professional": "వైద్యుడు",
+            "treatments": "చికిత్సలు",
+            "description": "వివరణ",
+            "qty": "పరిమాణం",
+            "unit_price": "యూనిట్ ధర",
+            "discount": "రాయితీ",
+            "total": "మొత్తం",
+            "subtotal": "ఉప మొత్తం",
+            "total_discount": "మొత్తం రాయితీ",
+            "tax": "పన్ను",
+            "grand_total": "తుది మొత్తం",
+            "validity": "చెల్లుబాటు కాలం",
+            "from": "నుండి",
+            "until": "వరకు",
+            "no_expiry": "గడువు తేదీ లేదు",
+            "notes": "గమనికలు",
+            "patient_signature": "రోగి సంతకం",
+            "clinic_signature": "క్లినిక్ సంతకం",
+            "signed_by": "సంతకం చేసినవారు",
+            "signed_at": "సంతకం చేసిన తేదీ",
+            "signature_method": "పద్ధతి",
+            "signature_method_drawn": "చేతితో గీసిన సంతకం",
+            "signature_method_click_accept": "ఆన్‌లైన్ అంగీకారం",
+            "signature_method_external": "బాహ్య సంతకం",
+            "document_hash": "పత్రం హాష్",
+            "generated_by": "రూపొందించినవారు",
+            "status": {
+                "draft": "డ్రాఫ్ట్",
+                "sent": "పంపబడింది",
+                "accepted": "అంగీకరించబడింది",
+                "in_progress": "పురోగతిలో",
+                "completed": "పూర్తయింది",
+                "invoiced": "ఇన్‌వాయిస్ చేయబడింది",
+                "rejected": "తిరస్కరించబడింది",
+                "expired": "గడువు ముగిసింది",
+                "cancelled": "రద్దు చేయబడింది",
+            },
+        }
+
         # English is the fallback for a locale we have not translated yet
         # (#485): the route accepts every host locale, so returning the
         # Spanish set for everything non-es printed a Spanish quote to a
@@ -1110,5 +1156,6 @@ class BudgetPDFService:
             "it": labels_it,
             "ar": labels_ar,
             "ta": labels_ta,
+            "te": labels_te,
         }
         return by_locale.get(locale, labels_en)

@@ -1,0 +1,104 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "UPI, QR, కార్డులు మరియు పేమెంట్ లింకుల ద్వారా చెల్లింపులు స్వీకరించండి."
+    },
+    "settings": {
+      "title": "Razorpay సెట్టింగ్‌లు",
+      "description": "ఈ క్లినిక్ కోసం Razorpay పేమెంట్ గేట్‌వేను కాన్ఫిగర్ చేయండి.",
+      "credentials": "API ఆధారాలు",
+      "mode": "మోడ్",
+      "modeTest": "పరీక్ష",
+      "modeLive": "లైవ్",
+      "keyId": "కీ ID",
+      "keyIdHint": "Razorpay డాష్‌బోర్డ్ నుండి — బ్రౌజర్‌కు చూపించడం సురక్షితం.",
+      "keySecret": "కీ రహస్యం",
+      "keySecretHint": "Razorpay డాష్‌బోర్డ్ నుండి. సేవ్ చేసిన తర్వాత మళ్ళీ చూపబడదు.",
+      "keySecretConfiguredHint": "కీ రహస్యం ఇప్పటికే కాన్ఫిగర్ అయింది. మార్చకూడదంటే ఖాళీగా ఉంచండి.",
+      "keySecretPlaceholder": "కీ రహస్యం నమోదు చేయండి",
+      "isActive": "సక్రియం",
+      "isActiveHint": "సక్రియ కాన్ఫిగరేషన్లు మాత్రమే రిసెప్షన్‌కు చెల్లింపు పద్ధతిగా అందించబడతాయి.",
+      "webhook": "వెబ్‌హుక్",
+      "webhookUrl": "వెబ్‌హుక్ URL",
+      "webhookUrlHint": "ఈ క్లినిక్ కోసం Razorpay డాష్‌బోర్డ్ వెబ్‌హుక్ సెట్టింగ్‌లలో దీన్ని అతికించండి.",
+      "webhookSecret": "వెబ్‌హుక్ రహస్యం",
+      "webhookSecretHint": "Razorpay వెబ్‌హుక్ ఈవెంట్లపై సంతకం చేయడానికి వాడే రహస్యం.",
+      "webhookSecretConfiguredHint": "వెబ్‌హుక్ రహస్యం ఇప్పటికే కాన్ఫిగర్ అయింది. మార్చకూడదంటే ఖాళీగా ఉంచండి.",
+      "webhookSecretPlaceholder": "వెబ్‌హుక్ రహస్యం నమోదు చేయండి",
+      "lastWebhookReceived": "చివరిగా అందిన వెబ్‌హుక్",
+      "lastWebhookProcessed": "చివరిగా ప్రాసెస్ అయిన వెబ్‌హుక్",
+      "lastWebhookEventType": "చివరి ఈవెంట్ రకం",
+      "lastWebhookError": "చివరి వెబ్‌హుక్ లోపం",
+      "never": "ఎప్పుడూ లేదు",
+      "professionalNotice": "మీ Razorpay ఖాతా సెటప్ మరియు సెటిల్‌మెంట్ వివరాలను Razorpay సపోర్ట్ లేదా మీ అకౌంటెంట్‌తో నిర్ధారించుకోండి. DentalPin సెటిల్‌మెంట్ లేదా చట్టబద్ధమైన నివేదనలను నిర్వహించదు.",
+      "saved": "సెట్టింగ్‌లు సేవ్ అయ్యాయి",
+      "saveError": "సెట్టింగ్‌లను సేవ్ చేయలేకపోయాము",
+      "loadError": "సెట్టింగ్‌లను లోడ్ చేయలేకపోయాము",
+      "webhookCopied": "వెబ్‌హుక్ URL కాపీ అయింది",
+      "modeDerivedHint": "కీ నుండి తీసుకోబడింది: rzp_live_ కీ నిజమైన డబ్బుతో లావాదేవీలు చేస్తుంది, rzp_test_ కీ చేయదు.",
+      "modeUnknown": "ఇంకా కీ లేదు"
+    },
+    "collect": {
+      "notConfiguredHint": "ఈ క్లినిక్‌కు Razorpay ఇంకా కాన్ఫిగర్ కాలేదు. సెట్టింగ్‌లలో సెటప్ చేయమని అడ్మిన్‌ను అడగండి.",
+      "waiting": "చెల్లింపు కోసం వేచి ఉంది…",
+      "pollTimeout": "మీ చెల్లింపును స్వయంచాలకంగా నిర్ధారించలేకపోయాము. దయచేసి చెల్లింపు స్థితిని తనిఖీ చేయండి లేదా సపోర్ట్‌ను సంప్రదించండి.",
+      "checkoutDismissed": "చెల్లింపు విండో మూసివేయబడింది. మళ్ళీ ప్రయత్నించండి లేదా క్రింద స్థితిని తనిఖీ చేయండి.",
+      "checkStatus": "స్థితిని తనిఖీ చేయండి",
+      "openCheckout": "Razorpay చెక్అవుట్ తెరవండి",
+      "scanQr": "ఏదైనా UPI యాప్‌తో ఈ QR కోడ్‌ను స్కాన్ చేయమని రోగిని అడగండి",
+      "linkCopied": "పేమెంట్ లింక్ కాపీ అయింది",
+      "authorizing": "చెల్లింపు అనుమతించబడింది — పూర్తి చేస్తోంది…",
+      "success": "చెల్లింపు అందింది",
+      "tryAgain": "మళ్ళీ ప్రయత్నించండి",
+      "createError": "చెల్లింపును ప్రారంభించలేకపోయాము",
+      "checkoutLoadError": "Razorpay చెక్అవుట్‌ను లోడ్ చేయలేకపోయాము — మీ కనెక్షన్ తనిఖీ చేసి మళ్ళీ ప్రయత్నించండి",
+      "states": {
+        "failed": "చెల్లింపు విఫలమైంది",
+        "expired": "చెల్లింపు గడువు ముగిసింది",
+        "cancelled": "చెల్లింపు రద్దు చేయబడింది"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "QR",
+        "card": "కార్డు",
+        "payment_link": "పేమెంట్ లింక్"
+      },
+      "railUpiQr": "UPI QR",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "పేమెంట్ లింక్"
+    },
+    "detail": {
+      "title": "Razorpay లావాదేవీ",
+      "auditTrail": "వివరాలు",
+      "method": "పద్ధతి",
+      "status": "స్థితి",
+      "providerReference": "Razorpay పేమెంట్ ID",
+      "initiated": "ప్రారంభించబడింది",
+      "confirmed": "నిర్ధారించబడింది",
+      "allocation": "కేటాయింపు",
+      "refundHistory": "రీఫండ్‌లు",
+      "refundAction": "Razorpay ద్వారా రీఫండ్ చేయండి",
+      "refundPermissionDenied": "రీఫండ్‌లు జారీ చేయడానికి మీకు అనుమతి లేదు",
+      "maxRefundable": "{amount} వరకు",
+      "noRefunds": "ఈ చెల్లింపుపై ఇంకా రీఫండ్‌లు లేవు.",
+      "refundRequested": "రీఫండ్ అభ్యర్థించబడింది",
+      "refundError": "రీఫండ్‌ను ప్రారంభించలేకపోయాము",
+      "states": {
+        "pending": "పెండింగ్",
+        "awaiting_customer_action": "చెల్లింపు కోసం వేచి ఉంది",
+        "authorised_awaiting_capture": "అనుమతిస్తోంది",
+        "succeeded": "విజయవంతమైంది",
+        "failed": "విఫలమైంది",
+        "expired": "గడువు ముగిసింది",
+        "cancelled": "రద్దు చేయబడింది"
+      },
+      "refundStates": {
+        "requested": "అభ్యర్థించబడింది",
+        "processing": "ప్రాసెస్ అవుతోంది",
+        "completed": "పూర్తయింది",
+        "failed": "విఫలమైంది"
+      }
+    }
+  }
+}

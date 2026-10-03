@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
+- feat(i18n): Telugu (`te`) purchase-order PDF labels.
 - Follow-up: single error toast on the procurement pages — the
   composable passes `errorToast: false` on every call the pages
   already surface themselves, including `listSuppliers` /

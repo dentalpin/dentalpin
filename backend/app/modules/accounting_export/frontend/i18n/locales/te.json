@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "accountingExport": "అకౌంటెంట్ ఎగుమతి"
+  },
+  "accountingExport": {
+    "title": "అకౌంటెంట్ ఎగుమతి",
+    "subtitle": "మీ అకౌంటెంట్‌కు ఇవ్వడానికి ఈ కాలపు ఇన్‌వాయిస్‌లు, చెల్లింపులను డౌన్‌లోడ్ చేయండి.",
+    "period": "కాలం",
+    "from": "నుండి",
+    "to": "వరకు",
+    "presets": {
+      "currentMonth": "ప్రస్తుత నెల",
+      "previousMonth": "గత నెల",
+      "currentQuarter": "ప్రస్తుత త్రైమాసికం",
+      "previousQuarter": "గత త్రైమాసికం",
+      "yearToDate": "ఈ సంవత్సరం ఇప్పటివరకు",
+      "custom": "అనుకూలం"
+    },
+    "actions": {
+      "preview": "ముందుగా చూడండి",
+      "download": "డౌన్‌లోడ్ (.zip)"
+    },
+    "counters": {
+      "invoices": "ఇన్‌వాయిస్‌లు",
+      "payments": "చెల్లింపులు",
+      "base": "మూల మొత్తం",
+      "total": "మొత్తం"
+    },
+    "cols": {
+      "numero": "సంఖ్య",
+      "fecha_emision": "తేదీ",
+      "cliente": "కస్టమర్",
+      "nif": "పన్ను ID",
+      "base": "మూల మొత్తం",
+      "cuota_iva": "పన్ను (VAT)",
+      "total": "మొత్తం",
+      "estado": "స్థితి"
+    }
+  }
+}

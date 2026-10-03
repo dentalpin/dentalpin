@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - fix(#522): the clinic-hours and professional-schedule pages defaulted
   `start_date` / `end_date` and computed "today" from the UTC day. Now use
   `toISODate`.

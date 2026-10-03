@@ -67,6 +67,27 @@ def test_clinic_settings_country_in_ignored_for_unsupported_languages():
         set_language("en")
 
 
+def test_telugu_demo_is_a_telangana_clinic():
+    """LANG=te implies an Indian clinic in Hyderabad (Telangana, GST state
+    36) — intra-state invoices and the GSTIN must use the home state."""
+    from app.modules.india_gst.constants import is_valid_gstin
+    from app.seeds.demo_data import get_india_gst_fixture, india_home_state
+
+    set_language("te")
+    try:
+        data = get_clinic_data()
+        assert data["settings"].get("country") == "IN"
+        assert data["address"]["city"] == "హైదరాబాద్"
+        assert data["currency"] == "INR"
+        assert india_home_state() == "36"
+        fixture = get_india_gst_fixture()
+        assert fixture["clinic_state"] == "36"
+        assert fixture["gstin"].startswith("36")
+        assert is_valid_gstin(fixture["gstin"])
+    finally:
+        set_language("en")
+
+
 async def test_seed_india_gst_creates_settings_vat_type_and_sac_defaults(
     db_session: AsyncSession,
     india_gst_clinic,

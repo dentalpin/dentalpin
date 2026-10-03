@@ -51,6 +51,7 @@ templates are contributed.
 | Poland | ✅ `pl` | ❌ | ❌ KSeF: mandatory 2026-02-01 / 2026-04-01, penalties 2027-01-01 — but art. 106ga ust. 2 pkt 4 exempts invoices to natural persons, so almost every patient invoice is out of scope and KSeF matters only for B2B; `pl_ksef` pending, **no certification needed** (MF publishes the OpenAPI contract, SDKs and three environments); patient sales stay on the practice's own kasa fiskalna online (ADR 0033) | ❌ P1/EDM: **feasible for a self-hosted open-source system** — CeZ issues the TLS/WSS certificates to the practice through RPWDL 2.0, the integration documentation is public, the Projectathon is voluntary; `pl_p1` pending (zdarzenia medyczne + EDM index, then EDM production, then e-recepta/e-skierowanie); the dentist's qualified signature never leaves the dentist; NFZ settlement out of scope (ADR 0033) | #143 (answered), #144 |
 | Hungary | ✅ `hu` | ❌ | ✅ `nav_online` module (NAV Online Számla 3.0 real-time reporting, phase 1: CREATE/STORNO) | n/a | #341 |
 | Tamil-speaking markets | ✅ `ta` | ✅ | see India | see India | — |
+| Telugu-speaking markets | ✅ `te` | ✅ | see India | see India | — |
 
 Legend: ✅ done · ❌ missing, scoped in the linked issue · ❓ open
 feasibility question — a sourced "no, and here is the rule" is as

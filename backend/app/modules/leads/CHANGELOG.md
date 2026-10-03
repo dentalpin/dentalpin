@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
+- feat(i18n): Telugu (`te`) web-form identity label on routed recalls.
+
 ### Fixed
 
 - Convert drawer: the Edit button now requires `leads.write` and Create

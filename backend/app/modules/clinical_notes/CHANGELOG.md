@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
+- feat(i18n): Telugu (`te`) demo clinical notes in the seed.
 - chore(#337): imports `AppointmentTreatment` from its new home in treatment_plan (a declared dependency).
 
 - refactor(#126): linked-treatment labels resolve catalog names through the shared `app.core.i18n_names.catalog_name` helper.

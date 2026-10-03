@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}రోజువారీ సారాంశం - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>{{ today }} సారాంశం</h2>
+
+{% if appointments is not none %}
+<h3>ఈరోజు అపాయింట్‌మెంట్లు ({{ appointments | length }})</h3>
+{% if appointments %}
+<div class="info-box">
+    {% for a in appointments %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ a.start_time[11:16] if a.start_time else '' }}</div>
+            <div class="value">{{ a.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">స్థితి</div>
+            <div class="value">{{ a.status }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>ఈరోజు అపాయింట్‌మెంట్లు షెడ్యూల్ కాలేదు.</p>
+{% endif %}
+{% endif %}
+
+{% if recalls is not none %}
+<h3>గడువు దాటిన రీకాల్స్ ({{ recalls | length }})</h3>
+{% if recalls %}
+<div class="info-box">
+    {% for r in recalls %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ r.reason }}</div>
+            <div class="value">{{ r.patient_name or '—' }}{% if r.phone %} · {{ r.phone }}{% endif %}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">ప్రాధాన్యత</div>
+            <div class="value">{{ r.priority }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>గడువు దాటిన రీకాల్స్ లేవు.</p>
+{% endif %}
+{% endif %}
+
+{% if budgets is not none %}
+<h3>సమాధానం లేని అంచనాలు ({{ budgets | length }})</h3>
+{% if budgets %}
+<div class="info-box">
+    {% for b in budgets %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ b.number }}</div>
+            <div class="value">{{ b.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">మొత్తం</div>
+            <div class="value">{{ b.total }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>సమాధానం కోసం వేచి ఉన్న అంచనాలు లేవు.</p>
+{% endif %}
+{% endif %}
+
+<p style="color: #71717a; font-size: 14px;">
+    DentalPin కోపైలట్ స్వయంచాలకంగా రూపొందించిన సారాంశం. దీన్ని నిలిపివేయవచ్చు
+    లేదా సెట్టింగ్‌లు → Copilot లో సమయాన్ని మార్చవచ్చు.
+</p>
+{% endblock %}

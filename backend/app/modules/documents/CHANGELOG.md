@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
+- feat(i18n): Telugu (`te`) labels for the managed-document PDF.
 - fix(#524): the managed-document PDF renders in every host locale.
   `_LABELS` held only `es`/`en`, the endpoint's pattern was `^(es|en)$`
   and the frontend sent no `locale` at all — so every clinic, in every

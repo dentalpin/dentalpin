@@ -11,6 +11,12 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Added
+
+- **Telugu (`te`, తెలుగు) locale** — core app and every module layer,
+  patient email templates (HTML + TXT), PDF labels, and a Telugu demo
+  seed (`--lang te`): an India GST clinic in Hyderabad, Telangana
+  (state 36) with traditional Telugu patient names. `README.te.md` added.
 ## [2.7.1] - 2026-10-02
 
 ### Fixed

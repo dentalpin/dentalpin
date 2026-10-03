@@ -1,0 +1,24 @@
+{
+  "expenses": {
+    "title": "ఖర్చులు",
+    "add": "ఖర్చు జోడించండి",
+    "date": "తేదీ",
+    "category": "వర్గం",
+    "amount": "మొత్తం",
+    "description": "వివరణ",
+    "filterByCategory": "వర్గం ద్వారా ఫిల్టర్ చేయండి",
+    "delete": "తొలగించు",
+    "deleteTitle": "ఖర్చును తొలగించండి",
+    "deleteMessage": "ఈ ఖర్చును తొలగించాలా? దీన్ని రద్దు చేయలేరు.",
+    "categories": {
+      "rent": "అద్దె",
+      "utilities": "యుటిలిటీలు (విద్యుత్, నీరు)",
+      "salaries": "జీతాలు",
+      "supplies": "సామగ్రి సరఫరా",
+      "equipment": "పరికరాలు",
+      "insurance": "బీమా",
+      "maintenance": "నిర్వహణ",
+      "other": "ఇతర"
+    }
+  }
+}

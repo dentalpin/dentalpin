@@ -297,7 +297,7 @@ class InvoicePDFService:
                     box-sizing: border-box;
                 }}
                 body {{
-                    font-family: 'Helvetica Neue', Arial, 'Noto Sans Tamil', 'Noto Sans Arabic', sans-serif;
+                    font-family: 'Helvetica Neue', Arial, 'Noto Sans Tamil', 'Noto Sans Telugu', 'Noto Sans Arabic', sans-serif;
                     font-size: 11pt;
                     line-height: 1.4;
                     color: #333;
@@ -877,6 +877,47 @@ class InvoicePDFService:
             },
         }
 
+        labels_te = {
+            "invoice": "ఇన్‌వాయిస్",
+            "credit_note": "క్రెడిట్ నోట్",
+            "credit_note_for": "దీనికి క్రెడిట్ నోట్",
+            "draft": "డ్రాఫ్ట్",
+            "issue_date": "జారీ తేదీ",
+            "due_date": "గడువు తేదీ",
+            "billing_info": "బిల్లింగ్ సమాచారం",
+            "billing_name": "పేరు / సంస్థ",
+            "tax_id": "పన్ను ID",
+            "address": "చిరునామా",
+            "patient": "రోగి",
+            "items": "అంశాలు",
+            "description": "వివరణ",
+            "qty": "పరిమాణం",
+            "unit_price": "యూనిట్ ధర",
+            "discount": "రాయితీ",
+            # Neutral "tax" wording — GST terminology arrives via the
+            # india_gst hook's label_overrides, as for Tamil.
+            "vat": "పన్ను",
+            "total": "మొత్తం",
+            "subtotal": "ఉప మొత్తం",
+            "total_discount": "మొత్తం రాయితీ",
+            "tax": "పన్ను",
+            "grand_total": "మొత్తం",
+            "total_paid": "చెల్లించినది",
+            "balance_due": "చెల్లించాల్సిన బకాయి",
+            "notes": "గమనికలు",
+            "payment_terms": "చెల్లింపు నిబంధనలు",
+            "days": "రోజులు",
+            "generated_by": "రూపొందించినవారు",
+            "status": {
+                "draft": "డ్రాఫ్ట్",
+                "issued": "జారీ చేయబడింది",
+                "partial": "పాక్షికంగా చెల్లించబడింది",
+                "paid": "చెల్లించబడింది",
+                "cancelled": "రద్దు చేయబడింది",
+                "voided": "చెల్లనిదిగా చేయబడింది",
+            },
+        }
+
         labels_fr = {
             "invoice": "Facture",
             "credit_note": "Avoir",
@@ -1154,6 +1195,8 @@ class InvoicePDFService:
             return labels_es
         if locale == "ta":
             return labels_ta
+        if locale == "te":
+            return labels_te
         if locale == "fr":
             return labels_fr
         if locale == "pt":

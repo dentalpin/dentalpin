@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - Follow-up: fold `tre_0002_created_by` + `tre_0003_entry_guards`
   back into `tre_0001` (single-release module, agreed on #463);
   dev DBs that applied them must re-stamp the branch.

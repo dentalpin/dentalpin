@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - fix(#522): the overdue check compared `due_date` against the UTC day, so
   east of UTC a task stayed unmarked for the length of the offset after local
   midnight. Now uses `toISODate`.

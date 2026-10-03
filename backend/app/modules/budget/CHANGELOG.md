@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) quote PDF labels.
 - fix(#522): the "today" and "in N days" markers on the budget list, and the
   `valid_from` default on the new-budget form, read the UTC day instead of
   the local one. Now use `toISODate`.

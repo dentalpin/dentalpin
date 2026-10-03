@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) default cabinet name for new clinics.
 - fix(#522): `useCalendarBounds` asked the availability endpoint for the
   previous day's open hours for clinics east of UTC — the calendar hands it
   local midnights and it rendered them with `toISOString()`. Now uses

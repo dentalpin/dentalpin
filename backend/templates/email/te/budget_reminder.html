@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}మీ అంచనా మీ సమాధానం కోసం వేచి ఉంది - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>స్నేహపూర్వక గుర్తు</h2>
+
+<p>నమస్కారం {{ patient_name }},</p>
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> నుండి మీ చికిత్స అంచనా <strong>#{{ budget_number }}</strong> ఇంకా మీ సమాధానం కోసం వేచి ఉంది.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">అంచనా</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        {% if total %}
+        <div style="flex: 1; text-align: right;">
+            <div class="label">మొత్తం</div>
+            <div class="value">{{ total }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if valid_until %}
+<div class="alert alert-warning">
+    <strong>చెల్లుబాటు:</strong> ఈ అంచనా {{ valid_until }} వరకు చెల్లుతుంది.
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">మీ అంచనాను చూడండి</a>
+</div>
+{% endif %}
+
+<p>మీరు ఇప్పటికే నిర్ణయం తీసుకున్నా లేదా ఏవైనా సందేహాలు ఉన్నా, దయచేసి మమ్మల్ని సంప్రదించండి — సహాయం చేయడానికి సంతోషిస్తాము.</p>
+{% endblock %}

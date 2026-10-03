@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}అపాయింట్‌మెంట్ రద్దు చేయబడింది - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>అపాయింట్‌మెంట్ రద్దు చేయబడింది</h2>
+
+<p>నమస్కారం {{ patient_name }},</p>
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> లో మీ అపాయింట్‌మెంట్ రద్దు చేయబడింది.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">తేదీ</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">సమయం</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">వైద్యుడు</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+    {% if cancellation_reason %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">కారణం</div>
+            <div class="value">{{ cancellation_reason }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<p>కొత్త అపాయింట్‌మెంట్ షెడ్యూల్ చేయడానికి, దయచేసి మమ్మల్ని సంప్రదించండి.</p>
+{% endblock %}

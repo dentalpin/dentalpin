@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
 
 - feat(i18n): Arabic (ar) locale for the module's frontend layer.

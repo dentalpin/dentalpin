@@ -1,0 +1,35 @@
+{
+  "treasury": {
+    "nav": { "title": "ట్రెజరీ" },
+    "title": "ట్రెజరీ",
+    "newAccount": "కొత్త ఖాతా",
+    "transfer": "బదిలీ",
+    "correct": "సవరణ",
+    "correctionDirection": "దిశ",
+    "accounts": "ఖాతాలు",
+    "noAccounts": "ఇంకా ఖాతాలు లేవు.",
+    "statement": "స్టేట్‌మెంట్",
+    "noEntries": "ఇంకా లావాదేవీలు లేవు.",
+    "accountName": "ఖాతా పేరు",
+    "accountKind": "రకం",
+    "kindCash": "నగదు",
+    "kindBank": "బ్యాంక్",
+    "create": "సృష్టించండి",
+    "openingBalance": "ప్రారంభ నిల్వ",
+    "deactivate": "నిష్క్రియం చేయండి",
+    "activate": "మళ్ళీ సక్రియం చేయండి",
+    "inactive": "నిష్క్రియం",
+    "fromAccount": "ఏ ఖాతా నుండి",
+    "toAccount": "ఏ ఖాతాకు",
+    "amount": "మొత్తం",
+    "memo": "మెమో (ఐచ్ఛికం)",
+    "correctMemo": "మెమో (తప్పనిసరి)",
+    "kind": {
+      "transfer_out": "బయటకు బదిలీ",
+      "transfer_in": "లోపలికి బదిలీ",
+      "correction_in": "సవరణ (జమ)",
+      "correction_out": "సవరణ (ఖర్చు)",
+      "opening": "ప్రారంభ నిల్వ"
+    }
+  }
+}

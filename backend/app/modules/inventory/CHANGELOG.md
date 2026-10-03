@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - feat(#232): sidebar entry grouped under the Inventory header (`nav.section` "inventory").
 - `InventoryService._apply_movement` renamed to `apply_movement`: it is the
   non-committing, row-locked entry point dependents use to move stock inside

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}అంచనా అంగీకరించబడింది - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>అంచనా అంగీకరించబడింది</h2>
+
+<p>నమస్కారం {{ patient_name }},</p>
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> నుండి మీ అంచనా <strong>#{{ budget_number }}</strong> అంగీకరించబడింది.</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div class="label">అంచనా</div>
+        <div class="value">#{{ budget_number }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">అంగీకరించిన తేదీ</div>
+        <div class="value">{{ accepted_date }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">మొత్తం</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+</div>
+
+<p>సంబంధిత అపాయింట్‌మెంట్లు షెడ్యూల్ చేయడానికి త్వరలో మిమ్మల్ని సంప్రదిస్తాము.</p>
+{% endblock %}

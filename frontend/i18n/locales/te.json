@@ -1,0 +1,3178 @@
+{
+  "app": {
+    "name": "DentalPin",
+    "tagline": "దంత క్లినిక్ నిర్వహణ"
+  },
+  "demo": {
+    "bannerMessage": "పబ్లిక్ డెమో — నిజమైన రోగి డేటాను నమోదు చేయవద్దు. డేటాబేస్ క్రమానుగతంగా రీసెట్ అవుతుంది.",
+    "bannerDismiss": "విస్మరించండి",
+    "credentialsTitle": "డెమో లాగిన్ వివరాలు",
+    "credentialsNote": "పరిశీలన కోసం మాత్రమే — ఇది పబ్లిక్ డెమో కాబట్టి చూపబడుతోంది.",
+    "copyEmail": "ఈమెయిల్ కాపీ చేయండి",
+    "copyPassword": "పాస్‌వర్డ్ కాపీ చేయండి",
+    "copied": "క్లిప్‌బోర్డ్‌కు కాపీ అయింది"
+  },
+  "nav": {
+    "dashboard": "హోమ్",
+    "journal": "కార్యకలాపాల లాగ్",
+    "staffTasks": "సిబ్బంది పనులు",
+    "patients": "రోగులు",
+    "appointments": "షెడ్యూల్",
+    "recalls": "రీకాల్స్",
+    "inventory": "ఇన్వెంటరీ",
+    "treatmentConsumables": "చికిత్స వినియోగ వస్తువులు",
+    "expenses": "ఖర్చులు",
+    "labOrdersForm": "కొత్త ల్యాబ్ ఆర్డర్",
+    "labOrdersStatus": "ల్యాబ్ ఆర్డర్లు",
+    "treatmentPlans": "చికిత్స ప్రణాళికలు",
+    "budgets": "అంచనాలు",
+    "invoices": "ఇన్‌వాయిస్‌లు",
+    "reports": "నివేదికలు",
+    "settings": "సెట్టింగ్‌లు",
+    "defaultClinicName": "క్లినిక్",
+    "catalog": "క్యాటలాగ్",
+    "contacts": "కాంటాక్టులు",
+    "menu": "మెనూ",
+    "openMenu": "మెనూ తెరవండి",
+    "close": "మూసివేయండి",
+    "sections": {
+      "clinical": "క్లినికల్",
+      "lab": "ల్యాబ్",
+      "financials": "ఆర్థిక వ్యవహారాలు",
+      "inventory": "ఇన్వెంటరీ",
+      "practice": "ప్రాక్టీస్"
+    },
+    "toggleSidebar": "సైడ్‌బార్ మార్చండి",
+    "documents": "పత్రాలు"
+  },
+  "auth": {
+    "login": "లాగిన్",
+    "logout": "లాగౌట్",
+    "email": "ఈమెయిల్",
+    "password": "పాస్‌వర్డ్",
+    "loginButton": "సైన్ ఇన్",
+    "loginSuccess": "విజయవంతంగా సైన్ ఇన్ అయ్యారు",
+    "invalidCredentials": "ఈమెయిల్ లేదా పాస్‌వర్డ్ తప్పు",
+    "emailRequired": "మీ ఈమెయిల్ నమోదు చేయండి",
+    "passwordRequired": "మీ పాస్‌వర్డ్ నమోదు చేయండి",
+    "emailInvalid": "చెల్లని ఈమెయిల్ చిరునామా",
+    "accountInactive": "మీ ఖాతా నిష్క్రియంగా ఉంది. మీ అడ్మినిస్ట్రేటర్‌ను సంప్రదించండి",
+    "tooManyAttempts": "చాలా ఎక్కువ ప్రయత్నాలు. కొన్ని నిమిషాల తర్వాత మళ్ళీ ప్రయత్నించండి",
+    "sessionExpired": "మీ సెషన్ గడువు ముగిసింది",
+    "networkError": "సర్వర్‌కు కనెక్ట్ కాలేకపోయాము",
+    "serverError": "సర్వర్ అందుబాటులో లేదు. దయచేసి కొన్ని నిమిషాల తర్వాత మళ్ళీ ప్రయత్నించండి",
+    "unknownError": "అనుకోని లోపం. దయచేసి మళ్ళీ ప్రయత్నించండి"
+  },
+  "setup": {
+    "title": "మొదటిసారి సెటప్",
+    "subtitle": "మీ ఖాతా మరియు మీ క్లినిక్‌ను సృష్టించండి. రెండు నిమిషాల్లో మీరు పని ప్రారంభించవచ్చు.",
+    "stepAccount": "అడ్మినిస్ట్రేటర్ ఖాతా",
+    "stepClinic": "క్లినిక్ వివరాలు",
+    "firstName": "మొదటి పేరు",
+    "lastName": "ఇంటి పేరు",
+    "email": "ఈమెయిల్",
+    "password": "పాస్‌వర్డ్",
+    "passwordConfirm": "పాస్‌వర్డ్ నిర్ధారించండి",
+    "passwordHint": "కనీసం 8 అక్షరాలు, అక్షరాలు మరియు అంకెలతో",
+    "clinicName": "క్లినిక్ పేరు",
+    "taxId": "పన్ను ID",
+    "next": "తదుపరి",
+    "back": "వెనక్కి",
+    "submit": "నా క్లినిక్ సృష్టించండి",
+    "success": "అంతా సిద్ధం! DentalPin కు స్వాగతం",
+    "firstNameRequired": "మొదటి పేరు నమోదు చేయండి",
+    "lastNameRequired": "ఇంటి పేరు నమోదు చేయండి",
+    "emailRequired": "ఈమెయిల్ నమోదు చేయండి",
+    "emailInvalid": "ఈమెయిల్ చెల్లదు",
+    "passwordRequired": "పాస్‌వర్డ్ నమోదు చేయండి",
+    "passwordTooShort": "పాస్‌వర్డ్ కనీసం 12 అక్షరాలు ఉండాలి",
+    "passwordWeak": "పాస్‌వర్డ్‌లో అక్షరాలు మరియు అంకెలు ఉండాలి",
+    "passwordMismatch": "పాస్‌వర్డ్‌లు సరిపోలడం లేదు",
+    "clinicNameRequired": "క్లినిక్ పేరు నమోదు చేయండి",
+    "taxIdRequired": "పన్ను ID నమోదు చేయండి",
+    "alreadyInitialized": "సిస్టమ్ ఇప్పటికే సెటప్ అయింది. దయచేసి లాగిన్ చేయండి.",
+    "error": "సెటప్ పూర్తి కాలేదు. దయచేసి మళ్ళీ ప్రయత్నించండి",
+    "stepOf": "దశ {current} / {total}",
+    "country": "దేశం",
+    "countryHelp": "మీ కోసం పన్నులు, కరెన్సీ మరియు టైమ్‌జోన్ సెట్ చేస్తుంది",
+    "countryRequired": "దేశాన్ని ఎంచుకోండి",
+    "taxIdGeneric": "పన్ను ID",
+    "taxIdLooksInvalid": "ఇది చెల్లుబాటు అయ్యే NIF/CIF లా లేదు. ఇన్‌వాయిస్ చేసే ముందు మళ్ళీ తనిఖీ చేయండి.",
+    "taxIdFormat": "చెల్లని ఫార్మాట్ (ఉదాహరణ: {example})",
+    "timezoneRequired": "టైమ్‌జోన్ ఎంచుకోండి",
+    "currencyRequired": "కరెన్సీ ఎంచుకోండి",
+    "derivedSettings": "టైమ్‌జోన్ మరియు కరెన్సీ",
+    "willSeed": "మీ కోసం చికిత్సల క్యాటలాగ్, పన్ను రకాలు, ఒక ఇన్‌వాయిస్ సిరీస్, ఒక గది మరియు సోమవారం–శుక్రవారం షెడ్యూల్ సృష్టిస్తాము. అన్నింటినీ తర్వాత మార్చవచ్చు.",
+    "willSuggestVerifactu": "తర్వాత VeriFactu ప్రారంభించమని సూచిస్తాము.",
+    "invalidData": "దయచేసి డేటాను సమీక్షించండి: ఏదో ఒక ఫీల్డ్ చెల్లదు.",
+    "attendPatientsMyself": "నేనే రోగులను చూస్తాను",
+    "attendPatientsMyselfHelp": "మిమ్మల్ని బుక్ చేయగల వైద్యుడిగా గుర్తిస్తుంది. తర్వాత టీమ్ సెట్టింగ్‌లలో మార్చవచ్చు.",
+    "addressTitle": "క్లినిక్ చిరునామా",
+    "addressOptional": "ఐచ్ఛికం"
+  },
+  "onboarding": {
+    "title": "ప్రారంభించడం",
+    "progress": "{total} లో {done} దశలు పూర్తయ్యాయి",
+    "configure": "సెటప్ చేయండి",
+    "skip": "దాటవేయండి",
+    "unskip": "రద్దు చేయండి",
+    "dismiss": "దాచండి",
+    "guidedMode": "మార్గదర్శక మోడ్",
+    "optional": "ఐచ్ఛికం ({count})",
+    "stepOf": "దశ {current} / {total}",
+    "next": "తదుపరి",
+    "finish": "ముగించండి",
+    "exit": "నిష్క్రమించండి",
+    "completedTitle": "మీ క్లినిక్ సిద్ధంగా ఉంది!",
+    "completedDescription": "సెటప్ పూర్తయింది. ఇప్పుడు మీరు సాధారణంగా పని చేయవచ్చు.",
+    "guidedDoneTitle": "పర్యటన ముగిసింది",
+    "guidedDoneDescription": "పెండింగ్ దశలు ఏవీ లేవు.",
+    "items": {
+      "team": {
+        "label": "మీ బృందం",
+        "description": "రోగులను చూసే వైద్యులను జోడించండి, లేదా మీరు ఒంటరిగా పని చేస్తే మిమ్మల్ని వైద్యుడిగా గుర్తించండి."
+      },
+      "verifactu": {
+        "label": "VeriFactu ప్రారంభించండి",
+        "description": "స్పెయిన్‌లో పన్ను సంస్థ (AEAT) కు చెల్లుబాటు అయ్యే ఇన్‌వాయిస్‌లు జారీ చేయడానికి అవసరం."
+      }
+    }
+  },
+  "actions": {
+    "edit": "సవరించండి",
+    "cancel": "రద్దు చేయండి",
+    "save": "సేవ్ చేయండి",
+    "create": "సృష్టించండి",
+    "delete": "తొలగించు",
+    "close": "మూసివేయండి",
+    "remove": "తొలగించండి"
+  },
+  "patients": {
+    "title": "రోగులు",
+    "create": "కొత్త రోగి",
+    "edit": "రోగిని సవరించండి",
+    "search": "రోగిని వెతకండి...",
+    "searchPlaceholder": "పేరు లేదా ఫోన్",
+    "noResults": "రోగులు కనుగొనబడలేదు",
+    "empty": "రోగులు నమోదు కాలేదు",
+    "emptyAction": "మొదటి రోగిని సృష్టించండి",
+    "name": "పేరు",
+    "firstName": "మొదటి పేరు",
+    "lastName": "ఇంటి పేరు",
+    "phone": "ఫోన్",
+    "email": "ఈమెయిల్",
+    "dateOfBirth": "పుట్టిన తేదీ",
+    "notes": "గమనికలు",
+    "created": "రోగి సృష్టించబడ్డారు",
+    "updated": "రోగి వివరాలు నవీకరించబడ్డాయి",
+    "archived": "రోగి ఆర్కైవ్ చేయబడ్డారు",
+    "notFound": "రోగి కనుగొనబడలేదు",
+    "archiveConfirm": "రోగి {name} ను ఆర్కైవ్ చేయాలా?",
+    "archiveDescription": "ఈ చర్య రోగిని శోధనల నుండి దాచుతుంది. ఉన్న అపాయింట్‌మెంట్లు తొలగించబడవు.",
+    "cancel": "రద్దు చేయండి",
+    "archive": "ఆర్కైవ్ చేయండి",
+    "dangerZone": {
+      "title": "ప్రమాద ప్రాంతం",
+      "archiveHelp": "రోగిని శోధనల నుండి దాచడానికి ఆర్కైవ్ చేయండి. అపాయింట్‌మెంట్లు మరియు చరిత్ర భద్రంగా ఉంటాయి."
+    },
+    "billingSection": "బిల్లింగ్ సమాచారం",
+    "billingSectionHint": "ఈ రోగికి ఇన్‌వాయిస్‌లు సృష్టించేటప్పుడు ఈ డేటా స్వయంచాలకంగా వాడబడుతుంది.",
+    "editingBillingForInvoice": "బిల్లింగ్ డేటాను సవరిస్తున్నారు. మార్పులు ఇన్‌వాయిస్‌లో కనిపిస్తాయి.",
+    "returnToInvoice": "ఇన్‌వాయిస్‌కు తిరిగి వెళ్ళండి",
+    "billingName": "బిల్లింగ్ పేరు",
+    "billingNamePlaceholder": "ఇన్‌వాయిస్‌ల కోసం పేరు లేదా కంపెనీ",
+    "billingTaxId": "పన్ను ID",
+    "billingEmail": "బిల్లింగ్ ఈమెయిల్",
+    "billingAddress": "బిల్లింగ్ చిరునామా",
+    "billingComplete": "పూర్తి",
+    "billingIncomplete": "అసంపూర్ణం",
+    "demographics": "వ్యక్తిగత వివరాలు",
+    "nationalId": "గుర్తింపు పత్రం",
+    "nationalIdType": "పత్రం రకం",
+    "passport": "పాస్‌పోర్ట్",
+    "profession": "వృత్తి",
+    "workplace": "పని ప్రదేశం",
+    "years": "సంవత్సరాలు",
+    "status": {
+      "active": "సక్రియం",
+      "archived": "ఆర్కైవ్ చేయబడింది"
+    },
+    "filters": {
+      "status": "స్థితి",
+      "city": "నగరం",
+      "withDebt": "బకాయితో",
+      "doNotContact": "సంప్రదించవద్దు",
+      "doNotContactOnly": "సంప్రదించవద్దు ఉన్నవారు మాత్రమే",
+      "doNotContactOnlyContactable": "సంప్రదించగలిగినవారు మాత్రమే"
+    },
+    "columns": {
+      "city": "నగరం",
+      "contact": "సంప్రదింపు",
+      "debt": "బకాయి"
+    },
+    "sort": {
+      "lastVisit": "చివరి సందర్శన",
+      "lastName": "ఇంటి పేరు",
+      "firstName": "మొదటి పేరు",
+      "createdAt": "చేరిన తేదీ",
+      "updatedAt": "ఇటీవల సవరించినవి"
+    },
+    "doNotContact": {
+      "label": "సంప్రదించవద్దు",
+      "hint": "రోగి కాల్ జాబితా మరియు ఆటోమేటిక్ సంప్రదింపుల నుండి మినహాయించబడతారు",
+      "badge": "సంప్రదించవద్దు"
+    },
+    "gender": {
+      "label": "లింగం",
+      "select": "లింగం ఎంచుకోండి",
+      "male": "పురుషుడు",
+      "female": "స్త్రీ",
+      "other": "ఇతర",
+      "preferNotSay": "చెప్పడానికి ఇష్టం లేదు"
+    },
+    "emergencyContact": {
+      "title": "అత్యవసర సంప్రదింపు",
+      "hasContact": "అత్యవసర సంప్రదింపు ఉంది",
+      "noContact": "అత్యవసర సంప్రదింపు నమోదు కాలేదు",
+      "name": "పూర్తి పేరు",
+      "namePlaceholder": "సంప్రదింపు వ్యక్తి పేరు",
+      "relationship": "సంబంధం",
+      "relationshipPlaceholder": "సంబంధాన్ని ఎంచుకోండి",
+      "phone": "ఫోన్",
+      "phonePlaceholder": "సంప్రదింపు ఫోన్",
+      "email": "ఈమెయిల్",
+      "emailPlaceholder": "సంప్రదింపు ఈమెయిల్",
+      "isLegalGuardian": "చట్టపరమైన సంరక్షకులు",
+      "remove": "సంప్రదింపును తొలగించండి",
+      "relationships": {
+        "spouse": "జీవిత భాగస్వామి",
+        "parent": "తల్లి/తండ్రి",
+        "child": "సంతానం",
+        "sibling": "తోబుట్టువు",
+        "friend": "స్నేహితుడు",
+        "other": "ఇతర"
+      }
+    },
+    "medicalHistory": {
+      "title": "వైద్య చరిత్ర",
+      "save": "చరిత్ర సేవ్ చేయండి",
+      "fetchError": "వైద్య చరిత్రను లోడ్ చేయడంలో లోపం",
+      "saveSuccess": "వైద్య చరిత్ర సేవ్ అయింది",
+      "saveError": "వైద్య చరిత్రను సేవ్ చేయడంలో లోపం",
+      "allergies": "అలర్జీలు",
+      "allergiesCount": "{n} అలర్జీ | {n} అలర్జీలు",
+      "onAnticoagulants": "రక్తం పలుచబరిచే మందులు (anticoagulants) వాడుతున్నారు",
+      "allergyName": "అలర్జీ పేరు",
+      "type": "రకం",
+      "allergyTypes": {
+        "drug": "మందు",
+        "food": "ఆహారం",
+        "material": "పదార్థం",
+        "environmental": "వాతావరణ సంబంధిత"
+      },
+      "severity": {
+        "low": "తక్కువ",
+        "medium": "మధ్యస్థం",
+        "high": "ఎక్కువ",
+        "critical": "తీవ్రం"
+      },
+      "medications": "మందులు",
+      "medicationName": "మందు పేరు",
+      "dosage": "మోతాదు",
+      "frequency": "ఎన్ని సార్లు",
+      "systemicDiseases": "శరీర సంబంధిత వ్యాధులు",
+      "diseaseName": "వ్యాధి పేరు",
+      "diseaseTypes": {
+        "cardiovascular": "గుండె మరియు రక్తనాళాలు",
+        "respiratory": "శ్వాస సంబంధిత",
+        "endocrine": "ఎండోక్రైన్ (హార్మోన్)",
+        "neurological": "నరాల సంబంధిత",
+        "autoimmune": "ఆటోఇమ్యూన్",
+        "other": "ఇతర"
+      },
+      "critical": "తీవ్రం",
+      "controlled": "నియంత్రణలో ఉంది",
+      "notControlled": "నియంత్రణలో లేదు",
+      "specialConditions": "ప్రత్యేక పరిస్థితులు",
+      "pregnant": "గర్భవతి",
+      "pregnancyWeek": "గర్భధారణ వారం",
+      "lactating": "పాలిచ్చే తల్లి",
+      "anticoagulants": "రక్తం పలుచబరిచే మందులు (anticoagulants)",
+      "anticoagulantMedication": "రక్తం పలుచబరిచే మందు",
+      "inrValue": "INR విలువ",
+      "anesthesiaReaction": "అనస్థీషియా (anesthesia) ప్రతిచర్య",
+      "anesthesiaReactionDetails": "ప్రతిచర్య వివరాలు",
+      "bruxism": "పళ్ళు కొరకడం (bruxism)",
+      "lifestyle": "జీవనశైలి",
+      "smoker": "ధూమపానం చేసేవారు",
+      "smokingFrequency": "సిగరెట్లు/రోజు",
+      "alcoholConsumption": "మద్యపానం",
+      "alcohol": {
+        "none": "లేదు",
+        "occasional": "అప్పుడప్పుడు",
+        "moderate": "మితంగా",
+        "heavy": "అధికంగా"
+      },
+      "surgicalHistory": "శస్త్రచికిత్స చరిత్ర",
+      "procedure": "ప్రక్రియ"
+    },
+    "timeline": {
+      "empty": "ఇంకా కార్యకలాపం నమోదు కాలేదు",
+      "emptyFiltered": "ఈ వర్గంలో ఈవెంట్లు లేవు",
+      "clearFilter": "అన్ని కార్యకలాపాలు చూపించు",
+      "endOfTimeline": "టైమ్‌లైన్ ముగింపు",
+      "totalEntries": "{count} నమోదు | {count} నమోదులు",
+      "groups": {
+        "today": "ఈరోజు",
+        "yesterday": "నిన్న",
+        "thisWeek": "ఈ వారం",
+        "thisMonth": "ఈ నెల",
+        "earlier": "అంతకు ముందు"
+      },
+      "author": "{name} ద్వారా",
+      "meta": {
+        "cabinet": "గది {name}",
+        "teeth": "దంతాలు: {list}",
+        "total": "మొత్తం: {amount}",
+        "number": "సంఖ్య {value}",
+        "via": "{channel} ద్వారా",
+        "template": "టెంప్లేట్: {key}",
+        "docType": "రకం: {type}"
+      },
+      "categories": {
+        "all": "అన్నీ",
+        "visit": "సందర్శనలు",
+        "treatment": "చికిత్సలు",
+        "financial": "ఆర్థిక",
+        "communication": "సంప్రదింపులు",
+        "medical": "వైద్య చరిత్ర",
+        "document": "పత్రాలు",
+        "note": "క్లినికల్ గమనికలు"
+      }
+    },
+    "alerts": {
+      "title": "{count} హెచ్చరిక | {count} హెచ్చరికలు",
+      "label": "క్లినికల్ హెచ్చరికలు"
+    },
+    "editDemographics": "వ్యక్తిగత వివరాలు సవరించండి",
+    "editEmergencyContact": "అత్యవసర సంప్రదింపు సవరించండి",
+    "editBilling": "బిల్లింగ్ సమాచారం సవరించండి",
+    "editMedicalHistory": "వైద్య చరిత్ర సవరించండి",
+    "medicalSnapshot": {
+      "title": "వైద్య సమాచారం",
+      "allergiesLabel": "అలర్జీలు",
+      "allergiesEmpty": "తెలిసిన అలర్జీలు లేవు",
+      "allergiesNotReviewed": "వైద్య చరిత్ర నమోదు కాలేదు",
+      "completeHistory": "చరిత్ర పూర్తి చేయండి",
+      "reviewedOn": "{date} న సమీక్షించబడింది",
+      "conditions": {
+        "pregnantWeek": "గర్భవతి · {week}వ వారం",
+        "anticoagulantInr": "రక్తం పలుచబరిచే మందు · INR {inr}",
+        "smokerFreq": "ధూమపానం · {freq}/రోజు"
+      }
+    },
+    "personalInfo": {
+      "title": "వ్యక్తిగత సమాచారం",
+      "ageLabel": "{age} సంవత్సరాలు",
+      "birthWithAge": "{date} ({age} సంవత్సరాలు)"
+    },
+    "contactInfo": {
+      "title": "సంప్రదింపు",
+      "copyPhone": "ఫోన్ కాపీ చేయండి",
+      "copyEmail": "ఈమెయిల్ కాపీ చేయండి",
+      "address": "చిరునామా",
+      "addEmergency": "అత్యవసర సంప్రదింపు జోడించండి",
+      "addGuardian": "చట్టపరమైన సంరక్షకుడిని జోడించండి",
+      "guardianRequired": "చట్టపరమైన సంరక్షకుడు అవసరం"
+    },
+    "administrative": {
+      "title": "పరిపాలనా వివరాలు"
+    },
+    "header": {
+      "ariaLabel": "రోగి హెడర్"
+    },
+    "quickActions": {
+      "ariaLabel": "రోగి త్వరిత చర్యలు"
+    },
+    "onboarding": {
+      "label": "మీ మొదటి రోగిని సృష్టించండి",
+      "description": "రికార్డు, అజెండా మరియు అంచనాలు ఎలా పని చేస్తాయో చూడటానికి అత్యంత వేగవంతమైన మార్గం."
+    },
+    "editLegalGuardian": "చట్టపరమైన సంరక్షకుడిని సవరించండి",
+    "legalGuardian": {
+      "title": "చట్టపరమైన సంరక్షకుడు",
+      "hasGuardian": "నమోదైన చట్టపరమైన సంరక్షకుడు ఉన్నారు",
+      "noGuardian": "చట్టపరమైన సంరక్షకుడు నమోదు కాలేదు",
+      "name": "పూర్తి పేరు",
+      "namePlaceholder": "సంరక్షకుని పేరు",
+      "dni": "గుర్తింపు సంఖ్య",
+      "dniPlaceholder": "గుర్తింపు పత్రం",
+      "relationship": "సంబంధం",
+      "relationshipPlaceholder": "సంబంధాన్ని ఎంచుకోండి",
+      "relationships": {
+        "parent": "తల్లి/తండ్రి",
+        "legal_tutor": "నియమించబడిన చట్టపరమైన సంరక్షకుడు",
+        "grandparent": "తాత/అమ్మమ్మ",
+        "other": "ఇతర"
+      },
+      "phone": "ఫోన్",
+      "phonePlaceholder": "సంరక్షకుని ఫోన్",
+      "email": "ఈమెయిల్",
+      "emailPlaceholder": "సంరక్షకుని ఈమెయిల్",
+      "address": "చిరునామా",
+      "addressPlaceholder": "సంరక్షకుని చిరునామా",
+      "notes": "గమనికలు",
+      "notesPlaceholder": "అదనపు వ్యాఖ్యలు...",
+      "remove": "సంరక్షకుడిని తొలగించండి"
+    }
+  },
+  "patientDetail": {
+    "tabs": {
+      "summary": "సారాంశం",
+      "info": "సమాచారం",
+      "clinical": "క్లినికల్",
+      "odontogram": "దంత చార్ట్",
+      "administration": "పరిపాలన",
+      "history": "చరిత్ర",
+      "timeline": "కార్యకలాపం",
+      "appointments": "అపాయింట్‌మెంట్లు",
+      "budgets": "అంచనాలు",
+      "billing": "బిల్లింగ్",
+      "payments": "చెల్లింపులు",
+      "documents": "పత్రాలు",
+      "gallery": "గ్యాలరీ"
+    },
+    "historyPlaceholder": "క్లినికల్ గమనికలు భవిష్యత్ వెర్షన్‌లో అందుబాటులో ఉంటాయి",
+    "noAppointments": "ఈ రోగికి అపాయింట్‌మెంట్లు లేవు",
+    "scheduleAppointment": "అపాయింట్‌మెంట్ షెడ్యూల్ చేయండి",
+    "noBudgets": "ఈ రోగికి అంచనాలు లేవు",
+    "createBudget": "అంచనా సృష్టించండి",
+    "viewAllBudgets": "అన్ని అంచనాలు చూడండి",
+    "activePlan": "సక్రియ ప్రణాళిక",
+    "noActivePlan": "సక్రియ ప్రణాళిక లేదు",
+    "viewPlan": "ప్రణాళిక తెరవండి",
+    "createPlan": "ప్రణాళిక సృష్టించండి",
+    "nextAppointment": "తదుపరి అపాయింట్‌మెంట్",
+    "noUpcomingAppointments": "రాబోయే అపాయింట్‌మెంట్లు లేవు",
+    "openAppointment": "అపాయింట్‌మెంట్ తెరవండి",
+    "lastVisit": "చివరి సందర్శన",
+    "neverVisited": "ఎప్పుడూ సందర్శించలేదు",
+    "reschedule": "సమయం మార్చండి",
+    "balance": "నిల్వ",
+    "collect": "వసూలు చేయండి",
+    "viewLedger": "లెడ్జర్ తెరవండి",
+    "noPayments": "కదలికలు లేవు",
+    "diagnoses": "రోగనిర్ధారణలు",
+    "pending": "చికిత్స చేయనివి",
+    "noDiagnoses": "పెండింగ్ పరిశీలనలు లేవు",
+    "openOdontogram": "దంత చార్ట్ తెరవండి",
+    "medicalHistory": "వైద్య చరిత్ర",
+    "completeMedicalHistory": "వైద్య చరిత్ర లేదు. అలర్జీలు, వ్యాధులు మరియు మందులను నమోదు చేయడానికి దాన్ని పూర్తి చేయండి.",
+    "editMedicalHistory": "వైద్య చరిత్ర సవరించండి",
+    "quickActions": "త్వరిత చర్యలు",
+    "edit": "సవరించండి",
+    "editPatient": "రోగిని సవరించండి",
+    "noSummaryCards": "సారాంశంలో ఏ మాడ్యూల్‌లు నమోదు కాలేదు.",
+    "actions": {
+      "label": "చర్యలు",
+      "newAppointment": "అపాయింట్‌మెంట్",
+      "collect": "వసూలు చేయండి",
+      "newNote": "గమనిక",
+      "newBudget": "అంచనా",
+      "uploadDocument": "పత్రం"
+    }
+  },
+  "patientBilling": {
+    "totalBudgeted": "మొత్తం అంచనా",
+    "workInProgress": "పురోగతిలో ఉన్న పని",
+    "workCompleted": "పూర్తయిన పని",
+    "totalInvoiced": "మొత్తం ఇన్‌వాయిస్ చేసినది",
+    "totalPaid": "మొత్తం చెల్లించినది",
+    "balancePending": "మిగిలిన బకాయి",
+    "invoices": "ఇన్‌వాయిస్‌లు",
+    "createInvoice": "ఇన్‌వాయిస్ సృష్టించండి",
+    "noInvoices": "ఈ రోగికి ఇన్‌వాయిస్‌లు లేవు",
+    "pending": "పెండింగ్",
+    "totalDiscount": "రాయితీలలో"
+  },
+  "odontogram": {
+    "title": "దంత చార్ట్",
+    "tooth": "దంతం",
+    "globals": {
+      "category": "మొత్తం నోరు",
+      "applied": "{name} ప్రణాళికకు జోడించబడింది",
+      "archPickerTitle": "\"{name}\" కోసం ఏ దవడ?",
+      "upperArch": "పై దవడ",
+      "lowerArch": "కింది దవడ",
+      "searchPlaceholder": "చికిత్సను వెతకండి…"
+    },
+    "selectCondition": "పరిస్థితిని ఎంచుకోండి",
+    "readOnly": "చూడటానికి మాత్రమే",
+    "legend": "సూచిక",
+    "statusLegend": "చికిత్స స్థితి",
+    "toothPosition": "దంతం స్థానం",
+    "displaced": "స్థానభ్రంశం",
+    "rotated": "తిరిగిన దంతం",
+    "dentition": {
+      "permanent": "శాశ్వత దంతాలు",
+      "deciduous": "పాల దంతాలు",
+      "toggle": "దంతాల రకం మార్చండి"
+    },
+    "quadrants": {
+      "upper": "పై దవడ",
+      "lower": "కింది దవడ",
+      "upperRight": "పై కుడి",
+      "upperLeft": "పై ఎడమ",
+      "lowerRight": "కింది కుడి",
+      "lowerLeft": "కింది ఎడమ"
+    },
+    "surfaces": {
+      "M": "మీసియల్ (Mesial)",
+      "D": "డిస్టల్ (Distal)",
+      "O": "ఆక్లూజల్ (Occlusal)",
+      "V": "వెస్టిబ్యులర్ (Vestibular)",
+      "L": "లింగ్వల్ (Lingual)"
+    },
+    "conditions": {
+      "healthy": "ఆరోగ్యకరం",
+      "caries": "దంత క్షయం (caries)",
+      "filling": "ఫిల్లింగ్",
+      "crown": "క్రౌన్ (crown)",
+      "missing": "లేని దంతం",
+      "root_canal": "రూట్ కెనాల్",
+      "implant": "ఇంప్లాంట్",
+      "bridge_pontic": "బ్రిడ్జ్ పాంటిక్",
+      "bridge_abutment": "బ్రిడ్జ్ అబట్‌మెంట్",
+      "extraction_indicated": "పన్ను తీయాలి",
+      "sealant": "సీలెంట్",
+      "fracture": "విరిగిన దంతం"
+    },
+    "history": {
+      "title": "మార్పుల చరిత్ర",
+      "noChanges": "మార్పులు నమోదు కాలేదు",
+      "changedBy": "మార్చినవారు",
+      "changeTypes": {
+        "created": "సృష్టించబడింది",
+        "general_condition": "సాధారణ పరిస్థితి",
+        "surface_update": "ఉపరితల నవీకరణ",
+        "note": "గమనిక"
+      }
+    },
+    "messages": {
+      "updated": "దంత చార్ట్ నవీకరించబడింది",
+      "error": "దంత చార్ట్‌ను నవీకరించడంలో లోపం",
+      "loadError": "దంత చార్ట్‌ను లోడ్ చేయలేకపోయాము"
+    },
+    "actions": {
+      "save": "సేవ్ చేయండి",
+      "reset": "రీసెట్ చేయండి",
+      "print": "ముద్రించండి"
+    },
+    "status": {
+      "existing": "ఉన్నది",
+      "planned": "ప్రణాళికలో ఉంది"
+    },
+    "treatments": {
+      "title": "చికిత్సలు",
+      "addTreatment": "చికిత్స జోడించండి",
+      "selectStatus": "స్థితిని ఎంచుకోండి",
+      "noTreatments": "చికిత్సలు నమోదు కాలేదు",
+      "markPerformed": "చేసినట్లు గుర్తించండి",
+      "categories": {
+        "common": "సాధారణ",
+        "restorative": "పునరుద్ధరణ",
+        "other": "ఇతర",
+        "diagnostico": "రోగనిర్ధారణ",
+        "restauradora": "పునరుద్ధరణ",
+        "cirugia": "శస్త్రచికిత్స",
+        "endodoncia": "ఎండోడాంటిక్స్ (రూట్ కెనాల్)",
+        "ortodoncia": "ఆర్థోడాంటిక్స్"
+      },
+      "types": {
+        "pulpitis": "పల్పైటిస్ (నరం వాపు)",
+        "caries": "దంత క్షయం (caries)",
+        "incipient_caries": "ప్రారంభ దంత క్షయం",
+        "pigmentation": "రంగు మారడం",
+        "fracture": "విరిగిన దంతం",
+        "missing": "లేని దంతం",
+        "periapical_small": "పెరియాపికల్ <2మి.మీ",
+        "periapical_medium": "పెరియాపికల్ 2-4మి.మీ",
+        "periapical_large": "పెరియాపికల్ >4మి.మీ",
+        "rotated": "తిరిగిన దంతం",
+        "displaced": "స్థానభ్రంశం",
+        "unerupted": "బయటకు రాని దంతం",
+        "filling": "ఫిల్లింగ్",
+        "filling_composite": "కాంపోజిట్ ఫిల్లింగ్",
+        "filling_amalgam": "అమాల్గమ్ ఫిల్లింగ్",
+        "filling_temporary": "తాత్కాలిక ఫిల్లింగ్",
+        "sealant": "సీలెంట్",
+        "veneer": "వెనీర్",
+        "inlay": "ఇన్‌లే",
+        "overlay": "ఓవర్‌లే",
+        "crown": "క్రౌన్ (crown)",
+        "crown_on_implant": "ఇంప్లాంట్‌పై క్రౌన్",
+        "provisional_crown_on_implant": "ఇంప్లాంట్‌పై తాత్కాలిక క్రౌన్",
+        "pontic": "పాంటిక్",
+        "bridge_pontic": "బ్రిడ్జ్ పాంటిక్",
+        "bridge_abutment": "బ్రిడ్జ్ అబట్‌మెంట్",
+        "extraction": "పన్ను తీయడం (extraction)",
+        "implant": "ఇంప్లాంట్",
+        "apicoectomy": "ఎపికోఎక్టమీ",
+        "root_canal": "రూట్ కెనాల్",
+        "root_canal_full": "పూర్తి రూట్ కెనాల్",
+        "root_canal_two_thirds": "రూట్ కెనాల్ 2/3",
+        "root_canal_half": "రూట్ కెనాల్ 1/2",
+        "root_canal_overfill": "అధికంగా నింపిన రూట్ కెనాల్",
+        "post": "పోస్ట్",
+        "bracket": "బ్రాకెట్",
+        "tube": "ట్యూబ్",
+        "band": "బ్యాండ్",
+        "attachment": "అటాచ్‌మెంట్",
+        "retainer": "రిటైనర్",
+        "rotate": "తిరిగిన దంతం",
+        "displace": "స్థానభ్రంశం",
+        "splint": "స్ప్లింట్",
+        "migrated": "సాధారణ చికిత్స",
+        "other": "ఇతర చికిత్స"
+      },
+      "treatmentAdded": "చికిత్స జోడించబడింది",
+      "treatmentPerformed": "చికిత్స చేసినట్లు గుర్తించబడింది",
+      "treatmentDeleted": "చికిత్స తొలగించబడింది",
+      "status": {
+        "existing": "ఉన్నది",
+        "planned": "ప్రణాళికలో ఉంది"
+      },
+      "deleteConfirm": "{name} (దంతం {tooth}) ను తొలగించాలా? దీన్ని రద్దు చేయలేరు."
+    },
+    "position": {
+      "displaced": "స్థానభ్రంశం",
+      "rotated": "తిరిగిన దంతం",
+      "normal": "సాధారణ"
+    },
+    "views": {
+      "occlusal": "ఆక్లూజల్ వీక్షణ",
+      "lateral": "పక్క వీక్షణ",
+      "dual": "ద్వంద్వ వీక్షణ"
+    },
+    "selectSurfaces": "ఉపరితలాలను ఎంచుకోండి",
+    "selectedSurfaces": "ఎంచుకున్న ఉపరితలాలు",
+    "surfacesSelected": "ఉపరితలం(లు) ఎంచుకోబడ్డాయి",
+    "instructions": {
+      "selectTreatment": "వర్తింపజేయడానికి చికిత్సను ఎంచుకోండి",
+      "clickTooth": "వర్తింపజేయడానికి దంతంపై క్లిక్ చేయండి"
+    },
+    "addToPlan": "ప్రణాళికకు జోడించండి",
+    "noPlan": "ప్రణాళిక లేదు",
+    "createNewPlan": "కొత్త ప్రణాళిక సృష్టించండి...",
+    "applyTo": "దీనికి వర్తింపజేయండి",
+    "oneTooth": "1 దంతం",
+    "multipleTeeth": "అనేక దంతాలు",
+    "surfacePricingHint": "ఉపరితలం వారీగా ధర: {range}",
+    "toothNames": {
+      "centralIncisor": "మధ్య కోత పన్ను (central incisor)",
+      "lateralIncisor": "పక్క కోత పన్ను (lateral incisor)",
+      "canine": "కోర పన్ను (canine)",
+      "firstPremolar": "మొదటి ప్రీమోలార్",
+      "secondPremolar": "రెండవ ప్రీమోలార్",
+      "firstMolar": "మొదటి దవడ పన్ను (molar)",
+      "secondMolar": "రెండవ దవడ పన్ను (molar)",
+      "thirdMolar": "జ్ఞాన దంతం (third molar)"
+    },
+    "positions": {
+      "upper": "పై",
+      "lower": "కింది",
+      "left": "ఎడమ",
+      "right": "కుడి"
+    },
+    "tooltip": {
+      "clickToEdit": "సవరించడానికి క్లిక్ చేయండి"
+    },
+    "planning": "ప్రణాళిక",
+    "diagnosisMode": "రోగనిర్ధారణ",
+    "treatmentList": {
+      "title": "చికిత్సల జాబితా",
+      "noTreatments": "చికిత్సలు నమోదు కాలేదు"
+    },
+    "changeHistory": {
+      "title": "మార్పుల చరిత్ర",
+      "noChanges": "మార్పులు నమోదు కాలేదు",
+      "treatmentAdded": "చికిత్స"
+    },
+    "timeline": {
+      "title": "టైమ్‌లైన్",
+      "viewingDate": "చూస్తున్నది: {date}",
+      "viewingHistory": "మీరు దంత చార్ట్ యొక్క పాత స్థితిని చూస్తున్నారు",
+      "returnToNow": "ప్రస్తుత స్థితికి తిరిగి వెళ్ళండి",
+      "noHistory": "గత చరిత్ర లేదు"
+    },
+    "multiTooth": {
+      "bridge": {
+        "label": "స్థిర బ్రిడ్జ్"
+      },
+      "splint": {
+        "label": "స్ప్లింట్"
+      },
+      "veneers": {
+        "label": "అనేక వెనీర్లు"
+      },
+      "crowns": {
+        "label": "అనేక క్రౌన్లు"
+      },
+      "pillar": "పిల్లర్",
+      "pontic": "పాంటిక్",
+      "roleHint": "పిల్లర్ / పాంటిక్ మార్చడానికి దంతంపై క్లిక్ చేయండి.",
+      "needPillar": "బ్రిడ్జ్‌కు కనీసం ఒక పిల్లర్ దంతం అవసరం.",
+      "confirmHint": "మీరు {n} దంతాలతో చికిత్స గ్రూపును సృష్టించబోతున్నారు.",
+      "willBePlanned": "గ్రూపు ప్రణాళికలో ఉన్నట్లు గుర్తించబడుతుంది.",
+      "willBeExisting": "గ్రూపు ఉన్నదిగా నమోదవుతుంది.",
+      "hints": {
+        "range": "మొదటి దంతంపై, తర్వాత చివరి దంతంపై క్లిక్ చేయండి",
+        "free": "దంతాలను జోడించడానికి లేదా తొలగించడానికి క్లిక్ చేయండి"
+      },
+      "errors": {
+        "tooFew": "కనీసం {n} దంతాలు అవసరం",
+        "tooMany": "గరిష్టం {n} దంతాలు అనుమతించబడతాయి",
+        "sameArchRequired": "దంతాలు ఒకే దవడలో ఉండాలి"
+      },
+      "sectionLabel": "అనేక దంతాల చికిత్సలు"
+    }
+  },
+  "clinical": {
+    "modes": {
+      "history": "చరిత్ర",
+      "diagnosis": "రోగనిర్ధారణ",
+      "plans": "చికిత్స ప్రణాళికలు",
+      "appointments": "అపాయింట్‌మెంట్లు"
+    },
+    "history": {
+      "stateAt": "ఈ తేదీ నాటి స్థితి",
+      "changesOnDate": "ఈ తేదీన మార్పులు",
+      "noChanges": "మార్పులు నమోదు కాలేదు"
+    },
+    "diagnosis": {
+      "registeredConditions": "నిర్ధారించిన పరిస్థితులు",
+      "registerConditions": "పరిస్థితులను నమోదు చేయండి",
+      "noConditions": "పరిస్థితులు నమోదు కాలేదు",
+      "startDiagnosis": "దంతాన్ని ఎంచుకుని ఉన్న పరిస్థితులను జోడించండి",
+      "generalConditions": "సాధారణ పరిస్థితులు",
+      "readyToCreatePlan": "రోగనిర్ధారణ పూర్తయిందా?",
+      "createPlan": "చికిత్స ప్రణాళిక సృష్టించండి",
+      "continuePlan": "\"{name}\" ప్రణాళికను కొనసాగించండి",
+      "selectPlan": "ప్రణాళికను ఎంచుకోండి",
+      "continue": "కొనసాగించండి",
+      "odontogramTab": "ఓడోంటోగ్రామ్"
+    },
+    "plans": {
+      "title": "చికిత్స ప్రణాళికలు",
+      "create": "కొత్త ప్రణాళిక",
+      "backToList": "ప్రణాళికలకు తిరిగి వెళ్ళండి",
+      "treatments": "ప్రణాళికలోని చికిత్సలు",
+      "addTreatment": "చికిత్స జోడించండి",
+      "total": "మొత్తం",
+      "activate": "ప్రణాళికను సక్రియం చేయండి",
+      "generateBudget": "అంచనా రూపొందించండి",
+      "empty": "చికిత్స ప్రణాళికలు లేవు",
+      "emptyDescription": "రోగి చికిత్సలను క్రమబద్ధీకరించడానికి ప్రణాళిక సృష్టించండి",
+      "createFirst": "మొదటి ప్రణాళిక సృష్టించండి",
+      "active": "సక్రియ ప్రణాళికలు",
+      "drafts": "డ్రాఫ్ట్‌లు",
+      "completed": "పూర్తయినవి",
+      "closed": "ముగిసినవి",
+      "other": "ఇతర",
+      "noItems": "ప్రణాళికలో చికిత్సలు లేవు",
+      "markComplete": "పూర్తయినట్లు గుర్తించండి",
+      "removeItem": "ప్రణాళిక నుండి తొలగించండి",
+      "sessions": {
+        "progress": "{done}/{total} సెషన్లు",
+        "markDone": "సెషన్ పూర్తయినట్లు గుర్తించండి",
+        "cancel": "సెషన్ రద్దు చేయండి",
+        "markedDone": "సెషన్ పూర్తయినట్లు గుర్తించబడింది",
+        "cancelled": "సెషన్ రద్దు చేయబడింది",
+        "untitled": "సెషన్ {n}"
+      },
+      "unknownTreatment": "చికిత్స",
+      "odontogram": "ఓడోంటోగ్రామ్",
+      "pending": "పెండింగ్",
+      "dragToReorder": "క్రమం మార్చడానికి లాగండి",
+      "reorderHint": "కదిలించడానికి Alt + బాణం కీలను వాడండి",
+      "emptyDraft": {
+        "title": "చికిత్సలను ప్రణాళిక చేయండి",
+        "step1": "క్రింది బార్ నుండి చికిత్సను ఎంచుకోండి",
+        "step2": "ఓడోంటోగ్రామ్‌పై దంతాన్ని క్లిక్ చేయండి",
+        "step3": "అంచనా మరియు అపాయింట్‌మెంట్లు రూపొందించడానికి ప్రణాళికను నిర్ధారించండి"
+      },
+      "steps": {
+        "plan": "ప్రణాళిక",
+        "confirm": "నిర్ధారణ",
+        "inProgress": "పురోగతిలో"
+      },
+      "confirmCta": {
+        "titleWithItems": "ప్రణాళికను నిర్ధారించండి",
+        "subtitleWithItems": "నిర్ధారిస్తే అంచనా రూపొందించడం మరియు అపాయింట్‌మెంట్ షెడ్యూలింగ్ అందుబాటులోకి వస్తాయి.",
+        "empty": "ప్రణాళికను నిర్ధారించడానికి కనీసం ఒక చికిత్స జోడించండి"
+      },
+      "ghostHint": "ప్రణాళికను నిర్ధారించిన తర్వాత అందుబాటులో ఉంటుంది",
+      "addedToPlan": "ప్రణాళికకు జోడించబడింది",
+      "addingToPlan": "ఈ ప్రణాళికకు జోడిస్తోంది",
+      "cancelPlan": "ప్రణాళిక రద్దు చేయండి",
+      "locked": {
+        "title": "ప్రణాళిక లాక్ అయింది",
+        "subtitle": "అంచనా {number} జారీ చేయబడింది. చికిత్సలను సవరించడానికి మళ్ళీ తెరవండి (పెండింగ్ అయితే) లేదా అంచనాను మళ్ళీ చర్చించండి.",
+        "viewBudget": "అంచనా చూడండి"
+      },
+      "removeItemConfirm": "{name} ను ఈ ప్రణాళిక నుండి తొలగించాలా? దీన్ని రద్దు చేయలేరు."
+    },
+    "tooth": "దంతం"
+  },
+  "appointments": {
+    "title": "షెడ్యూల్",
+    "checkin": {
+      "qr": "చెక్-ఇన్ QR",
+      "hint": "చెక్-ఇన్ చేయడానికి రోగి ఈ కోడ్‌ను స్కాన్ చేస్తారు. రూపొందించిన 15 నిమిషాల తర్వాత గడువు ముగుస్తుంది.",
+      "copyLink": "చెక్-ఇన్ లింక్ కాపీ చేయండి",
+      "openTitle": "క్లినిక్ చెక్-ఇన్",
+      "success": "మీరు చెక్-ఇన్ అయ్యారు. దయచేసి కూర్చోండి.",
+      "invalid": "ఈ చెక్-ఇన్ కోడ్ చెల్లదు లేదా గడువు ముగిసింది. దయచేసి రిసెప్షన్‌లో కొత్తది అడగండి."
+    },
+    "create": "కొత్త అపాయింట్‌మెంట్",
+    "edit": "అపాయింట్‌మెంట్ సవరించండి",
+    "today": "ఈరోజు",
+    "tomorrow": "రేపు",
+    "yesterday": "నిన్న",
+    "week": "వారం",
+    "prevWeek": "గత వారం",
+    "nextWeek": "తదుపరి వారం",
+    "selectPatient": "రోగిని ఎంచుకోండి",
+    "selectProfessional": "వైద్యుడిని ఎంచుకోండి",
+    "openPatientFile": "రోగి ఫైల్ తెరవండి",
+    "patient": "రోగి",
+    "professional": "వైద్యుడు",
+    "cabinet": "క్యాబినెట్",
+    "date": "తేదీ",
+    "time": "సమయం",
+    "startTime": "ప్రారంభ సమయం",
+    "duration": "వ్యవధి",
+    "treatmentType": "చికిత్స రకం",
+    "treatments": "చికిత్సలు",
+    "addTreatment": "చికిత్స జోడించండి",
+    "selectTreatment": "చికిత్సను ఎంచుకోండి",
+    "estimatedDuration": "అంచనా వ్యవధి",
+    "notes": "గమనికలు",
+    "hasNotes": "గమనికలు ఉన్నాయి",
+    "status": {
+      "label": "స్థితి",
+      "scheduled": "షెడ్యూల్ అయింది",
+      "confirmed": "నిర్ధారించబడింది",
+      "checked_in": "వెయిటింగ్ రూమ్‌లో",
+      "in_treatment": "చికిత్స కుర్చీలో",
+      "completed": "పూర్తయింది",
+      "cancelled": "రద్దు చేయబడింది",
+      "no_show": "రాలేదు"
+    },
+    "scheduled": "షెడ్యూల్ అయింది",
+    "confirmed": "నిర్ధారించబడింది",
+    "inProgress": "పురోగతిలో",
+    "in_progress": "పురోగతిలో",
+    "completed": "పూర్తయింది",
+    "cancelled": "రద్దు చేయబడింది",
+    "noShow": "రాలేదు",
+    "no_show": "రాలేదు",
+    "transitions": {
+      "confirmed": "నిర్ధారించినట్లు గుర్తించండి",
+      "checked_in": "రాకను నమోదు చేయండి",
+      "in_treatment": "కుర్చీకి తరలించండి",
+      "completed": "అపాయింట్‌మెంట్ ముగించండి",
+      "cancelled": "అపాయింట్‌మెంట్ రద్దు చేయండి",
+      "no_show": "రాలేదని గుర్తించండి"
+    },
+    "timer": {
+      "startsIn": "{minutes} నిమి.లో ప్రారంభం",
+      "startsInOverdue": "{minutes} నిమి. ఆలస్యం",
+      "waiting": "{minutes} నిమి. నుండి వేచి ఉన్నారు",
+      "inTreatment": "{elapsed}/{planned} నిమి.",
+      "completedAt": "{time} కు ముగిసింది",
+      "cancelledAt": "రద్దు చేయబడింది",
+      "noShowAt": "రాలేదు"
+    },
+    "confirmTransitionTitle": "స్థితి మార్పును నిర్ధారించండి",
+    "confirmCancelMessage": "ఈ అపాయింట్‌మెంట్‌ను రద్దు చేయాలా? మార్పు నమోదవుతుంది.",
+    "confirmNoShowMessage": "ఈ రోగి రాలేదని గుర్తించాలా? మార్పు నమోదవుతుంది.",
+    "noteLabel": "గమనిక (ఐచ్ఛికం)",
+    "transitionFailed": "అపాయింట్‌మెంట్ స్థితిని మార్చలేకపోయాము",
+    "when": "ఎప్పుడు",
+    "whereWho": "క్యాబినెట్ మరియు వైద్యుడు",
+    "followup": {
+      "title": "అపాయింట్‌మెంట్ తర్వాత చర్యలు"
+    },
+    "created": "అపాయింట్‌మెంట్ సృష్టించబడింది",
+    "saved": "అపాయింట్‌మెంట్ సేవ్ అయింది",
+    "updated": "అపాయింట్‌మెంట్ నవీకరించబడింది",
+    "conflict": "ఈ సమయం ఇప్పటికే బుక్ అయింది",
+    "cancel": "అపాయింట్‌మెంట్ రద్దు చేయండి",
+    "markCompleted": "పూర్తయినట్లు గుర్తించండి",
+    "markNoShow": "రాలేదు",
+    "dailyView": "రోజు",
+    "weeklyView": "వారం",
+    "kanbanView": "కాన్బన్",
+    "kanban": {
+      "upcoming": "రాబోయేవి",
+      "waiting": "వెయిటింగ్ రూమ్",
+      "inChair": "కుర్చీలో",
+      "done": "పూర్తయినవి",
+      "missed": "రాలేదు / రద్దు",
+      "free": "ఖాళీ",
+      "inactive": "నిష్క్రియం",
+      "empty": "అపాయింట్‌మెంట్లు లేవు",
+      "nextIn": "తదుపరి {time} కు",
+      "subtitleCount": "{count} అపాయింట్‌మెంట్లు",
+      "subtitleEmpty": "అపాయింట్‌మెంట్లు లేవు",
+      "subtitleWaiting": "{count} వేచి ఉన్నారు · సగటు {avg} నిమి.",
+      "subtitleInChair": "{busy} బిజీ · {free} ఖాళీ"
+    },
+    "cabinetAssignment": {
+      "assignLater": "తర్వాత కేటాయించండి",
+      "unassigned": "కేటాయించలేదు",
+      "assign": "క్యాబినెట్ కేటాయించండి",
+      "reassign": "క్యాబినెట్ మళ్ళీ కేటాయించండి",
+      "unassign": "క్యాబినెట్ కేటాయింపు తొలగించండి",
+      "requiredForTreatment": "చికిత్సకు తరలించే ముందు క్యాబినెట్ కేటాయించండి"
+    },
+    "professionals": {
+      "strip": "వైద్యులు",
+      "state": {
+        "free": "ఖాళీ",
+        "in_treatment": "కుర్చీలో",
+        "on_break": "విరామంలో",
+        "off": "విధుల్లో లేరు"
+      }
+    },
+    "noProfessionals": "వైద్యులు కాన్ఫిగర్ కాలేదు",
+    "overlapWarning": "సమయాలు ఒకదానిపై ఒకటి వస్తున్నాయి",
+    "overlapProfessional": "ఈ సమయంలో వైద్యునికి {count} అపాయింట్‌మెంట్(లు) ఉన్నాయి",
+    "overlapCabinet": "ఈ సమయంలో క్యాబినెట్‌కు {count} అపాయింట్‌మెంట్(లు) ఉన్నాయి",
+    "selectDuration": "వ్యవధిని ఎంచుకోండి...",
+    "sendEmail": "ఈమెయిల్ పంపండి",
+    "sendConfirmationEmail": "నిర్ధారణ పంపండి",
+    "resendConfirmation": "నిర్ధారణ మళ్ళీ పంపండి",
+    "sendReminderEmail": "రిమైండర్ పంపండి",
+    "emailSent": "ఈమెయిల్ విజయవంతంగా పంపబడింది",
+    "automatic": "స్వయంచాలకం",
+    "selectPatientFirst": "పెండింగ్ చికిత్సలు చూడటానికి రోగిని ఎంచుకోండి",
+    "noPendingTreatments": "పెండింగ్ చికిత్సలు లేవు",
+    "createPlanFirst": "ఈ రోగికి చికిత్స ప్రణాళిక సృష్టించండి",
+    "addTreatmentFromPlan": "ప్రణాళిక నుండి చికిత్స జోడించండి",
+    "selectPendingTreatment": "పెండింగ్ చికిత్సను ఎంచుకోండి",
+    "emptyDay": "ఈ రోజుకు అపాయింట్‌మెంట్లు లేవు",
+    "noPatient": "రోగి లేరు",
+    "freeSlots": {
+      "byProfessional": "వైద్యుడు",
+      "byCabinet": "క్యాబినెట్",
+      "freeSuffix": "ఖాళీ",
+      "freeShort": "ఖాళీ",
+      "noFreeTime": "ఖాళీ సమయం లేదు",
+      "tapToBook": "బుక్ చేయడానికి నొక్కండి",
+      "tapToBookAria": "{time} కు {duration} ఖాళీ సమయం",
+      "nextFreeAt": "తదుపరి {time} కు",
+      "gapsAtLeast": "{count} ఖాళీలు ≥ {min} నిమి.",
+      "minDuration": "కనిష్టం",
+      "noFreeSlots": "ఈరోజు ఖాళీ సమయాలు లేవు",
+      "clinicClosed": "క్లినిక్ మూసి ఉంది",
+      "professionalOff": "విధుల్లో లేరు",
+      "onBreak": "విరామంలో"
+    },
+    "actionsMenu": "అపాయింట్‌మెంట్ చర్యలు",
+    "sendMessage": "సందేశం పంపండి",
+    "resendConfirmationVia": "నిర్ధారణ మళ్ళీ పంపండి ({channel})",
+    "sendReminderVia": "రిమైండర్ పంపండి ({channel})",
+    "sendCancellationVia": "రద్దు సమాచారం పంపండి ({channel})",
+    "loadError": "అపాయింట్‌మెంట్లను లోడ్ చేయలేకపోయాము",
+    "planAwaitingBudget": "అంచనా అంగీకారం కోసం వేచి ఉంది"
+  },
+  "dashboard": {
+    "greetings": {
+      "morning": "శుభోదయం",
+      "afternoon": "శుభ మధ్యాహ్నం",
+      "evening": "శుభ సాయంత్రం"
+    },
+    "welcome": "DentalPin కు స్వాగతం",
+    "welcomeMessage": "మీ మొదటి రోగిని సృష్టించడం ద్వారా ప్రారంభించండి.",
+    "quickActions": {
+      "newAppointment": "కొత్త అపాయింట్‌మెంట్",
+      "newPatient": "కొత్త రోగి",
+      "search": "రోగిని వెతకండి",
+      "searchPlaceholder": "పేరు, ఫోన్ లేదా ఈమెయిల్ ద్వారా వెతకండి"
+    },
+    "timeline": {
+      "title": "ఈరోజు",
+      "empty": "ఈరోజు అపాయింట్‌మెంట్లు షెడ్యూల్ కాలేదు",
+      "now": "ఇప్పుడు",
+      "openSchedule": "షెడ్యూల్ తెరవండి"
+    },
+    "todayKpi": {
+      "title": "ఈరోజు అపాయింట్‌మెంట్లు",
+      "completed": "పూర్తయినవి",
+      "inProgress": "పురోగతిలో",
+      "upcoming": "రాబోయేవి",
+      "cancelled": "రద్దయినవి",
+      "noShow": "రానివారు",
+      "empty": "ఈరోజు అపాయింట్‌మెంట్లు లేవు"
+    },
+    "inClinic": {
+      "title": "ప్రస్తుతం క్లినిక్‌లో",
+      "inTreatment": "{n} చికిత్సలో",
+      "waiting": "{n} వేచి ఉన్నారు",
+      "empty": "క్లినిక్‌లో ఎవరూ లేరు"
+    },
+    "unconfirmed": {
+      "title": "రేపటికి నిర్ధారించనివి",
+      "empty": "రేపటి అన్ని అపాయింట్‌మెంట్లు నిర్ధారించబడ్డాయి",
+      "confirm": "నిర్ధారించండి",
+      "confirmError": "నిర్ధారించలేకపోయాము"
+    },
+    "overdue": {
+      "title": "గడువు దాటిన చెల్లింపులు",
+      "daysOverdue": "{n} రోజు గడువు దాటింది | {n} రోజులు గడువు దాటింది",
+      "viewAll": "అన్నీ చూడండి",
+      "empty": "గడువు దాటిన ఇన్‌వాయిస్‌లు లేవు"
+    },
+    "recent": {
+      "title": "ఇటీవలి రోగులు",
+      "empty": "ఇంకా రోగులు లేరు"
+    },
+    "weekGlance": {
+      "title": "వారం ఒక్క చూపులో",
+      "subtitle": "గత 7 రోజులు vs అంతకు ముందు 7 రోజులు",
+      "appointments": "అపాయింట్‌మెంట్లు",
+      "completed": "పూర్తయినవి",
+      "invoiced": "ఇన్‌వాయిస్ చేసినవి",
+      "empty": "ఈ వారం డేటా లేదు"
+    }
+  },
+  "settings": {
+    "title": "సెట్టింగ్‌లు",
+    "subtitle": "మీ క్లినిక్, బృందం మరియు మాడ్యూల్‌లను నిర్వహించండి.",
+    "allCategories": "అన్ని వర్గాలు",
+    "navLabel": "సెట్టింగ్‌ల వర్గాలు",
+    "attentionRequired": "శ్రద్ధ అవసరం",
+    "categories": {
+      "general": {
+        "label": "సాధారణ",
+        "description": "క్లినిక్ ప్రొఫైల్, బ్రాండింగ్ మరియు టైమ్‌జోన్."
+      },
+      "workspace": {
+        "label": "కార్యస్థలం",
+        "description": "క్యాబినెట్లు, పని సమయాలు మరియు అందుబాటు."
+      },
+      "people": {
+        "label": "వ్యక్తులు",
+        "description": "యూజర్లు, పాత్రలు మరియు ఆహ్వానాలు."
+      },
+      "clinical": {
+        "label": "క్లినికల్",
+        "description": "క్యాటలాగ్, చికిత్స డిఫాల్ట్‌లు మరియు టెంప్లేట్లు."
+      },
+      "billing": {
+        "label": "బిల్లింగ్ & పన్ను",
+        "description": "ఇన్‌వాయిస్ సిరీస్, పన్ను మరియు పన్ను నిబంధనల పాటింపు."
+      },
+      "communications": {
+        "label": "సంప్రదింపులు",
+        "description": "నోటిఫికేషన్లు, SMTP మరియు టెంప్లేట్లు."
+      },
+      "integrations": {
+        "label": "అనుసంధానాలు",
+        "description": "బాహ్య సేవలు మరియు ప్రొవైడర్లు."
+      },
+      "modules": {
+        "label": "మాడ్యూల్‌లు",
+        "description": "మాడ్యూల్‌లను ఇన్‌స్టాల్, అప్‌గ్రేడ్ మరియు అన్‌ఇన్‌స్టాల్ చేయండి."
+      },
+      "account": {
+        "label": "ఖాతా",
+        "description": "మీ ప్రొఫైల్, పాస్‌వర్డ్ మరియు భాష."
+      }
+    },
+    "supergroups": {
+      "clinicalSetup": {
+        "label": "క్లినికల్ సెటప్"
+      },
+      "clinicalManagement": {
+        "label": "క్లినికల్ నిర్వహణ"
+      },
+      "financialConfiguration": {
+        "label": "ఆర్థిక కాన్ఫిగరేషన్"
+      },
+      "systemAddons": {
+        "label": "సిస్టమ్ & యాడ్-ఆన్‌లు"
+      },
+      "myPreferences": {
+        "label": "నా ప్రాధాన్యతలు"
+      }
+    },
+    "search": {
+      "placeholder": "సెట్టింగ్‌లను వెతకండి…",
+      "empty": "ఆ శోధనకు సరిపోలికలు లేవు.",
+      "navigate": "నావిగేట్",
+      "open": "తెరవండి"
+    },
+    "locked": {
+      "title": "ఈ విభాగానికి మీకు యాక్సెస్ లేదు",
+      "description": "అవసరమైన అనుమతులు ఇవ్వమని క్లినిక్ అడ్మినిస్ట్రేటర్‌ను అడగండి."
+    },
+    "emptyCategory": {
+      "title": "ఎంపికలు అందుబాటులో లేవు",
+      "description": "అనుకూల మాడ్యూల్‌లు ప్రారంభించినప్పుడు, వాటి సెట్టింగ్‌లు ఇక్కడ కనిపిస్తాయి."
+    },
+    "loadError": {
+      "description": "ఈ ఎడిటర్‌ను లోడ్ చేయలేకపోయాము. కొన్ని సెకన్లలో మళ్ళీ ప్రయత్నించండి."
+    },
+    "comingSoon": {
+      "title": "త్వరలో వస్తుంది",
+      "subtitle": "మేము ఈ విభాగంపై పని చేస్తున్నాము. ఈలోగా దీన్ని API ద్వారా నిర్వహించవచ్చు."
+    },
+    "onboarding": {
+      "title": "మీ క్లినిక్ సెటప్ పూర్తి చేయండి",
+      "subtitle": "ప్రారంభ సెటప్ పూర్తి చేయడానికి మీకు {count} పెండింగ్ దశలు ఉన్నాయి.",
+      "dismiss": "విస్మరించండి",
+      "items": {
+        "clinicInfo": {
+          "label": "క్లినిక్ ప్రొఫైల్ పూర్తి చేయండి",
+          "description": "పేరు, పన్ను ID మరియు చిరునామా అంచనాలు మరియు ఇన్‌వాయిస్‌లపై కనిపిస్తాయి."
+        },
+        "cabinets": {
+          "label": "కనీసం ఒక క్యాబినెట్ సృష్టించండి",
+          "description": "క్యాబినెట్లు లేకుండా అపాయింట్‌మెంట్లు షెడ్యూల్ చేయలేరు."
+        }
+      }
+    },
+    "cabinetsDescription": "రోగులకు చికిత్స చేసే గదులు లేదా బాక్సులు.",
+    "usersDescription": "ఈ క్లినిక్‌కు యాక్సెస్ ఉన్న ఖాతాలు మరియు వాటి పాత్రలు.",
+    "profileDescription": "ఈ క్లినిక్‌లో మీ వ్యక్తిగత సమాచారం.",
+    "clinic": "క్లినిక్",
+    "profile": "ప్రొఫైల్",
+    "clinicName": "క్లినిక్ పేరు",
+    "clinicInfo": "క్లినిక్ సమాచారం",
+    "clinicInfoDescription": "ఈ డేటా అంచనాలు మరియు పత్రాలపై కనిపిస్తుంది",
+    "taxId": "పన్ను ID",
+    "legalName": "చట్టపరమైన పేరు",
+    "legalNameHelp": "ఇన్‌వాయిసింగ్ కోసం సంస్థ యొక్క చట్టపరమైన పేరు. క్లినిక్ పేరు వాడాలంటే ఖాళీగా ఉంచండి.",
+    "street": "చిరునామా",
+    "city": "నగరం",
+    "postalCode": "పిన్ కోడ్",
+    "country": "దేశం",
+    "countryPlaceholder": "దేశాన్ని ఎంచుకోండి",
+    "countrySearchPlaceholder": "దేశాన్ని వెతకండి…",
+    "phone": "ఫోన్",
+    "timezone": "టైమ్‌జోన్",
+    "timezoneHelp": "అన్ని షెడ్యూళ్లు మరియు అపాయింట్‌మెంట్లు ఈ టైమ్‌జోన్‌లో లెక్కించబడతాయి.",
+    "currency": "కరెన్సీ",
+    "currencyHelp": "అంచనాలు, ఇన్‌వాయిస్‌లు మరియు క్యాటలాగ్‌లో వాడే క్లినిక్ కరెన్సీ.",
+    "editClinicInfo": "సమాచారం సవరించండి",
+    "clinicUpdated": "క్లినిక్ సమాచారం నవీకరించబడింది",
+    "clinicUpdateError": "సమాచారాన్ని నవీకరించడంలో లోపం",
+    "cabinets": "క్యాబినెట్లు",
+    "language": "భాష",
+    "languageDescription": "మీకు ఇష్టమైన భాషను ఎంచుకోండి",
+    "users": "క్లినిక్ యూజర్లు",
+    "newUser": "కొత్త యూజర్",
+    "createUser": "యూజర్‌ను సృష్టించండి",
+    "editUser": "యూజర్‌ను సవరించండి",
+    "deleteUser": "యూజర్‌ను తొలగించండి",
+    "deleteUserConfirm": "మీరు ఖచ్చితంగా తొలగించాలనుకుంటున్నారా",
+    "deleteUserNote": "యూజర్ ఈ క్లినిక్‌కు యాక్సెస్ కోల్పోతారు, కానీ వారి ఖాతా తొలగించబడదు.",
+    "noUsers": "యూజర్లు నమోదు కాలేదు",
+    "youTag": "(మీరు)",
+    "userActive": "యూజర్ సక్రియం",
+    "isProfessional": "వైద్యుడిగా సేవలు అందిస్తారు",
+    "isProfessionalHelp": "అజెండాలో కనిపిస్తారు, పని సమయాలు ఉంటాయి మరియు చికిత్సలు కేటాయించవచ్చు. అడ్మినిస్ట్రేటర్ కూడా వైద్యుడిగా సేవలు అందించవచ్చు.",
+    "userInactiveNote": "(లాగిన్ చేయలేరు)",
+    "saveChanges": "మార్పులు సేవ్ చేయండి",
+    "noCabinets": "క్యాబినెట్లు కాన్ఫిగర్ కాలేదు",
+    "addCabinet": "జోడించండి",
+    "newCabinet": "కొత్త క్యాబినెట్",
+    "editCabinet": "క్యాబినెట్ సవరించండి",
+    "deleteCabinet": "క్యాబినెట్ తొలగించండి",
+    "deleteCabinetConfirm": "మీరు ఖచ్చితంగా ఈ క్యాబినెట్‌ను తొలగించాలనుకుంటున్నారా",
+    "deleteCabinetNote": "ఈ క్యాబినెట్‌లో ఉన్న అపాయింట్‌మెంట్లపై ప్రభావం ఉండదు.",
+    "createCabinet": "క్యాబినెట్ సృష్టించండి",
+    "roles": {
+      "admin": "అడ్మినిస్ట్రేటర్",
+      "dentist": "దంత వైద్యుడు",
+      "hygienist": "హైజీనిస్ట్",
+      "assistant": "సహాయకుడు",
+      "receptionist": "రిసెప్షనిస్ట్"
+    },
+    "errors": {
+      "loadUsers": "యూజర్లను లోడ్ చేయడంలో లోపం",
+      "createUser": "యూజర్‌ను సృష్టించడంలో లోపం",
+      "updateUser": "యూజర్‌ను నవీకరించడంలో లోపం",
+      "deleteUser": "యూజర్‌ను తొలగించడంలో లోపం",
+      "emailExists": "ఈమెయిల్ ఇప్పటికే ఉంది",
+      "userNotFound": "యూజర్ కనుగొనబడలేదు",
+      "operationNotAllowed": "ఈ చర్య అనుమతించబడదు",
+      "invalidData": "చెల్లని డేటా",
+      "inviteLink": "యాక్సెస్ లింక్‌ను రూపొందించలేకపోయాము"
+    },
+    "messages": {
+      "userCreated": "యూజర్ విజయవంతంగా సృష్టించబడ్డారు",
+      "userUpdated": "యూజర్ విజయవంతంగా నవీకరించబడ్డారు",
+      "userDeleted": "యూజర్ క్లినిక్ నుండి తొలగించబడ్డారు"
+    },
+    "modules": {
+      "title": "మాడ్యూల్‌లు",
+      "subtitle": "క్లినిక్ మాడ్యూల్‌లను ఇన్‌స్టాల్, అన్‌ఇన్‌స్టాల్ మరియు అప్‌గ్రేడ్ చేయండి.",
+      "description": "మీ క్లినిక్‌లో ఏ మాడ్యూల్‌లు సక్రియంగా ఉండాలో నిర్వహించండి.",
+      "searchPlaceholder": "మాడ్యూల్‌లను వెతకండి…",
+      "filterState": "స్థితి",
+      "deps": "ఆధారాలు (dependencies)",
+      "noDeps": "ఆధారాలు లేవు",
+      "state": {
+        "installed": "ఇన్‌స్టాల్ అయింది",
+        "uninstalled": "ఇన్‌స్టాల్ కాలేదు",
+        "toInstall": "ఇన్‌స్టాల్ పెండింగ్",
+        "toUpgrade": "అప్‌గ్రేడ్ పెండింగ్",
+        "toRemove": "తొలగింపు పెండింగ్",
+        "disabled": "నిలిపివేయబడింది",
+        "error": "లోపం"
+      },
+      "category": {
+        "official": "అధికారిక",
+        "community": "కమ్యూనిటీ"
+      },
+      "actions": {
+        "install": "ఇన్‌స్టాల్ చేయండి",
+        "uninstall": "అన్‌ఇన్‌స్టాల్ చేయండి",
+        "upgrade": "అప్‌గ్రేడ్ చేయండి",
+        "apply": "మార్పులు వర్తింపజేయండి",
+        "viewDetails": "వివరాలు",
+        "force": "బలవంతంగా అన్‌ఇన్‌స్టాల్ చేయండి"
+      },
+      "confirmInstall": {
+        "title": "{name} ఇన్‌స్టాల్ చేయాలా?",
+        "message": "మాడ్యూల్ ఇన్‌స్టాల్‌కు షెడ్యూల్ అవుతుంది మరియు మార్పులు వర్తింపజేసిన తర్వాత సక్రియం అవుతుంది.",
+        "scheduled": "ఈ ఆధారాలు కూడా ఇన్‌స్టాల్ అవుతాయి:"
+      },
+      "confirmUninstall": {
+        "title": "{name} అన్‌ఇన్‌స్టాల్ చేయాలా?",
+        "warning": "మాడ్యూల్ టేబుల్స్ తొలగించబడతాయి. డేటాను తిరిగి పొందగలిగేలా ముందుగా pg_dump బ్యాకప్ సృష్టించబడుతుంది.",
+        "forceHint": "ఆధారపడిన మాడ్యూల్‌లను విస్మరిస్తుంది. మీకు ఏమి చేస్తున్నారో తెలిస్తేనే వాడండి."
+      },
+      "confirmUpgrade": {
+        "title": "{name} అప్‌గ్రేడ్ చేయాలా?",
+        "message": "మార్పులు వర్తింపజేసినప్పుడు మాడ్యూల్ డిస్క్‌పై ఉన్న మానిఫెస్ట్ వెర్షన్‌కు అప్‌గ్రేడ్ అవుతుంది."
+      },
+      "confirmApply": {
+        "title": "మార్పులు వర్తింపజేయండి",
+        "message": "బ్యాకెండ్ పునఃప్రారంభమవుతుంది. పెండింగ్ ఆపరేషన్లు నడుస్తున్నప్పుడు సెషన్ కొద్దిసేపు అంతరాయం కావచ్చు."
+      },
+      "pending": {
+        "banner": "పెండింగ్ మార్పులు:",
+        "apply": "మార్పులు వర్తింపజేయండి"
+      },
+      "doctor": {
+        "banner": "మాడ్యూల్ సిస్టమ్‌లో సమస్యలు గుర్తించబడ్డాయి.",
+        "orphans": "అనాథ మాడ్యూల్‌లు",
+        "missingDeps": "లేని ఆధారాలు",
+        "manifestErrors": "మానిఫెస్ట్ లోపాలు",
+        "errored": "లోపం ఉన్న మాడ్యూల్‌లు"
+      },
+      "detail": {
+        "state": "స్థితి",
+        "category": "వర్గం",
+        "installedAt": "ఇన్‌స్టాల్ చేసిన సమయం",
+        "lastChange": "చివరి మార్పు",
+        "baseRevision": "మూల రివిజన్",
+        "appliedRevision": "వర్తింపజేసిన రివిజన్",
+        "manifest": "పూర్తి మానిఫెస్ట్",
+        "errorMessage": "లోప సందేశం",
+        "operationLog": "ఆపరేషన్ లాగ్",
+        "noOperations": "ఆపరేషన్లు నమోదు కాలేదు."
+      },
+      "restart": {
+        "inProgress": "బ్యాకెండ్ పునఃప్రారంభమవుతోంది…",
+        "done": "మార్పులు వర్తింపజేయబడ్డాయి",
+        "failed": "మార్పులు వర్తింపజేయడం విఫలమైంది",
+        "timeout": "బ్యాకెండ్ కోసం వేచి ఉండే సమయం ముగిసింది"
+      },
+      "toasts": {
+        "scheduled": "ఆపరేషన్ షెడ్యూల్ అయింది. పూర్తి చేయడానికి మార్పులు వర్తింపజేయండి.",
+        "applied": "మార్పులు విజయవంతంగా వర్తింపజేయబడ్డాయి."
+      }
+    },
+    "invite": {
+      "linkTitle": "యాక్సెస్ లింక్",
+      "linkHelp": "{name} తమ పాస్‌వర్డ్ ఎంచుకోవడానికి ఈ లింక్ పంపండి. {date} న గడువు ముగుస్తుంది, ఒకసారి మాత్రమే పని చేస్తుంది.",
+      "copy": "లింక్ కాపీ చేయండి",
+      "copied": "లింక్ కాపీ అయింది",
+      "whatsapp": "WhatsApp ద్వారా పంపండి",
+      "shareText": "నమస్కారం {name}, ఇది మీ DentalPin యాక్సెస్. దీన్ని తెరిచి మీ పాస్‌వర్డ్ ఎంచుకోండి: {url}",
+      "secretNote": "దీన్ని పాస్‌వర్డ్ లాగా చూసుకోండి: లింక్ ఉన్న ఎవరైనా ఈ ఖాతాలోకి సైన్ ఇన్ చేయగలరు.",
+      "passwordOptionalHelp": "WhatsApp లేదా ఈమెయిల్ ద్వారా పంపగల యాక్సెస్ లింక్ రూపొందించడానికి ఖాళీగా ఉంచండి.",
+      "passwordOptionalPlaceholder": "ఐచ్ఛికం",
+      "createAndLink": "సృష్టించి లింక్ రూపొందించండి",
+      "rowAction": "యాక్సెస్ లింక్",
+      "setPasswordTitle": "మీ పాస్‌వర్డ్ ఎంచుకోండి",
+      "setPasswordSubtitle": "మిమ్మల్ని DentalPin కు ఆహ్వానించారు. సైన్ ఇన్ చేయడానికి మీ పాస్‌వర్డ్ సృష్టించండి.",
+      "setPasswordSubmit": "సేవ్ చేసి సైన్ ఇన్ చేయండి",
+      "invalidToken": "ఈ లింక్ చెల్లదు లేదా ఇప్పటికే వాడబడింది. మీ క్లినిక్ అడ్మినిస్ట్రేటర్‌ను కొత్తది అడగండి."
+    }
+  },
+  "selector": {
+    "recentPatients": "ఇటీవలి రోగులు",
+    "commonTreatments": "సాధారణ చికిత్సలు",
+    "noRecentPatients": "ఇటీవలి రోగులు లేరు",
+    "noCommonTreatments": "సాధారణ చికిత్సలు లేవు",
+    "noMatches": "సరిపోలికలు లేవు",
+    "typeToSearch": "వెతకడానికి టైప్ చేయండి..."
+  },
+  "density": {
+    "switchToCompact": "కుదించిన వీక్షణ",
+    "switchToComfortable": "విశాలమైన వీక్షణ"
+  },
+  "patientSelector": {
+    "createOption": "\"{query}\" రోగిని సృష్టించండి",
+    "createOptionEmpty": "కొత్త రోగిని సృష్టించండి",
+    "newBadge": "కొత్త",
+    "duplicateWarning": "ఈ ఫోన్‌తో {name} ఇప్పటికే ఉన్నారు",
+    "useExisting": "ఈ రోగిని వాడండి",
+    "createForm": {
+      "title": "కొత్త రోగి",
+      "back": "శోధనకు తిరిగి వెళ్ళండి",
+      "firstName": "మొదటి పేరు",
+      "lastName": "ఇంటి పేరు",
+      "phone": "ఫోన్",
+      "phoneHint": "దీన్ని తర్వాత రోగి రికార్డులో జోడించవచ్చు.",
+      "submit": "సృష్టించి ఎంచుకోండి",
+      "cancel": "రద్దు చేయండి",
+      "errorGeneric": "రోగిని సృష్టించలేకపోయాము. మళ్ళీ ప్రయత్నించండి."
+    }
+  },
+  "common": {
+    "save": "సేవ్ చేయండి",
+    "add": "జోడించండి",
+    "cancel": "రద్దు చేయండి",
+    "clear": "క్లియర్ చేయండి",
+    "close": "మూసివేయండి",
+    "delete": "తొలగించు",
+    "comingSoon": "త్వరలో వస్తుంది",
+    "edit": "సవరించండి",
+    "change": "మార్పు | మార్పులు",
+    "back": "వెనక్కి",
+    "loading": "లోడ్ అవుతోంది...",
+    "error": "లోపం",
+    "success": "విజయవంతం",
+    "completed": "పూర్తయింది",
+    "retry": "మళ్ళీ ప్రయత్నించండి",
+    "refresh": "రిఫ్రెష్ చేయండి",
+    "hide": "దాచండి",
+    "forbidden": "యాక్సెస్ నిరాకరించబడింది",
+    "confirm": "నిర్ధారించండి",
+    "yes": "అవును",
+    "no": "కాదు",
+    "actions": "చర్యలు",
+    "viewDetails": "వివరాలు చూడండి",
+    "previous": "మునుపటి",
+    "next": "తదుపరి",
+    "previousYear": "గత సంవత్సరం",
+    "nextYear": "తదుపరి సంవత్సరం",
+    "undo": "రద్దు చేయండి",
+    "undone": "రద్దు చేయబడింది",
+    "added": "జోడించబడింది",
+    "removed": "తొలగించబడింది",
+    "page": "పేజీ {current} / {total}",
+    "noData": "డేటా లేదు",
+    "noValue": "విలువ లేదు",
+    "noResults": "ఫలితాలు లేవు",
+    "search": "వెతకండి...",
+    "selectAll": "అన్నీ",
+    "deselectAll": "ఏదీ కాదు",
+    "all": "అన్నీ",
+    "required": "ఈ ఫీల్డ్ తప్పనిసరి",
+    "invalidEmail": "చెల్లని ఈమెయిల్",
+    "networkError": "కనెక్షన్ లోపం",
+    "serverError": "సర్వర్ లోపం",
+    "notFound": "కనుగొనబడలేదు",
+    "offline": "ఆఫ్‌లైన్ — డేటా తాజాగా ఉండకపోవచ్చు",
+    "inactive": "నిష్క్రియం",
+    "name": "పేరు",
+    "color": "రంగు",
+    "firstName": "మొదటి పేరు",
+    "lastName": "ఇంటి పేరు",
+    "email": "ఈమెయిల్",
+    "password": "పాస్‌వర్డ్",
+    "passwordPlaceholder": "కనీసం 8 అక్షరాలు",
+    "role": "పాత్ర",
+    "readOnly": "చదవడానికి మాత్రమే",
+    "createdBy": "సృష్టించినవారు",
+    "date": "తేదీ",
+    "upload": "అప్‌లోడ్ చేయండి",
+    "uploading": "అప్‌లోడ్ అవుతోంది…",
+    "maxFileSize": "10 MB వరకు",
+    "durationMinutes": "{value} నిమి.",
+    "days": {
+      "sunday": "ఆదివారం",
+      "monday": "సోమవారం",
+      "tuesday": "మంగళవారం",
+      "wednesday": "బుధవారం",
+      "thursday": "గురువారం",
+      "friday": "శుక్రవారం",
+      "saturday": "శనివారం"
+    },
+    "now": "ఇప్పుడు",
+    "today": "ఈరోజు",
+    "tomorrow": "రేపు",
+    "yesterday": "నిన్న",
+    "copied": "క్లిప్‌బోర్డ్‌కు కాపీ అయింది",
+    "copy": "కాపీ",
+    "copyFailed": "కాపీ చేయలేకపోయాము",
+    "download": "డౌన్‌లోడ్",
+    "remove": "తొలగించండి",
+    "default": "డిఫాల్ట్"
+  },
+  "cabinet": {
+    "toast": {
+      "created": "క్యాబినెట్ సృష్టించబడింది",
+      "updated": "క్యాబినెట్ నవీకరించబడింది",
+      "deleted": "క్యాబినెట్ తొలగించబడింది",
+      "duplicateName": "ఈ పేరుతో క్యాబినెట్ ఇప్పటికే ఉంది",
+      "notFound": "క్యాబినెట్ కనుగొనబడలేదు",
+      "createFailed": "క్యాబినెట్‌ను సృష్టించడం విఫలమైంది",
+      "updateFailed": "క్యాబినెట్‌ను నవీకరించడం విఫలమైంది",
+      "deleteFailed": "క్యాబినెట్‌ను తొలగించడం విఫలమైంది"
+    }
+  },
+  "professionals": {
+    "toast": {
+      "loadFailed": "వైద్యులను లోడ్ చేయడం విఫలమైంది"
+    }
+  },
+  "lists": {
+    "empty": {
+      "title": "ఫలితాలు లేవు",
+      "description": "అన్ని రికార్డులు చూడటానికి ఫిల్టర్లను మార్చండి లేదా తొలగించండి."
+    },
+    "resultCount": "{total} లో {shown}",
+    "filter": {
+      "title": "ఫిల్టర్లు",
+      "more": "ఫిల్టర్లు",
+      "moreCount": "ఫిల్టర్లు ({count})",
+      "clear": "క్లియర్ చేయండి",
+      "apply": "వర్తింపజేయండి",
+      "date": "తేదీలు",
+      "dateFrom": "నుండి",
+      "dateTo": "వరకు",
+      "searchPlaceholder": "వెతకండి...",
+      "noResults": "సరిపోలికలు లేవు",
+      "all": "అన్నీ"
+    },
+    "sort": {
+      "label": "క్రమబద్ధీకరించండి",
+      "asc": "ఆరోహణ",
+      "desc": "అవరోహణ"
+    },
+    "datePreset": {
+      "today": "ఈరోజు",
+      "last7": "గత 7 రోజులు",
+      "last30": "గత 30 రోజులు",
+      "thisMonth": "ఈ నెల",
+      "thisQuarter": "త్రైమాసికం",
+      "thisYear": "సంవత్సరం",
+      "custom": "అనుకూలం"
+    },
+    "truncatedWarning": "ఫలితాలు కుదించబడ్డాయి (>1000). ఫిల్టర్లను మెరుగుపరచండి."
+  },
+  "shared": {
+    "totals": "మొత్తాలు",
+    "info": "వివరాలు",
+    "moreActions": "మరిన్ని చర్యలు",
+    "criticalBanner": {
+      "dismiss": "హెచ్చరికను విస్మరించండి"
+    },
+    "collect": {
+      "amountLabel": "వసూలు చేయాల్సిన మొత్తం",
+      "methodLabel": "చెల్లింపు పద్ధతి",
+      "dateLabel": "చెల్లింపు తేదీ",
+      "today": "ఈరోజు",
+      "quickFull": "పూర్తి మొత్తం",
+      "optionalDetails": "సూచన లేదా గమనికలు జోడించండి (ఐచ్ఛికం)",
+      "referenceLabel": "సూచన",
+      "referencePlaceholder": "ఉదా. POS లావాదేవీ సంఖ్య",
+      "notesLabel": "అంతర్గత గమనికలు",
+      "submit": "వసూలు చేయండి",
+      "cancel": "రద్దు చేయండి"
+    }
+  },
+  "validation": {
+    "required": "ఈ ఫీల్డ్ తప్పనిసరి",
+    "email": "చెల్లుబాటు అయ్యే ఈమెయిల్ నమోదు చేయండి",
+    "minLength": "కనీసం {min} అక్షరాలు",
+    "maxLength": "గరిష్టం {max} అక్షరాలు",
+    "phone": "చెల్లుబాటు అయ్యే ఫోన్ నంబర్ నమోదు చేయండి"
+  },
+  "time": {
+    "minutes": "{n} నిమి.",
+    "hours": "{n} గంట | {n} గంటలు"
+  },
+  "calendar": {
+    "today": "ఈరోజు",
+    "prevWeek": "గత వారం",
+    "nextWeek": "తదుపరి వారం",
+    "monday": "సోమవారం",
+    "tuesday": "మంగళవారం",
+    "wednesday": "బుధవారం",
+    "thursday": "గురువారం",
+    "friday": "శుక్రవారం",
+    "saturday": "శనివారం",
+    "sunday": "ఆదివారం"
+  },
+  "catalog": {
+    "title": "చికిత్సల క్యాటలాగ్",
+    "description": "చికిత్సలు, ధరలు మరియు పన్ను కాన్ఫిగరేషన్‌ను నిర్వహించండి",
+    "items": "చికిత్సలు",
+    "categories": "వర్గాలు",
+    "noItems": "క్యాటలాగ్‌లో చికిత్సలు లేవు",
+    "searchPlaceholder": "కోడ్ లేదా పేరు ద్వారా వెతకండి...",
+    "code": "కోడ్",
+    "name": "పేరు",
+    "category": "వర్గం",
+    "price": "ధర",
+    "defaultPrice": "మూల ధర",
+    "costPrice": "ఖర్చు ధర",
+    "currency": "కరెన్సీ",
+    "vatType": "పన్ను రకం",
+    "vatRate": "పన్ను %",
+    "duration": "వ్యవధి",
+    "system": "సిస్టమ్",
+    "newItem": "కొత్త చికిత్స",
+    "editItem": "చికిత్సను సవరించండి",
+    "deleteItem": "చికిత్సను తొలగించండి",
+    "deleteItemConfirm": "మీరు ఖచ్చితంగా \"{name}\" చికిత్సను తొలగించాలనుకుంటున్నారా?",
+    "deleteItemNote": "ఈ చర్యను రద్దు చేయలేరు.",
+    "pricing": "ధరలు",
+    "scheduling": "షెడ్యూలింగ్",
+    "characteristics": "లక్షణాలు",
+    "scope": "పరిధి",
+    "requiresAppointment": "అపాయింట్‌మెంట్ అవసరం",
+    "isDiagnostic": "రోగనిర్ధారణ సంబంధితం",
+    "requiresSurfaces": "ఉపరితలాలు అవసరం",
+    "materialNotes": "సామగ్రి గమనికలు",
+    "materialNotesPlaceholder": "అవసరమైన సామగ్రి లేదా సరఫరాలు...",
+    "active": "సక్రియం",
+    "vatTypes": {
+      "exempt": "మినహాయింపు",
+      "reduced": "తగ్గించిన రేటు",
+      "standard": "సాధారణ రేటు"
+    },
+    "scopeTypes": {
+      "tooth": "దంతం",
+      "multi_tooth": "అనేక దంతాలు",
+      "global_mouth": "మొత్తం నోరు",
+      "global_arch": "దవడ వారీగా"
+    },
+    "pricingStrategy": {
+      "label": "ధర నిర్ణయ విధానం",
+      "help": "వర్తింపజేసినప్పుడు చికిత్స ధర ఎలా లెక్కించబడుతుంది",
+      "flat": "స్థిర ధర (ఒకే ధర)",
+      "per_tooth": "దంతానికి (× దంతాల సంఖ్య)",
+      "per_surface": "ఉపరితలానికి (శ్రేణులు)",
+      "per_role": "పాత్రకు (బ్రిడ్జ్: పిల్లర్/పాంటిక్)"
+    },
+    "surfacePrices": {
+      "title": "ఉపరితలాల సంఖ్య వారీగా ధరలు",
+      "help": "1–5 ఉపరితలాలకు ధరను నిర్ణయించండి. దంతంపై ఉపరితలాలు ఎంచుకున్నప్పుడు, సరిపోయే శ్రేణి వాడబడుతుంది. లేని శ్రేణులకు దగ్గరలోని తక్కువ నింపిన శ్రేణి వాడబడుతుంది.",
+      "tier": "{n} ఉప."
+    },
+    "sessions": {
+      "title": "సెషన్లు (భాగాలుగా బిల్లింగ్)",
+      "help": "ఈ చికిత్స అందించబడి బిల్ చేయబడే దశలను నిర్ణయించండి (ఉదా. క్రౌన్: 'ఇంప్రెషన్లు' + 'అమర్చడం'). మొత్తం మూల ధరకు సమానంగా ఉండాలి.",
+      "label": "లేబుల్",
+      "labelPlaceholder": "ఉదా. ఇంప్రెషన్లు",
+      "price": "మొత్తం",
+      "add": "సెషన్ జోడించండి",
+      "sumStatus": "మొత్తం {sum} € · పూర్తి {total} €"
+    },
+    "categoryCreated": "వర్గం సృష్టించబడింది",
+    "categoryUpdated": "వర్గం నవీకరించబడింది",
+    "categoryDeleted": "వర్గం తొలగించబడింది",
+    "categoryKeyExists": "ఈ కీతో వర్గం ఇప్పటికే ఉంది",
+    "categoryCreateFailed": "వర్గాన్ని సృష్టించడంలో లోపం",
+    "categoryUpdateFailed": "వర్గాన్ని నవీకరించడంలో లోపం",
+    "categoryDeleteFailed": "వర్గాన్ని తొలగించడంలో లోపం",
+    "cannotModifySystemCategory": "సిస్టమ్ వర్గాన్ని మార్చలేరు",
+    "cannotDeleteSystemCategory": "సిస్టమ్ వర్గాన్ని తొలగించలేరు",
+    "itemCreated": "చికిత్స సృష్టించబడింది",
+    "itemUpdated": "చికిత్స నవీకరించబడింది",
+    "itemDeleted": "చికిత్స తొలగించబడింది",
+    "itemCodeExists": "ఈ కోడ్‌తో చికిత్స ఇప్పటికే ఉంది",
+    "categoryNotFound": "వర్గం కనుగొనబడలేదు",
+    "itemCreateFailed": "చికిత్సను సృష్టించడంలో లోపం",
+    "itemUpdateFailed": "చికిత్సను నవీకరించడంలో లోపం",
+    "itemDeleteFailed": "చికిత్సను తొలగించడంలో లోపం",
+    "cannotModifySystemItem": "సిస్టమ్ చికిత్సను మార్చలేరు",
+    "systemItemHint": "సిస్టమ్ చికిత్స: కోడ్, వర్గం, ధర నిర్ణయ విధానం మరియు పరిధి లాక్ అయ్యాయి; ధర, ఖర్చు, పన్ను, పేర్లు, వ్యవధి, సెషన్లు మరియు స్థితిని సవరించవచ్చు.",
+    "cannotDeleteSystemItem": "సిస్టమ్ చికిత్సను తొలగించలేరు",
+    "odontogramMapping": "ఓడోంటోగ్రామ్ దృశ్యీకరణ",
+    "odontogramMappingDescription": "రోగి చార్ట్‌లో కనిపించేలా ఈ చికిత్సను ఓడోంటోగ్రామ్ దృశ్య రకంతో అనుసంధానించండి.",
+    "odontogramType": "చికిత్స రకం",
+    "clinicalCategory": "క్లినికల్ వర్గం",
+    "noOdontogramMapping": "అనుసంధానం లేదు",
+    "odontogramMappingHint": "ఎంచుకున్న రకం ఆధారంగా చికిత్స లక్షణాలు స్వయంచాలకంగా సర్దుబాటు అవుతాయి.",
+    "selectCategory": "వర్గాన్ని ఎంచుకోండి...",
+    "selectVatType": "పన్ను రకాన్ని ఎంచుకోండి...",
+    "selectScope": "పరిధిని ఎంచుకోండి...",
+    "selectOdontogramType": "రకాన్ని ఎంచుకోండి...",
+    "selectClinicalCategory": "వర్గాన్ని ఎంచుకోండి...",
+    "expandAll": "అన్నీ విస్తరించండి",
+    "collapseAll": "అన్నీ కుదించండి",
+    "unnamed": "పేరు లేదు",
+    "activeHint": "అంచనాలు మరియు ప్రణాళికలకు అందుబాటులో ఉంది",
+    "tabs": {
+      "general": "సాధారణ",
+      "pricing": "ధరలు",
+      "scheduling": "షెడ్యూలింగ్",
+      "clinical": "క్లినికల్"
+    },
+    "onboarding": {
+      "label": "చికిత్సల క్యాటలాగ్",
+      "description": "చికిత్సలు లేకుండా అంచనాలు లేదా ప్రణాళికలు ఉండవు. డిఫాల్ట్ క్యాటలాగ్ లోడ్ చేయండి లేదా మీ స్వంతది సృష్టించండి.",
+      "createOwn": "నేనే సృష్టిస్తాను"
+    },
+    "manageCategories": "వర్గాలను నిర్వహించండి",
+    "newCategory": "కొత్త వర్గం",
+    "categoryName": "పేరు",
+    "categoryNamePlaceholder": "ఉదా. ఆర్థోడాంటిక్స్",
+    "categoryOrder": "క్రమం",
+    "noCategories": "వర్గాలు లేవు. ఒకటి సృష్టించండి లేదా డిఫాల్ట్ క్యాటలాగ్ లోడ్ చేయండి.",
+    "inactiveCategories": "నిష్క్రియ వర్గాలు",
+    "reactivate": "మళ్ళీ సక్రియం చేయండి",
+    "deleteCategoryConfirm": "వర్గం నిష్క్రియం అవుతుంది; దాని చికిత్సలు అలాగే ఉంటాయి. కొనసాగించాలా?",
+    "systemCategoryNote": "సిస్టమ్ వర్గాలను సవరించలేరు లేదా తొలగించలేరు.",
+    "loadDefaults": "డిఫాల్ట్ క్యాటలాగ్ లోడ్ చేయండి",
+    "loadDefaultsHint": "క్లినిక్ దేశం కోసం పన్ను రకాలు, వర్గాలు మరియు సూచన చికిత్సలు. లేని వరుసలు మాత్రమే జోడించబడతాయి.",
+    "defaultsLoaded": "క్యాటలాగ్ లోడ్ అయింది: {categories} వర్గాలు, {items} చికిత్సలు, {vat_types} పన్ను రకాలు",
+    "defaultsFailed": "డిఫాల్ట్ క్యాటలాగ్‌ను లోడ్ చేయలేకపోయాము",
+    "loadError": "చికిత్సల క్యాటలాగ్‌ను లోడ్ చేయలేకపోయాము"
+  },
+  "placeholders": {
+    "selectRole": "పాత్రను ఎంచుకోండి..."
+  },
+  "vatTypes": {
+    "title": "పన్ను రకాలు (VAT/GST)",
+    "description": "చికిత్సలకు అందుబాటులో ఉన్న పన్ను రకాలను నిర్వహించండి",
+    "name": "పేరు",
+    "rate": "రేటు",
+    "default": "డిఫాల్ట్",
+    "system": "సిస్టమ్",
+    "active": "సక్రియం",
+    "new": "కొత్త పన్ను రకం",
+    "edit": "పన్ను రకం సవరించండి",
+    "delete": "పన్ను రకం తొలగించండి",
+    "setAsDefault": "డిఫాల్ట్‌గా సెట్ చేయండి",
+    "showInactive": "నిష్క్రియమైనవి చూపించు",
+    "noItems": "పన్ను రకాలు కాన్ఫిగర్ కాలేదు",
+    "namePlaceholder": "ఉదా.: తగ్గించిన రేటు (10%)",
+    "systemNote": "సిస్టమ్ పన్ను రకాలకు డిఫాల్ట్ స్థితిని మాత్రమే మార్చగలరు.",
+    "deleteConfirm": "మీరు ఖచ్చితంగా ఈ పన్ను రకాన్ని తొలగించాలనుకుంటున్నారా",
+    "deleteNote": "ఈ పన్ను రకాన్ని వాడే చికిత్సలపై ప్రభావం ఉండదు.",
+    "created": "పన్ను రకం సృష్టించబడింది",
+    "updated": "పన్ను రకం నవీకరించబడింది",
+    "deleted": "పన్ను రకం తొలగించబడింది",
+    "loadError": "పన్ను రకాలను లోడ్ చేయడంలో లోపం",
+    "createError": "పన్ను రకాన్ని సృష్టించడంలో లోపం",
+    "updateError": "పన్ను రకాన్ని నవీకరించడంలో లోపం",
+    "deleteError": "పన్ను రకాన్ని తొలగించడంలో లోపం"
+  },
+  "treatmentPlans": {
+    "title": "చికిత్స ప్రణాళికలు",
+    "description": "రోగుల చికిత్స ప్రణాళికలను నిర్వహించండి",
+    "new": "కొత్త ప్రణాళిక",
+    "create": "చికిత్స ప్రణాళిక సృష్టించండి",
+    "edit": "ప్రణాళిక సవరించండి",
+    "view": "ప్రణాళిక చూడండి",
+    "delete": "ప్రణాళిక తొలగించండి",
+    "noItems": "ఈ ప్రణాళికలో చికిత్సలు లేవు",
+    "noPlans": "ఈ రోగికి చికిత్స ప్రణాళికలు లేవు",
+    "noPlansHint": "దంత చార్ట్‌పై చికిత్సలను గుర్తించి, వాటిని క్రమబద్ధీకరించడానికి ప్రణాళిక సృష్టించండి",
+    "createFirst": "మొదటి ప్రణాళిక సృష్టించండి",
+    "empty": "చికిత్స ప్రణాళికలు నమోదు కాలేదు",
+    "emptyAction": "మొదటి ప్రణాళిక సృష్టించండి",
+    "searchPlaceholder": "సంఖ్య, రోగి లేదా శీర్షిక ద్వారా వెతకండి...",
+    "planNumber": "సంఖ్య",
+    "patient": "రోగి",
+    "untitled": "శీర్షిక లేదు",
+    "untitledPlan": "శీర్షిక లేని ప్రణాళిక",
+    "itemCount": "{count} చికిత్స | {count} చికిత్సలు",
+    "treatments": "చికిత్సలు",
+    "progress": "పురోగతి",
+    "pendingTreatments": "పెండింగ్ చికిత్సలు",
+    "completedTreatments": "పూర్తయిన చికిత్సలు",
+    "linkedBudget": "లింక్ చేసిన అంచనా",
+    "unknownTreatment": "తెలియని చికిత్స",
+    "globalTreatment": "సాధారణ చికిత్స",
+    "activePlan": "సక్రియ ప్రణాళిక",
+    "otherPlans": "ఇతర ప్రణాళికలు",
+    "viewAllPlans": "ప్రణాళికల చరిత్ర చూడండి",
+    "activate": "సక్రియం చేయండి",
+    "generateBudget": "అంచనా రూపొందించండి",
+    "scheduleAppointment": "అపాయింట్‌మెంట్ షెడ్యూల్ చేయండి",
+    "status": {
+      "draft": "డ్రాఫ్ట్",
+      "pending": "పెండింగ్",
+      "active": "సక్రియం",
+      "completed": "పూర్తయింది",
+      "closed": "ముగిసింది",
+      "archived": "ఆర్కైవ్ చేయబడింది"
+    },
+    "fields": {
+      "title": "శీర్షిక",
+      "titlePlaceholder": "ఉదా.: పూర్తి నోటి పునరావాసం",
+      "assignedProfessional": "కేటాయించిన వైద్యుడు",
+      "selectProfessional": "వైద్యుడిని ఎంచుకోండి",
+      "diagnosisNotes": "రోగనిర్ధారణ గమనికలు",
+      "diagnosisNotesPlaceholder": "రోగనిర్ధారణ మరియు క్లినికల్ పరిశీలనలు...",
+      "internalNotes": "అంతర్గత గమనికలు",
+      "internalNotesPlaceholder": "సిబ్బందికి మాత్రమే కనిపించే గమనికలు..."
+    },
+    "modal": {
+      "subtitle": "రోగి చికిత్సలను క్రమబద్ధీకరించండి",
+      "titleHint": "ఐచ్ఛికం - ప్రణాళికను గుర్తించడానికి సహాయపడుతుంది",
+      "additionalNotes": "అదనపు గమనికలు",
+      "quickTip": "ప్రణాళిక సృష్టించిన తర్వాత ఓడోంటోగ్రామ్ లేదా క్యాటలాగ్ నుండి చికిత్సలు జోడించవచ్చు.",
+      "createButton": "ప్రణాళిక సృష్టించండి"
+    },
+    "actions": {
+      "activate": "ప్రణాళికను సక్రియం చేయండి",
+      "confirm": "ప్రణాళికను నిర్ధారించండి",
+      "complete": "పూర్తయినట్లు గుర్తించండి",
+      "generateBudget": "అంచనా రూపొందించండి",
+      "linkBudget": "అంచనాను లింక్ చేయండి",
+      "syncBudget": "అంచనాను సింక్ చేయండి",
+      "cancelPlan": "ప్రణాళిక రద్దు చేయండి",
+      "reopen": "మళ్ళీ తెరవండి",
+      "close": "ప్రణాళిక ముగించండి",
+      "reactivate": "ప్రణాళికను మళ్ళీ సక్రియం చేయండి",
+      "logContact": "సంప్రదింపు నమోదు చేయండి"
+    },
+    "items": {
+      "title": "చికిత్సలు",
+      "add": "చికిత్స జోడించండి",
+      "addSelected": "{count} చికిత్స జోడించండి | {count} చికిత్సలు జోడించండి",
+      "remove": "చికిత్స తొలగించండి",
+      "empty": "ఈ ప్రణాళికలో చికిత్సలు లేవు",
+      "assignedProfessional": "కేటాయించిన దంత వైద్యుడు",
+      "assignedProfessionalAriaLabel": "ఈ చికిత్సకు కేటాయించిన దంత వైద్యుడిని మార్చండి",
+      "useUsersPlanDoctor": "ప్రణాళిక దంత వైద్యుడిని వాడండి",
+      "noProfessional": "దంత వైద్యుడు కేటాయించలేదు",
+      "inactiveProfessional": "నిష్క్రియ వైద్యుడు",
+      "cascadeReassign": {
+        "title": "పెండింగ్ చికిత్సలను మళ్ళీ కేటాయించాలా?",
+        "body": "మీరు ప్రణాళిక దంత వైద్యుడిని మార్చారు. {count} పెండింగ్ చికిత్స(లు) {previousName} కు కేటాయించబడ్డాయి. వాటిని కూడా కొత్త దంత వైద్యుడికి మళ్ళీ కేటాయించాలా?",
+        "confirm": "అవును, పెండింగ్‌వి మళ్ళీ కేటాయించండి",
+        "cancel": "వద్దు, అలాగే ఉంచండి"
+      }
+    },
+    "filters": {
+      "allStatuses": "అన్ని స్థితులు"
+    },
+    "confirmations": {
+      "delete": "ఈ చికిత్స ప్రణాళికను తొలగించాలా?",
+      "completeItem": "చికిత్స పూర్తయినట్లు గుర్తించాలా?",
+      "completeItemDescription": "ఈ చర్యను రద్దు చేయలేరు.",
+      "activateTitle": "చికిత్స ప్రణాళికను నిర్ధారించాలా?",
+      "activateDescription": "నిర్ధారిస్తే అంచనా రూపొందించడం మరియు అపాయింట్‌మెంట్ షెడ్యూలింగ్ అందుబాటులోకి వస్తాయి. తర్వాత కూడా చికిత్సలు జోడించవచ్చు లేదా పూర్తి చేయవచ్చు.",
+      "unlockTitle": "ప్రణాళికను మార్చాలా?",
+      "unlockIntro": "ఈ ప్రణాళికకు అంచనా {number} ఇప్పటికే జారీ చేయబడింది. దీన్ని మార్చడానికి, ప్రస్తుత అంచనాను రద్దు చేయాలి.",
+      "unlockConsequence1": "అంచనా {number} రద్దు అవుతుంది మరియు రోగికి ఇకపై చెల్లదు.",
+      "unlockConsequence2": "మీరు ప్రణాళికకు చికిత్సలు జోడించవచ్చు, సవరించవచ్చు లేదా తొలగించవచ్చు.",
+      "unlockConsequence3": "మార్పులు పూర్తయిన తర్వాత కొత్త అంచనా రూపొందించాలి.",
+      "unlockConsequence4": "రద్దు చేసిన అంచనా గుర్తింపు కోసం చరిత్రలో ఉంచబడుతుంది.",
+      "cancelTitle": "చికిత్స ప్రణాళికను రద్దు చేయాలా?",
+      "cancelDescription": "ప్రణాళిక రద్దు స్థితికి వెళ్తుంది, చేయని ప్రణాళికాబద్ధ చికిత్సలు ఓడోంటోగ్రామ్ నుండి తొలగించబడతాయి. ప్రణాళిక చరిత్ర ఉంచబడుతుంది."
+    },
+    "messages": {
+      "created": "చికిత్స ప్రణాళిక సృష్టించబడింది",
+      "updated": "చికిత్స ప్రణాళిక నవీకరించబడింది",
+      "deleted": "చికిత్స ప్రణాళిక తొలగించబడింది",
+      "itemsAdded": "చికిత్సలు ప్రణాళికకు జోడించబడ్డాయి"
+    },
+    "itemCompleted": "చికిత్స పూర్తయింది",
+    "budgetGenerated": "అంచనా రూపొందించబడింది",
+    "created": "చికిత్స ప్రణాళిక సృష్టించబడింది",
+    "updated": "చికిత్స ప్రణాళిక నవీకరించబడింది",
+    "statusUpdated": "ప్రణాళిక స్థితి నవీకరించబడింది",
+    "deleted": "చికిత్స ప్రణాళిక తొలగించబడింది",
+    "budgetLinked": "అంచనా ప్రణాళికకు లింక్ చేయబడింది",
+    "budgetSynced": "అంచనా సింక్ అయింది",
+    "errors": {
+      "load": "చికిత్స ప్రణాళికలను లోడ్ చేయడంలో లోపం",
+      "create": "చికిత్స ప్రణాళికను సృష్టించడంలో లోపం",
+      "update": "చికిత్స ప్రణాళికను నవీకరించడంలో లోపం",
+      "delete": "చికిత్స ప్రణాళికను తొలగించడంలో లోపం"
+    },
+    "notes": {
+      "title": "క్లినికల్ గమనికలు",
+      "empty": "ఇంకా క్లినికల్ గమనికలు లేవు",
+      "addNote": "గమనిక జోడించండి",
+      "edit": "గమనిక సవరించండి",
+      "delete": "గమనిక తొలగించండి",
+      "attachments": "జతచేసినవి",
+      "author": "రచయిత",
+      "createdAt": "సృష్టించినది",
+      "templatePicker": "టెంప్లేట్లు",
+      "bodyPlaceholder": "క్లినికల్ గమనిక రాయండి…",
+      "saved": "గమనిక సేవ్ అయింది",
+      "deleted": "గమనిక తొలగించబడింది"
+    },
+    "completionNudge": {
+      "title": "చికిత్స పూర్తి చేయండి",
+      "description": "పూర్తయినట్లు గుర్తించే ముందు ఈ సందర్శనలో జరిగిన దాన్ని క్లినికల్ గమనికగా జోడించండి.",
+      "completeWithNote": "గమనికతో పూర్తి చేయండి",
+      "skip": "గమనిక దాటవేయండి",
+      "skipConfirm": "క్లినికల్ గమనిక లేకుండా పూర్తి చేయాలా?"
+    },
+    "visitNote": {
+      "title": "సందర్శన క్లినికల్ గమనిక",
+      "save": "గమనిక సేవ్ చేయండి",
+      "empty": "ఇంకా సందర్శన గమనిక లేదు",
+      "saved": "గమనిక సేవ్ అయింది"
+    },
+    "clinicalNotesTab": "క్లినికల్ గమనికలు",
+    "filterBy": {
+      "plan": "ప్రణాళిక",
+      "item": "చికిత్స",
+      "visit": "సందర్శన",
+      "all": "అన్నీ"
+    },
+    "byPlan": {
+      "empty": "ఈ రోగికి ఏ చికిత్స ప్రణాళికలోనూ క్లినికల్ గమనికలు లేవు",
+      "planNotesLabel": "ప్రణాళిక గమనికలు",
+      "noNotesForTreatment": "ఈ చికిత్సకు గమనికలు లేవు",
+      "noNotesForPlan": "ఈ ప్రణాళికలో గమనికలు లేవు"
+    },
+    "noteTemplates": {
+      "endo": {
+        "singleVisit": "రూట్ కెనాల్ చికిత్స — ఒకే సందర్శన",
+        "multiVisit": "రూట్ కెనాల్ చికిత్స — అనేక సందర్శనలు"
+      },
+      "perio": {
+        "scaling": "స్కేలింగ్ / రూట్ ప్లానింగ్"
+      },
+      "implant": {
+        "placement": "ఇంప్లాంట్ అమర్చడం"
+      },
+      "general": {
+        "followUp": "సాధారణ ఫాలో-అప్"
+      }
+    },
+    "closureReason": {
+      "rejected_by_patient": "రోగి తిరస్కరించారు",
+      "expired": "గడువు ముగిసింది",
+      "cancelled_by_clinic": "క్లినిక్ రద్దు చేసింది",
+      "patient_abandoned": "రోగి మధ్యలో వదిలేశారు",
+      "other": "ఇతర కారణం"
+    },
+    "confirmed": "ప్రణాళిక నిర్ధారించబడింది",
+    "reopened": "ప్రణాళిక మళ్ళీ తెరవబడింది",
+    "closed": "ప్రణాళిక ముగించబడింది",
+    "reactivated": "ప్రణాళిక మళ్ళీ సక్రియం చేయబడింది",
+    "contactLogged": "సంప్రదింపు నమోదైంది",
+    "modals": {
+      "confirm": {
+        "title": "ప్రణాళికను నిర్ధారించండి",
+        "description": "ప్రణాళిక పెండింగ్‌కు వెళ్తుంది మరియు డ్రాఫ్ట్ అంచనా స్వయంచాలకంగా సృష్టించబడుతుంది. నిర్ధారించిన తర్వాత చికిత్సలు చదవడానికి మాత్రమే అవుతాయి.",
+        "submit": "ప్రణాళికను నిర్ధారించండి"
+      },
+      "reopen": {
+        "title": "సవరణ కోసం ప్రణాళికను మళ్ళీ తెరవండి",
+        "description": "ఇది ప్రస్తుత అంచనాను రద్దు చేస్తుంది. చికిత్సలు సవరించగలిగేలా ప్రణాళిక డ్రాఫ్ట్‌కు తిరిగి వస్తుంది.",
+        "submit": "మళ్ళీ తెరవండి"
+      },
+      "close": {
+        "title": "ప్రణాళిక ముగించండి",
+        "description": "ముగింపు కారణాన్ని ఎంచుకోండి. పెండింగ్ చికిత్సలు ఆర్కైవ్ చేయబడతాయి.",
+        "reasonLabel": "కారణం",
+        "noteLabel": "గమనిక (ఐచ్ఛికం)",
+        "submit": "ప్రణాళిక ముగించండి"
+      },
+      "reactivate": {
+        "title": "ముగిసిన ప్రణాళికను మళ్ళీ సక్రియం చేయండి",
+        "description": "{date} న «{reason}» గా ముగిసిన ప్రణాళికను ఇది మళ్ళీ సక్రియం చేస్తుంది. కొనసాగించాలా?",
+        "submit": "మళ్ళీ సక్రియం చేయండి"
+      },
+      "contactLog": {
+        "title": "సంప్రదింపు నమోదు చేయండి",
+        "description": "ప్రణాళిక స్థితిని మార్చకుండా సంప్రదింపును నమోదు చేస్తుంది.",
+        "channelLabel": "మాధ్యమం",
+        "noteLabel": "గమనిక (ఐచ్ఛికం)",
+        "submit": "నమోదు చేయండి"
+      }
+    },
+    "newBudgetHint": {
+      "text": "ఈ రోగికి అంచనా లేని ప్రణాళిక {plan} ఉంది. అవి లింక్ అయి ఉండేలా ప్రణాళిక నుండి అంచనా రూపొందించండి.",
+      "cta": "ప్రణాళిక తెరవండి"
+    },
+    "viewDraftBudget": "అంచనా {number} (డ్రాఫ్ట్)",
+    "followup": {
+      "subtitle": "ఈ సందర్శనలోని ఈ ప్రణాళికాబద్ధ చికిత్సలు చేసినట్లు గుర్తించబడలేదు:",
+      "markPerformed": "చేసినట్లు గుర్తించండి",
+      "marked": "చేసినట్లు గుర్తించబడ్డాయి: {count}."
+    }
+  },
+  "pipeline": {
+    "title": "ప్రణాళికల పైప్‌లైన్",
+    "description": "చికిత్స పైప్‌లైన్‌ను నిర్వహించండి.",
+    "tabs": {
+      "por_presupuestar": "అంచనా వేయాలి",
+      "esperando_paciente": "రోగి కోసం వేచి ఉంది",
+      "sin_cita": "అపాయింట్‌మెంట్ లేదు",
+      "sin_proxima_cita": "తదుపరి అపాయింట్‌మెంట్ లేదు",
+      "cerrados": "ముగిసినవి",
+      "listado": "జాబితా"
+    },
+    "row": {
+      "patient": "రోగి",
+      "plan": "ప్రణాళిక",
+      "budget": "అంచనా",
+      "items": "చికిత్సలు",
+      "daysIn": "ఈ స్థితిలో {n} రోజులు",
+      "nextAppt": "తదుపరి అపాయింట్‌మెంట్",
+      "noNextAppt": "అపాయింట్‌మెంట్ లేదు",
+      "noBudget": "అంచనా లేదు"
+    },
+    "actions": {
+      "open": "తెరవండి",
+      "send": "పంపండి",
+      "remind": "మళ్ళీ పంపండి",
+      "schedule": "షెడ్యూల్ చేయండి",
+      "scheduleNext": "తదుపరిది షెడ్యూల్ చేయండి",
+      "reactivate": "మళ్ళీ సక్రియం చేయండి",
+      "call": "కాల్ చేయండి",
+      "whatsapp": "WhatsApp",
+      "markContacted": "సంప్రదించినట్లు గుర్తించండి",
+      "acceptInClinic": "క్లినిక్‌లో అంగీకరించండి"
+    },
+    "search": "పేరు లేదా సంఖ్య ద్వారా వెతకండి…",
+    "empty": "ఈ ట్యాబ్‌లో వరుసలు లేవు.",
+    "loading": "లోడ్ అవుతోంది…"
+  },
+  "budget": {
+    "title": "అంచనాలు",
+    "description": "రోగుల చికిత్స అంచనాలను నిర్వహించండి",
+    "new": "కొత్త అంచనా",
+    "edit": "అంచనా సవరించండి",
+    "view": "అంచనా చూడండి",
+    "delete": "అంచనా తొలగించండి",
+    "duplicate": "కొత్త వెర్షన్ సృష్టించండి",
+    "noItems": "అంచనాలు లేవు",
+    "empty": "అంచనాలు నమోదు కాలేదు",
+    "emptyAction": "మొదటి అంచనా సృష్టించండి",
+    "linkedToPlan": "ప్రణాళికకు లింక్ అయింది",
+    "searchPlaceholder": "సంఖ్య లేదా రోగి ద్వారా వెతకండి...",
+    "budgetNumber": "సంఖ్య",
+    "version": "వెర్షన్",
+    "treatmentPlan": "చికిత్స ప్రణాళిక",
+    "patient": "రోగి",
+    "selectPatient": "రోగిని ఎంచుకోండి",
+    "selectPatientHint": "ఈ అంచనా కోసం రోగిని వెతికి ఎంచుకోండి",
+    "professional": "వైద్యుడు",
+    "validFrom": "నుండి చెల్లుతుంది",
+    "validUntil": "వరకు చెల్లుతుంది",
+    "validUntilHint": "గడువు తేదీ లేని అంచనా కోసం ఖాళీగా ఉంచండి",
+    "noExpiry": "గడువు తేదీ లేదు",
+    "createAndAddItems": "సృష్టించి చికిత్సలు జోడించండి",
+    "subtotal": "ఉప మొత్తం",
+    "totalDiscount": "మొత్తం రాయితీ",
+    "totalTax": "మొత్తం పన్ను",
+    "total": "మొత్తం",
+    "globalDiscount": "మొత్తంపై రాయితీ",
+    "discountType": "రాయితీ రకం",
+    "discountValue": "రాయితీ విలువ",
+    "percentage": "శాతం",
+    "absolute": "స్థిర మొత్తం",
+    "internalNotes": "అంతర్గత గమనికలు",
+    "internalNotesPlaceholder": "సిబ్బందికి మాత్రమే కనిపించే గమనికలు...",
+    "patientNotes": "రోగి గమనికలు",
+    "patientNotesPlaceholder": "అంచనాపై కనిపించే గమనికలు...",
+    "status": {
+      "title": "స్థితి",
+      "draft": "డ్రాఫ్ట్",
+      "sent": "పంపబడింది",
+      "partially_accepted": "పాక్షికంగా అంగీకరించబడింది",
+      "accepted": "అంగీకరించబడింది",
+      "in_progress": "పురోగతిలో",
+      "completed": "పూర్తయింది",
+      "invoiced": "ఇన్‌వాయిస్ చేయబడింది",
+      "rejected": "తిరస్కరించబడింది",
+      "expired": "గడువు ముగిసింది",
+      "cancelled": "రద్దు చేయబడింది"
+    },
+    "itemStatus": {
+      "pending": "పెండింగ్",
+      "accepted": "అంగీకరించబడింది",
+      "rejected": "తిరస్కరించబడింది",
+      "in_progress": "పురోగతిలో",
+      "completed": "పూర్తయింది"
+    },
+    "actions": {
+      "send": "రోగికి పంపండి",
+      "accept": "అంచనాను అంగీకరించండి",
+      "acceptPartial": "ఎంచుకున్నవి అంగీకరించండి",
+      "reject": "తిరస్కరించండి",
+      "cancel": "అంచనా రద్దు చేయండి",
+      "duplicate": "కొత్త వెర్షన్ సృష్టించండి",
+      "downloadPdf": "PDF డౌన్‌లోడ్ చేయండి",
+      "previewPdf": "PDF ప్రివ్యూ",
+      "startTreatment": "చికిత్స ప్రారంభించండి",
+      "completeTreatment": "చికిత్స పూర్తి చేయండి",
+      "renegotiate": "మళ్ళీ చర్చించండి",
+      "acceptInClinic": "క్లినిక్‌లో అంగీకరించండి",
+      "resend": "మళ్ళీ పంపండి",
+      "sendReminder": "రిమైండర్ పంపండి",
+      "setPublicCode": "యాక్సెస్ కోడ్ సెట్ చేయండి",
+      "unlockPublic": "యాక్సెస్ అన్‌లాక్ చేయండి"
+    },
+    "items": {
+      "title": "చికిత్సలు",
+      "add": "చికిత్స జోడించండి",
+      "remove": "చికిత్స తొలగించండి",
+      "edit": "చికిత్స సవరించండి",
+      "empty": "ఈ అంచనాలో చికిత్సలు లేవు",
+      "singular": "చికిత్స",
+      "plural": "చికిత్సలు",
+      "addFromCatalog": "క్యాటలాగ్ నుండి జోడించండి",
+      "addFromOdontogram": "దంత చార్ట్ నుండి జోడించండి",
+      "treatment": "చికిత్స",
+      "searchCatalog": "చికిత్సల క్యాటలాగ్‌లో వెతకండి...",
+      "unitPrice": "యూనిట్ ధర",
+      "quantity": "పరిమాణం",
+      "discount": "రాయితీ",
+      "lineTotal": "లైన్ మొత్తం",
+      "tooth": "దంతం",
+      "toothNumber": "దంతం సంఖ్య",
+      "toothNumberPlaceholder": "ఉదా.: 11, 21, 36...",
+      "surfaces": "ఉపరితలాలు",
+      "notes": "గమనికలు",
+      "notesPlaceholder": "ఈ చికిత్స గురించి గమనికలు...",
+      "managedByPlan": "ఈ అంచనా లైన్లు చికిత్స ప్రణాళిక {plan} నుండి నిర్వహించబడతాయి."
+    },
+    "signature": {
+      "title": "డిజిటల్ సంతకం",
+      "viewAction": "సంతకం చూడండి",
+      "signedBy": "సంతకం చేసినవారు",
+      "signedAt": "సంతకం చేసిన తేదీ",
+      "methodLabel": "పద్ధతి",
+      "relationshipLabel": "సంబంధం",
+      "documentHash": "పత్రం హాష్ (SHA-256)",
+      "hashHint": "హాష్ {short} — సంతకాన్ని ఈ ఖచ్చితమైన PDF కు బంధిస్తుంది. ఏ మార్పు అయినా దాన్ని చెల్లకుండా చేస్తుంది.",
+      "downloadSignedPdf": "సంతకం చేసిన PDF డౌన్‌లోడ్ చేయండి",
+      "downloadError": "సంతకం చేసిన PDF ను డౌన్‌లోడ్ చేయలేకపోయాము.",
+      "notSigned": "ఈ అంచనాకు ఇంకా సంతకం తీసుకోలేదు.",
+      "method": {
+        "drawn": "చేతితో గీసిన సంతకం",
+        "clickAccept": "క్లిక్ చేసి అంగీకారం",
+        "external": "బాహ్య ప్రొవైడర్"
+      },
+      "email": "ఈమెయిల్",
+      "relationship": "రోగితో సంబంధం",
+      "patient": "రోగి",
+      "guardian": "చట్టపరమైన సంరక్షకుడు",
+      "representative": "ప్రతినిధి",
+      "accept": "నేను అంచనా నిబంధనలను అంగీకరిస్తున్నాను",
+      "signHere": "ఇక్కడ సంతకం చేయండి",
+      "clear": "సంతకం తుడిచివేయండి",
+      "loadError": "సంతకం స్థితిని లోడ్ చేయలేకపోయాము"
+    },
+    "history": {
+      "title": "మార్పుల చరిత్ర",
+      "noChanges": "మార్పులు నమోదు కాలేదు",
+      "actions": {
+        "created": "అంచనా సృష్టించబడింది",
+        "updated": "అంచనా నవీకరించబడింది",
+        "status_changed": "స్థితి మారింది",
+        "item_added": "చికిత్స జోడించబడింది",
+        "item_removed": "చికిత్స తొలగించబడింది",
+        "signed": "అంచనాపై సంతకం చేయబడింది",
+        "sent": "అంచనా పంపబడింది",
+        "duplicated": "కొత్త వెర్షన్ సృష్టించబడింది",
+        "deleted": "అంచనా తొలగించబడింది",
+        "item_treatment_started": "చికిత్స ప్రారంభమైంది",
+        "item_treatment_completed": "చికిత్స పూర్తయింది"
+      }
+    },
+    "versions": {
+      "title": "వెర్షన్లు",
+      "current": "ప్రస్తుతం",
+      "viewVersion": "వెర్షన్ చూడండి"
+    },
+    "confirmations": {
+      "send": "అంచనాను రోగికి పంపాలా?",
+      "sendDescription": "అంచనా పంపినట్లు గుర్తించబడుతుంది.",
+      "reject": "అంచనాను తిరస్కరించాలా?",
+      "rejectDescription": "ఈ చర్యను రద్దు చేయలేరు.",
+      "cancel": "అంచనాను రద్దు చేయాలా?",
+      "cancelDescription": "ఈ చర్యను రద్దు చేయలేరు.",
+      "resend": "ఈ అంచనాకు కొత్త వెర్షన్ సృష్టించాలా? లింక్ అయిన చికిత్స ప్రణాళిక కొత్త వెర్షన్‌ను అనుసరిస్తుంది.",
+      "delete": "అంచనాను తొలగించాలా?",
+      "deleteDescription": "ఈ చర్యను రద్దు చేయలేరు."
+    },
+    "send": {
+      "description": "మీరు అంచనాను ఈమెయిల్ లేదా WhatsApp ద్వారా పంపవచ్చు, లేదా మాన్యువల్‌గా పంపినట్లు (ముద్రించి లేదా చేతికి ఇచ్చి) గుర్తించవచ్చు.",
+      "sendByEmail": "ఈమెయిల్ ద్వారా పంపండి",
+      "willSendTo": "దీనికి పంపబడుతుంది",
+      "noPatientEmail": "రోగికి నమోదైన ఈమెయిల్ లేదు",
+      "customMessage": "అనుకూల సందేశం (ఐచ్ఛికం)",
+      "customMessagePlaceholder": "రోగి కోసం సందేశం జోడించండి...",
+      "manualNote": "ఏ సందేశం పంపకుండా అంచనా పంపినట్లు గుర్తించబడుతుంది.",
+      "sendEmail": "ఈమెయిల్ పంపండి",
+      "markAsSent": "పంపినట్లు గుర్తించండి",
+      "sendByWhatsapp": "WhatsApp ద్వారా పంపండి",
+      "sendWhatsapp": "WhatsApp పంపండి",
+      "willSendToPhone": "WhatsApp ద్వారా దీనికి పంపబడుతుంది"
+    },
+    "messages": {
+      "created": "అంచనా సృష్టించబడింది",
+      "updated": "అంచనా నవీకరించబడింది",
+      "deleted": "అంచనా తొలగించబడింది",
+      "sent": "అంచనా పంపబడింది",
+      "sentByEmail": "అంచనా ఈమెయిల్ ద్వారా పంపబడింది",
+      "sentManually": "అంచనా పంపినట్లు గుర్తించబడింది",
+      "accepted": "అంచనా అంగీకరించబడింది",
+      "rejected": "అంచనా తిరస్కరించబడింది",
+      "cancelled": "అంచనా రద్దు చేయబడింది",
+      "duplicated": "కొత్త వెర్షన్ సృష్టించబడింది",
+      "resent": "గత అంచనా నుండి కొత్త వెర్షన్ సృష్టించబడింది",
+      "itemAdded": "చికిత్స జోడించబడింది",
+      "itemUpdated": "చికిత్స నవీకరించబడింది",
+      "itemRemoved": "చికిత్స తొలగించబడింది",
+      "treatmentStarted": "చికిత్స ప్రారంభమైంది",
+      "treatmentCompleted": "చికిత్స పూర్తయింది",
+      "sentByWhatsapp": "అంచనా WhatsApp ద్వారా పంపబడింది"
+    },
+    "errors": {
+      "load": "అంచనాలను లోడ్ చేయడంలో లోపం",
+      "create": "అంచనాను సృష్టించడంలో లోపం",
+      "update": "అంచనాను నవీకరించడంలో లోపం",
+      "delete": "అంచనాను తొలగించడంలో లోపం",
+      "send": "అంచనాను పంపడంలో లోపం",
+      "accept": "అంచనాను అంగీకరించడంలో లోపం",
+      "reject": "అంచనాను తిరస్కరించడంలో లోపం",
+      "notFound": "అంచనా కనుగొనబడలేదు",
+      "onlyDraft": "డ్రాఫ్ట్ అంచనాలను మాత్రమే సవరించగలరు"
+    },
+    "filters": {
+      "allStatuses": "అన్ని స్థితులు",
+      "status": "స్థితి",
+      "paymentStatus": "స్థితి",
+      "professional": "వైద్యుడు",
+      "validity": "చెల్లుబాటు",
+      "validityValid": "చెల్లుతుంది",
+      "validityExpiringSoon": "7 రోజుల్లో గడువు ముగుస్తుంది",
+      "validityExpired": "గడువు ముగిసింది",
+      "dateFrom": "నుండి",
+      "dateTo": "వరకు",
+      "showExpired": "గడువు ముగిసినవి చూపించు",
+      "advanced": "అధునాతన ఫిల్టర్లు",
+      "clear": "ఫిల్టర్లు తొలగించండి"
+    },
+    "sortFields": {
+      "createdAt": "సృష్టించినది",
+      "validUntil": "వరకు చెల్లుతుంది",
+      "total": "మొత్తం",
+      "status": "స్థితి",
+      "budgetNumber": "సంఖ్య"
+    },
+    "validity": {
+      "expired": "గడువు ముగిసింది",
+      "expiresIn": "{days} రోజుల్లో గడువు"
+    },
+    "pdf": {
+      "generating": "PDF రూపొందిస్తోంది...",
+      "downloadError": "PDF డౌన్‌లోడ్ చేయడంలో లోపం"
+    },
+    "modals": {
+      "renegotiate": {
+        "title": "అంచనాను మళ్ళీ చర్చించండి",
+        "description": "ఇది ప్రస్తుత అంచనాను రద్దు చేసి, చికిత్సలు సర్దుబాటు చేయగలిగేలా ప్రణాళికను డ్రాఫ్ట్‌కు మళ్ళీ తెరుస్తుంది.",
+        "submit": "మళ్ళీ చర్చించండి"
+      },
+      "acceptInClinic": {
+        "title": "క్లినిక్‌లో అంచనాను అంగీకరించండి",
+        "description": "రోగి అంగీకారాన్ని నమోదు చేయండి. టాబ్లెట్‌పై సంతకం తీసుకోవచ్చు (ఐచ్ఛికం).",
+        "signerLabel": "సంతకం చేసేవారి పూర్తి పేరు",
+        "captureSignature": "సంతకం తీసుకోండి",
+        "submit": "అంగీకరించినట్లు గుర్తించండి"
+      },
+      "setPublicCode": {
+        "title": "యాక్సెస్ కోడ్ సెట్ చేయండి",
+        "description": "ఈ రోగికి ఫోన్ లేదా పుట్టిన తేదీ నమోదు కాలేదు. 4-6 అంకెల కోడ్ సెట్ చేసి రోగికి నోటి మాటగా చెప్పండి. ఈమెయిల్‌లో కోడ్‌ను చేర్చవద్దు.",
+        "codeLabel": "కోడ్ (4-6 అంకెలు)",
+        "submit": "కోడ్ సేవ్ చేయండి"
+      }
+    },
+    "publicLink": {
+      "action": "లింక్ షేర్ చేయండి",
+      "title": "రోగి లింక్",
+      "help": "ఈ లింక్‌ను కాపీ చేసి రోగితో WhatsApp లేదా ఈమెయిల్ ద్వారా షేర్ చేయండి. అంచనా చూసే ముందు ఒక ధృవీకరణ వివరం అడగబడుతుంది.",
+      "copy": "లింక్ కాపీ చేయండి",
+      "copied": "కాపీ అయింది!",
+      "whatsapp": "WhatsApp లో తెరవండి",
+      "whatsappNoPhone": "రోగికి ఫోన్ నమోదు కాలేదు",
+      "whatsappGreeting": "నమస్కారం {name}, మీ అంచనా ఇక్కడ ఉంది:",
+      "whatsappGreetingFallback": "నమస్కారం, మీ అంచనా ఇక్కడ ఉంది:",
+      "preview": "ప్రివ్యూ",
+      "statusSent": "పంపబడింది",
+      "statusAccepted": "అంగీకరించబడింది",
+      "statusRejected": "తిరస్కరించబడింది",
+      "statusExpired": "గడువు ముగిసింది"
+    },
+    "public": {
+      "title": "మీ అంచనా",
+      "intro": "{clinic} మీకు ఈ అంచనా పంపింది. చికిత్సలను సమీక్షించి ఒక ఎంపికను ఎంచుకోండి.",
+      "greeting": "నమస్కారం, {name}",
+      "subtitle": "మీ కోసం రూపొందించిన చికిత్స ప్రణాళిక",
+      "budgetNumber": "అంచనా",
+      "issuedOn": "{date} న జారీ చేయబడింది",
+      "items": "చేర్చిన చికిత్సలు",
+      "tooth": "దంతం {number}",
+      "subtotal": "ఉప మొత్తం",
+      "discount": "రాయితీ",
+      "tax": "పన్ను",
+      "total": "మొత్తం",
+      "validUntil": "{date} వరకు చెల్లుతుంది",
+      "trustSecure": "సురక్షిత కనెక్షన్",
+      "trustEncrypted": "ఎన్‌క్రిప్ట్ చేసిన డేటా",
+      "trustSignature": "చట్టబద్ధమైన సంతకం",
+      "needHelp": "సహాయం కావాలా? క్లినిక్‌కు కాల్ చేయండి",
+      "noteFromClinic": "క్లినిక్ నుండి సందేశం",
+      "callClinic": "క్లినిక్‌కు కాల్ చేయండి",
+      "emailClinic": "ఈమెయిల్ పంపండి",
+      "cta_accept": "అంగీకరించి సంతకం చేయండి",
+      "cta_reject": "ఆసక్తి లేదు",
+      "expired": "ఈ అంచనా గడువు ముగిసింది. దయచేసి క్లినిక్‌ను సంప్రదించండి.",
+      "locked": "చాలా ఎక్కువ ప్రయత్నాల తర్వాత యాక్సెస్ లాక్ అయింది. దయచేసి క్లినిక్‌కు కాల్ చేయండి.",
+      "already_accepted": "మీరు ఇప్పటికే ఈ అంచనాను అంగీకరించారు. మీ మొదటి అపాయింట్‌మెంట్ షెడ్యూల్ చేయడానికి క్లినిక్ మిమ్మల్ని సంప్రదిస్తుంది.",
+      "already_rejected": "మీరు ఈ అంచనాను తిరస్కరించారు. మీ మనసు మారితే, దయచేసి క్లినిక్‌కు కాల్ చేయండి.",
+      "download": {
+        "signedPdf": "సంతకం చేసిన PDF డౌన్‌లోడ్ చేయండి",
+        "notSigned": "ఈ అంచనాకు ఇంకా సంతకం జత కాలేదు.",
+        "error": "PDF ను డౌన్‌లోడ్ చేయలేకపోయాము. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+        "reauthIntro": "భద్రత కోసం, సంతకం చేసిన PDF డౌన్‌లోడ్ చేయడానికి దయచేసి మీ గుర్తింపును మళ్ళీ ధృవీకరించండి."
+      },
+      "verify": {
+        "title": "మీ గుర్తింపును ధృవీకరించండి",
+        "intro": "మీ సమాచారాన్ని రక్షించడానికి, అంచనా చూసే ముందు ఒక వివరాన్ని నిర్ధారించండి.",
+        "phone_last4_label": "మీ ఫోన్ చివరి 4 అంకెలు",
+        "dob_label": "మీ పుట్టిన తేదీ",
+        "manual_code_label": "క్లినిక్ మీకు ఇచ్చిన కోడ్",
+        "submit": "కొనసాగించండి",
+        "invalid": "వివరం తప్పు. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+        "locked": "చాలా ఎక్కువ ప్రయత్నాల తర్వాత యాక్సెస్ లాక్ అయింది. దయచేసి క్లినిక్‌కు కాల్ చేయండి.",
+        "rate_limited": "చాలా ఎక్కువ ప్రయత్నాలు. 15 నిమిషాలు వేచి ఉండండి."
+      },
+      "accept": {
+        "title": "అంగీకరించి సంతకం చేయండి",
+        "signerLabel": "మీ పూర్తి పేరు",
+        "signatureLabel": "ఇక్కడ సంతకం చేయండి (ఐచ్ఛికం)",
+        "signatureClear": "తుడిచివేయండి",
+        "consent": "నేను ఈ అంచనాను అంగీకరిస్తున్నాను మరియు వివరించిన చికిత్సకు అనుమతి ఇస్తున్నాను.",
+        "submit": "అంగీకారాన్ని నిర్ధారించండి",
+        "success": "పూర్తయింది! మీ మొదటి అపాయింట్‌మెంట్ షెడ్యూల్ చేయడానికి క్లినిక్ మిమ్మల్ని సంప్రదిస్తుంది."
+      },
+      "reject": {
+        "title": "ఆసక్తి లేదు",
+        "intro": "ఈ అంచనా మీకు ఎందుకు సరిపోదు?",
+        "reasonLabel": "కారణం",
+        "noteLabel": "వ్యాఖ్య (ఐచ్ఛికం)",
+        "submit": "తిరస్కరణను నిర్ధారించండి",
+        "success": "మేము క్లినిక్‌కు తెలియజేశాము.",
+        "reasons": {
+          "price": "ధర",
+          "time": "సమయం లేకపోవడం",
+          "second_opinion": "రెండవ అభిప్రాయం",
+          "other": "ఇతర కారణం"
+        }
+      }
+    },
+    "settings": {
+      "title": "అంచనా సెట్టింగ్‌లు",
+      "description": "గడువు, రిమైండర్లు మరియు పబ్లిక్ లింక్ ధృవీకరణను కాన్ఫిగర్ చేయండి.",
+      "cards": {
+        "expiry": {
+          "title": "గడువు మరియు స్వయంచాలక ముగింపు",
+          "description": "అంచనా గడువు ముగిసే ముందు ఎంత కాలం చెల్లుతుంది మరియు పెండింగ్ ప్రణాళికలను ఎప్పుడు స్వయంచాలకంగా ముగించాలి."
+        },
+        "reminders": {
+          "title": "ఆటోమేటిక్ రిమైండర్లు",
+          "description": "సమాధానం ఇవ్వని రోగులకు 7 / 14 రోజుల ఈమెయిల్ రిమైండర్లను ఆన్/ఆఫ్ చేయండి."
+        },
+        "publicLink": {
+          "title": "పబ్లిక్ లింక్ మరియు ధృవీకరణ",
+          "description": "రోగికి చూపే అంచనా లింక్ రక్షణను కాన్ఫిగర్ చేయండి."
+        }
+      },
+      "expiry": {
+        "validityDays": "అంచనా చెల్లుబాటు (రోజులు)",
+        "validityHelp": "ఇన్ని రోజులు సమాధానం లేకపోతే అంచనా గడువు ముగిసినదిగా మారుతుంది (పరిధి 7-180).",
+        "autoCloseDays": "ప్రణాళికను స్వయంచాలకంగా ముగించే ముందు రోజులు",
+        "autoCloseHelp": "గడువు ముగిసిన అంచనా ఉండి, ఇన్ని రోజులు ఏ చర్య లేని ప్రణాళికలు ముగిసినవిగా మారతాయి (పరిధి 7-180).",
+        "save": "సేవ్ చేయండి"
+      },
+      "reminders": {
+        "enabled": "7 మరియు 14 రోజులకు ఆటోమేటిక్ రిమైండర్లు పంపండి",
+        "enabledHelp": "ఆన్‌లో ఉన్నప్పుడు, పెండింగ్ అంచనాల గురించి సిస్టమ్ రోగికి ఈమెయిల్ చేస్తుంది. ఆఫ్‌లో ఉన్నప్పుడు, రిసెప్షన్ మాన్యువల్‌గా ఫాలో-అప్ చేస్తుంది.",
+        "save": "సేవ్ చేయండి"
+      },
+      "publicLink": {
+        "authDisabled": "పబ్లిక్ లింక్ ధృవీకరణను నిలిపివేయండి",
+        "authDisabledHelp": "ఆన్‌లో ఉన్నప్పుడు, రోగి లింక్‌తో మాత్రమే అంచనాను చూస్తారు — ఫోన్ లేదా పుట్టిన తేదీ ప్రశ్న ఉండదు. లింక్ షేర్ అయితే వచ్చే ప్రమాదాన్ని అంగీకరించండి.",
+        "save": "సేవ్ చేయండి"
+      },
+      "saved": "సెట్టింగ్‌లు సేవ్ అయ్యాయి"
+    }
+  },
+  "notifications": {
+    "communications": {
+      "language": {
+        "cardTitle": "సంప్రదింపుల భాష",
+        "cardDescription": "రోగికి చూపే అంచనా పేజీ, ఈమెయిల్‌లు మరియు WhatsApp సందేశాలలో వాడే భాష.",
+        "title": "రోగి సంప్రదింపుల భాష",
+        "label": "భాష",
+        "help": "రోగికి చూపే అంచనా పేజీ మరియు ఆటోమేటిక్ ఈమెయిల్/WhatsApp టెంప్లేట్లకు వర్తిస్తుంది. సిబ్బంది UI ప్రతి యూజర్ స్వంత భాషా ప్రాధాన్యతను ఉంచుతుంది.",
+        "save": "సేవ్ చేయండి",
+        "saved": "భాష సేవ్ అయింది"
+      }
+    },
+    "title": "నోటిఫికేషన్లు",
+    "description": "క్లినిక్ ఈమెయిల్ నోటిఫికేషన్లను కాన్ఫిగర్ చేయండి",
+    "pageDescription": "ఏ నోటిఫికేషన్లు స్వయంచాలకంగా పంపబడతాయో, ఏవి మాన్యువల్‌గా పంపాలో కాన్ఫిగర్ చేయండి.",
+    "autoVsManual": "స్వయంచాలక vs మాన్యువల్ నోటిఫికేషన్లు",
+    "autoVsManualDescription": "ఈవెంట్ జరిగినప్పుడు ఏ నోటిఫికేషన్లు స్వయంచాలకంగా పంపబడతాయో, ఏవి యూజర్ మాన్యువల్‌గా పంపాలో నిర్ణయించండి.",
+    "notificationType": "నోటిఫికేషన్ రకం",
+    "enabled": "ప్రారంభించబడింది",
+    "autoSend": "స్వయంచాలకంగా పంపండి",
+    "options": "ఎంపికలు",
+    "hoursBefore": "గం. ముందు",
+    "testConnection": "కనెక్షన్ పరీక్షించండి",
+    "testEmailTitle": "పరీక్ష ఈమెయిల్ పంపండి",
+    "testEmailDescription": "కాన్ఫిగరేషన్ సరిగ్గా పని చేస్తుందో ధృవీకరించడానికి పరీక్ష ఈమెయిల్ పంపుతాము.",
+    "sendTestEmail": "పరీక్ష పంపండి",
+    "test_email_sent": "పరీక్ష ఈమెయిల్ విజయవంతంగా పంపబడింది",
+    "settings_saved": "సెట్టింగ్‌లు సేవ్ అయ్యాయి",
+    "emailProvider": "ఈమెయిల్ ప్రొవైడర్",
+    "providerConfigured": "ఈమెయిల్ ప్రొవైడర్ కాన్ఫిగర్ అయింది",
+    "providerNote": "ఈమెయిల్ సర్వర్ కాన్ఫిగరేషన్ సర్వర్ ఎన్విరాన్‌మెంట్ వేరియబుల్స్‌లో చేయబడుతుంది.",
+    "infoTitle": "సమాచారం",
+    "infoAutoSend": "స్వయంచాలకంగా పంపడం: ఈవెంట్ జరిగినప్పుడు నోటిఫికేషన్ పంపబడుతుంది (ఉదా., అపాయింట్‌మెంట్ సృష్టించినప్పుడు).",
+    "infoManualSend": "మాన్యువల్‌గా పంపడం: కావలసినప్పుడు నోటిఫికేషన్ పంపడానికి ఒక బటన్ కనిపిస్తుంది.",
+    "infoDisabled": "నిలిపివేయబడింది: నోటిఫికేషన్ పంపబడదు మరియు పంపే ఎంపిక కనిపించదు.",
+    "types": {
+      "appointment_confirmation": "అపాయింట్‌మెంట్ నిర్ధారణ",
+      "appointment_confirmation_desc": "అపాయింట్‌మెంట్ షెడ్యూల్ అయినప్పుడు నిర్ధారణ ఈమెయిల్",
+      "appointment_cancelled": "అపాయింట్‌మెంట్ రద్దు",
+      "appointment_cancelled_desc": "అపాయింట్‌మెంట్ రద్దు అయినప్పుడు సమాచార ఈమెయిల్",
+      "appointment_reminder": "అపాయింట్‌మెంట్ రిమైండర్",
+      "appointment_reminder_desc": "అపాయింట్‌మెంట్‌కు ముందు రిమైండర్ ఈమెయిల్",
+      "budget_sent": "అంచనా పంపడం",
+      "budget_sent_desc": "అంచనా వివరాలతో ఈమెయిల్",
+      "budget_accepted": "అంచనా అంగీకరించబడింది",
+      "budget_accepted_desc": "అంచనా అంగీకరించినప్పుడు నిర్ధారణ ఈమెయిల్",
+      "welcome": "స్వాగతం",
+      "welcome_desc": "కొత్త రోగులకు స్వాగత ఈమెయిల్",
+      "invoice_sent": "ఇన్‌వాయిస్ పంపడం",
+      "invoice_sent_desc": "రోగికి ఇన్‌వాయిస్ పంపినప్పుడు దానితో సందేశం",
+      "budget_reminder": "అంచనా రిమైండర్",
+      "budget_reminder_desc": "సమాధానం లేని అంచనాలకు ఫాలో-అప్ (7 మరియు 14 రోజులు)",
+      "recall_reminder": "రీకాల్ రిమైండర్",
+      "recall_reminder_desc": "క్రమానుగత ఫాలో-అప్ సందర్శన బుక్ చేయడానికి రిమైండర్"
+    },
+    "sendConfirmation": "నిర్ధారణ పంపండి",
+    "sendReminder": "రిమైండర్ పంపండి",
+    "sendCancellation": "రద్దు సమాచారం పంపండి",
+    "sendBudget": "ఈమెయిల్ ద్వారా పంపండి",
+    "sendAcceptance": "నిర్ధారణ పంపండి",
+    "sendWelcome": "స్వాగతం పంపండి",
+    "sendEmail": "ఈమెయిల్ పంపండి",
+    "errors": {
+      "fetch_failed": "సెట్టింగ్‌లను లోడ్ చేయడంలో లోపం",
+      "save_failed": "సెట్టింగ్‌లను సేవ్ చేయడంలో లోపం",
+      "test_failed": "పరీక్ష ఈమెయిల్ పంపడంలో లోపం",
+      "send_failed": "నోటిఫికేషన్ పంపడంలో లోపం"
+    },
+    "smtp": {
+      "title": "ఈమెయిల్ సర్వర్ కాన్ఫిగరేషన్",
+      "description": "మీ క్లినిక్ నుండి ఈమెయిల్‌లు పంపడానికి SMTP సర్వర్‌ను కాన్ఫిగర్ చేయండి. ప్రతి క్లినిక్‌కు దాని స్వంత కాన్ఫిగరేషన్ ఉండవచ్చు.",
+      "configure": "కాన్ఫిగర్ చేయండి",
+      "provider": "ప్రొవైడర్",
+      "host": "సర్వర్",
+      "port": "పోర్ట్",
+      "username": "యూజర్‌నేమ్",
+      "password": "పాస్‌వర్డ్",
+      "passwordHint": "ప్రస్తుత పాస్‌వర్డ్ ఉంచడానికి ఖాళీగా ఉంచండి",
+      "useTls": "TLS వాడండి",
+      "useSsl": "SSL వాడండి",
+      "fromEmail": "పంపే ఈమెయిల్",
+      "fromName": "పంపేవారి పేరు",
+      "security": "భద్రత",
+      "testConnection": "కనెక్షన్ పరీక్షించండి",
+      "testConnectionTitle": "సేవ్ చేసే ముందు కాన్ఫిగరేషన్ పరీక్షించండి",
+      "testEmailPlaceholder": "పరీక్ష ఈమెయిల్ చిరునామా",
+      "test_success": "SMTP కనెక్షన్ విజయవంతమైంది. పరీక్ష ఈమెయిల్ పంపబడింది.",
+      "test_failed": "SMTP కనెక్షన్ లోపం",
+      "settings_saved": "SMTP సెట్టింగ్‌లు సేవ్ అయ్యాయి",
+      "consoleNote": "కన్సోల్ మోడ్‌లో, ఈమెయిల్‌లు పంపబడకుండా సర్వర్ కన్సోల్‌లో చూపబడతాయి. డెవలప్‌మెంట్‌కు ఉపయోగకరం.",
+      "disabledNote": "ఈమెయిల్ నిలిపివేస్తే, ఈ క్లినిక్ నుండి ఈమెయిల్ నోటిఫికేషన్లు పంపబడవు.",
+      "status": {
+        "not_configured": "కాన్ఫిగర్ కాలేదు",
+        "verified": "ధృవీకరించబడింది, పని చేస్తోంది",
+        "not_verified": "కాన్ఫిగర్ అయింది కానీ ధృవీకరించబడలేదు",
+        "disabled": "ఈమెయిల్ నిలిపివేయబడింది",
+        "console": "కన్సోల్ మోడ్ (డెవలప్‌మెంట్)"
+      },
+      "errors": {
+        "fetch_failed": "SMTP సెట్టింగ్‌లను లోడ్ చేయడంలో లోపం",
+        "save_failed": "SMTP సెట్టింగ్‌లను సేవ్ చేయడంలో లోపం",
+        "test_failed": "SMTP కనెక్షన్ పరీక్షించడంలో లోపం"
+      }
+    },
+    "onboarding": {
+      "label": "ఈమెయిల్ పంపడం",
+      "description": "అపాయింట్‌మెంట్ నిర్ధారణలు మరియు అంచనాలను ఈమెయిల్ చేయడానికి పంపేవారిని సెట్ చేయండి."
+    },
+    "channels": {
+      "cardTitle": "మాధ్యమాలు",
+      "cardDescription": "క్లినిక్ రోగులను ఎలా చేరుకుంటుంది: ఆటోమేటిక్ సందేశాలు వాడే మాధ్యమం మరియు సిబ్బందికి కనిపించే పంపే బటన్లు.",
+      "preferredLabel": "ప్రాధాన్య మాధ్యమం",
+      "preferredHelp": "ఆటోమేటిక్ సందేశాలకు వాడబడుతుంది (కొత్త బుకింగ్, రిమైండర్, స్వాగతం…).",
+      "fallbackLabel": "ఇతర మాధ్యమానికి మారండి",
+      "fallbackHelp": "ప్రాధాన్య మాధ్యమం పంపలేకపోతే, సందేశాన్ని వదిలేయకుండా అందుబాటులో ఉన్న ఇతర మాధ్యమాన్ని ప్రయత్నించండి.",
+      "manualLabel": "దీని కోసం పంపే బటన్ చూపించు…",
+      "manualHelp": "అపాయింట్‌మెంట్లు, అంచనాలు మరియు ఇన్‌వాయిస్‌లపై రిసెప్షన్‌కు ఏ పంపే బటన్లు కనిపిస్తాయి.",
+      "manualAtLeastOne": "కనీసం ఒక మాధ్యమాన్ని ఎంచుకోండి.",
+      "email": "ఈమెయిల్",
+      "whatsapp": "WhatsApp",
+      "whatsappUnavailableHint": "క్లినిక్ నంబర్ కనెక్ట్ అయ్యే వరకు WhatsApp అందుబాటులో ఉండదు.",
+      "whatsappConnect": "WhatsApp కనెక్ట్ చేయండి (Kapso)",
+      "noEmail": "రోగికి ఈమెయిల్ నమోదు కాలేదు",
+      "noPhone": "రోగికి ఫోన్ నమోదు కాలేదు",
+      "sms": "SMS",
+      "smsUnavailableHint": "SMS ప్రొవైడర్ కాన్ఫిగర్ అయ్యే వరకు SMS అందుబాటులో ఉండదు.",
+      "smsConnect": "కాన్ఫిగర్ చేయండి",
+      "smsDailyLimitLabel": "SMS రోజువారీ పరిమితి",
+      "smsDailyLimitHelp": "క్లినిక్‌కు రోజుకు గరిష్ట అవుట్‌బౌండ్ SMS."
+    },
+    "channelSent": {
+      "email": "ఈమెయిల్ విజయవంతంగా పంపబడింది",
+      "whatsapp": "WhatsApp సందేశం విజయవంతంగా పంపబడింది",
+      "sms": "SMS సందేశం విజయవంతంగా పంపబడింది"
+    },
+    "prefs": {
+      "title": "నోటిఫికేషన్ ప్రాధాన్యతలు",
+      "description": "ఈ రోగిని ఏ మాధ్యమాలు చేరుకోవచ్చు. నిరాకరణ ఆ మాధ్యమాన్ని బలవంతంగా పంపినా కూడా నిరోధిస్తుంది.",
+      "saved": "ప్రాధాన్యతలు సేవ్ అయ్యాయి"
+    }
+  },
+  "invoice": {
+    "title": "ఇన్‌వాయిస్‌లు",
+    "description": "ఇన్‌వాయిస్‌లు మరియు బిల్లింగ్‌ను నిర్వహించండి",
+    "new": "కొత్త ఇన్‌వాయిస్",
+    "edit": "ఇన్‌వాయిస్ సవరించండి",
+    "view": "ఇన్‌వాయిస్ చూడండి",
+    "delete": "ఇన్‌వాయిస్ తొలగించండి",
+    "noItems": "ఇన్‌వాయిస్‌లు లేవు",
+    "empty": "ఇన్‌వాయిస్‌లు నమోదు కాలేదు",
+    "emptyAction": "మొదటి ఇన్‌వాయిస్ సృష్టించండి",
+    "searchPlaceholder": "సంఖ్య లేదా రోగి ద్వారా వెతకండి...",
+    "notFound": "ఇన్‌వాయిస్ కనుగొనబడలేదు",
+    "draftNoNumber": "డ్రాఫ్ట్",
+    "details": "వివరాలు",
+    "invoiceNumber": "ఇన్‌వాయిస్ సంఖ్య",
+    "patient": "రోగి",
+    "searchPatient": "రోగిని వెతకండి",
+    "searchPatientPlaceholder": "పేరు ద్వారా వెతకండి...",
+    "professional": "వైద్యుడు",
+    "billingData": "బిల్లింగ్ డేటా",
+    "billingName": "బిల్లింగ్ పేరు",
+    "taxId": "పన్ను ID",
+    "billingEmail": "బిల్లింగ్ ఈమెయిల్",
+    "billingAddress": "బిల్లింగ్ చిరునామా",
+    "billingDataComplete": "పూర్తి",
+    "billingDataIncomplete": "అసంపూర్ణం",
+    "billingDataIncompleteHint": "రోగికి కొంత బిల్లింగ్ సమాచారం లేదు.",
+    "editPatientBilling": "రోగి డేటాను సవరించండి",
+    "fromPatient": "రోగి నుండి",
+    "editInPatient": "ప్రొఫైల్‌లో సవరించండి",
+    "billingFromPatientHint": "ఈ డేటా రోగి రికార్డు నుండి వస్తుంది. మార్చాలంటే, రోగి బిల్లింగ్ సమాచారాన్ని సవరించండి.",
+    "paymentTerms": "చెల్లింపు నిబంధనలు",
+    "linkedToBudget": "అంచనాకు లింక్ అయింది",
+    "selectPatient": "రోగిని ఎంచుకోండి",
+    "noBillingData": "బిల్లింగ్ డేటా లేదు",
+    "street": "వీధి",
+    "city": "నగరం",
+    "postalCode": "పిన్ కోడ్",
+    "province": "రాష్ట్రం",
+    "country": "దేశం",
+    "linkedBudget": "లింక్ చేసిన అంచనా",
+    "creditNoteFor": "దీనికి క్రెడిట్ నోట్",
+    "paymentTermDays": "చెల్లింపు గడువు (రోజులు)",
+    "dueDate": "గడువు తేదీ",
+    "issueDate": "జారీ తేదీ",
+    "subtotal": "ఉప మొత్తం",
+    "discount": "రాయితీ",
+    "tax": "పన్ను",
+    "total": "మొత్తం",
+    "paid": "చెల్లించినది",
+    "balance": "నిల్వ",
+    "balanceDue": "చెల్లించాల్సిన బకాయి",
+    "overdue": "గడువు దాటింది",
+    "overdueDays": "{n} రోజులు గడువు దాటింది",
+    "info": {
+      "issueDate": "జారీ తేదీ",
+      "dueDate": "గడువు తేదీ",
+      "issuedBy": "జారీ చేసినవారు",
+      "createdBy": "సృష్టించినవారు",
+      "createdAt": "సృష్టించినది",
+      "budget": "అంచనా",
+      "creditNoteFor": "దీనికి క్రెడిట్ నోట్"
+    },
+    "criticalBanner": {
+      "aeatRejected": {
+        "title": "AEAT ఈ ఇన్‌వాయిస్‌ను తిరస్కరించింది",
+        "cta": "సరిచేసి మళ్ళీ సమర్పించండి"
+      },
+      "billingIncomplete": {
+        "title": "బిల్లింగ్ డేటా అసంపూర్ణం",
+        "cta": "డేటా పూర్తి చేయండి"
+      }
+    },
+    "collect": {
+      "title": "ఇన్‌వాయిస్ మొత్తం వసూలు చేయండి",
+      "submit": "వసూలు చేయండి",
+      "noteAppliedToInvoice": "ఈ ఇన్‌వాయిస్‌కు వర్తింపజేయబడింది.",
+      "notePendingAfter": "మిగిలిన బకాయి",
+      "noteFullySettled": "ఈ చెల్లింపు ఇన్‌వాయిస్‌ను పూర్తిగా చెల్లిస్తుంది.",
+      "noteToInvoice": "ఈ ఇన్‌వాయిస్‌కు వర్తింపజేయబడింది మరియు",
+      "noteExcessToOnAccount": "రోగి ఖాతాలో జమ చేయబడింది.",
+      "noteInvoiceSettled": "ఈ ఇన్‌వాయిస్ ఇప్పటికే చెల్లించబడింది.",
+      "noteToOnAccount": "రోగి ఖాతాలో జమ చేయబడుతుంది."
+    },
+    "tooth": "దంతం",
+    "vat": "పన్ను",
+    "internalNotes": "అంతర్గత గమనికలు",
+    "internalNotesPlaceholder": "సిబ్బందికి మాత్రమే కనిపించే గమనికలు...",
+    "publicNotes": "పబ్లిక్ గమనికలు",
+    "publicNotesPlaceholder": "ఇన్‌వాయిస్‌పై కనిపించే గమనికలు...",
+    "items": "అంశాలు",
+    "addItem": "అంశం జోడించండి",
+    "editItem": "అంశం సవరించండి",
+    "selectTreatment": "చికిత్స",
+    "searchCatalog": "క్యాటలాగ్‌లో చికిత్సను వెతకండి...",
+    "itemDescription": "వివరణ",
+    "itemPrice": "యూనిట్ ధర",
+    "itemQuantity": "పరిమాణం",
+    "selectVatType": "పన్ను రకాన్ని ఎంచుకోండి",
+    "summary": "సారాంశం",
+    "createDraft": "డ్రాఫ్ట్ సృష్టించండి",
+    "createFromBudget": "అంచనా నుండి ఇన్‌వాయిస్ సృష్టించండి",
+    "notes": "గమనికలు",
+    "status": {
+      "draft": "డ్రాఫ్ట్",
+      "issued": "జారీ చేయబడింది",
+      "partial": "పాక్షికంగా చెల్లించబడింది",
+      "paid": "చెల్లించబడింది",
+      "cancelled": "రద్దు చేయబడింది",
+      "voided": "చెల్లనిదిగా చేయబడింది"
+    },
+    "actions": {
+      "issue": "ఇన్‌వాయిస్ జారీ చేయండి",
+      "void": "చెల్లనిదిగా చేయండి",
+      "recordPayment": "చెల్లింపు నమోదు చేయండి",
+      "createCreditNote": "క్రెడిట్ నోట్ సృష్టించండి",
+      "downloadPdf": "PDF డౌన్‌లోడ్ చేయండి",
+      "previewPdf": "PDF ప్రివ్యూ",
+      "sendEmail": "ఈమెయిల్ ద్వారా పంపండి"
+    },
+    "recordPayment": "చెల్లింపు నమోదు చేయండి",
+    "paymentAmount": "మొత్తం",
+    "paymentMethod": "చెల్లింపు పద్ధతి",
+    "paymentDate": "చెల్లింపు తేదీ",
+    "paymentReference": "సూచన",
+    "paymentReferencePlaceholder": "లావాదేవీ సంఖ్య, రసీదు...",
+    "paymentNotes": "చెల్లింపు గమనికలు",
+    "paymentVoided": "చెల్లింపు రద్దు చేయబడింది",
+    "createCreditNote": "క్రెడిట్ నోట్ సృష్టించండి",
+    "creditNoteReason": "క్రెడిట్ నోట్ కారణం",
+    "creditNoteReasonPlaceholder": "క్రెడిట్ నోట్ కారణాన్ని వివరించండి...",
+    "creditNoteInfo": "పూర్తి ఇన్‌వాయిస్ మొత్తానికి క్రెడిట్ నోట్ సృష్టించబడుతుంది.",
+    "prompts": {
+      "voidPaymentReason": "ఈ చెల్లింపును రద్దు చేయడానికి కారణం నమోదు చేయండి"
+    },
+    "payments": {
+      "title": "చెల్లింపులు",
+      "void": "చెల్లింపు రద్దు చేయండి",
+      "amount": "మొత్తం",
+      "method": "చెల్లింపు పద్ధతి",
+      "date": "తేదీ",
+      "reference": "సూచన",
+      "notes": "గమనికలు",
+      "noPayments": "చెల్లింపులు నమోదు కాలేదు",
+      "voided": "చెల్లింపు రద్దు చేయబడింది",
+      "voidReason": "రద్దు కారణం",
+      "voidReasonPlaceholder": "ఈ చెల్లింపును రద్దు చేయడానికి కారణం...",
+      "methods": {
+        "cash": "నగదు",
+        "card": "కార్డు",
+        "bank_transfer": "బ్యాంక్ బదిలీ",
+        "direct_debit": "డైరెక్ట్ డెబిట్",
+        "insurance": "బీమా",
+        "other": "ఇతర"
+      }
+    },
+    "creditNote": {
+      "title": "క్రెడిట్ నోట్",
+      "create": "క్రెడిట్ నోట్ సృష్టించండి",
+      "reason": "కారణం",
+      "reasonPlaceholder": "క్రెడిట్ నోట్ కారణం...",
+      "selectItems": "సవరించాల్సిన అంశాలను ఎంచుకోండి",
+      "originalInvoice": "అసలు ఇన్‌వాయిస్"
+    },
+    "history": {
+      "title": "చరిత్ర",
+      "noChanges": "మార్పులు నమోదు కాలేదు",
+      "actions": {
+        "created": "ఇన్‌వాయిస్ సృష్టించబడింది",
+        "updated": "ఇన్‌వాయిస్ నవీకరించబడింది",
+        "issued": "ఇన్‌వాయిస్ జారీ చేయబడింది",
+        "voided": "ఇన్‌వాయిస్ చెల్లనిదిగా చేయబడింది",
+        "payment_recorded": "చెల్లింపు నమోదైంది",
+        "payment_voided": "చెల్లింపు రద్దు చేయబడింది",
+        "credit_note_created": "క్రెడిట్ నోట్ సృష్టించబడింది"
+      }
+    },
+    "fromBudget": "అంచనా నుండి ఇన్‌వాయిస్ సృష్టించండి",
+    "selectItems": "ఇన్‌వాయిస్ చేయాల్సిన అంశాలను ఎంచుకోండి",
+    "selectItemsHint": "మీరు ఇన్‌వాయిస్ చేయాలనుకుంటున్న అంచనా అంశాలను ఎంచుకోండి",
+    "availableQuantity": "అందుబాటులో ఉంది",
+    "quantityToInvoice": "ఇన్‌వాయిస్ పరిమాణం",
+    "alreadyInvoiced": "ఇప్పటికే ఇన్‌వాయిస్ చేయబడింది",
+    "remaining": "మిగిలినది",
+    "noItemsAvailable": "ఇన్‌వాయిస్ చేయడానికి అంశాలు అందుబాటులో లేవు",
+    "allItemsInvoiced": "అన్ని అంశాలు ఇన్‌వాయిస్ చేయబడ్డాయి",
+    "series": {
+      "title": "ఇన్‌వాయిస్ సిరీస్",
+      "prefix": "ప్రిఫిక్స్",
+      "type": "రకం",
+      "currentNumber": "ప్రస్తుత సంఖ్య",
+      "resetYearly": "వార్షిక రీసెట్",
+      "default": "డిఫాల్ట్"
+    },
+    "filters": {
+      "allStatuses": "స్థితి",
+      "overdueOnly": "గడువు దాటినవి",
+      "dateFrom": "నుండి",
+      "dateTo": "వరకు"
+    },
+    "sortFields": {
+      "created": "సృష్టించినది",
+      "issueDate": "జారీ తేదీ",
+      "dueDate": "గడువు తేదీ",
+      "total": "మొత్తం"
+    },
+    "overdueByDays": "{days} రోజులు గడువు దాటింది",
+    "pdf": {
+      "generating": "PDF రూపొందిస్తోంది...",
+      "downloadError": "PDF డౌన్‌లోడ్ చేయడంలో లోపం"
+    },
+    "reports": {
+      "title": "బిల్లింగ్ నివేదికలు",
+      "summary": "సారాంశం",
+      "overdue": "గడువు దాటినవి",
+      "overdueInvoices": "గడువు దాటిన ఇన్‌వాయిస్‌లు",
+      "byPaymentMethod": "చెల్లింపు పద్ధతి వారీగా",
+      "byProfessional": "వైద్యుల వారీగా",
+      "vatSummary": "పన్ను సారాంశం",
+      "gaps": "సంఖ్యాక్రమంలో ఖాళీలు",
+      "period": "కాలం",
+      "from": "నుండి",
+      "to": "వరకు",
+      "refresh": "రిఫ్రెష్ చేయండి",
+      "totalInvoiced": "మొత్తం ఇన్‌వాయిస్ చేసినది",
+      "totalCollected": "మొత్తం వసూలైనది",
+      "totalPaid": "మొత్తం చెల్లించినది",
+      "totalPending": "మొత్తం పెండింగ్",
+      "pending": "బకాయి నిల్వ",
+      "invoices": "ఇన్‌వాయిస్‌లు",
+      "paid": "చెల్లించినవి",
+      "payments": "చెల్లింపులు",
+      "noGaps": "సంఖ్యాక్రమంలో ఖాళీలు లేవు",
+      "gapsFound": "సంఖ్యాక్రమంలో {count} ఖాళీ(లు) కనుగొనబడ్డాయి",
+      "gapsDetected": "సంఖ్యాక్రమంలో ఖాళీలు గుర్తించబడ్డాయి",
+      "missingNumbers": "లేని సంఖ్యలు:",
+      "noData": "ఎంచుకున్న కాలానికి డేటా లేదు",
+      "noOverdue": "గడువు దాటిన ఇన్‌వాయిస్‌లు లేవు",
+      "daysOverdue": "రోజులు గడువు దాటింది",
+      "vatType": "పన్ను రకం",
+      "base": "మూల మొత్తం",
+      "tax": "పన్ను",
+      "thisMonth": "ఈ నెల",
+      "thisQuarter": "ఈ త్రైమాసికం",
+      "thisYear": "ఈ సంవత్సరం",
+      "lastMonth": "గత నెల",
+      "lastQuarter": "గత త్రైమాసికం",
+      "lastYear": "గత సంవత్సరం"
+    },
+    "confirmations": {
+      "issue": "ఇన్‌వాయిస్ జారీ చేయాలా?",
+      "issueDescription": "జారీ చేసిన తర్వాత ఇన్‌వాయిస్‌ను సవరించలేరు. చెల్లింపులు నమోదు చేయడం లేదా క్రెడిట్ నోట్లు సృష్టించడం మాత్రమే సాధ్యం.",
+      "void": "ఇన్‌వాయిస్‌ను చెల్లనిదిగా చేయాలా?",
+      "voidDescription": "ఈ చర్యను రద్దు చేయలేరు.",
+      "delete": "ఇన్‌వాయిస్ తొలగించాలా?",
+      "deleteDescription": "ఈ చర్యను రద్దు చేయలేరు."
+    },
+    "messages": {
+      "created": "ఇన్‌వాయిస్ సృష్టించబడింది",
+      "updated": "ఇన్‌వాయిస్ నవీకరించబడింది",
+      "deleted": "ఇన్‌వాయిస్ తొలగించబడింది",
+      "issued": "ఇన్‌వాయిస్ జారీ చేయబడింది",
+      "voided": "ఇన్‌వాయిస్ చెల్లనిదిగా చేయబడింది",
+      "itemAdded": "అంశం జోడించబడింది",
+      "itemUpdated": "అంశం నవీకరించబడింది",
+      "sentByEmail": "ఇన్‌వాయిస్ ఈమెయిల్ ద్వారా పంపబడింది",
+      "sentManually": "ఇన్‌వాయిస్ పంపినట్లు గుర్తించబడింది",
+      "sentByWhatsapp": "ఇన్‌వాయిస్ WhatsApp ద్వారా పంపబడింది",
+      "creditNoteCreated": "క్రెడిట్ నోట్ సృష్టించబడింది",
+      "paymentRecorded": "చెల్లింపు నమోదైంది"
+    },
+    "send": {
+      "title": "ఇన్‌వాయిస్ పంపండి",
+      "description": "మీరు ఇన్‌వాయిస్‌ను ఈమెయిల్ లేదా WhatsApp ద్వారా పంపవచ్చు, లేదా మాన్యువల్‌గా పంపినట్లు (ముద్రించి లేదా స్వయంగా అందజేసి) గుర్తించవచ్చు.",
+      "sendByEmail": "ఈమెయిల్ ద్వారా పంపండి",
+      "willSendTo": "దీనికి పంపబడుతుంది",
+      "noPatientEmail": "రోగికి ఈమెయిల్ చిరునామా లేదు",
+      "customMessage": "అనుకూల సందేశం (ఐచ్ఛికం)",
+      "customMessagePlaceholder": "రోగి కోసం సందేశం జోడించండి...",
+      "manualNote": "ఏ సందేశం పంపకుండా ఇన్‌వాయిస్ పంపినట్లు గుర్తించబడుతుంది.",
+      "sendEmail": "ఈమెయిల్ పంపండి",
+      "markAsSent": "పంపినట్లు గుర్తించండి",
+      "sendByWhatsapp": "WhatsApp ద్వారా పంపండి",
+      "sendWhatsapp": "WhatsApp పంపండి",
+      "willSendToPhone": "WhatsApp ద్వారా దీనికి పంపబడుతుంది"
+    },
+    "errors": {
+      "load": "ఇన్‌వాయిస్‌లను లోడ్ చేయడంలో లోపం",
+      "create": "ఇన్‌వాయిస్‌ను సృష్టించడంలో లోపం",
+      "update": "ఇన్‌వాయిస్‌ను నవీకరించడంలో లోపం",
+      "delete": "ఇన్‌వాయిస్‌ను తొలగించడంలో లోపం",
+      "issue": "ఇన్‌వాయిస్‌ను జారీ చేయడంలో లోపం",
+      "void": "ఇన్‌వాయిస్‌ను చెల్లనిదిగా చేయడంలో లోపం",
+      "recordPayment": "చెల్లింపు నమోదు చేయడంలో లోపం",
+      "voidPayment": "చెల్లింపు రద్దు చేయడంలో లోపం",
+      "createCreditNote": "క్రెడిట్ నోట్ సృష్టించడంలో లోపం",
+      "send": "ఇన్‌వాయిస్ పంపడంలో లోపం",
+      "creditNoteReasonRequired": "క్రెడిట్ నోట్ కారణం తప్పనిసరి",
+      "notFound": "ఇన్‌వాయిస్ కనుగొనబడలేదు",
+      "canOnlyDeleteDraft": "డ్రాఫ్ట్ ఇన్‌వాయిస్‌లను మాత్రమే తొలగించగలరు",
+      "patientRequired": "రోగి తప్పనిసరి",
+      "itemsRequired": "కనీసం ఒక అంశం అవసరం",
+      "itemRequired": "వివరణ మరియు ధర తప్పనిసరి",
+      "selectCatalogItem": "దయచేసి క్యాటలాగ్ నుండి చికిత్సను ఎంచుకోండి",
+      "cannotEdit": "డ్రాఫ్ట్ ఇన్‌వాయిస్‌లను మాత్రమే సవరించగలరు"
+    },
+    "newItemsPending": "కొత్త అంశాలు సేవ్ చేయాల్సి ఉంది",
+    "linkedPlan": "చికిత్స ప్రణాళిక"
+  },
+  "reports": {
+    "title": "నివేదికలు",
+    "subtitle": "క్లినిక్ విశ్లేషణలు మరియు గణాంకాలు",
+    "viewReports": "నివేదికలు చూడండి",
+    "noAccess": "మీకు ఏ నివేదికలకూ యాక్సెస్ లేదు",
+    "dashboard": {
+      "title": "డాష్‌బోర్డ్",
+      "subtitle": "మీ క్లినిక్ ఒక్క చూపులో",
+      "period": "కాలం",
+      "snapshotBadge": "ఈరోజు",
+      "snapshotTooltip": "తేదీ పరిధి దీనిపై ప్రభావం చూపదు",
+      "vsPrev": "గత కాలంతో పోలిస్తే",
+      "empty": {
+        "noData": "ఈ పరిధిలో డేటా లేదు"
+      },
+      "drilldown": {
+        "title": "వివరంగా చూడండి",
+        "payments": "చెల్లింపులు"
+      },
+      "kpi": {
+        "cashCollected": "వసూలైన నగదు",
+        "cashCollectedHint": "{count} చెల్లింపులు",
+        "patientAdvance": "రోగి జమ",
+        "patientAdvanceHint": "కేటాయించని అడ్వాన్సులు",
+        "production": "ఉత్పత్తి (చేసిన చికిత్స)",
+        "productionHint": "{count} చికిత్సలు",
+        "byMethod": "చెల్లింపు పద్ధతి వారీగా",
+        "methodCount": "{count} చెల్లింపులు",
+        "total": "మొత్తం",
+        "newPatients": "కొత్త రోగులు",
+        "newPatientsHint": "మొత్తం అపాయింట్‌మెంట్లలో {rate}%",
+        "appointmentFunnel": "రాని రేటు",
+        "funnelHint": "{completed}% పూర్తయ్యాయి",
+        "avgCollectedTicket": "సగటు వసూలు మొత్తం",
+        "avgTicketHint": "{count} చెల్లింపులపై",
+        "aging": "బకాయిల వయస్సు"
+      },
+      "charts": {
+        "cashOverTime": "కాలక్రమంలో వసూళ్లు",
+        "productionByDoctor": "వైద్యుల వారీగా ఉత్పత్తి",
+        "refunded": "రీఫండ్‌లు"
+      },
+      "production": {
+        "unassigned": "కేటాయించలేదు",
+        "others": "ఇతరులు",
+        "treatmentCount": "{count} చికిత్సలు"
+      },
+      "aging": {
+        "bucket0_30": "0-30 రోజులు",
+        "bucket31_60": "31-60 రోజులు",
+        "bucket61_90": "61-90 రోజులు",
+        "bucket90plus": "90+ రోజులు",
+        "empty": "రావలసిన బకాయిలు లేవు",
+        "patientCount": "{count} రోగులు"
+      }
+    },
+    "billing": {
+      "title": "బిల్లింగ్",
+      "description": "ఆదాయం, చెల్లింపులు, పన్ను మరియు గడువు దాటిన ఇన్‌వాయిస్‌లు",
+      "summary": "సారాంశం",
+      "overdue": "గడువు దాటినవి",
+      "overdueInvoices": "గడువు దాటిన ఇన్‌వాయిస్‌లు",
+      "byPaymentMethod": "చెల్లింపు పద్ధతి వారీగా",
+      "byProfessional": "వైద్యుల వారీగా",
+      "vatSummary": "పన్ను సారాంశం",
+      "gaps": "సంఖ్యాక్రమంలో ఖాళీలు",
+      "period": "కాలం",
+      "from": "నుండి",
+      "to": "వరకు",
+      "refresh": "రిఫ్రెష్ చేయండి",
+      "totalInvoiced": "మొత్తం ఇన్‌వాయిస్ చేసినది",
+      "totalCollected": "మొత్తం వసూలైనది",
+      "pending": "బకాయి నిల్వ",
+      "invoices": "ఇన్‌వాయిస్‌లు",
+      "paid": "చెల్లించినవి",
+      "payments": "చెల్లింపులు",
+      "gapsDetected": "సంఖ్యాక్రమంలో ఖాళీలు గుర్తించబడ్డాయి",
+      "missingNumbers": "లేని సంఖ్యలు:",
+      "noData": "ఎంచుకున్న కాలానికి డేటా లేదు",
+      "noOverdue": "గడువు దాటిన ఇన్‌వాయిస్‌లు లేవు",
+      "invoiceAging": "ఇన్‌వాయిస్‌ల వయస్సు",
+      "invoiceAgingDescription": "ప్రతి విభాగంలో జారీ చేసిన బకాయి మొత్తాలు. గడువు రాని ఇన్‌వాయిస్‌లు వేరుగా ఉంటాయి.",
+      "notDue": "గడువు రాలేదు",
+      "issuedTrend": "జారీ ధోరణి",
+      "daysOverdue": "రోజులు గడువు దాటింది",
+      "vatType": "పన్ను రకం",
+      "base": "మూల మొత్తం",
+      "tax": "పన్ను",
+      "thisMonth": "ఈ నెల",
+      "thisQuarter": "ఈ త్రైమాసికం",
+      "thisYear": "ఈ సంవత్సరం",
+      "lastMonth": "గత నెల",
+      "lastQuarter": "గత త్రైమాసికం",
+      "lastYear": "గత సంవత్సరం"
+    },
+    "budgets": {
+      "title": "అంచనాలు",
+      "description": "అంగీకార రేట్లు, వైద్యుల విశ్లేషణ మరియు చికిత్సలు",
+      "comingSoonDescription": "అంచనా నివేదికలు త్వరలో అందుబాటులో ఉంటాయి. అంగీకార రేట్లు, వైద్యుల వారీగా అంచనాలు మరియు ఎక్కువగా అడిగిన చికిత్సలను విశ్లేషించవచ్చు.",
+      "features": {
+        "acceptanceRate": "అంగీకార రేటు",
+        "acceptanceRateDesc": "అంగీకరించిన vs తిరస్కరించిన అంచనాల శాతం",
+        "byProfessional": "వైద్యుల వారీగా",
+        "byProfessionalDesc": "ప్రతి వైద్యుడు సృష్టించిన అంచనాలు",
+        "byTreatment": "చికిత్స వారీగా",
+        "byTreatmentDesc": "ఎక్కువగా అంచనా వేసిన చికిత్సలు",
+        "averageValue": "సగటు విలువ",
+        "averageValueDesc": "సగటు అంచనా మొత్తం"
+      },
+      "labels": {
+        "totalCreated": "మొత్తం సృష్టించినవి",
+        "accepted": "అంగీకరించినవి",
+        "rejected": "తిరస్కరించినవి",
+        "pending": "పెండింగ్",
+        "completed": "పూర్తయినవి",
+        "acceptanceRate": "అంగీకార రేటు",
+        "averageValue": "సగటు విలువ",
+        "byStatus": "స్థితి వారీగా",
+        "topTreatments": "ఎక్కువగా అంచనా వేసిన చికిత్సలు",
+        "treatment": "చికిత్స",
+        "occurrences": "సంఖ్య",
+        "quantity": "పరిమాణం"
+      }
+    },
+    "scheduling": {
+      "title": "షెడ్యూల్",
+      "description": "మొదటి సందర్శనలు, పని చేసిన గంటలు మరియు వినియోగం",
+      "comingSoonDescription": "షెడ్యూల్ నివేదికలు త్వరలో అందుబాటులో ఉంటాయి. మొదటి సందర్శనలు, వైద్యుల వారీగా గంటలు మరియు రద్దు రేట్లను విశ్లేషించవచ్చు.",
+      "features": {
+        "firstVisits": "మొదటి సందర్శనలు",
+        "firstVisitsDesc": "ప్రతి కాలంలో కొత్త రోగులు",
+        "hoursWorked": "పని చేసిన గంటలు",
+        "hoursWorkedDesc": "ప్రతి వైద్యుని సమయం",
+        "cancellations": "రద్దులు",
+        "cancellationsDesc": "రద్దు మరియు రాని రేట్లు",
+        "cabinetUtilization": "క్యాబినెట్ వినియోగం",
+        "cabinetUtilizationDesc": "ప్రతి క్యాబినెట్ వాడకం"
+      },
+      "labels": {
+        "totalAppointments": "మొత్తం అపాయింట్‌మెంట్లు",
+        "completionRate": "పూర్తి రేటు",
+        "completed": "పూర్తయినవి",
+        "cancellationRate": "రద్దు రేటు",
+        "cancelled": "రద్దయినవి",
+        "noShowRate": "రాని రేటు",
+        "noShows": "రానివారు",
+        "newPatients": "కొత్త రోగులు",
+        "firstVisitRate": "మొదటి సందర్శన రేటు",
+        "ofTotalAppointments": "మొత్తం అపాయింట్‌మెంట్లలో",
+        "appointmentsInPeriod": "ఈ కాలంలో అపాయింట్‌మెంట్లు",
+        "excludingCancelled": "రద్దయినవి మినహా",
+        "appointments": "అపాయింట్‌మెంట్లు",
+        "byDayOfWeek": "వారంలో రోజు వారీగా",
+        "statusBreakdown": "స్థితి విభజన",
+        "pending": "పెండింగ్"
+      },
+      "analytics": {
+        "funnel": "స్థితి ఫన్నెల్",
+        "funnelDesc": "ఈ కాలంలో స్థితి వారీగా అపాయింట్‌మెంట్ల పంపిణీ",
+        "waitingTimes": "వేచి ఉండే సమయాలు",
+        "waitingTimesDesc": "రోగి వచ్చినప్పటి నుండి కుర్చీలోకి వెళ్ళే వరకు నిమిషాలు",
+        "punctuality": "రోగి సమయపాలన",
+        "punctualityDesc": "షెడ్యూల్ సమయం మరియు అసలు రాక మధ్య తేడా",
+        "durationVariance": "ప్రణాళిక vs అసలు వ్యవధి",
+        "durationVarianceDesc": "ప్రణాళిక వ్యవధి మరియు అసలు కుర్చీ సమయం మధ్య పోలిక",
+        "samples": "నమూనాలు",
+        "average": "సగటు",
+        "median": "మధ్యస్థం",
+        "p90": "P90",
+        "avgDelta": "సగటు తేడా",
+        "medianDelta": "మధ్యస్థ తేడా",
+        "onTime": "% సమయానికి",
+        "avgOverrun": "సగటు అధిక సమయం",
+        "overrunCount": "సమయం మించినవి",
+        "underCount": "సమయం కంటే ముందు ముగిసినవి",
+        "completionRate": "పూర్తి",
+        "noShowRate": "రానివారు",
+        "cancellationRate": "రద్దు",
+        "punctuality_early": "ముందుగా (<-5)",
+        "punctuality_on_time": "సమయానికి (±5)",
+        "punctuality_late_short": "ఆలస్యం (5-15)",
+        "punctuality_late_long": "ఆలస్యం (>15)"
+      },
+      "tabs": {
+        "overview": "అవలోకనం",
+        "activity": "కార్యకలాపం",
+        "quality": "నాణ్యత"
+      },
+      "hero": {
+        "inPeriod": "ఈ కాలంలో"
+      },
+      "filters": {
+        "cabinet": "క్యాబినెట్",
+        "professional": "వైద్యుడు",
+        "custom": "అనుకూల పరిధి",
+        "all": "అన్నీ",
+        "clear": "ఫిల్టర్లు తొలగించండి"
+      },
+      "empty": {
+        "title": "ఈ కాలానికి డేటా లేదు",
+        "desc": "విస్తృత తేదీ పరిధిని ప్రయత్నించండి లేదా ఫిల్టర్లను తొలగించండి."
+      }
+    },
+    "loadError": "నివేదిక డేటాను లోడ్ చేయలేకపోయాము"
+  },
+  "invoiceSeries": {
+    "title": "ఇన్‌వాయిస్ సిరీస్",
+    "description": "ఇన్‌వాయిస్ ప్రిఫిక్స్‌లు మరియు సంఖ్యాక్రమాన్ని కాన్ఫిగర్ చేయండి",
+    "regularInvoices": "ఇన్‌వాయిస్‌లు",
+    "creditNotes": "క్రెడిట్ నోట్లు",
+    "new": "కొత్త సిరీస్",
+    "newTitle": "కొత్త {type} సిరీస్",
+    "editTitle": "సిరీస్ సవరించండి",
+    "prefix": "ప్రిఫిక్స్",
+    "prefixHint": "ఉదా. INV, CR. సంవత్సరం స్వయంచాలకంగా జోడించబడుతుంది.",
+    "descriptionLabel": "వివరణ",
+    "descriptionPlaceholder": "ఐచ్ఛిక సిరీస్ వివరణ...",
+    "nextNumber": "తదుపరి సంఖ్య",
+    "preview": "ప్రివ్యూ",
+    "resetYearly": "వార్షిక రీసెట్",
+    "resetYearlyLabel": "ప్రతి సంవత్సరం సంఖ్యాక్రమాన్ని రీసెట్ చేయండి",
+    "setAsDefault": "డిఫాల్ట్‌గా సెట్ చేయండి",
+    "activeLabel": "సక్రియ సిరీస్",
+    "showInactive": "నిష్క్రియమైనవి చూపించు",
+    "noItems": "సిరీస్ కాన్ఫిగర్ కాలేదు",
+    "resetCounter": "కౌంటర్ రీసెట్ చేయండి",
+    "currentNumber": "ప్రస్తుత సంఖ్య",
+    "seriesPrefix": "సిరీస్ ప్రిఫిక్స్",
+    "newNumber": "కొత్త సంఖ్య",
+    "newNumberHint": "ఈ సిరీస్‌లో ఉన్న అత్యధిక సంఖ్య కంటే ఎక్కువగా ఉండాలి.",
+    "resetWarningTitle": "హెచ్చరిక",
+    "resetWarning": "ఈ చర్య ఆడిట్ లాగ్‌లో నమోదవుతుంది మరియు రద్దు చేయలేరు.",
+    "confirmReset": "కౌంటర్ రీసెట్ చేయండి",
+    "created": "సిరీస్ విజయవంతంగా సృష్టించబడింది",
+    "saved": "సిరీస్ విజయవంతంగా నవీకరించబడింది",
+    "resetSuccess": "కౌంటర్ విజయవంతంగా రీసెట్ అయింది",
+    "onboarding": {
+      "label": "ఇన్‌వాయిస్ సిరీస్",
+      "description": "మొదటి ఇన్‌వాయిస్ జారీ చేయడానికి అవసరం (ఉదా. FAC-2026-0001)."
+    }
+  },
+  "documents": {
+    "title": "పత్రాలు",
+    "add": "జోడించండి",
+    "edit": "పత్రాన్ని సవరించండి",
+    "upload": "పత్రం అప్‌లోడ్ చేయండి",
+    "uploading": "అప్‌లోడ్ అవుతోంది...",
+    "empty": "ఇంకా పత్రాలు లేవు",
+    "uploadFirst": "మొదటి పత్రం అప్‌లోడ్ చేయండి",
+    "types": {
+      "consent": "సమ్మతి పత్రం",
+      "id_scan": "గుర్తింపు పత్రం",
+      "insurance": "బీమా",
+      "report": "నివేదిక",
+      "referral": "రిఫరల్",
+      "other": "ఇతర"
+    },
+    "fields": {
+      "type": "రకం",
+      "title": "శీర్షిక",
+      "titlePlaceholder": "పత్రం శీర్షిక",
+      "description": "వివరణ",
+      "descriptionPlaceholder": "ఐచ్ఛిక గమనికలు"
+    },
+    "dropzone": {
+      "hint": "ఫైల్‌ను ఇక్కడ లాగి వదలండి, లేదా ఎంచుకోవడానికి క్లిక్ చేయండి"
+    },
+    "filter": {
+      "allTypes": "అన్ని రకాలు"
+    },
+    "deleteConfirm": {
+      "title": "పత్రాన్ని తొలగించండి",
+      "message": "మీరు ఖచ్చితంగా ఈ పత్రాన్ని తొలగించాలనుకుంటున్నారా? ఈ చర్యను రద్దు చేయలేరు."
+    },
+    "fetchError": "పత్రాలను లోడ్ చేయడంలో లోపం",
+    "uploadSuccess": "పత్రం విజయవంతంగా అప్‌లోడ్ అయింది",
+    "uploadError": "పత్రాన్ని అప్‌లోడ్ చేయడంలో లోపం",
+    "downloadError": "పత్రాన్ని డౌన్‌లోడ్ చేయడంలో లోపం",
+    "deleteSuccess": "పత్రం తొలగించబడింది",
+    "deleteError": "పత్రాన్ని తొలగించడంలో లోపం",
+    "updateSuccess": "పత్రం నవీకరించబడింది",
+    "updateError": "పత్రాన్ని నవీకరించడంలో లోపం",
+    "viewer": {
+      "loading": "పత్రం లోడ్ అవుతోంది...",
+      "error": "పత్రాన్ని లోడ్ చేయలేకపోయాము",
+      "downloadInstead": "బదులుగా డౌన్‌లోడ్ చేయండి",
+      "unsupported": "ఈ ఫైల్ రకానికి ప్రివ్యూ అందుబాటులో లేదు",
+      "zoomOut": "చిన్నది చేయండి",
+      "zoomIn": "పెద్దది చేయండి",
+      "resetZoom": "100% కు రీసెట్ చేయండి",
+      "zoomHint": "జూమ్ చేయడానికి Ctrl + స్క్రోల్"
+    },
+    "typeDesc": {
+      "consent": "సంతకం చేసిన పత్రం",
+      "id_scan": "ఆధార్ / పాస్‌పోర్ట్",
+      "insurance": "పాలసీ లేదా కార్డు",
+      "report": "క్లినికల్ నివేదిక",
+      "referral": "రిఫరల్ లేఖ",
+      "other": "వర్గీకరించనిది"
+    },
+    "errors": {
+      "mime": "ఈ ఫైల్ రకం అనుమతించబడదు. PDF, JPG లేదా PNG మాత్రమే.",
+      "size": "ఫైల్ 10 MB కంటే ఎక్కువగా ఉంది."
+    },
+    "pdfPreviewHint": "అప్‌లోడ్ తర్వాత ప్రివ్యూ అందుబాటులో ఉంటుంది",
+    "uploadHelp": "ఫైల్ సరైన వర్గంలో కనిపించేలా వర్గీకరించండి."
+  },
+  "photoGallery": {
+    "title": "రోగి గ్యాలరీ",
+    "add": "ఫోటో జోడించండి",
+    "empty": "ఇంకా ఫోటోలు లేవు",
+    "uploadFirst": "మొదటిది అప్‌లోడ్ చేయండి",
+    "showingOf": "{total} లో {count} చూపిస్తోంది",
+    "upload": "ఫోటో అప్‌లోడ్ చేయండి",
+    "uploadHelp": "సరైన వర్గంలో కనిపించేలా వర్గీకరించండి",
+    "dropHere": "ఫోటోను ఇక్కడ లాగండి లేదా క్లిక్ చేయండి",
+    "category": "రకం",
+    "subtype": "వీక్షణ",
+    "titlePlaceholder": "ముందు నోటి లోపలి ఫోటో — 02/05",
+    "capturedAt": "తేదీ",
+    "exifHint": "EXIF నుండి స్వయంచాలకంగా",
+    "cat": {
+      "all": "అన్నీ",
+      "intraoral": "నోటి లోపల (intraoral)",
+      "extraoral": "నోటి బయట (extraoral)",
+      "xray": "ఎక్స్-రే",
+      "clinical": "ముందు/తర్వాత",
+      "other": "ఇతర"
+    },
+    "catDesc": {
+      "intraoral": "నోటి లోపల",
+      "extraoral": "ముఖం మరియు ప్రొఫైల్",
+      "xray": "రేడియోలాజికల్ చిత్రం",
+      "clinical": "చికిత్స పోలిక",
+      "other": "వర్గీకరించనిది"
+    },
+    "sub": {
+      "frontal": "ముందు వైపు",
+      "lateral_left": "ఎడమ పక్క",
+      "lateral_right": "కుడి పక్క",
+      "occlusal_upper": "పై ఆక్లూజల్",
+      "occlusal_lower": "కింది ఆక్లూజల్",
+      "palatal": "పాలటల్",
+      "lingual": "లింగ్వల్",
+      "smile": "చిరునవ్వు",
+      "rest": "విశ్రాంతి స్థితి",
+      "frontal_face": "ముందు వైపు",
+      "profile_left": "ఎడమ ప్రొఫైల్",
+      "profile_right": "కుడి ప్రొఫైల్",
+      "three_quarter_left": "3/4 ఎడమ",
+      "three_quarter_right": "3/4 కుడి",
+      "panoramic": "పనోరమిక్ (OPG)",
+      "periapical": "పెరియాపికల్ (IOPA)",
+      "bitewing": "బైట్‌వింగ్",
+      "ceph_lat": "సెఫ్ లాటరల్",
+      "ceph_pa": "సెఫ్ PA",
+      "cbct": "CBCT",
+      "occlusal_xray": "ఆక్లూజల్ ఎక్స్-రే",
+      "before": "ముందు",
+      "after": "తర్వాత",
+      "progress": "పురోగతి",
+      "reference": "సూచన",
+      "portrait": "పోర్ట్రెయిట్",
+      "document_scan": "పత్రం",
+      "model_photo": "మోడల్"
+    },
+    "compare": {
+      "before": "ముందు",
+      "after": "తర్వాత"
+    },
+    "pair": {
+      "pickHint": "జత చేయాల్సిన ఫోటోను ఎంచుకోండి:",
+      "noCandidates": "ఫోటోలు అందుబాటులో లేవు. ముందుగా మరొకటి అప్‌లోడ్ చేయండి.",
+      "paired": "జత చేయబడింది",
+      "exitCompare": "పోలిక నుండి నిష్క్రమించండి",
+      "compare": "పోల్చండి",
+      "unpair": "తొలగించండి",
+      "pair": "ముందు/తర్వాత జత చేయండి"
+    }
+  },
+  "help": {
+    "label": "సహాయం",
+    "openHelp": "సహాయం తెరవండి",
+    "drawerTitle": "ఈ పేజీకి సహాయం",
+    "unavailable": "ఈ పేజీకి ఇంకా సందర్భ సహాయం అందుబాటులో లేదు.",
+    "openFullManual": "పూర్తి మాన్యువల్ తెరవండి"
+  },
+  "charts": {
+    "trend": {
+      "ariaLabel": "{count} పాయింట్లపై ధోరణి"
+    },
+    "donut": {
+      "ariaLabel": "డోనట్ చార్ట్, {count} భాగాలు"
+    }
+  }
+}

@@ -1,0 +1,312 @@
+{
+  "payments": {
+    "nav": {
+      "payments": "చెల్లింపులు",
+      "reports": "చెల్లింపు నివేదికలు"
+    },
+    "balance": {
+      "debt": "బకాయి",
+      "credit": "ఖాతాలో జమ",
+      "paid": "మొత్తం చెల్లించినది"
+    },
+    "list": {
+      "title": "చెల్లింపులు",
+      "subtitle": "రోగి చెల్లింపులు, అంచనాలపై అడ్వాన్సులు మరియు ఖాతాలో జమ.",
+      "empty": "చెల్లింపులు నమోదు కాలేదు.",
+      "new": "కొత్త చెల్లింపు",
+      "searchPlaceholder": "రోగి లేదా సూచన",
+      "filterDateFrom": "నుండి",
+      "filterDateTo": "వరకు",
+      "filterMethod": "పద్ధతి",
+      "filterPatient": "రోగి",
+      "filter": {
+        "method": "పద్ధతి",
+        "hasRefunds": "రీఫండ్‌లతో",
+        "hasUnallocated": "కేటాయించనివి",
+        "patient": "రోగి",
+        "withDebt": "బకాయితో",
+        "paymentStatus": "స్థితి"
+      },
+      "sort": {
+        "paymentDate": "తేదీ",
+        "amount": "మొత్తం"
+      },
+      "budgetStatus": {
+        "paid": "చెల్లించబడింది",
+        "partial": "పాక్షికం",
+        "unpaid": "చెల్లించలేదు"
+      },
+      "row": {
+        "debtTooltip": "రోగి బకాయి నిల్వ",
+        "creditTooltip": "రోగి జమ నిల్వ",
+        "allocationsLabel": "కేటాయింపు",
+        "refundedLabel": "రీఫండ్ చేయబడింది",
+        "noPatient": "రోగి లేరు"
+      },
+      "columnDate": "తేదీ",
+      "columnPatient": "రోగి",
+      "columnAmount": "మొత్తం",
+      "columnMethod": "పద్ధతి",
+      "columnAllocations": "కేటాయింపు",
+      "columnNet": "నికర",
+      "columnActions": "చర్యలు"
+    },
+    "detail": {
+      "title": "చెల్లింపు {reference}",
+      "amount": "మొత్తం",
+      "method": "పద్ధతి",
+      "date": "తేదీ",
+      "recordedBy": "నమోదు చేసినవారు",
+      "allocations": "కేటాయింపులు",
+      "refunds": "రీఫండ్‌లు",
+      "refund": "రీఫండ్",
+      "refundedTotal": "రీఫండ్ చేయబడింది",
+      "netAmount": "నికర",
+      "reference": "సూచన",
+      "notes": "గమనికలు"
+    },
+    "new": {
+      "title": "చెల్లింపు నమోదు చేయండి",
+      "patient": "రోగి",
+      "patientPlaceholder": "రోగిని వెతకండి...",
+      "unknownPatient": "తెలియని రోగి",
+      "amount": "మొత్తం",
+      "suggestedHint": "వసూలు చేయాల్సినది: {amount}",
+      "useSuggested": "ఈ మొత్తం వాడండి",
+      "method": "పద్ధతి",
+      "moreMethods": "మరిన్ని ఎంపికలు",
+      "date": "తేదీ",
+      "today": "ఈరోజు",
+      "advanced": "అధునాతన ఎంపికలు",
+      "reference": "సూచన",
+      "referencePlaceholder": "కార్డ్ ఆథరైజేషన్ #, బదిలీ సూచన...",
+      "notes": "గమనికలు",
+      "allocations": "కేటాయింపు",
+      "allocationsHint": "ఈ చెల్లింపును అంచనాల మధ్య విభజించండి లేదా రోగి జమలో ఉంచండి.",
+      "addAllocation": "కేటాయింపు జోడించండి",
+      "allocationToBudget": "అంచనాకు",
+      "allocationOnAccount": "ఖాతాలో జమ",
+      "sumLabel": "మొత్తం:",
+      "sumMismatch": "మొత్తానికి సరిపోలడం లేదు",
+      "submit": "నమోదు చేయండి",
+      "submitWithAmount": "{amount} వసూలు చేయండి",
+      "cancel": "రద్దు చేయండి",
+      "errPatient": "రోగిని ఎంచుకోండి",
+      "errAmount": "0 కంటే ఎక్కువ మొత్తం నమోదు చేయండి",
+      "errSum": "కేటాయింపుల మొత్తం చెల్లింపు మొత్తానికి సమానంగా ఉండాలి",
+      "errUnknown": "చెల్లింపును నమోదు చేయలేకపోయాము. మళ్ళీ ప్రయత్నించండి.",
+      "methodRecord": "ఇప్పటికే అందిన చెల్లింపును నమోదు చేయండి",
+      "methodCollect": "ఇప్పుడే వసూలు చేయండి"
+    },
+    "methods": {
+      "cash": "నగదు",
+      "card": "కార్డు",
+      "bank_transfer": "బ్యాంక్ బదిలీ",
+      "direct_debit": "డైరెక్ట్ డెబిట్",
+      "insurance": "బీమా",
+      "other": "ఇతర",
+      "upi": "UPI",
+      "netbanking": "నెట్ బ్యాంకింగ్"
+    },
+    "refund": {
+      "title": "చెల్లింపును రీఫండ్ చేయండి",
+      "amount": "మొత్తం",
+      "method": "పద్ధతి",
+      "reason": "కారణం",
+      "note": "వివరాలు",
+      "submit": "రీఫండ్ చేయండి",
+      "reasonCodes": {
+        "duplicate": "రెండుసార్లు చెల్లింపు",
+        "overpaid": "అధికంగా చెల్లించారు",
+        "treatment_cancelled": "చికిత్స రద్దు అయింది",
+        "dispute": "వివాదం",
+        "other": "ఇతర"
+      }
+    },
+    "ledger": {
+      "title": "రోగి లెడ్జర్",
+      "totalPaid": "మొత్తం చెల్లించినది",
+      "totalEarned": "చేసిన చికిత్స",
+      "patientCredit": "రోగి జమ నిల్వ",
+      "clinicReceivable": "క్లినిక్‌కు రావలసినది",
+      "onAccount": "ఖాతాలో జమ",
+      "empty": "కదలికలు లేవు."
+    },
+    "budgetCard": {
+      "title": "అంచనా చెల్లింపులు",
+      "budgetTotal": "అంచనా మొత్తం",
+      "collected": "వసూలైనది",
+      "pending": "పెండింగ్",
+      "collect": "వసూలు చేయండి",
+      "empty": "ఈ అంచనాకు ఇంకా చెల్లింపులు కేటాయించలేదు.",
+      "collectedLabel": "వసూలైనది",
+      "pendingLabel": "పెండింగ్",
+      "outOfTotal": "మొత్తం {total} లో",
+      "settled": "అంచనా పూర్తిగా వసూలైంది",
+      "history": "చెల్లింపు చరిత్ర",
+      "payment": "చెల్లింపు",
+      "emptyDetailed": "ఇంకా చెల్లింపులు వసూలు కాలేదు. మొదటిది నమోదు చేయడానికి \"వసూలు చేయండి\" వాడండి."
+    },
+    "budgetCollect": {
+      "title": "అంచనా మొత్తం వసూలు చేయండి",
+      "amountLabel": "మొత్తం",
+      "methodLabel": "చెల్లింపు పద్ధతి",
+      "dateLabel": "చెల్లింపు తేదీ",
+      "today": "ఈరోజు",
+      "quickFull": "పూర్తి మొత్తం",
+      "optionalDetails": "సూచన లేదా గమనికలు జోడించండి (ఐచ్ఛికం)",
+      "referenceLabel": "సూచన",
+      "referencePlaceholder": "ఉదా. POS లావాదేవీ ID",
+      "notesLabel": "అంతర్గత గమనికలు",
+      "submit": "వసూలు చేయండి",
+      "cancel": "రద్దు చేయండి",
+      "success": "చెల్లింపు నమోదైంది",
+      "errorGeneric": "చెల్లింపును నమోదు చేయలేకపోయాము",
+      "noteAppliedToBudget": "అంచనాకు వర్తింపజేయబడింది.",
+      "notePendingAfter": "మిగిలినది",
+      "noteFullySettled": "అంచనా పూర్తిగా చెల్లించబడుతుంది.",
+      "noteToBudget": "అంచనాకు వర్తింపజేయబడింది మరియు",
+      "noteExcessToOnAccount": "రోగి ఖాతా జమకు వెళ్తుంది.",
+      "noteBudgetSettled": "అంచనా ఇప్పటికే పూర్తిగా చెల్లించబడింది.",
+      "noteToOnAccount": "రోగి ఖాతా జమకు వెళ్తుంది."
+    },
+    "pendingCharges": {
+      "title": "వసూలు చేయాల్సినవి",
+      "count": "{n} సెషన్లు",
+      "more": "+ {n} మరిన్ని",
+      "collect": "{amount} వసూలు చేయండి",
+      "unnamedSession": "పేరు లేని సెషన్"
+    },
+    "patientPanel": {
+      "title": "రోగి లెడ్జర్",
+      "kpis": {
+        "totalPaid": "మొత్తం చెల్లించినది",
+        "debt": "క్లినిక్‌కు రావలసినది",
+        "onAccount": "ఖాతాలో జమ"
+      },
+      "sidebar": {
+        "title": "సారాంశం",
+        "credit": "రోగి జమ",
+        "lastPayment": "చివరి చెల్లింపు",
+        "noLastPayment": "ఇంకా చెల్లింపులు లేవు",
+        "totalEarned": "చేసిన చికిత్స"
+      },
+      "banner": {
+        "debtTitle": "క్లినిక్‌కు {amount} బకాయి ఉంది",
+        "debtDescription": "చెల్లించిన మొత్తం చేసిన చికిత్స కంటే తక్కువగా ఉంది.",
+        "creditTitle": "{amount} జమలో ఉంది",
+        "creditDescription": "చేసిన చికిత్స కంటే ఎక్కువ చెల్లించారు."
+      },
+      "cobrar": "చెల్లింపు నమోదు చేయండి",
+      "timeline": {
+        "title": "కదలికలు",
+        "empty": "కదలికలు నమోదు కాలేదు",
+        "emptyCta": "మొదటి చెల్లింపు నమోదు చేయండి",
+        "loadError": "రోగి లెడ్జర్‌ను లోడ్ చేయలేకపోయాము.",
+        "retry": "మళ్ళీ ప్రయత్నించండి",
+        "drPrefix": "డా. {name}",
+        "types": {
+          "payment": "చెల్లింపు",
+          "refund": "రీఫండ్",
+          "earned": "చేసిన చికిత్స"
+        },
+        "treatmentStatus": {
+          "planned": "ప్రణాళికలో ఉంది",
+          "performed": "చేయబడింది",
+          "completed": "పూర్తయింది",
+          "cancelled": "రద్దు చేయబడింది",
+          "in_progress": "పురోగతిలో ఉంది"
+        },
+        "rowMenu": {
+          "detail": "వివరాలు చూడండి",
+          "refund": "రీఫండ్",
+          "reallocate": "అంచనాకు కేటాయించండి…"
+        }
+      },
+      "refundModal": {
+        "title": "చెల్లింపును రీఫండ్ చేయండి",
+        "amount": "రీఫండ్ మొత్తం",
+        "method": "రీఫండ్ పద్ధతి",
+        "reason": "కారణం",
+        "note": "వివరాలు (ఐచ్ఛికం)",
+        "submit": "రీఫండ్ నిర్ధారించండి",
+        "cancel": "రద్దు చేయండి",
+        "errorGeneric": "రీఫండ్‌ను నమోదు చేయలేకపోయాము"
+      }
+    },
+    "reports": {
+      "title": "చెల్లింపు నివేదికలు",
+      "subtitle": "ఈ కాలానికి వసూళ్లు, రీఫండ్‌లు, రోగి నిల్వలు మరియు ధోరణులు.",
+      "loadError": "చెల్లింపు నివేదికలను లోడ్ చేయలేకపోయాము",
+      "cardDescription": "వసూళ్లు, రీఫండ్‌లు, రోగి నిల్వలు, బకాయి వయస్సు మరియు ధోరణులు.",
+      "period": "కాలం",
+      "refresh": "రిఫ్రెష్ చేయండి",
+      "collected": "వసూలైనది",
+      "refunded": "రీఫండ్ చేయబడింది",
+      "net": "నికర",
+      "patientCredit": "రోగుల మొత్తం జమ",
+      "patientCreditHint": "ఖాతాలో జమ లేదా అడ్వాన్స్ నిల్వలు.",
+      "clinicReceivable": "క్లినిక్‌కు రావలసినది",
+      "refundRatio": "రీఫండ్ నిష్పత్తి",
+      "byMethod": "పద్ధతి వారీగా",
+      "byProfessional": "వైద్యుల వారీగా",
+      "byProfessionalHint": "చేసిన చికిత్స, వసూలైనది కాదు.",
+      "aging": "బకాయిల వయస్సు",
+      "agingHint": "బకాయి ఉన్న రోగులు, బకాయి వయస్సు వారీగా.",
+      "refunds": "కారణం వారీగా రీఫండ్‌లు",
+      "refundsHint": "నమోదు చేసిన కారణం వారీగా రీఫండ్‌ల పంపిణీ.",
+      "bucket": "{range} రోజులు",
+      "unknownProfessional": "కేటాయించలేదు",
+      "countShort": "{n} లావాదేవీలు",
+      "countPatients": "{n} రోగులు",
+      "granularity": {
+        "day": "రోజు",
+        "week": "వారం",
+        "month": "నెల"
+      },
+      "hero": {
+        "netCollected": "నికర వసూలు",
+        "netCollectedHint": "ఈ కాలంలో వసూళ్ల నుండి రీఫండ్‌లు తీసివేసినది.",
+        "receivable": "రావలసిన బకాయి",
+        "receivableHint": "ఇంకా వసూలు కాని చేసిన చికిత్స, వయస్సు వారీగా.",
+        "vsPrevious": "గత కాలంతో పోలిస్తే",
+        "transactionsCount": "ఈ కాలంలో {n} లావాదేవీలు"
+      },
+      "trend": {
+        "title": "వసూళ్ల ధోరణి",
+        "subtitle": "ప్రతి విభాగానికి నికర మొత్తం. చుక్కల గీత రీఫండ్‌లను చూపిస్తుంది."
+      },
+      "empty": {
+        "noDataTitle": "ఈ పరిధిలో డేటా లేదు",
+        "noDataDescription": "నివేదిక చూడటానికి కాలాన్ని మార్చండి లేదా చెల్లింపు నమోదు చేయండి.",
+        "noTrend": "ధోరణి గీయడానికి తగినన్ని పాయింట్లు లేవు.",
+        "noMethods": "ఈ కాలంలో పద్ధతి వారీగా వసూళ్లు లేవు.",
+        "noProfessionals": "ఈ కాలంలో చేసిన చికిత్స లేదు.",
+        "noReceivable": "బకాయి ఉన్న రోగులు లేరు."
+      },
+      "drilldown": {
+        "viewPayments": "ఈ కాలంలోని చెల్లింపులు చూడండి",
+        "viewPatients": "బకాయి ఉన్న రోగులను చూడండి"
+      }
+    },
+    "target": {
+      "label": "దీనికి వర్తింపజేయండి",
+      "placeholder": "గమ్యాన్ని ఎంచుకోండి",
+      "onAccount": "రోగి జమ (ఖాతాలో)",
+      "onAccountHint": "రోగి ఖాతాలో జమగా ఉంటుంది. మీరు కేటాయించే వరకు ఏ ఇన్‌వాయిస్ లేదా అంచనాకు వర్తించదు.",
+      "budgetHint": "ఈ అంచనాకు మరియు దాని జారీ చేసిన ఇన్‌వాయిస్‌లకు వర్తింపజేయబడుతుంది.",
+      "lockedBudget": "అంచనా {budget} మరియు దాని ఇన్‌వాయిస్‌లకు వర్తింపజేయబడుతుంది."
+    },
+    "reallocate": {
+      "title": "అంచనాకు కేటాయించండి",
+      "hint": "పూర్తి {amount} చెల్లింపు ఎంచుకున్న అంచనా మరియు దాని జారీ చేసిన ఇన్‌వాయిస్‌లకు మారుతుంది.",
+      "submit": "కేటాయించండి",
+      "success": "చెల్లింపు అంచనాకు కేటాయించబడింది",
+      "error": "చెల్లింపును మళ్ళీ కేటాయించలేకపోయాము. దయచేసి మళ్ళీ ప్రయత్నించండి."
+    },
+    "followup": {
+      "collect": "చెల్లింపు వసూలు చేయండి",
+      "collected": "చెల్లింపు నమోదైంది."
+    }
+  }
+}

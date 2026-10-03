@@ -5,6 +5,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
+
 ### Changed
 
 - `GET /settings` creates the per-clinic row inactive; the admin enables the channel explicitly from the settings page.

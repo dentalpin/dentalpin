@@ -1,0 +1,99 @@
+{
+  "orthodontics": {
+    "tab": {
+      "label": "ఆర్థోడాంటిక్స్"
+    },
+    "nav": {
+      "title": "ఆర్థోడాంటిక్స్"
+    },
+    "appliance": {
+      "brackets_metal": "మెటల్ బ్రాకెట్లు",
+      "brackets_esthetic": "సౌందర్య (సిరామిక్) బ్రాకెట్లు",
+      "self_ligating": "సెల్ఫ్-లైగేటింగ్",
+      "aligners": "అలైనర్లు",
+      "functional": "ఫంక్షనల్ ఉపకరణం",
+      "retention": "రిటెన్షన్"
+    },
+    "status": {
+      "active": "సక్రియం",
+      "paused": "నిలిపివేయబడింది",
+      "finished": "పూర్తయింది",
+      "transferred_out": "బయటకు బదిలీ చేయబడింది"
+    },
+    "inbox": {
+      "title": "ఆర్థోడాంటిక్స్",
+      "active": "సక్రియం",
+      "overdue": "గడువు దాటిన కంట్రోల్",
+      "unscheduled": "తదుపరి కంట్రోల్ లేదు",
+      "finished": "పూర్తయింది",
+      "new": "కొత్త కేసు",
+      "empty": "ఈ వీక్షణలో కేసులు లేవు",
+      "nextDue": "తదుపరి కంట్రోల్",
+      "monthOf": "~{n} లో {x}వ నెల"
+    },
+    "case": {
+      "new": "కొత్త ఆర్థోడాంటిక్ కేసు",
+      "appliance": "ఉపకరణం",
+      "professional": "ఆర్థోడాంటిస్ట్",
+      "startDate": "ప్రారంభ తేదీ",
+      "estimatedMonths": "అంచనా నెలలు",
+      "notes": "రోగనిర్ధారణ / లక్ష్యాలు",
+      "create": "కేసు తెరవండి",
+      "inMouthNow": "ప్రస్తుతం నోటిలో ఉన్నవి",
+      "upper": "పై దవడ",
+      "lower": "కింది దవడ",
+      "noWire": "వైర్ నమోదు కాలేదు",
+      "changeStatus": "స్థితిని మార్చండి",
+      "statusNote": "కారణం (ఐచ్ఛికం)",
+      "save": "సేవ్ చేయండి",
+      "none": "ఇంకా ఆర్థోడాంటిక్ కేసు లేదు"
+    },
+    "control": {
+      "new": "కంట్రోల్ నమోదు చేయండి",
+      "wires": "ఆర్చ్‌వైర్లు (డిఫాల్ట్‌గా మార్పు లేదు)",
+      "procedures": "ప్రక్రియలు",
+      "proceduresOther": "ఇతర ప్రక్రియలు",
+      "hygiene": "నోటి పరిశుభ్రత",
+      "hygiene_good": "మంచిది",
+      "hygiene_fair": "పర్వాలేదు",
+      "hygiene_poor": "బలహీనం",
+      "alignerNumber": "అలైనర్ సంఖ్య",
+      "notes": "పరిశీలనలు / సూచనలు",
+      "nextControl": "తదుపరి కంట్రోల్",
+      "weeks": "{n} వారాలు",
+      "noNext": "తదుపరి కంట్రోల్ లేదు",
+      "save": "కంట్రోల్ సేవ్ చేయండి",
+      "history": "కంట్రోల్స్",
+      "empty": "ఇంకా కంట్రోల్స్ లేవు"
+    },
+    "card": {
+      "title": "ఆర్థోడాంటిక్స్",
+      "noCase": "సక్రియ కేసు లేదు",
+      "view": "తెరవండి"
+    },
+    "photos": {
+      "title": "ఫోటోలు ({n})",
+      "upload": "ఫోటో జోడించండి"
+    },
+    "procedures": {
+      "power_chain": "పవర్ చెయిన్",
+      "elastics_class_2": "క్లాస్ II ఎలాస్టిక్స్",
+      "elastics_class_3": "క్లాస్ III ఎలాస్టిక్స్",
+      "niti_open_coil": "NiTi ఓపెన్ కాయిల్",
+      "metal_ligature": "మెటల్ లిగేచర్",
+      "ligature_change": "లిగేచర్ మార్పు",
+      "button_attachment": "బటన్ / అటాచ్‌మెంట్",
+      "ipr": "IPR (దంతాల మధ్య తగ్గింపు)",
+      "bite_turbos": "బైట్ టర్బోలు",
+      "bracket_rebonding": "బ్రాకెట్ రీబాండింగ్",
+      "expander_activation": "ఎక్స్‌పాండర్ యాక్టివేషన్",
+      "band_placement": "బ్యాండ్ అమర్చడం",
+      "bracket_removal": "బ్రాకెట్ తొలగింపు",
+      "retainer_placement": "రిటైనర్ అమర్చడం"
+    },
+    "errors": {
+      "saveFailed": "సేవ్ చేయలేకపోయాము. దయచేసి మళ్ళీ ప్రయత్నించండి.",
+      "loadFailed": "ఆర్థోడాంటిక్ డేటాను లోడ్ చేయలేకపోయాము."
+    }
+  }
+}

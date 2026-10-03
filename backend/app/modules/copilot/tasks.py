@@ -51,6 +51,7 @@ _SUBJECT = {
     "fr": "Briefing du jour — {clinic_name}",
     "pt": "Briefing do dia — {clinic_name}",
     "ta": "இன்றைய சுருக்கம் — {clinic_name}",
+    "te": "ఈరోజు సారాంశం — {clinic_name}",
     "de": "Tagesbriefing — {clinic_name}",
     "hu": "Napi összefoglaló — {clinic_name}",
     "pl": "Poranne podsumowanie — {clinic_name}",

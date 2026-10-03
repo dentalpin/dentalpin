@@ -360,7 +360,7 @@ def test_pdf_every_locale_set_is_complete():
         notes=None,
     )
     expected = set(_get_labels("en"))
-    for locale in ("es", "en", "fr", "pt", "de", "hu", "pl", "it", "ar", "ta"):
+    for locale in ("es", "en", "fr", "pt", "de", "hu", "pl", "it", "ar", "ta", "te"):
         assert set(_get_labels(locale)) == expected, locale
         html = render_html(build_pdf_data(rx, [], "Pat", {"name": "C"}, locale=locale))
         assert f'lang="{locale}"' in html

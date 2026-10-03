@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
+- feat(i18n): Telugu (`te`) name for the GST 18% VAT type. The Telugu demo (`--lang te`) is an India GST clinic in Hyderabad, Telangana (state 36, GSTIN `36ABCDE1234F1Z1`).
 - feat(#232): sidebar entry grouped under the Financials header (`nav.section` "financials").
 - feat(i18n): Arabic (ar) locale for the module's frontend layer.
 - feat(i18n): the frontend layer's directional spacing, borders, text alignment and inset positioning now resolve against the document direction (physical→logical CSS utilities, Arabic RTL support).

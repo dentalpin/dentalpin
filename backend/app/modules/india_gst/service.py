@@ -309,7 +309,13 @@ class IndiaGstCatalogService:
             db.add(
                 VatType(
                     clinic_id=clinic_id,
-                    names={"en": "GST 18%", "es": "GST 18%", "fr": "GST 18%", "ta": "GST 18%"},
+                    names={
+                        "en": "GST 18%",
+                        "es": "GST 18%",
+                        "fr": "GST 18%",
+                        "ta": "GST 18%",
+                        "te": "GST 18%",
+                    },
                     rate=18.0,
                 )
             )

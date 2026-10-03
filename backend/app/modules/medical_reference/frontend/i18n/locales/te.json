@@ -1,0 +1,36 @@
+{
+  "medicalReference": {
+    "settingsLabel": "వైద్య సూచన జాబితాలు",
+    "settingsDescription": "రోగి రికార్డులలో ఉపయోగించే అలర్జీ, మందులు, వ్యాధుల జాబితాలను నిర్వహించండి.",
+    "title": "వైద్య సూచన జాబితాలు",
+    "description": "ఈ జాబితాలు రోగి వైద్య చరిత్రలోని శోధించగల డ్రాప్‌డౌన్‌లకు ఆధారం. ఒక అంశాన్ని నిష్క్రియం చేస్తే అది భవిష్యత్ శోధనల నుండి తొలగిపోతుంది, కానీ ఉన్న రోగి రికార్డులపై ప్రభావం ఉండదు.",
+    "tabs": {
+      "allergies": "అలర్జీలు",
+      "medications": "మందులు",
+      "diseases": "వ్యాధులు",
+      "surgeries": "శస్త్రచికిత్సలు",
+      "interactions": "మందుల పరస్పర చర్యలు",
+      "contraindications": "నిషేధాలు (contraindications)"
+    },
+    "name": "పేరు",
+    "status": "స్థితి",
+    "active": "సక్రియం",
+    "inactive": "నిష్క్రియం",
+    "showInactive": "నిష్క్రియమైనవి చూపించు",
+    "newItemPlaceholder": "కొత్త అంశం పేరు…",
+    "addSuccess": "జోడించబడింది",
+    "addError": "అంశాన్ని జోడించలేకపోయాము",
+    "updateError": "అంశాన్ని నవీకరించలేకపోయాము",
+    "deactivate": "నిష్క్రియం చేయండి",
+    "deactivateError": "అంశాన్ని నిష్క్రియం చేయలేకపోయాము",
+    "itemCount": "{count} అంశాలు",
+    "medicationA": "మందు A",
+    "medicationB": "మందు B",
+    "riskNote": "ప్రమాదం",
+    "riskNotePlaceholder": "ప్రమాదాన్ని వివరించండి…",
+    "flags": {
+      "interaction": "{a} + {b} పరస్పర చర్య",
+      "contraindication": "{a}: {b} తో కలిపి వాడకూడదు"
+    }
+  }
+}

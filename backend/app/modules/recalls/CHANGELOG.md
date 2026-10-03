@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Telugu (`te`) locale for the module's frontend layer.
+- feat(i18n): Telugu (`te`) demo recall notes in the seed.
 - feat(#232): sidebar entry grouped under the Clinical header (`nav.section` "clinical").
 - fix(#126): de/it/pl locale parity with en (confirms.cancel / confirms.done).
 
