@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}{{ clinic_name | default('DentalPin') }} में आपकी अगली जाँच{% endblock %}
+
+{% block content %}
+<h2>आपकी अगली जाँच का समय</h2>
+
+<p>नमस्ते {{ patient_name }},</p>
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> में आपकी अगली जाँच{% if due_month %} <strong>{{ due_month }}</strong> में{% endif %}{% if reason %} ({{ reason }}){% endif %} निर्धारित की गई है।</p>
+
+<p>अपनी सुविधा का समय बुक करने के लिए हमसे संपर्क करें।</p>
+
+{% if clinic_phone %}
+<div class="button-container">
+    <a href="tel:{{ clinic_phone }}" class="button">मेरा अपॉइंटमेंट बुक करें</a>
+</div>
+{% endif %}
+
+<p>कोई भी प्रश्न हो तो बेझिझक हमसे संपर्क करें।</p>
+{% endblock %}

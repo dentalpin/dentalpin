@@ -1095,6 +1095,52 @@ class BudgetPDFService:
             },
         }
 
+        labels_hi = {
+            "budget": "उपचार अनुमान",
+            "version": "संस्करण",
+            "date": "तिथि",
+            "draft": "मसौदा",
+            "patient_info": "मरीज़ की जानकारी",
+            "patient": "मरीज़",
+            "professional": "चिकित्सक",
+            "treatments": "उपचार",
+            "description": "विवरण",
+            "qty": "मात्रा",
+            "unit_price": "इकाई मूल्य",
+            "discount": "छूट",
+            "total": "कुल",
+            "subtotal": "उप-योग",
+            "total_discount": "कुल छूट",
+            "tax": "कर",
+            "grand_total": "कुल योग",
+            "validity": "वैधता",
+            "from": "से",
+            "until": "तक",
+            "no_expiry": "कोई समाप्ति तिथि नहीं",
+            "notes": "टिप्पणियाँ",
+            "patient_signature": "मरीज़ के हस्ताक्षर",
+            "clinic_signature": "क्लिनिक के हस्ताक्षर",
+            "signed_by": "हस्ताक्षरकर्ता",
+            "signed_at": "हस्ताक्षर की तिथि",
+            "signature_method": "तरीका",
+            "signature_method_drawn": "हस्तलिखित हस्ताक्षर",
+            "signature_method_click_accept": "ऑनलाइन स्वीकृति",
+            "signature_method_external": "बाहरी हस्ताक्षर",
+            "document_hash": "दस्तावेज़ हैश",
+            "generated_by": "द्वारा तैयार",
+            "status": {
+                "draft": "मसौदा",
+                "sent": "भेजा गया",
+                "accepted": "स्वीकृत",
+                "in_progress": "प्रगति पर",
+                "completed": "पूर्ण",
+                "invoiced": "चालान जारी",
+                "rejected": "अस्वीकृत",
+                "expired": "समाप्त",
+                "cancelled": "रद्द",
+            },
+        }
+
         # English is the fallback for a locale we have not translated yet
         # (#485): the route accepts every host locale, so returning the
         # Spanish set for everything non-es printed a Spanish quote to a
@@ -1110,5 +1156,6 @@ class BudgetPDFService:
             "it": labels_it,
             "ar": labels_ar,
             "ta": labels_ta,
+            "hi": labels_hi,
         }
         return by_locale.get(locale, labels_en)

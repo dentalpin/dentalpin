@@ -1,0 +1,24 @@
+{
+  "expenses": {
+    "title": "खर्च",
+    "add": "खर्च जोड़ें",
+    "date": "तिथि",
+    "category": "श्रेणी",
+    "amount": "राशि",
+    "description": "विवरण",
+    "filterByCategory": "श्रेणी से फ़िल्टर करें",
+    "delete": "हटाएँ",
+    "deleteTitle": "खर्च हटाएँ",
+    "deleteMessage": "यह खर्च हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
+    "categories": {
+      "rent": "किराया",
+      "utilities": "बिजली-पानी आदि",
+      "salaries": "वेतन",
+      "supplies": "सामग्री",
+      "equipment": "उपकरण",
+      "insurance": "बीमा",
+      "maintenance": "रखरखाव",
+      "other": "अन्य"
+    }
+  }
+}

@@ -1,0 +1,183 @@
+{
+  "copilot": {
+    "title": "AI",
+    "open": "AI खोलें",
+    "empty": "मुझसे मरीज़ों, शेड्यूल के बारे में पूछें, या अपॉइंटमेंट बुक करवाएँ।",
+    "placeholder": "अपना संदेश लिखें…",
+    "send": "भेजें",
+    "copy": "कॉपी करें",
+    "new": "नई बातचीत",
+    "thinking": "सोच रहा है…",
+    "you": "आप",
+    "assistant": "AI",
+    "trust": "आपका डेटा सुरक्षित है",
+    "phase": {
+      "working": "काम कर रहा है…",
+      "writing": "लिख रहा है…"
+    },
+    "tabs": {
+      "pending": "करने योग्य",
+      "chat": "चैट"
+    },
+    "pending": {
+      "empty": "कुछ भी लंबित नहीं। सब काम पूरा है।",
+      "unknownPatient": "अज्ञात मरीज़",
+      "group": {
+        "recall": "फ़ॉलो-अप के लिए रिकॉल",
+        "budget": "उत्तर की प्रतीक्षा में उपचार अनुमान"
+      }
+    },
+    "nudge": {
+      "act": "देखें",
+      "dismiss": "बंद करें",
+      "appointmentCancelled": {
+        "text": "{time} का अपॉइंटमेंट रद्द हुआ — एक स्लॉट अभी खाली हुआ है।",
+        "prompt": "{time} का अपॉइंटमेंट रद्द हुआ। ऐसे रिकॉल मरीज़ खोजें जो वह स्लॉट भर सकें।"
+      }
+    },
+    "suggest": {
+      "heading": "मैं कैसे मदद कर सकता हूँ?",
+      "cat": {
+        "workflows": "कार्य-प्रवाह",
+        "patients": "मरीज़",
+        "agenda": "शेड्यूल",
+        "recalls": "रिकॉल",
+        "money": "वसूली और उपचार अनुमान",
+        "reports": "रिपोर्ट"
+      },
+      "dailyBriefing": "दैनिक सारांश",
+      "prepareVisit": "विज़िट की तैयारी",
+      "fillGap": "खाली स्लॉट भरें",
+      "searchPatient": "मरीज़ खोजें",
+      "patientSummary": "मरीज़ का सारांश",
+      "freeSlots": "आज के खाली स्लॉट",
+      "bookAppointment": "अपॉइंटमेंट बुक करें",
+      "dueRecalls": "देय रिकॉल",
+      "pendingBudgets": "बिना उत्तर वाले उपचार अनुमान",
+      "recordPayment": "भुगतान दर्ज करें",
+      "monthCollections": "इस महीने की वसूली",
+      "agendaSummary": "शेड्यूल का अवलोकन",
+      "prompt": {
+        "dailyBriefing": "मुझे दैनिक सारांश दें: आज के अपॉइंटमेंट, विलंबित रिकॉल और बिना उत्तर वाले उपचार अनुमान",
+        "prepareVisit": "किसी मरीज़ की अगली विज़िट मेरे लिए तैयार करें",
+        "fillGap": "शेड्यूल में एक स्लॉट खाली हुआ है, हम किसे कॉल कर सकते हैं?",
+        "searchPatient": "एक मरीज़ खोजें",
+        "patientSummary": "किसी मरीज़ का सारांश दें",
+        "freeSlots": "आज कौन-से खाली स्लॉट हैं?",
+        "bookAppointment": "मैं एक अपॉइंटमेंट बुक करना चाहता/चाहती हूँ",
+        "dueRecalls": "इस महीने कौन-से रिकॉल देय हैं?",
+        "pendingBudgets": "कौन-से उपचार अनुमान भेजे गए हैं और उनका उत्तर नहीं आया?",
+        "recordPayment": "मैं मरीज़ का भुगतान दर्ज करना चाहता/चाहती हूँ",
+        "monthCollections": "इस महीने की वसूली का सारांश",
+        "agendaSummary": "आज के शेड्यूल का अवलोकन दें"
+      }
+    },
+    "settings": {
+      "title": "कोपायलट",
+      "description": "AI सहायक: दैनिक सारांश और इंजन",
+      "saved": "सेटिंग्स सहेजी गईं",
+      "digest": {
+        "title": "सुबह का सारांश ईमेल",
+        "description": "हर सुबह: आज के अपॉइंटमेंट, विलंबित रिकॉल और बिना उत्तर वाले उपचार अनुमान।",
+        "enabled": "दैनिक सारांश भेजें",
+        "hour": "भेजने का समय",
+        "hourHelp": "क्लिनिक के समय क्षेत्र में माना जाता है।",
+        "recipients": "प्राप्तकर्ता",
+        "recipientsHelp": "हर प्राप्तकर्ता को अपना सारांश मिलता है, जो उनकी भूमिका द्वारा देखी जा सकने वाली जानकारी तक सीमित है।",
+        "recipientsPlaceholder": "स्टाफ़ चुनें…"
+      },
+      "engine": {
+        "title": "इंजन",
+        "provider": "प्रदाता",
+        "model": "मॉडल",
+        "redaction": "PHI रिडैक्शन",
+        "redactionOn": "सक्षम",
+        "redactionOff": "अक्षम"
+      },
+      "metrics": {
+        "title": "उपयोग",
+        "description": "पिछले {days} दिन।",
+        "toolCalls": "टूल कॉल",
+        "errorRate": "त्रुटि दर",
+        "avgLatency": "औसत विलंब",
+        "conversations": "बातचीत",
+        "tokenBudget": "मासिक टोकन बजट",
+        "topTools": "सबसे अधिक उपयोग किए गए टूल",
+        "toolNames": {
+          "recalls_list_due_recalls": "विलंबित रिकॉल",
+          "budget_list_budgets": "लंबित उपचार अनुमान",
+          "patients_list_patients": "मरीज़ खोज",
+          "appointments_list_appointments": "अपॉइंटमेंट",
+          "invoices_list_invoices": "चालान"
+        }
+      }
+    },
+    "tool": {
+      "running": "{name} चल रहा है…",
+      "done": "{name} पूरा हुआ",
+      "failed": "{name} विफल"
+    },
+    "card": {
+      "viewPatient": "रिकॉर्ड देखें",
+      "noResults": "कोई परिणाम नहीं",
+      "notFound": "नहीं मिला",
+      "more": "+{n} और",
+      "freeSlots": "खाली स्लॉट",
+      "appointments": "अपॉइंटमेंट",
+      "patients": "मरीज़"
+    },
+    "patientStatus": {
+      "active": "सक्रिय",
+      "archived": "संग्रहीत"
+    },
+    "apptStatus": {
+      "scheduled": "निर्धारित",
+      "confirmed": "पुष्ट",
+      "checked_in": "पहुँच गए",
+      "in_treatment": "उपचार में",
+      "completed": "पूर्ण",
+      "cancelled": "रद्द",
+      "no_show": "नहीं आए"
+    },
+    "confirm": {
+      "title": "कार्रवाई की पुष्टि करें",
+      "body": "AI {name} चलाना चाहता है।",
+      "approve": "पुष्टि करें",
+      "reject": "रद्द करें",
+      "approved": "पुष्टि हुई",
+      "rejected": "रद्द किया गया",
+      "destructiveNote": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता।",
+      "action": {
+        "book_appointment": "AI एक अपॉइंटमेंट बुक करना चाहता है।",
+        "cancel_appointment": "AI एक अपॉइंटमेंट रद्द करना चाहता है।",
+        "create_patient": "AI एक मरीज़ बनाना चाहता है।"
+      },
+      "field": {
+        "patient_id": "मरीज़",
+        "professional_id": "चिकित्सक",
+        "appointment_id": "अपॉइंटमेंट",
+        "cabinet_id": "कक्ष",
+        "cabinet": "कक्ष",
+        "start_time": "तिथि",
+        "end_time": "समाप्ति",
+        "datetime": "तिथि",
+        "service": "सेवा",
+        "reason": "कारण",
+        "duration_minutes": "अवधि (मिनट)",
+        "first_name": "पहला नाम",
+        "last_name": "उपनाम",
+        "phone": "फ़ोन",
+        "email": "ईमेल",
+        "date_of_birth": "जन्म तिथि",
+        "query": "खोज"
+      }
+    },
+    "budgetExceeded": "AI उपयोग की मासिक सीमा पूरी हो गई है।",
+    "error": "कुछ गलत हो गया।",
+    "sessionExpired": "आपका सत्र समाप्त हो गया है। जारी रखने के लिए फिर से साइन इन करें।",
+    "page": {
+      "title": "AI",
+      "subtitle": "आपका क्लिनिक सहायक, आपकी अनुमतियों तक सीमित।"
+    }
+  }
+}

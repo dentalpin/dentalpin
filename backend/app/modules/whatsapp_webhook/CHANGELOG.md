@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
+
 - feat(i18n): Arabic (`ar`) locale for the module's frontend layer.
 - feat(#63): initial release — WhatsApp channel adapter delivering each
   notification as Stripe-style-signed JSON to a clinic-configured

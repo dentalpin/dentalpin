@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer; Hindi demo seed contact attempts.
+
 - feat(#232): sidebar entry grouped under the Clinical header (`nav.section` "clinical").
 - fix(#126): de/it/pl locale parity with en (confirms.cancel / confirms.done).
 

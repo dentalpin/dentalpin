@@ -63,6 +63,7 @@ _IDENTITY_LABELS: dict[str, str] = {
     "pl": "Formularz internetowy — wysłano jako",
     "hu": "Webes űrlap — beküldve mint",
     "ta": "இணையதளப் படிவம் — சமர்ப்பிக்கப்பட்டது",
+    "hi": "वेबसाइट फ़ॉर्म — इस नाम से भेजा गया",
     "ar": "نموذج الموقع الإلكتروني — أُرسل باسم",
 }
 _FALLBACK_LOCALE = "es"

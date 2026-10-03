@@ -15,7 +15,19 @@ from pathlib import Path
 
 from app.core.email.service import TEMPLATES_DIR
 
-EXPECTED_LOCALES = {"es", "en", "fr", "pt", "ta", "de", "hu", "pl", "it", "ar"}
+EXPECTED_LOCALES = {"es", "en", "fr", "pt", "ta", "hi", "de", "hu", "pl", "it", "ar"}
+
+# Country-specific templates a locale deliberately does not ship: Hindi
+# targets Indian clinics, which never run Spain's Verifactu (AEAT). The
+# renderer falls back to English for these.
+COUNTRY_EXEMPT: dict[str, set[str]] = {
+    "hi": {
+        "verifactu_cert_expiry.html",
+        "verifactu_cert_expiry.txt",
+        "verifactu_record_rejected.html",
+        "verifactu_record_rejected.txt",
+    },
+}
 
 
 def _locale_dirs() -> dict[str, Path]:
@@ -34,7 +46,7 @@ def test_every_locale_ships_the_same_template_set() -> None:
 
     for locale, path in sorted(dirs.items()):
         files = {f.name for f in path.iterdir() if f.is_file()}
-        missing = reference - files
+        missing = reference - files - COUNTRY_EXEMPT.get(locale, set())
         extra = files - reference
         assert not missing and not extra, (
             f"{locale}/ is out of parity with {reference_locale}/: "
@@ -72,3 +84,17 @@ def test_templates_are_nonempty_and_html_extends_base() -> None:
                 assert 'extends "base.html"' in content, (
                     f"{locale}/{f.name} does not extend base.html"
                 )
+
+
+def test_exempt_template_falls_back_to_english() -> None:
+    """A country-specific template missing from a locale renders the English one."""
+    from app.core.email.service import EmailService
+
+    service = EmailService()
+    service._initialize()
+    html = service._render_template(
+        "verifactu_cert_expiry",
+        "hi",
+        {"admin_name": "A", "clinic_name": "C", "is_expired": True, "valid_until": "x"},
+    )
+    assert html is not None and "Verifactu certificate" in html

@@ -1,0 +1,3178 @@
+{
+  "app": {
+    "name": "DentalPin",
+    "tagline": "डेंटल क्लिनिक प्रबंधन"
+  },
+  "demo": {
+    "bannerMessage": "सार्वजनिक डेमो — असली मरीज़ों का डेटा दर्ज न करें। डेटाबेस समय-समय पर रीसेट किया जाता है।",
+    "bannerDismiss": "बंद करें",
+    "credentialsTitle": "डेमो लॉगिन विवरण",
+    "credentialsNote": "केवल मूल्यांकन के लिए — यह एक सार्वजनिक डेमो है, इसलिए दिखाया जा रहा है।",
+    "copyEmail": "ईमेल कॉपी करें",
+    "copyPassword": "पासवर्ड कॉपी करें",
+    "copied": "क्लिपबोर्ड पर कॉपी किया गया"
+  },
+  "nav": {
+    "dashboard": "होम",
+    "journal": "गतिविधि लॉग",
+    "staffTasks": "स्टाफ़ कार्य",
+    "patients": "मरीज़",
+    "appointments": "शेड्यूल",
+    "recalls": "रिकॉल",
+    "inventory": "इन्वेंटरी",
+    "treatmentConsumables": "उपचार सामग्री",
+    "expenses": "खर्च",
+    "labOrdersForm": "नया लैब ऑर्डर",
+    "labOrdersStatus": "लैब ऑर्डर",
+    "treatmentPlans": "उपचार योजनाएँ",
+    "budgets": "उपचार अनुमान",
+    "invoices": "चालान",
+    "reports": "रिपोर्ट",
+    "settings": "सेटिंग्स",
+    "defaultClinicName": "क्लिनिक",
+    "catalog": "कैटलॉग",
+    "contacts": "संपर्क",
+    "menu": "मेनू",
+    "openMenu": "मेनू खोलें",
+    "close": "बंद करें",
+    "sections": {
+      "clinical": "नैदानिक",
+      "lab": "लैब",
+      "financials": "वित्त",
+      "inventory": "इन्वेंटरी",
+      "practice": "प्रैक्टिस"
+    },
+    "toggleSidebar": "साइडबार दिखाएँ/छिपाएँ",
+    "documents": "दस्तावेज़"
+  },
+  "auth": {
+    "login": "लॉग इन",
+    "logout": "लॉग आउट",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "loginButton": "साइन इन करें",
+    "loginSuccess": "सफलतापूर्वक साइन इन हो गया",
+    "invalidCredentials": "ईमेल या पासवर्ड गलत है",
+    "emailRequired": "अपना ईमेल दर्ज करें",
+    "passwordRequired": "अपना पासवर्ड दर्ज करें",
+    "emailInvalid": "अमान्य ईमेल पता",
+    "accountInactive": "आपका खाता निष्क्रिय है। अपने व्यवस्थापक से संपर्क करें",
+    "tooManyAttempts": "बहुत अधिक प्रयास। कुछ मिनट बाद फिर कोशिश करें",
+    "sessionExpired": "आपका सत्र समाप्त हो गया है",
+    "networkError": "सर्वर से कनेक्ट नहीं हो सका",
+    "serverError": "सर्वर उपलब्ध नहीं है। कृपया कुछ मिनट बाद फिर कोशिश करें",
+    "unknownError": "अनपेक्षित त्रुटि। कृपया फिर कोशिश करें"
+  },
+  "setup": {
+    "title": "प्रारंभिक सेटअप",
+    "subtitle": "अपना खाता और क्लिनिक बनाएँ। दो मिनट में आप काम शुरू कर देंगे।",
+    "stepAccount": "व्यवस्थापक खाता",
+    "stepClinic": "क्लिनिक विवरण",
+    "firstName": "पहला नाम",
+    "lastName": "उपनाम",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "passwordConfirm": "पासवर्ड की पुष्टि करें",
+    "passwordHint": "कम से कम 8 अक्षर, अक्षरों और अंकों सहित",
+    "clinicName": "क्लिनिक का नाम",
+    "taxId": "कर पहचान संख्या",
+    "next": "आगे",
+    "back": "पीछे",
+    "submit": "मेरा क्लिनिक बनाएँ",
+    "success": "सब तैयार है! DentalPin में आपका स्वागत है",
+    "firstNameRequired": "पहला नाम दर्ज करें",
+    "lastNameRequired": "उपनाम दर्ज करें",
+    "emailRequired": "ईमेल दर्ज करें",
+    "emailInvalid": "ईमेल मान्य नहीं है",
+    "passwordRequired": "पासवर्ड दर्ज करें",
+    "passwordTooShort": "पासवर्ड कम से कम 12 अक्षरों का होना चाहिए",
+    "passwordWeak": "पासवर्ड में अक्षर और अंक दोनों होने चाहिए",
+    "passwordMismatch": "पासवर्ड मेल नहीं खाते",
+    "clinicNameRequired": "क्लिनिक का नाम दर्ज करें",
+    "taxIdRequired": "कर पहचान संख्या दर्ज करें",
+    "alreadyInitialized": "सिस्टम पहले से सेट है। कृपया लॉग इन करें।",
+    "error": "सेटअप पूरा नहीं हो सका। कृपया फिर कोशिश करें",
+    "stepOf": "चरण {current} / {total}",
+    "country": "देश",
+    "countryHelp": "आपके लिए कर, मुद्रा और समय क्षेत्र तय करता है",
+    "countryRequired": "देश चुनें",
+    "taxIdGeneric": "कर पहचान संख्या",
+    "taxIdLooksInvalid": "यह मान्य NIF/CIF नहीं लगता। चालान बनाने से पहले इसे दोबारा जाँचें।",
+    "taxIdFormat": "अमान्य प्रारूप (उदाहरण: {example})",
+    "timezoneRequired": "समय क्षेत्र चुनें",
+    "currencyRequired": "मुद्रा चुनें",
+    "derivedSettings": "समय क्षेत्र और मुद्रा",
+    "willSeed": "हम आपके लिए उपचार कैटलॉग, VAT प्रकार, एक चालान श्रृंखला, एक कक्ष और सोमवार–शुक्रवार का शेड्यूल बनाएँगे। बाद में सब कुछ बदला जा सकता है।",
+    "willSuggestVerifactu": "बाद में हम VeriFactu सक्षम करने का सुझाव देंगे।",
+    "invalidData": "कृपया डेटा जाँचें: कोई फ़ील्ड अमान्य है।",
+    "attendPatientsMyself": "मैं स्वयं मरीज़ों को देखता/देखती हूँ",
+    "attendPatientsMyselfHelp": "आपको बुक किए जा सकने वाले चिकित्सक के रूप में चिह्नित करता है। इसे बाद में टीम सेटिंग्स में बदल सकते हैं।",
+    "addressTitle": "क्लिनिक का पता",
+    "addressOptional": "वैकल्पिक"
+  },
+  "onboarding": {
+    "title": "शुरुआत करें",
+    "progress": "{total} में से {done} चरण पूरे",
+    "configure": "सेट करें",
+    "skip": "छोड़ें",
+    "unskip": "पूर्ववत करें",
+    "dismiss": "छिपाएँ",
+    "guidedMode": "निर्देशित मोड",
+    "optional": "वैकल्पिक ({count})",
+    "stepOf": "चरण {current} / {total}",
+    "next": "आगे",
+    "finish": "समाप्त",
+    "exit": "बाहर निकलें",
+    "completedTitle": "आपका क्लिनिक तैयार है!",
+    "completedDescription": "सेटअप पूरा हो गया। अब आप सामान्य रूप से काम कर सकते हैं।",
+    "guidedDoneTitle": "टूर पूरा हुआ",
+    "guidedDoneDescription": "कोई चरण बाकी नहीं है।",
+    "items": {
+      "team": {
+        "label": "आपकी टीम",
+        "description": "मरीज़ों को देखने वाले चिकित्सकों को जोड़ें, या अकेले काम करते हैं तो स्वयं को चिकित्सक के रूप में चिह्नित करें।"
+      },
+      "verifactu": {
+        "label": "VeriFactu सक्षम करें",
+        "description": "स्पेन में कर एजेंसी (AEAT) के लिए मान्य चालान जारी करने हेतु आवश्यक।"
+      }
+    }
+  },
+  "actions": {
+    "edit": "संपादित करें",
+    "cancel": "रद्द करें",
+    "save": "सहेजें",
+    "create": "बनाएँ",
+    "delete": "हटाएँ",
+    "close": "बंद करें",
+    "remove": "निकालें"
+  },
+  "patients": {
+    "title": "मरीज़",
+    "create": "नया मरीज़",
+    "edit": "मरीज़ संपादित करें",
+    "search": "मरीज़ खोजें...",
+    "searchPlaceholder": "नाम या फ़ोन",
+    "noResults": "कोई मरीज़ नहीं मिला",
+    "empty": "कोई मरीज़ पंजीकृत नहीं है",
+    "emptyAction": "पहला मरीज़ बनाएँ",
+    "name": "नाम",
+    "firstName": "पहला नाम",
+    "lastName": "उपनाम",
+    "phone": "फ़ोन",
+    "email": "ईमेल",
+    "dateOfBirth": "जन्म तिथि",
+    "notes": "टिप्पणियाँ",
+    "created": "मरीज़ बनाया गया",
+    "updated": "मरीज़ अपडेट किया गया",
+    "archived": "मरीज़ संग्रहीत किया गया",
+    "notFound": "मरीज़ नहीं मिला",
+    "archiveConfirm": "मरीज़ {name} को संग्रहीत करें?",
+    "archiveDescription": "यह कार्रवाई मरीज़ को खोज परिणामों से छिपा देगी। मौजूदा अपॉइंटमेंट नहीं हटाए जाएँगे।",
+    "cancel": "रद्द करें",
+    "archive": "संग्रहीत करें",
+    "dangerZone": {
+      "title": "जोखिम क्षेत्र",
+      "archiveHelp": "मरीज़ को खोज से छिपाने के लिए संग्रहीत करें। अपॉइंटमेंट और इतिहास सुरक्षित रहते हैं।"
+    },
+    "billingSection": "बिलिंग जानकारी",
+    "billingSectionHint": "इस मरीज़ के चालान बनाते समय यह डेटा अपने-आप उपयोग होगा।",
+    "editingBillingForInvoice": "बिलिंग डेटा संपादित हो रहा है। बदलाव चालान में दिखेंगे।",
+    "returnToInvoice": "चालान पर लौटें",
+    "billingName": "बिलिंग नाम",
+    "billingNamePlaceholder": "चालान के लिए नाम या कंपनी",
+    "billingTaxId": "कर पहचान संख्या",
+    "billingEmail": "बिलिंग ईमेल",
+    "billingAddress": "बिलिंग पता",
+    "billingComplete": "पूर्ण",
+    "billingIncomplete": "अपूर्ण",
+    "demographics": "व्यक्तिगत विवरण",
+    "nationalId": "पहचान दस्तावेज़",
+    "nationalIdType": "दस्तावेज़ का प्रकार",
+    "passport": "पासपोर्ट",
+    "profession": "पेशा",
+    "workplace": "कार्यस्थल",
+    "years": "वर्ष",
+    "status": {
+      "active": "सक्रिय",
+      "archived": "संग्रहीत"
+    },
+    "filters": {
+      "status": "स्थिति",
+      "city": "शहर",
+      "withDebt": "बकाया वाले",
+      "doNotContact": "संपर्क न करें",
+      "doNotContactOnly": "केवल 'संपर्क न करें' वाले",
+      "doNotContactOnlyContactable": "केवल संपर्क योग्य"
+    },
+    "columns": {
+      "city": "शहर",
+      "contact": "संपर्क",
+      "debt": "बकाया"
+    },
+    "sort": {
+      "lastVisit": "अंतिम विज़िट",
+      "lastName": "उपनाम",
+      "firstName": "पहला नाम",
+      "createdAt": "जुड़ने की तिथि",
+      "updatedAt": "हाल ही में संपादित"
+    },
+    "doNotContact": {
+      "label": "संपर्क न करें",
+      "hint": "मरीज़ को कॉल सूची और स्वचालित संपर्क से बाहर रखा जाएगा",
+      "badge": "संपर्क न करें"
+    },
+    "gender": {
+      "label": "लिंग",
+      "select": "लिंग चुनें",
+      "male": "पुरुष",
+      "female": "महिला",
+      "other": "अन्य",
+      "preferNotSay": "बताना नहीं चाहते"
+    },
+    "emergencyContact": {
+      "title": "आपातकालीन संपर्क",
+      "hasContact": "आपातकालीन संपर्क दर्ज है",
+      "noContact": "कोई आपातकालीन संपर्क दर्ज नहीं",
+      "name": "पूरा नाम",
+      "namePlaceholder": "संपर्क का नाम",
+      "relationship": "संबंध",
+      "relationshipPlaceholder": "संबंध चुनें",
+      "phone": "फ़ोन",
+      "phonePlaceholder": "संपर्क का फ़ोन",
+      "email": "ईमेल",
+      "emailPlaceholder": "संपर्क का ईमेल",
+      "isLegalGuardian": "कानूनी अभिभावक हैं",
+      "remove": "संपर्क हटाएँ",
+      "relationships": {
+        "spouse": "पति/पत्नी",
+        "parent": "माता/पिता",
+        "child": "संतान",
+        "sibling": "भाई/बहन",
+        "friend": "मित्र",
+        "other": "अन्य"
+      }
+    },
+    "medicalHistory": {
+      "title": "चिकित्सा इतिहास",
+      "save": "इतिहास सहेजें",
+      "fetchError": "चिकित्सा इतिहास लोड करने में त्रुटि",
+      "saveSuccess": "चिकित्सा इतिहास सहेजा गया",
+      "saveError": "चिकित्सा इतिहास सहेजने में त्रुटि",
+      "allergies": "एलर्जी",
+      "allergiesCount": "{n} एलर्जी | {n} एलर्जी",
+      "onAnticoagulants": "एंटीकोएगुलेंट उपचार पर",
+      "allergyName": "एलर्जी का नाम",
+      "type": "प्रकार",
+      "allergyTypes": {
+        "drug": "दवा",
+        "food": "भोजन",
+        "material": "सामग्री",
+        "environmental": "पर्यावरणीय"
+      },
+      "severity": {
+        "low": "कम",
+        "medium": "मध्यम",
+        "high": "अधिक",
+        "critical": "गंभीर"
+      },
+      "medications": "दवाइयाँ",
+      "medicationName": "दवा का नाम",
+      "dosage": "खुराक",
+      "frequency": "आवृत्ति",
+      "systemicDiseases": "प्रणालीगत रोग",
+      "diseaseName": "रोग का नाम",
+      "diseaseTypes": {
+        "cardiovascular": "हृदय संबंधी",
+        "respiratory": "श्वसन संबंधी",
+        "endocrine": "अंतःस्रावी",
+        "neurological": "तंत्रिका संबंधी",
+        "autoimmune": "स्व-प्रतिरक्षी",
+        "other": "अन्य"
+      },
+      "critical": "गंभीर",
+      "controlled": "नियंत्रित",
+      "notControlled": "अनियंत्रित",
+      "specialConditions": "विशेष स्थितियाँ",
+      "pregnant": "गर्भवती",
+      "pregnancyWeek": "गर्भावस्था का सप्ताह",
+      "lactating": "स्तनपान करा रही हैं",
+      "anticoagulants": "एंटीकोएगुलेंट",
+      "anticoagulantMedication": "एंटीकोएगुलेंट दवा",
+      "inrValue": "INR मान",
+      "anesthesiaReaction": "एनेस्थीसिया से प्रतिक्रिया",
+      "anesthesiaReactionDetails": "प्रतिक्रिया का विवरण",
+      "bruxism": "ब्रक्सिज़्म (दाँत पीसना)",
+      "lifestyle": "जीवनशैली",
+      "smoker": "धूम्रपान करते हैं",
+      "smokingFrequency": "सिगरेट/दिन",
+      "alcoholConsumption": "शराब का सेवन",
+      "alcohol": {
+        "none": "नहीं",
+        "occasional": "कभी-कभी",
+        "moderate": "मध्यम",
+        "heavy": "अधिक"
+      },
+      "surgicalHistory": "शल्य चिकित्सा इतिहास",
+      "procedure": "प्रक्रिया"
+    },
+    "timeline": {
+      "empty": "अभी तक कोई गतिविधि दर्ज नहीं",
+      "emptyFiltered": "इस श्रेणी में कोई घटना नहीं",
+      "clearFilter": "सभी गतिविधि दिखाएँ",
+      "endOfTimeline": "टाइमलाइन का अंत",
+      "totalEntries": "{count} प्रविष्टि | {count} प्रविष्टियाँ",
+      "groups": {
+        "today": "आज",
+        "yesterday": "कल",
+        "thisWeek": "इस सप्ताह",
+        "thisMonth": "इस महीने",
+        "earlier": "पहले"
+      },
+      "author": "{name} द्वारा",
+      "meta": {
+        "cabinet": "कक्ष {name}",
+        "teeth": "दाँत: {list}",
+        "total": "कुल: {amount}",
+        "number": "सं. {value}",
+        "via": "{channel} के माध्यम से",
+        "template": "टेम्पलेट: {key}",
+        "docType": "प्रकार: {type}"
+      },
+      "categories": {
+        "all": "सभी",
+        "visit": "विज़िट",
+        "treatment": "उपचार",
+        "financial": "वित्तीय",
+        "communication": "संचार",
+        "medical": "चिकित्सा इतिहास",
+        "document": "दस्तावेज़",
+        "note": "नैदानिक टिप्पणियाँ"
+      }
+    },
+    "alerts": {
+      "title": "{count} चेतावनी | {count} चेतावनियाँ",
+      "label": "नैदानिक चेतावनियाँ"
+    },
+    "editDemographics": "व्यक्तिगत विवरण संपादित करें",
+    "editEmergencyContact": "आपातकालीन संपर्क संपादित करें",
+    "editBilling": "बिलिंग जानकारी संपादित करें",
+    "editMedicalHistory": "चिकित्सा इतिहास संपादित करें",
+    "medicalSnapshot": {
+      "title": "चिकित्सा जानकारी",
+      "allergiesLabel": "एलर्जी",
+      "allergiesEmpty": "कोई ज्ञात एलर्जी नहीं",
+      "allergiesNotReviewed": "चिकित्सा इतिहास दर्ज नहीं",
+      "completeHistory": "इतिहास पूरा करें",
+      "reviewedOn": "{date} को समीक्षा की गई",
+      "conditions": {
+        "pregnantWeek": "गर्भवती · सप्ताह {week}",
+        "anticoagulantInr": "एंटीकोएगुलेंट · INR {inr}",
+        "smokerFreq": "धूम्रपान · {freq}/दिन"
+      }
+    },
+    "personalInfo": {
+      "title": "व्यक्तिगत जानकारी",
+      "ageLabel": "{age} वर्ष",
+      "birthWithAge": "{date} ({age} वर्ष)"
+    },
+    "contactInfo": {
+      "title": "संपर्क",
+      "copyPhone": "फ़ोन कॉपी करें",
+      "copyEmail": "ईमेल कॉपी करें",
+      "address": "पता",
+      "addEmergency": "आपातकालीन संपर्क जोड़ें",
+      "addGuardian": "कानूनी अभिभावक जोड़ें",
+      "guardianRequired": "कानूनी अभिभावक आवश्यक"
+    },
+    "administrative": {
+      "title": "प्रशासनिक"
+    },
+    "header": {
+      "ariaLabel": "मरीज़ हेडर"
+    },
+    "quickActions": {
+      "ariaLabel": "मरीज़ की त्वरित कार्रवाइयाँ"
+    },
+    "onboarding": {
+      "label": "अपना पहला मरीज़ बनाएँ",
+      "description": "रिकॉर्ड, शेड्यूल और उपचार अनुमान को काम करते देखने का सबसे तेज़ तरीका।"
+    },
+    "editLegalGuardian": "कानूनी अभिभावक संपादित करें",
+    "legalGuardian": {
+      "title": "कानूनी अभिभावक",
+      "hasGuardian": "कानूनी अभिभावक दर्ज है",
+      "noGuardian": "कोई कानूनी अभिभावक दर्ज नहीं",
+      "name": "पूरा नाम",
+      "namePlaceholder": "अभिभावक का नाम",
+      "dni": "पहचान संख्या",
+      "dniPlaceholder": "पहचान दस्तावेज़",
+      "relationship": "संबंध",
+      "relationshipPlaceholder": "संबंध चुनें",
+      "relationships": {
+        "parent": "माता/पिता",
+        "legal_tutor": "नियुक्त कानूनी अभिभावक",
+        "grandparent": "दादा-दादी/नाना-नानी",
+        "other": "अन्य"
+      },
+      "phone": "फ़ोन",
+      "phonePlaceholder": "अभिभावक का फ़ोन",
+      "email": "ईमेल",
+      "emailPlaceholder": "अभिभावक का ईमेल",
+      "address": "पता",
+      "addressPlaceholder": "अभिभावक का पता",
+      "notes": "टिप्पणियाँ",
+      "notesPlaceholder": "अतिरिक्त टिप्पणियाँ...",
+      "remove": "अभिभावक हटाएँ"
+    }
+  },
+  "patientDetail": {
+    "tabs": {
+      "summary": "सारांश",
+      "info": "जानकारी",
+      "clinical": "नैदानिक",
+      "odontogram": "दंत चार्ट",
+      "administration": "प्रशासन",
+      "history": "इतिहास",
+      "timeline": "गतिविधि",
+      "appointments": "अपॉइंटमेंट",
+      "budgets": "उपचार अनुमान",
+      "billing": "बिलिंग",
+      "payments": "भुगतान",
+      "documents": "दस्तावेज़",
+      "gallery": "गैलरी"
+    },
+    "historyPlaceholder": "नैदानिक टिप्पणियाँ भविष्य के संस्करण में उपलब्ध होंगी",
+    "noAppointments": "इस मरीज़ का कोई अपॉइंटमेंट नहीं है",
+    "scheduleAppointment": "अपॉइंटमेंट तय करें",
+    "noBudgets": "इस मरीज़ का कोई उपचार अनुमान नहीं है",
+    "createBudget": "उपचार अनुमान बनाएँ",
+    "viewAllBudgets": "सभी उपचार अनुमान देखें",
+    "activePlan": "सक्रिय योजना",
+    "noActivePlan": "कोई सक्रिय योजना नहीं",
+    "viewPlan": "योजना खोलें",
+    "createPlan": "योजना बनाएँ",
+    "nextAppointment": "अगला अपॉइंटमेंट",
+    "noUpcomingAppointments": "कोई आगामी अपॉइंटमेंट नहीं",
+    "openAppointment": "अपॉइंटमेंट खोलें",
+    "lastVisit": "अंतिम विज़िट",
+    "neverVisited": "कभी विज़िट नहीं किया",
+    "reschedule": "समय बदलें",
+    "balance": "शेष राशि",
+    "collect": "भुगतान लें",
+    "viewLedger": "खाता बही खोलें",
+    "noPayments": "कोई लेन-देन नहीं",
+    "diagnoses": "निदान",
+    "pending": "उपचार बाकी",
+    "noDiagnoses": "कोई लंबित निष्कर्ष नहीं",
+    "openOdontogram": "दंत चार्ट खोलें",
+    "medicalHistory": "चिकित्सा इतिहास",
+    "completeMedicalHistory": "कोई चिकित्सा इतिहास नहीं। एलर्जी, स्थितियाँ और दवाइयाँ दर्ज करने के लिए इसे पूरा करें।",
+    "editMedicalHistory": "चिकित्सा इतिहास संपादित करें",
+    "quickActions": "त्वरित कार्रवाइयाँ",
+    "edit": "संपादित करें",
+    "editPatient": "मरीज़ संपादित करें",
+    "noSummaryCards": "सारांश में कोई मॉड्यूल पंजीकृत नहीं है।",
+    "actions": {
+      "label": "कार्रवाइयाँ",
+      "newAppointment": "अपॉइंटमेंट",
+      "collect": "भुगतान लें",
+      "newNote": "टिप्पणी",
+      "newBudget": "उपचार अनुमान",
+      "uploadDocument": "दस्तावेज़"
+    }
+  },
+  "patientBilling": {
+    "totalBudgeted": "कुल अनुमानित",
+    "workInProgress": "प्रगति पर कार्य",
+    "workCompleted": "पूर्ण कार्य",
+    "totalInvoiced": "कुल चालान राशि",
+    "totalPaid": "कुल भुगतान",
+    "balancePending": "शेष बकाया",
+    "invoices": "चालान",
+    "createInvoice": "चालान बनाएँ",
+    "noInvoices": "इस मरीज़ का कोई चालान नहीं है",
+    "pending": "लंबित",
+    "totalDiscount": "छूट में"
+  },
+  "odontogram": {
+    "title": "दंत चार्ट",
+    "tooth": "दाँत",
+    "globals": {
+      "category": "पूरा मुँह",
+      "applied": "{name} योजना में जोड़ा गया",
+      "archPickerTitle": "\"{name}\" के लिए कौन-सा जबड़ा?",
+      "upperArch": "ऊपरी जबड़ा",
+      "lowerArch": "निचला जबड़ा",
+      "searchPlaceholder": "उपचार खोजें…"
+    },
+    "selectCondition": "स्थिति चुनें",
+    "readOnly": "केवल देखने के लिए",
+    "legend": "संकेत-सूची",
+    "statusLegend": "उपचार की स्थिति",
+    "toothPosition": "दाँत की स्थिति",
+    "displaced": "विस्थापित",
+    "rotated": "घूमा हुआ",
+    "dentition": {
+      "permanent": "स्थायी",
+      "deciduous": "दूध के दाँत",
+      "toggle": "दंत-पंक्ति बदलें"
+    },
+    "quadrants": {
+      "upper": "ऊपरी जबड़ा",
+      "lower": "निचला जबड़ा",
+      "upperRight": "ऊपर दायाँ",
+      "upperLeft": "ऊपर बायाँ",
+      "lowerRight": "नीचे दायाँ",
+      "lowerLeft": "नीचे बायाँ"
+    },
+    "surfaces": {
+      "M": "मेसियल",
+      "D": "डिस्टल",
+      "O": "ऑक्लूज़ल",
+      "V": "वेस्टिबुलर",
+      "L": "लिंगुअल"
+    },
+    "conditions": {
+      "healthy": "स्वस्थ",
+      "caries": "कैविटी (क्षय)",
+      "filling": "फिलिंग",
+      "crown": "क्राउन",
+      "missing": "अनुपस्थित",
+      "root_canal": "रूट कैनाल",
+      "implant": "इम्प्लांट",
+      "bridge_pontic": "ब्रिज पॉन्टिक",
+      "bridge_abutment": "ब्रिज एबटमेंट",
+      "extraction_indicated": "निकालना आवश्यक",
+      "sealant": "सीलेंट",
+      "fracture": "फ्रैक्चर"
+    },
+    "history": {
+      "title": "परिवर्तन इतिहास",
+      "noChanges": "कोई परिवर्तन दर्ज नहीं",
+      "changedBy": "परिवर्तनकर्ता",
+      "changeTypes": {
+        "created": "बनाया गया",
+        "general_condition": "सामान्य स्थिति",
+        "surface_update": "सतह अपडेट",
+        "note": "टिप्पणी"
+      }
+    },
+    "messages": {
+      "updated": "दंत चार्ट अपडेट किया गया",
+      "error": "दंत चार्ट अपडेट करने में त्रुटि",
+      "loadError": "दंत चार्ट लोड नहीं हो सका"
+    },
+    "actions": {
+      "save": "सहेजें",
+      "reset": "रीसेट करें",
+      "print": "प्रिंट करें"
+    },
+    "status": {
+      "existing": "मौजूदा",
+      "planned": "नियोजित"
+    },
+    "treatments": {
+      "title": "उपचार",
+      "addTreatment": "उपचार जोड़ें",
+      "selectStatus": "स्थिति चुनें",
+      "noTreatments": "कोई उपचार दर्ज नहीं",
+      "markPerformed": "किया गया चिह्नित करें",
+      "categories": {
+        "common": "सामान्य",
+        "restorative": "पुनर्स्थापन",
+        "other": "अन्य",
+        "diagnostico": "निदान",
+        "restauradora": "पुनर्स्थापन",
+        "cirugia": "शल्य चिकित्सा",
+        "endodoncia": "एंडोडॉन्टिक्स",
+        "ortodoncia": "ऑर्थोडॉन्टिक्स"
+      },
+      "types": {
+        "pulpitis": "पल्पाइटिस",
+        "caries": "कैविटी (क्षय)",
+        "incipient_caries": "प्रारंभिक कैविटी",
+        "pigmentation": "रंग-परिवर्तन",
+        "fracture": "फ्रैक्चर",
+        "missing": "अनुपस्थित",
+        "periapical_small": "पेरिएपिकल <2mm",
+        "periapical_medium": "पेरिएपिकल 2-4mm",
+        "periapical_large": "पेरिएपिकल >4mm",
+        "rotated": "घूमा हुआ",
+        "displaced": "विस्थापित",
+        "unerupted": "अनिकला हुआ",
+        "filling": "फिलिंग",
+        "filling_composite": "कम्पोज़िट फिलिंग",
+        "filling_amalgam": "अमलगम फिलिंग",
+        "filling_temporary": "अस्थायी फिलिंग",
+        "sealant": "सीलेंट",
+        "veneer": "विनियर",
+        "inlay": "इनले",
+        "overlay": "ओवरले",
+        "crown": "क्राउन",
+        "crown_on_implant": "इम्प्लांट पर क्राउन",
+        "provisional_crown_on_implant": "इम्प्लांट पर अस्थायी क्राउन",
+        "pontic": "पॉन्टिक",
+        "bridge_pontic": "ब्रिज पॉन्टिक",
+        "bridge_abutment": "ब्रिज एबटमेंट",
+        "extraction": "दाँत निकालना",
+        "implant": "इम्प्लांट",
+        "apicoectomy": "एपिकोएक्टॉमी",
+        "root_canal": "रूट कैनाल",
+        "root_canal_full": "पूर्ण रूट कैनाल",
+        "root_canal_two_thirds": "रूट कैनाल 2/3",
+        "root_canal_half": "रूट कैनाल 1/2",
+        "root_canal_overfill": "ओवरफिल्ड रूट कैनाल",
+        "post": "पोस्ट",
+        "bracket": "ब्रैकेट",
+        "tube": "ट्यूब",
+        "band": "बैंड",
+        "attachment": "अटैचमेंट",
+        "retainer": "रिटेनर",
+        "rotate": "घूमा हुआ",
+        "displace": "विस्थापित",
+        "splint": "स्प्लिंट",
+        "migrated": "सामान्य उपचार",
+        "other": "अन्य उपचार"
+      },
+      "treatmentAdded": "उपचार जोड़ा गया",
+      "treatmentPerformed": "उपचार किया गया चिह्नित हुआ",
+      "treatmentDeleted": "उपचार हटाया गया",
+      "status": {
+        "existing": "मौजूदा",
+        "planned": "नियोजित"
+      },
+      "deleteConfirm": "{name} (दाँत {tooth}) हटाएँ? इसे पूर्ववत नहीं किया जा सकता।"
+    },
+    "position": {
+      "displaced": "विस्थापित",
+      "rotated": "घूमा हुआ",
+      "normal": "सामान्य"
+    },
+    "views": {
+      "occlusal": "ऑक्लूज़ल दृश्य",
+      "lateral": "पार्श्व दृश्य",
+      "dual": "दोहरा दृश्य"
+    },
+    "selectSurfaces": "सतहें चुनें",
+    "selectedSurfaces": "चुनी गई सतहें",
+    "surfacesSelected": "सतह चुनी गई",
+    "instructions": {
+      "selectTreatment": "लागू करने के लिए उपचार चुनें",
+      "clickTooth": "लागू करने के लिए दाँत पर क्लिक करें"
+    },
+    "addToPlan": "योजना में जोड़ें",
+    "noPlan": "कोई योजना नहीं",
+    "createNewPlan": "नई योजना बनाएँ...",
+    "applyTo": "इस पर लागू करें",
+    "oneTooth": "1 दाँत",
+    "multipleTeeth": "कई दाँत",
+    "surfacePricingHint": "सतह के अनुसार मूल्य: {range}",
+    "toothNames": {
+      "centralIncisor": "केंद्रीय कृंतक",
+      "lateralIncisor": "पार्श्व कृंतक",
+      "canine": "रदनक (कैनाइन)",
+      "firstPremolar": "पहला प्रीमोलर",
+      "secondPremolar": "दूसरा प्रीमोलर",
+      "firstMolar": "पहला मोलर",
+      "secondMolar": "दूसरा मोलर",
+      "thirdMolar": "तीसरा मोलर"
+    },
+    "positions": {
+      "upper": "ऊपरी",
+      "lower": "निचला",
+      "left": "बायाँ",
+      "right": "दायाँ"
+    },
+    "tooltip": {
+      "clickToEdit": "संपादित करने के लिए क्लिक करें"
+    },
+    "planning": "योजना",
+    "diagnosisMode": "निदान",
+    "treatmentList": {
+      "title": "उपचार सूची",
+      "noTreatments": "कोई उपचार दर्ज नहीं"
+    },
+    "changeHistory": {
+      "title": "परिवर्तन इतिहास",
+      "noChanges": "कोई परिवर्तन दर्ज नहीं",
+      "treatmentAdded": "उपचार"
+    },
+    "timeline": {
+      "title": "टाइमलाइन",
+      "viewingDate": "देख रहे हैं: {date}",
+      "viewingHistory": "आप दंत चार्ट की पिछली स्थिति देख रहे हैं",
+      "returnToNow": "वर्तमान स्थिति पर लौटें",
+      "noHistory": "कोई पिछला इतिहास नहीं"
+    },
+    "multiTooth": {
+      "bridge": {
+        "label": "फिक्स्ड ब्रिज"
+      },
+      "splint": {
+        "label": "स्प्लिंट"
+      },
+      "veneers": {
+        "label": "कई विनियर"
+      },
+      "crowns": {
+        "label": "कई क्राउन"
+      },
+      "pillar": "स्तंभ",
+      "pontic": "पॉन्टिक",
+      "roleHint": "स्तंभ / पॉन्टिक बदलने के लिए दाँत पर क्लिक करें।",
+      "needPillar": "ब्रिज के लिए कम से कम एक स्तंभ दाँत आवश्यक है।",
+      "confirmHint": "आप {n} दाँतों वाला एक उपचार समूह बनाने जा रहे हैं।",
+      "willBePlanned": "समूह नियोजित के रूप में चिह्नित होगा।",
+      "willBeExisting": "समूह मौजूदा के रूप में दर्ज होगा।",
+      "hints": {
+        "range": "पहले दाँत पर क्लिक करें, फिर अंतिम दाँत पर",
+        "free": "दाँत जोड़ने या हटाने के लिए क्लिक करें"
+      },
+      "errors": {
+        "tooFew": "कम से कम {n} दाँत आवश्यक",
+        "tooMany": "अधिकतम {n} दाँतों की अनुमति है",
+        "sameArchRequired": "दाँत एक ही जबड़े में होने चाहिए"
+      },
+      "sectionLabel": "कई दाँतों वाले उपचार"
+    }
+  },
+  "clinical": {
+    "modes": {
+      "history": "इतिहास",
+      "diagnosis": "निदान",
+      "plans": "उपचार योजनाएँ",
+      "appointments": "अपॉइंटमेंट"
+    },
+    "history": {
+      "stateAt": "इस समय की स्थिति",
+      "changesOnDate": "इस तिथि के परिवर्तन",
+      "noChanges": "कोई परिवर्तन दर्ज नहीं"
+    },
+    "diagnosis": {
+      "registeredConditions": "निदान की गई स्थितियाँ",
+      "registerConditions": "स्थितियाँ दर्ज करें",
+      "noConditions": "कोई स्थिति दर्ज नहीं",
+      "startDiagnosis": "दाँत चुनें और मौजूदा स्थितियाँ जोड़ें",
+      "generalConditions": "सामान्य स्थितियाँ",
+      "readyToCreatePlan": "निदान पूरा हुआ?",
+      "createPlan": "उपचार योजना बनाएँ",
+      "continuePlan": "योजना \"{name}\" जारी रखें",
+      "selectPlan": "योजना चुनें",
+      "continue": "जारी रखें",
+      "odontogramTab": "ओडोंटोग्राम"
+    },
+    "plans": {
+      "title": "उपचार योजनाएँ",
+      "create": "नई योजना",
+      "backToList": "योजनाओं पर लौटें",
+      "treatments": "योजना के उपचार",
+      "addTreatment": "उपचार जोड़ें",
+      "total": "कुल",
+      "activate": "योजना सक्रिय करें",
+      "generateBudget": "उपचार अनुमान बनाएँ",
+      "empty": "कोई उपचार योजना नहीं",
+      "emptyDescription": "मरीज़ के उपचार व्यवस्थित करने के लिए योजना बनाएँ",
+      "createFirst": "पहली योजना बनाएँ",
+      "active": "सक्रिय योजनाएँ",
+      "drafts": "मसौदे",
+      "completed": "पूर्ण",
+      "closed": "बंद",
+      "other": "अन्य",
+      "noItems": "योजना में कोई उपचार नहीं",
+      "markComplete": "पूर्ण चिह्नित करें",
+      "removeItem": "योजना से हटाएँ",
+      "sessions": {
+        "progress": "{done}/{total} सत्र",
+        "markDone": "सत्र पूर्ण चिह्नित करें",
+        "cancel": "सत्र रद्द करें",
+        "markedDone": "सत्र पूर्ण चिह्नित हुआ",
+        "cancelled": "सत्र रद्द हुआ",
+        "untitled": "सत्र {n}"
+      },
+      "unknownTreatment": "उपचार",
+      "odontogram": "ओडोंटोग्राम",
+      "pending": "लंबित",
+      "dragToReorder": "क्रम बदलने के लिए खींचें",
+      "reorderHint": "खिसकाने के लिए Alt + तीर कुंजियाँ उपयोग करें",
+      "emptyDraft": {
+        "title": "उपचारों की योजना बनाएँ",
+        "step1": "नीचे की पट्टी से उपचार चुनें",
+        "step2": "ओडोंटोग्राम पर दाँत पर क्लिक करें",
+        "step3": "उपचार अनुमान और अपॉइंटमेंट बनाने के लिए योजना की पुष्टि करें"
+      },
+      "steps": {
+        "plan": "योजना",
+        "confirm": "पुष्टि",
+        "inProgress": "प्रगति पर"
+      },
+      "confirmCta": {
+        "titleWithItems": "योजना की पुष्टि करें",
+        "subtitleWithItems": "पुष्टि करने पर उपचार अनुमान बनाना और अपॉइंटमेंट तय करना संभव होगा।",
+        "empty": "योजना की पुष्टि के लिए कम से कम एक उपचार जोड़ें"
+      },
+      "ghostHint": "योजना की पुष्टि के बाद उपलब्ध",
+      "addedToPlan": "योजना में जोड़ा गया",
+      "addingToPlan": "इस योजना में जोड़ रहे हैं",
+      "cancelPlan": "योजना रद्द करें",
+      "locked": {
+        "title": "योजना लॉक है",
+        "subtitle": "उपचार अनुमान {number} जारी हो चुका है। उपचार बदलने के लिए 'फिर से खोलें' (यदि लंबित हो) या उपचार अनुमान पर 'पुनः बातचीत' का उपयोग करें।",
+        "viewBudget": "उपचार अनुमान देखें"
+      },
+      "removeItemConfirm": "{name} को इस योजना से हटाएँ? इसे पूर्ववत नहीं किया जा सकता।"
+    },
+    "tooth": "दाँत"
+  },
+  "appointments": {
+    "title": "शेड्यूल",
+    "checkin": {
+      "qr": "चेक-इन QR",
+      "hint": "मरीज़ चेक-इन के लिए यह कोड स्कैन करते हैं। बनने के 15 मिनट बाद यह समाप्त हो जाता है।",
+      "copyLink": "चेक-इन लिंक कॉपी करें",
+      "openTitle": "क्लिनिक चेक-इन",
+      "success": "आपका चेक-इन हो गया है। कृपया बैठ जाएँ।",
+      "invalid": "यह चेक-इन कोड अमान्य है या समाप्त हो चुका है। कृपया रिसेप्शन से नया कोड लें।"
+    },
+    "create": "नया अपॉइंटमेंट",
+    "edit": "अपॉइंटमेंट संपादित करें",
+    "today": "आज",
+    "tomorrow": "कल",
+    "yesterday": "बीता कल",
+    "week": "सप्ताह",
+    "prevWeek": "पिछला सप्ताह",
+    "nextWeek": "अगला सप्ताह",
+    "selectPatient": "मरीज़ चुनें",
+    "selectProfessional": "चिकित्सक चुनें",
+    "openPatientFile": "मरीज़ की फ़ाइल खोलें",
+    "patient": "मरीज़",
+    "professional": "चिकित्सक",
+    "cabinet": "कक्ष",
+    "date": "तिथि",
+    "time": "समय",
+    "startTime": "आरंभ समय",
+    "duration": "अवधि",
+    "treatmentType": "उपचार का प्रकार",
+    "treatments": "उपचार",
+    "addTreatment": "उपचार जोड़ें",
+    "selectTreatment": "उपचार चुनें",
+    "estimatedDuration": "अनुमानित अवधि",
+    "notes": "टिप्पणियाँ",
+    "hasNotes": "टिप्पणियाँ हैं",
+    "status": {
+      "label": "स्थिति",
+      "scheduled": "निर्धारित",
+      "confirmed": "पुष्ट",
+      "checked_in": "प्रतीक्षा कक्ष में",
+      "in_treatment": "कुर्सी पर",
+      "completed": "पूर्ण",
+      "cancelled": "रद्द",
+      "no_show": "नहीं आए"
+    },
+    "scheduled": "निर्धारित",
+    "confirmed": "पुष्ट",
+    "inProgress": "प्रगति पर",
+    "in_progress": "प्रगति पर",
+    "completed": "पूर्ण",
+    "cancelled": "रद्द",
+    "noShow": "नहीं आए",
+    "no_show": "नहीं आए",
+    "transitions": {
+      "confirmed": "पुष्ट चिह्नित करें",
+      "checked_in": "आगमन दर्ज करें",
+      "in_treatment": "कुर्सी पर ले जाएँ",
+      "completed": "अपॉइंटमेंट समाप्त करें",
+      "cancelled": "अपॉइंटमेंट रद्द करें",
+      "no_show": "'नहीं आए' चिह्नित करें"
+    },
+    "timer": {
+      "startsIn": "{minutes} मिनट में शुरू",
+      "startsInOverdue": "{minutes} मिनट देर",
+      "waiting": "{minutes} मिनट से प्रतीक्षा",
+      "inTreatment": "{elapsed}/{planned} मिनट",
+      "completedAt": "{time} पर समाप्त",
+      "cancelledAt": "रद्द",
+      "noShowAt": "नहीं आए"
+    },
+    "confirmTransitionTitle": "स्थिति परिवर्तन की पुष्टि करें",
+    "confirmCancelMessage": "यह अपॉइंटमेंट रद्द करें? परिवर्तन दर्ज किया जाएगा।",
+    "confirmNoShowMessage": "इस मरीज़ को 'नहीं आए' चिह्नित करें? परिवर्तन दर्ज किया जाएगा।",
+    "noteLabel": "टिप्पणी (वैकल्पिक)",
+    "transitionFailed": "अपॉइंटमेंट की स्थिति नहीं बदली जा सकी",
+    "when": "कब",
+    "whereWho": "कक्ष और चिकित्सक",
+    "followup": {
+      "title": "अपॉइंटमेंट के बाद की कार्रवाइयाँ"
+    },
+    "created": "अपॉइंटमेंट बनाया गया",
+    "saved": "अपॉइंटमेंट सहेजा गया",
+    "updated": "अपॉइंटमेंट अपडेट किया गया",
+    "conflict": "यह समय पहले से बुक है",
+    "cancel": "अपॉइंटमेंट रद्द करें",
+    "markCompleted": "पूर्ण चिह्नित करें",
+    "markNoShow": "नहीं आए",
+    "dailyView": "दिन",
+    "weeklyView": "सप्ताह",
+    "kanbanView": "कानबन",
+    "kanban": {
+      "upcoming": "आगामी",
+      "waiting": "प्रतीक्षा कक्ष",
+      "inChair": "कुर्सी पर",
+      "done": "पूर्ण",
+      "missed": "नहीं आए / रद्द",
+      "free": "खाली",
+      "inactive": "निष्क्रिय",
+      "empty": "कोई अपॉइंटमेंट नहीं",
+      "nextIn": "अगला {time} पर",
+      "subtitleCount": "{count} अपॉइंटमेंट",
+      "subtitleEmpty": "कोई अपॉइंटमेंट नहीं",
+      "subtitleWaiting": "{count} प्रतीक्षा में · औसत {avg} मिनट",
+      "subtitleInChair": "{busy} व्यस्त · {free} खाली"
+    },
+    "cabinetAssignment": {
+      "assignLater": "बाद में आवंटित करें",
+      "unassigned": "अनावंटित",
+      "assign": "कक्ष आवंटित करें",
+      "reassign": "कक्ष फिर से आवंटित करें",
+      "unassign": "कक्ष आवंटन हटाएँ",
+      "requiredForTreatment": "उपचार शुरू करने से पहले कक्ष आवंटित करें"
+    },
+    "professionals": {
+      "strip": "चिकित्सक",
+      "state": {
+        "free": "खाली",
+        "in_treatment": "कुर्सी पर",
+        "on_break": "विराम पर",
+        "off": "छुट्टी पर"
+      }
+    },
+    "noProfessionals": "कोई चिकित्सक कॉन्फ़िगर नहीं",
+    "overlapWarning": "समय टकराव मिला",
+    "overlapProfessional": "इस समय चिकित्सक के {count} अपॉइंटमेंट हैं",
+    "overlapCabinet": "इस समय कक्ष में {count} अपॉइंटमेंट हैं",
+    "selectDuration": "अवधि चुनें...",
+    "sendEmail": "ईमेल भेजें",
+    "sendConfirmationEmail": "पुष्टि भेजें",
+    "resendConfirmation": "पुष्टि फिर से भेजें",
+    "sendReminderEmail": "अनुस्मारक भेजें",
+    "emailSent": "ईमेल सफलतापूर्वक भेजा गया",
+    "automatic": "स्वचालित",
+    "selectPatientFirst": "लंबित उपचार देखने के लिए मरीज़ चुनें",
+    "noPendingTreatments": "कोई लंबित उपचार नहीं",
+    "createPlanFirst": "इस मरीज़ के लिए उपचार योजना बनाएँ",
+    "addTreatmentFromPlan": "योजना से उपचार जोड़ें",
+    "selectPendingTreatment": "लंबित उपचार चुनें",
+    "emptyDay": "इस दिन कोई अपॉइंटमेंट नहीं",
+    "noPatient": "कोई मरीज़ नहीं",
+    "freeSlots": {
+      "byProfessional": "चिकित्सक",
+      "byCabinet": "कक्ष",
+      "freeSuffix": "खाली",
+      "freeShort": "खाली",
+      "noFreeTime": "कोई खाली समय नहीं",
+      "tapToBook": "बुक करने के लिए टैप करें",
+      "tapToBookAria": "{time} पर {duration} का खाली स्लॉट",
+      "nextFreeAt": "अगला {time} पर",
+      "gapsAtLeast": "≥ {min} मिनट के {count} खाली अंतराल",
+      "minDuration": "न्यूनतम",
+      "noFreeSlots": "आज कोई खाली स्लॉट नहीं",
+      "clinicClosed": "क्लिनिक बंद है",
+      "professionalOff": "ड्यूटी पर नहीं",
+      "onBreak": "विराम पर"
+    },
+    "actionsMenu": "अपॉइंटमेंट कार्रवाइयाँ",
+    "sendMessage": "संदेश भेजें",
+    "resendConfirmationVia": "पुष्टि फिर से भेजें ({channel})",
+    "sendReminderVia": "अनुस्मारक भेजें ({channel})",
+    "sendCancellationVia": "रद्दीकरण सूचना भेजें ({channel})",
+    "loadError": "अपॉइंटमेंट लोड नहीं हो सके",
+    "planAwaitingBudget": "उपचार अनुमान स्वीकृति की प्रतीक्षा में"
+  },
+  "dashboard": {
+    "greetings": {
+      "morning": "सुप्रभात",
+      "afternoon": "नमस्कार",
+      "evening": "शुभ संध्या"
+    },
+    "welcome": "DentalPin में आपका स्वागत है",
+    "welcomeMessage": "अपना पहला मरीज़ बनाकर शुरुआत करें।",
+    "quickActions": {
+      "newAppointment": "नया अपॉइंटमेंट",
+      "newPatient": "नया मरीज़",
+      "search": "मरीज़ खोजें",
+      "searchPlaceholder": "नाम, फ़ोन या ईमेल से खोजें"
+    },
+    "timeline": {
+      "title": "आज",
+      "empty": "आज कोई अपॉइंटमेंट निर्धारित नहीं",
+      "now": "अभी",
+      "openSchedule": "शेड्यूल खोलें"
+    },
+    "todayKpi": {
+      "title": "आज के अपॉइंटमेंट",
+      "completed": "पूर्ण",
+      "inProgress": "प्रगति पर",
+      "upcoming": "आगामी",
+      "cancelled": "रद्द",
+      "noShow": "नहीं आए",
+      "empty": "आज कोई अपॉइंटमेंट नहीं"
+    },
+    "inClinic": {
+      "title": "अभी क्लिनिक में",
+      "inTreatment": "{n} कुर्सी पर",
+      "waiting": "{n} प्रतीक्षा में",
+      "empty": "क्लिनिक में कोई नहीं"
+    },
+    "unconfirmed": {
+      "title": "कल के अपुष्ट अपॉइंटमेंट",
+      "empty": "कल के सभी अपॉइंटमेंट पुष्ट हैं",
+      "confirm": "पुष्टि करें",
+      "confirmError": "पुष्टि नहीं हो सकी"
+    },
+    "overdue": {
+      "title": "बकाया भुगतान",
+      "daysOverdue": "{n} दिन से बकाया | {n} दिनों से बकाया",
+      "viewAll": "सभी देखें",
+      "empty": "कोई बकाया चालान नहीं"
+    },
+    "recent": {
+      "title": "हाल के मरीज़",
+      "empty": "अभी कोई मरीज़ नहीं"
+    },
+    "weekGlance": {
+      "title": "सप्ताह एक नज़र में",
+      "subtitle": "पिछले 7 दिन बनाम उससे पहले के 7 दिन",
+      "appointments": "अपॉइंटमेंट",
+      "completed": "पूर्ण",
+      "invoiced": "चालान बने",
+      "empty": "इस सप्ताह कोई डेटा नहीं"
+    }
+  },
+  "settings": {
+    "title": "सेटिंग्स",
+    "subtitle": "अपना क्लिनिक, टीम और मॉड्यूल प्रबंधित करें।",
+    "allCategories": "सभी श्रेणियाँ",
+    "navLabel": "सेटिंग्स श्रेणियाँ",
+    "attentionRequired": "ध्यान देना आवश्यक",
+    "categories": {
+      "general": {
+        "label": "सामान्य",
+        "description": "क्लिनिक प्रोफ़ाइल, ब्रांडिंग और समय क्षेत्र।"
+      },
+      "workspace": {
+        "label": "कार्यक्षेत्र",
+        "description": "कक्ष, खुलने का समय और उपलब्धता।"
+      },
+      "people": {
+        "label": "लोग",
+        "description": "उपयोगकर्ता, भूमिकाएँ और आमंत्रण।"
+      },
+      "clinical": {
+        "label": "नैदानिक",
+        "description": "कैटलॉग, उपचार डिफ़ॉल्ट और टेम्पलेट।"
+      },
+      "billing": {
+        "label": "बिलिंग और कर",
+        "description": "चालान श्रृंखला, VAT और कर अनुपालन।"
+      },
+      "communications": {
+        "label": "संचार",
+        "description": "सूचनाएँ, SMTP और टेम्पलेट।"
+      },
+      "integrations": {
+        "label": "एकीकरण",
+        "description": "बाहरी सेवाएँ और प्रदाता।"
+      },
+      "modules": {
+        "label": "मॉड्यूल",
+        "description": "मॉड्यूल इंस्टॉल, अपग्रेड और अनइंस्टॉल करें।"
+      },
+      "account": {
+        "label": "खाता",
+        "description": "आपकी प्रोफ़ाइल, पासवर्ड और भाषा।"
+      }
+    },
+    "supergroups": {
+      "clinicalSetup": {
+        "label": "नैदानिक सेटअप"
+      },
+      "clinicalManagement": {
+        "label": "नैदानिक प्रबंधन"
+      },
+      "financialConfiguration": {
+        "label": "वित्तीय कॉन्फ़िगरेशन"
+      },
+      "systemAddons": {
+        "label": "सिस्टम और ऐड-ऑन"
+      },
+      "myPreferences": {
+        "label": "मेरी प्राथमिकताएँ"
+      }
+    },
+    "search": {
+      "placeholder": "सेटिंग्स खोजें…",
+      "empty": "इस खोज से कुछ नहीं मिला।",
+      "navigate": "नेविगेट करें",
+      "open": "खोलें"
+    },
+    "locked": {
+      "title": "आपको इस अनुभाग की पहुँच नहीं है",
+      "description": "आवश्यक अनुमतियों के लिए क्लिनिक व्यवस्थापक से अनुरोध करें।"
+    },
+    "emptyCategory": {
+      "title": "कोई विकल्प उपलब्ध नहीं",
+      "description": "संगत मॉड्यूल सक्षम होने पर उनकी सेटिंग्स यहाँ दिखेंगी।"
+    },
+    "loadError": {
+      "description": "यह संपादक लोड नहीं हो सका। कुछ सेकंड बाद फिर कोशिश करें।"
+    },
+    "comingSoon": {
+      "title": "जल्द आ रहा है",
+      "subtitle": "हम इस अनुभाग पर काम कर रहे हैं। तब तक आप इसे API के माध्यम से प्रबंधित कर सकते हैं।"
+    },
+    "onboarding": {
+      "title": "अपने क्लिनिक का सेटअप पूरा करें",
+      "subtitle": "प्रारंभिक सेटअप पूरा करने के लिए {count} चरण बाकी हैं।",
+      "dismiss": "बंद करें",
+      "items": {
+        "clinicInfo": {
+          "label": "क्लिनिक प्रोफ़ाइल पूरी करें",
+          "description": "नाम, कर पहचान संख्या और पता उपचार अनुमान और चालान पर दिखते हैं।"
+        },
+        "cabinets": {
+          "label": "कम से कम एक कक्ष बनाएँ",
+          "description": "कक्ष के बिना आप अपॉइंटमेंट तय नहीं कर सकते।"
+        }
+      }
+    },
+    "cabinetsDescription": "कमरे या केबिन जहाँ मरीज़ों का उपचार होता है।",
+    "usersDescription": "इस क्लिनिक की पहुँच वाले खाते और उनकी भूमिकाएँ।",
+    "profileDescription": "इस क्लिनिक में आपकी व्यक्तिगत जानकारी।",
+    "clinic": "क्लिनिक",
+    "profile": "प्रोफ़ाइल",
+    "clinicName": "क्लिनिक का नाम",
+    "clinicInfo": "क्लिनिक जानकारी",
+    "clinicInfoDescription": "यह डेटा उपचार अनुमान और दस्तावेज़ों पर दिखेगा",
+    "taxId": "कर पहचान संख्या",
+    "legalName": "कानूनी नाम",
+    "legalNameHelp": "चालान के लिए संस्था का कानूनी नाम। क्लिनिक का नाम उपयोग करने के लिए खाली छोड़ें।",
+    "street": "पता",
+    "city": "शहर",
+    "postalCode": "पिन कोड",
+    "country": "देश",
+    "countryPlaceholder": "देश चुनें",
+    "countrySearchPlaceholder": "देश खोजें…",
+    "phone": "फ़ोन",
+    "timezone": "समय क्षेत्र",
+    "timezoneHelp": "सभी शेड्यूल और अपॉइंटमेंट इसी समय क्षेत्र में माने जाते हैं।",
+    "currency": "मुद्रा",
+    "currencyHelp": "उपचार अनुमान, चालान और कैटलॉग में उपयोग होने वाली क्लिनिक की मुद्रा।",
+    "editClinicInfo": "जानकारी संपादित करें",
+    "clinicUpdated": "क्लिनिक जानकारी अपडेट की गई",
+    "clinicUpdateError": "जानकारी अपडेट करने में त्रुटि",
+    "cabinets": "कक्ष",
+    "language": "भाषा",
+    "languageDescription": "अपनी पसंदीदा भाषा चुनें",
+    "users": "क्लिनिक उपयोगकर्ता",
+    "newUser": "नया उपयोगकर्ता",
+    "createUser": "उपयोगकर्ता बनाएँ",
+    "editUser": "उपयोगकर्ता संपादित करें",
+    "deleteUser": "उपयोगकर्ता हटाएँ",
+    "deleteUserConfirm": "क्या आप वाकई हटाना चाहते हैं",
+    "deleteUserNote": "उपयोगकर्ता इस क्लिनिक की पहुँच खो देगा, लेकिन उसका खाता नहीं हटाया जाएगा।",
+    "noUsers": "कोई उपयोगकर्ता पंजीकृत नहीं",
+    "youTag": "(आप)",
+    "userActive": "उपयोगकर्ता सक्रिय",
+    "isProfessional": "चिकित्सक के रूप में काम करते हैं",
+    "isProfessionalHelp": "शेड्यूल में दिखते हैं, कार्य-समय होता है और उपचार सौंपे जा सकते हैं। व्यवस्थापक भी चिकित्सक हो सकते हैं।",
+    "userInactiveNote": "(लॉग इन नहीं कर सकते)",
+    "saveChanges": "परिवर्तन सहेजें",
+    "noCabinets": "कोई कक्ष कॉन्फ़िगर नहीं",
+    "addCabinet": "जोड़ें",
+    "newCabinet": "नया कक्ष",
+    "editCabinet": "कक्ष संपादित करें",
+    "deleteCabinet": "कक्ष हटाएँ",
+    "deleteCabinetConfirm": "क्या आप वाकई यह कक्ष हटाना चाहते हैं",
+    "deleteCabinetNote": "इस कक्ष के मौजूदा अपॉइंटमेंट प्रभावित नहीं होंगे।",
+    "createCabinet": "कक्ष बनाएँ",
+    "roles": {
+      "admin": "व्यवस्थापक",
+      "dentist": "दंत चिकित्सक",
+      "hygienist": "हाइजीनिस्ट",
+      "assistant": "सहायक",
+      "receptionist": "रिसेप्शनिस्ट"
+    },
+    "errors": {
+      "loadUsers": "उपयोगकर्ता लोड करने में त्रुटि",
+      "createUser": "उपयोगकर्ता बनाने में त्रुटि",
+      "updateUser": "उपयोगकर्ता अपडेट करने में त्रुटि",
+      "deleteUser": "उपयोगकर्ता हटाने में त्रुटि",
+      "emailExists": "यह ईमेल पहले से मौजूद है",
+      "userNotFound": "उपयोगकर्ता नहीं मिला",
+      "operationNotAllowed": "यह कार्रवाई अनुमत नहीं है",
+      "invalidData": "अमान्य डेटा",
+      "inviteLink": "पहुँच लिंक नहीं बन सका"
+    },
+    "messages": {
+      "userCreated": "उपयोगकर्ता सफलतापूर्वक बनाया गया",
+      "userUpdated": "उपयोगकर्ता सफलतापूर्वक अपडेट किया गया",
+      "userDeleted": "उपयोगकर्ता को क्लिनिक से हटाया गया"
+    },
+    "modules": {
+      "title": "मॉड्यूल",
+      "subtitle": "क्लिनिक मॉड्यूल इंस्टॉल, अनइंस्टॉल और अपग्रेड करें।",
+      "description": "प्रबंधित करें कि आपके क्लिनिक में कौन-से मॉड्यूल सक्रिय हैं।",
+      "searchPlaceholder": "मॉड्यूल खोजें…",
+      "filterState": "स्थिति",
+      "deps": "निर्भरताएँ",
+      "noDeps": "कोई निर्भरता नहीं",
+      "state": {
+        "installed": "इंस्टॉल है",
+        "uninstalled": "इंस्टॉल नहीं",
+        "toInstall": "इंस्टॉल लंबित",
+        "toUpgrade": "अपग्रेड लंबित",
+        "toRemove": "हटाना लंबित",
+        "disabled": "अक्षम",
+        "error": "त्रुटि"
+      },
+      "category": {
+        "official": "आधिकारिक",
+        "community": "समुदाय"
+      },
+      "actions": {
+        "install": "इंस्टॉल करें",
+        "uninstall": "अनइंस्टॉल करें",
+        "upgrade": "अपग्रेड करें",
+        "apply": "परिवर्तन लागू करें",
+        "viewDetails": "विवरण",
+        "force": "ज़बरदस्ती अनइंस्टॉल करें"
+      },
+      "confirmInstall": {
+        "title": "{name} इंस्टॉल करें?",
+        "message": "मॉड्यूल इंस्टॉल के लिए निर्धारित होगा और परिवर्तन लागू करने के बाद सक्रिय होगा।",
+        "scheduled": "ये निर्भरताएँ भी इंस्टॉल होंगी:"
+      },
+      "confirmUninstall": {
+        "title": "{name} अनइंस्टॉल करें?",
+        "warning": "मॉड्यूल की तालिकाएँ हटा दी जाएँगी। पहले एक pg_dump बैकअप बनाया जाता है ताकि डेटा वापस पाया जा सके।",
+        "forceHint": "निर्भर मॉड्यूल की अनदेखी करता है। इसका उपयोग तभी करें जब आप जानते हों कि आप क्या कर रहे हैं।"
+      },
+      "confirmUpgrade": {
+        "title": "{name} अपग्रेड करें?",
+        "message": "परिवर्तन लागू होने पर मॉड्यूल डिस्क पर मौजूद मैनिफ़ेस्ट संस्करण में अपग्रेड होगा।"
+      },
+      "confirmApply": {
+        "title": "परिवर्तन लागू करें",
+        "message": "बैकएंड पुनः आरंभ होगा। लंबित कार्रवाइयाँ चलने के दौरान सत्र थोड़ी देर के लिए बाधित हो सकता है।"
+      },
+      "pending": {
+        "banner": "लंबित परिवर्तन:",
+        "apply": "परिवर्तन लागू करें"
+      },
+      "doctor": {
+        "banner": "मॉड्यूल सिस्टम में समस्याएँ मिलीं।",
+        "orphans": "अनाथ मॉड्यूल",
+        "missingDeps": "अनुपलब्ध निर्भरताएँ",
+        "manifestErrors": "मैनिफ़ेस्ट त्रुटियाँ",
+        "errored": "त्रुटि वाले मॉड्यूल"
+      },
+      "detail": {
+        "state": "स्थिति",
+        "category": "श्रेणी",
+        "installedAt": "इंस्टॉल का समय",
+        "lastChange": "अंतिम परिवर्तन",
+        "baseRevision": "आधार संशोधन",
+        "appliedRevision": "लागू संशोधन",
+        "manifest": "पूरा मैनिफ़ेस्ट",
+        "errorMessage": "त्रुटि संदेश",
+        "operationLog": "कार्रवाई लॉग",
+        "noOperations": "कोई कार्रवाई दर्ज नहीं।"
+      },
+      "restart": {
+        "inProgress": "बैकएंड पुनः आरंभ हो रहा है…",
+        "done": "परिवर्तन लागू हुए",
+        "failed": "परिवर्तन लागू नहीं हो सके",
+        "timeout": "बैकएंड की प्रतीक्षा का समय समाप्त"
+      },
+      "toasts": {
+        "scheduled": "कार्रवाई निर्धारित हुई। पूरा करने के लिए परिवर्तन लागू करें।",
+        "applied": "परिवर्तन सफलतापूर्वक लागू हुए।"
+      }
+    },
+    "invite": {
+      "linkTitle": "पहुँच लिंक",
+      "linkHelp": "यह लिंक {name} को भेजें ताकि वे अपना पासवर्ड चुन सकें। यह {date} को समाप्त होगा और केवल एक बार काम करेगा।",
+      "copy": "लिंक कॉपी करें",
+      "copied": "लिंक कॉपी किया गया",
+      "whatsapp": "WhatsApp से भेजें",
+      "shareText": "नमस्ते {name}, यह आपकी DentalPin पहुँच है। इसे खोलें और अपना पासवर्ड चुनें: {url}",
+      "secretNote": "इसे पासवर्ड की तरह सुरक्षित रखें: लिंक वाला कोई भी व्यक्ति इस खाते में साइन इन कर सकता है।",
+      "passwordOptionalHelp": "WhatsApp या ईमेल से भेजने योग्य पहुँच लिंक बनाने के लिए खाली छोड़ें।",
+      "passwordOptionalPlaceholder": "वैकल्पिक",
+      "createAndLink": "बनाएँ और लिंक तैयार करें",
+      "rowAction": "पहुँच लिंक",
+      "setPasswordTitle": "अपना पासवर्ड चुनें",
+      "setPasswordSubtitle": "आपको DentalPin में आमंत्रित किया गया है। साइन इन करने के लिए अपना पासवर्ड बनाएँ।",
+      "setPasswordSubmit": "सहेजें और साइन इन करें",
+      "invalidToken": "यह लिंक अमान्य है या पहले ही उपयोग हो चुका है। अपने क्लिनिक व्यवस्थापक से नया लिंक माँगें।"
+    }
+  },
+  "selector": {
+    "recentPatients": "हाल के मरीज़",
+    "commonTreatments": "सामान्य उपचार",
+    "noRecentPatients": "कोई हाल का मरीज़ नहीं",
+    "noCommonTreatments": "कोई सामान्य उपचार नहीं",
+    "noMatches": "कोई मेल नहीं",
+    "typeToSearch": "खोजने के लिए टाइप करें..."
+  },
+  "density": {
+    "switchToCompact": "सघन दृश्य",
+    "switchToComfortable": "आरामदायक दृश्य"
+  },
+  "patientSelector": {
+    "createOption": "मरीज़ \"{query}\" बनाएँ",
+    "createOptionEmpty": "नया मरीज़ बनाएँ",
+    "newBadge": "नया",
+    "duplicateWarning": "{name} इस फ़ोन नंबर के साथ पहले से मौजूद हैं",
+    "useExisting": "इस मरीज़ का उपयोग करें",
+    "createForm": {
+      "title": "नया मरीज़",
+      "back": "खोज पर लौटें",
+      "firstName": "पहला नाम",
+      "lastName": "उपनाम",
+      "phone": "फ़ोन",
+      "phoneHint": "आप इसे बाद में मरीज़ के रिकॉर्ड में जोड़ सकते हैं।",
+      "submit": "बनाएँ और चुनें",
+      "cancel": "रद्द करें",
+      "errorGeneric": "मरीज़ नहीं बनाया जा सका। फिर कोशिश करें।"
+    }
+  },
+  "common": {
+    "save": "सहेजें",
+    "add": "जोड़ें",
+    "cancel": "रद्द करें",
+    "clear": "साफ़ करें",
+    "close": "बंद करें",
+    "delete": "हटाएँ",
+    "comingSoon": "जल्द आ रहा है",
+    "edit": "संपादित करें",
+    "change": "परिवर्तन | परिवर्तन",
+    "back": "पीछे",
+    "loading": "लोड हो रहा है...",
+    "error": "त्रुटि",
+    "success": "सफल",
+    "completed": "पूर्ण",
+    "retry": "फिर कोशिश करें",
+    "refresh": "रीफ़्रेश करें",
+    "hide": "छिपाएँ",
+    "forbidden": "पहुँच अस्वीकृत",
+    "confirm": "पुष्टि करें",
+    "yes": "हाँ",
+    "no": "नहीं",
+    "actions": "कार्रवाइयाँ",
+    "viewDetails": "विवरण देखें",
+    "previous": "पिछला",
+    "next": "अगला",
+    "previousYear": "पिछला वर्ष",
+    "nextYear": "अगला वर्ष",
+    "undo": "पूर्ववत करें",
+    "undone": "पूर्ववत किया गया",
+    "added": "जोड़ा गया",
+    "removed": "हटाया गया",
+    "page": "पृष्ठ {current} / {total}",
+    "noData": "कोई डेटा नहीं",
+    "noValue": "कोई मान नहीं",
+    "noResults": "कोई परिणाम नहीं",
+    "search": "खोजें...",
+    "selectAll": "सभी",
+    "deselectAll": "कोई नहीं",
+    "all": "सभी",
+    "required": "यह फ़ील्ड आवश्यक है",
+    "invalidEmail": "अमान्य ईमेल",
+    "networkError": "कनेक्शन त्रुटि",
+    "serverError": "सर्वर त्रुटि",
+    "notFound": "नहीं मिला",
+    "offline": "ऑफ़लाइन — डेटा अद्यतन न हो सकता है",
+    "inactive": "निष्क्रिय",
+    "name": "नाम",
+    "color": "रंग",
+    "firstName": "पहला नाम",
+    "lastName": "उपनाम",
+    "email": "ईमेल",
+    "password": "पासवर्ड",
+    "passwordPlaceholder": "कम से कम 8 अक्षर",
+    "role": "भूमिका",
+    "readOnly": "केवल पढ़ने के लिए",
+    "createdBy": "द्वारा बनाया गया",
+    "date": "तिथि",
+    "upload": "अपलोड करें",
+    "uploading": "अपलोड हो रहा है…",
+    "maxFileSize": "10 MB तक",
+    "durationMinutes": "{value} मिनट",
+    "days": {
+      "sunday": "रविवार",
+      "monday": "सोमवार",
+      "tuesday": "मंगलवार",
+      "wednesday": "बुधवार",
+      "thursday": "गुरुवार",
+      "friday": "शुक्रवार",
+      "saturday": "शनिवार"
+    },
+    "now": "अभी",
+    "today": "आज",
+    "tomorrow": "कल",
+    "yesterday": "बीता कल",
+    "copied": "क्लिपबोर्ड पर कॉपी किया गया",
+    "copy": "कॉपी करें",
+    "copyFailed": "कॉपी नहीं हो सका",
+    "download": "डाउनलोड करें",
+    "remove": "निकालें",
+    "default": "डिफ़ॉल्ट"
+  },
+  "cabinet": {
+    "toast": {
+      "created": "कक्ष बनाया गया",
+      "updated": "कक्ष अपडेट किया गया",
+      "deleted": "कक्ष हटाया गया",
+      "duplicateName": "इस नाम का कक्ष पहले से मौजूद है",
+      "notFound": "कक्ष नहीं मिला",
+      "createFailed": "कक्ष बनाने में विफल",
+      "updateFailed": "कक्ष अपडेट करने में विफल",
+      "deleteFailed": "कक्ष हटाने में विफल"
+    }
+  },
+  "professionals": {
+    "toast": {
+      "loadFailed": "चिकित्सक लोड करने में विफल"
+    }
+  },
+  "lists": {
+    "empty": {
+      "title": "कोई परिणाम नहीं",
+      "description": "सभी रिकॉर्ड देखने के लिए फ़िल्टर बदलें या हटाएँ।"
+    },
+    "resultCount": "{total} में से {shown}",
+    "filter": {
+      "title": "फ़िल्टर",
+      "more": "फ़िल्टर",
+      "moreCount": "फ़िल्टर ({count})",
+      "clear": "साफ़ करें",
+      "apply": "लागू करें",
+      "date": "तिथियाँ",
+      "dateFrom": "से",
+      "dateTo": "तक",
+      "searchPlaceholder": "खोजें...",
+      "noResults": "कोई मेल नहीं",
+      "all": "सभी"
+    },
+    "sort": {
+      "label": "क्रमबद्ध करें",
+      "asc": "आरोही",
+      "desc": "अवरोही"
+    },
+    "datePreset": {
+      "today": "आज",
+      "last7": "पिछले 7 दिन",
+      "last30": "पिछले 30 दिन",
+      "thisMonth": "इस महीने",
+      "thisQuarter": "तिमाही",
+      "thisYear": "वर्ष",
+      "custom": "कस्टम"
+    },
+    "truncatedWarning": "परिणाम सीमित किए गए (>1000)। फ़िल्टर और सटीक करें।"
+  },
+  "shared": {
+    "totals": "कुल योग",
+    "info": "विवरण",
+    "moreActions": "और कार्रवाइयाँ",
+    "criticalBanner": {
+      "dismiss": "चेतावनी बंद करें"
+    },
+    "collect": {
+      "amountLabel": "प्राप्त की जाने वाली राशि",
+      "methodLabel": "भुगतान का तरीका",
+      "dateLabel": "भुगतान की तिथि",
+      "today": "आज",
+      "quickFull": "पूरी राशि",
+      "optionalDetails": "संदर्भ या टिप्पणी जोड़ें (वैकल्पिक)",
+      "referenceLabel": "संदर्भ",
+      "referencePlaceholder": "उदा. POS लेन-देन संख्या",
+      "notesLabel": "आंतरिक टिप्पणियाँ",
+      "submit": "भुगतान लें",
+      "cancel": "रद्द करें"
+    }
+  },
+  "validation": {
+    "required": "यह फ़ील्ड आवश्यक है",
+    "email": "मान्य ईमेल दर्ज करें",
+    "minLength": "कम से कम {min} अक्षर",
+    "maxLength": "अधिकतम {max} अक्षर",
+    "phone": "मान्य फ़ोन नंबर दर्ज करें"
+  },
+  "time": {
+    "minutes": "{n} मिनट",
+    "hours": "{n} घंटा | {n} घंटे"
+  },
+  "calendar": {
+    "today": "आज",
+    "prevWeek": "पिछला सप्ताह",
+    "nextWeek": "अगला सप्ताह",
+    "monday": "सोमवार",
+    "tuesday": "मंगलवार",
+    "wednesday": "बुधवार",
+    "thursday": "गुरुवार",
+    "friday": "शुक्रवार",
+    "saturday": "शनिवार",
+    "sunday": "रविवार"
+  },
+  "catalog": {
+    "title": "उपचार कैटलॉग",
+    "description": "उपचार, मूल्य और कर कॉन्फ़िगरेशन प्रबंधित करें",
+    "items": "उपचार",
+    "categories": "श्रेणियाँ",
+    "noItems": "कैटलॉग में कोई उपचार नहीं",
+    "searchPlaceholder": "कोड या नाम से खोजें...",
+    "code": "कोड",
+    "name": "नाम",
+    "category": "श्रेणी",
+    "price": "मूल्य",
+    "defaultPrice": "मूल मूल्य",
+    "costPrice": "लागत मूल्य",
+    "currency": "मुद्रा",
+    "vatType": "VAT प्रकार",
+    "vatRate": "VAT %",
+    "duration": "अवधि",
+    "system": "सिस्टम",
+    "newItem": "नया उपचार",
+    "editItem": "उपचार संपादित करें",
+    "deleteItem": "उपचार हटाएँ",
+    "deleteItemConfirm": "क्या आप वाकई उपचार \"{name}\" हटाना चाहते हैं?",
+    "deleteItemNote": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता।",
+    "pricing": "मूल्य निर्धारण",
+    "scheduling": "शेड्यूलिंग",
+    "characteristics": "विशेषताएँ",
+    "scope": "दायरा",
+    "requiresAppointment": "अपॉइंटमेंट आवश्यक",
+    "isDiagnostic": "नैदानिक है",
+    "requiresSurfaces": "सतहें आवश्यक",
+    "materialNotes": "सामग्री टिप्पणियाँ",
+    "materialNotesPlaceholder": "आवश्यक सामग्री या आपूर्ति...",
+    "active": "सक्रिय",
+    "vatTypes": {
+      "exempt": "कर-मुक्त",
+      "reduced": "घटी हुई दर",
+      "standard": "मानक"
+    },
+    "scopeTypes": {
+      "tooth": "दाँत",
+      "multi_tooth": "कई दाँत",
+      "global_mouth": "पूरा मुँह",
+      "global_arch": "प्रति जबड़ा"
+    },
+    "pricingStrategy": {
+      "label": "मूल्य निर्धारण रणनीति",
+      "help": "लागू करते समय उपचार का मूल्य कैसे गिना जाता है",
+      "flat": "स्थिर (एकल मूल्य)",
+      "per_tooth": "प्रति दाँत (× दाँतों की संख्या)",
+      "per_surface": "प्रति सतह (स्तरीय)",
+      "per_role": "प्रति भूमिका (ब्रिज: स्तंभ/पॉन्टिक)"
+    },
+    "surfacePrices": {
+      "title": "सतहों की संख्या के अनुसार मूल्य",
+      "help": "1–5 सतहों के लिए मूल्य तय करें। दाँत पर सतहें चुनने पर संबंधित स्तर का मूल्य लगता है। जो स्तर खाली हों, उनके लिए निकटतम निचला भरा हुआ स्तर उपयोग होता है।",
+      "tier": "{n} सतह"
+    },
+    "sessions": {
+      "title": "सत्र (आंशिक बिलिंग)",
+      "help": "वे नामित चरण तय करें जिनमें यह उपचार दिया और बिल किया जाता है (उदा. क्राउन: 'इंप्रेशन' + 'फ़िटिंग')। योग मूल मूल्य के बराबर होना चाहिए।",
+      "label": "लेबल",
+      "labelPlaceholder": "उदा. इंप्रेशन",
+      "price": "राशि",
+      "add": "सत्र जोड़ें",
+      "sumStatus": "योग {sum} € · कुल {total} €"
+    },
+    "categoryCreated": "श्रेणी बनाई गई",
+    "categoryUpdated": "श्रेणी अपडेट की गई",
+    "categoryDeleted": "श्रेणी हटाई गई",
+    "categoryKeyExists": "इस कुंजी वाली श्रेणी पहले से मौजूद है",
+    "categoryCreateFailed": "श्रेणी बनाने में त्रुटि",
+    "categoryUpdateFailed": "श्रेणी अपडेट करने में त्रुटि",
+    "categoryDeleteFailed": "श्रेणी हटाने में त्रुटि",
+    "cannotModifySystemCategory": "सिस्टम श्रेणी बदली नहीं जा सकती",
+    "cannotDeleteSystemCategory": "सिस्टम श्रेणी हटाई नहीं जा सकती",
+    "itemCreated": "उपचार बनाया गया",
+    "itemUpdated": "उपचार अपडेट किया गया",
+    "itemDeleted": "उपचार हटाया गया",
+    "itemCodeExists": "इस कोड वाला उपचार पहले से मौजूद है",
+    "categoryNotFound": "श्रेणी नहीं मिली",
+    "itemCreateFailed": "उपचार बनाने में त्रुटि",
+    "itemUpdateFailed": "उपचार अपडेट करने में त्रुटि",
+    "itemDeleteFailed": "उपचार हटाने में त्रुटि",
+    "cannotModifySystemItem": "सिस्टम उपचार बदला नहीं जा सकता",
+    "systemItemHint": "सिस्टम उपचार: कोड, श्रेणी, मूल्य निर्धारण रणनीति और दायरा लॉक हैं; मूल्य, लागत, VAT, नाम, अवधि, सत्र और स्थिति संपादित की जा सकती है।",
+    "cannotDeleteSystemItem": "सिस्टम उपचार हटाया नहीं जा सकता",
+    "odontogramMapping": "ओडोंटोग्राम प्रदर्शन",
+    "odontogramMappingDescription": "इस उपचार को किसी ओडोंटोग्राम प्रदर्शन प्रकार से जोड़ें ताकि यह मरीज़ के चार्ट में दिखे।",
+    "odontogramType": "उपचार का प्रकार",
+    "clinicalCategory": "नैदानिक श्रेणी",
+    "noOdontogramMapping": "कोई संबंध नहीं",
+    "odontogramMappingHint": "चुने गए प्रकार के आधार पर उपचार की विशेषताएँ अपने-आप समायोजित होंगी।",
+    "selectCategory": "श्रेणी चुनें...",
+    "selectVatType": "VAT प्रकार चुनें...",
+    "selectScope": "दायरा चुनें...",
+    "selectOdontogramType": "प्रकार चुनें...",
+    "selectClinicalCategory": "श्रेणी चुनें...",
+    "expandAll": "सभी खोलें",
+    "collapseAll": "सभी समेटें",
+    "unnamed": "बिना शीर्षक",
+    "activeHint": "उपचार अनुमान और योजनाओं के लिए उपलब्ध",
+    "tabs": {
+      "general": "सामान्य",
+      "pricing": "मूल्य निर्धारण",
+      "scheduling": "शेड्यूलिंग",
+      "clinical": "नैदानिक"
+    },
+    "onboarding": {
+      "label": "उपचार कैटलॉग",
+      "description": "उपचार के बिना कोई उपचार अनुमान या योजना नहीं बन सकती। डिफ़ॉल्ट कैटलॉग लोड करें या अपना बनाएँ।",
+      "createOwn": "मैं अपना बनाऊँगा/बनाऊँगी"
+    },
+    "manageCategories": "श्रेणियाँ प्रबंधित करें",
+    "newCategory": "नई श्रेणी",
+    "categoryName": "नाम",
+    "categoryNamePlaceholder": "उदा. ऑर्थोडॉन्टिक्स",
+    "categoryOrder": "क्रम",
+    "noCategories": "कोई श्रेणी नहीं। एक बनाएँ या डिफ़ॉल्ट कैटलॉग लोड करें।",
+    "inactiveCategories": "निष्क्रिय श्रेणियाँ",
+    "reactivate": "फिर से सक्रिय करें",
+    "deleteCategoryConfirm": "श्रेणी निष्क्रिय कर दी जाएगी; उसके उपचार बने रहेंगे। जारी रखें?",
+    "systemCategoryNote": "सिस्टम श्रेणियाँ संपादित या हटाई नहीं जा सकतीं।",
+    "loadDefaults": "डिफ़ॉल्ट कैटलॉग लोड करें",
+    "loadDefaultsHint": "क्लिनिक के देश के लिए VAT प्रकार, श्रेणियाँ और संदर्भ उपचार। केवल अनुपलब्ध पंक्तियाँ जोड़ी जाती हैं।",
+    "defaultsLoaded": "कैटलॉग लोड हुआ: {categories} श्रेणियाँ, {items} उपचार, {vat_types} VAT प्रकार",
+    "defaultsFailed": "डिफ़ॉल्ट कैटलॉग लोड नहीं हो सका",
+    "loadError": "उपचार कैटलॉग लोड नहीं हो सका"
+  },
+  "placeholders": {
+    "selectRole": "भूमिका चुनें..."
+  },
+  "vatTypes": {
+    "title": "VAT प्रकार",
+    "description": "उपचारों के लिए उपलब्ध VAT प्रकार प्रबंधित करें",
+    "name": "नाम",
+    "rate": "दर",
+    "default": "डिफ़ॉल्ट",
+    "system": "सिस्टम",
+    "active": "सक्रिय",
+    "new": "नया VAT प्रकार",
+    "edit": "VAT प्रकार संपादित करें",
+    "delete": "VAT प्रकार हटाएँ",
+    "setAsDefault": "डिफ़ॉल्ट बनाएँ",
+    "showInactive": "निष्क्रिय दिखाएँ",
+    "noItems": "कोई VAT प्रकार कॉन्फ़िगर नहीं",
+    "namePlaceholder": "उदा.: घटी हुई दर (10%)",
+    "systemNote": "सिस्टम VAT प्रकारों में केवल डिफ़ॉल्ट स्थिति बदली जा सकती है।",
+    "deleteConfirm": "क्या आप वाकई यह VAT प्रकार हटाना चाहते हैं",
+    "deleteNote": "इस VAT प्रकार का उपयोग करने वाले उपचार प्रभावित नहीं होंगे।",
+    "created": "VAT प्रकार बनाया गया",
+    "updated": "VAT प्रकार अपडेट किया गया",
+    "deleted": "VAT प्रकार हटाया गया",
+    "loadError": "VAT प्रकार लोड करने में त्रुटि",
+    "createError": "VAT प्रकार बनाने में त्रुटि",
+    "updateError": "VAT प्रकार अपडेट करने में त्रुटि",
+    "deleteError": "VAT प्रकार हटाने में त्रुटि"
+  },
+  "treatmentPlans": {
+    "title": "उपचार योजनाएँ",
+    "description": "मरीज़ों की उपचार योजनाएँ प्रबंधित करें",
+    "new": "नई योजना",
+    "create": "उपचार योजना बनाएँ",
+    "edit": "योजना संपादित करें",
+    "view": "योजना देखें",
+    "delete": "योजना हटाएँ",
+    "noItems": "इस योजना में कोई उपचार नहीं है",
+    "noPlans": "इस मरीज़ की कोई उपचार योजना नहीं है",
+    "noPlansHint": "दंत चार्ट पर उपचार चिह्नित करें और उन्हें व्यवस्थित करने के लिए योजना बनाएँ",
+    "createFirst": "पहली योजना बनाएँ",
+    "empty": "कोई उपचार योजना पंजीकृत नहीं",
+    "emptyAction": "पहली योजना बनाएँ",
+    "searchPlaceholder": "संख्या, मरीज़ या शीर्षक से खोजें...",
+    "planNumber": "संख्या",
+    "patient": "मरीज़",
+    "untitled": "बिना शीर्षक",
+    "untitledPlan": "बिना शीर्षक योजना",
+    "itemCount": "{count} उपचार | {count} उपचार",
+    "treatments": "उपचार",
+    "progress": "प्रगति",
+    "pendingTreatments": "लंबित उपचार",
+    "completedTreatments": "पूर्ण उपचार",
+    "linkedBudget": "जुड़ा हुआ उपचार अनुमान",
+    "unknownTreatment": "अज्ञात उपचार",
+    "globalTreatment": "सामान्य उपचार",
+    "activePlan": "सक्रिय योजना",
+    "otherPlans": "अन्य योजनाएँ",
+    "viewAllPlans": "योजना इतिहास देखें",
+    "activate": "सक्रिय करें",
+    "generateBudget": "उपचार अनुमान बनाएँ",
+    "scheduleAppointment": "अपॉइंटमेंट तय करें",
+    "status": {
+      "draft": "मसौदा",
+      "pending": "लंबित",
+      "active": "सक्रिय",
+      "completed": "पूर्ण",
+      "closed": "बंद",
+      "archived": "संग्रहीत"
+    },
+    "fields": {
+      "title": "शीर्षक",
+      "titlePlaceholder": "उदा.: संपूर्ण मौखिक पुनर्वास",
+      "assignedProfessional": "नियत चिकित्सक",
+      "selectProfessional": "चिकित्सक चुनें",
+      "diagnosisNotes": "निदान टिप्पणियाँ",
+      "diagnosisNotesPlaceholder": "निदान और नैदानिक अवलोकन...",
+      "internalNotes": "आंतरिक टिप्पणियाँ",
+      "internalNotesPlaceholder": "केवल स्टाफ़ को दिखने वाली टिप्पणियाँ..."
+    },
+    "modal": {
+      "subtitle": "मरीज़ के उपचार व्यवस्थित करें",
+      "titleHint": "वैकल्पिक - योजना पहचानने में मदद करता है",
+      "additionalNotes": "अतिरिक्त टिप्पणियाँ",
+      "quickTip": "योजना बनाने के बाद आप ओडोंटोग्राम या कैटलॉग से उपचार जोड़ सकते हैं।",
+      "createButton": "योजना बनाएँ"
+    },
+    "actions": {
+      "activate": "योजना सक्रिय करें",
+      "confirm": "योजना की पुष्टि करें",
+      "complete": "पूर्ण चिह्नित करें",
+      "generateBudget": "उपचार अनुमान बनाएँ",
+      "linkBudget": "उपचार अनुमान जोड़ें",
+      "syncBudget": "उपचार अनुमान सिंक करें",
+      "cancelPlan": "योजना रद्द करें",
+      "reopen": "फिर से खोलें",
+      "close": "योजना बंद करें",
+      "reactivate": "योजना फिर से सक्रिय करें",
+      "logContact": "संपर्क दर्ज करें"
+    },
+    "items": {
+      "title": "उपचार",
+      "add": "उपचार जोड़ें",
+      "addSelected": "{count} उपचार जोड़ें | {count} उपचार जोड़ें",
+      "remove": "उपचार हटाएँ",
+      "empty": "इस योजना में कोई उपचार नहीं",
+      "assignedProfessional": "नियत दंत चिकित्सक",
+      "assignedProfessionalAriaLabel": "इस उपचार के लिए नियत दंत चिकित्सक बदलें",
+      "useUsersPlanDoctor": "योजना के दंत चिकित्सक का उपयोग करें",
+      "noProfessional": "कोई दंत चिकित्सक नियत नहीं",
+      "inactiveProfessional": "निष्क्रिय चिकित्सक",
+      "cascadeReassign": {
+        "title": "लंबित उपचार फिर से सौंपें?",
+        "body": "आपने योजना के दंत चिकित्सक बदल दिए हैं। {count} लंबित उपचार {previousName} को सौंपे गए थे। क्या उन्हें भी नए दंत चिकित्सक को सौंपें?",
+        "confirm": "हाँ, लंबित उपचार फिर से सौंपें",
+        "cancel": "नहीं, जैसे हैं वैसे रहने दें"
+      }
+    },
+    "filters": {
+      "allStatuses": "सभी स्थितियाँ"
+    },
+    "confirmations": {
+      "delete": "यह उपचार योजना हटाएँ?",
+      "completeItem": "उपचार को पूर्ण चिह्नित करें?",
+      "completeItemDescription": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता।",
+      "activateTitle": "उपचार योजना की पुष्टि करें?",
+      "activateDescription": "पुष्टि करने पर उपचार अनुमान बनाना और अपॉइंटमेंट तय करना संभव होगा। इसके बाद भी आप उपचार जोड़ या पूरे कर सकते हैं।",
+      "unlockTitle": "योजना बदलें?",
+      "unlockIntro": "इस योजना का उपचार अनुमान {number} पहले ही जारी हो चुका है। इसे बदलने के लिए मौजूदा उपचार अनुमान रद्द करना होगा।",
+      "unlockConsequence1": "उपचार अनुमान {number} रद्द हो जाएगा और मरीज़ के लिए मान्य नहीं रहेगा।",
+      "unlockConsequence2": "आप योजना में उपचार जोड़, संपादित या हटा सकेंगे।",
+      "unlockConsequence3": "परिवर्तन पूरे होने पर आपको नया उपचार अनुमान बनाना होगा।",
+      "unlockConsequence4": "रद्द उपचार अनुमान अनुरेखण के लिए इतिहास में रखा जाता है।",
+      "cancelTitle": "उपचार योजना रद्द करें?",
+      "cancelDescription": "योजना रद्द स्थिति में चली जाएगी और जो नियोजित उपचार नहीं किए गए, वे ओडोंटोग्राम से हटा दिए जाएँगे। योजना का इतिहास रखा जाता है।"
+    },
+    "messages": {
+      "created": "उपचार योजना बनाई गई",
+      "updated": "उपचार योजना अपडेट की गई",
+      "deleted": "उपचार योजना हटाई गई",
+      "itemsAdded": "उपचार योजना में जोड़े गए"
+    },
+    "itemCompleted": "उपचार पूर्ण हुआ",
+    "budgetGenerated": "उपचार अनुमान बनाया गया",
+    "created": "उपचार योजना बनाई गई",
+    "updated": "उपचार योजना अपडेट की गई",
+    "statusUpdated": "योजना की स्थिति अपडेट की गई",
+    "deleted": "उपचार योजना हटाई गई",
+    "budgetLinked": "उपचार अनुमान योजना से जोड़ा गया",
+    "budgetSynced": "उपचार अनुमान सिंक किया गया",
+    "errors": {
+      "load": "उपचार योजनाएँ लोड करने में त्रुटि",
+      "create": "उपचार योजना बनाने में त्रुटि",
+      "update": "उपचार योजना अपडेट करने में त्रुटि",
+      "delete": "उपचार योजना हटाने में त्रुटि"
+    },
+    "notes": {
+      "title": "नैदानिक टिप्पणियाँ",
+      "empty": "अभी तक कोई नैदानिक टिप्पणी नहीं",
+      "addNote": "टिप्पणी जोड़ें",
+      "edit": "टिप्पणी संपादित करें",
+      "delete": "टिप्पणी हटाएँ",
+      "attachments": "संलग्नक",
+      "author": "लेखक",
+      "createdAt": "बनाया गया",
+      "templatePicker": "टेम्पलेट",
+      "bodyPlaceholder": "नैदानिक टिप्पणी लिखें…",
+      "saved": "टिप्पणी सहेजी गई",
+      "deleted": "टिप्पणी हटाई गई"
+    },
+    "completionNudge": {
+      "title": "उपचार पूरा करें",
+      "description": "पूर्ण चिह्नित करने से पहले इस विज़िट में क्या हुआ, इसकी नैदानिक टिप्पणी जोड़ें।",
+      "completeWithNote": "टिप्पणी के साथ पूरा करें",
+      "skip": "टिप्पणी छोड़ें",
+      "skipConfirm": "नैदानिक टिप्पणी के बिना पूरा करें?"
+    },
+    "visitNote": {
+      "title": "विज़िट की नैदानिक टिप्पणी",
+      "save": "टिप्पणी सहेजें",
+      "empty": "अभी तक कोई विज़िट टिप्पणी नहीं",
+      "saved": "टिप्पणी सहेजी गई"
+    },
+    "clinicalNotesTab": "नैदानिक टिप्पणियाँ",
+    "filterBy": {
+      "plan": "योजना",
+      "item": "उपचार",
+      "visit": "विज़िट",
+      "all": "सभी"
+    },
+    "byPlan": {
+      "empty": "इस मरीज़ की किसी भी उपचार योजना में कोई नैदानिक टिप्पणी नहीं है",
+      "planNotesLabel": "योजना टिप्पणियाँ",
+      "noNotesForTreatment": "इस उपचार के लिए कोई टिप्पणी नहीं",
+      "noNotesForPlan": "इस योजना में कोई टिप्पणी नहीं"
+    },
+    "noteTemplates": {
+      "endo": {
+        "singleVisit": "एंडोडॉन्टिक्स — एक विज़िट",
+        "multiVisit": "एंडोडॉन्टिक्स — कई विज़िट"
+      },
+      "perio": {
+        "scaling": "स्केलिंग / रूट प्लानिंग"
+      },
+      "implant": {
+        "placement": "इम्प्लांट लगाना"
+      },
+      "general": {
+        "followUp": "सामान्य फ़ॉलो-अप"
+      }
+    },
+    "closureReason": {
+      "rejected_by_patient": "मरीज़ ने अस्वीकार किया",
+      "expired": "समाप्त",
+      "cancelled_by_clinic": "क्लिनिक ने रद्द किया",
+      "patient_abandoned": "मरीज़ ने बीच में छोड़ा",
+      "other": "अन्य कारण"
+    },
+    "confirmed": "योजना की पुष्टि हुई",
+    "reopened": "योजना फिर से खोली गई",
+    "closed": "योजना बंद की गई",
+    "reactivated": "योजना फिर से सक्रिय की गई",
+    "contactLogged": "संपर्क दर्ज किया गया",
+    "modals": {
+      "confirm": {
+        "title": "योजना की पुष्टि करें",
+        "description": "योजना 'लंबित' में चली जाएगी और एक मसौदा उपचार अनुमान अपने-आप बनेगा। पुष्टि के बाद उपचार केवल पढ़ने योग्य हो जाते हैं।",
+        "submit": "योजना की पुष्टि करें"
+      },
+      "reopen": {
+        "title": "संपादन के लिए योजना फिर से खोलें",
+        "description": "इससे मौजूदा उपचार अनुमान रद्द हो जाएगा। योजना 'मसौदा' में लौटेगी ताकि आप उपचार संपादित कर सकें।",
+        "submit": "फिर से खोलें"
+      },
+      "close": {
+        "title": "योजना बंद करें",
+        "description": "बंद करने का कारण चुनें। लंबित उपचार संग्रहीत कर दिए जाएँगे।",
+        "reasonLabel": "कारण",
+        "noteLabel": "टिप्पणी (वैकल्पिक)",
+        "submit": "योजना बंद करें"
+      },
+      "reactivate": {
+        "title": "बंद योजना फिर से सक्रिय करें",
+        "description": "{date} को «{reason}» कारण से बंद की गई योजना फिर से सक्रिय होगी। जारी रखें?",
+        "submit": "फिर से सक्रिय करें"
+      },
+      "contactLog": {
+        "title": "संपर्क दर्ज करें",
+        "description": "योजना की स्थिति बदले बिना संपर्क दर्ज करता है।",
+        "channelLabel": "माध्यम",
+        "noteLabel": "टिप्पणी (वैकल्पिक)",
+        "submit": "दर्ज करें"
+      }
+    },
+    "newBudgetHint": {
+      "text": "इस मरीज़ की योजना {plan} का कोई उपचार अनुमान नहीं है। दोनों जुड़े रहें, इसके लिए योजना से उपचार अनुमान बनाएँ।",
+      "cta": "योजना खोलें"
+    },
+    "viewDraftBudget": "उपचार अनुमान {number} (मसौदा)",
+    "followup": {
+      "subtitle": "इस विज़िट के ये नियोजित उपचार किए गए के रूप में चिह्नित नहीं हुए:",
+      "markPerformed": "किया गया चिह्नित करें",
+      "marked": "किया गया चिह्नित: {count}।"
+    }
+  },
+  "pipeline": {
+    "title": "योजना पाइपलाइन",
+    "description": "उपचार पाइपलाइन प्रबंधित करें।",
+    "tabs": {
+      "por_presupuestar": "अनुमान बनाना है",
+      "esperando_paciente": "मरीज़ की प्रतीक्षा",
+      "sin_cita": "कोई अपॉइंटमेंट नहीं",
+      "sin_proxima_cita": "अगला अपॉइंटमेंट नहीं",
+      "cerrados": "बंद",
+      "listado": "सूची"
+    },
+    "row": {
+      "patient": "मरीज़",
+      "plan": "योजना",
+      "budget": "उपचार अनुमान",
+      "items": "उपचार",
+      "daysIn": "{n} दिन से इस स्थिति में",
+      "nextAppt": "अगला अपॉइंटमेंट",
+      "noNextAppt": "कोई अपॉइंटमेंट नहीं",
+      "noBudget": "कोई उपचार अनुमान नहीं"
+    },
+    "actions": {
+      "open": "खोलें",
+      "send": "भेजें",
+      "remind": "फिर से भेजें",
+      "schedule": "तय करें",
+      "scheduleNext": "अगला तय करें",
+      "reactivate": "फिर से सक्रिय करें",
+      "call": "कॉल करें",
+      "whatsapp": "WhatsApp",
+      "markContacted": "संपर्क हुआ चिह्नित करें",
+      "acceptInClinic": "क्लिनिक में स्वीकार करें"
+    },
+    "search": "नाम या संख्या से खोजें…",
+    "empty": "इस टैब में कोई पंक्ति नहीं।",
+    "loading": "लोड हो रहा है…"
+  },
+  "budget": {
+    "title": "उपचार अनुमान",
+    "description": "मरीज़ों के उपचार अनुमान प्रबंधित करें",
+    "new": "नया उपचार अनुमान",
+    "edit": "उपचार अनुमान संपादित करें",
+    "view": "उपचार अनुमान देखें",
+    "delete": "उपचार अनुमान हटाएँ",
+    "duplicate": "नया संस्करण बनाएँ",
+    "noItems": "कोई उपचार अनुमान नहीं",
+    "empty": "कोई उपचार अनुमान पंजीकृत नहीं",
+    "emptyAction": "पहला उपचार अनुमान बनाएँ",
+    "linkedToPlan": "योजना से जुड़ा",
+    "searchPlaceholder": "संख्या या मरीज़ से खोजें...",
+    "budgetNumber": "संख्या",
+    "version": "संस्करण",
+    "treatmentPlan": "उपचार योजना",
+    "patient": "मरीज़",
+    "selectPatient": "मरीज़ चुनें",
+    "selectPatientHint": "इस उपचार अनुमान के लिए मरीज़ खोजें और चुनें",
+    "professional": "चिकित्सक",
+    "validFrom": "से मान्य",
+    "validUntil": "तक मान्य",
+    "validUntilHint": "बिना समाप्ति तिथि वाले उपचार अनुमान के लिए खाली छोड़ें",
+    "noExpiry": "कोई समाप्ति तिथि नहीं",
+    "createAndAddItems": "बनाएँ और उपचार जोड़ें",
+    "subtotal": "उप-योग",
+    "totalDiscount": "कुल छूट",
+    "totalTax": "कुल VAT",
+    "total": "कुल",
+    "globalDiscount": "समग्र छूट",
+    "discountType": "छूट का प्रकार",
+    "discountValue": "छूट का मान",
+    "percentage": "प्रतिशत",
+    "absolute": "निश्चित राशि",
+    "internalNotes": "आंतरिक टिप्पणियाँ",
+    "internalNotesPlaceholder": "केवल स्टाफ़ को दिखने वाली टिप्पणियाँ...",
+    "patientNotes": "मरीज़ के लिए टिप्पणियाँ",
+    "patientNotesPlaceholder": "उपचार अनुमान पर दिखने वाली टिप्पणियाँ...",
+    "status": {
+      "title": "स्थिति",
+      "draft": "मसौदा",
+      "sent": "भेजा गया",
+      "partially_accepted": "आंशिक रूप से स्वीकृत",
+      "accepted": "स्वीकृत",
+      "in_progress": "प्रगति पर",
+      "completed": "पूर्ण",
+      "invoiced": "चालान जारी",
+      "rejected": "अस्वीकृत",
+      "expired": "समाप्त",
+      "cancelled": "रद्द"
+    },
+    "itemStatus": {
+      "pending": "लंबित",
+      "accepted": "स्वीकृत",
+      "rejected": "अस्वीकृत",
+      "in_progress": "प्रगति पर",
+      "completed": "पूर्ण"
+    },
+    "actions": {
+      "send": "मरीज़ को भेजें",
+      "accept": "उपचार अनुमान स्वीकार करें",
+      "acceptPartial": "चुने हुए स्वीकार करें",
+      "reject": "अस्वीकार करें",
+      "cancel": "उपचार अनुमान रद्द करें",
+      "duplicate": "नया संस्करण बनाएँ",
+      "downloadPdf": "PDF डाउनलोड करें",
+      "previewPdf": "PDF पूर्वावलोकन",
+      "startTreatment": "उपचार शुरू करें",
+      "completeTreatment": "उपचार पूरा करें",
+      "renegotiate": "पुनः बातचीत",
+      "acceptInClinic": "क्लिनिक में स्वीकार करें",
+      "resend": "फिर से भेजें",
+      "sendReminder": "अनुस्मारक भेजें",
+      "setPublicCode": "एक्सेस कोड सेट करें",
+      "unlockPublic": "पहुँच अनलॉक करें"
+    },
+    "items": {
+      "title": "उपचार",
+      "add": "उपचार जोड़ें",
+      "remove": "उपचार हटाएँ",
+      "edit": "उपचार संपादित करें",
+      "empty": "इस उपचार अनुमान में कोई उपचार नहीं",
+      "singular": "उपचार",
+      "plural": "उपचार",
+      "addFromCatalog": "कैटलॉग से जोड़ें",
+      "addFromOdontogram": "दंत चार्ट से जोड़ें",
+      "treatment": "उपचार",
+      "searchCatalog": "उपचार कैटलॉग में खोजें...",
+      "unitPrice": "इकाई मूल्य",
+      "quantity": "मात्रा",
+      "discount": "छूट",
+      "lineTotal": "पंक्ति का योग",
+      "tooth": "दाँत",
+      "toothNumber": "दाँत संख्या",
+      "toothNumberPlaceholder": "उदा.: 11, 21, 36...",
+      "surfaces": "सतहें",
+      "notes": "टिप्पणियाँ",
+      "notesPlaceholder": "इस उपचार के बारे में टिप्पणियाँ...",
+      "managedByPlan": "इस उपचार अनुमान की पंक्तियाँ उपचार योजना {plan} से प्रबंधित होती हैं।"
+    },
+    "signature": {
+      "title": "डिजिटल हस्ताक्षर",
+      "viewAction": "हस्ताक्षर देखें",
+      "signedBy": "हस्ताक्षरकर्ता",
+      "signedAt": "हस्ताक्षर की तिथि",
+      "methodLabel": "तरीका",
+      "relationshipLabel": "संबंध",
+      "documentHash": "दस्तावेज़ हैश (SHA-256)",
+      "hashHint": "हैश {short} — हस्ताक्षर को इसी PDF से बाँधता है। कोई भी बदलाव इसे अमान्य कर देगा।",
+      "downloadSignedPdf": "हस्ताक्षरित PDF डाउनलोड करें",
+      "downloadError": "हस्ताक्षरित PDF डाउनलोड नहीं हो सका।",
+      "notSigned": "इस उपचार अनुमान पर अभी तक कोई हस्ताक्षर नहीं लिया गया है।",
+      "method": {
+        "drawn": "हस्तलिखित हस्ताक्षर",
+        "clickAccept": "क्लिक से स्वीकृति",
+        "external": "बाहरी प्रदाता"
+      },
+      "email": "ईमेल",
+      "relationship": "मरीज़ से संबंध",
+      "patient": "मरीज़",
+      "guardian": "कानूनी अभिभावक",
+      "representative": "प्रतिनिधि",
+      "accept": "मैं उपचार अनुमान की शर्तें स्वीकार करता/करती हूँ",
+      "signHere": "यहाँ हस्ताक्षर करें",
+      "clear": "हस्ताक्षर मिटाएँ",
+      "loadError": "हस्ताक्षर की स्थिति लोड नहीं हो सकी"
+    },
+    "history": {
+      "title": "परिवर्तन इतिहास",
+      "noChanges": "कोई परिवर्तन दर्ज नहीं",
+      "actions": {
+        "created": "उपचार अनुमान बनाया गया",
+        "updated": "उपचार अनुमान अपडेट किया गया",
+        "status_changed": "स्थिति बदली गई",
+        "item_added": "उपचार जोड़ा गया",
+        "item_removed": "उपचार हटाया गया",
+        "signed": "उपचार अनुमान पर हस्ताक्षर हुए",
+        "sent": "उपचार अनुमान भेजा गया",
+        "duplicated": "नया संस्करण बनाया गया",
+        "deleted": "उपचार अनुमान हटाया गया",
+        "item_treatment_started": "उपचार शुरू हुआ",
+        "item_treatment_completed": "उपचार पूर्ण हुआ"
+      }
+    },
+    "versions": {
+      "title": "संस्करण",
+      "current": "वर्तमान",
+      "viewVersion": "संस्करण देखें"
+    },
+    "confirmations": {
+      "send": "उपचार अनुमान मरीज़ को भेजें?",
+      "sendDescription": "उपचार अनुमान भेजा गया चिह्नित होगा।",
+      "reject": "उपचार अनुमान अस्वीकार करें?",
+      "rejectDescription": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता।",
+      "cancel": "उपचार अनुमान रद्द करें?",
+      "cancelDescription": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता।",
+      "resend": "इस उपचार अनुमान का नया संस्करण बनाएँ? जुड़ी हुई उपचार योजना नए संस्करण का अनुसरण करेगी।",
+      "delete": "उपचार अनुमान हटाएँ?",
+      "deleteDescription": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता।"
+    },
+    "send": {
+      "description": "आप उपचार अनुमान ईमेल या WhatsApp से भेज सकते हैं, या इसे मैन्युअल रूप से भेजा गया (प्रिंट करके या हाथ में दिया) चिह्नित कर सकते हैं।",
+      "sendByEmail": "ईमेल से भेजें",
+      "willSendTo": "इन्हें भेजा जाएगा",
+      "noPatientEmail": "मरीज़ का कोई ईमेल दर्ज नहीं",
+      "customMessage": "विशेष संदेश (वैकल्पिक)",
+      "customMessagePlaceholder": "मरीज़ के लिए संदेश जोड़ें...",
+      "manualNote": "कोई संदेश भेजे बिना उपचार अनुमान भेजा गया चिह्नित होगा।",
+      "sendEmail": "ईमेल भेजें",
+      "markAsSent": "भेजा गया चिह्नित करें",
+      "sendByWhatsapp": "WhatsApp से भेजें",
+      "sendWhatsapp": "WhatsApp भेजें",
+      "willSendToPhone": "WhatsApp से इन्हें भेजा जाएगा"
+    },
+    "messages": {
+      "created": "उपचार अनुमान बनाया गया",
+      "updated": "उपचार अनुमान अपडेट किया गया",
+      "deleted": "उपचार अनुमान हटाया गया",
+      "sent": "उपचार अनुमान भेजा गया",
+      "sentByEmail": "उपचार अनुमान ईमेल से भेजा गया",
+      "sentManually": "उपचार अनुमान भेजा गया चिह्नित हुआ",
+      "accepted": "उपचार अनुमान स्वीकृत",
+      "rejected": "उपचार अनुमान अस्वीकृत",
+      "cancelled": "उपचार अनुमान रद्द",
+      "duplicated": "नया संस्करण बनाया गया",
+      "resent": "पिछले उपचार अनुमान से नया संस्करण बनाया गया",
+      "itemAdded": "उपचार जोड़ा गया",
+      "itemUpdated": "उपचार अपडेट किया गया",
+      "itemRemoved": "उपचार हटाया गया",
+      "treatmentStarted": "उपचार शुरू हुआ",
+      "treatmentCompleted": "उपचार पूर्ण हुआ",
+      "sentByWhatsapp": "उपचार अनुमान WhatsApp से भेजा गया"
+    },
+    "errors": {
+      "load": "उपचार अनुमान लोड करने में त्रुटि",
+      "create": "उपचार अनुमान बनाने में त्रुटि",
+      "update": "उपचार अनुमान अपडेट करने में त्रुटि",
+      "delete": "उपचार अनुमान हटाने में त्रुटि",
+      "send": "उपचार अनुमान भेजने में त्रुटि",
+      "accept": "उपचार अनुमान स्वीकार करने में त्रुटि",
+      "reject": "उपचार अनुमान अस्वीकार करने में त्रुटि",
+      "notFound": "उपचार अनुमान नहीं मिला",
+      "onlyDraft": "केवल मसौदा उपचार अनुमान संपादित किए जा सकते हैं"
+    },
+    "filters": {
+      "allStatuses": "सभी स्थितियाँ",
+      "status": "स्थिति",
+      "paymentStatus": "स्थिति",
+      "professional": "चिकित्सक",
+      "validity": "वैधता",
+      "validityValid": "मान्य",
+      "validityExpiringSoon": "7 दिनों में समाप्त",
+      "validityExpired": "समाप्त",
+      "dateFrom": "से",
+      "dateTo": "तक",
+      "showExpired": "समाप्त दिखाएँ",
+      "advanced": "उन्नत फ़िल्टर",
+      "clear": "फ़िल्टर हटाएँ"
+    },
+    "sortFields": {
+      "createdAt": "बनाया गया",
+      "validUntil": "तक मान्य",
+      "total": "कुल",
+      "status": "स्थिति",
+      "budgetNumber": "संख्या"
+    },
+    "validity": {
+      "expired": "समाप्त",
+      "expiresIn": "{days} दिन में समाप्त"
+    },
+    "pdf": {
+      "generating": "PDF बन रहा है...",
+      "downloadError": "PDF डाउनलोड करने में त्रुटि"
+    },
+    "modals": {
+      "renegotiate": {
+        "title": "उपचार अनुमान पर पुनः बातचीत",
+        "description": "इससे मौजूदा उपचार अनुमान रद्द हो जाएगा और योजना 'मसौदा' में फिर से खुलेगी ताकि आप उपचार समायोजित कर सकें।",
+        "submit": "पुनः बातचीत"
+      },
+      "acceptInClinic": {
+        "title": "क्लिनिक में उपचार अनुमान स्वीकार करें",
+        "description": "मरीज़ की स्वीकृति दर्ज करें। आप टैबलेट पर हस्ताक्षर ले सकते हैं (वैकल्पिक)।",
+        "signerLabel": "हस्ताक्षरकर्ता का पूरा नाम",
+        "captureSignature": "हस्ताक्षर लें",
+        "submit": "स्वीकृत चिह्नित करें"
+      },
+      "setPublicCode": {
+        "title": "एक्सेस कोड सेट करें",
+        "description": "इस मरीज़ का न फ़ोन दर्ज है न जन्म तिथि। 4-6 अंकों का कोड सेट करें और मरीज़ को मौखिक रूप से बताएँ। कोड को ईमेल में शामिल न करें।",
+        "codeLabel": "कोड (4-6 अंक)",
+        "submit": "कोड सहेजें"
+      }
+    },
+    "publicLink": {
+      "action": "लिंक साझा करें",
+      "title": "मरीज़ लिंक",
+      "help": "यह लिंक कॉपी करें और WhatsApp या ईमेल से मरीज़ के साथ साझा करें। उपचार अनुमान देखने से पहले उनसे एक सत्यापन जानकारी पूछी जाएगी।",
+      "copy": "लिंक कॉपी करें",
+      "copied": "कॉपी हो गया!",
+      "whatsapp": "WhatsApp में खोलें",
+      "whatsappNoPhone": "मरीज़ का कोई फ़ोन दर्ज नहीं",
+      "whatsappGreeting": "नमस्ते {name}, यह आपका उपचार अनुमान है:",
+      "whatsappGreetingFallback": "नमस्ते, यह आपका उपचार अनुमान है:",
+      "preview": "पूर्वावलोकन",
+      "statusSent": "भेजा गया",
+      "statusAccepted": "स्वीकृत",
+      "statusRejected": "अस्वीकृत",
+      "statusExpired": "समाप्त"
+    },
+    "public": {
+      "title": "आपका उपचार अनुमान",
+      "intro": "{clinic} ने आपको यह उपचार अनुमान भेजा है। उपचार देखें और एक विकल्प चुनें।",
+      "greeting": "नमस्ते, {name}",
+      "subtitle": "आपकी व्यक्तिगत उपचार योजना",
+      "budgetNumber": "उपचार अनुमान",
+      "issuedOn": "{date} को जारी",
+      "items": "शामिल उपचार",
+      "tooth": "दाँत {number}",
+      "subtotal": "उप-योग",
+      "discount": "छूट",
+      "tax": "VAT",
+      "total": "कुल",
+      "validUntil": "{date} तक मान्य",
+      "trustSecure": "सुरक्षित कनेक्शन",
+      "trustEncrypted": "एन्क्रिप्टेड डेटा",
+      "trustSignature": "कानूनी रूप से मान्य हस्ताक्षर",
+      "needHelp": "सहायता चाहिए? क्लिनिक को कॉल करें",
+      "noteFromClinic": "क्लिनिक का संदेश",
+      "callClinic": "क्लिनिक को कॉल करें",
+      "emailClinic": "ईमेल भेजें",
+      "cta_accept": "स्वीकार करें और हस्ताक्षर करें",
+      "cta_reject": "रुचि नहीं है",
+      "expired": "यह उपचार अनुमान समाप्त हो गया है। कृपया क्लिनिक से संपर्क करें।",
+      "locked": "बहुत अधिक प्रयासों के कारण पहुँच लॉक हो गई है। कृपया क्लिनिक को कॉल करें।",
+      "already_accepted": "आप यह उपचार अनुमान पहले ही स्वीकार कर चुके हैं। आपका पहला अपॉइंटमेंट तय करने के लिए क्लिनिक आपसे संपर्क करेगा।",
+      "already_rejected": "आपने यह उपचार अनुमान अस्वीकार कर दिया है। यदि आपका विचार बदले, तो कृपया क्लिनिक को कॉल करें।",
+      "download": {
+        "signedPdf": "हस्ताक्षरित PDF डाउनलोड करें",
+        "notSigned": "इस उपचार अनुमान पर अभी कोई हस्ताक्षर संलग्न नहीं है।",
+        "error": "PDF डाउनलोड नहीं हो सका। कृपया फिर कोशिश करें।",
+        "reauthIntro": "सुरक्षा के लिए, हस्ताक्षरित PDF डाउनलोड करने हेतु कृपया अपनी पहचान फिर से सत्यापित करें।"
+      },
+      "verify": {
+        "title": "अपनी पहचान सत्यापित करें",
+        "intro": "आपकी जानकारी की सुरक्षा के लिए, उपचार अनुमान देखने से पहले एक जानकारी की पुष्टि करें।",
+        "phone_last4_label": "आपके फ़ोन के अंतिम 4 अंक",
+        "dob_label": "आपकी जन्म तिथि",
+        "manual_code_label": "क्लिनिक द्वारा दिया गया कोड",
+        "submit": "जारी रखें",
+        "invalid": "गलत जानकारी। कृपया फिर कोशिश करें।",
+        "locked": "बहुत अधिक प्रयासों के कारण पहुँच लॉक हो गई है। कृपया क्लिनिक को कॉल करें।",
+        "rate_limited": "बहुत अधिक प्रयास। 15 मिनट प्रतीक्षा करें।"
+      },
+      "accept": {
+        "title": "स्वीकार करें और हस्ताक्षर करें",
+        "signerLabel": "आपका पूरा नाम",
+        "signatureLabel": "यहाँ हस्ताक्षर करें (वैकल्पिक)",
+        "signatureClear": "मिटाएँ",
+        "consent": "मैं यह उपचार अनुमान स्वीकार करता/करती हूँ और बताए गए उपचार की अनुमति देता/देती हूँ।",
+        "submit": "स्वीकृति की पुष्टि करें",
+        "success": "हो गया! आपका पहला अपॉइंटमेंट तय करने के लिए क्लिनिक आपसे संपर्क करेगा।"
+      },
+      "reject": {
+        "title": "रुचि नहीं है",
+        "intro": "यह उपचार अनुमान आपके लिए क्यों नहीं है?",
+        "reasonLabel": "कारण",
+        "noteLabel": "टिप्पणी (वैकल्पिक)",
+        "submit": "अस्वीकृति की पुष्टि करें",
+        "success": "हमने क्लिनिक को सूचित कर दिया है।",
+        "reasons": {
+          "price": "मूल्य",
+          "time": "समय की कमी",
+          "second_opinion": "दूसरी राय",
+          "other": "अन्य कारण"
+        }
+      }
+    },
+    "settings": {
+      "title": "उपचार अनुमान सेटिंग्स",
+      "description": "समाप्ति, अनुस्मारक और सार्वजनिक लिंक सत्यापन कॉन्फ़िगर करें।",
+      "cards": {
+        "expiry": {
+          "title": "समाप्ति और स्वतः बंद",
+          "description": "उपचार अनुमान समाप्त होने से पहले कितने समय तक मान्य रहता है और लंबित योजनाएँ कब अपने-आप बंद हों।"
+        },
+        "reminders": {
+          "title": "स्वचालित अनुस्मारक",
+          "description": "उत्तर न देने वाले मरीज़ों को 7 दिन / 14 दिन के ईमेल अनुस्मारक चालू/बंद करें।"
+        },
+        "publicLink": {
+          "title": "सार्वजनिक लिंक और सत्यापन",
+          "description": "मरीज़ के लिए उपचार अनुमान लिंक की सुरक्षा कॉन्फ़िगर करें।"
+        }
+      },
+      "expiry": {
+        "validityDays": "उपचार अनुमान की वैधता (दिन)",
+        "validityHelp": "इतने दिनों तक उत्तर न मिलने पर उपचार अनुमान 'समाप्त' हो जाता है (सीमा 7-180)।",
+        "autoCloseDays": "योजना अपने-आप बंद होने से पहले के दिन",
+        "autoCloseHelp": "समाप्त उपचार अनुमान वाली योजनाएँ, जिन पर इतने दिनों तक कोई कार्रवाई न हो, 'बंद' में चली जाती हैं (सीमा 7-180)।",
+        "save": "सहेजें"
+      },
+      "reminders": {
+        "enabled": "7 और 14 दिन पर स्वचालित अनुस्मारक भेजें",
+        "enabledHelp": "चालू होने पर सिस्टम लंबित उपचार अनुमान के बारे में मरीज़ को ईमेल करता है। बंद होने पर रिसेप्शन मैन्युअल रूप से फ़ॉलो-अप करता है।",
+        "save": "सहेजें"
+      },
+      "publicLink": {
+        "authDisabled": "सार्वजनिक लिंक सत्यापन बंद करें",
+        "authDisabledHelp": "चालू होने पर मरीज़ केवल लिंक से उपचार अनुमान देख सकते हैं — फ़ोन या जन्म तिथि की जाँच नहीं होती। लिंक साझा होने का जोखिम स्वीकार करें।",
+        "save": "सहेजें"
+      },
+      "saved": "सेटिंग्स सहेजी गईं"
+    }
+  },
+  "notifications": {
+    "communications": {
+      "language": {
+        "cardTitle": "संचार की भाषा",
+        "cardDescription": "मरीज़ को दिखने वाले उपचार अनुमान, ईमेल और WhatsApp संदेशों में उपयोग होने वाली भाषा।",
+        "title": "मरीज़ संचार की भाषा",
+        "label": "भाषा",
+        "help": "मरीज़ को दिखने वाले उपचार अनुमान और स्वचालित ईमेल/WhatsApp टेम्पलेट पर लागू होती है। स्टाफ़ इंटरफ़ेस हर उपयोगकर्ता की अपनी भाषा में रहता है।",
+        "save": "सहेजें",
+        "saved": "भाषा सहेजी गई"
+      }
+    },
+    "title": "सूचनाएँ",
+    "description": "क्लिनिक की ईमेल सूचनाएँ कॉन्फ़िगर करें",
+    "pageDescription": "कॉन्फ़िगर करें कि कौन-सी सूचनाएँ अपने-आप भेजी जाएँ और किन्हें मैन्युअल रूप से भेजना हो।",
+    "autoVsManual": "स्वचालित बनाम मैन्युअल सूचनाएँ",
+    "autoVsManualDescription": "तय करें कि कोई घटना होने पर कौन-सी सूचनाएँ अपने-आप जाएँ और किन्हें उपयोगकर्ता मैन्युअल रूप से भेजे।",
+    "notificationType": "सूचना का प्रकार",
+    "enabled": "सक्षम",
+    "autoSend": "स्वतः भेजें",
+    "options": "विकल्प",
+    "hoursBefore": "घंटे पहले",
+    "testConnection": "कनेक्शन जाँचें",
+    "testEmailTitle": "परीक्षण ईमेल भेजें",
+    "testEmailDescription": "कॉन्फ़िगरेशन ठीक काम कर रहा है, यह जाँचने के लिए हम एक परीक्षण ईमेल भेजेंगे।",
+    "sendTestEmail": "परीक्षण भेजें",
+    "test_email_sent": "परीक्षण ईमेल सफलतापूर्वक भेजा गया",
+    "settings_saved": "सेटिंग्स सहेजी गईं",
+    "emailProvider": "ईमेल प्रदाता",
+    "providerConfigured": "ईमेल प्रदाता कॉन्फ़िगर है",
+    "providerNote": "ईमेल सर्वर का कॉन्फ़िगरेशन सर्वर के एनवायरनमेंट वेरिएबल्स में किया जाता है।",
+    "infoTitle": "जानकारी",
+    "infoAutoSend": "स्वतः भेजें: घटना होने पर सूचना भेजी जाती है (उदा. अपॉइंटमेंट बनाते समय)।",
+    "infoManualSend": "मैन्युअल भेजें: जब चाहें सूचना भेजने के लिए एक बटन दिखेगा।",
+    "infoDisabled": "अक्षम: सूचना नहीं भेजी जाएगी और भेजने का विकल्प नहीं दिखेगा।",
+    "types": {
+      "appointment_confirmation": "अपॉइंटमेंट की पुष्टि",
+      "appointment_confirmation_desc": "अपॉइंटमेंट तय होने पर पुष्टि ईमेल",
+      "appointment_cancelled": "अपॉइंटमेंट रद्दीकरण",
+      "appointment_cancelled_desc": "अपॉइंटमेंट रद्द होने पर सूचना ईमेल",
+      "appointment_reminder": "अपॉइंटमेंट अनुस्मारक",
+      "appointment_reminder_desc": "अपॉइंटमेंट से पहले अनुस्मारक ईमेल",
+      "budget_sent": "उपचार अनुमान भेजना",
+      "budget_sent_desc": "उपचार अनुमान के विवरण वाला ईमेल",
+      "budget_accepted": "उपचार अनुमान स्वीकृत",
+      "budget_accepted_desc": "उपचार अनुमान स्वीकार होने पर पुष्टि ईमेल",
+      "welcome": "स्वागत",
+      "welcome_desc": "नए मरीज़ों के लिए स्वागत ईमेल",
+      "invoice_sent": "चालान भेजना",
+      "invoice_sent_desc": "मरीज़ को चालान भेजते समय चालान वाला संदेश",
+      "budget_reminder": "उपचार अनुमान अनुस्मारक",
+      "budget_reminder_desc": "बिना उत्तर वाले उपचार अनुमान का फ़ॉलो-अप (7 और 14 दिन)",
+      "recall_reminder": "रिकॉल अनुस्मारक",
+      "recall_reminder_desc": "आवधिक फ़ॉलो-अप विज़िट बुक करने का अनुस्मारक"
+    },
+    "sendConfirmation": "पुष्टि भेजें",
+    "sendReminder": "अनुस्मारक भेजें",
+    "sendCancellation": "रद्दीकरण सूचना भेजें",
+    "sendBudget": "ईमेल से भेजें",
+    "sendAcceptance": "पुष्टि भेजें",
+    "sendWelcome": "स्वागत संदेश भेजें",
+    "sendEmail": "ईमेल भेजें",
+    "errors": {
+      "fetch_failed": "सेटिंग्स लोड करने में त्रुटि",
+      "save_failed": "सेटिंग्स सहेजने में त्रुटि",
+      "test_failed": "परीक्षण ईमेल भेजने में त्रुटि",
+      "send_failed": "सूचना भेजने में त्रुटि"
+    },
+    "smtp": {
+      "title": "ईमेल सर्वर कॉन्फ़िगरेशन",
+      "description": "अपने क्लिनिक से ईमेल भेजने के लिए SMTP सर्वर कॉन्फ़िगर करें। हर क्लिनिक का अपना कॉन्फ़िगरेशन हो सकता है।",
+      "configure": "कॉन्फ़िगर करें",
+      "provider": "प्रदाता",
+      "host": "सर्वर",
+      "port": "पोर्ट",
+      "username": "उपयोगकर्ता नाम",
+      "password": "पासवर्ड",
+      "passwordHint": "मौजूदा पासवर्ड रखने के लिए खाली छोड़ें",
+      "useTls": "TLS उपयोग करें",
+      "useSsl": "SSL उपयोग करें",
+      "fromEmail": "प्रेषक ईमेल",
+      "fromName": "प्रेषक का नाम",
+      "security": "सुरक्षा",
+      "testConnection": "कनेक्शन जाँचें",
+      "testConnectionTitle": "सहेजने से पहले कॉन्फ़िगरेशन जाँचें",
+      "testEmailPlaceholder": "परीक्षण ईमेल पता",
+      "test_success": "SMTP कनेक्शन सफल। परीक्षण ईमेल भेजा गया।",
+      "test_failed": "SMTP कनेक्शन त्रुटि",
+      "settings_saved": "SMTP सेटिंग्स सहेजी गईं",
+      "consoleNote": "कंसोल मोड में ईमेल भेजे जाने के बजाय सर्वर कंसोल में दिखाए जाते हैं। डेवलपमेंट के लिए उपयोगी।",
+      "disabledNote": "ईमेल अक्षम होने पर इस क्लिनिक से कोई ईमेल सूचना नहीं भेजी जाएगी।",
+      "status": {
+        "not_configured": "कॉन्फ़िगर नहीं",
+        "verified": "सत्यापित और कार्यरत",
+        "not_verified": "कॉन्फ़िगर है पर सत्यापित नहीं",
+        "disabled": "ईमेल अक्षम",
+        "console": "कंसोल मोड (डेवलपमेंट)"
+      },
+      "errors": {
+        "fetch_failed": "SMTP सेटिंग्स लोड करने में त्रुटि",
+        "save_failed": "SMTP सेटिंग्स सहेजने में त्रुटि",
+        "test_failed": "SMTP कनेक्शन जाँचने में त्रुटि"
+      }
+    },
+    "onboarding": {
+      "label": "ईमेल भेजना",
+      "description": "अपॉइंटमेंट पुष्टि और उपचार अनुमान ईमेल करने के लिए प्रेषक सेट करें।"
+    },
+    "channels": {
+      "cardTitle": "माध्यम",
+      "cardDescription": "क्लिनिक मरीज़ों तक कैसे पहुँचता है: स्वचालित संदेशों का माध्यम और स्टाफ़ को दिखने वाले 'भेजें' बटन।",
+      "preferredLabel": "पसंदीदा माध्यम",
+      "preferredHelp": "स्वचालित संदेशों के लिए उपयोग होता है (नई बुकिंग, अनुस्मारक, स्वागत…)।",
+      "fallbackLabel": "दूसरे माध्यम पर जाएँ",
+      "fallbackHelp": "यदि पसंदीदा माध्यम से भेजा न जा सके, तो संदेश छोड़ने के बजाय दूसरा उपलब्ध माध्यम आज़माएँ।",
+      "manualLabel": "इनके लिए 'भेजें' बटन दिखाएँ…",
+      "manualHelp": "रिसेप्शन को अपॉइंटमेंट, उपचार अनुमान और चालान पर कौन-से 'भेजें' बटन दिखें।",
+      "manualAtLeastOne": "कम से कम एक माध्यम चुनें।",
+      "email": "ईमेल",
+      "whatsapp": "WhatsApp",
+      "whatsappUnavailableHint": "क्लिनिक का नंबर कनेक्ट होने तक WhatsApp उपलब्ध नहीं है।",
+      "whatsappConnect": "WhatsApp कनेक्ट करें (Kapso)",
+      "noEmail": "मरीज़ का कोई ईमेल दर्ज नहीं",
+      "noPhone": "मरीज़ का कोई फ़ोन दर्ज नहीं",
+      "sms": "SMS",
+      "smsUnavailableHint": "SMS प्रदाता कॉन्फ़िगर होने तक SMS उपलब्ध नहीं है।",
+      "smsConnect": "कॉन्फ़िगर करें",
+      "smsDailyLimitLabel": "SMS दैनिक सीमा",
+      "smsDailyLimitHelp": "क्लिनिक के लिए प्रतिदिन अधिकतम भेजे जाने वाले SMS।"
+    },
+    "channelSent": {
+      "email": "ईमेल सफलतापूर्वक भेजा गया",
+      "whatsapp": "WhatsApp संदेश सफलतापूर्वक भेजा गया",
+      "sms": "SMS संदेश सफलतापूर्वक भेजा गया"
+    },
+    "prefs": {
+      "title": "सूचना प्राथमिकताएँ",
+      "description": "किन माध्यमों से इस मरीज़ तक पहुँचा जा सकता है। ऑप्ट-आउट उस माध्यम को ज़बरदस्ती भेजने पर भी रोकता है।",
+      "saved": "प्राथमिकताएँ सहेजी गईं"
+    }
+  },
+  "invoice": {
+    "title": "चालान",
+    "description": "चालान और बिलिंग प्रबंधित करें",
+    "new": "नया चालान",
+    "edit": "चालान संपादित करें",
+    "view": "चालान देखें",
+    "delete": "चालान हटाएँ",
+    "noItems": "कोई चालान नहीं",
+    "empty": "कोई चालान पंजीकृत नहीं",
+    "emptyAction": "पहला चालान बनाएँ",
+    "searchPlaceholder": "संख्या या मरीज़ से खोजें...",
+    "notFound": "चालान नहीं मिला",
+    "draftNoNumber": "मसौदा",
+    "details": "विवरण",
+    "invoiceNumber": "चालान संख्या",
+    "patient": "मरीज़",
+    "searchPatient": "मरीज़ खोजें",
+    "searchPatientPlaceholder": "नाम से खोजें...",
+    "professional": "चिकित्सक",
+    "billingData": "बिलिंग डेटा",
+    "billingName": "बिलिंग नाम",
+    "taxId": "कर पहचान संख्या",
+    "billingEmail": "बिलिंग ईमेल",
+    "billingAddress": "बिलिंग पता",
+    "billingDataComplete": "पूर्ण",
+    "billingDataIncomplete": "अपूर्ण",
+    "billingDataIncompleteHint": "मरीज़ की कुछ बिलिंग जानकारी अनुपलब्ध है।",
+    "editPatientBilling": "मरीज़ का डेटा संपादित करें",
+    "fromPatient": "मरीज़ से",
+    "editInPatient": "प्रोफ़ाइल में संपादित करें",
+    "billingFromPatientHint": "यह डेटा मरीज़ के रिकॉर्ड से आता है। इसे बदलने के लिए मरीज़ की बिलिंग जानकारी संपादित करें।",
+    "paymentTerms": "भुगतान की शर्तें",
+    "linkedToBudget": "उपचार अनुमान से जुड़ा",
+    "selectPatient": "मरीज़ चुनें",
+    "noBillingData": "कोई बिलिंग डेटा नहीं",
+    "street": "सड़क",
+    "city": "शहर",
+    "postalCode": "पिन कोड",
+    "province": "राज्य",
+    "country": "देश",
+    "linkedBudget": "जुड़ा हुआ उपचार अनुमान",
+    "creditNoteFor": "इसके लिए क्रेडिट नोट",
+    "paymentTermDays": "भुगतान अवधि (दिन)",
+    "dueDate": "देय तिथि",
+    "issueDate": "जारी करने की तिथि",
+    "subtotal": "उप-योग",
+    "discount": "छूट",
+    "tax": "कर",
+    "total": "कुल",
+    "paid": "भुगतान किया",
+    "balance": "शेष",
+    "balanceDue": "शेष देय राशि",
+    "overdue": "बकाया",
+    "overdueDays": "{n} दिन से बकाया",
+    "info": {
+      "issueDate": "जारी करने की तिथि",
+      "dueDate": "देय तिथि",
+      "issuedBy": "जारीकर्ता",
+      "createdBy": "द्वारा बनाया गया",
+      "createdAt": "बनाया गया",
+      "budget": "उपचार अनुमान",
+      "creditNoteFor": "इसके लिए क्रेडिट नोट"
+    },
+    "criticalBanner": {
+      "aeatRejected": {
+        "title": "AEAT ने यह चालान अस्वीकार कर दिया",
+        "cta": "ठीक करें और फिर से भेजें"
+      },
+      "billingIncomplete": {
+        "title": "बिलिंग डेटा अपूर्ण",
+        "cta": "डेटा पूरा करें"
+      }
+    },
+    "collect": {
+      "title": "चालान का भुगतान लें",
+      "submit": "भुगतान लें",
+      "noteAppliedToInvoice": "इस चालान पर लागू।",
+      "notePendingAfter": "शेष राशि",
+      "noteFullySettled": "इस भुगतान से चालान पूरी तरह चुकता हो जाता है।",
+      "noteToInvoice": "इस चालान पर लागू और",
+      "noteExcessToOnAccount": "मरीज़ के अग्रिम खाते में जमा।",
+      "noteInvoiceSettled": "इस चालान का भुगतान पहले ही हो चुका है।",
+      "noteToOnAccount": "मरीज़ के अग्रिम खाते में जमा किया जाएगा।"
+    },
+    "tooth": "दाँत",
+    "vat": "VAT",
+    "internalNotes": "आंतरिक टिप्पणियाँ",
+    "internalNotesPlaceholder": "केवल स्टाफ़ को दिखने वाली टिप्पणियाँ...",
+    "publicNotes": "सार्वजनिक टिप्पणियाँ",
+    "publicNotesPlaceholder": "चालान पर दिखने वाली टिप्पणियाँ...",
+    "items": "मदें",
+    "addItem": "मद जोड़ें",
+    "editItem": "मद संपादित करें",
+    "selectTreatment": "उपचार",
+    "searchCatalog": "कैटलॉग में उपचार खोजें...",
+    "itemDescription": "विवरण",
+    "itemPrice": "इकाई मूल्य",
+    "itemQuantity": "मात्रा",
+    "selectVatType": "VAT प्रकार चुनें",
+    "summary": "सारांश",
+    "createDraft": "मसौदा बनाएँ",
+    "createFromBudget": "उपचार अनुमान से चालान बनाएँ",
+    "notes": "टिप्पणियाँ",
+    "status": {
+      "draft": "मसौदा",
+      "issued": "जारी",
+      "partial": "आंशिक भुगतान",
+      "paid": "भुगतान हो गया",
+      "cancelled": "रद्द",
+      "voided": "अमान्य"
+    },
+    "actions": {
+      "issue": "चालान जारी करें",
+      "void": "अमान्य करें",
+      "recordPayment": "भुगतान दर्ज करें",
+      "createCreditNote": "क्रेडिट नोट बनाएँ",
+      "downloadPdf": "PDF डाउनलोड करें",
+      "previewPdf": "PDF पूर्वावलोकन",
+      "sendEmail": "ईमेल से भेजें"
+    },
+    "recordPayment": "भुगतान दर्ज करें",
+    "paymentAmount": "राशि",
+    "paymentMethod": "भुगतान का तरीका",
+    "paymentDate": "भुगतान की तिथि",
+    "paymentReference": "संदर्भ",
+    "paymentReferencePlaceholder": "लेन-देन संख्या, रसीद...",
+    "paymentNotes": "भुगतान टिप्पणियाँ",
+    "paymentVoided": "भुगतान अमान्य किया गया",
+    "createCreditNote": "क्रेडिट नोट बनाएँ",
+    "creditNoteReason": "क्रेडिट नोट का कारण",
+    "creditNoteReasonPlaceholder": "क्रेडिट नोट का कारण बताएँ...",
+    "creditNoteInfo": "पूरी चालान राशि के लिए एक क्रेडिट नोट बनाया जाएगा।",
+    "prompts": {
+      "voidPaymentReason": "इस भुगतान को अमान्य करने का कारण दर्ज करें"
+    },
+    "payments": {
+      "title": "भुगतान",
+      "void": "भुगतान अमान्य करें",
+      "amount": "राशि",
+      "method": "भुगतान का तरीका",
+      "date": "तिथि",
+      "reference": "संदर्भ",
+      "notes": "टिप्पणियाँ",
+      "noPayments": "कोई भुगतान दर्ज नहीं",
+      "voided": "भुगतान अमान्य किया गया",
+      "voidReason": "अमान्य करने का कारण",
+      "voidReasonPlaceholder": "इस भुगतान को अमान्य करने का कारण...",
+      "methods": {
+        "cash": "नकद",
+        "card": "कार्ड",
+        "bank_transfer": "बैंक ट्रांसफ़र",
+        "direct_debit": "डायरेक्ट डेबिट",
+        "insurance": "बीमा",
+        "other": "अन्य"
+      }
+    },
+    "creditNote": {
+      "title": "क्रेडिट नोट",
+      "create": "क्रेडिट नोट बनाएँ",
+      "reason": "कारण",
+      "reasonPlaceholder": "क्रेडिट नोट का कारण...",
+      "selectItems": "सुधारने के लिए मदें चुनें",
+      "originalInvoice": "मूल चालान"
+    },
+    "history": {
+      "title": "इतिहास",
+      "noChanges": "कोई परिवर्तन दर्ज नहीं",
+      "actions": {
+        "created": "चालान बनाया गया",
+        "updated": "चालान अपडेट किया गया",
+        "issued": "चालान जारी किया गया",
+        "voided": "चालान अमान्य किया गया",
+        "payment_recorded": "भुगतान दर्ज किया गया",
+        "payment_voided": "भुगतान अमान्य किया गया",
+        "credit_note_created": "क्रेडिट नोट बनाया गया"
+      }
+    },
+    "fromBudget": "उपचार अनुमान से चालान बनाएँ",
+    "selectItems": "चालान के लिए मदें चुनें",
+    "selectItemsHint": "उपचार अनुमान की वे मदें चुनें जिनका चालान बनाना है",
+    "availableQuantity": "उपलब्ध",
+    "quantityToInvoice": "चालान की मात्रा",
+    "alreadyInvoiced": "पहले से चालान बना",
+    "remaining": "शेष",
+    "noItemsAvailable": "चालान के लिए कोई मद उपलब्ध नहीं",
+    "allItemsInvoiced": "सभी मदों का चालान बन चुका है",
+    "series": {
+      "title": "चालान श्रृंखला",
+      "prefix": "उपसर्ग",
+      "type": "प्रकार",
+      "currentNumber": "वर्तमान संख्या",
+      "resetYearly": "हर वर्ष रीसेट करें",
+      "default": "डिफ़ॉल्ट"
+    },
+    "filters": {
+      "allStatuses": "स्थिति",
+      "overdueOnly": "बकाया",
+      "dateFrom": "से",
+      "dateTo": "तक"
+    },
+    "sortFields": {
+      "created": "बनाया गया",
+      "issueDate": "जारी करने की तिथि",
+      "dueDate": "देय तिथि",
+      "total": "कुल"
+    },
+    "overdueByDays": "{days} दिन से बकाया",
+    "pdf": {
+      "generating": "PDF बन रहा है...",
+      "downloadError": "PDF डाउनलोड करने में त्रुटि"
+    },
+    "reports": {
+      "title": "बिलिंग रिपोर्ट",
+      "summary": "सारांश",
+      "overdue": "बकाया",
+      "overdueInvoices": "बकाया चालान",
+      "byPaymentMethod": "भुगतान के तरीके के अनुसार",
+      "byProfessional": "चिकित्सक के अनुसार",
+      "vatSummary": "VAT सारांश",
+      "gaps": "क्रमांक में अंतराल",
+      "period": "अवधि",
+      "from": "से",
+      "to": "तक",
+      "refresh": "रीफ़्रेश करें",
+      "totalInvoiced": "कुल चालान राशि",
+      "totalCollected": "कुल प्राप्त",
+      "totalPaid": "कुल भुगतान",
+      "totalPending": "कुल लंबित",
+      "pending": "बकाया शेष",
+      "invoices": "चालान",
+      "paid": "भुगतान किया",
+      "payments": "भुगतान",
+      "noGaps": "क्रमांक में कोई अंतराल नहीं",
+      "gapsFound": "क्रमांक में {count} अंतराल मिले",
+      "gapsDetected": "क्रमांक में अंतराल पाए गए",
+      "missingNumbers": "अनुपलब्ध संख्याएँ:",
+      "noData": "चुनी गई अवधि के लिए कोई डेटा नहीं",
+      "noOverdue": "कोई बकाया चालान नहीं",
+      "daysOverdue": "दिन से बकाया",
+      "vatType": "VAT प्रकार",
+      "base": "आधार राशि",
+      "tax": "कर",
+      "thisMonth": "इस महीने",
+      "thisQuarter": "इस तिमाही",
+      "thisYear": "इस वर्ष",
+      "lastMonth": "पिछला महीना",
+      "lastQuarter": "पिछली तिमाही",
+      "lastYear": "पिछला वर्ष"
+    },
+    "confirmations": {
+      "issue": "चालान जारी करें?",
+      "issueDescription": "जारी होने के बाद चालान संपादित नहीं किया जा सकता। केवल भुगतान दर्ज किए जा सकते हैं या क्रेडिट नोट बनाए जा सकते हैं।",
+      "void": "चालान अमान्य करें?",
+      "voidDescription": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता।",
+      "delete": "चालान हटाएँ?",
+      "deleteDescription": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता।"
+    },
+    "messages": {
+      "created": "चालान बनाया गया",
+      "updated": "चालान अपडेट किया गया",
+      "deleted": "चालान हटाया गया",
+      "issued": "चालान जारी किया गया",
+      "voided": "चालान अमान्य किया गया",
+      "itemAdded": "मद जोड़ी गई",
+      "itemUpdated": "मद अपडेट की गई",
+      "sentByEmail": "चालान ईमेल से भेजा गया",
+      "sentManually": "चालान भेजा गया चिह्नित हुआ",
+      "sentByWhatsapp": "चालान WhatsApp से भेजा गया",
+      "creditNoteCreated": "क्रेडिट नोट बनाया गया",
+      "paymentRecorded": "भुगतान दर्ज किया गया"
+    },
+    "send": {
+      "title": "चालान भेजें",
+      "description": "आप चालान ईमेल या WhatsApp से भेज सकते हैं, या इसे मैन्युअल रूप से भेजा गया (प्रिंट करके या हाथ में दिया) चिह्नित कर सकते हैं।",
+      "sendByEmail": "ईमेल से भेजें",
+      "willSendTo": "इन्हें भेजा जाएगा",
+      "noPatientEmail": "मरीज़ का कोई ईमेल पता नहीं",
+      "customMessage": "विशेष संदेश (वैकल्पिक)",
+      "customMessagePlaceholder": "मरीज़ के लिए संदेश जोड़ें...",
+      "manualNote": "कोई संदेश भेजे बिना चालान भेजा गया चिह्नित होगा।",
+      "sendEmail": "ईमेल भेजें",
+      "markAsSent": "भेजा गया चिह्नित करें",
+      "sendByWhatsapp": "WhatsApp से भेजें",
+      "sendWhatsapp": "WhatsApp भेजें",
+      "willSendToPhone": "WhatsApp से इन्हें भेजा जाएगा"
+    },
+    "errors": {
+      "load": "चालान लोड करने में त्रुटि",
+      "create": "चालान बनाने में त्रुटि",
+      "update": "चालान अपडेट करने में त्रुटि",
+      "delete": "चालान हटाने में त्रुटि",
+      "issue": "चालान जारी करने में त्रुटि",
+      "void": "चालान अमान्य करने में त्रुटि",
+      "recordPayment": "भुगतान दर्ज करने में त्रुटि",
+      "voidPayment": "भुगतान अमान्य करने में त्रुटि",
+      "createCreditNote": "क्रेडिट नोट बनाने में त्रुटि",
+      "send": "चालान भेजने में त्रुटि",
+      "creditNoteReasonRequired": "क्रेडिट नोट का कारण आवश्यक है",
+      "notFound": "चालान नहीं मिला",
+      "canOnlyDeleteDraft": "केवल मसौदा चालान हटाए जा सकते हैं",
+      "patientRequired": "मरीज़ आवश्यक है",
+      "itemsRequired": "कम से कम एक मद आवश्यक है",
+      "itemRequired": "विवरण और मूल्य आवश्यक हैं",
+      "selectCatalogItem": "कृपया कैटलॉग से उपचार चुनें",
+      "cannotEdit": "केवल मसौदा चालान संपादित किए जा सकते हैं"
+    },
+    "newItemsPending": "नई मदें सहेजना बाकी",
+    "linkedPlan": "उपचार योजना"
+  },
+  "reports": {
+    "title": "रिपोर्ट",
+    "subtitle": "क्लिनिक विश्लेषण और आँकड़े",
+    "viewReports": "रिपोर्ट देखें",
+    "noAccess": "आपको किसी भी रिपोर्ट की पहुँच नहीं है",
+    "dashboard": {
+      "title": "डैशबोर्ड",
+      "subtitle": "आपका क्लिनिक एक नज़र में",
+      "period": "अवधि",
+      "snapshotBadge": "आज",
+      "snapshotTooltip": "तिथि सीमा से प्रभावित नहीं",
+      "vsPrev": "पिछली अवधि की तुलना में",
+      "empty": {
+        "noData": "इस सीमा में कोई डेटा नहीं"
+      },
+      "drilldown": {
+        "title": "विस्तृत विवरण",
+        "payments": "भुगतान"
+      },
+      "kpi": {
+        "cashCollected": "प्राप्त राशि",
+        "cashCollectedHint": "{count} भुगतान",
+        "patientAdvance": "मरीज़ों का अग्रिम",
+        "patientAdvanceHint": "बिना आवंटन वाले अग्रिम",
+        "production": "उत्पादन",
+        "productionHint": "{count} उपचार",
+        "byMethod": "भुगतान के तरीके के अनुसार",
+        "methodCount": "{count} भुगतान",
+        "total": "कुल",
+        "newPatients": "नए मरीज़",
+        "newPatientsHint": "कुल अपॉइंटमेंट का {rate}%",
+        "appointmentFunnel": "अनुपस्थिति दर",
+        "funnelHint": "{completed}% पूर्ण",
+        "avgCollectedTicket": "औसत प्राप्त राशि",
+        "avgTicketHint": "{count} भुगतानों पर",
+        "aging": "बकाया प्राप्य की अवधि"
+      },
+      "charts": {
+        "cashOverTime": "समय के साथ प्राप्तियाँ",
+        "productionByDoctor": "चिकित्सक के अनुसार उत्पादन",
+        "refunded": "धनवापसी"
+      },
+      "production": {
+        "unassigned": "अनावंटित",
+        "others": "अन्य",
+        "treatmentCount": "{count} उपचार"
+      },
+      "aging": {
+        "bucket0_30": "0-30 दिन",
+        "bucket31_60": "31-60 दिन",
+        "bucket61_90": "61-90 दिन",
+        "bucket90plus": "90+ दिन",
+        "empty": "कोई बकाया प्राप्य नहीं",
+        "patientCount": "{count} मरीज़"
+      }
+    },
+    "billing": {
+      "title": "बिलिंग",
+      "description": "राजस्व, भुगतान, VAT और बकाया चालान",
+      "summary": "सारांश",
+      "overdue": "बकाया",
+      "overdueInvoices": "बकाया चालान",
+      "byPaymentMethod": "भुगतान के तरीके के अनुसार",
+      "byProfessional": "चिकित्सक के अनुसार",
+      "vatSummary": "VAT सारांश",
+      "gaps": "क्रमांक में अंतराल",
+      "period": "अवधि",
+      "from": "से",
+      "to": "तक",
+      "refresh": "रीफ़्रेश करें",
+      "totalInvoiced": "कुल चालान राशि",
+      "totalCollected": "कुल प्राप्त",
+      "pending": "बकाया शेष",
+      "invoices": "चालान",
+      "paid": "भुगतान किया",
+      "payments": "भुगतान",
+      "gapsDetected": "क्रमांक में अंतराल पाए गए",
+      "missingNumbers": "अनुपलब्ध संख्याएँ:",
+      "noData": "चुनी गई अवधि के लिए कोई डेटा नहीं",
+      "noOverdue": "कोई बकाया चालान नहीं",
+      "invoiceAging": "चालान बकाया अवधि",
+      "invoiceAgingDescription": "प्रत्येक अवधि-समूह में जारी बकाया राशि। जिनकी देय तिथि अभी नहीं आई, वे अलग दिखते हैं।",
+      "notDue": "अभी देय नहीं",
+      "issuedTrend": "जारी चालानों का रुझान",
+      "daysOverdue": "दिन से बकाया",
+      "vatType": "VAT प्रकार",
+      "base": "आधार राशि",
+      "tax": "कर",
+      "thisMonth": "इस महीने",
+      "thisQuarter": "इस तिमाही",
+      "thisYear": "इस वर्ष",
+      "lastMonth": "पिछला महीना",
+      "lastQuarter": "पिछली तिमाही",
+      "lastYear": "पिछला वर्ष"
+    },
+    "budgets": {
+      "title": "उपचार अनुमान",
+      "description": "स्वीकृति दर, चिकित्सक विश्लेषण और उपचार",
+      "comingSoonDescription": "उपचार अनुमान रिपोर्ट जल्द उपलब्ध होंगी। आप स्वीकृति दर, चिकित्सक के अनुसार उपचार अनुमान और सबसे अधिक माँगे गए उपचारों का विश्लेषण कर सकेंगे।",
+      "features": {
+        "acceptanceRate": "स्वीकृति दर",
+        "acceptanceRateDesc": "स्वीकृत बनाम अस्वीकृत उपचार अनुमान का प्रतिशत",
+        "byProfessional": "चिकित्सक के अनुसार",
+        "byProfessionalDesc": "हर चिकित्सक द्वारा बनाए गए उपचार अनुमान",
+        "byTreatment": "उपचार के अनुसार",
+        "byTreatmentDesc": "सबसे अधिक अनुमानित उपचार",
+        "averageValue": "औसत मूल्य",
+        "averageValueDesc": "उपचार अनुमान की औसत राशि"
+      },
+      "labels": {
+        "totalCreated": "कुल बनाए गए",
+        "accepted": "स्वीकृत",
+        "rejected": "अस्वीकृत",
+        "pending": "लंबित",
+        "completed": "पूर्ण",
+        "acceptanceRate": "स्वीकृति दर",
+        "averageValue": "औसत मूल्य",
+        "byStatus": "स्थिति के अनुसार",
+        "topTreatments": "सबसे अधिक अनुमानित उपचार",
+        "treatment": "उपचार",
+        "occurrences": "बार",
+        "quantity": "मात्रा"
+      }
+    },
+    "scheduling": {
+      "title": "शेड्यूल",
+      "description": "पहली विज़िट, कार्य-घंटे और कक्ष उपयोग",
+      "comingSoonDescription": "शेड्यूल रिपोर्ट जल्द उपलब्ध होंगी। आप पहली विज़िट, चिकित्सक के अनुसार घंटे और रद्दीकरण दर का विश्लेषण कर सकेंगे।",
+      "features": {
+        "firstVisits": "पहली विज़िट",
+        "firstVisitsDesc": "प्रति अवधि नए मरीज़",
+        "hoursWorked": "कार्य-घंटे",
+        "hoursWorkedDesc": "प्रति चिकित्सक समय",
+        "cancellations": "रद्दीकरण",
+        "cancellationsDesc": "रद्दीकरण और अनुपस्थिति दर",
+        "cabinetUtilization": "कक्ष उपयोग",
+        "cabinetUtilizationDesc": "हर कक्ष का उपयोग"
+      },
+      "labels": {
+        "totalAppointments": "कुल अपॉइंटमेंट",
+        "completionRate": "पूर्णता दर",
+        "completed": "पूर्ण",
+        "cancellationRate": "रद्दीकरण दर",
+        "cancelled": "रद्द",
+        "noShowRate": "अनुपस्थिति दर",
+        "noShows": "नहीं आए",
+        "newPatients": "नए मरीज़",
+        "firstVisitRate": "पहली विज़िट दर",
+        "ofTotalAppointments": "कुल अपॉइंटमेंट में से",
+        "appointmentsInPeriod": "अवधि में अपॉइंटमेंट",
+        "excludingCancelled": "रद्द को छोड़कर",
+        "appointments": "अपॉइंटमेंट",
+        "byDayOfWeek": "सप्ताह के दिन के अनुसार",
+        "statusBreakdown": "स्थिति के अनुसार विभाजन",
+        "pending": "लंबित"
+      },
+      "analytics": {
+        "funnel": "स्थिति फ़नल",
+        "funnelDesc": "अवधि में स्थिति के अनुसार अपॉइंटमेंट का वितरण",
+        "waitingTimes": "प्रतीक्षा समय",
+        "waitingTimesDesc": "मरीज़ के आने और कुर्सी पर बैठने के बीच के मिनट",
+        "punctuality": "मरीज़ों की समयनिष्ठा",
+        "punctualityDesc": "निर्धारित समय और वास्तविक आगमन का अंतर",
+        "durationVariance": "नियोजित बनाम वास्तविक अवधि",
+        "durationVarianceDesc": "नियोजित अवधि और वास्तविक कुर्सी समय की तुलना",
+        "samples": "नमूने",
+        "average": "औसत",
+        "median": "माध्यिका",
+        "p90": "P90",
+        "avgDelta": "औसत अंतर",
+        "medianDelta": "माध्यिका अंतर",
+        "onTime": "% समय पर",
+        "avgOverrun": "औसत अतिरिक्त समय",
+        "overrunCount": "समय से अधिक",
+        "underCount": "समय से कम",
+        "completionRate": "पूर्णता",
+        "noShowRate": "अनुपस्थिति",
+        "cancellationRate": "रद्दीकरण",
+        "punctuality_early": "जल्दी (<-5)",
+        "punctuality_on_time": "समय पर (±5)",
+        "punctuality_late_short": "देर से (5-15)",
+        "punctuality_late_long": "देर से (>15)"
+      },
+      "tabs": {
+        "overview": "अवलोकन",
+        "activity": "गतिविधि",
+        "quality": "गुणवत्ता"
+      },
+      "hero": {
+        "inPeriod": "अवधि में"
+      },
+      "filters": {
+        "cabinet": "कक्ष",
+        "professional": "चिकित्सक",
+        "custom": "कस्टम सीमा",
+        "all": "सभी",
+        "clear": "फ़िल्टर हटाएँ"
+      },
+      "empty": {
+        "title": "इस अवधि के लिए कोई डेटा नहीं",
+        "desc": "बड़ी तिथि सीमा आज़माएँ या फ़िल्टर हटाएँ।"
+      }
+    },
+    "loadError": "रिपोर्ट डेटा लोड नहीं हो सका"
+  },
+  "invoiceSeries": {
+    "title": "चालान श्रृंखला",
+    "description": "चालान उपसर्ग और क्रमांकन कॉन्फ़िगर करें",
+    "regularInvoices": "चालान",
+    "creditNotes": "क्रेडिट नोट",
+    "new": "नई श्रृंखला",
+    "newTitle": "नई {type} श्रृंखला",
+    "editTitle": "श्रृंखला संपादित करें",
+    "prefix": "उपसर्ग",
+    "prefixHint": "उदा. INV, CR. वर्ष अपने-आप जोड़ा जाएगा।",
+    "descriptionLabel": "विवरण",
+    "descriptionPlaceholder": "श्रृंखला का वैकल्पिक विवरण...",
+    "nextNumber": "अगली संख्या",
+    "preview": "पूर्वावलोकन",
+    "resetYearly": "वार्षिक रीसेट",
+    "resetYearlyLabel": "हर वर्ष क्रमांकन रीसेट करें",
+    "setAsDefault": "डिफ़ॉल्ट बनाएँ",
+    "activeLabel": "सक्रिय श्रृंखला",
+    "showInactive": "निष्क्रिय दिखाएँ",
+    "noItems": "कोई श्रृंखला कॉन्फ़िगर नहीं",
+    "resetCounter": "काउंटर रीसेट करें",
+    "currentNumber": "वर्तमान संख्या",
+    "seriesPrefix": "श्रृंखला उपसर्ग",
+    "newNumber": "नई संख्या",
+    "newNumberHint": "संख्या इस श्रृंखला की सबसे बड़ी मौजूदा संख्या से अधिक होनी चाहिए।",
+    "resetWarningTitle": "चेतावनी",
+    "resetWarning": "यह कार्रवाई ऑडिट लॉग में दर्ज होगी और पूर्ववत नहीं की जा सकती।",
+    "confirmReset": "काउंटर रीसेट करें",
+    "created": "श्रृंखला सफलतापूर्वक बनाई गई",
+    "saved": "श्रृंखला सफलतापूर्वक अपडेट की गई",
+    "resetSuccess": "काउंटर सफलतापूर्वक रीसेट किया गया",
+    "onboarding": {
+      "label": "चालान श्रृंखला",
+      "description": "पहला चालान जारी करने के लिए आवश्यक (उदा. FAC-2026-0001)।"
+    }
+  },
+  "documents": {
+    "title": "दस्तावेज़",
+    "add": "जोड़ें",
+    "edit": "दस्तावेज़ संपादित करें",
+    "upload": "दस्तावेज़ अपलोड करें",
+    "uploading": "अपलोड हो रहा है...",
+    "empty": "अभी कोई दस्तावेज़ नहीं",
+    "uploadFirst": "पहला दस्तावेज़ अपलोड करें",
+    "types": {
+      "consent": "सहमति पत्र",
+      "id_scan": "पहचान दस्तावेज़",
+      "insurance": "बीमा",
+      "report": "रिपोर्ट",
+      "referral": "रेफ़रल",
+      "other": "अन्य"
+    },
+    "fields": {
+      "type": "प्रकार",
+      "title": "शीर्षक",
+      "titlePlaceholder": "दस्तावेज़ का शीर्षक",
+      "description": "विवरण",
+      "descriptionPlaceholder": "वैकल्पिक टिप्पणियाँ"
+    },
+    "dropzone": {
+      "hint": "फ़ाइल यहाँ खींचकर छोड़ें, या चुनने के लिए क्लिक करें"
+    },
+    "filter": {
+      "allTypes": "सभी प्रकार"
+    },
+    "deleteConfirm": {
+      "title": "दस्तावेज़ हटाएँ",
+      "message": "क्या आप वाकई यह दस्तावेज़ हटाना चाहते हैं? इस कार्रवाई को पूर्ववत नहीं किया जा सकता।"
+    },
+    "fetchError": "दस्तावेज़ लोड करने में त्रुटि",
+    "uploadSuccess": "दस्तावेज़ सफलतापूर्वक अपलोड हुआ",
+    "uploadError": "दस्तावेज़ अपलोड करने में त्रुटि",
+    "downloadError": "दस्तावेज़ डाउनलोड करने में त्रुटि",
+    "deleteSuccess": "दस्तावेज़ हटाया गया",
+    "deleteError": "दस्तावेज़ हटाने में त्रुटि",
+    "updateSuccess": "दस्तावेज़ अपडेट किया गया",
+    "updateError": "दस्तावेज़ अपडेट करने में त्रुटि",
+    "viewer": {
+      "loading": "दस्तावेज़ लोड हो रहा है...",
+      "error": "दस्तावेज़ लोड नहीं हो सका",
+      "downloadInstead": "इसके बजाय डाउनलोड करें",
+      "unsupported": "इस फ़ाइल प्रकार का पूर्वावलोकन उपलब्ध नहीं",
+      "zoomOut": "ज़ूम आउट",
+      "zoomIn": "ज़ूम इन",
+      "resetZoom": "100% पर रीसेट करें",
+      "zoomHint": "ज़ूम के लिए Ctrl + स्क्रॉल"
+    },
+    "typeDesc": {
+      "consent": "हस्ताक्षरित दस्तावेज़",
+      "id_scan": "आधार / पासपोर्ट",
+      "insurance": "पॉलिसी या कार्ड",
+      "report": "नैदानिक रिपोर्ट",
+      "referral": "रेफ़रल पत्र",
+      "other": "अवर्गीकृत"
+    },
+    "errors": {
+      "mime": "फ़ाइल प्रकार की अनुमति नहीं। केवल PDF, JPG या PNG।",
+      "size": "फ़ाइल 10 MB से बड़ी है।"
+    },
+    "pdfPreviewHint": "अपलोड के बाद पूर्वावलोकन उपलब्ध",
+    "uploadHelp": "फ़ाइल को वर्गीकृत करें ताकि वह सही श्रेणी में दिखे।"
+  },
+  "photoGallery": {
+    "title": "मरीज़ गैलरी",
+    "add": "फ़ोटो जोड़ें",
+    "empty": "अभी कोई फ़ोटो नहीं",
+    "uploadFirst": "पहली फ़ोटो अपलोड करें",
+    "showingOf": "{total} में से {count} दिखाए जा रहे हैं",
+    "upload": "फ़ोटो अपलोड करें",
+    "uploadHelp": "वर्गीकृत करें ताकि यह सही श्रेणी में दिखे",
+    "dropHere": "फ़ोटो यहाँ खींचें या क्लिक करें",
+    "category": "प्रकार",
+    "subtype": "दृश्य",
+    "titlePlaceholder": "सामने का इंट्राओरल — 02/05",
+    "capturedAt": "तिथि",
+    "exifHint": "EXIF से अपने-आप",
+    "cat": {
+      "all": "सभी",
+      "intraoral": "इंट्राओरल",
+      "extraoral": "एक्स्ट्राओरल",
+      "xray": "एक्स-रे",
+      "clinical": "पहले/बाद",
+      "other": "अन्य"
+    },
+    "catDesc": {
+      "intraoral": "मुँह के अंदर",
+      "extraoral": "चेहरा और प्रोफ़ाइल",
+      "xray": "रेडियोलॉजिकल छवि",
+      "clinical": "उपचार की तुलना",
+      "other": "अवर्गीकृत"
+    },
+    "sub": {
+      "frontal": "सामने से",
+      "lateral_left": "बायाँ पार्श्व",
+      "lateral_right": "दायाँ पार्श्व",
+      "occlusal_upper": "ऊपरी ऑक्लूज़ल",
+      "occlusal_lower": "निचला ऑक्लूज़ल",
+      "palatal": "पैलेटल",
+      "lingual": "लिंगुअल",
+      "smile": "मुस्कान",
+      "rest": "विश्राम",
+      "frontal_face": "सामने से",
+      "profile_left": "बायाँ प्रोफ़ाइल",
+      "profile_right": "दायाँ प्रोफ़ाइल",
+      "three_quarter_left": "3/4 बायाँ",
+      "three_quarter_right": "3/4 दायाँ",
+      "panoramic": "पैनोरमिक",
+      "periapical": "पेरिएपिकल",
+      "bitewing": "बाइटविंग",
+      "ceph_lat": "सेफ़ पार्श्व",
+      "ceph_pa": "सेफ़ PA",
+      "cbct": "CBCT",
+      "occlusal_xray": "ऑक्लूज़ल एक्स-रे",
+      "before": "पहले",
+      "after": "बाद में",
+      "progress": "प्रगति",
+      "reference": "संदर्भ",
+      "portrait": "पोर्ट्रेट",
+      "document_scan": "दस्तावेज़",
+      "model_photo": "मॉडल"
+    },
+    "compare": {
+      "before": "पहले",
+      "after": "बाद में"
+    },
+    "pair": {
+      "pickHint": "जोड़ी बनाने के लिए फ़ोटो चुनें:",
+      "noCandidates": "कोई फ़ोटो उपलब्ध नहीं। पहले दूसरी फ़ोटो अपलोड करें।",
+      "paired": "जोड़ी बनी",
+      "exitCompare": "तुलना से बाहर निकलें",
+      "compare": "तुलना करें",
+      "unpair": "हटाएँ",
+      "pair": "पहले/बाद की जोड़ी बनाएँ"
+    }
+  },
+  "help": {
+    "label": "सहायता",
+    "openHelp": "सहायता खोलें",
+    "drawerTitle": "इस पृष्ठ के लिए सहायता",
+    "unavailable": "इस पृष्ठ के लिए अभी कोई संदर्भ सहायता उपलब्ध नहीं।",
+    "openFullManual": "पूरा मैनुअल खोलें"
+  },
+  "charts": {
+    "trend": {
+      "ariaLabel": "{count} बिंदुओं पर रुझान"
+    },
+    "donut": {
+      "ariaLabel": "डोनट चार्ट, {count} खंड"
+    }
+  }
+}

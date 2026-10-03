@@ -1,0 +1,34 @@
+{
+  "staffTasks": {
+    "title": "स्टाफ़ कार्य",
+    "add": "नया कार्य",
+    "taskTitle": "कार्य",
+    "details": "विवरण",
+    "priority": "प्राथमिकता",
+    "dueDate": "देय तिथि",
+    "status": "स्थिति",
+    "assignee": "किसे सौंपा गया",
+    "filterByStatus": "स्थिति से फ़िल्टर करें",
+    "all": "सभी",
+    "delete": "हटाएँ",
+    "deleteTitle": "कार्य हटाएँ",
+    "deleteMessage": "यह कार्य हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
+    "updateFailed": "कार्य अपडेट नहीं हो सका।",
+    "saveFailed": "कार्य सहेजा नहीं जा सका।",
+    "deleteFailed": "कार्य हटाया नहीं जा सका।",
+    "statuses": {
+      "open": "खुला",
+      "claimed": "लिया गया",
+      "done": "पूर्ण",
+      "cancelled": "रद्द"
+    },
+    "priorities": {
+      "low": "कम",
+      "normal": "सामान्य",
+      "high": "अधिक"
+    }
+  },
+  "nav": {
+    "staffTasks": "स्टाफ़ कार्य"
+  }
+}

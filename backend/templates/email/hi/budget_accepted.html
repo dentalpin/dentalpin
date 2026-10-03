@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}उपचार अनुमान स्वीकृत - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>उपचार अनुमान स्वीकृत</h2>
+
+<p>नमस्ते {{ patient_name }},</p>
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> का आपका उपचार अनुमान <strong>#{{ budget_number }}</strong> स्वीकार कर लिया गया है।</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div class="label">उपचार अनुमान</div>
+        <div class="value">#{{ budget_number }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">स्वीकृति की तिथि</div>
+        <div class="value">{{ accepted_date }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">कुल</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+</div>
+
+<p>संबंधित अपॉइंटमेंट तय करने के लिए हम जल्द ही आपसे संपर्क करेंगे।</p>
+{% endblock %}

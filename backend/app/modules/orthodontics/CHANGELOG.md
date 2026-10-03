@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
+
 - fix(#522): the new-case `start_date` default read the UTC day instead of the
   local one. Now uses `toISODate`.
 - fix (maintainer review): inbox shows the patient's name (batched, no

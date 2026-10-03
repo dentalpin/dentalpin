@@ -1,0 +1,53 @@
+{
+  "inventory": {
+    "title": "इन्वेंटरी",
+    "add": "वस्तु जोड़ें",
+    "edit": "वस्तु संपादित करें",
+    "item": "वस्तु",
+    "category": "श्रेणी",
+    "unit": "इकाई",
+    "stock": "स्टॉक",
+    "minimum": "न्यूनतम",
+    "notes": "टिप्पणियाँ",
+    "status": "स्थिति",
+    "ok": "ठीक",
+    "low": "कम",
+    "filterByCategory": "श्रेणी से फ़िल्टर करें",
+    "lowStockOnly": "केवल कम स्टॉक",
+    "includeInactive": "निष्क्रिय दिखाएँ",
+    "increment": "स्टॉक बढ़ाएँ",
+    "decrement": "स्टॉक घटाएँ",
+    "delete": "हटाएँ",
+    "deleteTitle": "वस्तु हटाएँ",
+    "deleteMessage": "यह स्टॉक वस्तु हटाएँ? इसे पूर्ववत नहीं किया जा सकता।",
+    "cannotDeleteWithHistory": "इस वस्तु का स्टॉक इतिहास है। ऑडिट रिकॉर्ड बनाए रखने के लिए इसे निष्क्रिय करें।",
+    "deactivate": "निष्क्रिय करें",
+    "reactivate": "फिर से सक्रिय करें",
+    "deactivated": "वस्तु निष्क्रिय की गई",
+    "reactivated": "वस्तु फिर से सक्रिय की गई",
+    "empty": "अभी कोई लेन-देन नहीं",
+    "allCategories": "सभी श्रेणियाँ",
+    "adjustBy": "इतना समायोजित करें…",
+    "apply": "लागू करें",
+    "cost": "इकाई लागत",
+    "valuation": "स्टॉक मूल्य",
+    "movements": "लेन-देन",
+    "movementsTitle": "स्टॉक लेन-देन",
+    "reasons": {
+      "initial": "प्रारंभिक",
+      "restock": "पुनः भंडारण",
+      "consumption": "उपभोग",
+      "adjustment": "समायोजन",
+      "correction": "सुधार"
+    },
+    "categories": {
+      "consumables": "उपभोग्य सामग्री",
+      "equipment": "उपकरण",
+      "office": "कार्यालय",
+      "other": "अन्य"
+    }
+  },
+  "nav": {
+    "inventory": "इन्वेंटरी"
+  }
+}

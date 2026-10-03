@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer; Hindi document PDF labels.
+
 - fix(#524): the managed-document PDF renders in every host locale.
   `_LABELS` held only `es`/`en`, the endpoint's pattern was `^(es|en)$`
   and the frontend sent no `locale` at all — so every clinic, in every

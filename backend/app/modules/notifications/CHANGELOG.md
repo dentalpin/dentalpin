@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer; Hindi option in the clinic communication-language picker.
+
 - fix(#527): a manual `budget_sent` send no longer raises
   `AttributeError`. `router.py` read `catalog_item.name`; the model has
   no such attribute, only a per-locale `names` dict — and because

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer; Hindi subject for the morning digest email.
+
 - fix: a confirmed write tool now publishes its module namespace on the data
   bus. The confirmation stream only returns `tool_result` (no `tool_call`), so
   the old lookup of a tool message never matched and no page refetched (#568).

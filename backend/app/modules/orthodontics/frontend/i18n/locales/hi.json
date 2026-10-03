@@ -1,0 +1,99 @@
+{
+  "orthodontics": {
+    "tab": {
+      "label": "ऑर्थोडॉन्टिक्स"
+    },
+    "nav": {
+      "title": "ऑर्थोडॉन्टिक्स"
+    },
+    "appliance": {
+      "brackets_metal": "धातु ब्रैकेट",
+      "brackets_esthetic": "सौंदर्य ब्रैकेट",
+      "self_ligating": "सेल्फ़-लिगेटिंग",
+      "aligners": "अलाइनर",
+      "functional": "फ़ंक्शनल",
+      "retention": "रिटेंशन"
+    },
+    "status": {
+      "active": "सक्रिय",
+      "paused": "रुका हुआ",
+      "finished": "समाप्त",
+      "transferred_out": "अन्यत्र स्थानांतरित"
+    },
+    "inbox": {
+      "title": "ऑर्थोडॉन्टिक्स",
+      "active": "सक्रिय",
+      "overdue": "विलंबित जाँच",
+      "unscheduled": "अगली जाँच तय नहीं",
+      "finished": "समाप्त",
+      "new": "नया केस",
+      "empty": "इस दृश्य में कोई केस नहीं",
+      "nextDue": "अगली जाँच",
+      "monthOf": "~{n} में से महीना {x}"
+    },
+    "case": {
+      "new": "नया ऑर्थोडॉन्टिक केस",
+      "appliance": "उपकरण",
+      "professional": "ऑर्थोडॉन्टिस्ट",
+      "startDate": "आरंभ तिथि",
+      "estimatedMonths": "अनुमानित महीने",
+      "notes": "निदान / उद्देश्य",
+      "create": "केस खोलें",
+      "inMouthNow": "अभी मुँह में",
+      "upper": "ऊपरी",
+      "lower": "निचला",
+      "noWire": "कोई वायर दर्ज नहीं",
+      "changeStatus": "स्थिति बदलें",
+      "statusNote": "कारण (वैकल्पिक)",
+      "save": "सहेजें",
+      "none": "अभी कोई ऑर्थोडॉन्टिक केस नहीं"
+    },
+    "control": {
+      "new": "जाँच दर्ज करें",
+      "wires": "आर्चवायर (डिफ़ॉल्ट रूप से कोई बदलाव नहीं)",
+      "procedures": "प्रक्रियाएँ",
+      "proceduresOther": "अन्य प्रक्रियाएँ",
+      "hygiene": "स्वच्छता",
+      "hygiene_good": "अच्छी",
+      "hygiene_fair": "ठीक",
+      "hygiene_poor": "खराब",
+      "alignerNumber": "अलाइनर संख्या",
+      "notes": "अवलोकन / निर्देश",
+      "nextControl": "अगली जाँच",
+      "weeks": "{n} सप्ताह",
+      "noNext": "अगली जाँच नहीं",
+      "save": "जाँच सहेजें",
+      "history": "जाँचें",
+      "empty": "अभी कोई जाँच नहीं"
+    },
+    "card": {
+      "title": "ऑर्थोडॉन्टिक्स",
+      "noCase": "कोई सक्रिय केस नहीं",
+      "view": "खोलें"
+    },
+    "photos": {
+      "title": "फ़ोटो ({n})",
+      "upload": "फ़ोटो जोड़ें"
+    },
+    "procedures": {
+      "power_chain": "पावर चेन",
+      "elastics_class_2": "क्लास II इलास्टिक",
+      "elastics_class_3": "क्लास III इलास्टिक",
+      "niti_open_coil": "NiTi ओपन कॉइल",
+      "metal_ligature": "धातु लिगेचर",
+      "ligature_change": "लिगेचर बदलना",
+      "button_attachment": "बटन / अटैचमेंट",
+      "ipr": "IPR",
+      "bite_turbos": "बाइट टर्बो",
+      "bracket_rebonding": "ब्रैकेट दोबारा लगाना",
+      "expander_activation": "एक्सपैंडर सक्रियण",
+      "band_placement": "बैंड लगाना",
+      "bracket_removal": "ब्रैकेट हटाना",
+      "retainer_placement": "रिटेनर लगाना"
+    },
+    "errors": {
+      "saveFailed": "सहेजा नहीं जा सका। कृपया फिर कोशिश करें।",
+      "loadFailed": "ऑर्थोडॉन्टिक डेटा लोड नहीं हो सका।"
+    }
+  }
+}

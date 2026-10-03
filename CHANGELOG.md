@@ -11,6 +11,21 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Added
+
+- **Hindi (`hi`, हिन्दी) locale** — core app and every module layer,
+  patient email templates, PDF labels (`hi_IN` money/date formatting,
+  Devanagari via Noto Sans Devanagari), and a Hindi demo seed
+  (`--lang hi`): an India GST clinic in New Delhi (GST state 07,
+  GSTIN `07ABCDE1234F1Z2`) with Hindi patient names. `README.hi.md` added.
+  Country-specific compliance modules (`verifactu`, `nav_online`,
+  `sdi_it`, `sistema_ts`) and the Verifactu emails are not translated
+  to Hindi; they fall back to English.
+
+### Changed
+
+- Email templates missing in a locale now fall back to the English
+  template instead of rendering nothing.
 ## [2.7.1] - 2026-10-02
 
 ### Fixed

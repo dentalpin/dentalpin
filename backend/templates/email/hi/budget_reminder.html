@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}आपका उपचार अनुमान आपके उत्तर की प्रतीक्षा में है - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>एक विनम्र अनुस्मारक</h2>
+
+<p>नमस्ते {{ patient_name }},</p>
+
+<p><strong>{{ clinic_name | default('DentalPin') }}</strong> का आपका उपचार अनुमान <strong>#{{ budget_number }}</strong> अभी भी आपके उत्तर की प्रतीक्षा में है।</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">उपचार अनुमान</div>
+            <div class="value">{{ budget_number }}</div>
+        </div>
+        {% if total %}
+        <div style="flex: 1; text-align: right;">
+            <div class="label">कुल</div>
+            <div class="value">{{ total }}</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+{% if valid_until %}
+<div class="alert alert-warning">
+    <strong>वैधता:</strong> यह उपचार अनुमान {{ valid_until }} तक मान्य है।
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">अपना उपचार अनुमान देखें</a>
+</div>
+{% endif %}
+
+<p>यदि आप निर्णय ले चुके हैं या आपके कोई प्रश्न हैं, तो कृपया हमसे संपर्क करें — हमें आपकी सहायता करके खुशी होगी।</p>
+{% endblock %}

@@ -297,7 +297,7 @@ class InvoicePDFService:
                     box-sizing: border-box;
                 }}
                 body {{
-                    font-family: 'Helvetica Neue', Arial, 'Noto Sans Tamil', 'Noto Sans Arabic', sans-serif;
+                    font-family: 'Helvetica Neue', Arial, 'Noto Sans Tamil', 'Noto Sans Devanagari', 'Noto Sans Arabic', sans-serif;
                     font-size: 11pt;
                     line-height: 1.4;
                     color: #333;
@@ -877,6 +877,48 @@ class InvoicePDFService:
             },
         }
 
+        labels_hi = {
+            "invoice": "चालान",
+            "credit_note": "क्रेडिट नोट",
+            "credit_note_for": "इस चालान को सुधारता है",
+            "draft": "मसौदा",
+            "issue_date": "जारी करने की तिथि",
+            "due_date": "देय तिथि",
+            "billing_info": "बिलिंग जानकारी",
+            "billing_name": "नाम / संस्था",
+            "tax_id": "कर पहचान संख्या",
+            "address": "पता",
+            "patient": "मरीज़",
+            "items": "मदें",
+            "description": "विवरण",
+            "qty": "मात्रा",
+            "unit_price": "इकाई मूल्य",
+            "discount": "छूट",
+            # Neutral "tax" wording — the GST terminology for Indian
+            # clinics arrives via the india_gst hook's label_overrides,
+            # never hardcoded in billing.
+            "vat": "कर",
+            "total": "कुल",
+            "subtotal": "उप-योग",
+            "total_discount": "कुल छूट",
+            "tax": "कर",
+            "grand_total": "कुल योग",
+            "total_paid": "कुल भुगतान",
+            "balance_due": "शेष देय राशि",
+            "notes": "टिप्पणियाँ",
+            "payment_terms": "भुगतान की शर्तें",
+            "days": "दिन",
+            "generated_by": "द्वारा तैयार",
+            "status": {
+                "draft": "मसौदा",
+                "issued": "जारी",
+                "partial": "आंशिक भुगतान",
+                "paid": "भुगतान हो गया",
+                "cancelled": "रद्द",
+                "voided": "अमान्य",
+            },
+        }
+
         labels_fr = {
             "invoice": "Facture",
             "credit_note": "Avoir",
@@ -1154,6 +1196,8 @@ class InvoicePDFService:
             return labels_es
         if locale == "ta":
             return labels_ta
+        if locale == "hi":
+            return labels_hi
         if locale == "fr":
             return labels_fr
         if locale == "pt":

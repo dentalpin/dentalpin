@@ -14,15 +14,17 @@ same one. A test guards the two against each other.
 
 from __future__ import annotations
 
-PDF_LOCALES: tuple[str, ...] = ("es", "en", "ta", "fr", "pt", "de", "hu", "pl", "it", "ar")
+PDF_LOCALES: tuple[str, ...] = ("es", "en", "ta", "hi", "fr", "pt", "de", "hu", "pl", "it", "ar")
 PDF_LOCALE_PATTERN = "^(" + "|".join(PDF_LOCALES) + ")$"
 
 # UI language -> Babel locale for money and dates. Tamil clinics are in
-# India, so their amounts follow en_IN grouping.
+# India, so their amounts follow en_IN grouping; Hindi uses hi_IN (same
+# lakh/crore grouping and Latin digits, Hindi month names).
 LOCALE_BY_LANG: dict[str, str] = {
     "es": "es_ES",
     "en": "en_US",
     "ta": "en_IN",
+    "hi": "hi_IN",
     "fr": "fr_FR",
     "pt": "pt_PT",
     "de": "de_DE",

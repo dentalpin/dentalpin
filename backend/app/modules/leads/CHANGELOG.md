@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer; Hindi website-form identity label in recall notes.
+
 ### Fixed
 
 - Convert drawer: the Edit button now requires `leads.write` and Create
