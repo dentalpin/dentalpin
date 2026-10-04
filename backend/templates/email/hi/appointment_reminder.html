@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}अपॉइंटमेंट अनुस्मारक - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>अपॉइंटमेंट अनुस्मारक</h2>
+
+<p>नमस्ते {{ patient_name }},</p>
+
+<p>यह <strong>{{ clinic_name | default('DentalPin') }}</strong> में आपके आगामी अपॉइंटमेंट का एक अनुस्मारक है:</p>
+
+<div class="info-box">
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">तिथि</div>
+            <div class="value">{{ appointment_date }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">समय</div>
+            <div class="value">{{ appointment_time }}</div>
+        </div>
+    </div>
+    {% if professional_name %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">चिकित्सक</div>
+            <div class="value">{{ professional_name }}</div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<p>कृपया कुछ मिनट पहले पहुँचें। यदि आपको समय बदलना हो, तो जल्द से जल्द हमसे संपर्क करें।</p>
+{% endblock %}

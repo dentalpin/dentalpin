@@ -1,0 +1,36 @@
+{
+  "medicalReference": {
+    "settingsLabel": "चिकित्सा संदर्भ सूचियाँ",
+    "settingsDescription": "मरीज़ रिकॉर्ड में उपयोग होने वाली एलर्जी, दवा और रोग सूचियाँ प्रबंधित करें।",
+    "title": "चिकित्सा संदर्भ सूचियाँ",
+    "description": "ये सूचियाँ मरीज़ के चिकित्सा इतिहास के खोज योग्य ड्रॉपडाउन चलाती हैं। किसी मद को निष्क्रिय करने पर वह भविष्य की खोजों से हट जाती है, मौजूदा मरीज़ रिकॉर्ड प्रभावित नहीं होते।",
+    "tabs": {
+      "allergies": "एलर्जी",
+      "medications": "दवाइयाँ",
+      "diseases": "रोग",
+      "surgeries": "शल्य क्रियाएँ",
+      "interactions": "पारस्परिक प्रभाव",
+      "contraindications": "निषेध"
+    },
+    "name": "नाम",
+    "status": "स्थिति",
+    "active": "सक्रिय",
+    "inactive": "निष्क्रिय",
+    "showInactive": "निष्क्रिय दिखाएँ",
+    "newItemPlaceholder": "नई मद का नाम…",
+    "addSuccess": "जोड़ा गया",
+    "addError": "मद नहीं जोड़ी जा सकी",
+    "updateError": "मद अपडेट नहीं हो सकी",
+    "deactivate": "निष्क्रिय करें",
+    "deactivateError": "मद निष्क्रिय नहीं हो सकी",
+    "itemCount": "{count} मदें",
+    "medicationA": "दवा A",
+    "medicationB": "दवा B",
+    "riskNote": "जोखिम",
+    "riskNotePlaceholder": "जोखिम का वर्णन करें…",
+    "flags": {
+      "interaction": "{a} + {b} पारस्परिक प्रभाव",
+      "contraindication": "{a}: {b} के साथ निषिद्ध"
+    }
+  }
+}

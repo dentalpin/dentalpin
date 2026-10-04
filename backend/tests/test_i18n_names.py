@@ -36,5 +36,5 @@ def test_priority_chain_covers_known_locales():
     """CATALOG_NAME_PRIORITY must list the core locales; future locales
     are added by appending to the tuple — this test pins the known set
     without breaking when a new locale is added."""
-    for lang in ("es", "en", "fr", "pt", "ta", "de", "hu", "it", "pl"):
+    for lang in ("es", "en", "fr", "pt", "ta", "hi", "de", "hu", "it", "pl"):
         assert lang in CATALOG_NAME_PRIORITY, f"{lang} missing from CATALOG_NAME_PRIORITY"

@@ -1,0 +1,312 @@
+{
+  "payments": {
+    "nav": {
+      "payments": "भुगतान",
+      "reports": "भुगतान रिपोर्ट"
+    },
+    "balance": {
+      "debt": "बकाया",
+      "credit": "अग्रिम खाते में",
+      "paid": "कुल भुगतान"
+    },
+    "list": {
+      "title": "भुगतान",
+      "subtitle": "मरीज़ों के भुगतान, उपचार अनुमान के अग्रिम और अग्रिम खाता जमा।",
+      "empty": "कोई भुगतान दर्ज नहीं।",
+      "new": "नया भुगतान",
+      "searchPlaceholder": "मरीज़ या संदर्भ",
+      "filterDateFrom": "से",
+      "filterDateTo": "तक",
+      "filterMethod": "तरीका",
+      "filterPatient": "मरीज़",
+      "filter": {
+        "method": "तरीका",
+        "hasRefunds": "धनवापसी वाले",
+        "hasUnallocated": "अनावंटित",
+        "patient": "मरीज़",
+        "withDebt": "बकाया वाले",
+        "paymentStatus": "स्थिति"
+      },
+      "sort": {
+        "paymentDate": "तिथि",
+        "amount": "राशि"
+      },
+      "budgetStatus": {
+        "paid": "भुगतान हो गया",
+        "partial": "आंशिक",
+        "unpaid": "अदत्त"
+      },
+      "row": {
+        "debtTooltip": "मरीज़ की बकाया राशि",
+        "creditTooltip": "मरीज़ की जमा राशि",
+        "allocationsLabel": "आवंटन",
+        "refundedLabel": "धनवापसी",
+        "noPatient": "कोई मरीज़ नहीं"
+      },
+      "columnDate": "तिथि",
+      "columnPatient": "मरीज़",
+      "columnAmount": "राशि",
+      "columnMethod": "तरीका",
+      "columnAllocations": "आवंटन",
+      "columnNet": "शुद्ध",
+      "columnActions": "कार्रवाइयाँ"
+    },
+    "detail": {
+      "title": "भुगतान {reference}",
+      "amount": "राशि",
+      "method": "तरीका",
+      "date": "तिथि",
+      "recordedBy": "द्वारा दर्ज",
+      "allocations": "आवंटन",
+      "refunds": "धनवापसी",
+      "refund": "धनवापसी करें",
+      "refundedTotal": "धनवापसी की गई",
+      "netAmount": "शुद्ध",
+      "reference": "संदर्भ",
+      "notes": "टिप्पणियाँ"
+    },
+    "new": {
+      "title": "भुगतान दर्ज करें",
+      "patient": "मरीज़",
+      "patientPlaceholder": "मरीज़ खोजें...",
+      "unknownPatient": "अज्ञात मरीज़",
+      "amount": "राशि",
+      "suggestedHint": "लेने के लिए लंबित: {amount}",
+      "useSuggested": "यह राशि उपयोग करें",
+      "method": "तरीका",
+      "moreMethods": "और विकल्प",
+      "date": "तिथि",
+      "today": "आज",
+      "advanced": "उन्नत विकल्प",
+      "reference": "संदर्भ",
+      "referencePlaceholder": "कार्ड प्राधिकरण #, ट्रांसफ़र संदर्भ...",
+      "notes": "टिप्पणियाँ",
+      "allocations": "आवंटन",
+      "allocationsHint": "इस भुगतान को उपचार अनुमानों में बाँटें या मरीज़ के जमा खाते में छोड़ें।",
+      "addAllocation": "आवंटन जोड़ें",
+      "allocationToBudget": "उपचार अनुमान में",
+      "allocationOnAccount": "अग्रिम खाते में",
+      "sumLabel": "योग:",
+      "sumMismatch": "राशि से मेल नहीं खाता",
+      "submit": "दर्ज करें",
+      "submitWithAmount": "{amount} लें",
+      "cancel": "रद्द करें",
+      "errPatient": "मरीज़ चुनें",
+      "errAmount": "0 से अधिक राशि दर्ज करें",
+      "errSum": "आवंटन का योग राशि के बराबर होना चाहिए",
+      "errUnknown": "भुगतान दर्ज नहीं हो सका। फिर कोशिश करें।",
+      "methodRecord": "पहले से प्राप्त भुगतान दर्ज करें",
+      "methodCollect": "अभी भुगतान लें"
+    },
+    "methods": {
+      "cash": "नकद",
+      "card": "कार्ड",
+      "bank_transfer": "ट्रांसफ़र",
+      "direct_debit": "डायरेक्ट डेबिट",
+      "insurance": "बीमा",
+      "other": "अन्य",
+      "upi": "UPI",
+      "netbanking": "नेट बैंकिंग"
+    },
+    "refund": {
+      "title": "भुगतान की धनवापसी",
+      "amount": "राशि",
+      "method": "तरीका",
+      "reason": "कारण",
+      "note": "विवरण",
+      "submit": "धनवापसी करें",
+      "reasonCodes": {
+        "duplicate": "दोहरा भुगतान",
+        "overpaid": "अधिक भुगतान",
+        "treatment_cancelled": "उपचार रद्द",
+        "dispute": "विवाद",
+        "other": "अन्य"
+      }
+    },
+    "ledger": {
+      "title": "मरीज़ खाता बही",
+      "totalPaid": "कुल भुगतान",
+      "totalEarned": "किया गया उपचार",
+      "patientCredit": "मरीज़ की जमा राशि",
+      "clinicReceivable": "क्लिनिक की प्राप्य राशि",
+      "onAccount": "अग्रिम खाते में",
+      "empty": "कोई लेन-देन नहीं।"
+    },
+    "budgetCard": {
+      "title": "उपचार अनुमान भुगतान",
+      "budgetTotal": "अनुमानित",
+      "collected": "प्राप्त",
+      "pending": "लंबित",
+      "collect": "भुगतान लें",
+      "empty": "इस उपचार अनुमान पर अभी कोई भुगतान नहीं।",
+      "collectedLabel": "प्राप्त",
+      "pendingLabel": "लंबित",
+      "outOfTotal": "कुल {total} में से",
+      "settled": "उपचार अनुमान की पूरी राशि प्राप्त",
+      "history": "भुगतान इतिहास",
+      "payment": "भुगतान",
+      "emptyDetailed": "अभी कोई भुगतान प्राप्त नहीं। पहला दर्ज करने के लिए \"भुगतान लें\" उपयोग करें।"
+    },
+    "budgetCollect": {
+      "title": "उपचार अनुमान का भुगतान लें",
+      "amountLabel": "राशि",
+      "methodLabel": "भुगतान का तरीका",
+      "dateLabel": "भुगतान की तिथि",
+      "today": "आज",
+      "quickFull": "पूरी राशि",
+      "optionalDetails": "संदर्भ या टिप्पणी जोड़ें (वैकल्पिक)",
+      "referenceLabel": "संदर्भ",
+      "referencePlaceholder": "उदा. POS लेन-देन id",
+      "notesLabel": "आंतरिक टिप्पणियाँ",
+      "submit": "भुगतान लें",
+      "cancel": "रद्द करें",
+      "success": "भुगतान दर्ज किया गया",
+      "errorGeneric": "भुगतान दर्ज नहीं हो सका",
+      "noteAppliedToBudget": "उपचार अनुमान पर लागू।",
+      "notePendingAfter": "शेष",
+      "noteFullySettled": "उपचार अनुमान पूरी तरह चुकता हो जाएगा।",
+      "noteToBudget": "उपचार अनुमान पर लागू और",
+      "noteExcessToOnAccount": "मरीज़ के अग्रिम खाते में।",
+      "noteBudgetSettled": "उपचार अनुमान का पूरा भुगतान हो चुका है।",
+      "noteToOnAccount": "मरीज़ के अग्रिम खाते में जाएगा।"
+    },
+    "pendingCharges": {
+      "title": "लेने के लिए लंबित",
+      "count": "{n} सत्र",
+      "more": "+ {n} और",
+      "collect": "{amount} लें",
+      "unnamedSession": "बिना शीर्षक सत्र"
+    },
+    "patientPanel": {
+      "title": "मरीज़ खाता बही",
+      "kpis": {
+        "totalPaid": "कुल भुगतान",
+        "debt": "क्लिनिक की प्राप्य राशि",
+        "onAccount": "अग्रिम खाते में"
+      },
+      "sidebar": {
+        "title": "सारांश",
+        "credit": "मरीज़ की जमा राशि",
+        "lastPayment": "अंतिम भुगतान",
+        "noLastPayment": "अभी कोई भुगतान नहीं",
+        "totalEarned": "किया गया उपचार"
+      },
+      "banner": {
+        "debtTitle": "क्लिनिक का {amount} बकाया है",
+        "debtDescription": "कुल भुगतान किए गए उपचार से कम है।",
+        "creditTitle": "{amount} जमा है",
+        "creditDescription": "किए गए उपचार से अधिक भुगतान हुआ है।"
+      },
+      "cobrar": "भुगतान दर्ज करें",
+      "timeline": {
+        "title": "लेन-देन",
+        "empty": "कोई लेन-देन दर्ज नहीं",
+        "emptyCta": "पहला भुगतान दर्ज करें",
+        "loadError": "मरीज़ खाता बही लोड नहीं हो सकी।",
+        "retry": "फिर कोशिश करें",
+        "drPrefix": "डॉ. {name}",
+        "types": {
+          "payment": "भुगतान",
+          "refund": "धनवापसी",
+          "earned": "किया गया उपचार"
+        },
+        "treatmentStatus": {
+          "planned": "नियोजित",
+          "performed": "किया गया",
+          "completed": "पूर्ण",
+          "cancelled": "रद्द",
+          "in_progress": "प्रगति पर"
+        },
+        "rowMenu": {
+          "detail": "विवरण देखें",
+          "refund": "धनवापसी करें",
+          "reallocate": "उपचार अनुमान को सौंपें…"
+        }
+      },
+      "refundModal": {
+        "title": "भुगतान की धनवापसी",
+        "amount": "धनवापसी राशि",
+        "method": "धनवापसी का तरीका",
+        "reason": "कारण",
+        "note": "विवरण (वैकल्पिक)",
+        "submit": "धनवापसी की पुष्टि करें",
+        "cancel": "रद्द करें",
+        "errorGeneric": "धनवापसी दर्ज नहीं हो सकी"
+      }
+    },
+    "reports": {
+      "title": "भुगतान रिपोर्ट",
+      "subtitle": "अवधि की वसूली, धनवापसी, मरीज़ों की शेष राशि और रुझान।",
+      "loadError": "भुगतान रिपोर्ट लोड नहीं हो सकीं",
+      "cardDescription": "प्राप्ति, धनवापसी, मरीज़ों की शेष राशि, बकाया अवधि और रुझान।",
+      "period": "अवधि",
+      "refresh": "रीफ़्रेश करें",
+      "collected": "प्राप्त",
+      "refunded": "धनवापसी",
+      "net": "शुद्ध",
+      "patientCredit": "मरीज़ों की कुल जमा राशि",
+      "patientCreditHint": "अग्रिम खाते या अग्रिम भुगतान की शेष राशि।",
+      "clinicReceivable": "क्लिनिक की प्राप्य राशि",
+      "refundRatio": "धनवापसी अनुपात",
+      "byMethod": "तरीके के अनुसार",
+      "byProfessional": "चिकित्सक के अनुसार",
+      "byProfessionalHint": "किया गया उपचार, प्राप्त राशि नहीं।",
+      "aging": "प्राप्य राशि की अवधि",
+      "agingHint": "बकाया वाले मरीज़, बकाया की अवधि के अनुसार समूहित।",
+      "refunds": "कारण के अनुसार धनवापसी",
+      "refundsHint": "दर्ज कारणों के अनुसार धनवापसी का वितरण।",
+      "bucket": "{range} दिन",
+      "unknownProfessional": "अनावंटित",
+      "countShort": "{n} लेन-देन",
+      "countPatients": "{n} मरीज़",
+      "granularity": {
+        "day": "दिन",
+        "week": "सप्ताह",
+        "month": "महीना"
+      },
+      "hero": {
+        "netCollected": "शुद्ध प्राप्ति",
+        "netCollectedHint": "अवधि में प्राप्ति में से धनवापसी घटाकर।",
+        "receivable": "बकाया प्राप्य राशि",
+        "receivableHint": "किया गया उपचार जिसकी राशि अभी प्राप्त नहीं हुई, अवधि के अनुसार।",
+        "vsPrevious": "पिछली अवधि की तुलना में",
+        "transactionsCount": "अवधि में {n} लेन-देन"
+      },
+      "trend": {
+        "title": "प्राप्ति का रुझान",
+        "subtitle": "प्रति अवधि शुद्ध राशि। डैश रेखा धनवापसी दिखाती है।"
+      },
+      "empty": {
+        "noDataTitle": "इस सीमा में कोई डेटा नहीं",
+        "noDataDescription": "रिपोर्ट देखने के लिए अवधि बदलें या एक भुगतान दर्ज करें।",
+        "noTrend": "रुझान दिखाने के लिए पर्याप्त बिंदु नहीं।",
+        "noMethods": "अवधि में तरीके के अनुसार कोई प्राप्ति नहीं।",
+        "noProfessionals": "अवधि में कोई उपचार नहीं किया गया।",
+        "noReceivable": "कोई बकाया वाला मरीज़ नहीं।"
+      },
+      "drilldown": {
+        "viewPayments": "अवधि के भुगतान देखें",
+        "viewPatients": "बकाया वाले मरीज़ देखें"
+      }
+    },
+    "target": {
+      "label": "इस पर लागू करें",
+      "placeholder": "गंतव्य चुनें",
+      "onAccount": "मरीज़ की जमा राशि (अग्रिम खाता)",
+      "onAccountHint": "मरीज़ के अग्रिम खाते में जमा रहता है। जब तक आप इसे सौंपें नहीं, यह किसी चालान या उपचार अनुमान पर लागू नहीं होता।",
+      "budgetHint": "इस उपचार अनुमान और इसके जारी चालानों पर लागू होगा।",
+      "lockedBudget": "उपचार अनुमान {budget} और इसके चालानों पर लागू होगा।"
+    },
+    "reallocate": {
+      "title": "उपचार अनुमान को सौंपें",
+      "hint": "पूरा {amount} का भुगतान चुने गए उपचार अनुमान और उसके जारी चालानों में चला जाएगा।",
+      "submit": "सौंपें",
+      "success": "भुगतान उपचार अनुमान को सौंपा गया",
+      "error": "भुगतान फिर से नहीं सौंपा जा सका। कृपया फिर कोशिश करें।"
+    },
+    "followup": {
+      "collect": "भुगतान लें",
+      "collected": "भुगतान दर्ज किया गया।"
+    }
+  }
+}

@@ -31,7 +31,7 @@ Three independent axes per market:
    open-source software being admitted at all.
 
 Patient-facing **communications** (email templates, PDFs) render in
-five languages (es, en, fr, pt, ta) — a market whose language is
+six languages (es, en, fr, pt, ta, hi) — a market whose language is
 UI-only still sends patient documents in one of these until its
 templates are contributed.
 
@@ -40,7 +40,7 @@ templates are contributed.
 | Market | UI | Comms | Invoicing / tax | Clinical / insurance interop | Open issues |
 |---|---|---|---|---|---|
 | Spain | ✅ `es` | ✅ | ✅ `verifactu` module (AEAT) | n/a | — |
-| India | ✅ `en` + `ta` | ✅ | ✅ `india_gst` module (CGST/SGST/IGST, GSTIN checksum, FY numbering; e-invoice is applicability-tracking only) | ❓ ABDM voluntary? DPDP audit | #145 (e-invoicing GSP/IRP, DPDP, ABDM) |
+| India | ✅ `en` + `ta` + `hi` | ✅ | ✅ `india_gst` module (CGST/SGST/IGST, GSTIN checksum, FY numbering; e-invoice is applicability-tracking only) | ❓ ABDM voluntary? DPDP audit | #145 (e-invoicing GSP/IRP, DPDP, ABDM) |
 | France | ✅ `fr` | ✅ | ❌ e-invoicing reform (partner platforms, e-reporting); invoicing outside the Assurance Maladie flow until the FSE connector exists | ❌ `fr_ccam` (CCAM dentaire, tariffs, 100 % Santé baskets, devis conventionnel) then `fr_fse` connector to a homologated engine sold as API (ADR 0028); no in-house homologation; self-hosted installations are outside HDS, hosted offers need an HDS host | #411 (fr_ccam), #141 (answered), #142 |
 | Portugal | ✅ `pt` | ✅ | ❌ AT certification is not possible for a self-hosted, modifiable program (producer-exclusive signing key, Portaria 363/2010 art. 3; ADR 0027) — `pt_invoicing` connector to a certified invoicing API (InvoiceXpress, Moloni, Vendus…) pending; until then invoice with a certified program | n/a | #140 (answered) |
 | United States | ✅ `en` | ✅ | ✅ patient invoicing works as-is | ❌ Claims: no US regulator certifies dental PMS — the blocker is IP, not approval. DentalPin ships no CDT (ADA commercial licence; the practice supplies its own) and writes no X12 837D (X12's licence forbids Open Source licensing of the combined software, and ADR 0004 converts to Apache 2.0); `us_claims` sends a non-standard payload to a clearinghouse acting as the practice's business associate (45 CFR 162.930(b); ADR 0035). HIPAA: self-hosted means DentalPin is no business associate and signs no BAA; the hosted offer is one and does. Read-access logging, automatic logoff and emergency access are open before any readiness claim | #137 (answered) |
@@ -51,6 +51,7 @@ templates are contributed.
 | Poland | ✅ `pl` | ❌ | ❌ KSeF: mandatory 2026-02-01 / 2026-04-01, penalties 2027-01-01 — but art. 106ga ust. 2 pkt 4 exempts invoices to natural persons, so almost every patient invoice is out of scope and KSeF matters only for B2B; `pl_ksef` pending, **no certification needed** (MF publishes the OpenAPI contract, SDKs and three environments); patient sales stay on the practice's own kasa fiskalna online (ADR 0033) | ❌ P1/EDM: **feasible for a self-hosted open-source system** — CeZ issues the TLS/WSS certificates to the practice through RPWDL 2.0, the integration documentation is public, the Projectathon is voluntary; `pl_p1` pending (zdarzenia medyczne + EDM index, then EDM production, then e-recepta/e-skierowanie); the dentist's qualified signature never leaves the dentist; NFZ settlement out of scope (ADR 0033) | #143 (answered), #144 |
 | Hungary | ✅ `hu` | ❌ | ✅ `nav_online` module (NAV Online Számla 3.0 real-time reporting, phase 1: CREATE/STORNO) | n/a | #341 |
 | Tamil-speaking markets | ✅ `ta` | ✅ | see India | see India | — |
+| Hindi-speaking markets | ✅ `hi` | ✅ | see India | see India | — |
 
 Legend: ✅ done · ❌ missing, scoped in the linked issue · ❓ open
 feasibility question — a sourced "no, and here is the rule" is as

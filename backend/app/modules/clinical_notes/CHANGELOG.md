@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer; Hindi demo seed notes.
+
 - chore(#337): imports `AppointmentTreatment` from its new home in treatment_plan (a declared dependency).
 
 - refactor(#126): linked-treatment labels resolve catalog names through the shared `app.core.i18n_names.catalog_name` helper.

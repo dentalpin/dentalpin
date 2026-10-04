@@ -1,0 +1,133 @@
+{
+  "recalls": {
+    "title": "रिकॉल",
+    "callList": "कॉल सूची",
+    "noRecallsThisMonth": "इस महीने कोई लंबित रिकॉल नहीं",
+    "filters": {
+      "month": "महीना",
+      "reason": "कारण",
+      "professional": "चिकित्सक",
+      "status": "स्थिति",
+      "priority": "प्राथमिकता",
+      "overdue": "विलंबित दिखाएँ",
+      "any": "कोई भी",
+      "thisMonth": "इस महीने"
+    },
+    "counters": {
+      "due_this_week": "इस सप्ताह देय",
+      "due_this_month": "इस महीने देय",
+      "overdue": "विलंबित",
+      "scheduled_this_month": "इस महीने निर्धारित",
+      "completed_this_month": "इस महीने पूर्ण",
+      "conversion_rate": "रूपांतरण"
+    },
+    "setRecall": "रिकॉल सेट करें",
+    "setRecallShort": "रिकॉल",
+    "history": "रिकॉल इतिहास",
+    "viewAll": "सभी देखें",
+    "pillNext": "अगला रिकॉल: {month} · {reason}",
+    "pillNone": "कोई सक्रिय रिकॉल नहीं",
+    "reasons": {
+      "hygiene": "स्वच्छता",
+      "checkup": "जाँच",
+      "ortho_review": "ऑर्थो समीक्षा",
+      "implant_review": "इम्प्लांट समीक्षा",
+      "post_op": "शल्य चिकित्सा के बाद",
+      "treatment_followup": "उपचार फ़ॉलो-अप",
+      "other": "अन्य"
+    },
+    "priority": {
+      "low": "कम",
+      "normal": "सामान्य",
+      "high": "अधिक"
+    },
+    "status": {
+      "pending": "लंबित",
+      "contacted_no_answer": "उत्तर नहीं मिला",
+      "contacted_scheduled": "निर्धारित",
+      "contacted_declined": "अस्वीकार किया",
+      "done": "पूर्ण",
+      "cancelled": "रद्द",
+      "needs_review": "समीक्षा आवश्यक"
+    },
+    "confirms": {
+      "cancel": "{name} का रिकॉल रद्द करें? इसे पूर्ववत नहीं किया जा सकता।",
+      "done": "{name} का रिकॉल पूर्ण चिह्नित करें? इससे यह इस चक्र के लिए बंद हो जाएगा।"
+    },
+    "actions": {
+      "call": "कॉल करें",
+      "logAttempt": "प्रयास दर्ज करें",
+      "noAnswer": "उत्तर नहीं मिला",
+      "book": "अपॉइंटमेंट बुक करें",
+      "snooze": "टालें",
+      "cancel": "रद्द करें",
+      "markDone": "पूर्ण चिह्नित करें",
+      "exportCsv": "CSV निर्यात करें",
+      "save": "सहेजें"
+    },
+    "closeoutPrompt": {
+      "title": "रिकॉल तय करें?",
+      "subtitle": "मरीज़ का उपचार अभी पूरा हुआ — हम उन्हें कब फिर से कॉल करें?",
+      "skip": "अभी नहीं"
+    },
+    "modal": {
+      "title": "रिकॉल सेट करें",
+      "subtitle": "मरीज़ को भविष्य में कॉल-बैक के लिए चिह्नित करें",
+      "patient": "मरीज़",
+      "reason": "कारण",
+      "when": "कब",
+      "month": "लक्ष्य महीना",
+      "targetMonth": "लक्ष्य महीना",
+      "preciseDate": "कोई विशेष दिन चुनें",
+      "priority": "प्राथमिकता",
+      "assigned": "नियत चिकित्सक",
+      "note": "आंतरिक टिप्पणी",
+      "notePlaceholder": "वैकल्पिक विवरण (उदा. '47 पर फिलिंग की समीक्षा')",
+      "optional": "वैकल्पिक",
+      "duplicateGuard": "इस मरीज़ और कारण के लिए एक लंबित रिकॉल पहले से है। उसे अपडेट किया जाएगा।"
+    },
+    "doNotContact": {
+      "cannotSchedule": "यह मरीज़ \"संपर्क न करें\" चिह्नित है। रिकॉल तय नहीं किए जा सकते। संपर्क फिर से सक्षम करने के लिए व्यक्तिगत विवरण की प्राथमिकता बदलें।"
+    },
+    "activeRecallHint": "सक्रिय रिकॉल · प्रबंधित करने के लिए टैप करें",
+    "logAttempt": {
+      "channel": "माध्यम",
+      "outcome": "परिणाम",
+      "note": "टिप्पणी",
+      "submit": "प्रयास दर्ज करें"
+    },
+    "channel": {
+      "phone": "फ़ोन",
+      "whatsapp": "WhatsApp",
+      "sms": "SMS",
+      "email": "ईमेल"
+    },
+    "outcome": {
+      "no_answer": "उत्तर नहीं मिला",
+      "voicemail": "वॉइसमेल",
+      "scheduled": "अपॉइंटमेंट निर्धारित",
+      "declined": "अस्वीकार किया",
+      "wrong_number": "गलत नंबर"
+    },
+    "snoozePrompt": "कितने महीनों के लिए टालें?",
+    "settings": {
+      "title": "रिकॉल",
+      "description": "डिफ़ॉल्ट अंतराल + उपचार-श्रेणी मैपिंग",
+      "intervals": "डिफ़ॉल्ट अंतराल (महीने)",
+      "categoryMap": "उपचार → कारण",
+      "categoryKeyPlaceholder": "कैटलॉग श्रेणी कुंजी",
+      "autoSuggest": "उपचार पूरा होने पर रिकॉल सुझाएँ",
+      "autoLink": "निर्धारित अपॉइंटमेंट को लंबित रिकॉल से जोड़ें",
+      "saved": "सेटिंग्स सहेजी गईं"
+    },
+    "dashboard": {
+      "title": "रिकॉल"
+    },
+    "suggestion": {
+      "title": "सुझाया गया रिकॉल",
+      "body": "इस उपचार के बाद हम {month} में रिकॉल का सुझाव देते हैं ({reason})।",
+      "create": "रिकॉल बनाएँ",
+      "dismiss": "बंद करें"
+    }
+  }
+}

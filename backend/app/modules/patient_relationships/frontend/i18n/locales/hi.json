@@ -1,0 +1,22 @@
+{
+  "patientRelationships": {
+    "title": "परिवार",
+    "emptyHint": "कोई पारिवारिक संबंध दर्ज नहीं।",
+    "relationships": {
+      "title": "पारिवारिक संबंध",
+      "searchPatient": "जोड़ने के लिए मरीज़ खोजें…",
+      "addSuccess": "संबंध जोड़ा गया",
+      "addError": "संबंध नहीं जोड़ा जा सका",
+      "removeError": "संबंध नहीं हटाया जा सका",
+      "types": {
+        "parent": "माता/पिता",
+        "child": "संतान",
+        "spouse": "पति/पत्नी",
+        "sibling": "भाई/बहन",
+        "guardian": "अभिभावक",
+        "ward": "संरक्षित व्यक्ति",
+        "other": "अन्य"
+      }
+    }
+  }
+}

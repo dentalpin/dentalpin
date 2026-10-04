@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
+
 - Follow-up: fold `tre_0002_created_by` + `tre_0003_entry_guards`
   back into `tre_0001` (single-release module, agreed on #463);
   dev DBs that applied them must re-stamp the branch.

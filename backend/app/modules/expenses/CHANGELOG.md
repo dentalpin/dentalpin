@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
+
 - fix(#522): the `expense_date` default read the UTC day, so a clinic east of
   UTC filing an expense before its offset had elapsed got yesterday's date
   pre-filled. Now uses `toISODate`.

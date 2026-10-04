@@ -320,9 +320,12 @@ class EmailService:
             logger.warning("Jinja2 environment not initialized")
             return None
 
-        # Try locale-specific template first, then fallback to default
+        # Try locale-specific template first, then English (country-specific
+        # templates, e.g. Spain's Verifactu, are not shipped in every locale),
+        # then the legacy default/bare paths.
         template_paths = [
             f"{locale}/{template_key}.{extension}",
+            f"en/{template_key}.{extension}",
             f"default/{template_key}.{extension}",
             f"{template_key}.{extension}",
         ]

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer; Hindi purchase-order PDF labels.
+
 - Follow-up: single error toast on the procurement pages — the
   composable passes `errorToast: false` on every call the pages
   already surface themselves, including `listSuppliers` /

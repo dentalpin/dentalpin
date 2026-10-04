@@ -1,0 +1,90 @@
+{
+  "migrationImport": {
+    "settingsCard": {
+      "title": "डेटा माइग्रेशन (dental-bridge)",
+      "description": "dental-bridge द्वारा बनाई गई DPMF फ़ाइल आयात करें (मरीज़, अपॉइंटमेंट, उपचार अनुमान, भुगतान, दस्तावेज़)।"
+    },
+    "page": {
+      "title": "डेटा माइग्रेशन",
+      "subtitle": "dental-bridge द्वारा निकाला गया डेटा इस क्लिनिक में आयात करें।"
+    },
+    "upload": {
+      "dropFile": ".dpm फ़ाइल यहाँ छोड़ें, या चुनने के लिए क्लिक करें",
+      "passphrase": "पासफ़्रेज़ (केवल एन्क्रिप्टेड फ़ाइलों के लिए)",
+      "passphraseHelp": "केवल .dpm.enc / .dpm.zst.enc के लिए आवश्यक",
+      "submit": "अपलोड करें और सत्यापित करें",
+      "uploading": "अपलोड हो रहा है…",
+      "error": "अपलोड विफल"
+    },
+    "validate": {
+      "running": "फ़ाइल सत्यापित हो रही है…",
+      "ok": "फ़ाइल मान्य है",
+      "failed": "सत्यापन विफल"
+    },
+    "preview": {
+      "title": "पूर्वावलोकन",
+      "entities": "इकाइयाँ",
+      "samples": "नमूने",
+      "warnings": "चेतावनियाँ",
+      "files": "संलग्न फ़ाइलें",
+      "filesTotal": "कुल",
+      "filesWithSha": "sha256 सहित",
+      "filesWithoutSha": "sha256 के बिना",
+      "verifactuCheckbox": "Verifactu कानूनी डेटा आयात करें",
+      "verifactuHelp": "चालानों पर कानूनी हैश (Verifactu) सुरक्षित रखता है। केवल तब उपलब्ध जब Verifactu मॉड्यूल इंस्टॉल हो और फ़ाइल में वह डेटा हो।",
+      "confirm": "पुष्टि करें और आयात करें",
+      "warning": "इस कार्रवाई को पूर्ववत नहीं किया जा सकता। पुष्टि से पहले डेटा जाँच लें।"
+    },
+    "filters": {
+      "title": "चिकित्सक फ़िल्टरिंग",
+      "description": "फ़िल्टर किए गए स्टाफ़ निष्क्रिय के रूप में आयात होते हैं (ऐतिहासिक संदर्भों के लिए रखे जाते हैं, पर शेड्यूल में नहीं दिखते)। आप उन्हें बाद में सेटिंग्स → उपयोगकर्ता में फिर से सक्रिय कर सकते हैं।",
+      "totalLabel": "कुल",
+      "deactivatedLabel": "स्रोत में निष्क्रिय",
+      "orphansLabel": "केवल शेड्यूल वाले कॉलम",
+      "stale24mLabel": "पिछले 24 महीनों में कोई गतिविधि नहीं",
+      "minActivityLabel": "न्यूनतम गतिविधि (महीने)",
+      "minActivityHelp": "जिन चिकित्सकों का इतने महीनों से नया कोई नैदानिक रिकॉर्ड नहीं, उन्हें निष्क्रिय करें। अक्षम करने के लिए 0 रखें।",
+      "excludeOrphans": "वास्तविक सहयोगी रिकॉर्ड के बिना केवल शेड्यूल वाले कॉलम बाहर रखें",
+      "excludeInactive": "स्रोत में निष्क्रिय चिह्नित चिकित्सकों को बाहर रखें",
+      "excludeNonClinical": "केवल दंत चिकित्सक और हाइजीनिस्ट आयात करें (सहायक और प्रशासनिक स्टाफ़ छोड़ें)"
+    },
+    "execute": {
+      "running": "आयात हो रहा है…",
+      "progress": "{total} में से {processed} इकाइयाँ",
+      "ok": "आयात पूरा हुआ",
+      "failed": "आयात विफल"
+    },
+    "proposals": {
+      "title": "कैटलॉग मैपिंग की समीक्षा करें",
+      "subtitle": "आयात से पहले हर Gesdén उपचार को DentalPin कैटलॉग से जोड़ें।",
+      "build": "प्रस्ताव तैयार करें",
+      "building": "तैयार हो रहा है…",
+      "summary": "{total} प्रस्ताव: {link} जुड़े, {fuzzy} अनुमानित, {create} बनाने हैं",
+      "bulkAccept": "≥ 0.9 विश्वास वाले सभी मिलान स्वीकार करें",
+      "accepted": "{n} प्रस्ताव स्वीकार किए गए।",
+      "columnSource": "Gesdén उपचार",
+      "columnProposed": "प्रस्ताव",
+      "columnAction": "कार्रवाई",
+      "columnStatus": "स्थिति",
+      "actionLink": "कैटलॉग से जोड़ें",
+      "actionFuzzy": "अनुमानित मिलान",
+      "actionCreate": "नया बनाएँ",
+      "operatorPending": "लंबित",
+      "operatorAccepted": "स्वीकृत",
+      "operatorRelinked": "फिर से जोड़ा",
+      "operatorCreated": "नया बनाएँ",
+      "operatorIgnored": "अनदेखा",
+      "acceptRow": "स्वीकार करें",
+      "ignoreRow": "अनदेखा करें"
+    },
+    "status": {
+      "uploaded": "अपलोड हुआ",
+      "validating": "सत्यापन जारी",
+      "validated": "सत्यापित",
+      "previewing": "पूर्वावलोकन",
+      "executing": "आयात हो रहा है",
+      "completed": "पूर्ण",
+      "failed": "विफल"
+    }
+  }
+}

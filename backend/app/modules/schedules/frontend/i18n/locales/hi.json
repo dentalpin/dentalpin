@@ -1,0 +1,88 @@
+{
+  "schedules": {
+    "nav": {
+      "clinicHours": "क्लिनिक का समय",
+      "professionalSchedules": "चिकित्सकों का शेड्यूल"
+    },
+    "settingsCards": {
+      "clinicHoursTitle": "क्लिनिक का समय",
+      "clinicHoursDescription": "क्लिनिक के साप्ताहिक खुलने का समय और विशेष तिथियाँ (छुट्टियाँ, कम समय) तय करें।",
+      "professionalHoursTitle": "चिकित्सकों का शेड्यूल",
+      "professionalHoursDescription": "हर चिकित्सक का अलग शेड्यूल तय करें और छुट्टियाँ या अन्य अनुपलब्ध अवधियाँ प्रबंधित करें।"
+    },
+    "clinicHours": {
+      "title": "क्लिनिक का समय",
+      "subtitle": "तय करें कि सप्ताह के हर दिन क्लिनिक कब खुला रहता है।",
+      "weeklyTemplate": "साप्ताहिक टेम्पलेट",
+      "overrides": "विशेष तिथियाँ",
+      "addOverride": "विशेष तिथि जोड़ें",
+      "editOverride": "विशेष तिथि संपादित करें",
+      "save": "परिवर्तन सहेजें",
+      "saved": "शेड्यूल अपडेट किया गया",
+      "savedError": "शेड्यूल सहेजने में विफल"
+    },
+    "professionalHours": {
+      "title": "चिकित्सकों का शेड्यूल",
+      "selectProfessional": "चिकित्सक चुनें",
+      "weeklyTemplate": "साप्ताहिक शेड्यूल",
+      "overrides": "अनुपस्थिति और विशेष समय",
+      "addOverride": "अनुपस्थिति जोड़ें",
+      "editOverride": "अनुपस्थिति संपादित करें",
+      "save": "परिवर्तन सहेजें",
+      "saved": "शेड्यूल अपडेट किया गया"
+    },
+    "weekday": {
+      "0": "सोमवार",
+      "1": "मंगलवार",
+      "2": "बुधवार",
+      "3": "गुरुवार",
+      "4": "शुक्रवार",
+      "5": "शनिवार",
+      "6": "रविवार",
+      "closed": "बंद",
+      "addShift": "शिफ़्ट जोड़ें",
+      "removeShift": "शिफ़्ट हटाएँ",
+      "start": "शुरू",
+      "end": "समाप्त"
+    },
+    "overrides": {
+      "startDate": "आरंभ तिथि",
+      "endDate": "समाप्ति तिथि",
+      "kind": "प्रकार",
+      "reason": "कारण",
+      "reasonPlaceholder": "उदाहरण: दिवाली, सम्मेलन...",
+      "closed": "बंद",
+      "customHours": "विशेष समय",
+      "unavailable": "अनुपलब्ध",
+      "noOverrides": "कोई विशेष तिथि निर्धारित नहीं",
+      "delete": "हटाएँ",
+      "confirmDelete": "यह अवधि हटाएँ?",
+      "add": "जोड़ें",
+      "save": "सहेजें",
+      "cancel": "रद्द करें"
+    },
+    "analytics": {
+      "occupancyTitle": "कक्ष के अनुसार उपयोग",
+      "utilizationTitle": "चिकित्सक के अनुसार उपयोग",
+      "peakHoursTitle": "व्यस्ततम घंटे",
+      "bookedMinutes": "बुक किए गए मिनट",
+      "availableMinutes": "उपलब्ध मिनट",
+      "rate": "उपयोग",
+      "noData": "चुनी गई सीमा में कोई डेटा नहीं"
+    },
+    "availability": {
+      "clinicClosed": "क्लिनिक बंद है",
+      "professionalOff": "चिकित्सक उपलब्ध नहीं",
+      "outsideHours": "निर्धारित समय से बाहर",
+      "confirmOutside": "यह स्लॉट कार्य-समय से बाहर है। फिर भी अपॉइंटमेंट बनाएँ?",
+      "confirm": "फिर भी बनाएँ",
+      "cancel": "रद्द करें"
+    },
+    "onboarding": {
+      "hoursLabel": "क्लिनिक का समय",
+      "hoursDescription": "शेड्यूल अभी 24/7 खुला है। अपना वास्तविक खुलने का समय सेट करें।",
+      "presetSplit": "सोम–शुक्र 9–14 और 16–20",
+      "presetContinuous": "सोम–शुक्र 9–18"
+    }
+  }
+}

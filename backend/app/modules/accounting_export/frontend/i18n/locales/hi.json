@@ -1,0 +1,40 @@
+{
+  "nav": {
+    "accountingExport": "लेखाकार निर्यात"
+  },
+  "accountingExport": {
+    "title": "लेखाकार निर्यात",
+    "subtitle": "अपने लेखाकार को देने के लिए अवधि के चालान और भुगतान डाउनलोड करें।",
+    "period": "अवधि",
+    "from": "से",
+    "to": "तक",
+    "presets": {
+      "currentMonth": "वर्तमान महीना",
+      "previousMonth": "पिछला महीना",
+      "currentQuarter": "वर्तमान तिमाही",
+      "previousQuarter": "पिछली तिमाही",
+      "yearToDate": "वर्ष की शुरुआत से अब तक",
+      "custom": "कस्टम"
+    },
+    "actions": {
+      "preview": "पूर्वावलोकन",
+      "download": "डाउनलोड करें (.zip)"
+    },
+    "counters": {
+      "invoices": "चालान",
+      "payments": "भुगतान",
+      "base": "आधार राशि",
+      "total": "कुल"
+    },
+    "cols": {
+      "numero": "संख्या",
+      "fecha_emision": "तिथि",
+      "cliente": "ग्राहक",
+      "nif": "कर पहचान संख्या",
+      "base": "आधार राशि",
+      "cuota_iva": "VAT",
+      "total": "कुल",
+      "estado": "स्थिति"
+    }
+  }
+}

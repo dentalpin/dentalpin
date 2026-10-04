@@ -1,0 +1,56 @@
+{
+  "nav": {
+    "imagingViewer": "इमेजिंग"
+  },
+  "imagingViewer": {
+    "list": {
+      "title": "DICOM इमेजिंग",
+      "empty": "इस मरीज़ के लिए अभी कोई देखने योग्य स्टडी नहीं।",
+      "noPatient": "कोई मरीज़ चयनित नहीं",
+      "noPatientHint": "ऊपर मरीज़ चुनें, या यह पृष्ठ ?patient_id=... के साथ खोलें, उदा. मरीज़ रिकॉर्ड से।",
+      "pickPatient": "मरीज़ चुनें",
+      "unknownPatient": "अज्ञात मरीज़",
+      "searchPatients": "मरीज़ खोजें",
+      "unknownModality": "अज्ञात मोडैलिटी",
+      "noStudyDate": "स्टडी की कोई तिथि नहीं"
+    },
+    "viewer": {
+      "title": "DICOM व्यूअर",
+      "unavailable": "पूर्वावलोकन उपलब्ध नहीं",
+      "fallbackHint": "स्टडी प्रदर्शित नहीं हो सकी। फ़ाइल फिर से अपलोड करके देखें।",
+      "visualizationNote": "केवल दृश्य सहायता - कभी भी निदान नहीं।"
+    },
+    "rvg": {
+      "title": "RVG आयात कतार ({total} लंबित)",
+      "empty": "कोई लंबित RVG फ़ाइल नहीं। हर स्कैन के बाद नई सेंसर फ़ाइलें यहाँ दिखती हैं।",
+      "scanNow": "अभी स्कैन करें",
+      "approveSuggestion": "सुझाव स्वीकार करें",
+      "approveCurrentPatient": "वर्तमान मरीज़ को सौंपें",
+      "reject": "अस्वीकार करें",
+      "suggested": "सुझाया गया मरीज़ (स्कोर {score})",
+      "ambiguous": "अस्पष्ट मिलान - मरीज़ स्पष्ट रूप से चुनें",
+      "noSuggestion": "कोई मिलान नहीं - सौंपने के लिए ?patient_id= के साथ खोलें",
+      "loadFailed": "RVG कतार लोड नहीं हो सकी।",
+      "scanFailed": "स्कैन विफल। क्या वॉच फ़ोल्डर कॉन्फ़िगर है?",
+      "scanSummary": "स्कैन पूरा: {scanned} स्कैन, {created} नई, {approved} स्वतः स्वीकृत, {failed} विफल",
+      "actionFailed": "कार्रवाई विफल। हो सकता है इस पंक्ति पर पहले ही निर्णय हो चुका हो।"
+    },
+    "annotations": {
+      "title": "टिप्पणियाँ",
+      "ruler": "रूलर",
+      "freehand": "ड्रॉ करें",
+      "note": "टिप्पणी",
+      "notePlaceholder": "टिप्पणी का पाठ…",
+      "saveNote": "टिप्पणी सहेजें",
+      "deleteLabel": "टिप्पणी हटाएँ",
+      "mm": "{mm} mm",
+      "noSpacing": "पिक्सेल स्पेसिंग नहीं — mm उपलब्ध नहीं",
+      "kind_ruler": "रूलर",
+      "kind_freehand": "ड्रॉइंग",
+      "kind_note": "टिप्पणी",
+      "loadFailed": "टिप्पणियाँ लोड नहीं हो सकीं।",
+      "actionFailed": "कार्रवाई विफल। कृपया फिर कोशिश करें।",
+      "aidNote": "ओवरले केवल दृश्य सहायता हैं — कभी भी निदान नहीं।"
+    }
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "whatsapp_kapso": {
+    "settings": {
+      "title": "WhatsApp (Kapso)",
+      "description": "संदेश भेजने और प्राप्त करने के लिए Kapso के माध्यम से क्लिनिक का WhatsApp नंबर कनेक्ट करें।"
+    },
+    "connection": "कनेक्शन",
+    "verified": "सत्यापित",
+    "notVerified": "सत्यापित नहीं",
+    "apiKey": "Kapso API कुंजी",
+    "phoneNumberId": "फ़ोन नंबर ID",
+    "businessAccountId": "बिज़नेस खाता ID",
+    "businessAccountHelp": "स्वीकृत टेम्पलेट सिंक करने के लिए आवश्यक।",
+    "displayPhone": "दिखने वाला नंबर",
+    "webhookSecret": "वेबहुक सीक्रेट",
+    "secretStored": "सहेजा गया। बिना बदले रखने के लिए खाली छोड़ें।",
+    "webhook": "वेबहुक",
+    "webhookHelp": "स्थिति और उत्तर प्राप्त करने के लिए यह URL Kapso की वेबहुक सेटिंग्स में चिपकाएँ।",
+    "copy": "कॉपी करें",
+    "copied": "URL कॉपी किया गया",
+    "templates": "टेम्पलेट",
+    "sync": "सिंक करें",
+    "noTemplates": "कोई स्वीकृत टेम्पलेट नहीं। Kapso से लाने के लिए सिंक करें।",
+    "notificationType": "सूचना का प्रकार",
+    "template": "टेम्पलेट",
+    "map": "मैप करें",
+    "mapped": "टेम्पलेट मैप किया गया",
+    "mapError": "टेम्पलेट मैप नहीं हो सका",
+    "test": "परीक्षण भेजना",
+    "sendTest": "परीक्षण भेजें",
+    "testOk": "परीक्षण संदेश भेजा गया",
+    "testFail": "परीक्षण भेजने में विफल",
+    "saved": "सेटिंग्स सहेजी गईं",
+    "saveError": "सहेजा नहीं जा सका",
+    "synced": "{n} टेम्पलेट सिंक हुए",
+    "syncError": "सिंक नहीं हो सका",
+    "types": {
+      "appointment_confirmation": "अपॉइंटमेंट की पुष्टि",
+      "appointment_reminder": "अपॉइंटमेंट अनुस्मारक",
+      "appointment_cancelled": "अपॉइंटमेंट रद्दीकरण",
+      "budget_sent": "उपचार अनुमान भेजा गया",
+      "budget_accepted": "उपचार अनुमान स्वीकृत",
+      "budget_reminder": "उपचार अनुमान अनुस्मारक",
+      "invoice_sent": "चालान भेजा गया",
+      "recall_reminder": "रिकॉल अनुस्मारक",
+      "welcome": "स्वागत"
+    },
+    "onboarding": {
+      "label": "WhatsApp भेजना",
+      "description": "WhatsApp क्लिनिक का पसंदीदा माध्यम है, लेकिन Kapso अभी कनेक्ट नहीं है। स्वचालित संदेश भेजे जा सकें, इसके लिए इसे कनेक्ट करें।"
+    }
+  }
+}

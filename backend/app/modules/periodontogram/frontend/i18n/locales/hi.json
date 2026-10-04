@@ -1,0 +1,85 @@
+{
+  "periodontogram": {
+    "tab": {
+      "label": "पेरियोडोंटोग्राम"
+    },
+    "empty": {
+      "title": "अभी कोई पेरियोडॉन्टल जाँच नहीं",
+      "description": "प्रोबिंग गहराई, रक्तस्राव, प्लाक और बाकी SEPA माप दर्ज करने के लिए नया सत्र खोलें।",
+      "cta": "जाँच शुरू करें"
+    },
+    "session": {
+      "draftBadge": "मसौदा प्रगति पर",
+      "closedBadge": "बंद सत्र",
+      "recordedAt": "{date} को दर्ज",
+      "openDraft": "नया सत्र खोलें",
+      "continueDraft": "मसौदा जारी रखें",
+      "closeTitle": "पेरियोडॉन्टल सत्र बंद करें",
+      "closeDescription": "बंद होने के बाद सत्र अपरिवर्तनीय हो जाता है और इतिहास में दिखता है। सुधार के लिए आपको नया सत्र खोलना होगा।",
+      "closeButton": "सत्र बंद करें",
+      "discardTitle": "मसौदा छोड़ें",
+      "discardDescription": "इस सत्र में दर्ज सभी डेटा हटा दिया जाएगा। इसे पूर्ववत नहीं किया जा सकता।",
+      "discardButton": "छोड़ें",
+      "cancel": "रद्द करें",
+      "closeSession": "सत्र बंद करें",
+      "discardDraft": "मसौदा छोड़ें"
+    },
+    "indices": {
+      "bop": "रक्तस्राव",
+      "pi": "प्लाक",
+      "calMean": "औसत CAL",
+      "deepPockets": "पॉकेट ≥5mm"
+    },
+    "saveState": {
+      "saving": "सहेजा जा रहा है…",
+      "dirty": "बिना सहेजे परिवर्तन",
+      "saved": "परिवर्तन सहेजे गए"
+    },
+    "history": {
+      "viewingSession": "{date} का सत्र देख रहे हैं (केवल पढ़ने के लिए)।",
+      "returnToCurrent": "वर्तमान पर लौटें"
+    },
+    "arch": {
+      "upper": "ऊपरी",
+      "lower": "निचला",
+      "palatal": "पैलेटल",
+      "lingual": "लिंगुअल",
+      "vestibular": "वेस्टिबुलर",
+      "probing": "प्रोबिंग",
+      "margin": "मार्जिन",
+      "bleeding": "रक्तस्राव",
+      "plaque": "प्लाक",
+      "probingTitle": "{code} प्रोबिंग (0–15 mm)",
+      "marginTitle": "{code} मसूड़े का मार्जिन (-5 से 10 mm)",
+      "plaqueTitle": "{code} प्लाक (बदलने के लिए क्लिक करें)",
+      "bleedingTitle": "{code} रक्तस्राव (बदलने के लिए क्लिक करें)",
+      "implant": "इम्प्लांट",
+      "implantToggleOn": "इम्प्लांट (हटाने के लिए क्लिक करें)",
+      "implantToggleOff": "इम्प्लांट चिह्नित करने के लिए क्लिक करें",
+      "mobility": "गतिशीलता",
+      "mobilityTitle": "गतिशीलता बदलने के लिए क्लिक करें (0–3)",
+      "prognosis": "पूर्वानुमान",
+      "prognosisTitle": "अच्छा / ठीक / संदिग्ध / निराशाजनक",
+      "furcaV": "फ़र्का V",
+      "furcaVTitle": "वेस्टिबुलर फ़र्केशन (0/I/II/III)",
+      "furcaLP": "फ़र्का L/P",
+      "furcaLPTitle": "लिंगुअल/पैलेटल फ़र्केशन (0/I/II/III)",
+      "gingivalWidth": "मसूड़े की चौड़ाई",
+      "siteMarkerAria": "स्थान {code}, प्रोबिंग {depth}"
+    },
+    "chart": {
+      "ariaLabel": "पेरियोडोंटोग्राम — ऊपरी और निचला जबड़ा"
+    },
+    "indicesBanner": {
+      "observationsPlaceholder": "जाँच टिप्पणियाँ…",
+      "noteLabel": "टिप्पणी (वैकल्पिक)"
+    },
+    "loading": "पेरियोडोंटोग्राम लोड हो रहा है…",
+    "errors": {
+      "loadFailed": "पेरियोडोंटोग्राम लोड नहीं हो सका।",
+      "saveFailed": "परिवर्तन सहेजा नहीं जा सका।",
+      "checkConnection": "अपना कनेक्शन जाँचें और फिर कोशिश करें।",
+      "closeAborted": "कुछ माप अभी सहेजे नहीं गए हैं — जाँच बंद नहीं हुई। अपना कनेक्शन जाँचें और फिर कोशिश करें।"
+    }
+  }
+}

@@ -1,0 +1,110 @@
+{
+  "nav": {
+    "indiaGst": "भारत GST"
+  },
+  "indiaGst": {
+    "badge": {
+      "gst": "GST",
+      "irnGenerated": "IRN बना",
+      "einvoiceIssue": "ई-चालान समस्या",
+      "needsAttention": "ध्यान देना आवश्यक",
+      "missingGst": "GST डेटा अनुपलब्ध — GST विवरण बनाने के लिए यह चालान फिर से जारी करें"
+    },
+    "banner": {
+      "unregisteredTitle": "GSTIN कॉन्फ़िगर नहीं",
+      "unregisteredDescription": "इस बीच आप मरीज़ों को बिल देना जारी रख सकते हैं — मानक चालान GSTIN के बिना काम करते हैं।",
+      "configureAction": "GST कॉन्फ़िगर करें"
+    },
+    "listFilter": {
+      "needsAttention": "ध्यान देना आवश्यक"
+    },
+    "panel": {
+      "title": "GST और ई-चालान",
+      "correctsDocument": "इस दस्तावेज़ को सुधारता है",
+      "documentNumber": "GST दस्तावेज़ संख्या",
+      "placeOfSupply": "आपूर्ति का स्थान",
+      "gstinOnInvoice": "चालान पर GSTIN",
+      "notProvided": "नहीं दिया गया",
+      "calculation": "GST गणना",
+      "intraState": "राज्य के भीतर · CGST + SGST",
+      "interState": "अंतर-राज्यीय · IGST",
+      "einvoiceStatus": "ई-चालान स्थिति"
+    },
+    "einvoice": {
+      "notRequired": "आवश्यक नहीं",
+      "notConfigured": "कॉन्फ़िगर नहीं",
+      "pending": "लंबित",
+      "generated": "IRN बना",
+      "rejected": "अस्वीकृत",
+      "error": "कनेक्शन त्रुटि",
+      "notRequiredHint": "आपका क्लिनिक सेटिंग्स में तय टर्नओवर सीमा से नीचे है, इसलिए यह चालान ई-चालान पोर्टल पर नहीं भेजा जाता।",
+      "notConfiguredHint": "ई-चालान भारत GST सेटिंग्स में तय टर्नओवर सीमा से ऊपर वाले क्लिनिकों पर लागू होता है। इस चालान के लिए कुछ नहीं भेजा जाता।",
+      "reviewSettings": "ई-चालान सेटिंग्स देखें"
+    },
+    "form": {
+      "title": "चालान के GST विवरण",
+      "clinicGstDetails": "क्लिनिक के GST विवरण",
+      "placeOfSupply": "आपूर्ति का स्थान",
+      "placeOfSupplyHint": "तय करता है कि CGST+SGST लगेगा या IGST",
+      "selectState": "राज्य चुनें",
+      "selectPlaceOfSupplyHint": "GST की गणना के लिए आपूर्ति का स्थान चुनें",
+      "sacCodes": "SAC कोड",
+      "sacCode": "SAC कोड",
+      "sacOverrideHint": "SAC कोड आपके उपचार कैटलॉग से आते हैं। इसे तभी बदलें जब आपका लेखाकार सलाह दे।",
+      "save": "GST विवरण सहेजें",
+      "saved": "GST विवरण सहेजे गए",
+      "saveError": "GST विवरण सहेजे नहीं जा सके"
+    },
+    "settingsCards": {
+      "title": "भारत GST",
+      "description": "भारत के क्लिनिकों के लिए GSTIN, आपूर्ति के स्थान के डिफ़ॉल्ट और SAC कोड कॉन्फ़िगर करें।",
+      "open": "सेटिंग्स खोलें"
+    },
+    "settings": {
+      "title": "भारत GST सेटिंग्स",
+      "description": "इस क्लिनिक के GST विवरण और चालान डिफ़ॉल्ट कॉन्फ़िगर करें।",
+      "loadError": "GST सेटिंग्स लोड नहीं हो सकीं",
+      "saved": "सेटिंग्स सहेजी गईं",
+      "saveError": "सेटिंग्स सहेजी नहीं जा सकीं",
+      "clinicDetails": "क्लिनिक के GST विवरण",
+      "nonRegularNotice": "इस पंजीकरण प्रकार के तहत चालान के लिए GST गणना निष्क्रिय है।",
+      "tradeName": "व्यापारिक नाम",
+      "gstin": "GSTIN",
+      "gstinHint": "क्लिनिक का अपना (आपूर्तिकर्ता) GSTIN — कभी भी प्राप्तकर्ता का नहीं",
+      "registrationType": "पंजीकरण का प्रकार",
+      "registrationRegular": "नियमित",
+      "registrationComposition": "कंपोज़िशन",
+      "registrationUnregistered": "अपंजीकृत",
+      "registrationExempt": "छूट प्राप्त",
+      "clinicState": "क्लिनिक का राज्य",
+      "gstinStateMismatch": "GSTIN के पहले दो अंक एक राज्य कोड हैं जो चुने गए क्लिनिक राज्य से मेल नहीं खाता — इससे हर चालान का राज्य के भीतर/अंतर-राज्यीय GST वर्गीकरण बदल जाता है। दोनों दोबारा जाँचें।",
+      "catalogDefaults": "कैटलॉग GST डिफ़ॉल्ट",
+      "allSacConfigured": "सभी उपचारों के लिए SAC कोड कॉन्फ़िगर है।",
+      "missingSacCount": "{count} उपचारों के लिए SAC कोड और दर आवश्यक है।",
+      "autoconfigure": "स्वतः कॉन्फ़िगर करें",
+      "autoconfigureHint": "स्वतः कॉन्फ़िगरेशन ऊपर के हर उपचार को SAC 999312 (मानव स्वास्थ्य सेवाएँ) देता है, GST दर हर उपचार के कर प्रकार पर छोड़ता है। जिन उपचारों में पहले से SAC है, वे अपरिवर्तित रहते हैं।",
+      "autoconfigureDone": "{count} उपचारों पर SAC {sac} लगाया गया।",
+      "autoconfigureError": "SAC कोड स्वतः कॉन्फ़िगर नहीं हो सके",
+      "einvoiceIntegration": "ई-चालान एकीकरण",
+      "einvoiceProfessionalNotice": "ई-चालान सक्षम करने से पहले योग्य भारतीय कर विशेषज्ञ से पात्रता और नियामक दायित्वों की पुष्टि करें। Dentalpin यह तय नहीं करता कि आपके क्लिनिक पर ई-चालान लागू होता है या नहीं।",
+      "turnoverThreshold": "टर्नओवर सीमा",
+      "turnoverThresholdHint": "इस सीमा से ऊपर के क्लिनिकों के लिए ई-चालान आवश्यक है",
+      "einvoiceNotConfigured": "कॉन्फ़िगर नहीं",
+      "displayOptions": "प्रदर्शन विकल्प",
+      "showGstin": "चालान पर GSTIN दिखाएँ",
+      "showSac": "चालान पर SAC कोड दिखाएँ",
+      "creditNoteWorkflow": "क्रेडिट नोट प्रक्रिया",
+      "creditNoteWorkflowDescription": "जारी चालान में कोई भी सुधार रद्दीकरण या क्रेडिट नोट से होता है, और उसे करने वाले उपयोगकर्ता तक अनुरेखणीय रहता है।"
+    },
+    "reports": {
+      "title": "GST रिपोर्ट",
+      "description": "मिलान और रिटर्न दाखिल करने में सहायता के लिए कुल योग और लेन-देन विवरण।",
+      "export": "CSV निर्यात करें",
+      "creditNotes": "क्रेडिट नोट",
+      "byPlaceOfSupply": "आपूर्ति के स्थान के अनुसार",
+      "transactions": "लेन-देन",
+      "taxableValue": "कर योग्य मूल्य",
+      "empty": "इस अवधि में कोई लेन-देन नहीं।"
+    }
+  }
+}

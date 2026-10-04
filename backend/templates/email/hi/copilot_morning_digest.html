@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}दैनिक सारांश - {{ clinic_name }}{% endblock %}
+
+{% block content %}
+<h2>{{ today }} का सारांश</h2>
+
+{% if appointments is not none %}
+<h3>आज के अपॉइंटमेंट ({{ appointments | length }})</h3>
+{% if appointments %}
+<div class="info-box">
+    {% for a in appointments %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ a.start_time[11:16] if a.start_time else '' }}</div>
+            <div class="value">{{ a.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">स्थिति</div>
+            <div class="value">{{ a.status }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>आज कोई अपॉइंटमेंट निर्धारित नहीं है।</p>
+{% endif %}
+{% endif %}
+
+{% if recalls is not none %}
+<h3>लंबित रिकॉल ({{ recalls | length }})</h3>
+{% if recalls %}
+<div class="info-box">
+    {% for r in recalls %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ r.reason }}</div>
+            <div class="value">{{ r.patient_name or '—' }}{% if r.phone %} · {{ r.phone }}{% endif %}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">प्राथमिकता</div>
+            <div class="value">{{ r.priority }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>कोई लंबित रिकॉल नहीं।</p>
+{% endif %}
+{% endif %}
+
+{% if budgets is not none %}
+<h3>उत्तर की प्रतीक्षा में उपचार अनुमान ({{ budgets | length }})</h3>
+{% if budgets %}
+<div class="info-box">
+    {% for b in budgets %}
+    <div class="info-row">
+        <div style="flex: 1;">
+            <div class="label">{{ b.number }}</div>
+            <div class="value">{{ b.patient_name or '—' }}</div>
+        </div>
+        <div style="flex: 1;">
+            <div class="label">राशि</div>
+            <div class="value">{{ b.total }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<p>कोई उपचार अनुमान उत्तर की प्रतीक्षा में नहीं है।</p>
+{% endif %}
+{% endif %}
+
+<p style="color: #71717a; font-size: 14px;">
+    DentalPin कोपायलट द्वारा तैयार स्वचालित सारांश। आप इसे बंद कर सकते हैं
+    या इसका समय सेटिंग्स → कोपायलट में बदल सकते हैं।
+</p>
+{% endblock %}

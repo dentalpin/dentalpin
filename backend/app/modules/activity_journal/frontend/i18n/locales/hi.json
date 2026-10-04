@@ -1,0 +1,20 @@
+{
+  "journal": {
+    "title": "गतिविधि लॉग",
+    "subtitle": "किसने क्या और कब किया, इसका केवल-जोड़ने-योग्य रिकॉर्ड — मॉड्यूल घटनाओं से भरा जाता है।",
+    "filterByType": "घटना प्रकार से फ़िल्टर करें",
+    "filterByDateFrom": "से",
+    "filterByDateTo": "तक",
+    "event": "घटना",
+    "actor": "कर्ता",
+    "patient": "मरीज़",
+    "when": "कब",
+    "source": "स्रोत",
+    "empty": "अभी तक कोई गतिविधि दर्ज नहीं।",
+    "total": "{total} प्रविष्टियाँ",
+    "detailTitle": "घटना डेटा",
+    "unattributed": "—",
+    "allEvents": "सभी घटनाएँ",
+    "viewPayload": "विवरण देखें"
+  }
+}

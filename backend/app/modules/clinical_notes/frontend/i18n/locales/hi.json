@@ -1,0 +1,124 @@
+{
+  "clinicalNotes": {
+    "types": {
+      "administrative": "प्रशासनिक",
+      "diagnosis": "निदान",
+      "treatment": "उपचार",
+      "treatment_plan": "योजना",
+      "appointment_clinical": "नैदानिक",
+      "appointment_administrative": "प्रशासनिक"
+    },
+    "appointment": {
+      "addByType": "{label} टिप्पणी जोड़ें",
+      "empty": "इस अपॉइंटमेंट पर अभी कोई टिप्पणी नहीं। जोड़ने के लिए ऊपर के बटन उपयोग करें।"
+    },
+    "feed": {
+      "filterLabel": "फ़िल्टर",
+      "filterAll": "सभी",
+      "filterClear": "फ़िल्टर हटाएँ",
+      "filterStatus": "{total} में से {n} प्रकार दिखाए जा रहे हैं",
+      "addAdministrative": "प्रशासनिक टिप्पणी",
+      "loadMore": "और लोड करें",
+      "empty": {
+        "title": "अभी कोई टिप्पणी नहीं",
+        "help": "प्रशासनिक, निदान और उपचार टिप्पणियाँ यहाँ कालक्रम से दिखेंगी।"
+      }
+    },
+    "diagnosisSidebar": {
+      "title": "टिप्पणियाँ",
+      "addNote": "टिप्पणी जोड़ें",
+      "empty": "इस श्रेणी में कोई टिप्पणी नहीं।"
+    },
+    "treatmentButton": {
+      "title": "उपचार टिप्पणियाँ",
+      "add": "टिप्पणी जोड़ें",
+      "empty": "इस उपचार पर अभी कोई टिप्पणी नहीं।",
+      "aria": "उपचार टिप्पणियाँ ({n})"
+    },
+    "timeline": {
+      "addPlanNote": "योजना टिप्पणी",
+      "empty": "अभी कोई टिप्पणी नहीं।",
+      "emptyForFilter": "फ़िल्टर से कोई टिप्पणी मेल नहीं खाती।",
+      "source": {
+        "plan": "योजना",
+        "treatment": "उपचार",
+        "visit": "विज़िट"
+      }
+    },
+    "byPlan": {
+      "empty": "इस मरीज़ की अभी योजना से जुड़ी कोई नैदानिक टिप्पणी नहीं।",
+      "planNotesLabel": "योजना टिप्पणियाँ",
+      "unknownTreatment": "उपचार",
+      "noNotesForTreatment": "इस उपचार पर अभी कोई टिप्पणी नहीं।"
+    },
+    "composer": {
+      "placeholder": "टिप्पणी लिखें…",
+      "templates": "टेम्पलेट",
+      "attach": "फ़ोटो या दस्तावेज़ संलग्न करें",
+      "bindToTooth": "दाँत {n} से जोड़ें"
+    },
+    "linked": {
+      "tooth": "दाँत {n}",
+      "treatment": "उपचार",
+      "treatmentOnTooth": "{label} (दाँत {n})",
+      "plan": "योजना",
+      "planNamed": "योजना: {label}"
+    },
+    "actions": {
+      "showMore": "और दिखाएँ",
+      "showLess": "कम दिखाएँ",
+      "openLinked": "संदर्भ खोलें"
+    },
+    "author": {
+      "unknown": "अज्ञात लेखक"
+    },
+    "time": {
+      "justNow": "अभी-अभी",
+      "minutesAgo": "{n} मिनट पहले",
+      "hoursAgo": "{n} घंटे पहले",
+      "daysAgo": "{n} दिन पहले"
+    },
+    "toasts": {
+      "saved": "टिप्पणी सहेजी गई",
+      "deleted": "टिप्पणी हटाई गई",
+      "saveFailed": "टिप्पणी सहेजी नहीं जा सकी"
+    },
+    "confirms": {
+      "delete": "यह टिप्पणी हटाएँ? वापस पाने के लिए सहायता टीम से संपर्क करना होगा।"
+    },
+    "templates": {
+      "endo": {
+        "singleVisit": "एंडोडॉन्टिक्स (एक विज़िट)",
+        "multiVisit": "एंडोडॉन्टिक्स (कई विज़िट)"
+      },
+      "perio": {
+        "scaling": "स्केलिंग / रूट प्लानिंग"
+      },
+      "implant": {
+        "placement": "इम्प्लांट लगाना"
+      },
+      "diagnosis": {
+        "caries": "कैविटी (क्षय)",
+        "periapical": "पेरिएपिकल घाव"
+      },
+      "admin": {
+        "phoneCall": "मरीज़ का फ़ोन कॉल",
+        "reschedule": "समय बदलने का अनुरोध"
+      },
+      "general": {
+        "followUp": "सामान्य फ़ॉलो-अप"
+      }
+    },
+    "templateBodies": {
+      "endo_single_visit": "निदान: \nएनेस्थीसिया: \nमिली कैनाल: \nकार्य लंबाई: \nऑब्ट्यूरेशन: \nउपचार के बाद: ",
+      "endo_multi_visit": "सत्र: \nजिन कैनाल पर काम हुआ: \nइंट्राकैनाल दवा: \nअगला अपॉइंटमेंट: ",
+      "perio_scaling": "उपचारित क्वाड्रेंट: \nप्रोबिंग गहराई: \nप्रोबिंग पर रक्तस्राव: \nस्वच्छता निर्देश: ",
+      "implant_placement": "इम्प्लांट (ब्रांड / व्यास / लंबाई): \nअंतिम टॉर्क (Ncm): \nप्राथमिक स्थिरता: \nग्राफ़्ट: \nउपचार के बाद: ",
+      "diagnosis_caries": "निष्कर्ष: कैविटी \nगहराई: \nलक्षण: \nजीवंतता परीक्षण: \nसुझाया गया उपचार: ",
+      "diagnosis_periapical": "पेरिएपिकल घाव \nदाँत: \nएक्स-रे: \nपरीक्षण (पर्कशन, पैल्पेशन): \nनिदान: ",
+      "admin_phone_call": "मरीज़ की कॉल: \nकारण: \nकी गई कार्रवाई: \nफ़ॉलो-अप: ",
+      "admin_reschedule": "समय बदलने का अनुरोध: \nवर्तमान तिथि: \nनया प्रस्ताव: ",
+      "general_follow_up": "निष्कर्ष: \nकी गई प्रक्रिया: \nमरीज़ के लिए निर्देश: "
+    }
+  }
+}

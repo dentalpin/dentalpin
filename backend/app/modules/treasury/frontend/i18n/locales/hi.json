@@ -1,0 +1,37 @@
+{
+  "treasury": {
+    "nav": {
+      "title": "कोष"
+    },
+    "title": "कोष",
+    "newAccount": "नया खाता",
+    "transfer": "स्थानांतरण",
+    "correct": "सुधार",
+    "correctionDirection": "दिशा",
+    "accounts": "खाते",
+    "noAccounts": "अभी कोई खाता नहीं।",
+    "statement": "विवरण",
+    "noEntries": "अभी कोई लेन-देन नहीं।",
+    "accountName": "खाते का नाम",
+    "accountKind": "प्रकार",
+    "kindCash": "नकद",
+    "kindBank": "बैंक",
+    "create": "बनाएँ",
+    "openingBalance": "प्रारंभिक शेष",
+    "deactivate": "निष्क्रिय करें",
+    "activate": "फिर से सक्रिय करें",
+    "inactive": "निष्क्रिय",
+    "fromAccount": "खाते से",
+    "toAccount": "खाते में",
+    "amount": "राशि",
+    "memo": "टिप्पणी (वैकल्पिक)",
+    "correctMemo": "टिप्पणी (आवश्यक)",
+    "kind": {
+      "transfer_out": "बाहर स्थानांतरण",
+      "transfer_in": "अंदर स्थानांतरण",
+      "correction_in": "सुधार (जमा)",
+      "correction_out": "सुधार (निकासी)",
+      "opening": "प्रारंभिक"
+    }
+  }
+}

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer; Hindi prescription PDF labels.
+
 - fix: editor rows typed as `DraftItem` (nullable API `route`
   normalized to string by `blankLine`); fixes TS2322 on the new route
   input in CI typecheck.

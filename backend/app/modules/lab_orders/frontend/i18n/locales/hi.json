@@ -1,0 +1,50 @@
+{
+  "labOrders": {
+    "title": "लैब कार्य ऑर्डर",
+    "add": "नया लैब ऑर्डर",
+    "patient": "मरीज़",
+    "lab": "प्रयोगशाला",
+    "loading": "लोड हो रहा है…",
+    "selectPatient": "मरीज़ चुनें",
+    "selectLab": "प्रयोगशाला चुनें",
+    "workType": "कार्य का प्रकार",
+    "tooth": "दाँत / संदर्भ",
+    "impressionType": "इंप्रेशन",
+    "antagonistInfo": "विपरीत दाँत की जानकारी",
+    "shade": "शेड",
+    "sentDate": "भेजने की तिथि",
+    "expectedDate": "अपेक्षित तिथि",
+    "status": "स्थिति",
+    "notes": "टिप्पणियाँ",
+    "save": "ऑर्डर भेजें",
+    "cancel": "रद्द करें",
+    "noLabsHint": "पहले संपर्क में एक लैब संपर्क बनाएँ।",
+    "workTypes": {
+      "crown": "क्राउन",
+      "bridge": "ब्रिज",
+      "denture": "डेन्चर",
+      "implant": "इम्प्लांट",
+      "veneer": "विनियर",
+      "orthodontic": "ऑर्थोडॉन्टिक",
+      "repair": "मरम्मत",
+      "other": "अन्य"
+    },
+    "impressionTypes": {
+      "alginate": "एल्जिनेट",
+      "pvs_silicone": "PVS / सिलिकॉन",
+      "digital_scan": "डिजिटल स्कैन",
+      "other": "अन्य"
+    },
+    "statuses": {
+      "sent": "भेजा गया",
+      "in_progress": "प्रगति पर",
+      "ready": "तैयार",
+      "received": "प्राप्त",
+      "cancelled": "रद्द"
+    }
+  },
+  "nav": {
+    "labOrdersForm": "नया लैब ऑर्डर",
+    "labOrdersStatus": "लैब ऑर्डर"
+  }
+}

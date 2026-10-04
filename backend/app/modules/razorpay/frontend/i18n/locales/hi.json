@@ -1,0 +1,104 @@
+{
+  "razorpay": {
+    "settingsCards": {
+      "title": "Razorpay",
+      "description": "UPI, QR, कार्ड और भुगतान लिंक से भुगतान लें।"
+    },
+    "settings": {
+      "title": "Razorpay सेटिंग्स",
+      "description": "इस क्लिनिक के लिए Razorpay भुगतान गेटवे कॉन्फ़िगर करें।",
+      "credentials": "API क्रेडेंशियल",
+      "mode": "मोड",
+      "modeTest": "परीक्षण",
+      "modeLive": "लाइव",
+      "keyId": "Key ID",
+      "keyIdHint": "Razorpay डैशबोर्ड से — ब्राउज़र में दिखाना सुरक्षित है।",
+      "keySecret": "Key secret",
+      "keySecretHint": "Razorpay डैशबोर्ड से। सहेजने के बाद फिर कभी नहीं दिखाया जाता।",
+      "keySecretConfiguredHint": "Key secret पहले से कॉन्फ़िगर है। रखने के लिए खाली छोड़ें।",
+      "keySecretPlaceholder": "Key secret दर्ज करें",
+      "isActive": "सक्रिय",
+      "isActiveHint": "केवल सक्रिय कॉन्फ़िगरेशन ही रिसेप्शन को भुगतान लेने के तरीके के रूप में दिखते हैं।",
+      "webhook": "वेबहुक",
+      "webhookUrl": "वेबहुक URL",
+      "webhookUrlHint": "इसे इस क्लिनिक के लिए Razorpay डैशबोर्ड की वेबहुक सेटिंग्स में चिपकाएँ।",
+      "webhookSecret": "वेबहुक सीक्रेट",
+      "webhookSecretHint": "वह सीक्रेट जिससे Razorpay वेबहुक घटनाओं पर हस्ताक्षर करता है।",
+      "webhookSecretConfiguredHint": "वेबहुक सीक्रेट पहले से कॉन्फ़िगर है। रखने के लिए खाली छोड़ें।",
+      "webhookSecretPlaceholder": "वेबहुक सीक्रेट दर्ज करें",
+      "lastWebhookReceived": "अंतिम प्राप्त वेबहुक",
+      "lastWebhookProcessed": "अंतिम प्रोसेस किया गया वेबहुक",
+      "lastWebhookEventType": "अंतिम घटना का प्रकार",
+      "lastWebhookError": "अंतिम वेबहुक त्रुटि",
+      "never": "कभी नहीं",
+      "professionalNotice": "अपने Razorpay खाते का सेटअप और सेटलमेंट विवरण Razorpay सहायता या अपने लेखाकार से पुष्टि करें। DentalPin सेटलमेंट या वैधानिक रिपोर्टिंग का प्रबंधन नहीं करता।",
+      "saved": "सेटिंग्स सहेजी गईं",
+      "saveError": "सेटिंग्स सहेजी नहीं जा सकीं",
+      "loadError": "सेटिंग्स लोड नहीं हो सकीं",
+      "webhookCopied": "वेबहुक URL कॉपी किया गया",
+      "modeDerivedHint": "कुंजी से लिया गया: rzp_live_ कुंजी असली पैसे का लेन-देन करती है, rzp_test_ कुंजी नहीं।",
+      "modeUnknown": "अभी कोई कुंजी नहीं"
+    },
+    "collect": {
+      "notConfiguredHint": "इस क्लिनिक के लिए Razorpay अभी कॉन्फ़िगर नहीं है। किसी व्यवस्थापक से इसे सेटिंग्स में सेट करवाएँ।",
+      "waiting": "भुगतान की प्रतीक्षा…",
+      "pollTimeout": "हम आपका भुगतान अपने-आप पुष्ट नहीं कर सके। कृपया भुगतान की स्थिति जाँचें या सहायता से संपर्क करें।",
+      "checkoutDismissed": "भुगतान विंडो बंद हुई। फिर कोशिश करें या नीचे स्थिति जाँचें।",
+      "checkStatus": "स्थिति जाँचें",
+      "openCheckout": "Razorpay चेकआउट खोलें",
+      "scanQr": "मरीज़ से किसी भी UPI ऐप से यह QR कोड स्कैन करवाएँ",
+      "linkCopied": "भुगतान लिंक कॉपी किया गया",
+      "authorizing": "भुगतान अधिकृत — अंतिम रूप दिया जा रहा है…",
+      "success": "भुगतान प्राप्त हुआ",
+      "tryAgain": "फिर कोशिश करें",
+      "createError": "भुगतान शुरू नहीं हो सका",
+      "checkoutLoadError": "Razorpay चेकआउट लोड नहीं हो सका — अपना कनेक्शन जाँचें और फिर कोशिश करें",
+      "states": {
+        "failed": "भुगतान विफल",
+        "expired": "भुगतान समाप्त",
+        "cancelled": "भुगतान रद्द"
+      },
+      "methods": {
+        "upi": "UPI",
+        "qr": "QR",
+        "card": "कार्ड",
+        "payment_link": "भुगतान लिंक"
+      },
+      "railUpiQr": "UPI QR",
+      "railCheckout": "Razorpay",
+      "railPaymentLink": "भुगतान लिंक"
+    },
+    "detail": {
+      "title": "Razorpay लेन-देन",
+      "auditTrail": "विवरण",
+      "method": "तरीका",
+      "status": "स्थिति",
+      "providerReference": "Razorpay भुगतान ID",
+      "initiated": "शुरू किया गया",
+      "confirmed": "पुष्ट",
+      "allocation": "आवंटन",
+      "refundHistory": "धनवापसी",
+      "refundAction": "Razorpay से धनवापसी करें",
+      "refundPermissionDenied": "आपको धनवापसी करने की अनुमति नहीं है",
+      "maxRefundable": "{amount} तक",
+      "noRefunds": "इस भुगतान पर अभी कोई धनवापसी नहीं।",
+      "refundRequested": "धनवापसी का अनुरोध किया गया",
+      "refundError": "धनवापसी शुरू नहीं हो सकी",
+      "states": {
+        "pending": "लंबित",
+        "awaiting_customer_action": "भुगतान की प्रतीक्षा",
+        "authorised_awaiting_capture": "अधिकृत किया जा रहा है",
+        "succeeded": "सफल",
+        "failed": "विफल",
+        "expired": "समाप्त",
+        "cancelled": "रद्द"
+      },
+      "refundStates": {
+        "requested": "अनुरोधित",
+        "processing": "प्रोसेस हो रहा है",
+        "completed": "पूर्ण",
+        "failed": "विफल"
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
 - feat(#232): the three sidebar entries group under the Financials header (`nav.section` "financials").
 - Draft delete actions (follow-up to #390, now merged): remove-entry
   and delete-empty-period buttons with confirmation on the entries and

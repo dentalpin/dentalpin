@@ -21,6 +21,40 @@ def test_clinic_settings_include_country_in_for_tamil():
         set_language("en")
 
 
+def test_hindi_demo_is_a_delhi_clinic():
+    """LANG=hi implies an Indian clinic in New Delhi (GST state 07) —
+    intra-state invoices and the GSTIN must use the home state."""
+    from app.modules.india_gst.constants import is_valid_gstin
+    from app.seeds.demo_data import get_india_gst_fixture, india_home_state
+
+    set_language("hi")
+    try:
+        data = get_clinic_data()
+        assert data["settings"].get("country") == "IN"
+        assert data["address"]["city"] == "नई दिल्ली"
+        assert data["currency"] == "INR"
+        assert india_home_state() == "07"
+        fixture = get_india_gst_fixture()
+        assert fixture["clinic_state"] == "07"
+        assert fixture["gstin"].startswith("07")
+        assert is_valid_gstin(fixture["gstin"])
+    finally:
+        set_language("en")
+
+
+def test_tamil_demo_keeps_its_tamil_nadu_gst_fixture():
+    """The Hindi fixture must not leak into the Tamil (Chennai, state 33) demo."""
+    from app.modules.india_gst.constants import is_valid_gstin
+    from app.seeds.demo_data import get_india_gst_fixture, india_home_state
+
+    set_language("ta")
+    try:
+        assert india_home_state() == "33"
+        assert is_valid_gstin(get_india_gst_fixture()["gstin"])
+    finally:
+        set_language("en")
+
+
 def test_clinic_settings_exclude_country_for_non_tamil():
     """When LANG is not ta and COUNTRY is the default "generic", the
     clinic settings must NOT include country=IN — the India GST hook

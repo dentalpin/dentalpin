@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
+
 - fix(#522): the `sent_date` default read the UTC day rather than the local
   one. Now uses `toISODate`.
 

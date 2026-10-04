@@ -1,0 +1,49 @@
+{
+  "prescriptions": {
+    "nav": {
+      "title": "पर्चे"
+    },
+    "title": "पर्चे",
+    "openAll": "सभी देखें",
+    "emptyHint": "अभी कोई पर्चा नहीं।",
+    "items": "मदें",
+    "newPrescription": "नया पर्चा",
+    "safetyTitle": "जारी करने से पहले जाँचें",
+    "edit": "संपादित करें",
+    "issue": "जारी करें",
+    "cancel": "रद्द करें",
+    "downloadPdf": "PDF",
+    "editorTitle": "पर्चे का मसौदा",
+    "medicationName": "दवा",
+    "dosage": "खुराक",
+    "unit": "इकाई",
+    "frequency": "आवृत्ति",
+    "duration": "अवधि",
+    "instructions": "निर्देश",
+    "removeLine": "पंक्ति हटाएँ",
+    "notes": "टिप्पणियाँ",
+    "templateName": "टेम्पलेट का नाम",
+    "saveTemplate": "टेम्पलेट के रूप में सहेजें",
+    "save": "सहेजें",
+    "noTemplates": "अभी कोई टेम्पलेट नहीं। किसी मसौदे से एक सहेजें।",
+    "rename": "नाम बदलें",
+    "deleteTemplate": "टेम्पलेट हटाएँ",
+    "addLine": "पंक्ति जोड़ें",
+    "pickPatient": "मरीज़ के पर्चे देखने के लिए मरीज़ चुनकर खोलें।",
+    "settingsLabel": "पर्चा टेम्पलेट",
+    "settingsDescription": "एक क्लिक में पर्चा मसौदा बनाने के लिए पसंदीदा दवा संयोजन।",
+    "status": {
+      "draft": "मसौदा",
+      "issued": "जारी",
+      "cancelled": "रद्द"
+    },
+    "profileLabel": "पर्चा लिखने वाले की पहचान",
+    "profileDescription": "आपके पर्चों के लिए पेशेवर पंजीकरण और हस्ताक्षर।",
+    "licenseLabel": "पंजीकरण संख्या",
+    "issueConfirm": "यह पर्चा जारी करें? इसे पूर्ववत नहीं किया जा सकता।",
+    "cancelConfirm": "यह पर्चा रद्द करें? इसे पूर्ववत नहीं किया जा सकता।",
+    "noLicenseWarning": "आप PDF पर पंजीकरण संख्या के बिना जारी कर रहे हैं। इसे आप सेटिंग्स में जोड़ सकते हैं।",
+    "emptyDraft": "सहेजने से पहले कम से कम एक पंक्ति जोड़ें।",
+    "route": "मार्ग"
+  }
+}

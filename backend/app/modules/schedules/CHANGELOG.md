@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
+
 - fix(#522): the clinic-hours and professional-schedule pages defaulted
   `start_date` / `end_date` and computed "today" from the UTC day. Now use
   `toISODate`.

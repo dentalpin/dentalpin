@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}उपचार अनुमान - {{ clinic_name | default('DentalPin') }}{% endblock %}
+
+{% block content %}
+<h2>उपचार अनुमान</h2>
+
+<p>नमस्ते {{ patient_name }},</p>
+
+<p>नीचे <strong>{{ clinic_name | default('DentalPin') }}</strong> का उपचार अनुमान <strong>#{{ budget_number }}</strong> दिया गया है:</p>
+
+{% if treatments %}
+<div class="info-box">
+    {% for t in treatments %}
+    <div class="info-row">
+        <div style="flex: 2;">
+            <div class="label">{{ t.name }}{% if t.tooth %} — दाँत {{ t.tooth }}{% endif %}</div>
+        </div>
+        <div style="flex: 1; text-align: right;">
+            <div class="value">{{ t.price }}</div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="info-box">
+    {% if discount_amount %}
+    <div class="info-row">
+        <div class="label">उप-योग</div>
+        <div class="value">{{ subtotal }}</div>
+    </div>
+    <div class="info-row">
+        <div class="label">छूट</div>
+        <div class="value">-{{ discount_amount }}</div>
+    </div>
+    {% endif %}
+    <div class="info-row">
+        <div class="label">कुल</div>
+        <div class="value" style="font-size: 18px; font-weight: 700;">{{ total }}</div>
+    </div>
+    {% if validity_days %}
+    <div class="info-row">
+        <div class="label">वैधता अवधि</div>
+        <div class="value">{{ validity_days }} दिन</div>
+    </div>
+    {% endif %}
+</div>
+
+{% if notes %}
+<p><strong>टिप्पणियाँ:</strong> {{ notes }}</p>
+{% endif %}
+
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+<p>इस उपचार अनुमान के बारे में कोई प्रश्न हो तो कृपया हमसे संपर्क करें।</p>
+{% endblock %}

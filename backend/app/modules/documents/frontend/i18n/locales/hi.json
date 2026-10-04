@@ -1,0 +1,88 @@
+{
+  "documents": {
+    "title": "दस्तावेज़",
+    "subtitle": "पर्चे, प्रमाणपत्र, रेफ़रल और रेडियोलॉजी अनुरोध प्रबंधित करें",
+    "newDocument": "नया दस्तावेज़",
+    "editDocument": "दस्तावेज़ संपादित करें",
+    "filterType": "प्रकार से फ़िल्टर करें",
+    "filterStatus": "स्थिति से फ़िल्टर करें",
+    "empty": "अभी कोई दस्तावेज़ नहीं। शुरू करने के लिए अपना पहला दस्तावेज़ बनाएँ।",
+    "patient": "मरीज़",
+    "selectPatient": "मरीज़ चुनें",
+    "patientSearchEmpty": "आपकी खोज से मेल खाता कोई मरीज़ नहीं मिला",
+    "type": "दस्तावेज़ का प्रकार",
+    "selectType": "प्रकार चुनें",
+    "titleLabel": "शीर्षक",
+    "titlePlaceholder": "उदा. एमोक्सिसिलिन के लिए पर्चा",
+    "types": {
+      "all": "सभी प्रकार",
+      "prescription": "पर्चा",
+      "medical_certificate": "चिकित्सा प्रमाणपत्र",
+      "referral": "रेफ़रल पत्र",
+      "radiology_request": "रेडियोलॉजी अनुरोध"
+    },
+    "status": {
+      "all": "सभी स्थितियाँ",
+      "draft": "मसौदा",
+      "generated": "तैयार",
+      "archived": "संग्रहीत"
+    },
+    "actions": {
+      "generate": "PDF बनाएँ",
+      "edit": "संपादित करें",
+      "archive": "संग्रहीत करें",
+      "download": "PDF डाउनलोड करें"
+    },
+    "messages": {
+      "created": "दस्तावेज़ बनाया गया",
+      "updated": "दस्तावेज़ अपडेट किया गया",
+      "generated": "दस्तावेज़ सफलतापूर्वक तैयार हुआ",
+      "archived": "दस्तावेज़ संग्रहीत किया गया",
+      "downloaded": "PDF डाउनलोड हुआ",
+      "downloadFailed": "PDF डाउनलोड करने में विफल"
+    },
+    "content": {
+      "diagnosis": "निदान",
+      "diagnosisPlaceholder": "निदान दर्ज करें...",
+      "medications": "दवाइयाँ",
+      "addMedication": "दवा जोड़ें",
+      "medName": "दवा का नाम",
+      "medDose": "खुराक",
+      "medFrequency": "आवृत्ति",
+      "medDuration": "अवधि",
+      "notes": "टिप्पणियाँ",
+      "notesPlaceholder": "अतिरिक्त टिप्पणियाँ...",
+      "description": "विवरण",
+      "recommendations": "सिफ़ारिशें",
+      "referredTo": "किसके पास भेजा गया",
+      "specialty": "विशेषज्ञता",
+      "reason": "रेफ़र करने का कारण",
+      "clinicalSummary": "नैदानिक सारांश",
+      "examType": "जाँच का प्रकार",
+      "region": "क्षेत्र",
+      "clinicalQuestion": "नैदानिक प्रश्न"
+    },
+    "settings": {
+      "cards": {
+        "letterhead": {
+          "title": "दस्तावेज़ लेटरहेड",
+          "description": "पर्चों, प्रमाणपत्रों, रेफ़रल और रेडियोलॉजी अनुरोधों पर क्लिनिक की ब्रांडिंग"
+        }
+      },
+      "letterhead": {
+        "help": "ये फ़ील्ड तैयार PDF पर क्लिनिक प्रोफ़ाइल की जगह लेते हैं। क्लिनिक का सहेजा नाम, पता और कर पहचान संख्या उपयोग करने के लिए फ़ील्ड खाली छोड़ें।",
+        "name": "हेडर नाम",
+        "nameHint": "डिफ़ॉल्ट रूप से क्लिनिक का नाम",
+        "address": "हेडर पता",
+        "phone": "हेडर फ़ोन",
+        "email": "हेडर ईमेल",
+        "registrationNumber": "पंजीकरण / लाइसेंस संख्या",
+        "logo": "लोगो",
+        "logoHint": "हर PDF के ऊपर बाईं ओर दिखता है। सुझाव: 512&times;512 px से छोटा वर्गाकार पारदर्शी PNG।",
+        "chooseLogo": "छवि चुनें",
+        "save": "लेटरहेड सहेजें",
+        "saved": "लेटरहेड सहेजा गया"
+      }
+    }
+  }
+}

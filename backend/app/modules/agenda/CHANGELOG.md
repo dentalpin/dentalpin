@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(i18n): Hindi (`hi`) locale: Hindi default cabinet name (`कक्ष 1`) for clinics created in `hi`.
+
 - fix(#522): `useCalendarBounds` asked the availability endpoint for the
   previous day's open hours for clinics east of UTC — the calendar hands it
   local midnights and it rendered them with `toISOString()`. Now uses
