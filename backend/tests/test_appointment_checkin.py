@@ -127,6 +127,18 @@ async def test_checkin_rejects_bad_tokens(client) -> None:
     ).status_code == 401  # right signature, wrong purpose
 
 
+def test_checkin_secret_hard_required_in_production(monkeypatch: pytest.MonkeyPatch) -> None:
+    """No key in production refuses to sign; dev still falls back (#538)."""
+    from app.modules.agenda.checkin import _checkin_secret
+
+    monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "")
+    monkeypatch.setattr(settings, "ENVIRONMENT", "production")
+    with pytest.raises(RuntimeError):
+        _checkin_secret()
+    monkeypatch.setattr(settings, "ENVIRONMENT", "development")
+    assert _checkin_secret() == settings.SECRET_KEY
+
+
 @pytest.mark.asyncio
 async def test_checkin_unknown_appointment_is_404(client) -> None:
     token, _ = mint_checkin_token(uuid4(), uuid4())

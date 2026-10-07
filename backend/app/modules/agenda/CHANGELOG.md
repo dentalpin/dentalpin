@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix(#538): `AGENDA_PUBLIC_SECRET_KEY` is hard-required in production
+  (refuses to sign QR check-in tokens with the staff-JWT key); the
+  dev-only fallback is unchanged.
+
 - fix(#590): `validate_professional_access` tolerates duplicated
   membership rows (`.limit(1)` existence read, same fix as #598 for
   orthodontics). `clinic_memberships` has no unique `(clinic_id, user_id)`

@@ -21,28 +21,23 @@ from app.config import settings
 
 CHECKIN_TOKEN_TTL_MINUTES = 15
 
-warned_no_dedicated_secret = False
-
 
 def _checkin_secret() -> str:
     """Resolve the secret used to sign QR check-in tokens.
 
     Production deploys must set ``AGENDA_PUBLIC_SECRET_KEY`` — a token
     printed on paper and scanned by strangers must not share a key with
-    the session tokens. Falls back to ``SECRET_KEY`` for local/dev
+    the session tokens, so a production boot without it refuses to sign
+    instead of warning. Falls back to ``SECRET_KEY`` for local/dev
     convenience (budget public-link pattern).
     """
-    global warned_no_dedicated_secret
     if settings.AGENDA_PUBLIC_SECRET_KEY:
         return settings.AGENDA_PUBLIC_SECRET_KEY
-    if settings.ENVIRONMENT == "production" and not warned_no_dedicated_secret:
-        import logging
-
-        logging.getLogger(__name__).warning(
-            "AGENDA_PUBLIC_SECRET_KEY is unset in production — QR check-in "
-            "tokens share SECRET_KEY with session tokens. Set it explicitly."
+    if settings.ENVIRONMENT == "production":
+        raise RuntimeError(
+            "AGENDA_PUBLIC_SECRET_KEY is required in production: refusing to "
+            "sign QR check-in tokens with the staff-JWT key."
         )
-        warned_no_dedicated_secret = True
     return settings.SECRET_KEY
 
 
