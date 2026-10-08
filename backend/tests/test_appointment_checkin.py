@@ -153,6 +153,11 @@ def test_production_boot_requires_both_public_keys(monkeypatch: pytest.MonkeyPat
     monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "a" * 32)
     require_public_secrets_in_production()
 
+    # A short key is as unusable as a missing one.
+    monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "short")
+    with pytest.raises(RuntimeError, match="at least 32 characters"):
+        require_public_secrets_in_production()
+
     monkeypatch.setattr(settings, "ENVIRONMENT", "development")
     require_public_secrets_in_production()
 

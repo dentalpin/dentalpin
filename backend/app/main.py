@@ -14,7 +14,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
+from app.config import MIN_SECRET_KEY_LENGTH, settings
 from app.core.auth.router import limiter
 from app.core.auth.router import router as auth_router
 from app.core.auth.router_roles import router as roles_router
@@ -50,10 +50,16 @@ def require_public_secrets_in_production() -> None:
     if settings.ENVIRONMENT != "production":
         return
     for name in PUBLIC_SECRET_SETTINGS:
-        if not getattr(settings, name, ""):
+        value = getattr(settings, name, "")
+        if not value:
             raise RuntimeError(
                 f"{name} is required in production: refusing to start with the "
                 "public session keys bound to the staff-JWT SECRET_KEY."
+            )
+        if len(value) < MIN_SECRET_KEY_LENGTH:
+            raise RuntimeError(
+                f"{name} must be at least {MIN_SECRET_KEY_LENGTH} characters "
+                "(see .env.example: openssl rand -hex 32)."
             )
 
 
