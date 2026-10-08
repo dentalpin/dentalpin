@@ -21,6 +21,7 @@ from app.core.auth.models import Clinic, User
 from app.core.auth.router import limiter
 from app.core.auth.service import create_access_token, hash_password
 from app.modules.agenda.checkin import (
+    _checkin_secret,
     mint_checkin_token,
     render_checkin_qr,
     verify_checkin_token,
@@ -129,14 +130,31 @@ async def test_checkin_rejects_bad_tokens(client) -> None:
 
 def test_checkin_secret_hard_required_in_production(monkeypatch: pytest.MonkeyPatch) -> None:
     """No key in production refuses to sign; dev still falls back (#538)."""
-    from app.modules.agenda.checkin import _checkin_secret
-
     monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "")
     monkeypatch.setattr(settings, "ENVIRONMENT", "production")
     with pytest.raises(RuntimeError):
         _checkin_secret()
     monkeypatch.setattr(settings, "ENVIRONMENT", "development")
     assert _checkin_secret() == settings.SECRET_KEY
+
+
+def test_production_boot_requires_both_public_keys(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The boot guard refuses production without either public key (#538)."""
+    from app.main import require_public_secrets_in_production
+
+    monkeypatch.setattr(settings, "ENVIRONMENT", "production")
+    monkeypatch.setattr(settings, "BUDGET_PUBLIC_SECRET_KEY", "")
+    monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "")
+    with pytest.raises(RuntimeError, match="BUDGET_PUBLIC_SECRET_KEY"):
+        require_public_secrets_in_production()
+    monkeypatch.setattr(settings, "BUDGET_PUBLIC_SECRET_KEY", "b" * 32)
+    with pytest.raises(RuntimeError, match="AGENDA_PUBLIC_SECRET_KEY"):
+        require_public_secrets_in_production()
+    monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "a" * 32)
+    require_public_secrets_in_production()
+
+    monkeypatch.setattr(settings, "ENVIRONMENT", "development")
+    require_public_secrets_in_production()
 
 
 @pytest.mark.asyncio

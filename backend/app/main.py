@@ -34,6 +34,28 @@ from app.database import async_session_maker, engine, get_db
 
 logger = logging.getLogger(__name__)
 
+#: Settings that must be present in production so a patient-facing
+#: session can never be signed with the staff-JWT key (#538).
+PUBLIC_SECRET_SETTINGS = ("BUDGET_PUBLIC_SECRET_KEY", "AGENDA_PUBLIC_SECRET_KEY")
+
+
+def require_public_secrets_in_production() -> None:
+    """Refuse to boot production without the dedicated public keys.
+
+    The dev fallback to ``SECRET_KEY`` is a local convenience; in
+    production it silently removes the domain separation the public
+    surfaces promise, so the misconfiguration fails loudly at startup
+    instead of surfacing as a patient error later.
+    """
+    if settings.ENVIRONMENT != "production":
+        return
+    for name in PUBLIC_SECRET_SETTINGS:
+        if not getattr(settings, name, ""):
+            raise RuntimeError(
+                f"{name} is required in production: refusing to start with the "
+                "public session keys bound to the staff-JWT SECRET_KEY."
+            )
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -43,15 +65,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # (defaults to ``-`` outside a request).
     setup_logging()
 
-    # Security posture (audit SEC-01): public budget sessions fall back to
-    # SECRET_KEY when BUDGET_PUBLIC_SECRET_KEY is unset. Warn once in
-    # production; behavior unchanged (hard-requiring would break existing
-    # deploys that rely on the fallback).
-    if settings.ENVIRONMENT == "production" and not settings.BUDGET_PUBLIC_SECRET_KEY:
-        logger.warning(
-            "BUDGET_PUBLIC_SECRET_KEY is unset: public budget sessions fall "
-            "back to SECRET_KEY. Set a dedicated key in production."
-        )
+    require_public_secrets_in_production()
     # Error tracking is DSN-gated (SENTRY_DSN env, never committed) and
     # never raises — boot continues unreported when unconfigured.
     setup_error_tracking(
