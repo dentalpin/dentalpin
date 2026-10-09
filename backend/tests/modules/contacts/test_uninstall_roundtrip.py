@@ -79,6 +79,9 @@ def test_contacts_uninstall_roundtrip_is_branch_scoped() -> None:
     _alembic("upgrade", "heads")
     before = _list_tables()
     assert CONTACTS_TABLES.issubset(before), "contacts tables missing after upgrade"
+    assert CONTACTS_DEPENDENT_TABLES.issubset(before), (
+        f"expected M6 dependents missing after upgrade: {CONTACTS_DEPENDENT_TABLES - before}"
+    )
 
     expected_gone = CONTACTS_TABLES | dependent_tables(CONTACTS_HEAD)
     baseline = before - expected_gone
