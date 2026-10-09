@@ -27,6 +27,7 @@ services:
       # without it): generate with `openssl rand -hex 32` and store it in
       # Coolify alongside SECRET_KEY.
       BUDGET_PUBLIC_SECRET_KEY: ${BUDGET_PUBLIC_SECRET_KEY:?Set BUDGET_PUBLIC_SECRET_KEY in Coolify}
+      AGENDA_PUBLIC_SECRET_KEY: ${AGENDA_PUBLIC_SECRET_KEY:?Set AGENDA_PUBLIC_SECRET_KEY in Coolify}
       # Trusted-proxy set for uvicorn's --proxy-headers (#623). NOT "*":
       # with "*" uvicorn takes the leftmost X-Forwarded-For entry, which
       # the client controls, so any peer that can reach this port picks

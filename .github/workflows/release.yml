@@ -178,6 +178,7 @@ jobs:
             echo "curl -o .env $RAW/.env.prod.example"
             echo "# set PUBLIC_URL, POSTGRES_PASSWORD, SECRET_KEY"
             echo "# BUDGET_PUBLIC_SECRET_KEY: openssl rand -hex 32"
+            echo "# AGENDA_PUBLIC_SECRET_KEY: openssl rand -hex 32"
             echo "# and DENTALPIN_VERSION=$VERSION to pin this release, then:"
             echo "docker compose -f docker-compose.prod.yml up -d"
             echo '```'

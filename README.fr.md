@@ -107,6 +107,7 @@ curl -o .env https://raw.githubusercontent.com/dentalpin/dentalpin/main/.env.pro
 
 # Définissez PUBLIC_URL, POSTGRES_PASSWORD et SECRET_KEY dans .env, puis :
 # BUDGET_PUBLIC_SECRET_KEY: openssl rand -hex 32
+# AGENDA_PUBLIC_SECRET_KEY: openssl rand -hex 32
 docker compose -f docker-compose.prod.yml up -d
 ```
 

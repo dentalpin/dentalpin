@@ -136,30 +136,8 @@ def test_checkin_secret_hard_required_in_production(monkeypatch: pytest.MonkeyPa
         _checkin_secret()
     monkeypatch.setattr(settings, "ENVIRONMENT", "development")
     assert _checkin_secret() == settings.SECRET_KEY
-
-
-def test_production_boot_requires_both_public_keys(monkeypatch: pytest.MonkeyPatch) -> None:
-    """The boot guard refuses production without either public key (#538)."""
-    from app.main import require_public_secrets_in_production
-
-    monkeypatch.setattr(settings, "ENVIRONMENT", "production")
-    monkeypatch.setattr(settings, "BUDGET_PUBLIC_SECRET_KEY", "")
-    monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "")
-    with pytest.raises(RuntimeError, match="BUDGET_PUBLIC_SECRET_KEY"):
-        require_public_secrets_in_production()
-    monkeypatch.setattr(settings, "BUDGET_PUBLIC_SECRET_KEY", "b" * 32)
-    with pytest.raises(RuntimeError, match="AGENDA_PUBLIC_SECRET_KEY"):
-        require_public_secrets_in_production()
-    monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "a" * 32)
-    require_public_secrets_in_production()
-
-    # A short key is as unusable as a missing one.
-    monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", "short")
-    with pytest.raises(RuntimeError, match="at least 32 characters"):
-        require_public_secrets_in_production()
-
-    monkeypatch.setattr(settings, "ENVIRONMENT", "development")
-    require_public_secrets_in_production()
+    monkeypatch.setattr(settings, "AGENDA_PUBLIC_SECRET_KEY", " " * 32)
+    assert _checkin_secret() == settings.SECRET_KEY
 
 
 @pytest.mark.asyncio

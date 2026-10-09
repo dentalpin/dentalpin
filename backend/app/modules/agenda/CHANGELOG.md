@@ -3,7 +3,8 @@
 ## Unreleased
 
 - fix(#538): `AGENDA_PUBLIC_SECRET_KEY` is hard-required in production
-  (refuses to sign QR check-in tokens with the staff-JWT key); the
+  (missing, blank, padded, or short values refuse to boot via the shared
+  `Settings` validator, alongside `BUDGET_PUBLIC_SECRET_KEY`); the
   dev-only fallback is unchanged.
 
 - fix(#590): `validate_professional_access` tolerates duplicated

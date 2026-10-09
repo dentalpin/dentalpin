@@ -29,10 +29,12 @@ def _checkin_secret() -> str:
     printed on paper and scanned by strangers must not share a key with
     the session tokens, so a production boot without it refuses to sign
     instead of warning. Falls back to ``SECRET_KEY`` for local/dev
-    convenience (budget public-link pattern).
+    convenience (budget public-link pattern). A blank or
+    whitespace-only value is treated as unset.
     """
-    if settings.AGENDA_PUBLIC_SECRET_KEY:
-        return settings.AGENDA_PUBLIC_SECRET_KEY
+    key = settings.AGENDA_PUBLIC_SECRET_KEY or ""
+    if key.strip():
+        return key
     if settings.ENVIRONMENT == "production":
         raise RuntimeError(
             "AGENDA_PUBLIC_SECRET_KEY is required in production: refusing to "

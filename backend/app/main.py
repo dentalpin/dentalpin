@@ -15,7 +15,7 @@ from slowapi.middleware import SlowAPIMiddleware
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import MIN_SECRET_KEY_LENGTH, settings
+from app.config import settings
 from app.core.auth.router import limiter
 from app.core.auth.router import router as auth_router
 from app.core.auth.router_roles import router as roles_router
@@ -35,34 +35,6 @@ from app.database import async_session_maker, engine, get_db
 
 logger = logging.getLogger(__name__)
 
-#: Settings that must be present in production so a patient-facing
-#: session can never be signed with the staff-JWT key (#538).
-PUBLIC_SECRET_SETTINGS = ("BUDGET_PUBLIC_SECRET_KEY", "AGENDA_PUBLIC_SECRET_KEY")
-
-
-def require_public_secrets_in_production() -> None:
-    """Refuse to boot production without the dedicated public keys.
-
-    The dev fallback to ``SECRET_KEY`` is a local convenience; in
-    production it silently removes the domain separation the public
-    surfaces promise, so the misconfiguration fails loudly at startup
-    instead of surfacing as a patient error later.
-    """
-    if settings.ENVIRONMENT != "production":
-        return
-    for name in PUBLIC_SECRET_SETTINGS:
-        value = getattr(settings, name, "")
-        if not value:
-            raise RuntimeError(
-                f"{name} is required in production: refusing to start with the "
-                "public session keys bound to the staff-JWT SECRET_KEY."
-            )
-        if len(value) < MIN_SECRET_KEY_LENGTH:
-            raise RuntimeError(
-                f"{name} must be at least {MIN_SECRET_KEY_LENGTH} characters "
-                "(see .env.example: openssl rand -hex 32)."
-            )
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
@@ -72,7 +44,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # (defaults to ``-`` outside a request).
     setup_logging()
 
-    require_public_secrets_in_production()
     # Security posture (audit SEC-01): a production boot without
     # BUDGET_PUBLIC_SECRET_KEY already fails in app.config's Settings
     # validation, so there is nothing left to warn about here.

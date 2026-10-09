@@ -55,9 +55,9 @@ services:
       EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-noreply@dentalpin.com}
       EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-DentalPin}
       # Required in production since #538 (config.py refuses to boot
-      # without it); the agenda key keeps its optional form until #640.
+      # without them): generate each with `openssl rand -hex 32`.
       BUDGET_PUBLIC_SECRET_KEY: ${BUDGET_PUBLIC_SECRET_KEY:?Set BUDGET_PUBLIC_SECRET_KEY in your .env}
-      AGENDA_PUBLIC_SECRET_KEY: ${AGENDA_PUBLIC_SECRET_KEY:-}
+      AGENDA_PUBLIC_SECRET_KEY: ${AGENDA_PUBLIC_SECRET_KEY:?Set AGENDA_PUBLIC_SECRET_KEY in your .env}
       SENTRY_DSN: ${SENTRY_DSN:-}
       ENVIRONMENT: production
       ALLOWED_ORIGINS: ${PUBLIC_URL:-http://localhost}

@@ -20,6 +20,11 @@ frontend as a Nuxt layer under its own Python package.
   also refused, so generate a clean value (e.g. `openssl rand -hex 32`)
   before upgrading; `docker-compose.prod.yml` and
   `docker-compose.coolify.yml` now both refuse to start without it.
+- **Upgrade note (production):** `AGENDA_PUBLIC_SECRET_KEY` is now
+  required on the same terms: a production boot without a clean value
+  fails fast instead of signing QR check-in tokens with the staff-JWT
+  `SECRET_KEY`. Set it alongside `BUDGET_PUBLIC_SECRET_KEY` before
+  upgrading.
 
 ### Security
 
