@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- test(#552): branch-scoped uninstall round-trip test (heads, branch downgrade, reinstall).
+
 - `due_month` humanization fixed: the event payload carries the full
   ISO date (`"2026-09-01"` — `Recall.due_month` is a `Date`), but the
   handler parsed `"%Y-%m"`, so production emails would have shown the

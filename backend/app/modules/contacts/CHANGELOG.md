@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- test(#552): branch-scoped uninstall round-trip test (heads, branch downgrade, reinstall).
+
 - feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - feat(#232): sidebar entry grouped under the Inventory header (`nav.section` "inventory").
 - feat(#334): Hungarian (hu) locale for the module's frontend layer.
