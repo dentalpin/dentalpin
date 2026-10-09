@@ -6,8 +6,8 @@
   patient identity or budget contents before the knowledge factor; it
   answers with routing state plus the clinic fields the page needs
   (name, contacts, locale, currency), and the welcome greeting is the
-  generic title. Supersedes the clinic-scoped patient-name lookup below,
-  whose query no longer exists.
+  generic title. The old clinic-scoped patient-name lookup is gone
+  with the removed query.
 - fix(#531): the verify permanent lockout stays budget-wide on purpose
   (10 retained failures lock the token), and the staff `unlock-public`
   recovery path is now documented in ADR 0006; unlocking also drops

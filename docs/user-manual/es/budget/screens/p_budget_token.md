@@ -51,15 +51,16 @@ paciente cuando le pasan el enlace.
   descargas/minuto por token; cada acceso queda registrado en
   `BudgetAccessLog`.
 - **Nada personal antes de verificar.** `GET /meta` responde solo con
-  el estado de enrutado y el nombre de la clínica: sin nombre del
+  el estado de enrutado y los campos de la clínica que necesita la
+  página (nombre, contactos, idioma, moneda): sin nombre del
   paciente, ni número, total o validez del presupuesto. Esos datos
   llegan con el detalle protegido por cookie tras aceptar el código
   (#539).
 
 ## Lo que ve el paciente
 
-1. Pantalla de bienvenida con el nombre de la clínica y un campo de
-   código.
+1. Pantalla de bienvenida con un campo de código (el nombre de la
+   clínica no se muestra antes de verificar).
 2. Tras verificar: cabecera con el nombre de la clínica, listado de
    ítems con totales y validez.
 3. Botones **Aceptar** y **Rechazar** (este último pide motivo).

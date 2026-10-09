@@ -50,13 +50,15 @@ the link is forwarded to them.
   `GET /pdf/signed` with the cookie. Capped at 10 downloads per
   minute per token; each hit is logged in `BudgetAccessLog`.
 - **Nothing personal before verification.** `GET /meta` answers with
-  routing state and the clinic name only: no patient name, no budget
-  number, total, or validity. Those arrive with the cookie-protected
-  detail response after the code is accepted (#539).
+  routing state plus the clinic fields the page needs (name, contacts,
+  locale, currency): no patient name, no budget number, total, or
+  validity. Those arrive with the cookie-protected detail response
+  after the code is accepted (#539).
 
 ## What the patient sees
 
-1. A welcome screen with the clinic name and a code field.
+1. A welcome screen with a code field (no clinic name renders before
+   verification).
 2. After verifying: header with the clinic name, line items with
    totals and validity.
 3. **Accept** and **Reject** buttons (Reject asks for a reason).
