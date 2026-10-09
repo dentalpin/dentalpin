@@ -707,8 +707,8 @@ Register (typically in `frontend/slots.ts` of your layer):
 
 ```ts
 import { defineAsyncComponent } from 'vue'
-import { registerSlot } from '~/composables/useModuleSlots'
-import { PERMISSIONS } from '~/config/permissions'
+import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 registerSlot('patient.detail.sidebar', {
   id: 'inventory.patient.sidebar',   // stable, unique
