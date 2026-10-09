@@ -5,12 +5,13 @@
  */
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~/composables/useModuleSlots'
+import { PERMISSIONS } from '~/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSlot('dashboard.hero', {
     id: 'host.dashboard.onboarding',
     component: defineAsyncComponent(() => import('~/components/onboarding/OnboardingCard.vue')),
     order: 0,
-    permission: 'admin.clinic.write'
+    permission: PERMISSIONS.admin.clinicWrite
   })
 })
