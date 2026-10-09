@@ -30,6 +30,22 @@ ALEMBIC_INI = BACKEND_ROOT / "alembic.ini"
 CONTACTS_TABLES = {"contacts"}
 CONTACTS_HEAD = "con_0001"
 
+# Branches Alembic drags down with ``con_0001`` through ``depends_on``
+# edges (labo_0001, po_0001, rat_0001 and supp_0001 name it; sui_0001
+# names supp_0001, so supplier_items follows transitively). Pinned here
+# — not just derived — so a removed edge turns red instead of silently
+# narrowing the drag (trap M6).
+CONTACTS_DEPENDENT_TABLES = {
+    "lab_orders",
+    "purchase_orders",
+    "purchase_order_lines",
+    "purchase_receipts",
+    "purchase_receipt_lines",
+    "supplier_reviews",
+    "suppliers",
+    "supplier_items",
+}
+
 
 def _alembic(*args: str) -> None:
     subprocess.run(
@@ -70,6 +86,10 @@ def test_contacts_uninstall_roundtrip_is_branch_scoped() -> None:
     _alembic("downgrade", "contacts@-1")
     after_down = _list_tables()
     assert CONTACTS_TABLES.isdisjoint(after_down), "contacts tables still present after downgrade"
+    assert CONTACTS_DEPENDENT_TABLES.isdisjoint(after_down), (
+        "expected M6 dependents to be dragged with contacts: "
+        f"{CONTACTS_DEPENDENT_TABLES & after_down}"
+    )
     assert baseline <= after_down, (
         f"downgrade leaked beyond contacts branch (missing: {baseline - after_down})"
     )
