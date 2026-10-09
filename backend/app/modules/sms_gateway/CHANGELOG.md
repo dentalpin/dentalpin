@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
 - `GET /settings` creates the per-clinic row inactive; the admin enables the channel explicitly from the settings page.
 
 ### Added

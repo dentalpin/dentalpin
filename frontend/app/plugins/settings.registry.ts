@@ -8,6 +8,7 @@ import {
   registerSettingsPage,
   registerGettingStartedRule
 } from '~/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~/config/permissions'
 
 export default defineNuxtPlugin(() => {
   // ---- General -------------------------------------------------------
@@ -17,7 +18,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'settings.clinicInfo',
     descriptionKey: 'settings.clinicInfoDescription',
     icon: 'i-lucide-building-2',
-    permission: 'admin.clinic.read',
+    permission: PERMISSIONS.admin.clinicRead,
     component: () => import('~/components/settings/pages/ClinicInfoPage.vue'),
     searchKeywords: ['clinica', 'clinic', 'cif', 'nif', 'razon social', 'direccion', 'address', 'tax id'],
     order: 10
@@ -42,7 +43,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'settings.users',
     descriptionKey: 'settings.usersDescription',
     icon: 'i-lucide-users',
-    permission: 'admin.users.read',
+    permission: PERMISSIONS.users.read,
     component: () => import('~/components/settings/pages/UsersPage.vue'),
     searchKeywords: ['usuarios', 'users', 'roles', 'permisos', 'staff', 'equipo', 'team'],
     order: 10
@@ -55,7 +56,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'catalog.title',
     descriptionKey: 'catalog.description',
     icon: 'i-lucide-list',
-    permission: 'admin.clinic.read',
+    permission: PERMISSIONS.admin.clinicRead,
     to: '/settings/catalog',
     searchKeywords: ['catalogo', 'catalog', 'tratamientos', 'treatments', 'precios', 'prices'],
     order: 10
@@ -68,7 +69,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'invoiceSeries.title',
     descriptionKey: 'invoiceSeries.description',
     icon: 'i-lucide-hash',
-    permission: 'admin.clinic.read',
+    permission: PERMISSIONS.admin.clinicRead,
     to: '/settings/invoice-series',
     searchKeywords: ['series', 'numeracion', 'invoice', 'numbering', 'factura'],
     order: 10
@@ -79,7 +80,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'vatTypes.title',
     descriptionKey: 'vatTypes.description',
     icon: 'i-lucide-percent',
-    permission: 'admin.clinic.read',
+    permission: PERMISSIONS.admin.clinicRead,
     to: '/settings/vat-types',
     searchKeywords: ['iva', 'vat', 'impuesto', 'tax'],
     order: 20
@@ -92,7 +93,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'notifications.title',
     descriptionKey: 'notifications.description',
     icon: 'i-lucide-mail',
-    permission: 'admin.clinic.read',
+    permission: PERMISSIONS.admin.clinicRead,
     to: '/settings/notifications',
     searchKeywords: ['email', 'smtp', 'plantillas', 'templates', 'notificaciones', 'notifications'],
     order: 10
@@ -105,7 +106,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'settings.modules.title',
     descriptionKey: 'settings.modules.description',
     icon: 'i-lucide-blocks',
-    permission: 'admin.clinic.read',
+    permission: PERMISSIONS.admin.clinicRead,
     to: '/settings/modules',
     searchKeywords: ['modulo', 'module', 'plugin', 'instalar', 'install'],
     order: 10

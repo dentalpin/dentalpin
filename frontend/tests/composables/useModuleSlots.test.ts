@@ -1,5 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest'
 import { defineComponent, isReactive, markRaw, h } from 'vue'
+import { PERMISSIONS } from '~/config/permissions'
 
 // Regression: ISSUE-004 — slot components triggered "reactive object"
 // warnings because the slot registry stored every registered component
@@ -53,7 +54,7 @@ describe('useModuleSlots', () => {
     const B = defineComponent({ name: 'B', render: () => h('span', 'b') })
 
     registerSlot('ordered.slot', { id: 'b', component: B, order: 20 })
-    registerSlot('ordered.slot', { id: 'a', component: A, order: 10, permission: 'gated' })
+    registerSlot('ordered.slot', { id: 'a', component: A, order: 10, permission: PERMISSIONS.patients.read })
 
     const all = resolveSlot('ordered.slot', {}, { can: () => true })
     expect(all.map(e => e.id)).toEqual(['a', 'b'])

@@ -6,6 +6,7 @@
 // module since issue #60.
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   // Patient Resumen — active-plan smart card. The patients module
@@ -17,7 +18,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/summary/PlanCard.vue')
     ),
     order: 10,
-    permission: 'treatment_plan.plans.read'
+    permission: PERMISSIONS.treatmentPlans.read
   })
 
   // Post-completion follow-up: linked plan treatments the visit left
@@ -29,7 +30,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/clinical/MarkPerformedFollowupPrompt.vue')
     ),
     order: 5,
-    permission: 'treatment_plan.plans.write'
+    permission: PERMISSIONS.treatmentPlans.write
   })
 
   // "New quote" form — tells reception the patient already has a plan
@@ -40,6 +41,6 @@ export default defineNuxtPlugin(() => {
       () => import('../components/budget/NewBudgetPlanHint.vue')
     ),
     order: 10,
-    permission: 'treatment_plan.plans.read'
+    permission: PERMISSIONS.treatmentPlans.read
   })
 })

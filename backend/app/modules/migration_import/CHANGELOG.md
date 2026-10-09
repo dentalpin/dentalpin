@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - feat(#46): imported professional/user memberships persist the `roles`-row
   FK (`role_id`) alongside the role string.

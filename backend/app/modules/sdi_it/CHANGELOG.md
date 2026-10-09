@@ -2,6 +2,7 @@
 
 ## Unreleased — phase 3
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
 - Nuxt layer: Settings → Billing pages "Electronic invoicing (SDI)"
   (regime, exemption reference, bollo, manual/PEC transport with mailbox
   test) and "SDI files" (states, receipts, download / mark uploaded /

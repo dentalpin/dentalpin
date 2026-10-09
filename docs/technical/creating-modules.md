@@ -703,17 +703,18 @@ Consume:
 <ModuleSlot name="patient.detail.sidebar" :ctx="{ patient }" />
 ```
 
-Register (typically in `frontend/slots.ts` of your layer):
+Register (typically in `frontend/plugins/slots.client.ts` of your layer):
 
 ```ts
 import { defineAsyncComponent } from 'vue'
-import { registerSlot } from '~/composables/useModuleSlots'
+import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 registerSlot('patient.detail.sidebar', {
   id: 'inventory.patient.sidebar',   // stable, unique
-  component: defineAsyncComponent(() => import('./components/InventoryWidget.vue')),
+  component: defineAsyncComponent(() => import('../components/InventoryWidget.vue')),
   order: 30,
-  permission: 'inventory.items.read',
+  permission: PERMISSIONS.inventory.read,
   condition: (ctx) => ctx.patient.status === 'active',
 })
 ```
@@ -1077,7 +1078,9 @@ registerSlot('patient.detail.tabs', {
   id: 'my_module.patient.tab',
   component: defineAsyncComponent(() => import('./components/MyTab.vue')),
   order: 50,
-  permission: 'my_module.read',
+  // Reference your module's grant from frontend/app/config/permissions.ts
+  // (add it there first) — never hardcode the string (#557).
+  permission: PERMISSIONS.myModule.read,
 })
 ```
 

@@ -9,6 +9,7 @@
  * consumed by prescriptions.
  */
 import { registerSettingsPage } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSettingsPage({
@@ -20,7 +21,7 @@ export default defineNuxtPlugin(() => {
     // Gated on read, not write: dentists get read-only access (manifest
     // role_permissions) because prescribers need the list. The page hides
     // its write actions behind `canWrite`.
-    permission: 'medication_catalog.read',
+    permission: PERMISSIONS.medicationCatalog.read,
     component: () => import('../components/settings/MedicationCatalogSettingsPage.vue'),
     searchKeywords: ['medication', 'formulary', 'drug', 'dose', 'prescription', 'farmacia'],
     order: 45

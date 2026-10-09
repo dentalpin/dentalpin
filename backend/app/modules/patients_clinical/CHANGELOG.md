@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - fix: the five clinical getters (`get_medical_context`, `get_allergy`,
   `get_medication`, `get_systemic_disease`, `get_surgical_history`) now
   filter by `clinic_id` (signatures take it explicitly); the aggregates

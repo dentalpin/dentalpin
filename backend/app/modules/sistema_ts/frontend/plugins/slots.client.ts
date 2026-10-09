@@ -6,6 +6,7 @@
  */
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 interface InvoiceCtx {
   clinic?: { country?: string | null, settings?: { country?: string | null } | null } | null
@@ -22,13 +23,13 @@ export default defineNuxtPlugin(() => {
     id: 'sistema_ts.patient.summary.cards.opposition',
     component: defineAsyncComponent(() => import('../components/ts/PatientOppositionCard.vue')),
     order: 55,
-    permission: 'sistema_ts.opposition.read'
+    permission: PERMISSIONS.sistemaTs.oppositionRead
   })
   registerSlot('invoice.detail.compliance', {
     id: 'sistema_ts.invoice.detail.compliance',
     component: defineAsyncComponent(() => import('../components/ts/InvoiceTsSlot.vue')),
     order: 30,
-    permission: 'sistema_ts.documents.read',
+    permission: PERMISSIONS.sistemaTs.documentsRead,
     condition: isITClinic
   })
 })

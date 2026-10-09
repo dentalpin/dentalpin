@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations for the ``patients_clinical`` module.
@@ -16,7 +17,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/summary/MedicalHistoryCard.vue')
     ),
     order: 50,
-    permission: 'patients_clinical.medical.read'
+    permission: PERMISSIONS.medicalHistory.read
   })
 
   registerSlot('patient.header.alerts', {
@@ -25,6 +26,6 @@ export default defineNuxtPlugin(() => {
       () => import('../components/header/PatientHeaderAlertsChips.vue')
     ),
     order: 10,
-    permission: 'patients_clinical.medical.read'
+    permission: PERMISSIONS.medicalHistory.read
   })
 })

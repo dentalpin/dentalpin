@@ -14,6 +14,7 @@
  */
 
 import type { Component } from 'vue'
+import { PERMISSIONS, type PermissionValue } from '~/config/permissions'
 import type { ApiResponse, OnboardingState } from '~/types'
 
 export type ApiClient = ReturnType<typeof useApi>
@@ -40,7 +41,7 @@ export interface SettingsCategory {
    * AND has no visible page inside it. Pages can still gate themselves
    * independently. Account has no gate (always visible).
    */
-  permission?: string
+  permission?: PermissionValue
 }
 
 /**
@@ -63,8 +64,9 @@ export interface SettingsPageEntry {
    * Permission gate. A string requires that exact permission; an array
    * acts as ``canAny`` (visible if the user holds at least one). When
    * unset, the page is visible to all authenticated roles.
+   * Typed as {@link PermissionValue} so renames fail at typecheck (#557).
    */
-  permission?: string | string[]
+  permission?: PermissionValue | PermissionValue[]
   /** Component mounted at ``/settings/<category>/<path>``. */
   component?: () => Promise<Component | { default: Component }>
   /** External link target — overrides ``component`` when set. */
@@ -136,7 +138,7 @@ export interface GettingStartedRule {
    * ``can()`` embeds module-activation, so a rule from a baked-but-
    * uninstalled module neither renders nor fires its ``load`` (#326).
    */
-  permission?: string | string[]
+  permission?: PermissionValue | PermissionValue[]
   /** Guided-mode sequence. Lower first; ties resolve in registration order. */
   order?: number
   /** Optional steps are listed apart and don't count towards progress. */
@@ -172,7 +174,7 @@ const DEFAULT_CATEGORIES: readonly SettingsCategory[] = [
     descriptionKey: 'settings.categories.people.description',
     icon: 'i-lucide-users',
     order: 30,
-    permission: 'admin.users.read'
+    permission: PERMISSIONS.users.read
   },
   {
     id: 'clinical',
@@ -208,7 +210,7 @@ const DEFAULT_CATEGORIES: readonly SettingsCategory[] = [
     descriptionKey: 'settings.categories.modules.description',
     icon: 'i-lucide-blocks',
     order: 80,
-    permission: 'admin.clinic.read'
+    permission: PERMISSIONS.admin.clinicRead
   },
   {
     id: 'account',

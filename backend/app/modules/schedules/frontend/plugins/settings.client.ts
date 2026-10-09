@@ -11,6 +11,7 @@ import {
   registerGettingStartedRule,
   registerSettingsPage
 } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 import type { ClinicHours } from '../composables/useClinicHours'
 
 interface HoursOnboardingState { loaded: boolean, alwaysOpen: boolean }
@@ -34,7 +35,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'schedules.settingsCards.clinicHoursTitle',
     descriptionKey: 'schedules.settingsCards.clinicHoursDescription',
     icon: 'i-lucide-building-2',
-    permission: 'schedules.clinic_hours.read',
+    permission: PERMISSIONS.schedules.clinicHoursRead,
     component: () => import('../components/settings/ClinicHoursPage.vue'),
     searchKeywords: ['horario', 'clinica', 'hours', 'clinic', 'agenda', 'apertura'],
     order: 20
@@ -48,7 +49,7 @@ export default defineNuxtPlugin(() => {
     icon: 'i-lucide-user-cog',
     // canAny: dentist/hygienist hold ``own.read``; assistant/receptionist
     // hold the broader ``professional.read``. Admin matches via ``*``.
-    permission: ['schedules.professional.read', 'schedules.professional.own.read'],
+    permission: [PERMISSIONS.schedules.professionalRead, PERMISSIONS.schedules.professionalOwnRead],
     component: () => import('../components/settings/ProfessionalSchedulesPage.vue'),
     searchKeywords: ['profesional', 'professional', 'doctor', 'dentista', 'horario', 'turnos'],
     order: 30
@@ -62,7 +63,7 @@ export default defineNuxtPlugin(() => {
     descriptionKey: 'schedules.onboarding.hoursDescription',
     icon: 'i-lucide-clock',
     to: '/settings/workspace/clinic-hours',
-    permission: 'schedules.clinic_hours.read',
+    permission: PERMISSIONS.schedules.clinicHoursRead,
     order: 30,
     severity: 'info',
     modal: () => import('../components/settings/ClinicHoursQuickModal.vue'),

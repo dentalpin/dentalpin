@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations for the clinical_notes module.
@@ -16,7 +17,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/RecentNotesFeed.vue')
     ),
     order: 10,
-    permission: 'clinical_notes.notes.read'
+    permission: PERMISSIONS.clinicalNotes.read
   })
 
   // Diagnosis-mode right rail (odontogram).
@@ -26,7 +27,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/DiagnosisNotesSidebar.vue')
     ),
     order: 10,
-    permission: 'clinical_notes.notes.read'
+    permission: PERMISSIONS.clinicalNotes.read
   })
 
   // Per-treatment note action — reused inside the diagnosis conditions list
@@ -37,7 +38,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/TreatmentNoteButton.vue')
     ),
     order: 10,
-    permission: 'clinical_notes.notes.read'
+    permission: PERMISSIONS.clinicalNotes.read
   })
 
   // Patient timeline — plan-grouped notes (was registered by treatment_plan).
@@ -47,7 +48,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/PatientClinicalNotesByPlan.vue')
     ),
     order: 10,
-    permission: 'clinical_notes.notes.read'
+    permission: PERMISSIONS.clinicalNotes.read
   })
 
   // Agenda appointment modal — clinical + administrative notes per
@@ -59,6 +60,6 @@ export default defineNuxtPlugin(() => {
       () => import('../components/AppointmentNotesPanel.vue')
     ),
     order: 10,
-    permission: 'clinical_notes.notes.read'
+    permission: PERMISSIONS.clinicalNotes.read
   })
 })

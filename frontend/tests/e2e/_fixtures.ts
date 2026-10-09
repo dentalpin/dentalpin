@@ -66,7 +66,11 @@ export async function login(page: Page, role: Role): Promise<void> {
 
   // Prime the session by landing on the dashboard.
   await page.goto('/')
-  await page.waitForURL(url => url.pathname === '/', { timeout: 10_000 })
+  // Cold boot (auth + redirect + hydration) legitimately takes longer
+  // than interactive navigation on loaded CI runners: budget twice the
+  // repo's 15s navigation timeout instead of the 10s that flaked under
+  // memory pressure (#645).
+  await page.waitForURL(url => url.pathname === '/', { timeout: 30_000 })
 }
 
 type RoleFixture = {

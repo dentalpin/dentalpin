@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - fix(#473): `GET /patients` takes a repeatable `status` query
   parameter, so the Archived chip lists archived patients *alone*. The
   boolean `include_archived` could only ever say "active" or "active and

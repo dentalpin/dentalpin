@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - refactor: the nine `event_bus.publish` call sites that named their event
   with a string literal now use the matching `EventType` constant
   (`treatment_plan.created`, `.status_changed`, `.treatment_added`,

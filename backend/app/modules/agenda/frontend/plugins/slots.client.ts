@@ -1,33 +1,34 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSlot('dashboard.hero', {
     id: 'agenda.dashboard.todayAppointments',
     component: defineAsyncComponent(() => import('../components/home/TodayAppointmentsTile.vue')),
     order: 10,
-    permission: 'agenda.appointments.read'
+    permission: PERMISSIONS.appointments.read
   })
 
   registerSlot('dashboard.hero', {
     id: 'agenda.dashboard.inClinicNow',
     component: defineAsyncComponent(() => import('../components/home/InClinicNowTile.vue')),
     order: 20,
-    permission: 'agenda.appointments.read'
+    permission: PERMISSIONS.appointments.read
   })
 
   registerSlot('dashboard.timeline', {
     id: 'agenda.dashboard.todayTimeline',
     component: defineAsyncComponent(() => import('../components/home/TodayTimelineStrip.vue')),
     order: 10,
-    permission: 'agenda.appointments.read'
+    permission: PERMISSIONS.appointments.read
   })
 
   registerSlot('dashboard.attention', {
     id: 'agenda.dashboard.unconfirmed',
     component: defineAsyncComponent(() => import('../components/home/UnconfirmedPanel.vue')),
     order: 10,
-    permission: 'agenda.appointments.read'
+    permission: PERMISSIONS.appointments.read
   })
 
   // Patient Resumen — next-appointment smart card. Slot owned by the
@@ -39,7 +40,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/summary/NextAppointmentCard.vue')
     ),
     order: 20,
-    permission: 'agenda.appointments.read'
+    permission: PERMISSIONS.appointments.read
   })
 
   // Last completed visit, right next to the next-appointment card, so
@@ -50,6 +51,6 @@ export default defineNuxtPlugin(() => {
       () => import('../components/summary/LastVisitCard.vue')
     ),
     order: 21,
-    permission: 'agenda.appointments.read'
+    permission: PERMISSIONS.appointments.read
   })
 })

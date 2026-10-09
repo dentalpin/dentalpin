@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - feat(i18n): Telugu (`te`) locale for the module's frontend layer.
 - fix(#126): de/it/pl locale parity with en (closeAborted key); fixed an Italian typo (parodontogramma).
 

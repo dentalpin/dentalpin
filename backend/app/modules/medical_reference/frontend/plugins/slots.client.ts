@@ -1,4 +1,5 @@
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations wiring medical_reference's searchable comboboxes and
@@ -28,7 +29,7 @@ export default defineNuxtPlugin(() => {
       id: `medical_reference.${slot}`,
       component: nameFieldComponent,
       order: 10,
-      permission: 'medical_reference.read'
+      permission: PERMISSIONS.medicalReference.read
     })
   }
 
@@ -41,6 +42,6 @@ export default defineNuxtPlugin(() => {
       () => import('../components/PatientReferenceFlagsChips.vue')
     ),
     order: 20,
-    permission: 'medical_reference.read'
+    permission: PERMISSIONS.medicalReference.read
   })
 })

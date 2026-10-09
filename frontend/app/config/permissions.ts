@@ -296,5 +296,25 @@ export const PERMISSIONS = {
     casesWrite: 'orthodontics.cases.write',
     controlsWrite: 'orthodontics.controls.write',
     settingsManage: 'orthodontics.settings.manage'
+  },
+  medicalReference: {
+    read: 'medical_reference.read',
+    write: 'medical_reference.write'
+  },
+  smsGateway: {
+    settingsWrite: 'sms_gateway.settings.write'
   }
 } as const
+
+/**
+ * Union of every permission string in {@link PERMISSIONS}.
+ *
+ * Registration sites (`SlotEntry.permission`, settings pages, getting
+ * started rules) take this type instead of `string`, so renaming a
+ * permission fails at typecheck instead of silently hiding UI (#557).
+ */
+type DeepPermissionValue<T> = T extends object
+  ? { [K in keyof T]: DeepPermissionValue<T[K]> }[keyof T]
+  : T
+
+export type PermissionValue = DeepPermissionValue<typeof PERMISSIONS>
