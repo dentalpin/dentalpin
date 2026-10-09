@@ -712,7 +712,7 @@ import { PERMISSIONS } from '~~/app/config/permissions'
 
 registerSlot('patient.detail.sidebar', {
   id: 'inventory.patient.sidebar',   // stable, unique
-  component: defineAsyncComponent(() => import('./components/InventoryWidget.vue')),
+  component: defineAsyncComponent(() => import('../components/InventoryWidget.vue')),
   order: 30,
   permission: PERMISSIONS.inventory.read,
   condition: (ctx) => ctx.patient.status === 'active',
