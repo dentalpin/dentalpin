@@ -135,6 +135,12 @@ they do not issue a fresh cookie.
   with privacy expectations.
 - Brute-force resistance of the 4-digit `manual_code` relies on the
   lockout, not on the search space alone.
+- `/meta` answers with routing state and the clinic name only (#539).
+  Patient identity (name) and budget contents (number, total, validity)
+  stay behind the knowledge factor and arrive with the cookie-protected
+  detail response. Clinic contact, locale, and currency fields stay:
+  they are business data, not patient data, and the page needs them
+  before verification (locale switching, money formatting, call links).
 
 ## Alternatives considered
 
@@ -160,8 +166,9 @@ they do not issue a fresh cookie.
   package). It covers the unknown-token 404s, the verify cascade
   (correct value → cookie, bad value → 401, decided → 409, expired →
   410, locked → 423), a cookie minted for one budget being rejected on
-  another, the `none` method needing no cookie, the clinic-scoped
-  `/meta` lookup, the budget-wide lockout total, and the accept/reject
+  another, the `none` method needing no cookie, the minimized `/meta`
+  shape (routing state + clinic name; identity and contents asserted
+  absent), the budget-wide lockout total, and the accept/reject
   `BudgetAccessLog` rows. The production boot rules for
   `BUDGET_PUBLIC_SECRET_KEY` (required, minimum length, no blank or
   padded values) are proven in `backend/tests/test_secret_key_strength.py`.

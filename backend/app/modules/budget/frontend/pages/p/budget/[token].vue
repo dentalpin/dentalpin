@@ -233,8 +233,9 @@ const reasonOptions = computed(() => [
 ])
 
 const greeting = computed(() => {
-  const name = meta.value?.patient_first_name
-  return name ? t('budget.public.greeting', { name }) : t('budget.public.title')
+  // The name stays behind verification (/meta carries no patient identity
+  // since #539): greet generically until the verified detail arrives.
+  return t('budget.public.title')
 })
 </script>
 

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix(#539): `GET /public/budgets/{token}/meta` no longer discloses
+  patient identity or budget contents before the knowledge factor; it
+  answers with routing state and the clinic name only, and the welcome
+  greeting falls back to the generic title.
 - fix(#531): the verify permanent lockout stays budget-wide on purpose
   (10 retained failures lock the token), and the staff `unlock-public`
   recovery path is now documented in ADR 0006; unlocking also drops

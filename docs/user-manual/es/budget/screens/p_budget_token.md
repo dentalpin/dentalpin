@@ -50,6 +50,11 @@ paciente cuando le pasan el enlace.
   llama a `GET /pdf/signed` con la cookie. Está limitado a 10
   descargas/minuto por token; cada acceso queda registrado en
   `BudgetAccessLog`.
+- **Nada personal antes de verificar.** `GET /meta` responde solo con
+  el estado de enrutado y el nombre de la clínica: sin nombre del
+  paciente, ni número, total o validez del presupuesto. Esos datos
+  llegan con el detalle protegido por cookie tras aceptar el código
+  (#539).
 
 ## Lo que ve el paciente
 

@@ -201,14 +201,25 @@ async def test_budget_cookie_for_other_budget_401(
 
 
 @pytest.mark.asyncio
-async def test_budget_meta_returns_scoped_patient_name(client: AsyncClient, t1_setup: dict) -> None:
-    """The /meta patient lookup is clinic-scoped: the budget's own patient
-    resolves, so the checklist point-3 filter cannot silently blank the
-    name on a same-clinic row."""
+async def test_budget_meta_discloses_no_identity_or_contents(
+    client: AsyncClient, t1_setup: dict
+) -> None:
+    """/meta carries only routing state + clinic name: no patient identity,
+    no budget number/total/validity before the knowledge factor (#539)."""
     budget = t1_setup["budget"]
     response = await client.get(f"{BUDGET}/{budget.public_token}/meta")
     assert response.status_code == 200, response.text
-    assert response.json()["data"]["patient_first_name"] == "Pub"
+    data = response.json()["data"]
+    assert data["requires_verification"] is True
+    assert data["method"] == "phone_last4"
+    assert data["clinic_name"] == "Test Clinic"
+    for key in (
+        "patient_first_name",
+        "budget_number",
+        "budget_total",
+        "valid_until",
+    ):
+        assert key not in data, key
 
 
 @pytest.mark.asyncio

@@ -141,17 +141,15 @@ class PublicBudgetMeta(BaseModel):
     expired: bool = False
     already_decided: bool = False
     decided_status: str | None = None
-    # Trust + personalization signals.
+    # Trust signals only. Patient identity and budget contents stay
+    # behind verification: they arrive with the cookie-protected detail
+    # response, never on this cookie-less endpoint (#539).
     clinic_name: str | None = None
     clinic_phone: str | None = None
     clinic_email: str | None = None
     clinic_address_line: str | None = None
     clinic_language: str | None = None
     clinic_currency: str | None = None
-    patient_first_name: str | None = None
-    budget_number: str | None = None
-    budget_total: str | None = None
-    valid_until: str | None = None
 
 
 class PublicVerifyBody(BaseModel):
@@ -222,14 +220,6 @@ async def get_public_budget_meta(
     # Default to Spanish — matches the project's primary user base.
     clinic_language = clinic_language or "es"
 
-    patient_row = (
-        await db.execute(
-            _text("SELECT first_name FROM patients WHERE id = :id AND clinic_id = :clinic_id"),
-            {"id": budget.patient_id, "clinic_id": budget.clinic_id},
-        )
-    ).first()
-    patient_first_name = patient_row.first_name if patient_row else None
-
     method = budget.public_auth_method
     requires_verification = method != "none" and not already_decided
     return ApiResponse(
@@ -246,10 +236,6 @@ async def get_public_budget_meta(
             clinic_address_line=clinic_address_line,
             clinic_language=clinic_language,
             clinic_currency=clinic_currency,
-            patient_first_name=patient_first_name,
-            budget_number=budget.budget_number,
-            budget_total=str(budget.total) if budget.total is not None else None,
-            valid_until=budget.valid_until.isoformat() if budget.valid_until else None,
         )
     )
 

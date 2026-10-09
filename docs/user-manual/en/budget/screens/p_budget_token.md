@@ -49,6 +49,10 @@ the link is forwarded to them.
 - **Signed PDF.** After acceptance, *Download signed PDF* calls
   `GET /pdf/signed` with the cookie. Capped at 10 downloads per
   minute per token; each hit is logged in `BudgetAccessLog`.
+- **Nothing personal before verification.** `GET /meta` answers with
+  routing state and the clinic name only: no patient name, no budget
+  number, total, or validity. Those arrive with the cookie-protected
+  detail response after the code is accepted (#539).
 
 ## What the patient sees
 
