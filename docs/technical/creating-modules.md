@@ -703,7 +703,7 @@ Consume:
 <ModuleSlot name="patient.detail.sidebar" :ctx="{ patient }" />
 ```
 
-Register (typically in `frontend/slots.ts` of your layer):
+Register (typically in `frontend/plugins/slots.client.ts` of your layer):
 
 ```ts
 import { defineAsyncComponent } from 'vue'
