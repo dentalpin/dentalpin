@@ -5,6 +5,7 @@
  * inline (mini-modal → ``POST /catalog/seed``) or hands off to the page.
  */
 import { registerGettingStartedRule } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 interface CatalogOnboardingState { loaded: boolean, total: number }
 
@@ -18,7 +19,7 @@ export default defineNuxtPlugin(() => {
     descriptionKey: 'catalog.onboarding.description',
     icon: 'i-lucide-list-checks',
     to: '/settings/catalog',
-    permission: 'catalog.read',
+    permission: PERMISSIONS.catalog.read,
     modal: () => import('../components/catalog/CatalogSeedQuickModal.vue'),
     order: 50,
     severity: 'warning',

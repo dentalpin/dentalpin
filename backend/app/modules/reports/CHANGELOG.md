@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - fix(#611): report CSVs run every cell through `csv_cell`. Professional
   names and address areas reach those rows from user data, and a value
   starting with `=`, `+`, `-` or `@` is executed by Excel/LibreOffice on

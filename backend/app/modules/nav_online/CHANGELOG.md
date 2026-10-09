@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - feat(i18n): Arabic (`ar`) locale for the module's frontend layer.
 - fix: the records-page state filter's 'all states' option used `''` as its value, which reka-ui rejects in `<SelectItem />`; it now uses `null`.
 

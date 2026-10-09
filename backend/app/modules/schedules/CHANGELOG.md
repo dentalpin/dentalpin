@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - fix(#590): `ProfessionalHoursService.is_professional` tolerates
   duplicated membership rows (`.limit(1)` existence read, same fix as
   #598 for orthodontics). `clinic_memberships` has no unique

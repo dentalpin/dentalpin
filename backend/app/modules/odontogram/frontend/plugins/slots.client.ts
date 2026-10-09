@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations for the ``odontogram`` module.
@@ -16,6 +17,6 @@ export default defineNuxtPlugin(() => {
       () => import('../components/summary/DiagnosesCard.vue')
     ),
     order: 40,
-    permission: 'odontogram.treatments.read'
+    permission: PERMISSIONS.odontogram.treatmentsRead
   })
 })

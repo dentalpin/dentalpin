@@ -10,6 +10,7 @@ import {
   registerGettingStartedRule,
   registerSettingsPage
 } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 interface SmtpOnboardingState { loaded: boolean, configured: boolean }
 
@@ -23,7 +24,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'notifications.communications.language.cardTitle',
     descriptionKey: 'notifications.communications.language.cardDescription',
     icon: 'i-lucide-languages',
-    permission: 'admin.clinic.write',
+    permission: PERMISSIONS.admin.clinicWrite,
     component: () => import('../components/settings/ClinicLanguagePage.vue'),
     searchKeywords: [
       'idioma',
@@ -45,7 +46,7 @@ export default defineNuxtPlugin(() => {
     descriptionKey: 'notifications.onboarding.description',
     icon: 'i-lucide-mail',
     to: '/settings/notifications',
-    permission: 'notifications.settings.read',
+    permission: PERMISSIONS.notifications.settingsRead,
     order: 80,
     optional: true,
     severity: 'info',

@@ -6,6 +6,7 @@
  * layers use: `~~` reaches the host shell only.
  */
 import { registerSettingsPage } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSettingsPage({
@@ -16,7 +17,7 @@ export default defineNuxtPlugin(() => {
     icon: 'i-lucide-inbox',
     // Read is enough to *see* the page; changing the cap or rotating the
     // key needs leads.settings.write, checked inside the component.
-    permission: 'leads.settings.read',
+    permission: PERMISSIONS.leads.settingsRead,
     component: () => import('../components/settings/LeadsIntakeSettingsPage.vue'),
     searchKeywords: [
       'leads',

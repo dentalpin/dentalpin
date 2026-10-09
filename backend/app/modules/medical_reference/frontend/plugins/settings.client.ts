@@ -7,6 +7,7 @@
  * shell), not from another module.
  */
 import { registerSettingsPage } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSettingsPage({
@@ -15,7 +16,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'medicalReference.settingsLabel',
     descriptionKey: 'medicalReference.settingsDescription',
     icon: 'i-lucide-list-checks',
-    permission: 'medical_reference.write',
+    permission: PERMISSIONS.medicalReference.write,
     component: () => import('../components/settings/MedicalReferenceSettingsPage.vue'),
     searchKeywords: ['allergy', 'allergies', 'medication', 'disease', 'reference'],
     order: 40

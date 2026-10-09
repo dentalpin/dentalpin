@@ -4,6 +4,7 @@
  * clinics that predate the seed or deleted their series.
  */
 import { registerGettingStartedRule } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 interface SeriesOnboardingState { loaded: boolean, count: number }
 
@@ -17,7 +18,7 @@ export default defineNuxtPlugin(() => {
     descriptionKey: 'invoiceSeries.onboarding.description',
     icon: 'i-lucide-receipt-text',
     to: '/settings/invoice-series',
-    permission: 'billing.read',
+    permission: PERMISSIONS.billing.read,
     order: 60,
     severity: 'warning',
     load: async (api) => {

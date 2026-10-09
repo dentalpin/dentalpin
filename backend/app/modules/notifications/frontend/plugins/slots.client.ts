@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations for the `notifications` module.
@@ -13,13 +14,13 @@ export default defineNuxtPlugin(() => {
   registerSlot('patient.summary.cards', {
     id: 'notifications.patient.conversation',
     component: defineAsyncComponent(() => import('../components/ConversationThread.vue')),
-    permission: 'notifications.logs.read',
+    permission: PERMISSIONS.notifications.logsRead,
     order: 60
   })
   registerSlot('patient.summary.cards', {
     id: 'notifications.patient.prefs',
     component: defineAsyncComponent(() => import('../components/PatientNotificationPrefs.vue')),
-    permission: 'notifications.preferences.read',
+    permission: PERMISSIONS.notifications.preferencesRead,
     order: 61
   })
 })

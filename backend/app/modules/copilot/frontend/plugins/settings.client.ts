@@ -7,6 +7,7 @@
  * depends stay at ``[]``.
  */
 import { registerSettingsPage } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSettingsPage({
@@ -15,7 +16,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'copilot.settings.title',
     descriptionKey: 'copilot.settings.description',
     icon: 'i-lucide-sparkles',
-    permission: 'copilot.configure',
+    permission: PERMISSIONS.copilot.configure,
     component: () => import('../components/CopilotSettingsPanel.vue'),
     searchKeywords: ['copilot', 'ia', 'ai', 'briefing', 'digest', 'resumen'],
     order: 30

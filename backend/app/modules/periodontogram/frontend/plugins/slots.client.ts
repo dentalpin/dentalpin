@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations for the `periodontogram` module.
@@ -15,7 +16,7 @@ export default defineNuxtPlugin(() => {
       () => import('../components/PeriodontogramView.vue')
     ),
     order: 20,
-    permission: 'periodontogram.read',
+    permission: PERMISSIONS.periodontogram.read,
     labelKey: 'periodontogram.tab.label'
   })
 })

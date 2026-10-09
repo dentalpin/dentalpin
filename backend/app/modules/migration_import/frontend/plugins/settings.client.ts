@@ -6,6 +6,7 @@
  * roles (none today by default) can still inspect history.
  */
 import { registerSettingsPage } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSettingsPage({
@@ -14,7 +15,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'migrationImport.settingsCard.title',
     descriptionKey: 'migrationImport.settingsCard.description',
     icon: 'i-lucide-database-zap',
-    permission: 'migration_import.job.read',
+    permission: PERMISSIONS.migrationImport.jobRead,
     component: () => import('../components/settings/DataMigrationPage.vue'),
     searchKeywords: ['migracion', 'importar', 'gesden', 'dpmf', 'dental-bridge', 'migration', 'import'],
     order: 90

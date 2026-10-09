@@ -8,6 +8,7 @@
  * not another module. Recalls' depends stay at ``["patients", "agenda"]``.
  */
 import { registerSettingsPage } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSettingsPage({
@@ -16,7 +17,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'recalls.settings.title',
     descriptionKey: 'recalls.settings.description',
     icon: 'i-lucide-bell',
-    permission: 'recalls.read',
+    permission: PERMISSIONS.recalls.read,
     component: () => import('../components/RecallSettingsPanel.vue'),
     searchKeywords: ['recordatorio', 'recall', 'llamada', 'callback', 'motivo', 'intervalo'],
     order: 40

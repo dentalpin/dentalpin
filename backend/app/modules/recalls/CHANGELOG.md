@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - fix(#611): the recall CSV export no longer emits live spreadsheet
   formulas. Patient names arrive through the public lead intake and
   `reason_note` is free text; both are now apostrophe-prefixed when they

@@ -4,6 +4,7 @@
  * category route — same pattern as medication_catalog.
  */
 import { registerSettingsPage } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSettingsPage({
@@ -12,7 +13,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'prescriptions.settingsLabel',
     descriptionKey: 'prescriptions.settingsDescription',
     icon: 'i-lucide-pill',
-    permission: 'prescriptions.read',
+    permission: PERMISSIONS.prescriptions.read,
     component: () => import('../components/settings/PrescriptionTemplatesSettingsPage.vue'),
     searchKeywords: ['prescription', 'template', 'receta', 'plantilla'],
     order: 46
@@ -23,7 +24,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'prescriptions.profileLabel',
     descriptionKey: 'prescriptions.profileDescription',
     icon: 'i-lucide-badge-check',
-    permission: 'prescriptions.read',
+    permission: PERMISSIONS.prescriptions.read,
     component: () => import('../components/settings/PrescriberProfileSettingsPage.vue'),
     searchKeywords: ['prescription', 'license', 'receta', 'cedula', 'prescriptor'],
     order: 47

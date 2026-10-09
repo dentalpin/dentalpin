@@ -2,6 +2,7 @@
 
 ## Unreleased — phase 2
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
 - Nuxt layer: Settings → Billing pages "Sistema Tessera Sanitaria"
   (credentials, certificate upload, identity, year overview with the
   31 January deadline, `tipoSpesa` per catalog item) and "Sistema TS

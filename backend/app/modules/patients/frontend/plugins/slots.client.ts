@@ -1,6 +1,7 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
 import { registerGettingStartedRule } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 interface PatientsOnboardingState { loaded: boolean, total: number }
 
@@ -12,7 +13,7 @@ export default defineNuxtPlugin(() => {
     id: 'patients.dashboard.recent',
     component: defineAsyncComponent(() => import('../components/home/RecentPatientsPanel.vue')),
     order: 10,
-    permission: 'patients.read'
+    permission: PERMISSIONS.patients.read
   })
 
   // QuickActionsCard — patients-owned card. Renders last in the grid
@@ -21,7 +22,7 @@ export default defineNuxtPlugin(() => {
     id: 'patients.patient.summary.cards.quickActions',
     component: defineAsyncComponent(() => import('../components/patient/QuickActionsCard.vue')),
     order: 60,
-    permission: 'patients.read'
+    permission: PERMISSIONS.patients.read
   })
 
   // Getting-started (optional): the first patient is the natural "try it"
@@ -32,7 +33,7 @@ export default defineNuxtPlugin(() => {
     descriptionKey: 'patients.onboarding.description',
     icon: 'i-lucide-user-plus',
     to: '/patients?new=1',
-    permission: 'patients.read',
+    permission: PERMISSIONS.patients.read,
     order: 90,
     optional: true,
     severity: 'info',

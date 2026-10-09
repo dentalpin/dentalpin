@@ -9,6 +9,7 @@
  * ``["patients", "catalog", "odontogram"]``.
  */
 import { registerSettingsPage } from '~~/app/composables/useSettingsRegistry'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export default defineNuxtPlugin(() => {
   registerSettingsPage({
@@ -17,7 +18,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'budget.settings.cards.expiry.title',
     descriptionKey: 'budget.settings.cards.expiry.description',
     icon: 'i-lucide-calendar-clock',
-    permission: 'admin.clinic.write',
+    permission: PERMISSIONS.admin.clinicWrite,
     component: () => import('../components/settings/BudgetExpiryPage.vue'),
     searchKeywords: ['budget', 'presupuesto', 'expiry', 'caducidad', 'auto-close', 'cierre'],
     order: 50
@@ -29,7 +30,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'budget.settings.cards.reminders.title',
     descriptionKey: 'budget.settings.cards.reminders.description',
     icon: 'i-lucide-bell',
-    permission: 'admin.clinic.write',
+    permission: PERMISSIONS.admin.clinicWrite,
     component: () => import('../components/settings/BudgetRemindersPage.vue'),
     searchKeywords: ['budget', 'presupuesto', 'recordatorio', 'reminder', 'email'],
     order: 51
@@ -41,7 +42,7 @@ export default defineNuxtPlugin(() => {
     labelKey: 'budget.settings.cards.publicLink.title',
     descriptionKey: 'budget.settings.cards.publicLink.description',
     icon: 'i-lucide-shield-check',
-    permission: 'admin.clinic.write',
+    permission: PERMISSIONS.admin.clinicWrite,
     component: () => import('../components/settings/BudgetPublicLinkPage.vue'),
     searchKeywords: ['budget', 'presupuesto', 'public', 'link', 'auth', 'verificacion', 'security'],
     order: 52

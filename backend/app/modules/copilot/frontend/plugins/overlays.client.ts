@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 // Mount the global copilot launcher + drawer into the host's app.overlays
 // slot. The component teleports to <body>; nothing renders inline. The
@@ -9,6 +10,6 @@ export default defineNuxtPlugin(() => {
     id: 'copilot.overlay',
     component: defineAsyncComponent(() => import('../components/CopilotMount.vue')),
     order: 10,
-    permission: 'copilot.chat'
+    permission: PERMISSIONS.copilot.chat
   })
 })

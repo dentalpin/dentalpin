@@ -20,6 +20,7 @@
 
 import { markRaw } from 'vue'
 import type { Component } from 'vue'
+import type { PermissionValue } from '~/config/permissions'
 import type { SettingsCategoryId } from './useSettingsRegistry'
 
 export interface SlotEntry<Ctx = unknown> {
@@ -35,10 +36,11 @@ export interface SlotEntry<Ctx = unknown> {
    */
   order?: number
   /**
-   * Optional permission string (namespaced). When set, the entry
+   * Optional permission (namespaced). When set, the entry
    * renders only when ``usePermissions().can(permission)`` is truthy.
+   * Typed as {@link PermissionValue} so renames fail at typecheck (#557).
    */
-  permission?: string
+  permission?: PermissionValue
   /**
    * Optional predicate evaluated at render time with the slot's
    * ``ctx`` prop. Return false to hide the entry for this context.

@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations for the `orthodontics` module (issue #270).
@@ -14,13 +15,13 @@ export default defineNuxtPlugin(() => {
       () => import('../components/OrthodonticsView.vue')
     ),
     order: 21,
-    permission: 'orthodontics.cases.read',
+    permission: PERMISSIONS.orthodontics.casesRead,
     labelKey: 'orthodontics.tab.label'
   })
   registerSlot('patient.summary.cards', {
     id: 'orthodontics.patient.summary.cards.status',
     component: defineAsyncComponent(() => import('../components/summary/OrthoCard.vue')),
-    permission: 'orthodontics.cases.read',
+    permission: PERMISSIONS.orthodontics.casesRead,
     order: 58
   })
 })

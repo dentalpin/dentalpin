@@ -32,3 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   render body text instead of dispatching empty; downgrade removes only
   seeded rows.
 - RBAC: `sms_gateway.settings.read/write`, admin-only. No agent tools.
+
+## Unreleased
+
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).

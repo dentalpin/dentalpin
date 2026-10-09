@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations for the `recalls` module.
@@ -12,7 +13,7 @@ export default defineNuxtPlugin(() => {
   registerSlot('patient.summary.actions', {
     id: 'recalls.patient.set-recall',
     component: defineAsyncComponent(() => import('../components/SetRecallButton.vue')),
-    permission: 'recalls.write',
+    permission: PERMISSIONS.recalls.write,
     order: 20
   })
 
@@ -20,7 +21,7 @@ export default defineNuxtPlugin(() => {
   registerSlot('patient.summary.feed', {
     id: 'recalls.patient.feed',
     component: defineAsyncComponent(() => import('../components/RecallSummaryFeed.vue')),
-    permission: 'recalls.read',
+    permission: PERMISSIONS.recalls.read,
     order: 30
   })
 
@@ -29,7 +30,7 @@ export default defineNuxtPlugin(() => {
   registerSlot('odontogram.condition.actions', {
     id: 'recalls.plan-item.set-recall',
     component: defineAsyncComponent(() => import('../components/SetRecallFromTreatmentButton.vue')),
-    permission: 'recalls.write',
+    permission: PERMISSIONS.recalls.write,
     order: 30
   })
 
@@ -37,7 +38,7 @@ export default defineNuxtPlugin(() => {
   registerSlot('appointment.completed.followup', {
     id: 'recalls.appointment.closeout-prompt',
     component: defineAsyncComponent(() => import('../components/RecallCloseoutPrompt.vue')),
-    permission: 'recalls.write',
+    permission: PERMISSIONS.recalls.write,
     order: 10
   })
 
@@ -45,7 +46,7 @@ export default defineNuxtPlugin(() => {
   registerSlot('dashboard.attention', {
     id: 'recalls.dashboard.due-overdue',
     component: defineAsyncComponent(() => import('../components/RecallDashboardWidget.vue')),
-    permission: 'recalls.read',
+    permission: PERMISSIONS.recalls.read,
     order: 30
   })
 

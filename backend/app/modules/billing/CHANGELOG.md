@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - feat(i18n): Telugu (`te`) invoice PDF labels; `Noto Sans Telugu` joins the PDF font stack.
 - feat(#509): invoice PDF accepts `pt-BR`; captions reuse the `pt` labels.
 

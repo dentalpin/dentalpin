@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registration for the `patient_segments` module.
@@ -15,6 +16,6 @@ export default defineNuxtPlugin(() => {
       () => import('../components/summary/PatientSegmentsCard.vue')
     ),
     order: 56,
-    permission: 'patient_segments.read'
+    permission: PERMISSIONS.patientSegments.read
   })
 })

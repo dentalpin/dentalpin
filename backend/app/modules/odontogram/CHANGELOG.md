@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
+
 - fix(#522): `TimelineSlider` compared the last history date against the UTC
   day, so the "Now" position could fail to merge with today's entry. Now uses
   `toISODate`.

@@ -1,5 +1,6 @@
 import { defineAsyncComponent } from 'vue'
 import { registerSlot } from '~~/app/composables/useModuleSlots'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 /**
  * Slot registrations for the `payments` module.
@@ -17,7 +18,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/BudgetPaymentsCard.vue')
     ),
-    permission: 'payments.record.read',
+    permission: PERMISSIONS.payments.recordRead,
     order: 10
   })
 
@@ -32,7 +33,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/CollectFollowupPrompt.vue')
     ),
-    permission: 'payments.record.write',
+    permission: PERMISSIONS.payments.recordWrite,
     order: 20
   })
 
@@ -41,7 +42,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/PaymentsReportEntry.vue')
     ),
-    permission: 'payments.reports.read',
+    permission: PERMISSIONS.payments.reportsRead,
     order: 40
   })
 
@@ -53,7 +54,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/PatientPaymentsPanel.vue')
     ),
-    permission: 'payments.record.read',
+    permission: PERMISSIONS.payments.recordRead,
     order: 10
   })
 
@@ -65,7 +66,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/summary/BalanceCard.vue')
     ),
-    permission: 'payments.record.read',
+    permission: PERMISSIONS.payments.recordRead,
     order: 30
   })
 
@@ -76,7 +77,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/PatientListDebtCell.vue')
     ),
-    permission: 'payments.record.read',
+    permission: PERMISSIONS.payments.recordRead,
     order: 10
   })
 
@@ -86,7 +87,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/PatientListDebtFilter.vue')
     ),
-    permission: 'payments.record.read',
+    permission: PERMISSIONS.payments.recordRead,
     order: 10
   })
 
@@ -96,7 +97,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/BudgetListPaymentsCell.vue')
     ),
-    permission: 'payments.record.read',
+    permission: PERMISSIONS.payments.recordRead,
     order: 10
   })
 
@@ -106,7 +107,7 @@ export default defineNuxtPlugin(() => {
     component: defineAsyncComponent(
       () => import('../components/BudgetListPaymentsFilter.vue')
     ),
-    permission: 'payments.record.read',
+    permission: PERMISSIONS.payments.recordRead,
     order: 10
   })
 })
