@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- test(#552): branch-scoped uninstall round-trip test (heads, branch downgrade, reinstall).
+
 - fix(#611): party names and descriptions in `facturas.csv` / `cobros.csv`
   are neutralised against spreadsheet formula injection before the file
   reaches the accountant. Decimal amounts keep their own formatting path,

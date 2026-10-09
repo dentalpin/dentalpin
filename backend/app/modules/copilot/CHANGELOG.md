@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- test(#552): branch-scoped uninstall round-trip test (heads, branch downgrade, reinstall).
+
 - fix(#532): re-confirming an approved write replays the stored result
   instead of executing the tool again (retry/double-click safe).
 - fix(#586): redaction tokens are salted per conversation

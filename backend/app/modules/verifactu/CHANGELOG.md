@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- test(#552): branch-scoped uninstall round-trip test (heads, branch downgrade, reinstall).
+
 - feat(#46): the test-to-prod promotion check resolves flag-aware
   (`RBAC_FROM_DB` on: custom roles and per-clinic overrides apply).
 
