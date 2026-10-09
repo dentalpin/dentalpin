@@ -14,7 +14,10 @@ MIN_SECRET_KEY_LENGTH = 32
 # that is not a Settings field is almost certainly a misspelled app
 # setting, which ``extra="ignore"`` would otherwise swallow in silence.
 FOREIGN_ENV_PREFIXES = ("POSTGRES_", "NUXT_", "DENTALPIN_", "SEED_", "COMPOSE_", "VITE_")
-FOREIGN_ENV_KEYS = frozenset({"API_BASE_URL", "PUBLIC_URL", "PATH", "PWD"})
+# FORWARDED_ALLOW_IPS is uvicorn's, not ours (#623): uvicorn reads it
+# directly when --forwarded-allow-ips is absent, so it belongs in the
+# templates without being a Settings field.
+FOREIGN_ENV_KEYS = frozenset({"API_BASE_URL", "PUBLIC_URL", "PATH", "PWD", "FORWARDED_ALLOW_IPS"})
 
 
 def unknown_env_keys(env_file: str | Path, declared: set[str]) -> list[str]:
@@ -222,6 +225,44 @@ class Settings(BaseSettings):
             if self.ENVIRONMENT == "production":
                 raise ValueError(message)
             warnings.warn(message, stacklevel=2)
+        return self
+
+    @model_validator(mode="after")
+    def _validate_public_secret_key(self) -> "Settings":
+        """Require a dedicated public-link key in production (#538).
+
+        Public budget sessions must never be signed with the staff-JWT
+        key, so a production boot without ``BUDGET_PUBLIC_SECRET_KEY``
+        fails here with an actionable message instead of serving the
+        first patient a 500 from the request-time check.
+        """
+        key = self.BUDGET_PUBLIC_SECRET_KEY or ""
+        if self.ENVIRONMENT != "production":
+            return self
+        stripped_key = key.strip()
+        if not key:
+            raise ValueError(
+                "BUDGET_PUBLIC_SECRET_KEY is required in production: refusing "
+                "to start with public budget sessions bound to the staff-JWT "
+                "SECRET_KEY."
+            )
+        if not stripped_key:
+            raise ValueError(
+                "BUDGET_PUBLIC_SECRET_KEY must not be blank or whitespace in "
+                "production: refusing to start with a signing key that has no "
+                "entropy."
+            )
+        if key != stripped_key:
+            raise ValueError(
+                "BUDGET_PUBLIC_SECRET_KEY must not have leading or trailing "
+                "whitespace in production: the validator checks the stripped "
+                "value, while signing uses the configured value."
+            )
+        if len(stripped_key) < MIN_SECRET_KEY_LENGTH:
+            raise ValueError(
+                f"BUDGET_PUBLIC_SECRET_KEY must be at least {MIN_SECRET_KEY_LENGTH} "
+                "characters (see .env.example: openssl rand -hex 32)."
+            )
         return self
 
     #: Valid ENVIRONMENT values (#530). Anything else (a typo like

@@ -1320,7 +1320,19 @@ Rules:
   the only path where permissions, guardrails, and audit logging run.
 - **Subset tools explicitly.** `allowed_tools` is a hard list — the
   agent cannot invoke anything outside it, even if the registry has
-  other tools.
+  other tools and even if the caller's RBAC grants would allow them.
+  It is enforced at the registry chokepoint (`ToolRegistry.call`, step 2
+  of its enforcement order) and a refusal is audited as `BLOCKED`, so a
+  tool the LLM invents or hallucinates its way into is refused rather
+  than run. Exact qualified names only; there is no wildcard form.
+
+  The list reaches the chokepoint as `AgentContext.allowed_tools`, so
+  **whatever constructs the context for an agent must pass the agent's
+  own list through** (`allowed_tools=MyAgent.allowed_tools`). On the
+  context, `None` is a distinct third state meaning "no subsetting",
+  which is what conversational surfaces such as copilot use — an empty
+  list permits nothing, and `BaseAgent.allowed_tools` defaults to empty
+  so an agent that declares nothing can call nothing.
 - **Pick a mode honestly.** Default to `SUPERVISED` for any agent that
   writes. Only mark `AUTONOMOUS` once you are convinced the guardrails
   + audit story is sufficient for the risk.

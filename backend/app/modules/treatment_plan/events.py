@@ -21,6 +21,7 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import event_bus
+from app.core.events.types import EventType
 
 from .models import PlannedTreatmentItem, PlannedTreatmentItemSession
 
@@ -97,7 +98,7 @@ async def on_appointment_completed(data: dict[str, Any], *, db: AsyncSession) ->
 
         category_key = await _resolve_treatment_category_key(db, item.treatment_id)
         await event_bus.publish(
-            "treatment_plan.treatment_completed",
+            EventType.TREATMENT_PLAN_TREATMENT_COMPLETED,
             {
                 "plan_id": str(item.treatment_plan_id),
                 "item_id": str(item.id),
@@ -293,7 +294,7 @@ async def on_treatment_performed(data: dict[str, Any], *, db: AsyncSession) -> N
 
     category_key = await _resolve_treatment_category_key(db, item.treatment_id)
     await event_bus.publish(
-        "treatment_plan.treatment_completed",
+        EventType.TREATMENT_PLAN_TREATMENT_COMPLETED,
         {
             "plan_id": str(item.treatment_plan_id),
             "item_id": str(item.id),

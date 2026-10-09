@@ -1,6 +1,7 @@
 """FastAPI application entry point."""
 
 import logging
+import os
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 from typing import Annotated
@@ -72,6 +73,28 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     setup_logging()
 
     require_public_secrets_in_production()
+    # Security posture (audit SEC-01): a production boot without
+    # BUDGET_PUBLIC_SECRET_KEY already fails in app.config's Settings
+    # validation, so there is nothing left to warn about here.
+    # Trusted-proxy posture (#623). uvicorn resolves request.client.host
+    # from X-Forwarded-For only for peers in FORWARDED_ALLOW_IPS; "*"
+    # trusts every peer and then takes the client-controlled leftmost
+    # entry, which hands the caller its own login rate-limit bucket and
+    # its own audit IP. Logged unconditionally because the effective
+    # value is the only way to tell a correct deploy from a silently
+    # per-proxy one, and escalated in production.
+    forwarded_allow_ips = os.environ.get("FORWARDED_ALLOW_IPS", "127.0.0.1,::1")
+    if forwarded_allow_ips.strip() in ("*", '"*"'):
+        log = logger.error if settings.ENVIRONMENT == "production" else logger.warning
+        log(
+            "FORWARDED_ALLOW_IPS is '*': every peer is trusted with "
+            "X-Forwarded-For, so the login rate limit and session client_ip "
+            "can be set by the caller. Set it to the proxy's address or "
+            "network (see .env.example)."
+        )
+    else:
+        logger.info("Trusting proxy headers from: %s", forwarded_allow_ips)
+
     # Error tracking is DSN-gated (SENTRY_DSN env, never committed) and
     # never raises — boot continues unreported when unconfigured.
     setup_error_tracking(

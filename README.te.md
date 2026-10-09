@@ -105,6 +105,7 @@ curl -O https://raw.githubusercontent.com/dentalpin/dentalpin/main/Caddyfile
 curl -o .env https://raw.githubusercontent.com/dentalpin/dentalpin/main/.env.prod.example
 
 # .env లో PUBLIC_URL, POSTGRES_PASSWORD మరియు SECRET_KEY సెట్ చేసి, తర్వాత:
+# BUDGET_PUBLIC_SECRET_KEY: openssl rand -hex 32
 docker compose -f docker-compose.prod.yml up -d
 ```
 

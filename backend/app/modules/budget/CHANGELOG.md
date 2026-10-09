@@ -2,6 +2,17 @@
 
 ## Unreleased
 
+- fix(#531): the verify permanent lockout stays budget-wide on purpose
+  (10 retained failures lock the token), and the staff `unlock-public`
+  recovery path is now documented in ADR 0006; unlocking also drops
+  the failed-attempt rows so the recovery is not one-shot, and writes
+  a `BudgetHistory` entry for the unlock itself.
+- fix(#538): `BUDGET_PUBLIC_SECRET_KEY` is hard-required in production
+  (missing, blank, short, or whitespace-padded values refuse to boot;
+  dev-only fallback otherwise).
+- feat(#540): public accept/reject decisions are logged to
+  `BudgetAccessLog` with `success=True` (so they do not count towards
+  the lockout), like the signed-PDF download.
 - feat(i18n): Telugu (`te`) quote PDF labels.
 - fix: the public `/meta` patient-name lookup is now clinic-scoped
   (`AND clinic_id`). The id already comes from the budget's own row so this

@@ -11,6 +11,107 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Changed
+
+- **Upgrade note (production):** `BUDGET_PUBLIC_SECRET_KEY` is now
+  required. A production boot without it fails fast with an actionable
+  message instead of signing public budget sessions with the staff-JWT
+  `SECRET_KEY`. Blank, whitespace-only, and whitespace-padded values are
+  also refused, so generate a clean value (e.g. `openssl rand -hex 32`)
+  before upgrading; `docker-compose.prod.yml` and
+  `docker-compose.coolify.yml` now both refuse to start without it.
+
+### Security
+
+- **The backend no longer trusts `X-Forwarded-For` from any peer** (#623).
+  `backend/Dockerfile` and every compose file ran uvicorn with
+  `--forwarded-allow-ips *`; with `*` uvicorn takes the **leftmost**
+  `X-Forwarded-For` entry, which the client writes. The login rate limit
+  keys on `request.client.host` (`get_remote_address`), so a client
+  sending a fresh header per attempt got a fresh bucket per attempt and
+  the limit stopped existing — and the same value is stored as the
+  session's `client_ip`, so the audit trail could be forged with it.
+  The flag is gone; uvicorn now reads `FORWARDED_ALLOW_IPS`, which every
+  compose file sets to loopback plus Docker's address pools and which
+  deployments override for their own proxy chain
+  (`.env.example`, `docs/user-manual/{en,es}/operations.md` §1).
+  Restricted, uvicorn walks the header right-to-left and stops at the
+  first hop outside the list, so the real client is used whether the
+  proxy overwrites the header or appends to it — the append case is
+  spoofable under `*` even behind a proxy. `_client_ip()` no longer
+  re-parses the header, and the backend logs the effective value at
+  startup (error in production if it is still `*`).
+- **Coolify: trust Traefik's 10.0.x networks** (follow-up to #623).
+  `docker-compose.coolify.yml` now defaults `FORWARDED_ALLOW_IPS` to also
+  include `10.0.0.0/8`. Coolify creates its Docker networks there, so the
+  previous default made every client resolve to Traefik's IP and turned
+  the login rate limit global.
+
+- **`allowed_tools` is now enforced, not just declared** (#558).
+  `BaseAgent.allowed_tools` existed with zero enforcement references
+  anywhere in `app/`, while `docs/technical/creating-modules.md` told
+  module authors it was "a hard list — the agent cannot invoke anything
+  outside it". `ToolRegistry.call` now checks it as step 2 of its
+  enforcement order (before guardrails, so a call the agent was never
+  allowed to make cannot consume its rate limit or open an approval
+  request) and audits the refusal as `BLOCKED`. The list reaches the
+  chokepoint through the new `AgentContext.allowed_tools`, where `None`
+  means "no subsetting" — what copilot and other conversational
+  surfaces use, so their behaviour is unchanged — and an empty list
+  permits nothing, which is `BaseAgent`'s default.
+
+### Tests
+
+- **Every declared scheduled job is now executed by a test** (#629).
+  `test_scheduler_jobs.py` asserted the job *ids* and never called them,
+  which is how the 03:00 auto-close cron shipped querying a column that
+  does not exist and failed silently every night for months (#628).
+  `test_scheduled_jobs_run.py` resolves all 17 declared jobs and runs
+  each against a real (empty) schema — a schema-and-import smoke test,
+  not behaviour coverage, which is what keeps it at ~12s. Confirmed it
+  catches #628's regression when the old query is put back.
+
+- **Four tests read the local clock while the code under test uses UTC**,
+  so they pass in CI (UTC) and fail east of UTC for part of every day —
+  `test_budget_expired_detail_410`, `test_strip_excludes_appointments_on_other_days`,
+  `test_get_odontogram_at_date_returns_empty_state` and
+  `test_opposition_roundtrip`. Each now uses `datetime.now(UTC).date()`,
+  matching the route it asserts against. No product code changed.
+  A new `backend-test-east-of-utc` CI job runs the clock-reading tests
+  under `TZ=Pacific/Kiritimati` (UTC+14), selecting the files at run time
+  so a new test of this shape is covered the day it lands.
+
+- **A typo in a route's permission string now fails CI.** The tool
+  registry already guarded this (`test_every_tool_permission_exists`,
+  "would otherwise silently always-deny"); routes gate on the same
+  strings with no equivalent check, and the consequence is worse — a 403
+  for every user, forever, with nothing logged to say the string was the
+  problem. The tree is clean today (673 literal call sites, 189 distinct,
+  all valid), so `test_route_permissions.py` is purely preventive.
+
+### Fixed
+
+- **The split-host cookie warning told PaaS operators to set a value
+  browsers reject** (#444). `_shared_parent` built `.onrender.com` from
+  `app.onrender.com` + `api.onrender.com` — two labels, so it passed the
+  existing "a public suffix is not a parent" check — and the guard then
+  advised `COOKIE_DOMAIN=.onrender.com`, which the browser drops. The
+  operator restarted the backend and nothing changed. Known hosting
+  suffixes now resolve to no parent, and the remedy for that case points
+  at `NUXT_API_PROXY=true` (shipped in 2.8.0 for exactly this shape)
+  instead of suggesting they go and buy a domain. A real multi-label
+  domain such as `.example.co.uk` is still suggested as before.
+
+- **The help-portal build now fails on a fragment slug collision** and
+  warns about a slug the app can never request (#573, partial). Two
+  screens whose routes collapse to the same slug used to write the same
+  `.html`, last one winning, with nothing to show it had happened — and
+  the obvious fix for the periodontogram route (`{id}` → `[id]`) walks
+  straight into that: it would have silently taken the patient-detail
+  page's help away. The underlying question of how a query-selected
+  sub-view gets its own fragment is still open on #573; this only makes
+  the two failure modes visible.
+
 ## [2.8.0] - 2026-10-07
 
 ### Added

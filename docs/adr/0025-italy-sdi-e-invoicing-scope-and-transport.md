@@ -63,14 +63,18 @@ way patient invoices are issued. That is the opposite of what the
 XDENT comparison implied, and the docs/marketing sentence should say
 so.
 
-### 2. Format: FatturaPA v1.9, schema VFPR12 1.2.3
+### 2. Format: FatturaPA v1.9, FPR12 per the vendored 1.2.2 XSD
 
 - The current AdE "Specifiche tecniche" are **version 1.9**, in force
   since 1 April 2025 (allegato A to provvedimento AdE, downloaded as
-  `Specifiche_tecniche_v1.9.pdf`, 189 pages). The XML schema for
-  private recipients is `Schema_VFPR12` **v1.2.3**, transmission format
+  `Specifiche_tecniche_v1.9.pdf`, 189 pages). The XML schema the
+  builder emits and the tests validate against is
+  `Schema_del_file_xml_FatturaPA_v1.2.2.xsd` (vendored at
+  `backend/tests/modules/sdi_it/schemas/`), transmission format
   `FPR12` (`FPA12` only for public administrations; those additionally
-  require a qualified signature).
+  require a qualified signature). v1.2.3 publishes no stable XSD URL
+  and only adds enumeration values on top of 1.2.2, so 1.2.2-valid
+  output stays valid.
 - `TipoDocumento` values a practice uses: `TD01` fattura, `TD04` nota
   di credito, `TD05` nota di debito, `TD06` parcella (spec table
   "TipoDocumento"). Self-billing and reverse-charge types (TD16–TD28)
@@ -186,8 +190,8 @@ configuration recommendation, not a code constraint.
    **only invoices whose recipient is a soggetto passivo IVA / PA**.
    Invoices to natural persons are never queued; the hook enforces
    this from the recipient's fiscal identity, not from a checkbox.
-2. XML: FatturaPA v1.9 / VFPR12 1.2.3, `FPR12`, unsigned, validated
-   against the official XSD in tests. Catalog items carry an IVA
+2. XML: FatturaPA v1.9 / `FPR12` per `Schema_del_file_xml_FatturaPA_v1.2.2.xsd`,
+   unsigned, validated against the vendored XSD in tests. Catalog items carry an IVA
    treatment (`N4` exempt art. 10 n. 18 / 22%); exempt invoices over
    €77.47 get `DatiBollo`.
 3. Transport is a driver interface with three implementations, in
@@ -243,7 +247,8 @@ configuration recommendation, not a code constraint.
   patient) never creates an `sdi_it_records` row, even with the module
   enabled and the clinic in `IT`.
 - Backend test: generated XML validates against
-  `Schema_VFPR12_v1.2.3.xsd` (vendored in the module's tests) and an
+  `Schema_del_file_xml_FatturaPA_v1.2.2.xsd` (vendored at
+  `backend/tests/modules/sdi_it/schemas/`) and an
   exempt line carries `Natura=N4` with `AliquotaIVA=0.00`.
 - Backend test: `NS` handling re-queues with the same `Numero`/`Data`;
   `MC` sets state `undeliverable` and creates the notify task.
@@ -257,9 +262,9 @@ configuration recommendation, not a code constraint.
 - Art. 10-bis DL 119/2018 (testo vigente):
   <https://www.normattiva.it/uri-res/N2Ls?urn:nir:stato:decreto.legge:2018-10-23;119~art10bis!vig=>
 - Art. 9-bis DL 135/2018; art. 1 c. 3 D.Lgs. 127/2015; D.Lgs. 81/2025
-- AdE, Specifiche tecniche fattura elettronica v1.9 (allegato A) and
-  `Schema_VFPR12` 1.2.3:
+- AdE, Specifiche tecniche fattura elettronica v1.9 (allegato A):
   <https://www.fatturapa.gov.it/it/norme-e-regole/documentazione-fattura-elettronica/formato-fatturapa/>
+  (vendored schema file pinned at 1.2.2 — see the schemas README for why 1.2.3 is not vendored).
 - AdE, Sistema di Accreditamento / canali di trasmissione:
   <https://www.fatturapa.gov.it/it/sistema-interscambio/>
 - AdE circolare 13/E del 2 luglio 2018 (scarto, re-issue within 5 days)

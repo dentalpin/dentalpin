@@ -27,6 +27,16 @@ class BaseAgent(ABC):
     mode: ClassVar[AgentMode] = AgentMode.SUPERVISED
 
     #: Qualified tool names (``module.tool``) this agent may call.
+    #:
+    #: A hard allow-list, enforced at the registry chokepoint
+    #: (:meth:`ToolRegistry.call`) when it reaches the context as
+    #: ``AgentContext.allowed_tools`` — so whatever runs an agent must
+    #: pass this through. Exact names; no wildcards.
+    #:
+    #: The default is deliberately **empty rather than unset**: an agent
+    #: that declares nothing may call nothing. (On the context, ``None``
+    #: is the separate "no subsetting" case, which non-agent surfaces
+    #: such as copilot use.)
     allowed_tools: ClassVar[list[str]] = []
 
     @abstractmethod

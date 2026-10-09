@@ -1,6 +1,6 @@
 """sistema_ts API: settings gate, opposition, item types, documents."""
 
-from datetime import date
+from datetime import UTC, date, datetime
 from uuid import uuid4
 
 import pytest
@@ -62,7 +62,10 @@ async def test_opposition_roundtrip(client: AsyncClient, auth_headers, test_clin
         url, json={"opposed": True, "note": "richiesta verbale"}, headers=auth_headers
     )
     assert res.status_code == 200 and res.json()["data"]["opposed"] is True
-    assert res.json()["data"]["opposed_since"] == date.today().isoformat()
+    # The route stamps datetime.now(UTC).date() (router.py:349), so compare
+    # against the same clock: local date.today() is a day ahead of it for
+    # part of every day in any timezone east of UTC.
+    assert res.json()["data"]["opposed_since"] == datetime.now(UTC).date().isoformat()
     res = await client.put(url, json={"opposed": False}, headers=auth_headers)
     assert res.json()["data"]["opposed"] is False and res.json()["data"]["revoked_at"] is not None
 

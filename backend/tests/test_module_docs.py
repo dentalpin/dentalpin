@@ -124,3 +124,29 @@ def test_locale_parity_holds_on_the_real_tree(docs_coverage) -> None:
     findings = docs_coverage.Findings()
     docs_coverage._check_locale_parity(findings)
     assert findings.errors == [], "\n".join(findings.errors)
+
+
+# Flow-list frontmatter + strict endpoint normalisation (#543)
+# ---------------------------------------------------------------------------
+
+
+def test_flow_list_parses_to_list_not_string(docs_coverage) -> None:
+    """`related_permissions: []` is an empty list, not phantom '[' ']' (#543)."""
+    assert docs_coverage._parse_scalar_or_flow_list("[]") == []
+    assert docs_coverage._parse_scalar_or_flow_list("['a', 'b']") == ["a", "b"]
+    assert docs_coverage._parse_scalar_or_flow_list("patients.read") == "patients.read"
+
+
+def test_flow_list_in_frontmatter_end_to_end(docs_coverage) -> None:
+    """The parsed frontmatter value for `[]` iterates as nothing."""
+    fm = docs_coverage._parse_frontmatter("---\nrelated_permissions: []\n---\n# t\n")
+    assert fm["related_permissions"] == []
+    assert list(fm["related_permissions"]) == []
+
+
+def test_normalise_strips_example_query_strings(docs_coverage) -> None:
+    """Docs may carry `?year=` forms; routes never do (#543)."""
+    assert (
+        docs_coverage._normalise_endpoint("GET", "/api/v1/payroll/reports/annual?year=")
+        == "GET /api/v1/payroll/reports/annual"
+    )

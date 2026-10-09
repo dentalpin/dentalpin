@@ -57,4 +57,11 @@ USER appuser
 EXPOSE 8000
 
 ENTRYPOINT ["/app/docker-entrypoint.sh"]
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers", "--forwarded-allow-ips", "*"]
+# No --forwarded-allow-ips flag on purpose (#623). Without it uvicorn
+# reads $FORWARDED_ALLOW_IPS, so the trusted-proxy set is deployment
+# configuration instead of a baked-in "*". With "*" uvicorn takes the
+# LEFTMOST X-Forwarded-For entry, which the client writes, so anyone who
+# can reach this port picks their own rate-limit bucket and audit IP.
+# uvicorn's own fallback is "127.0.0.1,::1"; every compose file here sets
+# a value that also covers the proxy container's network.
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000", "--proxy-headers"]

@@ -625,7 +625,18 @@ async def unlock_public_link(
     budget = await BudgetService.get_budget(db, ctx.clinic_id, budget_id, include_items=True)
     if not budget:
         raise HTTPException(status_code=404, detail="Budget not found")
+    was_locked = budget.public_locked_at is not None
     budget = await BudgetWorkflowService.unlock_public(db, budget)
+    await BudgetHistoryService.add_entry(
+        db,
+        clinic_id=ctx.clinic_id,
+        budget_id=budget.id,
+        action="public_lock_cleared",
+        changed_by=ctx.user_id,
+        previous_state={"locked": was_locked},
+        new_state={"locked": False},
+        notes="Cleared failed public verification attempts while clearing the link lock.",
+    )
     return ApiResponse(data=BudgetResponse.model_validate(budget))
 
 

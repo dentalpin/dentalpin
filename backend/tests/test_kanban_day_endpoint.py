@@ -178,7 +178,10 @@ async def test_strip_excludes_appointments_on_other_days(
 
     # Snapshot for TODAY must NOT mark the dentist as in_treatment — they
     # have no active appointment today (tomorrow's one doesn't count).
-    snap = await KanbanDayService.snapshot(db_session, world["clinic_id"], date.today())
+    # UTC, matching the `tomorrow` above: with local date.today() in a
+    # timezone east of UTC the "tomorrow" appointment lands on the day
+    # being snapshotted and the exclusion this test checks never applies.
+    snap = await KanbanDayService.snapshot(db_session, world["clinic_id"], datetime.now(UTC).date())
     dentist_pill = next(p for p in snap["professionals"] if p["id"] == str(world["dentist_id"]))
     assert dentist_pill["state"] != "in_treatment"
     assert dentist_pill["current_appointment_id"] is None

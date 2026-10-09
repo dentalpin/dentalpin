@@ -22,6 +22,16 @@ services:
     environment:
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-dental}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-dental_clinic}
       SECRET_KEY: ${SECRET_KEY:?Set SECRET_KEY in .env}
+      # Trusted-proxy set for uvicorn's --proxy-headers (#623). NOT "*":
+      # with "*" uvicorn takes the leftmost X-Forwarded-For entry, which
+      # the client controls, so any peer that can reach this port picks
+      # its own login rate-limit bucket and its own audit IP. Restricted,
+      # uvicorn instead walks the header right-to-left and stops at the
+      # first hop outside this set — the real client — which is correct
+      # whether the proxy overwrites or appends. Covers loopback plus
+      # Docker's default address pools (the proxy container's network).
+      # Swarm/k8s (10.0.0.0/8) or a PaaS edge must set their own value.
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,::1,172.16.0.0/12,192.168.0.0/16}
       ENVIRONMENT: ${ENVIRONMENT:-development}
       # Explicit test opt-out for rate limiting and friends (#530).
       # Must default to "false": pydantic rejects an empty string as a
@@ -51,7 +61,7 @@ services:
       # Mount the frontend root read-write so the backend can regenerate
       # modules.json when a module with a Nuxt layer is installed.
       - ./frontend:/host_frontend
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --proxy-headers --forwarded-allow-ips=*
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --proxy-headers
 
   frontend:
     build:

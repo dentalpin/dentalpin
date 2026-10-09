@@ -23,6 +23,22 @@ services:
       SERVICE_FQDN_BACKEND_8000: ${BACKEND_FQDN}
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-dental}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-dental_clinic}
       SECRET_KEY: ${SECRET_KEY}
+      # Required in production since #538 (the backend refuses to boot
+      # without it): generate with `openssl rand -hex 32` and store it in
+      # Coolify alongside SECRET_KEY.
+      BUDGET_PUBLIC_SECRET_KEY: ${BUDGET_PUBLIC_SECRET_KEY:?Set BUDGET_PUBLIC_SECRET_KEY in Coolify}
+      # Trusted-proxy set for uvicorn's --proxy-headers (#623). NOT "*":
+      # with "*" uvicorn takes the leftmost X-Forwarded-For entry, which
+      # the client controls, so any peer that can reach this port picks
+      # its own login rate-limit bucket and its own audit IP. Restricted,
+      # uvicorn instead walks the header right-to-left and stops at the
+      # first hop outside this set — the real client — which is correct
+      # whether the proxy overwrites or appends. Covers loopback plus
+      # Docker's default address pools, plus 10.0.0.0/8: Coolify creates
+      # its networks there (coolify-proxy/Traefik reaches the backend from
+      # 10.0.x), and without it every client collapses onto Traefik's IP
+      # and the login limit goes global. A PaaS edge must set its own value.
+      FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
       # `console` logs the whole message and reports it sent (#614).
       EMAIL_PROVIDER: ${EMAIL_PROVIDER:-console}
       EMAIL_ENABLED: ${EMAIL_ENABLED:-true}

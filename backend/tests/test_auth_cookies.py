@@ -353,6 +353,34 @@ async def test_split_host_login_warns_with_the_cookie_domain_to_set(
 
 
 @pytest.mark.asyncio
+async def test_public_suffix_host_is_told_to_use_the_proxy_not_cookie_domain(
+    client: AsyncClient, monkeypatch, caplog
+) -> None:
+    """On a hosting domain, COOKIE_DOMAIN cannot work at all (#444).
+
+    The guard used to suggest ``COOKIE_DOMAIN=.onrender.com``, which the
+    browser drops, so the operator restarted for nothing. 2.8.0 shipped
+    the same-origin proxy for exactly this shape, so recommend that.
+    """
+    from app.config import settings
+    from app.core.auth import cookies
+
+    await _bootstrap(client)
+    monkeypatch.setattr(cookies, "_HOST_ONLY_WARNED", False)
+    monkeypatch.setattr(settings, "COOKIE_DOMAIN", "")
+    with caplog.at_level(logging.WARNING, logger="app.core.auth.cookies"):
+        resp = await client.post(
+            LOGIN,
+            data={"username": "admin@example.com", "password": "SecurePass1234"},
+            headers={"Host": "api.onrender.com", "Origin": "https://app.onrender.com"},
+        )
+    assert resp.status_code == 200, resp.text
+    assert "NUXT_API_PROXY=true" in caplog.text
+    # The remedy that cannot work must not be the one we name first.
+    assert "COOKIE_DOMAIN=.onrender.com" not in caplog.text
+
+
+@pytest.mark.asyncio
 async def test_no_warning_for_one_host_or_when_cookie_domain_is_set(
     client: AsyncClient, monkeypatch, caplog
 ) -> None:
@@ -397,3 +425,25 @@ def test_shared_parent_needs_two_common_labels() -> None:
     )
     assert _shared_parent("app.example.com", "api.example.net") is None
     assert _shared_parent("app.com", "api.com") is None  # a public suffix is not a parent
+
+
+def test_shared_parent_rejects_public_hosting_suffixes() -> None:
+    """A hosting suffix has two labels but is still a public suffix.
+
+    The guard used to answer ``.onrender.com`` here and tell the operator
+    to set ``COOKIE_DOMAIN`` to it, which browsers drop — so they
+    restarted the backend and nothing changed (#444). These are exactly
+    the free-tier deploys that hit the bug most.
+    """
+    from app.core.auth.cookies import _shared_parent
+
+    for suffix in ("onrender.com", "vercel.app", "herokuapp.com", "fly.dev", "sslip.io"):
+        assert _shared_parent(f"app.{suffix}", f"api.{suffix}") is None, suffix
+
+
+def test_shared_parent_keeps_a_real_multi_label_domain() -> None:
+    """Not every two-dot suffix is a public one: ``.example.co.uk`` is a
+    registrable domain and must still be suggested."""
+    from app.core.auth.cookies import _shared_parent
+
+    assert _shared_parent("app.example.co.uk", "api.example.co.uk") == ".example.co.uk"

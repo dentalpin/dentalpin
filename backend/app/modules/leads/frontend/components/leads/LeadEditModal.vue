@@ -166,7 +166,8 @@ async function submit() {
       return
     }
 
-    // Edit mode. exclude_unset semantics: only what the user changed.
+    // Edit mode. Sends every form field, not only the changed ones; the
+    // backend's exclude_unset skips only fields omitted from the payload.
     const updated = await leadsApi.update(props.lead!.id, {
       full_name: form.full_name.trim(),
       phone: form.phone.trim(),

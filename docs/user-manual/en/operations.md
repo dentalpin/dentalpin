@@ -35,8 +35,25 @@ operator runs — not the Python internals.
   `NUXT_API_PROXY=true`, `NUXT_PUBLIC_API_BASE_URL=https://<app-host>`
   (the app's own URL) and `NUXT_API_BASE_URL_SERVER=https://<api-host>`.
   On the **backend**: `ALLOWED_ORIGINS=https://<app-host>`, `ENVIRONMENT=production`,
-  `COOKIE_DOMAIN` empty. The API host stays reachable directly; see #623
-  for restricting which proxies the backend trusts for client IPs.
+  `COOKIE_DOMAIN` empty, and `FORWARDED_ALLOW_IPS` (below) — the API host
+  stays reachable directly, so this one matters here.
+- **`FORWARDED_ALLOW_IPS` — which proxies may set the client IP.** The
+  login rate limit and the session's `client_ip` both come from
+  `X-Forwarded-For`, which is a header the client can write. uvicorn
+  only reads it from peers in this list, walking the header
+  right-to-left and taking the first address *not* in the list as the
+  real client. So list every hop between the browser and the backend:
+  leave one out and it becomes the "client", putting every request
+  behind it in one rate-limit bucket. Never `*` — that trusts every peer
+  and then takes the leftmost entry, the one the caller wrote, so anyone
+  who can reach the port picks their own bucket and their own audit IP.
+  The default (`127.0.0.1,::1,172.16.0.0/12,192.168.0.0/16`) covers
+  Docker's address pools, which is right for compose and Coolify. Swarm
+  or Kubernetes add `10.0.0.0/8`. With the proxy above, the nearest hop
+  is the *frontend* container and the platform's edge sits between it
+  and the browser, so both ranges belong in the list. The backend logs
+  the effective value at startup — read that line after any deployment
+  change, because both mistakes are silent.
 
 Smoke-check:
 

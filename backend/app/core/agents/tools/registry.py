@@ -96,11 +96,16 @@ class ToolRegistry:
         Enforcement order:
 
         1. Tool exists
-        2. Guardrails check (rate limit, blocked, require-approval)
-        3. RBAC permission check against ``ctx.permissions``
-        4. Pydantic validation of ``arguments``
-        5. Handler execution
-        6. Audit-log write (regardless of success/failure)
+        2. ``ctx.allowed_tools`` subset check, when the context declares one
+        3. Guardrails check (rate limit, blocked, require-approval)
+        4. RBAC permission check against ``ctx.permissions``
+        5. Pydantic validation of ``arguments``
+        6. Handler execution
+        7. Audit-log write (regardless of success/failure)
+
+        The subset check runs before guardrails on purpose: a call the
+        agent was never allowed to make should not consume its rate
+        limit or open an approval request.
         """
         from app.core.agents.guardrails import GuardrailDecision
         from app.core.agents.guardrails import check as guardrails_check
@@ -111,6 +116,22 @@ class ToolRegistry:
         tool = self._tools.get(qualified_name)
         if tool is None:
             raise ToolRegistryError(f"Unknown tool: {qualified_name}")
+
+        # Tool subsetting (#558). `is not None` rather than a truthiness
+        # test: an empty list is a declaration that this agent may call
+        # nothing, while None means no subsetting was requested at all.
+        # Exact names only -- the module-author contract calls this "a
+        # hard list", so no wildcard expansion.
+        if ctx.allowed_tools is not None and qualified_name not in ctx.allowed_tools:
+            await AuditService.record(
+                ctx,
+                qualified_name,
+                arguments,
+                error=f"not in allowed_tools: {qualified_name}",
+                status="BLOCKED",
+                execution_time_ms=0,
+            )
+            return ToolResult(ok=False, error=f"not in allowed_tools: {qualified_name}")
 
         decision = guardrails_check(ctx, tool, qualified_name, ctx.guardrail_config)
         if decision is GuardrailDecision.BLOCK:

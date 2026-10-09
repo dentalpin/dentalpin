@@ -16,8 +16,9 @@ import logging
 from datetime import date, timedelta
 from uuid import UUID
 
-from sqlalchemy import text
+from sqlalchemy import select, text
 
+from app.core.auth.models import Clinic
 from app.database import async_session_maker
 
 logger = logging.getLogger(__name__)
@@ -96,9 +97,14 @@ async def auto_close_expired_plans() -> None:
     """
     today = date.today()
     async with async_session_maker() as db:
-        clinic_rows = (
-            await db.execute(text("SELECT id, settings FROM clinics WHERE deleted_at IS NULL"))
-        ).all()
+        # ORM, not raw SQL: this used to be
+        # ``text("SELECT id, settings FROM clinics WHERE deleted_at IS NULL")``
+        # and `clinics` has no `deleted_at`, so the job raised
+        # UndefinedColumnError on its first statement every night and no
+        # plan was ever auto-closed. A column that does not exist is a test
+        # failure through the mapper; in a text() string it is a 03:00 log
+        # line nobody reads.
+        clinic_rows = (await db.execute(select(Clinic.id, Clinic.settings))).all()
 
     sem = asyncio.Semaphore(_CLINIC_CONCURRENCY)
     tasks = []

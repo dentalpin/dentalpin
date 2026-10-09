@@ -94,6 +94,70 @@ jobs:
         run: |
           python -m pytest -v -m alembic_roundtrip --tb=short
 
+  backend-test-east-of-utc:
+    # CI runs in UTC, which hides a whole class of test bug: a test that
+    # reads the LOCAL clock while the code under test uses UTC. Its
+    # "yesterday" is the product's "today" for part of every day in any
+    # timezone east of UTC — i.e. all of Europe — so the test passes here
+    # and fails on a contributor's machine, or in the small hours on
+    # mine. Four tests were broken this way and nothing caught them.
+    #
+    # Only the files that read a clock at all, selected at run time
+    # rather than from a hardcoded list, so a new test of this shape is
+    # covered the day it lands. ~2 minutes, against backend-test's ~90.
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: dental_clinic_test
+          POSTGRES_USER: dental
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: postgresql+asyncpg://dental:testpass@localhost:5432/dental_clinic_test
+      SECRET_KEY: test-secret-key-for-ci
+      ENVIRONMENT: test
+      TESTING: "true"
+      # UTC+14: the maximum offset, so the local date is ahead of UTC for
+      # 14 of every 24 hours instead of the 2 a European timezone gives.
+      TZ: Pacific/Kiritimati
+
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        working-directory: backend
+        run: |
+          pip install -e ".[dev]"
+
+      - name: Run the clock-reading tests with the local date ahead of UTC
+        working-directory: backend
+        run: |
+          date
+          grep -rl --include='*.py' -E 'date\.today\(\)|datetime\.now\(\)' tests/ \
+            | sort > /tmp/clock-tests.txt
+          count=$(wc -l < /tmp/clock-tests.txt | tr -d ' ')
+          echo "$count test files read a clock:"
+          sed 's/^/  /' /tmp/clock-tests.txt
+          # A zero match means the pattern broke, not that the suite is
+          # clean — fail rather than hand pytest an empty argument list
+          # and silently run (and pass) nothing.
+          test "$count" -gt 0
+          xargs python -m pytest -v --tb=short < /tmp/clock-tests.txt
+
   manifest-consistency:
     # Static manifest sanity — every entry point in pyproject.toml must
     # resolve, declare a valid manifest, and its role permissions must

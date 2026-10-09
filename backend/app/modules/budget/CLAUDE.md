@@ -16,7 +16,7 @@ Routes mounted at `/api/v1/budget/`. Authenticated subset:
 - `GET  /budgets/{id}/signature` — signature metadata (no raw PNG).
 
 Public subset (no staff auth, 2-factor verification — ADR 0006) under
-`/api/v1/public/budgets/{token}/`:
+`/api/v1/budget/public/budgets/{token}/`:
 
 - `GET    /meta`
 - `POST   /verify`           (rate-limited; sets HttpOnly cookie)
@@ -143,7 +143,7 @@ contract.
   is the pre-global gross, shown struck through.
 - **Budget versioning** keeps every prior version — never overwrite.
 - **Public-link sessions are per-token** (cookie path scoped to
-  `/api/v1/public/budgets/{token}`) so a stolen cookie from one
+  `/api/v1/budget/public/budgets/{token}`) so a stolen cookie from one
   budget cannot unlock another.
 - **`BUDGET_PUBLIC_SECRET_KEY`** signs the public session cookies and
   is independent from the global `SECRET_KEY`. Falls back in dev only.

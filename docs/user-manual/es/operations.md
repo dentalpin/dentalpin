@@ -36,9 +36,28 @@ Cubre los comandos que ejecuta un operador — no los internos de Python.
   servicio **frontend**: `NUXT_API_PROXY=true`,
   `NUXT_PUBLIC_API_BASE_URL=https://<host-app>` (la URL de la propia
   aplicación) y `NUXT_API_BASE_URL_SERVER=https://<host-api>`. En el
-  **backend**: `ALLOWED_ORIGINS=https://<host-app>`, `ENVIRONMENT=production`
-  y `COOKIE_DOMAIN` vacío. El host de la API sigue accesible directamente;
-  ver #623 para limitar de qué proxies se fía el backend para la IP del cliente.
+  **backend**: `ALLOWED_ORIGINS=https://<host-app>`, `ENVIRONMENT=production`,
+  `COOKIE_DOMAIN` vacío y `FORWARDED_ALLOW_IPS` (más abajo): el host de la
+  API sigue accesible directamente, así que aquí esta variable importa.
+- **`FORWARDED_ALLOW_IPS` — qué proxies pueden fijar la IP del cliente.**
+  El límite de intentos de login y el `client_ip` de la sesión salen los
+  dos de `X-Forwarded-For`, una cabecera que el cliente puede escribir.
+  uvicorn solo la lee de los pares que figuren en esta lista, y recorre
+  la cabecera de derecha a izquierda tomando como cliente real la primera
+  dirección que *no* esté en la lista. Hay que listar por tanto todos los
+  saltos entre el navegador y el backend: si falta uno, ese salto pasa a
+  ser el "cliente" y todas las peticiones que vengan detrás comparten un
+  único cubo de límite. Nunca `*`: eso se fía de cualquier par y entonces
+  toma la entrada más a la izquierda, la que escribió quien llama, así
+  que cualquiera que alcance el puerto elige su propio cubo y su propia
+  IP de auditoría. El valor por defecto
+  (`127.0.0.1,::1,172.16.0.0/12,192.168.0.0/16`) cubre los rangos de
+  Docker, que es lo correcto para compose y Coolify. En Swarm o
+  Kubernetes añadir `10.0.0.0/8`. Con el proxy anterior el salto más
+  cercano es el contenedor *frontend* y el borde de la plataforma queda
+  entre él y el navegador, así que ambos rangos deben constar. El backend
+  registra el valor efectivo al arrancar: conviene leer esa línea tras
+  cualquier cambio de despliegue, porque los dos errores son silenciosos.
 
 Comprobación rápida:
 

@@ -347,7 +347,7 @@ class TreatmentPlanService:
 
         # Publish event
         await event_bus.publish(
-            "treatment_plan.created",
+            EventType.TREATMENT_PLAN_CREATED,
             {
                 "plan_id": str(plan.id),
                 "patient_id": str(plan.patient_id),
@@ -442,7 +442,7 @@ class TreatmentPlanService:
 
         # Publish event
         await event_bus.publish(
-            "treatment_plan.status_changed",
+            EventType.TREATMENT_PLAN_STATUS_CHANGED,
             {
                 "plan_id": str(plan.id),
                 "old_status": old_status,
@@ -623,7 +623,7 @@ class TreatmentPlanService:
         primary_tooth = treatment.teeth[0].tooth_number if treatment and treatment.teeth else None
         primary_surfaces = treatment.teeth[0].surfaces if treatment and treatment.teeth else None
         await event_bus.publish(
-            "treatment_plan.treatment_added",
+            EventType.TREATMENT_PLAN_TREATMENT_ADDED,
             {
                 "plan_id": str(plan_id),
                 "item_id": str(item.id),
@@ -824,7 +824,7 @@ class TreatmentPlanService:
         # Snapshot payload — budget needs ``budget_id`` to find the
         # matching line without importing treatment_plan models.
         await event_bus.publish(
-            "treatment_plan.treatment_removed",
+            EventType.TREATMENT_PLAN_TREATMENT_REMOVED,
             {
                 "plan_id": str(plan_id),
                 "item_id": str(item_id),
@@ -986,7 +986,7 @@ class TreatmentPlanService:
                     treatment_category_key = item.treatment.catalog_item.category.key
 
         await event_bus.publish(
-            "treatment_plan.treatment_completed",
+            EventType.TREATMENT_PLAN_TREATMENT_COMPLETED,
             {
                 "plan_id": str(plan_id),
                 "item_id": str(item.id),
@@ -1200,7 +1200,7 @@ class TreatmentPlanService:
         plan.status = "completed"
 
         await event_bus.publish(
-            "treatment_plan.status_changed",
+            EventType.TREATMENT_PLAN_STATUS_CHANGED,
             {
                 "plan_id": str(plan.id),
                 "old_status": old_status,
@@ -1309,7 +1309,7 @@ class TreatmentPlanService:
             )
 
         await event_bus.publish(
-            "treatment_plan.budget_sync_requested",
+            EventType.TREATMENT_PLAN_BUDGET_SYNC_REQUESTED,
             {
                 "plan_id": str(plan_id),
                 "budget_id": str(plan.budget_id),

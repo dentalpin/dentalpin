@@ -135,8 +135,23 @@ def _parse_frontmatter(text: str) -> dict[str, object]:
             out[key] = []
         else:
             current_list_key = None
-            out[key] = value.strip("\"'")
+            out[key] = _parse_scalar_or_flow_list(value.strip("\"'"))
     return out
+
+
+def _parse_scalar_or_flow_list(value: str) -> object:
+    """Parse a frontmatter scalar that may use YAML flow-list syntax.
+
+    ``related_permissions: []`` must come back as an empty list, not the
+    string ``"[]"`` (whose characters were previously iterated as phantom
+    permissions ``'['`` and ``']'`` — #543).
+    """
+    if value.startswith("[") and value.endswith("]"):
+        inner = value[1:-1].strip()
+        if not inner:
+            return []
+        return [item.strip().strip("\"'") for item in inner.split(",")]
+    return value
 
 
 # ---------------------------------------------------------------------------
@@ -174,8 +189,42 @@ PUBLISH_RE = re.compile(
 )
 
 
-def _scan_module_endpoints(mod_dir: Path, mount_prefix: str) -> list[tuple[str, str]]:
-    """Return [(METHOD, '/api/v1/<m>/<path>')] for every router decorator."""
+def _iter_leaf_routes(router: object, prefix: str) -> object:
+    """Yield (methods, full path) descending into deferred includes.
+
+    FastAPI defers nested ``include_router`` entries (``_IncludedRouter``
+    placeholders resolve only when the app serves). We descend ourselves
+    via the placeholder's sub-router, threading each include's prefix —
+    so sub-router prefixes (e.g. a module's ``public_router`` under
+    ``/public/...``) compose exactly as in production. The old decorator
+    regex missed them entirely (it only matched ``@router.``) — #543.
+    """
+    for route in getattr(router, "routes", []) or []:
+        methods = {m.lower() for m in (getattr(route, "methods", None) or set())}
+        path = getattr(route, "path", None)
+        if methods and path is not None:
+            yield methods, f"{prefix}{path}"
+            continue
+        if type(route).__name__ == "_IncludedRouter":
+            box = getattr(route, "__dict__", {}) or {}
+            sub = box.get("original_router")
+            extra = getattr(box.get("include_context"), "prefix", "") or ""
+            if sub is not None:
+                yield from _iter_leaf_routes(sub, f"{prefix}{extra}")
+
+
+def _walk_router(router: object, mount_prefix: str) -> list[tuple[str, str]]:
+    """Return [(METHOD, full path)] for every route a module mount serves."""
+    endpoints: list[tuple[str, str]] = []
+    for methods, full in _iter_leaf_routes(router, mount_prefix):
+        for method in sorted(methods):
+            if method in HTTP_METHODS:
+                endpoints.append((method.upper(), full))
+    return endpoints
+
+
+def _scan_module_endpoints_regex(mod_dir: Path, mount_prefix: str) -> list[tuple[str, str]]:
+    """Fallback decorator scan when a module router cannot be walked live."""
     endpoints: list[tuple[str, str]] = []
     for py_file in mod_dir.rglob("*.py"):
         text = py_file.read_text(encoding="utf-8", errors="replace")
@@ -186,6 +235,34 @@ def _scan_module_endpoints(mod_dir: Path, mount_prefix: str) -> list[tuple[str, 
             sub_path = match.group("path") or ""
             full = f"{mount_prefix}{sub_path}".rstrip("/") or mount_prefix
             endpoints.append((method, full))
+    return endpoints
+
+
+def _scan_module_endpoints(
+    module: object, mod_dir: Path, mount_prefix: str
+) -> list[tuple[str, str]]:
+    """Return [(METHOD, '/api/v1/<m>/<path>')] for every mounted route."""
+    try:
+        router = module.get_router()  # type: ignore[union-attr]
+    except Exception:  # noqa: BLE001 — exotic routers fall back to the regex scan
+        router = None
+    if router is not None:
+        walked = _walk_router(router, mount_prefix)
+        if walked:
+            return walked
+    return _scan_module_endpoints_regex(mod_dir, mount_prefix)
+
+
+def _scan_core_endpoints() -> list[tuple[str, str]]:
+    """Endpoints mounted outside modules (auth, roles) under ``/api/v1``."""
+    endpoints: list[tuple[str, str]] = []
+    try:
+        from app.core.auth.router import router as auth_router
+        from app.core.auth.router_roles import router as roles_router
+    except Exception:  # noqa: BLE001 — core routers unavailable; modules only
+        return endpoints
+    endpoints.extend(_walk_router(auth_router, "/api/v1"))
+    endpoints.extend(_walk_router(roles_router, "/api/v1"))
     return endpoints
 
 
@@ -236,7 +313,7 @@ def _collect_facts(module) -> ModuleFacts:
     events_consumed = sorted(handlers.keys())
     events_emitted = sorted(_scan_module_publishers(mod_dir))
     pages = _scan_module_pages(mod_dir)
-    endpoints = _scan_module_endpoints(mod_dir, mount_prefix=f"/api/v1/{name}")
+    endpoints = _scan_module_endpoints(module, mod_dir, mount_prefix=f"/api/v1/{name}")
     has_frontend = (mod_dir / "frontend").is_dir()
     return ModuleFacts(
         name=name,
@@ -298,13 +375,20 @@ class Findings:
 
 def _normalise_endpoint(method: str, path: str) -> str:
     """`{patient_id}` and `:patient_id` and `[id]` all collapse to `<param>`."""
+    path = path.split("?", 1)[0]  # docs may carry example query strings
     norm = re.sub(r"\{[^}]+\}", "<param>", path)
     norm = re.sub(r":[a-zA-Z_][\w]*", "<param>", norm)
     norm = re.sub(r"\[[^\]]+\]", "<param>", norm)
     return f"{method.upper()} {norm.rstrip('/') or '/'}"
 
 
-def _check_module(facts: ModuleFacts, findings: Findings) -> None:
+def _check_module(
+    facts: ModuleFacts,
+    findings: Findings,
+    all_endpoints: set[tuple[str, str]],
+    bare_permissions: set[str],
+    qualified_permissions: set[str],
+) -> None:
     name = facts.name
     tech_dir = TECHNICAL_ROOT / name
 
@@ -348,7 +432,10 @@ def _check_module(facts: ModuleFacts, findings: Findings) -> None:
                 )
 
     # 5. Validate every screen MD frontmatter.
-    valid_endpoints = {_normalise_endpoint(m, p) for m, p in facts.endpoints}
+    # The portal contract resolves related_endpoints against ANY registered
+    # endpoint (screens call other modules' APIs), not just this module's
+    # router — #543. Same for related_permissions (bare action names).
+    valid_endpoints = {_normalise_endpoint(m, p) for m, p in all_endpoints}
     for locale, docs in screens_by_locale.items():
         for screen in docs:
             fm = screen.frontmatter
@@ -372,25 +459,32 @@ def _check_module(facts: ModuleFacts, findings: Findings) -> None:
             for ep in fm.get("related_endpoints", []) or []:
                 m = re.match(r"\s*([A-Z]+)\s+(.+)\s*$", str(ep))
                 if not m:
-                    findings.warn(
+                    findings.err(
                         f"{rel}: malformed related_endpoint {ep!r} (expected 'METHOD /path')."
                     )
                     continue
                 method, path = m.group(1), m.group(2).strip()
                 key = _normalise_endpoint(method, path)
                 if key not in valid_endpoints:
-                    findings.warn(
-                        f"{rel}: related_endpoint {method} {path} not found "
-                        f"on {name}'s router (after normalising path params)."
+                    findings.err(
+                        f"{rel}: related_endpoint {method} {path} is not "
+                        f"a registered endpoint (after normalising path params)."
                     )
 
             for perm in fm.get("related_permissions", []) or []:
-                # Accept both 'patients.read' and 'read'.
-                bare = str(perm).split(".", 1)[-1]
-                if bare not in facts.permissions:
-                    findings.warn(
-                        f"{rel}: related_permission {perm!r} not in "
-                        f"{name}.get_permissions() = {facts.permissions}."
+                # Accept 'module.resource.action', bare 'resource.action',
+                # and bare 'action' (stripped to the last two segments).
+                text = str(perm)
+                bare = text.split(".", 1)[-1]
+                short = ".".join(text.split(".")[-2:])
+                if (
+                    text not in qualified_permissions
+                    and text not in bare_permissions
+                    and bare not in bare_permissions
+                    and short not in bare_permissions
+                ):
+                    findings.err(
+                        f"{rel}: related_permission {perm!r} is not a registered permission."
                     )
 
 
@@ -461,8 +555,14 @@ def run(strict: bool) -> int:
         )
 
     facts_by_name = {m.name: _collect_facts(m) for m in modules}
+    all_endpoints = {(m, p) for facts in facts_by_name.values() for m, p in facts.endpoints}
+    all_endpoints.update(_scan_core_endpoints())
+    bare_permissions = {perm for facts in facts_by_name.values() for perm in facts.permissions}
+    qualified_permissions = {
+        f"{name}.{perm}" for name, facts in facts_by_name.items() for perm in facts.permissions
+    }
     for facts in facts_by_name.values():
-        _check_module(facts, findings)
+        _check_module(facts, findings, all_endpoints, bare_permissions, qualified_permissions)
 
     _check_orphan_screens([m.name for m in modules], findings)
     _check_locale_parity(findings)

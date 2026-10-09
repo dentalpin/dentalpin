@@ -291,9 +291,16 @@ async def login(
 
 
 def _client_ip(request: Request) -> str | None:
-    forwarded = request.headers.get("x-forwarded-for")
-    if forwarded:
-        return forwarded.split(",")[0].strip()
+    """The peer as uvicorn resolved it — never the raw header (#623).
+
+    This used to read ``X-Forwarded-For`` itself and take the leftmost
+    entry, which is the one the client writes, so the ``client_ip``
+    stored on a refresh family could be set to anything the caller
+    liked. ``request.client.host`` is what uvicorn's proxy-headers
+    middleware already settled using FORWARDED_ALLOW_IPS, and it is the
+    same value the login rate limit keys on (``get_remote_address``), so
+    the audit trail and the limiter can no longer disagree.
+    """
     return request.client.host if request.client else None
 
 

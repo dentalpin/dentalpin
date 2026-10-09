@@ -358,17 +358,21 @@ class BudgetHistory(Base):
 
 
 class BudgetAccessLog(Base):
-    """Audit row per public-link verification attempt.
+    """Audit row per public-link access event.
 
-    Captures both successful and failed verification attempts of the
-    patient-facing public link (see ADR 0006). Powers the rate-limit
-    and lockout policy:
+    Captures successful and failed patient-link verification attempts and
+    follow-on public actions (see ADR 0006). Failed verification rows power
+    the lockout policy:
 
-    - 5 failed attempts in 15 minutes per token → 429 (transient).
-    - 10 total failed attempts → ``Budget.public_locked_at`` set →
-      token becomes inert; reception must reissue.
+    - 5 failures in 15 minutes per token → 429 (transient).
+    - 10 retained failures against the same budget, from any IPs →
+      ``Budget.public_locked_at`` set → token stops verifying (the lock
+      is deliberately budget-wide); reception clears it via
+      ``unlock-public``, which also drops the failed-attempt rows (or
+      reissues when the link itself is burned).
 
     A daily cron purges rows older than 90 days (retention policy).
+    Staff administrative actions belong in ``BudgetHistory``, not here.
     """
 
     __tablename__ = "budget_access_logs"
@@ -381,7 +385,9 @@ class BudgetAccessLog(Base):
         DateTime(timezone=True), default=lambda: datetime.now()
     )
     # SHA-256 of the requester IP (privacy-preserving — we don't store
-    # the raw IP). Same client → same hash, so rate-limit windows work.
+    # the raw IP). It preserves patient-request correlation for audit.
+    # The current lockout counters intentionally key on budget and
+    # outcome, not this hash.
     ip_hash: Mapped[str] = mapped_column(String(64))
     success: Mapped[bool] = mapped_column(Boolean)
     method_attempted: Mapped[str] = mapped_column(String(20))

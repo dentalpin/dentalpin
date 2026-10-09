@@ -157,7 +157,10 @@ async def test_budget_expired_detail_410(
 ) -> None:
     budget = t1_setup["budget"]
     budget.public_auth_method = "none"
-    budget.valid_until = date.today() - timedelta(days=1)
+    # UTC: the route compares against datetime.now(UTC).date()
+    # (budget/public_router.py:328). A local "yesterday" east of UTC is
+    # that same day, so the link reads as live and answers 200.
+    budget.valid_until = datetime.now(UTC).date() - timedelta(days=1)
     await db_session.commit()
     response = await client.get(f"{BUDGET}/{budget.public_token}")
     assert response.status_code == 410
@@ -348,3 +351,255 @@ async def test_integration_token_cannot_read_foreign_patient(
         headers={"Authorization": f"Bearer {plaintext}"},
     )
     assert response.status_code == 404
+
+
+# ---------------------------------------------------------------------------
+# Public-link hardening (#531, #538, #540)
+# ---------------------------------------------------------------------------
+
+
+async def _seed_failures(
+    db_session: AsyncSession, budget_id: UUID, ip_hash: str, count: int
+) -> None:
+    """Old failed attempts (outside the 15-minute window)."""
+    from app.modules.budget.models import BudgetAccessLog
+
+    old = datetime.now(UTC) - timedelta(hours=1)
+    for _ in range(count):
+        db_session.add(
+            BudgetAccessLog(
+                budget_id=budget_id,
+                ip_hash=ip_hash,
+                success=False,
+                method_attempted="phone_last4",
+                attempted_at=old,
+            )
+        )
+    await db_session.commit()
+
+
+@pytest.mark.asyncio
+async def test_total_lockout_counts_every_ip(db_session: AsyncSession, t1_setup: dict) -> None:
+    """The permanent lockout stays budget-wide: failures from any IPs add up (#531)."""
+    from app.modules.budget.workflow import BudgetWorkflowService
+
+    budget = t1_setup["budget"]
+    await _seed_failures(db_session, budget.id, "attacker-ip-a", 5)
+    await _seed_failures(db_session, budget.id, "attacker-ip-b", 4)
+    ok, code = await BudgetWorkflowService.verify_public_access(
+        db_session, budget, "phone_last4", "0000", "attacker-ip-c"
+    )
+    assert (ok, code) == (False, "locked")
+    assert budget.public_locked_at is not None
+
+
+@pytest.mark.asyncio
+async def test_unlock_clears_failure_counter(db_session: AsyncSession, t1_setup: dict) -> None:
+    """Unlocked links stay unlocked: the counter rows go with the flag (#531)."""
+    from app.modules.budget.workflow import BudgetWorkflowService
+
+    budget = t1_setup["budget"]
+    await _seed_failures(db_session, budget.id, "attacker-ip", 9)
+    ok, code = await BudgetWorkflowService.verify_public_access(
+        db_session, budget, "phone_last4", "0000", "attacker-ip"
+    )
+    assert (ok, code) == (False, "locked")
+    await BudgetWorkflowService.unlock_public(db_session, budget)
+    assert budget.public_locked_at is None
+    ok, code = await BudgetWorkflowService.verify_public_access(
+        db_session, budget, "phone_last4", "0000", "attacker-ip"
+    )
+    assert (ok, code) == (False, "invalid")
+    assert budget.public_locked_at is None
+
+
+@pytest.mark.asyncio
+async def test_unlock_records_staff_history(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    t1_setup: dict,
+) -> None:
+    """Staff unlocks leave a history entry even though failed rows are removed (#531)."""
+    from app.modules.budget.models import BudgetAccessLog, BudgetHistory
+
+    budget = t1_setup["budget"]
+    budget_id = budget.id
+    clinic_id = t1_setup["clinic"].id
+    staff_id = UUID(
+        (await client.get("/api/v1/auth/me", headers=auth_headers)).json()["data"]["user"]["id"]
+    )
+    await _seed_failures(db_session, budget_id, "attacker-ip", 9)
+    budget.public_locked_at = datetime.now(UTC)
+    await db_session.commit()
+
+    response = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/unlock-public",
+        headers=auth_headers,
+    )
+    assert response.status_code == 200, response.text
+    await _seed_failures(db_session, budget_id, "attacker-ip", 9)
+    response = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/unlock-public",
+        headers=auth_headers,
+    )
+    assert response.status_code == 200, response.text
+
+    entries = (
+        (
+            await db_session.execute(
+                select(BudgetHistory).where(
+                    BudgetHistory.budget_id == budget_id,
+                    BudgetHistory.action == "public_lock_cleared",
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert len(entries) == 2
+    assert {entry.changed_by for entry in entries} == {staff_id}
+    assert {entry.clinic_id for entry in entries} == {clinic_id}
+    assert sorted(entry.previous_state["locked"] for entry in entries) == [False, True]
+    assert {entry.new_state["locked"] for entry in entries} == {False}
+
+    failures = (
+        (
+            await db_session.execute(
+                select(BudgetAccessLog).where(
+                    BudgetAccessLog.budget_id == budget_id,
+                    BudgetAccessLog.success.is_(False),
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert failures == []
+
+
+@pytest.mark.asyncio
+async def test_correct_guess_succeeds_despite_old_failures(
+    db_session: AsyncSession, t1_setup: dict
+) -> None:
+    """Old failures never block the legitimate patient: only failures count (#531)."""
+    from app.modules.budget.workflow import BudgetWorkflowService
+
+    clinic, patient, user = t1_setup["clinic"], t1_setup["patient"], t1_setup["user"]
+    budget = await _budget(db_session, clinic.id, patient.id, user.id)
+    await _seed_failures(db_session, budget.id, "attacker-ip", 9)
+    ok, code = await BudgetWorkflowService.verify_public_access(
+        db_session, budget, "phone_last4", "1222", "patient-ip"
+    )
+    assert (ok, code) == (True, None)
+    assert budget.public_locked_at is None
+
+
+def test_public_secret_hard_required_in_production(monkeypatch: pytest.MonkeyPatch) -> None:
+    """No key in production refuses to sign; dev still falls back (#538)."""
+    from app.config import settings
+    from app.modules.budget.public_router import _public_secret
+
+    monkeypatch.setattr(settings, "BUDGET_PUBLIC_SECRET_KEY", "")
+    monkeypatch.setattr(settings, "ENVIRONMENT", "production")
+    with pytest.raises(RuntimeError):
+        _public_secret()
+    monkeypatch.setattr(settings, "ENVIRONMENT", "development")
+    assert _public_secret() == settings.SECRET_KEY
+    monkeypatch.setattr(settings, "BUDGET_PUBLIC_SECRET_KEY", " " * 32)
+    assert _public_secret() == settings.SECRET_KEY
+
+
+async def _verified_cookie(client: AsyncClient, budget: Budget) -> str:
+    verify = await client.post(
+        f"{BUDGET}/{budget.public_token}/verify",
+        json={"method": "phone_last4", "value": "1222"},
+    )
+    assert verify.status_code == 204, verify.text
+    value = verify.headers["set-cookie"].split(";")[0].split("=", 1)[1]
+    return f"bdg_session_{budget.public_token}={value}"
+
+
+@pytest.mark.asyncio
+async def test_reject_logs_access_row(
+    client: AsyncClient, db_session: AsyncSession, t1_setup: dict
+) -> None:
+    """Reject decisions land in BudgetAccessLog like the other actions (#540)."""
+    from app.modules.budget.models import BudgetAccessLog
+
+    budget = t1_setup["budget"]
+    cookie = await _verified_cookie(client, budget)
+    response = await client.post(
+        f"{BUDGET}/{budget.public_token}/reject",
+        json={"reason": "price"},
+        headers={"Cookie": cookie},
+    )
+    assert response.status_code == 200, response.text
+    row = (
+        await db_session.execute(
+            select(BudgetAccessLog).where(
+                BudgetAccessLog.budget_id == budget.id,
+                BudgetAccessLog.method_attempted == "reject",
+            )
+        )
+    ).scalar_one()
+    assert row.success is True
+
+
+@pytest.mark.asyncio
+async def test_accept_logs_access_row(
+    client: AsyncClient, db_session: AsyncSession, t1_setup: dict
+) -> None:
+    """Accept decisions land in BudgetAccessLog like the other actions (#540)."""
+    from app.modules.budget.models import BudgetAccessLog, BudgetItem
+    from app.modules.catalog.models import TreatmentCatalogItem, TreatmentCategory
+
+    clinic, user = t1_setup["clinic"], t1_setup["user"]
+    clinic_id, user_id = clinic.id, user.id
+    patient = await _patient(db_session, clinic_id)
+    patient_id = patient.id
+    budget = await _budget(db_session, clinic_id, patient_id, user_id)
+    budget_id = budget.id
+    category = TreatmentCategory(id=uuid4(), clinic_id=clinic_id, key=f"t1-{uuid4().hex[:6]}")
+    db_session.add(category)
+    await db_session.flush()
+    catalog_item = TreatmentCatalogItem(
+        id=uuid4(),
+        clinic_id=clinic_id,
+        category_id=category.id,
+        internal_code=f"T1-{uuid4().hex[:6]}",
+    )
+    db_session.add(catalog_item)
+    await db_session.flush()
+    db_session.add(
+        BudgetItem(
+            id=uuid4(),
+            clinic_id=clinic_id,
+            budget_id=budget_id,
+            catalog_item_id=catalog_item.id,
+            unit_price=Decimal("60.00"),
+            quantity=1,
+            vat_rate=0.0,
+            line_subtotal=Decimal("60.00"),
+            line_discount=Decimal("0.00"),
+            line_tax=Decimal("0.00"),
+            line_total=Decimal("60.00"),
+        )
+    )
+    await db_session.commit()
+    cookie = await _verified_cookie(client, budget)
+    response = await client.post(
+        f"{BUDGET}/{budget.public_token}/accept",
+        json={"signer_name": "Pub Lic"},
+        headers={"Cookie": cookie},
+    )
+    assert response.status_code == 200, response.text
+    row = (
+        await db_session.execute(
+            select(BudgetAccessLog).where(
+                BudgetAccessLog.budget_id == budget.id,
+                BudgetAccessLog.method_attempted == "accept",
+            )
+        )
+    ).scalar_one()
+    assert row.success is True

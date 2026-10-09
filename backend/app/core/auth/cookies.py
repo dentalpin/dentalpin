@@ -60,9 +60,48 @@ def _domain() -> str | None:
 _HOST_ONLY_WARNED = False
 
 
+# Hosting domains whose subdomains are separate sites to a browser, so a
+# "shared parent" built from them is a public suffix and `set_cookie`
+# with it is silently dropped. The two-label rule below already rejects
+# bare TLDs (`app.com` + `api.com`); these need naming because they look
+# like registrable domains and do not behave like them. Not the full
+# Public Suffix List -- just the hosts this project has seen people
+# deploy on, which are the ones named in
+# docs/user-manual/*/operations.md. A suffix missing from here falls back
+# to suggesting COOKIE_DOMAIN, which is the old behaviour.
+_PUBLIC_HOSTING_SUFFIXES = frozenset(
+    {
+        "onrender.com",
+        "vercel.app",
+        "herokuapp.com",
+        "railway.app",
+        "up.railway.app",
+        "fly.dev",
+        "netlify.app",
+        "pages.dev",
+        "workers.dev",
+        "github.io",
+        "azurewebsites.net",
+        "ondigitalocean.app",
+        "sslip.io",
+        "nip.io",
+    }
+)
+
+
 def _shared_parent(app_host: str, api_host: str) -> str | None:
-    """Longest common dotted suffix of two hosts, at least two labels:
-    ``demo.example.com`` + ``api-demo.example.com`` -> ``.example.com``."""
+    """Longest common dotted suffix usable as ``COOKIE_DOMAIN``.
+
+    ``demo.example.com`` + ``api-demo.example.com`` -> ``.example.com``.
+
+    Returns ``None`` when the common suffix is not something a browser
+    will accept: fewer than two labels (a bare TLD), or a known hosting
+    suffix (``*.onrender.com`` and friends), where every subdomain is a
+    separate site and the cookie is dropped without an error. Suggesting
+    ``COOKIE_DOMAIN=.onrender.com`` sent operators to restart the backend
+    for no change (#444); the caller recommends the same-origin proxy
+    instead.
+    """
     common: list[str] = []
     for left, right in zip(reversed(app_host.split(".")), reversed(api_host.split("."))):
         if left != right:
@@ -70,7 +109,10 @@ def _shared_parent(app_host: str, api_host: str) -> str | None:
         common.append(left)
     if len(common) < 2:
         return None
-    return "." + ".".join(reversed(common))
+    parent = ".".join(reversed(common))
+    if parent in _PUBLIC_HOSTING_SUFFIXES:
+        return None
+    return "." + parent
 
 
 def warn_if_host_only(request: Request | None) -> None:
@@ -97,10 +139,18 @@ def warn_if_host_only(request: Request | None) -> None:
         return
     _HOST_ONLY_WARNED = True
     parent = _shared_parent(app_host, api_host)
+    # No usable parent means the two hosts share nothing, or share only a
+    # public hosting suffix. Either way COOKIE_DOMAIN cannot fix it, so
+    # point at the same-origin proxy added in 2.8.0 rather than telling
+    # the operator to go buy a domain.
     fix = (
         f"set COOKIE_DOMAIN={parent} and restart"
         if parent
-        else "serve both from sibling hosts of one parent domain and set COOKIE_DOMAIN"
+        else (
+            "set NUXT_API_PROXY=true on the frontend so the browser only talks to the "
+            "app's origin (operations.md section 1), or serve both from sibling hosts of "
+            "a registrable domain and set COOKIE_DOMAIN"
+        )
     )
     logger.warning(
         "Session cookies are host-only: the app (%s) and the API (%s) are different hosts "

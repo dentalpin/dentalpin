@@ -178,9 +178,65 @@ target="_top">el manual</a> para ver lo que ya está documentado.</p>
   },
 };
 
+// A slug becomes a filename and then a URL path segment. Anything that
+// only has meaning in a URL -- query separators, braces left over from a
+// `{id}` route -- cannot be requested back by the app, which asks for
+// `<slug>.html` built from the matched route (no query, brackets
+// stripped). See `frontend/app/composables/useHelp.ts`.
+const UNSERVABLE_IN_SLUG = /[?&=#{}]/;
+
 export async function buildHelpFragments(distDir: string): Promise<number> {
   const screens = await collectScreens();
   let written = 0;
+
+  // Two screens whose routes collapse to the same slug write the same
+  // file, and the last one silently wins (#573). That is a real trap
+  // here: the obvious "fix" for the periodontogram route -- changing
+  // `{id}` to `[id]` -- would make it collide with the patient-detail
+  // doc, and the patient page would lose its help with nothing to show
+  // that it had happened. Fail the build instead.
+  // Paths relative to `docs/`, so the message reads the same locally and
+  // on a CI runner.
+  const rel = (file: string) => file.replace(`${DOCS_ROOT}/`, "");
+  const byTarget = new Map<string, Array<{ file: string; route: string }>>();
+  for (const screen of screens) {
+    const key = `${screen.locale}/${routeToSlug(screen.route)}`;
+    const bucket = byTarget.get(key) ?? [];
+    bucket.push({ file: rel(screen.file), route: screen.route });
+    byTarget.set(key, bucket);
+  }
+  const collisions = [...byTarget.entries()].filter(([, v]) => v.length > 1);
+  if (collisions.length > 0) {
+    const detail = collisions
+      .map(([key, v]) =>
+        [
+          `  ${key}.html would be written by ${v.length} screens:`,
+          ...v.map((x) => `    ${x.file}  (route: ${x.route})`),
+        ].join("\n"),
+      )
+      .join("\n");
+    throw new Error(
+      `Help fragment slug collision: two or more screens map to the same ` +
+        `file, so one would overwrite the other.\n${detail}\n` +
+        `Give each screen a route that collapses to a distinct slug.`,
+    );
+  }
+
+  // Not fatal, because the fix needs a decision on how sub-views are
+  // addressed (#573) and failing here would block every unrelated build
+  // until that lands. Loud, because the symptom otherwise shows up only
+  // as "No help for this screen yet" in the drawer.
+  const unservable = [...byTarget.keys()].filter((k) => UNSERVABLE_IN_SLUG.test(k));
+  if (unservable.length > 0) {
+    console.warn(
+      `[help] ${unservable.length} fragment(s) have a slug the app can never ` +
+        `request, so their help drawer always falls back (#573):`,
+    );
+    for (const key of unservable.sort()) {
+      const screens_ = byTarget.get(key) ?? [];
+      console.warn(`  ${key}.html  <- ${screens_.map((x) => x.file).join(", ")}`);
+    }
+  }
 
   for (const screen of screens) {
     const slug = routeToSlug(screen.route);
