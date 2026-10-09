@@ -391,6 +391,66 @@ jobs:
         working-directory: frontend
         run: npm run test
 
+  locale-parity-vs-main:
+    # Locale parity is the one check that two correct branches can break
+    # between them: one adds a key to every locale that exists, the other
+    # adds a locale file, and whichever merges second was authored against
+    # a tree without the other. It has happened three times (#522, #589,
+    # #622), and each time both PRs were green on their own.
+    #
+    # The `pull_request` checkout already builds a merge commit, but it is
+    # the merge with main *as of when the run started*; GitHub does not
+    # re-run a check when main moves underneath it. This job re-merges
+    # current main at run time and re-checks parity only, which is cheap.
+    #
+    # It narrows the window rather than closing it — a PR merging seconds
+    # after this passes can still land on a newer main. Closing it fully
+    # means "Require branches to be up to date before merging" in branch
+    # protection, which is a repo setting and a heavier workflow.
+    name: locale parity against current main
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+
+      - name: Merge current main into the PR head
+        id: merge
+        run: |
+          git config user.name "ci"
+          git config user.email "ci@dentalpin.local"
+          # checkout already gave us full history (fetch-depth: 0); this
+          # just brings the base branch's current tip. FETCH_HEAD rather
+          # than origin/<base>: the pull_request checkout does not
+          # necessarily configure a remote-tracking ref for it.
+          git fetch --no-tags origin "${{ github.base_ref }}"
+          if ! git merge --no-edit FETCH_HEAD; then
+            echo "conflict=true" >> "$GITHUB_OUTPUT"
+            git merge --abort
+          fi
+
+      - name: Skip on conflict
+        if: steps.merge.outputs.conflict == 'true'
+        run: |
+          echo "::notice::Branch conflicts with ${{ github.base_ref }}; parity cannot be evaluated on the merge result. Rebase and push."
+
+      - name: Set up Node.js
+        if: steps.merge.outputs.conflict != 'true'
+        uses: actions/setup-node@v5
+        with:
+          node-version: "22"
+
+      - name: Install dependencies
+        if: steps.merge.outputs.conflict != 'true'
+        working-directory: frontend
+        run: npm ci --no-audit --no-fund
+
+      - name: Locale parity on the merge result
+        if: steps.merge.outputs.conflict != 'true'
+        working-directory: frontend
+        run: npx vitest run tests/i18n/locale-parity.test.ts
+
   e2e:
     # Browser E2E smoke. Boots db + backend via docker compose, builds
     # the frontend for production and serves the .output bundle on the
