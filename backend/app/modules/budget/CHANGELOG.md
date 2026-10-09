@@ -4,8 +4,10 @@
 
 - fix(#539): `GET /public/budgets/{token}/meta` no longer discloses
   patient identity or budget contents before the knowledge factor; it
-  answers with routing state and the clinic name only, and the welcome
-  greeting falls back to the generic title.
+  answers with routing state plus the clinic fields the page needs
+  (name, contacts, locale, currency), and the welcome greeting is the
+  generic title. Supersedes the clinic-scoped patient-name lookup below,
+  whose query no longer exists.
 - fix(#531): the verify permanent lockout stays budget-wide on purpose
   (10 retained failures lock the token), and the staff `unlock-public`
   recovery path is now documented in ADR 0006; unlocking also drops
@@ -18,9 +20,6 @@
   `BudgetAccessLog` with `success=True` (so they do not count towards
   the lockout), like the signed-PDF download.
 - feat(i18n): Telugu (`te`) quote PDF labels.
-- fix: the public `/meta` patient-name lookup is now clinic-scoped
-  (`AND clinic_id`). The id already comes from the budget's own row so this
-  was not exploitable, but an id-only query is a checklist point-3 miss.
 - feat(#509): the quote PDF for `pt-BR` reuses the `pt` labels.
 
 - fix(#522): the "today" and "in N days" markers on the budget list, and the

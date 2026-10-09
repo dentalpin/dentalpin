@@ -57,8 +57,8 @@ the link is forwarded to them.
 ## What the patient sees
 
 1. A welcome screen with the clinic name and a code field.
-2. After verifying: header with clinic + patient, line items with
-   totals, validity, and assigned professional.
+2. After verifying: header with the clinic name, line items with
+   totals and validity.
 3. **Accept** and **Reject** buttons (Reject asks for a reason).
 4. **Download PDF** of the budget.
 

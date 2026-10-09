@@ -233,8 +233,8 @@ const reasonOptions = computed(() => [
 ])
 
 const greeting = computed(() => {
-  // The name stays behind verification (/meta carries no patient identity
-  // since #539): greet generically until the verified detail arrives.
+  // No personalization here by design: /meta carries no patient identity
+  // (#539), so the welcome heading is always the generic title.
   return t('budget.public.title')
 })
 </script>

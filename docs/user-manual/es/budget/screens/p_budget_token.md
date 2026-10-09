@@ -60,8 +60,8 @@ paciente cuando le pasan el enlace.
 
 1. Pantalla de bienvenida con el nombre de la clínica y un campo de
    código.
-2. Tras verificar: cabecera con clínica + paciente, listado de
-   ítems con totales, validez y profesional asignado.
+2. Tras verificar: cabecera con el nombre de la clínica, listado de
+   ítems con totales y validez.
 3. Botones **Aceptar** y **Rechazar** (este último pide motivo).
 4. **Descargar PDF** del presupuesto.
 
