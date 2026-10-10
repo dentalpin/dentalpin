@@ -2218,7 +2218,6 @@
     "public": {
       "title": "Your quote",
       "intro": "{clinic} has sent you this quote. Review the treatments and choose an option.",
-      "greeting": "Hello, {name}",
       "subtitle": "Your personalised treatment plan",
       "budgetNumber": "Quote",
       "issuedOn": "Issued on {date}",

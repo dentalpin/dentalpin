@@ -2218,7 +2218,6 @@
     "public": {
       "title": "Twój kosztorys",
       "intro": "{clinic} przesyła Ci ten kosztorys. Zapoznaj się z zabiegami i wybierz opcję.",
-      "greeting": "Dzień dobry, {name}",
       "subtitle": "Twój spersonalizowany plan leczenia",
       "budgetNumber": "Kosztorys",
       "issuedOn": "Wystawiono {date}",

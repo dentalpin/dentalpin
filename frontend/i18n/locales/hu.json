@@ -2218,7 +2218,6 @@
     "public": {
       "title": "Az Ön árajánlata",
       "intro": "{clinic} elküldte Önnek ezt az árajánlatot. Tekintse át a kezeléseket, és válasszon.",
-      "greeting": "Üdvözöljük, {name}",
       "subtitle": "Az Ön személyre szabott kezelési terve",
       "budgetNumber": "Árajánlat",
       "issuedOn": "Kiállítva: {date}",

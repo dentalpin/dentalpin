@@ -2218,7 +2218,6 @@
     "public": {
       "title": "Il tuo preventivo",
       "intro": "{clinic} ti ha inviato questo preventivo. Esamina i trattamenti e scegli un'opzione.",
-      "greeting": "Ciao, {name}",
       "subtitle": "Il tuo piano di cura personalizzato",
       "budgetNumber": "Preventivo",
       "issuedOn": "Emesso il {date}",

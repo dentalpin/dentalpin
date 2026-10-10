@@ -2218,7 +2218,6 @@
     "public": {
       "title": "Ihr Kostenvoranschlag",
       "intro": "{clinic} hat Ihnen diesen Kostenvoranschlag gesendet. Prüfen Sie die Behandlungen und wählen Sie eine Option.",
-      "greeting": "Hallo, {name}",
       "subtitle": "Ihr persönlicher Behandlungsplan",
       "budgetNumber": "Kostenvoranschlag",
       "issuedOn": "Ausgestellt am {date}",

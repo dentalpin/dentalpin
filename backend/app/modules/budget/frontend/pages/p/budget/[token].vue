@@ -4,8 +4,8 @@
  * ``/p/budget/<token>`` and bypasses the global auth middleware
  * (see ``frontend/app/middleware/auth.global.ts``).
  *
- * Conversion-optimised UI: clinic identity hero, personalised
- * greeting, itemised treatment list, prominent total, trust signals
+ * Conversion-optimised UI: clinic identity hero, generic welcome
+ * heading, itemised treatment list, prominent total, trust signals
  * and three CTAs (accept · doubts · reject) with a sticky bar on
  * mobile so the primary action is always reachable.
  */
@@ -233,8 +233,9 @@ const reasonOptions = computed(() => [
 ])
 
 const greeting = computed(() => {
-  const name = meta.value?.patient_first_name
-  return name ? t('budget.public.greeting', { name }) : t('budget.public.title')
+  // No personalization here by design: /meta carries no patient identity
+  // (#539), so the welcome heading is always the generic title.
+  return t('budget.public.title')
 })
 </script>
 

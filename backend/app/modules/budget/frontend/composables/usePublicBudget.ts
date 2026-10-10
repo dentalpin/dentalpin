@@ -27,10 +27,6 @@ export interface PublicMeta {
   clinic_address_line: string | null
   clinic_language: string | null
   clinic_currency: string | null
-  patient_first_name: string | null
-  budget_number: string | null
-  budget_total: string | null
-  valid_until: string | null
 }
 
 export interface PublicBudgetItem {

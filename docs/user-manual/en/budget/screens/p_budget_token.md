@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/p/budget/[token].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: a13bd29
+last_verified_commit: 29b545ae
 ---
 
 # Public patient acceptance
@@ -49,12 +49,18 @@ the link is forwarded to them.
 - **Signed PDF.** After acceptance, *Download signed PDF* calls
   `GET /pdf/signed` with the cookie. Capped at 10 downloads per
   minute per token; each hit is logged in `BudgetAccessLog`.
+- **Nothing personal before verification.** `GET /meta` answers with
+  routing state plus the clinic fields the page needs (name, contacts,
+  locale, currency): no patient name, no budget number, total, or
+  validity. Those arrive with the cookie-protected detail response
+  after the code is accepted (#539).
 
 ## What the patient sees
 
-1. A welcome screen with the clinic name and a code field.
-2. After verifying: header with clinic + patient, line items with
-   totals, validity, and assigned professional.
+1. A welcome screen with a code field (no clinic name renders before
+   verification).
+2. After verifying: header with the clinic name, line items with
+   totals and validity.
 3. **Accept** and **Reject** buttons (Reject asks for a reason).
 4. **Download PDF** of the budget.
 

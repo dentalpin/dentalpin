@@ -2218,7 +2218,6 @@
     "public": {
       "title": "Votre devis",
       "intro": "{clinic} vous a envoyé ce devis. Examinez les traitements et choisissez une option.",
-      "greeting": "Bonjour, {name}",
       "subtitle": "Votre plan de traitement personnalisé",
       "budgetNumber": "Devis",
       "issuedOn": "Émis le {date}",
