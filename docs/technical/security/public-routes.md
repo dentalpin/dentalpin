@@ -24,9 +24,9 @@ cookie are the auth.
 Scoping rule: token lookup (`BudgetService.get_by_public_token`,
 `service.py:458`) carries no clinic filter by design — the token is the
 access factor. Every downstream query re-scopes through
-`budget.clinic_id` (`:338`, `:366`, `:429`, `:497`); the `/meta` display
-reads bind `:id = budget.clinic_id / budget.patient_id` (`:194`,
-`:215`). Cookie `bdg_session_{token}` is path-scoped to the token's own
+`budget.clinic_id` (`:338`, `:366`, `:429`, `:497`); the `/meta`
+display read binds `:id = budget.clinic_id` on the core `clinics`
+table only (no patient lookup since #539). Cookie `bdg_session_{token}` is path-scoped to the token's own
 prefix (`:96`) and binds `tok` to the URL token (`:110`), so a cookie
 for budget A reads as 401 on budget B. Lockout is permanent after 10
 failed attempts (`workflow.py`, `public_locked_at`); rate limits are

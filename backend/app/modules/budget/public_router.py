@@ -191,10 +191,9 @@ async def get_public_budget_meta(
     expired = budget.valid_until is not None and budget.valid_until < today
     already_decided = budget.status in {"accepted", "rejected"}
 
-    # Resolve clinic context via raw SQL. ``clinics`` lives in a module
-    # already declared in budget.depends so this is just a denormalised
-    # display read — kept as raw SQL to avoid pulling the full ORM model
-    # for one row.
+    # Resolve clinic context via raw SQL against the core ``clinics``
+    # table — kept as raw SQL to avoid pulling the full ORM model for
+    # one row.
     from sqlalchemy import text as _text
 
     clinic_row = (

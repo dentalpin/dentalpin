@@ -139,9 +139,10 @@ they do not issue a fresh cookie.
   needs (name, contacts, locale, currency) (#539). Patient identity
   (name) and budget contents (number, total, validity) stay behind the
   knowledge factor and arrive with the cookie-protected detail
-  response. The contact, locale, and currency fields stay: they are
-  business data, not patient data, and the page needs them before
-  verification (locale switching, money formatting, call links).
+  response. The kept clinic fields are business data, not patient
+  data; language and phone are read before verification (locale
+  switching, call links on locked/expired/decided states), the rest
+  render with the verified detail.
 
 ## Alternatives considered
 
