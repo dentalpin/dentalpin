@@ -5,7 +5,8 @@ Implements the patient-facing flow described in
 
 1. ``GET    /api/v1/budget/public/budgets/{token}/meta``      → returns
    the auth method the SPA should ask for (or ``none``), the
-   ``locked``/``expired`` flags and the clinic name. No PII.
+   ``locked``/``expired`` flags and the clinic fields the page needs.
+   No patient identity, no budget contents (#539).
 2. ``POST   /api/v1/budget/public/budgets/{token}/verify``    → patient
    submits the verification value (phone last 4, DOB, or manual
    code). On success a signed cookie is set, scoped to the token.
