@@ -2218,7 +2218,6 @@
     "public": {
       "title": "Tu presupuesto",
       "intro": "{clinic} te ha enviado este presupuesto. Revisa los tratamientos y elige una opción.",
-      "greeting": "Hola, {name}",
       "subtitle": "Tu plan de tratamiento personalizado",
       "budgetNumber": "Presupuesto",
       "issuedOn": "Emitido el {date}",
