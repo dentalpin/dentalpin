@@ -204,8 +204,9 @@ async def test_budget_cookie_for_other_budget_401(
 async def test_budget_meta_discloses_no_identity_or_contents(
     client: AsyncClient, t1_setup: dict
 ) -> None:
-    """/meta carries only routing state + clinic name: no patient identity,
-    no budget number/total/validity before the knowledge factor (#539)."""
+    """/meta carries routing state plus kept clinic fields: no patient
+    identity, no budget number/total/validity before the knowledge
+    factor (#539)."""
     budget = t1_setup["budget"]
     response = await client.get(f"{BUDGET}/{budget.public_token}/meta")
     assert response.status_code == 200, response.text
