@@ -13,6 +13,7 @@ import pytest
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings as app_settings
 from app.core.agents.models import Agent, AgentSession
 from app.core.agents.orchestrator import ConfirmationRequired, Final, Token, ToolCallFinished
 from app.core.auth.models import User
@@ -28,8 +29,10 @@ from app.modules.patients.models import Patient
 class _FakeProvider:
     def __init__(self, scripts: list[list[ProviderEvent]]) -> None:
         self._scripts = list(scripts)
+        self.seen_max_tokens: list[int] = []
 
     async def complete(self, *, system, messages, tools, model, max_tokens) -> AsyncIterator:
+        self.seen_max_tokens.append(max_tokens)
         for ev in self._scripts.pop(0):
             yield ev
 
@@ -119,6 +122,71 @@ async def test_text_turn_persists_messages(db_session, test_clinic) -> None:
     assert isinstance(events[-1], Final)
     assert await _count_messages(db_session, conv.id) == 2  # user + assistant
     assert conv.total_input_tokens == 8 and conv.total_output_tokens == 5
+    assert provider.seen_max_tokens == [app_settings.COPILOT_MAX_TOKENS]
+
+
+@pytest.mark.asyncio
+async def test_bridge_forwards_the_configured_token_ceiling(
+    db_session, test_clinic, monkeypatch
+) -> None:
+    """The bridge must read COPILOT_MAX_TOKENS, not a baked-in literal.
+
+    `drive_turn` and `resume_turn` both hardcoded 4096, so the setting an
+    operator could see in config.py changed nothing; a value the default
+    never differs from would not notice. Pin it to a value 4096 is not.
+    """
+    monkeypatch.setattr(app_settings, "COPILOT_MAX_TOKENS", 12345)
+    conv, settings_row, user_id, agent_id, session_id = await _setup(db_session, test_clinic.id)
+    provider = _FakeProvider([[TextDelta("ok"), Done("stop")]])
+
+    await _drive(db_session, conv, settings_row, user_id, agent_id, session_id, provider)
+
+    assert provider.seen_max_tokens == [12345]
+
+
+@pytest.mark.asyncio
+async def test_resume_turn_also_forwards_the_configured_token_ceiling(
+    db_session, test_clinic, monkeypatch
+) -> None:
+    """Both call sites, not just drive_turn: the resume path is a second
+    provider call and would otherwise keep the old ceiling forever."""
+    monkeypatch.setattr(app_settings, "COPILOT_MAX_TOKENS", 54321)
+    conv, settings_row, user_id, agent_id, session_id = await _setup(db_session, test_clinic.id)
+
+    p1 = _FakeProvider(
+        [
+            [
+                ToolUse(
+                    "c1",
+                    "patients.create_patient",
+                    {"first_name": "María", "last_name": "González"},
+                ),
+                Done("tool_calls"),
+            ]
+        ]
+    )
+    events = await _drive(
+        db_session, conv, settings_row, user_id, agent_id, session_id, p1, "crea a María"
+    )
+    assert isinstance(events[-1], ConfirmationRequired)
+    call_id = events[-1].call_id
+
+    p2 = _FakeProvider([[TextDelta("Hecho."), Done("stop")]])
+    async for _ in resume_turn(
+        db=db_session,
+        conv=conv,
+        settings_row=settings_row,
+        permissions=["*"],
+        user_id=user_id,
+        agent_id=agent_id,
+        session_id=session_id,
+        call_id=call_id,
+        approve=True,
+        provider=p2,
+    ):
+        pass
+
+    assert p2.seen_max_tokens == [54321]
 
 
 @pytest.mark.asyncio

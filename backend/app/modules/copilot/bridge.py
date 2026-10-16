@@ -15,6 +15,7 @@ from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.core.agents.context import AgentContext, AgentMode
 from app.core.agents.guardrails import GuardrailConfig
 from app.core.agents.orchestrator import ConfirmationRequired, ToolCallFinished, TurnUsage, run_turn
@@ -196,7 +197,7 @@ async def drive_turn(
         tool_names=_tool_names_for(permissions, include_free_text=not redactor.enabled),
         redactor=redactor,
         model=conv.model,
-        max_tokens=4096,
+        max_tokens=settings.COPILOT_MAX_TOKENS,
         budget=budget,
         dialect=_dialect_for(conv.provider),
     ):
@@ -267,7 +268,7 @@ async def resume_turn(
         tool_names=_tool_names_for(permissions, include_free_text=not redactor.enabled),
         redactor=redactor,
         model=conv.model,
-        max_tokens=4096,
+        max_tokens=settings.COPILOT_MAX_TOKENS,
         budget=budget,
         dialect=_dialect_for(conv.provider),
     ):

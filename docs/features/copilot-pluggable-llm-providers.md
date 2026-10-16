@@ -122,8 +122,11 @@ Extends the existing `copilot_settings` (`GET/PATCH /settings`,
 Already present and reused, not rebuilt: per-clinic token budgets and
 the per-role `agents.view` gate. Added:
 
-- `max_tokens` cap per request clamps to the provider entry's ceiling
-  (free tiers get conservative defaults).
+- `max_tokens` per request comes from the `COPILOT_MAX_TOKENS` setting
+  (default 4096, forwarded by `docker-compose.yml` and
+  `docker-compose.prod.yml`). There is no per-provider ceiling field:
+  free-tier caps are the provider's own, and the operator lowers the
+  single value if a tier rejects long answers.
 - Budget accounting keys on `(clinic, provider)` so switching
   providers doesn't reset spend tracking mid-month.
 - Per-role enable stays the existing RBAC surface — no new mechanism.

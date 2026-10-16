@@ -43,6 +43,9 @@ services:
       # Copilot agentic layer (app/core/llm/). Set OPENAI_API_KEY in .env
       # (gitignored). Empty default keeps the stack bootable without it.
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # Output ceiling per assistant turn (tokens). Forwarded so the
+      # value in .env actually reaches the container.
+      COPILOT_MAX_TOKENS: ${COPILOT_MAX_TOKENS:-4096}
     ports:
       - "8000:8000"
     depends_on:

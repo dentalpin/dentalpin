@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- fix(#332): `COPILOT_MAX_TOKENS` was declared in `Settings` and read
+  nowhere, while `drive_turn` and `resume_turn` each hardcoded
+  `max_tokens=4096`, so the setting an operator could change did
+  nothing. Both call sites read it now. It is documented in
+  `.env.example` and `.env.prod.example`, and forwarded by
+  `docker-compose.yml` and `docker-compose.prod.yml` - the backend
+  service lists its environment explicitly, so documenting the key
+  without forwarding it would have left the operator's change inside
+  the container's 4096 default.
 - feat(#332): OpenRouter + Groq LLM provider adapters, same subclass shape
   as Gemini over their OpenAI-compatible endpoints (`OPENROUTER_API_KEY` /
   `GROQ_API_KEY` + per-provider default models, specs registered from
