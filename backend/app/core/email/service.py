@@ -56,16 +56,13 @@ class EmailService:
         elif settings.EMAIL_PROVIDER == "console":
             self._provider = ConsoleProvider()
             if settings.ENVIRONMENT == "production":
-                # The console provider prints the whole message — recipient,
-                # name, treatment, amount — at INFO, and reports SUCCESS, so
-                # the outbox marks it sent while the patient receives nothing
-                # (#614). EMAIL_PROVIDER is in no compose file and not in
-                # .env.example, so this is reached by omission, not choice.
+                # Misconfiguration, reached by omission: the console
+                # provider is metadata-only here and reports FAILED, so
+                # nothing is delivered and nothing claims it was (#614).
                 logger.error(
-                    "EMAIL_PROVIDER=console in production: messages are written to "
-                    "the log instead of being delivered, and patient details end up "
-                    "in it. Set EMAIL_PROVIDER=smtp (see .env.example), or "
-                    "EMAIL_ENABLED=false if this instance is not meant to send mail."
+                    "Email is not configured: no email will be delivered. "
+                    "Set EMAIL_PROVIDER=smtp (or EMAIL_ENABLED=false to "
+                    "silence this)."
                 )
             else:
                 logger.info("Email service using console provider")
@@ -85,9 +82,16 @@ class EmailService:
         else:
             # Fallback to console if unknown provider
             self._provider = ConsoleProvider()
-            logger.warning(
-                f"Unknown email provider '{settings.EMAIL_PROVIDER}', falling back to console"
-            )
+            if settings.ENVIRONMENT == "production":
+                logger.error(
+                    f"Unknown email provider '{settings.EMAIL_PROVIDER}': no email "
+                    "will be delivered. Set EMAIL_PROVIDER=smtp (or "
+                    "EMAIL_ENABLED=false to silence this)."
+                )
+            else:
+                logger.warning(
+                    f"Unknown email provider '{settings.EMAIL_PROVIDER}', falling back to console"
+                )
 
         # Initialize Jinja2 environment for templates
         if TEMPLATES_DIR.exists():

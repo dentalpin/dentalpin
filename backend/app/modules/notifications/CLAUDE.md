@@ -93,7 +93,9 @@ the full consent path — never bypasses `do_not_contact`.
   `tasks.py` (APScheduler) so the request transaction can commit
   before the SMTP attempt.
 - **Provider abstraction** lives behind `EMAIL_PROVIDER`. `console`
-  prints to stdout — use it in dev.
+  prints to stdout — use it in dev. In production it is metadata-only
+  and reports FAILED (#614), so a missing provider is loud but never
+  claims delivery.
 - **Templates are i18n-aware** (Spanish UI strings). Never hardcode
   copy in handlers — use a template.
 - **Template context that needs a query lives in `service.py`, once.**

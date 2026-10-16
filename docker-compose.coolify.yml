@@ -40,7 +40,8 @@ services:
       # 10.0.x), and without it every client collapses onto Traefik's IP
       # and the login limit goes global. A PaaS edge must set its own value.
       FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,::1,10.0.0.0/8,172.16.0.0/12,192.168.0.0/16}
-      # `console` logs the whole message and reports it sent (#614).
+      # `console` never delivers: in production it logs metadata only,
+      # reports the send failed and logs an ERROR naming this remedy (#614).
       EMAIL_PROVIDER: ${EMAIL_PROVIDER:-console}
       EMAIL_ENABLED: ${EMAIL_ENABLED:-true}
       EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-smtp.gmail.com}

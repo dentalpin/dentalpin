@@ -42,7 +42,8 @@ services:
       # Docker's default address pools (the proxy container's network).
       # Swarm/k8s (10.0.0.0/8) or a PaaS edge must set their own value.
       FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,::1,172.16.0.0/12,192.168.0.0/16}
-      # `console` logs the whole message and reports it sent (#614).
+      # `console` never delivers: in production it logs metadata only,
+      # reports the send failed and logs an ERROR naming this remedy (#614).
       EMAIL_PROVIDER: ${EMAIL_PROVIDER:-console}
       EMAIL_ENABLED: ${EMAIL_ENABLED:-true}
       EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-smtp.gmail.com}

@@ -568,3 +568,12 @@ EMAIL_SMTP_TLS=true
 EMAIL_FROM_ADDRESS=noreply@example.com
 EMAIL_FROM_NAME=DentalPin
 ```
+
+Production boots normally with `EMAIL_PROVIDER=console` (or an unknown
+provider) while email is enabled (#614): resolving the provider logs an
+ERROR naming the remedy (resolution is lazy, so this happens on the first
+email, not at boot), the console provider writes metadata-only lines
+(masked recipient, no subject/body/names) and reports every send as
+failed, so the UI stops claiming delivery. Either configure SMTP or set
+`EMAIL_ENABLED=false`. A demo instance running `ENVIRONMENT=development`
+is unaffected by the production branch.

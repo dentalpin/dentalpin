@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+- fix(#614): production with `EMAIL_PROVIDER=console` (or unknown)
+  boots normally but delivers nothing loudly — resolving the provider
+  logs an ERROR, the console provider writes metadata-only lines (masked
+  recipient, no subject/body/names) and reports sends as failed so the UI
+  stops claiming delivery. Opt out with `EMAIL_ENABLED=false`.
+  `.env.prod.example` documents the SMTP section; per-clinic
+  `console` settings remain a follow-up.
 - feat(#546, ADR 0038): expose a `NotificationsErasureContributor` instead of
   subscribing to `gdpr.erasure.executed`; `gdpr` pulls it inside the
   erasure transaction. Same redaction (recipient, subject, body, template

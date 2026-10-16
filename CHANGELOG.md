@@ -55,6 +55,15 @@ frontend as a Nuxt layer under its own Python package.
 - Email templates missing in a locale now fall back to the English
   template instead of rendering nothing.
 
+- **Heads-up (production email):** `EMAIL_PROVIDER=console` (the dev
+  default) delivers nothing (#614). A production instance that never
+  set `EMAIL_PROVIDER` boots normally but logs an ERROR when it first
+  resolves the provider (on the first email, since resolution is lazy),
+  writes metadata-only log lines (no bodies, no names), and reports
+  sends as failed so the UI stops claiming delivery. Set
+  `EMAIL_PROVIDER=smtp` with real credentials, or
+  `EMAIL_ENABLED=false` if the instance sends no mail.
+
 - **Upgrade note (production):** `BUDGET_PUBLIC_SECRET_KEY` is now
   required. A production boot without it fails fast with an actionable
   message instead of signing public budget sessions with the staff-JWT
