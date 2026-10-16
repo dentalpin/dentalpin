@@ -8,11 +8,47 @@ import logging
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
+from fastapi import HTTPException
 from sqlalchemy import and_, select
 
 from app.database import async_session_maker
 
 logger = logging.getLogger(__name__)
+
+
+def _reminder_checkin_url(appointment, clinic) -> str | None:
+    """Day-valid reminder check-in link for the sweep (ADR 0037).
+
+    Mints a ``source=reminder`` token living until the end of the
+    appointment's clinic-local day and returns its patient-facing URL.
+    Returns None (and logs) when no public origin is configured, so a
+    missing ALLOWED_ORIGINS degrades to a link-less reminder instead of
+    failing the whole sweep.
+    """
+    from app.modules.agenda.checkin import build_checkin_url, mint_checkin_token
+    from app.modules.agenda.tz import as_utc, safe_zone
+
+    try:
+        tz = safe_zone(getattr(clinic, "timezone", None))
+        now_utc = datetime.now(UTC)
+        start_utc = as_utc(appointment.start_time, tz)
+        day_end_local = start_utc.astimezone(tz).replace(
+            hour=23, minute=59, second=59, microsecond=0
+        )
+        ttl_minutes = max(60, int((day_end_local.astimezone(UTC) - now_utc).total_seconds() // 60))
+        token, _ = mint_checkin_token(
+            appointment.id, appointment.clinic_id, source="reminder", ttl_minutes=ttl_minutes
+        )
+        return build_checkin_url(token)
+    except HTTPException:
+        # No public origin configured: link-less reminders, never a failed sweep.
+        logger.warning("Reminder check-in link skipped: no public origin configured")
+        return None
+    except Exception as exc:  # noqa: BLE001
+        # Anything else (bad signing key, clock skew) would go link-less
+        # indefinitely on a WARNING; make a permanent failure visible.
+        logger.error("Reminder check-in link skipped by unexpected error: %s", exc)
+        return None
 
 
 async def dispatch_outbox() -> None:
@@ -133,6 +169,7 @@ async def process_appointment_reminders() -> None:
                         "clinic_phone": clinic.phone if clinic else None,
                         "clinic_address": clinic.address if clinic else None,
                         "appointment_id": str(appointment.id),  # For duplicate check
+                        "checkin_url": _reminder_checkin_url(appointment, clinic),
                     }
 
                     # Enqueue reminder — dedup_key keeps the 5-min re-runs idempotent
@@ -235,6 +272,7 @@ async def send_single_reminder(appointment_id: UUID, clinic_id: UUID) -> bool:
                 "clinic_phone": clinic.phone if clinic else None,
                 "clinic_address": clinic.address if clinic else None,
                 "appointment_id": str(appointment.id),
+                "checkin_url": _reminder_checkin_url(appointment, clinic),
             }
 
             # Enqueue reminder (force_send to bypass auto_send check). The

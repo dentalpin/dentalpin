@@ -832,7 +832,11 @@
       "copyLink": "చెక్-ఇన్ లింక్ కాపీ చేయండి",
       "openTitle": "క్లినిక్ చెక్-ఇన్",
       "success": "మీరు చెక్-ఇన్ అయ్యారు. దయచేసి కూర్చోండి.",
-      "invalid": "ఈ చెక్-ఇన్ కోడ్ చెల్లదు లేదా గడువు ముగిసింది. దయచేసి రిసెప్షన్‌లో కొత్తది అడగండి."
+      "invalid": "ఈ చెక్-ఇన్ కోడ్ చెల్లదు లేదా గడువు ముగిసింది. దయచేసి రిసెప్షన్‌లో కొత్తది అడగండి.",
+      "confirm": "I'm here",
+      "confirmHint": "Press the button to confirm your arrival.",
+      "tooEarly": "It's too early to check in. Your appointment is at {time}.",
+      "tooLate": "Check-in for this appointment is closed. Please ask at reception."
     },
     "create": "కొత్త అపాయింట్‌మెంట్",
     "edit": "అపాయింట్‌మెంట్ సవరించండి",

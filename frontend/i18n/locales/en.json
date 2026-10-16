@@ -832,7 +832,11 @@
       "copyLink": "Copy check-in link",
       "openTitle": "Clinic check-in",
       "success": "You are checked in. Please take a seat.",
-      "invalid": "This check-in code is invalid or expired. Please ask reception for a new one."
+      "invalid": "This check-in code is invalid or expired. Please ask reception for a new one.",
+      "confirm": "I'm here",
+      "confirmHint": "Press the button to confirm your arrival.",
+      "tooEarly": "It's too early to check in. Your appointment is at {time}.",
+      "tooLate": "Check-in for this appointment is closed. Please ask at reception."
     },
     "create": "New appointment",
     "edit": "Edit appointment",

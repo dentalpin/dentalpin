@@ -832,7 +832,11 @@
       "copyLink": "Kopiuj link meldowania",
       "openTitle": "Meldowanie w klinice",
       "success": "Zameldowano. Proszę usiąść.",
-      "invalid": "Ten kod meldowania jest nieprawidłowy lub wygasł. Poproś recepcję o nowy."
+      "invalid": "Ten kod meldowania jest nieprawidłowy lub wygasł. Poproś recepcję o nowy.",
+      "confirm": "Jestem na miejscu",
+      "confirmHint": "Naciśnij przycisk, aby potwierdzić przybycie.",
+      "tooEarly": "Jest jeszcze za wcześnie na zameldowanie. Twoja wizyta jest o {time}.",
+      "tooLate": "Meldowanie na tę wizytę jest już zamknięte. Zgłoś się do recepcji."
     },
     "create": "Nowa wizyta",
     "edit": "Edytuj wizytę",

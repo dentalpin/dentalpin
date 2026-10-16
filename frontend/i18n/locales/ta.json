@@ -832,7 +832,11 @@
       "copyLink": "வருகை இணைப்பை நகலெடு",
       "openTitle": "கிளினிக் வருகைப் பதிவு",
       "success": "பதிவு முடிந்தது. அமரவும்.",
-      "invalid": "இந்த வருகைக் குறியீடு தவறானது அல்லது காலாவதியானது. வரவேற்பில் புதியது கேட்கவும்."
+      "invalid": "இந்த வருகைக் குறியீடு தவறானது அல்லது காலாவதியானது. வரவேற்பில் புதியது கேட்கவும்.",
+      "confirm": "I'm here",
+      "confirmHint": "Press the button to confirm your arrival.",
+      "tooEarly": "It's too early to check in. Your appointment is at {time}.",
+      "tooLate": "Check-in for this appointment is closed. Please ask at reception."
     },
     "create": "புதிய சந்திப்பு",
     "edit": "சந்திப்பைத் திருத்து",

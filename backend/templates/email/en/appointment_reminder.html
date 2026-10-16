@@ -31,4 +31,10 @@
 </div>
 
 <p>Please arrive a few minutes early. If you need to reschedule, contact us as soon as possible.</p>
+{% if checkin_url %}
+<div class="button-container">
+    <a href="{{ checkin_url }}" class="button">Check in for my appointment</a>
+</div>
+{% endif %}
+
 {% endblock %}

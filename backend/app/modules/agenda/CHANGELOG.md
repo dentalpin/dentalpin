@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- feat(#480, ADR 0037): `source` claim on check-in tokens. Counter QRs
+  (`source=counter`, the staff mint default) auto-submit; mailed reminder
+  links (`source=reminder`, minted by the notification sweep with a
+  clinic-day TTL) require a press, so mail-scanner pre-fetches can no
+  longer check patients in. Missing/unknown sources fail safe to
+  `reminder`. Check-in is only accepted inside the start_time window
+  (two hours before start until one hour after end; 422 `too_early` /
+  `window_closed` with the local start), closing the #464 date-guard
+  follow-up. Public check-ins now note `kiosk-checkin`. ar/hi/ta/te
+  page strings fall back to English (noted).
 - fix(#538): `AGENDA_PUBLIC_SECRET_KEY` is hard-required in production
   (missing, blank, padded, or short values refuse to boot via the shared
   `Settings` validator, alongside `BUDGET_PUBLIC_SECRET_KEY`); the

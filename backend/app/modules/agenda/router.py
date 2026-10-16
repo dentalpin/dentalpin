@@ -9,7 +9,6 @@ into their own table + permission namespace.
 from datetime import date as date_type
 from datetime import datetime
 from typing import Annotated
-from urllib.parse import urlparse
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response, status
@@ -17,14 +16,15 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
 from app.core.auth.router import limiter
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
 from .checkin import (
+    CheckinSource,
     CheckinTokenError,
+    build_checkin_url,
     mint_checkin_token,
     render_checkin_qr,
     verify_checkin_token,
@@ -53,6 +53,7 @@ from .service import (
     AppointmentService,
     CabinetRequiredError,
     CabinetService,
+    CheckinWindowError,
     InvalidTransitionError,
 )
 from .tz import safe_zone
@@ -597,29 +598,9 @@ async def update_appointment_treatment_note(
 # Signed short-lived tokens let patients check themselves in by scanning
 # a QR code — no account, no login. Minting/QR render stay behind
 # appointments.write; only the single-purpose consume endpoint is public
-# (rate-limited, minimal-PII response).
-
-
-def _checkin_base_url() -> str:
-    """Public origin check-in links and QR codes are built from.
-
-    Single source: the first configured ``ALLOWED_ORIGINS`` entry, so a
-    copied link and its QR can never point at different hosts. 422 when
-    unset or not an http(s) origin.
-    """
-    origins = settings.allowed_origins_list
-    if not origins:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="Set ALLOWED_ORIGINS to render check-in QR codes",
-        )
-    parsed = urlparse(origins[0])
-    if parsed.scheme not in ("http", "https") or not parsed.netloc:
-        raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-            detail="ALLOWED_ORIGINS must hold http(s) origins",
-        )
-    return f"{parsed.scheme}://{parsed.netloc}"
+# (rate-limited, minimal-PII response). The ``source`` claim (ADR 0037)
+# tells the public page whether the token was scanned at the counter
+# (auto-submit) or mailed in a reminder (press to confirm).
 
 
 @router.post(
@@ -631,12 +612,15 @@ async def mint_appointment_checkin_token(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("agenda.appointments.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    source: CheckinSource = Query(default="counter"),
 ) -> ApiResponse[CheckinTokenResponse]:
-    """Mint a 15-minute QR check-in token for an appointment.
+    """Mint a check-in token for an appointment.
 
     Returns the token plus the patient-facing URL, built server-side
     with the same origin logic as the QR — the frontend builds no
-    check-in URLs at all, so link and QR cannot diverge.
+    check-in URLs at all, so link and QR cannot diverge. ``source``
+    records how the token reaches the patient: counter QRs auto-submit
+    on scan, mailed reminder links require a press (ADR 0037).
     """
     appointment = await AppointmentService.get_appointment(db, ctx.clinic_id, appointment_id)
     if appointment is None:
@@ -644,8 +628,8 @@ async def mint_appointment_checkin_token(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Appointment not found",
         )
-    token, expires_at = mint_checkin_token(appointment.id, ctx.clinic_id)
-    url = f"{_checkin_base_url()}/p/check-in/{token}"
+    token, expires_at = mint_checkin_token(appointment.id, ctx.clinic_id, source=source)
+    url = build_checkin_url(token)
     return ApiResponse(data=CheckinTokenResponse(token=token, expires_at=expires_at, url=url))
 
 
@@ -670,8 +654,8 @@ async def appointment_checkin_qr(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Appointment not found",
         )
-    token, _ = mint_checkin_token(appointment.id, ctx.clinic_id)
-    png = render_checkin_qr(f"{_checkin_base_url()}/p/check-in/{token}")
+    token, _ = mint_checkin_token(appointment.id, ctx.clinic_id, source="counter")
+    png = render_checkin_qr(build_checkin_url(token))
     return Response(content=png, media_type="image/png")
 
 
@@ -689,21 +673,25 @@ async def public_appointment_checkin(
     request: Request,
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[CheckinResultResponse]:
-    """Consume a QR check-in token (unauthenticated, rate-limited).
+    """Consume a check-in token (unauthenticated, rate-limited).
 
     The token rides the path (never a query string) so proxies and
     Referer headers cannot pick it up. Per-IP and per-token limits apply.
     Transitions scheduled/confirmed → checked_in through the canonical
     status machine so events fire. Re-scanning an already checked-in
     appointment returns 200 with the current status (never an error) —
-    the token stays replayable for its full fifteen minutes, which is
-    defensible for an idempotent ``checked_in`` write and stated here
+    the token stays replayable until it expires (fifteen minutes for
+    counter QRs, end of the clinic-local day for reminder links), which
+    is defensible for an idempotent ``checked_in`` write and stated here
     rather than left implicit; wrong-state tokens answer 422, bad/expired
     tokens 401, unknown appointments 404 (no oracle beyond what the
-    token already encodes).
+    token already encodes). Outside the start_time window (two hours
+    before start until one hour after end) answers 422
+    ``too_early:<HH:MM>`` / ``window_closed``, so the page can message
+    precisely (ADR 0037).
     """
     try:
-        appointment_id, clinic_id = verify_checkin_token(token)
+        appointment_id, clinic_id, _source = verify_checkin_token(token)
     except CheckinTokenError as e:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -716,6 +704,16 @@ async def public_appointment_checkin(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Appointment not found",
         ) from None
+    except CheckinWindowError as e:
+        # The global HTTP handler stringifies details, so the code and
+        # the local start travel in one machine-stable string the page
+        # splits on the first colon (ADR 0037: the page messages
+        # precisely instead of failing silently).
+        detail = e.code if e.code == "window_closed" else f"{e.code}:{e.local_start}"
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=detail,
+        ) from e
     except (InvalidTransitionError, CabinetRequiredError) as e:
         raise HTTPException(
             status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,

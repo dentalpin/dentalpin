@@ -832,7 +832,11 @@
       "copyLink": "Copier le lien d'enregistrement",
       "openTitle": "Enregistrement à la clinique",
       "success": "Vous êtes enregistré. Veuillez prendre place.",
-      "invalid": "Ce code d'enregistrement est invalide ou expiré. Demandez-en un nouveau à l'accueil."
+      "invalid": "Ce code d'enregistrement est invalide ou expiré. Demandez-en un nouveau à l'accueil.",
+      "confirm": "Je suis là",
+      "confirmHint": "Appuyez sur le bouton pour confirmer votre arrivée.",
+      "tooEarly": "Il est encore trop tôt pour vous enregistrer. Votre rendez-vous est à {time}.",
+      "tooLate": "L'enregistrement pour ce rendez-vous est fermé. Présentez-vous à l'accueil."
     },
     "create": "Nouveau rendez-vous",
     "edit": "Modifier le rendez-vous",

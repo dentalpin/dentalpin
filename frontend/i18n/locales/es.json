@@ -832,7 +832,11 @@
       "copyLink": "Copiar enlace de registro",
       "openTitle": "Registro en clínica",
       "success": "Registro completado. Tome asiento, por favor.",
-      "invalid": "Este código de registro no es válido o ha caducado. Pida uno nuevo en recepción."
+      "invalid": "Este código de registro no es válido o ha caducado. Pida uno nuevo en recepción.",
+      "confirm": "Estoy aquí",
+      "confirmHint": "Pulsa el botón para confirmar tu llegada.",
+      "tooEarly": "Aún es pronto para registrarte. Tu cita es a las {time}.",
+      "tooLate": "El registro para esta cita ya está cerrado. Pide ayuda en recepción."
     },
     "create": "Nueva cita",
     "edit": "Editar cita",

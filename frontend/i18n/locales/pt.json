@@ -832,7 +832,11 @@
       "copyLink": "Copiar ligação de check-in",
       "openTitle": "Check-in na clínica",
       "success": "Check-in concluído. Queira sentar-se, por favor.",
-      "invalid": "Este código de check-in é inválido ou expirou. Peça um novo na receção."
+      "invalid": "Este código de check-in é inválido ou expirou. Peça um novo na receção.",
+      "confirm": "Cheguei",
+      "confirmHint": "Carregue no botão para confirmar a sua chegada.",
+      "tooEarly": "Ainda é cedo para fazer o check-in. A sua consulta é às {time}.",
+      "tooLate": "O check-in para esta consulta está encerrado. Fale com a receção."
     },
     "create": "Nova consulta",
     "edit": "Editar consulta",

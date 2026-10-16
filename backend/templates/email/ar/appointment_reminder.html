@@ -31,4 +31,10 @@
 </div>
 
 <p>يرجى الحضور قبل الموعد ببضع دقائق. إذا كنت بحاجة إلى تغيير الموعد، يرجى التواصل معنا في أقرب وقت ممكن.</p>
+{% if checkin_url %}
+<div class="button-container">
+    <a href="{{ checkin_url }}" class="button">Check in for my appointment</a>
+</div>
+{% endif %}
+
 {% endblock %}

@@ -832,7 +832,11 @@
       "copyLink": "Check-in-Link kopieren",
       "openTitle": "Check-in in der Praxis",
       "success": "Sie sind eingecheckt. Bitte nehmen Sie Platz.",
-      "invalid": "Dieser Check-in-Code ist ungültig oder abgelaufen. Bitte an der Rezeption einen neuen anfordern."
+      "invalid": "Dieser Check-in-Code ist ungültig oder abgelaufen. Bitte an der Rezeption einen neuen anfordern.",
+      "confirm": "Ich bin da",
+      "confirmHint": "Drücken Sie den Knopf, um Ihre Ankunft zu bestätigen.",
+      "tooEarly": "Es ist noch zu früh zum Einchecken. Ihr Termin ist um {time} Uhr.",
+      "tooLate": "Der Check-in für diesen Termin ist geschlossen. Bitte melden Sie sich am Empfang."
     },
     "create": "Neuer Termin",
     "edit": "Termin bearbeiten",

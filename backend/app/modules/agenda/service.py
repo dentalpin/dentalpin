@@ -6,7 +6,7 @@ Moved from ``app.modules.clinical.service`` in Fase B.2 chunk 1.
 from __future__ import annotations
 
 import re
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -74,6 +74,28 @@ class AlreadyInStateError(ValueError):
 
 class CabinetRequiredError(ValueError):
     """Raised when moving to ``in_treatment`` without a cabinet assigned."""
+
+
+#: Check-in window around ``start_time`` (ADR 0037, closes the #464
+#: missing date guard). Accepts from two hours before start until one
+#: hour after end, compared in UTC (instants need no timezone).
+CHECKIN_WINDOW_BEFORE_MINUTES = 120
+CHECKIN_WINDOW_AFTER_MINUTES = 60
+
+
+class CheckinWindowError(ValueError):
+    """Raised when a check-in falls outside the start_time window.
+
+    Carries a machine-stable ``code`` (``"too_early"`` /
+    ``"window_closed"``) plus the appointment start rendered in the
+    clinic wall-clock, so the public page can message precisely
+    without doing timezone math client-side.
+    """
+
+    def __init__(self, code: str, local_start: str) -> None:
+        super().__init__(code)
+        self.code = code
+        self.local_start = local_start
 
 
 class CabinetService:
@@ -701,13 +723,16 @@ class AppointmentService:
     async def public_checkin(
         db: AsyncSession, appointment_id: UUID, clinic_id: UUID
     ) -> Appointment:
-        """Consume a QR check-in token: resolve, transition, attribute.
+        """Consume a check-in token: resolve, window-check, transition, attribute.
 
         Keeps the resolve → transition → commit sequence in the service
         layer (routers stay thin). Fetches the appointment row lean — the
         public response only needs id/status, so the patient/professional
         graph is not eager-loaded here. Already-checked-in is idempotent
-        (no error); wrong-state raises, unknown id raises KeyError.
+        (no error); unknown id raises KeyError; outside the
+        start_time window raises CheckinWindowError (ADR 0037 closes the
+        #464 missing date guard: check-in is only accepted from two
+        hours before start until one hour after end, clinic wall-clock).
         """
         row = (
             await db.execute(
@@ -719,8 +744,16 @@ class AppointmentService:
         ).scalar_one_or_none()
         if row is None:
             raise KeyError("Appointment not found")
+        tz = await get_clinic_tz(db, clinic_id)
+        now_utc = datetime.now(UTC)
+        opens_at = row.start_time - timedelta(minutes=CHECKIN_WINDOW_BEFORE_MINUTES)
+        closes_at = row.end_time + timedelta(minutes=CHECKIN_WINDOW_AFTER_MINUTES)
+        if not (opens_at <= now_utc <= closes_at):
+            local_start = row.start_time.astimezone(tz).strftime("%H:%M")
+            code = "too_early" if now_utc < opens_at else "window_closed"
+            raise CheckinWindowError(code, local_start)
         try:
-            await AppointmentService.transition(db, row, "checked_in", note="qr-checkin")
+            await AppointmentService.transition(db, row, "checked_in", note="kiosk-checkin")
         except AlreadyInStateError:
             pass
         return row

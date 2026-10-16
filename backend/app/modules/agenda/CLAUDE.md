@@ -16,7 +16,13 @@ signed with `AGENDA_PUBLIC_SECRET_KEY`, hard-required in production
 `GET .../check-in-qr` renders the same URL as PNG. Patients consume it
 unauthenticated at the agenda-owned `/p/check-in/<token>` page via
 `POST /public/check-in/{token}` (per-IP + per-token limits,
-`note="qr-checkin"`), through the canonical status machine.
+`note="kiosk-checkin"`), through the canonical status machine.
+The token carries a `source` claim (ADR 0037): `counter` (staff mint
+default) auto-submits on scan; `reminder` (mailed links, minted by the
+notification sweep with a clinic-day TTL) requires a press, so
+mail-scanner pre-fetches check nobody in; missing/unknown fails safe
+to `reminder`. Check-in is accepted only inside the start_time window
+(two hours before start until one hour after end).
 
 ## Dependencies
 

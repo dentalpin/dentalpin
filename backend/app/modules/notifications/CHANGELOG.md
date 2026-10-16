@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- feat(#480, ADR 0037): the appointment reminder sweep mints a
+  `source=reminder` check-in token (valid until the end of the
+  appointment's clinic-local day) and passes `checkin_url` into the
+  reminder context; the email templates render it as a button when
+  present (de/fr/it/pt/hu/pl translated; ar/hi/ta/te English fallback).
+  A missing public origin degrades to a link-less reminder instead of
+  failing the sweep. No new dependency: `notifications` already
+  depends on `agenda`.
 - feat(#546, ADR 0038): expose a `NotificationsErasureContributor` instead of
   subscribing to `gdpr.erasure.executed`; `gdpr` pulls it inside the
   erasure transaction. Same redaction (recipient, subject, body, template

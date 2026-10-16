@@ -832,7 +832,11 @@
       "copyLink": "نسخ رابط الحضور",
       "openTitle": "تسجيل الحضور في العيادة",
       "success": "تم تسجيل حضورك. تفضل بالجلوس.",
-      "invalid": "رمز الحضور هذا غير صالح أو منتهي الصلاحية. اطلب رمزاً جديداً من الاستقبال."
+      "invalid": "رمز الحضور هذا غير صالح أو منتهي الصلاحية. اطلب رمزاً جديداً من الاستقبال.",
+      "confirm": "I'm here",
+      "confirmHint": "Press the button to confirm your arrival.",
+      "tooEarly": "It's too early to check in. Your appointment is at {time}.",
+      "tooLate": "Check-in for this appointment is closed. Please ask at reception."
     },
     "create": "موعد جديد",
     "edit": "تعديل الموعد",

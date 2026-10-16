@@ -61,4 +61,10 @@
 {% endif %}
 
 <p>À bientôt !</p>
+{% if checkin_url %}
+<div class="button-container">
+    <a href="{{ checkin_url }}" class="button">M'enregistrer</a>
+</div>
+{% endif %}
+
 {% endblock %}
