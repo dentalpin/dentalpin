@@ -13,6 +13,19 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **The AI copilot could never be configured on the Coolify stack.**
+  `docker-compose.coolify.yml` forwarded no LLM key at all — not
+  `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`,
+  `OPENROUTER_API_KEY` or `GROQ_API_KEY` — while
+  `docker-compose.prod.yml` forwarded them. Neither file uses
+  `env_file`, `CopilotSettings` stores provider and model but no key, and
+  `copilot/bridge.py` resolves the key from deployment settings alone, so
+  on Coolify every copilot request raised `LLMConfigError` regardless of
+  what the operator set. Every provider key plus
+  `COPILOT_PROVIDER_DEFAULT` is now forwarded, `.env.prod.example`
+  names them, and a guard (`backend/tests/test_copilot_compose_wiring.py`)
+  reads the keys off the registered provider specs so a new provider
+  fails until both stacks forward it.
 - **26 UI strings showed the i18n key instead of a message** (#631).
   `errors.loadFailed`, `errors.createFailed`, `errors.updateFailed` and
   `errors.deleteFailed` existed in no locale file, so a clinic saw a toast
