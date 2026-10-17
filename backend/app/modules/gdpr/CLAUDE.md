@@ -16,6 +16,7 @@ Routes mounted at `/api/v1/gdpr/`.
   immutable except for status transitions)
 - `GET    /consents`          — list consents (optionally per patient); `gdpr.consents.read`
 - `POST   /consents`          — record a consent grant or withdrawal (201); `gdpr.consents.write`
+- `GET    /consents/current`  — latest consent for one (patient, purpose); `gdpr.consents.read`
 - `GET    /retention`         — list active retention policies; `gdpr.retention.read`
 - `POST   /retention`         — create a policy; `gdpr.retention.write`
 - `PATCH  /retention/{id}`    — update a policy; `gdpr.retention.write`
@@ -37,8 +38,8 @@ Routes mounted at `/api/v1/gdpr/`.
   `status` (received | in_progress | completed | rejected), `received_at`,
   `deadline_at` (30-day SLA, Art. 12(3)), `resolved_at`.
 - `patient_consents` — append-only consent events (Art. 7-8): every
-  grant/withdraw inserts a row (`purpose`, `granted`, `provided_text`
-  verbatim, `granted_at`, `withdrawn_at`). Latest row per
+  grant/withdraw inserts a row (`purpose` canonical, `granted`,
+  `provided_text` verbatim, `granted_at`, `withdrawn_at`). Latest row per
   (patient, purpose) is current; history is never mutated.
 - `retention_policies` — per-clinic rules (Art. 5(1)(e)): `data_category`,
   `retention_years`, `legal_hold_until`, `is_active`. These gate erasure
@@ -47,10 +48,12 @@ Routes mounted at `/api/v1/gdpr/`.
   (Art. 17): `erased_categories`, `fields_blanked`, `rationale`, `executed_at`,
   `executed_by`.
 - `data_breaches` — breach register (Art. 33-34): `description`,
-  `data_involved`, `affected_people`, `status`, `notified_authority_at`.
+  `data_involved`, `affected_people`, `status`, `notified_authority_at`,
+  `notified_subjects_at`, `notified_subjects_count`.
 
-Migration `gdpr_0001_initial` on own Alembic branch (`gdpr`), depending on
-`patients@pat_0003`.
+Four migrations on own Alembic branch (`gdpr`), depending on
+`patients@pat_0003`: `gdpr_0001_initial`, `gdpr_0002_single_active_policy`,
+`gdpr_0003_subject_notification`, `gdpr_0004_canonical_consent_purpose`.
 
 ## Erasure semantics (read this first)
 
@@ -108,6 +111,8 @@ DSRs).
 | `list_gdpr_consents` | READ | `ConsentService.list_consents` | `gdpr.consents.read` |
 | `create_retention_policy` | WRITE | `RetentionService.create` | `gdpr.retention.write` |
 | `execute_partial_erasure` | DESTRUCTIVE | `ErasureService.execute` | `gdpr.requests.write` |
+| `report_breach` | WRITE | `DataBreachService.create` | `gdpr.breaches.write` |
+| `list_breaches` | READ | `DataBreachService.list` | `gdpr.breaches.read` |
 
 All tools filter by `ctx.clinic_id` and return native values (UUID/datetime).
 

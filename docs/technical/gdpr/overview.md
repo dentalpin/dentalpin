@@ -1,6 +1,6 @@
 ---
 module: gdpr
-last_verified_commit: 8b8e9375
+last_verified_commit: 47a008bcc85677e4e45c93b34d7a7e1525e86f29
 ---
 
 # gdpr — overview
@@ -26,6 +26,7 @@ Art. 5(2), immutable except for status transitions):
 - `PATCH /api/v1/gdpr/requests/{id}` — transition DSR status
 - `GET /api/v1/gdpr/consents` — list consents (per patient)
 - `POST /api/v1/gdpr/consents` — record consent grant/withdrawal (201)
+- `GET /api/v1/gdpr/consents/current` — latest consent for one (patient, purpose)
 - `GET /api/v1/gdpr/retention` — list active retention policies
 - `POST /api/v1/gdpr/retention` — create a policy (201)
 - `PATCH /api/v1/gdpr/retention/{id}` — update a policy
@@ -53,7 +54,9 @@ Five tables, all `clinic_id`-scoped and indexed on `clinic_id`:
 | `data_breaches` | reportable breach register | 33-34 |
 
 Migration `gdpr_0001_initial` on own Alembic branch (`gdpr`), depending on
-`patients@pat_0003` (the patient FK).
+`patients@pat_0003` (the patient FK). Followed by `gdpr_0002_single_active_policy`,
+`gdpr_0003_subject_notification` (Art. 34 columns) and
+`gdpr_0004_canonical_consent_purpose` (backfills pre-canonical purposes).
 
 ## Service layer
 
@@ -62,12 +65,36 @@ Migration `gdpr_0001_initial` on own Alembic branch (`gdpr`), depending on
   a 30-day `deadline_at`.
 - `ConsentService` — `grant_or_withdraw` APPENDS one row per event
   (grant → withdraw → grant = three rows); `list_consents` returns
-  newest-first, so the first row per (patient, purpose) is current.
-- `RetentionService` — active policies that gate erasure.
+  newest-first (created_at + id tiebreak), so the first row per
+  (patient, purpose) is current; `current` returns just that row.
+  Purposes are stored canonical (`strip().lower()`), so "SMS" and
+  "sms " are one purpose, not two; `gdpr_0004` backfills the rows written
+  before that rule. A grant requires the shown text
+  (`provided_text`); withdrawals carry none. Recording a withdrawal
+  publishes `gdpr.consent.withdrawn`, but send paths gate on the
+  independent `do_not_contact` field — the record does not itself
+  stop sends. Wiring withdrawal into the send path is a parked
+  product decision (#562 CONS-02); until it lands, this document is
+  the disclosure.
+- `RetentionService` — active policies that gate erasure. At most
+  one active policy per (clinic, category) (partial unique index,
+  `gdpr_0002`); creating one supersedes its predecessors, which stay
+  as history. Deactivation is terminal by design: to change a policy,
+  create a new one — there is no reactivate path (#562 RET-02).
 - `ErasureService` — `erasure_eligible` splits requested categories into
   erasable (policy expired) vs retained (still under hold); `execute` blanks
   identity PII and writes the audit log; `list_audit`.
-- `DataBreachService` — breach create/list/update.
+- `DataBreachService` — breach create/list/update. Art. 33 authority
+  notification (`notified_authority_at`) is stamped by the transition into
+  `reported`; the Art. 34 subject-notification record
+  (`notified_subjects_at` / `notified_subjects_count`, `gdpr_0003`) is set
+  explicitly, with no auto-stamp rule - whether notifying people is automatic
+  is a parked product decision (#562 SEC-02). Status moves follow
+  `_BREACH_TRANSITIONS`: `under_review` to `reported` or `not_reportable`,
+  `reported` to `resolved` or `not_reportable`, `not_reportable` back to
+  `under_review` to retry. The `reported -> not_reportable` edge covers an
+  authority ruling the report below the threshold after notification; the
+  latches stay set, because the notification happened.
 - `ExportService` — machine-readable portability snapshot.
 
 ## Erasure semantics
@@ -125,8 +152,9 @@ looked at.
 
 ## Agent tools
 
-Six tools: `create_gdpr_request`, `list_gdpr_requests`, `record_gdpr_consent`,
-`list_gdpr_consents`, `create_retention_policy`, `execute_partial_erasure`.
+Eight tools: `create_gdpr_request`, `list_gdpr_requests`, `record_gdpr_consent`,
+`list_gdpr_consents`, `create_retention_policy`, `execute_partial_erasure`,
+`report_breach`, `list_breaches`.
 Each wraps the matching service method, filters by `ctx.clinic_id`, and
 returns native values (UUID/datetime coerced at the registry).
 

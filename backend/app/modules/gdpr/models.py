@@ -174,5 +174,11 @@ class DataBreach(Base, TimestampMixin):
         DateTime(timezone=True), nullable=True
     )
     reported: Mapped[bool] = mapped_column(Boolean, default=False, server_default="false")
+    # Art. 34 communication to affected people (operator-recorded; no
+    # auto-stamp rule — that scope decision is parked, #562 SEC-02).
+    notified_subjects_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    notified_subjects_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
     clinic: Mapped[Clinic] = relationship(foreign_keys=[clinic_id])

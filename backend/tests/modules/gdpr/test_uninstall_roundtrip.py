@@ -1,8 +1,9 @@
 """gdpr round-trip uninstall test.
 
 Install -> uninstall -> reinstall must drop ONLY the gdpr tables and leave
-every other module untouched. The module owns two revisions
-(gdpr_0001, gdpr_0002), so the branch-scoped downgrade target is ``gdpr@-2``.
+every other module untouched. The module owns four revisions
+(gdpr_0001, gdpr_0002, gdpr_0003, gdpr_0004), so the branch-scoped downgrade
+target is ``gdpr@-4``.
 Marked ``alembic_roundtrip`` and excluded from the default pytest run.
 """
 
@@ -67,7 +68,7 @@ def test_gdpr_uninstall_roundtrip_is_branch_scoped() -> None:
     before = _list_tables()
     assert GDPR_TABLES.issubset(before), "gdpr tables missing after upgrade"
 
-    _alembic("downgrade", "gdpr@-2")
+    _alembic("downgrade", "gdpr@-4")
     after_down = _list_tables()
     assert GDPR_TABLES.isdisjoint(after_down), "gdpr tables still present after downgrade"
 
@@ -104,8 +105,11 @@ def test_gdpr_0002_reconciles_duplicate_actives() -> None:
     """
     _alembic("upgrade", "heads")
     # Drop only the index so duplicates become insertable; tables and any
-    # other data stay exactly as upgrade left them.
-    _alembic("downgrade", "gdpr@-1")
+    # other data stay exactly as upgrade left them. ``@-N`` counts back from
+    # the branch HEAD, so it must track the revision count: four revisions
+    # now means ``-3`` lands on gdpr_0001 (#562 SEC-02 added gdpr_0003; the
+    # canonical-purpose backfill added gdpr_0004).
+    _alembic("downgrade", "gdpr@-3")
 
     clinic_id = uuid.uuid4()
     other_clinic_id = uuid.uuid4()
@@ -202,6 +206,86 @@ def test_gdpr_0002_reconciles_duplicate_actives() -> None:
         assert index_rows[0]["indisunique"] is True
         pred = index_rows[0]["indpred"]
         assert pred is not None and pred.replace(" ", "") == "is_active"
+    finally:
+        # Restore schema as well as rows: a failure between the downgrade
+        # and the re-upgrade would otherwise leave the branch head behind.
+        _alembic("upgrade", "heads")
+        asyncio.run(_teardown())
+
+
+def test_gdpr_0004_canonicalizes_stored_purposes() -> None:
+    """gdpr_0004's UPDATE must bring pre-canonical stored purposes onto the
+    single key ``ConsentService.current`` looks up (``strip().lower()``), so
+    a withdrawal stored as ``"Marketing"`` is not silently superseded by a
+    later grant for ``"marketing"`` (#562 CONS-05). Runs the real migration
+    file against real rows — not the model metadata.
+    """
+    _alembic("upgrade", "heads")
+    # Un-apply only gdpr_0004 so its UPDATE can be observed on rows written
+    # before it; the branch HEAD now counts back as ``-1``. gdpr_0004's
+    # downgrade is a no-op, so tables and data are left untouched.
+    _alembic("downgrade", "gdpr@-1")
+
+    clinic_id = uuid.uuid4()
+    patient_id = uuid.uuid4()
+    marketing_id = uuid.uuid4()
+    spaced_id = uuid.uuid4()
+    canonical_id = uuid.uuid4()
+
+    async def _setup() -> None:
+        await _execute_async(
+            "INSERT INTO clinics (id, name, tax_id, settings, created_at, updated_at) "
+            "VALUES ($1, 'Consent Clinic', 'B00000004', '{}'::jsonb, now(), now())",
+            clinic_id,
+        )
+        await _execute_async(
+            "INSERT INTO patients "
+            "(id, clinic_id, first_name, last_name, status, do_not_contact, "
+            "preferred_language, created_at, updated_at) "
+            "VALUES ($1, $2, 'Mig', 'Patient', 'active', false, 'es', now(), now())",
+            patient_id,
+            clinic_id,
+        )
+        for row_id, purpose in (
+            (marketing_id, "Marketing"),
+            (spaced_id, "sms "),
+            (canonical_id, "marketing"),
+        ):
+            await _execute_async(
+                "INSERT INTO patient_consents "
+                "(id, clinic_id, patient_id, purpose, granted, withdrawn_at, "
+                "created_at, updated_at) "
+                "VALUES ($1, $2, $3, $4, false, now(), now(), now())",
+                row_id,
+                clinic_id,
+                patient_id,
+                purpose,
+            )
+
+    async def _teardown() -> None:
+        await _execute_async("DELETE FROM patient_consents WHERE clinic_id = $1", clinic_id)
+        await _execute_async("DELETE FROM patients WHERE clinic_id = $1", clinic_id)
+        await _execute_async("DELETE FROM clinics WHERE id = $1", clinic_id)
+
+    try:
+        asyncio.run(_setup())
+        _alembic("upgrade", "heads")
+        rows = asyncio.run(
+            _fetch_async(
+                "SELECT id, purpose FROM patient_consents WHERE clinic_id = $1",
+                clinic_id,
+            )
+        )
+        by_id = {r["id"]: r["purpose"] for r in rows}
+        # Both non-canonical shapes collapse onto the key the service uses:
+        # casing via lower(), padding via btrim().
+        assert by_id[marketing_id] == "marketing"
+        assert by_id[spaced_id] == "sms"
+        # An already-canonical row is left untouched.
+        assert by_id[canonical_id] == "marketing"
+        # The withdrawal is now reachable under the same key a later grant
+        # would use: one purpose, one lookup, no silent supersede.
+        assert by_id[marketing_id] == by_id[canonical_id]
     finally:
         # Restore schema as well as rows: a failure between the downgrade
         # and the re-upgrade would otherwise leave the branch head behind.

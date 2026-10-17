@@ -13,6 +13,7 @@ from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
 from .schemas import (
+    BreachStatus,
     ConsentCreate,
     ConsentResponse,
     DataBreachCreate,
@@ -25,6 +26,8 @@ from .schemas import (
     GdprRequestCreate,
     GdprRequestResponse,
     GdprRequestUpdate,
+    RequestStatus,
+    RequestType,
     RetentionPolicyCreate,
     RetentionPolicyResponse,
     RetentionPolicyUpdate,
@@ -51,8 +54,8 @@ async def list_requests(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("gdpr.requests.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    status: str | None = Query(default=None),
-    request_type: str | None = Query(default=None),
+    status: RequestStatus | None = Query(default=None),
+    request_type: RequestType | None = Query(default=None),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
 ) -> PaginatedApiResponse[GdprRequestResponse]:
@@ -149,6 +152,25 @@ async def record_consent(
     row = await ConsentService.grant_or_withdraw(db, ctx.clinic_id, data)
     if row is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
+    return ApiResponse(data=ConsentResponse.model_validate(row))
+
+
+@router.get("/consents/current", response_model=ApiResponse[ConsentResponse])
+async def current_consent(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("gdpr.consents.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    patient_id: UUID = Query(),
+    purpose: str = Query(min_length=1, max_length=100),
+) -> ApiResponse[ConsentResponse]:
+    """Latest consent row for one (patient, purpose) — the current state.
+
+    Same ordering as the ledger (created_at + id tiebreak), so this
+    endpoint and ``list_consents`` can never disagree (#562 CONS-04).
+    """
+    row = await ConsentService.current(db, ctx.clinic_id, patient_id, purpose)
+    if row is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No consent recorded")
     return ApiResponse(data=ConsentResponse.model_validate(row))
 
 
@@ -262,7 +284,7 @@ async def list_breaches(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("gdpr.breaches.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    status: str | None = Query(default=None),
+    status: BreachStatus | None = Query(default=None),
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=20, ge=1, le=100),
 ) -> PaginatedApiResponse[DataBreachResponse]:

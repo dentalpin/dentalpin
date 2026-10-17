@@ -2,6 +2,46 @@
 
 ## Unreleased
 
+- fix(#562 S2): the consent ledger answers "what is the state now", the
+  breach register carries the Art. 34 record, and the filters stop
+  accepting free text.
+  - `GET /consents/current?patient_id&purpose` returns the latest row for
+    one pair, ordered `created_at DESC, id DESC` - the same ordering
+    `list_consents` uses, so the two can never disagree (CONS-04).
+  - Consent purposes are canonicalized on write (strip + lowercase), so
+    `"SMS"`, `"sms "` and `"sms"` are one purpose instead of three
+    (CONS-05).
+  - `gdpr_0004` backfills rows written before that rule: purposes holding
+    the original casing or padding (`"Marketing"`, `"sms "`) are
+    canonicalized in place, so a withdrawal stored pre-canonical is
+    reachable under the key a later grant uses (CONS-05). The backfill can
+    merge rows that the raw string kept distinct — that collapse is the
+    intended single-purpose semantics, not a side effect.
+  - The `gdpr.consent.granted` / `gdpr.consent.withdrawn` events publish the
+    canonical purpose (the stored key), not the raw client string, so a
+    subscriber keyed on `purpose` sees the value the ledger stores (CONS-05).
+  - A blank purpose (`" "`) is 422: it passes `min_length=1` but normalizes
+    to `""`, which would otherwise store an empty key (CONS-05).
+  - Purposes stay an open vocabulary (clinics invent processors); only the
+    spelling is canonical, so no legitimate purpose is ever rejected.
+  - Recording a grant without the shown text is 422: without the text
+    there is no record of what was consented to (Art. 4(11), CONS-07).
+  - `status` / `request_type` filters are closed vocabularies, so a typo
+    is a 422 instead of an empty list (QUAL-11).
+  - `data_breaches` gains `notified_subjects_at` + `notified_subjects_count`
+    (`gdpr_0003`): the register tracked authority notification only, with
+    nowhere to record whether affected people were told. Both nullable,
+    set explicitly; no auto-stamp rule (that scope decision is parked)
+    (SEC-02).
+  - Breach list ordering gets the same `id DESC` tiebreak, so pagination
+    stays stable when two breaches share a second (CONS-04).
+  - `report_breach` / `list_breaches` agent tools, both clinic-scoped
+    and wrapping the existing service methods (SEC-06).
+  - `reported -> not_reportable` is documented: it covers an authority
+    ruling the report below the threshold after notification, and the
+    authority/report latches deliberately stay set, because the
+    notification did happen (review round on #664).
+
 - fix(#562 S1): consent writes do a clinic-scoped patient lookup first
   (unknown/foreign ids: 404 on HTTP, error on the tool); creating a
   retention policy supersedes active same-category policies (reactivation

@@ -164,7 +164,12 @@ async def test_consent_grant_withdraw_regrant_keeps_full_trail(
     await ConsentService.grant_or_withdraw(
         db_session,
         test_clinic.id,
-        ConsentCreate(patient_id=test_patient.id, purpose="sms", granted=True),
+        ConsentCreate(
+            patient_id=test_patient.id,
+            purpose="sms",
+            granted=True,
+            provided_text="I accept receiving SMS.",
+        ),
     )
     items, total = await ConsentService.list_consents(
         db_session, test_clinic.id, patient_id=test_patient.id
@@ -406,7 +411,12 @@ async def test_receptionist_cannot_write_breaches(
         # Allowed: the gate passes, so the unknown patient 404s (not 403s).
         ok = await client.post(
             "/api/v1/gdpr/consents",
-            json={"patient_id": str(uuid4()), "purpose": "sms", "granted": True},
+            json={
+                "patient_id": str(uuid4()),
+                "purpose": "sms",
+                "granted": True,
+                "provided_text": "I accept receiving SMS.",
+            },
             headers=desk_headers,
         )
         assert ok.status_code == 404
@@ -470,7 +480,7 @@ async def test_consent_unknown_patient_returns_none(db_session: AsyncSession, te
     result = await ConsentService.grant_or_withdraw(
         db_session,
         test_clinic.id,
-        ConsentCreate(patient_id=uuid4(), purpose="sms", granted=True),
+        ConsentCreate(patient_id=uuid4(), purpose="sms", granted=True, provided_text="I accept."),
     )
     assert result is None
 
@@ -499,7 +509,9 @@ async def test_consent_other_clinic_patient_returns_none(
     result = await ConsentService.grant_or_withdraw(
         db_session,
         test_clinic.id,
-        ConsentCreate(patient_id=p_other.id, purpose="sms", granted=True),
+        ConsentCreate(
+            patient_id=p_other.id, purpose="sms", granted=True, provided_text="I accept."
+        ),
     )
     assert result is None
     items, total = await ConsentService.list_consents(
@@ -696,7 +708,12 @@ async def test_consent_http_unknown_patient_404(
     # The 404 surface, end to end: router maps the service None (#562 CONS-03).
     response = await client.post(
         "/api/v1/gdpr/consents",
-        json={"patient_id": str(uuid4()), "purpose": "sms", "granted": True},
+        json={
+            "patient_id": str(uuid4()),
+            "purpose": "sms",
+            "granted": True,
+            "provided_text": "I accept receiving SMS.",
+        },
         headers=auth_headers,
     )
     assert response.status_code == 404
@@ -945,3 +962,349 @@ async def test_execute_erasure_tool_reports_missing_patient(
         ExecuteErasureArgs(patient_id=str(uuid4()), categories=["email"], rationale=None),
     )
     assert out == {"error": "patient not found"}
+
+
+@pytest.mark.asyncio
+async def test_consent_purpose_case_variants_collapse(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """CONS-05: "SMS", "sms" and "sms " are one purpose, not three."""
+    for purpose in ("SMS", "sms", "sms "):
+        await ConsentService.grant_or_withdraw(
+            db_session,
+            test_clinic.id,
+            ConsentCreate(
+                patient_id=test_patient.id,
+                purpose=purpose,
+                granted=True,
+                provided_text="I accept.",
+            ),
+        )
+    items, total = await ConsentService.list_consents(
+        db_session, test_clinic.id, patient_id=test_patient.id
+    )
+    assert total == 3
+    assert {i.purpose for i in items} == {"sms"}
+    current = await ConsentService.current(db_session, test_clinic.id, test_patient.id, "SMS")
+    assert current is not None and current.purpose == "sms"
+
+
+@pytest.mark.asyncio
+async def test_consent_current_endpoint_returns_latest(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+):
+    """CONS-04/08: the current endpoint agrees with the ledger, over HTTP."""
+    from uuid import uuid4
+
+    from app.modules.gdpr.service import ConsentService as _Svc
+
+    await _Svc.grant_or_withdraw(
+        db_session,
+        test_clinic.id,
+        ConsentCreate(
+            patient_id=test_patient.id,
+            purpose="email",
+            granted=True,
+            provided_text="Yes.",
+        ),
+    )
+    await _Svc.grant_or_withdraw(
+        db_session,
+        test_clinic.id,
+        ConsentCreate(patient_id=test_patient.id, purpose="email", granted=False),
+    )
+    got = await client.get(
+        f"/api/v1/gdpr/consents/current?patient_id={test_patient.id}&purpose=email",
+        headers=auth_headers,
+    )
+    assert got.status_code == 200
+    assert got.json()["data"]["granted"] is False
+    missing = await client.get(
+        f"/api/v1/gdpr/consents/current?patient_id={uuid4()}&purpose=email",
+        headers=auth_headers,
+    )
+    assert missing.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_consent_grant_without_text_is_422(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+):
+    """CONS-07/08: a grant with no shown text is not informed consent."""
+    from uuid import uuid4
+
+    blank = await client.post(
+        "/api/v1/gdpr/consents",
+        json={"patient_id": str(uuid4()), "purpose": "sms", "granted": True},
+        headers=auth_headers,
+    )
+    assert blank.status_code == 422
+    empty = await client.post(
+        "/api/v1/gdpr/consents",
+        json={"patient_id": str(uuid4()), "purpose": "sms", "granted": True, "provided_text": "  "},
+        headers=auth_headers,
+    )
+    assert empty.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_consent_blank_purpose_is_422(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+):
+    """CONS-05: a blank purpose passes ``min_length=1`` but normalizes to
+    ``""``; the schema rejects it, so an empty key never enters the ledger."""
+    from uuid import uuid4
+
+    blank = await client.post(
+        "/api/v1/gdpr/consents",
+        json={"patient_id": str(uuid4()), "purpose": "   ", "granted": False},
+        headers=auth_headers,
+    )
+    assert blank.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_consent_event_publishes_canonical_purpose(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """CONS-05: the grant event carries the canonical purpose - the same key
+    that is stored and looked up - not the raw client string."""
+    from app.core.events import EventType, event_bus
+
+    seen: list[dict] = []
+
+    async def _recorder(data):
+        seen.append(data)
+
+    event_bus.subscribe(EventType.GDPR_CONSENT_GRANTED, _recorder)
+    try:
+        await ConsentService.grant_or_withdraw(
+            db_session,
+            test_clinic.id,
+            ConsentCreate(
+                patient_id=test_patient.id,
+                purpose="SMS ",
+                granted=True,
+                provided_text="Yes.",
+            ),
+        )
+    finally:
+        event_bus.unsubscribe(EventType.GDPR_CONSENT_GRANTED, _recorder)
+    assert [s["purpose"] for s in seen] == ["sms"]
+
+
+@pytest.mark.asyncio
+async def test_consent_http_grant_withdraw_list_roundtrip(
+    client: AsyncClient, auth_headers: dict, test_patient: Patient
+):
+    """CONS-08: consent endpoints over HTTP, not just the service layer."""
+    grant = await client.post(
+        "/api/v1/gdpr/consents",
+        json={
+            "patient_id": str(test_patient.id),
+            "purpose": "research",
+            "granted": True,
+            "provided_text": "I consent to research use.",
+        },
+        headers=auth_headers,
+    )
+    assert grant.status_code == 201
+    assert grant.json()["data"]["purpose"] == "research"
+    withdraw = await client.post(
+        "/api/v1/gdpr/consents",
+        json={"patient_id": str(test_patient.id), "purpose": "research", "granted": False},
+        headers=auth_headers,
+    )
+    assert withdraw.status_code == 201
+    listed = await client.get(
+        f"/api/v1/gdpr/consents?patient_id={test_patient.id}", headers=auth_headers
+    )
+    assert listed.status_code == 200
+    assert listed.json()["total"] == 2
+    assert listed.json()["data"][0]["granted"] is False
+
+
+@pytest.mark.asyncio
+async def test_request_status_filter_rejects_garbage(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+):
+    """QUAL-11: status/type filters are closed vocabularies, not free text."""
+    assert (
+        await client.get("/api/v1/gdpr/requests?status=bogus", headers=auth_headers)
+    ).status_code == 422
+    assert (
+        await client.get("/api/v1/gdpr/requests?request_type=bogus", headers=auth_headers)
+    ).status_code == 422
+    assert (
+        await client.get("/api/v1/gdpr/breaches?status=bogus", headers=auth_headers)
+    ).status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_breach_resolved_flow_and_not_reportable_branch(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """SEC-07: beyond the happy path — full reported run + closed branch."""
+    from app.modules.gdpr.schemas import DataBreachCreate, DataBreachUpdate
+    from app.modules.gdpr.service import BreachTransitionError
+    from app.modules.gdpr.service import DataBreachService as _Svc
+
+    row = await _Svc.create(
+        db_session,
+        test_clinic.id,
+        DataBreachCreate(description="Lost drive", data_involved=["email"], affected_people=3),
+    )
+    row = await _Svc.update(
+        db_session, row, DataBreachUpdate(status="reported", description="Lost encrypted drive")
+    )
+    assert row.status == "reported" and row.reported is True
+    assert row.notified_authority_at is not None
+    row = await _Svc.update(db_session, row, DataBreachUpdate(status="resolved"))
+    assert row.status == "resolved"
+
+    other = await _Svc.create(
+        db_session,
+        test_clinic.id,
+        DataBreachCreate(description="False alarm", data_involved=["email"]),
+    )
+    other = await _Svc.update(db_session, other, DataBreachUpdate(status="not_reportable"))
+    assert other.status == "not_reportable" and other.reported is False
+    # Closed branch: resolved is unreachable from here, retry path stays open.
+    with pytest.raises(BreachTransitionError):
+        await _Svc.update(db_session, other, DataBreachUpdate(status="resolved"))
+    other = await _Svc.update(db_session, other, DataBreachUpdate(status="under_review"))
+    assert other.status == "under_review"
+
+
+@pytest.mark.asyncio
+async def test_reported_to_not_reportable_keeps_the_latches(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """The edge agreed in the #664 review round: the authority ruled the
+    report below the threshold after notification, so the record moves -
+    but the latches stay, because the notification really happened."""
+    from app.modules.gdpr.schemas import DataBreachCreate, DataBreachUpdate
+    from app.modules.gdpr.service import DataBreachService as _Svc
+
+    row = await _Svc.create(
+        db_session,
+        test_clinic.id,
+        DataBreachCreate(description="Misdirected letter", data_involved=["email"]),
+    )
+    row = await _Svc.update(db_session, row, DataBreachUpdate(status="reported"))
+    assert row.reported is True and row.notified_authority_at is not None
+
+    row = await _Svc.update(db_session, row, DataBreachUpdate(status="not_reportable"))
+    assert row.status == "not_reportable"
+    assert row.reported is True, "the authority notification happened; it stays on the record"
+    assert row.notified_authority_at is not None
+
+
+@pytest.mark.asyncio
+async def test_breach_subject_notification_fields_persist(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """SEC-02: Art. 34 subject-notification record (gdpr_0003 columns)."""
+    from datetime import UTC, datetime
+
+    from app.modules.gdpr.schemas import DataBreachCreate, DataBreachUpdate
+    from app.modules.gdpr.service import DataBreachService as _Svc
+
+    row = await _Svc.create(
+        db_session,
+        test_clinic.id,
+        DataBreachCreate(description="Mail misfire", data_involved=["email"], affected_people=12),
+    )
+    assert row.notified_subjects_at is None
+    row = await _Svc.update(
+        db_session,
+        row,
+        DataBreachUpdate(
+            status="reported",
+            notified_subjects_at=datetime(2026, 10, 1, tzinfo=UTC),
+            notified_subjects_count=12,
+        ),
+    )
+    assert row.notified_subjects_count == 12
+    assert row.notified_subjects_at is not None
+
+    # A late-discovered incident may already have been communicated, so the
+    # record has to be settable at creation too (L4: a persistable field
+    # belongs on both schemas).
+    late = await _Svc.create(
+        db_session,
+        test_clinic.id,
+        DataBreachCreate(
+            description="Discovered in audit",
+            data_involved=["national_id"],
+            notified_subjects_at=datetime(2026, 9, 1, tzinfo=UTC),
+            notified_subjects_count=4,
+        ),
+    )
+    assert late.notified_subjects_count == 4
+    assert late.notified_subjects_at is not None
+
+
+@pytest.mark.asyncio
+async def test_breach_tools_report_and_list(db_session: AsyncSession, test_clinic: Clinic):
+    """SEC-06: breach register reachable from agents, clinic-scoped."""
+    from uuid import uuid4
+
+    from app.modules.gdpr.tools import (
+        ListBreachesArgs,
+        ReportBreachArgs,
+        _list_breaches,
+        _report_breach,
+    )
+
+    ctx = SimpleNamespace(db=db_session, clinic_id=test_clinic.id, agent_id=uuid4())
+    out = await _report_breach(
+        ctx,
+        ReportBreachArgs(description="Phish", data_involved=["email"], affected_people=2),
+    )
+    assert out["status"] == "under_review"
+    listed = await _list_breaches(ctx, ListBreachesArgs(status=None, limit=20))
+    assert listed["total"] >= 1
+    filtered = await _list_breaches(ctx, ListBreachesArgs(status="reported", limit=20))
+    assert filtered["total"] == 0
+
+
+@pytest.mark.asyncio
+async def test_hold_boundary_today_holds_yesterday_releases(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """RET-03: a hold through today still holds; yesterday's hold released."""
+    from datetime import UTC, datetime, timedelta
+
+    from app.modules.gdpr.schemas import RetentionPolicyCreate
+    from app.modules.gdpr.service import ErasureService, RetentionService
+
+    # The service measures "today" as the UTC date, so the test must build
+    # its boundary from the same clock. `date.today()` is host-local and
+    # drifts a day in the east-of-utc CI job, which then reads a hold set
+    # for "yesterday" as still in force.
+    today = datetime.now(UTC).date()
+    await RetentionService.create(
+        db_session,
+        test_clinic.id,
+        RetentionPolicyCreate(data_category="email", retention_years=0, legal_hold_until=today),
+    )
+    erasable, retained = await ErasureService.erasure_eligible(
+        db_session, test_clinic.id, ["email"], today
+    )
+    assert retained == ["email"] and erasable == []
+    await RetentionService.create(
+        db_session,
+        test_clinic.id,
+        RetentionPolicyCreate(
+            data_category="email", retention_years=0, legal_hold_until=today - timedelta(days=1)
+        ),
+    )
+    erasable, retained = await ErasureService.erasure_eligible(
+        db_session, test_clinic.id, ["email"], today
+    )
+    assert erasable == ["email"] and retained == []

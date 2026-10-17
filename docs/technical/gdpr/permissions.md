@@ -1,6 +1,6 @@
 ---
 module: gdpr
-last_verified_commit: 8b8e9375
+last_verified_commit: 47a008bcc85677e4e45c93b34d7a7e1525e86f29
 ---
 
 # gdpr — permissions
@@ -12,7 +12,7 @@ Returned by `GdprModule.get_permissions()`
 |------------|--------|-------------|
 | `gdpr.requests.read` | List and view data-subject requests, erasure audit, exports | `GET /api/v1/gdpr/requests`, `GET /api/v1/gdpr/requests/{id}`, `GET /api/v1/gdpr/export/{patient_id}` |
 | `gdpr.requests.write` | Create/transition DSRs (never delete — accountability, Art. 5(2)); run erasure | `POST /api/v1/gdpr/requests`, `PATCH /api/v1/gdpr/requests/{id}`, `POST /api/v1/gdpr/erasure` |
-| `gdpr.consents.read` | List patient consents | `GET /api/v1/gdpr/consents` |
+| `gdpr.consents.read` | List patient consents; read the current consent per purpose | `GET /api/v1/gdpr/consents`, `GET /api/v1/gdpr/consents/current` |
 | `gdpr.consents.write` | Record consent grant or withdrawal | `POST /api/v1/gdpr/consents` |
 | `gdpr.retention.read` | List active retention policies | `GET /api/v1/gdpr/retention` |
 | `gdpr.retention.write` | Create/update/delete retention policies | `POST /api/v1/gdpr/retention`, `PATCH /api/v1/gdpr/retention/{id}`, `DELETE /api/v1/gdpr/retention/{id}` |

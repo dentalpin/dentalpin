@@ -6,7 +6,7 @@ from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
 # The coverage shape lives in core so contributor modules can return it
 # without depending on the optional gdpr module (ADR 0038); gdpr itself
@@ -15,6 +15,7 @@ from app.core.erasure.types import ErasureCoverage
 
 RequestType = Literal["access", "rectification", "erasure", "portability", "restrict"]
 RequestStatus = Literal["received", "in_progress", "completed", "rejected"]
+BreachStatus = Literal["under_review", "reported", "not_reportable", "resolved"]
 
 # Closed erasure vocabulary (Art. 17): only categories with a documented
 # field mapping in ErasureService.category_to_fields are erasable. Unknown
@@ -58,6 +59,24 @@ class ConsentCreate(BaseModel):
     purpose: str = Field(min_length=1, max_length=100)
     granted: bool = True
     provided_text: str | None = Field(default=None, max_length=4000)
+
+    @field_validator("purpose")
+    @classmethod
+    def _purpose_not_blank(cls, value: str) -> str:
+        """Reject a blank purpose: ``" "`` passes ``min_length=1`` but
+        normalizes to ``""``, which would store an empty consent key in a
+        compliance ledger (#562 CONS-05)."""
+        if not value.strip():
+            raise ValueError("purpose must not be blank")
+        return value
+
+    @model_validator(mode="after")
+    def _require_text_on_grant(self) -> ConsentCreate:
+        """A grant without the shown text is not informed consent
+        (Art. 4(11), #562 CONS-07). Withdrawals carry no text."""
+        if self.granted and not (self.provided_text or "").strip():
+            raise ValueError("provided_text is required when recording a grant")
+        return self
 
 
 class ConsentResponse(BaseModel):
@@ -143,14 +162,21 @@ class DataBreachCreate(BaseModel):
     description: str = Field(min_length=1, max_length=4000)
     data_involved: list[str] = Field(min_length=1)
     affected_people: int | None = Field(default=None, ge=0)
+    #: Art. 34 record. Accepted at creation too, because an incident
+    #: discovered late may already have been communicated; still explicit
+    #: operator input, never auto-stamped (#562 SEC-02).
+    notified_subjects_at: datetime | None = None
+    notified_subjects_count: int | None = Field(default=None, ge=0)
 
 
 class DataBreachUpdate(BaseModel):
-    status: Literal["under_review", "reported", "not_reportable", "resolved"] | None = None
+    status: BreachStatus | None = None
     description: str | None = Field(default=None, min_length=1, max_length=4000)
     data_involved: list[str] | None = Field(default=None, min_length=1)
     affected_people: int | None = Field(default=None, ge=0)
     notified_authority_at: datetime | None = None
+    notified_subjects_at: datetime | None = None
+    notified_subjects_count: int | None = Field(default=None, ge=0)
 
 
 class DataBreachResponse(BaseModel):
@@ -164,6 +190,8 @@ class DataBreachResponse(BaseModel):
     affected_people: int | None
     status: str
     notified_authority_at: datetime | None
+    notified_subjects_at: datetime | None
+    notified_subjects_count: int | None
     reported: bool
     created_at: datetime
     updated_at: datetime

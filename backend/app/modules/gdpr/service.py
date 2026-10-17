@@ -143,6 +143,14 @@ class GdprService:
 
 class ConsentService:
     @staticmethod
+    def normalize_purpose(purpose: str) -> str:
+        """Canonical purpose key: case/whitespace variants ("SMS", "sms ")
+        are one purpose, not three (#562 CONS-05). Purposes stay an open
+        vocabulary (clinics invent processors); only the spelling is
+        canonical, so no legitimate purpose is ever rejected."""
+        return purpose.strip().lower()
+
+    @staticmethod
     async def grant_or_withdraw(
         db: AsyncSession, clinic_id: UUID, payload: ConsentCreate
     ) -> PatientConsent | None:
@@ -174,7 +182,7 @@ class ConsentService:
         row = PatientConsent(
             clinic_id=clinic_id,
             patient_id=payload.patient_id,
-            purpose=payload.purpose,
+            purpose=ConsentService.normalize_purpose(payload.purpose),
             granted=payload.granted,
             provided_text=payload.provided_text,
             granted_at=now if payload.granted else None,
@@ -190,7 +198,7 @@ class ConsentService:
                     "clinic_id": str(clinic_id),
                     "consent_id": str(row.id),
                     "patient_id": str(payload.patient_id),
-                    "purpose": payload.purpose,
+                    "purpose": row.purpose,
                 },
                 db=db,
             )
@@ -201,7 +209,7 @@ class ConsentService:
                     "clinic_id": str(clinic_id),
                     "consent_id": str(row.id),
                     "patient_id": str(payload.patient_id),
-                    "purpose": payload.purpose,
+                    "purpose": row.purpose,
                 },
                 db=db,
             )
@@ -220,11 +228,36 @@ class ConsentService:
             stmt = stmt.where(PatientConsent.patient_id == patient_id)
         total = (await db.execute(select(func.count()).select_from(stmt.subquery()))).scalar_one()
         stmt = (
-            stmt.order_by(PatientConsent.created_at.desc())
+            # created_at ties are real (same-second writes, clock granularity):
+            # id DESC breaks them deterministically so "latest" is stable
+            # (#562 CONS-04).
+            stmt.order_by(PatientConsent.created_at.desc(), PatientConsent.id.desc())
             .offset((max(page, 1) - 1) * min(max(page_size, 1), 100))
             .limit(min(max(page_size, 1), 100))
         )
         return list((await db.execute(stmt)).scalars()), total
+
+    @staticmethod
+    async def current(
+        db: AsyncSession, clinic_id: UUID, patient_id: UUID, purpose: str
+    ) -> PatientConsent | None:
+        """Latest consent row for one (patient, purpose) — the current state.
+
+        Same ordering as ``list_consents`` (created_at + id tiebreak),
+        so the endpoint and the ledger can never disagree (#562 CONS-04).
+        """
+        return (
+            await db.execute(
+                select(PatientConsent)
+                .where(
+                    PatientConsent.clinic_id == clinic_id,
+                    PatientConsent.patient_id == patient_id,
+                    PatientConsent.purpose == ConsentService.normalize_purpose(purpose),
+                )
+                .order_by(PatientConsent.created_at.desc(), PatientConsent.id.desc())
+                .limit(1)
+            )
+        ).scalar_one_or_none()
 
 
 class RetentionConflictError(ValueError):
@@ -510,6 +543,8 @@ class DataBreachService:
             description=payload.description,
             data_involved=payload.data_involved,
             affected_people=payload.affected_people,
+            notified_subjects_at=payload.notified_subjects_at,
+            notified_subjects_count=payload.notified_subjects_count,
         )
         db.add(row)
         await db.commit()
@@ -548,7 +583,10 @@ class DataBreachService:
             stmt = stmt.where(DataBreach.status == status)
         total = (await db.execute(select(func.count()).select_from(stmt.subquery()))).scalar_one()
         stmt = (
-            stmt.order_by(DataBreach.occurred_at.desc())
+            # occurred_at ties are real (same-second breaches), so id DESC
+            # breaks them deterministically and pagination stays stable
+            # (#562 CONS-04).
+            stmt.order_by(DataBreach.occurred_at.desc(), DataBreach.id.desc())
             .offset((max(page, 1) - 1) * min(max(page_size, 1), 100))
             .limit(min(max(page_size, 1), 100))
         )
@@ -559,6 +597,13 @@ class DataBreachService:
     #: valid, while not_reportable → under_review is allowed to retry the
     #: assessment. A wrong report is superseded by correcting the record
     #: fields, not by rewinding the lifecycle (#562 SEC-03).
+    #: ``not_reportable`` is the closed state for its branch: an assessed
+    #: non-breach rests there, it never moves to ``resolved`` (which
+    #: closes the reported branch only). ``reported → not_reportable``
+    #: covers the authority ruling the report below the threshold after
+    #: notification: the latches stay set deliberately, because the
+    #: notification did happen and clearing them would rewrite history
+    #: (#562 S2, review round on #664).
     _BREACH_TRANSITIONS: dict[str, set[str]] = {
         "under_review": {"reported", "not_reportable"},
         "reported": {"resolved", "not_reportable"},
