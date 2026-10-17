@@ -17,6 +17,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from app.core.agents import AgentContext, Tool, ToolCategory
+from app.core.i18n_names import catalog_name
 
 from .schemas import BudgetStatus
 from .service import BudgetService
@@ -92,8 +93,17 @@ async def _get_budget(ctx: AgentContext, params: GetBudgetArgs) -> dict:
     if budget is None:
         return {"error": "not_found"}
     data = _budget_summary(budget)
+    # ``BudgetItem`` has no description column — a line's human-readable
+    # name comes from its catalog item's ``names`` JSONB, resolved through
+    # the shared priority order rather than by picking a locale here.
+    # ``get_budget(include_items=True)`` joinedloads ``catalog_item``, so
+    # this never lazy-loads inside the async session.
     data["items"] = [
-        {"description": i.description, "quantity": i.quantity, "total": i.line_total}
+        {
+            "description": catalog_name(i.catalog_item.names) if i.catalog_item else None,
+            "quantity": i.quantity,
+            "total": i.line_total,
+        }
         for i in budget.items
     ]
     return data

@@ -2,6 +2,15 @@
 
 ## Unreleased
 
+- fix: the `budget.get_budget` agent tool failed on every budget that has
+  a line item. It read `BudgetItem.description`, a column that does not
+  exist — the line's name lives on its catalog item — so the copilot got
+  `ok=False` with a raw `AttributeError` string instead of the quote. The
+  existing tool test used an empty draft budget, which is the one case
+  that never reaches the serialisation branch. Now resolved through the
+  shared `catalog_name()` helper, like the PDF does, and the test carries
+  a real line.
+
 - fix: resending a terminal budget twice returned 500. `clone_to_new_draft`
   took the new version from the row it was cloning (`version + 1`) while
   `BudgetService.duplicate_budget` took it from `max(version)`, so the

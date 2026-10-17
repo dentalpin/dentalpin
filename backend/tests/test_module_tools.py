@@ -7,6 +7,7 @@ make the agent safe).
 
 from __future__ import annotations
 
+from decimal import Decimal
 from uuid import uuid4
 
 import pytest
@@ -703,11 +704,18 @@ def test_money_tools_registered() -> None:
 
 
 async def _money_world(db: AsyncSession, clinic_id) -> dict:
-    """Patient (no email) + user + empty draft budget + draft invoice."""
+    """Patient (no email) + user + empty draft budget + draft invoice.
+
+    Also a second budget carrying one real line item: ``get_budget``
+    serialises ``budget.items``, so a budget with none never exercises
+    that branch — which is how `i.description` survived on a model with
+    no such column.
+    """
     from datetime import date
 
     from app.modules.billing.models import Invoice
-    from app.modules.budget.models import Budget
+    from app.modules.budget.models import Budget, BudgetItem
+    from app.modules.catalog.models import TreatmentCatalogItem, TreatmentCategory
 
     user = await _supervisor(db)
     patient = await PatientService.create_patient(
@@ -729,7 +737,51 @@ async def _money_world(db: AsyncSession, clinic_id) -> dict:
     )
     db.add_all([budget, invoice])
     await db.flush()
-    return {"user": user, "patient": patient, "budget": budget, "invoice": invoice}
+
+    category = TreatmentCategory(clinic_id=clinic_id, key="tools-test", names={"es": "Pruebas"})
+    db.add(category)
+    await db.flush()
+    catalog_item = TreatmentCatalogItem(
+        clinic_id=clinic_id,
+        category_id=category.id,
+        internal_code="TOOLS-001",
+        names={"es": "Limpieza dental", "en": "Dental cleaning"},
+        default_price=50,
+    )
+    db.add(catalog_item)
+    await db.flush()
+    lined = Budget(
+        clinic_id=clinic_id,
+        patient_id=patient.id,
+        budget_number="PRES-TEST-0002",
+        # Not draft, so the `status: ["draft"]` list assertion above keeps
+        # seeing exactly one budget.
+        status="rejected",
+        valid_from=date(2032, 1, 1),
+        created_by=user.id,
+    )
+    db.add(lined)
+    await db.flush()
+    db.add(
+        BudgetItem(
+            clinic_id=clinic_id,
+            budget_id=lined.id,
+            catalog_item_id=catalog_item.id,
+            unit_price=50,
+            quantity=2,
+            line_subtotal=100,
+            line_total=100,
+        )
+    )
+    await db.flush()
+    return {
+        "user": user,
+        "patient": patient,
+        "budget": budget,
+        "invoice": invoice,
+        "lined_budget": lined,
+        "catalog_item": catalog_item,
+    }
 
 
 @pytest.mark.asyncio
@@ -752,6 +804,17 @@ async def test_budget_tools_and_send_errors(db_session, test_clinic) -> None:
     )
     assert detail.ok
     assert detail.data["items"] == []
+
+    # A budget WITH a line: the branch the empty case cannot reach. It
+    # raised AttributeError, because BudgetItem has no `description`
+    # column — the line's name lives on its catalog item.
+    lined = await tool_registry.call(
+        ctx, "budget.get_budget", {"budget_id": str(world["lined_budget"].id)}
+    )
+    assert lined.ok, lined.error
+    assert lined.data["items"] == [
+        {"description": "Limpieza dental", "quantity": 2, "total": Decimal("100.00")}
+    ]
 
     # Patient has no email → structured error, no state change.
     res = await tool_registry.call(

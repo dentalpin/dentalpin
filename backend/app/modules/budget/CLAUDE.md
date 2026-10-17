@@ -94,6 +94,14 @@ contract.
 
 ## Gotchas
 
+- **A budget line has no `description` of its own.** The human-readable
+  name comes from `BudgetItem.catalog_item.names` (JSONB), resolved with
+  `app.core.i18n_names.catalog_name()` — the shared priority order, not a
+  locale picked at the call site. `get_budget(include_items=True)`
+  joinedloads `catalog_item`, so reading it does not lazy-load inside the
+  async session. The `budget.get_budget` tool read a non-existent
+  `item.description` for months because its test used an empty budget.
+
 - **One version allocator: `BudgetService.next_version`.**
   `uq_budget_clinic_number_version` covers
   `(clinic_id, budget_number, version)`, so a new version must come from
