@@ -112,6 +112,22 @@ async def test_settings_patch_provider_change_requires_anthropic_key(
 
 
 @pytest.mark.asyncio
+async def test_settings_patch_provider_change_to_ollama_needs_no_key(
+    client: AsyncClient, auth_headers: dict, test_clinic
+) -> None:
+    """Ollama is keyless: selecting it must not hit the missing-key guard."""
+    res = await client.patch(
+        "/api/v1/copilot/settings",
+        json={"provider": "ollama"},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()["data"]
+    assert body["provider"] == "ollama"
+    assert body["model"] == app_settings.COPILOT_MODEL_CHAT_OLLAMA
+
+
+@pytest.mark.asyncio
 async def test_settings_patch_provider_switch_defaults_model(
     client: AsyncClient, auth_headers: dict, test_clinic, monkeypatch
 ) -> None:

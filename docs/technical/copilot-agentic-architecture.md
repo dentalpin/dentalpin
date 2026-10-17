@@ -9,8 +9,9 @@ Status: **plan / not yet implemented**. This is the technical/architecture plan 
 > `GeminiProvider` have since landed in `backend/app/core/llm/`; the factory
 > now resolves active provider specifications through a process-wide
 > registry. Copilot registers the built-in OpenAI, Anthropic, Gemini,
-> OpenRouter and Groq specifications from `CopilotModule.on_activate()` per
-> ADR 0020. RAG/Ollama remain deferred as stated.
+> OpenRouter, Groq and Ollama specifications from `CopilotModule.on_activate()`
+> per ADR 0020. RAG/pgvector, proactive/scheduled agents and admin dashboards
+> remain deferred as stated.
 
 ---
 
@@ -44,13 +45,14 @@ The whole point of this sub-package is that **the orchestrator never knows which
 - `anthropic_provider.py` — `AnthropicProvider` over the `anthropic` SDK (`client.messages.create(..., stream=True)`), tool schemas via `tool_to_anthropic_schema()` (`app/core/agents/tools/schema.py:19`). Same single-tool posture (`disable_parallel_tool_use`); tool results are serialized as `tool_result` blocks merged into the next `user` turn; dotted tool names map `.` ↔ `-` (Anthropic's name charset, same trick as OpenAI).
 - `gemini_provider.py` — `GeminiProvider(OpenAIProvider)` over Google's OpenAI-compatible endpoint (`.../v1beta/openai/`) through the `openai` SDK: identical wire format and `openai` tool dialect, no new dependency. Free-tier API keys from AI Studio work; the operator accepts Google's data-use terms there, and the mandatory PHI redactor still runs upstream.
 - `openrouter_provider.py` / `groq_provider.py` — same subclass shape over `https://openrouter.ai/api/v1` and `https://api.groq.com/openai/v1`: gateway and hosted open-weight models behind the same OpenAI wire format, still no new dependency. Keys and billing live on the operator's accounts; redaction still upstream. OpenRouter is a gateway, not a single subprocessor: it routes each request to whichever upstream serves the model id, so the operator must set the account's data policy (no prompt logging/training) in OpenRouter before enabling it for a clinic.
-- `spec.py` / `registry.py` — `ProviderSpec` is the single source for a provider's default model, tool-schema dialect and deployment API-key setting. `ProviderRegistry` stores active specs process-wide; `CopilotModule.on_activate()` registers OpenAI, Anthropic, Gemini, OpenRouter and Groq only while the module is installed (ADR 0020).
+- `ollama_provider.py` — `OllamaProvider(OpenAIProvider)` over a self-hosted Ollama server's OpenAI-compatible endpoint (`OLLAMA_BASE_URL`, default `http://ollama:11434`; the adapter appends `/v1`). No API key (`needs_api_key=False`; the OpenAI SDK gets a placeholder), so pointed at a host on the operator's network every prompt stays there. Its `openai` tool dialect matches the wire format, but tool calling only works on pulled models that support it (e.g. the default `llama3.1:8b`). It inherits the streamed usage-chunk accounting, so a server that omits usage chunks leaves `monthly_token_limit` unenforced and `GET /metrics` reading zero. Redaction still runs upstream: the local-tier relaxation from the #332 brief stays deferred.
+- `spec.py` / `registry.py` — `ProviderSpec` is the single source for a provider's default model, tool-schema dialect, deployment API-key setting and (for self-hosted providers) deployment base-URL setting. `ProviderRegistry` stores active specs process-wide; `CopilotModule.on_activate()` registers OpenAI, Anthropic, Gemini, OpenRouter, Groq and Ollama only while the module is installed (ADR 0020).
 - `factory.py` — `get_provider(name: str) -> Provider` resolves the active spec through the registry and calls `spec.factory(config)`. Unknown or inactive providers raise a clear `LLMConfigError`; adding a registered provider does not require another factory branch.
 - **Resolution order:** per-clinic `copilot_settings.provider` + `.model` override the registered spec defaults. Settings-save reads `spec.needs_api_key` and `spec.api_key_setting`; the bridge reads `spec.tool_dialect`, so provider policy is not duplicated in Copilot call sites.
 - Tier, capability and redaction-policy metadata remains in the #332 design brief and will be added with the settings/redaction consumers that enforce it, avoiding unused duplicate sources of truth in this initial registry slice.
 - Deps: `openai>=1.40` and `anthropic>=0.40` in `backend/pyproject.toml`.
 
-Redaction, budget, audit, and the inline-confirm pause are all **upstream of the provider** and therefore vendor-agnostic — adding Anthropic, Gemini, OpenRouter and Groq changed nothing outside `app/core/llm/` beyond the dialect hint and settings validation.
+Redaction, budget, audit, and the inline-confirm pause are all **upstream of the provider** and therefore vendor-agnostic — adding Anthropic, Gemini, OpenRouter, Groq and Ollama changed nothing outside `app/core/llm/` beyond the dialect hint, the deployment base-URL setting and settings validation.
 
 ### 2.2 Orchestrator (`app/core/agents/orchestrator.py`)
 The reusable tool-use loop. **No HTTP / SSE / copilot knowledge.** Signature sketch:
@@ -87,7 +89,7 @@ The PHI boundary. Per-session `SymbolTable` mapping real value ↔ stable opaque
 `Tool` gains exactly one optional field: `exposes_free_text: bool = False`. No other change to the frozen dataclass.
 
 ### 2.4 Config (`app/config.py`)
-Add `OPENAI_API_KEY: str = ""`, `COPILOT_PROVIDER_DEFAULT: str = "openai"`, `COPILOT_MODEL_CHAT_OPENAI: str = "gpt-5.4-mini"`, `COPILOT_MAX_TOKENS: int = 4096`, `COPILOT_REDACTION_DEFAULT: bool = True`. Per-clinic `copilot_settings` overrides provider and model. (`ANTHROPIC_API_KEY` + Anthropic model default landed with that provider; `GEMINI_API_KEY` + Gemini model default with #332; `OPENROUTER_API_KEY` / `GROQ_API_KEY` + OpenRouter and Groq model defaults with #332.)
+Add `OPENAI_API_KEY: str = ""`, `COPILOT_PROVIDER_DEFAULT: str = "openai"`, `COPILOT_MODEL_CHAT_OPENAI: str = "gpt-5.4-mini"`, `COPILOT_MAX_TOKENS: int = 4096`, `COPILOT_REDACTION_DEFAULT: bool = True`. Per-clinic `copilot_settings` overrides provider and model. (`ANTHROPIC_API_KEY` + Anthropic model default landed with that provider; `GEMINI_API_KEY` + Gemini model default with #332; `OPENROUTER_API_KEY` / `GROQ_API_KEY` + OpenRouter and Groq model defaults with #332; `OLLAMA_BASE_URL` + `COPILOT_MODEL_CHAT_OLLAMA` with the Ollama provider, #332.)
 
 ---
 

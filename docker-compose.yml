@@ -43,6 +43,9 @@ services:
       # Copilot agentic layer (app/core/llm/). Set OPENAI_API_KEY in .env
       # (gitignored). Empty default keeps the stack bootable without it.
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      # Self-hosted Ollama endpoint (#332); empty falls back to the
+      # provider default (http://ollama:11434).
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
     ports:
       - "8000:8000"
     depends_on:

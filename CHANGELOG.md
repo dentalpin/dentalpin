@@ -27,6 +27,12 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Added
 
+- **Copilot: Ollama LLM provider adapter** (self-hosted, local, no API
+  key) over its OpenAI-compatible endpoint. `OLLAMA_SPEC` needs no key
+  and reads its endpoint from a new `base_url_setting`
+  (`OLLAMA_BASE_URL`, default `http://ollama:11434`); the factory threads
+  it into `ProviderConfig`. Per-clinic selection; dev, prod and Coolify
+  compose forward the setting. No bridge, settings or UI change (#332).
 - **Copilot: OpenRouter + Groq LLM provider adapters** over their
   OpenAI-compatible endpoints (same subclass shape as Gemini;
   `OPENROUTER_API_KEY` / `GROQ_API_KEY` + per-clinic selection, specs

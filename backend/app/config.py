@@ -189,19 +189,25 @@ class Settings(BaseSettings):
     EMAIL_FROM_NAME: str = "DentalPin"
 
     # Copilot / agentic layer (app/core/llm/). OpenAI, Anthropic, Gemini,
-    # OpenRouter and Groq are the live providers; per-clinic
+    # OpenRouter, Groq and Ollama are the live providers; per-clinic
     # `copilot_settings` overrides provider + model.
     OPENAI_API_KEY: str = ""
     ANTHROPIC_API_KEY: str = ""
     GEMINI_API_KEY: str = ""
     OPENROUTER_API_KEY: str = ""
     GROQ_API_KEY: str = ""
+    # Ollama (self-hosted, keyless) - the OpenAI-compatible server root;
+    # the provider appends `/v1`. The default hostname `ollama` matches no
+    # bundled service, so run an Ollama service on that name or set this
+    # to a reachable URL.
+    OLLAMA_BASE_URL: str = "http://ollama:11434"
     COPILOT_PROVIDER_DEFAULT: str = "openai"
     COPILOT_MODEL_CHAT_OPENAI: str = "gpt-5.4-mini"
     COPILOT_MODEL_CHAT_ANTHROPIC: str = "claude-sonnet-5"
     COPILOT_MODEL_CHAT_GEMINI: str = "gemini-3.5-flash"
     COPILOT_MODEL_CHAT_OPENROUTER: str = "meta-llama/llama-3.3-70b-instruct"
     COPILOT_MODEL_CHAT_GROQ: str = "llama-3.3-70b-versatile"
+    COPILOT_MODEL_CHAT_OLLAMA: str = "llama3.1:8b"
     COPILOT_MAX_TOKENS: int = 4096
     COPILOT_REDACTION_DEFAULT: bool = True
 

@@ -13,6 +13,7 @@ from app.core.llm.factory import (
     ANTHROPIC_SPEC,
     GEMINI_SPEC,
     GROQ_SPEC,
+    OLLAMA_SPEC,
     OPENAI_SPEC,
     OPENROUTER_SPEC,
     get_provider,
@@ -98,12 +99,14 @@ def test_copilot_activation_registers_builtin_providers() -> None:
         "gemini": llm_provider_registry.get("gemini"),
         "openrouter": llm_provider_registry.get("openrouter"),
         "groq": llm_provider_registry.get("groq"),
+        "ollama": llm_provider_registry.get("ollama"),
     }
     llm_provider_registry.unregister("openai")
     llm_provider_registry.unregister("anthropic")
     llm_provider_registry.unregister("gemini")
     llm_provider_registry.unregister("openrouter")
     llm_provider_registry.unregister("groq")
+    llm_provider_registry.unregister("ollama")
 
     try:
         module = CopilotModule()
@@ -114,6 +117,7 @@ def test_copilot_activation_registers_builtin_providers() -> None:
         assert llm_provider_registry.get("gemini") is GEMINI_SPEC
         assert llm_provider_registry.get("openrouter") is OPENROUTER_SPEC
         assert llm_provider_registry.get("groq") is GROQ_SPEC
+        assert llm_provider_registry.get("ollama") is OLLAMA_SPEC
 
         module.on_activate()
 
@@ -122,12 +126,14 @@ def test_copilot_activation_registers_builtin_providers() -> None:
         assert llm_provider_registry.get("gemini") is GEMINI_SPEC
         assert llm_provider_registry.get("openrouter") is OPENROUTER_SPEC
         assert llm_provider_registry.get("groq") is GROQ_SPEC
+        assert llm_provider_registry.get("ollama") is OLLAMA_SPEC
     finally:
         llm_provider_registry.unregister("openai")
         llm_provider_registry.unregister("anthropic")
         llm_provider_registry.unregister("gemini")
         llm_provider_registry.unregister("openrouter")
         llm_provider_registry.unregister("groq")
+        llm_provider_registry.unregister("ollama")
         for spec in previous_specs.values():
             if spec is not None:
                 llm_provider_registry.register(spec)
@@ -172,5 +178,18 @@ def test_factory_reads_deployment_key_named_by_spec(monkeypatch) -> None:
         provider = get_provider(spec.name)
         assert isinstance(provider, _FakeProvider)
         assert provider.config == ProviderConfig(api_key="deployment-key")
+    finally:
+        llm_provider_registry.unregister(spec.name)
+
+
+def test_factory_reads_deployment_base_url_named_by_spec(monkeypatch) -> None:
+    spec = replace(_spec("deployment-url-provider"), base_url_setting="OLLAMA_BASE_URL")
+    monkeypatch.setattr(settings, "OLLAMA_BASE_URL", "http://ollama.internal:11434")
+    llm_provider_registry.register(spec)
+
+    try:
+        provider = get_provider(spec.name)
+        assert isinstance(provider, _FakeProvider)
+        assert provider.config == ProviderConfig(base_url="http://ollama.internal:11434")
     finally:
         llm_provider_registry.unregister(spec.name)

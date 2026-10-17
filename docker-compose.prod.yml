@@ -68,6 +68,11 @@ services:
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
       GROQ_API_KEY: ${GROQ_API_KEY:-}
+      # Self-hosted Ollama endpoint (#332). No bundled Ollama service: run
+      # one and point this at it (e.g. http://192.168.1.20:11434, a host
+      # reachable from the container). Leave empty for the provider's
+      # built-in default.
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-}
       # Seeds the demo clinic on first boot. Leave at 0 for a real clinic.
       SEED_ON_STARTUP: ${SEED_ON_STARTUP:-0}
       SEED_LANG: ${SEED_LANG:-es}

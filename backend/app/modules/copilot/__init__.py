@@ -51,6 +51,7 @@ class CopilotModule(BaseModule):
             ANTHROPIC_SPEC,
             GEMINI_SPEC,
             GROQ_SPEC,
+            OLLAMA_SPEC,
             OPENAI_SPEC,
             OPENROUTER_SPEC,
         )
@@ -61,6 +62,7 @@ class CopilotModule(BaseModule):
         llm_provider_registry.register(GEMINI_SPEC)
         llm_provider_registry.register(OPENROUTER_SPEC)
         llm_provider_registry.register(GROQ_SPEC)
+        llm_provider_registry.register(OLLAMA_SPEC)
 
     def get_models(self) -> list:
         return [CopilotConversation, CopilotMessage, CopilotNudge, CopilotSettings]

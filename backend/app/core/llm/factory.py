@@ -38,6 +38,12 @@ def _create_groq(config: ProviderConfig) -> Provider:
     return GroqProvider(api_key=config.api_key or "")
 
 
+def _create_ollama(config: ProviderConfig) -> Provider:
+    from app.core.llm.ollama_provider import OllamaProvider
+
+    return OllamaProvider(base_url=config.base_url)
+
+
 OPENAI_SPEC = ProviderSpec(
     name="openai",
     label="OpenAI",
@@ -88,6 +94,17 @@ GROQ_SPEC = ProviderSpec(
     factory=_create_groq,
 )
 
+OLLAMA_SPEC = ProviderSpec(
+    name="ollama",
+    label="Ollama",
+    default_model=settings.COPILOT_MODEL_CHAT_OLLAMA,
+    tool_dialect="openai",
+    needs_api_key=False,
+    api_key_setting=None,
+    factory=_create_ollama,
+    base_url_setting="OLLAMA_BASE_URL",
+)
+
 
 def get_provider_spec(name: str) -> ProviderSpec:
     """Return the registered specification for ``name``."""
@@ -105,6 +122,19 @@ def get_configured_api_key(spec: ProviderSpec) -> str | None:
     return getattr(settings, spec.api_key_setting)
 
 
+def get_configured_base_url(spec: ProviderSpec) -> str | None:
+    """Return the deployment-level base URL configured for ``spec``.
+
+    ``None`` for vendors with a fixed endpoint; the self-hosted provider
+    (Ollama) reads its endpoint from ``OLLAMA_BASE_URL``. An unset *or*
+    empty setting normalizes to ``None`` so the provider's own default
+    applies (Compose forwards an unset var as ``""``, not omitted).
+    """
+    if spec.base_url_setting is None:
+        return None
+    return (getattr(settings, spec.base_url_setting) or "").strip() or None
+
+
 def get_provider(name: str, *, api_key: str | None = None) -> Provider:
     """Return a configured :class:`Provider` for ``name``.
 
@@ -114,4 +144,9 @@ def get_provider(name: str, *, api_key: str | None = None) -> Provider:
     spec = get_provider_spec(name)
     resolved_api_key = api_key or get_configured_api_key(spec)
 
-    return spec.factory(ProviderConfig(api_key=resolved_api_key))
+    return spec.factory(
+        ProviderConfig(
+            api_key=resolved_api_key,
+            base_url=get_configured_base_url(spec),
+        )
+    )

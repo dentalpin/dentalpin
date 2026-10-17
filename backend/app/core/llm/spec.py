@@ -28,6 +28,9 @@ class ProviderSpec:
     needs_api_key: bool
     api_key_setting: str | None
     factory: Callable[[ProviderConfig], Provider]
+    # Deployment setting holding a self-hosted endpoint (Ollama); ``None``
+    # for vendors with a fixed URL baked into their adapter.
+    base_url_setting: str | None = None
 
     def __post_init__(self) -> None:
         if self.needs_api_key and not self.api_key_setting:
