@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat: billing settings use the core settings registry (ADR 0041). The three settings are declared on the module and `GET/PUT /settings` delegate to `ClinicSettingsService`; the public contract is unchanged. A new Settings > Billing > Preferences page renders them from the declarations through the generic `SettingsModuleForm`; an emptied required integer blocks the save with an inline message.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix: date-only fields (`YYYY-MM-DD`) are parsed as local midnight

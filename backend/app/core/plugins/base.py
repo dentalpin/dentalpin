@@ -9,6 +9,8 @@ from typing import TYPE_CHECKING, Any, ClassVar
 from fastapi import APIRouter
 from sqlalchemy.orm import DeclarativeBase
 
+from app.core.settings.spec import SettingSpec
+
 from .manifest import Manifest
 
 if TYPE_CHECKING:
@@ -78,6 +80,19 @@ class BaseModule(ABC):
         Format: ``'resource.action'`` (no module prefix). The registry
         namespaces them automatically, e.g. ``'patients.read'`` from
         ``clinical`` becomes ``'clinical.patients.read'``.
+        """
+        return []
+
+    # --- Settings contract (ADR 0041) ------------------------------------
+
+    def get_settings(self) -> list[SettingSpec]:
+        """Return simple clinic-scoped settings this module declares.
+
+        Default is an empty list. Declarations are validated when the
+        module is registered and served through
+        ``/api/v1/settings/{module}``; values are stored under
+        ``clinics.settings[<module>]``. Never declare credentials here -
+        ``clinics.settings`` is returned to clients.
         """
         return []
 

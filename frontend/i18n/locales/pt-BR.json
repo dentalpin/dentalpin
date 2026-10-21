@@ -163,6 +163,13 @@
     }
   },
   "settings": {
+    "moduleSettings": {
+      "save": "Guardar",
+      "saved": "Definições guardadas",
+      "empty": "Este módulo não tem definições que possa ver.",
+      "loadError": "Não foi possível carregar estas configurações. Tente novamente em alguns segundos.",
+      "invalidInteger": "Informe um número inteiro."
+    },
     "categories": {
       "people": {
         "description": "Usuários, perfis e convites."
@@ -374,6 +381,24 @@
       },
       "filters": {
         "cabinet": "Consultório"
+      }
+    }
+  },
+  "billingSettings": {
+    "title": "Preferências de faturação",
+    "description": "Prazos de pagamento, rodapé da fatura e dados bancários.",
+    "fields": {
+      "defaultPaymentTermDays": {
+        "label": "Prazo de pagamento predefinido (dias)",
+        "description": "Prazo de pagamento preferido da clínica, em dias. Cada fatura mantém o prazo informado."
+      },
+      "invoiceFooterText": {
+        "label": "Rodapé da fatura",
+        "description": "Texto livre salvo com as preferências de faturamento da clínica."
+      },
+      "bankAccountInfo": {
+        "label": "Dados bancários",
+        "description": "Dados bancários salvos com as preferências de faturamento da clínica."
       }
     }
   },

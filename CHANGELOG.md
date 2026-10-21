@@ -63,6 +63,20 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Added
 
+- **Module settings registry (ADR 0041).** Modules can declare simple
+  clinic-scoped settings through `BaseModule.get_settings()`; the core
+  validates them at discovery, stores values under
+  `clinics.settings[<module>]` and serves them at
+  `GET/PATCH /api/v1/settings/{module}` with per-setting read and write
+  permissions. A generic `SettingsModuleForm` renders the declarations,
+  PATCHes only the fields the user changed, sends no request on an
+  unchanged save and blocks an emptied required integer with an inline
+  message. Billing is the first module on it (Settings > Billing >
+  Preferences), with its legacy settings endpoints delegating to the same
+  service. The new
+  strings are translated in de/fr/it/pt/pt-BR; ar/hi/hu/pl/ta/te fall
+  back to English.
+
 - **Copilot: Ollama LLM provider adapter** (self-hosted, local, no API
   key) over its OpenAI-compatible endpoint. `OLLAMA_SPEC` needs no key
   and reads its endpoint from a new `base_url_setting`

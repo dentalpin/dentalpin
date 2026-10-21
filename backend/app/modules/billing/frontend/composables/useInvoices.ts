@@ -1,7 +1,5 @@
 import type {
   ApiResponse,
-  BillingSettings,
-  BillingSettingsUpdate,
   CreditNoteCreate,
   Invoice,
   InvoiceCreate,
@@ -423,30 +421,6 @@ export function useInvoices() {
   }
 
   // ============================================================================
-  // Settings
-  // ============================================================================
-
-  async function fetchSettings(): Promise<BillingSettings | null> {
-    try {
-      const response = await api.get<ApiResponse<BillingSettings>>(
-        '/api/v1/billing/settings'
-      )
-      return response.data
-    } catch (e) {
-      console.error('Failed to fetch billing settings:', e)
-      return null
-    }
-  }
-
-  async function updateSettings(data: BillingSettingsUpdate): Promise<BillingSettings> {
-    const response = await api.put<ApiResponse<BillingSettings>>(
-      '/api/v1/billing/settings',
-      data
-    )
-    return response.data
-  }
-
-  // ============================================================================
   // Patient Summary (used by patient billing tab)
   // ============================================================================
 
@@ -593,10 +567,6 @@ export function useInvoices() {
 
     // History
     fetchHistory,
-
-    // Settings
-    fetchSettings,
-    updateSettings,
 
     // Patient Summary
     fetchPatientSummary,
