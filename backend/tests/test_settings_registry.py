@@ -433,9 +433,7 @@ async def test_discovered_but_inactive_module_returns_404(
 ) -> None:
     module_registry.register(_InactiveSettingsModule())
     try:
-        response = await client.get(
-            "/api/v1/settings/settings_inactive_stub", headers=auth_headers
-        )
+        response = await client.get("/api/v1/settings/settings_inactive_stub", headers=auth_headers)
     finally:
         module_registry.unregister("settings_inactive_stub")
 
@@ -448,9 +446,7 @@ async def test_active_module_without_declarations_returns_404(
     module_registry.register(_EmptySettingsModule())
     module_registry.activate("settings_empty_stub")
     try:
-        response = await client.get(
-            "/api/v1/settings/settings_empty_stub", headers=auth_headers
-        )
+        response = await client.get("/api/v1/settings/settings_empty_stub", headers=auth_headers)
     finally:
         module_registry.unregister("settings_empty_stub")
 
