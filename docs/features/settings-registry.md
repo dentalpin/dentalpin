@@ -120,8 +120,9 @@ entered on each invoice.
    storage.
 4. Settings are clinic-scoped: a second clinic sees defaults, not the first
    clinic's values.
-5. Billing's legacy settings endpoints behave exactly as before and now go
-   through the service.
+5. Billing's legacy settings endpoints behave as before for well-formed
+   stored values and route drifted ones through the documented read-time
+   fallback; they now go through the service.
 6. The billing settings page renders from declarations, saves with PATCH and
    reflects permissions.
 7. Existing suites, catalogs and docs gates stay green.

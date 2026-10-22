@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 from typing import Any
 from uuid import UUID
 
@@ -11,6 +12,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.auth.models import Clinic
 from app.core.plugins.registry import module_registry
 from app.core.settings.spec import SettingSpec, SettingValueError, validate_value
+
+logger = logging.getLogger(__name__)
 
 
 class UnknownSettingsModuleError(LookupError):
@@ -39,15 +42,22 @@ class ClinicSettingsService:
         return specs
 
     @staticmethod
-    def _effective(specs: list[SettingSpec], stored: dict[str, Any]) -> dict[str, Any]:
+    def _effective(
+        specs: list[SettingSpec], stored: dict[str, Any], module_name: str
+    ) -> dict[str, Any]:
         values: dict[str, Any] = {}
         for spec in specs:
             if spec.key in stored:
                 try:
                     values[spec.key] = validate_value(spec, stored[spec.key])
                     continue
-                except SettingValueError:
-                    pass
+                except SettingValueError as exc:
+                    logger.warning(
+                        "Settings fallback: module %s key %s %s",
+                        module_name,
+                        spec.key,
+                        exc,
+                    )
             values[spec.key] = spec.default
         return values
 
@@ -58,7 +68,9 @@ class ClinicSettingsService:
         if clinic is None:
             raise SettingsClinicNotFoundError(str(clinic_id))
         stored = (clinic.settings or {}).get(module_name)
-        return ClinicSettingsService._effective(specs, stored if isinstance(stored, dict) else {})
+        return ClinicSettingsService._effective(
+            specs, stored if isinstance(stored, dict) else {}, module_name
+        )
 
     @staticmethod
     async def update(
@@ -94,4 +106,4 @@ class ClinicSettingsService:
         clinic.settings = settings
         await db.commit()
 
-        return ClinicSettingsService._effective(specs, namespace)
+        return ClinicSettingsService._effective(specs, namespace, module_name)
