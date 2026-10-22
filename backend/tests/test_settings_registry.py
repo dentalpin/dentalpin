@@ -367,6 +367,47 @@ def test_declarations_reject_enum_default_outside_choices() -> None:
         )
 
 
+def test_declarations_reject_key_outside_namespace() -> None:
+    with pytest.raises(SettingDeclarationError):
+        validate_declarations("billing", [_spec(key="Enabled")])
+
+
+def test_declarations_reject_non_setting_spec_entry() -> None:
+    with pytest.raises(SettingDeclarationError):
+        validate_declarations("billing", ["not-a-spec"])
+
+
+def test_declarations_reject_unsupported_type() -> None:
+    with pytest.raises(SettingDeclarationError):
+        validate_declarations("billing", [_spec(type="element")])
+
+
+def test_declarations_reject_min_value_above_max_value() -> None:
+    with pytest.raises(SettingDeclarationError):
+        validate_declarations(
+            "billing",
+            [_spec(type="integer", default=10, min_value=30, max_value=5)],
+        )
+
+
+def test_declarations_reject_bounds_on_non_integer() -> None:
+    with pytest.raises(SettingDeclarationError):
+        validate_declarations("billing", [_spec(min_value=1)])
+
+
+def test_declarations_reject_max_length_on_non_string() -> None:
+    with pytest.raises(SettingDeclarationError, match="max_length"):
+        validate_declarations("billing", [_spec(default=5, max_length=120)])
+
+
+def test_declarations_reject_non_string_enum_choice() -> None:
+    with pytest.raises(SettingDeclarationError):
+        validate_declarations(
+            "billing",
+            [_spec(type="enum", default="term", choices=("term", 30))],
+        )
+
+
 def test_declarations_accept_valid_spec() -> None:
     validate_declarations("billing", [_spec()])
 

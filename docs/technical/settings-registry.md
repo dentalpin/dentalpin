@@ -81,6 +81,7 @@ declaration falls back to the default instead of breaking the form.
         "default": 30,
         "writable": true,
         "label_key": "billingSettings.fields.defaultPaymentTermDays.label",
+        "description_key": "billingSettings.fields.defaultPaymentTermDays.description",
         "choices": [],
         "min_value": 0,
         "max_value": 365,

@@ -1,6 +1,7 @@
 # Settings registry
 
-> Status: in progress (ADR 0042). Modules: core seam + billing pilot.
+> Status: shipped in the settings-registry PR (ADR 0042). Scope: core seam + billing
+> pilot; device scope and secret-bearing settings remain out.
 > Spec last updated: 2026-10-20.
 
 ## Problem
@@ -75,7 +76,8 @@ at request time.
 ### API
 
 - `GET /api/v1/settings/{module}` returns the module's readable
-  declarations plus effective values (`stored ?? default`) and a `writable`
+  declarations plus effective values (the stored value when it still validates,
+  else the default) and a `writable`
   flag per field. Modules with no declarations answer 404.
 - `PATCH /api/v1/settings/{module}` takes a partial `values` object. Unknown
   keys, wrong types, out-of-bounds values and non-writable fields are
