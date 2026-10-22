@@ -12,7 +12,7 @@ related_paths:
   - backend/app/modules/billing/frontend/components/BillingSettingsPage.vue
   - frontend/app/components/settings/SettingsModuleForm.vue
   - backend/app/core/settings/router.py
-last_verified_commit: 6573363558909b2316257813049fc1c379aaf7a8
+last_verified_commit: 9b2483eb491d80c7ceeef0aee2500d9458549047
 ---
 
 # Preferencias de facturación
