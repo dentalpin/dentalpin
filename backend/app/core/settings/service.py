@@ -68,9 +68,13 @@ class ClinicSettingsService:
         if clinic is None:
             raise SettingsClinicNotFoundError(str(clinic_id))
         stored = (clinic.settings or {}).get(module_name)
-        return ClinicSettingsService._effective(
-            specs, stored if isinstance(stored, dict) else {}, module_name
-        )
+        if not isinstance(stored, dict) and stored is not None:
+            logger.warning(
+                "Settings fallback: module %s stores a non-dict namespace; using defaults",
+                module_name,
+            )
+            stored = {}
+        return ClinicSettingsService._effective(specs, stored or {}, module_name)
 
     @staticmethod
     async def update(

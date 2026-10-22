@@ -359,15 +359,23 @@ def test_declarations_reject_bad_default() -> None:
         validate_declarations("billing", [_spec(default="no")])
 
 
+def test_declarations_reject_foreign_write_permission() -> None:
+    with pytest.raises(SettingDeclarationError, match="write_permission"):
+        validate_declarations(
+            "billing",
+            [_spec(type="integer", default=1, write_permission="patients.read")],
+        )
+
+
 def test_declarations_reject_enum_default_outside_choices() -> None:
-    with pytest.raises(SettingDeclarationError):
+    with pytest.raises(SettingDeclarationError, match="default is not one of its choices"):
         validate_declarations(
             "billing",
             [_spec(type="enum", default="b", choices=("a", "c"))],
         )
 
 
-def test_declarations_reject_key_outside_namespace() -> None:
+def test_declarations_reject_invalid_key_format() -> None:
     with pytest.raises(SettingDeclarationError):
         validate_declarations("billing", [_spec(key="Enabled")])
 
@@ -383,10 +391,10 @@ def test_declarations_reject_unsupported_type() -> None:
 
 
 def test_declarations_reject_min_value_above_max_value() -> None:
-    with pytest.raises(SettingDeclarationError):
+    with pytest.raises(SettingDeclarationError, match="min_value exceeds max_value"):
         validate_declarations(
             "billing",
-            [_spec(type="integer", default=10, min_value=30, max_value=5)],
+            [_spec(type="integer", default=None, nullable=True, min_value=30, max_value=5)],
         )
 
 
