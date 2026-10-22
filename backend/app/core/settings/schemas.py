@@ -1,4 +1,4 @@
-"""API schemas for the module settings registry (ADR 0041)."""
+"""API schemas for the module settings registry (ADR 0042)."""
 
 from __future__ import annotations
 

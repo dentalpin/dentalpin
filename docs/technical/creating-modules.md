@@ -928,7 +928,7 @@ if (can(PERMISSIONS.inventory.read)) { /* ... */ }
 <UButton v-if="can(PERMISSIONS.inventory.write)" ...>Add item</UButton>
 ```
 
-### Clinic settings (ADR 0041)
+### Clinic settings (ADR 0042)
 
 Simple, non-secret, clinic-scoped settings do **not** need a table, a
 migration or a router. Declare them on the module and the core serves

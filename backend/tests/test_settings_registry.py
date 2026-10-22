@@ -1,4 +1,4 @@
-"""Module settings registry (ADR 0041)."""
+"""Module settings registry (ADR 0042)."""
 
 from uuid import uuid4
 

@@ -1,7 +1,7 @@
 # Module settings registry
 
 How modules declare simple clinic settings and get storage, validation,
-RBAC and a generated form without a migration. Rule: ADR 0041.
+RBAC and a generated form without a migration. Rule: ADR 0042.
 Product brief: `docs/features/settings-registry.md`.
 
 ## Contract

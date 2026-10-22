@@ -1,4 +1,4 @@
-# 0041 — Module settings registry
+# 0042 — Module settings registry
 
 - **Status:** accepted
 - **Date:** 2026-10-20

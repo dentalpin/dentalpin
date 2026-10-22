@@ -1,6 +1,6 @@
 # Settings registry
 
-> Status: in progress (ADR 0041). Modules: core seam + billing pilot.
+> Status: in progress (ADR 0042). Modules: core seam + billing pilot.
 > Spec last updated: 2026-10-20.
 
 ## Problem

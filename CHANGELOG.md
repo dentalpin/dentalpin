@@ -63,7 +63,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Added
 
-- **Module settings registry (ADR 0041).** Modules can declare simple
+- **Module settings registry (ADR 0042).** Modules can declare simple
   clinic-scoped settings through `BaseModule.get_settings()`; the core
   validates them at discovery, stores values under
   `clinics.settings[<module>]` and serves them at

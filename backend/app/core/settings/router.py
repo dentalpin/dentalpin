@@ -1,4 +1,4 @@
-"""Generic settings API (ADR 0041)."""
+"""Generic settings API (ADR 0042)."""
 
 from __future__ import annotations
 

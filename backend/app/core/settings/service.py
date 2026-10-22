@@ -1,4 +1,4 @@
-"""Storage and validation for declared clinic settings (ADR 0041)."""
+"""Storage and validation for declared clinic settings (ADR 0042)."""
 
 from __future__ import annotations
 

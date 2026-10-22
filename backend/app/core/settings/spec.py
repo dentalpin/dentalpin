@@ -1,4 +1,4 @@
-"""Declarative clinic setting specs (ADR 0041)."""
+"""Declarative clinic setting specs (ADR 0042)."""
 
 from __future__ import annotations
 

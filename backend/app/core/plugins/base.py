@@ -83,7 +83,7 @@ class BaseModule(ABC):
         """
         return []
 
-    # --- Settings contract (ADR 0041) ------------------------------------
+    # --- Settings contract (ADR 0042) ------------------------------------
 
     def get_settings(self) -> list[SettingSpec]:
         """Return simple clinic-scoped settings this module declares.
