@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- feat: S3-compatible object storage backend (`storage/s3.py`) behind the
+  existing `StorageBackend` seam, selected with `STORAGE_BACKEND=s3` (T6).
+  `STORAGE_S3_BUCKET` is required in that mode; `STORAGE_S3_REGION` /
+  `STORAGE_S3_ENDPOINT_URL` target MinIO/Wasabi/R2 and empty credentials
+  fall back to the standard AWS chain. The factory also fails fast on an
+  unknown backend name and refuses `s3` without a bucket instead of
+  failing on the first upload. Keys are forwarded in all three deployment
+  compose files and documented in the shipped `.env` templates; boto3
+  added to `pyproject.toml` (uv.lock updated). 13 tests cover put/get/
+  head/delete semantics, the NoSuchKey -> FileNotFoundError mapping and
+  the factory guards.
+
 - fix(#743): emptying a document's description in the edit modal kept the
   old text. The modal sent `|| undefined` (key dropped) and
   `update_document` skipped every `None`. The modal now sends `null` and

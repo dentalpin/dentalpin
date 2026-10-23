@@ -85,8 +85,10 @@ through `attachment_registry`.
   free-form, so all three erasure categories are declared.
 
 - **Storage backend is pluggable** (`STORAGE_BACKEND` env var).
-  Currently `local`. The future `media_s3` module extends
-  `StorageBackend` without API changes.
+  `local` (Docker volume via `aiofiles`) or `s3` (`storage/s3.py`,
+  boto3 S3 client; bucket required, region/endpoint optional, empty
+  credentials use the AWS chain). Both implement `StorageBackend`, so
+  upload/download/archive/get_archive/download all work unchanged.
 - **Thumbnails** are precomputed on upload (`thumbnails.py`) at two
   sizes (`{path}.thumb.jpg`, `{path}.medium.jpg`). Originals stay
   untouched. The download endpoint accepts a `variant` query param.

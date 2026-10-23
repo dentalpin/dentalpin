@@ -39,4 +39,17 @@ def get_storage_backend() -> StorageBackend:
         path = _test_storage_path or settings.STORAGE_LOCAL_PATH
         return LocalStorageBackend(path)
 
+    if backend == "s3":
+        if not settings.STORAGE_S3_BUCKET:
+            raise ValueError("STORAGE_BACKEND=s3 requires STORAGE_S3_BUCKET to be set")
+        from .s3 import S3StorageBackend
+
+        return S3StorageBackend(
+            bucket=settings.STORAGE_S3_BUCKET,
+            region=settings.STORAGE_S3_REGION,
+            endpoint_url=settings.STORAGE_S3_ENDPOINT_URL,
+            access_key_id=settings.STORAGE_S3_ACCESS_KEY_ID,
+            secret_access_key=settings.STORAGE_S3_SECRET_ACCESS_KEY,
+        )
+
     raise ValueError(f"Unknown storage backend: {backend}")

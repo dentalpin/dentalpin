@@ -64,6 +64,13 @@ services:
       ALLOWED_ORIGINS: ${PUBLIC_URL:-http://localhost}
       STORAGE_BACKEND: local
       STORAGE_LOCAL_PATH: /app/storage
+      # Media S3 backend. Inert while STORAGE_BACKEND stays `local`;
+      # operators flip the backend via the module-level override file.
+      STORAGE_S3_BUCKET: ${STORAGE_S3_BUCKET:-}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION:-}
+      STORAGE_S3_ENDPOINT_URL: ${STORAGE_S3_ENDPOINT_URL:-}
+      STORAGE_S3_ACCESS_KEY_ID: ${STORAGE_S3_ACCESS_KEY_ID:-}
+      STORAGE_S3_SECRET_ACCESS_KEY: ${STORAGE_S3_SECRET_ACCESS_KEY:-}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       GEMINI_API_KEY: ${GEMINI_API_KEY:-}

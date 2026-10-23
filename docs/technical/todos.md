@@ -148,11 +148,16 @@ Extended `clinical` module with:
 **Storage Configuration:**
 
 ```python
-# backend/app/core/config.py
+# backend/app/config.py
 STORAGE_BACKEND: str = "local"  # local | s3
 STORAGE_LOCAL_PATH: str = "/app/storage"
+STORAGE_S3_BUCKET: str = ""     # required when STORAGE_BACKEND=s3
+STORAGE_S3_REGION: str = ""
+STORAGE_S3_ENDPOINT_URL: str = ""   # MinIO / Wasabi / Cloudflare R2
+STORAGE_S3_ACCESS_KEY_ID: str = ""  # empty -> standard AWS chain
+STORAGE_S3_SECRET_ACCESS_KEY: str = ""
 STORAGE_MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
-STORAGE_ALLOWED_TYPES: list = ["application/pdf", "image/jpeg", "image/png"]
+STORAGE_ALLOWED_MIME_TYPES: str = "application/pdf,image/jpeg,image/png"
 ```
 
 **Files Created/Modified:**
