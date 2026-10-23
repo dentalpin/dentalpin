@@ -37,6 +37,16 @@ class ModuleRegistry:
         """Record a discovered module instance (not yet active)."""
         if module.name in self._modules:
             raise ValueError(f"Module '{module.name}' is already registered")
+        from app.core.settings.spec import validate_declarations
+
+        known_permissions = {
+            f"{module.name}.{permission}" for permission in module.get_permissions()
+        }
+        validate_declarations(
+            module.name,
+            list(module.get_settings()),
+            known_permissions=known_permissions,
+        )
         self._modules[module.name] = module
         logger.info(f"Registered module: {module.name} v{module.version}")
 

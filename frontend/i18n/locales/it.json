@@ -1050,6 +1050,13 @@
     }
   },
   "settings": {
+    "moduleSettings": {
+      "save": "Salva",
+      "saved": "Impostazioni salvate",
+      "empty": "Questo modulo non ha impostazioni che puoi visualizzare.",
+      "loadError": "Impossibile caricare queste impostazioni. Riprova tra qualche secondo.",
+      "invalidInteger": "Inserisci un numero intero."
+    },
     "title": "Impostazioni",
     "subtitle": "Gestisci il tuo studio, il team e i moduli.",
     "allCategories": "Tutte le categorie",
@@ -2986,6 +2993,24 @@
       }
     },
     "loadError": "Impossibile caricare i dati del report"
+  },
+  "billingSettings": {
+    "title": "Preferenze di fatturazione",
+    "description": "Termini di pagamento, piè di pagina e dati bancari.",
+    "fields": {
+      "defaultPaymentTermDays": {
+        "label": "Termine di pagamento predefinito (giorni)",
+        "description": "Termine di pagamento preferito della clinica, in giorni. Ogni fattura mantiene il termine inserito."
+      },
+      "invoiceFooterText": {
+        "label": "Piè di pagina fattura",
+        "description": "Testo libero salvato con le preferenze di fatturazione della clinica."
+      },
+      "bankAccountInfo": {
+        "label": "Coordinate bancarie",
+        "description": "Coordinate bancarie salvate con le preferenze di fatturazione della clinica."
+      }
+    }
   },
   "invoiceSeries": {
     "title": "Serie di fatturazione",

@@ -1050,6 +1050,13 @@
     }
   },
   "settings": {
+    "moduleSettings": {
+      "save": "Guardar",
+      "saved": "Definições guardadas",
+      "empty": "Este módulo não tem definições que possa ver.",
+      "loadError": "Não foi possível carregar estas configurações. Tente novamente em alguns segundos.",
+      "invalidInteger": "Introduza um número inteiro."
+    },
     "title": "Definições",
     "subtitle": "Faça a gestão da sua clínica, equipa e módulos.",
     "allCategories": "Todas as categorias",
@@ -2986,6 +2993,24 @@
       }
     },
     "loadError": "Não foi possível carregar os dados do relatório"
+  },
+  "billingSettings": {
+    "title": "Preferências de faturação",
+    "description": "Prazos de pagamento, rodapé da fatura e dados bancários.",
+    "fields": {
+      "defaultPaymentTermDays": {
+        "label": "Prazo de pagamento predefinido (dias)",
+        "description": "Prazo de pagamento preferido da clínica, em dias. Cada fatura mantém o prazo introduzido."
+      },
+      "invoiceFooterText": {
+        "label": "Rodapé da fatura",
+        "description": "Texto livre guardado com as preferências de faturação da clínica."
+      },
+      "bankAccountInfo": {
+        "label": "Dados bancários",
+        "description": "Dados bancários guardados com as preferências de faturação da clínica."
+      }
+    }
   },
   "invoiceSeries": {
     "title": "Séries de faturação",

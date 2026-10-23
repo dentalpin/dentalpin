@@ -1050,6 +1050,13 @@
     }
   },
   "settings": {
+    "moduleSettings": {
+      "save": "Save",
+      "saved": "Settings saved",
+      "empty": "This module has no settings you can view.",
+      "loadError": "Couldn't load these settings. Try again in a few seconds.",
+      "invalidInteger": "Enter a whole number."
+    },
     "title": "Beállítások",
     "subtitle": "Kezelje a rendelőjét, a csapatát és a modulokat.",
     "allCategories": "Minden kategória",
@@ -2986,6 +2993,24 @@
       }
     },
     "loadError": "Nem sikerült betölteni a riport adatait"
+  },
+  "billingSettings": {
+    "title": "Billing preferences",
+    "description": "Payment terms, invoice footer and bank details.",
+    "fields": {
+      "defaultPaymentTermDays": {
+        "label": "Default payment term (days)",
+        "description": "Clinic preference for the payment term, in days. Each invoice keeps the term entered on it."
+      },
+      "invoiceFooterText": {
+        "label": "Invoice footer",
+        "description": "Free text stored with the clinic's billing preferences."
+      },
+      "bankAccountInfo": {
+        "label": "Bank account details",
+        "description": "Bank details stored with the clinic's billing preferences."
+      }
+    }
   },
   "invoiceSeries": {
     "title": "Számlatömbök",

@@ -1050,6 +1050,13 @@
     }
   },
   "settings": {
+    "moduleSettings": {
+      "save": "Save",
+      "saved": "Settings saved",
+      "empty": "This module has no settings you can view.",
+      "loadError": "Couldn't load these settings. Try again in a few seconds.",
+      "invalidInteger": "Enter a whole number."
+    },
     "title": "సెట్టింగ్‌లు",
     "subtitle": "మీ క్లినిక్, బృందం మరియు మాడ్యూల్‌లను నిర్వహించండి.",
     "allCategories": "అన్ని వర్గాలు",
@@ -2996,6 +3003,24 @@
       }
     },
     "loadError": "నివేదిక డేటాను లోడ్ చేయలేకపోయాము"
+  },
+  "billingSettings": {
+    "title": "Billing preferences",
+    "description": "Payment terms, invoice footer and bank details.",
+    "fields": {
+      "defaultPaymentTermDays": {
+        "label": "Default payment term (days)",
+        "description": "Clinic preference for the payment term, in days. Each invoice keeps the term entered on it."
+      },
+      "invoiceFooterText": {
+        "label": "Invoice footer",
+        "description": "Free text stored with the clinic's billing preferences."
+      },
+      "bankAccountInfo": {
+        "label": "Bank account details",
+        "description": "Bank details stored with the clinic's billing preferences."
+      }
+    }
   },
   "invoiceSeries": {
     "title": "ఇన్‌వాయిస్ సిరీస్",
