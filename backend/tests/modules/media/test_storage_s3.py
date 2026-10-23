@@ -21,24 +21,29 @@ class StubS3Client:
         self.delete_calls: list[str] = []
         self.head_calls: list[str] = []
 
-    def put_object(self, Bucket: str, Key: str, Body: bytes) -> None:
-        self.put_calls.append((Key, Body))
-        self.objects[Key] = Body
+    def put_object(self, **kwargs: object) -> None:
+        key = str(kwargs["Key"])
+        body = kwargs["Body"]
+        self.put_calls.append((key, body))
+        self.objects[key] = body
 
-    def head_object(self, Bucket: str, Key: str) -> dict:
-        self.head_calls.append(Key)
-        if Key not in self.objects:
+    def head_object(self, **kwargs: object) -> dict:
+        key = str(kwargs["Key"])
+        self.head_calls.append(key)
+        if key not in self.objects:
             raise _not_found_error("HeadObject")
-        return {"ContentLength": len(self.objects[Key])}
+        return {"ContentLength": len(self.objects[key])}
 
-    def get_object(self, Bucket: str, Key: str) -> dict:
-        if Key not in self.objects:
+    def get_object(self, **kwargs: object) -> dict:
+        key = str(kwargs["Key"])
+        if key not in self.objects:
             raise _not_found_error("GetObject")
-        return {"Body": _StubBody(self.objects[Key])}
+        return {"Body": _StubBody(self.objects[key])}
 
-    def delete_object(self, Bucket: str, Key: str) -> dict:
-        self.delete_calls.append(Key)
-        self.objects.pop(Key, None)
+    def delete_object(self, **kwargs: object) -> dict:
+        key = str(kwargs["Key"])
+        self.delete_calls.append(key)
+        self.objects.pop(key, None)
         return {"ResponseMetadata": {"HTTPStatusCode": 204}}
 
 
