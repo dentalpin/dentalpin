@@ -1502,3 +1502,28 @@ async def test_update_system_item_preserves_seeded_odontogram_mapping(
     )
     assert resp.status_code == 200, resp.text
     assert resp.json()["data"]["odontogram_mapping"]["visualization_rules"] == rules
+
+
+@pytest.mark.asyncio
+async def test_price_past_the_column_answers_422(
+    client: AsyncClient, auth_headers: dict, catalog_clinic_setup: dict
+):
+    cat = await client.post(
+        "/api/v1/catalog/categories",
+        json={"key": "overflow", "names": {"es": "Desbordamiento"}},
+        headers=auth_headers,
+    )
+    response = await client.post(
+        "/api/v1/catalog/items",
+        json={
+            "category_id": cat.json()["data"]["id"],
+            "internal_code": "OVF-1",
+            "names": {"es": "Corona"},
+            "default_price": 1_000_000_000,  # NUMERIC(10,2) tops out below 10^8
+            "vat_type_id": catalog_clinic_setup["vat_exempt_id"],
+            "treatment_scope": "tooth",
+        },
+        headers=auth_headers,
+    )
+    assert response.status_code == 422, response.text
+    assert response.json()["message"] == "A numeric value is out of range"
