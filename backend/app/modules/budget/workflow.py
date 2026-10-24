@@ -105,6 +105,16 @@ class BudgetWorkflowService:
         return new_status in allowed
 
     @staticmethod
+    async def _lock_status(db: AsyncSession, budget: Budget) -> None:
+        """Lock the budget row and re-read its status before a transition.
+
+        The router loaded ``budget`` without a lock, so two clicks at once
+        both saw the old status and both transitioned: two signatures on one
+        budget, ``budget.accepted`` published twice.
+        """
+        await db.refresh(budget, attribute_names=["status"], with_for_update=True)
+
+    @staticmethod
     async def send_budget(
         db: AsyncSession,
         budget: Budget,
@@ -129,6 +139,7 @@ class BudgetWorkflowService:
         """
         if send_method not in ("manual", "email", "whatsapp"):
             raise BudgetWorkflowError(f"Invalid send_method '{send_method}'")
+        await BudgetWorkflowService._lock_status(db, budget)
         if not BudgetWorkflowService.can_transition(budget.status, "sent"):
             raise BudgetWorkflowError(f"Cannot send budget from status '{budget.status}'")
 
@@ -201,6 +212,7 @@ class BudgetWorkflowService:
                 see how each acceptance was captured without joining
                 signatures.
         """
+        await BudgetWorkflowService._lock_status(db, budget)
         if not BudgetWorkflowService.can_transition(budget.status, "accepted"):
             raise BudgetWorkflowError(f"Cannot accept budget from status '{budget.status}'")
 
@@ -360,6 +372,7 @@ class BudgetWorkflowService:
         ``budget.rejected`` so the treatment_plan module can close the
         companion plan with ``closure_reason='rejected_by_patient'``.
         """
+        await BudgetWorkflowService._lock_status(db, budget)
         if not BudgetWorkflowService.can_transition(budget.status, "rejected"):
             raise BudgetWorkflowError(f"Cannot reject budget from status '{budget.status}'")
 
@@ -435,6 +448,7 @@ class BudgetWorkflowService:
         inside its own transaction: the echoed event would send the plan
         back through a reopen it is already performing.
         """
+        await BudgetWorkflowService._lock_status(db, budget)
         if not BudgetWorkflowService.can_transition(budget.status, "cancelled"):
             raise BudgetWorkflowError(f"Cannot cancel budget from status '{budget.status}'")
 
@@ -570,6 +584,7 @@ class BudgetWorkflowService:
         ``treatment_plan`` is not in budget's ``manifest.depends`` —
         the reverse direction is correctly the bus.
         """
+        await BudgetWorkflowService._lock_status(db, budget)
         if not BudgetWorkflowService.can_transition(budget.status, "cancelled"):
             raise BudgetWorkflowError(f"Cannot renegotiate budget in status '{budget.status}'")
 

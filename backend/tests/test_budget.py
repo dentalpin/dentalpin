@@ -1483,3 +1483,68 @@ async def test_assigning_a_real_professional_returns_the_nested_object(
     assert data["assigned_professional_id"] == budget_clinic_setup["user_id"]
     assert data["assigned_professional"] is not None, "stale relationship on the PUT response"
     assert data["assigned_professional"]["id"] == budget_clinic_setup["user_id"]
+
+
+@pytest.mark.asyncio
+async def test_concurrent_accepts_sign_once(
+    client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict, db_session: AsyncSession
+):
+    """Two accepts at once (double click, or the patient link and reception)
+    both read the unlocked status and both accepted: two signatures and
+    budget.accepted published twice. The second now waits for the first and
+    finds the budget already accepted."""
+    import asyncio
+
+    from sqlalchemy import func, select
+
+    from app.database import async_session_maker
+    from app.modules.budget.models import BudgetSignature
+    from app.modules.budget.service import BudgetService
+    from app.modules.budget.workflow import BudgetWorkflowError, BudgetWorkflowService
+
+    r = await client.post(
+        "/api/v1/budget/budgets",
+        json={"patient_id": budget_clinic_setup["patient_id"], "valid_from": "2024-01-01"},
+        headers=auth_headers,
+    )
+    budget_id = UUID(r.json()["data"]["id"])
+    r = await client.post(
+        f"/api/v1/budget/budgets/{budget_id}/items",
+        json={"catalog_item_id": budget_clinic_setup["catalog_item_id"], "quantity": 1},
+        headers=auth_headers,
+    )
+    assert r.status_code == 201, r.text
+    await db_session.commit()
+    clinic_id = UUID(budget_clinic_setup["clinic_id"])
+    user_id = UUID(budget_clinic_setup["user_id"])
+
+    async def accept(db):
+        budget = await BudgetService.get_budget(db, clinic_id, budget_id)
+        return await BudgetWorkflowService.accept_budget(
+            db, budget, {"signed_by_name": "Test", "relationship_to_patient": "patient"}, user_id
+        )
+
+    async with async_session_maker() as first, async_session_maker() as second:
+        second_budget = await BudgetService.get_budget(second, clinic_id, budget_id)
+        await accept(first)
+        other = asyncio.create_task(
+            BudgetWorkflowService.accept_budget(
+                second,
+                second_budget,
+                {"signed_by_name": "Test", "relationship_to_patient": "patient"},
+                user_id,
+            )
+        )
+        await asyncio.sleep(0.3)  # the second accept reaches the lock
+        await first.commit()
+        with pytest.raises(BudgetWorkflowError):
+            await other
+        await second.rollback()
+
+    async with async_session_maker() as db:
+        signatures = await db.scalar(
+            select(func.count())
+            .select_from(BudgetSignature)
+            .where(BudgetSignature.budget_id == budget_id)
+        )
+    assert signatures == 1
