@@ -764,7 +764,9 @@ class BudgetWorkflowService:
         """
         if budget.public_locked_at is not None:
             return False, "locked"
-        if budget.valid_until is not None and budget.valid_until < datetime.now(UTC).date():
+        if budget.valid_until is not None and budget.valid_until < await clinic_today_for(
+            db, budget.clinic_id
+        ):
             return False, "expired"
         if method != budget.public_auth_method:
             return False, "method_mismatch"
@@ -874,7 +876,7 @@ class BudgetWorkflowService:
             version=await BudgetService.next_version(db, budget.clinic_id, budget.budget_number),
             parent_budget_id=budget.id,
             status="draft",
-            valid_from=datetime.now(UTC).date(),
+            valid_from=await clinic_today_for(db, budget.clinic_id),
             valid_until=budget.valid_until,
             created_by=cloned_by,
             assigned_professional_id=budget.assigned_professional_id,

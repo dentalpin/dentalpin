@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import base64
-from datetime import UTC, date, datetime
+from datetime import date
 from typing import Annotated
 from uuid import UUID
 
@@ -14,6 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
 from app.core.email.encryption import encrypt_password
 from app.core.schemas import ApiResponse, PaginatedApiResponse
+from app.core.utils.dates import clinic_today_for
 from app.database import get_db
 from app.modules.catalog.models import TreatmentCatalogItem
 from app.modules.patients.models import Patient
@@ -88,7 +89,7 @@ async def _year_counts(db: AsyncSession, clinic_id: UUID, year: int) -> tuple[in
 async def _settings_response(
     db: AsyncSession, clinic_id: UUID, s: SistemaTsSettings | None
 ) -> TsSettingsResponse:
-    year = datetime.now(UTC).year
+    year = (await clinic_today_for(db, clinic_id)).year
     unsent, accepted, rejected = await _year_counts(db, clinic_id, year)
     expiry = None
     try:
@@ -354,7 +355,7 @@ async def set_opposition(
             )
         )
     ).scalar_one_or_none()
-    today = datetime.now(UTC).date()
+    today = await clinic_today_for(db, ctx.clinic_id)
     if data.opposed:
         if row is None:
             row = SistemaTsPatientOpposition(

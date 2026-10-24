@@ -22,6 +22,7 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel, Field
 
 from app.core.agents import AgentContext, Tool, ToolCategory
+from app.core.utils.dates import clinic_today_for
 from app.modules.agenda.service import AppointmentService
 
 from .services.availability import AvailabilityService
@@ -88,7 +89,7 @@ def _overlaps_part(local_start: datetime, local_end: datetime, part: str) -> boo
 
 
 async def _find_free_slots(ctx: AgentContext, params: FreeSlotsArgs) -> dict:
-    start_day = params.date_from or datetime.now(UTC).date()
+    start_day = params.date_from or await clinic_today_for(ctx.db, ctx.clinic_id)
     end_day = start_day + timedelta(days=params.days_ahead)
     tz_name, ranges = await AvailabilityService.resolve(
         ctx.db, ctx.clinic_id, start_day, end_day, params.professional_id

@@ -15,6 +15,7 @@ from app.core.auth.models import ClinicMembership
 from app.core.events import event_bus
 from app.core.events.types import EventType
 from app.core.i18n_names import catalog_name
+from app.core.utils.dates import clinic_today_for
 from app.modules.agenda.models import Appointment
 from app.modules.odontogram.models import Treatment
 from app.modules.patients.models import Patient
@@ -215,7 +216,7 @@ class TreatmentPlanService:
     @staticmethod
     async def generate_plan_number(db: AsyncSession, clinic_id: UUID) -> str:
         """Generate a unique plan number for the clinic."""
-        year = datetime.now(UTC).year
+        year = (await clinic_today_for(db, clinic_id)).year
 
         # Count existing plans for this year
         result = await db.execute(

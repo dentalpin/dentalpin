@@ -97,7 +97,7 @@ class BudgetNumberService:
         Format: {PREFIX}-{YEAR}-{SEQUENCE:04d}
         Example: PRES-2024-0001
         """
-        current_year = datetime.now(UTC).year
+        current_year = (await clinic_today_for(db, clinic_id)).year
         year_prefix = f"{prefix}-{current_year}-"
 
         # Serialise allocation per clinic until this transaction ends, so the

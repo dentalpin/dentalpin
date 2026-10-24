@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#779): the plan number's year is the clinic's year, not the server's UTC year (New Year's Eve gave the wrong year).
+
 - fix(#770): **Generate budget** clicked twice at the same moment created two budgets for one plan (or answered 500). The route now locks and re-reads the plan's `budget_id` before checking it, so the second click answers 400 "Plan already has a budget linked".
 
 - fix(#750): removing a plan item that was booked into an appointment

@@ -17,6 +17,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic
+from app.core.utils.dates import clinic_today_for
 from app.modules.billing.hooks import BillingComplianceHook
 
 from .models import NavOnlineRecord, NavOnlineSettings
@@ -102,7 +103,7 @@ class NavOnlineHook(BillingComplianceHook):
             invoice_id=invoice.id,
             operation="STORNO" if original else "CREATE",
             invoice_number=result.invoice_number,
-            issue_date=invoice.issue_date or datetime.now(UTC).date(),
+            issue_date=invoice.issue_date or await clinic_today_for(db, invoice.clinic_id),
             gross_amount=result.gross_amount,
             xml_payload=result.xml,
             state="pending",
