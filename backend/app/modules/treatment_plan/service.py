@@ -418,6 +418,31 @@ class TreatmentPlanService:
         return plan
 
     @staticmethod
+    async def _get_locked(
+        db: AsyncSession,
+        clinic_id: UUID,
+        plan_id: UUID,
+    ) -> TreatmentPlan | None:
+        """Get a plan for a status transition, with its row locked and status re-read.
+
+        ``get`` reads without a lock, so two transitions at once (a double
+        click, two staff members) both passed the status check and both
+        wrote (#774). The linked budget's row is locked first: a budget
+        transition locks the budget and its handlers then write the plan,
+        so taking budget → plan here too keeps the two paths from
+        deadlocking.
+        """
+        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        if plan is None:
+            return None
+        if plan.budget_id is not None:
+            from app.modules.budget.models import Budget
+
+            await db.execute(select(Budget.id).where(Budget.id == plan.budget_id).with_for_update())
+        await db.refresh(plan, attribute_names=["status"], with_for_update=True)
+        return plan
+
+    @staticmethod
     async def update_status(
         db: AsyncSession,
         clinic_id: UUID,
@@ -426,7 +451,7 @@ class TreatmentPlanService:
         user_id: UUID,
     ) -> TreatmentPlan | None:
         """Update treatment plan status with validation."""
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             return None
 
@@ -1640,7 +1665,7 @@ class TreatmentPlanService:
           payload so subscribers (patient_timeline, future hooks) do
           not need to import treatment_plan models.
         """
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
 
@@ -1707,7 +1732,7 @@ class TreatmentPlanService:
         edit items again). The companion budget event is published by
         ``BudgetWorkflowService.cancel_budget``.
         """
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
         if plan.status != "pending":
@@ -1806,7 +1831,7 @@ class TreatmentPlanService:
         if closure_reason not in VALID_CLOSURE_REASONS:
             raise ValueError(f"Unknown closure_reason '{closure_reason}'")
 
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
         if "closed" not in VALID_PLAN_TRANSITIONS.get(plan.status, set()):
@@ -1854,7 +1879,7 @@ class TreatmentPlanService:
         user_id: UUID,
     ) -> TreatmentPlan:
         """Revive a closed plan back to ``draft`` for a new cycle."""
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
         if plan.status != "closed":

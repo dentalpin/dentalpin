@@ -655,3 +655,37 @@ async def test_reconfirm_does_not_relink_an_already_deleted_budget(
     assert new_budget_id != budget_id
     r = await client.get(f"/api/v1/budget/budgets/{new_budget_id}", headers=auth_headers)
     assert r.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_concurrent_confirms_create_one_budget(
+    client: AsyncClient, auth_headers: dict, setup: dict, db_session: AsyncSession
+):
+    """Two confirms at once (double click) both passed the draft check on
+    their unlocked plan: two draft budgets, two confirmed events. The second
+    now waits for the first and finds the plan pending (#774)."""
+    import asyncio
+
+    from app.database import async_session_maker
+    from app.modules.treatment_plan.service import TreatmentPlanService
+
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    await db_session.commit()
+    clinic_id, user_id = UUID(setup["clinic_id"]), UUID(setup["user_id"])
+
+    async with async_session_maker() as first, async_session_maker() as second:
+        await TreatmentPlanService.confirm(first, clinic_id, UUID(plan_id), user_id)
+        other = asyncio.create_task(
+            TreatmentPlanService.confirm(second, clinic_id, UUID(plan_id), user_id)
+        )
+        await asyncio.sleep(0.3)  # the second confirm reaches the lock
+        await first.commit()
+        with pytest.raises(ValueError, match="Cannot confirm"):
+            await other
+        await second.rollback()
+
+    async with async_session_maker() as db:
+        budgets = (
+            (await db.execute(select(Budget).where(Budget.clinic_id == clinic_id))).scalars().all()
+        )
+    assert len(budgets) == 1
