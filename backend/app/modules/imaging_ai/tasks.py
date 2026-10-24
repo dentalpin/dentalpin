@@ -51,6 +51,7 @@ async def process_ai_job_queue() -> None:
                 .order_by(AiJob.created_at)
                 .limit(CLAIM_BATCH_SIZE)
                 .with_for_update(skip_locked=True)
+                .execution_options(populate_existing=True)
             )
         ).scalars()
         claimed: list[tuple[UUID, UUID]] = [(j.id, j.clinic_id) for j in rows.all()]

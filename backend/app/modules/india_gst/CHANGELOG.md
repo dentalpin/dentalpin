@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
+
 - fix(#750): deleting a draft invoice line that had a SAC override (`PUT /india_gst/invoices/{id}`) answered 500. The override row references the line through a deliberately `RESTRICT` FK. `IndiaGstHook.on_draft_item_deleted` now removes the row first.
 
 - fix(#740): clearing the turnover threshold in settings removes it. The cleared input sent `""`, which the `Decimal` field answered with 422; an explicit `null` was skipped and the old value stayed.

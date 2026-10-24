@@ -168,6 +168,7 @@ class InvoiceNumberService:
                 InvoiceSeries.clinic_id == clinic_id,
             )
             .with_for_update()
+            .execution_options(populate_existing=True)
         )
         series = result.scalar_one_or_none()
 
@@ -254,6 +255,7 @@ class InvoiceSeriesService:
                     InvoiceSeries.is_default.is_(True),
                 )
                 .with_for_update()
+                .execution_options(populate_existing=True)
             )
             # SQLAlchemy will handle the update when we flush
 

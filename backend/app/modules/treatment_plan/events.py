@@ -271,6 +271,7 @@ async def on_treatment_performed(data: dict[str, Any], *, db: AsyncSession) -> N
             PlannedTreatmentItem.status == "pending",
         )
         .with_for_update()
+        .execution_options(populate_existing=True)
     )
     item = result.scalar_one_or_none()
     if item is None:

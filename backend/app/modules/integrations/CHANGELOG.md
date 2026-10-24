@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
+
 - fix(#750): deleting a webhook subscription that had fired at least once answered 500, because `webhook_deliveries.subscription_id` has no `ondelete`. The subscription's deliveries are now deleted with it.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

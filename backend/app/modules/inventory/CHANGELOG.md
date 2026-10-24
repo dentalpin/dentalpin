@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#768): the row locks in `apply_movement` / `update_item` now re-read the locked row (`populate_existing`). A `SELECT … FOR UPDATE` on a row already in the session returned the cached instance with its pre-lock values: `adjust_stock` loads the item first, so a concurrent adjustment was lost (+5 and +5 on 10 ended at 15). This undid the #153 fix.
+
 - fix(#750): deleting an item without stock history that is linked to a supplier, a treatment (consumables) or a purchase-order line answered 500. Those links live in modules that depend on inventory, and their FKs have no ondelete. The DELETE now runs in a savepoint and answers 409 `item_in_use`; the page shows a localised "deactivate it instead" toast (`inventory.cannotDeleteInUse`, all 12 locales).
 
 - fix(#740): clearing an item's unit cost saves it as empty. The cleared input sent `""`, which the `Decimal` field answered with 422.

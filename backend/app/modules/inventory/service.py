@@ -127,6 +127,7 @@ class InventoryService:
             select(InventoryItem)
             .where(InventoryItem.id == item_id, InventoryItem.clinic_id == clinic_id)
             .with_for_update()
+            .execution_options(populate_existing=True)
         )
         item = (await db.execute(stmt)).scalar_one_or_none()
         if item is None:
@@ -274,6 +275,7 @@ class InventoryService:
                     InventoryItem.clinic_id == clinic_id,
                 )
                 .with_for_update()
+                .execution_options(populate_existing=True)
             )
         ).scalar_one_or_none()
         if locked is None:
