@@ -152,9 +152,13 @@ async def test_number_lock_reads_the_committed_counter(
         # Held, as issue holds get_default_series()'s result; a dropped
         # instance leaves the identity map and the lock would load fresh.
         preloaded = await second.get(InvoiceSeries, series_id)
-        number_1, _, _ = await InvoiceNumberService.generate_number(first, test_clinic.id, series_id)
+        number_1, _, _ = await InvoiceNumberService.generate_number(
+            first, test_clinic.id, series_id
+        )
         await first.commit()
-        number_2, _, _ = await InvoiceNumberService.generate_number(second, test_clinic.id, series_id)
+        number_2, _, _ = await InvoiceNumberService.generate_number(
+            second, test_clinic.id, series_id
+        )
         await second.commit()
 
     assert number_1 != number_2
