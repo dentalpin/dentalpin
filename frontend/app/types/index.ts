@@ -1764,19 +1764,6 @@ export interface CreditNoteCreate {
   public_notes?: string
 }
 
-// Settings
-export interface BillingSettings {
-  default_payment_term_days: number
-  invoice_footer_text?: string
-  bank_account_info?: string
-}
-
-export interface BillingSettingsUpdate {
-  default_payment_term_days?: number
-  invoice_footer_text?: string
-  bank_account_info?: string
-}
-
 // Report Types
 export interface VatSummaryItem {
   vat_type_id?: string

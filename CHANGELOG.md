@@ -11,6 +11,18 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Changed
+
+- **Clinic settings stored with an invalid value now read as the default**
+  (ADR 0042). A module that declares its settings through the core
+  settings registry validates each stored value on read. A value that fails
+  its declaration (wrong type, out of range, longer than `max_length`)
+  falls back to the declared default and logs a warning naming the module
+  and key, where the old hand-written endpoints returned it coerced or
+  as-is. Billing is the first module on the registry: its footer and bank
+  details are now capped at 2000 characters, so a longer value saved before
+  the cap reads as empty until it is re-entered.
+
 ## [2.9.0] - 2026-10-27
 
 Hindi, four more LLM providers for the copilot, kiosk self check-in, and a
@@ -45,6 +57,20 @@ large correctness sweep (concurrency, tenant scoping, clinic-calendar dates,
   sent.
 
 ### Added
+
+- **Module settings registry (ADR 0042).** Modules can declare simple
+  clinic-scoped settings through `BaseModule.get_settings()`; the core
+  validates them at discovery, stores values under
+  `clinics.settings[<module>]` and serves them at
+  `GET/PATCH /api/v1/settings/{module}` with per-setting read and write
+  permissions. A generic `SettingsModuleForm` renders the declarations,
+  PATCHes only the fields the user changed, sends no request on an
+  unchanged save and blocks an emptied required integer with an inline
+  message. Billing is the first module on it (Settings > Billing >
+  Preferences), with its legacy settings endpoints delegating to the same
+  service. The new
+  strings are translated in de/fr/it/pt/pt-BR; ar/hi/hu/pl/ta/te fall
+  back to English.
 
 - **Copilot: Ollama LLM provider adapter** (self-hosted, local, no API
   key) over its OpenAI-compatible endpoint. `OLLAMA_SPEC` needs no key

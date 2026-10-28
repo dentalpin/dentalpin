@@ -29,6 +29,8 @@ the `budget` module. **Payments** link to invoices through
   — invoice all or some items from an accepted budget.
 - [Invoice series (settings)](./screens/settings_invoice-series.md)
   — manage prefixes, counters, and the active series.
+- [Billing preferences (settings)](./screens/settings_preferences.md)
+  — default payment term, invoice footer and bank details.
 
 ## Quick reference
 

@@ -928,6 +928,36 @@ if (can(PERMISSIONS.inventory.read)) { /* ... */ }
 <UButton v-if="can(PERMISSIONS.inventory.write)" ...>Add item</UButton>
 ```
 
+### Clinic settings (ADR 0042)
+
+Simple, non-secret, clinic-scoped settings do **not** need a table, a
+migration or a router. Declare them on the module and the core serves
+them at `/api/v1/settings/<module>` with the declaration's permissions:
+
+```python
+from app.core.settings.spec import SettingSpec
+
+def get_settings(self) -> list[SettingSpec]:
+    return [
+        SettingSpec(
+            key="default_payment_term_days",
+            type="integer",
+            default=30,
+            permission="billing.read",
+            write_permission="billing.admin",
+            label_key="billingSettings.fields.defaultPaymentTermDays.label",
+            min_value=0,
+            max_value=365,
+        ),
+    ]
+```
+
+Values are stored in `clinics.settings[<module>]`. Never declare
+credentials: that column is returned to clients. The frontend mounts
+`SettingsModuleForm` from a registered settings page and gets the form
+from the declarations. Full contract:
+`docs/technical/settings-registry.md`.
+
 ---
 
 ## 8. Versioning

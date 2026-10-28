@@ -284,6 +284,11 @@ from app.core.security.router import router as security_router  # noqa: E402
 
 app.include_router(security_router, prefix="/api/v1")
 
+# Generic module settings registry (ADR 0042).
+from app.core.settings.router import router as settings_router  # noqa: E402
+
+app.include_router(settings_router, prefix="/api/v1")
+
 
 @app.get("/health")
 async def health_check() -> JSONResponse:

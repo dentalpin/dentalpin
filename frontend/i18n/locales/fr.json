@@ -1050,6 +1050,13 @@
     }
   },
   "settings": {
+    "moduleSettings": {
+      "save": "Enregistrer",
+      "saved": "Paramètres enregistrés",
+      "empty": "Ce module n'a aucun paramètre que vous pouvez consulter.",
+      "loadError": "Impossible de charger ces réglages. Réessayez dans quelques secondes.",
+      "invalidInteger": "Saisissez un nombre entier."
+    },
     "title": "Paramètres",
     "subtitle": "Gérez votre clinique, équipe et modules.",
     "allCategories": "Toutes les catégories",
@@ -2987,6 +2994,24 @@
       }
     },
     "loadError": "Impossible de charger les données du rapport"
+  },
+  "billingSettings": {
+    "title": "Préférences de facturation",
+    "description": "Délais de paiement, pied de facture et coordonnées bancaires.",
+    "fields": {
+      "defaultPaymentTermDays": {
+        "label": "Délai de paiement par défaut (jours)",
+        "description": "Délai de paiement préféré de la clinique, en jours. Chaque facture conserve le délai saisi."
+      },
+      "invoiceFooterText": {
+        "label": "Pied de facture",
+        "description": "Texte libre enregistré avec les préférences de facturation de la clinique."
+      },
+      "bankAccountInfo": {
+        "label": "Coordonnées bancaires",
+        "description": "Coordonnées bancaires enregistrées avec les préférences de facturation de la clinique."
+      }
+    }
   },
   "invoiceSeries": {
     "title": "Séries de facturation",

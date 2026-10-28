@@ -4,6 +4,7 @@ from fastapi import APIRouter
 
 from app.core.erasure.types import ErasureContributor
 from app.core.plugins import BaseModule
+from app.core.settings.spec import SettingSpec
 
 from .models import Invoice, InvoiceHistory, InvoiceItem, InvoicePayment, InvoiceSeries
 from .router import router
@@ -71,6 +72,45 @@ class BillingModule(BaseModule):
             "read",  # View invoices
             "write",  # Create/update invoices, record payments
             "admin",  # Manage series, settings, void invoices
+        ]
+
+    def get_settings(self) -> list[SettingSpec]:
+        return [
+            SettingSpec(
+                key="default_payment_term_days",
+                type="integer",
+                default=30,
+                permission="billing.read",
+                write_permission="billing.admin",
+                label_key="billingSettings.fields.defaultPaymentTermDays.label",
+                description_key="billingSettings.fields.defaultPaymentTermDays.description",
+                min_value=0,
+                max_value=365,
+            ),
+            SettingSpec(
+                key="invoice_footer_text",
+                type="string",
+                default=None,
+                nullable=True,
+                multiline=True,
+                max_length=2000,
+                permission="billing.read",
+                write_permission="billing.admin",
+                label_key="billingSettings.fields.invoiceFooterText.label",
+                description_key="billingSettings.fields.invoiceFooterText.description",
+            ),
+            SettingSpec(
+                key="bank_account_info",
+                type="string",
+                default=None,
+                nullable=True,
+                multiline=True,
+                max_length=2000,
+                permission="billing.read",
+                write_permission="billing.admin",
+                label_key="billingSettings.fields.bankAccountInfo.label",
+                description_key="billingSettings.fields.bankAccountInfo.description",
+            ),
         ]
 
     def get_event_handlers(self) -> dict:
