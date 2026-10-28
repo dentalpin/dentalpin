@@ -5,10 +5,11 @@ from __future__ import annotations
 from uuid import uuid4
 
 from httpx import AsyncClient
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.billing.models import Invoice
-from app.modules.india_gst.models import IndiaGstSettings
+from app.modules.india_gst.models import IndiaGstInvoiceItem, IndiaGstSettings
 from app.modules.patients.models import Patient
 
 
@@ -61,3 +62,42 @@ async def test_put_rejects_issued_invoice(
         headers=auth_headers,
     )
     assert r.status_code == 409
+
+
+async def test_delete_draft_line_with_sac_override(
+    client: AsyncClient,
+    auth_headers,
+    db_session: AsyncSession,
+    india_gst_settings: IndiaGstSettings,
+    test_patient: Patient,
+):
+    """The override row references the line through a RESTRICT FK, so
+    deleting the line used to answer 500 (#750)."""
+    r = await client.post(
+        "/api/v1/billing/invoices", json={"patient_id": str(test_patient.id)}, headers=auth_headers
+    )
+    invoice_id = r.json()["data"]["id"]
+    r = await client.post(
+        f"/api/v1/billing/invoices/{invoice_id}/items",
+        json={"description": "Scaling", "unit_price": "1000"},
+        headers=auth_headers,
+    )
+    assert r.status_code == 201, r.text
+    item_id = r.json()["data"]["id"]
+    r = await client.put(
+        f"/api/v1/india_gst/invoices/{invoice_id}",
+        json={"items": [{"invoice_item_id": item_id, "sac_code": "999311"}]},
+        headers=auth_headers,
+    )
+    assert r.status_code == 200, r.text
+
+    r = await client.delete(
+        f"/api/v1/billing/invoices/{invoice_id}/items/{item_id}", headers=auth_headers
+    )
+    assert r.status_code == 204, r.text
+    left = await db_session.scalar(
+        select(func.count())
+        .select_from(IndiaGstInvoiceItem)
+        .where(IndiaGstInvoiceItem.invoice_item_id == item_id)
+    )
+    assert left == 0

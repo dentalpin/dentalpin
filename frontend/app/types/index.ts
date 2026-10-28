@@ -1591,8 +1591,8 @@ export interface InvoiceItemUpdate {
   description?: string
   unit_price?: number
   quantity?: number
-  discount_type?: DiscountType
-  discount_value?: number
+  discount_type?: DiscountType | null
+  discount_value?: number | null
   vat_type_id?: string
   vat_exempt_reason?: string
   display_order?: number

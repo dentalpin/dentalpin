@@ -21,6 +21,7 @@
     "deleteTitle": "Delete item",
     "deleteMessage": "Delete this stock item? This cannot be undone.",
     "cannotDeleteWithHistory": "This item has stock history. Deactivate it instead to preserve the audit trail.",
+    "cannotDeleteInUse": "This item is linked to a supplier, a treatment or a purchase order. Deactivate it instead.",
     "deactivate": "Deactivate",
     "reactivate": "Reactivate",
     "deactivated": "Item deactivated",

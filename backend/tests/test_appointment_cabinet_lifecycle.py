@@ -346,3 +346,49 @@ async def test_list_cabinet_events_respects_clinic(db_session: AsyncSession) -> 
         db_session, world_b["clinic_id"], apt_a.id
     )
     assert events_b == []
+
+
+@pytest.mark.asyncio
+async def test_delete_cabinet_with_cancelled_history_answers_409(
+    client,
+    auth_headers: dict[str, str],
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+) -> None:
+    """Only cancelled appointments left still reference the cabinet; the
+    DELETE used to fail on the FK with a 500 (#750)."""
+    membership = (
+        (
+            await db_session.execute(
+                select(ClinicMembership).where(ClinicMembership.clinic_id == test_clinic.id)
+            )
+        )
+        .scalars()
+        .first()
+    )
+    used = Cabinet(id=uuid4(), clinic_id=test_clinic.id, name="Used", color="#000000")
+    unused = Cabinet(id=uuid4(), clinic_id=test_clinic.id, name="Unused", color="#ffffff")
+    db_session.add_all([used, unused])
+    await db_session.flush()
+    start = datetime(2026, 6, 1, 10, 0, tzinfo=UTC)
+    db_session.add(
+        Appointment(
+            clinic_id=test_clinic.id,
+            patient_id=test_patient.id,
+            professional_id=membership.user_id,
+            cabinet_id=used.id,
+            cabinet=used.name,
+            start_time=start,
+            end_time=start + timedelta(minutes=30),
+            status="cancelled",
+        )
+    )
+    await db_session.commit()
+
+    blocked = await client.delete(f"/api/v1/agenda/cabinets/{used.id}", headers=auth_headers)
+    assert blocked.status_code == 409, blocked.text
+    assert "deactivate" in blocked.json()["message"]
+
+    deleted = await client.delete(f"/api/v1/agenda/cabinets/{unused.id}", headers=auth_headers)
+    assert deleted.status_code == 204, deleted.text

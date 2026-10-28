@@ -7,7 +7,7 @@ from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 ApplianceType = Literal[
     "brackets_metal",
@@ -21,6 +21,17 @@ ApplianceType = Literal[
 CaseStatus = Literal["active", "paused", "finished", "transferred_out"]
 
 Hygiene = Literal["good", "fair", "poor"]
+
+
+def _blank_is_none(value: object) -> object:
+    """A cleared input sends "" -- for a typed optional field that means "no value".
+
+    Without this, clearing a number input and saving answers 422, so the
+    form cannot be saved until the user types something back (#740).
+    """
+    if isinstance(value, str) and not value.strip():
+        return None
+    return value
 
 
 class OrthoCaseCreate(BaseModel):
@@ -83,6 +94,8 @@ class OrthoControlCreate(BaseModel):
     appointment_id: UUID | None = None
     session_id: UUID | None = None
 
+    _clear_blank = field_validator("aligner_number", mode="before")(_blank_is_none)
+
 
 class OrthoControlUpdate(BaseModel):
     upper_wire: str | None = Field(default=None, max_length=40)
@@ -95,6 +108,8 @@ class OrthoControlUpdate(BaseModel):
     next_control_weeks: int | None = Field(default=None, ge=1, le=52)
     appointment_id: UUID | None = None
     session_id: UUID | None = None
+
+    _clear_blank = field_validator("aligner_number", mode="before")(_blank_is_none)
 
 
 class OrthoControlResponse(BaseModel):

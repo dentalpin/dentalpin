@@ -14,7 +14,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/patients/router.py
   - backend/app/modules/patients/frontend/pages/patients/[id].vue
-last_verified_commit: 27442250
+last_verified_commit: 42ccbba7
 ---
 
 # Ficha del paciente
@@ -125,6 +125,13 @@ está activo:
 La tarjeta de resumen lleva preferencias por paciente y canal: canal
 preferido (email, WhatsApp o SMS), interruptor de SMS (solo se envía
 con opt-in) e idioma. `do_not_contact` prevalece sobre todo.
+
+Debajo de los canales hay un interruptor por tipo de mensaje
+(recordatorio de cita, envío de presupuesto, envío de factura,
+recordatorio de revisión…). Desactivar un tipo lo bloquea en todos los
+canales, también en los envíos manuales del personal; el encendido o
+apagado de cada tipo para toda la clínica sigue en los ajustes de
+notificaciones.
 
 ## Grupos
 

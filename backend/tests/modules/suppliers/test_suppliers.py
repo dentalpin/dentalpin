@@ -159,3 +159,17 @@ async def test_update_tool_partial_update_keeps_other_fields(
     assert out["phone"] == "555-0100"
     assert out["payment_terms"] == "NET30"
     assert out["is_preferred"] is True
+
+
+@pytest.mark.asyncio
+async def test_cleared_lead_time_saves_as_empty(db_session: AsyncSession, test_clinic: Clinic):
+    """A cleared lead-time input sends "" -- it means "unknown", not a 422 (#740)."""
+    assert SupplierCreate(name="Acme", lead_time_days="").lead_time_days is None
+
+    contact, supplier_row = await SupplierService.create_supplier(
+        db_session, test_clinic.id, SupplierCreate(name="Acme", lead_time_days=7)
+    )
+    _, supplier_row = await SupplierService.update_supplier(
+        db_session, contact, supplier_row, SupplierUpdate(lead_time_days="")
+    )
+    assert supplier_row.lead_time_days is None

@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import event_bus
 from app.core.events.types import EventType
-from app.core.utils.dates import clinic_today_for
+from app.core.utils.dates import clinic_today_for, clinic_zone_for
 from app.modules.patients.models import Patient
 
 from .models import (
@@ -548,10 +548,15 @@ class RecallService:
     async def dashboard_stats(
         db: AsyncSession, clinic_id: UUID, today: date | None = None
     ) -> dict[str, int | float]:
-        today = today or await clinic_today_for(db, clinic_id)
+        tz = await clinic_zone_for(db, clinic_id)
+        today = today or datetime.now(tz).date()
         month_start = _normalize_due_month(today)
         month_end = _add_months(month_start, 1)
         week_end = today + timedelta(days=7)
+        # "This month" is the clinic's month. A naive bound would be read in
+        # the app process's zone, so the KPI moved with the container's TZ.
+        month_start_at = datetime.combine(month_start, datetime.min.time(), tzinfo=tz)
+        month_end_at = datetime.combine(month_end, datetime.min.time(), tzinfo=tz)
 
         async def count_where(*conditions: Any) -> int:
             stmt = (
@@ -587,14 +592,14 @@ class RecallService:
         )
         completed_this_month_count = await count_where(
             Recall.status == "done",
-            Recall.completed_at >= datetime.combine(month_start, datetime.min.time()),
-            Recall.completed_at < datetime.combine(month_end, datetime.min.time()),
+            Recall.completed_at >= month_start_at,
+            Recall.completed_at < month_end_at,
         )
         # Conversion = completed this month / (completed + cancelled this month)
         cancelled_this_month_count = await count_where(
             Recall.status == "cancelled",
-            Recall.updated_at >= datetime.combine(month_start, datetime.min.time()),
-            Recall.updated_at < datetime.combine(month_end, datetime.min.time()),
+            Recall.updated_at >= month_start_at,
+            Recall.updated_at < month_end_at,
         )
         denominator = completed_this_month_count + cancelled_this_month_count
         conversion_rate = float(completed_this_month_count) / denominator if denominator else 0.0

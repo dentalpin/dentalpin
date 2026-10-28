@@ -1839,3 +1839,37 @@ async def test_appointment_update_with_empty_planned_items_unlinks_them(
     cleared = await client.put(url, headers=auth_headers, json={"planned_item_ids": []})
     assert cleared.status_code == 200, cleared.text
     assert cleared.json()["data"]["treatments"] == []
+
+
+async def test_remove_booked_item_answers_409_until_the_appointment_is_cancelled(
+    client: AsyncClient, auth_headers: dict, setup: dict
+):
+    """``appointment_treatments`` references the item through an FK without
+    ondelete, so removing a booked item used to answer 500 (#750)."""
+    plan_id, item_ids = await _create_plan_with_items(client, auth_headers, setup, [16])
+    created = await client.post(
+        "/api/v1/agenda/appointments",
+        headers=auth_headers,
+        json={
+            "patient_id": setup["patient_id"],
+            "professional_id": setup["user_id"],
+            "start_time": "2026-05-04T10:00:00Z",
+            "end_time": "2026-05-04T10:30:00Z",
+            "planned_item_ids": item_ids,
+        },
+    )
+    assert created.status_code == 201, created.text
+    appointment_url = f"/api/v1/agenda/appointments/{created.json()['data']['id']}"
+    item_url = f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}"
+
+    blocked = await client.delete(item_url, headers=auth_headers)
+    assert blocked.status_code == 409, blocked.text
+    assert "booked" in blocked.json()["message"]
+
+    cancelled = await client.delete(appointment_url, headers=auth_headers)
+    assert cancelled.status_code == 204, cancelled.text
+    removed = await client.delete(item_url, headers=auth_headers)
+    assert removed.status_code == 204, removed.text
+
+    appointment = await client.get(appointment_url, headers=auth_headers)
+    assert appointment.json()["data"]["treatments"] == []

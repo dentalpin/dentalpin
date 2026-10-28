@@ -5,6 +5,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field, field_validator
 
+from .models import NotificationType, default_type_preferences
+
 # ============================================================================
 # Email Template Schemas
 # ============================================================================
@@ -66,16 +68,7 @@ class NotificationPreferenceBase(BaseModel):
     whatsapp_enabled: bool = True
     sms_enabled: bool = True
     push_enabled: bool = True
-    preferences: dict = Field(
-        default_factory=lambda: {
-            "appointment_confirmation": True,
-            "appointment_reminder": True,
-            "appointment_cancelled": True,
-            "budget_sent": True,
-            "budget_accepted": True,
-            "welcome": True,
-        }
-    )
+    preferences: dict = Field(default_factory=default_type_preferences)
     preferred_locale: str = Field(default="es", max_length=5)
 
 
@@ -93,7 +86,10 @@ class NotificationPreferenceUpdate(BaseModel):
     whatsapp_enabled: bool | None = None
     sms_enabled: bool | None = None
     push_enabled: bool | None = None
-    preferences: dict | None = None
+    # Keyed by the closed vocabulary, so a misspelt type is a 422 rather
+    # than a stored opt-out nothing ever reads (#683). Merged into the
+    # stored dict: sending one type leaves the others as recorded.
+    preferences: dict[NotificationType, bool] | None = None
     preferred_locale: str | None = Field(default=None, max_length=5)
 
 

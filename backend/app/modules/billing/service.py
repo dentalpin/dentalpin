@@ -15,6 +15,7 @@ from app.core.utils.dates import clinic_today_for
 from app.modules.payments.models import Payment as PaymentModel
 from app.modules.payments.models import Refund as RefundModel
 
+from .hooks import BillingHookRegistry
 from .models import (
     Invoice,
     InvoiceHistory,
@@ -141,7 +142,7 @@ class InvoiceNumberService:
         clinic_id: UUID,
         series_id: UUID,
         today: date | None = None,
-    ) -> tuple[str, int]:
+    ) -> tuple[str, int, int]:
         """Generate the next invoice number for a series.
 
         Handles yearly reset if configured.
@@ -154,10 +155,12 @@ class InvoiceNumberService:
                 goes into the number. Defaults to the server's date.
 
         Returns:
-            Tuple of (invoice_number, sequential_number)
+            Tuple of (invoice_number, sequential_number, fiscal_year). The
+            sequential is unique per (series, fiscal_year): a
+            ``reset_yearly`` series starts again at 1 each year.
 
         Example:
-            "FAC-2024-0001", 1
+            "FAC-2024-0001", 1, 2024
         """
         # Get series with lock for update
         result = await db.execute(
@@ -167,6 +170,7 @@ class InvoiceNumberService:
                 InvoiceSeries.clinic_id == clinic_id,
             )
             .with_for_update()
+            .execution_options(populate_existing=True)
         )
         series = result.scalar_one_or_none()
 
@@ -192,7 +196,7 @@ class InvoiceNumberService:
 
         await db.flush()
 
-        return invoice_number, sequential_number
+        return invoice_number, sequential_number, current_year
 
 
 class InvoiceSeriesService:
@@ -253,6 +257,7 @@ class InvoiceSeriesService:
                     InvoiceSeries.is_default.is_(True),
                 )
                 .with_for_update()
+                .execution_options(populate_existing=True)
             )
             # SQLAlchemy will handle the update when we flush
 
@@ -342,15 +347,17 @@ class InvoiceSeriesService:
     ) -> InvoiceSeries:
         """Reset series counter to a new number.
 
-        Validates that new_number > max(sequential_number) for invoices in this series.
+        Validates that new_number > max(sequential_number) for invoices in this
+        series — within the current year when the series resets yearly, since
+        last year's sequentials no longer compete with this year's.
         """
-        # Find max sequential_number for invoices in this series
-        max_result = await db.execute(
-            select(func.max(Invoice.sequential_number)).where(
-                Invoice.series_id == series.id,
-                Invoice.clinic_id == series.clinic_id,
-            )
+        query = select(func.max(Invoice.sequential_number)).where(
+            Invoice.series_id == series.id,
+            Invoice.clinic_id == series.clinic_id,
         )
+        if series.reset_yearly:
+            query = query.where(Invoice.fiscal_year == series.last_reset_year)
+        max_result = await db.execute(query)
         max_sequential = max_result.scalar() or 0
 
         if new_number <= max_sequential:
@@ -593,6 +600,8 @@ class InvoiceItemService:
     ) -> None:
         """Delete an invoice item."""
         budget_item_id = item.budget_item_id
+        for hook in BillingHookRegistry.get_all().values():
+            await hook.on_draft_item_deleted(item, db)
         await db.delete(item)
         await db.flush()
 

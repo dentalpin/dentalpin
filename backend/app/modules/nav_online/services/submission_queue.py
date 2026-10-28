@@ -71,6 +71,7 @@ async def _due_rows(db: AsyncSession, clinic_id: UUID, state: str) -> list[NavOn
         .order_by(NavOnlineRecord.created_at)
         .limit(_BATCH)
         .with_for_update(skip_locked=True)
+        .execution_options(populate_existing=True)
     )
     return list((await db.execute(stmt)).scalars().all())
 

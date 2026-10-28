@@ -54,6 +54,56 @@ async def test_settings_gate_and_write_only_secrets(client: AsyncClient, auth_he
 
 
 @pytest.mark.asyncio
+async def test_null_clears_an_optional_field(client: AsyncClient, auth_headers, test_clinic):
+    res = await client.put(
+        SETTINGS,
+        json={
+            "username": "PROVAX00X00X000Y",
+            "cf_proprietario": "RSSMRA80A01H501U",
+            "codice_regione": "120",
+            "codice_asl": "201",
+            "sync_from": "2026-01-01",
+        },
+        headers=auth_headers,
+    )
+    assert res.status_code == 200, res.text
+    res = await client.put(
+        SETTINGS,
+        json={
+            "codice_regione": None,
+            "codice_asl": None,
+            "sync_from": None,
+            "cf_proprietario": None,
+            "dispositivo": None,
+        },
+        headers=auth_headers,
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()["data"]
+    assert body["codice_regione"] is None and body["codice_asl"] is None
+    assert body["sync_from"] is None and body["cf_proprietario"] is None
+    assert body["username"] == "PROVAX00X00X000Y"  # not sent, kept
+    assert body["dispositivo"] == "1"  # NOT NULL: null leaves it unchanged
+
+
+@pytest.mark.asyncio
+async def test_clearing_a_credential_of_an_enabled_clinic_answers_400(
+    client: AsyncClient, auth_headers, test_clinic
+):
+    creds = {
+        "username": "PROVAX00X00X000Y",
+        "password": "Salve123",
+        "pincode": "1234567890",
+        "cf_proprietario": "RSSMRA80A01H501U",
+        "enabled": True,
+    }
+    res = await client.put(SETTINGS, json=creds, headers=auth_headers)
+    assert res.status_code == 200 and res.json()["data"]["enabled"] is True
+    res = await client.put(SETTINGS, json={"username": None}, headers=auth_headers)
+    assert res.status_code == 400
+
+
+@pytest.mark.asyncio
 async def test_opposition_roundtrip(client: AsyncClient, auth_headers, test_clinic, test_patient):
     url = f"/api/v1/sistema_ts/opposition/{test_patient.id}"
     res = await client.get(url, headers=auth_headers)

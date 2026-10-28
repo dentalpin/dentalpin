@@ -99,7 +99,10 @@ def _now_madrid() -> datetime:
 
 async def _get_or_create_settings(db: AsyncSession, clinic_id) -> VerifactuSettings:
     result = await db.execute(
-        select(VerifactuSettings).where(VerifactuSettings.clinic_id == clinic_id).with_for_update()
+        select(VerifactuSettings)
+        .where(VerifactuSettings.clinic_id == clinic_id)
+        .with_for_update()
+        .execution_options(populate_existing=True)
     )
     settings = result.scalar_one_or_none()
     if settings is None:

@@ -21,6 +21,7 @@
     "deleteTitle": "Artikel löschen",
     "deleteMessage": "Diesen Lagerartikel löschen? Dies kann nicht rückgängig gemacht werden.",
     "cannotDeleteWithHistory": "Dieser Artikel hat Bestandsbewegungen. Deaktivieren Sie ihn, um die Prüfpreserve zu erhalten.",
+    "cannotDeleteInUse": "Dieser Artikel ist mit einem Lieferanten, einer Behandlung oder einer Bestellung verknüpft. Deaktivieren Sie ihn stattdessen.",
     "deactivate": "Deaktivieren",
     "reactivate": "Reaktivieren",
     "deactivated": "Artikel deaktiviert",

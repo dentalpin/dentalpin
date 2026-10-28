@@ -15,10 +15,17 @@ from app.core.auth.models import ClinicMembership
 from app.core.events import event_bus
 from app.core.events.types import EventType
 from app.core.i18n_names import catalog_name
+from app.core.utils.dates import clinic_today_for
+from app.modules.agenda.models import Appointment
 from app.modules.odontogram.models import Treatment
 from app.modules.patients.models import Patient
 
-from .models import PlannedTreatmentItem, PlannedTreatmentItemSession, TreatmentPlan
+from .models import (
+    AppointmentTreatment,
+    PlannedTreatmentItem,
+    PlannedTreatmentItemSession,
+    TreatmentPlan,
+)
 
 
 async def _validate_professional_in_clinic(
@@ -168,6 +175,10 @@ class PlanLockedError(ValueError):
     """Raised when a mutation is attempted on a plan locked by an active budget."""
 
 
+class PlanItemBookedError(ValueError):
+    """Raised when removing an item still booked into a non-cancelled appointment."""
+
+
 TERMINAL_BUDGET_STATUSES = frozenset({"cancelled", "rejected", "expired"})
 
 
@@ -205,7 +216,7 @@ class TreatmentPlanService:
     @staticmethod
     async def generate_plan_number(db: AsyncSession, clinic_id: UUID) -> str:
         """Generate a unique plan number for the clinic."""
-        year = datetime.now(UTC).year
+        year = (await clinic_today_for(db, clinic_id)).year
 
         # Count existing plans for this year
         result = await db.execute(
@@ -408,6 +419,31 @@ class TreatmentPlanService:
         return plan
 
     @staticmethod
+    async def _get_locked(
+        db: AsyncSession,
+        clinic_id: UUID,
+        plan_id: UUID,
+    ) -> TreatmentPlan | None:
+        """Get a plan for a status transition, with its row locked and status re-read.
+
+        ``get`` reads without a lock, so two transitions at once (a double
+        click, two staff members) both passed the status check and both
+        wrote (#774). The linked budget's row is locked first: a budget
+        transition locks the budget and its handlers then write the plan,
+        so taking budget → plan here too keeps the two paths from
+        deadlocking.
+        """
+        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        if plan is None:
+            return None
+        if plan.budget_id is not None:
+            from app.modules.budget.models import Budget
+
+            await db.execute(select(Budget.id).where(Budget.id == plan.budget_id).with_for_update())
+        await db.refresh(plan, attribute_names=["status"], with_for_update=True)
+        return plan
+
+    @staticmethod
     async def update_status(
         db: AsyncSession,
         clinic_id: UUID,
@@ -416,7 +452,7 @@ class TreatmentPlanService:
         user_id: UUID,
     ) -> TreatmentPlan | None:
         """Update treatment plan status with validation."""
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             return None
 
@@ -801,6 +837,27 @@ class TreatmentPlanService:
         item = result.scalar_one_or_none()
         if not item:
             return False
+
+        # ``appointment_treatments`` references the item through a NOT NULL
+        # FK without ondelete, so a booked item failed the DELETE with a 500
+        # (#750). A live booking blocks the removal; links to cancelled
+        # appointments are dead and go with the item.
+        links = (
+            await db.execute(
+                select(AppointmentTreatment, Appointment.status)
+                .join(Appointment, Appointment.id == AppointmentTreatment.appointment_id)
+                .where(
+                    Appointment.clinic_id == clinic_id,
+                    AppointmentTreatment.planned_treatment_item_id == item.id,
+                )
+            )
+        ).all()
+        if any(status != "cancelled" for _, status in links):
+            raise PlanItemBookedError(
+                "Treatment is booked in an appointment; unlink it there first"
+            )
+        for link, _ in links:
+            await db.delete(link)
 
         treatment_id = item.treatment_id
         await db.delete(item)
@@ -1609,7 +1666,7 @@ class TreatmentPlanService:
           payload so subscribers (patient_timeline, future hooks) do
           not need to import treatment_plan models.
         """
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
 
@@ -1676,7 +1733,7 @@ class TreatmentPlanService:
         edit items again). The companion budget event is published by
         ``BudgetWorkflowService.cancel_budget``.
         """
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
         if plan.status != "pending":
@@ -1775,7 +1832,7 @@ class TreatmentPlanService:
         if closure_reason not in VALID_CLOSURE_REASONS:
             raise ValueError(f"Unknown closure_reason '{closure_reason}'")
 
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
         if "closed" not in VALID_PLAN_TRANSITIONS.get(plan.status, set()):
@@ -1823,7 +1880,7 @@ class TreatmentPlanService:
         user_id: UUID,
     ) -> TreatmentPlan:
         """Revive a closed plan back to ``draft`` for a new cycle."""
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
         if plan.status != "closed":

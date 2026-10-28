@@ -271,3 +271,45 @@ async def test_invoice_compliance_block_follows_the_record_state(
     assert res.status_code == 200, res.text
     b = await block()
     assert b["state"] == "delivered" and b["record_id"] == str(rec.id)
+
+
+@pytest.mark.asyncio
+async def test_null_clears_an_optional_pec_field(client: AsyncClient, auth_headers, test_clinic):
+    creds = {
+        "pec_address": "studio@pec.example.it",
+        "smtp_host": "smtps.example.it",
+        "imap_host": "imaps.example.it",
+        "smtp_username": "studio@pec.example.it",
+        "smtp_password": "secret",
+    }
+    res = await client.put(SETTINGS, json=creds, headers=auth_headers)
+    assert res.status_code == 200, res.text
+    res = await client.put(
+        SETTINGS,
+        json={"smtp_host": None, "imap_host": None, "regime_fiscale": None},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()["data"]
+    assert body["smtp_host"] is None and body["imap_host"] is None
+    assert body["pec_address"] == "studio@pec.example.it"  # not sent, kept
+    assert body["regime_fiscale"] == "RF01"  # NOT NULL: null leaves it unchanged
+
+
+@pytest.mark.asyncio
+async def test_clearing_a_credential_of_an_enabled_pec_transport_answers_400(
+    client: AsyncClient, auth_headers, test_clinic
+):
+    creds = {
+        "transport": "pec",
+        "pec_address": "studio@pec.example.it",
+        "smtp_host": "smtps.example.it",
+        "imap_host": "imaps.example.it",
+        "smtp_username": "studio@pec.example.it",
+        "smtp_password": "secret",
+        "enabled": True,
+    }
+    res = await client.put(SETTINGS, json=creds, headers=auth_headers)
+    assert res.status_code == 200 and res.json()["data"]["enabled"] is True
+    res = await client.put(SETTINGS, json={"pec_address": None}, headers=auth_headers)
+    assert res.status_code == 400

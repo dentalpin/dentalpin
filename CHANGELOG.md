@@ -11,55 +11,38 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
-### Fixed
+## [2.9.0] - 2026-10-27
 
-- **Dates showed one day early in the Americas.** `new Date('2026-10-20')`
-  is UTC midnight per spec, so in any zone behind UTC every date-only field
-  (invoice and due dates, quote validity, payment dates, dates of birth, a
-  recall's due month) rendered as the previous day — a November recall
-  read as October in Mexico City. The host now exports `parseDateOnly`
-  (`frontend/app/utils/wallClock.ts`, promoted from the payments report),
-  and the date formatters in 13 modules go through it.
-- **Two backend vocabularies reached the UI with no label** (#695). The
-  patient file's appointment list rendered `appointments.checked_in` /
-  `appointments.in_treatment` in the status badge, because it read a stale
-  flat `appointments.<status>` namespace instead of the canonical
-  `appointments.status.*`; the duplicate is deleted and the component now
-  calls `useAppointmentStatus().statusLabel`. And `invoice.payments.methods`
-  was missing `upi` / `netbanking` (#365) in all 12 host locales, so
-  invoices, the financial by-method report and the dashboard tile labelled
-  India's payment methods with their raw value — the labels the payments
-  layer already ships were copied in. A new guard,
-  `backend/tests/test_i18n_vocabulary_labels.py`, pins 20 (i18n namespace →
-  closed backend vocabulary) pairs: neither locale parity (a key missing
-  everywhere keeps parity) nor the literal-key resolver (#631, dynamic keys
-  are out of its scope) can see this class.
+Hindi, four more LLM providers for the copilot, kiosk self check-in, and a
+large correctness sweep (concurrency, tenant scoping, clinic-calendar dates,
+422/409 instead of 500). Thanks @ZoliQua, @lamanji, @tresundios and
+@abdd8433.
 
-- **26 UI strings showed the i18n key instead of a message** (#631).
-  `errors.loadFailed`, `errors.createFailed`, `errors.updateFailed` and
-  `errors.deleteFailed` existed in no locale file, so a clinic saw a toast
-  titled `errors.updateFailed`; `treatment_plan` alone had 21 of the sites.
-  The four keys are now in all 12 host locales, `common.more` became the
-  interpolated `common.andMore` (`+{count} more`), and the one `common.view`
-  tooltip reuses the existing `common.viewDetails`. A new guard,
-  `frontend/tests/i18n/key-resolution.test.ts`, resolves every literal
-  `t('…')` key against the merged English set — the locale-parity test
-  cannot see this class, because a key absent from *every* locale keeps
-  parity perfectly.
-- **Ten UI strings rendered one hardcoded language to every locale**
-  (#697). `actions.change`, `common.optional`, `common.expand`,
-  `common.collapse`, `clinical.diagnosis.openNotes`,
-  `attachments.linkError`, `documents.viewError` and the three
-  `photoGallery.*` upload/fetch messages existed in no locale file, so the
-  default message passed at the call site is what rendered: an English
-  clinic read "Cambiar" / "Opcional" / "Expandir" on the media upload
-  controls and the patient alerts banner (two of them aria-labels), a
-  Spanish one read "Error loading photos" in a toast. All ten are now in
-  the 12 host locales, phrased from the strings each locale already uses
-  for the same kind of message, and the redundant defaults are gone from
-  the call sites. `key-resolution.test.ts` no longer skips a call that
-  passes a default message — the default may stay, the key has to exist —
-  which is the follow-up its own docstring asked for.
+### Upgrade notes
+
+- **Upgrade note (production):** `BUDGET_PUBLIC_SECRET_KEY` is now
+  required. A production boot without it fails fast with an actionable
+  message instead of signing public budget sessions with the staff-JWT
+  `SECRET_KEY`. Blank, whitespace-only, and whitespace-padded values are
+  also refused, so generate a clean value (e.g. `openssl rand -hex 32`)
+  before upgrading; `docker-compose.prod.yml` and
+  `docker-compose.coolify.yml` now both refuse to start without it.
+- **Upgrade note (production):** `AGENDA_PUBLIC_SECRET_KEY` is now
+  required on the same terms: a production boot without a clean value
+  fails fast instead of signing QR check-in tokens with the staff-JWT
+  `SECRET_KEY`. Set it alongside `BUDGET_PUBLIC_SECRET_KEY` (see the note above) before upgrading.
+- **Heads-up (production email):** `EMAIL_PROVIDER=console` (the dev
+  default) delivers nothing (#614). A production instance that never
+  set `EMAIL_PROVIDER` boots normally but logs an ERROR when it first
+  resolves the provider (on the first email, since resolution is lazy),
+  writes metadata-only log lines (no bodies, no names), and reports
+  sends as failed so the UI stops claiming delivery. Set
+  `EMAIL_PROVIDER=smtp` with real credentials, or
+  `EMAIL_ENABLED=false` if the instance sends no mail (sends are then
+  skipped, not retried or reported as failed). The public demo is
+  affected too: it runs production, so it now logs metadata and reports
+  those sends as failed instead of printing the message and reporting it
+  sent.
 
 ### Added
 
@@ -101,6 +84,10 @@ frontend as a Nuxt layer under its own Python package.
   Country-specific compliance modules (`verifactu`, `nav_online`,
   `sdi_it`, `sistema_ts`) and the Verifactu emails are not translated
   to Hindi; they fall back to English.
+- **Kiosk self check-in, phase 1** (#480, ADR 0037). A patient checks in
+  from the QR link in their reminder: the token records its source, the
+  reminder carries the link, and check-in only opens within a window
+  around the appointment's start time (#667, thanks @lamanji).
 
 ### Changed
 
@@ -109,30 +96,17 @@ frontend as a Nuxt layer under its own Python package.
   fails fast instead of signing QR check-in tokens with the staff-JWT
   `SECRET_KEY`. Set it alongside `BUDGET_PUBLIC_SECRET_KEY` (see its
   note below) before upgrading.
-
 - Email templates missing in a locale now fall back to the English
   template instead of rendering nothing.
-
-- **Heads-up (production email):** `EMAIL_PROVIDER=console` (the dev
-  default) delivers nothing (#614). A production instance that never
-  set `EMAIL_PROVIDER` boots normally but logs an ERROR when it first
-  resolves the provider (on the first email, since resolution is lazy),
-  writes metadata-only log lines (no bodies, no names), and reports
-  sends as failed so the UI stops claiming delivery. Set
-  `EMAIL_PROVIDER=smtp` with real credentials, or
-  `EMAIL_ENABLED=false` if the instance sends no mail (sends are then
-  skipped, not retried or reported as failed). The public demo is
-  affected too: it runs production, so it now logs metadata and reports
-  those sends as failed instead of printing the message and reporting it
-  sent.
-
-- **Upgrade note (production):** `BUDGET_PUBLIC_SECRET_KEY` is now
-  required. A production boot without it fails fast with an actionable
-  message instead of signing public budget sessions with the staff-JWT
-  `SECRET_KEY`. Blank, whitespace-only, and whitespace-padded values are
-  also refused, so generate a clean value (e.g. `openssl rand -hex 32`)
-  before upgrading; `docker-compose.prod.yml` and
-  `docker-compose.coolify.yml` now both refuse to start without it.
+- **GDPR erasure now pulls a contributor registry, not a fan-out** (#546,
+  ADR 0038). `gdpr` calls every registered erasure contributor
+  (`notifications`, `recalls`) inside the erasure transaction and builds
+  the per-scope coverage list (`ErasureCoverage`) from their answers — a
+  scope with no contributor produces no row. `gdpr.erasure.executed` is a
+  post-commit announcement. Fiscal, signature and clinical records stay
+  retained (Art. 17(3)), hardcoded as interim rows until their
+  contributors land. `ErasureResult.coverage_note` is removed in favor of
+  the `coverage` list (no frontend reader affected).
 
 ### Security
 
@@ -145,7 +119,6 @@ frontend as a Nuxt layer under its own Python package.
   clinic-scoped patient lookup first: unknown or foreign ids answer 404
   on HTTP and `{"error": "patient not found"}` on the agent tool, before
   anything is written.
-
 - **A budget could be assigned a professional from another clinic.**
   `assigned_professional_id` was a plain FK to `users` with no
   membership check, so a caller naming a user id from a different clinic
@@ -154,7 +127,6 @@ frontend as a Nuxt layer under its own Python package.
   a bad request. Both paths now answer 400, on create and on update. The
   patient on the same route was already checked against the clinic; the
   professional was not.
-
 - **The backend no longer trusts `X-Forwarded-For` from any peer** (#623).
   `backend/Dockerfile` and every compose file ran uvicorn with
   `--forwarded-allow-ips *`; with `*` uvicorn takes the **leftmost**
@@ -178,7 +150,6 @@ frontend as a Nuxt layer under its own Python package.
   include `10.0.0.0/8`. Coolify creates its Docker networks there, so the
   previous default made every client resolve to Traefik's IP and turned
   the login rate limit global.
-
 - **`allowed_tools` is now enforced, not just declared** (#558).
   `BaseAgent.allowed_tools` existed with zero enforcement references
   anywhere in `app/`, while `docs/technical/creating-modules.md` told
@@ -191,9 +162,103 @@ frontend as a Nuxt layer under its own Python package.
   means "no subsetting" — what copilot and other conversational
   surfaces use, so their behaviour is unchanged — and an empty list
   permits nothing, which is `BaseAgent`'s default.
+- **Tenant scoping closed in four more places:** the recall suggestion
+  patient lookup (#727), `patients_clinical` list helpers, 1:1 getters and
+  bulk archive (#728), and the notification handlers' row reads (#729)
+  now filter by clinic (thanks @lamanji).
+- **Public budget page: per-IP lockout, production-only signing secret,
+  audited accept/reject** (#636), and a minimized pre-verification
+  payload (#647) (thanks @lamanji).
+- **Copilot redaction closes its key gaps** and tokenizes known values
+  wherever they appear in a tool result (#688).
 
 ### Fixed
 
+- **A patient's opt-out from appointment reminders was ignored** (#683).
+  Reminders, and staff sends of quotes and invoices, are forced sends, and
+  the per-type opt-out was only checked for unforced ones. It now blocks
+  every send, and the patient card has a switch per message type, so the
+  opt-out can be recorded without calling the API by hand.
+- **"Load default catalog" failed for a clinic with its own VAT type at a
+  preset rate.** A second 0% type next to the seeded exempt one made
+  `POST /catalog/seed` answer 500; the seed now reuses the system type.
+- **A per-type notification opt-out with a misspelt key was stored and
+  ignored** (#683). The keys are now a closed list, so an unknown one is a
+  422; saving one opt-out keeps the patient's other recorded choices; and
+  `recall_reminder`, `budget_reminder` and `invoice_sent` are part of the
+  default record.
+- **The recalls dashboard counted a different month on each host** (#684).
+  `completed_this_month` and `conversion_rate` bounded the month with naive
+  datetimes, which the driver reads in the app process's zone, so the same
+  data answered 1 on a UTC container and 3 on a Europe/Madrid one. The month
+  is now the clinic's (`Clinic.timezone`), on every host. The new
+  `clinic_zone` / `clinic_zone_for` helpers in `app/core/utils/dates.py`
+  return the clinic's zone for bounds like these.
+- **The first invoice of a new year could not be issued** (#689). A
+  series with `reset_yearly` (the default) restarts at 1 every January,
+  but the fiscal backstop index made the sequential unique over the
+  series' whole life, so on 1 January issuing answered 500. Invoices now
+  store their `fiscal_year` and the sequential is unique per series and
+  year (migration `bil_0006`).
+- **Dates showed one day early in the Americas.** `new Date('2026-10-20')`
+  is UTC midnight per spec, so in any zone behind UTC every date-only field
+  (invoice and due dates, quote validity, payment dates, dates of birth, a
+  recall's due month) rendered as the previous day — a November recall
+  read as October in Mexico City. The host now exports `parseDateOnly`
+  (`frontend/app/utils/wallClock.ts`, promoted from the payments report),
+  and the date formatters in 13 modules go through it.
+- **Two backend vocabularies reached the UI with no label** (#695). The
+  patient file's appointment list rendered `appointments.checked_in` /
+  `appointments.in_treatment` in the status badge, because it read a stale
+  flat `appointments.<status>` namespace instead of the canonical
+  `appointments.status.*`; the duplicate is deleted and the component now
+  calls `useAppointmentStatus().statusLabel`. And `invoice.payments.methods`
+  was missing `upi` / `netbanking` (#365) in all 12 host locales, so
+  invoices, the financial by-method report and the dashboard tile labelled
+  India's payment methods with their raw value — the labels the payments
+  layer already ships were copied in. A new guard,
+  `backend/tests/test_i18n_vocabulary_labels.py`, pins 20 (i18n namespace →
+  closed backend vocabulary) pairs: neither locale parity (a key missing
+  everywhere keeps parity) nor the literal-key resolver (#631, dynamic keys
+  are out of its scope) can see this class.
+- **The AI copilot could never be configured on the Coolify stack.**
+  `docker-compose.coolify.yml` forwarded no LLM key at all — not
+  `OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`,
+  `OPENROUTER_API_KEY` or `GROQ_API_KEY` — while
+  `docker-compose.prod.yml` forwarded them. Neither file uses
+  `env_file`, `CopilotSettings` stores provider and model but no key, and
+  `copilot/bridge.py` resolves the key from deployment settings alone, so
+  on Coolify every copilot request raised `LLMConfigError` regardless of
+  what the operator set. Every provider key plus
+  `COPILOT_PROVIDER_DEFAULT` is now forwarded, `.env.prod.example`
+  names them, and a guard (`backend/tests/test_copilot_compose_wiring.py`)
+  reads the keys off the registered provider specs so a new provider
+  fails until both stacks forward it.
+- **26 UI strings showed the i18n key instead of a message** (#631).
+  `errors.loadFailed`, `errors.createFailed`, `errors.updateFailed` and
+  `errors.deleteFailed` existed in no locale file, so a clinic saw a toast
+  titled `errors.updateFailed`; `treatment_plan` alone had 21 of the sites.
+  The four keys are now in all 12 host locales, `common.more` became the
+  interpolated `common.andMore` (`+{count} more`), and the one `common.view`
+  tooltip reuses the existing `common.viewDetails`. A new guard,
+  `frontend/tests/i18n/key-resolution.test.ts`, resolves every literal
+  `t('…')` key against the merged English set — the locale-parity test
+  cannot see this class, because a key absent from *every* locale keeps
+  parity perfectly.
+- **Ten UI strings rendered one hardcoded language to every locale**
+  (#697). `actions.change`, `common.optional`, `common.expand`,
+  `common.collapse`, `clinical.diagnosis.openNotes`,
+  `attachments.linkError`, `documents.viewError` and the three
+  `photoGallery.*` upload/fetch messages existed in no locale file, so the
+  default message passed at the call site is what rendered: an English
+  clinic read "Cambiar" / "Opcional" / "Expandir" on the media upload
+  controls and the patient alerts banner (two of them aria-labels), a
+  Spanish one read "Error loading photos" in a toast. All ten are now in
+  the 12 host locales, phrased from the strings each locale already uses
+  for the same kind of message, and the redundant defaults are gone from
+  the call sites. `key-resolution.test.ts` no longer skips a call that
+  passes a default message — the default may stay, the key has to exist —
+  which is the follow-up its own docstring asked for.
 - **GDPR retention policies can no longer disagree with each other**
   (#562). Two active policies for one (clinic, category) made erasure
   eligibility pick one at random (unordered dict collapse). Creating a
@@ -217,7 +282,6 @@ frontend as a Nuxt layer under its own Python package.
   the only broken path was the documented admin override, and it had no
   test. Found by exercising every mutating endpoint against a seeded
   database.
-
 - **The split-host cookie warning told PaaS operators to set a value
   browsers reject** (#444). `_shared_parent` built `.onrender.com` from
   `app.onrender.com` + `api.onrender.com` — two labels, so it passed the
@@ -228,7 +292,6 @@ frontend as a Nuxt layer under its own Python package.
   at `NUXT_API_PROXY=true` (shipped in 2.8.0 for exactly this shape)
   instead of suggesting they go and buy a domain. A real multi-label
   domain such as `.example.co.uk` is still suggested as before.
-
 - **The help-portal build now fails on a fragment slug collision** and
   warns about a slug the app can never request (#573, partial). Two
   screens whose routes collapse to the same slug used to write the same
@@ -238,26 +301,41 @@ frontend as a Nuxt layer under its own Python package.
   page's help away. The underlying question of how a query-selected
   sub-view gets its own fragment is still open on #573; this only makes
   the two failure modes visible.
-
-### Changed
-
-- **Upgrade note (production):** `BUDGET_PUBLIC_SECRET_KEY` is now
-  required. A production boot without it fails fast with an actionable
-  message instead of signing public budget sessions with the staff-JWT
-  `SECRET_KEY`. Blank, whitespace-only, and whitespace-padded values are
-  also refused, so generate a clean value (e.g. `openssl rand -hex 32`)
-  before upgrading; `docker-compose.prod.yml` and
-  `docker-compose.coolify.yml` now both refuse to start without it.
-
-- **GDPR erasure now pulls a contributor registry, not a fan-out** (#546,
-  ADR 0038). `gdpr` calls every registered erasure contributor
-  (`notifications`, `recalls`) inside the erasure transaction and builds
-  the per-scope coverage list (`ErasureCoverage`) from their answers — a
-  scope with no contributor produces no row. `gdpr.erasure.executed` is a
-  post-commit announcement. Fiscal, signature and clinical records stay
-  retained (Art. 17(3)), hardcoded as interim rows until their
-  contributors land. `ErasureResult.coverage_note` is removed in favor of
-  the `coverage` list (no frontend reader affected).
+- **Concurrent writes run once.** Budget numbers (#773), budget, agenda,
+  treatment plan, payroll and prescription transitions (#775-#778) and
+  every `SELECT … FOR UPDATE` (#771) now take a row lock that re-reads the
+  row, so two clicks at the same instant no longer double a transition.
+- **Dates follow the clinic's calendar, not the server's.** Invoice
+  dates (#719), every server-side "today" (#720, #780), PDF timestamps
+  (#706) and the agenda's patient summary (#739).
+- **Clearing a field clears it.** Emptying an optional input used to
+  answer 422 or silently keep the old value in patients_clinical,
+  catalog, budget, agenda, media, billing, sdi_it, nav_online,
+  sistema_ts, inventory, orthodontics and india_gst (#741-#749, #757,
+  #767).
+- **Deletes that hit a reference answer 409, not 500** (cabinets,
+  webhook subscriptions, plan items, inventory items, linked orthodontic
+  cases, invoice-series prefixes; #661, #751-#758), and a value wider than
+  its column answers 422 (#702, #764).
+- **Billing and reports:** an invoice cannot be credited past its total
+  (#772); receivables are net of refunds again (#691); Verifactu rounds
+  fiscal amounts like the invoice row (#692) and its ledger filters work
+  (#725); a deleted treatment frees its internal code (#737); only an
+  unlinked draft quote can be deleted (#760); a quote resend takes the
+  next free version (#663).
+- **The treatment-plan auto-close cron never ran** (#628): it queried a
+  column that does not exist and failed silently every night.
+- **Nuxt UI v4 leftovers:** pagination (#730) and dismissible alerts
+  (#732) bind the v4 API; the odontogram diagnosis plan selector uses v4
+  items (#726); the odontogram loads every page of treatments (#717).
+- **The frontend called paths the backend does not mount** (#700); a new
+  test checks every API path against the OpenAPI schema (#710).
+- **Copilot tools:** `get_budget` crashed on any budget with a line item
+  (#675); id parameters are typed as UUID and closed vocabularies as
+  `Literal`, so the chokepoint rejects a bad value by name (#678, #682);
+  `COPILOT_MAX_TOKENS` reaches the bridge (#673).
+- Razorpay shows the real payment method (#653, thanks @abdd8433);
+  prescriptions show a country-aware license caption (#668).
 
 ### Tests
 
@@ -269,7 +347,6 @@ frontend as a Nuxt layer under its own Python package.
   each against a real (empty) schema — a schema-and-import smoke test,
   not behaviour coverage, which is what keeps it at ~12s. Confirmed it
   catches #628's regression when the old query is put back.
-
 - **Four tests read the local clock while the code under test uses UTC**,
   so they pass in CI (UTC) and fail east of UTC for part of every day —
   `test_budget_expired_detail_410`, `test_strip_excludes_appointments_on_other_days`,
@@ -279,7 +356,6 @@ frontend as a Nuxt layer under its own Python package.
   A new `backend-test-east-of-utc` CI job runs the clock-reading tests
   under `TZ=Pacific/Kiritimati` (UTC+14), selecting the files at run time
   so a new test of this shape is covered the day it lands.
-
 - **A typo in a route's permission string now fails CI.** The tool
   registry already guarded this (`test_every_tool_permission_exists`,
   "would otherwise silently always-deny"); routes gate on the same
@@ -287,6 +363,9 @@ frontend as a Nuxt layer under its own Python package.
   for every user, forever, with nothing logged to say the string was the
   problem. The tree is clean today (673 literal call sites, 189 distinct,
   all valid), so `test_route_permissions.py` is purely preventive.
+- Migrations are checked against the schema the models declare (#704); a
+  slot nobody renders fails CI (#694); six removable modules get
+  branch-scoped uninstall round-trips (#646, thanks @lamanji).
 
 ## [2.8.0] - 2026-10-07
 

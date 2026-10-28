@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy import func, select, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.email import EmailResult, email_service
@@ -284,12 +285,21 @@ class NotificationService:
         if prefs:
             return prefs
 
-        # Create default preferences
+        # Create default preferences. Two first reads for the same patient
+        # (two tabs, an inbound message) race on
+        # uq_notification_pref_clinic_patient; the loser reads the winner's row.
         prefs = NotificationPreference(
             clinic_id=clinic_id,
             patient_id=patient_id,
         )
-        db.add(prefs)
+        try:
+            async with db.begin_nested():
+                db.add(prefs)
+        except IntegrityError:
+            existing = await NotificationService.get_patient_preferences(db, clinic_id, patient_id)
+            if existing is None:
+                raise
+            return existing
         await db.commit()
         await db.refresh(prefs)
         return prefs
@@ -307,8 +317,13 @@ class NotificationService:
         )
 
         for key, value in data.items():
-            if value is not None:
-                setattr(prefs, key, value)
+            if value is None:
+                continue
+            if key == "preferences":
+                # Merge, never replace: recording one opt-out must not
+                # discard the patient's other recorded choices (#683).
+                value = {**(prefs.preferences or {}), **value}
+            setattr(prefs, key, value)
 
         await db.commit()
         await db.refresh(prefs)
@@ -649,10 +664,17 @@ class NotificationService:
                     return False, "patient_opted_out"
 
                 # Check specific preference
-                if not prefs.preferences.get(notification_type, True):
+                if NotificationService.opted_out_of_type(prefs, notification_type):
                     return False, f"patient_opted_out_of_{notification_type}"
 
         return True, "ok"
+
+    @staticmethod
+    def opted_out_of_type(prefs: NotificationPreference | None, notification_type: str) -> bool:
+        """The patient explicitly declined this type. An absent key is consent."""
+        if prefs is None:
+            return False
+        return not (prefs.preferences or {}).get(notification_type, True)
 
     @staticmethod
     async def test_email_connection(to_email: str) -> EmailResult:

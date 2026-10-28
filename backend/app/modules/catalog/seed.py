@@ -2892,13 +2892,24 @@ async def _ensure_vat_types(
     vat_type_map: dict[str, UUID] = {}
     created = 0
     for vat_data in VAT_PRESETS.get(vat_preset, VAT_PRESETS["generic"]):
+        # A rate is not unique per clinic: a clinic may add its own type at a
+        # preset's rate (a second 0% for non-subject operations, a retired
+        # version kept for old invoices). Reuse the system row first, then
+        # the active one, rather than 500 on the second match.
         existing = await db.execute(
-            select(VatType).where(
+            select(VatType)
+            .where(
                 VatType.clinic_id == clinic_id,
                 VatType.rate == vat_data["rate"],
             )
+            .order_by(
+                VatType.is_system.desc(),
+                VatType.is_active.desc(),
+                VatType.created_at,
+                VatType.id,
+            )
         )
-        vat = existing.scalar_one_or_none()
+        vat = existing.scalars().first()
         if not vat:
             vat = VatType(
                 clinic_id=clinic_id,

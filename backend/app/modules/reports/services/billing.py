@@ -559,11 +559,15 @@ class BillingReportService:
         gaps = []
 
         for series in series_list:
-            # Get all sequential numbers for this series, grouped by year
+            # Get all sequential numbers for this series, grouped by the
+            # fiscal year they were drawn in (the counter restarts there on a
+            # reset_yearly series), not the year the draft was created.
             # Only include issued invoices (those with sequential_number assigned)
             result = await db.execute(
                 select(
-                    func.extract("year", Invoice.created_at).label("year"),
+                    func.coalesce(
+                        Invoice.fiscal_year, func.extract("year", Invoice.issue_date)
+                    ).label("year"),
                     Invoice.sequential_number,
                 )
                 .where(

@@ -92,6 +92,9 @@ class Invoice(Base, TimestampMixin):
     sequential_number: Mapped[int | None] = mapped_column(
         Integer, default=None
     )  # For gap control - assigned when issued
+    fiscal_year: Mapped[int | None] = mapped_column(
+        Integer, default=None
+    )  # Year the sequential was drawn in (the year in invoice_number) - assigned when issued
 
     # Links
     budget_id: Mapped[UUID | None] = mapped_column(
@@ -189,7 +192,7 @@ class Invoice(Base, TimestampMixin):
         Index("idx_invoices_budget", "budget_id"),
         Index("idx_invoices_credit_note_for", "credit_note_for_id"),
         Index("idx_invoices_series", "series_id"),
-        # Fiscal uniqueness backstop (bil_0005). Partial — drafts carry
+        # Fiscal uniqueness backstop (bil_0005, bil_0006). Partial — drafts carry
         # NULL identifiers and must not collide. Enforced at the DB level
         # because number generation being serialized on the series row
         # lock is not, by itself, a guarantee against duplicates.
@@ -200,12 +203,18 @@ class Invoice(Base, TimestampMixin):
             unique=True,
             postgresql_where=text("invoice_number IS NOT NULL"),
         ),
+        # The sequential restarts each year on a ``reset_yearly`` series,
+        # so it is unique per (series, fiscal year) (bil_0006, #689).
+        # NULLS NOT DISTINCT keeps a row without a year under the
+        # lifetime rule rather than outside the index.
         Index(
-            "ix_invoices_series_sequential_unique",
+            "ix_invoices_series_year_sequential_unique",
             "series_id",
+            "fiscal_year",
             "sequential_number",
             unique=True,
             postgresql_where=text("series_id IS NOT NULL AND sequential_number IS NOT NULL"),
+            postgresql_nulls_not_distinct=True,
         ),
     )
 

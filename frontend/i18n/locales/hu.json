@@ -2475,7 +2475,8 @@
     "prefs": {
       "title": "Értesítési beállítások",
       "description": "Mely csatornákon érhető el a páciens. A leiratkozás kényszerített küldésnél is blokkolja a csatornát.",
-      "saved": "Beállítások mentve"
+      "saved": "Beállítások mentve",
+      "typesDescription": "A páciensnek küldött üzenettípusok. Egy típus kikapcsolása minden csatornán tiltja, a kézi küldést is beleértve."
     }
   },
   "invoice": {

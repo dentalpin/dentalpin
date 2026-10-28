@@ -71,6 +71,7 @@ async def _due_pending(db: AsyncSession, clinic_id: UUID) -> list[SdiItRecord]:
         .order_by(SdiItRecord.created_at)
         .limit(_BATCH)
         .with_for_update(skip_locked=True)
+        .execution_options(populate_existing=True)
     )
     return list((await db.execute(stmt)).scalars().all())
 

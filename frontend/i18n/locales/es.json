@@ -2991,7 +2991,8 @@
     "prefs": {
       "title": "Preferencias de notificaciones",
       "description": "Qué canales pueden contactar a este paciente. Darse de baja bloquea ese canal incluso en envíos forzosos.",
-      "saved": "Preferencias guardadas"
+      "saved": "Preferencias guardadas",
+      "typesDescription": "Tipos de mensaje que recibe este paciente. Desactivar uno lo bloquea en todos los canales, también en los envíos manuales."
     }
   },
   "billingSettings": {

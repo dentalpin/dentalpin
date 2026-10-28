@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#750): removing the plan item a case is linked to answered 500, because `fk_ortho_cases_item` had no `ondelete`. `ort_0004` recreates it `ON DELETE SET NULL`, so the case keeps its plan and loses only the item link, which `_annotate_case` already reads as "no installments". The uninstall roundtrip now targets `orthodontics@-4`.
+- fix(#740): a control whose aligner-number input was typed in and then cleared saves. The cleared input sent `""`, which the `int` field answered with 422.
 - fix: date-only fields (`YYYY-MM-DD`) are parsed as local midnight
   (`parseDateOnly`, host `utils/wallClock.ts`) instead of `new Date(s)`, which
   is UTC midnight and rendered every such date one day early in zones behind

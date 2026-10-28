@@ -72,6 +72,25 @@ services:
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.0}
       STORAGE_BACKEND: local
       STORAGE_LOCAL_PATH: /app/storage
+      # AI Copilot. The key reaches the app ONLY through these mappings:
+      # there is no env_file here, `CopilotSettings` stores provider and
+      # model but no key, and `bridge.py` resolves the key from settings
+      # alone — so without these the copilot raises LLMConfigError on
+      # every request no matter what is set in Coolify. Empty = assistant
+      # off, the rest of the app runs.
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      # Which provider a clinic gets before it picks one in settings.
+      COPILOT_PROVIDER_DEFAULT: ${COPILOT_PROVIDER_DEFAULT:-openai}
+      # Output ceiling per assistant turn. Forwarded for the same reason
+      # as the keys: the backend enumerates its environment, so a value
+      # set in Coolify never reaches the container otherwise. The bridge
+      # starts reading it in #673; forwarding it here is inert until then
+      # and correct afterwards.
+      COPILOT_MAX_TOKENS: ${COPILOT_MAX_TOKENS:-4096}
       # Demo deployments set SEED_ON_STARTUP=1 in Coolify env so a wiped
       # DB volume self-heals on next restart: alembic recreates the
       # schema and seed_demo.py repopulates it (idempotent — no-op when

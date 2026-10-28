@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import UTC, datetime
 from decimal import Decimal
 from uuid import uuid4
 
@@ -204,3 +205,35 @@ async def test_link_options_search(client: AsyncClient, auth_headers: dict, seed
     )
     data = res.json()["data"]
     assert any(i["id"] == str(item.id) for i in data["items"])
+
+
+@pytest.mark.asyncio
+async def test_link_options_skip_retired_rows(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    seeded_pair,
+):
+    """A deleted or deactivated row is gone from its own module; don't offer it here."""
+    treatment, item = seeded_pair
+    treatment.deleted_at = datetime.now(UTC)
+    treatment.is_active = False
+    item.is_active = False
+    await db_session.commit()
+
+    res = await client.get("/api/v1/treatment_consumables/link-options", headers=auth_headers)
+    assert res.status_code == 200, res.text
+    data = res.json()["data"]
+    assert all(t["id"] != str(treatment.id) for t in data["treatments"])
+    assert all(i["id"] != str(item.id) for i in data["items"])
+
+    # A deleted catalog treatment can't be linked by id either.
+    code, _ = await _create(
+        client,
+        auth_headers,
+        catalog_item_id=str(treatment.id),
+        inventory_item_id=str(item.id),
+        quantity="1",
+    )
+    assert code == 404

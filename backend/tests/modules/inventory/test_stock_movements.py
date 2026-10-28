@@ -187,3 +187,36 @@ async def test_movements_http_is_clinic_scoped(
 
     res = await client.get("/api/v1/inventory/valuation", headers=auth_headers)
     assert res.status_code == 200, res.text
+
+
+@pytest.mark.asyncio
+async def test_adjustment_after_a_concurrent_one_keeps_both(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """adjust_stock reads the item (get_item) before apply_movement locks it.
+    An adjustment whose session loaded the item before another adjustment
+    committed used to add its delta to the cached quantity, losing the other."""
+    from app.database import async_session_maker
+
+    item = await InventoryService.create_item(
+        db_session,
+        test_clinic.id,
+        InventoryItemCreate(name="Gloves L", category="consumables", stock_quantity=Decimal("10")),
+        created_by=None,
+    )
+    await db_session.commit()
+
+    async with async_session_maker() as first, async_session_maker() as second:
+        # Held, as adjust_stock holds get_item()'s result while it locks.
+        preloaded = await InventoryService.get_item(second, test_clinic.id, item.id)
+        await InventoryService.adjust_stock(
+            first, test_clinic.id, item.id, Decimal("5"), reason="restock", created_by=None
+        )
+        await first.commit()
+        updated = await InventoryService.adjust_stock(
+            second, test_clinic.id, item.id, Decimal("5"), reason="restock", created_by=None
+        )
+        await second.commit()
+
+    assert updated is preloaded
+    assert updated.stock_quantity == Decimal("20")

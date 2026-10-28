@@ -67,6 +67,7 @@ async def _open_invoices(
         )
         .order_by(Invoice.issue_date, Invoice.created_at, Invoice.id)
         .with_for_update()
+        .execution_options(populate_existing=True)
     )
     invoices = list(result.scalars().all())
     if prefer_invoice_id is not None:

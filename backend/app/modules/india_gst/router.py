@@ -119,7 +119,8 @@ async def update_settings(
         settings.registration_type = body.registration_type
     if body.clinic_state is not None:
         settings.clinic_state = body.clinic_state
-    if body.turnover_threshold is not None:
+    # Nullable: an explicit null (or a cleared input) removes the threshold.
+    if "turnover_threshold" in body.model_fields_set:
         settings.turnover_threshold = body.turnover_threshold
     if body.show_gstin_on_invoice is not None:
         settings.show_gstin_on_invoice = body.show_gstin_on_invoice

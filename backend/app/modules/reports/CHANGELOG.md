@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#689): the numbering-gaps report groups sequentials by the invoice's `fiscal_year` (the year its number was drawn in) instead of the year the draft was created, so one year's counter can no longer fill another year's gap.
+
 - fix: date-only fields (`YYYY-MM-DD`) are parsed as local midnight
   (`parseDateOnly`, host `utils/wallClock.ts`) instead of `new Date(s)`, which
   is UTC midnight and rendered every such date one day early in zones behind

@@ -12,13 +12,13 @@ import secrets
 from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.email.encryption import encrypt_password
 from app.core.webhooks.url_safety import validate_new_url
 
-from .models import ApiToken, WebhookSubscription
+from .models import ApiToken, WebhookDelivery, WebhookSubscription
 
 # Server-side generated, shown once, never Fernet-decrypted back out for
 # display (only internally, to sign a delivery).
@@ -115,6 +115,15 @@ class IntegrationsService:
 
     @staticmethod
     async def delete_subscription(db: AsyncSession, subscription: WebhookSubscription) -> None:
+        # Deliveries reference the subscription through an FK without
+        # ondelete, so they go first or the DELETE fails with a 500 (#750).
+        # A queued delivery of a deleted subscription has nowhere to go.
+        await db.execute(
+            delete(WebhookDelivery).where(
+                WebhookDelivery.clinic_id == subscription.clinic_id,
+                WebhookDelivery.subscription_id == subscription.id,
+            )
+        )
         await db.delete(subscription)
         await db.commit()
 

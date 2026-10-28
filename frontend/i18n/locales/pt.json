@@ -2475,7 +2475,8 @@
     "prefs": {
       "title": "Preferências de notificação",
       "description": "Que canais podem contactar este paciente. Cancelar a subscrição bloqueia esse canal mesmo em envios forçados.",
-      "saved": "Preferências guardadas"
+      "saved": "Preferências guardadas",
+      "typesDescription": "Tipos de mensagem que este paciente recebe. Desativar um bloqueia-o em todos os canais, incluindo envios manuais."
     }
   },
   "invoice": {

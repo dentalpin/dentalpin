@@ -23,6 +23,7 @@ from sqlalchemy.orm import joinedload, selectinload
 from app.core.auth.models import User
 from app.core.i18n_names import catalog_name
 from app.core.list_query import parse_sort
+from app.core.utils.dates import clinic_today_for
 from app.modules.budget.models import Budget
 
 from .models import (
@@ -912,7 +913,7 @@ class PaymentReportsService:
             .group_by(PatientEarnedEntry.patient_id)
         )
 
-        today = datetime.now(UTC).date()
+        today = await clinic_today_for(db, clinic_id)
         buckets_data: dict[str, dict[str, object]] = {
             "0-30": {"total": Decimal("0"), "patients": set()},
             "31-60": {"total": Decimal("0"), "patients": set()},

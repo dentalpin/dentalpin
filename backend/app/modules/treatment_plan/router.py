@@ -31,7 +31,7 @@ from .schemas import (
     TreatmentPlanUpdate,
     UpdateSessionRequest,
 )
-from .service import PlanLockedError, TreatmentPlanService
+from .service import PlanItemBookedError, PlanLockedError, TreatmentPlanService
 
 router = APIRouter()
 
@@ -444,7 +444,7 @@ async def remove_plan_item(
         removed = await TreatmentPlanService.remove_item(
             db, ctx.clinic_id, plan_id, item_id, ctx.user_id
         )
-    except PlanLockedError as e:
+    except (PlanLockedError, PlanItemBookedError) as e:
         raise HTTPException(status_code=409, detail=str(e))
     if not removed:
         raise HTTPException(status_code=404, detail="Treatment item not found")
@@ -715,6 +715,9 @@ async def generate_budget_from_plan(
     plan = await TreatmentPlanService.get(db, ctx.clinic_id, plan_id)
     if not plan:
         raise HTTPException(status_code=404, detail="Treatment plan not found")
+    # Lock and re-read the link: a second click at the same moment then sees
+    # the first click's budget instead of creating another one (#770).
+    await db.refresh(plan, attribute_names=["budget_id"], with_for_update=True)
 
     # Check if existing linked budget is cancelled - if so, allow creating new one
     if plan.budget_id:

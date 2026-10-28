@@ -5,12 +5,23 @@ from __future__ import annotations
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .constants import INDIA_STATES, REGISTRATION_TYPES
 
 _REGISTRATION_PATTERN = "^(" + "|".join(REGISTRATION_TYPES) + ")$"
 _STATE_PATTERN = "^(" + "|".join(INDIA_STATES.keys()) + ")$"
+
+
+def _blank_is_none(value: object) -> object:
+    """A cleared input sends "" -- for a typed optional field that means "no value".
+
+    Without this, clearing a number input and saving answers 422, so the
+    form cannot be saved until the user types something back (#740).
+    """
+    if isinstance(value, str) and not value.strip():
+        return None
+    return value
 
 
 class IndiaGstSettingsResponse(BaseModel):
@@ -40,6 +51,8 @@ class IndiaGstSettingsUpdate(BaseModel):
     turnover_threshold: Decimal | None = None
     show_gstin_on_invoice: bool | None = None
     show_sac_on_invoice: bool | None = None
+
+    _clear_blank = field_validator("turnover_threshold", mode="before")(_blank_is_none)
 
 
 class IndiaGstCatalogItemResponse(BaseModel):

@@ -7,11 +7,22 @@ from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 ItemCategory = Literal["consumables", "equipment", "office", "other"]
 
 MovementReason = Literal["initial", "restock", "consumption", "adjustment", "correction"]
+
+
+def _blank_is_none(value: object) -> object:
+    """A cleared input sends "" -- for a typed optional field that means "no value".
+
+    Without this, clearing a number input and saving answers 422, so the
+    form cannot be saved until the user types something back (#740).
+    """
+    if isinstance(value, str) and not value.strip():
+        return None
+    return value
 
 
 class InventoryItemCreate(BaseModel):
@@ -22,6 +33,8 @@ class InventoryItemCreate(BaseModel):
     min_quantity: Decimal = Field(default=Decimal("0"), ge=0)
     unit_cost: Decimal | None = Field(default=None, ge=0)
     notes: str | None = Field(default=None, max_length=2000)
+
+    _clear_blank = field_validator("unit_cost", mode="before")(_blank_is_none)
 
 
 class InventoryItemUpdate(BaseModel):
@@ -36,6 +49,8 @@ class InventoryItemUpdate(BaseModel):
     # Items with ledger history cannot be deleted — deactivate instead.
     is_active: bool | None = None
     notes: str | None = Field(default=None, max_length=2000)
+
+    _clear_blank = field_validator("unit_cost", mode="before")(_blank_is_none)
 
 
 class StockAdjustPayload(BaseModel):

@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix(#774): a period status change locks the row and re-reads its status before checking the transition. Two requests at once both passed the check on their unlocked copy and published `payroll.period.status_changed` twice; the second now answers 409.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 ### Added

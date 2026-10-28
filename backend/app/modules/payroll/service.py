@@ -228,6 +228,9 @@ class PeriodService:
     async def transition(
         db: AsyncSession, row: PayrollPeriod, payload: PeriodTransition
     ) -> PayrollPeriod:
+        # Lock and re-read: two requests at once both passed the check on
+        # their unlocked copy and published the status change twice (#774).
+        await db.refresh(row, attribute_names=["status"], with_for_update=True)
         if payload.status not in PERIOD_TRANSITIONS.get(row.status, frozenset()):
             raise HTTPException(
                 http_status.HTTP_409_CONFLICT,

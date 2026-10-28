@@ -4394,6 +4394,7 @@ def generate_invoices_data(catalog_items_map: dict[str, dict], budgets_result: d
                 "invoice_number": invoice_number,
                 "series_id": INVOICE_SERIES_IDS[0],
                 "sequential_number": sequential_number,
+                "fiscal_year": current_year,
                 "budget_id": budget_id,
                 "credit_note_for_id": None,
                 "status": invoice_scenario["status"],

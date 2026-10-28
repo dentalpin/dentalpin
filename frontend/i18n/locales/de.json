@@ -2475,7 +2475,8 @@
     "prefs": {
       "title": "Benachrichtigungseinstellungen",
       "description": "Über welche Kanäle dieser Patient erreichbar ist. Eine Abmeldung blockiert den Kanal auch bei erzwungenen Sendungen.",
-      "saved": "Einstellungen gespeichert"
+      "saved": "Einstellungen gespeichert",
+      "typesDescription": "Nachrichtentypen, die dieser Patient erhält. Ein deaktivierter Typ wird auf allen Kanälen blockiert, auch bei manuellem Versand."
     }
   },
   "invoice": {

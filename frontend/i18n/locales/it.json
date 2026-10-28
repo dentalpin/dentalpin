@@ -2475,7 +2475,8 @@
     "prefs": {
       "title": "Preferenze di notifica",
       "description": "Tramite quali canali è possibile contattare questo paziente. La disiscrizione blocca il canale anche per gli invii forzati.",
-      "saved": "Preferenze salvate"
+      "saved": "Preferenze salvate",
+      "typesDescription": "Tipi di messaggio che questo paziente riceve. Disattivarne uno lo blocca su tutti i canali, invii manuali compresi."
     }
   },
   "invoice": {

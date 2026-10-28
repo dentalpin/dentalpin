@@ -21,6 +21,7 @@
     "deleteTitle": "Tétel törlése",
     "deleteMessage": "Törli ezt a készlettételt? Ez nem vonható vissza.",
     "cannotDeleteWithHistory": "Ennek a tételnek van mozgástörténete. Inaktiválja az audit nyomvonal megőrzéséhez.",
+    "cannotDeleteInUse": "Ez a tétel beszállítóhoz, kezeléshez vagy beszerzési rendeléshez kapcsolódik. Törlés helyett inaktiválja.",
     "deactivate": "Inaktiválás",
     "reactivate": "Aktiválás",
     "deactivated": "Tétel inaktiválva",

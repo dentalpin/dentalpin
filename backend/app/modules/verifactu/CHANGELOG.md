@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#768): the row locks in the settings (chain head) now re-read the locked row (`populate_existing`). A `SELECT … FOR UPDATE` on a row already in the session returned the cached instance with its pre-lock values: `validate_before_issue` loads the settings first, so two issues on different series could chain two records off the same `huella`.
+
 - fix(#732): the settings error alert's close button did nothing. It listened for `@close`, which Nuxt UI v4 `UAlert` never emits; it now handles `@update:open`.
 
 - fix: the fiscal-ledger filters work again. Both `USelect`s bound `:options` (a Nuxt UI v3 prop that v4 ignores) and modelled "no filter" as `undefined`, so the dropdowns rendered empty and every change was a no-op; they now use `:items` with an explicit `all` sentinel mapped to no query parameter, and a filter change resets pagination to page 1. The `records.all` label ships in all ten locales.

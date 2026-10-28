@@ -21,6 +21,7 @@
     "deleteTitle": "Excluir item",
     "deleteMessage": "Excluir este item do inventário? Esta ação não pode ser desfeita.",
     "cannotDeleteWithHistory": "Este item tem histórico de movimentos. Desative-o para preservar a pista de auditoria.",
+    "cannotDeleteInUse": "Este artigo está associado a um fornecedor, a um tratamento ou a uma encomenda de compra. Desative-o em vez disso.",
     "deactivate": "Desativar",
     "reactivate": "Reativar",
     "deactivated": "Item desativado",

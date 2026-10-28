@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#684): the dashboard's `completed_this_month` and `conversion_rate` changed with the app container's `TZ`. The month bounds were naive datetimes compared with `timestamptz` columns, so they were read in the process's zone: the same rows gave 1 on a UTC host and 3 on a Madrid one. They are now midnight in the clinic's `timezone` (`clinic_zone_for`, `app/core/utils/dates.py`), the same zone `today` already came from, so a recall completed at 00:30 on 1 June in a Madrid clinic counts in June on every host.
+
 - fix: the next-recall suggestion now scopes its patient lookup by clinic, so another clinic's patient row is never read. Defence in depth; the row was already discarded before use.
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 

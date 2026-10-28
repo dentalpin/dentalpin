@@ -339,7 +339,8 @@
       "save_failed": "Erro ao salvar as definições"
     },
     "prefs": {
-      "saved": "Preferências salvas"
+      "saved": "Preferências salvas",
+      "typesDescription": "Tipos de mensagem que este paciente recebe. Desativar um bloqueia o envio em todos os canais, inclusive envios manuais."
     }
   },
   "invoice": {

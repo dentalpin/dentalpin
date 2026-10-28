@@ -55,8 +55,11 @@ class OrthoCase(Base):
     treatment_plan_id: Mapped[uuid.UUID | None] = mapped_column(
         UUID(as_uuid=True), ForeignKey("treatment_plans.id"), nullable=True, unique=True
     )
+    # SET NULL: removing the item from the plan unlinks the case (#750).
     plan_item_id: Mapped[uuid.UUID | None] = mapped_column(
-        UUID(as_uuid=True), ForeignKey("planned_treatment_items.id"), nullable=True
+        UUID(as_uuid=True),
+        ForeignKey("planned_treatment_items.id", ondelete="SET NULL"),
+        nullable=True,
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now(), nullable=False

@@ -2475,7 +2475,8 @@
     "prefs": {
       "title": "Préférences de notification",
       "description": "Quels canaux peuvent joindre ce patient. Se désinscrire bloque ce canal même pour les envois forcés.",
-      "saved": "Préférences enregistrées"
+      "saved": "Préférences enregistrées",
+      "typesDescription": "Types de messages reçus par ce patient. En désactiver un le bloque sur tous les canaux, envois manuels compris."
     }
   },
   "invoice": {

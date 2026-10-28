@@ -40,10 +40,16 @@ class PrescriptionService:
         return patient
 
     @staticmethod
-    async def _get(db: AsyncSession, clinic_id: UUID, prescription_id: UUID):
+    async def _get(
+        db: AsyncSession, clinic_id: UUID, prescription_id: UUID, *, for_update: bool = False
+    ):
         stmt = select(Prescription).where(
             Prescription.id == prescription_id, Prescription.clinic_id == clinic_id
         )
+        if for_update:
+            # Lock and re-read for a status change: two issues at once both
+            # passed the draft check on their unlocked copy (#774).
+            stmt = stmt.with_for_update().execution_options(populate_existing=True)
         row = (await db.execute(stmt)).scalar_one_or_none()
         if row is None:
             raise HTTPException(http_status.HTTP_404_NOT_FOUND, "Prescription not found")
@@ -155,7 +161,7 @@ class PrescriptionService:
     ) -> Prescription:
         from app.core.auth.models import User
 
-        row = await PrescriptionService._get(db, clinic_id, prescription_id)
+        row = await PrescriptionService._get(db, clinic_id, prescription_id, for_update=True)
         await PrescriptionService._require_draft(row)
         items = await PrescriptionService._items(db, clinic_id, row.id)
         if not items:
@@ -215,7 +221,7 @@ class PrescriptionService:
 
     @staticmethod
     async def cancel(db: AsyncSession, clinic_id: UUID, prescription_id: UUID) -> Prescription:
-        row = await PrescriptionService._get(db, clinic_id, prescription_id)
+        row = await PrescriptionService._get(db, clinic_id, prescription_id, for_update=True)
         if row.status == "cancelled":
             raise HTTPException(http_status.HTTP_409_CONFLICT, "Prescription is already cancelled")
         row.status = "cancelled"

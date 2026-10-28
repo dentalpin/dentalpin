@@ -53,6 +53,10 @@ async def get_settings(
     return ApiResponse(data=_settings_response(await _get_settings(db, ctx.clinic_id)))
 
 
+# Nullable columns: an explicit null clears them; null on the others means "unchanged".
+_CLEARABLE = {"tax_number", "technical_user_login", "software_dev_contact"}
+
+
 @router.put("/settings", response_model=ApiResponse[NavSettingsResponse])
 async def update_settings(
     data: NavSettingsUpdate,
@@ -72,7 +76,7 @@ async def update_settings(
         "software_dev_contact",
     ):
         value = getattr(data, field)
-        if value is not None:
+        if value is not None or (field in _CLEARABLE and field in data.model_fields_set):
             setattr(s, field, value)
     if data.technical_user_password:
         s.technical_user_password_encrypted = encrypt_password(data.technical_user_password)
@@ -80,12 +84,14 @@ async def update_settings(
         s.signature_key_encrypted = encrypt_password(data.signature_key)
     if data.exchange_key:
         s.exchange_key_encrypted = encrypt_password(data.exchange_key)
+    enabled = s.enabled if data.enabled is None else data.enabled
+    # Also checked on a plain save: clearing the tax number or login of an enabled clinic.
+    if enabled and submission_queue.credentials_for(s) is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Add meg az adószámot, a technikai felhasználót és mindkét kulcsot az aktiválás előtt.",
+        )
     if data.enabled is not None:
-        if data.enabled and submission_queue.credentials_for(s) is None:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="Add meg az adószámot, a technikai felhasználót és mindkét kulcsot az aktiválás előtt.",
-            )
         s.enabled = data.enabled
     # Any config change lifts a tokenExchange pause.
     s.next_send_after = None

@@ -689,3 +689,34 @@ async def test_duplicate_membership_rejected_for_control_registration(
     )
     await db_session.commit()
     assert control.id is not None
+
+
+def test_cleared_aligner_number_is_no_value():
+    """A cleared aligner input sends "" -- it means "none", not a 422 (#740)."""
+    assert OrthoControlCreate(aligner_number="").aligner_number is None
+    update = OrthoControlUpdate(aligner_number="")
+    assert update.aligner_number is None
+    assert "aligner_number" in update.model_fields_set
+
+
+@pytest.mark.asyncio
+async def test_removing_the_linked_plan_item_unlinks_the_case(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    """``fk_ortho_cases_item`` had no ondelete, so removing the linked item
+    from a draft plan failed with a 500 (#750)."""
+    from app.modules.treatment_plan.service import TreatmentPlanService
+
+    doc = await _professional(db_session, test_clinic.id)
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    plan, item = await _plan_with_item(db_session, test_clinic.id, test_patient.id, doc.id)
+    await OrthoCaseService.link_plan(db_session, test_clinic.id, case.id, plan.id, item.id)
+    await db_session.commit()
+
+    assert await TreatmentPlanService.remove_item(
+        db_session, test_clinic.id, plan.id, item.id, doc.id
+    )
+    await db_session.commit()
+    await db_session.refresh(case)
+    assert case.plan_item_id is None
+    assert case.treatment_plan_id == plan.id

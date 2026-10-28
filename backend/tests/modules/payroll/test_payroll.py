@@ -379,3 +379,23 @@ async def test_http_delete_draft_guards(
     await PeriodService.transition(db_session, late, PeriodTransition(status="closed"))
     blocked = await client.delete(f"/api/v1/payroll/entries/{stuck_id}", headers=auth_headers)
     assert blocked.status_code == 409, blocked.text
+
+
+@pytest.mark.asyncio
+async def test_transition_rechecks_a_concurrently_changed_status(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """A request that loaded the period before another one closed it used to
+    close it again on its stale copy and publish the change twice (#774)."""
+    from app.database import async_session_maker
+
+    period = await _make_period(db_session, test_clinic.id, month="2026-03")
+    await db_session.commit()
+
+    async with async_session_maker() as first, async_session_maker() as second:
+        stale = await PeriodService.get_period(second, test_clinic.id, period.id)
+        mine = await PeriodService.get_period(first, test_clinic.id, period.id)
+        await PeriodService.transition(first, mine, PeriodTransition(status="closed"))
+        with pytest.raises(HTTPException) as exc:
+            await PeriodService.transition(second, stale, PeriodTransition(status="closed"))
+        assert exc.value.status_code == 409

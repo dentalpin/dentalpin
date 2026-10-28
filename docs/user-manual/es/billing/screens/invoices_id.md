@@ -36,7 +36,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/[id]/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: c9856a3
+last_verified_commit: edc08ff
 ---
 
 # Detalle de factura
@@ -106,6 +106,10 @@ se emite un abono.
   histórico para auditoría. Solo admin.
 - **Crear nota de crédito** — emite un abono asociado con los
   importes de la factura origen. Pasa por el mismo flujo de emisión.
+  El conjunto de abonos de una factura, borradores incluidos, no puede
+  superar su total; una vez abonada por completo, uno nuevo se rechaza
+  indicando el importe que queda por abonar. Borra un abono en borrador
+  para liberar su importe.
 
 ## Permisos
 

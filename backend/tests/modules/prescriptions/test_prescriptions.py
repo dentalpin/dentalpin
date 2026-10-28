@@ -401,3 +401,29 @@ def test_country_default_flows_into_pdf_caption():
     )
     assert "Cédula profesional" in render_html(data)
     assert "N.º de colegiado" not in render_html(data)
+
+
+@pytest.mark.asyncio
+async def test_issue_rechecks_a_concurrently_issued_prescription(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """A request that loaded the draft before another one issued it used to
+    issue it again on its stale copy: second compliance hook run, second
+    prescription.issued event (#774)."""
+    from app.database import async_session_maker
+    from app.modules.prescriptions.models import Prescription
+
+    doc = await _prescriber(db_session, test_clinic.id)
+    row = await PrescriptionService.create_draft(
+        db_session, test_clinic.id, doc.id, test_patient.id, notes="n", locale="es", items=_items()
+    )
+    await db_session.commit()
+
+    async with async_session_maker() as first, async_session_maker() as second:
+        stale = await second.get(Prescription, row.id)  # held, as a request holds it
+        await PrescriptionService.issue(first, test_clinic.id, row.id, doc.id)
+        await first.commit()
+        with pytest.raises(HTTPException) as exc:
+            await PrescriptionService.issue(second, test_clinic.id, row.id, doc.id)
+        assert exc.value.status_code == 422
+        assert stale.status == "issued"

@@ -560,6 +560,13 @@ async def delete_cabinet(
             status_code=status.HTTP_409_CONFLICT,
             detail=f"Cabinet has {in_use} active appointments",
         )
+    # Cancelled appointments and the cabinet audit trail still reference the
+    # row (FKs without ondelete), so the DELETE would fail with a 500 (#750).
+    if await CabinetService.has_history(db, cabinet):
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Cabinet has appointment history; deactivate it instead",
+        )
 
     await CabinetService.delete_cabinet(db, cabinet)
     await db.commit()

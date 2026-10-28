@@ -2475,7 +2475,8 @@
     "prefs": {
       "title": "Preferencje powiadomień",
       "description": "Jakimi kanałami można kontaktować się z tym pacjentem. Rezygnacja blokuje kanał nawet przy wysyłkach wymuszonych.",
-      "saved": "Zapisano preferencje"
+      "saved": "Zapisano preferencje",
+      "typesDescription": "Rodzaje wiadomości, które otrzymuje ten pacjent. Wyłączenie jednego blokuje go na wszystkich kanałach, także przy wysyłce ręcznej."
     }
   },
   "invoice": {

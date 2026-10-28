@@ -49,6 +49,18 @@
   service lists its environment explicitly, so documenting the key
   without forwarding it would have left the operator's change inside
   the container's 4096 default.
+- fix: the Coolify stack forwarded no LLM API key, so the copilot raised
+  `LLMConfigError` on every request there whatever the operator
+  configured. `docker-compose.coolify.yml` now maps every provider key
+  (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`,
+  `OPENROUTER_API_KEY`, `GROQ_API_KEY`) plus
+  `COPILOT_PROVIDER_DEFAULT`, like `docker-compose.prod.yml` already did,
+  and `tests/test_copilot_compose_wiring.py` derives the required keys
+  from the registered provider specs so the two stacks cannot drift
+  apart again. `COPILOT_PROVIDER_DEFAULT` and `COPILOT_MAX_TOKENS` are
+  forwarded there too, for the same reason. The guard also covers a
+  keyless provider's endpoint setting (`OLLAMA_BASE_URL`), which fails
+  the same way when it is not forwarded.
 - feat(#332): OpenRouter + Groq LLM provider adapters, same subclass shape
   as Gemini over their OpenAI-compatible endpoints (`OPENROUTER_API_KEY` /
   `GROQ_API_KEY` + per-provider default models, specs registered from

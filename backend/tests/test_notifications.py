@@ -1,20 +1,33 @@
 """Tests for the notifications module."""
 
+import asyncio
+import re
+from pathlib import Path
+from uuid import uuid4
+
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth.models import Clinic
+from app.database import async_session_maker
 from app.modules.notifications.channels import (
     AdapterResult,
     Channel,
     SendStatus,
     channel_registry,
 )
+from app.modules.notifications.gateway import NotificationGateway
 from app.modules.notifications.models import (
+    NOTIFICATION_TYPES,
+    ClinicNotificationSettings,
+    NotificationPreference,
     NotificationTemplate,
 )
 from app.modules.notifications.service import NotificationService
+from app.modules.patients.models import Patient
 
 
 @pytest_asyncio.fixture
@@ -116,6 +129,59 @@ async def test_get_patient_preferences(
 
 
 @pytest.mark.asyncio
+async def test_patient_endpoints_of_an_unknown_or_foreign_patient_answer_404(
+    client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_clinic
+):
+    """The GET creates the row on first read and a reply writes a message row:
+    an unknown id hit the patients FK (500), and another clinic's patient got
+    a row in this clinic."""
+    other = Clinic(id=uuid4(), name="Other", tax_id="B99999999", address={}, settings={})
+    db_session.add(other)
+    await db_session.flush()
+    foreign = Patient(id=uuid4(), clinic_id=other.id, first_name="Ana", last_name="Ruiz")
+    db_session.add(foreign)
+    await db_session.commit()
+
+    for patient_id in (uuid4(), foreign.id):
+        url = f"/api/v1/notifications/preferences/patient/{patient_id}"
+        assert (await client.get(url, headers=auth_headers)).status_code == 404
+        put = await client.put(url, json={"email_enabled": False}, headers=auth_headers)
+        assert put.status_code == 404
+        reply = await client.post(
+            f"/api/v1/notifications/conversations/{patient_id}/reply",
+            json={"channel": "whatsapp", "body": "Hola"},
+            headers=auth_headers,
+        )
+        assert reply.status_code == 404, reply.text
+
+    rows = await db_session.scalar(
+        select(func.count())
+        .select_from(NotificationPreference)
+        .where(NotificationPreference.patient_id == foreign.id)
+    )
+    assert rows == 0
+
+
+@pytest.mark.asyncio
+async def test_concurrent_first_reads_share_one_preferences_row(
+    db_session: AsyncSession, test_clinic, test_patient
+):
+    """Two first reads race on uq_notification_pref_clinic_patient; the loser
+    used to raise IntegrityError (500) instead of reading the winner's row."""
+    await db_session.commit()
+
+    async def first_read():
+        async with async_session_maker() as db:
+            prefs = await NotificationService.get_or_create_patient_preferences(
+                db, test_clinic.id, test_patient.id
+            )
+            return prefs.id
+
+    ids = await asyncio.gather(*(first_read() for _ in range(4)))
+    assert len(set(ids)) == 1
+
+
+@pytest.mark.asyncio
 async def test_update_patient_preferences(
     client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_patient
 ):
@@ -136,6 +202,107 @@ async def test_update_patient_preferences(
 
     assert data["email_enabled"] is False
     assert data["preferences"]["appointment_reminder"] is False
+
+
+@pytest.mark.asyncio
+async def test_a_misspelt_notification_type_is_rejected_not_stored(
+    client: AsyncClient, auth_headers: dict, test_patient
+):
+    """An absent key reads as consent, so a stored ``recal_reminder: false``
+    answered 200 and never blocked a recall reminder (#683)."""
+    url = f"/api/v1/notifications/preferences/patient/{test_patient.id}"
+    for key in ("recal_reminder", "Recall_Reminder"):
+        response = await client.put(url, json={"preferences": {key: False}}, headers=auth_headers)
+        assert response.status_code == 422, (key, response.text)
+
+    stored = (await client.get(url, headers=auth_headers)).json()["data"]["preferences"]
+    assert "recal_reminder" not in stored and "Recall_Reminder" not in stored
+
+
+@pytest.mark.asyncio
+async def test_a_per_type_opt_out_keeps_the_other_recorded_choices(
+    client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_clinic, test_patient
+):
+    """A PUT used to replace the whole dict: recording one opt-out discarded
+    the others. And the opt-out it records is the one the gate reads."""
+    url = f"/api/v1/notifications/preferences/patient/{test_patient.id}"
+    first = {"preferences": {"budget_reminder": False}}
+    assert (await client.put(url, json=first, headers=auth_headers)).status_code == 200
+    second = {"preferences": {"recall_reminder": False}}
+    response = await client.put(url, json=second, headers=auth_headers)
+    assert response.status_code == 200
+
+    stored = response.json()["data"]["preferences"]
+    assert stored["budget_reminder"] is False
+    assert stored["recall_reminder"] is False
+    assert stored["appointment_reminder"] is True
+
+    for notification_type in ("budget_reminder", "recall_reminder"):
+        verdict = await NotificationService.should_send_notification(
+            db_session, test_clinic.id, notification_type, test_patient.id
+        )
+        assert verdict == (False, f"patient_opted_out_of_{notification_type}")
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("force_send", [False, True])
+async def test_a_per_type_opt_out_holds_on_a_forced_send(
+    db_session: AsyncSession, test_clinic, test_patient, force_send
+):
+    """The reminder cron and staff sends pass force_send, which skipped the
+    whole preference check: an appointment_reminder opt-out never applied.
+    Like do_not_contact and the channel toggles, it now blocks both."""
+    await NotificationService.update_patient_preferences(
+        db_session,
+        test_clinic.id,
+        test_patient.id,
+        {"preferences": {"appointment_reminder": False}},
+    )
+
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        test_clinic.id,
+        "appointment_reminder",
+        context={},
+        patient_id=test_patient.id,
+        force_send=force_send,
+    )
+    assert msg.status == "skipped"
+    assert msg.error_message == "patient_opted_out_of_appointment_reminder"
+
+
+# Enqueued types that are not notifications a patient opts out of. A
+# conversation reply answers a message the patient sent, inside the 24h
+# session window; the channel toggles and do_not_contact still gate it.
+NOT_OPT_OUTABLE = {"reply"}
+
+# ``enqueue(db, clinic_id, "type", ...)``: the type as the third positional.
+_POSITIONAL_TYPE = re.compile(r'NotificationGateway\.enqueue\(\s*[\w.]+,\s*[\w.]+,\s*"([a-z_]+)"')
+
+
+def test_every_enqueued_type_is_in_the_vocabulary():
+    """Every type the backend enqueues, by keyword or positionally, has a key
+    a patient can opt out of, and the clinic defaults cover the same set."""
+    app_root = Path(__file__).resolve().parents[1] / "app"
+    used = set()
+    for path in app_root.rglob("*.py"):
+        source = path.read_text()
+        used |= set(re.findall(r'notification_type="([a-z_]+)"', source))
+        used |= set(_POSITIONAL_TYPE.findall(source))
+    assert NOT_OPT_OUTABLE <= used, "an allowlisted type is no longer enqueued; drop it"
+    used -= NOT_OPT_OUTABLE
+    assert used, "found no enqueue call sites; the pattern is stale"
+    assert used <= set(NOTIFICATION_TYPES), used - set(NOTIFICATION_TYPES)
+
+    clinic_defaults = ClinicNotificationSettings.__table__.c.settings.default.arg(None)
+    assert set(clinic_defaults) == set(NOTIFICATION_TYPES)
+
+    # The settings page and the patient card both render this list; a type
+    # missing from it has no switch, so the patient cannot opt out of it.
+    composable = (
+        app_root / "modules/notifications/frontend/composables/useNotificationSettings.ts"
+    ).read_text()
+    assert set(re.findall(r"key: '([a-z_]+)'", composable)) == set(NOTIFICATION_TYPES)
 
 
 @pytest.mark.asyncio

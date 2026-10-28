@@ -2475,7 +2475,8 @@
     "prefs": {
       "title": "Notification preferences",
       "description": "Which channels may reach this patient. An opt-out blocks that channel even for forced sends.",
-      "saved": "Preferences saved"
+      "saved": "Preferences saved",
+      "typesDescription": "Message types this patient receives. Turning one off blocks it on every channel, manual sends included."
     }
   },
   "invoice": {

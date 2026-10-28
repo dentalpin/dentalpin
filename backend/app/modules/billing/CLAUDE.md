@@ -83,6 +83,14 @@ that event was never published.
   from `clinic_today(ctx.clinic.timezone)` (`app/core/utils/dates.py`),
   passed into `issue_invoice(today=…)` and on to `generate_number`. Keep
   the two on the same value — the number embeds the year.
+- **The sequential is unique per (series, fiscal year), not per
+  series.** A `reset_yearly` series (the default) restarts at 1 each
+  year; `generate_number` returns the year it drew in and the workflow
+  stores it on `Invoice.fiscal_year`. The backstop index is
+  `(series_id, fiscal_year, sequential_number)` `NULLS NOT DISTINCT`
+  (`bil_0006`, #689). Anything that writes `sequential_number` must write
+  `fiscal_year` with it; anything that groups sequentials by year
+  (the gap report) reads `fiscal_year`.
 - **Compliance hooks live in compliance modules**, not here. The
   `verifactu` module attaches via `BillingComplianceHook` on
   `invoice.issued` to chain into AEAT. Don't import verifactu from

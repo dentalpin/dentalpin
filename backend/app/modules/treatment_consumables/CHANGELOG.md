@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix(#761): the link picker (`GET /link-options`) only offers active,
+  undeleted catalog treatments and active inventory items, and creating
+  a link to a deleted catalog treatment answers 404. Both modules' own
+  lists already hid those rows.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix(#703): `tc_0002` makes `created_at` / `updated_at` NOT NULL, the
