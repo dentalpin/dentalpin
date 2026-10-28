@@ -1,6 +1,6 @@
 # 0042 — Module settings registry
 
-- **Status:** accepted
+- **Status:** proposed
 - **Date:** 2026-10-20
 - **Deciders:** maintainers
 - **Tags:** modules, settings, api, frontend

@@ -169,6 +169,31 @@ async def test_legacy_put_accepts_long_string(
     assert registry.json()["data"]["values"]["invoice_footer_text"] == footer
 
 
+async def test_billing_free_text_is_capped_at_2000_characters(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+) -> None:
+    """clinics.settings is sent to every member through GET /auth/clinics."""
+    for key in ("invoice_footer_text", "bank_account_info"):
+        at_cap = await client.patch(
+            "/api/v1/settings/billing",
+            json={"values": {key: "x" * 2000}},
+            headers=auth_headers,
+        )
+        assert at_cap.status_code == 200
+
+        over = await client.patch(
+            "/api/v1/settings/billing",
+            json={"values": {key: "x" * 2001}},
+            headers=auth_headers,
+        )
+        assert over.status_code == 422
+
+        legacy = await client.put(
+            "/api/v1/billing/settings", json={key: "x" * 2001}, headers=auth_headers
+        )
+        assert legacy.status_code == 422
+
+
 async def test_patch_can_clear_nullable_string(
     client: AsyncClient, auth_headers: dict, test_clinic: Clinic
 ) -> None:

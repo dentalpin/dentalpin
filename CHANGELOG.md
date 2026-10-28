@@ -11,6 +11,18 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Changed
+
+- **Clinic settings stored with an invalid value now read as the default**
+  (ADR 0042). A module that declares its settings through the core
+  settings registry validates each stored value on read. A value that fails
+  its declaration (wrong type, out of range, longer than `max_length`)
+  falls back to the declared default and logs a warning naming the module
+  and key, where the old hand-written endpoints returned it coerced or
+  as-is. Billing is the first module on the registry: its footer and bank
+  details are now capped at 2000 characters, so a longer value saved before
+  the cap reads as empty until it is re-entered.
+
 ## [2.9.0] - 2026-10-27
 
 Hindi, four more LLM providers for the copilot, kiosk self check-in, and a
