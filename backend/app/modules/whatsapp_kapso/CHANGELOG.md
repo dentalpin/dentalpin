@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- fix: `POST /templates/map` types `notification_type` as the
+  notifications `NotificationType`, so a template mapped to a type that is
+  never sent answers 422 instead of being stored unused. The settings
+  page's type list is kept equal to it by a backend test.
+
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
 - chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
 

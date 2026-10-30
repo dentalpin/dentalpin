@@ -18,16 +18,12 @@ from app.core.agents import AgentContext, Tool, ToolCategory
 
 from .channels import Channel
 from .gateway import NotificationGateway
+from .models import NotificationType
 
 
 class SendNotificationArgs(BaseModel):
     patient_id: UUID
-    notification_type: str = Field(
-        description=(
-            "Tipo de notificación: 'appointment_reminder', 'welcome', "
-            "'budget_sent', 'appointment_confirmation', etc."
-        )
-    )
+    notification_type: NotificationType = Field(description="Tipo de notificación.")
     channel: Channel | None = Field(
         default=None,
         description="Canal forzado (email / whatsapp). None = automático con fallback.",

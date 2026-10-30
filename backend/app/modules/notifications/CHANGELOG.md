@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+- fix: the send side is keyed by the same closed vocabulary as the
+  preferences (#683). `POST /send` and the `send_notification` agent tool
+  type `notification_type` as `NotificationType`, so a misspelt type
+  answers 422 (the tool's schema now lists the nine values). It used to
+  queue, answer success, and fail only at dispatch with "Template not
+  found", after the per-type opt-out had been checked against a key no
+  patient could have set.
+
 - fix: turning a patient's email off no longer blocks their WhatsApp,
   SMS and push notifications. The consent gate read `email_enabled` as
   a global opt-out (a leftover from when email was the only channel), so
