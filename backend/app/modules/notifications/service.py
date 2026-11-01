@@ -655,17 +655,13 @@ class NotificationService:
             if check_auto_send and not type_settings.get("auto_send", True):
                 return False, "manual_send_required"
 
-        # Check patient preferences
+        # Check patient preferences. The channel toggles (email_enabled,
+        # whatsapp_enabled, ...) are not read here: each one opts out of its
+        # own channel, which the gateway's channel resolution enforces.
         if patient_id:
             prefs = await NotificationService.get_patient_preferences(db, clinic_id, patient_id)
-            if prefs:
-                # Check global email toggle
-                if not prefs.email_enabled:
-                    return False, "patient_opted_out"
-
-                # Check specific preference
-                if NotificationService.opted_out_of_type(prefs, notification_type):
-                    return False, f"patient_opted_out_of_{notification_type}"
+            if NotificationService.opted_out_of_type(prefs, notification_type):
+                return False, f"patient_opted_out_of_{notification_type}"
 
         return True, "ok"
 

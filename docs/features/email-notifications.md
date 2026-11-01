@@ -309,7 +309,7 @@ Patients can opt-out of specific notification types:
 ```python
 class NotificationPreference:
     patient_id: UUID
-    email_enabled: bool = True           # Master toggle
+    email_enabled: bool = True           # Email channel only (whatsapp_enabled, sms_enabled, push_enabled likewise)
     preferences: dict = {
         "appointment_reminder": True,
         "budget_sent": False,            # Opted out
@@ -332,7 +332,6 @@ if not should_send:
     # Possible reasons:
     # - "disabled_at_clinic_level"
     # - "manual_send_required"
-    # - "patient_opted_out"
     # - "patient_opted_out_of_appointment_reminder"
 ```
 

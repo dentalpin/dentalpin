@@ -23,6 +23,15 @@ frontend as a Nuxt layer under its own Python package.
   details are now capped at 2000 characters, so a longer value saved before
   the cap reads as empty until it is re-entered.
 
+### Fixed
+
+- **Turning a patient's email off also silenced WhatsApp and SMS.** The
+  consent check still treated the email switch as an opt-out of every
+  channel, so a patient who declined email but kept WhatsApp got no
+  automatic appointment confirmation or cancellation, welcome, quote
+  reminder or recall message. Each channel switch now
+  blocks only its own channel, as the patient card already says.
+
 ## [2.9.0] - 2026-10-27
 
 Hindi, four more LLM providers for the copilot, kiosk self check-in, and a

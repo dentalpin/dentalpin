@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- fix: turning a patient's email off no longer blocks their WhatsApp,
+  SMS and push notifications. The consent gate read `email_enabled` as
+  a global opt-out (a leftover from when email was the only channel), so
+  every unforced send (`appointment_confirmation`,
+  `appointment_cancelled`, `welcome`, `budget_accepted`,
+  `budget_reminder`, `recall_reminder`) was skipped as `patient_opted_out` for a patient who had only declined
+  email. Each channel toggle now opts out of its own channel, as the
+  patient card says. With no other channel left, the skip reads
+  `no_viable_channel`, the same as a forced send.
+
 - fix(#683): a patient's per-type opt-out now holds under `force_send`.
   The gateway checked it only inside the non-forced branch, and the
   appointment-reminder cron, the manual reminder and the staff budget and
