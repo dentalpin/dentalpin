@@ -13,6 +13,7 @@ from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
 from sqlalchemy import text
+from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -218,6 +219,28 @@ async def http_exception_handler(request: Request, exc: HTTPException) -> JSONRe
         status_code=exc.status_code,
         content=error_response.model_dump(),
         headers=headers,
+    )
+
+
+# Postgres data exceptions a request body can trigger when a schema field is
+# wider than its column: a price past NUMERIC(10,2), a name past VARCHAR(n).
+# The value is the client's to fix, so answer 422 instead of a 500.
+_DATA_EXCEPTION_MESSAGES = {
+    "22001": "A text value is longer than the field allows",
+    "22003": "A numeric value is out of range",
+}
+
+
+@app.exception_handler(DBAPIError)
+async def db_data_exception_handler(request: Request, exc: DBAPIError) -> JSONResponse:
+    message = _DATA_EXCEPTION_MESSAGES.get(getattr(exc.orig, "sqlstate", None))
+    if message is None:
+        return await global_exception_handler(request, exc)
+    logger.warning("Rejected out-of-range value: %s", exc.orig)
+    return JSONResponse(
+        status_code=422,
+        content=ErrorResponse(message=message, errors=[message]).model_dump(),
+        headers=_cors_headers(request),
     )
 
 

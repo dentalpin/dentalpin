@@ -2,13 +2,14 @@
 
 Install → uninstall → reinstall must drop ONLY the module's tables and
 leave every other module untouched. Branch-scoped target
-``orthodontics@-3`` (three revisions: ort_0001 + ort_0002 + ort_0003; the
+``orthodontics@-4`` (four revisions: ort_0001 .. ort_0004; the
 <label>@base form would downgrade every branch - see
 _downgrade_target_for). Marked ``alembic_roundtrip`` and excluded from
 the default pytest run.
 
 The count in ``@-N`` tracks the branch's revision count, so adding
-``ort_0003_unique_plan_link`` moved the target from ``@-2`` to ``@-3``:
+``ort_0003_unique_plan_link`` moved the target from ``@-2`` to ``@-3``,
+and ``ort_0004_plan_item_set_null`` to ``@-4``:
 ``@base`` would downgrade every branch.
 
 """
@@ -70,7 +71,7 @@ def test_orthodontics_uninstall_roundtrip_is_branch_scoped() -> None:
     before = _list_tables()
     assert ORT_TABLES.issubset(before), "ortho tables missing after upgrade"
 
-    _alembic("downgrade", "orthodontics@-3")
+    _alembic("downgrade", "orthodontics@-4")
     after_down = _list_tables()
     assert ORT_TABLES.isdisjoint(after_down), "ortho tables still present after downgrade"
 

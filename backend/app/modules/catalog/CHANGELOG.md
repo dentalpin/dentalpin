@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: `POST /catalog/seed` answered 500 (`MultipleResultsFound`) when the clinic had its own VAT type at one of the preset's rates, such as a second 0% type next to the seeded exempt one. `_ensure_vat_types` now reuses the system row first, then the active one, the same tolerance #736 gave the treatment lookup.
+
 - fix(#740): a treatment's price, cost or duration could not be removed.
   - Clearing the input and saving answered 422: a cleared input sends `""`,
     and Nuxt UI's `UInput` keeps `""` even for `type="number"`.

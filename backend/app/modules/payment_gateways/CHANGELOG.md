@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
+
 - feat(#439/#445): `POST /payments/gateway-info/batch` — the same
   `get_for_payment` lookup as `GET /payments/{id}/gateway-info`, batched
   for a page of the payments list (up to 100 ids per call) instead of

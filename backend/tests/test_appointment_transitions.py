@@ -375,3 +375,44 @@ async def test_update_without_status_does_not_create_event(
         .all()
     )
     assert len(events) == 1
+
+
+@pytest.mark.asyncio
+async def test_concurrent_check_ins_record_one_event(db_session: AsyncSession):
+    """Two check-ins at once (kiosk and reception, or a double click) both
+    passed the status check on their unlocked copy and wrote two
+    scheduled→checked_in events. The second now waits and finds the
+    appointment already checked in (#774)."""
+    import asyncio
+
+    from app.database import async_session_maker
+
+    world = await _mkworld(db_session)
+    apt = await _mkapt(db_session, world)
+    await db_session.commit()
+
+    async with async_session_maker() as first, async_session_maker() as second:
+        mine = await first.get(Appointment, apt.id)
+        theirs = await second.get(Appointment, apt.id)
+        await AppointmentService.transition(first, mine, "checked_in")
+        other = asyncio.create_task(AppointmentService.transition(second, theirs, "checked_in"))
+        await asyncio.sleep(0.3)  # the second check-in reaches the lock
+        await first.commit()
+        with pytest.raises(AlreadyInStateError):
+            await other
+        await second.rollback()
+
+    async with async_session_maker() as db:
+        events = (
+            (
+                await db.execute(
+                    select(AppointmentStatusEvent).where(
+                        AppointmentStatusEvent.appointment_id == apt.id,
+                        AppointmentStatusEvent.to_status == "checked_in",
+                    )
+                )
+            )
+            .scalars()
+            .all()
+        )
+    assert len(events) == 1

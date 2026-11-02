@@ -24,7 +24,9 @@ Two things worth knowing about the scope, raised on #629 and still open:
   the empty DB is load-bearing and must stay that way.
 - A job that catches its own exceptions broadly would pass this while
   doing nothing. This test cannot see that; it only proves the job does
-  not raise.
+  not raise. ``test_scheduled_jobs_with_a_clinic.py`` covers it: one
+  clinic makes every per-clinic body run, and it asserts on the log
+  (#680).
 """
 
 from __future__ import annotations

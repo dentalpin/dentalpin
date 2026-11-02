@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#779): the retention window is measured from the clinic's day, not the server's UTC day.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix(#679): the `list_gdpr_requests` agent tool types `status` and

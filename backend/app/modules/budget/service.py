@@ -22,6 +22,10 @@ class PlanOwnsLinesError(ValueError):
     """The quote is linked to a treatment plan; its lines are managed there (issue #176)."""
 
 
+class BudgetNotDeletableError(ValueError):
+    """Only an unlinked draft can be deleted; anything else is cancelled instead."""
+
+
 async def lookup_linked_plan(
     db: AsyncSession, clinic_id: UUID, budget_id: UUID
 ) -> TreatmentPlanBrief | None:
@@ -93,8 +97,18 @@ class BudgetNumberService:
         Format: {PREFIX}-{YEAR}-{SEQUENCE:04d}
         Example: PRES-2024-0001
         """
-        current_year = datetime.now(UTC).year
+        current_year = (await clinic_today_for(db, clinic_id)).year
         year_prefix = f"{prefix}-{current_year}-"
+
+        # Serialise allocation per clinic until this transaction ends, so the
+        # next allocation reads the number this one commits (#770). Without
+        # it two concurrent creates read the same max and the second insert
+        # hits uq_budget_clinic_number_version.
+        await db.execute(
+            select(
+                func.pg_advisory_xact_lock(func.hashtextextended(f"budget_number:{clinic_id}", 0))
+            )
+        )
 
         # Find the highest number for this year
         result = await db.execute(
@@ -565,6 +579,7 @@ class BudgetService:
                     "WHERE tp.id = :plan_id "
                     "  AND tp.clinic_id = :clinic_id "
                     "  AND b.status NOT IN ('cancelled', 'rejected', 'expired') "
+                    "  AND b.deleted_at IS NULL "
                     "LIMIT 1"
                 ),
                 {"plan_id": plan_id_raw, "clinic_id": clinic_id},
@@ -705,7 +720,23 @@ class BudgetService:
         budget: Budget,
         deleted_by: UUID,
     ) -> None:
-        """Soft delete a budget."""
+        """Soft delete a draft budget.
+
+        A quote that left draft is paper the patient has seen or signed, and
+        a plan-linked one is the plan's quote: deleting either hid it while
+        the plan kept pointing at it — locked by an accepted quote nobody
+        could open. Those are cancelled instead.
+        """
+        if budget.status != "draft":
+            raise BudgetNotDeletableError(
+                f"Only draft budgets can be deleted; this one is '{budget.status}'"
+            )
+        plan = await lookup_linked_plan(db, budget.clinic_id, budget.id)
+        if plan is not None:
+            raise BudgetNotDeletableError(
+                f"This quote belongs to plan {plan.plan_number}; reopen the plan instead"
+            )
+
         budget.deleted_at = datetime.now(UTC)
 
         # Add history entry

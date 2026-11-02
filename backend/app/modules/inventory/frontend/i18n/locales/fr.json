@@ -21,6 +21,7 @@
     "deleteTitle": "Supprimer l'article",
     "deleteMessage": "Supprimer cet article de l'inventaire ? Cette action est irréversible.",
     "cannotDeleteWithHistory": "Cet article a un historique de mouvements. Désactivez-le pour préserver la piste d'audit.",
+    "cannotDeleteInUse": "Cet article est lié à un fournisseur, un traitement ou un bon de commande. Désactivez-le plutôt.",
     "deactivate": "Désactiver",
     "reactivate": "Réactiver",
     "deactivated": "Article désactivé",

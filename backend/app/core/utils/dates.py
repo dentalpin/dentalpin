@@ -17,16 +17,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.auth.models import Clinic
 
 
+def clinic_zone(timezone: str | None) -> ZoneInfo:
+    """The clinic's IANA ``timezone`` as a zone (UTC if unknown)."""
+    try:
+        return ZoneInfo(timezone) if timezone else ZoneInfo("UTC")
+    except (ZoneInfoNotFoundError, ValueError):
+        return ZoneInfo("UTC")
+
+
 def clinic_today(timezone: str | None) -> date:
     """Today's date in the clinic's IANA ``timezone`` (UTC if unknown)."""
-    try:
-        tz = ZoneInfo(timezone) if timezone else ZoneInfo("UTC")
-    except (ZoneInfoNotFoundError, ValueError):
-        tz = ZoneInfo("UTC")
-    return datetime.now(tz).date()
+    return datetime.now(clinic_zone(timezone)).date()
+
+
+async def clinic_zone_for(db: AsyncSession, clinic_id: UUID) -> ZoneInfo:
+    """``clinic_zone`` for a clinic known only by id (one indexed read)."""
+    timezone = await db.scalar(select(Clinic.timezone).where(Clinic.id == clinic_id))
+    return clinic_zone(timezone)
 
 
 async def clinic_today_for(db: AsyncSession, clinic_id: UUID) -> date:
     """``clinic_today`` for a clinic known only by id (one indexed read)."""
-    timezone = await db.scalar(select(Clinic.timezone).where(Clinic.id == clinic_id))
-    return clinic_today(timezone)
+    return datetime.now(await clinic_zone_for(db, clinic_id)).date()

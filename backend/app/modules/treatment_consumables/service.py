@@ -81,6 +81,7 @@ class TreatmentConsumablesService:
                 select(TreatmentCatalogItem).where(
                     TreatmentCatalogItem.id == catalog_item_id,
                     TreatmentCatalogItem.clinic_id == clinic_id,
+                    TreatmentCatalogItem.deleted_at.is_(None),
                 )
             )
         ).scalar_one_or_none()
@@ -218,6 +219,9 @@ class TreatmentConsumablesService:
     ) -> tuple[list[TreatmentCatalogItem], list[InventoryItem]]:
         """Search-based picker data from both dependency modules.
 
+        Only offers rows the owning module still lists: an active, undeleted
+        catalog treatment and an active inventory item.
+
         Catalog names are JSONB-localized so the `q` match runs in Python
         over the clinic's own rows (bounded; avoids dialect-specific jsonb
         operators); inventory names are plain columns matched in SQL.
@@ -227,7 +231,11 @@ class TreatmentConsumablesService:
         treatments = (
             (
                 await db.execute(
-                    select(TreatmentCatalogItem).where(TreatmentCatalogItem.clinic_id == clinic_id)
+                    select(TreatmentCatalogItem).where(
+                        TreatmentCatalogItem.clinic_id == clinic_id,
+                        TreatmentCatalogItem.is_active.is_(True),
+                        TreatmentCatalogItem.deleted_at.is_(None),
+                    )
                 )
             )
             .scalars()
@@ -241,7 +249,9 @@ class TreatmentConsumablesService:
             or needle in (t.internal_code or "").lower()
         ][:limit]
 
-        item_stmt = select(InventoryItem).where(InventoryItem.clinic_id == clinic_id)
+        item_stmt = select(InventoryItem).where(
+            InventoryItem.clinic_id == clinic_id, InventoryItem.is_active
+        )
         if needle:
             item_stmt = item_stmt.where(InventoryItem.name.ilike(f"%{needle}%"))
         matched_items = (await db.execute(item_stmt.limit(limit))).scalars().all()

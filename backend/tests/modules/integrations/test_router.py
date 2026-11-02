@@ -2,7 +2,10 @@
 
 import pytest
 from httpx import AsyncClient
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.modules.integrations.models import WebhookDelivery
 
 BASE = "/api/v1/integrations/webhooks/subscriptions"
 
@@ -180,3 +183,37 @@ async def test_cross_clinic_subscription_not_visible(
         f"{BASE}/{other_sub.id}", json={"is_active": False}, headers=auth_headers
     )
     assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_delete_subscription_with_deliveries(
+    client: AsyncClient, auth_headers, test_clinic, db_session: AsyncSession
+):
+    """A subscription that has fired once used to fail the DELETE on the
+    webhook_deliveries FK with a 500 (#750)."""
+    created = await client.post(
+        BASE,
+        json={"target_url": "https://example.com/hook", "event_types": ["patient.created"]},
+        headers=auth_headers,
+    )
+    subscription_id = created.json()["data"]["id"]
+    for status in ("sent", "queued"):
+        db_session.add(
+            WebhookDelivery(
+                subscription_id=subscription_id,
+                clinic_id=test_clinic.id,
+                event_type="patient.created",
+                payload={},
+                status=status,
+            )
+        )
+    await db_session.commit()
+
+    deleted = await client.delete(f"{BASE}/{subscription_id}", headers=auth_headers)
+    assert deleted.status_code == 204, deleted.text
+    remaining = await db_session.scalar(
+        select(func.count())
+        .select_from(WebhookDelivery)
+        .where(WebhookDelivery.subscription_id == subscription_id)
+    )
+    assert remaining == 0

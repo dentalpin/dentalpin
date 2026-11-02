@@ -16,6 +16,7 @@ from uuid import UUID
 
 from fastapi import HTTPException, status
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import User
@@ -126,6 +127,7 @@ class InventoryService:
             select(InventoryItem)
             .where(InventoryItem.id == item_id, InventoryItem.clinic_id == clinic_id)
             .with_for_update()
+            .execution_options(populate_existing=True)
         )
         item = (await db.execute(stmt)).scalar_one_or_none()
         if item is None:
@@ -175,7 +177,18 @@ class InventoryService:
                 status_code=status.HTTP_409_CONFLICT,
                 detail="item_has_history",
             )
-        await db.delete(item)
+        # Supplier links, treatment consumables and purchase-order lines
+        # reference the item from modules that depend on inventory, so they
+        # cannot be counted here. Their FKs have no ondelete; the savepoint
+        # turns the violation into a 409 instead of a 500 (#750).
+        try:
+            async with db.begin_nested():
+                await db.delete(item)
+        except IntegrityError:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="item_in_use",
+            ) from None
         await db.commit()
 
     @staticmethod
@@ -262,6 +275,7 @@ class InventoryService:
                     InventoryItem.clinic_id == clinic_id,
                 )
                 .with_for_update()
+                .execution_options(populate_existing=True)
             )
         ).scalar_one_or_none()
         if locked is None:

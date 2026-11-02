@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#779): `find_free_slots` without `date_from` starts on the clinic's day, not the server's UTC day.
+
 - docs(#707): the permissions doc's role table missed `analytics.read`
   for `dentist` and described `assistant` as `professional.own.{read,write}`
   while the manifest grants `professional.read` (any professional's

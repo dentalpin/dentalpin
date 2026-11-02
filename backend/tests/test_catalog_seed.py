@@ -131,3 +131,26 @@ async def test_seed_endpoint_is_idempotent_repair_path(
     assert r.status_code == 200
     second = r.json()["data"]
     assert second == {"categories": 0, "items": 0, "vat_types": 0}
+
+
+@pytest.mark.asyncio
+async def test_seed_endpoint_tolerates_a_clinic_type_at_a_preset_rate(
+    client, auth_headers: dict, test_clinic: Clinic, db_session: AsyncSession
+) -> None:
+    """A clinic's own 0% type next to the seeded exempt one made the repair
+    path 500 with ``MultipleResultsFound``; the seed now reuses the system
+    row and creates nothing."""
+    from app.modules.catalog.models import VatType
+
+    r = await client.post("/api/v1/catalog/seed", headers=auth_headers)
+    assert r.status_code == 200, r.text
+    system = await db_session.scalar(
+        select(VatType).where(VatType.clinic_id == test_clinic.id, VatType.is_system.is_(True))
+    )
+    own = VatType(clinic_id=test_clinic.id, names={"es": "No sujeto"}, rate=system.rate)
+    db_session.add(own)
+    await db_session.commit()
+
+    r = await client.post("/api/v1/catalog/seed", headers=auth_headers)
+    assert r.status_code == 200, r.text
+    assert r.json()["data"] == {"categories": 0, "items": 0, "vat_types": 0}

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#740): clearing a supplier's lead time saves it as empty. The cleared input sent `""`, which the `int` field answered with 422.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix(#677): the `get_supplier` / `update_supplier` tool parameter

@@ -114,7 +114,14 @@ the full consent path — never bypasses `do_not_contact`.
   ``/settings/communications/language`` (registered via
   ``frontend/plugins/settings.client.ts``).
 - **Preferences are per-patient + per-event-type.** Honour them before
-  enqueueing.
+  enqueueing. The types are `NotificationType` in `models.py`: a new
+  `notification_type` is added there (and to the clinic `settings`
+  default) or `test_every_enqueued_type_is_in_the_vocabulary` fails. An
+  absent key reads as consent, which is why the write is closed (#683).
+  An explicit opt-out (a type, a channel, `do_not_contact`) holds under
+  `force_send`; only the clinic's `enabled` / `auto_send` gate is
+  bypassable. The patient card renders the types from
+  `useNotificationSettings().notificationTypes`.
 
 ## Related ADRs
 

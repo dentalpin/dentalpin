@@ -463,7 +463,7 @@ async function handleDelete(b: BudgetListItem, ev: Event) {
               @click="handleDownloadPDF(b, $event)"
             />
             <UButton
-              v-if="can(PERMISSIONS.budget.admin)"
+              v-if="b.status === 'draft' && can(PERMISSIONS.budget.admin)"
               variant="ghost"
               color="error"
               icon="i-lucide-trash-2"

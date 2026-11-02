@@ -232,3 +232,55 @@ async def test_items_are_clinic_scoped(db_session: AsyncSession, test_clinic: Cl
 
     rows, total = await InventoryService.list_items(db_session, test_clinic.id)
     assert total == 0
+
+
+@pytest.mark.asyncio
+async def test_delete_item_linked_elsewhere_answers_409(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """A supplier link has no ondelete and inventory cannot count it, so an
+    item without stock history used to fail the DELETE with a 500 (#750)."""
+    from app.modules.supplier_items.models import SupplierItem
+    from app.modules.suppliers.schemas import SupplierCreate
+    from app.modules.suppliers.service import SupplierService
+
+    item = await InventoryService.create_item(
+        db_session, test_clinic.id, InventoryItemCreate(name="Gloves"), created_by=None
+    )
+    _, supplier = await SupplierService.create_supplier(
+        db_session, test_clinic.id, SupplierCreate(name="Acme")
+    )
+    db_session.add(
+        SupplierItem(clinic_id=test_clinic.id, supplier_id=supplier.id, inventory_item_id=item.id)
+    )
+    await db_session.commit()
+
+    with pytest.raises(HTTPException) as exc_info:
+        await InventoryService.delete_item(db_session, test_clinic.id, item.id)
+    assert exc_info.value.status_code == 409
+    assert exc_info.value.detail == "item_in_use"
+    # The savepoint rolled back only the DELETE; the item is still there.
+    assert (await InventoryService.get_item(db_session, test_clinic.id, item.id)).id == item.id
+
+    unlinked = await InventoryService.create_item(
+        db_session, test_clinic.id, InventoryItemCreate(name="Masks"), created_by=None
+    )
+    await InventoryService.delete_item(db_session, test_clinic.id, unlinked.id)
+
+
+@pytest.mark.asyncio
+async def test_cleared_unit_cost_saves_as_empty(db_session: AsyncSession, test_clinic: Clinic):
+    """A cleared cost input sends "" -- it means "no cost", not a 422 (#740)."""
+    created = InventoryItemCreate(name="Gloves", unit_cost="")
+    assert created.unit_cost is None
+
+    item = await InventoryService.create_item(
+        db_session,
+        test_clinic.id,
+        InventoryItemCreate(name="Gloves", unit_cost=Decimal("4.50")),
+        created_by=None,
+    )
+    updated = await InventoryService.update_item(
+        db_session, test_clinic.id, item.id, InventoryItemUpdate(unit_cost="")
+    )
+    assert updated.unit_cost is None

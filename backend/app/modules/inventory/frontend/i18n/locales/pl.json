@@ -21,6 +21,7 @@
     "deleteTitle": "Usuń pozycję",
     "deleteMessage": "Usunąć tę pozycję magazynową? Tej operacji nie można cofnąć.",
     "cannotDeleteWithHistory": "Ta pozycja ma historię ruchów. Dezaktywuj ją, aby zachować ślad audytu.",
+    "cannotDeleteInUse": "Ta pozycja jest powiązana z dostawcą, zabiegiem lub zamówieniem zakupu. Zamiast tego dezaktywuj ją.",
     "deactivate": "Dezaktywuj",
     "reactivate": "Aktywuj ponownie",
     "deactivated": "Pozycja dezaktywowana",

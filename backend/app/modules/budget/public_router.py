@@ -41,6 +41,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.config import settings
 from app.core.auth.router import limiter
 from app.core.schemas import ApiResponse
+from app.core.utils.dates import clinic_today_for
 from app.database import get_db
 
 from .models import BudgetAccessLog
@@ -188,7 +189,7 @@ async def get_public_budget_meta(
         raise HTTPException(status_code=404, detail="Budget link not found")
 
     locked = budget.public_locked_at is not None
-    today = datetime.now(UTC).date()
+    today = await clinic_today_for(db, budget.clinic_id)
     expired = budget.valid_until is not None and budget.valid_until < today
     already_decided = budget.status in {"accepted", "rejected"}
 
@@ -325,7 +326,7 @@ async def get_public_budget(
     cookie_value = request.cookies.get(_cookie_name(token))
     budget = await _require_session(token, db, cookie_value)
 
-    today = datetime.now(UTC).date()
+    today = await clinic_today_for(db, budget.clinic_id)
     if budget.valid_until is not None and budget.valid_until < today:
         raise HTTPException(status_code=410, detail="expired")
 

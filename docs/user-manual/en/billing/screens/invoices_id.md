@@ -30,7 +30,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/[id]/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: c9856a3
+last_verified_commit: edc08ff
 ---
 
 # Invoice detail
@@ -97,7 +97,10 @@ or issue a credit note.
 - **Void** — marks the invoice as `void`. Its number stays in the
   history for audit. Admin only.
 - **Create credit note** — issues a credit note tied to the source
-  invoice's amounts. Goes through the same issuing workflow.
+  invoice's amounts. Goes through the same issuing workflow. All the
+  credit notes of one invoice together, drafts included, cannot exceed
+  its total; once it is fully credited, a new one is refused with the
+  amount still creditable. Delete a draft credit note to free its amount.
 
 ## Permissions
 

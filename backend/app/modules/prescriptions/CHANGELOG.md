@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#774): issue and cancel lock the prescription row and re-read it before checking its status. Two issues at once both passed the draft check, ran the country hook twice and published `prescription.issued` twice; the second now answers 422 (409 for cancel).
+
 - fix: date-only fields (`YYYY-MM-DD`) are parsed as local midnight
   (`parseDateOnly`, host `utils/wallClock.ts`) instead of `new Date(s)`, which
   is UTC midnight and rendered every such date one day early in zones behind

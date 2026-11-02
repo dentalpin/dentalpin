@@ -14,7 +14,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/patients/router.py
   - backend/app/modules/patients/frontend/pages/patients/[id].vue
-last_verified_commit: 27442250
+last_verified_commit: 42ccbba7
 ---
 
 # Patient detail
@@ -124,6 +124,11 @@ The summary card carries per-patient channel preferences: preferred
 channel (email, WhatsApp or SMS), an SMS opt-in toggle (SMS sends only
 when enabled), and the UI language. `do_not_contact` overrides
 everything.
+
+Below the channels, one switch per message type (appointment reminder,
+quote sent, invoice sent, recall reminder…). Turning a type off blocks it
+on every channel, manual sends from staff included; the clinic-wide
+on/off for each type stays in notification settings.
 
 ## Groups
 

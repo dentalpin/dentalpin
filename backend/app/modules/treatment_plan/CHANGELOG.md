@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- fix(#779): the plan number's year is the clinic's year, not the server's UTC year (New Year's Eve gave the wrong year).
+- fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
+
+- fix(#774): confirm, reopen, close, reactivate and the PUT status change lock the plan row (and its linked budget's first, the order a budget transition takes) and re-read the status before checking it. Two confirms at the same moment both passed the draft check on their unlocked plan and both ran: the second now gets "Cannot confirm plan in status 'pending'".
+
+- fix(#770): **Generate budget** clicked twice at the same moment created two budgets for one plan (or answered 500). The route now locks and re-reads the plan's `budget_id` before checking it, so the second click answers 400 "Plan already has a budget linked".
+
+- fix(#750): removing a plan item that was booked into an appointment
+  answered 500 (`appointment_treatments` references it through an FK
+  without ondelete). While the appointment is live the removal answers
+  409 and asks to unlink it in the appointment first; links to cancelled
+  appointments are removed with the item.
 - fix(#730): the pipeline tab pager never changed page. It used the Nuxt UI v3 `UPagination` binding (`:model-value` / `@update:model-value`, `:page-count`); it now binds `:page` / `@update:page` / `:items-per-page`.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

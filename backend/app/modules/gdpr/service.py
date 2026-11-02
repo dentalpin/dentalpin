@@ -18,6 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.erasure.registry import erasure_registry
 from app.core.erasure.types import ErasureCoverage
 from app.core.events import EventType, event_bus
+from app.core.utils.dates import clinic_today_for
 
 from .models import DataBreach, ErasureAuditLog, GdprRequest, PatientConsent, RetentionPolicy
 from .schemas import (
@@ -391,7 +392,7 @@ class ErasureService:
         provider exists). Categories with no policy, or with no field
         mapping in ``category_to_fields``, are retained.
         """
-        today = datetime.now(UTC).date()
+        today = await clinic_today_for(db, clinic_id)
         policies = await RetentionService.list_active(db, clinic_id)
         by_category: dict[str, RetentionPolicy] = {p.data_category: p for p in policies}
 

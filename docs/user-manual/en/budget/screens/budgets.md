@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/index.vue
   - backend/app/modules/budget/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: a297ec1
 ---
 
 # Budget list
@@ -87,7 +87,9 @@ budget.
 
 - **Download PDF** — for the current budget state.
 - **Duplicate** — creates a new draft with the same items.
-- **Cancel / Delete** — admin only.
+- **Cancel / Delete** — admin only. Only a draft that no treatment plan
+  uses can be deleted; cancel a sent or accepted quote instead, and
+  reopen the plan to drop a plan's quote.
 
 ## Permissions
 

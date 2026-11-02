@@ -615,3 +615,31 @@ async def test_accept_logs_access_row(
         )
     ).scalar_one()
     assert row.success is True
+
+
+@pytest.mark.asyncio
+async def test_budget_link_expiry_follows_the_clinic_day(
+    client: AsyncClient, db_session: AsyncSession, t1_setup: dict
+) -> None:
+    """valid_until is a clinic calendar date. The link compared it with the
+    server's (UTC) date, so from 18:00 in a UTC-6 clinic a quote valid until
+    today already read as expired, and just after midnight in a UTC+ clinic
+    yesterday's quote still read as open. Uses a zone whose date differs from
+    the server's right now (UTC+14 and UTC-12 are 26 hours apart)."""
+    from zoneinfo import ZoneInfo
+
+    zone = next(
+        z
+        for z in ("Pacific/Kiritimati", "Etc/GMT+12")
+        if datetime.now(ZoneInfo(z)).date() != date.today()
+    )
+    clinic_day = datetime.now(ZoneInfo(zone)).date()
+    clinic, budget = t1_setup["clinic"], t1_setup["budget"]
+    clinic.timezone = zone
+    # Last valid day by the clinic's calendar when the clinic is behind the
+    # server; already past when it is ahead.
+    budget.valid_until = min(clinic_day, date.today())
+    await db_session.commit()
+
+    data = (await client.get(f"{BUDGET}/{budget.public_token}/meta")).json()["data"]
+    assert data["expired"] is (budget.valid_until < clinic_day)

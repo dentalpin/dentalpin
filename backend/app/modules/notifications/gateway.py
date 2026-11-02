@@ -103,6 +103,27 @@ class NotificationGateway:
                 triggered_by_user_id,
             )
 
+        # A per-type opt-out is the patient's own record, so like
+        # do_not_contact and the channel toggles it holds under force_send:
+        # the reminder cron and staff sends both set it (#683). force_send
+        # only bypasses the clinic's enable / auto_send gate below.
+        prefs = (
+            await NotificationService.get_patient_preferences(db, clinic_id, patient_id)
+            if patient_id
+            else None
+        )
+        if NotificationService.opted_out_of_type(prefs, notification_type):
+            return await NotificationGateway._skip(
+                db,
+                clinic_id,
+                notification_type,
+                patient_id,
+                to_address or (patient.email if patient else "") or "",
+                f"patient_opted_out_of_{notification_type}",
+                triggered_by_event,
+                triggered_by_user_id,
+            )
+
         # Clinic-level enable / auto_send + per-patient per-type opt-in.
         if not force_send:
             should, reason = await NotificationService.should_send_notification(
@@ -122,11 +143,6 @@ class NotificationGateway:
 
         # Locale: clinic default → patient preference override.
         locale = await resolve_clinic_communication_locale(db, clinic_id)
-        prefs = (
-            await NotificationService.get_patient_preferences(db, clinic_id, patient_id)
-            if patient_id
-            else None
-        )
         if prefs and prefs.preferred_locale:
             locale = prefs.preferred_locale
 
@@ -251,6 +267,7 @@ class NotificationGateway:
                     .order_by(CommunicationMessage.created_at)
                     .limit(limit)
                     .with_for_update(skip_locked=True)
+                    .execution_options(populate_existing=True)
                 )
             )
             .scalars()

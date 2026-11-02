@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/index.vue
   - backend/app/modules/budget/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: a297ec1
 ---
 
 # Listado de presupuestos
@@ -88,7 +88,9 @@ detalle para trabajar sobre cada uno.
 
 - **Descargar PDF** — del presupuesto en su estado actual.
 - **Duplicar** — crea un nuevo borrador con los mismos ítems.
-- **Cancelar / Borrar** — admin only.
+- **Cancelar / Borrar** — admin only. Solo se puede borrar un borrador
+  que no use ningún plan de tratamiento; un presupuesto enviado o
+  aceptado se cancela, y el de un plan se descarta reabriendo el plan.
 
 ## Permisos
 

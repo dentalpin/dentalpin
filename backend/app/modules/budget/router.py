@@ -39,6 +39,7 @@ from .schemas import (
 from .service import (
     BudgetHistoryService,
     BudgetItemService,
+    BudgetNotDeletableError,
     BudgetService,
     PlanOwnsLinesError,
     lookup_linked_plan,
@@ -199,7 +200,10 @@ async def delete_budget(
     if not budget:
         raise HTTPException(status_code=404, detail="Budget not found")
 
-    await BudgetService.delete_budget(db, budget, ctx.user_id)
+    try:
+        await BudgetService.delete_budget(db, budget, ctx.user_id)
+    except BudgetNotDeletableError as e:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(e))
 
 
 # ============================================================================

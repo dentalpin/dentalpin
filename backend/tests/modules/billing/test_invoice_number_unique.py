@@ -132,3 +132,34 @@ async def test_multiple_drafts_coexist(
     db_session.add(_issued_invoice(test_clinic, test_patient, test_user_id, number=None))
     db_session.add(_issued_invoice(test_clinic, test_patient, test_user_id, number=None))
     await db_session.flush()  # no IntegrityError
+
+
+@pytest.mark.asyncio
+async def test_number_lock_reads_the_committed_counter(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """Issue loads the default series before it locks it. A second issue that
+    loaded the series before the first one committed used to get the cached
+    counter back from the lock and hand out the same number (500 on
+    uq_invoice_clinic_number)."""
+    from app.database import async_session_maker
+    from app.modules.billing.service import InvoiceNumberService
+
+    series_id = await _make_series(db_session, test_clinic)
+    await db_session.commit()
+
+    async with async_session_maker() as first, async_session_maker() as second:
+        # Held, as issue holds get_default_series()'s result; a dropped
+        # instance leaves the identity map and the lock would load fresh.
+        preloaded = await second.get(InvoiceSeries, series_id)
+        number_1, _, _ = await InvoiceNumberService.generate_number(
+            first, test_clinic.id, series_id
+        )
+        await first.commit()
+        number_2, _, _ = await InvoiceNumberService.generate_number(
+            second, test_clinic.id, series_id
+        )
+        await second.commit()
+
+    assert number_1 != number_2
+    assert preloaded.current_number == 2

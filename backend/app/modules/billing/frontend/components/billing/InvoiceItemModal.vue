@@ -142,8 +142,10 @@ async function handleSubmit() {
         unit_price: form.unit_price,
         quantity: form.quantity || 1,
         vat_type_id: form.vat_type_id || undefined,
-        discount_type: form.discount_type || undefined,
-        discount_value: form.discount_value || undefined
+        // ``null`` clears the discount; ``undefined`` would drop the key
+        // and the backend would keep the old one (#743).
+        discount_type: form.discount_type || null,
+        discount_value: form.discount_type ? form.discount_value || null : null
       })
 
       toast.add({

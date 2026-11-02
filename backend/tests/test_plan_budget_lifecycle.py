@@ -8,6 +8,7 @@ see the rows, and expires so the test session picks up their writes instead
 of stale identity-map state.
 """
 
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import pytest
@@ -603,3 +604,88 @@ async def test_update_response_keeps_the_linked_plan(
     linked = r.json()["data"]["treatment_plan"]
     assert linked is not None, "PUT response lost the linked plan"
     assert linked["id"] == plan_id
+
+
+@pytest.mark.asyncio
+async def test_plan_linked_budget_cannot_be_deleted(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """Deleting the plan's quote hid it while the plan still pointed at it."""
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    budget_id = await _confirm_plan(client, auth_headers, plan_id)
+    await _sync(db_session)
+
+    # Even while still a draft, the quote belongs to the plan.
+    r = await client.delete(f"/api/v1/budget/budgets/{budget_id}", headers=auth_headers)
+    assert r.status_code == 409, r.text
+
+    await _send_budget(client, auth_headers, budget_id)
+    await _accept_budget(client, auth_headers, budget_id)
+    await _sync(db_session)
+    r = await client.delete(f"/api/v1/budget/budgets/{budget_id}", headers=auth_headers)
+    assert r.status_code == 409, r.text
+
+    r = await client.get(f"/api/v1/budget/budgets/{budget_id}", headers=auth_headers)
+    assert r.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_reconfirm_does_not_relink_an_already_deleted_budget(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """Rows deleted before the guard existed: confirm must provision a new quote."""
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    budget_id = await _confirm_plan(client, auth_headers, plan_id)
+    await _sync(db_session)
+    await _send_budget(client, auth_headers, budget_id)
+    await _accept_budget(client, auth_headers, budget_id)
+    await _sync(db_session)
+
+    budget = await db_session.get(Budget, UUID(budget_id))
+    budget.deleted_at = datetime.now(UTC)
+    await _sync(db_session)
+
+    base = f"/api/v1/treatment_plan/treatment-plans/{plan_id}"
+    r = await client.post(f"{base}/close", headers=auth_headers, json={"closure_reason": "other"})
+    assert r.status_code == 200, r.text
+    r = await client.post(f"{base}/reactivate", headers=auth_headers, json={})
+    assert r.status_code == 200, r.text
+    new_budget_id = await _confirm_plan(client, auth_headers, plan_id)
+
+    assert new_budget_id != budget_id
+    r = await client.get(f"/api/v1/budget/budgets/{new_budget_id}", headers=auth_headers)
+    assert r.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_concurrent_confirms_create_one_budget(
+    client: AsyncClient, auth_headers: dict, setup: dict, db_session: AsyncSession
+):
+    """Two confirms at once (double click) both passed the draft check on
+    their unlocked plan: two draft budgets, two confirmed events. The second
+    now waits for the first and finds the plan pending (#774)."""
+    import asyncio
+
+    from app.database import async_session_maker
+    from app.modules.treatment_plan.service import TreatmentPlanService
+
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    await db_session.commit()
+    clinic_id, user_id = UUID(setup["clinic_id"]), UUID(setup["user_id"])
+
+    async with async_session_maker() as first, async_session_maker() as second:
+        await TreatmentPlanService.confirm(first, clinic_id, UUID(plan_id), user_id)
+        other = asyncio.create_task(
+            TreatmentPlanService.confirm(second, clinic_id, UUID(plan_id), user_id)
+        )
+        await asyncio.sleep(0.3)  # the second confirm reaches the lock
+        await first.commit()
+        with pytest.raises(ValueError, match="Cannot confirm"):
+            await other
+        await second.rollback()
+
+    async with async_session_maker() as db:
+        budgets = (
+            (await db.execute(select(Budget).where(Budget.clinic_id == clinic_id))).scalars().all()
+        )
+    assert len(budgets) == 1

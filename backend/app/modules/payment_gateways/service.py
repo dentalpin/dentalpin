@@ -135,6 +135,7 @@ class PaymentRequestService:
                 PaymentRequest.provider_reference == provider_reference,
             )
             .with_for_update()
+            .execution_options(populate_existing=True)
         )
         return result.scalar_one_or_none()
 
@@ -152,6 +153,7 @@ class PaymentRequestService:
             select(PaymentRequest)
             .where(PaymentRequest.id == request_id, PaymentRequest.clinic_id == clinic_id)
             .with_for_update()
+            .execution_options(populate_existing=True)
         )
         return result.scalar_one_or_none()
 
@@ -512,6 +514,7 @@ class GatewayRefundService:
                 GatewayRefundRequest.provider_refund_reference == provider_refund_reference,
             )
             .with_for_update()
+            .execution_options(populate_existing=True)
         )
         return result.scalar_one_or_none()
 

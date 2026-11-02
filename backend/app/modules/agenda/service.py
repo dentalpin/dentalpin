@@ -9,7 +9,7 @@ import re
 from datetime import UTC, datetime, timedelta
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -167,6 +167,22 @@ class CabinetService:
             )
 
         return cabinet
+
+    @staticmethod
+    async def has_history(db: AsyncSession, cabinet: Cabinet) -> bool:
+        """Whether any appointment or cabinet event still references the cabinet."""
+        for stmt in (
+            select(Appointment.id).where(Appointment.cabinet_id == cabinet.id),
+            select(AppointmentCabinetEvent.id).where(
+                or_(
+                    AppointmentCabinetEvent.from_cabinet_id == cabinet.id,
+                    AppointmentCabinetEvent.to_cabinet_id == cabinet.id,
+                )
+            ),
+        ):
+            if (await db.execute(stmt.limit(1))).first() is not None:
+                return True
+        return False
 
     @staticmethod
     async def delete_cabinet(db: AsyncSession, cabinet: Cabinet) -> None:
@@ -628,6 +644,9 @@ class AppointmentService:
             return await AppointmentService.transition(
                 db, appointment, "cancelled", changed_by=changed_by
             )
+        except AlreadyInStateError:
+            # Cancelled by a concurrent request while this one waited.
+            return appointment
         except InvalidTransitionError:
             # Terminal states (completed / no_show) are not cancellable by
             # contract — surface a 400 at the router layer.
@@ -652,7 +671,12 @@ class AppointmentService:
 
         Raises :class:`AlreadyInStateError` if ``to_status`` equals the
         current status, and :class:`InvalidTransitionError` otherwise.
+
+        The row is locked and its status re-read first: the caller loaded it
+        without a lock, so two requests at once (a double click, kiosk and
+        reception) both passed the check and wrote two status events (#774).
         """
+        await db.refresh(appointment, attribute_names=["status"], with_for_update=True)
         from_status = appointment.status
 
         if to_status == from_status:

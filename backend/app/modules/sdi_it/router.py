@@ -83,6 +83,10 @@ async def get_sdi_settings(
     return ApiResponse(data=_settings_response(await get_settings(db, ctx.clinic_id)))
 
 
+# Nullable columns: an explicit null clears them; null on the others means "unchanged".
+_CLEARABLE = {"pec_address", "smtp_host", "smtp_username", "imap_host"}
+
+
 @router.put("/settings", response_model=ApiResponse[SdiSettingsResponse])
 async def update_sdi_settings(
     data: SdiSettingsUpdate,
@@ -109,16 +113,18 @@ async def update_sdi_settings(
         "imap_folder",
     ):
         value = getattr(data, field)
-        if value is not None:
+        if value is not None or (field in _CLEARABLE and field in data.model_fields_set):
             setattr(s, field, value)
     if data.smtp_password:
         s.smtp_password_encrypted = encrypt_password(data.smtp_password)
+    enabled = s.enabled if data.enabled is None else data.enabled
+    # Also checked on a plain save: clearing a credential of an enabled PEC transport.
+    if enabled and s.transport == "pec" and submission_queue.credentials_for(s) is None:
+        raise HTTPException(
+            status.HTTP_400_BAD_REQUEST,
+            "Per il trasporto PEC servono indirizzo PEC, host SMTP e IMAP, utente e password.",
+        )
     if data.enabled is not None:
-        if data.enabled and s.transport == "pec" and submission_queue.credentials_for(s) is None:
-            raise HTTPException(
-                status.HTTP_400_BAD_REQUEST,
-                "Per il trasporto PEC servono indirizzo PEC, host SMTP e IMAP, utente e password.",
-            )
         s.enabled = data.enabled
         if data.enabled:
             s.last_error = None

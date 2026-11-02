@@ -227,3 +227,24 @@ async def test_autoconfigure_creates_gst_vat_type_idempotently(
         .where(VatType.clinic_id == clinic_id, VatType.names.op("->>")("en") == "GST 18%")
     )
     assert count_q.scalar() == 1
+
+
+async def test_update_settings_clears_turnover_threshold(
+    client: AsyncClient, auth_headers, india_gst_clinic: Clinic
+):
+    """A cleared threshold sends "" (or null) -- it removes the value (#740)."""
+    url = "/api/v1/india_gst/settings"
+    r = await client.put(url, json={"turnover_threshold": "2000000"}, headers=auth_headers)
+    assert r.status_code == 200, r.text
+    assert r.json()["data"]["turnover_threshold"] is not None
+
+    for cleared in ("", None):
+        r = await client.put(url, json={"turnover_threshold": "2000000"}, headers=auth_headers)
+        r = await client.put(url, json={"turnover_threshold": cleared}, headers=auth_headers)
+        assert r.status_code == 200, r.text
+        assert r.json()["data"]["turnover_threshold"] is None
+
+    # Omitting the key leaves the stored value alone.
+    await client.put(url, json={"turnover_threshold": "2000000"}, headers=auth_headers)
+    r = await client.put(url, json={"show_sac_on_invoice": True}, headers=auth_headers)
+    assert r.json()["data"]["turnover_threshold"] is not None

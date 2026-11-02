@@ -4,6 +4,7 @@ from datetime import UTC, date, datetime
 from decimal import Decimal
 from uuid import UUID
 
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import EventType, event_bus
@@ -68,6 +69,44 @@ class InvoiceWorkflowService:
         if invoice.credit_note_for_id is not None:
             return False
         return invoice.status in ["issued", "partial", "paid"]
+
+    @staticmethod
+    async def assert_within_creditable(db: AsyncSession, credit_note: Invoice) -> None:
+        """Refuse a credit note that would credit more than its invoice's total.
+
+        Counts every other live credit note of the same invoice, drafts
+        included, so two drafts cannot each take the whole amount. The
+        original invoice row is locked first, so concurrent credit notes on
+        one invoice are checked one after the other.
+        """
+        original_total = (
+            await db.execute(
+                select(Invoice.total)
+                .where(
+                    Invoice.id == credit_note.credit_note_for_id,
+                    Invoice.clinic_id == credit_note.clinic_id,
+                )
+                .with_for_update()
+            )
+        ).scalar_one()
+        # Credit note totals are negative.
+        already_credited = -(
+            await db.execute(
+                select(func.coalesce(func.sum(Invoice.total), 0)).where(
+                    Invoice.credit_note_for_id == credit_note.credit_note_for_id,
+                    Invoice.id != credit_note.id,
+                    Invoice.status.notin_(("voided", "cancelled")),
+                    Invoice.deleted_at.is_(None),
+                )
+            )
+        ).scalar_one()
+        remaining = original_total - already_credited
+        if -credit_note.total > remaining:
+            raise InvoiceWorkflowError(
+                f"Credit note of {-credit_note.total} exceeds the amount still creditable "
+                f"on this invoice ({remaining}); other credit notes, drafts included, "
+                f"already cover {already_credited}"
+            )
 
     @staticmethod
     async def issue_invoice(
@@ -155,6 +194,9 @@ class InvoiceWorkflowService:
                 f"Cannot issue invoice: incomplete billing data. {', '.join(billing_errors)}"
             )
 
+        if invoice.credit_note_for_id is not None:
+            await InvoiceWorkflowService.assert_within_creditable(db, invoice)
+
         # Assign invoice number if not already assigned (drafts don't have numbers)
         if invoice.invoice_number is None:
             from .service import InvoiceNumberService, InvoiceSeriesService
@@ -172,11 +214,16 @@ class InvoiceWorkflowService:
                 series_id = series.id
 
             # Generate number
-            invoice_number, sequential_number = await InvoiceNumberService.generate_number(
+            (
+                invoice_number,
+                sequential_number,
+                fiscal_year,
+            ) = await InvoiceNumberService.generate_number(
                 db, invoice.clinic_id, series_id, today=today
             )
             invoice.invoice_number = invoice_number
             invoice.sequential_number = sequential_number
+            invoice.fiscal_year = fiscal_year
             invoice.series_id = series_id
 
         previous_status = invoice.status
@@ -621,6 +668,7 @@ class InvoiceWorkflowService:
 
         # Calculate credit note totals
         await InvoiceService.recalculate_totals(db, credit_note)
+        await InvoiceWorkflowService.assert_within_creditable(db, credit_note)
 
         # Add history to credit note
         from .service import InvoiceHistoryService

@@ -12,7 +12,7 @@ Generalized from email-only to a channel-agnostic gateway:
 """
 
 from datetime import datetime
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal, get_args
 from uuid import uuid4
 
 from sqlalchemy import (
@@ -34,6 +34,30 @@ from app.database import Base, TimestampMixin
 if TYPE_CHECKING:
     from app.core.auth.models import Clinic
     from app.modules.patients.models import Patient
+
+
+# Every ``notification_type`` the product enqueues. A patient's per-type
+# opt-out is keyed by these, and an absent key reads as consent, so a key
+# outside this list is an opt-out that silently never applies (#683). The
+# write schema is typed with the Literal; ``NOTIFICATION_TYPES`` is the
+# membership-test shape, derived so the two cannot drift.
+NotificationType = Literal[
+    "appointment_confirmation",
+    "appointment_reminder",
+    "appointment_cancelled",
+    "budget_sent",
+    "budget_accepted",
+    "budget_reminder",
+    "invoice_sent",
+    "recall_reminder",
+    "welcome",
+]
+NOTIFICATION_TYPES: tuple[str, ...] = get_args(NotificationType)
+
+
+def default_type_preferences() -> dict[str, bool]:
+    """Every type opted in: the stored record of what the patient was asked."""
+    return dict.fromkeys(NOTIFICATION_TYPES, True)
 
 
 class NotificationTemplate(Base, TimestampMixin):
@@ -131,17 +155,7 @@ class NotificationPreference(Base, TimestampMixin):
     last_inbound_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
 
     # Per-type preferences (channel-agnostic opt-in)
-    preferences: Mapped[dict] = mapped_column(
-        JSONB,
-        default=lambda: {
-            "appointment_confirmation": True,
-            "appointment_reminder": True,
-            "appointment_cancelled": True,
-            "budget_sent": True,
-            "budget_accepted": True,
-            "welcome": True,
-        },
-    )
+    preferences: Mapped[dict] = mapped_column(JSONB, default=default_type_preferences)
 
     # Language preference
     preferred_locale: Mapped[str] = mapped_column(String(5), default="es")

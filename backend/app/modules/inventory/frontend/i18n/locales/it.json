@@ -21,6 +21,7 @@
     "deleteTitle": "Elimina articolo",
     "deleteMessage": "Eliminare questo articolo di magazzino? L'operazione non può essere annullata.",
     "cannotDeleteWithHistory": "Questo articolo ha uno storico movimenti. Disattivalo per preservare la traccia di audit.",
+    "cannotDeleteInUse": "Questo articolo è collegato a un fornitore, a un trattamento o a un ordine d'acquisto. Disattivalo invece.",
     "deactivate": "Disattiva",
     "reactivate": "Riattiva",
     "deactivated": "Articolo disattivato",

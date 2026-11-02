@@ -5,7 +5,18 @@ from __future__ import annotations
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+
+
+def _blank_is_none(value: object) -> object:
+    """A cleared input sends "" -- for a typed optional field that means "no value".
+
+    Without this, clearing a number input and saving answers 422, so the
+    form cannot be saved until the user types something back (#740).
+    """
+    if isinstance(value, str) and not value.strip():
+        return None
+    return value
 
 
 class SupplierCreate(BaseModel):
@@ -24,6 +35,8 @@ class SupplierCreate(BaseModel):
     lead_time_days: int | None = Field(default=None, ge=0)
     is_preferred: bool = False
 
+    _clear_blank = field_validator("lead_time_days", mode="before")(_blank_is_none)
+
 
 class SupplierUpdate(BaseModel):
     """Schema for atomic update of a Contact + Supplier row."""
@@ -41,6 +54,8 @@ class SupplierUpdate(BaseModel):
     payment_terms: str | None = Field(default=None, max_length=255)
     lead_time_days: int | None = Field(default=None, ge=0)
     is_preferred: bool | None = None
+
+    _clear_blank = field_validator("lead_time_days", mode="before")(_blank_is_none)
 
 
 class SupplierResponse(BaseModel):

@@ -307,7 +307,10 @@ class ImportJobService:
                 # status check below runs against the locked snapshot, so
                 # only one task can win the race.
                 result = await session.execute(
-                    select(ImportJob).where(ImportJob.id == job_id).with_for_update()
+                    select(ImportJob)
+                    .where(ImportJob.id == job_id)
+                    .with_for_update()
+                    .execution_options(populate_existing=True)
                 )
                 job = result.scalar_one_or_none()
                 if job is None:

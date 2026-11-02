@@ -2,6 +2,11 @@
 
 ## Unreleased — phase 2
 
+- fix(#779): the settings year counts and the opposition date use the clinic's day, not the server's UTC day.
+- fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
+
+- fix(#743): emptying the username, owner's codice fiscale, regione/ASL/SSA codes or the sync-from date in the settings now clears it. The page sent `null`, and the router skipped every `null` as "not sent", so the old value came back. A save that would leave an enabled clinic without complete credentials now answers 400. Before, that was checked only when enabling.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).

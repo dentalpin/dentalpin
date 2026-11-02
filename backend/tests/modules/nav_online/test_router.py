@@ -45,3 +45,35 @@ async def test_exchange_key_must_be_16_chars(client: AsyncClient, auth_headers, 
 async def test_records_list_empty(client: AsyncClient, auth_headers, test_clinic):
     res = await client.get("/api/v1/nav_online/records", headers=auth_headers)
     assert res.status_code == 200 and res.json()["total"] == 0
+
+
+@pytest.mark.asyncio
+async def test_null_clears_an_optional_field(client: AsyncClient, auth_headers, test_clinic):
+    res = await client.put(
+        SETTINGS, json={**_CREDS, "software_dev_contact": "dev@example.hu"}, headers=auth_headers
+    )
+    assert res.status_code == 200, res.text
+    res = await client.put(
+        SETTINGS,
+        json={"tax_number": None, "software_dev_contact": None, "environment": None},
+        headers=auth_headers,
+    )
+    assert res.status_code == 200, res.text
+    body = res.json()["data"]
+    assert body["tax_number"] is None and body["software_dev_contact"] is None
+    assert body["technical_user_login"] == "t"  # not sent, kept
+    assert body["environment"] == "test"  # NOT NULL: null leaves it unchanged
+
+
+@pytest.mark.asyncio
+async def test_clearing_a_credential_of_an_enabled_clinic_answers_400(
+    client: AsyncClient, auth_headers, test_clinic
+):
+    res = await client.put(SETTINGS, json={**_CREDS, "enabled": True}, headers=auth_headers)
+    assert res.status_code == 200 and res.json()["data"]["enabled"] is True
+    res = await client.put(SETTINGS, json={"tax_number": None}, headers=auth_headers)
+    assert res.status_code == 400
+    res = await client.put(
+        SETTINGS, json={"enabled": False, "tax_number": None}, headers=auth_headers
+    )
+    assert res.status_code == 200 and res.json()["data"]["tax_number"] is None

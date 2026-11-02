@@ -190,6 +190,24 @@ async def delete_template(
 # ============================================================================
 
 
+async def _ensure_clinic_patient(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> None:
+    """404 unless the patient is this clinic's.
+
+    The preference endpoints create the row on first read and a reply writes a
+    message row, so an unknown id hit the patients FK (500) and another
+    clinic's patient got a row here.
+    """
+    from sqlalchemy import select
+
+    from app.modules.patients.models import Patient
+
+    found = await db.scalar(
+        select(Patient.id).where(Patient.id == patient_id, Patient.clinic_id == clinic_id)
+    )
+    if found is None:
+        raise HTTPException(status_code=404, detail="Patient not found")
+
+
 @router.get(
     "/preferences/patient/{patient_id}",
     response_model=ApiResponse[NotificationPreferenceResponse],
@@ -204,6 +222,7 @@ async def get_patient_preferences(
 
     Creates default preferences if they don't exist.
     """
+    await _ensure_clinic_patient(db, ctx.clinic_id, patient_id)
     prefs = await NotificationService.get_or_create_patient_preferences(
         db, ctx.clinic_id, patient_id
     )
@@ -222,6 +241,7 @@ async def update_patient_preferences(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[NotificationPreferenceResponse]:
     """Update notification preferences for a patient."""
+    await _ensure_clinic_patient(db, ctx.clinic_id, patient_id)
     prefs = await NotificationService.update_patient_preferences(
         db, ctx.clinic_id, patient_id, data.model_dump(exclude_unset=True)
     )
@@ -628,6 +648,7 @@ async def reply_to_conversation(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ConversationMessageResponse]:
     """Send a free-form reply to the patient (within the 24h session window)."""
+    await _ensure_clinic_patient(db, ctx.clinic_id, patient_id)
     msg = await NotificationGateway.enqueue(
         db,
         ctx.clinic_id,

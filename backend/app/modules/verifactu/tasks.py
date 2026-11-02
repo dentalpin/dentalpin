@@ -129,6 +129,7 @@ async def _notify_rejected(payload: dict) -> None:
             select(VerifactuSettings)
             .where(VerifactuSettings.clinic_id == clinic_id)
             .with_for_update()
+            .execution_options(populate_existing=True)
         )
         settings = settings_q.scalar_one_or_none()
         if (

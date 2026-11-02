@@ -31,7 +31,7 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Any
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.billing.hooks import BillingComplianceHook
@@ -157,6 +157,20 @@ class IndiaGstHook(BillingComplianceHook):
     async def on_credit_note_issued(self, credit_note, original_invoice, db) -> dict[str, Any]:
         return await self._apply(
             credit_note, db, is_credit_note=True, original_invoice=original_invoice
+        )
+
+    async def on_draft_item_deleted(self, item, db) -> None:
+        """Drop the SAC override row of a draft line before billing deletes it.
+
+        ``PUT /india_gst/invoices/{id}`` writes the row while the invoice is
+        still a draft; the FK is ``RESTRICT`` on purpose (issued lines), so
+        without this the line's DELETE answered 500 (#750).
+        """
+        await db.execute(
+            delete(IndiaGstInvoiceItem).where(
+                IndiaGstInvoiceItem.clinic_id == item.clinic_id,
+                IndiaGstInvoiceItem.invoice_item_id == item.id,
+            )
         )
 
     def enhance_pdf_data(self, pdf_data: dict, invoice) -> dict:

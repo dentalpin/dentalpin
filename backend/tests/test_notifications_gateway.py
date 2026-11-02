@@ -236,6 +236,7 @@ async def test_do_not_contact_hard_blocks_even_force(db_session, test_patient):
 
 @pytest.mark.asyncio
 async def test_email_opt_out_skips(db_session, test_patient):
+    """An email-only clinic has nothing left once the patient turns email off."""
     from app.modules.notifications.models import NotificationPreference
 
     db_session.add(
@@ -256,7 +257,7 @@ async def test_email_opt_out_skips(db_session, test_patient):
         to_address=test_patient.email,
     )
     assert msg.status == "skipped"
-    assert msg.error_message == "patient_opted_out"
+    assert msg.error_message == "no_viable_channel"
 
 
 # --------------------------------------------------------------------------- #
@@ -566,6 +567,36 @@ async def test_explicit_whatsapp_opt_out_falls_back_to_email(
     assert msg.status == "queued"
     assert msg.channel == "email"
     assert msg.to_address == test_patient.email
+
+
+@pytest.mark.asyncio
+async def test_explicit_email_opt_out_still_sends_on_whatsapp(
+    db_session, test_patient, whatsapp_adapter
+):
+    """email_enabled=False opts out of email, not of every channel. The
+    consent gate used to read it as a global opt-out, so a patient who
+    turned email off and kept WhatsApp got no automatic notification."""
+    await _channel_settings(db_session, test_patient.clinic_id, preferred="whatsapp")
+    await _approved_hsm(db_session, test_patient.clinic_id)
+    db_session.add(
+        NotificationPreference(
+            clinic_id=test_patient.clinic_id,
+            patient_id=test_patient.id,
+            email_enabled=False,
+        )
+    )
+    await db_session.commit()
+
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        test_patient.clinic_id,
+        "appointment_confirmation",
+        context={},
+        patient_id=test_patient.id,
+    )
+    assert msg.status == "queued"
+    assert msg.channel == "whatsapp"
+    assert msg.to_address == test_patient.phone
 
 
 @pytest.mark.asyncio

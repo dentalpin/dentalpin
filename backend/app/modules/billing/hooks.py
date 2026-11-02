@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 if TYPE_CHECKING:
     from app.core.auth.models import Clinic
 
-    from .models import Invoice
+    from .models import Invoice, InvoiceItem
 
 
 class BillingComplianceHook(ABC):
@@ -268,6 +268,20 @@ class BillingComplianceHook(ABC):
         """
 
         return {}
+
+    async def on_draft_item_deleted(self, item: "InvoiceItem", db: AsyncSession) -> None:
+        """Remove this module's own rows for a draft invoice line about to be deleted.
+
+        A module that stores per-line data with an FK to ``invoice_items``
+        (India GST's SAC override on a draft) deletes it here, or the line's
+        DELETE fails on that FK. Billing calls this on **every** registered
+        hook, not only the clinic's country: the per-line row does not
+        depend on the country setting (#750).
+
+        Default: no-op.
+        """
+
+        return None
 
 
 class BillingHookRegistry:

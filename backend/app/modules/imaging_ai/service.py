@@ -240,7 +240,12 @@ class AiJobService:
         (migration_import pattern).
         """
         async with async_session_maker() as db:
-            result = await db.execute(select(AiJob).where(AiJob.id == job_id).with_for_update())
+            result = await db.execute(
+                select(AiJob)
+                .where(AiJob.id == job_id)
+                .with_for_update()
+                .execution_options(populate_existing=True)
+            )
             job = result.scalar_one_or_none()
             if job is None or job.clinic_id != clinic_id or job.status != JOB_QUEUED:
                 return

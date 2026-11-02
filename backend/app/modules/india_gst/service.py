@@ -192,6 +192,7 @@ async def allocate_fy_document_number(
             IndiaGstDocumentSequence.fy_label == label,
         )
         .with_for_update()
+        .execution_options(populate_existing=True)
     )
     seq = seq_q.scalar_one()
     seq.last_number += 1
