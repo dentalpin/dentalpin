@@ -345,6 +345,91 @@ async def test_approve_endpoint_executes_and_a_second_click_is_404(
 
 
 @pytest.mark.asyncio
+async def test_approve_endpoint_reports_a_failed_run(client, auth_headers, db_session, test_clinic):
+    clinic_id = test_clinic.id  # the rollback inside the request expires ORM objects
+    request_id = await _queue(db_session, test_clinic, tool="fail_thing")
+    headers = {**auth_headers, "X-Clinic-Id": str(clinic_id)}
+
+    resp = await client.post(
+        f"/api/v1/agents/approvals/{request_id}/approve", json={}, headers=headers
+    )
+
+    # The decision was recorded, the run was not: the response says which.
+    assert resp.status_code == 200, resp.text
+    assert resp.json()["data"]["status"] == "failed"
+    leaked = await db_session.execute(select(Agent).where(Agent.name == "leaked"))
+    assert leaked.scalars().all() == []
+
+
+@pytest.mark.asyncio
+async def test_two_reviewers_approving_at_once_run_it_once(db_session, test_clinic):
+    """Two approvals racing on their own connections, as two browser tabs
+    or two supervisors would: exactly one runs the action."""
+    import asyncio
+
+    from app.database import async_session_maker
+
+    clinic_id = test_clinic.id
+    request_id = await _queue(db_session, test_clinic)
+    reviewer_id = await _clinic_admin_id(db_session, test_clinic)
+    await db_session.commit()
+
+    async def approve():
+        async with async_session_maker() as db:
+            result = await ApprovalService.approve(
+                db, clinic_id, request_id, reviewer_id=reviewer_id, reviewer_role="admin"
+            )
+            await db.commit()
+            return None if result is None else result.status
+
+    outcomes = await asyncio.gather(approve(), approve())
+
+    assert sorted(outcomes, key=lambda o: o is None) == ["executed", None]
+    assert _WRITES == ["room"]
+
+
+@pytest.mark.asyncio
+async def test_an_approval_waiting_on_the_lock_sees_the_other_decision(db_session, test_clinic):
+    """The second approval has the row cached as ``pending`` and blocks on the
+    row lock while the first decides; once the first commits it must re-read
+    the row (populate_existing), find it decided, and run nothing."""
+    import asyncio
+
+    from app.database import async_session_maker
+
+    clinic_id = test_clinic.id
+    request_id = await _queue(db_session, test_clinic)
+    reviewer_id = await _clinic_admin_id(db_session, test_clinic)
+    await db_session.commit()
+
+    async with async_session_maker() as holder, async_session_maker() as other:
+        cached = await other.get(AgentApprovalQueue, request_id)
+        assert cached.status == "pending"
+        locked = (
+            await holder.execute(
+                select(AgentApprovalQueue)
+                .where(AgentApprovalQueue.id == request_id)
+                .with_for_update()
+            )
+        ).scalar_one()
+
+        waiting = asyncio.create_task(
+            ApprovalService.approve(
+                other, clinic_id, request_id, reviewer_id=reviewer_id, reviewer_role="admin"
+            )
+        )
+        await asyncio.sleep(0.3)
+        assert not waiting.done(), "the second approval should be blocked on the row lock"
+
+        locked.status = "approved"  # the first reviewer's decision lands
+        await holder.commit()
+        assert await waiting is None
+        await other.rollback()
+
+    assert _WRITES == []
+
+
+@pytest.mark.asyncio
 async def test_reject_is_idempotent_against_double_decision(db_session, test_clinic):
     agent, session = await _setup(db_session, test_clinic)
     req = AgentApprovalQueue(
