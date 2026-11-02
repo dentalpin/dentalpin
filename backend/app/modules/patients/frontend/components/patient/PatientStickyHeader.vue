@@ -19,6 +19,7 @@
 
 import type { PatientExtended } from '~~/app/types'
 import { parseDateOnly } from '~~/app/utils/wallClock'
+import { genderLabelKey } from '../../utils/genderLabelKey'
 
 interface Props {
   patient: PatientExtended
@@ -56,15 +57,8 @@ const age = computed(() => {
 })
 
 const genderLabel = computed(() => {
-  const g = props.patient.gender
-  if (!g) return null
-  const map: Record<string, string> = {
-    male: t('patients.gender.male'),
-    female: t('patients.gender.female'),
-    other: t('patients.gender.other'),
-    prefer_not_say: t('patients.gender.preferNotSay')
-  }
-  return map[g] ?? null
+  const key = genderLabelKey(props.patient.gender)
+  return key ? t(key) : null
 })
 
 const isArchived = computed(() => props.patient.status === 'archived')
