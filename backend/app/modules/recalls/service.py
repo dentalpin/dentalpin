@@ -38,6 +38,10 @@ OPEN_STATUSES = ACTIVE_STATUSES + ("needs_review",)
 TERMINAL_STATUSES = ("done", "cancelled")
 
 
+class RecallClosedError(Exception):
+    """The action needs an open recall, and this one is done or cancelled."""
+
+
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
@@ -325,6 +329,18 @@ class RecallService:
         return recall
 
     @staticmethod
+    async def _get_open(db: AsyncSession, clinic_id: UUID, recall_id: UUID) -> Recall | None:
+        """Lock the recall and refuse a closed one, so a second concurrent
+        call waits and then sees the first call's status (#804)."""
+        recall = await RecallService.get(db, clinic_id, recall_id)
+        if not recall:
+            return None
+        await db.refresh(recall, attribute_names=["status"], with_for_update=True)
+        if recall.status in TERMINAL_STATUSES:
+            raise RecallClosedError(recall.status)
+        return recall
+
+    @staticmethod
     async def snooze(
         db: AsyncSession,
         clinic_id: UUID,
@@ -333,7 +349,7 @@ class RecallService:
         reason_note: str | None,
         by_user: UUID | None,
     ) -> Recall | None:
-        recall = await RecallService.get(db, clinic_id, recall_id)
+        recall = await RecallService._get_open(db, clinic_id, recall_id)
         if not recall:
             return None
         recall.due_month = _add_months(recall.due_month, months)
@@ -349,8 +365,7 @@ class RecallService:
                 + stamp
                 + f"snoozed +{months}mo · {reason_note}"
             )
-        if recall.status not in ("done", "cancelled"):
-            recall.status = "pending"
+        recall.status = "pending"
         await db.flush()
         payload = _build_event_payload(recall)
         payload["snoozed_months"] = months
@@ -365,7 +380,7 @@ class RecallService:
         note: str | None,
         by_user: UUID | None,
     ) -> Recall | None:
-        recall = await RecallService.get(db, clinic_id, recall_id)
+        recall = await RecallService._get_open(db, clinic_id, recall_id)
         if not recall:
             return None
         recall.status = "cancelled"
@@ -385,7 +400,7 @@ class RecallService:
         by_user: UUID | None,
         commit: bool = True,
     ) -> Recall | None:
-        recall = await RecallService.get(db, clinic_id, recall_id)
+        recall = await RecallService._get_open(db, clinic_id, recall_id)
         if not recall:
             return None
         recall.status = "done"
@@ -402,7 +417,7 @@ class RecallService:
         attempt_data: dict[str, Any],
         by_user: UUID,
     ) -> tuple[Recall, RecallContactAttempt] | None:
-        recall = await RecallService.get(db, clinic_id, recall_id)
+        recall = await RecallService._get_open(db, clinic_id, recall_id)
         if not recall:
             return None
         attempt = RecallContactAttempt(
