@@ -86,9 +86,10 @@ through `attachment_registry`.
 
 - **Storage backend is pluggable** (`STORAGE_BACKEND` env var).
   `local` (Docker volume via `aiofiles`) or `s3` (`storage/s3.py`,
-  boto3 S3 client; bucket required, region/endpoint optional, empty
-  credentials use the AWS chain). Both implement `StorageBackend`, so
-  upload/download/archive/get_archive/download all work unchanged.
+  boto3 client run through `asyncio.to_thread`; bucket required,
+  region/endpoint optional, empty credentials use the AWS chain). Both
+  implement the same four seam methods (`store`, `retrieve`, `delete`,
+  `exists`), so upload/download/archive flow unchanged.
 - **Thumbnails** are precomputed on upload (`thumbnails.py`) at two
   sizes (`{path}.thumb.jpg`, `{path}.medium.jpg`). Originals stay
   untouched. The download endpoint accepts a `variant` query param.

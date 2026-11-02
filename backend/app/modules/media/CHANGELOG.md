@@ -6,13 +6,17 @@
   existing `StorageBackend` seam, selected with `STORAGE_BACKEND=s3` (T6).
   `STORAGE_S3_BUCKET` is required in that mode; `STORAGE_S3_REGION` /
   `STORAGE_S3_ENDPOINT_URL` target MinIO/Wasabi/R2 and empty credentials
-  fall back to the standard AWS chain. The factory also fails fast on an
-  unknown backend name and refuses `s3` without a bucket instead of
-  failing on the first upload. Keys are forwarded in all three deployment
-  compose files and documented in the shipped `.env` templates; boto3
-  added to `pyproject.toml` (uv.lock updated). 13 tests cover put/get/
-  head/delete semantics, the NoSuchKey -> FileNotFoundError mapping and
-  the factory guards.
+  fall back to the standard AWS chain. The factory refuses `s3` without a
+  bucket instead of failing on the first upload (the unknown-backend-name
+  ValueError is pre-existing and now test-covered); prod/coolify composes
+  interpolate `STORAGE_BACKEND` with a `local` default so the template's
+  opt-in flips the real switch. SDK calls run via `asyncio.to_thread` so
+  the sync boto3 client never blocks the event loop. Keys are forwarded
+  in all three deployment compose files and documented in the shipped
+  `.env` templates; boto3 added to `pyproject.toml` (uv.lock updated).
+  11 tests cover put/get/head/delete semantics, the full NOT_FOUND code
+  set -> FileNotFoundError mapping, unexpected-error passthrough,
+  constructor wiring and the factory guards.
 
 - fix(#743): emptying a document's description in the edit modal kept the
   old text. The modal sent `|| undefined` (key dropped) and

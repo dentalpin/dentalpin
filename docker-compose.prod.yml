@@ -62,10 +62,11 @@ services:
       SENTRY_DSN: ${SENTRY_DSN:-}
       ENVIRONMENT: production
       ALLOWED_ORIGINS: ${PUBLIC_URL:-http://localhost}
-      STORAGE_BACKEND: local
-      STORAGE_LOCAL_PATH: /app/storage
-      # Media S3 backend. Inert while STORAGE_BACKEND stays `local`;
-      # operators flip the backend via the module-level override file.
+      STORAGE_BACKEND: ${STORAGE_BACKEND:-local}
+      STORAGE_LOCAL_PATH: ${STORAGE_LOCAL_PATH:-/app/storage}
+      # Media S3 backend. STORAGE_BACKEND defaults to local; set
+      # STORAGE_BACKEND=s3 (+ STORAGE_S3_BUCKET and optional keys below)
+      # in .env to opt in.
       STORAGE_S3_BUCKET: ${STORAGE_S3_BUCKET:-}
       STORAGE_S3_REGION: ${STORAGE_S3_REGION:-}
       STORAGE_S3_ENDPOINT_URL: ${STORAGE_S3_ENDPOINT_URL:-}
