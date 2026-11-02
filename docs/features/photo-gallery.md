@@ -97,7 +97,8 @@ PDFs, consents, insurance, reports continue to live there unchanged.
 ## Out of scope (follow-ups)
 
 - Native mobile camera capture (`<input capture="environment">`).
-- Module `media_s3` extending `StorageBackend`.
+- Tenant-scoped S3 prefix wrapper and presigned download URLs (the S3
+  backend itself shipped inside `media`, T6).
 - Active retention / lifecycle enforcement (see ADR 0008).
 - AI photo analysis (caries detection, etc.).
 - Per-photo access control beyond the current module-level RBAC.

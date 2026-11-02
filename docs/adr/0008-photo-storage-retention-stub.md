@@ -72,8 +72,9 @@ When the `media_s3` module lands:
 
 - `grep "archive_patient_documents" backend/app/modules/media/service.py`
   — soft-delete-only path remains the single archive entry point.
-- When the S3 module ships, `docs/modules/media-s3.md` MUST cite this
-  ADR and document the lifecycle rules it ships.
+- The S3 backend shipped inside `media` (`storage/s3.py`), not as a
+  separate `media_s3` module, and implements no lifecycle rules; this
+  ADR remains the record for that unimplemented policy.
 
 ## References
 
