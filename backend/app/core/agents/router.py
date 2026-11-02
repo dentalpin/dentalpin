@@ -102,7 +102,12 @@ async def approve_request(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ApprovalResponse]:
     request = await ApprovalService.approve(
-        db, ctx.clinic_id, request_id, reviewer_id=ctx.user_id, notes=payload.notes
+        db,
+        ctx.clinic_id,
+        request_id,
+        reviewer_id=ctx.user_id,
+        reviewer_role=ctx.role,
+        notes=payload.notes,
     )
     if request is None:
         raise HTTPException(status_code=404, detail="Approval request not found or not pending")

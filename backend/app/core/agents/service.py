@@ -175,11 +175,18 @@ class ApprovalService:
         status: str,
         notes: str | None,
     ) -> AgentApprovalQueue | None:
+        # Row lock: two reviewers (or one double click) deciding the same
+        # request serialize here, and the second sees it already decided.
+        # populate_existing so the status is re-read, not taken from the
+        # identity map (#771).
         result = await db.execute(
-            select(AgentApprovalQueue).where(
+            select(AgentApprovalQueue)
+            .where(
                 AgentApprovalQueue.id == request_id,
                 AgentApprovalQueue.clinic_id == clinic_id,
             )
+            .with_for_update()
+            .execution_options(populate_existing=True)
         )
         request = result.scalar_one_or_none()
         if request is None or request.status != "pending":
@@ -198,9 +205,23 @@ class ApprovalService:
         request_id: UUID,
         *,
         reviewer_id: UUID,
+        reviewer_role: str | None = None,
         notes: str | None = None,
     ) -> AgentApprovalQueue | None:
-        return await ApprovalService._decide(
+        """Approve a pending request and run the queued tool call.
+
+        Status trail: ``pending`` -> ``approved`` -> ``executed`` or
+        ``failed``. The call runs with the *reviewer's* permissions (``reviewer_role``;
+        none if omitted, so it fails closed), re-validated against the
+        tool's parameter model. Both outcomes write an audit row. A
+        request already decided returns ``None`` and runs nothing, so a
+        second approval can never execute the action twice.
+        """
+        from app.core.agents.context import AgentMode
+        from app.core.agents.tools.registry import tool_registry
+        from app.core.auth.rbac import granted_permissions_for
+
+        request = await ApprovalService._decide(
             db,
             clinic_id,
             request_id,
@@ -208,6 +229,35 @@ class ApprovalService:
             status="approved",
             notes=notes,
         )
+        if request is None:
+            return None
+        # Make the decision durable before the action runs: it releases
+        # the row lock, so a second approval now sees a decided request,
+        # and a failing handler's rollback cannot take the decision with
+        # it. If the process dies mid-run the row stays ``approved``: the
+        # honest "decided, not finished" state, never run a second time.
+        await db.commit()
+
+        permissions = (
+            await granted_permissions_for(db, clinic_id, reviewer_role)
+            if reviewer_role is not None
+            else []
+        )
+        ctx = AgentContext(
+            agent_id=request.agent_id,
+            session_id=request.session_id,
+            clinic_id=clinic_id,
+            mode=AgentMode.AUTONOMOUS,
+            permissions=list(permissions),
+            tools=tool_registry,
+            db=db,
+            supervisor_id=reviewer_id,
+        )
+        outcome = await tool_registry.execute_approved(ctx, request.tool_name, request.arguments)
+        await db.refresh(request)  # a rollback after a failed run expires it
+        request.status = "executed" if outcome.ok else "failed"
+        await db.flush()
+        return request
 
     @staticmethod
     async def reject(

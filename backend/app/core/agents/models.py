@@ -71,7 +71,13 @@ class AgentSession(Base, TimestampMixin):
 
 
 class AgentApprovalQueue(Base, TimestampMixin):
-    """Pending action awaiting human review (supervised mode)."""
+    """Pending action awaiting human review (supervised mode).
+
+    ``status``: ``pending`` -> ``approved`` -> ``executed`` | ``failed``,
+    or ``pending`` -> ``rejected``. Approving runs the queued call
+    (``ApprovalService.approve``); ``executed``/``failed`` is its outcome,
+    detailed in the audit log.
+    """
 
     __tablename__ = "agent_approval_queue"
 
