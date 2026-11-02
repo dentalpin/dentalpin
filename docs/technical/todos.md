@@ -103,7 +103,8 @@ Extended `clinical` module with:
 
 **Architecture Decisions:**
 - Separate `media` module (reusable for images, X-rays, attachments)
-- StorageBackend protocol: LocalStorage (MVP), S3Storage (future)
+- StorageBackend protocol: LocalStorage (shipped), S3 (`storage/s3.py`,
+  shipped with `STORAGE_BACKEND=s3`)
 - File metadata in DB, actual files in configured storage
 - Document types: consent, id_scan, insurance, report, referral, other
 

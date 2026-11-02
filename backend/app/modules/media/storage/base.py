@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 class StorageBackend(ABC):
     """Abstract storage backend for file operations.
 
-    Implementations: LocalStorageBackend, (future: S3StorageBackend)
+    Implementations: LocalStorageBackend, S3StorageBackend
     """
 
     @abstractmethod

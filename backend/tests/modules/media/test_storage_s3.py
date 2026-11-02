@@ -10,9 +10,9 @@ from botocore.exceptions import ClientError
 
 from app.modules.media.storage import get_storage_backend
 from app.modules.media.storage.local import LocalStorageBackend
-from app.modules.media.storage.s3 import S3StorageBackend
+from app.modules.media.storage.s3 import NOT_FOUND_CODES, S3StorageBackend
 
-NOT_FOUND_CASES = ["NoSuchKey", "NotFound", "404"]
+NOT_FOUND_CASES = sorted(NOT_FOUND_CODES)
 
 
 class StubS3Client:
@@ -248,15 +248,16 @@ def test_factory_builds_s3_backend_for_s3(monkeypatch) -> None:
     monkeypatch.setattr("app.modules.media.storage.settings.STORAGE_BACKEND", "s3")
     monkeypatch.setattr("app.modules.media.storage.settings.STORAGE_S3_BUCKET", "unit-bucket")
     get_storage_backend.cache_clear()
+    try:
+        backend = get_storage_backend()
 
-    backend = get_storage_backend()
-
-    assert isinstance(backend, S3StorageBackend)
-    assert backend.bucket == "unit-bucket"
-
-    # Restore local dispatch for other tests (test-local cache-cleared).
-    monkeypatch.undo()
-    get_storage_backend.cache_clear()
+        assert isinstance(backend, S3StorageBackend)
+        assert backend.bucket == "unit-bucket"
+    finally:
+        # Restore local dispatch even on failure (monkeypatch teardown
+        # fixes the settings ref, not this module's cache).
+        monkeypatch.undo()
+        get_storage_backend.cache_clear()
 
 
 def test_factory_requires_bucket_for_s3(monkeypatch) -> None:
@@ -267,11 +268,11 @@ def test_factory_requires_bucket_for_s3(monkeypatch) -> None:
     settings.STORAGE_S3_BUCKET = ""
     monkeypatch.setattr("app.modules.media.storage.settings", settings)
     get_storage_backend.cache_clear()
-
-    with pytest.raises(ValueError, match="STORAGE_S3_BUCKET"):
-        get_storage_backend()
-
-    get_storage_backend.cache_clear()
+    try:
+        with pytest.raises(ValueError, match="STORAGE_S3_BUCKET"):
+            get_storage_backend()
+    finally:
+        get_storage_backend.cache_clear()
 
 
 def test_factory_raises_on_unknown_backend(monkeypatch) -> None:
@@ -281,8 +282,8 @@ def test_factory_raises_on_unknown_backend(monkeypatch) -> None:
     settings.STORAGE_BACKEND = "carrier-pigeon"
     monkeypatch.setattr("app.modules.media.storage.settings", settings)
     get_storage_backend.cache_clear()
-
-    with pytest.raises(ValueError, match="Unknown storage backend"):
-        get_storage_backend()
-
-    get_storage_backend.cache_clear()
+    try:
+        with pytest.raises(ValueError, match="Unknown storage backend"):
+            get_storage_backend()
+    finally:
+        get_storage_backend.cache_clear()

@@ -19,6 +19,11 @@ locally — it's a feature of S3-class backends. A future
 `media_s3` module is on the roadmap and will extend `StorageBackend`
 without changing the contract.
 
+> **Superseded (T6)**: `media` now also ships the S3 backend
+> (`storage/s3.py`, `STORAGE_BACKEND=s3`, boto3 via `asyncio.to_thread`),
+> so S3-class lifecycle features are feasible; the "future media_s3
+> module" landed inside `media`.
+
 Building a custom retention loop on local disk now would be premature
 infrastructure (cron + tombstones + restore UI) for a feature nobody
 needs at the current scale.

@@ -17,8 +17,10 @@ class S3StorageBackend(StorageBackend):
     Credentials fall back to the standard AWS chain (env vars, IAM
     profile) when explicit keys are absent. SDK calls run through
     asyncio.to_thread so the boto3 client's sync HTTP round trips do
-    not block the event loop (ADR 0012 prescribes non-blocking storage
-    IO; boto3 keeps aioboto3's dependency chain out).
+    not block the event loop. ADR 0012 (a proposal) targets the same
+    non-blocking storage IO with aioboto3; plain boto3 wrapped in
+    to_thread is the deliberate substitute here, keeping aioboto3's
+    dependency chain out.
     """
 
     def __init__(

@@ -89,7 +89,10 @@ through `attachment_registry`.
   boto3 client run through `asyncio.to_thread`; bucket required,
   region/endpoint optional, empty credentials use the AWS chain). Both
   implement the same four seam methods (`store`, `retrieve`, `delete`,
-  `exists`), so upload/download/archive flow unchanged.
+  `exists`), so upload/download/archive flow unchanged. ADR 0012 PR-3
+  (S3CompatibleStorage in core) can keep this precedent instead of
+  aioboto3: boto3's sync client wrapped in `asyncio.to_thread` is the
+  accepted non-blocking mechanism here.
 - **Thumbnails** are precomputed on upload (`thumbnails.py`) at two
   sizes (`{path}.thumb.jpg`, `{path}.medium.jpg`). Originals stay
   untouched. The download endpoint accepts a `variant` query param.
