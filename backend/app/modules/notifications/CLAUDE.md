@@ -58,7 +58,8 @@ Agent tool in `tools.py` (wraps `NotificationGateway`, no logic duplicated).
 | `send_notification` | WRITE | `NotificationGateway.enqueue` | `notifications.send` |
 
 Structured params only (cloud-eligible under redaction). Enqueues through
-the full consent path — never bypasses `do_not_contact`.
+the full consent path — never bypasses `do_not_contact`. `notification_type`
+is the `NotificationType` Literal, so the model is shown the nine values.
 
 ## Events emitted
 

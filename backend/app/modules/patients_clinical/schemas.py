@@ -1,6 +1,7 @@
 """Pydantic schemas for the patients_clinical module."""
 
 from datetime import date, datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
@@ -57,11 +58,15 @@ class MedicalContextResponse(MedicalContextBase):
 
 # --- Allergy ------------------------------------------------------------
 
+# Only `high` and `critical` raise an alert (`compute_alerts`), so a value outside
+# this set would be stored and silently raise none.
+AllergySeverity = Literal["low", "medium", "high", "critical"]
+
 
 class AllergyCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
     type: str | None = Field(default=None, max_length=50)
-    severity: str = Field(default="medium", max_length=20)
+    severity: AllergySeverity = "medium"
     reaction: str | None = Field(default=None, max_length=500)
     notes: str | None = None
     # Loose link to an optional medical_reference list item (no DB FK —
@@ -72,7 +77,7 @@ class AllergyCreate(BaseModel):
 class AllergyUpdate(BaseModel):
     name: str | None = Field(default=None, min_length=1, max_length=100)
     type: str | None = Field(default=None, max_length=50)
-    severity: str | None = Field(default=None, max_length=20)
+    severity: AllergySeverity | None = None
     reaction: str | None = Field(default=None, max_length=500)
     notes: str | None = None
     reference_id: UUID | None = None
@@ -80,6 +85,8 @@ class AllergyUpdate(BaseModel):
 
 class AllergyResponse(AllergyCreate):
     id: UUID
+    # Not the input Literal: rows stored before it was enforced must stay readable.
+    severity: str
     status: str
 
     model_config = ConfigDict(from_attributes=True)

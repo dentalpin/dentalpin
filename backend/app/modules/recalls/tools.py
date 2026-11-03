@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field
 from app.core.agents import AgentContext, Tool, ToolCategory
 
 from .schemas import Channel, Outcome, Priority, Reason, Status
-from .service import RecallFilters, RecallService
+from .service import RecallClosedError, RecallFilters, RecallService
 
 
 class ListDueRecallsArgs(BaseModel):
@@ -138,18 +138,21 @@ async def _create_recall(ctx: AgentContext, params: CreateRecallArgs) -> dict:
 
 
 async def _log_contact_attempt(ctx: AgentContext, params: LogContactAttemptArgs) -> dict:
-    result = await RecallService.log_attempt(
-        ctx.db,
-        ctx.clinic_id,
-        params.recall_id,
-        {
-            "channel": params.channel,
-            "outcome": params.outcome,
-            "note": params.note,
-            "linked_appointment_id": params.linked_appointment_id,
-        },
-        by_user=ctx.supervisor_id,
-    )
+    try:
+        result = await RecallService.log_attempt(
+            ctx.db,
+            ctx.clinic_id,
+            params.recall_id,
+            {
+                "channel": params.channel,
+                "outcome": params.outcome,
+                "note": params.note,
+                "linked_appointment_id": params.linked_appointment_id,
+            },
+            by_user=ctx.supervisor_id,
+        )
+    except RecallClosedError:
+        return {"error": "recall_closed"}
     if result is None:
         return {"error": "not_found"}
     recall, _attempt = result
@@ -161,23 +164,29 @@ async def _log_contact_attempt(ctx: AgentContext, params: LogContactAttemptArgs)
 
 
 async def _snooze_recall(ctx: AgentContext, params: SnoozeRecallArgs) -> dict:
-    recall = await RecallService.snooze(
-        ctx.db,
-        ctx.clinic_id,
-        params.recall_id,
-        months=params.months,
-        reason_note=params.reason_note,
-        by_user=ctx.supervisor_id,
-    )
+    try:
+        recall = await RecallService.snooze(
+            ctx.db,
+            ctx.clinic_id,
+            params.recall_id,
+            months=params.months,
+            reason_note=params.reason_note,
+            by_user=ctx.supervisor_id,
+        )
+    except RecallClosedError:
+        return {"error": "recall_closed"}
     if recall is None:
         return {"error": "not_found"}
     return {"id": recall.id, "due_month": recall.due_month, "status": recall.status}
 
 
 async def _complete_recall(ctx: AgentContext, params: CompleteRecallArgs) -> dict:
-    recall = await RecallService.mark_done(
-        ctx.db, ctx.clinic_id, params.recall_id, by_user=ctx.supervisor_id
-    )
+    try:
+        recall = await RecallService.mark_done(
+            ctx.db, ctx.clinic_id, params.recall_id, by_user=ctx.supervisor_id
+        )
+    except RecallClosedError:
+        return {"error": "recall_closed"}
     if recall is None:
         return {"error": "not_found"}
     return {"id": recall.id, "status": recall.status}

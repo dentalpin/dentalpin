@@ -77,12 +77,15 @@ class CopilotSettingsService:
             # vendor's model id behind — use the registered provider's default.
             if provider_name != row.provider and not data.get("model"):
                 data = {**data, "model": spec.default_model}
+        # The limits are nullable, and null means "no limit": unlike the fields
+        # below, an explicit None is a value here.
+        for field in ("monthly_token_limit", "monthly_cost_limit_cents"):
+            if field in data:
+                setattr(row, field, data[field])
         for field in (
             "provider",
             "model",
             "redaction_enabled",
-            "monthly_token_limit",
-            "monthly_cost_limit_cents",
             "digest_enabled",
             "digest_hour",
         ):

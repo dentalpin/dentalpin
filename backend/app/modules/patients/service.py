@@ -289,20 +289,36 @@ class PatientService:
 
         ``data`` should come from ``model_dump(exclude_unset=True)`` so
         unspecified fields are preserved and explicit ``None`` clears.
+
+        A ``status`` goes through ``archive_patient`` / ``restore_patient``,
+        whose events drive the media and imaging cascades. The column is NOT
+        NULL, so ``None`` leaves it unchanged.
         """
-        for key, value in data.items():
+        fields = {key: value for key, value in data.items() if key != "status"}
+        for key, value in fields.items():
             setattr(patient, key, value)
 
         await db.flush()
 
-        await event_bus.publish(
-            EventType.PATIENT_UPDATED,
-            {
-                "patient_id": str(patient.id),
-                "clinic_id": str(patient.clinic_id),
-                "changes": list(data.keys()),
-            },
-        )
+        if fields:
+            await event_bus.publish(
+                EventType.PATIENT_UPDATED,
+                {
+                    "patient_id": str(patient.id),
+                    "clinic_id": str(patient.clinic_id),
+                    "changes": list(fields.keys()),
+                },
+            )
+
+        new_status = data.get("status")
+        if new_status == "archived" and patient.status != "archived":
+            await PatientService.archive_patient(db, patient)
+        elif new_status == "active" and patient.status == "archived":
+            await PatientService.restore_patient(db, patient)
+        elif new_status == "active" and patient.status != "active":
+            # A value stored before the schema enforced the vocabulary.
+            patient.status = "active"
+            await db.flush()
         return patient
 
     @staticmethod

@@ -6,6 +6,7 @@ shapes live in ``app.modules.patients_clinical.schemas``.
 """
 
 from datetime import date, datetime
+from typing import Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
@@ -47,7 +48,7 @@ class PatientUpdate(BaseModel):
     email: EmailStr | None = None
     date_of_birth: date | None = None
     notes: str | None = None
-    status: str | None = Field(default=None, max_length=20)
+    status: Literal["active", "archived"] | None = None
     do_not_contact: bool | None = None
     billing_name: str | None = Field(default=None, max_length=200)
     billing_tax_id: str | None = Field(default=None, max_length=50)

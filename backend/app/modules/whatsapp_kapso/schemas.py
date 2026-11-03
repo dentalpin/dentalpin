@@ -4,6 +4,8 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
+from app.modules.notifications.models import NotificationType
+
 
 class KapsoSettingsUpdate(BaseModel):
     api_key: str | None = Field(default=None, description="Kapso project API key (write-only).")
@@ -39,7 +41,7 @@ class KapsoTemplateResponse(BaseModel):
 
 
 class KapsoTemplateMapRequest(BaseModel):
-    notification_type: str = Field(..., max_length=100)
+    notification_type: NotificationType
     locale: str = Field(..., max_length=10)
     template_name: str = Field(..., max_length=200)
 
