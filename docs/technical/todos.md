@@ -113,7 +113,7 @@ Extended `clinical` module with:
 | Task | Status | Description |
 |------|--------|-------------|
 | Create media module | ✅ | BaseModule subclass with dependencies: ["patients"] |
-| StorageBackend protocol | ✅ | upload, download, delete, get_url methods |
+| StorageBackend protocol | ✅ | upload, download, delete, exists methods |
 | LocalStorage implementation | ✅ | Docker volume mount, path-based storage |
 | Document model | ✅ | patient_id, document_type, filename, storage_path, mime_type, file_size, title, description, metadata (JSONB), uploaded_by |
 | Upload endpoint | ✅ | POST /patients/{id}/documents with multipart form, validation (size, type) |

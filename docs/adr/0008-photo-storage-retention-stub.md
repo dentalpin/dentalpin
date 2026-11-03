@@ -37,7 +37,7 @@ soft-delete (`Document.status='archived'`).
 
 When S3-class storage first ships (lifecycle rules themselves remain
 unimplemented; the backend is live at `media/storage/s3.py`), the
-policy below is to apply:
+policy below applies:
 
 1. Map "archived" documents to S3 `STANDARD_IA` after 30 days via
    bucket lifecycle rule.

@@ -45,8 +45,7 @@ class StorageBackend(ABC):
             path: Storage path
 
         Returns:
-            True if the key is absent after the call (deleted - or
-            absent already, for idempotent backends), False if not found
+            True if deleted, False if the key was not found
         """
         ...
 

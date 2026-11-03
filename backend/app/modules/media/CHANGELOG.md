@@ -14,7 +14,7 @@
   the sync boto3 client never blocks the event loop. Keys are forwarded
   in all three deployment compose files and documented in the shipped
   `.env` templates; boto3 added to `pyproject.toml` (uv.lock updated).
-  17 tests (23 cases once the three NOT_FOUND codes are parametrized)
+  17 tests, 23 cases (the three NOT_FOUND codes are parametrized)
   cover the seam methods (store/retrieve/delete/exists), the full
   NOT_FOUND code set -> FileNotFoundError mapping, unexpected-error
   passthrough, response-body closing, constructor wiring and the

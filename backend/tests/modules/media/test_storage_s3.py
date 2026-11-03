@@ -238,10 +238,16 @@ def test_constructor_uses_defaults_for_empty_fields(monkeypatch) -> None:
     assert captured["client"] == {}
 
 
-def test_factory_builds_local_backend_for_local() -> None:
-    backend = get_storage_backend()
+def test_factory_builds_local_backend_for_local(monkeypatch) -> None:
+    monkeypatch.setattr("app.modules.media.storage.settings.STORAGE_BACKEND", "local")
+    get_storage_backend.cache_clear()
+    try:
+        backend = get_storage_backend()
 
-    assert isinstance(backend, LocalStorageBackend)
+        assert isinstance(backend, LocalStorageBackend)
+    finally:
+        monkeypatch.undo()
+        get_storage_backend.cache_clear()
 
 
 def test_factory_builds_s3_backend_for_s3(monkeypatch) -> None:
