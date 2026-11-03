@@ -106,8 +106,9 @@ class SettingsUpdate(BaseModel):
     provider: str | None = Field(default=None, max_length=20)
     model: str | None = Field(default=None, max_length=100)
     redaction_enabled: bool | None = None
-    monthly_token_limit: int | None = None
-    monthly_cost_limit_cents: int | None = None
+    # ``null`` removes a limit. Zero stops the copilot; a negative value would too.
+    monthly_token_limit: int | None = Field(default=None, ge=0)
+    monthly_cost_limit_cents: int | None = Field(default=None, ge=0)
     digest_enabled: bool | None = None
     digest_hour: int | None = Field(default=None, ge=0, le=23)
     # v2: full replacement of the recipient list. None = leave unchanged;
