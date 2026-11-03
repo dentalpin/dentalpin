@@ -45,6 +45,7 @@ from .schemas import (
     Status as RecallStatusLiteral,
 )
 from .service import (
+    RecallClosedError,
     RecallFilters,
     RecallService,
     RecallSettingsService,
@@ -301,14 +302,17 @@ async def snooze_recall(
     _: Annotated[None, Depends(require_permission("recalls.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[RecallResponse]:
-    recall = await RecallService.snooze(
-        db,
-        ctx.clinic_id,
-        recall_id,
-        months=data.months,
-        reason_note=data.reason_note,
-        by_user=ctx.user_id,
-    )
+    try:
+        recall = await RecallService.snooze(
+            db,
+            ctx.clinic_id,
+            recall_id,
+            months=data.months,
+            reason_note=data.reason_note,
+            by_user=ctx.user_id,
+        )
+    except RecallClosedError as exc:
+        raise HTTPException(status_code=409, detail="Recall is closed") from exc
     if not recall:
         raise HTTPException(status_code=404, detail="Recall not found")
     await db.commit()
@@ -323,13 +327,16 @@ async def cancel_recall(
     _: Annotated[None, Depends(require_permission("recalls.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[RecallResponse]:
-    recall = await RecallService.cancel(
-        db,
-        ctx.clinic_id,
-        recall_id,
-        note=data.note,
-        by_user=ctx.user_id,
-    )
+    try:
+        recall = await RecallService.cancel(
+            db,
+            ctx.clinic_id,
+            recall_id,
+            note=data.note,
+            by_user=ctx.user_id,
+        )
+    except RecallClosedError as exc:
+        raise HTTPException(status_code=409, detail="Recall is closed") from exc
     if not recall:
         raise HTTPException(status_code=404, detail="Recall not found")
     await db.commit()
@@ -343,7 +350,10 @@ async def mark_recall_done(
     _: Annotated[None, Depends(require_permission("recalls.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[RecallResponse]:
-    recall = await RecallService.mark_done(db, ctx.clinic_id, recall_id, by_user=ctx.user_id)
+    try:
+        recall = await RecallService.mark_done(db, ctx.clinic_id, recall_id, by_user=ctx.user_id)
+    except RecallClosedError as exc:
+        raise HTTPException(status_code=409, detail="Recall is closed") from exc
     if not recall:
         raise HTTPException(status_code=404, detail="Recall not found")
     await db.commit()
@@ -364,13 +374,16 @@ async def log_attempt(
 ) -> ApiResponse[AttemptResponse]:
     if not ctx.user_id:
         raise HTTPException(status_code=400, detail="user_id required to log attempt")
-    result = await RecallService.log_attempt(
-        db,
-        ctx.clinic_id,
-        recall_id,
-        attempt_data=data.model_dump(),
-        by_user=ctx.user_id,
-    )
+    try:
+        result = await RecallService.log_attempt(
+            db,
+            ctx.clinic_id,
+            recall_id,
+            attempt_data=data.model_dump(),
+            by_user=ctx.user_id,
+        )
+    except RecallClosedError as exc:
+        raise HTTPException(status_code=409, detail="Recall is closed") from exc
     if not result:
         raise HTTPException(status_code=404, detail="Recall not found")
     _, attempt = result
