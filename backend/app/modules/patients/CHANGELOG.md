@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: `PUT /patients/{id}` and `/extended` with `status` wrote the column directly, so `archived` and `active` skipped `patient.archived` / `patient.restored`: documents were neither archived nor restored, and imaging studies were not archived. They now go through `archive_patient` / `restore_patient`. Any other value answers 422 instead of being stored, and `null` leaves the status unchanged instead of answering 500. A status-only update no longer also publishes `patient.updated`.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix: date-only fields (`YYYY-MM-DD`) are parsed as local midnight
