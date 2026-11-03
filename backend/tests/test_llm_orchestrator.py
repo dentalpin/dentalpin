@@ -729,14 +729,11 @@ def test_compose_forwards_ollama_base_url() -> None:
     local development (``docker-compose.yml``) is its primary deployment.
     """
     import re
-    from pathlib import Path
 
-    repo = Path(__file__).resolve().parents[2]
+    from tests._compose import backend_block
+
     for compose in ("docker-compose.prod.yml", "docker-compose.yml", "docker-compose.coolify.yml"):
-        body = (repo / compose).read_text(encoding="utf-8")
-        after = body.split("\n  backend:", 1)[1]
-        nxt = re.search(r"^  \S", after, re.M)
-        backend = after[: nxt.start()] if nxt else after
+        backend = backend_block(compose)
         assert re.search(r"^\s+OLLAMA_BASE_URL:\s*\$\{OLLAMA_BASE_URL:-\}", backend, re.M), (
             f"{compose} does not forward OLLAMA_BASE_URL"
         )
