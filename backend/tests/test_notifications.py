@@ -304,6 +304,38 @@ def test_every_enqueued_type_is_in_the_vocabulary():
     ).read_text()
     assert set(re.findall(r"key: '([a-z_]+)'", composable)) == set(NOTIFICATION_TYPES)
 
+    # The Kapso template mapping offers its own copy of the list, and its
+    # endpoint now answers 422 for a type outside it.
+    kapso = (
+        app_root / "modules/whatsapp_kapso/frontend/components/KapsoSettingsPage.vue"
+    ).read_text()
+    kapso_list = re.search(r"const NOTIFICATION_TYPES = \[(.*?)\]", kapso, re.S)
+    assert kapso_list, "the Kapso type list moved; update this guard"
+    assert set(re.findall(r"'([a-z_]+)'", kapso_list.group(1))) == set(NOTIFICATION_TYPES)
+
+
+@pytest.mark.asyncio
+async def test_a_misspelt_type_is_rejected_on_the_send_side(
+    client: AsyncClient, auth_headers: dict, test_patient
+):
+    """A type outside the vocabulary has no template, so it used to queue,
+    answer success, and fail only at dispatch with "Template not found"."""
+    from pydantic import ValidationError
+
+    from app.modules.notifications.tools import SendNotificationArgs
+
+    response = await client.post(
+        "/api/v1/notifications/send",
+        json={"notification_type": "recal_reminder", "patient_id": str(test_patient.id)},
+        headers=auth_headers,
+    )
+    assert response.status_code == 422
+
+    with pytest.raises(ValidationError):
+        SendNotificationArgs(patient_id=test_patient.id, notification_type="recal_reminder")
+    schema = SendNotificationArgs.model_json_schema()["properties"]["notification_type"]
+    assert set(schema["enum"]) == set(NOTIFICATION_TYPES)
+
 
 @pytest.mark.asyncio
 async def test_list_email_logs(client: AsyncClient, auth_headers: dict, test_clinic):
