@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix: moving an unassigned appointment over another unassigned one warned about a "same cabinet" overlap, because `null === null` counted as a match. An appointment with no cabinet now shares no cabinet; the warning about the same professional is unchanged. Found while checking #786.
 - fix(#774): `AppointmentService.transition` locks the appointment row and re-reads its status before the state-machine check. Two check-ins (kiosk and reception) or a double-clicked no-show at the same moment both passed the check on their unlocked copy and wrote two status events and two bus events. The second now gets 409 "already in status"; a concurrent second cancel stays a no-op.
 
 - fix(#750): deleting a cabinet whose appointments were all cancelled

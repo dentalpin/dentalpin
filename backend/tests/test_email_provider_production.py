@@ -70,19 +70,6 @@ def test_env_example_documents_the_setting() -> None:
         assert key in body, key
 
 
-def _compose_env(path) -> set[str]:
-    """Keys the backend service passes through, from a compose file."""
-    import re
-
-    body = path.read_text(encoding="utf-8")
-    after = body.split("\n  backend:", 1)[1]
-    # The next service starts at exactly two spaces + a name; anything more
-    # indented still belongs to backend.
-    nxt = re.search(r"^  \S", after, re.M)
-    backend = after[: nxt.start()] if nxt else after
-    return set(re.findall(r"^\s{6}([A-Z][A-Z0-9_]*):", backend, re.M))
-
-
 @pytest.mark.parametrize("compose", ["docker-compose.prod.yml", "docker-compose.coolify.yml"])
 def test_production_compose_forwards_every_email_setting(compose: str) -> None:
     """The remedy we print must be applicable where we print it.
@@ -92,12 +79,11 @@ def test_production_compose_forwards_every_email_setting(compose: str) -> None:
     operator to set `EMAIL_PROVIDER=smtp` while the SMTP host, user and
     password stay at their defaults hands them a broken remedy (#614).
     """
-    from pathlib import Path
-
     from app.config import Settings
+    from tests._compose import forwarded_keys
 
     declared = {n for n in Settings.model_fields if n.startswith("EMAIL_")}
-    forwarded = _compose_env(Path(__file__).resolve().parents[2] / compose)
+    forwarded = forwarded_keys(compose)
     missing = sorted(declared - forwarded)
     assert not missing, f"{compose} does not forward: {missing}"
 

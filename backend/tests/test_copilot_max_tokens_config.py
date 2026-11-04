@@ -15,21 +15,12 @@ from pathlib import Path
 import pytest
 
 from app.config import Settings
+from tests._compose import backend_block
 
 REPO = Path(__file__).resolve().parents[2]
 
 # The compose files that list the backend's environment explicitly.
 COMPOSE_FILES = ("docker-compose.yml", "docker-compose.prod.yml")
-
-
-def _backend_env_block(compose: str) -> str:
-    """The `environment:` block of the backend service, comments stripped."""
-    text = (REPO / compose).read_text(encoding="utf-8")
-    after = text.split("\n  backend:", 1)[1]
-    nxt = re.search(r"^  \S", after, re.M)
-    block = after[: nxt.start()] if nxt else after
-    # A commented-out key is not a forwarded key.
-    return "\n".join(ln for ln in block.splitlines() if not ln.strip().startswith("#"))
 
 
 @pytest.mark.parametrize("compose", COMPOSE_FILES)
@@ -40,7 +31,7 @@ def test_compose_forwards_the_token_ceiling(compose: str) -> None:
     `${COPILOT_MAX_TOKENS:-}` with no default would resolve to an empty
     string and fail int parsing at boot, the way EMAIL_ENABLED did.
     """
-    block = _backend_env_block(compose)
+    block = backend_block(compose)
     match = re.search(r"^\s+COPILOT_MAX_TOKENS:\s*\$\{COPILOT_MAX_TOKENS:-([^}]*)\}", block, re.M)
     assert match, f"{compose} does not forward COPILOT_MAX_TOKENS to the backend"
     default = str(Settings.model_fields["COPILOT_MAX_TOKENS"].default)

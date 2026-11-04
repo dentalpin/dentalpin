@@ -263,7 +263,7 @@ class ConversationReplyRequest(BaseModel):
 class ManualSendRequest(BaseModel):
     """Schema for a manual notification send request."""
 
-    notification_type: str = Field(..., description="Type of notification to send")
+    notification_type: NotificationType = Field(..., description="Type of notification to send")
     patient_id: UUID | None = Field(
         default=None, description="Patient to send to (required for most types)"
     )

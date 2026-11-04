@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- fix(#793): allergy `severity` accepted any string, and a value such as
+  `severe` or `High` was stored and raised no alert, since only `high` and
+  `critical` do. Create, update and the medical history bulk replace now answer
+  422 for anything outside `low`, `medium`, `high` and `critical`. Rows
+  already stored with another value stay readable, but a bulk replace that
+  resends one answers 422 until it is corrected.
 - fix(#740): clearing an optional input and saving answered 422, because a
   cleared input sends `""` (Nuxt UI's `UInput` keeps `""` even for
   `type="number"`). Affected: the medical history's pregnancy week, INR

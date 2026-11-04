@@ -27,7 +27,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Recall
-from .service import RecallService, RecallSettingsService
+from .service import RecallClosedError, RecallService, RecallSettingsService
 
 logger = logging.getLogger(__name__)
 
@@ -102,13 +102,17 @@ async def on_appointment_completed(data: dict[str, Any], *, db: AsyncSession) ->
         )
     )
     for recall in result.scalars().all():
-        await RecallService.mark_done(
-            db,
-            clinic_id=clinic_id,
-            recall_id=recall.id,
-            by_user=None,
-            commit=False,
-        )
+        try:
+            await RecallService.mark_done(
+                db,
+                clinic_id=clinic_id,
+                recall_id=recall.id,
+                by_user=None,
+                commit=False,
+            )
+        except RecallClosedError:
+            # Closed by someone else after the query above; nothing to do.
+            continue
 
 
 async def on_appointment_cancelled(data: dict[str, Any], *, db: AsyncSession) -> None:

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { PatientExtended } from '~~/app/types'
 import { computeAge, formatPatientDate } from '../../../utils/medicalSnapshot'
+import { genderLabelKey } from '../../../utils/genderLabelKey'
 
 interface Props {
   patient: PatientExtended
@@ -38,9 +39,10 @@ const documentDisplay = computed(() => {
   return type ? `${type}: ${props.patient.national_id}` : props.patient.national_id
 })
 
-const genderLabel = computed(() =>
-  props.patient.gender ? t(`patients.gender.${props.patient.gender}`) : null
-)
+const genderLabel = computed(() => {
+  const key = genderLabelKey(props.patient.gender)
+  return key ? t(key) : null
+})
 </script>
 
 <template>
