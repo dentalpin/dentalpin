@@ -19,33 +19,15 @@ provider fails this test until its key is forwarded too.
 from __future__ import annotations
 
 import re
-from pathlib import Path
 
 import pytest
 
 from app.core.llm.registry import llm_provider_registry
 from app.modules.copilot import CopilotModule
-
-REPO_ROOT = Path(__file__).resolve().parents[2]
+from tests._compose import backend_block, forwarded_keys
 
 #: Both documented production entry points, so both carry the same settings.
 PRODUCTION_COMPOSE = ("docker-compose.prod.yml", "docker-compose.coolify.yml")
-
-
-def _backend_env_block(compose_name: str) -> str:
-    """The backend service's slice of a compose file, as text."""
-    path = REPO_ROOT / compose_name
-    assert path.exists(), f"missing compose file: {compose_name}"
-    body = path.read_text(encoding="utf-8")
-    after = body.split("\n  backend:", 1)[1]
-    # The next service starts at exactly two spaces + a name; anything
-    # more deeply indented still belongs to backend.
-    nxt = re.search(r"^  \S", after, re.M)
-    return after[: nxt.start()] if nxt else after
-
-
-def _forwarded_keys(compose_name: str) -> set[str]:
-    return set(re.findall(r"^\s{6}([A-Z][A-Z0-9_]*):", _backend_env_block(compose_name), re.M))
 
 
 def _api_key_settings() -> set[str]:
@@ -68,7 +50,7 @@ def _api_key_settings() -> set[str]:
 
 @pytest.mark.parametrize("compose_name", PRODUCTION_COMPOSE)
 def test_production_compose_forwards_every_provider_api_key(compose_name: str) -> None:
-    missing = sorted(_api_key_settings() - _forwarded_keys(compose_name))
+    missing = sorted(_api_key_settings() - forwarded_keys(compose_name))
     assert not missing, (
         f"{compose_name} does not forward {missing} to the backend; the copilot "
         "raises LLMConfigError for those providers no matter what the operator sets"
@@ -83,7 +65,7 @@ def test_provider_api_keys_are_optional_not_required(compose_name: str) -> None:
     warn, so every optional key uses the explicit ``${VAR:-}`` form —
     the shape the required secrets deliberately do *not* use.
     """
-    block = _backend_env_block(compose_name)
+    block = backend_block(compose_name)
     wrong = []
     for key in sorted(_api_key_settings()):
         match = re.search(rf"^\s+{key}: (\S+)", block, re.M)

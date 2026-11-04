@@ -2,6 +2,7 @@
 import type { Appointment } from '~~/app/types'
 import { defineAsyncComponent } from 'vue'
 import { formatLocalDate } from '../../utils/date'
+import { countAppointmentOverlaps } from '../../composables/countAppointmentOverlaps'
 
 // Mode-specific scheduler views are heavy (drag grids, overlap math, mobile
 // timeline). Lazy-load each so the initial /agenda payload only ships the
@@ -395,44 +396,15 @@ function checkAndWarnOverlaps(
   const appointment = appointments.value.find(a => a.id === appointmentId)
   if (!appointment) return
 
-  const effectiveProfessionalId = professionalId ?? appointment.professional_id
-  const effectiveCabinet = cabinet ?? appointment.cabinet
-
-  // Parse times as minutes from midnight
-  const startParts = newStartTime.split(':').map(Number)
-  const endParts = newEndTime.split(':').map(Number)
-  const newStartMinutes = (startParts[0] ?? 0) * 60 + (startParts[1] ?? 0)
-  const newEndMinutes = (endParts[0] ?? 0) * 60 + (endParts[1] ?? 0)
-
-  let sameProfessionalCount = 0
-  let sameCabinetCount = 0
-
-  for (const apt of appointments.value) {
-    if (apt.id === appointmentId) continue
-    if (apt.status === 'cancelled') continue
-
-    const aptDate = apt.start_time.split('T')[0]
-    if (aptDate !== newDate) continue
-
-    const aptStartTime = apt.start_time.split('T')[1]?.substring(0, 5) ?? '00:00'
-    const aptEndTime = apt.end_time.split('T')[1]?.substring(0, 5) ?? '00:00'
-
-    const aptStartParts = aptStartTime.split(':').map(Number)
-    const aptEndParts = aptEndTime.split(':').map(Number)
-    const aptStartMinutes = (aptStartParts[0] ?? 0) * 60 + (aptStartParts[1] ?? 0)
-    const aptEndMinutes = (aptEndParts[0] ?? 0) * 60 + (aptEndParts[1] ?? 0)
-
-    const overlaps = newStartMinutes < aptEndMinutes && newEndMinutes > aptStartMinutes
-
-    if (overlaps) {
-      if (apt.professional_id === effectiveProfessionalId) {
-        sameProfessionalCount++
-      }
-      if (apt.cabinet === effectiveCabinet) {
-        sameCabinetCount++
-      }
-    }
-  }
+  const { sameProfessional: sameProfessionalCount, sameCabinet: sameCabinetCount }
+    = countAppointmentOverlaps(appointments.value, {
+      appointmentId,
+      date: newDate,
+      startTime: newStartTime,
+      endTime: newEndTime,
+      professionalId: professionalId ?? appointment.professional_id,
+      cabinet: cabinet ?? appointment.cabinet
+    })
 
   if (sameProfessionalCount > 0 || sameCabinetCount > 0) {
     const warnings: string[] = []

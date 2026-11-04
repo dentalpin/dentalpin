@@ -22,6 +22,7 @@ const snoozeMonths = ref(3)
 const isBusy = ref(false)
 
 const patient = computed(() => props.recall.patient ?? null)
+const isClosed = computed(() => ['done', 'cancelled'].includes(props.recall.status))
 
 const callable = computed(
   () =>
@@ -184,7 +185,10 @@ async function onAttemptLogged() {
       </p>
     </div>
 
-    <div class="flex gap-1 sm:gap-2 flex-wrap">
+    <div
+      v-if="!isClosed"
+      class="flex gap-1 sm:gap-2 flex-wrap"
+    >
       <UButton
         v-if="callable"
         :href="phoneHref"

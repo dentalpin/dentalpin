@@ -397,7 +397,9 @@ jobs:
     # host (#259 — more representative than nuxt dev, catches
     # bundle/runtime issues dev mode hides), drives it with Playwright
     # on the host. Slow (~6 min). Required on main + PRs.
-    runs-on: ubuntu-latest
+    # Pinned: Playwright 1.59 refuses to install chromium on ubuntu-26.04,
+    # which ubuntu-latest has started to hand out.
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     env:
       POSTGRES_PASSWORD: testpass
