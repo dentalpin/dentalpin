@@ -288,6 +288,14 @@ copia de seguridad. Procedimiento completo de restauración,
 migración de hardware y verificación mensual: la guía
 `docs/workflows/backup-restore.md`.
 
+Con `STORAGE_BACKEND=s3` el tarball cubre solo el volumen local
+(`documents/` y `migration-import/` siguen en el volumen incluso en
+ese modo), mientras que los medios subidos viven en el bucket de S3,
+al que `db backup` no llega. El comando imprime un aviso con el
+nombre del bucket; haz copia del bucket en el proveedor (activa el
+versionado o la replicación). Consulta también
+`docs/workflows/backup-restore.md`.
+
 ---
 
 ## 9. Recuperación

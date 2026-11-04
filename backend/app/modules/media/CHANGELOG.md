@@ -20,6 +20,19 @@
   passthrough, response-body closing, constructor wiring and the
   factory guards.
 
+- docs: S3 cutover notes for the maintainer's pre-merge review. In
+  `STORAGE_BACKEND=s3` mode `dentalpin db backup` now prints a line
+  naming the bucket and saying the media must be backed up on the
+  provider side (versioning or replication) - the storage tarball only
+  ever covered the local volume. The same note went into
+  `docs/workflows/backup-restore.md` and the operations manual (en/es);
+  `media/CLAUDE.md` documents the switch-over for an install that
+  already has files (copy the volume into the bucket first, excluding
+  `backups/`; `documents/` and `migration-import/` stay local so the
+  volume is still required). Three new `db backup` tests cover the
+  notice (printed, printed also with `--skip-storage`, silent in local
+  mode).
+
 - fix(#743): emptying a document's description in the edit modal kept the
   old text. The modal sent `|| undefined` (key dropped) and
   `update_document` skipped every `None`. The modal now sends `null` and
