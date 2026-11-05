@@ -70,8 +70,16 @@ services:
       SENTRY_DSN: ${SENTRY_DSN:-}
       # Traces stay off unless explicitly enabled (backend default 0.0).
       SENTRY_TRACES_SAMPLE_RATE: ${SENTRY_TRACES_SAMPLE_RATE:-0.0}
-      STORAGE_BACKEND: local
-      STORAGE_LOCAL_PATH: /app/storage
+      STORAGE_BACKEND: ${STORAGE_BACKEND:-local}
+      STORAGE_LOCAL_PATH: ${STORAGE_LOCAL_PATH:-/app/storage}
+      # Media S3 backend. STORAGE_BACKEND defaults to local; set
+      # STORAGE_BACKEND=s3 (+ STORAGE_S3_BUCKET and optional keys below)
+      # in the Coolify env to opt in.
+      STORAGE_S3_BUCKET: ${STORAGE_S3_BUCKET:-}
+      STORAGE_S3_REGION: ${STORAGE_S3_REGION:-}
+      STORAGE_S3_ENDPOINT_URL: ${STORAGE_S3_ENDPOINT_URL:-}
+      STORAGE_S3_ACCESS_KEY_ID: ${STORAGE_S3_ACCESS_KEY_ID:-}
+      STORAGE_S3_SECRET_ACCESS_KEY: ${STORAGE_S3_SECRET_ACCESS_KEY:-}
       # AI Copilot. The key reaches the app ONLY through these mappings:
       # there is no env_file here, `CopilotSettings` stores provider and
       # model but no key, and `bridge.py` resolves the key from settings

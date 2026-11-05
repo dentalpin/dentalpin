@@ -15,6 +15,14 @@ covers only one of them will lose patient files:
 | Relational data (patients, invoices, schedules, …) | PostgreSQL (`db` service) | everything you see in the UI lists |
 | Files (documents, DICOM bytes, RVG imports, module dumps) | `storage_data` volume (`/app/storage` in backend) | PDFs, X-rays, `storage/backups/` |
 
+With `STORAGE_BACKEND=s3` (media on S3-compatible object storage) the
+split changes: uploads live in the bucket, while the `storage_data`
+volume still holds `documents/` (generated PDFs) and
+`migration-import/`. `db backup` still archives only the local volume
+and prints a reminder naming the bucket - the bucket itself is outside
+this command's reach, so back it up on the provider side (enable
+versioning or replication and verify a restore from it).
+
 Module uninstalls already auto-dump their own tables to
 `storage/backups/` (see the operations manual §8) — that protects you
 from a bad module removal, **not** from a dead disk.

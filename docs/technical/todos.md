@@ -103,7 +103,8 @@ Extended `clinical` module with:
 
 **Architecture Decisions:**
 - Separate `media` module (reusable for images, X-rays, attachments)
-- StorageBackend protocol: LocalStorage (MVP), S3Storage (future)
+- StorageBackend protocol: LocalStorage (shipped), S3 (`storage/s3.py`,
+  shipped with `STORAGE_BACKEND=s3`)
 - File metadata in DB, actual files in configured storage
 - Document types: consent, id_scan, insurance, report, referral, other
 
@@ -111,8 +112,8 @@ Extended `clinical` module with:
 
 | Task | Status | Description |
 |------|--------|-------------|
-| Create media module | ✅ | BaseModule subclass with dependencies: ["clinical"] |
-| StorageBackend protocol | ✅ | upload, download, delete, get_url methods |
+| Create media module | ✅ | BaseModule subclass with dependencies: ["patients"] |
+| StorageBackend protocol | ✅ | upload, download, delete, exists methods |
 | LocalStorage implementation | ✅ | Docker volume mount, path-based storage |
 | Document model | ✅ | patient_id, document_type, filename, storage_path, mime_type, file_size, title, description, metadata (JSONB), uploaded_by |
 | Upload endpoint | ✅ | POST /patients/{id}/documents with multipart form, validation (size, type) |
@@ -148,11 +149,16 @@ Extended `clinical` module with:
 **Storage Configuration:**
 
 ```python
-# backend/app/core/config.py
+# backend/app/config.py
 STORAGE_BACKEND: str = "local"  # local | s3
 STORAGE_LOCAL_PATH: str = "/app/storage"
+STORAGE_S3_BUCKET: str = ""     # required when STORAGE_BACKEND=s3
+STORAGE_S3_REGION: str = ""
+STORAGE_S3_ENDPOINT_URL: str = ""   # MinIO / Wasabi / Cloudflare R2
+STORAGE_S3_ACCESS_KEY_ID: str = ""  # empty -> standard AWS chain
+STORAGE_S3_SECRET_ACCESS_KEY: str = ""
 STORAGE_MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
-STORAGE_ALLOWED_TYPES: list = ["application/pdf", "image/jpeg", "image/png"]
+STORAGE_ALLOWED_MIME_TYPES: str = "application/pdf,image/jpeg,image/png"
 ```
 
 **Files Created/Modified:**

@@ -85,8 +85,23 @@ through `attachment_registry`.
   free-form, so all three erasure categories are declared.
 
 - **Storage backend is pluggable** (`STORAGE_BACKEND` env var).
-  Currently `local`. The future `media_s3` module extends
-  `StorageBackend` without API changes.
+  `local` (Docker volume via `aiofiles`) or `s3` (`storage/s3.py`,
+  boto3 client run through `asyncio.to_thread`; bucket required,
+  region/endpoint optional, empty credentials use the AWS chain). Both
+  implement the same four seam methods (`store`, `retrieve`, `delete`,
+  `exists`), so upload/download/archive flow unchanged. ADR 0012 PR-3
+  (S3CompatibleStorage in core) can keep this precedent instead of
+  aioboto3: boto3's sync client wrapped in `asyncio.to_thread` is the
+  accepted non-blocking mechanism here.
+  Switching an install that already has files: S3 keys use the same
+  relative paths as the local backend, so copy the volume into the
+  bucket **before** flipping the backend
+  (`aws s3 sync "$STORAGE_LOCAL_PATH" "s3://$STORAGE_S3_BUCKET/" --exclude "backups/*"`
+  or `mc mirror`) - otherwise existing documents 404. `documents/`
+  (generated PDFs) and `migration-import/` always stay on the local
+  volume, so the volume is still required in S3 mode; for the same
+  reason `dentalpin db backup` still tars it and reminds that the
+  bucket needs provider-side backup (versioning or replication).
 - **Thumbnails** are precomputed on upload (`thumbnails.py`) at two
   sizes (`{path}.thumb.jpg`, `{path}.medium.jpg`). Originals stay
   untouched. The download endpoint accepts a `variant` query param.

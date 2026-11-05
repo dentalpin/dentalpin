@@ -165,6 +165,11 @@ class Settings(BaseSettings):
     # Storage configuration
     STORAGE_BACKEND: str = "local"
     STORAGE_LOCAL_PATH: str = "/app/storage"
+    STORAGE_S3_BUCKET: str = ""
+    STORAGE_S3_REGION: str = ""
+    STORAGE_S3_ENDPOINT_URL: str = ""
+    STORAGE_S3_ACCESS_KEY_ID: str = ""
+    STORAGE_S3_SECRET_ACCESS_KEY: str = ""
     STORAGE_MAX_FILE_SIZE: int = 10 * 1024 * 1024  # 10MB
     STORAGE_ALLOWED_MIME_TYPES: str = "application/pdf,image/jpeg,image/png"
 

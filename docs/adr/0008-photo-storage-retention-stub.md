@@ -19,6 +19,11 @@ locally — it's a feature of S3-class backends. A future
 `media_s3` module is on the roadmap and will extend `StorageBackend`
 without changing the contract.
 
+> **Superseded (T6)**: `media` now also ships the S3 backend
+> (`storage/s3.py`, `STORAGE_BACKEND=s3`, boto3 via `asyncio.to_thread`),
+> so S3-class lifecycle features are feasible; the "future media_s3
+> module" landed inside `media`.
+
 Building a custom retention loop on local disk now would be premature
 infrastructure (cron + tombstones + restore UI) for a feature nobody
 needs at the current scale.
@@ -30,7 +35,9 @@ loop, no archival cron, no UI for "moved to cold storage".** Photos
 live alongside other documents and are deleted only via the existing
 soft-delete (`Document.status='archived'`).
 
-When the `media_s3` module lands:
+When S3-class storage first ships (lifecycle rules themselves remain
+unimplemented; the backend is live at `media/storage/s3.py`), the
+policy below applies:
 
 1. Map "archived" documents to S3 `STANDARD_IA` after 30 days via
    bucket lifecycle rule.
@@ -67,8 +74,9 @@ When the `media_s3` module lands:
 
 - `grep "archive_patient_documents" backend/app/modules/media/service.py`
   — soft-delete-only path remains the single archive entry point.
-- When the S3 module ships, `docs/modules/media-s3.md` MUST cite this
-  ADR and document the lifecycle rules it ships.
+- The S3 backend shipped inside `media` (`storage/s3.py`), not as a
+  separate `media_s3` module, and implements no lifecycle rules; this
+  ADR remains the record for that unimplemented policy.
 
 ## References
 

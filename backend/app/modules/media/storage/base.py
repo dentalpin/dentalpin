@@ -6,7 +6,7 @@ from abc import ABC, abstractmethod
 class StorageBackend(ABC):
     """Abstract storage backend for file operations.
 
-    Implementations: LocalStorageBackend, (future: S3StorageBackend)
+    Implementations: LocalStorageBackend, S3StorageBackend
     """
 
     @abstractmethod
@@ -45,7 +45,7 @@ class StorageBackend(ABC):
             path: Storage path
 
         Returns:
-            True if deleted, False if not found
+            True if deleted, False if the key was not found
         """
         ...
 

@@ -61,6 +61,11 @@ dependencies = [
     "sentry-sdk>=2.0.0",
     # WebPush channel (notifications): push delivery to patient browsers.
     "pywebpush>=1.14.0",
+    # media module: S3-compatible object storage backend (AWS S3 or any
+    # endpoint speaking the S3 API: MinIO, Wasabi, Cloudflare R2). The
+    # client is boto3; its sync calls run via asyncio.to_thread, so no
+    # aioboto3 dependency chain is needed.
+    "boto3>=1.34",
 ]
 
 [project.optional-dependencies]

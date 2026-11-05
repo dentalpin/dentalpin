@@ -2,6 +2,37 @@
 
 ## Unreleased
 
+- feat: S3-compatible object storage backend (`storage/s3.py`) behind the
+  existing `StorageBackend` seam, selected with `STORAGE_BACKEND=s3` (T6).
+  `STORAGE_S3_BUCKET` is required in that mode; `STORAGE_S3_REGION` /
+  `STORAGE_S3_ENDPOINT_URL` target MinIO/Wasabi/R2 and empty credentials
+  fall back to the standard AWS chain. The factory refuses `s3` without a
+  bucket instead of failing on the first upload (the unknown-backend-name
+  ValueError is pre-existing and now test-covered); prod/coolify composes
+  interpolate `STORAGE_BACKEND` with a `local` default so the template's
+  opt-in flips the real switch. SDK calls run via `asyncio.to_thread` so
+  the sync boto3 client never blocks the event loop. Keys are forwarded
+  in all three deployment compose files and documented in the shipped
+  `.env` templates; boto3 added to `pyproject.toml` (uv.lock updated).
+  17 tests, 23 cases (the three NOT_FOUND codes are parametrized)
+  cover the seam methods (store/retrieve/delete/exists), the full
+  NOT_FOUND code set -> FileNotFoundError mapping, unexpected-error
+  passthrough, response-body closing, constructor wiring and the
+  factory guards.
+
+- docs: S3 cutover notes for the maintainer's pre-merge review. In
+  `STORAGE_BACKEND=s3` mode `dentalpin db backup` now prints a line
+  naming the bucket and saying the media must be backed up on the
+  provider side (versioning or replication) - the storage tarball only
+  ever covered the local volume. The same note went into
+  `docs/workflows/backup-restore.md` and the operations manual (en/es);
+  `media/CLAUDE.md` documents the switch-over for an install that
+  already has files (copy the volume into the bucket first, excluding
+  `backups/`; `documents/` and `migration-import/` stay local so the
+  volume is still required). Three new `db backup` tests cover the
+  notice (printed, printed also with `--skip-storage`, silent in local
+  mode).
+
 - fix(#743): emptying a document's description in the edit modal kept the
   old text. The modal sent `|| undefined` (key dropped) and
   `update_document` skipped every `None`. The modal now sends `null` and

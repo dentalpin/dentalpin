@@ -245,6 +245,18 @@ def _cmd_backup(args: argparse.Namespace) -> int:
     print(f"db backup: database -> {db_target}")
     written = {db_target}
 
+    # S3 media is outside the tarball below; the notice prints even with
+    # --skip-storage so a dump-only cron still sees the reminder.
+    if settings.STORAGE_BACKEND == "s3":
+        print(
+            "db backup: STORAGE_BACKEND=s3 - the media lives in S3 bucket "
+            f"'{settings.STORAGE_S3_BUCKET}' and is NOT in this backup. "
+            "Back the bucket up on the provider side (enable versioning or "
+            "replication). The tarball still covers the local volume, which "
+            "keeps documents/ and migration-import/ even in S3 mode.",
+            flush=True,
+        )
+
     if not args.skip_storage:
         storage_target = out_dir / f"storage_{timestamp}.tar.gz"
         error = snapshot_storage(Path(settings.STORAGE_LOCAL_PATH), storage_target, out_dir)

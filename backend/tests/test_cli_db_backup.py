@@ -221,6 +221,68 @@ def test_cmd_backup_missing_pg_dump(monkeypatch, tmp_path: Path, capsys) -> None
     assert "pg_dump not found" in capsys.readouterr().out
 
 
+def test_cmd_backup_s3_prints_bucket_notice_but_still_tars(
+    monkeypatch, tmp_path: Path, capsys
+) -> None:
+    monkeypatch.setattr("shutil.which", lambda _: "/usr/bin/pg_dump")
+
+    def _ok(*a, **k):
+        k["stdout"].write(b"DUMP")
+        return subprocess.CompletedProcess(a[0], 0, b"", b"")
+
+    monkeypatch.setattr("subprocess.run", _ok)
+    storage = tmp_path / "storage"
+    (storage / "documents").mkdir(parents=True)
+    (storage / "documents" / "a.bin").write_bytes(b"data")
+    monkeypatch.setattr("app.cli.db.settings", _S3Settings(storage))
+    code = db_cli._cmd_backup(_args())
+    assert code == 0
+    out = capsys.readouterr().out
+    assert "STORAGE_BACKEND=s3" in out
+    assert "dentalpin-media-test" in out
+    assert "NOT in this backup" in out
+    # The local volume is still snapshotted: documents/ and
+    # migration-import/ stay there even in S3 mode.
+    dest = storage / "backups"
+    assert len(list(dest.glob("storage_*.tar.gz"))) == 1
+
+
+def test_cmd_backup_s3_notice_prints_even_with_skip_storage(
+    monkeypatch, tmp_path: Path, capsys
+) -> None:
+    monkeypatch.setattr("shutil.which", lambda _: "/usr/bin/pg_dump")
+
+    def _ok(*a, **k):
+        k["stdout"].write(b"DUMP")
+        return subprocess.CompletedProcess(a[0], 0, b"", b"")
+
+    monkeypatch.setattr("subprocess.run", _ok)
+    storage = tmp_path / "storage"
+    (storage / "documents").mkdir(parents=True)
+    monkeypatch.setattr("app.cli.db.settings", _S3Settings(storage))
+    code = db_cli._cmd_backup(_args(out_dir=str(storage / "backups"), skip_storage=True))
+    assert code == 0
+    out = capsys.readouterr().out
+    assert "STORAGE_BACKEND=s3" in out
+    assert list((storage / "backups").glob("storage_*.tar.gz")) == []
+
+
+def test_cmd_backup_local_mode_prints_no_s3_notice(monkeypatch, tmp_path: Path, capsys) -> None:
+    monkeypatch.setattr("shutil.which", lambda _: "/usr/bin/pg_dump")
+
+    def _ok(*a, **k):
+        k["stdout"].write(b"DUMP")
+        return subprocess.CompletedProcess(a[0], 0, b"", b"")
+
+    monkeypatch.setattr("subprocess.run", _ok)
+    storage = tmp_path / "storage"
+    (storage / "documents").mkdir(parents=True)
+    monkeypatch.setattr("app.cli.db.settings", _Settings(storage, tmp_path / "backups"))
+    code = db_cli._cmd_backup(_args())
+    assert code == 0
+    assert "STORAGE_BACKEND=s3" not in capsys.readouterr().out
+
+
 def test_cmd_backup_success(monkeypatch, tmp_path: Path) -> None:
     monkeypatch.setattr("shutil.which", lambda _: "/usr/bin/pg_dump")
 
@@ -244,9 +306,19 @@ def test_cmd_backup_success(monkeypatch, tmp_path: Path) -> None:
 
 
 class _Settings:
+    STORAGE_BACKEND = "local"
+    STORAGE_S3_BUCKET = ""
+
     def __init__(self, storage: Path, _out: Path):
         self.STORAGE_LOCAL_PATH = str(storage)
         self.DATABASE_URL = "postgresql://x"
+
+
+class _S3Settings(_Settings):
+    def __init__(self, storage: Path, bucket: str = "dentalpin-media-test"):
+        super().__init__(storage, storage / "backups")
+        self.STORAGE_BACKEND = "s3"
+        self.STORAGE_S3_BUCKET = bucket
 
 
 def test_backup_parser_wires_command() -> None:

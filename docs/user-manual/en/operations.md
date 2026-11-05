@@ -276,6 +276,13 @@ server: a backup on the same disk is not a backup. Full restore,
 hardware-migration, and monthly-verification procedure:
 `docs/workflows/backup-restore.md`.
 
+With `STORAGE_BACKEND=s3` the tarball still covers only the local
+volume - `documents/` and `migration-import/` stay on the volume even
+in that mode - while the uploaded media lives in the S3 bucket, which
+`db backup` cannot reach. The command prints a reminder naming the
+bucket; back the bucket up on the provider side (enable versioning or
+replication). See `docs/workflows/backup-restore.md` too.
+
 ---
 
 ## 9. Recovery
