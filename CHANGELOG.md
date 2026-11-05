@@ -13,6 +13,12 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Changed
 
+- **Invoices pick up the clinic's configured defaults.** The
+  new-invoice and budget-invoice screens pre-fill the payment term
+  from `default_payment_term_days` (Settings > Billing >
+  Preferences), and the invoice PDF prints the clinic's bank details
+  and a custom footer text when those settings are filled in.
+
 - **Clinic settings stored with an invalid value now read as the default**
   (ADR 0042). A module that declares its settings through the core
   settings registry validates each stored value on read. A value that fails

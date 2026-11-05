@@ -15,7 +15,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/from-budget/[budgetId].vue
   - backend/app/modules/billing/router.py
-last_verified_commit: a13bd29
+last_verified_commit: eab5bb31
 ---
 
 # Factura desde presupuesto
@@ -54,8 +54,11 @@ y qué cantidades incluir.
   paciente**, que abre el modal de facturación y vuelve aquí al
   guardar.
 - **Plazo de pago.** Solo se muestra si el presupuesto tiene importe
-  pendiente de cobro. Un presupuesto cobrado al 100 % genera una
-  factura sin plazo ni vencimiento.
+  pendiente de cobro; el plazo llega precargado con el valor por
+  defecto de la clínica
+  ([preferencias de facturación](./settings_preferences.md)). Un
+  presupuesto cobrado al 100 % genera una factura sin plazo ni
+  vencimiento.
 
 ## Facturar desde presupuesto
 

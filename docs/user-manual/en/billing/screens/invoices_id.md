@@ -30,7 +30,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/[id]/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: edc08ff
+last_verified_commit: eab5bb31
 ---
 
 # Invoice detail
@@ -61,7 +61,9 @@ or issue a credit note.
   VAT type carrying a statutory note (e.g. the Spanish exemption,
   art. 20.Uno.5º LIVA, seeded by the `es` preset), the note prints in
   the legal-notices block. The footer shows the generation date and
-  time in the clinic's timezone.
+  time in the clinic's timezone. When set in
+  [Billing preferences](./settings_preferences.md), the PDF also
+  prints the clinic's bank details and a custom footer text.
 - **History.** Status changes and key events in chronological order.
 - **VeriFactu.** When the module is installed, issuing the invoice
   queues the AEAT submission. State (`pending`, `sent`, `rejected`)

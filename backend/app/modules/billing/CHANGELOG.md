@@ -1,6 +1,17 @@
-# Changelog — billing module
+# Changelog - billing module
 
 ## Unreleased
+
+- feat: the clinic's settings now drive the invoice defaults. The
+  new-invoice and from-budget screens pre-fill the payment term with
+  `default_payment_term_days` (settings registry, billing namespace of
+  the clinic JSONB; the fallback stays 30 when unset and 0 remains a
+  legal term for paid-up-front invoices). The invoice PDF renders
+  `bank_account_info` as a payment-info block and `invoice_footer_text`
+  as a footer line above the generation stamp when set - both
+  HTML-escaped, multiline whitespace preserved. Four pure-HTML tests
+  cover the escaping, the blank/non-string fallback and the per-locale
+  label.
 
 - feat: billing settings use the core settings registry (ADR 0042). The three settings are declared on the module and `GET/PUT /settings` delegate to `ClinicSettingsService`; the public contract is unchanged. A new Settings > Billing > Preferences page renders them from the declarations through the generic `SettingsModuleForm`; an emptied required integer blocks the save with an inline message.
 

@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/new.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: e1d6873
+last_verified_commit: eab5bb31
 ---
 
 # New invoice
@@ -42,6 +42,9 @@ entry errors.
 - **Numbering.** Not assigned here; the fiscal number is set only
   when you **issue** (button on the detail), which takes the next
   one from the active series.
+- **Payment terms.** Pre-filled with the clinic default from
+  [Billing preferences](./settings_preferences.md)
+  (`default_payment_term_days`); change it per invoice if needed.
 
 ## Create a free invoice
 

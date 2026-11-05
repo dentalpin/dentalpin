@@ -36,7 +36,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/[id]/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: edc08ff
+last_verified_commit: eab5bb31
 ---
 
 # Detalle de factura
@@ -68,7 +68,10 @@ se emite un abono.
   la exención española, art. 20.Uno.5º LIVA, sembrada por el preset
   `es`), la nota se imprime en el bloque de avisos legales. El pie
   muestra fecha y hora de generación en la zona horaria de la
-  clínica.
+  clínica. Si están configurados en las
+  [preferencias de facturación](./settings_preferences.md), el PDF
+  imprime también los datos bancarios de la clínica y un texto de
+  pie personalizado.
 - **Historial.** Cambios de estado y eventos clave en orden
   cronológico.
 - **VeriFactu.** Si el módulo está instalado, al emitir se encola el

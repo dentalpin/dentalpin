@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/new.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: e1d6873
+last_verified_commit: eab5bb31
 ---
 
 # Nueva factura
@@ -41,6 +41,10 @@ Para facturar a partir de un presupuesto aceptado usa la
 - **Numeración.** No se asigna en este paso; el número fiscal solo
   llega al **emitir** (botón en el detalle), que toma el siguiente
   de la serie activa.
+- **Plazo de pago.** Precargado con el valor por defecto de la
+  clínica de las [preferencias de facturación](./settings_preferences.md)
+  (`default_payment_term_days`); cámbialo por factura si lo
+  necesitas.
 
 ## Crear una factura libre
 
