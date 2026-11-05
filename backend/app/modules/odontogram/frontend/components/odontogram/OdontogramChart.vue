@@ -37,6 +37,8 @@ const props = withDefaults(defineProps<{
   planId?: string
   /** Plan title shown as context banner inside the TreatmentBar (planning mode). */
   planTitle?: string
+  /** Show the chart as it was on this date (YYYY-MM-DD). Null shows today. */
+  atDate?: string | null
 }>(), {
   mode: 'full',
   highlightedTeethProp: () => [],
@@ -192,6 +194,7 @@ async function loadAll(patientId: string) {
 
 onMounted(async () => {
   await loadAll(props.patientId)
+  if (props.atDate) await fetchOdontogramAtDate(props.patientId, props.atDate)
   window.addEventListener('keydown', handleKeydown)
 })
 
@@ -207,8 +210,11 @@ watch(() => props.patientId, async (newId) => {
       fetchTreatments(newId),
       fetchTimeline(newId)
     ])
+    if (props.atDate) await fetchOdontogramAtDate(newId, props.atDate)
   }
 })
+
+watch(() => props.atDate, date => handleTimelineDateChange(date ?? null))
 
 // Emit tooth hover for parent hover linking
 watch(hoveredTooth, (toothNumber) => {

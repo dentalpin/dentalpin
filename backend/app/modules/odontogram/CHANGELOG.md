@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix: picking a date on the clinical History tab now redraws the chart as it was on that date. `HistoryMode` kept the selected date in its own state, and the chart below it loaded today's treatments, so every date showed the current chart, including treatments added later. `OdontogramChart` takes an `atDate` prop, and `HistoryMode` passes the selected date.
 - fix: the "Continue plan" dropdown on the diagnosis banner rendered empty.
   `DiagnosisCTA` bound the Nuxt UI v3 `options` / `option-attribute` /
   `value-attribute` props, which v4 ignores, so with two or more drafts the

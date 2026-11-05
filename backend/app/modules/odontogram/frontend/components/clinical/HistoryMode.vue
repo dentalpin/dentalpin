@@ -184,6 +184,7 @@ async function onHistoryExpanded(expanded: boolean) {
           <OdontogramChart
             :patient-id="patientId"
             mode="view-only"
+            :at-date="viewingDate"
           />
         </UCard>
 
