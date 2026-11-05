@@ -254,15 +254,17 @@ def _scan_module_endpoints(
 
 
 def _scan_core_endpoints() -> list[tuple[str, str]]:
-    """Endpoints mounted outside modules (auth, roles) under ``/api/v1``."""
+    """Endpoints mounted outside modules (auth, roles, settings) under ``/api/v1``."""
     endpoints: list[tuple[str, str]] = []
     try:
         from app.core.auth.router import router as auth_router
         from app.core.auth.router_roles import router as roles_router
+        from app.core.settings.router import router as settings_router
     except Exception:  # noqa: BLE001 — core routers unavailable; modules only
         return endpoints
     endpoints.extend(_walk_router(auth_router, "/api/v1"))
     endpoints.extend(_walk_router(roles_router, "/api/v1"))
+    endpoints.extend(_walk_router(settings_router, "/api/v1"))
     return endpoints
 
 

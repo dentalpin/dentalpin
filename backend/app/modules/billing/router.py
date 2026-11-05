@@ -1162,26 +1162,17 @@ async def get_billing_settings(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[BillingSettingsResponse]:
     """Get billing settings for the clinic."""
-    from sqlalchemy import select
-
-    from app.core.auth.models import Clinic
-
-    result = await db.execute(select(Clinic).where(Clinic.id == ctx.clinic_id))
-    clinic = result.scalar_one_or_none()
-
-    if not clinic:
-        raise HTTPException(status_code=404, detail="Clinic not found")
-
-    settings = clinic.settings or {}
-    billing_settings = settings.get("billing", {})
-
-    return ApiResponse(
-        data=BillingSettingsResponse(
-            default_payment_term_days=billing_settings.get("default_payment_term_days", 30),
-            invoice_footer_text=billing_settings.get("invoice_footer_text"),
-            bank_account_info=billing_settings.get("bank_account_info"),
-        )
+    from app.core.settings.service import (
+        ClinicSettingsService,
+        SettingsClinicNotFoundError,
     )
+
+    try:
+        values = await ClinicSettingsService.get_values(db, ctx.clinic_id, "billing")
+    except SettingsClinicNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Clinic not found") from exc
+
+    return ApiResponse(data=BillingSettingsResponse(**values))
 
 
 @router.put("/settings", response_model=ApiResponse[BillingSettingsResponse])
@@ -1192,38 +1183,22 @@ async def update_billing_settings(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[BillingSettingsResponse]:
     """Update billing settings for the clinic."""
-    from sqlalchemy import select
-
-    from app.core.auth.models import Clinic
-
-    result = await db.execute(select(Clinic).where(Clinic.id == ctx.clinic_id))
-    clinic = result.scalar_one_or_none()
-
-    if not clinic:
-        raise HTTPException(status_code=404, detail="Clinic not found")
-
-    settings = clinic.settings or {}
-    billing_settings = settings.get("billing", {})
-
-    if data.default_payment_term_days is not None:
-        billing_settings["default_payment_term_days"] = data.default_payment_term_days
-    if data.invoice_footer_text is not None:
-        billing_settings["invoice_footer_text"] = data.invoice_footer_text
-    if data.bank_account_info is not None:
-        billing_settings["bank_account_info"] = data.bank_account_info
-
-    settings["billing"] = billing_settings
-    clinic.settings = settings
-
-    await db.commit()
-
-    return ApiResponse(
-        data=BillingSettingsResponse(
-            default_payment_term_days=billing_settings.get("default_payment_term_days", 30),
-            invoice_footer_text=billing_settings.get("invoice_footer_text"),
-            bank_account_info=billing_settings.get("bank_account_info"),
-        )
+    from app.core.settings.service import (
+        ClinicSettingsService,
+        SettingsClinicNotFoundError,
     )
+    from app.core.settings.spec import SettingValueError
+
+    try:
+        values = await ClinicSettingsService.update(
+            db, ctx.clinic_id, "billing", data.model_dump(exclude_none=True)
+        )
+    except SettingsClinicNotFoundError as exc:
+        raise HTTPException(status_code=404, detail="Clinic not found") from exc
+    except SettingValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+
+    return ApiResponse(data=BillingSettingsResponse(**values))
 
 
 # ============================================================================

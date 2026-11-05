@@ -29,6 +29,8 @@ módulo `payments` (`billing` depende de `payments`, no al revés).
   — facturar todos o parte de los ítems de un presupuesto aceptado.
 - [Series de facturación (ajustes)](./screens/settings_invoice-series.md)
   — gestionar prefijos, contadores y series activas.
+- [Preferencias de facturación (ajustes)](./screens/settings_preferences.md)
+  — plazo de pago, pie de factura y datos bancarios.
 
 ## Referencia rápida
 

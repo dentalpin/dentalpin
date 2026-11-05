@@ -3,7 +3,10 @@
  * ``FAC``/``RECT`` are seeded by ``clinic.created``; this rule catches
  * clinics that predate the seed or deleted their series.
  */
-import { registerGettingStartedRule } from '~~/app/composables/useSettingsRegistry'
+import {
+  registerGettingStartedRule,
+  registerSettingsPage
+} from '~~/app/composables/useSettingsRegistry'
 import { PERMISSIONS } from '~~/app/config/permissions'
 
 interface SeriesOnboardingState { loaded: boolean, count: number }
@@ -12,6 +15,18 @@ const useSeriesOnboardingState = () =>
   useState<SeriesOnboardingState>('billing:onboarding-series', () => ({ loaded: false, count: 0 }))
 
 export default defineNuxtPlugin(() => {
+  registerSettingsPage({
+    path: 'preferences',
+    category: 'billing',
+    labelKey: 'billingSettings.title',
+    descriptionKey: 'billingSettings.description',
+    icon: 'i-lucide-settings-2',
+    permission: PERMISSIONS.billing.read,
+    component: () => import('../components/BillingSettingsPage.vue'),
+    searchKeywords: ['factura', 'invoice', 'pago', 'payment', 'banco', 'bank', 'pie', 'footer'],
+    order: 30
+  })
+
   registerGettingStartedRule({
     id: 'invoice-series',
     labelKey: 'invoiceSeries.onboarding.label',

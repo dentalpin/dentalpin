@@ -8,6 +8,7 @@ const router = useRouter()
 const toast = useToast()
 const { fetchBudget } = useBudgets()
 const { createFromBudget } = useInvoices()
+const { currentClinic, fetchClinic, defaultPaymentTermDays } = useClinic()
 const api = useApi()
 
 const budgetId = route.params.budgetId as string
@@ -37,6 +38,8 @@ const form = ref({
 // Load budget and VAT types
 onMounted(async () => {
   try {
+    if (!currentClinic.value) await fetchClinic()
+    form.value.payment_term_days = defaultPaymentTermDays.value
     const [budgetData, vatResponse, paymentSummary] = await Promise.all([
       fetchBudget(budgetId),
       // The surrounding catch toasts + navigates away on any failure.

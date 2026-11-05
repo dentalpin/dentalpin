@@ -60,6 +60,12 @@ def _clinic(timezone: str = "Europe/Madrid") -> Clinic:
     )
 
 
+def _clinic_with_billing_settings(ns: dict) -> Clinic:
+    clinic = _clinic()
+    clinic.settings = {"billing": ns}
+    return clinic
+
+
 def _html(invoice: Invoice, clinic: Clinic, locale: str = "es", **kwargs) -> str:
     return InvoicePDFService._generate_html(
         invoice, clinic, is_preview=False, locale=locale, **kwargs
@@ -165,3 +171,47 @@ def test_each_locale_renders_own_grand_total() -> None:
     }
     for locale, total in totals.items():
         assert total in _html(_invoice(), _clinic(), locale=locale)
+
+
+def test_bank_account_info_renders_escaped() -> None:
+    html = _html(
+        _invoice(),
+        _clinic_with_billing_settings({"bank_account_info": "CaixaBank\nES91 2100 <b>4502</b>"}),
+    )
+    assert "Datos bancarios" in html
+    assert "CaixaBank" in html
+    assert "<b>" not in html
+    assert "&lt;b&gt;" in html
+
+
+def test_invoice_footer_text_renders_escaped() -> None:
+    html = _html(
+        _invoice(),
+        _clinic_with_billing_settings(
+            {"invoice_footer_text": "Grabaciones <script>alert(1)</script>"}
+        ),
+    )
+    assert "Grabaciones" in html
+    assert '<div class="settings-footer">&lt;script&gt;' not in html
+    assert "<script>" not in html
+    assert "&lt;script&gt;" in html
+
+
+def test_blank_or_non_string_settings_render_no_block() -> None:
+    for ns in (
+        {},
+        {"bank_account_info": "   ", "invoice_footer_text": ""},
+        {"bank_account_info": 12345, "invoice_footer_text": ["x"]},
+    ):
+        html = _html(_invoice(), _clinic_with_billing_settings(ns))
+        assert "Datos bancarios" not in html
+        assert '<div class="settings-footer">' not in html
+
+
+def test_bank_label_translates_per_locale() -> None:
+    ns = {"bank_account_info": "IBAN"}
+    assert "Bank details" in _html(_invoice(), _clinic_with_billing_settings(ns), locale="en")
+    assert "Coordonnées bancaires" in _html(
+        _invoice(), _clinic_with_billing_settings(ns), locale="fr"
+    )
+    assert "Bankverbindung" in _html(_invoice(), _clinic_with_billing_settings(ns), locale="de")

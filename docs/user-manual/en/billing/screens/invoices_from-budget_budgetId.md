@@ -15,7 +15,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/from-budget/[budgetId].vue
   - backend/app/modules/billing/router.py
-last_verified_commit: a13bd29
+last_verified_commit: eab5bb31
 ---
 
 # Invoice from budget
@@ -51,8 +51,10 @@ include.
   data** button that opens the billing modal and returns here on
   save.
 - **Payment terms.** Only shown when the budget still has an
-  outstanding amount. A fully collected budget produces an invoice
-  with no terms or due date.
+  outstanding amount; the term comes pre-filled from the clinic
+  default ([Billing preferences](./settings_preferences.md)). A
+  fully collected budget produces an invoice with no terms or due
+  date.
 
 ## Invoice from a budget
 

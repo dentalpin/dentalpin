@@ -81,6 +81,11 @@ export interface Clinic {
     country?: string
     communication_language?: string
     onboarding?: OnboardingState
+    billing?: {
+      default_payment_term_days?: number
+      invoice_footer_text?: string | null
+      bank_account_info?: string | null
+    }
   }
   cabinets: Cabinet[]
   created_at: string
@@ -1762,19 +1767,6 @@ export interface CreditNoteCreate {
   items?: CreditNoteItemSelect[]
   internal_notes?: string
   public_notes?: string
-}
-
-// Settings
-export interface BillingSettings {
-  default_payment_term_days: number
-  invoice_footer_text?: string
-  bank_account_info?: string
-}
-
-export interface BillingSettingsUpdate {
-  default_payment_term_days?: number
-  invoice_footer_text?: string
-  bank_account_info?: string
 }
 
 // Report Types

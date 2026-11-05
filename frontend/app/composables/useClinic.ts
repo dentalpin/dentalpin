@@ -27,6 +27,12 @@ export function useClinic() {
   const clinicName = computed(() => currentClinic.value?.name || '')
   const cabinets = computed(() => currentClinic.value?.cabinets || [])
   const slotDuration = computed(() => currentClinic.value?.settings?.slot_duration_min || 15)
+  // Clinic-wide default from the billing settings registry (#755); the
+  // registry default is 30 when unset. ?? not ||: 0 is a valid term
+  // (paid up front).
+  const defaultPaymentTermDays = computed(
+    () => currentClinic.value?.settings?.billing?.default_payment_term_days ?? 30
+  )
 
   // Actions
   async function fetchClinic(): Promise<void> {
@@ -175,6 +181,7 @@ export function useClinic() {
     clinicName,
     cabinets,
     slotDuration,
+    defaultPaymentTermDays,
     fetchClinic,
     updateClinic,
     patchSettings,

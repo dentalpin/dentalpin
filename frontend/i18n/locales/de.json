@@ -1050,6 +1050,13 @@
     }
   },
   "settings": {
+    "moduleSettings": {
+      "save": "Speichern",
+      "saved": "Einstellungen gespeichert",
+      "empty": "Dieses Modul hat keine Einstellungen, die du sehen kannst.",
+      "loadError": "Diese Einstellungen konnten nicht geladen werden. Versuche es in ein paar Sekunden erneut.",
+      "invalidInteger": "Geben Sie eine ganze Zahl ein."
+    },
     "title": "Einstellungen",
     "subtitle": "Verwalten Sie Ihre Praxis, Ihr Team und Ihre Module.",
     "allCategories": "Alle Kategorien",
@@ -2987,6 +2994,24 @@
       }
     },
     "loadError": "Berichtsdaten konnten nicht geladen werden"
+  },
+  "billingSettings": {
+    "title": "Abrechnungseinstellungen",
+    "description": "Zahlungsfristen, Rechnungsfuß und Bankdaten.",
+    "fields": {
+      "defaultPaymentTermDays": {
+        "label": "Standardzahlungsfrist (Tage)",
+        "description": "Klinikweite Zahlungsfrist in Tagen. Jede Rechnung behält die dort eingetragene Frist."
+      },
+      "invoiceFooterText": {
+        "label": "Rechnungsfuß",
+        "description": "Freitext, der mit den Abrechnungseinstellungen der Klinik gespeichert wird."
+      },
+      "bankAccountInfo": {
+        "label": "Bankverbindung",
+        "description": "Bankdaten, die mit den Abrechnungseinstellungen der Klinik gespeichert werden."
+      }
+    }
   },
   "invoiceSeries": {
     "title": "Rechnungskreise",

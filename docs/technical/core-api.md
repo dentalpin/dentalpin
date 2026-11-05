@@ -31,6 +31,7 @@ as properties. Prefer `manifest`.
 | `get_models()` | `list[type[DeclarativeBase]]` | SQLAlchemy classes to register. |
 | `get_router()` | `APIRouter` | Mounted at `/api/v1/<name>/`. |
 | `get_permissions()` | `list[str]` | Module-local strings; registry namespaces them. |
+| `get_settings()` | `list[SettingSpec]` | Optional. Declared clinic settings, served at `/api/v1/settings/<name>` (ADR 0042). |
 | `get_event_handlers()` | `dict[str, Callable]` | Optional. |
 
 ### Lifecycle hooks (async, optional)

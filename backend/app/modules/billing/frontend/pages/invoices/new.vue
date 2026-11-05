@@ -7,6 +7,7 @@ const route = useRoute()
 const router = useRouter()
 const toast = useToast()
 const { createInvoice } = useInvoices()
+const { currentClinic, fetchClinic, defaultPaymentTermDays } = useClinic()
 const api = useApi()
 
 // Track if coming from patient page
@@ -49,6 +50,8 @@ function handleItemAdded(item: InvoiceItemCreate) {
 // Load VAT types
 onMounted(async () => {
   try {
+    if (!currentClinic.value) await fetchClinic()
+    form.value.payment_term_days = defaultPaymentTermDays.value
     const response = await api.get<{ data: VatType[] }>('/api/v1/catalog/vat-types')
     vatTypes.value = response.data
   } catch (e) {

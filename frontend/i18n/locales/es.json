@@ -1050,6 +1050,13 @@
     }
   },
   "settings": {
+    "moduleSettings": {
+      "save": "Guardar",
+      "saved": "Ajustes guardados",
+      "empty": "Este módulo no tiene ajustes que puedas ver.",
+      "loadError": "No se pudieron cargar estos ajustes. Inténtalo de nuevo en unos segundos.",
+      "invalidInteger": "Introduce un número entero."
+    },
     "title": "Configuración",
     "subtitle": "Gestiona los ajustes de tu clínica, equipo y módulos.",
     "allCategories": "Todas las categorías",
@@ -2986,6 +2993,24 @@
       "description": "Qué canales pueden contactar a este paciente. Darse de baja bloquea ese canal incluso en envíos forzosos.",
       "saved": "Preferencias guardadas",
       "typesDescription": "Tipos de mensaje que recibe este paciente. Desactivar uno lo bloquea en todos los canales, también en los envíos manuales."
+    }
+  },
+  "billingSettings": {
+    "title": "Preferencias de facturación",
+    "description": "Plazos de pago, pie de factura y datos bancarios.",
+    "fields": {
+      "defaultPaymentTermDays": {
+        "label": "Plazo de pago por defecto (días)",
+        "description": "Preferencia de la clínica para el plazo de pago, en días. Cada factura conserva el plazo que se introduce en ella."
+      },
+      "invoiceFooterText": {
+        "label": "Pie de factura",
+        "description": "Texto libre guardado con las preferencias de facturación de la clínica."
+      },
+      "bankAccountInfo": {
+        "label": "Datos bancarios",
+        "description": "Datos bancarios guardados con las preferencias de facturación de la clínica."
+      }
     }
   },
   "invoiceSeries": {
