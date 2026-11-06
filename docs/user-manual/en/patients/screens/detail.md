@@ -29,7 +29,7 @@ related_paths:
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: 42ccbba7
+last_verified_commit: 84c03fa4
 ---
 
 # Patient detail
