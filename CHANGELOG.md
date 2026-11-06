@@ -11,13 +11,60 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+## [2.10.0] - 2026-11-06
+
+Module settings registry with billing as the pilot, S3-compatible storage
+for media, and a round of fixes across notifications, patients, recalls,
+agenda, copilot and the odontogram. Thanks @ZoliQua and @lamanji.
+
+### Upgrade notes
+
+- **Billing footer and bank details are capped at 2000 characters.** A
+  longer value saved before this release reads as empty until it is
+  re-entered (Settings > Billing > Preferences). See "Changed" below.
+- **Stricter API validation (API clients only, the screens never sent
+  these values):** an unknown notification type on `POST
+  /api/v1/notifications/send` and the Kapso template map, an unknown
+  allergy severity, and a patient `status` other than `active` /
+  `archived` now answer 422 instead of being stored. Actions on a done or
+  cancelled recall answer 409.
+- **S3 media storage is opt-in.** Nothing changes unless you set
+  `STORAGE_BACKEND=s3`. If you switch an existing install, copy the
+  storage volume into the bucket first, keep the volume (generated PDFs
+  and migration imports stay on it), and back the bucket up on the
+  provider side: `dentalpin db backup` does not cover it and says so.
+
+### Added
+
+- **Module settings registry (ADR 0042, #755, thanks @lamanji).** Modules can declare simple
+  clinic-scoped settings through `BaseModule.get_settings()`; the core
+  validates them at discovery, stores values under
+  `clinics.settings[<module>]` and serves them at
+  `GET/PATCH /api/v1/settings/{module}` with per-setting read and write
+  permissions. A generic `SettingsModuleForm` renders the declarations,
+  PATCHes only the fields the user changed, sends no request on an
+  unchanged save and blocks an emptied required integer with an inline
+  message. Billing is the first module on it (Settings > Billing >
+  Preferences), with its legacy settings endpoints delegating to the same
+  service. The new
+  strings are translated in de/fr/it/pt/pt-BR; ar/hi/hu/pl/ta/te fall
+  back to English.
+- **S3-compatible storage for media** (#806, thanks @lamanji). Uploads
+  (documents, photos, X-rays and their thumbnails) can live on AWS S3,
+  MinIO, Wasabi, Cloudflare R2 or Hetzner instead of the Docker volume,
+  selected with `STORAGE_BACKEND=s3` and the `STORAGE_S3_BUCKET`,
+  `STORAGE_S3_REGION`, `STORAGE_S3_ENDPOINT_URL`,
+  `STORAGE_S3_ACCESS_KEY_ID` and `STORAGE_S3_SECRET_ACCESS_KEY` keys
+  (forwarded in all deployment composes). A missing bucket fails at
+  startup instead of on the first upload. No migration.
+
 ### Changed
 
 - **Invoices pick up the clinic's configured defaults.** The
   new-invoice and budget-invoice screens pre-fill the payment term
   from `default_payment_term_days` (Settings > Billing >
   Preferences), and the invoice PDF prints the clinic's bank details
-  and a custom footer text when those settings are filled in.
+  and a custom footer text when those settings are filled in (#755).
 
 - **Clinic settings stored with an invalid value now read as the default**
   (ADR 0042). A module that declares its settings through the core
@@ -36,7 +83,36 @@ frontend as a Nuxt layer under its own Python package.
   channel, so a patient who declined email but kept WhatsApp got no
   automatic appointment confirmation or cancellation, welcome, quote
   reminder or recall message. Each channel switch now
-  blocks only its own channel, as the patient card already says.
+  blocks only its own channel, as the patient card already says (#789).
+- **The odontogram History tab drew today's chart for every date.**
+  Picking a date changed the list of changes but not the chart, so a date
+  before a treatment still showed it. The chart now shows that date
+  (#820).
+- **Two unassigned appointments warned that they shared a cabinet** when
+  dragged or resized over each other in the agenda. An appointment with
+  no cabinet now shares none; the same-professional warning is
+  unchanged (#800).
+- **Done and cancelled recalls stay closed.** Snooze, cancel, complete
+  and contact attempts on a closed recall are refused (409 on the API,
+  an error from the copilot tools), a completed appointment no longer
+  touches a recall someone already closed, and the recall row hides the
+  actions (#805).
+- **"Prefer not to say" showed as a raw translation key** on the
+  patient's personal info card (#803).
+- **A patient `status` sent by `PUT` skipped the archive and restore
+  cascades.** Archiving that way left documents and imaging studies
+  active, restoring left them archived, any string was stored, and
+  `null` answered 500. It now goes through the same archive and restore
+  path as the screens (#795).
+- **An unknown allergy severity was stored without raising an alert**
+  (e.g. `severe` or `High`). It now answers 422 on create, update and
+  the medical-history bulk replace; stored rows still read (#794).
+- **A misspelt notification type failed silently** on the manual send
+  endpoint, the `send_notification` copilot tool and the Kapso template
+  map. It now answers 422 (#790).
+- **Copilot: a `null` monthly limit was ignored and a negative one was
+  stored.** `null` now removes the limit and a negative value answers
+  422 (#799).
 
 ## [2.9.0] - 2026-10-27
 
@@ -72,20 +148,6 @@ large correctness sweep (concurrency, tenant scoping, clinic-calendar dates,
   sent.
 
 ### Added
-
-- **Module settings registry (ADR 0042).** Modules can declare simple
-  clinic-scoped settings through `BaseModule.get_settings()`; the core
-  validates them at discovery, stores values under
-  `clinics.settings[<module>]` and serves them at
-  `GET/PATCH /api/v1/settings/{module}` with per-setting read and write
-  permissions. A generic `SettingsModuleForm` renders the declarations,
-  PATCHes only the fields the user changed, sends no request on an
-  unchanged save and blocks an emptied required integer with an inline
-  message. Billing is the first module on it (Settings > Billing >
-  Preferences), with its legacy settings endpoints delegating to the same
-  service. The new
-  strings are translated in de/fr/it/pt/pt-BR; ar/hi/hu/pl/ta/te fall
-  back to English.
 
 - **Copilot: Ollama LLM provider adapter** (self-hosted, local, no API
   key) over its OpenAI-compatible endpoint. `OLLAMA_SPEC` needs no key
