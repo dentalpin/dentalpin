@@ -8,7 +8,7 @@ const routeState = vi.hoisted(() => ({
   matched: [{ path: '/patients/:id' }]
 }))
 
-vi.mock('vue-router', async (importOriginal) => ({
+vi.mock('vue-router', async importOriginal => ({
   ...(await importOriginal<Record<string, unknown>>()),
   useRoute: () => routeState
 }))
