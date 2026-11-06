@@ -1,6 +1,13 @@
-# Changelog — periodontogram module
+# Changelog - periodontogram module
 
 ## Unreleased
+
+- docs(#573): the screen doc `periodontogram-view.md` (en/es) is
+  absorbed as a `#periodontogram` section of the patients detail page.
+  The view is a sub-tab of the patient clinical record; as a standalone
+  screen its route query made the help fragment slug unservable, so the
+  drawer could never reach it. The module index links to the new
+  section.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 

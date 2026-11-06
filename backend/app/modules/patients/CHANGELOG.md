@@ -1,6 +1,12 @@
-# Changelog — patients module
+# Changelog - patients module
 
 ## Unreleased
+
+- docs(#573): the patient detail page (en/es) gains a `#periodontogram`
+  anchored section hosting the periodontogram help, absorbed from the
+  deleted `periodontogram/screens/periodontogram-view.md`; the
+  frontmatter now covers the periodontogram endpoints and permissions
+  so docs coverage stays green.
 
 - fix(#802): the personal info card shows "Prefer not to say" instead of the raw key `patients.gender.prefer_not_say`. The card and the sticky header now share one mapping from stored value to i18n key.
 

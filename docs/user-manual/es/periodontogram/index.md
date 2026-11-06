@@ -16,9 +16,10 @@ ve a *Admin → Módulos → Periodontograma → Instalar*.
 
 ## Pantallas
 
-- [Vista del periodontograma](./screens/periodontogram-view.md) —
+- [Vista del periodontograma](../patients/screens/detail.md#periodontogram) -
   exploración SEPA, captura por celda, banner de índices, slider de
-  histórico.
+  histórico. Es una sub-vista de la ficha del paciente y se documenta
+  como sección de esa página.
 
 ## ¿Qué captura cada exploración?
 
