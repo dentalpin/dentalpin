@@ -4,9 +4,7 @@ Junction module linking a **catalog treatment** to the **inventory
 items** it consumes, with a quantity per link (e.g. root canal → 2
 anesthetic vials).
 
-**Pure mapping**: no stock deduction logic here. When the inventory
-core upgrade (#226) adds consumption tracking, it will subscribe to
-treatment events itself rather than this junction writing stock.
+When a catalog-linked treatment is marked performed, this module handles the treatment event and calls the inventory service to apply linked consumption. See the events documentation for idempotency and transaction behavior.
 
 ## Design
 

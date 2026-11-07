@@ -20,7 +20,7 @@ last_verified_commit: 38a49ffe
 
 Asocia cada tratamiento del catálogo con los artículos de inventario
 que utiliza, y cuántos (p. ej. endodoncia → 2 viales de anestésico).
-Mapeo puro: el stock **no** se descuenta automáticamente.
+Al registrar la realización de un tratamiento vinculado, las cantidades asociadas pueden descontarse automáticamente del stock. Las notas del vínculo son informativas y no establecen condiciones para el descuento.
 
 ## Qué puedes hacer
 

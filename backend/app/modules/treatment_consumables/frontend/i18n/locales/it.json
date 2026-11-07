@@ -1,7 +1,7 @@
 {
   "consumables": {
     "title": "Materiali di consumo dei trattamenti",
-    "subtitle": "Quali articoli di magazzino consuma ciascun trattamento del listino e in che quantità. Pura mappatura — le scorte non vengono scalate automaticamente.",
+    "subtitle": "Quali articoli di magazzino consuma ciascun trattamento del listino e in che quantità.",
     "treatment": "Trattamento",
     "item": "Articolo di magazzino",
     "quantity": "Quantità",

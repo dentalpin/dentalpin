@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Clarify that stock can be deducted when a linked treatment is marked performed.
+
 - fix(#761): the link picker (`GET /link-options`) only offers active,
   undeleted catalog treatments and active inventory items, and creating
   a link to a deleted catalog treatment answers 404. Both modules' own

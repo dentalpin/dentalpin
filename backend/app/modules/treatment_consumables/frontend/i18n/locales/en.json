@@ -1,7 +1,7 @@
 {
   "consumables": {
     "title": "Treatment consumables",
-    "subtitle": "Which inventory items each catalog treatment consumes, and how much. Pure mapping — stock is not deducted automatically.",
+    "subtitle": "Link supplies and quantities to each treatment. When a linked treatment is marked performed, stock may be deducted automatically.",
     "treatment": "Treatment",
     "item": "Inventory item",
     "quantity": "Quantity",

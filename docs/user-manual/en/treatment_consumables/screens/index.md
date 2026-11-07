@@ -19,8 +19,7 @@ last_verified_commit: 38a49ffe
 # Treatment consumables
 
 Maps each catalog treatment to the inventory items it uses, and how
-many of them (e.g. root canal → 2 anesthetic vials). Pure mapping:
-stock is **not** deducted automatically.
+many of them (e.g. root canal → 2 anesthetic vials). When a linked catalog treatment is marked performed, the linked quantities may be deducted from stock automatically. Link notes are informational; they do not set conditions for deduction.
 
 ## What you can do
 
