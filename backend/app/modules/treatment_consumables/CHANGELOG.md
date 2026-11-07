@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Display consumable links as readable cards on narrow screens.
+
 - Clarify that stock can be deducted when a linked treatment is marked performed.
 
 - fix(#761): the link picker (`GET /link-options`) only offers active,
