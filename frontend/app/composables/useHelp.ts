@@ -48,9 +48,9 @@ function collapseDynamicSegments(path: string, matchedRoute: string | undefined)
 
 function routeToSlug(route: string): string {
   // Keep the path only. `route.path` never carries a query, but a screen's
-  // `route:` in the user manual can (e.g. the periodontogram deep link), and
-  // the portal's `routeToSlug` drops it there — `?` is an illegal filename
-  // character and the fragment filename must match on both sides.
+  // `route:` in the user manual can, and the portal's `routeToSlug` drops
+  // it there - `?` is an illegal filename character and the fragment
+  // filename must match on both sides.
   const [pathOnly = ''] = route.split(/[?#]/)
   const trimmed = pathOnly.replace(/^\/+|\/+$/g, '')
   if (!trimmed) return 'index'

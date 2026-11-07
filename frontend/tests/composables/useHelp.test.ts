@@ -62,4 +62,9 @@ describe('useHelp', () => {
     const url = await helpUrlFor({ tab: 'clinical', clinicalMode: 'plans', diagnosisView: 'periodontogram' })
     expect(url).toBe(`${DOCS}/en/help/patients_id.html`)
   })
+
+  it('does not anchor on a bare diagnosisView without the mode param', async () => {
+    const url = await helpUrlFor({ tab: 'clinical', diagnosisView: 'periodontogram' })
+    expect(url).toBe(`${DOCS}/en/help/patients_id.html`)
+  })
 })

@@ -37,9 +37,12 @@ frontend as a Nuxt layer under its own Python package.
   the periodontogram tab always fell back to "No help for this screen
   yet". A named diagnosis sub-view (`clinicalMode=diagnosis` +
   `diagnosisView=<view>`) now opens the parent patient-detail fragment
-  at a `#<view>` anchor. The periodontogram documentation moved into the
-  patient-detail page (en/es) as that anchored section; the standalone
-  `periodontogram-view.md` screen docs are gone (#573).
+  at a `#<view>` anchor; the diagnosis container writes `clinicalMode`
+  when a sub-tab is picked, so the anchor also fires entering through
+  the default mode rather than only on deep links. The periodontogram
+  documentation moved into the patient-detail page (en/es) as that
+  anchored section; the standalone `periodontogram-view.md` screen docs
+  are gone (#573).
 
 - **Turning a patient's email off also silenced WhatsApp and SMS.** The
   consent check still treated the email switch as an opt-out of every

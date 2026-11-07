@@ -1,6 +1,12 @@
-# Changelog - patients module
+# Changelog — patients module
 
 ## Unreleased
+
+- fix(#573): the diagnosis mode container writes `clinicalMode=diagnosis`
+  alongside `diagnosisView` when a sub-tab is picked, so the contextual
+  help drawer's anchor rule also fires when entering the clinical record
+  through the default mode (the URL carried no `clinicalMode` unless a
+  mode switch had happened) instead of only on deep links.
 
 - docs(#573): the patient detail page (en/es) gains a `#periodontogram`
   anchored section hosting the periodontogram help, absorbed from the
