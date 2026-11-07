@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- fix(#570 follow-up): the patient picker on the AI queue page now
+  debounces its search 250 ms instead of firing an API call on every
+  keystroke.
+
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
