@@ -820,8 +820,9 @@ class RvgService:
                 row, created = await RvgService.scan_bytes(
                     db, clinic_id, name, raw, retry_failed=retry_failed
                 )
-            except Exception:  # noqa: BLE001 — per-file best-effort, tick continues
+            except Exception:  # noqa: BLE001 - per-file best-effort, tick continues
                 logger.exception("RvgService.scan_watch_dir: failed on %s", name)
+                counts["failed"] += 1
                 continue
             if created:
                 counts["created"] += 1

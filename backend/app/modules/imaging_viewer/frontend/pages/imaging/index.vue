@@ -42,6 +42,12 @@ async function searchPatients(term: string) {
   }
 }
 
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+function onSearchTerm(term: string) {
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => void searchPatients(term), 250)
+}
+
 async function resolvePickedName(id: string) {
   resolvingPatient.value = true
   try {
@@ -272,7 +278,7 @@ onMounted(() => {
         :search-input="{ placeholder: t('imagingViewer.list.searchPatients') }"
         class="w-72"
         @update:model-value="pickPatient($event as string | undefined)"
-        @update:search-term="searchPatients"
+        @update:search-term="onSearchTerm"
       />
     </div>
 
