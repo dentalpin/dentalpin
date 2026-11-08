@@ -48,7 +48,11 @@ jobs:
         working-directory: backend
         run: uv lock --check
 
-  backend-test:
+  backend-test-shards:
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1]
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -87,12 +91,53 @@ jobs:
       - name: Run tests (default set)
         working-directory: backend
         run: |
-          python -m pytest -v --tb=short
+          python -m pytest -p ci_shard -v --tb=short \
+            --ci-shard-count=2 --ci-shard-index=${{ matrix.shard }}
 
+  backend-test-migrations:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: dental_clinic_test
+          POSTGRES_USER: dental
+          POSTGRES_PASSWORD: testpass
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql+asyncpg://dental:testpass@localhost:5432/dental_clinic_test
+      SECRET_KEY: test-secret-key-for-ci
+      ENVIRONMENT: test
+      TESTING: "true"
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install dependencies
+        working-directory: backend
+        run: pip install -e ".[dev]"
       - name: Alembic round-trip (base → head → base → head)
         working-directory: backend
+        run: python -m pytest -v -m alembic_roundtrip --tb=short
+
+  # Preserve the existing required status name while failing if any shard or
+  # the independent migration job fails, is skipped, or is cancelled.
+  backend-test:
+    if: ${{ always() }}
+    needs: [backend-test-shards, backend-test-migrations]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check backend test results
         run: |
-          python -m pytest -v -m alembic_roundtrip --tb=short
+          test "${{ needs.backend-test-shards.result }}" = "success"
+          test "${{ needs.backend-test-migrations.result }}" = "success"
 
   backend-test-east-of-utc:
     # CI runs in UTC, which hides a whole class of test bug: a test that
