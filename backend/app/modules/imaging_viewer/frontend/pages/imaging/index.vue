@@ -47,6 +47,9 @@ function onSearchTerm(term: string) {
   if (searchTimer) clearTimeout(searchTimer)
   searchTimer = setTimeout(() => void searchPatients(term), 250)
 }
+onBeforeUnmount(() => {
+  if (searchTimer) clearTimeout(searchTimer)
+})
 
 async function resolvePickedName(id: string) {
   resolvingPatient.value = true

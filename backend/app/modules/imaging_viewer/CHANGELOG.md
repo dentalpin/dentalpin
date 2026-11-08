@@ -3,11 +3,12 @@
 ## Unreleased
 
 - fix(#580 follow-up): `scan_watch_dir` counts a file that errors before a
-  row can exist toward `failed` (it did `continue` without counting), so the
-  summary toast no longer reads green with `scanned` > `created`. The
+  row can exist toward `failed` (it did `continue` without counting), so a
+  scan where a file errored can no longer report zero failures. The
   errored file stays in the watch root for the next tick to retry.
 - fix(#570 follow-up): the patient picker's search now debounces 250 ms
-  instead of firing an API call on every keystroke.
+  instead of firing an API call on every keystroke; a trailing timer is
+  cleared on unmount.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
