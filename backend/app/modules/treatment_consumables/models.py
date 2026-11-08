@@ -1,9 +1,10 @@
 """treatment_consumables — junction: catalog treatment → inventory items.
 
-Pure mapping with a quantity per link (e.g. root canal → 2 anesthetic
-vials). **No stock deduction here** — that lands in the inventory core
-upgrade (#226). Reads both dependency modules to validate links and to
-resolve display names (ADR 0002); writes only its own table.
+A quantity per link (e.g. root canal → 2 anesthetic vials). The
+models hold the mapping only; stock is deducted by the
+``odontogram.treatment.performed`` handler in ``events.py`` (#226).
+Reads both dependency modules to validate links and to resolve display
+names (ADR 0002); writes only its own table.
 """
 
 from __future__ import annotations

@@ -1,7 +1,6 @@
 """treatment_consumables — catalog treatments ↔ inventory items junction.
 
-Pure mapping with a quantity per link (root canal → 2 anesthetic
-vials). Reads both dependencies to validate links and resolve names;
+A quantity per link (root canal → 2 anesthetic vials). Reads both dependencies to validate links and resolve names;
 writes only its own table.  Handles ``odontogram.treatment.performed``
 via subscription inversion (#226): reads links via ORM model, calls
 ``InventoryService.apply_consumption`` as a clean public primitive.

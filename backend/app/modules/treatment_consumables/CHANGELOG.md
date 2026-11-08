@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- The Hindi screen subtitle no longer says stock is never deducted, and
+  the module docstrings point at the deduction handler (follow-up to #821).
+
 - Display consumable links as readable cards on narrow screens.
 
 - Clarify that stock can be deducted when a linked treatment is marked performed.
