@@ -567,8 +567,9 @@ class DocumentPDFService:
                     margin-bottom: 10px; padding-bottom: 5px;
                     border-bottom: 1px solid #e5e7eb;
                 }}
-                .meta {{ display: flex; gap: 40px; }}
-                .info-group {{ min-width: 180px; }}
+                /* Wrap metadata rather than clipping patient or issuer details. */
+                .meta {{ display: flex; flex-wrap: wrap; }}
+                .info-group {{ width: 48%; min-width: 0; margin-bottom: 8px; overflow-wrap: anywhere; }}
                 .info-label {{ font-size: 9pt; color: #666; margin-bottom: 2px; }}
                 .info-value {{ font-weight: 500; }}
                 table {{ width: 100%; border-collapse: collapse; margin-bottom: 20px; }}
