@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID, uuid4
@@ -15,6 +16,7 @@ from app.core.agents.models import (
     AgentApprovalQueue,
     AgentAuditLog,
     AgentSession,
+    ApprovalStatus,
 )
 
 
@@ -126,6 +128,19 @@ class AuditService:
         return list(result.scalars().all())
 
 
+@dataclass(frozen=True)
+class ApprovalOutcome:
+    """What :meth:`ApprovalService.approve` did with a request.
+
+    ``error`` is the tool's error when the run ended ``failed`` (``None``
+    when it ``executed``). It is returned to the reviewer, not stored on
+    the row; the audit log keeps it.
+    """
+
+    request: AgentApprovalQueue
+    error: str | None = None
+
+
 class ApprovalService:
     """Human-in-the-loop approval queue for supervised agents."""
 
@@ -153,7 +168,7 @@ class ApprovalService:
 
     @staticmethod
     async def list_pending(
-        db: AsyncSession, clinic_id: UUID, *, status: str = "pending"
+        db: AsyncSession, clinic_id: UUID, *, status: ApprovalStatus = "pending"
     ) -> list[AgentApprovalQueue]:
         result = await db.execute(
             select(AgentApprovalQueue)
@@ -172,7 +187,7 @@ class ApprovalService:
         request_id: UUID,
         *,
         reviewer_id: UUID,
-        status: str,
+        status: ApprovalStatus,
         notes: str | None,
     ) -> AgentApprovalQueue | None:
         # Row lock: two reviewers (or one double click) deciding the same
@@ -207,15 +222,39 @@ class ApprovalService:
         reviewer_id: UUID,
         reviewer_role: str | None = None,
         notes: str | None = None,
-    ) -> AgentApprovalQueue | None:
+    ) -> ApprovalOutcome | None:
         """Approve a pending request and run the queued tool call.
 
         Status trail: ``pending`` -> ``approved`` -> ``executed`` or
-        ``failed``. The call runs with the *reviewer's* permissions (``reviewer_role``;
-        none if omitted, so it fails closed), re-validated against the
-        tool's parameter model. Both outcomes write an audit row. A
-        request already decided returns ``None`` and runs nothing, so a
-        second approval can never execute the action twice.
+        ``failed``. Only ``executed`` and ``failed`` are end states.
+        ``approved`` means *decided but never finished*: the decision was
+        committed and the process stopped before the run's outcome was.
+        Such a row is deliberately not retried (re-running a destructive
+        call is worse than leaving it stuck); supervisors find them with
+        ``GET /approvals?status=approved``. Never read ``approved`` as done.
+
+        Two transactions. The decision (``approved``, reviewer, time,
+        notes) is committed first, which also releases the row lock, so a
+        second approval finds the request decided and runs nothing. The
+        run and its outcome are the second: if the tool raises, its
+        uncommitted work is rolled back, and the committed decision
+        survives that rollback to be moved on to ``failed``.
+
+        The call runs with the *reviewer's* permissions (``reviewer_role``;
+        none if omitted, so it fails closed): the reviewer needs the
+        tool's own permission as well as ``agents.supervise``. A reviewer
+        without it gets ``failed`` and the request stays decided. The
+        stored ``arguments`` are re-validated against the tool's
+        parameter model; arguments that no longer validate end ``failed``
+        without the tool being called. The approval guardrail is not
+        consulted again, so the call cannot loop back into the queue;
+        ``blocked_tools`` is still honoured. Every outcome writes an
+        audit row.
+
+        Returns ``None`` (and runs nothing) when the request does not
+        exist in this clinic or is no longer ``pending``. Otherwise the
+        :class:`ApprovalOutcome` carries the request and, on ``failed``,
+        the tool's error.
         """
         from app.core.agents.context import AgentMode
         from app.core.agents.tools.registry import tool_registry
@@ -231,13 +270,11 @@ class ApprovalService:
         )
         if request is None:
             return None
-        # Make the decision durable before the action runs: it releases
-        # the row lock, so a second approval now sees a decided request,
-        # and a failing handler's rollback cannot take the decision with
-        # it. If the process dies mid-run the row stays ``approved``: the
-        # honest "decided, not finished" state, never run a second time.
+        # Transaction 1: the decision. Committing it releases the row lock
+        # and puts it out of reach of a failing handler's rollback.
         await db.commit()
 
+        # Transaction 2: the run and its outcome.
         permissions = (
             await granted_permissions_for(db, clinic_id, reviewer_role)
             if reviewer_role is not None
@@ -256,8 +293,8 @@ class ApprovalService:
         outcome = await tool_registry.execute_approved(ctx, request.tool_name, request.arguments)
         await db.refresh(request)  # a rollback after a failed run expires it
         request.status = "executed" if outcome.ok else "failed"
-        await db.flush()
-        return request
+        await db.commit()
+        return ApprovalOutcome(request=request, error=None if outcome.ok else outcome.error)
 
     @staticmethod
     async def reject(

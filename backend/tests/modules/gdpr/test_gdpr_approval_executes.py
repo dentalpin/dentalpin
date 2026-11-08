@@ -89,7 +89,8 @@ async def test_approved_erasure_blanks_the_patient_once(
         reviewer_role="admin",
     )
 
-    assert approved.status == "executed"
+    assert approved.request.status == "executed"
+    assert approved.error is None
     await db_session.refresh(test_patient)
     assert test_patient.email is None
     assert test_patient.phone is None
