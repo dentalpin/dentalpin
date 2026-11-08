@@ -1,6 +1,6 @@
 ---
 module: periodontogram
-last_verified_commit: 6dde74fc546d6bf48bc251b41ab49fc0a27fa7e1
+last_verified_commit: 6dde74fc
 ---
 
 # Periodontogram
