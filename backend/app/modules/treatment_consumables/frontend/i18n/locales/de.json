@@ -1,7 +1,7 @@
 {
   "consumables": {
     "title": "Verbrauchsmaterial je Behandlung",
-    "subtitle": "Welche Lagerartikel jede Katalogbehandlung verbraucht und in welcher Menge. Reine Zuordnung — der Bestand wird nicht automatisch abgezogen.",
+    "subtitle": "Welche Lagerartikel jede Katalogbehandlung verbraucht und in welcher Menge.",
     "treatment": "Behandlung",
     "item": "Lagerartikel",
     "quantity": "Menge",

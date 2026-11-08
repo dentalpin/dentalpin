@@ -1,7 +1,7 @@
 {
   "consumables": {
     "title": "Materiały zużywane w leczeniu",
-    "subtitle": "Które pozycje magazynowe zużywa każde leczenie z katalogu i w jakiej ilości. Czyste mapowanie — stan magazynowy nie jest odejmowany automatycznie.",
+    "subtitle": "Które pozycje magazynowe zużywa każde leczenie z katalogu i w jakiej ilości.",
     "treatment": "Leczenie",
     "item": "Pozycja magazynowa",
     "quantity": "Ilość",

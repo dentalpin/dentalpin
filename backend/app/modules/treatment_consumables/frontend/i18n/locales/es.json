@@ -1,7 +1,7 @@
 {
   "consumables": {
     "title": "Consumibles por tratamiento",
-    "subtitle": "Qué artículos de inventario consume cada tratamiento del catálogo, y en qué cantidad. Solo mapeo — el stock no se descuenta automáticamente.",
+    "subtitle": "Qué artículos de inventario consume cada tratamiento del catálogo, y en qué cantidad.",
     "treatment": "Tratamiento",
     "item": "Artículo de inventario",
     "quantity": "Cantidad",

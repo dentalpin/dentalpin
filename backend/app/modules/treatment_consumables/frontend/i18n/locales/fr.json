@@ -1,7 +1,7 @@
 {
   "consumables": {
     "title": "Consommables par traitement",
-    "subtitle": "Quels articles d'inventaire chaque traitement du catalogue consomme, et en quelle quantité. Simple mappage — le stock n'est pas déduit automatiquement.",
+    "subtitle": "Quels articles d'inventaire chaque traitement du catalogue consomme, et en quelle quantité.",
     "treatment": "Traitement",
     "item": "Article d'inventaire",
     "quantity": "Quantité",

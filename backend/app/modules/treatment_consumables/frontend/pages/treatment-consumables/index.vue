@@ -238,7 +238,84 @@ const columns = computed(() => [
       </UButton>
     </div>
 
+    <div class="space-y-3 sm:hidden">
+      <p
+        v-if="loading"
+        class="text-ui text-subtle"
+        role="status"
+      >
+        {{ t('common.loading') }}
+      </p>
+      <EmptyState
+        v-else-if="items.length === 0"
+        icon="i-lucide-link-2"
+        :title="t('consumables.empty')"
+      />
+      <ul
+        v-else
+        class="space-y-3"
+      >
+        <li
+          v-for="item in items"
+          :key="item.id"
+          class="rounded-lg border border-default p-3"
+        >
+          <div class="flex items-start justify-between gap-3">
+            <div class="min-w-0">
+              <h2 class="font-medium break-words">
+                {{ item.treatment_name }}
+                <span
+                  v-if="item.treatment_code"
+                  class="text-xs text-subtle"
+                >({{ item.treatment_code }})</span>
+              </h2>
+              <p class="text-ui text-subtle break-words">
+                {{ item.item_name }}
+              </p>
+            </div>
+            <div
+              v-if="canWrite"
+              class="flex shrink-0 gap-1"
+            >
+              <UButton
+                icon="i-lucide-pencil"
+                variant="ghost"
+                :aria-label="t('actions.edit')"
+                @click="openEdit(item)"
+              />
+              <UButton
+                icon="i-lucide-unlink"
+                variant="ghost"
+                color="error"
+                :aria-label="t('consumables.delete')"
+                @click="confirmDelete(item)"
+              />
+            </div>
+          </div>
+          <dl class="mt-3 grid grid-cols-2 gap-3 text-ui">
+            <div>
+              <dt class="text-subtle">
+                {{ t('consumables.quantity') }}
+              </dt>
+              <dd>
+                {{ fmtQty(item.quantity) }} {{ item.item_unit || '' }}
+              </dd>
+            </div>
+            <div class="min-w-0">
+              <dt class="text-subtle">
+                {{ t('consumables.note') }}
+              </dt>
+              <dd class="break-words">
+                {{ item.note || '—' }}
+              </dd>
+            </div>
+          </dl>
+        </li>
+      </ul>
+    </div>
+
     <UTable
+      class="hidden sm:block"
       :data="items"
       :columns="columns"
       :loading="loading"

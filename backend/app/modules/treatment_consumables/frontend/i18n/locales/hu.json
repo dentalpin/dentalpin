@@ -1,7 +1,7 @@
 {
   "consumables": {
     "title": "Kezelési fogyóeszközök",
-    "subtitle": "Melyik készletcikket fogyasztja az egyes katalóguskezelések, és milyen mennyiségben. Csak megfeleltetés — a készlet nem csökken automatikusan.",
+    "subtitle": "Melyik készletcikket fogyasztja az egyes katalóguskezelések, és milyen mennyiségben.",
     "treatment": "Kezelés",
     "item": "Készletcikk",
     "quantity": "Mennyiség",
