@@ -791,7 +791,8 @@ class RvgService:
         a human decision moves to ``pending/`` (approve reads the bytes
         from there, then retires the file to ``processed/``), and
         everything else decided by the tick itself (auto-imported,
-        rejected) moves to ``processed/``. So a folder holding more than
+        rejected, failed) moves to ``processed/``. So a folder holding
+        more than
         ``limit`` files drains over successive ticks instead of stalling
         on the first page, and ticks never re-hash the same files.
         Returns counts ``{scanned, created, approved, pending, failed}``.

@@ -6,7 +6,7 @@
   row can exist toward `failed` (it did `continue` without counting), so a
   scan where a file errored can no longer report zero failures. The
   errored file stays in the watch root for the next tick to retry.
-- fix(#570 follow-up): the patient picker's search now debounces 250 ms
+- fix(#569 follow-up): the patient picker's search now debounces 250 ms
   instead of firing an API call on every keystroke; a trailing timer is
   cleared on unmount.
 
