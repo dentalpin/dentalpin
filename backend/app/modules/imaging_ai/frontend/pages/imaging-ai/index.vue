@@ -174,6 +174,7 @@ onBeforeUnmount(() => {
     clearInterval(pollTimer)
     pollTimer = null
   }
+  if (searchTimer) clearTimeout(searchTimer)
 })
 </script>
 
