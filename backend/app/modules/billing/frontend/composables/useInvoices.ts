@@ -465,7 +465,7 @@ export function useInvoices() {
 
     // Extract filename from Content-Disposition header or generate one
     const contentDisposition = response.headers.get('Content-Disposition')
-    const filenameMatch = contentDisposition?.match(/filename="?(.+)"?/)
+    const filenameMatch = contentDisposition?.match(/filename="?([^"]+)"?/)
     link.download = filenameMatch?.[1] || `factura_${id}.pdf`
 
     document.body.appendChild(link)

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#828): "Download PDF" on an invoice saved the file as `factura_….pdf_` on Windows. The filename regex kept the closing quote of `filename="….pdf"`, and the browser replaced the `"` with `_`.
+
 - feat: the clinic's settings now drive the invoice defaults. The
   new-invoice and from-budget screens pre-fill the payment term with
   `default_payment_term_days` (settings registry, billing namespace of

@@ -370,7 +370,7 @@ export function useBudgets() {
     link.href = url
 
     const contentDisposition = response.headers.get('Content-Disposition')
-    const filenameMatch = contentDisposition?.match(/filename="?(.+)"?/)
+    const filenameMatch = contentDisposition?.match(/filename="?([^"]+)"?/)
     link.download = filenameMatch?.[1] || fallbackName
 
     document.body.appendChild(link)

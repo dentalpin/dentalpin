@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#828): "Download PDF" saved generated documents as `….pdf_` on Windows. The filename regex kept the closing quote of `filename="….pdf"`, and the browser replaced the `"` with `_`.
+
 - Wrap patient metadata on generated PDFs so details stay within the page in LTR and RTL layouts.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

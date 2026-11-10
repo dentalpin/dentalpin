@@ -11,6 +11,13 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Downloaded PDFs ended in `.pdf_` on Windows (#828).** Invoices, budgets
+  and generated documents kept the closing quote of the server's
+  `filename="….pdf"`, which Windows replaces with `_`. Thanks @j4py for
+  the report.
+
 ## [2.10.0] - 2026-11-06
 
 Module settings registry with billing as the pilot, S3-compatible storage

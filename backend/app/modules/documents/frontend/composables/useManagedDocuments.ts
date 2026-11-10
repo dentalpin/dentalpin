@@ -131,7 +131,7 @@ export function useManagedDocuments() {
     link.href = url
 
     const contentDisposition = response.headers.get('Content-Disposition')
-    const filenameMatch = contentDisposition?.match(/filename="?(.+)"?/)
+    const filenameMatch = contentDisposition?.match(/filename="?([^"]+)"?/)
     link.download = filenameMatch?.[1] || `document_${document_id.slice(0, 8)}.pdf`
 
     document.body.appendChild(link)
