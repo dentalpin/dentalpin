@@ -35,10 +35,6 @@ OPEN_VOCABULARY_PARAMS: frozenset[str] = frozenset(
         # Retention policies may be written for any category; only
         # email|phone|identity are erasable, and the service says so.
         "gdpr.create_retention_policy.data_category",
-        # The two notification preference dicts (NotificationPreference
-        # .preferences and ClinicNotificationSettings.settings) do not agree
-        # on their key sets, so there is no single vocabulary to declare yet.
-        "notifications.send_notification.notification_type",
     }
 )
 
@@ -91,6 +87,27 @@ def test_vocabulary_parameters_are_literal_typed() -> None:
     assert not offenders, (
         "status/type parameters typed as bare str — an unknown value filters "
         "the result to nothing instead of being rejected:\n" + "\n".join(sorted(offenders))
+    )
+
+
+def test_open_vocabulary_entries_are_still_open() -> None:
+    """Every exemption names a real parameter that is still a bare str.
+
+    An entry left behind after its parameter gained a Literal exempts the
+    parameter from the check above, so a later revert to ``str`` would pass.
+    """
+    fields = {
+        f"{qualified}.{name}": field.annotation
+        for qualified, model in _registered_tools()
+        for name, field in model.model_fields.items()
+    }
+    stale = sorted(
+        entry
+        for entry in OPEN_VOCABULARY_PARAMS
+        if entry not in fields or not _is_plain_str(fields[entry])
+    )
+    assert not stale, "OPEN_VOCABULARY_PARAMS entries that are gone or now typed: " + ", ".join(
+        stale
     )
 
 
