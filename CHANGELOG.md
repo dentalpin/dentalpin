@@ -31,6 +31,10 @@ frontend as a Nuxt layer under its own Python package.
   twice, or two reviewers at once, runs it once. `approved` now means
   "decided but never finished" (the process stopped mid-run) and is not
   retried; list those with `GET /api/v1/agents/approvals?status=approved`.
+- **Downloaded PDFs ended in `.pdf_` on Windows (#828).** Invoices, budgets
+  and generated documents kept the closing quote of the server's
+  `filename="….pdf"`, which Windows replaces with `_`. Thanks @j4py for
+  the report.
 
 ## [2.10.0] - 2026-11-06
 
