@@ -91,6 +91,25 @@ The PHI boundary. Per-session `SymbolTable` mapping real value ↔ stable opaque
 ### 2.4 Config (`app/config.py`)
 Add `OPENAI_API_KEY: str = ""`, `COPILOT_PROVIDER_DEFAULT: str = "openai"`, `COPILOT_MODEL_CHAT_OPENAI: str = "gpt-5.4-mini"`, `COPILOT_MAX_TOKENS: int = 4096`, `COPILOT_REDACTION_DEFAULT: bool = True`. Per-clinic `copilot_settings` overrides provider and model. (`ANTHROPIC_API_KEY` + Anthropic model default landed with that provider; `GEMINI_API_KEY` + Gemini model default with #332; `OPENROUTER_API_KEY` / `GROQ_API_KEY` + OpenRouter and Groq model defaults with #332; `OLLAMA_BASE_URL` + `COPILOT_MODEL_CHAT_OLLAMA` with the Ollama provider, #332.)
 
+### 2.5 Approval queue (`AgentApprovalQueue`, supervised mode, #686)
+Copilot does not use the queue (inline confirm, §1 refinement 1). It is what any other agent gets on the default `GuardrailConfig`: a supervised `WRITE`, every `DESTRUCTIVE` tool, `*.delete` and `billing.*` are queued with `PENDING_APPROVAL` instead of run.
+
+**Approving runs the queued call.** `POST /api/v1/agents/approvals/{id}/approve` (`agents.supervise`) → `ApprovalService.approve` → `ToolRegistry.execute_approved`. Status vocabulary (`ApprovalStatus`, closed: `GET /approvals?status=` answers 422 on anything else):
+
+| Status | Meaning |
+|---|---|
+| `pending` | queued, not decided |
+| `rejected` | end state; nothing ran |
+| `approved` | **decided but never finished**: the decision was committed and the process stopped before the run's outcome was. Not an end state, and not retried (re-running a destructive call is worse than a stuck row). Find them with `?status=approved`. Never read it as done. |
+| `executed` | end state; the tool ran (audit `SUCCESS`) |
+| `failed` | end state; the run was refused or raised (audit `BLOCKED` / `FAILED`). The approve response carries the tool's `error`; it is not stored on the row. |
+
+Rules of the run:
+- **Two transactions.** The decision (status `approved`, reviewer, time, notes) is committed first, under a row lock, so a second approval (double click, second reviewer) gets 404 and runs nothing. The run and its outcome are the second; if the handler raises, its uncommitted work is rolled back and the committed decision moves on to `failed`. A handler that commits part of its work and then raises keeps the committed part.
+- **The reviewer's permissions.** The run's `AgentContext.permissions` are the reviewer's role grants (`granted_permissions_for`), not the agent session's: the reviewer needs `agents.supervise` *and* the tool's own permission, or the request ends `failed` (`permission denied: …`). `supervisor_id` is the reviewer, so write tools that stamp it record who approved (the general `supervisor_id` contract is #681).
+- **Re-validation.** The stored `arguments` go through the tool's parameter model again; arguments that no longer validate end `failed` without the handler being called.
+- **No loop.** `execute_approved` skips the guardrail decision (otherwise the approved call would be queued again as `REQUIRE_APPROVAL`) and the rate limits, but still honours `blocked_tools`. An unknown or removed tool ends `failed`.
+
 ---
 
 ## 3. Layer B — the tool contract & v1 backfill
