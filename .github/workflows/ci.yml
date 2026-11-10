@@ -84,6 +84,14 @@ jobs:
         run: |
           pip install -e ".[dev]"
 
+      - name: Install pdftotext for the PDF layout tests
+        # The documents tests extract text from rendered PDFs with
+        # poppler's pdftotext and skip without it, so a regression in
+        # the PDF layout would pass here unnoticed.
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends poppler-utils
+
       - name: Run tests (default set)
         working-directory: backend
         run: |
