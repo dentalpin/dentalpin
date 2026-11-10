@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.agents.models import ApprovalStatus
+
 
 class AgentCreate(BaseModel):
     name: str = Field(min_length=1, max_length=100)
@@ -50,11 +52,15 @@ class ApprovalResponse(BaseModel):
     tool_name: str
     arguments: dict[str, Any]
     reason: str | None
-    status: str
+    status: ApprovalStatus
     reviewed_by: UUID | None
     reviewed_at: datetime | None
     review_notes: str | None
     created_at: datetime
+    # Only on the approve response, when the run ended ``failed``: the
+    # tool's error, so the reviewer sees why without opening the audit
+    # log. Not stored on the row (the audit log keeps it).
+    error: str | None = None
 
 
 class ApprovalDecision(BaseModel):

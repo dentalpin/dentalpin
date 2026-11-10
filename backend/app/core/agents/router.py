@@ -8,6 +8,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.agents.models import ApprovalStatus
 from app.core.agents.schemas import (
     AgentCreate,
     AgentResponse,
@@ -83,7 +84,7 @@ async def list_approvals(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("agents.supervise"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-    status_filter: str = Query(default="pending", alias="status"),
+    status_filter: ApprovalStatus = Query(default="pending", alias="status"),
 ) -> PaginatedApiResponse[ApprovalResponse]:
     items = await ApprovalService.list_pending(db, ctx.clinic_id, status=status_filter)
     data = [ApprovalResponse.model_validate(i) for i in items]
@@ -101,12 +102,24 @@ async def approve_request(
     _: Annotated[None, Depends(require_permission("agents.supervise"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ApprovalResponse]:
-    request = await ApprovalService.approve(
-        db, ctx.clinic_id, request_id, reviewer_id=ctx.user_id, notes=payload.notes
+    """Approve a pending request and run the queued call (#686).
+
+    Answers ``executed`` or ``failed`` (with the tool's ``error``), 404 if
+    the request is not pending. See ``ApprovalService.approve``.
+    """
+    outcome = await ApprovalService.approve(
+        db,
+        ctx.clinic_id,
+        request_id,
+        reviewer_id=ctx.user_id,
+        reviewer_role=ctx.role,
+        notes=payload.notes,
     )
-    if request is None:
+    if outcome is None:
         raise HTTPException(status_code=404, detail="Approval request not found or not pending")
-    return ApiResponse(data=ApprovalResponse.model_validate(request))
+    data = ApprovalResponse.model_validate(outcome.request)
+    data.error = outcome.error
+    return ApiResponse(data=data)
 
 
 @router.post(

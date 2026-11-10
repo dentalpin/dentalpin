@@ -110,8 +110,6 @@ class ToolRegistry:
         from app.core.agents.guardrails import GuardrailDecision
         from app.core.agents.guardrails import check as guardrails_check
         from app.core.agents.service import ApprovalService, AuditService
-        from app.core.agents.tooling import jsonify
-        from app.core.auth.permissions import permission_matches
 
         tool = self._tools.get(qualified_name)
         if tool is None:
@@ -166,6 +164,64 @@ class ToolRegistry:
                 error="pending approval",
             )
 
+        return await self._invoke(ctx, tool, qualified_name, arguments)
+
+    async def execute_approved(
+        self,
+        ctx: AgentContext,
+        qualified_name: str,
+        arguments: dict[str, Any],
+    ) -> ToolResult:
+        """Run a call a human has approved from the approval queue.
+
+        ``ctx`` is the *reviewer's* context: ``ctx.permissions`` are the
+        reviewer's grants, since they are the one authorizing the action
+        and the original session's grants may be stale or gone. The
+        guardrail step is skipped, otherwise the call would just queue
+        again; the hard ``blocked_tools`` list is still honoured. The
+        stored ``arguments`` are re-validated, as the row can be old.
+        If the handler raises, uncommitted work is rolled back first, so
+        the caller must commit its own state (the request row) beforehand.
+
+        Never raises: every outcome is a :class:`ToolResult` with an
+        audit row, so the caller can record ``executed`` or ``failed``.
+        """
+        from app.core.agents.guardrails import _matches_any, default_config
+        from app.core.agents.service import AuditService
+
+        tool = self._tools.get(qualified_name)
+        if tool is None:
+            error = f"Unknown tool: {qualified_name}"
+        elif _matches_any(qualified_name, (ctx.guardrail_config or default_config).blocked_tools):
+            error = "blocked by guardrails"
+        else:
+            return await self._invoke(ctx, tool, qualified_name, arguments, rollback_on_error=True)
+        await AuditService.record(
+            ctx, qualified_name, arguments, error=error, status="BLOCKED", execution_time_ms=0
+        )
+        return ToolResult(ok=False, error=error)
+
+    async def _invoke(
+        self,
+        ctx: AgentContext,
+        tool: Tool,
+        qualified_name: str,
+        arguments: dict[str, Any],
+        *,
+        rollback_on_error: bool = False,
+    ) -> ToolResult:
+        """RBAC check, validation, handler and audit row (steps 4-7).
+
+        Shared by :meth:`call` and :meth:`execute_approved`.
+        ``rollback_on_error`` rolls the session back when the handler
+        raises, so a failed run leaves no half-written change behind.
+        (A savepoint would be tidier, but handlers commit their own
+        work, which a savepoint does not allow.)
+        """
+        from app.core.agents.service import AuditService
+        from app.core.agents.tooling import jsonify
+        from app.core.auth.permissions import permission_matches
+
         for required in tool.permissions:
             if not any(permission_matches(required, granted) for granted in ctx.permissions):
                 await AuditService.record(
@@ -206,6 +262,10 @@ class ToolRegistry:
             )
             return ToolResult(ok=True, data=data, execution_time_ms=elapsed_ms)
         except Exception as exc:
+            if rollback_on_error:
+                # Take back what the handler left uncommitted before the
+                # audit row is written.
+                await ctx.db.rollback()
             elapsed_ms = int((time.monotonic() - t0) * 1000)
             await AuditService.record(
                 ctx,

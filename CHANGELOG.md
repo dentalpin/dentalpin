@@ -11,8 +11,26 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Upgrade notes
+
+- **API clients of the agent approval queue:** `POST
+  /api/v1/agents/approvals/{id}/approve` now runs the action and answers
+  `executed` or `failed` (plus `error`) instead of `approved`. `GET
+  /api/v1/agents/approvals?status=` accepts only `pending`, `approved`,
+  `rejected`, `executed` or `failed`; anything else answers 422 instead of
+  an empty list.
+
 ### Fixed
 
+- **Approving a queued agent action did nothing (#686).** Approval only
+  recorded the decision, so an approved erasure erased nothing. Approving
+  now runs the queued call with the reviewer's permissions (they need the
+  tool's own permission as well as `agents.supervise`) and the stored
+  arguments re-validated. The request ends `executed` or `failed`, and a
+  failed run's error is returned by the approve endpoint. Approving
+  twice, or two reviewers at once, runs it once. `approved` now means
+  "decided but never finished" (the process stopped mid-run) and is not
+  retried; list those with `GET /api/v1/agents/approvals?status=approved`.
 - **Downloaded PDFs ended in `.pdf_` on Windows (#828).** Invoices, budgets
   and generated documents kept the closing quote of the server's
   `filename="….pdf"`, which Windows replaces with `_`. Thanks @j4py for

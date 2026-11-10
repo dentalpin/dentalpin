@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import uuid
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from sqlalchemy import DateTime, ForeignKey, Index, String
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -70,8 +70,22 @@ class AgentSession(Base, TimestampMixin):
     ended_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
+# Lifecycle of an approval request (#686). The column stays a plain
+# String(20) with no CHECK constraint; this Literal is the vocabulary the
+# API reads and writes.
+ApprovalStatus = Literal["pending", "approved", "rejected", "executed", "failed"]
+
+
 class AgentApprovalQueue(Base, TimestampMixin):
-    """Pending action awaiting human review (supervised mode)."""
+    """Pending action awaiting human review (supervised mode).
+
+    ``status``: ``pending`` -> ``approved`` -> ``executed`` | ``failed``,
+    or ``pending`` -> ``rejected``. Approving runs the queued call
+    (``ApprovalService.approve``); ``executed``/``failed`` is its outcome,
+    detailed in the audit log. ``approved`` is not an end state: it means
+    decided but never finished (the process stopped mid-run), and such a
+    row is not retried.
+    """
 
     __tablename__ = "agent_approval_queue"
 
