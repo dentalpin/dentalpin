@@ -42,6 +42,13 @@ async function runPatientSearch() {
   }
 }
 
+let searchTimer: ReturnType<typeof setTimeout> | null = null
+function onSearchTerm(term: string) {
+  patientSearch.value = term
+  if (searchTimer) clearTimeout(searchTimer)
+  searchTimer = setTimeout(() => void runPatientSearch(), 250)
+}
+
 async function resolveSelectedPatient() {
   if (!patientId.value || !canReadPatients.value) {
     selectedPatient.value = undefined
@@ -167,6 +174,7 @@ onBeforeUnmount(() => {
     clearInterval(pollTimer)
     pollTimer = null
   }
+  if (searchTimer) clearTimeout(searchTimer)
 })
 </script>
 
@@ -188,7 +196,7 @@ onBeforeUnmount(() => {
         label-key="label"
         ignore-filter
         @update:model-value="pickPatient"
-        @update:search-term="patientSearch = $event; runPatientSearch()"
+        @update:search-term="onSearchTerm"
       />
     </UCard>
     <UAlert
