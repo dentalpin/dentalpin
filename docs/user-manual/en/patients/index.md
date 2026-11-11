@@ -59,7 +59,7 @@ Columns: `first_name*`, `last_name*`, `phone`, `email`,
 (auto-detected), UTF-8, max 1000 rows / 1 MiB. Dry-run (default)
 validates only and returns per-row errors plus `duplicates` (rows
 matching an existing patient by national id, else email + birth
-date; rows repeating within the file report `matched_on:
+date, ignoring upper/lower case; rows repeating within the file report `matched_on:
 "same_file"` with a null `patient_id`); commit skips duplicates
 unless `allow_duplicates=true`.
 The report shape is `{total, valid, created, skipped, errors,
