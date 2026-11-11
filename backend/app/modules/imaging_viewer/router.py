@@ -18,6 +18,8 @@ from .schemas import (
     AnnotationResponse,
     ImagingStudyResponse,
     RvgApproveRequest,
+    RvgBatchApproveRequest,
+    RvgBatchApproveResponse,
     RvgImportResponse,
     RvgLinkResponse,
     RvgRejectRequest,
@@ -273,6 +275,31 @@ async def rvg_reject_import(
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
     RvgService.retire_source_file(ctx.clinic_id, decided.filename, decided.content_hash)
     return ApiResponse(data=RvgImportResponse.model_validate(decided))
+
+
+@router.post(
+    "/rvg/imports/approve-batch",
+    response_model=ApiResponse[RvgBatchApproveResponse],
+)
+async def rvg_approve_imports_batch(
+    data: RvgBatchApproveRequest,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("imaging_viewer.rvg.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[RvgBatchApproveResponse]:
+    """Approve several pending imports in one call, per-item outcomes.
+
+    (Literal path, registered before the ``{import_id}`` routes like
+    ``counts``; each item is decided independently - a failed item never
+    rolls back an approved sibling.)
+    """
+    outcome = await RvgService.approve_batch(
+        db,
+        ctx.clinic_id,
+        [(item.import_id, item.patient_id) for item in data.items],
+        ctx.user_id,
+    )
+    return ApiResponse(data=RvgBatchApproveResponse.model_validate(outcome))
 
 
 @router.get("/rvg/links", response_model=ApiResponse[list[RvgLinkResponse]])

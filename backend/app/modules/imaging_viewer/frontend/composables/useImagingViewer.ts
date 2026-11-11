@@ -117,6 +117,12 @@ export interface RvgLink {
   updated_at: string
 }
 
+export interface RvgBatchApproveResult {
+  results: Array<{ import_id: string, patient_id: string, status: string, error: string | null }>
+  approved: number
+  failed: number
+}
+
 export function useRvgImport() {
   const api = useApi()
 
@@ -149,6 +155,14 @@ export function useRvgImport() {
     return res.data
   }
 
+  async function approveImports(items: Array<{ import_id: string, patient_id: string }>) {
+    const res = await api.post<ApiResponse<RvgBatchApproveResult>>(
+      '/api/v1/imaging_viewer/rvg/imports/approve-batch',
+      { items }
+    )
+    return res.data
+  }
+
   async function rejectImport(importId: string, reason?: string) {
     const res = await api.post<ApiResponse<RvgImport>>(
       `/api/v1/imaging_viewer/rvg/imports/${importId}/reject`,
@@ -166,5 +180,5 @@ export function useRvgImport() {
     await api.del(`/api/v1/imaging_viewer/rvg/links/${linkId}`)
   }
 
-  return { fetchImports, fetchImportCounts, triggerScan, approveImport, rejectImport, fetchLinks, deleteLink }
+  return { fetchImports, fetchImportCounts, triggerScan, approveImport, approveImports, rejectImport, fetchLinks, deleteLink }
 }

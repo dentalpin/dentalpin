@@ -68,6 +68,36 @@ class RvgApproveRequest(BaseModel):
     patient_id: UUID
 
 
+class RvgBatchApproveItem(BaseModel):
+    """One queue row to approve, with its explicit target patient."""
+
+    import_id: UUID
+    patient_id: UUID
+
+
+class RvgBatchApproveRequest(BaseModel):
+    """Approve several pending imports in one call, per-item outcomes."""
+
+    items: list[RvgBatchApproveItem] = Field(min_length=1, max_length=50)
+
+
+class RvgBatchApproveResult(BaseModel):
+    """Per-item outcome: the row id, the target, and the failure reason."""
+
+    import_id: UUID
+    patient_id: UUID
+    status: str
+    error: str | None = None
+
+
+class RvgBatchApproveResponse(BaseModel):
+    """Batch outcome: per-item results plus approved/failed totals."""
+
+    results: list[RvgBatchApproveResult]
+    approved: int
+    failed: int
+
+
 class RvgRejectRequest(BaseModel):
     """Reject a pending import, keeping the row for audit."""
 

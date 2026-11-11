@@ -34,6 +34,11 @@
       "scanFailed": "Skanowanie nie powiodło się. Czy folder obserwowany jest skonfigurowany?",
       "scanSummary": "Skanowanie zakończone: zeskanowane {scanned}, nowe {created}, zatwierdzone automatycznie {approved}, nieudane {failed}",
       "actionFailed": "Akcja nie powiodła się. Wiersz mógł już zostać rozstrzygnięty.",
+      "selectAll": "Zaznacz wszystkie",
+      "approveSelectedSuggestions": "Zatwierdź zaznaczone według sugestii",
+      "approveSelectedCurrent": "Zatwierdź zaznaczone dla bieżącego pacjenta",
+      "batchSummary": "Zatwierdzono {approved} z {total}",
+      "batchNothingEligible": "Żaden z zaznaczonych plików nie ma pacjenta docelowego.",
       "status": {
         "pending": "Oczekujące",
         "approved": "Zatwierdzone",

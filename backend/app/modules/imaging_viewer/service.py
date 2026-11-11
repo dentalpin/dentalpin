@@ -1009,6 +1009,49 @@ class RvgService:
         return row
 
     @staticmethod
+    async def approve_batch(
+        db: AsyncSession,
+        clinic_id: UUID,
+        items: list[tuple[UUID, UUID]],
+        user_id: UUID,
+    ) -> dict:
+        """Approve several pending imports in one call, per-item outcomes.
+
+        Each item runs the single-approve sequence (read bytes → approve →
+        retire the file) in its own transaction: a failed item never rolls
+        back an approved sibling. Expected per-item failures (unknown
+        row/patient/file, already decided) write nothing and come back as
+        ``status="failed"`` with the reason; an unexpected error aborts the
+        call loudly instead of being swallowed into the batch result.
+        """
+        results = []
+        for import_id, patient_id in items:
+            entry: dict = {
+                "import_id": import_id,
+                "patient_id": patient_id,
+                "status": "failed",
+                "error": None,
+            }
+            try:
+                row = await RvgService.get_import(db, clinic_id, import_id)
+                if row is None:
+                    raise LookupError("Import not found")
+                raw = RvgService.read_source_bytes(clinic_id, row.filename, row.content_hash)
+                decided = await RvgService.approve(
+                    db, clinic_id, import_id, patient_id, user_id, raw=raw
+                )
+                RvgService.retire_source_file(clinic_id, decided.filename, decided.content_hash)
+                entry["status"] = "approved"
+            except (RvgConflictError, LookupError) as exc:
+                entry["error"] = str(exc)
+            results.append(entry)
+        return {
+            "results": results,
+            "approved": sum(1 for r in results if r["status"] == "approved"),
+            "failed": sum(1 for r in results if r["status"] == "failed"),
+        }
+
+    @staticmethod
     async def reject(
         db: AsyncSession,
         clinic_id: UUID,

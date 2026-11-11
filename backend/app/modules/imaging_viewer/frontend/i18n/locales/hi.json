@@ -34,6 +34,11 @@
       "scanFailed": "स्कैन विफल। क्या वॉच फ़ोल्डर कॉन्फ़िगर है?",
       "scanSummary": "स्कैन पूरा: {scanned} स्कैन, {created} नई, {approved} स्वतः स्वीकृत, {failed} विफल",
       "actionFailed": "कार्रवाई विफल। हो सकता है इस पंक्ति पर पहले ही निर्णय हो चुका हो।",
+      "selectAll": "सभी चुनें",
+      "approveSelectedSuggestions": "चुने गए सुझावों के अनुसार स्वीकृत करें",
+      "approveSelectedCurrent": "चुने गए वर्तमान मरीज़ के लिए स्वीकृत करें",
+      "batchSummary": "{total} में से {approved} स्वीकृत",
+      "batchNothingEligible": "किसी चुनी गई फ़ाइल का लक्ष्य मरीज़ नहीं है।",
       "status": {
         "pending": "लंबित",
         "approved": "स्वीकृत",

@@ -34,6 +34,11 @@
       "scanFailed": "Falló el escaneo. ¿Está configurada la carpeta de vigilancia?",
       "scanSummary": "Escaneo completo: {scanned} escaneados, {created} nuevos, {approved} autoaprobados, {failed} fallidos",
       "actionFailed": "Falló la acción. La fila puede estar ya decidida.",
+      "selectAll": "Seleccionar todas",
+      "approveSelectedSuggestions": "Aprobar seleccionadas por sugerencia",
+      "approveSelectedCurrent": "Aprobar seleccionadas para el paciente actual",
+      "batchSummary": "Aprobadas {approved} de {total}",
+      "batchNothingEligible": "Ningún archivo seleccionado tiene paciente de destino.",
       "status": {
         "pending": "Pendientes",
         "approved": "Aprobadas",

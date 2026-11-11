@@ -34,6 +34,11 @@
       "scanFailed": "فشل المسح. هل مجلد المراقبة مهيأ؟",
       "scanSummary": "اكتمل المسح: {scanned} ممسوحة، {created} جديدة، {approved} معتمدة تلقائياً، {failed} فاشلة",
       "actionFailed": "فشل الإجراء. ربما تم حسم الصف مسبقاً.",
+      "selectAll": "تحديد الكل",
+      "approveSelectedSuggestions": "اعتماد المحدد وفق الاقتراحات",
+      "approveSelectedCurrent": "اعتماد المحدد للمريض الحالي",
+      "batchSummary": "تم اعتماد {approved} من {total}",
+      "batchNothingEligible": "لا يوجد مريض هدف لأي ملف محدد.",
       "status": {
         "pending": "معلقة",
         "approved": "معتمدة",

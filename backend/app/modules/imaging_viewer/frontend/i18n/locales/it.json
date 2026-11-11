@@ -34,6 +34,11 @@
       "scanFailed": "Scansione non riuscita. La cartella monitorata è configurata?",
       "scanSummary": "Scansione completata: {scanned} scansionati, {created} nuovi, {approved} approvati automaticamente, {failed} non riusciti",
       "actionFailed": "Azione non riuscita. La riga potrebbe essere già stata decisa.",
+      "selectAll": "Seleziona tutto",
+      "approveSelectedSuggestions": "Approva le selezionate tramite suggerimenti",
+      "approveSelectedCurrent": "Approva le selezionate per il paziente attuale",
+      "batchSummary": "Approvati {approved} di {total}",
+      "batchNothingEligible": "Nessun file selezionato ha un paziente di destinazione.",
       "status": {
         "pending": "In attesa",
         "approved": "Approvate",
