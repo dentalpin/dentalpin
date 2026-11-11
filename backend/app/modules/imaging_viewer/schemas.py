@@ -86,7 +86,7 @@ class RvgBatchApproveResult(BaseModel):
 
     import_id: UUID
     patient_id: UUID
-    status: str
+    status: Literal["approved", "failed"]
     error: str | None = None
 
 

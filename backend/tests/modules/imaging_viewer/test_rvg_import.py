@@ -734,6 +734,13 @@ async def test_approve_batch_over_http(
     )
     assert empty.status_code == 422
 
+    over = await client.post(
+        "/api/v1/imaging_viewer/rvg/imports/approve-batch",
+        json={"items": [{"import_id": str(uuid4()), "patient_id": str(test_patient.id)}] * 51},
+        headers=auth_headers,
+    )
+    assert over.status_code == 422
+
     approved = await client.post(
         "/api/v1/imaging_viewer/rvg/imports/approve-batch",
         json={"items": items},

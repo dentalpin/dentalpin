@@ -181,26 +181,30 @@ async function approveSelected(mode: 'suggestion' | 'current') {
     actionError.value = t('imagingViewer.rvg.batchNothingEligible')
     return
   }
+  // loadQueue() clears the error line, so the failure reasons are assigned
+  // after the reloads; the filenames must be captured before, because
+  // approved rows leave the pending tab on reload.
+  const nameById = new Map(queue.value.map(row => [row.id, row.filename]))
   batchRunning.value = true
   actionError.value = null
   try {
     const outcome = await approveImports(items)
-    if (outcome.failed > 0) {
-      const reasons = outcome.results
-        .filter(r => r.error)
-        .map(r => `${queue.value.find(row => row.id === r.import_id)?.filename ?? r.import_id}: ${r.error}`)
-      actionError.value = reasons.join('; ') || t('imagingViewer.rvg.actionFailed')
-    }
     toast.add({
       title: t('imagingViewer.rvg.batchSummary', {
         approved: outcome.approved,
-        total: items.length
+        total: selectedIds.value.length
       }),
       color: outcome.failed > 0 ? 'warning' : 'success'
     })
     selectedIds.value = []
     await loadQueue()
     await loadLinks()
+    if (outcome.failed > 0) {
+      const reasons = outcome.results
+        .filter(r => r.error)
+        .map(r => `${nameById.get(r.import_id) ?? r.import_id}: ${r.error}`)
+      actionError.value = reasons.join('; ') || t('imagingViewer.rvg.actionFailed')
+    }
   } catch (e) {
     // The queue may have changed under us: reload so it shows the truth
     // and surface the backend's reason instead of the generic line.

@@ -289,9 +289,12 @@ async def rvg_approve_imports_batch(
 ) -> ApiResponse[RvgBatchApproveResponse]:
     """Approve several pending imports in one call, per-item outcomes.
 
-    (Literal path, registered before the ``{import_id}`` routes like
-    ``counts``; each item is decided independently - a failed item never
-    rolls back an approved sibling.)
+    (Literal path, declared after the ``{import_id}`` routes - matching
+    stays unambiguous only because every ``{import_id}`` POST route
+    requires a suffix segment (``/approve``, ``/reject``); a bare
+    ``POST /rvg/imports/{import_id}`` added later would shadow this path.
+    Each item is decided independently - a failed item never rolls back
+    an approved sibling.)
     """
     outcome = await RvgService.approve_batch(
         db,

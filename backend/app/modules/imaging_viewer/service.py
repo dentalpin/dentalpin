@@ -1023,6 +1023,11 @@ class RvgService:
         row/patient/file, already decided) write nothing and come back as
         ``status="failed"`` with the reason; an unexpected error aborts the
         call loudly instead of being swallowed into the batch result.
+
+        The "writes nothing" guarantee is ordering, not rollback: every
+        expected failure is raised before the first flush of its
+        transaction, so the per-item ``except`` needs no rollback of its
+        own; a failure raised after a flush would need a savepoint.
         """
         results = []
         for import_id, patient_id in items:
