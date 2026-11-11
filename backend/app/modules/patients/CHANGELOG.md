@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#819): an "Import from CSV" screen (`/patients/import`, "Import CSV" on the patient list, `patients.write`) wraps `POST /patients/import.csv`, which was API-only. It checks the file first (the endpoint's dry run) and shows the per-row errors and possible duplicates with a link to the matching patient. Then it imports, with an opt-in to import the duplicates too, and shows what was created and skipped. A template CSV can be downloaded. The committing request gets a 5-minute client timeout: 1000 rows take about 8 s, past the default 10 s on a slower server, and a retry after a client timeout would duplicate rows the duplicate check cannot match.
+
 - fix(#573): the diagnosis mode container writes `clinicalMode=diagnosis`
   alongside `diagnosisView` when a sub-tab is picked, so the contextual
   help drawer's anchor rule also fires when entering the clinical record

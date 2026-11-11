@@ -271,6 +271,15 @@ function patientCity(p: Patient): string {
     >
       <template #actions>
         <UButton
+          v-if="can(PERMISSIONS.patients.write)"
+          to="/patients/import"
+          color="neutral"
+          variant="soft"
+          icon="i-lucide-file-up"
+        >
+          {{ t('patients.import.listAction') }}
+        </UButton>
+        <UButton
           color="primary"
           variant="soft"
           icon="i-lucide-plus"

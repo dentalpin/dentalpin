@@ -1,6 +1,6 @@
 ---
 module: patients
-last_verified_commit: 0e9a0ac
+last_verified_commit: f7c72c6f
 ---
 
 # Pacientes
@@ -17,6 +17,8 @@ enlazan con un paciente.
 - [Ficha del paciente](./screens/detail.md) — vista de un único
   paciente: tarjeta de identidad, datos extendidos y acciones que
   aportan otros módulos (recalls, fotos, planes de tratamiento, …).
+- [Importar desde CSV](./screens/import.md) — añadir muchos pacientes
+  a la vez desde un archivo CSV.
 
 ## Referencia rápida
 
@@ -44,6 +46,9 @@ Para instrucciones paso a paso, sigue las guías por pantalla.
 
 ## Importar desde CSV
 
+Usa la pantalla [Importar desde CSV](./screens/import.md) (listado de
+pacientes → **Importar CSV**). Los clientes de la API pueden llamar
+directamente a la misma importación,
 `POST /api/v1/patients/import.csv` (multipart `file`, `patients.write`):
 
 ```bash

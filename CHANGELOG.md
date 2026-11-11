@@ -20,6 +20,13 @@ frontend as a Nuxt layer under its own Python package.
   `rejected`, `executed` or `failed`; anything else answers 422 instead of
   an empty list.
 
+### Added
+
+- **Import patients from CSV in the app (#819).** The patient list has an
+  *Import CSV* button. The new screen checks the file, lists rows with
+  errors and possible duplicates, and imports after you confirm. Until now
+  the CSV import was reachable only through the API.
+
 ### Fixed
 
 - **Approving a queued agent action did nothing (#686).** Approval only

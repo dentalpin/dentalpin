@@ -152,6 +152,52 @@
     "linkError": "Hiba a csatolmány csatolásakor"
   },
   "patients": {
+    "import": {
+      "listAction": "CSV importálása",
+      "title": "Páciensek importálása CSV-ből",
+      "subtitle": "Tölts fel egy CSV-fájlt, hogy egyszerre több pácienst adj hozzá. A fájlt először ellenőrizzük; semmi nem mentődik, amíg meg nem erősíted.",
+      "back": "Vissza a páciensekhez",
+      "format": {
+        "title": "Fájlformátum",
+        "required": "Kötelező oszlopok:",
+        "optional": "Nem kötelező oszlopok:",
+        "rules": "Az első sorban pontosan az itt látható oszlopnevek legyenek; a többi oszlopot figyelmen kívül hagyjuk. Az értékeket vesszővel vagy pontosvesszővel válaszd el, és a fájlt UTF-8 kódolással mentsd. Dátum: ÉÉÉÉ-HH-NN vagy NN/HH/ÉÉÉÉ. do_not_contact: yes/no.",
+        "limits": "Fájlonként legfeljebb {rows} sor és 1 MB. A nagyobb fájlt bontsd több részre, és importáld őket egymás után.",
+        "template": "Sablon letöltése"
+      },
+      "file": "CSV-fájl",
+      "check": "Fájl ellenőrzése",
+      "checkFailed": "A fájlt nem sikerült ellenőrizni.",
+      "commitFailed": "Az importálás nem sikerült. Mielőtt újra próbálod, nézd meg a páciensek listáját: lehet, hogy néhány páciens már létrejött.",
+      "report": {
+        "title": "Ellenőrzés eredménye",
+        "total": "Sorok",
+        "valid": "Érvényes",
+        "errors": "Hibás",
+        "duplicates": "Lehetséges duplikátumok",
+        "errorsTitle": "Hibás sorok",
+        "errorsHint": "Ezeket a sorokat nem importáljuk. Javítsd őket a fájlban, és importáld újra.",
+        "row": "{row}. sor",
+        "duplicatesTitle": "Lehetséges duplikátumok",
+        "openPatient": "Meglévő páciens megnyitása",
+        "allowDuplicates": "A duplikátumok importálása is",
+        "allowDuplicatesHelp": "Alapértelmezésben kihagyjuk azokat a sorokat, amelyek egy meglévő pácienssel vagy a fájl egy korábbi sorával egyeznek.",
+        "nothingToImport": "Nincs importálható sor.",
+        "commit": "Páciensek importálása ({count})"
+      },
+      "matchedOn": {
+        "nationalId": "Ugyanaz a személyi azonosító, mint egy meglévő páciensé",
+        "emailAndBirthDate": "Ugyanaz az e-mail és születési dátum, mint egy meglévő páciensé",
+        "sameFile": "A fájl egy korábbi sorát ismétli"
+      },
+      "done": {
+        "title": "Az importálás befejeződött",
+        "summary": "{created} páciens létrehozva, {skipped} kihagyva duplikátumként.",
+        "notImported": "Hibás, nem importált sorok: {count}.",
+        "goToList": "Ugrás a páciensekhez",
+        "another": "Másik fájl importálása"
+      }
+    },
     "title": "Páciensek",
     "create": "Új páciens",
     "edit": "Páciens szerkesztése",
