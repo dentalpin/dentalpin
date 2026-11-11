@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#834): the S3 backend's `retrieve` read the object body (`StreamingBody.read()`, the actual download) on the event loop; only `get_object` ran in the worker thread. A large file stalled every other request for the length of the download. Both now run in the thread.
+
 - feat: S3-compatible object storage backend (`storage/s3.py`) behind the
   existing `StorageBackend` seam, selected with `STORAGE_BACKEND=s3` (T6).
   `STORAGE_S3_BUCKET` is required in that mode; `STORAGE_S3_REGION` /

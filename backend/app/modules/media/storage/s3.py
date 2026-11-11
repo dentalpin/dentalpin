@@ -50,17 +50,24 @@ class S3StorageBackend(StorageBackend):
         await asyncio.to_thread(self.client.put_object, Bucket=self.bucket, Key=path, Body=data)
         return path
 
+    def _get_object_bytes(self, path: str) -> bytes:
+        response = self.client.get_object(Bucket=self.bucket, Key=path)
+        # StreamingBody holds a pooled connection; close it even when the
+        # caller never drains the full body.
+        with closing(response["Body"]) as body:
+            return body.read()
+
     async def retrieve(self, path: str) -> bytes:
+        # get_object returns once the headers arrive; the bytes come over
+        # the network in Body.read(), so both run in the worker thread.
+        # Reading on the loop would stall every request for the length of
+        # the download.
         try:
-            response = await asyncio.to_thread(self.client.get_object, Bucket=self.bucket, Key=path)
+            return await asyncio.to_thread(self._get_object_bytes, path)
         except ClientError as exc:
             if self._not_found(exc):
                 raise FileNotFoundError(f"File not found: {path}") from exc
             raise
-        # StreamingBody holds a pooled connection; close it even when the
-        # caller never drains the full body.
-        with closing(response["Body"]):
-            return response["Body"].read()
 
     async def delete(self, path: str) -> bool:
         try:
