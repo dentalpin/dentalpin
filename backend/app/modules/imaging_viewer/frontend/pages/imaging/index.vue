@@ -186,8 +186,10 @@ async function approveSelected(mode: 'suggestion' | 'current') {
   try {
     const outcome = await approveImports(items)
     if (outcome.failed > 0) {
-      const first = outcome.results.find(r => r.error)
-      actionError.value = first?.error ?? t('imagingViewer.rvg.actionFailed')
+      const reasons = outcome.results
+        .filter(r => r.error)
+        .map(r => `${queue.value.find(row => row.id === r.import_id)?.filename ?? r.import_id}: ${r.error}`)
+      actionError.value = reasons.join('; ') || t('imagingViewer.rvg.actionFailed')
     }
     toast.add({
       title: t('imagingViewer.rvg.batchSummary', {
