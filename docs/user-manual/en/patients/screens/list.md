@@ -12,7 +12,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/patients/router.py
   - backend/app/modules/patients/frontend/pages/patients/index.vue
-last_verified_commit: 10085df
+last_verified_commit: f7c72c6f
 screenshots:
   - patients.png
 ---
@@ -58,12 +58,16 @@ filter, open a patient's detail page, or create a new patient.
    the system publishes a `patient.created` event so other modules
    (recalls, notifications, …) can react.
 
+To add many patients at once, click **Import CSV** next to it and
+follow [Import from CSV](./import.md).
+
 ## Permissions
 
 | You see / can do | Permission |
 |------------------|-----------|
 | Browse and search the list | `patients.read` |
 | Open the **New patient** button | `patients.write` |
+| See the **Import CSV** button | `patients.write` |
 
 ## Troubleshooting
 

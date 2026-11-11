@@ -152,6 +152,52 @@
     "linkError": "Erro ao associar o anexo"
   },
   "patients": {
+    "import": {
+      "listAction": "Importar CSV",
+      "title": "Importar pacientes a partir de CSV",
+      "subtitle": "Carregue um ficheiro CSV para adicionar vários pacientes de uma só vez. O ficheiro é verificado primeiro; nada é guardado até confirmar.",
+      "back": "Voltar aos pacientes",
+      "format": {
+        "title": "Formato do ficheiro",
+        "required": "Colunas obrigatórias:",
+        "optional": "Colunas opcionais:",
+        "rules": "A primeira linha deve conter os nomes das colunas exatamente como aqui; as restantes colunas são ignoradas. Separe os valores com vírgulas ou ponto e vírgula e guarde o ficheiro em UTF-8. Datas: AAAA-MM-DD ou DD/MM/AAAA. do_not_contact: yes/no.",
+        "limits": "Até {rows} linhas e 1 MB por ficheiro. Divida um ficheiro maior em vários e importe-os um após o outro.",
+        "template": "Descarregar modelo"
+      },
+      "file": "Ficheiro CSV",
+      "check": "Verificar ficheiro",
+      "checkFailed": "Não foi possível verificar o ficheiro.",
+      "commitFailed": "A importação falhou. Verifique a lista de pacientes antes de tentar novamente: alguns pacientes podem já ter sido criados.",
+      "report": {
+        "title": "Resultado da verificação",
+        "total": "Linhas",
+        "valid": "Válidas",
+        "errors": "Com erros",
+        "duplicates": "Possíveis duplicados",
+        "errorsTitle": "Linhas com erros",
+        "errorsHint": "Estas linhas não serão importadas. Corrija-as no ficheiro e importe-o novamente.",
+        "row": "Linha {row}",
+        "duplicatesTitle": "Possíveis duplicados",
+        "openPatient": "Abrir paciente existente",
+        "allowDuplicates": "Importar também os duplicados",
+        "allowDuplicatesHelp": "Por omissão, as linhas que coincidem com um paciente existente ou com uma linha anterior do ficheiro são ignoradas.",
+        "nothingToImport": "Não há linhas para importar.",
+        "commit": "Importar pacientes ({count})"
+      },
+      "matchedOn": {
+        "nationalId": "Mesmo documento de identificação que um paciente existente",
+        "emailAndBirthDate": "Mesmo email e data de nascimento que um paciente existente",
+        "sameFile": "Repete uma linha anterior deste ficheiro"
+      },
+      "done": {
+        "title": "Importação concluída",
+        "summary": "{created} pacientes criados, {skipped} ignorados como duplicados.",
+        "notImported": "Linhas com erros não importadas: {count}.",
+        "goToList": "Ir para pacientes",
+        "another": "Importar outro ficheiro"
+      }
+    },
     "title": "Pacientes",
     "create": "Novo paciente",
     "edit": "Editar paciente",

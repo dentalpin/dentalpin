@@ -4,6 +4,20 @@
 
 - fix(#836): the CSV import's duplicate check ignores upper/lower case in `national_id` and `email`. `Ana.Garcia@…` against `ana.garcia@…`, or a DNI letter in lower case, was not flagged, so the import created the same patient a second time. Patient search already ignored case. The check now reads the matching patients in two queries for the whole file instead of up to two per row (neither column is indexed): about 0.6 s → 0.07 s for 1000 rows against 1000 patients.
 
+- feat(#819): an "Import from CSV" screen (`/patients/import`, "Import CSV" on the patient list, `patients.write`) wraps `POST /patients/import.csv`, which was API-only. It checks the file first (the endpoint's dry run) and shows the per-row errors and possible duplicates with a link to the matching patient. Then it imports, with an opt-in to import the duplicates too, and shows what was created and skipped. A template CSV can be downloaded. The committing request gets a 5-minute client timeout: 1000 rows take about 8 s, past the default 10 s on a slower server, and a retry after a client timeout would duplicate rows the duplicate check cannot match.
+
+- fix(#573): the diagnosis mode container writes `clinicalMode=diagnosis`
+  alongside `diagnosisView` when a sub-tab is picked, so the contextual
+  help drawer's anchor rule also fires when entering the clinical record
+  through the default mode (the URL carried no `clinicalMode` unless a
+  mode switch had happened) instead of only on deep links.
+
+- docs(#573): the patient detail page (en/es) gains a `#periodontogram`
+  anchored section hosting the periodontogram help, absorbed from the
+  deleted `periodontogram/screens/periodontogram-view.md`; the
+  frontmatter now covers the periodontogram endpoints and permissions
+  so docs coverage stays green.
+
 - fix(#802): the personal info card shows "Prefer not to say" instead of the raw key `patients.gender.prefer_not_say`. The card and the sticky header now share one mapping from stored value to i18n key.
 
 - fix: `PUT /patients/{id}` and `/extended` with `status` wrote the column directly, so `archived` and `active` skipped `patient.archived` / `patient.restored`: documents were neither archived nor restored, and imaging studies were not archived. They now go through `archive_patient` / `restore_patient`. Any other value answers 422 instead of being stored, and `null` leaves the status unchanged instead of answering 500. A status-only update no longer also publishes `patient.updated`.

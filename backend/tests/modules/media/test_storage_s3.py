@@ -5,6 +5,8 @@ each test asserts the backend's contract (store/retrieve/delete/exists
 semantics and error mapping) without network access.
 """
 
+import threading
+
 import pytest
 from botocore.exceptions import ClientError
 
@@ -69,8 +71,10 @@ class _StubBody:
     def __init__(self, data: bytes) -> None:
         self._data = data
         self.closed = False
+        self.read_on: threading.Thread | None = None
 
     def read(self) -> bytes:
+        self.read_on = threading.current_thread()
         return self._data
 
     def close(self) -> None:
@@ -84,6 +88,21 @@ async def test_retrieve_closes_the_body() -> None:
 
     assert await backend.retrieve("k") == b"v"
     assert client.last_body.closed is True
+
+
+@pytest.mark.asyncio
+async def test_retrieve_reads_the_body_off_the_event_loop() -> None:
+    """``get_object`` returns as soon as the headers arrive; the bytes
+    come over the network in ``Body.read()``. Reading on the loop thread
+    would stall every other request for the length of the download (a
+    multi-MB X-ray or photo), so the read must run in the worker thread
+    too."""
+    client = StubS3Client({"k": b"v"})
+    backend = _make_backend(client)
+
+    assert await backend.retrieve("k") == b"v"
+    assert client.last_body.read_on is not None
+    assert client.last_body.read_on is not threading.current_thread()
 
 
 def _make_backend(client: StubS3Client) -> S3StorageBackend:

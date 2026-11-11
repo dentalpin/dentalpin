@@ -1,6 +1,6 @@
 ---
 module: periodontogram
-last_verified_commit: 411343e
+last_verified_commit: 6dde74fc
 ---
 
 # Periodontogram
@@ -16,8 +16,10 @@ Activate it from *Admin → Modules → Periodontogram → Install*.
 
 ## Screens
 
-- [Periodontogram view](./screens/periodontogram-view.md) — SEPA
-  exam, cell-level editing, indices banner, history slider.
+- [Periodontogram view](../patients/screens/detail.md#periodontogram) - SEPA
+  exam, cell-level editing, indices banner, history slider. It is a
+  sub-view of the patient detail page and is documented as a section
+  of that page.
 
 ## What each exam captures
 

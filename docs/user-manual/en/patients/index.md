@@ -1,6 +1,6 @@
 ---
 module: patients
-last_verified_commit: 4def5a3a
+last_verified_commit: f7c72c6f
 ---
 
 # Patients
@@ -15,6 +15,8 @@ Almost every other module in DentalPin links back to a patient row.
 - [Patient detail](./screens/detail.md) — single patient view: identity
   card, extended demographics, sibling-module actions (recalls, photos,
   treatment plans, …).
+- [Import from CSV](./screens/import.md) — add many patients at once
+  from a CSV file.
 
 ## Quick reference
 
@@ -41,6 +43,8 @@ For end-user instructions, follow the screen-by-screen guides above.
 
 ## Importing from CSV
 
+Use the [Import from CSV](./screens/import.md) screen (patient list →
+**Import CSV**). API clients can call the same import directly,
 `POST /api/v1/patients/import.csv` (multipart `file`, `patients.write`):
 
 ```bash

@@ -12,7 +12,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/patients/router.py
   - backend/app/modules/patients/frontend/pages/patients/index.vue
-last_verified_commit: 10085df
+last_verified_commit: f7c72c6f
 screenshots:
   - patients.png
 ---
@@ -58,12 +58,16 @@ buscar, filtrar, abrir la ficha de un paciente o crear uno nuevo.
    el sistema publica un evento `patient.created` para que otros
    módulos (recalls, notificaciones…) reaccionen.
 
+Para añadir muchos pacientes a la vez, pulsa **Importar CSV** a su lado
+y sigue [Importar desde CSV](./import.md).
+
 ## Permisos
 
 | Lo que ves / puedes hacer | Permiso |
 |---------------------------|---------|
 | Navegar y buscar el listado | `patients.read` |
 | Ver el botón **Nuevo paciente** | `patients.write` |
+| Ver el botón **Importar CSV** | `patients.write` |
 
 ## Resolución de problemas
 

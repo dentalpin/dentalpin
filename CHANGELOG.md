@@ -20,6 +20,13 @@ frontend as a Nuxt layer under its own Python package.
   `rejected`, `executed` or `failed`; anything else answers 422 instead of
   an empty list.
 
+### Added
+
+- **Import patients from CSV in the app (#819).** The patient list has an
+  *Import CSV* button. The new screen checks the file, lists rows with
+  errors and possible duplicates, and imports after you confirm. Until now
+  the CSV import was reachable only through the API.
+
 ### Fixed
 
 - **Approving a queued agent action did nothing (#686).** Approval only
@@ -102,6 +109,20 @@ agenda, copilot and the odontogram. Thanks @ZoliQua and @lamanji.
   the cap reads as empty until it is re-entered.
 
 ### Fixed
+
+- **Contextual help now covers the periodontogram sub-tab.** The help
+  drawer requested a fragment the docs portal published under a name no
+  app route can produce (`patients_{id}.html` vs `patients_id.html`), so
+  the periodontogram tab never reached its documentation: the drawer
+  loaded the patient-detail help from the top, the periodontogram
+  section nowhere in view. A named diagnosis sub-view
+  (`clinicalMode=diagnosis` + `diagnosisView=<view>`) now opens the
+  parent patient-detail fragment at a `#<view>` anchor; the diagnosis
+  container writes `clinicalMode` when a sub-tab is picked, so the
+  anchor also fires entering through the default mode rather than only
+  on deep links. The periodontogram documentation moved into the
+  patient-detail page (en/es) as that anchored section; the standalone
+  `periodontogram-view.md` screen docs are gone (#573).
 
 - **Turning a patient's email off also silenced WhatsApp and SMS.** The
   consent check still treated the email switch as an opt-out of every

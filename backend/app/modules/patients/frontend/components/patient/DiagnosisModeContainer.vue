@@ -65,7 +65,14 @@ onMounted(() => {
 
 watch(activeKey, (value) => {
   router.replace({
-    query: { ...route.query, diagnosisView: value === 'odontogram' ? undefined : value }
+    // clinicalMode rides along: diagnosis is this container's only mode,
+    // and the help drawer's anchor rule keys on it (#573) - entry through
+    // the default mode carries no clinicalMode in the URL otherwise.
+    query: {
+      ...route.query,
+      clinicalMode: 'diagnosis',
+      diagnosisView: value === 'odontogram' ? undefined : value
+    }
   })
 })
 </script>

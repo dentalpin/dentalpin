@@ -248,6 +248,7 @@
       "path": "/module_layers/patients/frontend",
       "routes": [
         "/patients/:id",
+        "/patients/import",
         "/patients"
       ]
     },

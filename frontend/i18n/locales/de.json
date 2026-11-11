@@ -152,6 +152,52 @@
     "linkError": "Fehler beim Verknüpfen des Anhangs"
   },
   "patients": {
+    "import": {
+      "listAction": "CSV importieren",
+      "title": "Patienten aus CSV importieren",
+      "subtitle": "Laden Sie eine CSV-Datei hoch, um mehrere Patienten auf einmal anzulegen. Die Datei wird zuerst geprüft; gespeichert wird erst nach Ihrer Bestätigung.",
+      "back": "Zurück zu den Patienten",
+      "format": {
+        "title": "Dateiformat",
+        "required": "Pflichtspalten:",
+        "optional": "Optionale Spalten:",
+        "rules": "Die erste Zeile muss die Spaltennamen genau wie hier angegeben enthalten; andere Spalten werden ignoriert. Trennen Sie die Werte mit Komma oder Semikolon und speichern Sie die Datei als UTF-8. Datum: JJJJ-MM-TT oder TT/MM/JJJJ. do_not_contact: yes/no.",
+        "limits": "Bis zu {rows} Zeilen und 1 MB pro Datei. Teilen Sie eine größere Datei auf und importieren Sie die Teile nacheinander.",
+        "template": "Vorlage herunterladen"
+      },
+      "file": "CSV-Datei",
+      "check": "Datei prüfen",
+      "checkFailed": "Die Datei konnte nicht geprüft werden.",
+      "commitFailed": "Der Import ist fehlgeschlagen. Prüfen Sie die Patientenliste, bevor Sie es erneut versuchen: Einige Patienten wurden möglicherweise bereits angelegt.",
+      "report": {
+        "title": "Prüfergebnis",
+        "total": "Zeilen",
+        "valid": "Gültig",
+        "errors": "Mit Fehlern",
+        "duplicates": "Mögliche Duplikate",
+        "errorsTitle": "Zeilen mit Fehlern",
+        "errorsHint": "Diese Zeilen werden nicht importiert. Korrigieren Sie sie in der Datei und importieren Sie sie erneut.",
+        "row": "Zeile {row}",
+        "duplicatesTitle": "Mögliche Duplikate",
+        "openPatient": "Vorhandenen Patienten öffnen",
+        "allowDuplicates": "Duplikate ebenfalls importieren",
+        "allowDuplicatesHelp": "Standardmäßig werden Zeilen übersprungen, die einem vorhandenen Patienten oder einer früheren Zeile der Datei entsprechen.",
+        "nothingToImport": "Es gibt keine Zeilen zum Importieren.",
+        "commit": "Patienten importieren ({count})"
+      },
+      "matchedOn": {
+        "nationalId": "Gleiche Ausweisnummer wie ein vorhandener Patient",
+        "emailAndBirthDate": "Gleiche E-Mail und gleiches Geburtsdatum wie ein vorhandener Patient",
+        "sameFile": "Wiederholt eine frühere Zeile dieser Datei"
+      },
+      "done": {
+        "title": "Import abgeschlossen",
+        "summary": "{created} Patienten angelegt, {skipped} als Duplikate übersprungen.",
+        "notImported": "Zeilen mit Fehlern, die nicht importiert wurden: {count}.",
+        "goToList": "Zu den Patienten",
+        "another": "Weitere Datei importieren"
+      }
+    },
     "title": "Patienten",
     "create": "Neuer Patient",
     "edit": "Patient bearbeiten",

@@ -152,6 +152,52 @@
     "linkError": "Błąd podczas dołączania załącznika"
   },
   "patients": {
+    "import": {
+      "listAction": "Importuj CSV",
+      "title": "Import pacjentów z pliku CSV",
+      "subtitle": "Prześlij plik CSV, aby dodać kilku pacjentów naraz. Plik jest najpierw sprawdzany; nic nie zostanie zapisane, dopóki tego nie potwierdzisz.",
+      "back": "Powrót do pacjentów",
+      "format": {
+        "title": "Format pliku",
+        "required": "Kolumny wymagane:",
+        "optional": "Kolumny opcjonalne:",
+        "rules": "Pierwszy wiersz musi zawierać nazwy kolumn dokładnie takie jak tutaj; pozostałe kolumny są pomijane. Oddzielaj wartości przecinkami lub średnikami i zapisz plik w kodowaniu UTF-8. Daty: RRRR-MM-DD lub DD/MM/RRRR. do_not_contact: yes/no.",
+        "limits": "Do {rows} wierszy i 1 MB na plik. Większy plik podziel na kilka części i importuj je po kolei.",
+        "template": "Pobierz szablon"
+      },
+      "file": "Plik CSV",
+      "check": "Sprawdź plik",
+      "checkFailed": "Nie udało się sprawdzić pliku.",
+      "commitFailed": "Import nie powiódł się. Zanim spróbujesz ponownie, sprawdź listę pacjentów: część pacjentów mogła już zostać utworzona.",
+      "report": {
+        "title": "Wynik sprawdzenia",
+        "total": "Wiersze",
+        "valid": "Poprawne",
+        "errors": "Z błędami",
+        "duplicates": "Możliwe duplikaty",
+        "errorsTitle": "Wiersze z błędami",
+        "errorsHint": "Te wiersze nie zostaną zaimportowane. Popraw je w pliku i zaimportuj go ponownie.",
+        "row": "Wiersz {row}",
+        "duplicatesTitle": "Możliwe duplikaty",
+        "openPatient": "Otwórz istniejącego pacjenta",
+        "allowDuplicates": "Importuj także duplikaty",
+        "allowDuplicatesHelp": "Domyślnie pomijane są wiersze zgodne z istniejącym pacjentem lub z wcześniejszym wierszem pliku.",
+        "nothingToImport": "Brak wierszy do zaimportowania.",
+        "commit": "Importuj pacjentów ({count})"
+      },
+      "matchedOn": {
+        "nationalId": "Ten sam numer identyfikacyjny co istniejący pacjent",
+        "emailAndBirthDate": "Ten sam e-mail i data urodzenia co istniejący pacjent",
+        "sameFile": "Powtarza wcześniejszy wiersz tego pliku"
+      },
+      "done": {
+        "title": "Import zakończony",
+        "summary": "Utworzono pacjentów: {created}, pominięto jako duplikaty: {skipped}.",
+        "notImported": "Wiersze z błędami, które nie zostały zaimportowane: {count}.",
+        "goToList": "Przejdź do pacjentów",
+        "another": "Importuj inny plik"
+      }
+    },
     "title": "Pacjenci",
     "create": "Nowy pacjent",
     "edit": "Edytuj pacjenta",
