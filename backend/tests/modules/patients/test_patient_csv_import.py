@@ -203,3 +203,63 @@ async def test_intra_file_duplicates_flagged(
     assert len(body["duplicates"]) == 1
     assert body["duplicates"][0]["row"] == 3
     assert body["duplicates"][0]["matched_on"] == "same_file"
+
+
+@pytest.mark.asyncio
+async def test_duplicates_match_regardless_of_case(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+) -> None:
+    """An export rarely keeps the case the clinic typed: ``Ana.Garcia@…``
+    against ``ana.garcia@…``, or a DNI letter in lower case. Search
+    already ignores case (``ilike``); the duplicate check must too, or
+    the import creates the same patient twice and says nothing."""
+    from datetime import date
+
+    test_patient.email = "Ana.Garcia@example.com"
+    test_patient.date_of_birth = date(1990, 5, 1)
+    test_patient.national_id = "12345678Z"
+    await db_session.commit()
+    csv_bytes = (
+        b"first_name,last_name,email,date_of_birth,national_id\n"
+        b"Ana,Garcia,ana.garcia@example.com,1990-05-01,\n"
+        b"Ana,Garcia,,,12345678z\n"
+    )
+
+    dry = await client.post(
+        "/api/v1/patients/import.csv",
+        files={"file": ("case.csv", csv_bytes, "text/csv")},
+        headers=auth_headers,
+    )
+    assert dry.status_code == 200, dry.text
+    duplicates = {d["row"]: d for d in dry.json()["data"]["duplicates"]}
+    assert duplicates[2]["matched_on"] == "email+date_of_birth"
+    assert duplicates[2]["patient_id"] == str(test_patient.id)
+    assert duplicates[3]["matched_on"] == "national_id"
+    assert duplicates[3]["patient_id"] == str(test_patient.id)
+
+
+@pytest.mark.asyncio
+async def test_intra_file_duplicates_match_regardless_of_case(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+) -> None:
+    twin_csv = (
+        b"first_name,last_name,email,date_of_birth,national_id\n"
+        b"Ana,Garcia,,,11111111H\n"
+        b"Ana,Garcia,,,11111111h\n"
+        b"Eva,Lopez,Eva@example.com,1985-01-02,\n"
+        b"Eva,Lopez,eva@example.com,1985-01-02,\n"
+    )
+    dry = await client.post(
+        "/api/v1/patients/import.csv",
+        files={"file": ("twins.csv", twin_csv, "text/csv")},
+        headers=auth_headers,
+    )
+    assert dry.status_code == 200, dry.text
+    rows = sorted((d["row"], d["matched_on"]) for d in dry.json()["data"]["duplicates"])
+    assert rows == [(3, "same_file"), (5, "same_file")]

@@ -23,7 +23,7 @@ from datetime import date, datetime
 from uuid import UUID
 
 from pydantic import ValidationError
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.modules.patients.models import Patient
@@ -156,76 +156,84 @@ async def find_duplicate_lines(
 ) -> list[dict]:
     """Flag rows matching an existing non-archived patient — or each other.
 
-    Match key: national_id, else email + date_of_birth. Returns
+    Match key: national_id, else email + date_of_birth, both compared
+    without regard to case (an export rarely keeps the case the clinic
+    typed, and patient search already ignores it). Returns
     ``{"row", "patient_id", "matched_on"}`` per flagged row;
     intra-file repeats carry ``patient_id: null`` and
     ``matched_on: "same_file"``.
     """
+    existing_by_id, existing_by_email = await _existing_patient_keys(db, clinic_id, valid)
     duplicates: list[dict] = []
-    seen_ids: dict[str, int] = {}
-    seen_emails: dict[tuple[str | None, object], int] = {}
+    seen_ids: set[str] = set()
+    seen_emails: set[tuple[str, date]] = set()
     for row, line_number in zip(valid, lines):
-        if row.national_id:
-            if row.national_id in seen_ids:
+        national_id = row.national_id.lower() if row.national_id else None
+        email_key = (
+            (row.email.lower(), row.date_of_birth) if row.email and row.date_of_birth else None
+        )
+        if national_id:
+            if national_id in seen_ids:
                 duplicates.append(
-                    {
-                        "row": line_number,
-                        "patient_id": None,
-                        "matched_on": "same_file",
-                    }
+                    {"row": line_number, "patient_id": None, "matched_on": "same_file"}
                 )
                 continue
-            seen_ids[row.national_id] = line_number
-        elif row.email and row.date_of_birth:
-            key = (row.email, row.date_of_birth)
-            if key in seen_emails:
+            seen_ids.add(national_id)
+        elif email_key:
+            if email_key in seen_emails:
                 duplicates.append(
-                    {
-                        "row": line_number,
-                        "patient_id": None,
-                        "matched_on": "same_file",
-                    }
+                    {"row": line_number, "patient_id": None, "matched_on": "same_file"}
                 )
                 continue
-            seen_emails[key] = line_number
-        match: Patient | None = None
+            seen_emails.add(email_key)
+        match: UUID | None = None
         matched_on = ""
-        if row.national_id:
-            match = (
-                (
-                    await db.execute(
-                        select(Patient).where(
-                            Patient.clinic_id == clinic_id,
-                            Patient.national_id == row.national_id,
-                            Patient.status != "archived",
-                        )
-                    )
-                )
-                .scalars()
-                .first()
-            )
+        if national_id:
+            match = existing_by_id.get(national_id)
             matched_on = "national_id"
-        if match is None and row.email and row.date_of_birth:
-            match = (
-                (
-                    await db.execute(
-                        select(Patient).where(
-                            Patient.clinic_id == clinic_id,
-                            Patient.email == row.email,
-                            Patient.date_of_birth == row.date_of_birth,
-                            Patient.status != "archived",
-                        )
-                    )
-                )
-                .scalars()
-                .first()
-            )
+        if match is None and email_key:
+            match = existing_by_email.get(email_key)
             matched_on = "email+date_of_birth"
         if match is not None:
             duplicates.append(
-                {"row": line_number, "patient_id": str(match.id), "matched_on": matched_on}
+                {"row": line_number, "patient_id": str(match), "matched_on": matched_on}
             )
     return duplicates
+
+
+async def _existing_patient_keys(
+    db: AsyncSession, clinic_id: UUID, valid: list[PatientCreate]
+) -> tuple[dict[str, UUID], dict[tuple[str, date], UUID]]:
+    """Existing non-archived patients keyed by lower-cased national_id and
+    by (lower-cased email, date_of_birth), for the keys the file uses.
+
+    Two queries for the whole file instead of up to two per row; neither
+    column is indexed, so each per-row query scanned the clinic's patients.
+    The oldest patient wins when several share a key.
+    """
+    ids = {row.national_id.lower() for row in valid if row.national_id}
+    emails = {row.email.lower() for row in valid if row.email and row.date_of_birth}
+    by_id: dict[str, UUID] = {}
+    by_email: dict[tuple[str, date], UUID] = {}
+    active = (Patient.clinic_id == clinic_id, Patient.status != "archived")
+    order = (Patient.created_at, Patient.id)
+    if ids:
+        key = func.lower(Patient.national_id)
+        result = await db.execute(
+            select(Patient.id, key).where(*active, key.in_(ids)).order_by(*order)
+        )
+        for patient_id, national_id in result.all():
+            by_id.setdefault(national_id, patient_id)
+    if emails:
+        key = func.lower(Patient.email)
+        result = await db.execute(
+            select(Patient.id, key, Patient.date_of_birth)
+            .where(*active, key.in_(emails), Patient.date_of_birth.is_not(None))
+            .order_by(*order)
+        )
+        for patient_id, email, born in result.all():
+            by_email.setdefault((email, born), patient_id)
+    return by_id, by_email
 
 
 async def import_patients(

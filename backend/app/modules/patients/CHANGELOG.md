@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#836): the CSV import's duplicate check ignores upper/lower case in `national_id` and `email`. `Ana.Garcia@…` against `ana.garcia@…`, or a DNI letter in lower case, was not flagged, so the import created the same patient a second time. Patient search already ignored case. The check now reads the matching patients in two queries for the whole file instead of up to two per row (neither column is indexed): about 0.6 s → 0.07 s for 1000 rows against 1000 patients.
+
 - fix(#802): the personal info card shows "Prefer not to say" instead of the raw key `patients.gender.prefer_not_say`. The card and the sticky header now share one mapping from stored value to i18n key.
 
 - fix: `PUT /patients/{id}` and `/extended` with `status` wrote the column directly, so `archived` and `active` skipped `patient.archived` / `patient.restored`: documents were neither archived nor restored, and imaging studies were not archived. They now go through `archive_patient` / `restore_patient`. Any other value answers 422 instead of being stored, and `null` leaves the status unchanged instead of answering 500. A status-only update no longer also publishes `patient.updated`.
