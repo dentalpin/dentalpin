@@ -783,16 +783,19 @@ class RvgService:
     ) -> dict:
         """Scan up to ``limit`` files from a watch dir, best-effort per file.
 
-        A broken file records a failed row — it never aborts the tick.
-        Handled files are filed by outcome: a row still awaiting a human
-        decision moves to ``pending/`` (approve reads the bytes from
-        there, then retires the file to ``processed/``), and everything
-        decided by the tick itself (auto-imported, rejected, failed) moves
-        to ``processed/`` (failed rows keep their error for audit; re-drop
-        the file to retry). So a folder holding more than ``limit`` files
-        drains over successive ticks instead of stalling on the first
-        page, and ticks never re-hash the same files. Returns counts
-        ``{scanned, created, approved, pending, failed}``.
+        A broken file never aborts the tick. A row that fails during
+        import records a ``failed`` row (its error kept for audit); a
+        file that errors before a row can exist only counts toward
+        ``failed`` and stays in the watch root for the next tick to
+        retry. Handled files are filed by outcome: a row still awaiting
+        a human decision moves to ``pending/`` (approve reads the bytes
+        from there, then retires the file to ``processed/``), and
+        everything else decided by the tick itself (auto-imported,
+        rejected, failed) moves to ``processed/``. So a folder holding
+        more than
+        ``limit`` files drains over successive ticks instead of stalling
+        on the first page, and ticks never re-hash the same files.
+        Returns counts ``{scanned, created, approved, pending, failed}``.
         """
         counts = {"scanned": 0, "created": 0, "approved": 0, "pending": 0, "failed": 0}
         try:
@@ -822,6 +825,7 @@ class RvgService:
                 )
             except Exception:  # noqa: BLE001 — per-file best-effort, tick continues
                 logger.exception("RvgService.scan_watch_dir: failed on %s", name)
+                counts["failed"] += 1
                 continue
             if created:
                 counts["created"] += 1

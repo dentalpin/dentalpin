@@ -448,6 +448,40 @@ async def test_scan_watch_dir_files_by_outcome_and_drains_past_limit(
 
 
 @pytest.mark.asyncio
+async def test_scan_watch_dir_counts_failed_when_a_file_errors(
+    test_clinic: Clinic, db_session: AsyncSession, monkeypatch: pytest.MonkeyPatch, tmp_path
+) -> None:
+    """A file that errors before a row can exist (unreadable bytes, a
+    crash on the way into scan_bytes) must still count toward ``failed``:
+    the summary toast otherwise reads green with ``scanned`` > ``created``
+    (#580 follow-up). The file stays in the watch root, so the next tick
+    retries it."""
+    from pathlib import Path
+
+    watch = Path(str(tmp_path)) / "watch"
+    watch.mkdir()
+    (watch / "ok.dcm").write_bytes(b"not-dicom")
+    (watch / "boom.dcm").write_bytes(b"not-dicom")
+
+    real_scan = RvgService.scan_bytes
+
+    async def flaky(db, clinic_id, name, raw, retry_failed=False):
+        if name == "boom.dcm":
+            raise RuntimeError("read exploded")
+        return await real_scan(db, clinic_id, name, raw, retry_failed=retry_failed)
+
+    monkeypatch.setattr(RvgService, "scan_bytes", staticmethod(flaky))
+    counts = await RvgService.scan_watch_dir(db_session, test_clinic.id, str(watch))
+    # ok.dcm records a failed ROW (created=True, status=failed); boom.dcm
+    # errors before any row - the except branch must count it too.
+    assert counts == {"scanned": 2, "created": 1, "approved": 0, "pending": 0, "failed": 2}
+    # boom.dcm was never decided: it stays in the root for a retry. ok.dcm's
+    # failed ROW was decided by the tick: retired to processed/ for audit.
+    assert [p.name for p in watch.iterdir() if p.is_file()] == ["boom.dcm"]
+    assert (watch / "processed" / "ok.dcm").is_file()
+
+
+@pytest.mark.asyncio
 async def test_same_filename_different_bytes_approves_its_own_bytes(
     client,
     auth_headers: dict,
