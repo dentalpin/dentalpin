@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#819): an "Import from CSV" screen (`/patients/import`, "Import CSV" on the patient list, `patients.write`) wraps `POST /patients/import.csv`, which was API-only. It checks the file first (the endpoint's dry run) and shows the per-row errors and possible duplicates with a link to the matching patient. Then it imports, with an opt-in to import the duplicates too, and shows what was created and skipped. A template CSV can be downloaded. The committing request gets a 5-minute client timeout: 1000 rows take about 8 s, past the default 10 s on a slower server, and a retry after a client timeout would duplicate rows the duplicate check cannot match.
+
 - fix(#802): the personal info card shows "Prefer not to say" instead of the raw key `patients.gender.prefer_not_say`. The card and the sticky header now share one mapping from stored value to i18n key.
 
 - fix: `PUT /patients/{id}` and `/extended` with `status` wrote the column directly, so `archived` and `active` skipped `patient.archived` / `patient.restored`: documents were neither archived nor restored, and imaging studies were not archived. They now go through `archive_patient` / `restore_patient`. Any other value answers 422 instead of being stored, and `null` leaves the status unchanged instead of answering 500. A status-only update no longer also publishes `patient.updated`.

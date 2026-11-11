@@ -152,6 +152,52 @@
     "linkError": "Error linking attachment"
   },
   "patients": {
+    "import": {
+      "listAction": "Import CSV",
+      "title": "Import patients from CSV",
+      "subtitle": "Upload a CSV file to add several patients at once. The file is checked first; nothing is saved until you confirm.",
+      "back": "Back to patients",
+      "format": {
+        "title": "File format",
+        "required": "Required columns:",
+        "optional": "Optional columns:",
+        "rules": "The first row must hold the column names exactly as written here; other columns are ignored. Separate values with commas or semicolons and save the file as UTF-8. Dates: YYYY-MM-DD or DD/MM/YYYY. do_not_contact: yes/no.",
+        "limits": "Up to {rows} rows and 1 MB per file. Split a larger file into several and import them one after another.",
+        "template": "Download template"
+      },
+      "file": "CSV file",
+      "check": "Check file",
+      "checkFailed": "The file could not be checked.",
+      "commitFailed": "The import failed. Check the patient list before trying again: some patients may already have been created.",
+      "report": {
+        "title": "Check result",
+        "total": "Rows",
+        "valid": "Valid",
+        "errors": "With errors",
+        "duplicates": "Possible duplicates",
+        "errorsTitle": "Rows with errors",
+        "errorsHint": "These rows will not be imported. Fix them in the file and import it again.",
+        "row": "Row {row}",
+        "duplicatesTitle": "Possible duplicates",
+        "openPatient": "Open existing patient",
+        "allowDuplicates": "Import duplicates too",
+        "allowDuplicatesHelp": "By default, rows that match an existing patient or an earlier row in the file are skipped.",
+        "nothingToImport": "There are no rows to import.",
+        "commit": "Import patients ({count})"
+      },
+      "matchedOn": {
+        "nationalId": "Same national ID as an existing patient",
+        "emailAndBirthDate": "Same email and date of birth as an existing patient",
+        "sameFile": "Repeats an earlier row in this file"
+      },
+      "done": {
+        "title": "Import finished",
+        "summary": "{created} patients created, {skipped} skipped as duplicates.",
+        "notImported": "Rows with errors that were not imported: {count}.",
+        "goToList": "Go to patients",
+        "another": "Import another file"
+      }
+    },
     "title": "Patients",
     "create": "New patient",
     "edit": "Edit patient",

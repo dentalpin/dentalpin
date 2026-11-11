@@ -27,6 +27,11 @@ interface UseApiOptions {
   // routinely semantic ("not signed", probe-style reads) and its
   // handling belongs to the caller.
   errorToast?: boolean
+  // Milliseconds before the request is abandoned (default 10 s). Raise
+  // it only for a request that legitimately runs long, such as a bulk
+  // import: the server keeps working after the client gives up, so a
+  // timed-out write may still commit.
+  timeout?: number
 }
 
 function _withQuery(path: string, query?: UseApiOptions['query']): string {
@@ -61,7 +66,7 @@ export function useApi() {
     path: string,
     options: UseApiOptions = {}
   ): Promise<T> {
-    const { skipAuth, method, body, headers: optionHeaders, signal, query, errorToast = true } = options
+    const { skipAuth, method, body, headers: optionHeaders, signal, query, errorToast = true, timeout = 10000 } = options
 
     const headers: Record<string, string> = {
       ...(optionHeaders || {})
@@ -78,7 +83,7 @@ export function useApi() {
     try {
       return await $fetch<T>(url, {
         baseURL: apiBaseUrl.value,
-        timeout: 10000, // 10 seconds
+        timeout,
         method,
         body,
         headers,
