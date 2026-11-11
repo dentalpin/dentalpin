@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/imaging_viewer/router.py
   - backend/app/modules/imaging_viewer/frontend/pages/imaging/index.vue
-last_verified_commit: f2f27de5779ae29cf903a88464d8e4bde4095a08
+last_verified_commit: 6a661916db4e15d4deeb4e23a03132e49a3ec913
 screenshots: []
 ---
 
