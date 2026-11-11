@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- fix(#573): the diagnosis mode container writes `clinicalMode=diagnosis`
+  alongside `diagnosisView` when a sub-tab is picked, so the contextual
+  help drawer's anchor rule also fires when entering the clinical record
+  through the default mode (the URL carried no `clinicalMode` unless a
+  mode switch had happened) instead of only on deep links.
+
+- docs(#573): the patient detail page (en/es) gains a `#periodontogram`
+  anchored section hosting the periodontogram help, absorbed from the
+  deleted `periodontogram/screens/periodontogram-view.md`; the
+  frontmatter now covers the periodontogram endpoints and permissions
+  so docs coverage stays green.
+
 - fix(#802): the personal info card shows "Prefer not to say" instead of the raw key `patients.gender.prefer_not_say`. The card and the sticky header now share one mapping from stored value to i18n key.
 
 - fix: `PUT /patients/{id}` and `/extended` with `status` wrote the column directly, so `archived` and `active` skipped `patient.archived` / `patient.restored`: documents were neither archived nor restored, and imaging studies were not archived. They now go through `archive_patient` / `restore_patient`. Any other value answers 422 instead of being stored, and `null` leaves the status unchanged instead of answering 500. A status-only update no longer also publishes `patient.updated`.

@@ -18,6 +18,12 @@
  * Dynamic params in the live route (e.g. `/patients/abc-123`) collapse
  * to the static `[id]` form so they hit the same MD file the portal
  * built from the source.
+ *
+ * Query-driven sub-views (the periodontogram tab inside the patient's
+ * diagnosis mode) are sections of the parent screen's fragment,
+ * addressed by an explicit anchor: `clinicalMode=diagnosis` +
+ * `diagnosisView=<view>` appends `#<view>` to the URL (#573). The
+ * odontogram default view carries no `diagnosisView` and needs none.
  */
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
@@ -42,9 +48,9 @@ function collapseDynamicSegments(path: string, matchedRoute: string | undefined)
 
 function routeToSlug(route: string): string {
   // Keep the path only. `route.path` never carries a query, but a screen's
-  // `route:` in the user manual can (e.g. the periodontogram deep link), and
-  // the portal's `routeToSlug` drops it there — `?` is an illegal filename
-  // character and the fragment filename must match on both sides.
+  // `route:` in the user manual can, and the portal's `routeToSlug` drops
+  // it there - `?` is an illegal filename character and the fragment
+  // filename must match on both sides.
   const [pathOnly = ''] = route.split(/[?#]/)
   const trimmed = pathOnly.replace(/^\/+|\/+$/g, '')
   if (!trimmed) return 'index'
@@ -68,12 +74,21 @@ export function useHelp() {
     routeToSlug(collapseDynamicSegments(route.path, matchedRoute.value))
   )
 
+  // Named diagnosis sub-views (periodontogram, future imaging tools)
+  // share the parent patient-detail fragment and scroll to an explicit
+  // anchor in it (#573). Anything else on the route keeps the plain URL.
+  const anchor = computed(() => {
+    if (route.query.clinicalMode !== 'diagnosis') return ''
+    const view = route.query.diagnosisView
+    return typeof view === 'string' && view ? `#${view}` : ''
+  })
+
   const lang = computed(() => (locale.value?.toLowerCase().startsWith('es') ? 'es' : 'en'))
 
   /** Iframe URL for the matching help fragment. Empty when the portal
    *  is not configured (NUXT_PUBLIC_DOCS_URL=''). */
   const helpUrl = computed(() =>
-    docsUrl ? `${docsUrl.replace(/\/$/, '')}/${lang.value}/help/${slug.value}.html` : ''
+    docsUrl ? `${docsUrl.replace(/\/$/, '')}/${lang.value}/help/${slug.value}.html${anchor.value}` : ''
   )
 
   /** Full-page user-manual URL on the portal — used by the drawer's
