@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+- feat: batch approve for the RVG queue. New `POST /rvg/imports/approve-batch`
+  (same `imaging_viewer.rvg.write` permission) decides several pending
+  imports in one call, each for its own explicit target patient, and
+  reports per-item outcomes: an item that is already decided, names an
+  unknown import/patient or has no source file fails by name while
+  approved siblings stand (each item is its own transaction; failed items
+  write nothing and stay retryable). The queue page grows pending-row
+  checkboxes with select-all and two batch actions mirroring the row
+  buttons (approve selected via suggestions / for the current patient),
+  plus an approved-X-of-Y summary toast. 12-locale strings added.
 - fix(#580 follow-up): `scan_watch_dir` counts a file that errors before a
   row can exist toward `failed` (it did `continue` without counting), so a
   scan where a file errored can no longer report zero failures. The

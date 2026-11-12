@@ -11,7 +11,7 @@ const { can } = usePermissions()
 const route = useRoute()
 const router = useRouter()
 const { fetchStudies } = useImagingViewer()
-const { fetchImports, fetchImportCounts, triggerScan, approveImport, rejectImport, fetchLinks, deleteLink } = useRvgImport()
+const { fetchImports, fetchImportCounts, triggerScan, approveImport, approveImports, rejectImport, fetchLinks, deleteLink } = useRvgImport()
 const toast = useToast()
 const api = useApi()
 
@@ -84,6 +84,8 @@ const queueLoading = ref(false)
 const links = ref<RvgLink[]>([])
 const scanning = ref(false)
 const actionError = ref<string | null>(null)
+const selectedIds = ref<string[]>([])
+const batchRunning = ref(false)
 
 const canRvgRead = computed(() => can(PERMISSIONS.imagingViewer.rvg.read))
 const canRvgWrite = computed(() => can(PERMISSIONS.imagingViewer.rvg.write))
@@ -150,7 +152,67 @@ async function loadQueue() {
 function selectQueueTab(status: QueueStatus) {
   if (activeQueueTab.value === status) return
   activeQueueTab.value = status
+  selectedIds.value = []
   void loadQueue()
+}
+
+function toggleRow(id: string, checked: boolean | 'indeterminate') {
+  selectedIds.value = checked === true
+    ? [...selectedIds.value, id]
+    : selectedIds.value.filter(x => x !== id)
+}
+
+const allSelected = computed(() =>
+  queue.value.length > 0 && queue.value.every(row => selectedIds.value.includes(row.id))
+)
+
+function toggleAll(checked: boolean | 'indeterminate') {
+  selectedIds.value = checked === true ? queue.value.map(row => row.id) : []
+}
+
+async function approveSelected(mode: 'suggestion' | 'current') {
+  const items: Array<{ import_id: string, patient_id: string }> = []
+  for (const row of queue.value) {
+    if (!selectedIds.value.includes(row.id)) continue
+    const target = mode === 'suggestion' ? row.suggested_patient_id : (patientId.value || null)
+    if (target) items.push({ import_id: row.id, patient_id: target })
+  }
+  if (items.length === 0) {
+    actionError.value = t('imagingViewer.rvg.batchNothingEligible')
+    return
+  }
+  // loadQueue() clears the error line, so the failure reasons are assigned
+  // after the reloads; the filenames must be captured before, because
+  // approved rows leave the pending tab on reload.
+  const nameById = new Map(queue.value.map(row => [row.id, row.filename]))
+  batchRunning.value = true
+  actionError.value = null
+  try {
+    const outcome = await approveImports(items)
+    toast.add({
+      title: t('imagingViewer.rvg.batchSummary', {
+        approved: outcome.approved,
+        total: selectedIds.value.length
+      }),
+      color: outcome.failed > 0 ? 'warning' : 'success'
+    })
+    selectedIds.value = []
+    await loadQueue()
+    await loadLinks()
+    if (outcome.failed > 0) {
+      const reasons = outcome.results
+        .filter(r => r.error)
+        .map(r => `${nameById.get(r.import_id) ?? r.import_id}: ${r.error}`)
+      actionError.value = reasons.join('; ') || t('imagingViewer.rvg.actionFailed')
+    }
+  } catch (e) {
+    // The queue may have changed under us: reload so it shows the truth
+    // and surface the backend's reason instead of the generic line.
+    await loadQueue()
+    actionError.value = errorDetail(e) ?? t('imagingViewer.rvg.actionFailed')
+  } finally {
+    batchRunning.value = false
+  }
 }
 
 async function scanNow() {
@@ -393,62 +455,94 @@ onMounted(() => {
         color="info"
         :title="t('imagingViewer.rvg.empty')"
       />
-      <ul
-        v-else
-        class="flex flex-col gap-2"
-      >
-        <li
-          v-for="row in queue"
-          :key="row.id"
-          class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 pb-2"
+      <template v-else>
+        <div
+          v-if="canRvgWrite && activeQueueTab === 'pending'"
+          class="flex flex-wrap items-center gap-2"
         >
-          <div>
-            <p class="text-sm font-medium">
-              {{ row.filename }}
-            </p>
-            <p
-              v-if="activeQueueTab === 'pending'"
-              class="text-xs text-gray-500"
-            >
-              {{ suggestionLabel(row) }}
-            </p>
-            <p
-              v-if="row.error"
-              class="text-xs text-red-500"
-            >
-              {{ row.error }}
-            </p>
-          </div>
-          <div
-            v-if="canRvgWrite && activeQueueTab === 'pending'"
-            class="flex gap-2"
+          <UCheckbox
+            :model-value="allSelected"
+            :label="t('imagingViewer.rvg.selectAll')"
+            @update:model-value="toggleAll($event as boolean | 'indeterminate')"
+          />
+          <UButton
+            size="sm"
+            :loading="batchRunning"
+            :disabled="selectedIds.length === 0"
+            @click="approveSelected('suggestion')"
           >
-            <UButton
-              v-if="row.suggested_patient_id"
-              size="sm"
-              @click="approve(row, row.suggested_patient_id)"
+            {{ t('imagingViewer.rvg.approveSelectedSuggestions') }}
+          </UButton>
+          <UButton
+            v-if="patientId"
+            size="sm"
+            variant="soft"
+            :loading="batchRunning"
+            :disabled="selectedIds.length === 0"
+            @click="approveSelected('current')"
+          >
+            {{ t('imagingViewer.rvg.approveSelectedCurrent') }}
+          </UButton>
+        </div>
+        <ul class="flex flex-col gap-2">
+          <li
+            v-for="row in queue"
+            :key="row.id"
+            class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-100 pb-2"
+          >
+            <UCheckbox
+              v-if="canRvgWrite && activeQueueTab === 'pending'"
+              :model-value="selectedIds.includes(row.id)"
+              @update:model-value="toggleRow(row.id, $event as boolean | 'indeterminate')"
+            />
+            <div>
+              <p class="text-sm font-medium">
+                {{ row.filename }}
+              </p>
+              <p
+                v-if="activeQueueTab === 'pending'"
+                class="text-xs text-gray-500"
+              >
+                {{ suggestionLabel(row) }}
+              </p>
+              <p
+                v-if="row.error"
+                class="text-xs text-red-500"
+              >
+                {{ row.error }}
+              </p>
+            </div>
+            <div
+              v-if="canRvgWrite && activeQueueTab === 'pending'"
+              class="flex gap-2"
             >
-              {{ t('imagingViewer.rvg.approveSuggestion') }}
-            </UButton>
-            <UButton
-              v-if="patientId && patientId !== row.suggested_patient_id"
-              size="sm"
-              variant="soft"
-              @click="approve(row, patientId)"
-            >
-              {{ t('imagingViewer.rvg.approveCurrentPatient') }}
-            </UButton>
-            <UButton
-              size="sm"
-              color="error"
-              variant="soft"
-              @click="reject(row)"
-            >
-              {{ t('imagingViewer.rvg.reject') }}
-            </UButton>
-          </div>
-        </li>
-      </ul>
+              <UButton
+                v-if="row.suggested_patient_id"
+                size="sm"
+                @click="approve(row, row.suggested_patient_id)"
+              >
+                {{ t('imagingViewer.rvg.approveSuggestion') }}
+              </UButton>
+              <UButton
+                v-if="patientId && patientId !== row.suggested_patient_id"
+                size="sm"
+                variant="soft"
+                @click="approve(row, patientId)"
+              >
+                {{ t('imagingViewer.rvg.approveCurrentPatient') }}
+              </UButton>
+              <UButton
+                size="sm"
+                color="error"
+                variant="soft"
+                @click="reject(row)"
+              >
+                {{ t('imagingViewer.rvg.reject') }}
+              </UButton>
+            </div>
+          </li>
+        </ul>
+      </template>
       <div class="mt-4 border-t border-gray-100 pt-3">
         <p class="text-sm font-medium">
           {{ t('imagingViewer.rvg.linksTitle') }}

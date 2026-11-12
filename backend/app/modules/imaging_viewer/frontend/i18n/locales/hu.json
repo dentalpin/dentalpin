@@ -34,6 +34,11 @@
       "scanFailed": "A szkennelés nem sikerült. Be van állítva a figyelt mappa?",
       "scanSummary": "Szkennelés kész: {scanned} szkennelve, {created} új, {approved} automatikusan jóváhagyva, {failed} sikertelen",
       "actionFailed": "A művelet nem sikerült. Lehet, hogy a sor már el van döntve.",
+      "selectAll": "Összes kijelölése",
+      "approveSelectedSuggestions": "Kijelöltek jóváhagyása javaslat alapján",
+      "approveSelectedCurrent": "Kijelöltek jóváhagyása a jelenlegi páciensnek",
+      "batchSummary": "{approved} jóváhagyva, összesen {total}",
+      "batchNothingEligible": "A kijelölt fájlok egyikéhez sincs célpáciens.",
       "status": {
         "pending": "Függőben",
         "approved": "Jóváhagyva",

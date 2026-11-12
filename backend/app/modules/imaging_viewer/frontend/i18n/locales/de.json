@@ -34,6 +34,11 @@
       "scanFailed": "Scan fehlgeschlagen. Ist der Überwachungsordner konfiguriert?",
       "scanSummary": "Scan abgeschlossen: {scanned} gescannt, {created} neu, {approved} automatisch freigegeben, {failed} fehlgeschlagen",
       "actionFailed": "Aktion fehlgeschlagen. Die Zeile wurde möglicherweise bereits entschieden.",
+      "selectAll": "Alle auswählen",
+      "approveSelectedSuggestions": "Ausgewählte per Vorschlag genehmigen",
+      "approveSelectedCurrent": "Ausgewählte für den aktuellen Patienten genehmigen",
+      "batchSummary": "{approved} von {total} genehmigt",
+      "batchNothingEligible": "Keine ausgewählte Datei hat einen Zielpatienten.",
       "status": {
         "pending": "Ausstehend",
         "approved": "Freigegeben",

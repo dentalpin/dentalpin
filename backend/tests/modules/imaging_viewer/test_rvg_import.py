@@ -527,3 +527,241 @@ async def test_same_filename_different_bytes_approves_its_own_bytes(
         assert new == [expected]
     assert list((clinic_dir / "pending").iterdir()) == []
     assert len(list((clinic_dir / "processed").iterdir())) == 2
+
+
+@pytest.mark.asyncio
+async def test_approve_batch_approves_each_row_for_its_patient(
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    fake_storage: _FakeStorage,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+) -> None:
+    """Batch approve decides each row for its own target patient: links are
+    stored per row, files are retired, and the outcome counts both. Each
+    scan carries a distinct identity so a sibling's link can never
+    auto-approve it mid-test."""
+    from pathlib import Path
+
+    def _tags(raw: bytes) -> dict:
+        marker = raw.decode()
+        return {"PatientID": f"DNI-{marker}", "PatientName": f"Batch^{marker}"}
+
+    monkeypatch.setattr(service_module, "extract_identity_tags", _tags)
+    watch = Path(str(tmp_path)) / "batch-root"
+    clinic_dir = watch / str(test_clinic.id)
+    clinic_dir.mkdir(parents=True)
+    (clinic_dir / "one.dcm").write_bytes(b"batch-one")
+    (clinic_dir / "two.dcm").write_bytes(b"batch-two")
+    monkeypatch.setenv("DENTALPIN_RVG_WATCH_DIR", str(watch))
+    counts = await RvgService.scan_watch_dir(db_session, test_clinic.id, str(clinic_dir))
+    assert counts["pending"] == 2
+
+    second = Patient(
+        id=uuid4(),
+        clinic_id=test_clinic.id,
+        first_name="Second",
+        last_name="Patient",
+        email="second-batch@test.com",
+        phone="+34666123457",
+    )
+    db_session.add(second)
+    await db_session.commit()
+
+    rows = {
+        r.filename: r
+        for r in (await RvgService.list_imports(db_session, test_clinic.id, status="pending"))[0]
+    }
+    one, two = rows["one.dcm"], rows["two.dcm"]
+    user_id = await _user_id(db_session)
+
+    outcome = await RvgService.approve_batch(
+        db_session,
+        test_clinic.id,
+        [(one.id, test_patient.id), (two.id, second.id)],
+        user_id,
+    )
+    assert outcome["approved"] == 2
+    assert outcome["failed"] == 0
+    assert all(r["status"] == "approved" for r in outcome["results"])
+
+    await db_session.refresh(one)
+    await db_session.refresh(two)
+    assert one.patient_id == test_patient.id
+    assert one.document_id is not None and one.study_id is not None
+    assert two.patient_id == second.id
+    link_ids = {
+        link.dicom_patient_id: link.patient_id
+        for link in (
+            await db_session.execute(select(RvgLink).where(RvgLink.clinic_id == test_clinic.id))
+        )
+        .scalars()
+        .all()
+    }
+    assert link_ids == {"DNI-batch-one": test_patient.id, "DNI-batch-two": second.id}
+    assert list((clinic_dir / "pending").iterdir()) == []
+    assert sorted(p.name for p in (clinic_dir / "processed").iterdir()) == ["one.dcm", "two.dcm"]
+
+
+@pytest.mark.asyncio
+async def test_approve_batch_degrades_per_item(
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    fake_storage: _FakeStorage,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+) -> None:
+    """Expected per-item failures (already decided, unknown patient, unknown
+    import, source file gone) write nothing for that item and never roll
+    back an approved sibling; every reason is reported by name."""
+    from pathlib import Path
+
+    def _tags(raw: bytes) -> dict:
+        marker = raw.decode()
+        return {"PatientID": f"DNI-{marker}", "PatientName": f"Batch^{marker}"}
+
+    monkeypatch.setattr(service_module, "extract_identity_tags", _tags)
+    watch = Path(str(tmp_path)) / "batch-root"
+    clinic_dir = watch / str(test_clinic.id)
+    clinic_dir.mkdir(parents=True)
+    (clinic_dir / "good.dcm").write_bytes(b"good")
+    (clinic_dir / "decided.dcm").write_bytes(b"decided")
+    (clinic_dir / "orphan-target.dcm").write_bytes(b"orphan-target")
+    monkeypatch.setenv("DENTALPIN_RVG_WATCH_DIR", str(watch))
+    counts = await RvgService.scan_watch_dir(db_session, test_clinic.id, str(clinic_dir))
+    assert counts["pending"] == 3
+
+    user_id = await _user_id(db_session)
+    rows = {
+        r.filename: r
+        for r in (await RvgService.list_imports(db_session, test_clinic.id, status="pending"))[0]
+    }
+    good, decided, orphan = rows["good.dcm"], rows["decided.dcm"], rows["orphan-target.dcm"]
+
+    # A fourth row scanned straight into the table never had a file parked,
+    # so its source bytes are gone (re-drop heals it - approve stays retryable).
+    missing, _ = await RvgService.scan_bytes(db_session, test_clinic.id, "missing.dcm", b"missing")
+    assert missing.status == "pending"
+
+    # Pre-decide one row so the batch meets it as an already-approved conflict.
+    await RvgService.approve(
+        db_session, test_clinic.id, decided.id, test_patient.id, user_id, raw=b"decided"
+    )
+
+    unknown_import = uuid4()
+    outcome = await RvgService.approve_batch(
+        db_session,
+        test_clinic.id,
+        [
+            (good.id, test_patient.id),
+            (decided.id, test_patient.id),
+            (orphan.id, uuid4()),
+            (missing.id, test_patient.id),
+            (unknown_import, test_patient.id),
+        ],
+        user_id,
+    )
+    assert outcome["approved"] == 1
+    assert outcome["failed"] == 4
+    by_id = {r["import_id"]: r for r in outcome["results"]}
+    assert by_id[good.id]["status"] == "approved"
+    assert by_id[decided.id]["error"] == "Import is already approved"
+    assert by_id[orphan.id]["error"] == "Patient not found"
+    assert by_id[missing.id]["error"] == "Source file no longer in the watch folder"
+    assert by_id[unknown_import]["error"] == "Import not found"
+
+    await db_session.refresh(good)
+    await db_session.refresh(orphan)
+    await db_session.refresh(missing)
+    assert good.status == "approved"
+    # Every failed item keeps its prior state: the conflict row stays
+    # approved, the rest stay pending and retryable.
+    assert orphan.status == "pending"
+    assert missing.status == "pending"
+    assert (clinic_dir / "processed" / "good.dcm").is_file()
+    assert (clinic_dir / "pending" / orphan.content_hash).is_file()
+
+
+@pytest.mark.asyncio
+async def test_approve_batch_over_http(
+    client,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path,
+    fake_storage: _FakeStorage,
+) -> None:
+    """POST /rvg/imports/approve-batch: per-item results in one call, an
+    empty batch is a 422, and an unknown id in the batch comes back as a
+    failed item (200) rather than failing the whole call."""
+    from pathlib import Path
+
+    def _tags(raw: bytes) -> dict:
+        marker = raw.decode()
+        return {"PatientID": f"DNI-{marker}", "PatientName": f"Batch^{marker}"}
+
+    monkeypatch.setattr(service_module, "extract_identity_tags", _tags)
+    watch = Path(str(tmp_path)) / "batch-root"
+    clinic_dir = watch / str(test_clinic.id)
+    clinic_dir.mkdir(parents=True)
+    (clinic_dir / "http-one.dcm").write_bytes(b"http-one")
+    (clinic_dir / "http-two.dcm").write_bytes(b"http-two")
+    monkeypatch.setenv("DENTALPIN_RVG_WATCH_DIR", str(watch))
+    scanned = await client.post(
+        "/api/v1/imaging_viewer/rvg/scan",
+        json={"retry_failed": False},
+        headers=auth_headers,
+    )
+    assert scanned.status_code == 200, scanned.text
+    assert scanned.json()["data"]["pending"] == 2
+
+    queue = await client.get(
+        "/api/v1/imaging_viewer/rvg/imports",
+        params={"status": "pending"},
+        headers=auth_headers,
+    )
+    rows = queue.json()["data"]
+    items = [{"import_id": r["id"], "patient_id": str(test_patient.id)} for r in rows]
+
+    empty = await client.post(
+        "/api/v1/imaging_viewer/rvg/imports/approve-batch",
+        json={"items": []},
+        headers=auth_headers,
+    )
+    assert empty.status_code == 422
+
+    over = await client.post(
+        "/api/v1/imaging_viewer/rvg/imports/approve-batch",
+        json={"items": [{"import_id": str(uuid4()), "patient_id": str(test_patient.id)}] * 51},
+        headers=auth_headers,
+    )
+    assert over.status_code == 422
+
+    approved = await client.post(
+        "/api/v1/imaging_viewer/rvg/imports/approve-batch",
+        json={"items": items},
+        headers=auth_headers,
+    )
+    assert approved.status_code == 200, approved.text
+    data = approved.json()["data"]
+    assert data["approved"] == 2
+    assert data["failed"] == 0
+    assert all(r["status"] == "approved" for r in data["results"])
+
+    again = await client.post(
+        "/api/v1/imaging_viewer/rvg/imports/approve-batch",
+        json={"items": items + [{"import_id": str(uuid4()), "patient_id": str(test_patient.id)}]},
+        headers=auth_headers,
+    )
+    assert again.status_code == 200, again.text
+    data = again.json()["data"]
+    assert data["approved"] == 0
+    assert data["failed"] == 3
+    assert {r["error"] for r in data["results"]} == {
+        "Import is already approved",
+        "Import not found",
+    }

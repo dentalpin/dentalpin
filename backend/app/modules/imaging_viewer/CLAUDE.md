@@ -18,6 +18,7 @@ Routes mounted at `/api/v1/imaging_viewer/`.
 - `POST   /rvg/scan`                     — scan the clinic watch folder now; `imaging_viewer.rvg.write`
 - `GET    /rvg/imports` (+`/{id}`)       — approval queue (filter `?status=`); `imaging_viewer.rvg.read`
 - `POST   /rvg/imports/{id}/approve`     — materialize document + study, store link; `imaging_viewer.rvg.write`
+- `POST   /rvg/imports/approve-batch`    — approve several pending imports, per-item outcomes; `imaging_viewer.rvg.write`
 - `POST   /rvg/imports/{id}/reject`      — keep row for audit; `imaging_viewer.rvg.write`
 - `GET    /rvg/links`                    — approved DICOM-identity links; `imaging_viewer.rvg.read`
 - `DELETE /rvg/links/{id}`               — drop a link (204); `imaging_viewer.rvg.write`

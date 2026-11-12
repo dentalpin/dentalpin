@@ -34,6 +34,11 @@
       "scanFailed": "Échec de l'analyse. Le dossier surveillé est-il configuré ?",
       "scanSummary": "Analyse terminée : {scanned} analysés, {created} nouveaux, {approved} approuvés automatiquement, {failed} en échec",
       "actionFailed": "Échec de l'action. La ligne a peut-être déjà été traitée.",
+      "selectAll": "Tout sélectionner",
+      "approveSelectedSuggestions": "Approuver la sélection via les suggestions",
+      "approveSelectedCurrent": "Approuver la sélection pour le patient actuel",
+      "batchSummary": "{approved} approuvés sur {total}",
+      "batchNothingEligible": "Aucun fichier sélectionné n'a de patient cible.",
       "status": {
         "pending": "En attente",
         "approved": "Approuvés",

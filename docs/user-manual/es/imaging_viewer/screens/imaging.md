@@ -6,12 +6,14 @@ related_endpoints:
   - GET /api/v1/imaging_viewer/patients/{patient_id}/studies
   - GET /api/v1/imaging_viewer/studies/{study_id}
   - GET /api/v1/imaging_viewer/studies/{study_id}/render
+  - POST /api/v1/imaging_viewer/rvg/imports/approve-batch
 related_permissions:
   - imaging_viewer.studies.read
+  - imaging_viewer.rvg.write
 related_paths:
   - backend/app/modules/imaging_viewer/router.py
   - backend/app/modules/imaging_viewer/frontend/pages/imaging/index.vue
-last_verified_commit: f2f27de5779ae29cf903a88464d8e4bde4095a08
+last_verified_commit: 0fbdf545d47ce839a5ce0d20c13129f21275388a
 screenshots: []
 ---
 
@@ -28,7 +30,14 @@ manual de la carpeta RVG se muestra un resumen (escaneados / nuevos /
 autoaprobados / fallidos). La cola RVG tiene
 pestañas por estado (pendientes / aprobadas / rechazadas / fallidas)
 con conteos en vivo; las acciones solo se muestran en pendientes y las
-fallidas muestran su error. Debajo de la cola de
+fallidas muestran su error. Las filas pendientes tienen casillas de
+selección con un control de seleccionar todo, y dos acciones por
+lote que reflejan los botones de fila: aprobar la selección por la
+sugerencia de cada fila, o aprobar la selección para el paciente
+elegido en la cabecera. El lote se ejecuta fila a fila: una fila ya
+decidida o con archivo fuente ausente se reporta por su nombre
+mientras las aprobadas se mantienen, y un aviso indica cuántas se
+aprobaron. Debajo de la cola de
 importación se listan las identidades de sensor vinculadas con el nombre
 del paciente, con acción para desvincular un emparejamiento DICOM erróneo.
 

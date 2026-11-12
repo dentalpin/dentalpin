@@ -34,6 +34,11 @@
       "scanFailed": "Scan failed. Is the watch folder configured?",
       "scanSummary": "Scan complete: {scanned} scanned, {created} new, {approved} auto-approved, {failed} failed",
       "actionFailed": "Action failed. The row may already be decided.",
+      "selectAll": "Select all",
+      "approveSelectedSuggestions": "Approve selected via suggestions",
+      "approveSelectedCurrent": "Approve selected for current patient",
+      "batchSummary": "Approved {approved} of {total}",
+      "batchNothingEligible": "No selected file has a target patient.",
       "status": {
         "pending": "Pending",
         "approved": "Approved",
