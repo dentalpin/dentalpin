@@ -265,7 +265,13 @@ async def login(
     """Login and get access tokens."""
     # Find user by email
     result = await db.execute(
-        select(User).options(selectinload(User.memberships)).where(User.email == form_data.username)
+        select(User)
+        .options(selectinload(User.memberships))
+        .where(func.lower(User.email) == form_data.username.strip().lower())
+        # Rows written before addresses were lowercased can differ only by
+        # case; the exact spelling wins, then the oldest account.
+        .order_by((User.email == form_data.username.strip()).desc(), User.created_at)
+        .limit(1)
     )
     user = result.scalar_one_or_none()
 
@@ -579,7 +585,7 @@ async def create_user(
             )
 
     # Check if email already exists
-    result = await db.execute(select(User).where(User.email == data.email))
+    result = await db.execute(select(User.id).where(func.lower(User.email) == data.email).limit(1))
     if result.scalar_one_or_none():
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -728,7 +734,9 @@ async def update_user(
 
     # Check email uniqueness if changing email
     if data.email is not None and data.email != user.email:
-        email_check = await db.execute(select(User).where(User.email == data.email))
+        email_check = await db.execute(
+            select(User.id).where(func.lower(User.email) == data.email, User.id != user.id).limit(1)
+        )
         if email_check.scalar_one_or_none():
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,

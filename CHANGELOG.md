@@ -29,6 +29,12 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Staff email addresses were case-sensitive (#840).** A user created as
+  `Anna.Kovacs@…` got "Invalid email or password" when logging in as
+  `anna.kovacs@…`, and the same mailbox could be registered twice under a
+  different case. New and changed addresses are now stored lowercased (as the
+  migration import already did), and login and the duplicate checks ignore
+  case, so existing mixed-case accounts keep working.
 - **Approving a queued agent action did nothing (#686).** Approval only
   recorded the decision, so an approved erasure erased nothing. Approving
   now runs the queued call with the reviewer's permissions (they need the
