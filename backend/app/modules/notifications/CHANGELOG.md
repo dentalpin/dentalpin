@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#838): the SMTP settings form declares `method="post"`, so a submit before the page has hydrated can't put the SMTP password in the URL.
 - fix: the send side is keyed by the same closed vocabulary as the
   preferences (#683). `POST /send` and the `send_notification` agent tool
   type `notification_type` as `NotificationType`, so a misspelt type

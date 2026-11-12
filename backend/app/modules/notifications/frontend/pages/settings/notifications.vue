@@ -736,6 +736,7 @@ if (!isAdmin.value) {
           </template>
 
           <form
+            method="post"
             class="space-y-6"
             @submit.prevent="handleSmtpSave"
           >
