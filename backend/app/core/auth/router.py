@@ -685,6 +685,32 @@ async def set_password_from_invite(
     return await _start_session(request, response, db, user, clinic_id)
 
 
+async def _refuse_if_last_admin(db: AsyncSession, clinic_id: UUID, user_id: UUID) -> None:
+    """400 when ``user_id`` is the clinic's only active admin.
+
+    Called before demoting, deactivating or removing an admin. An admin can't
+    target themselves, so this matters for a custom role holding
+    ``admin.users.write`` (#556). An inactive admin can't log in, so they don't
+    count as remaining.
+    """
+    remaining = await db.scalar(
+        select(func.count())
+        .select_from(ClinicMembership)
+        .join(User, User.id == ClinicMembership.user_id)
+        .where(
+            ClinicMembership.clinic_id == clinic_id,
+            ClinicMembership.role == "admin",
+            ClinicMembership.user_id != user_id,
+            User.is_active.is_(True),
+        )
+    )
+    if not remaining:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="This is the clinic's last admin: they can't be demoted, deactivated or removed",
+        )
+
+
 @router.put("/users/{user_id}", response_model=ApiResponse[UserWithRoleResponse])
 async def update_user(
     user_id: UUID,
@@ -742,6 +768,8 @@ async def update_user(
     if data.last_name is not None:
         user.last_name = data.last_name
     if data.is_active is not None:
+        if data.is_active is False and user.is_active and membership.role == "admin":
+            await _refuse_if_last_admin(db, ctx.clinic_id, user.id)
         user.is_active = data.is_active
         # Increment token version to invalidate existing tokens when deactivating
         if not data.is_active:
@@ -755,22 +783,8 @@ async def update_user(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Cannot change your own role",
             )
-        # Prevent demoting the clinic's last admin.
         if membership.role == "admin":
-            remaining_admins = await db.scalar(
-                select(func.count())
-                .select_from(ClinicMembership)
-                .where(
-                    ClinicMembership.clinic_id == ctx.clinic_id,
-                    ClinicMembership.role == "admin",
-                    ClinicMembership.user_id != user.id,
-                )
-            )
-            if not remaining_admins:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Cannot demote the clinic's last admin",
-                )
+            await _refuse_if_last_admin(db, ctx.clinic_id, user.id)
         membership.role = data.role
         membership.role_id = await resolve_role_id(db, membership.clinic_id, data.role)
 
@@ -871,6 +885,9 @@ async def delete_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="User not found in this clinic",
         )
+
+    if membership.role == "admin":
+        await _refuse_if_last_admin(db, ctx.clinic_id, user_id)
 
     await db.delete(membership)
     await db.commit()

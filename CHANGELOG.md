@@ -29,6 +29,11 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **A clinic could lose its last admin (#842).** A user whose custom role
+  grants `admin.users.write` could not demote the last admin, but could
+  deactivate them or remove them from the clinic, and the demotion check
+  counted deactivated admins as remaining. All three now refuse with 400 unless
+  another active admin remains.
 - **Approving a queued agent action did nothing (#686).** Approval only
   recorded the decision, so an approved erasure erased nothing. Approving
   now runs the queued call with the reviewer's permissions (they need the
