@@ -29,6 +29,12 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Staff email addresses were case-sensitive (#840).** A user created as
+  `Anna.Kovacs@…` got "Invalid email or password" when logging in as
+  `anna.kovacs@…`, and the same mailbox could be registered twice under a
+  different case. New and changed addresses are now stored lowercased (as the
+  migration import already did), and login and the duplicate checks ignore
+  case, so existing mixed-case accounts keep working.
 - **A login before the page finished loading put the password in the URL (#838).**
   The login form had no `method`, so until JavaScript took over a click on
   **Login** submitted it natively as GET, and the email and password landed in
