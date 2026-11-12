@@ -223,6 +223,7 @@ onMounted(refresh)
       </template>
 
       <form
+        method="post"
         class="space-y-5"
         @submit.prevent="submit"
       >

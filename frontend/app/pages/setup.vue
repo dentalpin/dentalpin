@@ -322,6 +322,7 @@ async function onSubmit() {
       <!-- Step 1: admin account -->
       <form
         v-if="step === 1"
+        method="post"
         class="space-y-4"
         @submit.prevent="goNext"
       >
