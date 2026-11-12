@@ -122,6 +122,7 @@ watch(() => formState.password, () => {
 
     <UCard>
       <form
+        method="post"
         class="space-y-4"
         @submit.prevent="onSubmit"
       >
