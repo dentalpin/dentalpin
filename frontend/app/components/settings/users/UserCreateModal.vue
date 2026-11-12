@@ -158,6 +158,7 @@ const expiresLabel = computed(() =>
         <!-- Create form -->
         <form
           v-else
+          method="post"
           class="space-y-4"
           @submit.prevent="submit"
         >

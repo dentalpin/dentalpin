@@ -81,6 +81,7 @@ async function onSubmit() {
 
       <form
         v-else
+        method="post"
         class="space-y-4"
         @submit.prevent="onSubmit"
       >

@@ -1,9 +1,15 @@
 """Pydantic schemas for authentication."""
 
 from datetime import datetime
+from typing import Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, EmailStr, Field, field_validator
+
+# A staff login address. `EmailStr` lowercases only the domain, and the local
+# part is case-insensitive at every provider a clinic uses, so it is stored and
+# compared lowercased: login and the uniqueness checks match on `lower(email)`.
+StaffEmail = Annotated[EmailStr, AfterValidator(str.lower)]
 
 
 def _validate_iana_timezone(value: str | None) -> str | None:
@@ -151,7 +157,7 @@ class AuthResponse(BaseModel):
 class UserCreate(BaseModel):
     """Schema for admin creating a new user."""
 
-    email: EmailStr
+    email: StaffEmail
     # Optional: without a password the account is created locked and the
     # admin hands out an invite link (``POST /users/{id}/invite-link``).
     password: str | None = Field(default=None, min_length=12)
@@ -202,7 +208,7 @@ class UserUpdate(BaseModel):
 
     first_name: str | None = Field(default=None, min_length=1, max_length=100)
     last_name: str | None = Field(default=None, min_length=1, max_length=100)
-    email: EmailStr | None = None
+    email: StaffEmail | None = None
     role: str | None = Field(
         default=None, description="Role: admin, dentist, hygienist, assistant, receptionist"
     )
@@ -240,7 +246,7 @@ class SystemSetup(BaseModel):
 
     admin_first_name: str = Field(min_length=1, max_length=100)
     admin_last_name: str = Field(min_length=1, max_length=100)
-    admin_email: EmailStr
+    admin_email: StaffEmail
     admin_password: str = Field(min_length=12)
     # Whether the admin also attends patients (solo practice) — flips
     # `is_professional` on the admin membership so the team onboarding

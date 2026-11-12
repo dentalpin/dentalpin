@@ -34,6 +34,19 @@ frontend as a Nuxt layer under its own Python package.
   deactivate them or remove them from the clinic, and the demotion check
   counted deactivated admins as remaining. All three now refuse with 400 unless
   another active admin remains.
+- **Staff email addresses were case-sensitive (#840).** A user created as
+  `Anna.Kovacs@…` got "Invalid email or password" when logging in as
+  `anna.kovacs@…`, and the same mailbox could be registered twice under a
+  different case. New and changed addresses are now stored lowercased (as the
+  migration import already did), and login and the duplicate checks ignore
+  case, so existing mixed-case accounts keep working.
+- **A login before the page finished loading put the password in the URL (#838).**
+  The login form had no `method`, so until JavaScript took over a click on
+  **Login** submitted it natively as GET, and the email and password landed in
+  the address bar, browser history and access logs. Every form with a password
+  field now posts: login, invitation, first-run setup, new user, SMTP settings
+  and the VeriFactu certificate upload. A frontend test fails on any new
+  password form that doesn't.
 - **Approving a queued agent action did nothing (#686).** Approval only
   recorded the decision, so an approved erasure erased nothing. Approving
   now runs the queued call with the reviewer's permissions (they need the
