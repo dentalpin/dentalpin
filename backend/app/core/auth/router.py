@@ -672,8 +672,15 @@ async def set_password_from_invite(
     if payload.get("type") != "invite" or not payload.get("sub"):
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid link")
 
+    # Lock the row and re-read it: two requests carrying the same token would
+    # otherwise both read version N, both pass and both commit N+1. The one
+    # that waits sees the bumped version and gets the "used link" answer.
     result = await db.execute(
-        select(User).options(selectinload(User.memberships)).where(User.id == UUID(payload["sub"]))
+        select(User)
+        .options(selectinload(User.memberships))
+        .where(User.id == UUID(payload["sub"]))
+        .with_for_update(of=User)
+        .execution_options(populate_existing=True)
     )
     user = result.scalar_one_or_none()
     if user is None or not user.is_active or payload.get("token_version", 0) != user.token_version:
