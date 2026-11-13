@@ -29,6 +29,12 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Another patient's visit could close a recall (#852).** A recall could be
+  linked to any appointment id, including another patient's or a
+  nonexistent one (a 500), and completing that other patient's visit marked
+  this patient's recall done. The assigned professional was not checked
+  either. Both now have to belong to the clinic and, for the appointment, to
+  the patient.
 - **One RVG file could be approved twice (#850).** Two approvals of the same
   queued file at once could file the X-ray under two patients, and an
   approval that started during a reject still went through. The second
