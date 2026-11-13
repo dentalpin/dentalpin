@@ -29,6 +29,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **An invoice line could get 0 % VAT from a foreign VAT type (#854).** The
+  invoice endpoints accepted another clinic's series, VAT type and catalog
+  item ids; a foreign VAT type was stored with a 0 % rate, and an unknown id
+  was a 500. They now answer 400.
 - **Another patient's visit could close a recall (#852).** A recall could be
   linked to any appointment id, including another patient's or a
   nonexistent one (a 500), and completing that other patient's visit marked
