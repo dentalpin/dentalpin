@@ -20,7 +20,7 @@ from pydantic import BaseModel, Field
 from app.core.agents import AgentContext, Tool, ToolCategory
 
 from .schemas import Channel, Outcome, Priority, Reason, Status
-from .service import RecallClosedError, RecallFilters, RecallService
+from .service import RecallClosedError, RecallFilters, RecallReferenceError, RecallService
 
 
 class ListDueRecallsArgs(BaseModel):
@@ -153,6 +153,8 @@ async def _log_contact_attempt(ctx: AgentContext, params: LogContactAttemptArgs)
         )
     except RecallClosedError:
         return {"error": "recall_closed"}
+    except RecallReferenceError as exc:
+        return {"error": str(exc)}
     if result is None:
         return {"error": "not_found"}
     recall, _attempt = result
