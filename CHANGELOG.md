@@ -33,6 +33,17 @@ frontend as a Nuxt layer under its own Python package.
   queued file at once could file the X-ray under two patients, and an
   approval that started during a reject still went through. The second
   decision now waits and gets "already decided".
+- **An invitation or password-reset link could be used twice (#846).** Two
+  requests carrying the same link at the same moment both set a password and
+  both got a session, and the last password written won. The account row is
+  now locked while the link is checked, so the second request gets "Invalid
+  or used link".
+- **Staff accounts after a migration import (#848).** The import created a
+  second, disabled account when the existing one was stored with capitals
+  (`Anna.Kovacs@…`), and that person could then no longer log in typing
+  their address in lowercase. Logging into any imported account before an
+  admin sent a reset link answered 500 instead of "Invalid email or
+  password". Both are fixed.
 - **A clinic could lose its last admin (#842).** A user whose custom role
   grants `admin.users.write` could not demote the last admin, but could
   deactivate them or remove them from the clinic, and the demotion check
