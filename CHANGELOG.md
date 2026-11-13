@@ -29,6 +29,11 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **An invitation or password-reset link could be used twice (#846).** Two
+  requests carrying the same link at the same moment both set a password and
+  both got a session, and the last password written won. The account row is
+  now locked while the link is checked, so the second request gets "Invalid
+  or used link".
 - **A clinic could lose its last admin (#842).** A user whose custom role
   grants `admin.users.write` could not demote the last admin, but could
   deactivate them or remove them from the clinic, and the demotion check
