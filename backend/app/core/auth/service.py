@@ -22,8 +22,16 @@ def hash_password(password: str) -> str:
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verify a password against its hash."""
-    return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
+    """Verify a password against its hash.
+
+    A stored value that is not a bcrypt hash never matches. The migration
+    import writes ``!migration_disabled:<random>`` on purpose so the account
+    can't log in until an admin sends a reset link; bcrypt raises on it.
+    """
+    try:
+        return bcrypt.checkpw(plain_password.encode("utf-8"), hashed_password.encode("utf-8"))
+    except ValueError:
+        return False
 
 
 # Length beats composition rules (#354): 12 is the floor NIST 800-63B
