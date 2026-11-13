@@ -29,6 +29,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **One RVG file could be approved twice (#850).** Two approvals of the same
+  queued file at once could file the X-ray under two patients, and an
+  approval that started during a reject still went through. The second
+  decision now waits and gets "already decided".
 - **An invitation or password-reset link could be used twice (#846).** Two
   requests carrying the same link at the same moment both set a password and
   both got a session, and the last password written won. The account row is
