@@ -29,6 +29,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **A new treatment plan accepted any professional (#856).** Creating a plan
+  did not check the assigned professional, unlike editing it: an unknown id
+  was a 500, and another clinic's dentist was stored and then blocked every
+  item added to the plan. Now 400.
 - **A clinic could lose its last admin (#842).** A user whose custom role
   grants `admin.users.write` could not demote the last admin, but could
   deactivate them or remove them from the clinic, and the demotion check

@@ -337,6 +337,10 @@ class TreatmentPlanService:
         patient = await db.get(Patient, patient_id)
         if not patient or patient.clinic_id != clinic_id:
             raise ValueError("Invalid patient")
+        if data.get("assigned_professional_id") is not None:
+            # Same rule as update and add_item; without it an unknown id was a
+            # 500 and another clinic's user was stored on the plan.
+            await _validate_professional_in_clinic(db, clinic_id, data["assigned_professional_id"])
 
         plan_number = await TreatmentPlanService.generate_plan_number(db, clinic_id)
 
