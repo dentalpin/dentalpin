@@ -29,6 +29,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **An invoice line could get 0 % VAT from a foreign VAT type (#854).** The
+  invoice endpoints accepted another clinic's series, VAT type and catalog
+  item ids; a foreign VAT type was stored with a 0 % rate, and an unknown id
+  was a 500. They now answer 400.
 - **A clinic could lose its last admin (#842).** A user whose custom role
   grants `admin.users.write` could not demote the last admin, but could
   deactivate them or remove them from the clinic, and the demotion check
