@@ -30,7 +30,7 @@ from datetime import date, datetime
 from typing import Any
 from uuid import UUID, uuid4
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.core.auth.models import ClinicMembership, User
 from app.core.auth.rbac import resolve_role_id
@@ -158,7 +158,14 @@ class ProfessionalMapper:
         is_active = filter_reason is None
 
         # Re-use an existing User if email already known.
-        existing_user = await ctx.db.execute(select(User).where(User.email == email))
+        # Addresses written before #840 can carry capitals; match them, or the
+        # import mints a second, unusable account for the same mailbox.
+        existing_user = await ctx.db.execute(
+            select(User)
+            .where(func.lower(User.email) == email)
+            .order_by(User.created_at, User.id)
+            .limit(1)
+        )
         user = existing_user.scalar_one_or_none()
         if user is None:
             user = User(

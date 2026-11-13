@@ -29,6 +29,12 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Staff accounts after a migration import (#848).** The import created a
+  second, disabled account when the existing one was stored with capitals
+  (`Anna.Kovacs@…`), and that person could then no longer log in typing
+  their address in lowercase. Logging into any imported account before an
+  admin sent a reset link answered 500 instead of "Invalid email or
+  password". Both are fixed.
 - **A clinic could lose its last admin (#842).** A user whose custom role
   grants `admin.users.write` could not demote the last admin, but could
   deactivate them or remove them from the clinic, and the demotion check
