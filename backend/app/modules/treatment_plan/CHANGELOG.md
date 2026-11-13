@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#856): creating a plan checks `assigned_professional_id` with `_validate_professional_in_clinic`, as update and add-item already did. An unknown id was a 500; another clinic's dentist (or a non-professional member) was stored, shown on the plan, and made every later item fail with "Invalid professional for this clinic". Now 400.
+
 - fix(#779): the plan number's year is the clinic's year, not the server's UTC year (New Year's Eve gave the wrong year).
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
 
