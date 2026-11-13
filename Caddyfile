@@ -1,6 +1,8 @@
 # Single origin for the whole app. PUBLIC_URL doubles as the site
 # address: give it an https host and Caddy provisions the certificate
 # itself; leave it at http://localhost and it serves plain HTTP.
+# A port in PUBLIC_URL is the port Caddy listens on inside the container:
+# http://192.168.1.10:8080 needs "8080:8080" in compose, not "8080:80".
 
 {$PUBLIC_URL:http://localhost} {
 	handle /api/* {

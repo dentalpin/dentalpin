@@ -402,6 +402,7 @@ DELETE FROM alembic_version;
 | Sesión cerrada en cada recarga, aunque navegar funciona | Aplicación y API en hosts distintos con `COOKIE_DOMAIN` vacío: las cookies de sesión nunca llegan a la aplicación | Fijar `COOKIE_DOMAIN` al dominio padre compartido (p. ej. `.example.com`) y reiniciar el backend |
 | Cada guardado responde `403 CSRF token missing or invalid`, aunque leer funciona | La misma causa: la aplicación no puede leer la cookie `dp_csrf`, así que nunca envía la cabecera `X-CSRF-Token` | La misma solución: fijar `COOKIE_DOMAIN` al dominio padre compartido |
 | El login responde 200, luego `/auth/me` 401 y vuelve a la pantalla de login | Aplicación y API en un dominio de hosting que es sufijo público (`*.onrender.com`, `*.vercel.app`…): el navegador rechaza las cookies | Poner un dominio propio en ambos (`app.example.com` + `api.example.com`) y fijar `COOKIE_DOMAIN=.example.com`, o activar el proxy de mismo origen del frontend (`NUXT_API_PROXY=true`, §1) |
+| "Error de conexión" o `connection closed` sin nada en los logs, con PUBLIC_URL en un puerto que no es el 80 (p. ej. `http://192.168.1.10:8080`) | Caddy escucha *dentro* del contenedor en el puerto de `PUBLIC_URL`, pero el compose mapea `"8080:80"`: el tráfico entra por un puerto donde no escucha nadie | Mapear el mismo puerto a ambos lados (`"8080:8080"` en el servicio `caddy`), dejar el `Caddyfile` sin tocar y entrar exactamente por la URL de `PUBLIC_URL` |
 
 ---
 
