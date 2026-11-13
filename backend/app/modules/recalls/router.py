@@ -47,6 +47,7 @@ from .schemas import (
 from .service import (
     RecallClosedError,
     RecallFilters,
+    RecallReferenceError,
     RecallService,
     RecallSettingsService,
 )
@@ -124,6 +125,8 @@ async def create_recall(
             data=data.model_dump(),
             recommended_by=ctx.user_id,
         )
+    except RecallReferenceError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc)) from exc
     await db.commit()
@@ -285,9 +288,12 @@ async def update_recall(
     _: Annotated[None, Depends(require_permission("recalls.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[RecallResponse]:
-    recall = await RecallService.update(
-        db, ctx.clinic_id, recall_id, data.model_dump(exclude_unset=True)
-    )
+    try:
+        recall = await RecallService.update(
+            db, ctx.clinic_id, recall_id, data.model_dump(exclude_unset=True)
+        )
+    except RecallReferenceError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     if not recall:
         raise HTTPException(status_code=404, detail="Recall not found")
     await db.commit()
@@ -382,6 +388,8 @@ async def log_attempt(
             attempt_data=data.model_dump(),
             by_user=ctx.user_id,
         )
+    except RecallReferenceError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     except RecallClosedError as exc:
         raise HTTPException(status_code=409, detail="Recall is closed") from exc
     if not result:
@@ -410,7 +418,12 @@ async def link_appointment(
     _: Annotated[None, Depends(require_permission("recalls.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[RecallResponse]:
-    recall = await RecallService.link_appointment(db, ctx.clinic_id, recall_id, data.appointment_id)
+    try:
+        recall = await RecallService.link_appointment(
+            db, ctx.clinic_id, recall_id, data.appointment_id
+        )
+    except RecallReferenceError as exc:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     if not recall:
         raise HTTPException(status_code=404, detail="Recall not found")
     await db.commit()

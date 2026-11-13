@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#854): an invoice's `series_id` and a line's `vat_type_id` / `catalog_item_id` must belong to the clinic, else 400. Unknown ids were a 500 (FK); another clinic's VAT type was stored with a silent 0 % rate, its catalog item was embedded in the response, and its series left a draft that failed at issue.
+
 - fix(#828): "Download PDF" on an invoice saved the file as `factura_….pdf_` on Windows. The filename regex kept the closing quote of `filename="….pdf"`, and the browser replaced the `"` with `_`.
 
 - feat: the clinic's settings now drive the invoice defaults. The

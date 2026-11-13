@@ -481,6 +481,34 @@ class InvoiceHistoryService:
         return list(result.scalars().all())
 
 
+async def _clinic_vat_rate(db: AsyncSession, clinic_id: UUID, vat_type_id: UUID) -> float:
+    """The rate of one of this clinic's VAT types.
+
+    An id that isn't the clinic's used to be stored with a silent 0 % rate
+    when it named another clinic's type, or fail as a 500 (FK) when unknown.
+    """
+    from app.modules.catalog.models import VatType
+
+    rate = await db.scalar(
+        select(VatType.rate).where(VatType.id == vat_type_id, VatType.clinic_id == clinic_id)
+    )
+    if rate is None:
+        raise ValueError("VAT type not found")
+    return rate
+
+
+async def _check_clinic_catalog_item(db: AsyncSession, clinic_id: UUID, item_id: UUID) -> None:
+    from app.modules.catalog.models import TreatmentCatalogItem
+
+    found = await db.scalar(
+        select(TreatmentCatalogItem.id).where(
+            TreatmentCatalogItem.id == item_id, TreatmentCatalogItem.clinic_id == clinic_id
+        )
+    )
+    if found is None:
+        raise ValueError("Catalog item not found")
+
+
 class InvoiceItemService:
     """Service for invoice item operations."""
 
@@ -495,17 +523,9 @@ class InvoiceItemService:
         # Get VAT rate from VAT type if provided
         vat_rate = 0.0
         if data.get("vat_type_id"):
-            from app.modules.catalog.models import VatType
-
-            result = await db.execute(
-                select(VatType).where(
-                    VatType.id == data["vat_type_id"],
-                    VatType.clinic_id == clinic_id,
-                )
-            )
-            vat_type = result.scalar_one_or_none()
-            if vat_type:
-                vat_rate = vat_type.rate
+            vat_rate = await _clinic_vat_rate(db, clinic_id, data["vat_type_id"])
+        if data.get("catalog_item_id"):
+            await _check_clinic_catalog_item(db, clinic_id, data["catalog_item_id"])
 
         item = InvoiceItem(
             clinic_id=clinic_id,
@@ -560,22 +580,12 @@ class InvoiceItemService:
                 Decimal(str(data["discount_value"])) if data["discount_value"] else None
             )
         if "vat_type_id" in data:
-            item.vat_type_id = data["vat_type_id"]
             # Update VAT rate
             if data["vat_type_id"]:
-                from app.modules.catalog.models import VatType
-
-                result = await db.execute(
-                    select(VatType).where(
-                        VatType.id == data["vat_type_id"],
-                        VatType.clinic_id == clinic_id,
-                    )
-                )
-                vat_type = result.scalar_one_or_none()
-                if vat_type:
-                    item.vat_rate = vat_type.rate
+                item.vat_rate = await _clinic_vat_rate(db, clinic_id, data["vat_type_id"])
             else:
                 item.vat_rate = 0.0
+            item.vat_type_id = data["vat_type_id"]
         if "vat_exempt_reason" in data:
             item.vat_exempt_reason = data["vat_exempt_reason"]
         if "display_order" in data and data["display_order"] is not None:
@@ -902,6 +912,16 @@ class InvoiceService:
         patient = result.scalar_one_or_none()
         if not patient:
             raise ValueError("Patient not found")
+        if series_id is not None:
+            # Another clinic's series was stored and only failed at issue
+            # ("Series not found"); an unknown id was a 500 (FK).
+            series = await db.scalar(
+                select(InvoiceSeries.id).where(
+                    InvoiceSeries.id == series_id, InvoiceSeries.clinic_id == clinic_id
+                )
+            )
+            if series is None:
+                raise ValueError("Invoice series not found")
 
         # Draft invoices don't store billing data - it comes from patient dynamically
         invoice = Invoice(
