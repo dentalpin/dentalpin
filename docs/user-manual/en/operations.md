@@ -385,6 +385,7 @@ DELETE FROM alembic_version;
 | Logged out on every page refresh, while clicking around works | App and API on different hosts with `COOKIE_DOMAIN` empty, so the session cookies never reach the app | Set `COOKIE_DOMAIN` to the shared parent domain (e.g. `.example.com`) and restart the backend |
 | Every save answers `403 CSRF token missing or invalid`, while reading works | Same cause: the app cannot read the `dp_csrf` cookie, so the `X-CSRF-Token` header is never sent | Same fix: set `COOKIE_DOMAIN` to the shared parent domain |
 | Login answers 200, then `/auth/me` 401 and back to the login screen | App and API on a hosting domain that is a public suffix (`*.onrender.com`, `*.vercel.app`…): the browser rejects the cookies | Put a custom domain on both (`app.example.com` + `api.example.com`) and set `COOKIE_DOMAIN=.example.com`, or turn on the frontend's same-origin proxy (`NUXT_API_PROXY=true`, §1) |
+| "Connection error" or `connection closed` with nothing in the logs, with PUBLIC_URL on a port other than 80 (e.g. `http://192.168.1.10:8080`) | Caddy listens *inside* the container on the port in `PUBLIC_URL`, but the compose maps `"8080:80"`: traffic lands on a port nobody listens on | Map the same port on both sides (`"8080:8080"` on the `caddy` service), leave the `Caddyfile` untouched, and browse to exactly the `PUBLIC_URL` |
 
 ---
 
