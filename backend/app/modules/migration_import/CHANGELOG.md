@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#848): the user and professional mappers find an existing account whatever the case of its stored email. An account written before #840 as `Anna.Kovacs@…` got a second, disabled account for the same mailbox, and login then preferred that one when she typed her address in lowercase.
+
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

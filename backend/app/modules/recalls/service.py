@@ -16,9 +16,11 @@ from uuid import UUID
 from sqlalchemy import and_, case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth.models import ClinicMembership
 from app.core.events import event_bus
 from app.core.events.types import EventType
 from app.core.utils.dates import clinic_today_for, clinic_zone_for
+from app.modules.agenda.models import Appointment
 from app.modules.patients.models import Patient
 
 from .models import (
@@ -40,6 +42,47 @@ TERMINAL_STATUSES = ("done", "cancelled")
 
 class RecallClosedError(Exception):
     """The action needs an open recall, and this one is done or cancelled."""
+
+
+class RecallReferenceError(ValueError):
+    """An appointment or professional id that isn't this clinic's (or, for an
+    appointment, this patient's). Both columns are plain FKs, so an unknown id
+    was a 500 and another clinic's id was stored."""
+
+
+async def _check_professional(db: AsyncSession, clinic_id: UUID, user_id: UUID | None) -> None:
+    if user_id is None:
+        return
+    member = await db.scalar(
+        select(ClinicMembership.id)
+        .where(
+            ClinicMembership.clinic_id == clinic_id,
+            ClinicMembership.user_id == user_id,
+            ClinicMembership.is_professional.is_(True),
+        )
+        .limit(1)
+    )
+    if member is None:
+        raise RecallReferenceError("Invalid professional for this clinic")
+
+
+async def _check_appointment(
+    db: AsyncSession, clinic_id: UUID, patient_id: UUID, appointment_id: UUID | None
+) -> None:
+    """The linked appointment must be this patient's: completing it closes the
+    recall (``on_appointment_completed``), so another patient's visit would
+    mark this patient's recall done."""
+    if appointment_id is None:
+        return
+    found = await db.scalar(
+        select(Appointment.id).where(
+            Appointment.id == appointment_id,
+            Appointment.clinic_id == clinic_id,
+            Appointment.patient_id == patient_id,
+        )
+    )
+    if found is None:
+        raise RecallReferenceError("Appointment not found for this patient")
 
 
 # ---------------------------------------------------------------------------
@@ -266,6 +309,7 @@ class RecallService:
         )
         if patient_in_clinic.scalar_one_or_none() is None:
             raise ValueError("Patient not found in this clinic")
+        await _check_professional(db, clinic_id, data.get("assigned_professional_id"))
 
         existing = await RecallService.find_pending_for(
             db, clinic_id, data["patient_id"], data["reason"]
@@ -324,6 +368,7 @@ class RecallService:
         if "priority" in data and data["priority"]:
             recall.priority = data["priority"]
         if "assigned_professional_id" in data:
+            await _check_professional(db, clinic_id, data["assigned_professional_id"])
             recall.assigned_professional_id = data["assigned_professional_id"]
         await db.flush()
         return recall
@@ -420,6 +465,9 @@ class RecallService:
         recall = await RecallService._get_open(db, clinic_id, recall_id)
         if not recall:
             return None
+        await _check_appointment(
+            db, clinic_id, recall.patient_id, attempt_data.get("linked_appointment_id")
+        )
         attempt = RecallContactAttempt(
             recall_id=recall.id,
             clinic_id=clinic_id,
@@ -457,6 +505,7 @@ class RecallService:
         recall = await RecallService.get(db, clinic_id, recall_id)
         if not recall:
             return None
+        await _check_appointment(db, clinic_id, recall.patient_id, appointment_id)
         recall.linked_appointment_id = appointment_id
         if recall.status in ("pending", "contacted_no_answer"):
             recall.status = "contacted_scheduled"

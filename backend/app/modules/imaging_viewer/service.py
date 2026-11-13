@@ -937,6 +937,19 @@ class RvgService:
         ).scalar_one_or_none()
 
     @staticmethod
+    async def _lock_import(db: AsyncSession, clinic_id: UUID, import_id: UUID) -> RvgImport | None:
+        """Read the row ``FOR UPDATE`` and refresh it, so a second decision
+        on the same row waits for the first and then sees its status."""
+        return (
+            await db.execute(
+                select(RvgImport)
+                .where(RvgImport.id == import_id, RvgImport.clinic_id == clinic_id)
+                .with_for_update()
+                .execution_options(populate_existing=True)
+            )
+        ).scalar_one_or_none()
+
+    @staticmethod
     async def approve(
         db: AsyncSession,
         clinic_id: UUID,
@@ -952,7 +965,7 @@ class RvgService:
         Raises ``LookupError`` for unknown import/patient/file (→ 404) and
         ``RvgConflictError`` when the row is already decided (→ 409).
         """
-        row = await RvgService.get_import(db, clinic_id, import_id)
+        row = await RvgService._lock_import(db, clinic_id, import_id)
         if row is None:
             raise LookupError("Import not found")
         if row.status != "pending":
@@ -1064,7 +1077,7 @@ class RvgService:
         reason: str | None = None,
     ) -> RvgImport:
         """Reject a pending import. The row stays for audit."""
-        row = await RvgService.get_import(db, clinic_id, import_id)
+        row = await RvgService._lock_import(db, clinic_id, import_id)
         if row is None:
             raise LookupError("Import not found")
         if row.status != "pending":

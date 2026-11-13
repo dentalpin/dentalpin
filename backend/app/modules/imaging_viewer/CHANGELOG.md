@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#850): approve and reject lock the queue row (`FOR UPDATE`, `populate_existing`). Two decisions at once both passed the `pending` check: two approvals could file one X-ray under two patients (or the loser hit a 500 on the link's unique key), and an approval that started during a reject approved the rejected file. The second decision now waits and gets 409.
+
 - feat: batch approve for the RVG queue. New `POST /rvg/imports/approve-batch`
   (same `imaging_viewer.rvg.write` permission) decides several pending
   imports in one call, each for its own explicit target patient, and

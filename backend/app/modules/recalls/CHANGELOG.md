@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#852): a linked appointment must belong to the clinic and to the recall's patient (`link-appointment`, contact attempts, `log_contact_attempt` tool), and an assigned professional must be a professional of the clinic (create, update, `create_recall` tool). Unknown ids were a 500; another patient's appointment was stored, and completing that visit closed this patient's recall. Both now answer 400.
+
 - fix(#804): a done or cancelled recall can no longer be changed. Logging an attempt used to put it back on the active call list, and a closed recall could be cancelled, completed or snoozed again. These actions now lock the row and answer 409, the agent tools return `recall_closed`, and `RecallRow` hides the actions on closed rows.
 
 - fix(#684): the dashboard's `completed_this_month` and `conversion_rate` changed with the app container's `TZ`. The month bounds were naive datetimes compared with `timestamptz` columns, so they were read in the process's zone: the same rows gave 1 on a UTC host and 3 on a Madrid one. They are now midnight in the clinic's `timezone` (`clinic_zone_for`, `app/core/utils/dates.py`), the same zone `today` already came from, so a recall completed at 00:30 on 1 June in a Madrid clinic counts in June on every host.
