@@ -29,6 +29,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **One RVG file could be approved twice (#850).** Two approvals of the same
+  queued file at once could file the X-ray under two patients, and an
+  approval that started during a reject still went through. The second
+  decision now waits and gets "already decided".
 - **A clinic could lose its last admin (#842).** A user whose custom role
   grants `admin.users.write` could not demote the last admin, but could
   deactivate them or remove them from the clinic, and the demotion check
