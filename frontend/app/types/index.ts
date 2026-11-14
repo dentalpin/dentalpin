@@ -485,6 +485,7 @@ export interface TreatmentCatalogItemBrief {
   internal_code: string
   names: Record<string, string>
   default_price?: string | null
+  default_duration_minutes?: number | null
 }
 
 /** Treatment = one clinical act. Bridges, splints and multiple-veneers/crowns are
