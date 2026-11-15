@@ -1251,7 +1251,7 @@ defineExpose({
   }
 }
 
-@container (max-width: 920px) {
+@container (max-width: 960px) {
   .odontogram-grid {
     zoom: 0.7;
   }
