@@ -1239,57 +1239,69 @@ defineExpose({
 }
 
 /* Container queries - respond to actual container width, not viewport */
-@container (max-width: 1100px) {
+@container (max-width: 1200px) {
   .odontogram-grid {
     zoom: 0.9;
   }
 }
 
-@container (max-width: 935px) {
+@container (max-width: 1030px) {
   .odontogram-grid {
     zoom: 0.8;
   }
 }
 
-@container (max-width: 830px) {
+@container (max-width: 920px) {
   .odontogram-grid {
     zoom: 0.7;
   }
 }
 
-@container (max-width: 730px) {
+@container (max-width: 805px) {
   .odontogram-grid {
     zoom: 0.6;
   }
 }
 
-@container (max-width: 625px) {
+@container (max-width: 690px) {
   .odontogram-grid {
     zoom: 0.5;
   }
 }
 
-@container (max-width: 525px) {
+@container (max-width: 575px) {
   .odontogram-grid {
     zoom: 0.4;
   }
 }
 
-@container (max-width: 420px) {
+@container (max-width: 460px) {
+  .odontogram-grid {
+    zoom: 0.35;
+  }
+}
+
+@container (max-width: 400px) {
   .odontogram-grid {
     zoom: 0.3;
   }
 }
 
-@container (max-width: 315px) {
+@container (max-width: 345px) {
   .odontogram-grid {
     zoom: 0.25;
   }
 }
 
-@container (max-width: 260px) {
+@container (max-width: 285px) {
   .odontogram-grid {
     zoom: 0.2;
+  }
+}
+
+@container (max-width: 230px) {
+  .odontogram-grid {
+    zoom: 0.15;
   }
 }
 
