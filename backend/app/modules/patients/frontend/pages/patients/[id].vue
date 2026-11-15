@@ -96,18 +96,6 @@ const defaultPatientTab = computed(() =>
 )
 const activeTab = ref(defaultPatientTab.value)
 
-watch(
-  [() => route.query.tab, defaultPatientTab],
-  ([tab, fallbackTab]) => {
-    if (tab && typeof tab === 'string') {
-      activeTab.value = tab
-    } else {
-      activeTab.value = fallbackTab
-    }
-  },
-  { immediate: true }
-)
-
 const tabs = computed(() => {
   const items: Array<{ value: string, label: string, icon: string, slot: string }> = [
     {
@@ -161,6 +149,19 @@ const tabs = computed(() => {
 
   return items
 })
+
+// Permissions can hydrate after the route. Keep a requested tab selected
+// when it becomes available, and fall back when the user cannot access it.
+watch(
+  [() => route.query.tab, defaultPatientTab, tabs],
+  ([tab, fallbackTab, availableTabs]) => {
+    const requestedTab = typeof tab === 'string' ? tab : fallbackTab
+    activeTab.value = availableTabs.some(item => item.value === requestedTab)
+      ? requestedTab
+      : fallbackTab
+  },
+  { immediate: true }
+)
 
 // Permissions used by Datos tab + edit modals.
 const canEditMedicalHistory = computed(() => can(PERMISSIONS.medicalHistory.write))
