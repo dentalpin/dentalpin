@@ -80,17 +80,26 @@ test.describe('patient detail', () => {
         if (!grid) throw new Error('odontogram grid is missing')
         const container = element.getBoundingClientRect()
         const gridBounds = grid.getBoundingClientRect()
+        const queryContainer = [grid.parentElement, grid.parentElement?.parentElement]
+          .find(ancestor => ancestor && getComputedStyle(ancestor).containerType !== 'normal')
+        const queryContainerWidth = queryContainer?.getBoundingClientRect().width ?? null
         return {
           containerWidth: container.width,
           zoom: Number.parseFloat(getComputedStyle(grid).zoom),
           containerRight: container.right,
+          gridLeft: gridBounds.left,
+          gridWidth: gridBounds.width,
           gridRight: gridBounds.right,
+          queryContainerWidth,
           viewportWidth: window.innerWidth
         }
       })
       expect(layout.containerWidth).toBeLessThanOrEqual(width)
       expect(layout.zoom).toBeGreaterThan(0)
-      expect(layout.gridRight).toBeLessThanOrEqual(layout.containerRight + 1)
+      expect(
+        layout.gridRight,
+        `layout at ${width}px: ${JSON.stringify(layout)}`
+      ).toBeLessThanOrEqual(layout.containerRight + 1)
       expect(layout.gridRight).toBeLessThanOrEqual(layout.viewportWidth + 1)
       await expect(lateralView).toBeVisible()
       measurements.push({ width, containerWidth: layout.containerWidth, zoom: layout.zoom })
