@@ -1212,6 +1212,11 @@ defineExpose({
 </template>
 
 <style scoped>
+.odontogram-chart {
+  width: 100%;
+  min-width: 0;
+}
+
 .odontogram-wrapper {
   container-type: inline-size;
   width: 100%;

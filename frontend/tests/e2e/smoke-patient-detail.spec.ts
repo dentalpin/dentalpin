@@ -83,6 +83,30 @@ test.describe('patient detail', () => {
         const queryContainer = [grid.parentElement, grid.parentElement?.parentElement]
           .find(ancestor => ancestor && getComputedStyle(ancestor).containerType !== 'normal')
         const queryContainerWidth = queryContainer?.getBoundingClientRect().width ?? null
+        const ancestors: Array<{
+          tag: string
+          className: string
+          left: number
+          width: number
+          display: string
+          flex: string
+          gridColumns: string
+        }> = []
+        let ancestor: HTMLElement | null = element
+        while (ancestor && ancestors.length < 8) {
+          const bounds = ancestor.getBoundingClientRect()
+          const styles = getComputedStyle(ancestor)
+          ancestors.push({
+            tag: ancestor.tagName.toLowerCase(),
+            className: ancestor.className.toString().slice(0, 100),
+            left: Math.round(bounds.left),
+            width: Math.round(bounds.width),
+            display: styles.display,
+            flex: styles.flex,
+            gridColumns: styles.gridTemplateColumns
+          })
+          ancestor = ancestor.parentElement
+        }
         return {
           containerWidth: container.width,
           zoom: Number.parseFloat(getComputedStyle(grid).zoom),
@@ -91,6 +115,7 @@ test.describe('patient detail', () => {
           gridWidth: gridBounds.width,
           gridRight: gridBounds.right,
           queryContainerWidth,
+          ancestors,
           viewportWidth: window.innerWidth
         }
       })
