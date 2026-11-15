@@ -1,6 +1,6 @@
 """sistema_ts API: settings gate, opposition, item types, documents."""
 
-from datetime import UTC, date, datetime
+from datetime import date
 from uuid import uuid4
 
 import pytest
@@ -104,7 +104,16 @@ async def test_clearing_a_credential_of_an_enabled_clinic_answers_400(
 
 
 @pytest.mark.asyncio
-async def test_opposition_roundtrip(client: AsyncClient, auth_headers, test_clinic, test_patient):
+async def test_opposition_roundtrip(
+    client: AsyncClient, auth_headers, test_clinic, test_patient, monkeypatch
+):
+    expected_today = date(2031, 4, 5)
+
+    async def fixed_clinic_today(_db, _clinic_id):
+        return expected_today
+
+    # Keep this endpoint test deterministic across UTC/local-midnight boundaries.
+    monkeypatch.setattr("app.modules.sistema_ts.router.clinic_today_for", fixed_clinic_today)
     url = f"/api/v1/sistema_ts/opposition/{test_patient.id}"
     res = await client.get(url, headers=auth_headers)
     assert res.status_code == 200 and res.json()["data"]["opposed"] is False
@@ -112,10 +121,7 @@ async def test_opposition_roundtrip(client: AsyncClient, auth_headers, test_clin
         url, json={"opposed": True, "note": "richiesta verbale"}, headers=auth_headers
     )
     assert res.status_code == 200 and res.json()["data"]["opposed"] is True
-    # The route stamps datetime.now(UTC).date() (router.py:349), so compare
-    # against the same clock: local date.today() is a day ahead of it for
-    # part of every day in any timezone east of UTC.
-    assert res.json()["data"]["opposed_since"] == datetime.now(UTC).date().isoformat()
+    assert res.json()["data"]["opposed_since"] == expected_today.isoformat()
     res = await client.put(url, json={"opposed": False}, headers=auth_headers)
     assert res.json()["data"]["opposed"] is False and res.json()["data"]["revoked_at"] is not None
 
