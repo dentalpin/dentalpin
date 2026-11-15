@@ -310,10 +310,7 @@ def _scan_host_pages() -> set[str]:
     pages_dir = REPO_ROOT / "frontend" / "app" / "pages"
     if not pages_dir.is_dir():
         return set()
-    return {
-        _page_to_route(vue.relative_to(pages_dir))
-        for vue in pages_dir.rglob("*.vue")
-    }
+    return {_page_to_route(vue.relative_to(pages_dir)) for vue in pages_dir.rglob("*.vue")}
 
 
 def _collect_facts(module) -> ModuleFacts:

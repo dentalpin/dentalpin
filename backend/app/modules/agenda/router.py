@@ -37,10 +37,10 @@ from .checkin import (
 from .kanban_service import KanbanDayService
 from .models import Appointment
 from .schemas import (
+    AppointmentAssistantBrief,
     AppointmentCabinetAssignment,
     AppointmentCabinetEventResponse,
     AppointmentCreate,
-    AppointmentAssistantBrief,
     AppointmentResponse,
     AppointmentStatusEventResponse,
     AppointmentStatusTransition,

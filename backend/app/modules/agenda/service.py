@@ -364,7 +364,9 @@ class AppointmentService:
         return result.scalar_one_or_none() is not None
 
     @staticmethod
-    async def validate_assistant_access(db: AsyncSession, clinic_id: UUID, assistant_id: UUID) -> bool:
+    async def validate_assistant_access(
+        db: AsyncSession, clinic_id: UUID, assistant_id: UUID
+    ) -> bool:
         """Only allow an active assistant who belongs to this clinic."""
         result = await db.execute(
             select(ClinicMembership.id)

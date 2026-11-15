@@ -164,12 +164,14 @@ async def test_odontogram_treatment_delete_is_recorded_for_admin_journal(
         db=db_session,
     )
     entry = (
-        await db_session.execute(
-            select(ActivityJournalEntry).where(
-                ActivityJournalEntry.clinic_id == test_clinic.id
+        (
+            await db_session.execute(
+                select(ActivityJournalEntry).where(ActivityJournalEntry.clinic_id == test_clinic.id)
             )
         )
-    ).scalars().one()
+        .scalars()
+        .one()
+    )
     assert entry.event_type == "odontogram.treatment.deleted"
     assert entry.actor_id == actor
 

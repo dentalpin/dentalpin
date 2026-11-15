@@ -107,9 +107,7 @@ async def test_assistant_assignment_is_active_and_clinic_scoped(
     db_session.add_all([assistant, other_clinic])
     await db_session.flush()
     db_session.add(
-        ClinicMembership(
-            id=uuid4(), user_id=assistant.id, clinic_id=clinic_id, role="assistant"
-        )
+        ClinicMembership(id=uuid4(), user_id=assistant.id, clinic_id=clinic_id, role="assistant")
     )
     await db_session.commit()
 
@@ -172,9 +170,7 @@ async def test_appointment_assistant_must_be_active_clinic_member(
 
     assistant.is_active = False
     await db_session.commit()
-    rejected = await client.post(
-        "/api/v1/agenda/appointments", headers=auth_headers, json=booking
-    )
+    rejected = await client.post("/api/v1/agenda/appointments", headers=auth_headers, json=booking)
     assert rejected.status_code == 400, rejected.text
 
 

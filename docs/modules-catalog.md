@@ -2,7 +2,7 @@
 
 # Modules catalog
 
-Single source of truth for every module loaded into the running Dentum instance. Generated from module manifests, `get_permissions()`, `get_event_handlers()`, and grep of `event_bus.publish` callsites.
+Single source of truth for every module loaded into the running DentalPin instance. Generated from module manifests, `get_permissions()`, `get_event_handlers()`, and grep of `event_bus.publish` callsites.
 
 Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest changes without re-generation.
 
@@ -11,7 +11,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | Module | Version | Category | Depends | Install | Removable | Permissions | Emits | Consumes | FE layer |
 |--------|---------|----------|---------|---------|-----------|-------------|-------|----------|----------|
 | `accounting_export` | 0.1.0 | official | billing, payments | manual | yes | 2 | 0 | 0 | yes |
-| `activity_journal` | 0.1.0 | community | — | manual | yes | 1 | 0 | 31 | yes |
+| `activity_journal` | 0.1.0 | community | — | manual | yes | 1 | 0 | 34 | yes |
 | `agenda` | 0.4.0 | official | patients, catalog, odontogram | auto | no | 4 | 11 | 1 | yes |
 | `billing` | 0.1.0 | official | patients, catalog, budget, payments | auto | no | 3 | 3 | 3 | yes |
 | `budget` | 0.1.0 | official | patients, catalog, odontogram | auto | no | 5 | 9 | 3 | yes |
@@ -53,7 +53,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `recall_reminders` | 0.1.0 | community | recalls, notifications, patients | manual | yes | 0 | 0 | 1 | yes |
 | `recalls` | 0.1.0 | official | patients, agenda | auto | yes | 3 | 4 | 5 | yes |
 | `reports` | 0.2.0 | official | patients, agenda, catalog, budget, billing, payments, treatment_plan | auto | no | 6 | 0 | 0 | yes |
-| `schedules` | 0.1.0 | official | agenda | auto | yes | 8 | 0 | 4 | yes |
+| `schedules` | 0.1.0 | official | agenda | auto | yes | 12 | 0 | 4 | yes |
 | `sdi_it` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
 | `sistema_ts` | 0.1.0 | official | billing, patients, catalog, payments | manual | yes | 6 | 0 | 0 | yes |
 | `sms_gateway` | 0.1.0 | community | notifications | manual | yes | 2 | 0 | 0 | yes |
@@ -76,7 +76,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 
 Export invoices and payments for the accountant (gestoría).
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -93,7 +93,7 @@ Export invoices and payments for the accountant (gestoría).
 
 Append-only staff activity log recorded from module events.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -119,7 +119,10 @@ Append-only staff activity log recorded from module events.
   - `document.generated`
   - `invoice.sent`
   - `lab_order.status_changed`
+  - `odontogram.treatment.added`
+  - `odontogram.treatment.deleted`
   - `odontogram.treatment.performed`
+  - `odontogram.treatment.status_changed`
   - `patient.archived`
   - `patient.created`
   - `payment.allocated`
@@ -140,7 +143,7 @@ Append-only staff activity log recorded from module events.
 
 Appointments, scheduling, cabinets.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -171,7 +174,7 @@ Appointments, scheduling, cabinets.
 
 Invoices, payments, credit notes, PDF billing.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -195,7 +198,7 @@ Invoices, payments, credit notes, PDF billing.
 
 Dental treatment quotes, versioning, signatures.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -227,7 +230,7 @@ Dental treatment quotes, versioning, signatures.
 
 Treatment catalog, categories, VAT types.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -246,7 +249,7 @@ Treatment catalog, categories, VAT types.
 
 Polymorphic clinical notes (administrative, diagnosis, treatment, treatment plan) with author. Attachments delegated to media.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -284,9 +287,9 @@ Directory of external labs, suppliers, and other provider contacts.
 
 ### `copilot` — v0.1.0
 
-Conversational AI agent over Dentum, scoped to the caller's permissions.
+Conversational AI agent over DentalPin, scoped to the caller's permissions.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=True
@@ -310,7 +313,7 @@ Conversational AI agent over Dentum, scoped to the caller's permissions.
 
 Generates prescriptions, medical certificates, referral letters and radiology requests as branded PDFs with configurable clinic letterhead.
 
-- **Author:** Dentum Contributors
+- **Author:** DentalPin Contributors
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -328,7 +331,7 @@ Generates prescriptions, medical certificates, referral letters and radiology re
 
 Fixed/recurring office expense tracking with monthly category totals.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -345,7 +348,7 @@ Fixed/recurring office expense tracking with monthly category totals.
 
 Data-subject rights, consents, retention and breach reporting (GDPR).
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -375,7 +378,7 @@ Data-subject rights, consents, retention and breach reporting (GDPR).
 
 On-demand AI segmentation jobs over imaging studies.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -394,7 +397,7 @@ On-demand AI segmentation jobs over imaging studies.
 
 In-app DICOM study viewer (PNG render) indexed on media documents.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -435,7 +438,7 @@ CGST/SGST/IGST GST billing compliance for Indian clinics.
 
 Webhook subscriptions (REST Hooks) for third-party automations.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -497,7 +500,7 @@ Reorder suggestions from 90-day usage and supplier lead times; generates draft p
 
 Track lab work orders per patient — from sent to received.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -536,7 +539,7 @@ Inbound leads from external forms: new enquiries become leads, known patients be
 
 Patient documents, photos, X-rays + polymorphic attachments.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -581,7 +584,7 @@ Managed allergy/medication/disease/surgery lists with searchable medical-history
 
 Clinic-wide medication list with dose/unit/form, seeded with a 56-item dental starter set.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -599,7 +602,7 @@ Clinic-wide medication list with dose/unit/form, seeded with a 56-item dental st
 
 Importa datos de pacientes, citas, presupuestos, pagos y documentos desde un archivo DPMF generado por dental-bridge.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -623,7 +626,7 @@ Importa datos de pacientes, citas, presupuestos, pagos y documentos desde un arc
 
 NAV Online Számla — valós idejű számlaadat-szolgáltatás (HU).
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -642,7 +645,7 @@ NAV Online Számla — valós idejű számlaadat-szolgáltatás (HU).
 
 Email templates, preferences, SMTP, event-driven sending.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -681,7 +684,7 @@ Email templates, preferences, SMTP, event-driven sending.
 
 Dental charting, tooth state, clinical treatments.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -707,7 +710,7 @@ Dental charting, tooth state, clinical treatments.
 
 Orthodontic case tracking — monthly controls, wires, photo evolution.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -729,7 +732,7 @@ Orthodontic case tracking — monthly controls, wires, photo evolution.
 
 Patient family relationships (Lien de Parentée).
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -746,7 +749,7 @@ Patient family relationships (Lien de Parentée).
 
 Clinic-local patient tags for grouping and campaigns.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -763,7 +766,7 @@ Clinic-local patient tags for grouping and campaigns.
 
 Patient timeline — unified activity log.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -820,7 +823,7 @@ Patient timeline — unified activity log.
 
 Patient identity: name, contact, demographics, status.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -841,7 +844,7 @@ Patient identity: name, contact, demographics, status.
 
 Normalized medical history, allergies, medications, emergency contacts.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -861,7 +864,7 @@ Normalized medical history, allergies, medications, emergency contacts.
 
 Provider-neutral payment gateway contract, registry, and PaymentRequest lifecycle.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -876,7 +879,7 @@ Provider-neutral payment gateway contract, registry, and PaymentRequest lifecycl
 
 Patient-centric collections, allocations to budgets / on-account, refunds, patient ledger, and dental payment reports.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -920,7 +923,7 @@ Staff payroll with encrypted bank/tax data, periods, entries and reports.
 
 SEPA periodontal charting — snapshots, probing sites, BoP/PI/CAL indices.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -940,7 +943,7 @@ SEPA periodontal charting — snapshots, probing sites, BoP/PI/CAL indices.
 
 Clinical prescriptions with per-country compliance hooks.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -980,7 +983,7 @@ Purchase orders with receiving, quality checks and PDF export.
 
 Razorpay payment gateway — UPI, QR, cards, and payment links for India clinics.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -997,7 +1000,7 @@ Razorpay payment gateway — UPI, QR, cards, and payment links for India clinics
 
 Connects recalls to the notifications gateway — auto-reminds patients when a recall is created.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1013,7 +1016,7 @@ Connects recalls to the notifications gateway — auto-reminds patients when a r
 
 Patient recalls: schedule call-backs, work the monthly call list, log attempts, auto-link booked appointments.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=True
@@ -1040,7 +1043,7 @@ Patient recalls: schedule call-backs, work the monthly call list, log attempts, 
 
 Cross-module reporting: billing, budgets, scheduling.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -1061,7 +1064,7 @@ Cross-module reporting: billing, budgets, scheduling.
 
 Clinic + professional operating hours, overrides, availability, and occupancy analytics.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=True
@@ -1069,6 +1072,10 @@ Clinic + professional operating hours, overrides, availability, and occupancy an
 - **Frontend layer:** `frontend`
 - **Permissions:**
   - `schedules.analytics.read`
+  - `schedules.assistant.own.read`
+  - `schedules.assistant.own.write`
+  - `schedules.assistant.read`
+  - `schedules.assistant.write`
   - `schedules.availability.read`
   - `schedules.clinic_hours.read`
   - `schedules.clinic_hours.write`
@@ -1088,7 +1095,7 @@ Clinic + professional operating hours, overrides, availability, and occupancy an
 
 FatturaPA / SDI — fatturazione elettronica B2B per l'Italia.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1107,7 +1114,7 @@ FatturaPA / SDI — fatturazione elettronica B2B per l'Italia.
 
 Sistema Tessera Sanitaria — invio delle spese sanitarie dei pazienti (IT).
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1145,7 +1152,7 @@ SMS delivery for notifications via pluggable providers.
 
 Clock in/out events, current state, and daily pairing report.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1163,7 +1170,7 @@ Clock in/out events, current state, and daily pairing report.
 
 Staff handoff board — internal tasks and handoffs between team members.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1216,7 +1223,7 @@ Automatic delivery/quality metrics from PO history plus a manual 1-5 communicati
 
 Procurement vendors and suppliers (extends contacts).
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1233,7 +1240,7 @@ Procurement vendors and suppliers (extends contacts).
 
 CTI: aviso en pantalla de llamadas entrantes + registro de llamadas.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1257,7 +1264,7 @@ CTI: aviso en pantalla de llamadas entrantes + registro de llamadas.
 
 Cash/bank accounts, transfers, and manual corrections.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1276,7 +1283,7 @@ Cash/bank accounts, transfers, and manual corrections.
 
 Maps catalog treatments to inventory items with quantity per link.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1294,7 +1301,7 @@ Maps catalog treatments to inventory items with quantity per link.
 
 Patient treatment plans with budget + odontogram sync.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
@@ -1333,7 +1340,7 @@ Patient treatment plans with budget + odontogram sync.
 
 Cumplimiento Veri*Factu (AEAT) para clínicas en España.
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1356,7 +1363,7 @@ Cumplimiento Veri*Factu (AEAT) para clínicas en España.
 
 WhatsApp para notifications vía Kapso (Meta Cloud API).
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
@@ -1373,7 +1380,7 @@ WhatsApp para notifications vía Kapso (Meta Cloud API).
 
 WhatsApp para notifications vía webhook firmado (Zapier/Make/n8n).
 
-- **Author:** Dentum Core Team
+- **Author:** DentalPin Core Team
 - **License:** BSL-1.1
 - **Category:** community
 - **Install policy:** installable=True · auto_install=False · removable=True
