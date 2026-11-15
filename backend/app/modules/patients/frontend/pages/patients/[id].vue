@@ -150,18 +150,27 @@ const tabs = computed(() => {
   return items
 })
 
-// Permissions can hydrate after the route. Keep a requested tab selected
-// when it becomes available, and fall back when the user cannot access it.
+// Permissions can hydrate after the route, and UTabs may initialize its own
+// value while mounting. Reapply a requested tab after either event settles.
+function syncActiveTabFromRoute() {
+  const requestedTab = typeof route.query.tab === 'string'
+    ? route.query.tab
+    : defaultPatientTab.value
+  activeTab.value = tabs.value.some(item => item.value === requestedTab)
+    ? requestedTab
+    : defaultPatientTab.value
+}
+
 watch(
   [() => route.query.tab, defaultPatientTab, tabs],
-  ([tab, fallbackTab, availableTabs]) => {
-    const requestedTab = typeof tab === 'string' ? tab : fallbackTab
-    activeTab.value = availableTabs.some(item => item.value === requestedTab)
-      ? requestedTab
-      : fallbackTab
-  },
-  { immediate: true }
+  syncActiveTabFromRoute,
+  { immediate: true, flush: 'post' }
 )
+
+onMounted(async () => {
+  await nextTick()
+  syncActiveTabFromRoute()
+})
 
 // Permissions used by Datos tab + edit modals.
 const canEditMedicalHistory = computed(() => can(PERMISSIONS.medicalHistory.write))
