@@ -414,7 +414,7 @@ const allReportsEmpty = computed(() => {
           />
           <div
             v-if="agingData && agingTotal > 0"
-            class="mt-3 grid grid-cols-4 gap-2"
+            class="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4"
           >
             <button
               v-for="b in agingData.buckets"

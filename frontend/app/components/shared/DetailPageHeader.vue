@@ -70,7 +70,7 @@ withDefaults(defineProps<Props>(), {
 
       <div
         v-if="$slots.actions"
-        class="shrink-0"
+        class="min-w-0 sm:shrink-0"
       >
         <slot name="actions" />
       </div>

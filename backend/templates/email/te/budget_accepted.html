@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}అంచనా అంగీకరించబడింది - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}అంచనా అంగీకరించబడింది - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>అంచనా అంగీకరించబడింది</h2>
 
 <p>నమస్కారం {{ patient_name }},</p>
 
-<p><strong>{{ clinic_name | default('DentalPin') }}</strong> నుండి మీ అంచనా <strong>#{{ budget_number }}</strong> అంగీకరించబడింది.</p>
+<p><strong>{{ clinic_name | default('Dentum') }}</strong> నుండి మీ అంచనా <strong>#{{ budget_number }}</strong> అంగీకరించబడింది.</p>
 
 <div class="info-box">
     <div class="info-row">

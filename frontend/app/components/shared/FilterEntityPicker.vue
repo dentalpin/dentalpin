@@ -118,7 +118,7 @@ const isActive = computed(() => Boolean(props.modelValue))
     </UButton>
 
     <template #content>
-      <div class="p-2 w-[280px]">
+      <div class="w-[min(280px,90vw)] p-2">
         <UInput
           v-model="query"
           :placeholder="placeholder ?? t('lists.filter.searchPlaceholder')"

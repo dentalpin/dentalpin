@@ -7,10 +7,13 @@ import { mockNuxtImport } from '@nuxt/test-utils/runtime'
  * refresh, one retry contract `useApi` gives everything else.
  */
 const refresh = vi.fn(async () => true)
+const fetchMock = vi.hoisted(() => vi.fn())
 
 mockNuxtImport('useAuth', () => () => ({ refresh, logout: vi.fn() }))
 mockNuxtImport('useI18n', () => () => ({ t: (key: string, fallback?: string) => fallback ?? key }))
 mockNuxtImport('useToast', () => () => ({ add: vi.fn() }))
+mockNuxtImport('$fetch', () => fetchMock)
+mockNuxtImport('useSessionRequest', () => () => ({ csrfHeaders: () => ({}) }))
 mockNuxtImport('useApi', () => () => ({
   get: vi.fn(), post: vi.fn(), put: vi.fn(), patch: vi.fn(), del: vi.fn(), raw: vi.fn()
 }))
@@ -25,11 +28,11 @@ describe('useDocuments().uploadDocument', () => {
   beforeEach(() => {
     refresh.mockClear()
     refresh.mockResolvedValue(true)
+    fetchMock.mockReset()
   })
 
   it('uploads once while the session is valid', async () => {
-    const fetchMock = vi.fn(async () => ({ data: { id: 'doc-1' } }))
-    vi.stubGlobal('$fetch', fetchMock)
+    fetchMock.mockResolvedValue({ data: { id: 'doc-1' } })
 
     const doc = await upload()
 
@@ -39,10 +42,9 @@ describe('useDocuments().uploadDocument', () => {
   })
 
   it('refreshes once and retries when the access cookie has expired', async () => {
-    const fetchMock = vi.fn()
+    fetchMock
       .mockRejectedValueOnce(Object.assign(new Error('Unauthorized'), { statusCode: 401 }))
       .mockResolvedValueOnce({ data: { id: 'doc-2' } })
-    vi.stubGlobal('$fetch', fetchMock)
 
     const doc = await upload()
 
@@ -53,10 +55,7 @@ describe('useDocuments().uploadDocument', () => {
 
   it('gives up when the refresh fails, without a second attempt', async () => {
     refresh.mockResolvedValue(false)
-    const fetchMock = vi.fn(async () => {
-      throw Object.assign(new Error('Unauthorized'), { statusCode: 401 })
-    })
-    vi.stubGlobal('$fetch', fetchMock)
+    fetchMock.mockRejectedValue(Object.assign(new Error('Unauthorized'), { statusCode: 401 }))
 
     const doc = await upload()
 

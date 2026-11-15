@@ -1,11 +1,20 @@
 <script setup lang="ts">
-import type { Patient } from '~~/app/types'
+import type { Patient, Surface } from '~~/app/types'
 
 const router = useRouter()
 const { t } = useI18n()
-const { createPlan, loading } = useTreatmentPlans()
+const { locale } = useI18n()
+const { createPlanBatch, loading } = useTreatmentPlans()
 const { professionals, fetchProfessionals } = useProfessionals()
+const treatmentCatalog = useTreatmentCatalog()
 const api = useApi()
+
+interface ProposalLine {
+  catalog_item_id: string | undefined
+  tooth_numbers: string
+  surfaces: string
+  notes: string
+}
 
 // Patient search
 const searchQuery = ref('')
@@ -20,10 +29,14 @@ const form = ref({
   diagnosis_notes: '',
   internal_notes: ''
 })
+const proposalLines = ref<ProposalLine[]>([
+  { catalog_item_id: undefined, tooth_numbers: '', surfaces: '', notes: '' }
+])
 
 // Fetch professionals on mount
 onMounted(() => {
   fetchProfessionals()
+  treatmentCatalog.fetchTreatments()
 })
 
 // Search patients
@@ -72,15 +85,69 @@ const professionalOptions = computed(() => {
   }))
 })
 
-async function handleSubmit() {
-  if (!selectedPatient.value) return
+const procedureOptions = computed(() => treatmentCatalog.treatments.value
+  .filter(item => !!item.odontogram_treatment_type)
+  .map(item => ({
+    label: item.names[locale.value] || item.names.es || item.names.en || item.internal_code,
+    value: item.id
+  })))
 
-  const plan = await createPlan({
-    patient_id: selectedPatient.value.id,
-    title: form.value.title || undefined,
-    assigned_professional_id: form.value.assigned_professional_id || undefined,
-    diagnosis_notes: form.value.diagnosis_notes || undefined,
-    internal_notes: form.value.internal_notes || undefined
+function addProposalLine() {
+  proposalLines.value.push({
+    catalog_item_id: undefined,
+    tooth_numbers: '',
+    surfaces: '',
+    notes: ''
+  })
+}
+
+function removeProposalLine(index: number) {
+  if (proposalLines.value.length > 1) proposalLines.value.splice(index, 1)
+}
+
+function parseNumbers(value: string): number[] {
+  return value.split(/[\s,;]+/).filter(Boolean).map(Number)
+}
+
+function lineIsValid(line: ProposalLine): boolean {
+  const teeth = parseNumbers(line.tooth_numbers)
+  return !!line.catalog_item_id
+    && teeth.length > 0
+    && teeth.every(Number.isInteger)
+    && surfacesAreValid(line)
+}
+
+function surfacesAreValid(line: ProposalLine): boolean {
+  const surfaces = line.surfaces.split(/[\s,;]+/).filter(Boolean)
+  return surfaces.every(surface => ['M', 'D', 'O', 'V', 'L'].includes(surface))
+}
+
+async function handleSubmit() {
+  if (!selectedPatient.value || !proposalLines.value.every(lineIsValid)) return
+
+  const plan = await createPlanBatch({
+    plan: {
+      patient_id: selectedPatient.value.id,
+      title: form.value.title || undefined,
+      assigned_professional_id: form.value.assigned_professional_id || undefined,
+      diagnosis_notes: form.value.diagnosis_notes || undefined,
+      internal_notes: form.value.internal_notes || undefined
+    },
+    items: proposalLines.value.map((line) => {
+      const teeth = parseNumbers(line.tooth_numbers)
+      const surfaces = line.surfaces
+        .split(/[\s,;]+/)
+        .filter((surface): surface is Surface => ['M', 'D', 'O', 'V', 'L'].includes(surface))
+      return {
+        create_treatment: {
+          catalog_item_id: line.catalog_item_id,
+          tooth_numbers: teeth,
+          surfaces: surfaces.length ? surfaces : undefined,
+          status: 'planned' as const,
+          notes: line.notes || undefined
+        }
+      }
+    })
   })
 
   if (plan) {
@@ -213,6 +280,93 @@ function goBack() {
           />
         </UFormField>
 
+        <section class="space-y-4 border-t border-default pt-5">
+          <div class="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-semibold text-default">
+                {{ t('treatmentPlans.batch.title', 'Диагнозы и процедуры') }}
+              </h2>
+              <p class="text-sm text-muted">
+                {{ t('treatmentPlans.batch.description', 'Выберите процедуру из каталога и укажите зубы. Врач проверит весь план и смету перед подтверждением.') }}
+              </p>
+            </div>
+            <UButton
+              type="button"
+              variant="soft"
+              icon="i-lucide-plus"
+              :disabled="proposalLines.length >= 100"
+              @click="addProposalLine"
+            >
+              {{ t('treatmentPlans.batch.addLine', 'Добавить строку') }}
+            </UButton>
+          </div>
+
+          <UAlert
+            v-if="!treatmentCatalog.loading.value && procedureOptions.length === 0"
+            icon="i-lucide-book-open-check"
+            color="warning"
+            variant="subtle"
+            :title="t('treatmentPlans.batch.emptyCatalog', 'В каталоге нет процедур для одонтограммы')"
+            :description="t('treatmentPlans.batch.emptyCatalogHint', 'Сначала добавьте и сопоставьте процедуры в настройках каталога.')"
+          />
+
+          <div
+            v-for="(line, index) in proposalLines"
+            :key="index"
+            class="grid gap-3 rounded-lg border border-default bg-surface-muted/40 p-4 sm:grid-cols-2"
+          >
+            <UFormField
+              :label="t('treatmentPlans.batch.procedure', 'Процедура каталога')"
+              required
+            >
+              <USelect
+                v-model="line.catalog_item_id"
+                :items="procedureOptions"
+                value-key="value"
+                :placeholder="t('treatmentPlans.batch.selectProcedure', 'Выберите процедуру')"
+                :disabled="treatmentCatalog.loading.value || procedureOptions.length === 0"
+              />
+            </UFormField>
+            <UFormField
+              :label="t('treatmentPlans.batch.teeth', 'Номера зубов (FDI)')"
+              required
+            >
+              <UInput
+                v-model="line.tooth_numbers"
+                placeholder="14, 15, 26"
+                inputmode="numeric"
+              />
+            </UFormField>
+            <UFormField :label="t('treatmentPlans.batch.surfaces', 'Поверхности (необязательно)')">
+              <UInput
+                v-model="line.surfaces"
+                placeholder="M, O, D"
+              />
+              <p
+                v-if="!surfacesAreValid(line)"
+                class="mt-1 text-xs text-error"
+              >
+                {{ t('treatmentPlans.batch.invalidSurfaces', 'Допустимы поверхности: M, D, O, V, L.') }}
+              </p>
+            </UFormField>
+            <UFormField :label="t('treatmentPlans.batch.notes', 'Комментарий к строке')">
+              <UInput v-model="line.notes" />
+            </UFormField>
+            <div class="flex items-center justify-between gap-3 sm:col-span-2">
+              <span class="text-xs text-muted">{{ t('treatmentPlans.batch.groupingHint', 'Зубы одной строки будут сгруппированы в одном пункте плана.') }}</span>
+              <UButton
+                v-if="proposalLines.length > 1"
+                type="button"
+                variant="ghost"
+                color="error"
+                icon="i-lucide-trash-2"
+                :aria-label="t('common.delete')"
+                @click="removeProposalLine(index)"
+              />
+            </div>
+          </div>
+        </section>
+
         <!-- Actions -->
         <div class="flex justify-end gap-3 pt-4 border-t">
           <UButton
@@ -225,9 +379,9 @@ function goBack() {
           <UButton
             type="submit"
             :loading="loading"
-            :disabled="!selectedPatient"
+            :disabled="!selectedPatient || !proposalLines.length || !proposalLines.every(lineIsValid) || procedureOptions.length === 0"
           >
-            {{ t('actions.create') }}
+            {{ t('treatmentPlans.batch.createForReview', 'Создать план на проверку врача') }}
           </UButton>
         </div>
       </form>

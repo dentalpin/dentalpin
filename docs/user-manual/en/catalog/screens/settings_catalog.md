@@ -31,7 +31,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/catalog/frontend/pages/settings/catalog/index.vue
   - backend/app/modules/catalog/frontend/components/catalog/CatalogCategoriesModal.vue
-last_verified_commit: 6b3eb82
+last_verified_commit: 71402014
 ---
 
 # /settings/catalog
@@ -64,3 +64,5 @@ It is the price source for budgets, plans and invoices.
   path for installs created before automatic seeding existed or where it
   failed; the dashboard "Getting started" card links here when it detects an
   empty catalog.
+- On narrow screens, the treatment pricing fields wrap into two columns;
+  wider screens show up to five columns.

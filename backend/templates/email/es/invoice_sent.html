@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Factura - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}Factura - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>Factura</h2>
 
 <p>Hola {{ patient_name }},</p>
 
-<p>Te enviamos el detalle de la factura <strong>#{{ invoice_number }}</strong> de <strong>{{ clinic_name | default('DentalPin') }}</strong>:</p>
+<p>Te enviamos el detalle de la factura <strong>#{{ invoice_number }}</strong> de <strong>{{ clinic_name | default('Dentum') }}</strong>:</p>
 
 <div class="info-box">
     <div class="info-row">

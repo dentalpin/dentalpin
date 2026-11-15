@@ -124,7 +124,7 @@
                 class="w-full"
               />
             </UFormField>
-            <div class="grid grid-cols-3 gap-4">
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
               <UFormField :label="t('payroll.entries.gross')">
                 <UInput
                   v-model="form.gross"

@@ -78,6 +78,9 @@ class Appointment(Base, TimestampMixin):
     clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"), index=True)
     patient_id: Mapped[UUID | None] = mapped_column(ForeignKey("patients.id"))
     professional_id: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
+    assistant_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("users.id", ondelete="SET NULL"), index=True, nullable=True
+    )
     # Denormalized cabinet name (kept in sync on Cabinet rename). The
     # authoritative reference is ``cabinet_id`` — the string lets
     # legacy filters keep working during the frontend migration.
@@ -113,6 +116,7 @@ class Appointment(Base, TimestampMixin):
     # one-directional (Appointment → Patient).
     patient: Mapped[Patient | None] = relationship()
     professional: Mapped[User] = relationship(foreign_keys=[professional_id])
+    assistant: Mapped[User | None] = relationship(foreign_keys=[assistant_id])
     cabinet_assigner: Mapped[User | None] = relationship(foreign_keys=[cabinet_assigned_by])
     cabinet_ref: Mapped[Cabinet | None] = relationship()
 

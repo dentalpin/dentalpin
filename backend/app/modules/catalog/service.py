@@ -23,8 +23,31 @@ class SessionTemplateError(ValueError):
     """Raised when a session template fails validation (sum mismatch, etc.)."""
 
 
+class RecommendedTreatmentError(SessionTemplateError):
+    """Raised when a diagnosis-to-treatment recommendation is invalid."""
+
+
 # Nullable item columns a client can clear by sending ``null``.
-_CLEARABLE_ITEM_FIELDS = frozenset({"default_price", "cost_price", "default_duration_minutes"})
+_CLEARABLE_ITEM_FIELDS = frozenset({"default_price", "cost_price", "default_duration_minutes", "recommended_treatment_id"})
+
+
+async def _validate_recommended_treatment(
+    db: AsyncSession, clinic_id: UUID, treatment_id: UUID | None, diagnosis_id: UUID | None = None
+) -> None:
+    if treatment_id is None:
+        return
+    candidate = await db.get(TreatmentCatalogItem, treatment_id)
+    if (
+        candidate is None
+        or candidate.clinic_id != clinic_id
+        or not candidate.is_active
+        or candidate.is_diagnostic
+        or candidate.treatment_scope != "tooth"
+        or candidate.id == diagnosis_id
+    ):
+        raise RecommendedTreatmentError(
+            "Recommended treatment must be an active tooth-level therapeutic item in this clinic"
+        )
 
 
 def validate_session_template(
@@ -477,6 +500,9 @@ class CatalogService:
 
         # Validate session template against the item total
         validate_session_template(data.get("default_price"), sessions_data)
+        if data.get("recommended_treatment_id") and not data.get("is_diagnostic", False):
+            raise RecommendedTreatmentError("Only diagnostic catalog items can recommend a treatment")
+        await _validate_recommended_treatment(db, clinic_id, data.get("recommended_treatment_id"))
 
         # If no vat_type_id provided, use clinic default
         if not data.get("vat_type_id"):
@@ -524,6 +550,15 @@ class CatalogService:
         """
         odontogram_data = data.pop("odontogram_mapping", None)
         sessions_data = data.pop("sessions", "__not_provided__")
+
+        effective_recommendation = data.get("recommended_treatment_id", item.recommended_treatment_id)
+        effective_diagnostic = data.get("is_diagnostic", item.is_diagnostic)
+        if effective_recommendation and not effective_diagnostic:
+            raise RecommendedTreatmentError("Only diagnostic catalog items can recommend a treatment")
+        if "recommended_treatment_id" in data:
+            await _validate_recommended_treatment(
+                db, clinic_id, data["recommended_treatment_id"], diagnosis_id=item.id
+            )
 
         # Determine effective total for sessions validation
         effective_total = data["default_price"] if "default_price" in data else item.default_price
@@ -741,6 +776,7 @@ class OdontogramCatalogService:
                     "treatment_scope": item.treatment_scope,
                     "requires_surfaces": item.requires_surfaces,
                     "is_diagnostic": item.is_diagnostic,
+                    "recommended_treatment_id": str(item.recommended_treatment_id) if item.recommended_treatment_id else None,
                     "pricing_strategy": item.pricing_strategy or "flat",
                     "pricing_config": item.pricing_config,
                     "surface_prices": item.surface_prices,

@@ -4,6 +4,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -12,6 +13,7 @@ from app.core.utils.dates import clinic_today
 from app.database import get_db
 
 from .schemas import (
+    BatchTreatmentPlanCreate,
     ClosePlanRequest,
     CompleteItemRequest,
     CompleteSessionRequest,
@@ -175,7 +177,21 @@ async def get_treatment_plan(
     plan = await TreatmentPlanService.get(db, ctx.clinic_id, plan_id)
     if not plan:
         raise HTTPException(status_code=404, detail="Treatment plan not found")
-    return ApiResponse(data=TreatmentPlanDetailResponse.model_validate(plan))
+    response = TreatmentPlanDetailResponse.model_validate(plan)
+    if plan.budget_id is not None:
+        from app.modules.billing.models import Invoice
+
+        paid_invoice = await db.execute(
+            select(Invoice.id)
+            .where(
+                Invoice.clinic_id == ctx.clinic_id,
+                Invoice.budget_id == plan.budget_id,
+                Invoice.status == "paid",
+            )
+            .limit(1)
+        )
+        response.is_paid = paid_invoice.scalar_one_or_none() is not None
+    return ApiResponse(data=response)
 
 
 @router.post(
@@ -197,6 +213,45 @@ async def create_treatment_plan(
         raise HTTPException(status_code=400, detail=str(e))
 
 
+@router.post(
+    "/treatment-plans/batch",
+    response_model=ApiResponse[TreatmentPlanDetailResponse],
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_treatment_plan_batch(
+    data: BatchTreatmentPlanCreate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("treatment_plan.plans.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[TreatmentPlanDetailResponse]:
+    """Atomically create a multi-diagnosis proposal for doctor review.
+
+    The batch is always saved as ``draft``; the clinician confirms the
+    complete estimate separately so no quote is sent from this endpoint.
+    """
+    try:
+        plan = await TreatmentPlanService.create_batch(
+            db,
+            ctx.clinic_id,
+            ctx.user_id,
+            data.plan.model_dump(),
+            [item.model_dump() for item in data.items],
+        )
+    except PlanLockedError as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e)) from e
+
+    plan.item_count = len(plan.items)
+    plan.completed_count = sum(item.status == "completed" for item in plan.items)
+    plan.total = sum(
+        float(item.treatment.price_snapshot or 0)
+        for item in plan.items
+        if item.treatment is not None
+    )
+    return ApiResponse(data=TreatmentPlanDetailResponse.model_validate(plan))
+
+
 @router.put(
     "/treatment-plans/{plan_id}",
     response_model=ApiResponse[TreatmentPlanResponse],
@@ -211,7 +266,7 @@ async def update_treatment_plan(
     """Update a treatment plan."""
     try:
         plan = await TreatmentPlanService.update(
-            db, ctx.clinic_id, plan_id, data.model_dump(exclude_unset=True)
+            db, ctx.clinic_id, plan_id, data.model_dump(exclude_unset=True), user_id=ctx.user_id
         )
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -370,7 +425,10 @@ async def delete_treatment_plan(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> None:
     """Soft delete (archive) a treatment plan."""
-    deleted = await TreatmentPlanService.delete(db, ctx.clinic_id, plan_id, ctx.user_id)
+    try:
+        deleted = await TreatmentPlanService.delete(db, ctx.clinic_id, plan_id, ctx.user_id)
+    except ValueError as e:
+        raise HTTPException(status_code=409, detail=str(e))
     if not deleted:
         raise HTTPException(status_code=404, detail="Treatment plan not found")
 
@@ -394,7 +452,9 @@ async def add_plan_item(
 ) -> ApiResponse[PlannedTreatmentItemResponse]:
     """Add a treatment item to the plan."""
     try:
-        item = await TreatmentPlanService.add_item(db, ctx.clinic_id, plan_id, data.model_dump())
+        item = await TreatmentPlanService.add_item(
+            db, ctx.clinic_id, plan_id, data.model_dump(), user_id=ctx.user_id
+        )
         return ApiResponse(data=PlannedTreatmentItemResponse.model_validate(item))
     except PlanLockedError as e:
         raise HTTPException(status_code=409, detail=str(e))

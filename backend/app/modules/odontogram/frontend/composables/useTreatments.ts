@@ -51,6 +51,9 @@ export function useTreatments() {
 
   const treatments = ref<Treatment[]>([])
   const loading = ref(false)
+  const error = ref<string | null>(null)
+  let fetchSequence = 0
+  let activePatientId: string | null = null
 
   // ============================================================================
   // Helpers
@@ -86,11 +89,19 @@ export function useTreatments() {
     patientId: string,
     filters?: { status?: TreatmentStatus, tooth_number?: number, clinical_type?: string }
   ): Promise<void> {
+    const requestId = ++fetchSequence
+    if (activePatientId !== patientId) {
+      activePatientId = patientId
+      treatments.value = []
+    }
     if (!can(PERMISSIONS.odontogram.treatmentsRead)) {
       treatments.value = []
+      error.value = 'Failed to load treatments'
+      loading.value = false
       return
     }
     loading.value = true
+    error.value = null
     try {
       const params = new URLSearchParams()
       if (filters?.status) params.append('status', filters.status)
@@ -111,11 +122,17 @@ export function useTreatments() {
         rows.push(...response.data)
         if (response.data.length < TREATMENTS_PAGE_SIZE || rows.length >= response.total) break
       }
-      treatments.value = rows.map(normalizeTreatment)
+      if (requestId === fetchSequence) {
+        treatments.value = rows.map(normalizeTreatment)
+      }
     } catch (err) {
       console.error('Error fetching treatments:', err)
+      if (requestId === fetchSequence) {
+        treatments.value = []
+        error.value = 'Failed to load treatments'
+      }
     } finally {
-      loading.value = false
+      if (requestId === fetchSequence) loading.value = false
     }
   }
 
@@ -135,7 +152,7 @@ export function useTreatments() {
         { errorToast: false }
       )
       const normalized = normalizeTreatment(response.data)
-      treatments.value.push(normalized)
+      if (activePatientId === patientId) treatments.value.push(normalized)
       return normalized
     } catch (err) {
       toast.add({
@@ -259,13 +276,18 @@ export function useTreatments() {
   }
 
   function reset(): void {
+    fetchSequence++
+    activePatientId = null
     treatments.value = []
+    loading.value = false
+    error.value = null
   }
 
   return {
     // State
     treatments,
     loading,
+    error,
     // Helpers
     getToothTreatments,
     getTreatmentsByStatus,

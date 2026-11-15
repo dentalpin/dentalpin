@@ -111,7 +111,7 @@ function onPage(value: number) {
       <!-- Footer: count + pagination -->
       <div
         v-if="!loading && !empty"
-        class="flex items-center justify-between pt-3 mt-3 border-t border-subtle text-caption text-subtle tnum"
+        class="mt-3 flex flex-col gap-3 border-t border-subtle pt-3 text-caption text-subtle tnum sm:flex-row sm:items-center sm:justify-between"
       >
         <span>
           {{ t('lists.resultCount', { shown: Math.min(page * pageSize, total), total }) }}

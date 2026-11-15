@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 
-{% block title %}{{ clinic_name | default('DentalPin') }} அடுத்த பரிசோதனை{% endblock %}
+{% block title %}{{ clinic_name | default('Dentum') }} அடுத்த பரிசோதனை{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
 <p>வணக்கம் {{ patient_name }},</p>
 
 
-<p>உங்கள் அடுத்த பரிசோதனையை{% if due_month %} <strong>{{ due_month }}</strong> மாதத்திற்கு{% endif %}{% if reason %} ({{ reason }}){% endif %} <strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கில் திட்டமிட்டுள்ளோம்.</p>
+<p>உங்கள் அடுத்த பரிசோதனையை{% if due_month %} <strong>{{ due_month }}</strong> மாதத்திற்கு{% endif %}{% if reason %} ({{ reason }}){% endif %} <strong>{{ clinic_name | default('Dentum') }}</strong> கிளினிக்கில் திட்டமிட்டுள்ளோம்.</p>
 
 
 <p>உங்களுக்கு வசதியான நேரத்தை பதிவு செய்ய எங்களைத் தொடர்பு கொள்ளவும்.</p>

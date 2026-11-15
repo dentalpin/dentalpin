@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}عرض السعر بانتظار ردك - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}عرض السعر بانتظار ردك - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>تذكير بخصوص عرض السعر</h2>
 
 <p>مرحباً {{ patient_name }}،</p>
 
-<p>نود تذكيرك بأن عرض سعر خطتك العلاجية <strong>#{{ budget_number }}</strong> من <strong>{{ clinic_name | default('DentalPin') }}</strong> ما زال بانتظار ردك وموافقتك.</p>
+<p>نود تذكيرك بأن عرض سعر خطتك العلاجية <strong>#{{ budget_number }}</strong> من <strong>{{ clinic_name | default('Dentum') }}</strong> ما زال بانتظار ردك وموافقتك.</p>
 
 <div class="info-box">
     <div class="info-row">

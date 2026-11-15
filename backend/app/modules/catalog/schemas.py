@@ -215,6 +215,7 @@ class CatalogItemCreate(BaseModel):
     treatment_scope: Literal["tooth", "multi_tooth", "global_mouth", "global_arch"] = "tooth"
     is_diagnostic: bool = False
     requires_surfaces: bool = False
+    recommended_treatment_id: UUID | None = None
 
     # Material
     material_notes: str | None = None
@@ -258,6 +259,7 @@ class CatalogItemUpdate(BaseModel):
     treatment_scope: Literal["tooth", "multi_tooth", "global_mouth", "global_arch"] | None = None
     is_diagnostic: bool | None = None
     requires_surfaces: bool | None = None
+    recommended_treatment_id: UUID | None = None
 
     # Material
     material_notes: str | None = None
@@ -310,6 +312,7 @@ class CatalogItemResponse(BaseModel):
     treatment_scope: str
     is_diagnostic: bool
     requires_surfaces: bool
+    recommended_treatment_id: UUID | None = None
 
     # Material
     material_notes: str | None
@@ -365,6 +368,7 @@ class OdontogramTreatmentResponse(BaseModel):
     treatment_scope: str
     requires_surfaces: bool
     is_diagnostic: bool
+    recommended_treatment_id: UUID | None = None
 
     # Pricing strategy (for multi-tooth price preview).
     pricing_strategy: str

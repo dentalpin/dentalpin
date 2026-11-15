@@ -16,6 +16,7 @@ const props = defineProps<{
   patientId: string
   readonly?: boolean
 }>()
+const { t } = useI18n()
 
 const emit = defineEmits<{
   'plan-view-change': [view: 'list' | 'detail']
@@ -31,6 +32,7 @@ const route = useRoute()
 
 // Current mode (default to diagnosis as the most common workflow)
 const currentMode = ref<ClinicalMode>('diagnosis')
+const currentModeLabel = computed(() => t('clinical.modes.' + currentMode.value))
 
 // Plan to open directly (when transitioning from diagnosis)
 const targetPlanId = ref<string | null>(null)
@@ -111,38 +113,73 @@ watch(currentMode, (newMode) => {
 </script>
 
 <template>
-  <div class="clinical-tab space-y-4">
-    <!-- Mode Toggle -->
+  <div class="clinical-tab grid gap-4 pb-2 sm:gap-5">
+    <header class="clinical-workspace-heading flex min-w-0 items-center justify-between gap-3">
+      <div class="flex min-w-0 items-center gap-3">
+        <span class="clinical-workspace-mark flex size-11 shrink-0 items-center justify-center rounded-token-lg">
+          <UIcon
+            name="i-lucide-stethoscope"
+            class="size-5"
+          />
+        </span>
+        <div class="min-w-0">
+          <p class="text-caption text-muted">
+            {{ t('patientDetail.tabs.clinical') }}
+          </p>
+          <h2 class="text-h2 text-default truncate">
+            {{ currentModeLabel }}
+          </h2>
+        </div>
+      </div>
+      <UBadge
+        v-if="readonly"
+        color="neutral"
+        variant="subtle"
+        class="shrink-0"
+      >
+        {{ t('odontogram.readOnly') }}
+      </UBadge>
+    </header>
+
+    <!-- Mode navigation -->
     <ClinicalModeToggle v-model="currentMode" />
 
-    <!-- Mode Content -->
-    <HistoryMode
-      v-if="currentMode === 'history'"
-      :patient-id="patientId"
-    />
+    <!-- Active workspace panel -->
+    <section
+      id="clinical-mode-panel"
+      class="clinical-mode-panel min-w-0"
+      role="tabpanel"
+      tabindex="0"
+      :aria-labelledby="'clinical-mode-' + currentMode"
+    >
+      <HistoryMode
+        v-if="currentMode === 'history'"
+        :patient-id="patientId"
+      />
 
-    <DiagnosisModeContainer
-      v-else-if="currentMode === 'diagnosis'"
-      :patient-id="patientId"
-      :readonly="readonly"
-      @create-plan="handleCreatePlan"
-      @continue-plan="handleContinuePlan"
-    />
+      <DiagnosisModeContainer
+        v-else-if="currentMode === 'diagnosis'"
+        :patient-id="patientId"
+        :readonly="readonly"
+        @create-plan="handleCreatePlan"
+        @continue-plan="handleContinuePlan"
+      />
 
-    <PlansMode
-      v-else-if="currentMode === 'plans'"
-      :patient-id="patientId"
-      :initial-plan-id="targetPlanId"
-      :readonly="readonly"
-      @plan-activated="handlePlanActivated"
-      @budget-generated="handleBudgetGenerated"
-      @view-change="emit('plan-view-change', $event)"
-    />
+      <PlansMode
+        v-else-if="currentMode === 'plans'"
+        :patient-id="patientId"
+        :initial-plan-id="targetPlanId"
+        :readonly="readonly"
+        @plan-activated="handlePlanActivated"
+        @budget-generated="handleBudgetGenerated"
+        @view-change="emit('plan-view-change', $event)"
+      />
 
-    <AppointmentsMode
-      v-else-if="currentMode === 'appointments'"
-      :patient-id="patientId"
-    />
+      <AppointmentsMode
+        v-else-if="currentMode === 'appointments'"
+        :patient-id="patientId"
+      />
+    </section>
 
     <!-- Create Plan Modal (shared across modes) -->
     <TreatmentPlanModal
@@ -152,3 +189,20 @@ watch(currentMode, (newMode) => {
     />
   </div>
 </template>
+
+<style scoped>
+.clinical-workspace-heading {
+  min-height: 3.5rem;
+}
+
+.clinical-workspace-mark {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
+}
+
+.clinical-mode-panel:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--color-primary-accent) 32%, transparent);
+  outline-offset: 4px;
+  border-radius: var(--radius-lg);
+}
+</style>

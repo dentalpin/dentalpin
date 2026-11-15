@@ -35,6 +35,14 @@ class ProfessionalBrief(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+class AppointmentAssistantBrief(BaseModel):
+    id: UUID
+    first_name: str
+    last_name: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
 class AppointmentTreatmentNoteUpdate(BaseModel):
     """PATCH body for updating visit-level clinical notes."""
 
@@ -159,6 +167,7 @@ class AppointmentTreatmentBrief(BaseModel):
 class AppointmentCreate(BaseModel):
     patient_id: UUID | None = None
     professional_id: UUID
+    assistant_id: UUID | None = None
     # Callers may send either cabinet_id (preferred) or cabinet name;
     # the service resolves the other side.
     cabinet_id: UUID | None = None
@@ -173,6 +182,7 @@ class AppointmentCreate(BaseModel):
 class AppointmentUpdate(BaseModel):
     patient_id: UUID | None = None
     professional_id: UUID | None = None
+    assistant_id: UUID | None = None
     cabinet_id: UUID | None = None
     cabinet: str | None = Field(default=None, min_length=1, max_length=50)
     start_time: datetime | None = None
@@ -279,6 +289,7 @@ class AppointmentResponse(BaseModel):
     clinic_id: UUID
     patient_id: UUID | None
     professional_id: UUID
+    assistant_id: UUID | None = None
     cabinet: str | None = None  # Denormalized name for legacy UI callers.
     cabinet_id: UUID | None = None
     cabinet_assigned_at: datetime | None = None
@@ -293,6 +304,7 @@ class AppointmentResponse(BaseModel):
     updated_at: datetime
     patient: PatientBrief | None = None
     professional: ProfessionalBrief | None = None
+    assistant: AppointmentAssistantBrief | None = None
     treatments: list[AppointmentTreatmentBrief] = []
     # Only populated on detail endpoints (GET /appointments/{id}) to keep
     # list responses lean. List endpoints leave these as None.
@@ -317,6 +329,7 @@ class AppointmentResponse(BaseModel):
                 "clinic_id": data.clinic_id,
                 "patient_id": data.patient_id,
                 "professional_id": data.professional_id,
+                "assistant_id": data.assistant_id,
                 "cabinet": data.cabinet,
                 "cabinet_id": data.cabinet_id,
                 "cabinet_assigned_at": data.cabinet_assigned_at,
@@ -331,6 +344,7 @@ class AppointmentResponse(BaseModel):
                 "updated_at": data.updated_at,
                 "patient": data.patient,
                 "professional": data.professional,
+                "assistant": data.assistant,
                 "treatments": treatments_list,
                 "history": None,
                 "cabinet_history": None,

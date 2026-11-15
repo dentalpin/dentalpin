@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}अपॉइंटमेंट अनुस्मारक - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}अपॉइंटमेंट अनुस्मारक - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>अपॉइंटमेंट अनुस्मारक</h2>
 
 <p>नमस्ते {{ patient_name }},</p>
 
-<p>यह <strong>{{ clinic_name | default('DentalPin') }}</strong> में आपके आगामी अपॉइंटमेंट का एक अनुस्मारक है:</p>
+<p>यह <strong>{{ clinic_name | default('Dentum') }}</strong> में आपके आगामी अपॉइंटमेंट का एक अनुस्मारक है:</p>
 
 <div class="info-box">
     <div class="info-row">

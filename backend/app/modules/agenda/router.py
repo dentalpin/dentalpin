@@ -21,6 +21,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.auth.models import ClinicMembership, User
 from app.core.auth.router import limiter
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
@@ -39,6 +40,7 @@ from .schemas import (
     AppointmentCabinetAssignment,
     AppointmentCabinetEventResponse,
     AppointmentCreate,
+    AppointmentAssistantBrief,
     AppointmentResponse,
     AppointmentStatusEventResponse,
     AppointmentStatusTransition,
@@ -79,6 +81,31 @@ def _localize(response: AppointmentResponse, ctx: ClinicContext) -> AppointmentR
 
 
 # --- Appointments -------------------------------------------------------
+
+
+@router.get(
+    "/appointment-assistants",
+    response_model=ApiResponse[list[AppointmentAssistantBrief]],
+)
+async def list_appointment_assistants(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("agenda.appointments.write"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[list[AppointmentAssistantBrief]]:
+    """List active assistant names for appointment assignment."""
+    result = await db.execute(
+        select(User)
+        .join(ClinicMembership, ClinicMembership.user_id == User.id)
+        .where(
+            ClinicMembership.clinic_id == ctx.clinic_id,
+            ClinicMembership.role == "assistant",
+            User.is_active.is_(True),
+        )
+        .order_by(User.first_name, User.last_name, User.id)
+    )
+    return ApiResponse(
+        data=[AppointmentAssistantBrief.model_validate(user) for user in result.scalars().all()]
+    )
 
 
 @router.get("/appointments", response_model=PaginatedApiResponse[AppointmentResponse])
@@ -148,6 +175,14 @@ async def create_appointment(
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Invalid professional: must be a dentist or hygienist in this clinic",
+        )
+
+    if data.assistant_id and not await AppointmentService.validate_assistant_access(
+        db, ctx.clinic_id, data.assistant_id
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid assistant: must be an active assistant in this clinic",
         )
 
     try:
@@ -252,6 +287,14 @@ async def update_appointment(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Invalid professional: must be a dentist or hygienist in this clinic",
             )
+
+    if data.assistant_id and not await AppointmentService.validate_assistant_access(
+        db, ctx.clinic_id, data.assistant_id
+    ):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid assistant: must be an active assistant in this clinic",
+        )
 
     try:
         appointment = await AppointmentService.update_appointment(

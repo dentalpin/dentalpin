@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}మీ అంచనా మీ సమాధానం కోసం వేచి ఉంది - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}మీ అంచనా మీ సమాధానం కోసం వేచి ఉంది - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>స్నేహపూర్వక గుర్తు</h2>
 
 <p>నమస్కారం {{ patient_name }},</p>
 
-<p><strong>{{ clinic_name | default('DentalPin') }}</strong> నుండి మీ చికిత్స అంచనా <strong>#{{ budget_number }}</strong> ఇంకా మీ సమాధానం కోసం వేచి ఉంది.</p>
+<p><strong>{{ clinic_name | default('Dentum') }}</strong> నుండి మీ చికిత్స అంచనా <strong>#{{ budget_number }}</strong> ఇంకా మీ సమాధానం కోసం వేచి ఉంది.</p>
 
 <div class="info-box">
     <div class="info-row">

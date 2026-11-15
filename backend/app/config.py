@@ -17,7 +17,7 @@ FOREIGN_ENV_PREFIXES = ("POSTGRES_", "NUXT_", "DENTALPIN_", "SEED_", "COMPOSE_",
 # FORWARDED_ALLOW_IPS is uvicorn's, not ours (#623): uvicorn reads it
 # directly when --forwarded-allow-ips is absent, so it belongs in the
 # templates without being a Settings field.
-FOREIGN_ENV_KEYS = frozenset({"API_BASE_URL", "PUBLIC_URL", "PATH", "PWD", "FORWARDED_ALLOW_IPS"})
+FOREIGN_ENV_KEYS = frozenset({"API_BASE_URL", "PATH", "PWD", "FORWARDED_ALLOW_IPS"})
 
 
 def unknown_env_keys(env_file: str | Path, declared: set[str]) -> list[str]:
@@ -187,6 +187,8 @@ class Settings(BaseSettings):
     # Default sender
     EMAIL_FROM_ADDRESS: str = "noreply@dentum.online"
     EMAIL_FROM_NAME: str = "Dentum"
+    # Canonical public URL used in account invitation and password links.
+    PUBLIC_URL: str = "http://localhost:3000"
 
     # Copilot / agentic layer (app/core/llm/). OpenAI, Anthropic, Gemini,
     # OpenRouter, Groq and Ollama are the live providers; per-clinic

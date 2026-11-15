@@ -5,6 +5,7 @@ const { t } = useI18n()
 const auth = useAuth()
 const clinic = useClinic()
 const { navigationItems, ensureLoaded } = useModules()
+const api = useApi()
 const { init: initDensity } = useDensity()
 const { isTablet } = useBreakpoint()
 const route = useRoute()
@@ -53,6 +54,7 @@ onMounted(() => {
     isSidebarCollapsed.value = true
   }
   initDensity()
+  refreshDraftCounts()
 })
 
 function toggleSidebar() {
@@ -68,6 +70,31 @@ async function handleLogout() {
 
 const settingsItem = computed(() => navigationItems.value.find(i => i.to === '/settings'))
 const mainNavItems = computed(() => navigationItems.value.filter(i => i.to !== '/settings'))
+const draftCounts = reactive({ budgets: 0, plans: 0 })
+
+async function refreshDraftCounts() {
+  const hasBudgets = mainNavItems.value.some(item => item.to === '/budgets')
+  const hasPlans = mainNavItems.value.some(item => item.to === '/treatment-plans')
+  const requests: Promise<void>[] = []
+  if (hasBudgets) {
+    requests.push(api.get<{ data: unknown[], total: number }>('/api/v1/budget/budgets?page=1&page_size=1&status=draft', { errorToast: false })
+      .then((response) => { draftCounts.budgets = response.total })
+      .catch(() => { draftCounts.budgets = 0 }))
+  }
+  if (hasPlans) {
+    requests.push(api.get<{ data: unknown[], total: number }>('/api/v1/treatment_plan/treatment-plans?page=1&page_size=1&status=draft', { errorToast: false })
+      .then((response) => { draftCounts.plans = response.total })
+      .catch(() => { draftCounts.plans = 0 }))
+  }
+  await Promise.all(requests)
+}
+
+watch(mainNavItems, () => {
+  if (import.meta.client) refreshDraftCounts()
+})
+watch(() => route.path, () => {
+  if (import.meta.client) refreshDraftCounts()
+})
 
 // Collapsible sidebar sections (issue #232): headers are expandable,
 // never links. Collapsed map persists in localStorage like the sidebar
@@ -123,7 +150,7 @@ function isActive(to: string): boolean {
 </script>
 
 <template>
-  <div class="min-h-screen flex bg-canvas">
+  <div class="min-h-[100dvh] flex bg-canvas">
     <!-- Desktop/tablet sidebar (hidden on mobile) -->
     <aside
       class="hidden md:flex fixed inset-y-0 start-0 z-50 flex-col bg-surface-muted transition-[width] duration-150 ease-out"
@@ -162,6 +189,7 @@ function isActive(to: string): boolean {
           :icon="item.icon"
           :active="isActive(item.to)"
           :hide-label="isSidebarCollapsed"
+          :count="item.to === '/budgets' ? draftCounts.budgets : item.to === '/treatment-plans' ? draftCounts.plans : undefined"
         />
         <div
           v-for="group in mainNavGroups.groups"
@@ -200,13 +228,17 @@ function isActive(to: string): boolean {
               :label="item.label"
               :icon="item.icon"
               :active="isActive(item.to)"
+              :count="item.to === '/budgets' ? draftCounts.budgets : item.to === '/treatment-plans' ? draftCounts.plans : undefined"
             />
           </div>
         </div>
       </nav>
 
       <!-- User section -->
-      <div class="px-3 py-3 border-t border-subtle">
+      <div
+        class="py-3 border-t border-subtle"
+        :class="isSidebarCollapsed ? 'px-2' : 'px-3'"
+      >
         <div
           v-if="auth.user.value"
           class="flex items-center gap-3"
@@ -228,24 +260,21 @@ function isActive(to: string): boolean {
               {{ auth.user.value.email }}
             </p>
           </div>
-          <NuxtLink
-            v-if="settingsItem"
-            :to="settingsItem.to"
-            :title="settingsItem.label"
-            :aria-label="settingsItem.label"
-            class="shrink-0 p-1.5 rounded-token-md transition-colors"
-            :class="[
-              isActive(settingsItem.to)
-                ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
-                : 'text-muted hover:bg-surface hover:text-default'
-            ]"
-          >
-            <UIcon
-              :name="settingsItem.icon"
-              class="w-[18px] h-[18px]"
-            />
-          </NuxtLink>
         </div>
+        <NuxtLink
+          v-if="settingsItem"
+          :to="settingsItem.to"
+          :title="settingsItem.label"
+          :aria-label="settingsItem.label"
+          class="flex min-h-11 items-center rounded-lg border border-[var(--color-primary)]/30 bg-[var(--color-primary-soft)] font-semibold text-[var(--color-primary-soft-text)] shadow-sm transition-colors hover:border-[var(--color-primary)]/60 hover:brightness-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-muted)]"
+          :class="isSidebarCollapsed ? 'mx-auto mt-3 size-11 justify-center p-0' : 'mt-3 w-full justify-center gap-2 px-3 text-sm'"
+        >
+          <UIcon
+            :name="settingsItem.icon"
+            class="size-5 shrink-0"
+          />
+          <span v-if="!isSidebarCollapsed">{{ settingsItem.label }}</span>
+        </NuxtLink>
       </div>
     </aside>
 
@@ -295,6 +324,7 @@ function isActive(to: string): boolean {
               :icon="item.icon"
               :active="isActive(item.to)"
               padded="roomy"
+              :count="item.to === '/budgets' ? draftCounts.budgets : item.to === '/treatment-plans' ? draftCounts.plans : undefined"
             />
             <div
               v-for="group in mainNavGroups.groups"
@@ -333,6 +363,7 @@ function isActive(to: string): boolean {
                   :icon="item.icon"
                   :active="isActive(item.to)"
                   padded="roomy"
+                  :count="item.to === '/budgets' ? draftCounts.budgets : item.to === '/treatment-plans' ? draftCounts.plans : undefined"
                 />
               </div>
             </div>
@@ -357,24 +388,20 @@ function isActive(to: string): boolean {
                   {{ auth.user.value.email }}
                 </p>
               </div>
-              <NuxtLink
-                v-if="settingsItem"
-                :to="settingsItem.to"
-                :title="settingsItem.label"
-                :aria-label="settingsItem.label"
-                class="shrink-0 p-2 rounded-token-md transition-colors"
-                :class="[
-                  isActive(settingsItem.to)
-                    ? 'bg-[var(--color-primary-soft)] text-[var(--color-primary-soft-text)]'
-                    : 'text-muted hover:bg-surface hover:text-default'
-                ]"
-              >
-                <UIcon
-                  :name="settingsItem.icon"
-                  class="w-5 h-5"
-                />
-              </NuxtLink>
             </div>
+            <NuxtLink
+              v-if="settingsItem"
+              :to="settingsItem.to"
+              :title="settingsItem.label"
+              :aria-label="settingsItem.label"
+              class="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[var(--color-primary)]/30 bg-[var(--color-primary-soft)] px-3 text-sm font-semibold text-[var(--color-primary-soft-text)] shadow-sm transition-colors hover:border-[var(--color-primary)]/60 hover:brightness-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--color-primary)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--color-surface-muted)]"
+            >
+              <UIcon
+                :name="settingsItem.icon"
+                class="size-5 shrink-0"
+              />
+              <span>{{ settingsItem.label }}</span>
+            </NuxtLink>
           </div>
         </div>
       </template>
@@ -414,7 +441,7 @@ function isActive(to: string): boolean {
         <!-- Clinic name — client-only to avoid SSR/CSR hydration text mismatch
              ("Clínica" placeholder vs loaded clinic name). -->
         <ClientOnly>
-          <div class="ms-3 sm:ms-4 flex items-center gap-2 min-w-0">
+          <div class="ms-2 sm:ms-4 flex max-w-[32vw] items-center gap-2 min-w-0 sm:max-w-[40vw]">
             <UIcon
               name="i-lucide-building-2"
               class="w-4 h-4 text-subtle shrink-0"
@@ -428,9 +455,10 @@ function isActive(to: string): boolean {
         <div class="flex-1" />
 
         <!-- Right actions -->
-        <div class="flex items-center gap-1">
+        <div class="flex shrink-0 items-center gap-0.5 sm:gap-1">
           <HelpButton />
           <DensityToggle />
+          <ThemePicker />
           <UColorModeButton />
           <UButton
             variant="ghost"

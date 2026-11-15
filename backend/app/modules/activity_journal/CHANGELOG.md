@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat: the admin journal records odontogram treatment creation, status changes, performance and deletion transactionally. Plan-linked creation is represented once as a plan-item event, with the acting user attributed.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.

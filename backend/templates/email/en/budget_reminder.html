@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Your estimate is awaiting your reply - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}Your estimate is awaiting your reply - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>A friendly reminder</h2>
 
 <p>Hello {{ patient_name }},</p>
 
-<p>Your treatment estimate <strong>#{{ budget_number }}</strong> from <strong>{{ clinic_name | default('DentalPin') }}</strong> is still awaiting your reply.</p>
+<p>Your treatment estimate <strong>#{{ budget_number }}</strong> from <strong>{{ clinic_name | default('Dentum') }}</strong> is still awaiting your reply.</p>
 
 <div class="info-box">
     <div class="info-row">

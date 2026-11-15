@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 
-{% block title %}உங்கள் சிகிச்சை மதிப்பீடு உங்கள் பதிலுக்காக காத்திருக்கிறது - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}உங்கள் சிகிச்சை மதிப்பீடு உங்கள் பதிலுக்காக காத்திருக்கிறது - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 
 {% block content %}
@@ -11,7 +11,7 @@
 <p>வணக்கம் {{ patient_name }},</p>
 
 
-<p><strong>{{ clinic_name | default('DentalPin') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட சிகிச்சை மதிப்பீடு <strong>#{{ budget_number }}</strong> இன்னும் உங்கள் பதிலுக்காகக் காத்திருக்கிறது.</p>
+<p><strong>{{ clinic_name | default('Dentum') }}</strong> கிளினிக்கிலிருந்து வழங்கப்பட்ட சிகிச்சை மதிப்பீடு <strong>#{{ budget_number }}</strong> இன்னும் உங்கள் பதிலுக்காகக் காத்திருக்கிறது.</p>
 
 <div class="info-box">
     <div class="info-row">

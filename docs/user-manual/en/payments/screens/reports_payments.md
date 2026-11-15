@@ -28,7 +28,7 @@ related_permissions:
   - payments.reports.read
 related_paths:
   - backend/app/modules/payments/frontend/pages/reports/payments/index.vue
-last_verified_commit: b1b82f5
+last_verified_commit: 71402014
 ---
 
 # /reports/payments
@@ -74,6 +74,8 @@ The dashboard reads top-down:
 - Period: `FilterDateRange` with quick presets (Today / 7d / 30d /
   This month / Quarter / Year). Default is the last 90 days.
 - Granularity: only affects the trend chart.
+- On narrow screens, receivables-aging buckets use two columns; wider screens
+  show four.
 
 ## Empty states
 

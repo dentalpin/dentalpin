@@ -371,7 +371,7 @@ function selectOnFocus(e: FocusEvent) {
               :disabled="readonly || !tooth.is_present"
               class="perio-cell-input"
               @focus="selectOnFocus"
-              @change="(e) => onToothNumberInput(tooth.tooth_number, 'keratinized_gingiva_mm', e)"
+              @change="(e: Event) => onToothNumberInput(tooth.tooth_number, 'keratinized_gingiva_mm', e)"
             >
           </td>
         </tr>
@@ -413,7 +413,7 @@ function selectOnFocus(e: FocusEvent) {
                   class="perio-cell-input perio-cell-input--site"
                   :title="t('periodontogram.arch.probingTitle', { code })"
                   @focus="selectOnFocus"
-                  @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
+                  @change="(e: Event) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
                 >
                 <input
                   v-else-if="row.kind === 'site-gm'"
@@ -425,7 +425,7 @@ function selectOnFocus(e: FocusEvent) {
                   class="perio-cell-input perio-cell-input--site"
                   :title="t('periodontogram.arch.marginTitle', { code })"
                   @focus="selectOnFocus"
-                  @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
+                  @change="(e: Event) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
                 >
                 <button
                   v-else-if="row.kind === 'site-plaque'"
@@ -555,7 +555,7 @@ function selectOnFocus(e: FocusEvent) {
                   class="perio-cell-input perio-cell-input--site"
                   :title="t('periodontogram.arch.probingTitle', { code })"
                   @focus="selectOnFocus"
-                  @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
+                  @change="(e: Event) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
                 >
                 <input
                   v-else-if="row.kind === 'site-gm'"
@@ -567,7 +567,7 @@ function selectOnFocus(e: FocusEvent) {
                   class="perio-cell-input perio-cell-input--site"
                   :title="t('periodontogram.arch.marginTitle', { code })"
                   @focus="selectOnFocus"
-                  @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
+                  @change="(e: Event) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
                 >
                 <button
                   v-else-if="row.kind === 'site-plaque'"
@@ -635,7 +635,7 @@ function selectOnFocus(e: FocusEvent) {
                   class="perio-cell-input perio-cell-input--site"
                   :title="t('periodontogram.arch.probingTitle', { code })"
                   @focus="selectOnFocus"
-                  @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
+                  @change="(e: Event) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
                 >
                 <input
                   v-else-if="row.kind === 'site-gm'"
@@ -647,7 +647,7 @@ function selectOnFocus(e: FocusEvent) {
                   class="perio-cell-input perio-cell-input--site"
                   :title="t('periodontogram.arch.marginTitle', { code })"
                   @focus="selectOnFocus"
-                  @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
+                  @change="(e: Event) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
                 >
                 <button
                   v-else-if="row.kind === 'site-plaque'"
@@ -776,7 +776,7 @@ function selectOnFocus(e: FocusEvent) {
                   class="perio-cell-input perio-cell-input--site"
                   :title="t('periodontogram.arch.probingTitle', { code })"
                   @focus="selectOnFocus"
-                  @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
+                  @change="(e: Event) => onSiteNumberInput(tooth.tooth_number, code, 'probing_depth_mm', e)"
                 >
                 <input
                   v-else-if="row.kind === 'site-gm'"
@@ -788,7 +788,7 @@ function selectOnFocus(e: FocusEvent) {
                   class="perio-cell-input perio-cell-input--site"
                   :title="t('periodontogram.arch.marginTitle', { code })"
                   @focus="selectOnFocus"
-                  @change="(e) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
+                  @change="(e: Event) => onSiteNumberInput(tooth.tooth_number, code, 'gingival_margin_mm', e)"
                 >
                 <button
                   v-else-if="row.kind === 'site-plaque'"
@@ -834,7 +834,7 @@ function selectOnFocus(e: FocusEvent) {
               :disabled="readonly || !tooth.is_present"
               class="perio-cell-input"
               @focus="selectOnFocus"
-              @change="(e) => onToothNumberInput(tooth.tooth_number, 'keratinized_gingiva_mm', e)"
+              @change="(e: Event) => onToothNumberInput(tooth.tooth_number, 'keratinized_gingiva_mm', e)"
             >
           </td>
         </tr>

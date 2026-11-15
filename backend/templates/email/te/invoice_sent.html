@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}ఇన్‌వాయిస్ - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}ఇన్‌వాయిస్ - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>ఇన్‌వాయిస్</h2>
 
 <p>నమస్కారం {{ patient_name }},</p>
 
-<p><strong>{{ clinic_name | default('DentalPin') }}</strong> నుండి ఇన్‌వాయిస్ <strong>#{{ invoice_number }}</strong> వివరాలు క్రింద ఉన్నాయి:</p>
+<p><strong>{{ clinic_name | default('Dentum') }}</strong> నుండి ఇన్‌వాయిస్ <strong>#{{ invoice_number }}</strong> వివరాలు క్రింద ఉన్నాయి:</p>
 
 <div class="info-box">
     <div class="info-row">

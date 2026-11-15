@@ -17,7 +17,7 @@ Plus:
 from __future__ import annotations
 
 from typing import Any
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 import pytest_asyncio
@@ -27,6 +27,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.auth.models import Clinic, ClinicMembership, User
 from app.core.auth.service import hash_password
 from app.core.events import EventType, event_bus
+from app.modules.agenda.service import AppointmentService
 
 
 @pytest_asyncio.fixture
@@ -81,6 +82,100 @@ async def clinic_setup(
         "user_id": user_id,
         "dentist_id": str(dentist.id),
     }
+
+
+@pytest.mark.asyncio
+async def test_assistant_assignment_is_active_and_clinic_scoped(
+    db_session: AsyncSession, clinic_setup: dict
+) -> None:
+    clinic_id = UUID(clinic_setup["clinic_id"])
+    assistant = User(
+        id=uuid4(),
+        email=f"assistant-{uuid4().hex[:8]}@test.clinic",
+        password_hash=hash_password("TestPass1234"),
+        first_name="Ari",
+        last_name="Assistant",
+        is_active=True,
+    )
+    other_clinic = Clinic(
+        id=uuid4(),
+        name="Other Clinic",
+        tax_id=f"B{uuid4().int % 10**8:08d}",
+        address={"city": "Madrid"},
+        settings={},
+    )
+    db_session.add_all([assistant, other_clinic])
+    await db_session.flush()
+    db_session.add(
+        ClinicMembership(
+            id=uuid4(), user_id=assistant.id, clinic_id=clinic_id, role="assistant"
+        )
+    )
+    await db_session.commit()
+
+    assert await AppointmentService.validate_assistant_access(db_session, clinic_id, assistant.id)
+    assert not await AppointmentService.validate_assistant_access(
+        db_session, other_clinic.id, assistant.id
+    )
+
+    assistant.is_active = False
+    await db_session.commit()
+    assert not await AppointmentService.validate_assistant_access(
+        db_session, clinic_id, assistant.id
+    )
+
+
+@pytest.mark.asyncio
+async def test_appointment_assistant_must_be_active_clinic_member(
+    client: AsyncClient,
+    auth_headers: dict[str, str],
+    clinic_setup: dict,
+    db_session: AsyncSession,
+) -> None:
+    patient = await client.post(
+        "/api/v1/patients",
+        headers=auth_headers,
+        json={"first_name": "A", "last_name": "Patient"},
+    )
+    patient_id = patient.json()["data"]["id"]
+    assistant = User(
+        id=uuid4(),
+        email=f"assistant-{uuid4().hex[:8]}@test.clinic",
+        password_hash=hash_password("TestPass1234"),
+        first_name="Ari",
+        last_name="Assistant",
+        is_active=True,
+    )
+    db_session.add(assistant)
+    await db_session.flush()
+    db_session.add(
+        ClinicMembership(
+            id=uuid4(),
+            user_id=assistant.id,
+            clinic_id=UUID(clinic_setup["clinic_id"]),
+            role="assistant",
+        )
+    )
+    await db_session.commit()
+
+    booking = {
+        "patient_id": patient_id,
+        "professional_id": clinic_setup["dentist_id"],
+        "assistant_id": str(assistant.id),
+        "start_time": "2026-05-01T09:00:00Z",
+        "end_time": "2026-05-01T09:30:00Z",
+    }
+    created = await client.post("/api/v1/agenda/appointments", headers=auth_headers, json=booking)
+    assert created.status_code == 201, created.text
+    assert created.json()["data"]["assistant_id"] == str(assistant.id)
+    assert created.json()["data"]["assistant"]["first_name"] == "Ari"
+
+    assistant.is_active = False
+    await db_session.commit()
+    rejected = await client.post(
+        "/api/v1/agenda/appointments", headers=auth_headers, json=booking
+    )
+    assert rejected.status_code == 400, rejected.text
 
 
 class BusSpy:

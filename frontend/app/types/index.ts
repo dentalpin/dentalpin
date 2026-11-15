@@ -270,6 +270,7 @@ export interface Appointment {
   clinic_id: string
   patient_id?: string
   professional_id: string
+  assistant_id?: string | null
   // Cabinet is optional now (#51): a booked appointment may exist without
   // a cabinet decision until the patient arrives.
   cabinet: string | null
@@ -287,6 +288,7 @@ export interface Appointment {
   updated_at: string
   patient?: Patient
   professional?: User
+  assistant?: Pick<User, 'id' | 'first_name' | 'last_name'> | null
   // Populated only on GET /appointments/{id} and after POST transitions.
   history?: AppointmentStatusEvent[] | null
   cabinet_history?: AppointmentCabinetEvent[] | null
@@ -295,6 +297,7 @@ export interface Appointment {
 export interface AppointmentCreate {
   patient_id: string
   professional_id: string
+  assistant_id?: string | null
   cabinet?: string | null
   cabinet_id?: string | null
   start_time: string
@@ -729,6 +732,7 @@ export interface TreatmentCatalogItem {
   treatment_scope: 'tooth' | 'multi_tooth' | 'global_mouth' | 'global_arch'
   is_diagnostic: boolean
   requires_surfaces: boolean
+  recommended_treatment_id?: string | null
   // Material
   material_notes?: string
   // Status
@@ -764,6 +768,7 @@ export interface TreatmentCatalogItemCreate {
   treatment_scope?: 'tooth' | 'multi_tooth' | 'global_mouth' | 'global_arch'
   is_diagnostic?: boolean
   requires_surfaces?: boolean
+  recommended_treatment_id?: string | null
   // Material
   material_notes?: string
   // Odontogram mapping
@@ -788,6 +793,7 @@ export interface TreatmentCatalogItemUpdate {
   treatment_scope?: 'tooth' | 'multi_tooth' | 'global_mouth' | 'global_arch'
   is_diagnostic?: boolean
   requires_surfaces?: boolean
+  recommended_treatment_id?: string | null
   material_notes?: string
   is_active?: boolean
   odontogram_mapping?: OdontogramMappingCreate
@@ -812,6 +818,7 @@ export interface OdontogramTreatment {
   treatment_scope: 'tooth' | 'multi_tooth' | 'global_mouth' | 'global_arch'
   requires_surfaces: boolean
   is_diagnostic: boolean
+  recommended_treatment_id?: string | null
   // Pricing
   pricing_strategy: PricingStrategy
   pricing_config?: Record<string, number> | null
@@ -2188,7 +2195,8 @@ export interface PlannedTreatmentItem {
 }
 
 export interface PlannedTreatmentItemCreate {
-  treatment_id: string
+  treatment_id?: string
+  create_treatment?: TreatmentCreate
   sequence_order?: number
   notes?: string
   assigned_professional_id?: string | null
@@ -2394,6 +2402,7 @@ export interface TreatmentPlan {
 }
 
 export interface TreatmentPlanDetail extends TreatmentPlan {
+  is_paid?: boolean
   diagnosis_notes?: string
   internal_notes?: string
   items: PlannedTreatmentItem[]
@@ -2407,6 +2416,11 @@ export interface TreatmentPlanCreate {
   assigned_professional_id?: string
   diagnosis_notes?: string
   internal_notes?: string
+}
+
+export interface BatchTreatmentPlanCreate {
+  plan: TreatmentPlanCreate
+  items: PlannedTreatmentItemCreate[]
 }
 
 export interface TreatmentPlanUpdate {

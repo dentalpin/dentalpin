@@ -11,7 +11,7 @@ Expiry date: {{ valid_until.strftime('%d/%m/%Y') }}
 
 Steps:
 1. Request a new certificate from the FNMT.
-2. Go to DentalPin → Settings → Verifactu → Certificate.
+2. Go to Dentum → Settings → Verifactu → Certificate.
 3. Upload the .pfx file and enter its password.
 
 If you need help, reply to this email.

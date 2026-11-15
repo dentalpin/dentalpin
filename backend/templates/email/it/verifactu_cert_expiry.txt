@@ -11,7 +11,7 @@ Scadenza: {{ valid_until.strftime('%d/%m/%Y') }}
 
 Passaggi:
 1. Richieda un nuovo certificato alla FNMT.
-2. Entri in DentalPin → Impostazioni → Verifactu → Certificato.
+2. Entri in Dentum → Impostazioni → Verifactu → Certificato.
 3. Carichi il file .pfx e ne inserisca la password.
 
 Se ha bisogno di assistenza, risponda a questa email.

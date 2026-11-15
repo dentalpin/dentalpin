@@ -1,5 +1,6 @@
 import type {
   ApiResponse,
+  BatchTreatmentPlanCreate,
   CompleteItemRequest,
   GenerateBudgetResponse,
   LinkBudgetRequest,
@@ -135,6 +136,25 @@ export function useTreatmentPlans() {
         title: t('errors.createFailed'),
         color: 'error'
       })
+      return null
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function createPlanBatch(data: BatchTreatmentPlanCreate) {
+    loading.value = true
+    try {
+      const response = await api.post<ApiResponse<TreatmentPlanDetail>>(
+        '/api/v1/treatment_plan/treatment-plans/batch',
+        data,
+        { errorToast: false }
+      )
+      toast.add({ title: t('treatmentPlans.created'), color: 'success' })
+      return response.data
+    } catch (error) {
+      console.error('Error creating treatment plan batch:', error)
+      toast.add({ title: t('errors.createFailed'), color: 'error' })
       return null
     } finally {
       loading.value = false
@@ -724,6 +744,7 @@ export function useTreatmentPlans() {
     fetchPatientPlans,
     fetchPlan,
     createPlan,
+    createPlanBatch,
     updatePlan,
     updatePlanStatus,
     deletePlan,

@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Приглашение в Dentum{% endblock %}
+
+{% block content %}
+<h2>Вас пригласили в Dentum</h2>
+
+<p>Здравствуйте, {{ first_name }}!</p>
+
+<p>Клиника <strong>{{ clinic_name }}</strong> приглашает вас присоединиться к рабочему пространству Dentum.</p>
+
+<div class="button-container">
+    <a href="{{ invite_url }}" class="button">Создать пароль и войти</a>
+</div>
+
+<div class="info-box">
+    <p>Одноразовая ссылка действует {{ expires_days }} дней.</p>
+</div>
+
+<p>Если вы не ожидали это приглашение, просто проигнорируйте письмо.</p>
+{% endblock %}
+
+{% block footer %}
+<p>Приглашение отправлено клиникой {{ clinic_name }} через Dentum.</p>
+{% endblock %}

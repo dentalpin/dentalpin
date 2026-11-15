@@ -19,7 +19,7 @@ re-run it whenever adding events.
 | `payment.*` | `allocated`, `refunded` |
 | `patient.*` | `created`, `archived` |
 | `recall.*` | `created` |
-| `odontogram.*` | `treatment.performed` |
+| `odontogram.*` | `treatment.added`, `treatment.status_changed`, `treatment.performed`, `treatment.deleted` |
 | `lab_order.*` | `status_changed` |
 | `treatment_plan.*` | `treatment_added`, `treatment_removed`, `item_session_completed`, `budget_sync_requested` |
 | `document.*` | `generated` |
@@ -64,7 +64,8 @@ publisher(s).
 `_ACTOR_KEYS`. Besides the generic `user_id`/`actor_id`/`created_by`,
 the list carries the `*_by` keys the subscribed publishers actually use
 (`changed_by`, `performed_by`, `completed_by`, `refunded_by`,
-`cancelled_by`, `resent_by`, `accepted_by`, `recommended_by`) — each
+`cancelled_by`, `resent_by`, `accepted_by`, `recommended_by`,
+`deleted_by`) — each
 verified to hold a **user** id at its publish site (a `users.id` FK or
 `ctx.user_id`). Keys that may point at a non-user entity
 (`professional_id`) are deliberately excluded. When subscribing to a
@@ -73,8 +74,8 @@ new event, check what its payload calls the acting user and extend
 
 Some payloads carry no user at all (`patient.created/archived`,
 `appointment.scheduled`, `invoice.sent`, `budget.sent`,
-`lab_order.status_changed`, `treatment_plan.treatment_added/removed/
-budget_sync_requested`) — those rows stay unattributed until their
-publishers start including one. All id parsing is fail-soft: a
+`lab_order.status_changed`, `treatment_plan.treatment_removed`,
+`treatment_plan.budget_sync_requested`) — those rows stay unattributed
+until their publishers start including one. All id parsing is fail-soft: a
 malformed id degrades to `NULL` (the verbatim value is still in
 `payload`) rather than aborting the publisher's transaction.

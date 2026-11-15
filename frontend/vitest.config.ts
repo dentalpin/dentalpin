@@ -17,6 +17,15 @@ export default defineVitestConfig({
   test: {
     environment: 'nuxt',
     globals: true,
+    // Each worker boots an isolated Nuxt app across all module layers.
+    // Cap parallel boots so resource contention does not make otherwise
+    // fast composable tests exceed Vitest's default 5 second test timeout.
+    maxWorkers: 4,
+    testTimeout: 30_000,
+    // Nuxt setup compiles all enabled layers and consolidated locales before
+    // each isolated suite. On slower developer/CI machines, 10 seconds can
+    // expire before a pure test body starts.
+    hookTimeout: 120_000,
     // Playwright E2E specs live under tests/e2e/. They use their own
     // test runner (see playwright.config.ts + scripts/e2e.sh) and must
     // not be picked up by vitest — doing so throws

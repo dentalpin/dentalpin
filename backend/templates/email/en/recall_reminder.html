@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Your next check-up at {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}Your next check-up at {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>Time for your next check-up</h2>
 
 <p>Hello {{ patient_name }},</p>
 
-<p>We've scheduled your next check-up{% if due_month %} for <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} at <strong>{{ clinic_name | default('DentalPin') }}</strong>.</p>
+<p>We've scheduled your next check-up{% if due_month %} for <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} at <strong>{{ clinic_name | default('Dentum') }}</strong>.</p>
 
 <p>Get in touch with us to book a time that works for you.</p>
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: treatment and plan-item creation now share one transaction, so a failed plan link cannot leave an orphaned treatment. The doctor flow supports selecting either the tooth or procedure first, searches long procedure lists, supports keyboard tooth selection, clears stale patient data, and prevents duplicate submissions.
+
 - fix(rbac): `assistant` gets `treatments.read` with `read` — the chart is drawn from the treatments list, so assistants hit a 403 on every patient. The chart composables no longer call the API for roles without the permission (reception).
 
 - fix: the "Continue plan" dropdown on the diagnosis banner rendered empty.

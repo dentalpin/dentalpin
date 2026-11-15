@@ -65,6 +65,19 @@ export interface SchedulingSummary {
   no_show_rate: number
 }
 
+export interface TreatmentPlanConversion {
+  period_start: string
+  period_end: string
+  confirmed_plans: number
+  booked_plans: number
+  completed_plans: number
+  items_total: number
+  items_completed: number
+  booking_conversion_rate: number
+  plan_completion_rate: number
+  item_completion_rate: number
+}
+
 // Appointment lifecycle analytics (issue #49)
 export interface AnalyticsBucket {
   label: string
@@ -416,6 +429,23 @@ export function useReports() {
       return response.data
     } catch (e) {
       console.error('Failed to fetch scheduling summary:', e)
+      fetchFailed.value = true
+      return null
+    }
+  }
+
+  async function fetchTreatmentPlanConversion(
+    dateFrom: string,
+    dateTo: string
+  ): Promise<TreatmentPlanConversion | null> {
+    try {
+      const response = await api.get<ApiResponse<TreatmentPlanConversion>>(
+        `/api/v1/reports/treatment-plans/conversion?date_from=${dateFrom}&date_to=${dateTo}`,
+        { errorToast: false }
+      )
+      return response.data
+    } catch (e) {
+      console.error('Failed to fetch treatment plan conversion:', e)
       fetchFailed.value = true
       return null
     }
@@ -781,6 +811,7 @@ export function useReports() {
     fetchBudgetsByStatus,
     // Scheduling
     fetchSchedulingSummary,
+    fetchTreatmentPlanConversion,
     fetchFirstVisits,
     fetchHoursByProfessional,
     fetchCabinetUtilization,

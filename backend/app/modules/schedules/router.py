@@ -28,6 +28,8 @@ from .models import (
     ProfessionalWeeklySchedule,
 )
 from .schemas import (
+    AssistantBrief,
+    AssistantWorkloadResponse,
     AvailabilityRange,
     AvailabilityResponse,
     ClinicHoursResponse,
@@ -147,6 +149,21 @@ async def _require_professional_access(
     """Raise 403 if the user lacks rights to read/write someone else's schedule."""
     perm_general = f"schedules.professional.{action}"
     perm_own = f"schedules.professional.own.{action}"
+    if await has_permission_for(db, ctx.clinic_id, ctx.role, perm_general):
+        return
+    if await has_permission_for(db, ctx.clinic_id, ctx.role, perm_own) and user_id == ctx.user_id:
+        return
+    raise HTTPException(
+        status_code=status.HTTP_403_FORBIDDEN,
+        detail=f"Permission denied: {perm_general}",
+    )
+
+
+async def _require_assistant_access(
+    db: AsyncSession, ctx: ClinicContext, user_id: UUID, action: str
+) -> None:
+    perm_general = f"schedules.assistant.{action}"
+    perm_own = f"schedules.assistant.own.{action}"
     if await has_permission_for(db, ctx.clinic_id, ctx.role, perm_general):
         return
     if await has_permission_for(db, ctx.clinic_id, ctx.role, perm_own) and user_id == ctx.user_id:
@@ -428,6 +445,165 @@ async def delete_professional_override(
     await ProfessionalHoursService.delete_override(db, override)
 
 
+# --- Assistant hours -------------------------------------------------
+
+
+@router.get("/assistants", response_model=ApiResponse[list[AssistantBrief]])
+async def list_assistants(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("schedules.assistant.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[list[AssistantBrief]]:
+    rows = await ProfessionalHoursService.list_assistants(db, ctx.clinic_id)
+    return ApiResponse(data=[AssistantBrief(**row) for row in rows])
+
+
+@router.get(
+    "/assistants/{user_id}/hours",
+    response_model=ApiResponse[ProfessionalHoursResponse],
+)
+async def get_assistant_hours(
+    user_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[ProfessionalHoursResponse]:
+    await _require_assistant_access(db, ctx, user_id, "read")
+    if not await ProfessionalHoursService.is_assistant(db, ctx.clinic_id, user_id):
+        raise HTTPException(status_code=404, detail="Assistant not found")
+    weekly = await ProfessionalHoursService.get_or_create_weekly(db, ctx.clinic_id, user_id)
+    return ApiResponse(data=_professional_weekly_to_response(weekly))
+
+
+@router.put(
+    "/assistants/{user_id}/hours",
+    response_model=ApiResponse[ProfessionalHoursResponse],
+)
+async def update_assistant_hours(
+    user_id: UUID,
+    payload: ProfessionalHoursUpdate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[ProfessionalHoursResponse]:
+    await _require_assistant_access(db, ctx, user_id, "write")
+    if not await ProfessionalHoursService.is_assistant(db, ctx.clinic_id, user_id):
+        raise HTTPException(status_code=404, detail="Assistant not found")
+    weekly = await ProfessionalHoursService.get_or_create_weekly(db, ctx.clinic_id, user_id)
+    weekly = await ProfessionalHoursService.replace_weekly_shifts(
+        db,
+        weekly,
+        [
+            {
+                "weekday": day.weekday,
+                "shifts": [
+                    {"start_time": shift.start_time, "end_time": shift.end_time}
+                    for shift in day.shifts
+                ],
+            }
+            for day in payload.days
+        ],
+    )
+    return ApiResponse(data=_professional_weekly_to_response(weekly))
+
+
+@router.get(
+    "/assistants/{user_id}/overrides",
+    response_model=ApiResponse[list[ProfessionalOverrideResponse]],
+)
+async def list_assistant_overrides(
+    user_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    start: date | None = None,
+    end: date | None = None,
+) -> ApiResponse[list[ProfessionalOverrideResponse]]:
+    await _require_assistant_access(db, ctx, user_id, "read")
+    if not await ProfessionalHoursService.is_assistant(db, ctx.clinic_id, user_id):
+        raise HTTPException(status_code=404, detail="Assistant not found")
+    rows = await ProfessionalHoursService.list_overrides(db, ctx.clinic_id, user_id, start, end)
+    return ApiResponse(data=[_professional_override_to_response(row) for row in rows])
+
+
+@router.post(
+    "/assistants/{user_id}/overrides",
+    response_model=ApiResponse[ProfessionalOverrideResponse],
+    status_code=status.HTTP_201_CREATED,
+)
+async def create_assistant_override(
+    user_id: UUID,
+    payload: ProfessionalOverrideCreate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[ProfessionalOverrideResponse]:
+    await _require_assistant_access(db, ctx, user_id, "write")
+    if not await ProfessionalHoursService.is_assistant(db, ctx.clinic_id, user_id):
+        raise HTTPException(status_code=404, detail="Assistant not found")
+    row = await ProfessionalHoursService.create_override(
+        db,
+        ctx.clinic_id,
+        user_id,
+        {
+            "start_date": payload.start_date,
+            "end_date": payload.end_date,
+            "kind": payload.kind,
+            "reason": payload.reason,
+            "shifts": [
+                {"start_time": shift.start_time, "end_time": shift.end_time}
+                for shift in payload.shifts
+            ],
+        },
+    )
+    return ApiResponse(data=_professional_override_to_response(row))
+
+
+@router.put(
+    "/assistants/{user_id}/overrides/{override_id}",
+    response_model=ApiResponse[ProfessionalOverrideResponse],
+)
+async def update_assistant_override(
+    user_id: UUID,
+    override_id: UUID,
+    payload: ProfessionalOverrideUpdate,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> ApiResponse[ProfessionalOverrideResponse]:
+    await _require_assistant_access(db, ctx, user_id, "write")
+    row = await ProfessionalHoursService.get_override(db, ctx.clinic_id, user_id, override_id)
+    if row is None or not await ProfessionalHoursService.is_assistant(db, ctx.clinic_id, user_id):
+        raise HTTPException(status_code=404, detail="Override not found")
+    row = await ProfessionalHoursService.update_override(
+        db,
+        row,
+        {
+            "start_date": payload.start_date,
+            "end_date": payload.end_date,
+            "kind": payload.kind,
+            "reason": payload.reason,
+            "shifts": [
+                {"start_time": shift.start_time, "end_time": shift.end_time}
+                for shift in payload.shifts
+            ],
+        },
+    )
+    return ApiResponse(data=_professional_override_to_response(row))
+
+
+@router.delete(
+    "/assistants/{user_id}/overrides/{override_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_assistant_override(
+    user_id: UUID,
+    override_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    db: Annotated[AsyncSession, Depends(get_db)],
+) -> None:
+    await _require_assistant_access(db, ctx, user_id, "write")
+    row = await ProfessionalHoursService.get_override(db, ctx.clinic_id, user_id, override_id)
+    if row is None or not await ProfessionalHoursService.is_assistant(db, ctx.clinic_id, user_id):
+        raise HTTPException(status_code=404, detail="Override not found")
+    await ProfessionalHoursService.delete_override(db, row)
+
+
 # --- Availability -----------------------------------------------------
 
 
@@ -439,12 +615,18 @@ async def get_availability(
     start: date = Query(...),
     end: date = Query(...),
     professional_id: UUID | None = Query(default=None),
+    assistant_id: UUID | None = Query(default=None),
 ) -> ApiResponse[AvailabilityResponse]:
     if end < start:
         raise HTTPException(status_code=400, detail="end must be on or after start")
-    timezone, ranges = await AvailabilityService.resolve(
-        db, ctx.clinic_id, start, end, professional_id
-    )
+    if professional_id is not None and assistant_id is not None:
+        raise HTTPException(status_code=400, detail="Choose one team member")
+    member_id = professional_id or assistant_id
+    if assistant_id is not None and not await ProfessionalHoursService.is_assistant(
+        db, ctx.clinic_id, assistant_id
+    ):
+        raise HTTPException(status_code=404, detail="Assistant not found")
+    timezone, ranges = await AvailabilityService.resolve(db, ctx.clinic_id, start, end, member_id)
     return ApiResponse(
         data=AvailabilityResponse(
             timezone=timezone,
@@ -453,13 +635,32 @@ async def get_availability(
                     start=r.start,
                     end=r.end,
                     state=r.state,
-                    professional_id=r.professional_id,
+                    professional_id=r.professional_id if professional_id else None,
+                    assistant_id=r.professional_id if assistant_id else None,
                     reason=r.reason,
                 )
                 for r in ranges
             ],
         )
     )
+
+
+@router.get(
+    "/analytics/assistant-workload",
+    response_model=ApiResponse[AssistantWorkloadResponse],
+)
+async def get_assistant_workload(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("schedules.analytics.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    start: date = Query(...),
+    end: date = Query(...),
+    assistant_id: UUID | None = Query(default=None),
+) -> ApiResponse[AssistantWorkloadResponse]:
+    if end < start:
+        raise HTTPException(status_code=400, detail="end must be on or after start")
+    data = await AnalyticsService.assistant_workload(db, ctx.clinic_id, start, end, assistant_id)
+    return ApiResponse(data=AssistantWorkloadResponse(**data))
 
 
 # --- Analytics --------------------------------------------------------

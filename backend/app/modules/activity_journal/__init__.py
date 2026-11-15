@@ -22,7 +22,7 @@ from .router import router
 
 # Every event type whose publishers all publish inside a DB transaction.
 # Events with any db-less publisher (email.*, copilot.*, migration.*,
-# legacy odontogram updates, ...) are excluded on purpose — a
+# legacy tooth/surface updates, ...) are excluded on purpose — a
 # transactional handler without a session raises RuntimeError and would
 # break those flows. See docs/technical/activity_journal/events.md.
 _SUBSCRIBED = [
@@ -50,7 +50,10 @@ _SUBSCRIBED = [
     EventType.PATIENT_ARCHIVED,
     # Recalls / treatments / lab
     EventType.RECALL_CREATED,
+    EventType.ODONTOGRAM_TREATMENT_ADDED,
+    EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED,
     EventType.ODONTOGRAM_TREATMENT_PERFORMED,
+    EventType.ODONTOGRAM_TREATMENT_DELETED,
     EventType.LAB_ORDER_STATUS_CHANGED,
     EventType.TREATMENT_PLAN_TREATMENT_ADDED,
     EventType.TREATMENT_PLAN_TREATMENT_REMOVED,

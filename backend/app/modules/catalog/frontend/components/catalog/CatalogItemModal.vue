@@ -28,6 +28,9 @@ const emit = defineEmits<{
 const { t, locale } = useI18n()
 const { format: formatMoney, symbol: currencySymbol } = useCurrency()
 const catalog = useCatalog()
+const api = useApi()
+const recommendedTreatmentOptions = ref<Array<{ value: string, label: string }>>([])
+const UNMAPPED_TREATMENT = '__none__'
 
 // VAT Types
 const {
@@ -54,8 +57,27 @@ const tabs = computed(() => [
 ])
 
 // Reset to first tab when modal opens
-watch(open, (v) => {
-  if (v) activeTab.value = 'general'
+watch(open, async (v) => {
+  if (v) {
+    activeTab.value = 'general'
+    try {
+      const response = await api.get<{ data: Array<{ id: string, internal_code: string, names: Record<string, string>, is_diagnostic: boolean, treatment_scope: string }> }>(
+        '/api/v1/catalog/items?page=1&page_size=100&is_active=true',
+        { errorToast: false }
+      )
+      recommendedTreatmentOptions.value = [
+        { value: UNMAPPED_TREATMENT, label: t('catalog.noRecommendedTreatment', 'Не связывать') },
+        ...response.data
+          .filter(item => !item.is_diagnostic && item.treatment_scope === 'tooth' && item.id !== props.item?.id)
+          .map(item => ({
+            value: item.id,
+            label: `${item.names[locale.value] || item.names.ru || item.names.en || item.internal_code} (${item.internal_code})`
+          }))
+      ]
+    } catch {
+      recommendedTreatmentOptions.value = [{ value: UNMAPPED_TREATMENT, label: t('catalog.noRecommendedTreatment', 'Не связывать') }]
+    }
+  }
 })
 
 // Form state
@@ -69,6 +91,11 @@ const itemName = computed({
     }
     formData.value.names[locale.value] = value
   }
+})
+
+const recommendedTreatmentSelection = computed({
+  get: () => formData.value.recommended_treatment_id ?? UNMAPPED_TREATMENT,
+  set: (value: string) => { formData.value.recommended_treatment_id = value }
 })
 
 // Odontogram mapping
@@ -135,6 +162,7 @@ watch(
         vat_type_id: newItem.vat_type_id,
         treatment_scope: newItem.treatment_scope,
         is_diagnostic: newItem.is_diagnostic,
+        recommended_treatment_id: newItem.recommended_treatment_id ?? UNMAPPED_TREATMENT,
         requires_surfaces: newItem.requires_surfaces,
         material_notes: newItem.material_notes,
         is_active: newItem.is_active
@@ -175,6 +203,7 @@ watch(
         vat_type_id: defaultVatType.value?.id,
         treatment_scope: 'tooth',
         is_diagnostic: false,
+        recommended_treatment_id: UNMAPPED_TREATMENT,
         requires_surfaces: false,
         is_active: true
       }
@@ -278,6 +307,10 @@ watch(odontogramType, (newType) => {
   }
 })
 
+watch(() => formData.value.is_diagnostic, (isDiagnostic) => {
+  if (!isDiagnostic) formData.value.recommended_treatment_id = null
+})
+
 const isValid = computed(() => {
   if (!formData.value.internal_code || !itemName.value || !formData.value.category_id) {
     return false
@@ -309,6 +342,9 @@ function handleSubmit() {
   // state is the payload as-is.
   const payload: TreatmentCatalogItemUpdate = {
     ...formData.value,
+    recommended_treatment_id: formData.value.recommended_treatment_id === UNMAPPED_TREATMENT
+      ? null
+      : formData.value.recommended_treatment_id,
     sessions: sessionsEnabled.value ? sessionsToPayload() : []
   }
   if (odontogramType.value && clinicalCategory.value) {
@@ -593,7 +629,7 @@ function handleClose() {
                 <p class="text-xs text-muted mb-3">
                   {{ t('catalog.surfacePrices.help') }}
                 </p>
-                <div class="grid grid-cols-5 gap-2">
+                <div class="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
                   <UFormField
                     v-for="tier in SURFACE_TIERS"
                     :key="tier"
@@ -822,6 +858,20 @@ function handleClose() {
                   />
                 </div>
               </div>
+
+              <UFormField
+                v-if="formData.is_diagnostic"
+                :label="t('catalog.recommendedTreatment', 'Связанная процедура для плана')"
+                :description="t('catalog.recommendedTreatmentDescription', 'Процедура будет предложена врачу после фиксации такого диагноза. В план она попадёт только после подтверждения.')"
+              >
+                <USelect
+                  v-model="recommendedTreatmentSelection"
+                  :items="recommendedTreatmentOptions"
+                  value-key="value"
+                  label-key="label"
+                  :placeholder="t('catalog.recommendedTreatment', 'Связанная процедура для плана')"
+                />
+              </UFormField>
 
               <!-- Odontogram mapping -->
               <div class="rounded-lg border border-default overflow-hidden">

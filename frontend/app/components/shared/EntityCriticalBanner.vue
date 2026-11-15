@@ -35,7 +35,7 @@ function dismiss() {
 const containerClass = computed(() => {
   const role = props.role
   const map: Record<SemanticRole, string> = {
-    primary: 'bg-primary-50 border-primary-200 text-primary-900 dark:bg-primary-950/40 dark:border-primary-800 dark:text-primary-100',
+    primary: 'bg-(--color-primary-soft) border-(--color-primary) text-(--color-primary-soft-text)',
     success: 'bg-success-50 border-success-200 text-success-900 dark:bg-success-950/40 dark:border-success-800 dark:text-success-100',
     info: 'bg-info-50 border-info-200 text-info-900 dark:bg-info-950/40 dark:border-info-800 dark:text-info-100',
     warning: 'bg-warning-50 border-warning-200 text-warning-900 dark:bg-warning-950/40 dark:border-warning-800 dark:text-warning-100',
@@ -65,7 +65,7 @@ function iconFor(role: SemanticRole): string {
   <div
     v-if="visible"
     role="alert"
-    class="rounded-lg border px-4 py-3 flex items-start gap-3"
+    class="flex flex-wrap items-start gap-3 rounded-lg border px-4 py-3 sm:flex-nowrap"
     :class="containerClass"
   >
     <UIcon
@@ -86,7 +86,7 @@ function iconFor(role: SemanticRole): string {
       </p>
     </div>
 
-    <div class="flex items-center gap-2 shrink-0">
+    <div class="ms-auto flex shrink-0 items-center gap-2">
       <UButton
         v-if="cta"
         :color="ctaColor"

@@ -171,10 +171,11 @@ class UserCreate(BaseModel):
 
 
 class InviteLinkResponse(BaseModel):
-    """One-time set-password token for a user (the client builds the URL)."""
+    """One-time set-password token; email_sent reports SMTP delivery status."""
 
     token: str
     expires_at: datetime
+    email_sent: bool = False
 
 
 class SetPasswordRequest(BaseModel):

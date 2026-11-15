@@ -38,7 +38,7 @@ const sortedUsers = computed(() => {
 const showCreate = ref(false)
 
 // Admin-issued access link (new accounts without password, or a reset).
-const invite = ref<{ user: ClinicUser, url: string, expiresAt: string } | null>(null)
+const invite = ref<{ user: ClinicUser, url: string, expiresAt: string, emailSent: boolean } | null>(null)
 const inviteCopied = ref(false)
 async function openInvite(user: ClinicUser) {
   const link = await createInviteLink(user.id)
@@ -343,6 +343,13 @@ async function handleDelete() {
           <div class="space-y-4">
             <p class="text-body text-muted">
               {{ t('settings.invite.linkHelp', { name: `${invite.user.first_name} ${invite.user.last_name}`, date: new Date(invite.expiresAt).toLocaleDateString(locale) }) }}
+            </p>
+            <p
+              role="status"
+              class="text-caption"
+              :class="invite.emailSent ? 'text-success' : 'text-warning'"
+            >
+              {{ invite.emailSent ? t('settings.invite.emailSent') : t('settings.invite.emailNotSent') }}
             </p>
             <UInput
               :model-value="invite.url"

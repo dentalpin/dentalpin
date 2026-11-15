@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(ui): aging-receivable buckets use a two-column layout on narrow screens and four columns on wider screens.
+
 - fix: `GET /payments/reports/refunds` returned 422 — `/{payment_id}/refunds` was declared first and parsed `reports` as a payment id. The refunds routes now use a `:uuid` path converter.
 
 - fix(#779): aging-receivable buckets count days from the clinic's day, not the server's UTC day.

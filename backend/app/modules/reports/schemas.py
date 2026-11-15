@@ -18,6 +18,21 @@ class DateRangeParams(BaseModel):
     date_to: date
 
 
+class TreatmentPlanConversion(BaseModel):
+    """Conversion and completed-care metrics for confirmed-plan cohorts."""
+
+    period_start: date
+    period_end: date
+    confirmed_plans: int
+    booked_plans: int
+    completed_plans: int
+    items_total: int
+    items_completed: int
+    booking_conversion_rate: float
+    plan_completion_rate: float
+    item_completion_rate: float
+
+
 # ============================================================================
 # Billing Reports
 # ============================================================================

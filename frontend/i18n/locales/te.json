@@ -49,6 +49,16 @@
     "toggleSidebar": "సైడ్‌బార్ మార్చండి",
     "documents": "పత్రాలు"
   },
+  "appearance": {
+    "pickerLabel": "ఇంటర్‌ఫేస్ రంగులు",
+    "pickerTitle": "రంగు థీమ్‌ను ఎంచుకోండి",
+    "themes": {
+      "clinical": "క్లినికల్ నీలం",
+      "mint": "పుదీనా",
+      "lavender": "లావెండర్",
+      "coral": "కోరల్"
+    }
+  },
   "auth": {
     "login": "లాగిన్",
     "logout": "లాగౌట్",
@@ -769,7 +779,14 @@
       "selectPlan": "ప్రణాళికను ఎంచుకోండి",
       "continue": "కొనసాగించండి",
       "odontogramTab": "ఓడోంటోగ్రామ్",
-      "openNotes": "గమనికలు తెరవండి"
+      "openNotes": "గమనికలు తెరవండి",
+      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "recommendedTreatmentTitle": "Add the procedure to a plan?",
+      "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
+      "planForTreatment": "Treatment plan",
+      "createNewPlanOption": "Create a new plan",
+      "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
+      "addToPlan": "Add to plan"
     },
     "plans": {
       "title": "చికిత్స ప్రణాళికలు",
@@ -991,7 +1008,9 @@
     "sendReminderVia": "రిమైండర్ పంపండి ({channel})",
     "sendCancellationVia": "రద్దు సమాచారం పంపండి ({channel})",
     "loadError": "అపాయింట్‌మెంట్లను లోడ్ చేయలేకపోయాము",
-    "planAwaitingBudget": "అంచనా అంగీకారం కోసం వేచి ఉంది"
+    "planAwaitingBudget": "అంచనా అంగీకారం కోసం వేచి ఉంది",
+    "assistant": "Assistant",
+    "assistantUnassigned": "No assistant"
   },
   "dashboard": {
     "greetings": {
@@ -1320,7 +1339,9 @@
       "setPasswordTitle": "మీ పాస్‌వర్డ్ ఎంచుకోండి",
       "setPasswordSubtitle": "మిమ్మల్ని Dentum కు ఆహ్వానించారు. సైన్ ఇన్ చేయడానికి మీ పాస్‌వర్డ్ సృష్టించండి.",
       "setPasswordSubmit": "సేవ్ చేసి సైన్ ఇన్ చేయండి",
-      "invalidToken": "ఈ లింక్ చెల్లదు లేదా ఇప్పటికే వాడబడింది. మీ క్లినిక్ అడ్మినిస్ట్రేటర్‌ను కొత్తది అడగండి."
+      "invalidToken": "ఈ లింక్ చెల్లదు లేదా ఇప్పటికే వాడబడింది. మీ క్లినిక్ అడ్మినిస్ట్రేటర్‌ను కొత్తది అడగండి.",
+      "emailSent": "The invitation email was sent. You can also copy and share the link below.",
+      "emailNotSent": "Email delivery is not configured or failed. Copy and share the link below manually."
     }
   },
   "selector": {
@@ -1667,7 +1688,10 @@
     "loadDefaultsHint": "క్లినిక్ దేశం కోసం పన్ను రకాలు, వర్గాలు మరియు సూచన చికిత్సలు. లేని వరుసలు మాత్రమే జోడించబడతాయి.",
     "defaultsLoaded": "క్యాటలాగ్ లోడ్ అయింది: {categories} వర్గాలు, {items} చికిత్సలు, {vat_types} పన్ను రకాలు",
     "defaultsFailed": "డిఫాల్ట్ క్యాటలాగ్‌ను లోడ్ చేయలేకపోయాము",
-    "loadError": "చికిత్సల క్యాటలాగ్‌ను లోడ్ చేయలేకపోయాము"
+    "loadError": "చికిత్సల క్యాటలాగ్‌ను లోడ్ చేయలేకపోయాము",
+    "recommendedTreatment": "Related procedure for the plan",
+    "recommendedTreatmentDescription": "This procedure will be suggested to the clinician after recording this diagnosis. It is added to a plan only after confirmation.",
+    "noRecommendedTreatment": "Do not link"
   },
   "placeholders": {
     "selectRole": "పాత్రను ఎంచుకోండి..."
@@ -1932,6 +1956,21 @@
       "subtitle": "ఈ సందర్శనలోని ఈ ప్రణాళికాబద్ధ చికిత్సలు చేసినట్లు గుర్తించబడలేదు:",
       "markPerformed": "చేసినట్లు గుర్తించండి",
       "marked": "చేసినట్లు గుర్తించబడ్డాయి: {count}."
+    },
+    "batch": {
+      "title": "Diagnoses and procedures",
+      "description": "Choose a catalog procedure and enter the teeth. A doctor reviews the full plan and estimate before confirmation.",
+      "addLine": "Add line",
+      "emptyCatalog": "No odontogram procedures in the catalog",
+      "emptyCatalogHint": "Add and map procedures in catalog settings first.",
+      "procedure": "Catalog procedure",
+      "selectProcedure": "Select a procedure",
+      "teeth": "Tooth numbers (FDI)",
+      "surfaces": "Surfaces (optional)",
+      "notes": "Line note",
+      "groupingHint": "Teeth in one line are grouped in one plan item.",
+      "createForReview": "Create plan for doctor review",
+      "invalidSurfaces": "Allowed surfaces: M, D, O, V, L."
     }
   },
   "pipeline": {
@@ -2852,7 +2891,9 @@
         "bucket90plus": "90+ రోజులు",
         "empty": "రావలసిన బకాయిలు లేవు",
         "patientCount": "{count} రోగులు"
-      }
+      },
+      "periodFrom": "From",
+      "periodTo": "To"
     },
     "billing": {
       "title": "బిల్లింగ్",
@@ -3001,7 +3042,18 @@
         "desc": "విస్తృత తేదీ పరిధిని ప్రయత్నించండి లేదా ఫిల్టర్లను తొలగించండి."
       }
     },
-    "loadError": "నివేదిక డేటాను లోడ్ చేయలేకపోయాము"
+    "loadError": "నివేదిక డేటాను లోడ్ చేయలేకపోయాము",
+    "planConversion": {
+      "title": "Treatment plan conversion",
+      "subtitle": "Track doctor-confirmed plans through booking and completed care.",
+      "confirmed": "Plans confirmed",
+      "cohortHint": "Cohort by the date the doctor confirmed the plan",
+      "booked": "Booked from a plan",
+      "completedPlans": "Plans fully completed",
+      "ofPlans": "of confirmed plans",
+      "itemProgress": "Treatment item progress",
+      "metricNote": "A plan counts as booked when at least one linked appointment is not cancelled. Completion follows the treatment plan item status."
+    }
   },
   "invoiceSeries": {
     "title": "ఇన్‌వాయిస్ సిరీస్",
@@ -3319,6 +3371,32 @@
       "verifactu": "Cumplimiento Veri*Factu (AEAT) para clínicas en España.",
       "whatsapp_kapso": "WhatsApp para notifications vía Kapso (Meta Cloud API).",
       "whatsapp_webhook": "WhatsApp para notifications vía webhook firmado (Zapier/Make/n8n)."
+    }
+  },
+  "schedules": {
+    "settingsCards": {
+      "assistantHoursTitle": "Assistant schedules",
+      "assistantHoursDescription": "Set assistant availability, exceptions and review workload conflicts."
+    },
+    "assistants": {
+      "title": "Assistant schedules",
+      "description": "Set working hours and exceptions. Workload and overlaps are calculated from assigned appointments.",
+      "select": "Assistant",
+      "noAssistant": "No assistant schedule is configured for this account.",
+      "weekly": "Weekly hours",
+      "workload": "Workload this week",
+      "appointments": "Appointments",
+      "bookedHours": "Booked, h",
+      "load": "Load",
+      "conflictsCount": "Conflicts",
+      "noConflicts": "No schedule conflicts",
+      "overlap": "Two assistant appointments overlap.",
+      "outsideShift": "Appointment falls outside the assistant shift."
+    },
+    "overrides": {
+      "startTime": "Start time",
+      "endTime": "End time",
+      "addShift": "Add shift"
     }
   }
 }

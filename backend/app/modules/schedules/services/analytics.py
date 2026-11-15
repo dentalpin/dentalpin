@@ -20,9 +20,119 @@ from app.core.auth.models import ClinicMembership, User
 from app.modules.agenda.models import Appointment, Cabinet
 
 from .availability import AvailabilityService
+from .professional_hours import ProfessionalHoursService
 
 
 class AnalyticsService:
+    @staticmethod
+    async def assistant_workload(
+        db: AsyncSession,
+        clinic_id: UUID,
+        start: date,
+        end: date,
+        assistant_id: UUID | None = None,
+    ) -> dict[str, Any]:
+        """Return assistant capacity, booked time and shift conflicts.
+
+        Overlapping active appointments are reported separately from
+        appointments that fall outside the assistant's configured shifts.
+        Cancelled and no-show appointments do not consume capacity.
+        """
+        if end < start:
+            raise ValueError("end must be on or after start")
+        members = await ProfessionalHoursService.list_assistants(db, clinic_id)
+        if assistant_id is not None:
+            members = [m for m in members if m["user_id"] == assistant_id]
+
+        tz_name, _ = await AvailabilityService.resolve(db, clinic_id, start, end)
+        tz = ZoneInfo(tz_name)
+        lo, hi = _bound(start, "lo", tz), _bound(end, "hi", tz)
+        rows: list[dict[str, Any]] = []
+        conflicts: list[dict[str, Any]] = []
+
+        for member in members:
+            user_id = member["user_id"]
+            _, ranges = await AvailabilityService.resolve(db, clinic_id, start, end, user_id)
+            open_ranges = [r for r in ranges if r.state == "open"]
+            available_minutes = sum(
+                int((r.end - r.start).total_seconds() / 60) for r in open_ranges
+            )
+            appointments = (
+                (
+                    await db.execute(
+                        select(Appointment)
+                        .where(
+                            Appointment.clinic_id == clinic_id,
+                            Appointment.assistant_id == user_id,
+                            Appointment.status.notin_(["cancelled", "no_show"]),
+                            Appointment.start_time < hi,
+                            Appointment.end_time > lo,
+                        )
+                        .order_by(Appointment.start_time, Appointment.end_time)
+                    )
+                )
+                .scalars()
+                .all()
+            )
+            booked_minutes = sum(
+                max(0, int((a.end_time - a.start_time).total_seconds() / 60)) for a in appointments
+            )
+            active = [
+                a
+                for a in appointments
+                if a.status in ("scheduled", "confirmed", "checked_in", "in_treatment")
+            ]
+            for index, appointment in enumerate(active):
+                if not any(
+                    interval.start <= appointment.start_time
+                    and interval.end >= appointment.end_time
+                    for interval in open_ranges
+                ):
+                    conflicts.append(
+                        {
+                            "assistant_id": user_id,
+                            "assistant_name": f"{member['first_name']} {member['last_name']}".strip(),
+                            "kind": "outside_shift",
+                            "appointment_id": appointment.id,
+                            "other_appointment_id": None,
+                            "start_at": appointment.start_time,
+                            "end_at": appointment.end_time,
+                        }
+                    )
+                for other in active[index + 1 :]:
+                    if other.start_time >= appointment.end_time:
+                        break
+                    if (
+                        other.start_time < appointment.end_time
+                        and other.end_time > appointment.start_time
+                    ):
+                        conflicts.append(
+                            {
+                                "assistant_id": user_id,
+                                "assistant_name": f"{member['first_name']} {member['last_name']}".strip(),
+                                "kind": "overlap",
+                                "appointment_id": appointment.id,
+                                "other_appointment_id": other.id,
+                                "start_at": max(appointment.start_time, other.start_time),
+                                "end_at": min(appointment.end_time, other.end_time),
+                            }
+                        )
+
+            rows.append(
+                {
+                    "assistant_id": user_id,
+                    "assistant_name": f"{member['first_name']} {member['last_name']}".strip(),
+                    "appointment_count": len(appointments),
+                    "booked_minutes": booked_minutes,
+                    "available_minutes": available_minutes,
+                    "utilization_rate": booked_minutes / available_minutes
+                    if available_minutes
+                    else 0.0,
+                    "conflict_count": sum(c["assistant_id"] == user_id for c in conflicts),
+                }
+            )
+        return {"start": start, "end": end, "rows": rows, "conflicts": conflicts}
+
     @staticmethod
     async def occupancy(
         db: AsyncSession,

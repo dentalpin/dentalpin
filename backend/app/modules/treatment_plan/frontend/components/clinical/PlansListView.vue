@@ -48,6 +48,7 @@ const hasPlans = computed(() => props.plans.length > 0)
 <template>
   <div class="space-y-[var(--density-gap,1rem)]">
     <SectionHeader
+      v-if="loading || hasPlans"
       icon="i-lucide-clipboard-list"
       :title="t('clinical.plans.title')"
     >
@@ -75,23 +76,22 @@ const hasPlans = computed(() => props.plans.length > 0)
     </div>
 
     <!-- Empty state -->
-    <UCard v-else-if="!hasPlans">
-      <EmptyState
-        icon="i-lucide-clipboard"
-        :title="t('clinical.plans.empty')"
-        :description="t('clinical.plans.emptyDescription')"
-      >
-        <template #actions>
-          <UButton
-            color="primary"
-            variant="soft"
-            icon="i-lucide-plus"
-            @click="emit('create-plan')"
-          >
-            {{ t('clinical.plans.createFirst') }}
-          </UButton>
-        </template>
-      </EmptyState>
+    <UCard
+      v-else-if="!hasPlans"
+      class="mx-auto w-full max-w-xl text-center"
+    >
+      <div class="space-y-4 py-2">
+        <p class="text-h3 text-default">
+          {{ t('treatmentPlans.empty') }}
+        </p>
+        <UButton
+          color="primary"
+          icon="i-lucide-plus"
+          @click="emit('create-plan')"
+        >
+          {{ t('treatmentPlans.create') }}
+        </UButton>
+      </div>
     </UCard>
 
     <!-- Plans list -->

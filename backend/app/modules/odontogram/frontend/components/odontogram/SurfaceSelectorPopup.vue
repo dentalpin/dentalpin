@@ -8,7 +8,11 @@ const props = defineProps<{
   toothNumber: number
   treatmentType: TreatmentType
   status: TreatmentStatus
+  diagnosisMode?: boolean
 }>()
+
+const selectedTreatment = defineModel<string | null>('selectedTreatment', { default: null })
+const selectedCatalogItemId = defineModel<string | null>('selectedCatalogItemId', { default: null })
 
 const emit = defineEmits<{
   'update:open': [value: boolean]
@@ -160,7 +164,9 @@ function getSurfaceOpacity(surface: Surface): number {
 
 // Confirm selection
 function handleConfirm() {
-  if (selectedSurfaces.value.length > 0) {
+  if (props.diagnosisMode) {
+    if (selectedTreatment.value) emit('confirm', [...selectedSurfaces.value])
+  } else if (selectedSurfaces.value.length > 0) {
     emit('confirm', [...selectedSurfaces.value])
   }
   selectedSurfaces.value = []
@@ -211,6 +217,19 @@ watch(() => props.open, (isOpen) => {
 
     <template #body>
       <div class="surface-selector">
+        <TreatmentBar
+          v-if="diagnosisMode"
+          v-model:selected-treatment="selectedTreatment"
+          v-model:selected-catalog-item-id="selectedCatalogItemId"
+          selected-status="existing"
+          mode="diagnosis"
+        />
+        <p
+          v-if="diagnosisMode"
+          class="text-caption text-subtle"
+        >
+          {{ t('clinical.diagnosis.chooseDiagnosisAndSurfaces', 'Выберите диагноз и при необходимости отметьте поверхности') }}
+        </p>
         <!-- Tooth visualization -->
         <div class="tooth-views">
           <!-- Occlusal View -->
@@ -439,7 +458,7 @@ watch(() => props.open, (isOpen) => {
           </UButton>
           <UButton
             color="primary"
-            :disabled="selectedSurfaces.length === 0"
+            :disabled="diagnosisMode ? !selectedTreatment : selectedSurfaces.length === 0"
             @click="handleConfirm"
           >
             {{ t('common.confirm') }}
@@ -459,8 +478,9 @@ watch(() => props.open, (isOpen) => {
 
 .tooth-views {
   display: flex;
+  flex-wrap: wrap;
   justify-content: center;
-  gap: 32px;
+  gap: clamp(12px, 4vw, 32px);
 }
 
 .view-container {
@@ -482,6 +502,8 @@ watch(() => props.open, (isOpen) => {
   background: var(--odontogram-bg);
   border-radius: 12px;
   padding: 8px;
+  max-width: min(160px, calc((100vw - 5rem) / 2));
+  height: auto;
 }
 
 .tooth-svg.lateral {

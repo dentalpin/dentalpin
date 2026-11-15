@@ -49,6 +49,16 @@
     "defaultClinicName": "Clínica",
     "documents": "Documentos"
   },
+  "appearance": {
+    "pickerLabel": "Colores de la interfaz",
+    "pickerTitle": "Elige un tema de color",
+    "themes": {
+      "clinical": "Azul clínico",
+      "mint": "Menta",
+      "lavender": "Lavanda",
+      "coral": "Coral"
+    }
+  },
   "auth": {
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
@@ -769,7 +779,14 @@
       "selectPlan": "Seleccionar plan",
       "continue": "Continuar",
       "odontogramTab": "Odontograma",
-      "openNotes": "Abrir notas"
+      "openNotes": "Abrir notas",
+      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "recommendedTreatmentTitle": "Add the procedure to a plan?",
+      "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
+      "planForTreatment": "Treatment plan",
+      "createNewPlanOption": "Create a new plan",
+      "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
+      "addToPlan": "Add to plan"
     },
     "plans": {
       "title": "Planes de Tratamiento",
@@ -991,7 +1008,9 @@
     "sendReminderVia": "Enviar recordatorio ({channel})",
     "sendCancellationVia": "Enviar cancelación ({channel})",
     "loadError": "No se pudieron cargar las citas",
-    "planAwaitingBudget": "Presupuesto sin aceptar"
+    "planAwaitingBudget": "Presupuesto sin aceptar",
+    "assistant": "Assistant",
+    "assistantUnassigned": "No assistant"
   },
   "dashboard": {
     "greetings": {
@@ -1096,11 +1115,21 @@
       }
     },
     "supergroups": {
-      "clinicalSetup": { "label": "Configuración clínica" },
-      "clinicalManagement": { "label": "Gestión clínica" },
-      "financialConfiguration": { "label": "Configuración financiera" },
-      "systemAddons": { "label": "Sistema y complementos" },
-      "myPreferences": { "label": "Mis preferencias" }
+      "clinicalSetup": {
+        "label": "Configuración clínica"
+      },
+      "clinicalManagement": {
+        "label": "Gestión clínica"
+      },
+      "financialConfiguration": {
+        "label": "Configuración financiera"
+      },
+      "systemAddons": {
+        "label": "Sistema y complementos"
+      },
+      "myPreferences": {
+        "label": "Mis preferencias"
+      }
     },
     "search": {
       "placeholder": "Buscar configuración…",
@@ -1303,14 +1332,16 @@
       "whatsapp": "Enviar por WhatsApp",
       "shareText": "Hola {name}, aquí tienes tu acceso a Dentum. Entra y elige tu contraseña: {url}",
       "secretNote": "Trátalo como una contraseña: quien tenga el enlace puede entrar con esta cuenta.",
-      "passwordOptionalHelp": "Déjala vacía para generar un enlace de acceso que puedas enviar por WhatsApp o email.",
+      "passwordOptionalHelp": "Déjala vacía y Dentum enviará un enlace para crear la contraseña. Si defines una contraseña temporal, la persona recibirá igualmente un enlace para elegir la suya.",
       "passwordOptionalPlaceholder": "Opcional",
-      "createAndLink": "Crear y generar enlace",
+      "createAndLink": "Crear y enviar invitación",
       "rowAction": "Enlace de acceso",
       "setPasswordTitle": "Elige tu contraseña",
       "setPasswordSubtitle": "Te han invitado a Dentum. Crea tu contraseña para entrar.",
       "setPasswordSubmit": "Guardar y entrar",
-      "invalidToken": "Este enlace no es válido o ya se ha usado. Pide uno nuevo al administrador de tu clínica."
+      "invalidToken": "Este enlace no es válido o ya se ha usado. Pide uno nuevo al administrador de tu clínica.",
+      "emailSent": "Se ha enviado la invitación por correo. También puedes copiar y compartir el enlace.",
+      "emailNotSent": "El envío de correo no está configurado o ha fallado. Copia y comparte el enlace manualmente."
     }
   },
   "selector": {
@@ -1657,7 +1688,10 @@
     "loadDefaultsHint": "Tipos de IVA, categorías y tratamientos de referencia según el país de la clínica. Se añaden solo los que faltan.",
     "defaultsLoaded": "Catálogo cargado: {categories} categorías, {items} tratamientos, {vat_types} tipos de IVA",
     "defaultsFailed": "No se pudo cargar el catálogo por defecto",
-    "loadError": "No se pudo cargar el catálogo de tratamientos"
+    "loadError": "No se pudo cargar el catálogo de tratamientos",
+    "recommendedTreatment": "Related procedure for the plan",
+    "recommendedTreatmentDescription": "This procedure will be suggested to the clinician after recording this diagnosis. It is added to a plan only after confirmation.",
+    "noRecommendedTreatment": "Do not link"
   },
   "placeholders": {
     "selectRole": "Seleccionar rol..."
@@ -1922,6 +1956,21 @@
       "subtitle": "Estos tratamientos del plan quedaron sin marcar como realizados:",
       "markPerformed": "Marcar como realizados",
       "marked": "Marcados como realizados: {count}."
+    },
+    "batch": {
+      "title": "Diagnoses and procedures",
+      "description": "Choose a catalog procedure and enter the teeth. A doctor reviews the full plan and estimate before confirmation.",
+      "addLine": "Add line",
+      "emptyCatalog": "No odontogram procedures in the catalog",
+      "emptyCatalogHint": "Add and map procedures in catalog settings first.",
+      "procedure": "Catalog procedure",
+      "selectProcedure": "Select a procedure",
+      "teeth": "Tooth numbers (FDI)",
+      "surfaces": "Surfaces (optional)",
+      "notes": "Line note",
+      "groupingHint": "Teeth in one line are grouped in one plan item.",
+      "createForReview": "Create plan for doctor review",
+      "invalidSurfaces": "Allowed surfaces: M, D, O, V, L."
     }
   },
   "pipeline": {
@@ -2700,7 +2749,9 @@
         "bucket90plus": "Más de 90 días",
         "empty": "No hay cuentas por cobrar",
         "patientCount": "{count} pacientes"
-      }
+      },
+      "periodFrom": "From",
+      "periodTo": "To"
     },
     "billing": {
       "title": "Facturación",
@@ -2849,7 +2900,18 @@
         "desc": "Prueba un rango más amplio o elimina filtros."
       }
     },
-    "loadError": "No se pudieron cargar los datos del informe"
+    "loadError": "No se pudieron cargar los datos del informe",
+    "planConversion": {
+      "title": "Treatment plan conversion",
+      "subtitle": "Track doctor-confirmed plans through booking and completed care.",
+      "confirmed": "Plans confirmed",
+      "cohortHint": "Cohort by the date the doctor confirmed the plan",
+      "booked": "Booked from a plan",
+      "completedPlans": "Plans fully completed",
+      "ofPlans": "of confirmed plans",
+      "itemProgress": "Treatment item progress",
+      "metricNote": "A plan counts as booked when at least one linked appointment is not cancelled. Completion follows the treatment plan item status."
+    }
   },
   "notifications": {
     "communications": {
@@ -3309,6 +3371,32 @@
       "verifactu": "Cumplimiento Veri*Factu (AEAT) para clínicas en España.",
       "whatsapp_kapso": "WhatsApp para notifications vía Kapso (Meta Cloud API).",
       "whatsapp_webhook": "WhatsApp para notifications vía webhook firmado (Zapier/Make/n8n)."
+    }
+  },
+  "schedules": {
+    "settingsCards": {
+      "assistantHoursTitle": "Assistant schedules",
+      "assistantHoursDescription": "Set assistant availability, exceptions and review workload conflicts."
+    },
+    "assistants": {
+      "title": "Assistant schedules",
+      "description": "Set working hours and exceptions. Workload and overlaps are calculated from assigned appointments.",
+      "select": "Assistant",
+      "noAssistant": "No assistant schedule is configured for this account.",
+      "weekly": "Weekly hours",
+      "workload": "Workload this week",
+      "appointments": "Appointments",
+      "bookedHours": "Booked, h",
+      "load": "Load",
+      "conflictsCount": "Conflicts",
+      "noConflicts": "No schedule conflicts",
+      "overlap": "Two assistant appointments overlap.",
+      "outsideShift": "Appointment falls outside the assistant shift."
+    },
+    "overrides": {
+      "startTime": "Start time",
+      "endTime": "End time",
+      "addShift": "Add shift"
     }
   }
 }

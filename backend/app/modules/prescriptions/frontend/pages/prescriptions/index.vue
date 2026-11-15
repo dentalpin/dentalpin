@@ -333,7 +333,7 @@ watch(patientId, () => void refresh())
                 v-model="item.medication_name"
                 :placeholder="t('prescriptions.medicationName')"
               />
-              <div class="grid grid-cols-3 gap-2">
+              <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <UInput
                   v-model="item.dosage"
                   :placeholder="t('prescriptions.dosage')"
@@ -347,7 +347,7 @@ watch(patientId, () => void refresh())
                   :placeholder="t('prescriptions.frequency')"
                 />
               </div>
-              <div class="grid grid-cols-3 gap-2">
+              <div class="grid grid-cols-1 gap-2 sm:grid-cols-3">
                 <UInput
                   v-model="item.route"
                   :placeholder="t('prescriptions.route')"

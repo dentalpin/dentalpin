@@ -31,7 +31,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/catalog/frontend/pages/settings/catalog/index.vue
   - backend/app/modules/catalog/frontend/components/catalog/CatalogCategoriesModal.vue
-last_verified_commit: 6b3eb82
+last_verified_commit: 71402014
 ---
 
 # /settings/catalog
@@ -66,3 +66,5 @@ categorías. Es la fuente de precios de presupuestos, planes y facturas.
   vía de reparación cuando una instalación se creó antes de que existiera la
   siembra automática o esta falló; la tarjeta "Primeros pasos" del panel
   enlaza aquí cuando detecta el catálogo vacío.
+- En pantallas estrechas, los campos de precios se distribuyen en dos columnas;
+  en pantallas amplias se muestran hasta cinco.

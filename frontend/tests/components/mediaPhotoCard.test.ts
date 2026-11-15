@@ -1,7 +1,7 @@
 import { mockNuxtImport, mountSuspended } from '@nuxt/test-utils/runtime'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { VueWrapper } from '@vue/test-utils'
-import PhotoCard from '../../module_layers/media/frontend/components/media/PhotoCard.vue'
+import PhotoCard from '#module-layers/media/frontend/components/media/PhotoCard.vue'
 
 const raw = vi.fn(async () => new Response(new Blob(['x']), { status: 200 }))
 mockNuxtImport('useApi', () => () => ({

@@ -85,16 +85,24 @@ const { data: patient, status, refresh } = await useAsyncData(
 // patients_clinical-owned card.
 const { medicalHistory, isSaving: isSavingMedical, saveMedicalHistory } = useMedicalHistory(patientIdRef)
 
-// Tabs — Resumen is the landing.
-const activeTab = ref('summary')
+// Clinicians land directly in the charting workspace; other staff keep
+// the patient summary as their starting point. Explicit tab links always
+// take precedence so invoices and shared links keep their destination.
+const defaultPatientTab = computed(() =>
+  (can(PERMISSIONS.odontogram.read) || can(PERMISSIONS.treatmentPlans.read))
+  && (can(PERMISSIONS.odontogram.write) || can(PERMISSIONS.treatmentPlans.write))
+    ? 'clinical'
+    : 'summary'
+)
+const activeTab = ref(defaultPatientTab.value)
 
 watch(
-  () => route.query.tab,
-  (tab) => {
+  [() => route.query.tab, defaultPatientTab],
+  ([tab, fallbackTab]) => {
     if (tab && typeof tab === 'string') {
       activeTab.value = tab
     } else {
-      activeTab.value = 'summary'
+      activeTab.value = fallbackTab
     }
   },
   { immediate: true }
@@ -107,12 +115,6 @@ const tabs = computed(() => {
       label: t('patientDetail.tabs.summary'),
       icon: 'i-lucide-layout-dashboard',
       slot: 'summary'
-    },
-    {
-      value: 'info',
-      label: t('patientDetail.tabs.info'),
-      icon: 'i-lucide-user',
-      slot: 'info'
     }
   ]
 
@@ -124,6 +126,13 @@ const tabs = computed(() => {
       slot: 'clinical'
     })
   }
+
+  items.push({
+    value: 'info',
+    label: t('patientDetail.tabs.info'),
+    icon: 'i-lucide-user',
+    slot: 'info'
+  })
 
   if (can(PERMISSIONS.budget.read) || can(PERMISSIONS.billing.read)) {
     items.push({
@@ -321,7 +330,7 @@ function collect() {
         <UTabs
           v-model="activeTab"
           :items="tabs"
-          default-value="summary"
+          :default-value="defaultPatientTab"
           class="w-full"
           :ui="{ content: 'overflow-visible' }"
         >

@@ -53,37 +53,38 @@ function smoothstep(a: number, b: number, value: number) {
 }
 
 async function addTooth() {
-  if (!THREE || !scene) return
+  const three = THREE
+  if (!three || !scene) return
 
   const { GLTFLoader } = await import('three/addons/loaders/GLTFLoader.js')
   const gltf = await new GLTFLoader().loadAsync('/models/dentum-maxillary-first-molar.glb')
-  const group = new THREE.Group()
+  const group = new three.Group()
   const model = gltf.scene
   model.rotation.x = Math.PI
   model.updateMatrixWorld(true)
 
-  const originalBounds = new THREE.Box3().setFromObject(model)
-  const originalHeight = originalBounds.getSize(new THREE.Vector3()).y
+  const originalBounds = new three.Box3().setFromObject(model)
+  const originalHeight = originalBounds.getSize(new three.Vector3()).y
   const targetHeight = isMobile ? 3.05 : 3.28
   model.scale.setScalar(targetHeight / Math.max(originalHeight, 0.001))
   model.updateMatrixWorld(true)
 
-  const bounds = new THREE.Box3().setFromObject(model)
-  model.position.sub(bounds.getCenter(new THREE.Vector3()))
+  const bounds = new three.Box3().setFromObject(model)
+  model.position.sub(bounds.getCenter(new three.Vector3()))
   group.position.set(isMobile ? 0 : 1.02, -0.03, 0)
   group.add(model)
   scene.add(group)
   scene.updateMatrixWorld(true)
 
-  const modelBounds = new THREE.Box3().setFromObject(model)
+  const modelBounds = new three.Box3().setFromObject(model)
   const verticalRange = Math.max(modelBounds.max.y - modelBounds.min.y, 0.001)
-  const rootTone = new THREE.Color('#decdaa')
-  const crownTone = new THREE.Color('#fffdf6')
-  const vertex = new THREE.Vector3()
-  const vertexColor = new THREE.Color()
+  const rootTone = new three.Color('#decdaa')
+  const crownTone = new three.Color('#fffdf6')
+  const vertex = new three.Vector3()
+  const vertexColor = new three.Color()
 
   model.traverse((object) => {
-    if (!(object instanceof THREE.Mesh)) return
+    if (!(object instanceof three.Mesh)) return
     const geometry = object.geometry
     const positions = geometry.getAttribute('position')
     const colors = new Float32Array(positions.count * 3)
@@ -101,9 +102,9 @@ async function addTooth() {
       colors[index * 3 + 2] = vertexColor.b
     }
 
-    geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
+    geometry.setAttribute('color', new three.Float32BufferAttribute(colors, 3))
     geometry.computeVertexNormals()
-    object.material = new THREE.MeshPhysicalMaterial({
+    object.material = new three.MeshPhysicalMaterial({
       color: '#ffffff',
       vertexColors: true,
       roughness: 0.29,
@@ -120,17 +121,18 @@ async function addTooth() {
 }
 
 async function createScene() {
-  if (!THREE || !canvas.value || !stage.value) return
+  const three = THREE
+  if (!three || !canvas.value || !stage.value) return
   try {
     const width = stage.value.clientWidth
     const height = stage.value.clientHeight
     const pixelRatio = Math.min(window.devicePixelRatio || 1, isMobile ? 1.35 : 1.8)
 
-    scene = new THREE.Scene()
-    camera = new THREE.PerspectiveCamera(32, width / Math.max(height, 1), 0.1, 60)
+    scene = new three.Scene()
+    camera = new three.PerspectiveCamera(32, width / Math.max(height, 1), 0.1, 60)
     camera.position.set(isMobile ? 0 : 1.02, 0.18, isMobile ? 7.3 : 8)
 
-    renderer = new THREE.WebGLRenderer({
+    renderer = new three.WebGLRenderer({
       canvas: canvas.value,
       alpha: true,
       antialias: !isMobile,
@@ -139,59 +141,59 @@ async function createScene() {
     })
     renderer.setPixelRatio(pixelRatio)
     renderer.setSize(width, height, false)
-    renderer.outputColorSpace = THREE.SRGBColorSpace
-    renderer.toneMapping = THREE.ACESFilmicToneMapping
+    renderer.outputColorSpace = three.SRGBColorSpace
+    renderer.toneMapping = three.ACESFilmicToneMapping
     renderer.toneMappingExposure = 1.12
 
-    scene.add(new THREE.HemisphereLight('#fffdf7', '#b8cfd0', 2.25))
-    const key = new THREE.DirectionalLight('#fff9eb', 3.6)
+    scene.add(new three.HemisphereLight('#fffdf7', '#b8cfd0', 2.25))
+    const key = new three.DirectionalLight('#fff9eb', 3.6)
     key.position.set(-3.5, 5, 6)
     scene.add(key)
-    const rim = new THREE.DirectionalLight('#61d1df', 2.7)
+    const rim = new three.DirectionalLight('#61d1df', 2.7)
     rim.position.set(4, 1.5, -3)
     scene.add(rim)
-    const fill = new THREE.PointLight('#a5e6e3', 65, 12, 2)
+    const fill = new three.PointLight('#a5e6e3', 65, 12, 2)
     fill.position.set(-3.2, -1.5, 3.5)
     scene.add(fill)
 
     await addTooth()
 
-    orbit = new THREE.Group()
+    orbit = new three.Group()
     orbit.position.set(isMobile ? 0 : 1.02, -0.04, -0.06)
     scene.add(orbit)
-    const halo = new THREE.Mesh(
-      new THREE.TorusGeometry(1.74, 0.008, 8, 160),
-      new THREE.MeshBasicMaterial({ color: '#64c6d2', transparent: true, opacity: 0.4 })
+    const halo = new three.Mesh(
+      new three.TorusGeometry(1.74, 0.008, 8, 160),
+      new three.MeshBasicMaterial({ color: '#64c6d2', transparent: true, opacity: 0.4 })
     )
     halo.rotation.set(0.72, 0.32, -0.3)
     orbit.add(halo)
 
-    const halo2 = new THREE.Mesh(
-      new THREE.TorusGeometry(1.94, 0.005, 8, 160),
-      new THREE.MeshBasicMaterial({ color: '#89c5c4', transparent: true, opacity: 0.24 })
+    const halo2 = new three.Mesh(
+      new three.TorusGeometry(1.94, 0.005, 8, 160),
+      new three.MeshBasicMaterial({ color: '#89c5c4', transparent: true, opacity: 0.24 })
     )
     halo2.rotation.set(0.95, -0.38, 0.55)
     orbit.add(halo2)
 
-    inspectionRing = new THREE.Mesh(
-      new THREE.TorusGeometry(0.92, 0.012, 8, 120),
-      new THREE.MeshBasicMaterial({ color: '#078d9a', transparent: true, opacity: 0.72 })
+    inspectionRing = new three.Mesh(
+      new three.TorusGeometry(0.92, 0.012, 8, 120),
+      new three.MeshBasicMaterial({ color: '#078d9a', transparent: true, opacity: 0.72 })
     )
     inspectionRing.position.set(0.18, 0.57, 0.38)
     inspectionRing.rotation.set(1.16, 0.23, 0.12)
     inspectionRing.visible = false
     orbit.add(inspectionRing)
 
-    planRing = new THREE.Mesh(
-      new THREE.TorusGeometry(1.24, 0.013, 8, 120),
-      new THREE.MeshBasicMaterial({ color: '#54b8b5', transparent: true, opacity: 0.62 })
+    planRing = new three.Mesh(
+      new three.TorusGeometry(1.24, 0.013, 8, 120),
+      new three.MeshBasicMaterial({ color: '#54b8b5', transparent: true, opacity: 0.62 })
     )
     planRing.position.set(-0.13, 0.12, 0)
     planRing.rotation.set(0.34, 0.7, -0.24)
     planRing.visible = false
     orbit.add(planRing)
 
-    const markerMaterial = new THREE.MeshBasicMaterial({ color: '#088c99' })
+    const markerMaterial = new three.MeshBasicMaterial({ color: '#088c99' })
     const markerPositions: [number, number, number][] = [
       [0.2, 0.62, 0.58],
       [-0.42, 0.27, 0.55],
@@ -200,8 +202,8 @@ async function createScene() {
     markers = []
     for (let index = 0; index < markerPositions.length; index++) {
       const position = markerPositions[index]!
-      const marker = new THREE.Mesh(
-        new THREE.SphereGeometry(index === 0 ? 0.055 : 0.035, 20, 14),
+      const marker = new three.Mesh(
+        new three.SphereGeometry(index === 0 ? 0.055 : 0.035, 20, 14),
         markerMaterial
       )
       marker.position.set(...position)
@@ -227,7 +229,7 @@ function syncScroll() {
 }
 
 function syncScene() {
-  if (!THREE || !scene || !camera || !renderer || !tooth || !orbit) return
+  if (!scene || !camera || !renderer || !tooth || !orbit) return
 
   const amount = progress.value
   const step = amount * (props.chapters.length + 1)
@@ -319,9 +321,10 @@ onBeforeUnmount(() => {
   resizeObserver?.disconnect()
   visibilityObserver?.disconnect()
   if (frame) window.cancelAnimationFrame(frame)
-  if (scene) {
+  const three = THREE
+  if (scene && three) {
     scene.traverse((object) => {
-      if (!(object instanceof THREE!.Mesh)) return
+      if (!(object instanceof three.Mesh)) return
       object.geometry.dispose()
       const material = object.material
       if (Array.isArray(material)) material.forEach(item => item.dispose())

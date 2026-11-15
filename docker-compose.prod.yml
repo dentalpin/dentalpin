@@ -52,6 +52,7 @@ services:
       EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
       EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-noreply@dentum.online}
       EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-Dentum}
+      PUBLIC_URL: ${PUBLIC_URL:-https://dentum.online}
       # Required in production since #538 (config.py refuses to boot
       # without them): generate each with `openssl rand -hex 32`.
       BUDGET_PUBLIC_SECRET_KEY: ${BUDGET_PUBLIC_SECRET_KEY:?Set BUDGET_PUBLIC_SECRET_KEY in your .env}

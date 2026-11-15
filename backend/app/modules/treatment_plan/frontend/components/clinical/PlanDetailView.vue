@@ -9,11 +9,9 @@
  * - Two-column layout on larger screens
  */
 
-import type { DropdownMenuItem } from '@nuxt/ui'
 import type { PlannedTreatmentItem, TreatmentPlanDetail } from '~~/app/types'
 
 import ConfirmPlanModal from './modals/ConfirmPlanModal.vue'
-import ReopenPlanModal from './modals/ReopenPlanModal.vue'
 import ClosePlanModal from './modals/ClosePlanModal.vue'
 import ReactivatePlanModal from './modals/ReactivatePlanModal.vue'
 import ContactLogModal from './modals/ContactLogModal.vue'
@@ -47,9 +45,10 @@ const {
   reorderItems,
   changeItemDoctor,
   fetchPlan,
+  updatePlan,
+  deletePlan,
   loading,
   confirmPlan,
-  reopenPlan,
   closePlan,
   reactivatePlan,
   logContact
@@ -62,10 +61,12 @@ const {
 // ============================================================================
 
 const showConfirmModal = ref(false)
-const showReopenModal = ref(false)
 const showCloseModal = ref(false)
 const showReactivateModal = ref(false)
 const showContactLogModal = ref(false)
+const showEditPlanModal = ref(false)
+const showDeletePlanModal = ref(false)
+const editedTitle = ref('')
 const transitioning = ref(false)
 
 const planSummary = computed(() => {
@@ -89,19 +90,6 @@ async function onConfirmPlan() {
     const result = await confirmPlan(props.plan.id)
     if (result) {
       showConfirmModal.value = false
-      await refreshPlan()
-    }
-  } finally {
-    transitioning.value = false
-  }
-}
-
-async function onReopenPlan() {
-  transitioning.value = true
-  try {
-    const result = await reopenPlan(props.plan.id)
-    if (result) {
-      showReopenModal.value = false
       await refreshPlan()
     }
   } finally {
@@ -177,26 +165,37 @@ const isLocked = computed(() => {
 })
 
 const effectiveReadonly = computed(() => props.readonly || isLocked.value)
+const isPaid = computed(() => props.plan.is_paid === true)
+const canEditPlan = computed(() => !props.readonly && !isPaid.value && !isLocked.value && !['closed', 'completed'].includes(props.plan.status))
+
+function beginEditPlan() {
+  editedTitle.value = props.plan.title || ''
+  showEditPlanModal.value = true
+}
+
+async function savePlanEdits() {
+  if (!canEditPlan.value) return
+  const updated = await updatePlan(props.plan.id, { title: editedTitle.value.trim() })
+  if (updated) {
+    showEditPlanModal.value = false
+    await refreshPlan()
+  }
+}
+
+async function confirmDeletePlan() {
+  if (!canEditPlan.value) return
+  const deleted = await deletePlan(props.plan.id)
+  if (deleted) {
+    showDeletePlanModal.value = false
+    emit('cancelled')
+  }
+}
 
 // ============================================================================
 // Cancel plan — delegated to the parent's ClosePlanModal. The legacy in-line
 // modal kept for status-only cancellation (without closure_reason); the new
 // flow surfaces ``request-close`` so the page collects a reason.
 // ============================================================================
-
-const canCancelPlan = computed(() =>
-  !props.readonly
-  && (
-    props.plan.status === 'draft'
-    || props.plan.status === 'active'
-    || props.plan.status === 'pending'
-  )
-)
-
-function openCancelModal() {
-  // Delegates to the unified ClosePlanModal owned by this view.
-  showCloseModal.value = true
-}
 
 // ============================================================================
 // Visual feedback: pulse right-column card when first item lands on a draft plan
@@ -290,58 +289,6 @@ const canGenerateBudget = computed(() => {
   const noActiveBudget = !props.plan.budget_id
     || ['cancelled', 'rejected', 'expired'].includes(budgetStatus ?? '')
   return validStatus && noActiveBudget
-})
-
-// ============================================================================
-// Progress stepper — maps plan status to a 3-step user journey.
-// ============================================================================
-
-type StepState = 'current' | 'complete' | 'upcoming'
-
-interface Step {
-  key: 'plan' | 'confirm' | 'inProgress'
-  label: string
-  icon: string
-  state: StepState
-}
-
-const steps = computed<Step[]>(() => {
-  const status = props.plan.status
-  // Map the 5 backend states to the 3-step stepper:
-  //   draft     → step 1 (Planificar) current
-  //   pending   → step 2 (Confirmar)  current — awaiting patient acceptance
-  //   active    → step 3 (En curso)   current — treatment underway
-  //   completed → all complete
-  //   closed    → frozen, last reached step stays current visually
-  const isDraft = status === 'draft'
-  const isPending = status === 'pending'
-  const isActive = status === 'active'
-  const isCompleted = status === 'completed'
-
-  return [
-    {
-      key: 'plan',
-      label: t('clinical.plans.steps.plan'),
-      icon: 'i-lucide-clipboard-list',
-      state: isDraft ? 'current' : 'complete'
-    },
-    {
-      key: 'confirm',
-      label: t('clinical.plans.steps.confirm'),
-      icon: 'i-lucide-check-circle-2',
-      state: isDraft
-        ? 'upcoming'
-        : (isPending ? 'current' : 'complete')
-    },
-    {
-      key: 'inProgress',
-      label: t('clinical.plans.steps.inProgress'),
-      icon: 'i-lucide-stethoscope',
-      state: isActive
-        ? 'current'
-        : (isCompleted ? 'complete' : 'upcoming')
-    }
-  ]
 })
 
 const isDraft = computed(() => props.plan.status === 'draft')
@@ -448,24 +395,10 @@ function openActivateModal() {
 function handleGenerateBudget() {
   emit('generate-budget')
 }
-
-const moreMenuItems = computed<DropdownMenuItem[]>(() => {
-  const items: DropdownMenuItem[] = []
-  if (canCancelPlan.value) {
-    items.push({
-      label: t('clinical.plans.cancelPlan'),
-      icon: 'i-lucide-ban',
-      color: 'error',
-      onSelect: openCancelModal
-    })
-  }
-  return items
-})
 </script>
 
 <template>
   <div class="space-y-4">
-    <!-- Header: title + stepper + actions -->
     <div class="plan-header">
       <div class="plan-header-title">
         <h2 class="text-h1 text-default">
@@ -483,30 +416,13 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
           {{ plan.patient.first_name }} {{ plan.patient.last_name }}
         </NuxtLink>
       </div>
-
-      <!-- Progress stepper -->
-      <ol class="plan-stepper">
-        <li
-          v-for="(step, idx) in steps"
-          :key="step.key"
-          class="plan-step"
-          :class="`plan-step-${step.state}`"
-        >
-          <span class="plan-step-marker">
-            <UIcon
-              v-if="step.state === 'complete'"
-              name="i-lucide-check"
-              class="w-3.5 h-3.5"
-            />
-            <span v-else>{{ idx + 1 }}</span>
-          </span>
-          <span class="plan-step-label">{{ step.label }}</span>
-          <span
-            v-if="idx < steps.length - 1"
-            class="plan-step-connector"
-          />
-        </li>
-      </ol>
+      <UBadge
+        :color="plan.status === 'pending' ? 'warning' : plan.status === 'active' ? 'success' : 'neutral'"
+        variant="subtle"
+        class="justify-self-start"
+      >
+        {{ t(`treatmentPlans.status.${plan.status}`, plan.status) }}
+      </UBadge>
 
       <!-- Action buttons: ghost/disabled for draft, live for active/completed. -->
       <div
@@ -561,29 +477,6 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
              Administración → Presupuestos (#207). Once the quote is
              sent, isLocked's banner takes over the link. -->
         <UButton
-          v-if="plan.status === 'pending' && plan.budget_id && !isLocked"
-          variant="soft"
-          size="sm"
-          icon="i-lucide-file-text"
-          :to="`/budgets/${plan.budget_id}`"
-        >
-          {{ t('treatmentPlans.viewDraftBudget', { number: plan.budget?.budget_number || '' }) }}
-        </UButton>
-
-        <!-- Workflow transitions for plans past draft. The big CTA in
-             the body owns the draft → pending action so it's not
-             duplicated up here. -->
-        <UButton
-          v-if="plan.status === 'pending'"
-          variant="soft"
-          color="warning"
-          size="sm"
-          icon="i-lucide-undo-2"
-          @click="showReopenModal = true"
-        >
-          {{ t('treatmentPlans.actions.reopen') }}
-        </UButton>
-        <UButton
           v-if="plan.status === 'closed'"
           variant="solid"
           color="primary"
@@ -593,19 +486,6 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
         >
           {{ t('treatmentPlans.actions.reactivate') }}
         </UButton>
-
-        <UDropdownMenu
-          v-if="moreMenuItems.length > 0"
-          :items="moreMenuItems"
-        >
-          <UButton
-            variant="ghost"
-            color="neutral"
-            icon="i-lucide-more-horizontal"
-            size="sm"
-            :aria-label="t('common.actions')"
-          />
-        </UDropdownMenu>
       </div>
     </div>
 
@@ -626,18 +506,6 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
           {{ t('clinical.plans.locked.subtitle', { number: plan.budget?.budget_number || '' }) }}
         </div>
       </div>
-      <UButton
-        v-if="plan.budget_id"
-        :to="`/budgets/${plan.budget_id}`"
-        size="xs"
-        color="warning"
-        variant="soft"
-        icon="i-lucide-external-link"
-        trailing
-        class="plan-locked-action shrink-0"
-      >
-        {{ t('clinical.plans.locked.viewBudget') }}
-      </UButton>
     </div>
 
     <!-- Two-column layout.
@@ -778,6 +646,42 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
             @item-hover="hoveredItemId = $event"
           />
         </UCard>
+        <div
+          v-if="!readonly"
+          class="grid gap-2 sm:grid-cols-2"
+        >
+          <UButton
+            size="lg"
+            block
+            class="sm:col-span-2"
+            icon="i-lucide-calendar-plus"
+            :disabled="plan.status !== 'active'"
+            @click="emit('schedule')"
+          >
+            {{ t('treatmentPlans.scheduleAppointment') }}
+          </UButton>
+          <UButton
+            size="lg"
+            block
+            variant="outline"
+            icon="i-lucide-pencil"
+            :disabled="!canEditPlan"
+            @click="beginEditPlan"
+          >
+            {{ t('common.edit') }}
+          </UButton>
+          <UButton
+            size="lg"
+            block
+            variant="outline"
+            color="error"
+            icon="i-lucide-trash-2"
+            :disabled="!canEditPlan"
+            @click="showDeletePlanModal = true"
+          >
+            {{ t('common.delete') }}
+          </UButton>
+        </div>
       </div>
     </div>
 
@@ -792,13 +696,6 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
       @update:open="(v) => (showConfirmModal = v)"
       @confirm="onConfirmPlan"
       @cancel="showConfirmModal = false"
-    />
-    <ReopenPlanModal
-      :open="showReopenModal"
-      :loading="transitioning"
-      @update:open="(v) => (showReopenModal = v)"
-      @confirm="onReopenPlan"
-      @cancel="showReopenModal = false"
     />
     <ClosePlanModal
       :open="showCloseModal"
@@ -823,6 +720,64 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
       @confirm="onLogContact"
       @cancel="showContactLogModal = false"
     />
+
+    <UModal v-model:open="showEditPlanModal">
+      <template #content>
+        <div class="space-y-4 p-4">
+          <h2 class="text-h3 text-default">
+            {{ t('common.edit') }}
+          </h2>
+          <UFormField :label="t('treatmentPlans.fields.title')">
+            <UInput
+              v-model="editedTitle"
+              maxlength="200"
+            />
+          </UFormField>
+          <div class="flex justify-end gap-2">
+            <UButton
+              variant="ghost"
+              @click="showEditPlanModal = false"
+            >
+              {{ t('common.cancel') }}
+            </UButton>
+            <UButton
+              :loading="loading"
+              @click="savePlanEdits"
+            >
+              {{ t('common.save') }}
+            </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
+
+    <UModal v-model:open="showDeletePlanModal">
+      <template #content>
+        <div class="space-y-4 p-4">
+          <h2 class="text-h3 text-default">
+            {{ t('common.delete') }}
+          </h2>
+          <p class="text-caption text-subtle">
+            {{ t('treatmentPlans.delete') }} «{{ plan.title || plan.plan_number }}»?
+          </p>
+          <div class="flex justify-end gap-2">
+            <UButton
+              variant="ghost"
+              @click="showDeletePlanModal = false"
+            >
+              {{ t('common.cancel') }}
+            </UButton>
+            <UButton
+              color="error"
+              :loading="loading"
+              @click="confirmDeletePlan"
+            >
+              {{ t('common.delete') }}
+            </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
 
     <!-- Remove-item confirmation (destructive, no undo endpoint) -->
     <UModal v-model:open="showRemoveItemConfirm">
@@ -858,7 +813,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
 <style scoped>
 .plan-header {
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   align-items: center;
   gap: 16px;
 }
@@ -879,89 +834,6 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-}
-
-/* Stepper */
-.plan-stepper {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.plan-step {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #9CA3AF;
-  position: relative;
-}
-
-.plan-step-marker {
-  width: 22px;
-  height: 22px;
-  border-radius: 50%;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 11px;
-  font-weight: 600;
-  border: 1.5px solid currentColor;
-  background: transparent;
-  flex-shrink: 0;
-}
-
-.plan-step-label {
-  font-weight: 500;
-  white-space: nowrap;
-}
-
-.plan-step-connector {
-  width: 20px;
-  height: 1.5px;
-  background: currentColor;
-  opacity: 0.4;
-}
-
-.plan-step-current {
-  color: #2563EB;
-}
-
-.plan-step-current .plan-step-marker {
-  background: #2563EB;
-  color: white;
-  border-color: #2563EB;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
-}
-
-.plan-step-complete {
-  color: #16A34A;
-}
-
-.plan-step-complete .plan-step-marker {
-  background: #16A34A;
-  color: white;
-  border-color: #16A34A;
-}
-
-.plan-step-upcoming {
-  color: #9CA3AF;
-}
-
-:root.dark .plan-step-current {
-  color: #60A5FA;
-}
-
-:root.dark .plan-step-current .plan-step-marker {
-  background: #2563EB;
-  border-color: #3B82F6;
-}
-
-:root.dark .plan-step-complete {
-  color: #4ADE80;
 }
 
 /* Confirm CTA footer */

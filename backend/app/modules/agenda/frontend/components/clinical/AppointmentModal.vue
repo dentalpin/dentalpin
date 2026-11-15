@@ -51,11 +51,15 @@ const scheduleAvailability = useScheduleAvailability()
 // placeholder state), so we round-trip this token and normalise it
 // to null on submit.
 const UNASSIGNED_CABINET = '__unassigned__'
+const UNASSIGNED_ASSISTANT = '__unassigned__'
 
 // Form state
 const isSubmitting = ref(false)
+const attemptedSave = ref(false)
 const selectedPatient = ref<Patient | null>(null)
 const selectedProfessionalId = ref<string>('')
+const selectedAssistantId = ref<string>(UNASSIGNED_ASSISTANT)
+const assistants = ref<Array<{ id: string, first_name: string, last_name: string }>>([])
 // Create mode, auto-send OFF: the channel the confirmation goes out on.
 // One control per clinic manual channel (issue #287); null = don't send.
 const confirmationChannel = ref<NotificationChannel | null>(null)
@@ -119,6 +123,25 @@ const professionalOptions = computed(() => {
     color: getProfessionalColor(prof.id)
   }))
 })
+
+const assistantOptions = computed(() => [
+  { value: UNASSIGNED_ASSISTANT, label: t('appointments.assistantUnassigned') },
+  ...assistants.value.map(assistant => ({
+    value: assistant.id,
+    label: `${assistant.first_name} ${assistant.last_name}`.trim()
+  }))
+])
+
+async function fetchAssistants() {
+  try {
+    const response = await api.get<{ data: Array<{ id: string, first_name: string, last_name: string }> }>(
+      '/api/v1/agenda/appointment-assistants'
+    )
+    assistants.value = response.data
+  } catch {
+    assistants.value = []
+  }
+}
 
 // Computed
 const modalTitle = computed(() =>
@@ -330,7 +353,7 @@ watch(() => props.open, async (isOpen) => {
   // fetching produced "Access denied" / "Error loading settings" toasts
   // every time they opened the modal. When skipped, getAutoSendStatus
   // falls back to its sensible default (auto-send on).
-  const tasks: Array<Promise<unknown>> = [fetchProfessionals()]
+  const tasks: Array<Promise<unknown>> = [fetchProfessionals(), fetchAssistants()]
   if (can(PERMISSIONS.notifications.settingsRead)) {
     tasks.push(fetchSettings())
   }
@@ -341,6 +364,7 @@ watch(() => props.open, async (isOpen) => {
     const apt = props.appointment
     selectedPatient.value = apt.patient || null
     selectedProfessionalId.value = apt.professional_id
+    selectedAssistantId.value = apt.assistant_id ?? UNASSIGNED_ASSISTANT
     formData.date = apt.start_time.split('T')[0] ?? ''
     formData.startTime = apt.start_time.split('T')[1]?.substring(0, 5) ?? '09:00'
     // null cabinet (#51) maps to the "assign later" option.
@@ -402,6 +426,7 @@ watch(() => props.open, async (isOpen) => {
     )
   } else {
     // Create mode - use initial values
+    selectedAssistantId.value = UNASSIGNED_ASSISTANT
     if (props.initialDate) {
       formData.date = formatLocalDate(props.initialDate)
     } else {
@@ -499,6 +524,7 @@ function calculateEndTime(): string {
 }
 
 async function handleSave() {
+  attemptedSave.value = true
   if (!canSave.value || !selectedPatient.value) return
 
   isSubmitting.value = true
@@ -563,6 +589,7 @@ async function handleSave() {
     const appointmentData: AppointmentCreate = {
       patient_id: selectedPatient.value.id,
       professional_id: selectedProfessionalId.value,
+      assistant_id: selectedAssistantId.value === UNASSIGNED_ASSISTANT ? null : selectedAssistantId.value,
       cabinet: cabinetValue,
       start_time: startTime,
       end_time: endTime,
@@ -736,10 +763,12 @@ function openPatientFile() {
                 />
                 {{ t('appointments.selectPatient') }}
               </div>
-              <PatientVisualSelector
-                v-model="selectedPatient"
-                in-modal
-              />
+              <div :class="attemptedSave && !selectedPatient ? 'rounded-token-md ring-2 ring-error' : ''">
+                <PatientVisualSelector
+                  v-model="selectedPatient"
+                  in-modal
+                />
+              </div>
               <div v-if="selectedPatient">
                 <p class="text-caption text-subtle mb-1.5">
                   {{ t('appointments.treatments') }}
@@ -771,6 +800,7 @@ function openPatientFile() {
                     type="date"
                     :size="isMobile ? 'lg' : 'md'"
                     icon="i-lucide-calendar"
+                    :class="attemptedSave && !formData.date ? 'ring-2 ring-error' : ''"
                     required
                   />
                 </UFormField>
@@ -783,6 +813,7 @@ function openPatientFile() {
                     type="time"
                     :size="isMobile ? 'lg' : 'md'"
                     icon="i-lucide-clock"
+                    :class="attemptedSave && !formData.startTime ? 'ring-2 ring-error' : ''"
                     required
                   />
                 </UFormField>
@@ -834,7 +865,10 @@ function openPatientFile() {
                 :label="t('appointments.professional')"
                 required
               >
-                <div class="flex flex-wrap gap-2">
+                <div
+                  class="flex flex-wrap gap-2 rounded-token-md"
+                  :class="attemptedSave && !selectedProfessionalId ? 'ring-2 ring-error p-1' : ''"
+                >
                   <button
                     v-for="p in professionalOptions"
                     :key="p.value"
@@ -854,6 +888,18 @@ function openPatientFile() {
                     {{ p.label }}
                   </button>
                 </div>
+              </UFormField>
+
+              <UFormField :label="t('appointments.assistant', 'Ассистент')">
+                <USelect
+                  v-model="selectedAssistantId"
+                  :items="assistantOptions"
+                  value-key="value"
+                  label-key="label"
+                  :size="isMobile ? 'lg' : 'md'"
+                  :placeholder="t('appointments.assistant', 'Ассистент')"
+                  icon="i-lucide-user-round-plus"
+                />
               </UFormField>
             </section>
 

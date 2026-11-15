@@ -82,6 +82,7 @@ export function useOdontogram() {
     // === Treatments ===
     treatments: treatmentsApi.treatments,
     treatmentsLoading: treatmentsApi.loading,
+    treatmentsError: treatmentsApi.error,
     fetchTreatments: treatmentsApi.fetchTreatments,
     createTreatment: treatmentsApi.createTreatment,
     updateTreatment: treatmentsApi.updateTreatment,

@@ -32,6 +32,7 @@
   --color-primary-hover: #0284C7;
   --color-primary-soft: #E0F2FE;
   --color-primary-soft-text: #0369A1;
+  --color-primary-accent: #0284C7;
 
   /* Semantics — accent / soft bg / text */
   --color-success-accent: #0F9D58;
@@ -86,6 +87,7 @@
   --color-primary-hover: #7DD3FC;
   --color-primary-soft: rgba(56, 189, 248, 0.12);
   --color-primary-soft-text: #7DD3FC;
+  --color-primary-accent: #38BDF8;
 
   /* Semantics — dark */
   --color-success-accent: #34D399;
@@ -106,6 +108,94 @@
   --shadow-sm: none;
   --shadow-md: none;
   --shadow-lg: none;
+}
+
+/* User-selectable brand accents. Light/dark mode remains independent. */
+:root[data-dentum-theme='mint'] {
+  --color-primary: #059669;
+  --color-primary-hover: #047857;
+  --color-primary-soft: #D1FAE5;
+  --color-primary-soft-text: #065F46;
+  --color-primary-accent: #059669;
+  --ui-primary: #10B981;
+  --ui-color-primary-50: #ECFDF5;
+  --ui-color-primary-100: #D1FAE5;
+  --ui-color-primary-200: #A7F3D0;
+  --ui-color-primary-300: #6EE7B7;
+  --ui-color-primary-400: #34D399;
+  --ui-color-primary-500: #10B981;
+  --ui-color-primary-600: #059669;
+  --ui-color-primary-700: #047857;
+  --ui-color-primary-800: #065F46;
+  --ui-color-primary-900: #064E3B;
+  --ui-color-primary-950: #022C22;
+}
+
+.dark[data-dentum-theme='mint'] {
+  --color-primary: #34D399;
+  --color-primary-hover: #6EE7B7;
+  --color-primary-soft: rgba(52, 211, 153, 0.12);
+  --color-primary-soft-text: #A7F3D0;
+  --color-primary-accent: #34D399;
+  --ui-primary: #34D399;
+}
+
+:root[data-dentum-theme='lavender'] {
+  --color-primary: #7C3AED;
+  --color-primary-hover: #6D28D9;
+  --color-primary-soft: #EDE9FE;
+  --color-primary-soft-text: #5B21B6;
+  --color-primary-accent: #7C3AED;
+  --ui-primary: #8B5CF6;
+  --ui-color-primary-50: #F5F3FF;
+  --ui-color-primary-100: #EDE9FE;
+  --ui-color-primary-200: #DDD6FE;
+  --ui-color-primary-300: #C4B5FD;
+  --ui-color-primary-400: #A78BFA;
+  --ui-color-primary-500: #8B5CF6;
+  --ui-color-primary-600: #7C3AED;
+  --ui-color-primary-700: #6D28D9;
+  --ui-color-primary-800: #5B21B6;
+  --ui-color-primary-900: #4C1D95;
+  --ui-color-primary-950: #2E1065;
+}
+
+.dark[data-dentum-theme='lavender'] {
+  --color-primary: #A78BFA;
+  --color-primary-hover: #C4B5FD;
+  --color-primary-soft: rgba(167, 139, 250, 0.13);
+  --color-primary-soft-text: #DDD6FE;
+  --color-primary-accent: #A78BFA;
+  --ui-primary: #A78BFA;
+}
+
+:root[data-dentum-theme='coral'] {
+  --color-primary: #E11D48;
+  --color-primary-hover: #BE123C;
+  --color-primary-soft: #FFE4E6;
+  --color-primary-soft-text: #9F1239;
+  --color-primary-accent: #E11D48;
+  --ui-primary: #F43F5E;
+  --ui-color-primary-50: #FFF1F2;
+  --ui-color-primary-100: #FFE4E6;
+  --ui-color-primary-200: #FECDD3;
+  --ui-color-primary-300: #FDA4AF;
+  --ui-color-primary-400: #FB7185;
+  --ui-color-primary-500: #F43F5E;
+  --ui-color-primary-600: #E11D48;
+  --ui-color-primary-700: #BE123C;
+  --ui-color-primary-800: #9F1239;
+  --ui-color-primary-900: #881337;
+  --ui-color-primary-950: #4C0519;
+}
+
+.dark[data-dentum-theme='coral'] {
+  --color-primary: #FB7185;
+  --color-primary-hover: #FDA4AF;
+  --color-primary-soft: rgba(251, 113, 133, 0.13);
+  --color-primary-soft-text: #FDA4AF;
+  --color-primary-accent: #FB7185;
+  --ui-primary: #FB7185;
 }
 
 /* ============================================================================

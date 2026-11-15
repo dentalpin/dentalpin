@@ -49,6 +49,16 @@
     "treatmentConsumables": "مستهلكات العلاج",
     "documents": "المستندات"
   },
+  "appearance": {
+    "pickerLabel": "لون الواجهة",
+    "pickerTitle": "اختر سمة اللون",
+    "themes": {
+      "clinical": "الأزرق السريري",
+      "mint": "نعناعي",
+      "lavender": "لافندر",
+      "coral": "مرجاني"
+    }
+  },
   "auth": {
     "login": "تسجيل الدخول",
     "logout": "تسجيل الخروج",
@@ -769,7 +779,14 @@
       "selectPlan": "اختر الخطة",
       "continue": "متابعة",
       "odontogramTab": "مخطط الأسنان",
-      "openNotes": "فتح الملاحظات"
+      "openNotes": "فتح الملاحظات",
+      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "recommendedTreatmentTitle": "Add the procedure to a plan?",
+      "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
+      "planForTreatment": "Treatment plan",
+      "createNewPlanOption": "Create a new plan",
+      "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
+      "addToPlan": "Add to plan"
     },
     "plans": {
       "title": "خطط العلاج",
@@ -991,7 +1008,9 @@
     "sendReminderVia": "إرسال التذكير ({channel})",
     "sendCancellationVia": "إرسال الإلغاء ({channel})",
     "loadError": "تعذّر تحميل المواعيد",
-    "planAwaitingBudget": "عرض سعر بانتظار القبول"
+    "planAwaitingBudget": "عرض سعر بانتظار القبول",
+    "assistant": "Assistant",
+    "assistantUnassigned": "No assistant"
   },
   "dashboard": {
     "greetings": {
@@ -1098,11 +1117,21 @@
       }
     },
     "supergroups": {
-      "clinicalSetup": { "label": "إعدادات العيادة" },
-      "clinicalManagement": { "label": "إدارة العيادة" },
-      "financialConfiguration": { "label": "الإعدادات المالية" },
-      "systemAddons": { "label": "النظام والإضافات" },
-      "myPreferences": { "label": "تفضيلاتي" }
+      "clinicalSetup": {
+        "label": "إعدادات العيادة"
+      },
+      "clinicalManagement": {
+        "label": "إدارة العيادة"
+      },
+      "financialConfiguration": {
+        "label": "الإعدادات المالية"
+      },
+      "systemAddons": {
+        "label": "النظام والإضافات"
+      },
+      "myPreferences": {
+        "label": "تفضيلاتي"
+      }
     },
     "search": {
       "placeholder": "ابحث في الإعدادات…",
@@ -1310,7 +1339,9 @@
       "setPasswordTitle": "اختر كلمة مرورك",
       "setPasswordSubtitle": "تمت دعوتك إلى Dentum. أنشئ كلمة مرورك لتسجيل الدخول.",
       "setPasswordSubmit": "حفظ وتسجيل الدخول",
-      "invalidToken": "هذا الرابط غير صالح أو استُخدم مسبقًا. اطلب من مسؤول عيادتك رابطًا جديدًا."
+      "invalidToken": "هذا الرابط غير صالح أو استُخدم مسبقًا. اطلب من مسؤول عيادتك رابطًا جديدًا.",
+      "emailSent": "The invitation email was sent. You can also copy and share the link below.",
+      "emailNotSent": "Email delivery is not configured or failed. Copy and share the link below manually."
     }
   },
   "selector": {
@@ -1657,7 +1688,10 @@
     "loadDefaultsHint": "أنواع الضريبة والفئات والعلاجات المرجعية الخاصة بدولة العيادة. تُضاف الصفوف الناقصة فقط.",
     "defaultsLoaded": "حُمل الكتالوج: {categories} فئات، {items} علاجًا، {vat_types} نوع ضريبة",
     "defaultsFailed": "تعذر تحميل الكتالوج الافتراضي",
-    "loadError": "تعذّر تحميل كتالوج العلاج"
+    "loadError": "تعذّر تحميل كتالوج العلاج",
+    "recommendedTreatment": "Related procedure for the plan",
+    "recommendedTreatmentDescription": "This procedure will be suggested to the clinician after recording this diagnosis. It is added to a plan only after confirmation.",
+    "noRecommendedTreatment": "Do not link"
   },
   "placeholders": {
     "selectRole": "اختر الدور..."
@@ -1922,6 +1956,21 @@
       "subtitle": "هذه العلاجات المخططة من الزيارة لم تُعلَّم كمنفّذة:",
       "markPerformed": "وضع علامة منفّذ",
       "marked": "عُلّمت كمنفّذة: {count}."
+    },
+    "batch": {
+      "title": "Diagnoses and procedures",
+      "description": "Choose a catalog procedure and enter the teeth. A doctor reviews the full plan and estimate before confirmation.",
+      "addLine": "Add line",
+      "emptyCatalog": "No odontogram procedures in the catalog",
+      "emptyCatalogHint": "Add and map procedures in catalog settings first.",
+      "procedure": "Catalog procedure",
+      "selectProcedure": "Select a procedure",
+      "teeth": "Tooth numbers (FDI)",
+      "surfaces": "Surfaces (optional)",
+      "notes": "Line note",
+      "groupingHint": "Teeth in one line are grouped in one plan item.",
+      "createForReview": "Create plan for doctor review",
+      "invalidSurfaces": "Allowed surfaces: M, D, O, V, L."
     }
   },
   "pipeline": {
@@ -2842,7 +2891,9 @@
         "bucket90plus": "٩٠+ يومًا",
         "empty": "لا ذمم قائمة",
         "patientCount": "{count} مريضًا"
-      }
+      },
+      "periodFrom": "From",
+      "periodTo": "To"
     },
     "billing": {
       "title": "الفوترة",
@@ -2991,7 +3042,18 @@
         "desc": "جرّب نطاقًا زمنيًا أوسع أو أزل عوامل التصفية."
       }
     },
-    "loadError": "تعذّر تحميل بيانات التقرير"
+    "loadError": "تعذّر تحميل بيانات التقرير",
+    "planConversion": {
+      "title": "Treatment plan conversion",
+      "subtitle": "Track doctor-confirmed plans through booking and completed care.",
+      "confirmed": "Plans confirmed",
+      "cohortHint": "Cohort by the date the doctor confirmed the plan",
+      "booked": "Booked from a plan",
+      "completedPlans": "Plans fully completed",
+      "ofPlans": "of confirmed plans",
+      "itemProgress": "Treatment item progress",
+      "metricNote": "A plan counts as booked when at least one linked appointment is not cancelled. Completion follows the treatment plan item status."
+    }
   },
   "invoiceSeries": {
     "title": "سلاسل الفواتير",
@@ -3309,6 +3371,32 @@
       "verifactu": "Cumplimiento Veri*Factu (AEAT) para clínicas en España.",
       "whatsapp_kapso": "WhatsApp para notifications vía Kapso (Meta Cloud API).",
       "whatsapp_webhook": "WhatsApp para notifications vía webhook firmado (Zapier/Make/n8n)."
+    }
+  },
+  "schedules": {
+    "settingsCards": {
+      "assistantHoursTitle": "Assistant schedules",
+      "assistantHoursDescription": "Set assistant availability, exceptions and review workload conflicts."
+    },
+    "assistants": {
+      "title": "Assistant schedules",
+      "description": "Set working hours and exceptions. Workload and overlaps are calculated from assigned appointments.",
+      "select": "Assistant",
+      "noAssistant": "No assistant schedule is configured for this account.",
+      "weekly": "Weekly hours",
+      "workload": "Workload this week",
+      "appointments": "Appointments",
+      "bookedHours": "Booked, h",
+      "load": "Load",
+      "conflictsCount": "Conflicts",
+      "noConflicts": "No schedule conflicts",
+      "overlap": "Two assistant appointments overlap.",
+      "outsideShift": "Appointment falls outside the assistant shift."
+    },
+    "overrides": {
+      "startTime": "Start time",
+      "endTime": "End time",
+      "addShift": "Add shift"
     }
   }
 }

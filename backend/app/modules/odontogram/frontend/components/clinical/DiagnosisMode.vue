@@ -25,7 +25,7 @@ const { t } = useI18n()
 // ============================================================================
 
 const { treatments, fetchTreatments, loading: odontogramLoading } = useOdontogram()
-const { plans, fetchPatientPlans, loading: plansLoading } = useTreatmentPlans()
+const { plans, fetchPatientPlans, createPlan, addItem, loading: plansLoading } = useTreatmentPlans()
 
 // ============================================================================
 // State
@@ -68,6 +68,13 @@ const loading = computed(() => odontogramLoading.value || plansLoading.value)
 
 // Collapsible state for conditions block
 const conditionsCollapsed = ref(false)
+const recommendation = ref<{ catalogItemId: string, diagnosisName: string, toothNumber: number } | null>(null)
+const recommendationPlanId = ref('__new__')
+const applyingRecommendation = ref(false)
+const draftPlanOptions = computed(() => [
+  ...draftPlans.value.map(plan => ({ value: plan.id, label: plan.title || plan.plan_number })),
+  { value: '__new__', label: t('clinical.diagnosis.createNewPlanOption', 'Создать новый план') }
+])
 
 // ============================================================================
 // Lifecycle
@@ -128,76 +135,146 @@ const sidebarCtx = computed(() => ({
 async function handleTreatmentsChanged() {
   await fetchTreatments(props.patientId)
 }
+
+function handleTreatmentRecommendation(value: { catalogItemId: string, diagnosisName: string, toothNumber: number }) {
+  recommendation.value = value
+  recommendationPlanId.value = draftPlans.value[0]?.id ?? '__new__'
+}
+
+async function confirmTreatmentRecommendation() {
+  if (!recommendation.value || applyingRecommendation.value) return
+  applyingRecommendation.value = true
+  try {
+    let planId = recommendationPlanId.value
+    if (planId === '__new__') {
+      const plan = await createPlan({
+        patient_id: props.patientId,
+        title: t('clinical.diagnosis.planFromDiagnosis', { diagnosis: recommendation.value.diagnosisName })
+      })
+      if (!plan) return
+      planId = plan.id
+    }
+    const item = await addItem(planId, {
+      create_treatment: {
+        catalog_item_id: recommendation.value.catalogItemId,
+        status: 'planned',
+        scope: 'tooth',
+        tooth_numbers: [recommendation.value.toothNumber]
+      }
+    })
+    if (!item) return
+    recommendation.value = null
+    await fetchPatientPlans(props.patientId)
+    emit('continue-plan', planId)
+  } finally {
+    applyingRecommendation.value = false
+  }
+}
 </script>
 
 <template>
-  <!-- Side-by-side at ``min-[960px]:`` instead of the previous
-       ``lg:`` (1024px) — laptops + browsers with DevTools or side
-       panels open often report a viewport just below 1024px, which
-       collapsed the right-rail notes sidebar below the odontogram
-       and made the chart fill the full width (looking "gigante"). -->
-  <div class="min-[960px]:flex min-[960px]:gap-4 min-[960px]:items-start">
-    <div class="flex-1 min-w-0 space-y-4">
-      <!-- Loading state -->
+  <div class="diagnosis-workspace">
+    <section
+      class="diagnosis-chart-column min-w-0"
+      :aria-label="t('clinical.diagnosis.registerConditions')"
+    >
       <div
         v-if="loading"
-        class="flex items-center justify-center py-8"
+        class="diagnosis-loading flex min-h-64 items-center justify-center rounded-token-lg border border-default bg-surface"
       >
         <UIcon
           name="i-lucide-loader-2"
-          class="w-8 h-8 animate-spin text-primary-accent"
+          class="size-8 animate-spin text-primary-accent"
         />
       </div>
 
-      <template v-else>
-        <!-- Odontogram with diagnosis mode -->
-        <UCard>
-          <template #header>
-            <div class="flex items-center gap-2">
+      <UCard
+        v-else
+        class="diagnosis-chart-card min-w-0"
+      >
+        <template #header>
+          <div class="flex min-w-0 items-center gap-3">
+            <span class="diagnosis-section-icon flex size-10 shrink-0 items-center justify-center rounded-token-md">
               <UIcon
                 name="i-lucide-stethoscope"
-                class="w-5 h-5 text-primary-accent"
+                class="size-5"
               />
-              <span class="font-medium">{{ t('clinical.diagnosis.registerConditions') }}</span>
+            </span>
+            <div class="min-w-0">
+              <h3 class="text-ui font-semibold text-default">
+                {{ t('clinical.diagnosis.registerConditions') }}
+              </h3>
+              <p class="mt-0.5 text-caption text-muted">
+                {{ t('clinical.diagnosis.startDiagnosis') }}
+              </p>
             </div>
-          </template>
+          </div>
+        </template>
 
-          <OdontogramChart
-            :patient-id="patientId"
-            mode="diagnosis"
-            :highlighted-teeth-prop="hoveredTeeth"
-            @tooth-hover="handleToothHover"
-            @treatments-changed="handleTreatmentsChanged"
-          />
-        </UCard>
+        <OdontogramChart
+          :patient-id="patientId"
+          mode="diagnosis"
+          :readonly="readonly"
+          :highlighted-teeth-prop="hoveredTeeth"
+          @tooth-hover="handleToothHover"
+          @treatments-changed="handleTreatmentsChanged"
+          @treatment-recommendation="handleTreatmentRecommendation"
+        />
+      </UCard>
+    </section>
 
-        <!-- Registered conditions list -->
-        <UCard>
+    <aside
+      class="diagnosis-rail min-w-0"
+      :aria-label="t('clinical.diagnosis.registeredConditions')"
+    >
+      <div
+        v-if="loading"
+        class="space-y-3"
+        aria-hidden="true"
+      >
+        <USkeleton class="h-48 w-full rounded-token-lg" />
+        <USkeleton class="h-36 w-full rounded-token-lg" />
+      </div>
+
+      <template v-else>
+        <UCard class="diagnosis-conditions-card min-w-0">
           <template #header>
             <button
               type="button"
-              class="w-full flex items-center justify-between gap-2 text-start"
+              class="diagnosis-conditions-trigger flex min-h-11 w-full items-center justify-between gap-3 text-start"
               :aria-expanded="!conditionsCollapsed"
               @click="conditionsCollapsed = !conditionsCollapsed"
             >
-              <div class="flex items-center gap-2">
+              <span class="flex min-w-0 items-center gap-2.5">
+                <span class="diagnosis-section-icon flex size-9 shrink-0 items-center justify-center rounded-token-md">
+                  <UIcon
+                    name="i-lucide-clipboard-list"
+                    class="size-4.5"
+                  />
+                </span>
+                <span class="min-w-0">
+                  <span class="block text-ui font-semibold text-default">
+                    {{ t('clinical.diagnosis.registeredConditions') }}
+                  </span>
+                  <span class="block text-caption text-muted">
+                    {{ t('clinical.diagnosis.generalConditions') }}
+                  </span>
+                </span>
+              </span>
+              <span class="flex shrink-0 items-center gap-2">
+                <UBadge
+                  color="neutral"
+                  variant="subtle"
+                  class="tnum"
+                >
+                  {{ conditions.length }}
+                </UBadge>
                 <UIcon
                   :name="conditionsCollapsed ? 'i-lucide-chevron-right' : 'i-lucide-chevron-down'"
-                  class="w-4 h-4 text-subtle transition-transform"
+                  class="size-4 text-subtle"
+                  aria-hidden="true"
                 />
-                <UIcon
-                  name="i-lucide-clipboard-list"
-                  class="w-5 h-5"
-                />
-                <span class="font-medium">{{ t('clinical.diagnosis.registeredConditions') }}</span>
-              </div>
-              <UBadge
-                v-if="conditions.length > 0"
-                color="neutral"
-                variant="subtle"
-              >
-                {{ conditions.length }}
-              </UBadge>
+              </span>
             </button>
           </template>
 
@@ -210,28 +287,25 @@ async function handleTreatmentsChanged() {
           />
         </UCard>
 
-        <!-- Contextual CTA -->
         <DiagnosisCTA
           v-if="!readonly && conditions.length > 0"
+          class="diagnosis-next-step"
           :draft-plans="draftPlans"
           @create="emit('create-plan')"
           @continue="emit('continue-plan', $event)"
         />
-      </template>
-    </div>
 
-    <!-- Right rail at ≥960px: clinical-notes sidebar provided by
-         other modules via the ``odontogram.diagnosis.sidebar`` slot. -->
-    <aside class="hidden min-[960px]:block min-[960px]:w-80 xl:w-96 min-[960px]:shrink-0">
-      <ModuleSlot
-        name="odontogram.diagnosis.sidebar"
-        :ctx="sidebarCtx"
-      />
+        <div class="diagnosis-notes-slot">
+          <ModuleSlot
+            name="odontogram.diagnosis.sidebar"
+            :ctx="sidebarCtx"
+          />
+        </div>
+      </template>
     </aside>
 
-    <!-- Floating action button + slideover for narrow viewports. -->
     <UButton
-      class="fixed end-4 bottom-4 z-30 min-[960px]:hidden shadow-lg"
+      class="fixed end-4 bottom-[calc(5.5rem+env(safe-area-inset-bottom))] z-30 shadow-lg lg:bottom-4 xl:hidden"
       icon="i-lucide-notebook-pen"
       color="primary"
       size="lg"
@@ -241,10 +315,10 @@ async function handleTreatmentsChanged() {
     <USlideover
       v-model:open="sidebarOpen"
       side="right"
-      class="min-[960px]:hidden"
+      class="xl:hidden"
     >
       <template #content>
-        <div class="p-2 h-full">
+        <div class="h-full p-2">
           <ModuleSlot
             name="odontogram.diagnosis.sidebar"
             :ctx="sidebarCtx"
@@ -252,5 +326,103 @@ async function handleTreatmentsChanged() {
         </div>
       </template>
     </USlideover>
+
+    <UModal
+      :open="!!recommendation"
+      @update:open="(open) => { if (!open) recommendation = null }"
+    >
+      <template #content>
+        <div class="space-y-4 p-5">
+          <h2 class="text-h3 font-semibold text-default">
+            {{ t('clinical.diagnosis.recommendedTreatmentTitle', 'Добавить процедуру в план?') }}
+          </h2>
+          <p class="text-caption text-subtle">
+            {{ t('clinical.diagnosis.recommendedTreatmentDescription', { diagnosis: recommendation?.diagnosisName, tooth: recommendation?.toothNumber }) }}
+          </p>
+          <UFormField :label="t('clinical.diagnosis.planForTreatment', 'План лечения')">
+            <USelect
+              v-model="recommendationPlanId"
+              :items="draftPlanOptions"
+              value-key="value"
+              label-key="label"
+            />
+          </UFormField>
+          <div class="flex justify-end gap-2">
+            <UButton
+              color="neutral"
+              variant="ghost"
+              :disabled="applyingRecommendation"
+              @click="recommendation = null"
+            >
+              {{ t('common.cancel') }}
+            </UButton>
+            <UButton
+              color="primary"
+              :loading="applyingRecommendation"
+              @click="confirmTreatmentRecommendation"
+            >
+              {{ t('clinical.diagnosis.addToPlan', 'Добавить в план') }}
+            </UButton>
+          </div>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>
+
+<style scoped>
+.diagnosis-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: 1rem;
+}
+
+.diagnosis-chart-column,
+.diagnosis-chart-card,
+.diagnosis-rail,
+.diagnosis-conditions-card {
+  min-width: 0;
+}
+
+.diagnosis-chart-card {
+  overflow: hidden;
+}
+
+.diagnosis-section-icon {
+  background-color: var(--color-primary-soft);
+  color: var(--color-primary-soft-text);
+}
+
+.diagnosis-rail {
+  display: grid;
+  align-content: start;
+  gap: 1rem;
+}
+
+.diagnosis-conditions-trigger {
+  border-radius: var(--radius-sm);
+  touch-action: manipulation;
+}
+
+.diagnosis-conditions-trigger:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--color-primary-accent) 38%, transparent);
+  outline-offset: 2px;
+}
+
+.diagnosis-notes-slot {
+  min-width: 0;
+}
+
+@media (min-width: 1280px) {
+  .diagnosis-workspace {
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 23rem);
+    gap: 1.25rem;
+  }
+
+  .diagnosis-rail {
+    position: sticky;
+    top: 6rem;
+  }
+}
+</style>

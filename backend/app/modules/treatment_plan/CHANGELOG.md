@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat: plan items can atomically create their odontogram treatment (`create_treatment`), with planned status enforced server-side and rollback on any validation or persistence error.
+
 - fix(i18n): pipeline row showed the raw budget status code and a hardcoded `€`; now `budget.status.*` and the clinic currency (also in the confirm-plan modal).
 
 - fix(#779): the plan number's year is the clinic's year, not the server's UTC year (New Year's Eve gave the wrong year).

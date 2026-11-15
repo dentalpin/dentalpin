@@ -55,6 +55,18 @@ export default defineNuxtPlugin(() => {
     order: 30
   })
 
+  registerSettingsPage({
+    path: 'assistant-schedules',
+    category: 'workspace',
+    labelKey: 'schedules.settingsCards.assistantHoursTitle',
+    descriptionKey: 'schedules.settingsCards.assistantHoursDescription',
+    icon: 'i-lucide-users-round',
+    permission: [PERMISSIONS.schedules.assistantRead, PERMISSIONS.schedules.assistantOwnRead],
+    component: () => import('../components/settings/AssistantSchedulesPage.vue'),
+    searchKeywords: ['assistant', 'asistente', 'ассистент', 'horario', 'turnos', 'workload'],
+    order: 35
+  })
+
   // Getting-started: a clinic still on the 24/7 default has not set its
   // real opening hours — the agenda would offer slots around the clock.
   registerGettingStartedRule({

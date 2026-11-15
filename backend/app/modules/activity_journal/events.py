@@ -38,6 +38,7 @@ _ACTOR_KEYS = (
     "created_by",
     "changed_by",  # agenda status transitions
     "performed_by",  # odontogram.treatment.performed
+    "deleted_by",  # odontogram.treatment.deleted
     "completed_by",  # treatment_plan.item_session_completed
     "refunded_by",  # payment.refunded
     "cancelled_by",  # budget.cancelled / budget.renegotiated
@@ -85,6 +86,14 @@ def make_handler(event_type_value: str):
     """Build a transactional handler bound to one event type value."""
 
     async def _record(data: dict, db: AsyncSession) -> None:
+        # A treatment created atomically for a plan is represented by the
+        # treatment_plan.treatment_added event below; avoid duplicate rows.
+        if (
+            event_type_value == "odontogram.treatment.added"
+            and data.get("source_module") == "treatment_plan"
+        ):
+            return
+
         clinic_id = _uuid_or_none(data.get("clinic_id"))
         if clinic_id is None:
             # A journal row without a clinic cannot be scoped or isolated;

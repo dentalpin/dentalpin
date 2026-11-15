@@ -330,6 +330,8 @@ class TreatmentPlanService:
         clinic_id: UUID,
         user_id: UUID,
         data: dict,
+        *,
+        publish_event: bool = True,
     ) -> TreatmentPlan:
         """Create a new treatment plan."""
         # Validate patient exists in clinic
@@ -337,6 +339,10 @@ class TreatmentPlanService:
         patient = await db.get(Patient, patient_id)
         if not patient or patient.clinic_id != clinic_id:
             raise ValueError("Invalid patient")
+
+        assigned_professional_id = data.get("assigned_professional_id")
+        if assigned_professional_id is not None:
+            await _validate_professional_in_clinic(db, clinic_id, assigned_professional_id)
 
         plan_number = await TreatmentPlanService.generate_plan_number(db, clinic_id)
 
@@ -356,20 +362,80 @@ class TreatmentPlanService:
         # Load patient relationship for response serialization
         await db.refresh(plan, ["patient"])
 
-        # Publish event
+        if publish_event:
+            await event_bus.publish(
+                EventType.TREATMENT_PLAN_CREATED,
+                {
+                    "plan_id": str(plan.id),
+                    "patient_id": str(plan.patient_id),
+                    "clinic_id": str(clinic_id),
+                    "created_by": str(user_id),
+                    "plan_number": plan.plan_number,
+                    "plan_name": plan.title,
+                },
+            )
+
+        return plan
+
+    @staticmethod
+    async def create_batch(
+        db: AsyncSession,
+        clinic_id: UUID,
+        user_id: UUID,
+        plan_data: dict,
+        items_data: list[dict],
+    ) -> TreatmentPlan:
+        """Create a draft and all proposed items in one savepoint.
+
+        The doctor reviews the complete item list and total before confirming
+        the plan. A failed line rolls back every row and event from the batch.
+        """
+        if not items_data or len(items_data) > 100:
+            raise ValueError("A plan must contain between 1 and 100 items")
+        treatment_ids = [
+            item.get("treatment_id") for item in items_data if item.get("treatment_id")
+        ]
+        if len(treatment_ids) != len(set(treatment_ids)):
+            raise ValueError("A treatment can only appear once in a plan")
+        if treatment_ids:
+            already_planned = await db.execute(
+                select(PlannedTreatmentItem.treatment_id)
+                .where(PlannedTreatmentItem.treatment_id.in_(treatment_ids))
+                .limit(1)
+            )
+            if already_planned.scalar_one_or_none() is not None:
+                raise ValueError("A treatment can only appear once in a plan")
+
+        async with db.begin_nested():
+            plan = await TreatmentPlanService.create(
+                db, clinic_id, user_id, plan_data, publish_event=False
+            )
+            for index, item_data in enumerate(items_data, start=1):
+                row = dict(item_data)
+                row["sequence_order"] = index
+                await TreatmentPlanService.add_item(db, clinic_id, plan.id, row, user_id=user_id)
+            # add_item loads the plan before inserting each line. Expire that
+            # collection so the final eager-loaded response includes every
+            # newly flushed PlannedTreatmentItem.
+            db.expire(plan, ["items"])
+            loaded = await TreatmentPlanService.get(db, clinic_id, plan.id)
+            if loaded is None:
+                raise ValueError("Created plan could not be loaded")
+
+        # Avoid emitting a patient-timeline event if any proposed line failed
+        # and the savepoint rolled back.
         await event_bus.publish(
             EventType.TREATMENT_PLAN_CREATED,
             {
-                "plan_id": str(plan.id),
-                "patient_id": str(plan.patient_id),
+                "plan_id": str(loaded.id),
+                "patient_id": str(loaded.patient_id),
                 "clinic_id": str(clinic_id),
                 "created_by": str(user_id),
-                "plan_number": plan.plan_number,
-                "plan_name": plan.title,
+                "plan_number": loaded.plan_number,
+                "plan_name": loaded.title,
             },
         )
-
-        return plan
+        return loaded
 
     @staticmethod
     async def update(
@@ -377,11 +443,25 @@ class TreatmentPlanService:
         clinic_id: UUID,
         plan_id: UUID,
         data: dict,
+        user_id: UUID | None = None,
     ) -> TreatmentPlan | None:
         """Update a treatment plan."""
         plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
         if not plan:
             return None
+
+        await TreatmentPlanService._ensure_plan_not_paid(db, clinic_id, plan)
+
+        # Editing a confirmed plan invalidates its previous confirmation.
+        # Reopen through the established workflow so the linked draft quote
+        # is cancelled and the next confirmation creates a fresh revision.
+        if plan.status == "pending" and any(
+            key in data and data[key] != getattr(plan, key, None)
+            for key in ("title", "assigned_professional_id", "diagnosis_notes", "internal_notes")
+        ):
+            if user_id is None:
+                raise ValueError("user_id is required to edit a confirmed plan")
+            plan = await TreatmentPlanService.reopen(db, clinic_id, plan_id, user_id)
 
         # Pull the cascade flag out before generic setattr — it is a
         # write-only directive, not a column on TreatmentPlan.
@@ -506,9 +586,34 @@ class TreatmentPlanService:
         if not plan:
             return False
 
+        await TreatmentPlanService._ensure_plan_not_paid(db, clinic_id, plan)
+
         await TreatmentPlanService._cleanup_orphan_planned_treatments(db, clinic_id, plan, user_id)
         plan.deleted_at = datetime.now(UTC)
         return True
+
+    @staticmethod
+    async def _ensure_plan_not_paid(
+        db: AsyncSession,
+        clinic_id: UUID,
+        plan: TreatmentPlan,
+    ) -> None:
+        """Reject plan changes once an invoice linked to its budget is paid."""
+        if plan.budget_id is None:
+            return
+        from app.modules.billing.models import Invoice
+
+        paid_invoice = await db.execute(
+            select(Invoice.id)
+            .where(
+                Invoice.clinic_id == clinic_id,
+                Invoice.budget_id == plan.budget_id,
+                Invoice.status == "paid",
+            )
+            .limit(1)
+        )
+        if paid_invoice.scalar_one_or_none() is not None:
+            raise ValueError("A plan with a paid invoice cannot be edited or deleted")
 
     @staticmethod
     async def _cleanup_orphan_planned_treatments(
@@ -565,6 +670,7 @@ class TreatmentPlanService:
         clinic_id: UUID,
         plan_id: UUID,
         data: dict,
+        user_id: UUID | None = None,
     ) -> PlannedTreatmentItem:
         """Add a Treatment to the plan as a new item."""
         plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
@@ -581,8 +687,33 @@ class TreatmentPlanService:
             raise PlanLockedError("Plan is locked by an active budget")
 
         treatment_id = data.get("treatment_id")
-        if treatment_id is None:
-            raise ValueError("treatment_id is required")
+        create_treatment = data.get("create_treatment")
+        if create_treatment is not None:
+            from app.modules.odontogram.service import TreatmentService
+
+            if user_id is None:
+                raise ValueError("user_id is required to create a treatment for this plan")
+
+            treatment = await TreatmentService.create(
+                db=db,
+                clinic_id=clinic_id,
+                patient_id=plan.patient_id,
+                user_id=user_id,
+                catalog_item_id=create_treatment.get("catalog_item_id"),
+                clinical_type=create_treatment.get("clinical_type"),
+                tooth_numbers=create_treatment.get("tooth_numbers") or [],
+                teeth=create_treatment.get("teeth"),
+                common_surfaces=create_treatment.get("surfaces"),
+                status="planned",
+                notes=create_treatment.get("notes"),
+                budget_item_id=None,
+                source_module="treatment_plan",
+                scope=create_treatment.get("scope") or "tooth",
+                arch=create_treatment.get("arch"),
+            )
+            treatment_id = treatment.id
+        elif treatment_id is None:
+            raise ValueError("treatment_id or create_treatment is required")
 
         # Validate the Treatment exists for this clinic/patient.
         treatment = await db.get(Treatment, treatment_id)
@@ -666,6 +797,7 @@ class TreatmentPlanService:
                 "treatment_id": str(treatment_id),
                 "clinic_id": str(clinic_id),
                 "patient_id": str(plan.patient_id),
+                "created_by": str(user_id) if user_id else None,
                 "budget_id": str(plan.budget_id) if plan.budget_id else None,
                 "catalog_item_id": (
                     str(treatment.catalog_item_id)

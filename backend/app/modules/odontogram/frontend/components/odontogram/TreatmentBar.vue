@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { Arch, OdontogramTreatment, Treatment, TreatmentStatus, TreatmentPlan } from '~~/app/types'
+import type { Arch, OdontogramTreatment, TreatmentStatus, TreatmentPlan } from '~~/app/types'
 import { TREATMENT_ICONS, isSurfaceTreatment, resolveTreatmentIconKey } from './TreatmentIcons'
 import {
   ATOMIC_MULTI_TOOTH_TYPES,
@@ -45,7 +45,7 @@ const emit = defineEmits<{
   'update:selectedPlanId': [planId: string | null]
   'treatmentSelect': [treatment: string]
   /** Fired after a global treatment is created and (optionally) added to the plan. */
-  'treatmentApplied': [treatment: Treatment]
+  'treatmentApplied': [treatmentId: string]
   'createPlan': []
   'cancel': []
 }>()
@@ -158,6 +158,8 @@ interface TreatmentBarItem {
   tooltip: string
   /** Backend clinical_type ('crown', 'bridge', ...). */
   odontogramType: string
+  /** Catalog code is useful when a doctor searches by a short item identifier. */
+  internalCode?: string
   /** Resolved icon key in TREATMENT_ICONS — may differ from odontogramType when a
    * catalog item has a variant icon (e.g. REST-BRIDGE-MARY → bridge_maryland). */
   iconKey: string
@@ -213,6 +215,7 @@ function globalItemToBarItem(
     label,
     tooltip,
     odontogramType: oType,
+    internalCode: c.internal_code,
     iconKey: resolveTreatmentIconKey(oType, c.internal_code),
     catalogItemId: c.id,
     isAtomicMulti: false,
@@ -249,6 +252,7 @@ const currentTreatments = computed<TreatmentBarItem[]>(() => {
           label,
           tooltip,
           odontogramType: oType,
+          internalCode: c.internal_code,
           iconKey: resolveTreatmentIconKey(oType, c.internal_code),
           catalogItemId: isRealCatalogItem ? c.id : null,
           isAtomicMulti: isAtomic,
@@ -297,6 +301,7 @@ const GLOBAL_GROUP_ORDER = [
 ]
 
 const globalsFilter = ref('')
+const treatmentsFilter = ref('')
 
 const globalItemCount = computed(() =>
   treatmentCatalog.globalMouthItems.value.length + treatmentCatalog.globalArchItems.value.length
@@ -306,6 +311,20 @@ const globalItemCount = computed(() =>
 const showGlobalsFilter = computed(() =>
   activeCategory.value === GLOBALS_CATEGORY && globalItemCount.value > 12
 )
+
+const showTreatmentsFilter = computed(() =>
+  activeCategory.value !== GLOBALS_CATEGORY && currentTreatments.value.length > 8
+)
+
+const filteredTreatments = computed(() => {
+  const query = treatmentsFilter.value.trim().toLocaleLowerCase(locale.value)
+  if (!query) return currentTreatments.value
+  return currentTreatments.value.filter(item =>
+    item.label.toLocaleLowerCase(locale.value).includes(query)
+    || item.odontogramType.toLocaleLowerCase(locale.value).includes(query)
+    || item.internalCode?.toLocaleLowerCase(locale.value).includes(query)
+  )
+})
 
 function matchesGlobalsFilter(c: OdontogramTreatment): boolean {
   const query = globalsFilter.value.trim().toLowerCase()
@@ -318,7 +337,9 @@ function matchesGlobalsFilter(c: OdontogramTreatment): boolean {
  *  tab, items grouped by catalog category (mouth items before arch items). */
 const treatmentGroups = computed<TreatmentBarGroup[]>(() => {
   if (activeCategory.value !== GLOBALS_CATEGORY) {
-    return [{ key: activeCategory.value, label: null, items: currentTreatments.value }]
+    return filteredTreatments.value.length
+      ? [{ key: activeCategory.value, label: null, items: filteredTreatments.value }]
+      : []
   }
 
   const groups = new Map<string, { label: string, mouth: TreatmentBarItem[], arch: TreatmentBarItem[] }>()
@@ -352,11 +373,17 @@ const globalsFilterHasNoResults = computed(() =>
   && globalsFilter.value.trim() !== ''
   && treatmentGroups.value.length === 0
 )
+const treatmentsFilterHasNoResults = computed(() =>
+  activeCategory.value !== GLOBALS_CATEGORY
+  && treatmentsFilter.value.trim() !== ''
+  && filteredTreatments.value.length === 0
+)
 
 // Leaving the globals tab resets the filter — stale queries would silently
 // empty the tab on return.
 watch(activeCategory, () => {
   globalsFilter.value = ''
+  treatmentsFilter.value = ''
 })
 
 // ============================================================================
@@ -370,6 +397,13 @@ const treatmentPlansApi = useTreatmentPlans()
 // Arch picker state: non-null while user must choose upper/lower for a global_arch.
 const archPickerItem = ref<OdontogramTreatment | null>(null)
 const applyingGlobal = ref(false)
+let globalApplySequence = 0
+
+watch([() => props.patientId, () => props.selectedPlanId], () => {
+  globalApplySequence++
+  applyingGlobal.value = false
+  archPickerItem.value = null
+})
 
 function isGlobalItem(item: TreatmentBarItem): {
   catalog: OdontogramTreatment
@@ -388,36 +422,62 @@ async function applyGlobalTreatment(
   scope: 'global_mouth' | 'global_arch',
   arch?: Arch
 ) {
-  if (!props.patientId) {
+  if (applyingGlobal.value) return
+  const patientId = props.patientId
+  const planId = props.selectedPlanId
+  if (!patientId) {
     console.error('TreatmentBar: patientId is required to apply a global treatment')
     return
   }
+  const requestId = ++globalApplySequence
   applyingGlobal.value = true
   try {
-    const created = await createGlobalTreatment(props.patientId, {
-      catalogItemId,
-      scope,
-      arch,
-      status: 'planned'
-    })
-    if (!created) return
+    let treatmentId: string
+    const catalogItem = scope === 'global_mouth'
+      ? treatmentCatalog.globalMouthItems.value.find(item => item.id === catalogItemId)
+      : treatmentCatalog.globalArchItems.value.find(item => item.id === catalogItemId)
 
-    // Link to the currently selected plan (if any).
-    if (props.selectedPlanId) {
-      await treatmentPlansApi.addItem(props.selectedPlanId, { treatment_id: created.id })
+    // Create the treatment and its plan item in one server transaction.
+    if (planId) {
+      const item = await treatmentPlansApi.addItem(planId, {
+        create_treatment: {
+          catalog_item_id: catalogItemId,
+          scope,
+          arch,
+          status: 'planned'
+        }
+      })
+      if (!item) return
+      treatmentId = item.treatment_id
+    } else {
+      const created = await createGlobalTreatment(patientId, {
+        catalogItemId,
+        scope,
+        arch,
+        status: 'planned'
+      })
+      if (!created) return
+      treatmentId = created.id
     }
+
+    if (
+      requestId !== globalApplySequence
+      || patientId !== props.patientId
+      || planId !== props.selectedPlanId
+    ) return
 
     toast.add({
       title: t('odontogram.globals.applied', {
-        name: created.catalog_item?.names?.[locale.value]
-          || created.catalog_item?.names?.es
-          || created.clinical_type
+        name: catalogItem?.names?.[locale.value]
+          || catalogItem?.names?.es
+          || catalogItem?.names?.en
+          || t('odontogram.treatments.types.other')
       }),
       color: 'success'
     })
-    emit('treatmentApplied', created)
+    emit('treatmentApplied', treatmentId)
   } finally {
-    applyingGlobal.value = false
+    if (requestId === globalApplySequence) applyingGlobal.value = false
   }
 }
 
@@ -641,6 +701,7 @@ const planMenuItems = computed(() => [
           :key="option.value"
           type="button"
           class="status-btn"
+          :aria-pressed="effectiveStatus === option.value"
           :class="{
             selected: effectiveStatus === option.value,
             [`status-${option.color}`]: true
@@ -695,6 +756,7 @@ const planMenuItems = computed(() => [
           :key="categoryKey"
           type="button"
           class="category-tab"
+          :aria-pressed="activeCategory === categoryKey"
           :class="{ active: activeCategory === categoryKey }"
           @click="activeCategory = categoryKey"
         >
@@ -823,6 +885,21 @@ const planMenuItems = computed(() => [
         icon="i-lucide-search"
         size="sm"
         :placeholder="t('odontogram.globals.searchPlaceholder')"
+        :aria-label="t('odontogram.globals.searchPlaceholder')"
+        class="globals-filter-input"
+      />
+    </div>
+
+    <div
+      v-if="showTreatmentsFilter"
+      class="globals-filter"
+    >
+      <UInput
+        v-model="treatmentsFilter"
+        icon="i-lucide-search"
+        size="sm"
+        :placeholder="t('odontogram.globals.searchPlaceholder')"
+        :aria-label="t('odontogram.globals.searchPlaceholder')"
         class="globals-filter-input"
       />
     </div>
@@ -851,6 +928,9 @@ const planMenuItems = computed(() => [
             <button
               type="button"
               class="treatment-btn"
+              :disabled="disabled || applyingGlobal"
+              :aria-pressed="isSelected(item)"
+              :aria-label="item.label"
               :class="{
                 'selected': isSelected(item),
                 'is-surface': isSurfaceTreatment(item.odontogramType),
@@ -895,6 +975,7 @@ const planMenuItems = computed(() => [
               <button
                 type="button"
                 class="mode-chip"
+                :aria-pressed="!selectedMultiMode"
                 :class="{ active: !selectedMultiMode }"
                 @click.stop="setMultiMode(false)"
               >
@@ -907,6 +988,7 @@ const planMenuItems = computed(() => [
               <button
                 type="button"
                 class="mode-chip"
+                :aria-pressed="selectedMultiMode"
                 :class="{ active: selectedMultiMode }"
                 @click.stop="setMultiMode(true)"
               >
@@ -922,7 +1004,7 @@ const planMenuItems = computed(() => [
       </section>
 
       <div
-        v-if="globalsFilterHasNoResults"
+        v-if="globalsFilterHasNoResults || treatmentsFilterHasNoResults"
         class="globals-no-results"
       >
         {{ t('common.noResults') }}
@@ -935,16 +1017,17 @@ const planMenuItems = computed(() => [
 .treatment-bar {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 12px 16px;
-  background: linear-gradient(to bottom, #FAFAFA, #F4F4F5);
-  border: 1px solid #E4E4E7;
-  border-radius: 12px;
+  gap: 16px;
+  padding: 16px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
 }
 
 :root.dark .treatment-bar {
-  background: linear-gradient(to bottom, #27272A, #18181B);
-  border-color: #3F3F46;
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
 }
 
 .treatment-bar.disabled {
@@ -987,7 +1070,7 @@ const planMenuItems = computed(() => [
 .top-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
@@ -1031,7 +1114,8 @@ const planMenuItems = computed(() => [
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 6px 12px;
+  min-height: 44px;
+  padding: 8px 12px;
   border-radius: 6px;
   font-size: 13px;
   font-weight: 500;
@@ -1127,15 +1211,16 @@ const planMenuItems = computed(() => [
 /* Category Tabs — calm segmented pattern (DESIGN §6) */
 .category-tabs {
   display: flex;
-  gap: 2px;
+  gap: 4px;
   flex-wrap: wrap;
-  padding: 2px;
+  padding: 4px;
   background: var(--color-surface-muted);
   border-radius: var(--radius-md);
 }
 
 .category-tab {
-  padding: 6px 12px;
+  min-height: 40px;
+  padding: 8px 12px;
   font-size: 13px;
   font-weight: 500;
   color: var(--color-text-muted);
@@ -1188,8 +1273,8 @@ const planMenuItems = computed(() => [
    at equal height regardless of label length. */
 .treatment-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
-  gap: 6px;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 8px;
   align-items: stretch;
 }
 
@@ -1205,15 +1290,17 @@ const planMenuItems = computed(() => [
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 3px;
-  padding: 7px 6px;
-  border-radius: 8px;
-  border: 2px solid transparent;
-  background: white;
-  transition: background 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+  gap: 5px;
+  padding: 9px 7px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
   width: 100%;
   height: 100%;
-  min-height: 72px;
+  min-height: 82px;
+  cursor: pointer;
+  touch-action: manipulation;
 }
 
 .treatment-btn.has-mode-selector {
@@ -1226,19 +1313,25 @@ const planMenuItems = computed(() => [
 }
 
 .treatment-btn:hover {
-  border-color: #93C5FD;
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-primary-accent);
+  box-shadow: var(--shadow-xs);
 }
 
 .treatment-btn.selected {
-  border-color: #3B82F6;
-  background: #EFF6FF;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+  border-color: var(--color-primary-accent);
+  background: var(--color-primary-soft);
+  box-shadow: 0 0 0 2px color-mix(in oklab, var(--color-primary-accent) 24%, transparent);
 }
 
 :root.dark .treatment-btn.selected {
-  background: rgba(59, 130, 246, 0.2);
+  background: var(--color-primary-soft);
+}
+
+.treatment-btn:focus-visible,
+.mode-chip:focus-visible,
+.category-tab:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--color-primary-accent) 42%, transparent);
+  outline-offset: 2px;
 }
 
 .treatment-btn.is-surface::after {
@@ -1266,11 +1359,11 @@ const planMenuItems = computed(() => [
 }
 
 .treatment-label {
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 500;
-  color: #52525B;
+  color: var(--color-text);
   text-align: center;
-  line-height: 1.3;
+  line-height: 1.35;
   word-break: break-word;
   overflow-wrap: anywhere;
   hyphens: auto;
@@ -1278,7 +1371,75 @@ const planMenuItems = computed(() => [
 }
 
 :root.dark .treatment-label {
-  color: #A1A1AA;
+  color: var(--color-text);
+}
+
+@media (max-width: 640px) {
+  .treatment-bar {
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .top-row {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .divider,
+  .spacer {
+    display: none;
+  }
+
+  .diagnosis-mode-indicator,
+  .status-toggle {
+    order: 1;
+  }
+
+  .plan-selector {
+    order: 2;
+    max-width: 100%;
+  }
+
+  .cancel-section {
+    order: 3;
+    margin-inline-start: auto;
+  }
+
+  .category-tabs {
+    order: 4;
+    width: 100%;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+  }
+
+  .category-tab {
+    flex: 0 0 auto;
+    min-height: 44px;
+  }
+
+  .instructions {
+    order: 5;
+    width: 100%;
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .treatment-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 92px), 1fr));
+    gap: 7px;
+  }
+
+  .treatment-btn {
+    min-height: 76px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .treatment-btn,
+  .category-tab {
+    transition: none;
+  }
 }
 
 /* Atomic multi-tooth catalog buttons (bridge, splint) — distinguished by a small

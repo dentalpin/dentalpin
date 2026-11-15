@@ -11,7 +11,7 @@ Lejárat: {{ valid_until.strftime('%d/%m/%Y') }}
 
 Lépések:
 1. Igényeljen új tanúsítványt az FNMT-nél.
-2. Nyissa meg: DentalPin → Beállítások → Verifactu → Tanúsítvány.
+2. Nyissa meg: Dentum → Beállítások → Verifactu → Tanúsítvány.
 3. Töltse fel a .pfx fájlt, és adja meg a hozzá tartozó jelszót.
 
 Ha segítségre van szüksége, válaszoljon erre az e-mailre.

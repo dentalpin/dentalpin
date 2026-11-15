@@ -49,6 +49,16 @@
     "toggleSidebar": "Toggle sidebar",
     "documents": "Documents"
   },
+  "appearance": {
+    "pickerLabel": "Interface colors",
+    "pickerTitle": "Choose a color theme",
+    "themes": {
+      "clinical": "Clinical blue",
+      "mint": "Mint",
+      "lavender": "Lavender",
+      "coral": "Coral"
+    }
+  },
   "auth": {
     "login": "Log in",
     "logout": "Log out",
@@ -758,6 +768,13 @@
       "noChanges": "No changes recorded"
     },
     "diagnosis": {
+      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "recommendedTreatmentTitle": "Add the procedure to a plan?",
+      "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
+      "planForTreatment": "Treatment plan",
+      "createNewPlanOption": "Create a new plan",
+      "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
+      "addToPlan": "Add to plan",
       "registeredConditions": "Diagnosed conditions",
       "registerConditions": "Register conditions",
       "noConditions": "No conditions registered",
@@ -834,6 +851,8 @@
     "tooth": "Tooth"
   },
   "appointments": {
+    "assistant": "Assistant",
+    "assistantUnassigned": "No assistant",
     "title": "Schedule",
     "checkin": {
       "qr": "Check-in QR",
@@ -1098,11 +1117,21 @@
       }
     },
     "supergroups": {
-      "clinicalSetup": { "label": "Clinical setup" },
-      "clinicalManagement": { "label": "Clinical management" },
-      "financialConfiguration": { "label": "Financial configuration" },
-      "systemAddons": { "label": "System & add-ons" },
-      "myPreferences": { "label": "My preferences" }
+      "clinicalSetup": {
+        "label": "Clinical setup"
+      },
+      "clinicalManagement": {
+        "label": "Clinical management"
+      },
+      "financialConfiguration": {
+        "label": "Financial configuration"
+      },
+      "systemAddons": {
+        "label": "System & add-ons"
+      },
+      "myPreferences": {
+        "label": "My preferences"
+      }
     },
     "search": {
       "placeholder": "Search settings…",
@@ -1303,14 +1332,16 @@
       "whatsapp": "Send via WhatsApp",
       "shareText": "Hi {name}, here is your Dentum access. Open it and choose your password: {url}",
       "secretNote": "Treat it like a password: anyone with the link can sign in to this account.",
-      "passwordOptionalHelp": "Leave empty to generate an access link you can send by WhatsApp or email.",
+      "passwordOptionalHelp": "Leave empty and Dentum will send a password setup link. If you set a temporary password, the user still receives a link to choose their own.",
       "passwordOptionalPlaceholder": "Optional",
-      "createAndLink": "Create and generate link",
+      "createAndLink": "Create and invite",
       "rowAction": "Access link",
       "setPasswordTitle": "Choose your password",
       "setPasswordSubtitle": "You've been invited to Dentum. Create your password to sign in.",
       "setPasswordSubmit": "Save and sign in",
-      "invalidToken": "This link is invalid or already used. Ask your clinic administrator for a new one."
+      "invalidToken": "This link is invalid or already used. Ask your clinic administrator for a new one.",
+      "emailSent": "The invitation email was sent. You can also copy and share the link below.",
+      "emailNotSent": "Email delivery is not configured or failed. Copy and share the link below manually."
     }
   },
   "selector": {
@@ -1532,6 +1563,9 @@
     "sunday": "Sunday"
   },
   "catalog": {
+    "recommendedTreatment": "Related procedure for the plan",
+    "recommendedTreatmentDescription": "This procedure will be suggested to the clinician after recording this diagnosis. It is added to a plan only after confirmation.",
+    "noRecommendedTreatment": "Do not link",
     "title": "Treatment Catalog",
     "description": "Manage treatments, pricing, and tax configuration",
     "items": "Treatments",
@@ -1922,6 +1956,21 @@
       "subtitle": "These planned treatments from the visit weren't marked as performed:",
       "markPerformed": "Mark as performed",
       "marked": "Marked as performed: {count}."
+    },
+    "batch": {
+      "title": "Diagnoses and procedures",
+      "description": "Choose a catalog procedure and enter the teeth. A doctor reviews the full plan and estimate before confirmation.",
+      "addLine": "Add line",
+      "emptyCatalog": "No odontogram procedures in the catalog",
+      "emptyCatalogHint": "Add and map procedures in catalog settings first.",
+      "procedure": "Catalog procedure",
+      "selectProcedure": "Select a procedure",
+      "teeth": "Tooth numbers (FDI)",
+      "surfaces": "Surfaces (optional)",
+      "notes": "Line note",
+      "groupingHint": "Teeth in one line are grouped in one plan item.",
+      "createForReview": "Create plan for doctor review",
+      "invalidSurfaces": "Allowed surfaces: M, D, O, V, L."
     }
   },
   "pipeline": {
@@ -2842,7 +2891,9 @@
         "bucket90plus": "90+ days",
         "empty": "No outstanding receivables",
         "patientCount": "{count} patients"
-      }
+      },
+      "periodFrom": "From",
+      "periodTo": "To"
     },
     "billing": {
       "title": "Billing",
@@ -2991,7 +3042,18 @@
         "desc": "Try a wider date range or remove filters."
       }
     },
-    "loadError": "Couldn't load report data"
+    "loadError": "Couldn't load report data",
+    "planConversion": {
+      "title": "Treatment plan conversion",
+      "subtitle": "Track doctor-confirmed plans through booking and completed care.",
+      "confirmed": "Plans confirmed",
+      "cohortHint": "Cohort by the date the doctor confirmed the plan",
+      "booked": "Booked from a plan",
+      "completedPlans": "Plans fully completed",
+      "ofPlans": "of confirmed plans",
+      "itemProgress": "Treatment item progress",
+      "metricNote": "A plan counts as booked when at least one linked appointment is not cancelled. Completion follows the treatment plan item status."
+    }
   },
   "invoiceSeries": {
     "title": "Invoice Series",
@@ -3309,6 +3371,32 @@
       "verifactu": "Cumplimiento Veri*Factu (AEAT) para clínicas en España.",
       "whatsapp_kapso": "WhatsApp para notifications vía Kapso (Meta Cloud API).",
       "whatsapp_webhook": "WhatsApp para notifications vía webhook firmado (Zapier/Make/n8n)."
+    }
+  },
+  "schedules": {
+    "settingsCards": {
+      "assistantHoursTitle": "Assistant schedules",
+      "assistantHoursDescription": "Set assistant availability, exceptions and review workload conflicts."
+    },
+    "assistants": {
+      "title": "Assistant schedules",
+      "description": "Set working hours and exceptions. Workload and overlaps are calculated from assigned appointments.",
+      "select": "Assistant",
+      "noAssistant": "No assistant schedule is configured for this account.",
+      "weekly": "Weekly hours",
+      "workload": "Workload this week",
+      "appointments": "Appointments",
+      "bookedHours": "Booked, h",
+      "load": "Load",
+      "conflictsCount": "Conflicts",
+      "noConflicts": "No schedule conflicts",
+      "overlap": "Two assistant appointments overlap.",
+      "outsideShift": "Appointment falls outside the assistant shift."
+    },
+    "overrides": {
+      "startTime": "Start time",
+      "endTime": "End time",
+      "addShift": "Add shift"
     }
   }
 }

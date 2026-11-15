@@ -124,6 +124,39 @@ class ProfessionalHoursUpdate(BaseModel):
     days: list[WeekdayShiftsIn]
 
 
+class AssistantBrief(BaseModel):
+    user_id: UUID
+    first_name: str
+    last_name: str
+
+
+class AssistantWorkloadRow(BaseModel):
+    assistant_id: UUID
+    assistant_name: str
+    appointment_count: int
+    booked_minutes: int
+    available_minutes: int
+    utilization_rate: float
+    conflict_count: int
+
+
+class AssistantScheduleConflict(BaseModel):
+    assistant_id: UUID
+    assistant_name: str
+    kind: Literal["overlap", "outside_shift"]
+    appointment_id: UUID
+    other_appointment_id: UUID | None = None
+    start_at: datetime
+    end_at: datetime
+
+
+class AssistantWorkloadResponse(BaseModel):
+    start: date
+    end: date
+    rows: list[AssistantWorkloadRow]
+    conflicts: list[AssistantScheduleConflict]
+
+
 # --- Professional overrides ------------------------------------------
 
 
@@ -181,6 +214,7 @@ class AvailabilityRange(BaseModel):
     end: datetime
     state: AvailabilityState
     professional_id: UUID | None = None
+    assistant_id: UUID | None = None
     reason: str | None = None
 
 

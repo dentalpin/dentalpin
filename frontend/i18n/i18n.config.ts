@@ -17,6 +17,7 @@ export default defineI18nConfig(() => ({
   datetimeFormats: {
     'es': { short: { dateStyle: 'short', timeStyle: 'short' } },
     'en': { short: { dateStyle: 'short', timeStyle: 'short' } },
+    'hi': { short: { dateStyle: 'short', timeStyle: 'short' } },
     'de': { short: { dateStyle: 'short', timeStyle: 'short' } },
     'fr': { short: { dateStyle: 'short', timeStyle: 'short' } },
     'hu': { short: { dateStyle: 'short', timeStyle: 'short' } },

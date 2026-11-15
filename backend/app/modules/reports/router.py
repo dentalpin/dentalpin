@@ -43,6 +43,7 @@ from .schemas import (
     ProfessionalBillingSummary,
     PunctualityStats,
     SchedulingSummary,
+    TreatmentPlanConversion,
     TrendPoint,
     VatSummaryItem,
     VisitFrequency,
@@ -55,10 +56,36 @@ from .services import (
     FinancialReportService,
     OperationalReportService,
     PatientStatsService,
+    PlanConversionReportService,
     SchedulingReportService,
 )
 
 router = APIRouter(tags=["reports"])
+
+
+@router.get(
+    "/treatment-plans/conversion",
+    response_model=ApiResponse[TreatmentPlanConversion],
+)
+async def get_treatment_plan_conversion(
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("reports.scheduling.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    date_from: date = Query(...),
+    date_to: date = Query(...),
+) -> ApiResponse[TreatmentPlanConversion]:
+    """Follow confirmed plans through booking and performed treatment.
+
+    The selected period is anchored to the clinic-local confirmation date;
+    appointments may take place later and count if linked to the plan.
+    """
+    try:
+        data = await PlanConversionReportService.get(db, ctx.clinic_id, date_from, date_to)
+    except ValueError as e:
+        from fastapi import HTTPException, status
+
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
+    return ApiResponse(data=TreatmentPlanConversion(**data))
 
 
 # ============================================================================

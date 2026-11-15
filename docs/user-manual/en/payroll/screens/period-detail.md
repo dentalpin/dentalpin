@@ -2,7 +2,7 @@
 module: payroll
 screen: period-detail
 route: /payroll/periods/[id]
-last_verified_commit: 55144ef3
+last_verified_commit: 71402014
 related_endpoints:
   - GET /api/v1/payroll/periods/{id}
   - GET /api/v1/payroll/periods/{id}/entries
@@ -29,3 +29,5 @@ badge and one row per employee entry (`gross − deductions = net`).
 - **Edit** amounts or notes of a draft entry. Outside draft the actions
   disappear — closed and paid entries are immutable.
 - **Delete** a draft entry with confirmation (wrong-user corrections).
+- On narrow screens, the gross, deductions and net totals stack vertically;
+  wider screens display them in three columns.

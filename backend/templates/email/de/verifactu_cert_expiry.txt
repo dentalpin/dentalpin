@@ -11,7 +11,7 @@ Ablaufdatum: {{ valid_until.strftime('%d/%m/%Y') }}
 
 Schritte:
 1. Beantragen Sie ein neues Zertifikat bei der FNMT.
-2. Öffnen Sie DentalPin → Einstellungen → Verifactu → Zertifikat.
+2. Öffnen Sie Dentum → Einstellungen → Verifactu → Zertifikat.
 3. Laden Sie die .pfx-Datei hoch und geben Sie das Passwort ein.
 
 Wenn Sie Hilfe benötigen, antworten Sie auf diese E-Mail.

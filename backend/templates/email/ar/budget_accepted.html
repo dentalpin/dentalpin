@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}تم قبول عرض السعر - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}تم قبول عرض السعر - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>تم قبول عرض السعر</h2>
 
 <p>مرحباً {{ patient_name }}،</p>
 
-<p>تم قبول عرض السعر <strong>#{{ budget_number }}</strong> من <strong>{{ clinic_name | default('DentalPin') }}</strong>.</p>
+<p>تم قبول عرض السعر <strong>#{{ budget_number }}</strong> من <strong>{{ clinic_name | default('Dentum') }}</strong>.</p>
 
 <div class="info-box">
     <div class="info-row">

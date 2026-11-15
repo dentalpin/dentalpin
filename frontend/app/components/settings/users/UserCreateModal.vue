@@ -36,7 +36,7 @@ const isProfessional = ref(true)
 // admin can override it — a solo admin-dentist ticks it manually.
 watch(role, r => (isProfessional.value = PROFESSIONAL_ROLES.includes(r)))
 
-const invite = ref<{ url: string, expiresAt: string, name: string } | null>(null)
+const invite = ref<{ url: string, expiresAt: string, emailSent: boolean, name: string } | null>(null)
 const copied = ref(false)
 
 watch(() => props.open, (open) => {
@@ -62,10 +62,6 @@ async function submit() {
   isCreating.value = false
   if (!user) return
   emit('saved')
-  if (data.password) {
-    isOpen.value = false
-    return
-  }
   const link = await createInviteLink(user.id)
   if (link) invite.value = { ...link, name: `${form.value.first_name} ${form.value.last_name}`.trim() }
   else isOpen.value = false
@@ -116,6 +112,13 @@ const expiresLabel = computed(() =>
         >
           <p class="text-body text-muted">
             {{ t('settings.invite.linkHelp', { name: invite.name, date: expiresLabel }) }}
+          </p>
+          <p
+            role="status"
+            class="text-caption"
+            :class="invite.emailSent ? 'text-success' : 'text-warning'"
+          >
+            {{ invite.emailSent ? t('settings.invite.emailSent') : t('settings.invite.emailNotSent') }}
           </p>
           <UInput
             :model-value="invite.url"
@@ -230,7 +233,7 @@ const expiresLabel = computed(() =>
               :loading="isCreating"
               :icon="form.password ? undefined : 'i-lucide-link'"
             >
-              {{ form.password ? t('settings.createUser') : t('settings.invite.createAndLink') }}
+              {{ t('settings.invite.createAndLink') }}
             </UButton>
           </div>
         </form>

@@ -28,7 +28,7 @@ related_permissions:
   - payments.reports.read
 related_paths:
   - backend/app/modules/payments/frontend/pages/reports/payments/index.vue
-last_verified_commit: b1b82f5
+last_verified_commit: 71402014
 ---
 
 # /reports/payments
@@ -77,6 +77,8 @@ La pantalla se lee de arriba abajo:
 - Periodo: `FilterDateRange` con presets rápidos (Hoy / 7d / 30d /
   Este mes / Trimestre / Año). Por defecto, últimos 90 días.
 - Granularidad: solo afecta al gráfico de tendencia.
+- En pantallas estrechas, los buckets de antigüedad se muestran en dos
+  columnas; en pantallas amplias se muestran cuatro.
 
 ## Estados vacíos
 

@@ -1,0 +1,8 @@
+Hola {{ first_name }}:
+
+{{ clinic_name }} te invita a unirte a su espacio de trabajo en Dentum.
+
+Usa este enlace de un solo uso para crear tu contraseña y entrar:
+{{ invite_url }}
+
+El enlace caduca en {{ expires_days }} días. Si no esperabas esta invitación, puedes ignorar este correo.

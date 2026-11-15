@@ -14,7 +14,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.core.auth.models import ClinicMembership
+from app.core.auth.models import ClinicMembership, User
 from app.core.events import EventType, event_bus
 from app.modules.catalog.models import TreatmentCatalogItem  # noqa: F401
 from app.modules.patients.models import Patient
@@ -230,6 +230,7 @@ class AppointmentService:
             .options(
                 selectinload(Appointment.patient),
                 selectinload(Appointment.professional),
+                selectinload(Appointment.assistant),
                 # The whole treatments graph (relationship + planned-item
                 # chain + catalog item) comes from the provider (#309/#337).
                 *_treatments_loader_options(),
@@ -324,6 +325,7 @@ class AppointmentService:
             .options(
                 selectinload(Appointment.patient),
                 selectinload(Appointment.professional),
+                selectinload(Appointment.assistant),
                 # The whole treatments graph (relationship + planned-item
                 # chain + catalog item) comes from the provider (#309/#337).
                 *_treatments_loader_options(),
@@ -356,6 +358,22 @@ class AppointmentService:
                 ClinicMembership.user_id == professional_id,
                 ClinicMembership.clinic_id == clinic_id,
                 ClinicMembership.is_professional.is_(True),
+            )
+            .limit(1)
+        )
+        return result.scalar_one_or_none() is not None
+
+    @staticmethod
+    async def validate_assistant_access(db: AsyncSession, clinic_id: UUID, assistant_id: UUID) -> bool:
+        """Only allow an active assistant who belongs to this clinic."""
+        result = await db.execute(
+            select(ClinicMembership.id)
+            .join(User, User.id == ClinicMembership.user_id)
+            .where(
+                ClinicMembership.user_id == assistant_id,
+                ClinicMembership.clinic_id == clinic_id,
+                ClinicMembership.role == "assistant",
+                User.is_active.is_(True),
             )
             .limit(1)
         )
@@ -521,6 +539,7 @@ class AppointmentService:
         )
 
         await db.refresh(appointment, ["patient", "professional", "treatments"])
+        await db.refresh(appointment, ["assistant"])
         for treatment in appointment.treatments:
             await db.refresh(treatment, ["planned_item", "catalog_item"])
             if treatment.planned_item:
@@ -547,6 +566,8 @@ class AppointmentService:
         requested_status = data.pop("status", None)
 
         planned_item_ids = data.pop("planned_item_ids", None)
+        assistant_change_requested = "assistant_id" in data
+        requested_assistant_id = data.pop("assistant_id", None)
 
         await AppointmentService._normalize_times(db, appointment.clinic_id, data)
 
@@ -584,6 +605,8 @@ class AppointmentService:
         for key, value in data.items():
             if value is not None:
                 setattr(appointment, key, value)
+        if assistant_change_requested:
+            appointment.assistant_id = requested_assistant_id
 
         try:
             await db.flush()
@@ -628,6 +651,8 @@ class AppointmentService:
                     "patient_id": (str(appointment.patient_id) if appointment.patient_id else None),
                 },
             )
+
+        await db.refresh(appointment, ["assistant"])
 
         return appointment
 

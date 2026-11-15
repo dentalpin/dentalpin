@@ -99,7 +99,7 @@ function goToAppointment(appointment: Appointment) {
   <div class="appointments-mode">
     <!-- Header -->
     <div class="flex items-center justify-between mb-4">
-      <h3 class="font-medium flex items-center gap-2">
+      <h3 class="text-h2 text-default font-semibold flex min-w-0 items-center gap-2">
         <UIcon
           name="i-lucide-calendar"
           class="w-5 h-5"
@@ -157,28 +157,52 @@ function goToAppointment(appointment: Appointment) {
     </UCard>
 
     <!-- Appointments list -->
-    <UCard v-else>
+    <UCard
+      v-else
+      class="appointments-list-card"
+    >
       <ul class="divide-y divide-[var(--color-border-subtle)]">
         <li
           v-for="appointment in appointments"
           :key="appointment.id"
-          class="py-3 first:pt-0 last:pb-0 flex items-center justify-between cursor-pointer hover:bg-surface-muted -mx-4 px-4 transition-colors"
-          @click="goToAppointment(appointment)"
+          class="first:-mt-2 last:-mb-2"
         >
-          <div>
-            <p class="font-medium text-default">
-              {{ formatDateTime(appointment.start_time) }}
-            </p>
-            <p class="text-sm text-muted">
-              {{ appointment.treatment_type || '-' }}
-            </p>
-          </div>
-          <UBadge
-            :color="getStatusColor(appointment.status)"
-            variant="subtle"
+          <button
+            type="button"
+            class="appointment-row flex min-h-16 w-full items-center justify-between gap-3 rounded-token-md px-2 py-3 text-start"
+            :aria-label="formatDateTime(appointment.start_time) + ' — ' + (appointment.treatment_type || '')"
+            @click="goToAppointment(appointment)"
           >
-            {{ statusLabel(appointment.status) }}
-          </UBadge>
+            <span class="flex min-w-0 items-center gap-3">
+              <span class="appointment-row-icon flex size-10 shrink-0 items-center justify-center rounded-token-md">
+                <UIcon
+                  name="i-lucide-calendar-clock"
+                  class="size-5"
+                />
+              </span>
+              <span class="min-w-0">
+                <span class="block text-ui font-semibold text-default">
+                  {{ formatDateTime(appointment.start_time) }}
+                </span>
+                <span class="mt-0.5 block truncate text-caption text-muted">
+                  {{ appointment.treatment_type || '-' }}
+                </span>
+              </span>
+            </span>
+            <span class="flex shrink-0 items-center gap-2">
+              <UBadge
+                :color="getStatusColor(appointment.status)"
+                variant="subtle"
+              >
+                {{ statusLabel(appointment.status) }}
+              </UBadge>
+              <UIcon
+                name="i-lucide-chevron-right"
+                class="size-4 text-subtle"
+                aria-hidden="true"
+              />
+            </span>
+          </button>
         </li>
       </ul>
 
@@ -191,3 +215,30 @@ function goToAppointment(appointment: Appointment) {
     </UCard>
   </div>
 </template>
+
+<style scoped>
+.appointment-row {
+  touch-action: manipulation;
+  transition: background-color 150ms ease;
+}
+
+.appointment-row:hover {
+  background-color: var(--color-surface-muted);
+}
+
+.appointment-row:focus-visible {
+  outline: 3px solid color-mix(in oklab, var(--color-primary-accent) 40%, transparent);
+  outline-offset: 2px;
+}
+
+.appointment-row-icon {
+  background-color: var(--color-surface-muted);
+  color: var(--color-primary-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .appointment-row {
+    transition: none;
+  }
+}
+</style>

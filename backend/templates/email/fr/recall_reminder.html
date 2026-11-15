@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Votre prochain contrôle chez {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}Votre prochain contrôle chez {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>C'est bientôt l'heure de votre prochain contrôle</h2>
 
 <p>Bonjour {{ patient_name }},</p>
 
-<p>Nous avons programmé votre prochain contrôle{% if due_month %} pour <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} chez <strong>{{ clinic_name | default('DentalPin') }}</strong>.</p>
+<p>Nous avons programmé votre prochain contrôle{% if due_month %} pour <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} chez <strong>{{ clinic_name | default('Dentum') }}</strong>.</p>
 
 <p>Contactez-nous pour réserver un créneau qui vous convient.</p>
 

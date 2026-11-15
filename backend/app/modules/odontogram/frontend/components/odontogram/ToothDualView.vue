@@ -332,6 +332,11 @@ const hasPlannedLateralTreatments = computed(() => {
 <template>
   <div
     class="tooth-dual-view-wrapper"
+    :role="readonly ? undefined : 'button'"
+    :tabindex="readonly ? -1 : 0"
+    :aria-label="`${_toothName} (${toothNumber})`"
+    :aria-pressed="selected"
+    :aria-disabled="readonly || undefined"
     :class="{
       'selected': selected,
       'readonly': readonly,
@@ -344,6 +349,8 @@ const hasPlannedLateralTreatments = computed(() => {
       'is-deciduous': isDeciduous
     }"
     @click="handleToothClick"
+    @keydown.enter.prevent="handleToothClick"
+    @keydown.space.prevent="handleToothClick"
   >
     <!-- Lateral View Container - fixed height for alignment -->
     <div
@@ -1094,6 +1101,12 @@ const hasPlannedLateralTreatments = computed(() => {
 
 .tooth-dual-view-wrapper:hover {
   transform: translateY(-1px);
+}
+
+.tooth-dual-view-wrapper:focus-visible {
+  outline: 3px solid var(--color-primary-500);
+  outline-offset: 3px;
+  border-radius: 8px;
 }
 
 .tooth-dual-view-wrapper.readonly {

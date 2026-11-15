@@ -2,7 +2,7 @@
 module: prescriptions
 screen: prescriptions
 route: /prescriptions
-last_verified_commit: b631b127955584bc7d5350275232ffa9b1abdfa9
+last_verified_commit: 71402014
 related_endpoints:
   - GET /api/v1/prescriptions/patients/{patient_id}/prescriptions
   - POST /api/v1/prescriptions/patients/{patient_id}/prescriptions
@@ -42,3 +42,5 @@ draft from the patient summary ("New prescription" action).
 - The editor requires at least one line, includes a route field, and
   clears `&new=1` from the URL on open.
 - Heed the allergy/interaction banner — it warns, never blocks.
+- On narrow screens, medication fields stack vertically; wider screens show
+  three fields per row.

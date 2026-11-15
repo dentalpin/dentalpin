@@ -278,7 +278,7 @@ async function toggleLocale() {
             >{{ copy.openApp }} <span aria-hidden="true">↗</span></a>
             <a
               class="landing-secondary"
-              href="/docs/user-manual/en/"
+              href="https://dentum.online/docs/user-manual/en/"
             >{{ copy.manual }} <span aria-hidden="true">↗</span></a>
           </div>
           <a
@@ -319,7 +319,7 @@ async function toggleLocale() {
       <p>{{ copy.footer }}</p>
       <a
         class="landing-footer__manual"
-        href="/docs/user-manual/en/"
+        href="https://dentum.online/docs/user-manual/en/"
       >{{ copy.manual }} <span aria-hidden="true">↗</span></a>
       <span class="landing-footer__copyright">© {{ new Date().getFullYear() }} Dentum</span>
     </footer>

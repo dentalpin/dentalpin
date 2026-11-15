@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(ui): catalog pricing fields reflow from two columns on narrow screens to five on wide screens.
+
 - feat(i18n): Russian (`ru`) names for every seeded category, item and VAT type. fix: price inputs and session sums showed a hardcoded `€` — now the clinic currency via `useCurrency`; durations use `common.durationMinutes`.
 
 - fix: `POST /catalog/seed` answered 500 (`MultipleResultsFound`) when the clinic had its own VAT type at one of the preset's rates, such as a second 0% type next to the seeded exempt one. `_ensure_vat_types` now reuses the system row first, then the active one, the same tolerance #736 gave the treatment lookup.

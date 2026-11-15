@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}الفاتورة - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}الفاتورة - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>الفاتورة</h2>
 
 <p>مرحباً {{ patient_name }}،</p>
 
-<p>تجد أدناه تفاصيل الفاتورة <strong>#{{ invoice_number }}</strong> من <strong>{{ clinic_name | default('DentalPin') }}</strong>:</p>
+<p>تجد أدناه تفاصيل الفاتورة <strong>#{{ invoice_number }}</strong> من <strong>{{ clinic_name | default('Dentum') }}</strong>:</p>
 
 <div class="info-box">
     <div class="info-row">

@@ -78,6 +78,13 @@ const drilldownCards = computed(() => [
     visible: canScheduling.value
   },
   {
+    key: 'plan-conversion',
+    label: t('reports.planConversion.title', 'Планы лечения'),
+    icon: 'i-lucide-clipboard-check',
+    to: '/reports/treatment-plan-conversion',
+    visible: canScheduling.value
+  },
+  {
     key: 'payments',
     label: t('reports.dashboard.drilldown.payments'),
     icon: 'i-lucide-wallet',

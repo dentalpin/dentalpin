@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}{{ clinic_name | default('DentalPin') }} में आपकी अगली जाँच{% endblock %}
+{% block title %}{{ clinic_name | default('Dentum') }} में आपकी अगली जाँच{% endblock %}
 
 {% block content %}
 <h2>आपकी अगली जाँच का समय</h2>
 
 <p>नमस्ते {{ patient_name }},</p>
 
-<p><strong>{{ clinic_name | default('DentalPin') }}</strong> में आपकी अगली जाँच{% if due_month %} <strong>{{ due_month }}</strong> में{% endif %}{% if reason %} ({{ reason }}){% endif %} निर्धारित की गई है।</p>
+<p><strong>{{ clinic_name | default('Dentum') }}</strong> में आपकी अगली जाँच{% if due_month %} <strong>{{ due_month }}</strong> में{% endif %}{% if reason %} ({{ reason }}){% endif %} निर्धारित की गई है।</p>
 
 <p>अपनी सुविधा का समय बुक करने के लिए हमसे संपर्क करें।</p>
 

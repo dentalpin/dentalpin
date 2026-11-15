@@ -36,7 +36,7 @@ function handleClick(chip: EntityChip) {
       :aria-label="chip.onClick ? (chip.ariaLabel ?? chip.label) : undefined"
       :class="[
         'inline-flex items-center rounded-md',
-        chip.onClick ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500' : ''
+        chip.onClick ? 'cursor-pointer focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)' : ''
       ]"
       @click="handleClick(chip)"
       @keydown.enter.space.prevent="handleClick(chip)"

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}చికిత్స అంచనా - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}చికిత్స అంచనా - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>చికిత్స అంచనా</h2>
 
 <p>నమస్కారం {{ patient_name }},</p>
 
-<p><strong>{{ clinic_name | default('DentalPin') }}</strong> నుండి చికిత్స అంచనా <strong>#{{ budget_number }}</strong> క్రింద ఇవ్వబడింది:</p>
+<p><strong>{{ clinic_name | default('Dentum') }}</strong> నుండి చికిత్స అంచనా <strong>#{{ budget_number }}</strong> క్రింద ఇవ్వబడింది:</p>
 
 {% if treatments %}
 <div class="info-box">

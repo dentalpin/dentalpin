@@ -63,7 +63,7 @@ function routeToSlug(route: string, query: Record<string, unknown>): string {
   // (tabs, filters, modal actions) continues to use the patient's guide.
   const queryPairs = ['clinicalMode', 'diagnosisView']
     .filter(key => query[key] !== undefined && query[key] !== null)
-    .flatMap(key => {
+    .flatMap((key) => {
       const value = query[key]
       return (Array.isArray(value) ? value : [value]).map(item => [key, String(item)] as const)
     })

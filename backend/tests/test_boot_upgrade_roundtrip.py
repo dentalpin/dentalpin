@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import asyncio
 import subprocess
+import sys
 from pathlib import Path
 
 import asyncpg
@@ -28,7 +29,8 @@ PERIO_TABLES = {"periodontogram_snapshots", "periodontogram_teeth", "periodontog
 
 
 def _run(*args: str) -> None:
-    subprocess.run(list(args), cwd=BACKEND_ROOT, check=True)
+    command = [sys.executable, *args[1:]] if args[0] == "python" else list(args)
+    subprocess.run(command, cwd=BACKEND_ROOT, check=True)
 
 
 def _dsn() -> str:

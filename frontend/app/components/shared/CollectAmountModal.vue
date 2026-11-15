@@ -197,15 +197,15 @@ const submitText = computed(() => props.submitLabel ?? t('shared.collect.submit'
           <label class="block text-sm font-medium text-default">
             {{ t('shared.collect.methodLabel') }}
           </label>
-          <div class="grid grid-cols-3 gap-2">
+          <div class="grid grid-cols-1 gap-2 min-[360px]:grid-cols-3">
             <button
               v-for="m in METHODS"
               :key="m.value"
               type="button"
-              class="flex flex-col items-center gap-1 rounded-md border px-2 py-3 text-xs transition-all focus:outline-none focus:ring-1 focus:ring-primary-accent"
+              class="flex flex-col items-center gap-1 rounded-md border px-2 py-3 text-xs transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-(--color-primary)"
               :class="form.method === m.value
-                ? 'border-primary-accent bg-primary-50 text-primary-accent dark:bg-primary-950'
-                : 'border-default bg-elevated text-default hover:border-primary-accent'"
+                ? 'border-(--color-primary) bg-(--color-primary-soft) text-(--color-primary-accent)'
+                : 'border-default bg-elevated text-default hover:border-(--color-primary)'"
               @click="form.method = m.value"
             >
               <UIcon

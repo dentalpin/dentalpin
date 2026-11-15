@@ -1,5 +1,6 @@
 """Authentication router with rate limiting."""
 
+import logging
 import secrets
 from datetime import UTC, datetime
 from typing import Annotated
@@ -15,6 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.config import settings
+from app.core.email import email_service
 from app.core.events import EventType, event_bus
 from app.core.plugins import module_registry
 from app.core.schemas import ApiResponse, PaginatedApiResponse
@@ -77,6 +79,7 @@ from .service import (
 )
 
 router = APIRouter(prefix="/auth", tags=["auth"])
+logger = logging.getLogger(__name__)
 # Rate limiting is on everywhere except test runs (#530): a reachable
 # non-production deploy (staging, preview, default compose on a public
 # host, or a typo in ENVIRONMENT) otherwise has unbounded password
@@ -623,11 +626,11 @@ async def create_user_invite_link(
     __: Annotated[None, Depends(block_in_demo)],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[InviteLinkResponse]:
-    """Mint a one-time set-password token for a member of this clinic.
+    """Mint a one-time set-password token and email it when SMTP is ready.
 
     Works for brand-new accounts (created without a password) and as an
-    admin-driven password reset for existing ones. The link is a bearer
-    secret: the client shows it once for the admin to copy / share.
+    admin-driven password reset for existing ones. The link is also returned
+    once so the administrator can share it manually if delivery is unavailable.
     """
     result = await db.execute(
         select(User)
@@ -641,7 +644,44 @@ async def create_user_invite_link(
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="User is inactive")
 
     token, expires_at = create_invite_token(user.id, token_version=user.token_version)
-    return ApiResponse(data=InviteLinkResponse(token=token, expires_at=expires_at))
+    public_url = (settings.PUBLIC_URL or "http://localhost:3000").rstrip("/")
+    invite_url = f"{public_url}/set-password?token={token}"
+    email_sent = False
+
+    # Never send bearer links through the development console provider: it
+    # prints message bodies to logs. Account emails use the instance SMTP
+    # relay and can be retried or shared manually if SMTP is unavailable.
+    if settings.EMAIL_ENABLED and settings.EMAIL_PROVIDER == "smtp":
+        try:
+            clinic = await db.get(Clinic, ctx.clinic_id)
+            clinic_settings = (
+                clinic.settings if clinic and isinstance(clinic.settings, dict) else {}
+            )
+            locale = str(clinic_settings.get("communication_language", "es"))
+            subjects = {
+                "es": "Invitación para acceder a Dentum",
+                "ru": "Приглашение в Dentum",
+            }
+            result = await email_service.send_templated(
+                to_email=user.email,
+                to_name=f"{user.first_name} {user.last_name}".strip(),
+                template_key="auth_invite",
+                context={
+                    "first_name": user.first_name,
+                    "clinic_name": clinic.name if clinic else "Dentum",
+                    "invite_url": invite_url,
+                    "expires_days": 7,
+                },
+                subject=subjects.get(locale, "Invitation to Dentum"),
+                locale=locale,
+            )
+            email_sent = result.is_success
+        except Exception:
+            logger.exception("Failed to send account invitation email")
+
+    return ApiResponse(
+        data=InviteLinkResponse(token=token, expires_at=expires_at, email_sent=email_sent)
+    )
 
 
 @router.post("/set-password", response_model=TokenResponse)

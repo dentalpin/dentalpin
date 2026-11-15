@@ -49,6 +49,16 @@
     "toggleSidebar": "Mostra/nascondi barra laterale",
     "documents": "Documenti"
   },
+  "appearance": {
+    "pickerLabel": "Colori dell’interfaccia",
+    "pickerTitle": "Scegli un tema colore",
+    "themes": {
+      "clinical": "Blu clinico",
+      "mint": "Menta",
+      "lavender": "Lavanda",
+      "coral": "Corallo"
+    }
+  },
   "auth": {
     "login": "Accedi",
     "logout": "Esci",
@@ -769,7 +779,14 @@
       "selectPlan": "Seleziona piano",
       "continue": "Continua",
       "odontogramTab": "Odontogramma",
-      "openNotes": "Apri le note"
+      "openNotes": "Apri le note",
+      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "recommendedTreatmentTitle": "Add the procedure to a plan?",
+      "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
+      "planForTreatment": "Treatment plan",
+      "createNewPlanOption": "Create a new plan",
+      "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
+      "addToPlan": "Add to plan"
     },
     "plans": {
       "title": "Piani di cura",
@@ -991,7 +1008,9 @@
     "sendReminderVia": "Invia promemoria ({channel})",
     "sendCancellationVia": "Invia avviso di annullamento ({channel})",
     "loadError": "Impossibile caricare gli appuntamenti",
-    "planAwaitingBudget": "Preventivo in attesa di accettazione"
+    "planAwaitingBudget": "Preventivo in attesa di accettazione",
+    "assistant": "Assistant",
+    "assistantUnassigned": "No assistant"
   },
   "dashboard": {
     "greetings": {
@@ -1098,11 +1117,21 @@
       }
     },
     "supergroups": {
-      "clinicalSetup": { "label": "Configurazione clinica" },
-      "clinicalManagement": { "label": "Gestione clinica" },
-      "financialConfiguration": { "label": "Configurazione finanziaria" },
-      "systemAddons": { "label": "Sistema e componenti aggiuntivi" },
-      "myPreferences": { "label": "Le mie preferenze" }
+      "clinicalSetup": {
+        "label": "Configurazione clinica"
+      },
+      "clinicalManagement": {
+        "label": "Gestione clinica"
+      },
+      "financialConfiguration": {
+        "label": "Configurazione finanziaria"
+      },
+      "systemAddons": {
+        "label": "Sistema e componenti aggiuntivi"
+      },
+      "myPreferences": {
+        "label": "Le mie preferenze"
+      }
     },
     "search": {
       "placeholder": "Cerca nelle impostazioni…",
@@ -1310,7 +1339,9 @@
       "setPasswordTitle": "Scegli la tua password",
       "setPasswordSubtitle": "Sei stato invitato su Dentum. Crea la tua password per accedere.",
       "setPasswordSubmit": "Salva e accedi",
-      "invalidToken": "Questo link non è valido o è già stato usato. Chiedi un nuovo link all'amministratore dello studio."
+      "invalidToken": "Questo link non è valido o è già stato usato. Chiedi un nuovo link all'amministratore dello studio.",
+      "emailSent": "The invitation email was sent. You can also copy and share the link below.",
+      "emailNotSent": "Email delivery is not configured or failed. Copy and share the link below manually."
     }
   },
   "selector": {
@@ -1657,7 +1688,10 @@
     "loadDefaultsHint": "Aliquote IVA, categorie e trattamenti di riferimento per il paese dello studio. Vengono aggiunte solo le righe mancanti.",
     "defaultsLoaded": "Listino caricato: {categories} categorie, {items} trattamenti, {vat_types} aliquote IVA",
     "defaultsFailed": "Impossibile caricare il listino predefinito",
-    "loadError": "Impossibile caricare il listino prestazioni"
+    "loadError": "Impossibile caricare il listino prestazioni",
+    "recommendedTreatment": "Related procedure for the plan",
+    "recommendedTreatmentDescription": "This procedure will be suggested to the clinician after recording this diagnosis. It is added to a plan only after confirmation.",
+    "noRecommendedTreatment": "Do not link"
   },
   "placeholders": {
     "selectRole": "Seleziona ruolo..."
@@ -1922,6 +1956,21 @@
       "subtitle": "Questi trattamenti pianificati della visita non sono stati contrassegnati come eseguiti:",
       "markPerformed": "Contrassegna come eseguiti",
       "marked": "Contrassegnati come eseguiti: {count}."
+    },
+    "batch": {
+      "title": "Diagnoses and procedures",
+      "description": "Choose a catalog procedure and enter the teeth. A doctor reviews the full plan and estimate before confirmation.",
+      "addLine": "Add line",
+      "emptyCatalog": "No odontogram procedures in the catalog",
+      "emptyCatalogHint": "Add and map procedures in catalog settings first.",
+      "procedure": "Catalog procedure",
+      "selectProcedure": "Select a procedure",
+      "teeth": "Tooth numbers (FDI)",
+      "surfaces": "Surfaces (optional)",
+      "notes": "Line note",
+      "groupingHint": "Teeth in one line are grouped in one plan item.",
+      "createForReview": "Create plan for doctor review",
+      "invalidSurfaces": "Allowed surfaces: M, D, O, V, L."
     }
   },
   "pipeline": {
@@ -2842,7 +2891,9 @@
         "bucket90plus": "90+ giorni",
         "empty": "Nessun credito in sospeso",
         "patientCount": "{count} pazienti"
-      }
+      },
+      "periodFrom": "From",
+      "periodTo": "To"
     },
     "billing": {
       "title": "Fatturazione",
@@ -2991,7 +3042,18 @@
         "desc": "Prova un intervallo di date più ampio o rimuovi i filtri."
       }
     },
-    "loadError": "Impossibile caricare i dati del report"
+    "loadError": "Impossibile caricare i dati del report",
+    "planConversion": {
+      "title": "Treatment plan conversion",
+      "subtitle": "Track doctor-confirmed plans through booking and completed care.",
+      "confirmed": "Plans confirmed",
+      "cohortHint": "Cohort by the date the doctor confirmed the plan",
+      "booked": "Booked from a plan",
+      "completedPlans": "Plans fully completed",
+      "ofPlans": "of confirmed plans",
+      "itemProgress": "Treatment item progress",
+      "metricNote": "A plan counts as booked when at least one linked appointment is not cancelled. Completion follows the treatment plan item status."
+    }
   },
   "invoiceSeries": {
     "title": "Serie di fatturazione",
@@ -3309,6 +3371,32 @@
       "verifactu": "Cumplimiento Veri*Factu (AEAT) para clínicas en España.",
       "whatsapp_kapso": "WhatsApp para notifications vía Kapso (Meta Cloud API).",
       "whatsapp_webhook": "WhatsApp para notifications vía webhook firmado (Zapier/Make/n8n)."
+    }
+  },
+  "schedules": {
+    "settingsCards": {
+      "assistantHoursTitle": "Assistant schedules",
+      "assistantHoursDescription": "Set assistant availability, exceptions and review workload conflicts."
+    },
+    "assistants": {
+      "title": "Assistant schedules",
+      "description": "Set working hours and exceptions. Workload and overlaps are calculated from assigned appointments.",
+      "select": "Assistant",
+      "noAssistant": "No assistant schedule is configured for this account.",
+      "weekly": "Weekly hours",
+      "workload": "Workload this week",
+      "appointments": "Appointments",
+      "bookedHours": "Booked, h",
+      "load": "Load",
+      "conflictsCount": "Conflicts",
+      "noConflicts": "No schedule conflicts",
+      "overlap": "Two assistant appointments overlap.",
+      "outsideShift": "Appointment falls outside the assistant shift."
+    },
+    "overrides": {
+      "startTime": "Start time",
+      "endTime": "End time",
+      "addShift": "Add shift"
     }
   }
 }

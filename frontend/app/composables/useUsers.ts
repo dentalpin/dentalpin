@@ -192,15 +192,15 @@ export function useUsers() {
   }
 
   /** Mint a one-time set-password link for a member (new account or admin reset). */
-  async function createInviteLink(userId: string): Promise<{ url: string, expiresAt: string } | null> {
+  async function createInviteLink(userId: string): Promise<{ url: string, expiresAt: string, emailSent: boolean } | null> {
     try {
-      const response = await api.post<ApiResponse<{ token: string, expires_at: string }>>(
+      const response = await api.post<ApiResponse<{ token: string, expires_at: string, email_sent?: boolean }>>(
         `/api/v1/auth/users/${userId}/invite-link`,
         null,
         { errorToast: false }
       )
       const url = `${window.location.origin}/set-password?token=${encodeURIComponent(response.data.token)}`
-      return { url, expiresAt: response.data.expires_at }
+      return { url, expiresAt: response.data.expires_at, emailSent: response.data.email_sent === true }
     } catch (e) {
       toast.add({
         title: t('common.error'),

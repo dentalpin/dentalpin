@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}चालान - {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}चालान - {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>चालान</h2>
 
 <p>नमस्ते {{ patient_name }},</p>
 
-<p>नीचे <strong>{{ clinic_name | default('DentalPin') }}</strong> के चालान <strong>#{{ invoice_number }}</strong> का विवरण दिया गया है:</p>
+<p>नीचे <strong>{{ clinic_name | default('Dentum') }}</strong> के चालान <strong>#{{ invoice_number }}</strong> का विवरण दिया गया है:</p>
 
 <div class="info-box">
     <div class="info-row">

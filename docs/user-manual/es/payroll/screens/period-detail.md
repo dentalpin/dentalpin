@@ -2,7 +2,7 @@
 module: payroll
 screen: period-detail
 route: /payroll/periods/[id]
-last_verified_commit: 55144ef3
+last_verified_commit: 71402014
 related_endpoints:
   - GET /api/v1/payroll/periods/{id}
   - GET /api/v1/payroll/periods/{id}/entries
@@ -32,3 +32,5 @@ insignia de estado y una fila por movimiento de empleado
   borrador las acciones desaparecen — lo cerrado y pagado es inmutable.
 - **Eliminar** un movimiento en borrador con confirmación (corrección
   de usuario erróneo).
+- En pantallas estrechas, los totales de bruto, deducciones y neto se apilan;
+  en pantallas amplias aparecen en tres columnas.

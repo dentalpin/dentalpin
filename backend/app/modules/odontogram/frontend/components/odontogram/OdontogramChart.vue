@@ -28,6 +28,8 @@ export type OdontogramMode = 'full' | 'view-only' | 'diagnosis' | 'planning'
 const props = withDefaults(defineProps<{
   patientId: string
   mode?: OdontogramMode
+  /** Disable every chart mutation while keeping the current view visible. */
+  readonly?: boolean
   statusFilter?: TreatmentStatus[]
   /** Teeth to highlight (for hover linking from parent) */
   highlightedTeethProp?: number[]
@@ -39,6 +41,7 @@ const props = withDefaults(defineProps<{
   planTitle?: string
 }>(), {
   mode: 'full',
+  readonly: false,
   highlightedTeethProp: () => [],
   highlightedGlobalIds: () => []
 })
@@ -54,9 +57,10 @@ const emit = defineEmits<{
   globalHover: [treatmentId: string | null]
   /** Arch currently under hover (for painting the arch halo). */
   archHover: [arch: 'upper' | 'lower' | null]
+  treatmentRecommendation: [recommendation: { catalogItemId: string, diagnosisName: string, toothNumber: number }]
 }>()
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const toast = useToast()
 
 // ============================================================================
@@ -71,6 +75,7 @@ const {
   getToothRecord,
   treatments,
   treatmentsLoading,
+  treatmentsError,
   fetchTreatments,
   createTreatment,
   performTreatment,
@@ -84,10 +89,12 @@ const {
   displayTreatments,
   fetchTimeline,
   fetchOdontogramAtDate,
-  returnToCurrentView
+  returnToCurrentView,
+  resetAll
 } = useOdontogram()
 
 const treatmentPlansApi = useTreatmentPlans()
+const { treatments: catalogTreatments } = useTreatmentCatalog()
 
 // ============================================================================
 // State
@@ -122,6 +129,7 @@ const highlightedTeeth = computed(() => [
 const selectedTreatmentType = ref<string | null>(null)
 const selectedCatalogItemId = ref<string | null>(null)
 const selectedTreatmentStatus = ref<TreatmentStatus>('existing')
+const isSavingTreatment = ref(false)
 
 // Multi-tooth selection (bridges, splints, multiple veneers/crowns)
 const multiToothSelection = ref<{ teeth: number[], anchor: number | null }>({ teeth: [], anchor: null })
@@ -133,6 +141,8 @@ const undoStack = ref<Array<{ treatmentId: string, type: string }>>([])
 // History section
 const historyData = ref<OdontogramHistoryEntry[]>([])
 const historyLoading = ref(false)
+let historyRequestSequence = 0
+let patientMutationSequence = 0
 
 // Treatment editing (per-tooth view — edit modal operates on single-tooth context).
 const showTreatmentEditModal = ref(false)
@@ -145,7 +155,8 @@ const showLateral = true
 // Computed
 // ============================================================================
 
-const isReadonly = computed(() => props.mode === 'view-only' || isViewingHistory.value)
+const isReadonly = computed(() => props.readonly || props.mode === 'view-only' || isViewingHistory.value)
+const loadError = computed(() => error.value || treatmentsError.value)
 const isPlanningMode = computed(() => props.mode === 'planning')
 const isDiagnosisMode = computed(() => props.mode === 'diagnosis')
 
@@ -201,13 +212,40 @@ onUnmounted(() => {
 
 watch(() => props.patientId, async (newId) => {
   if (newId) {
+    patientMutationSequence++
+    isSavingTreatment.value = false
+    resetAll()
     returnToCurrentView()
+    selectedTooth.value = null
+    selectedTreatmentType.value = null
+    selectedCatalogItemId.value = null
+    showSurfaceSelector.value = false
+    resetMultiToothSelection()
+    undoStack.value = []
+    showTreatmentEditModal.value = false
+    editingTreatment.value = null
+    showDeleteTreatmentConfirm.value = false
+    pendingDeleteTreatmentId.value = null
+    deletingTreatment.value = false
+    historyData.value = []
+    historyRequestSequence++
+    historyLoading.value = false
     await Promise.all([
       fetchOdontogram(newId),
       fetchTreatments(newId),
       fetchTimeline(newId)
     ])
   }
+})
+
+watch(() => props.planId, () => {
+  patientMutationSequence++
+  isSavingTreatment.value = false
+  selectedTooth.value = null
+  selectedTreatmentType.value = null
+  selectedCatalogItemId.value = null
+  showSurfaceSelector.value = false
+  resetMultiToothSelection()
 })
 
 // Emit tooth hover for parent hover linking
@@ -297,6 +335,7 @@ const lowerMidlineBridgeStatus = computed<'existing' | 'planned' | null>(() => {
 // ============================================================================
 
 function handleKeydown(e: KeyboardEvent) {
+  if (isSavingTreatment.value) return
   if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return
 
   if (e.key === 'Escape') {
@@ -335,7 +374,7 @@ function handleKeydown(e: KeyboardEvent) {
 
   const shortcut = TREATMENT_SHORTCUTS[e.key]
   if (shortcut && !isReadonly.value) {
-    selectedTreatmentType.value = shortcut
+    handleTreatmentSelected(shortcut)
   }
 }
 
@@ -344,7 +383,11 @@ function handleKeydown(e: KeyboardEvent) {
 // ============================================================================
 
 function handleSurfaceClick(toothNumber: number, surface: Surface) {
-  if (isReadonly.value || !isClickToApplyMode.value) return
+  if (isReadonly.value || isSavingTreatment.value) return
+  if (!isClickToApplyMode.value) {
+    selectedTooth.value = toothNumber
+    return
+  }
 
   // In multi-tooth mode, surface clicks collapse to tooth-level selection.
   if (isMultiToothMode.value) {
@@ -353,14 +396,24 @@ function handleSurfaceClick(toothNumber: number, surface: Surface) {
   }
 
   if (isSurfaceTreatment(selectedTreatmentType.value!)) {
-    applyTreatment(toothNumber, [surface])
+    selectedTooth.value = toothNumber
+    void applyTreatment(toothNumber, [surface])
   } else {
-    applyTreatment(toothNumber)
+    selectedTooth.value = toothNumber
+    void applyTreatment(toothNumber)
   }
 }
 
 function handleToothClick(toothNumber: number) {
-  if (isReadonly.value || !isClickToApplyMode.value) return
+  if (isReadonly.value || isSavingTreatment.value) return
+  selectedTooth.value = toothNumber
+  if (isDiagnosisMode.value) {
+    selectedTreatmentType.value = null
+    selectedCatalogItemId.value = null
+    showSurfaceSelector.value = true
+    return
+  }
+  if (!isClickToApplyMode.value) return
 
   if (isMultiToothMode.value) {
     handleMultiToothClick(toothNumber)
@@ -371,8 +424,30 @@ function handleToothClick(toothNumber: number) {
     selectedTooth.value = toothNumber
     showSurfaceSelector.value = true
   } else {
-    applyTreatment(toothNumber)
+    void applyTreatment(toothNumber)
   }
+}
+
+function clearSelectedTooth() {
+  selectedTooth.value = null
+}
+
+/** Selecting a treatment after a tooth starts the same flow as treatment-first. */
+function handleTreatmentSelected(type: string) {
+  selectedTreatmentType.value = type
+  if (isReadonly.value || selectedTooth.value === null) return
+
+  const toothNumber = selectedTooth.value
+  if (isMultiToothMode.value) {
+    multiToothSelection.value = { teeth: [toothNumber], anchor: toothNumber }
+    selectedTooth.value = null
+    return
+  }
+  if (isSurfaceTreatment(type)) {
+    showSurfaceSelector.value = true
+    return
+  }
+  void applyTreatment(toothNumber)
 }
 
 // ============================================================================
@@ -459,6 +534,10 @@ function requestMultiToothConfirm() {
 async function confirmMultiToothSelection(
   teethRoles: Array<{ tooth_number: number, role: 'pillar' | 'pontic' }> | null = null
 ) {
+  if (isSavingTreatment.value) return
+  const operationSequence = patientMutationSequence
+  const patientId = props.patientId
+  const planId = props.planId
   const cfg = multiToothConfig.value
   if (!cfg) return
   const sortedTeeth = [...multiToothSelection.value.teeth].sort((a, b) => a - b)
@@ -485,22 +564,41 @@ async function confirmMultiToothSelection(
     payload.catalog_item_id = selectedCatalogItemId.value
   }
 
-  const created = await createTreatment(props.patientId, payload)
-  if (!created) {
-    showMultiToothConfirm.value = false
-    return
-  }
+  isSavingTreatment.value = true
+  try {
+    let created: Treatment | undefined
+    let treatmentId: string
+    if (isPlanningMode.value && planId) {
+      const item = await treatmentPlansApi.addItem(planId, { create_treatment: payload })
+      if (!item) return
+      if (operationSequence !== patientMutationSequence || patientId !== props.patientId || planId !== props.planId) return
+      treatmentId = item.treatment_id
+      await fetchTreatments(patientId)
+      if (operationSequence !== patientMutationSequence || patientId !== props.patientId || planId !== props.planId) return
+      created = treatments.value.find(treatment => treatment.id === treatmentId)
+    } else {
+      const result = await createTreatment(patientId, payload)
+      if (!result) return
+      if (operationSequence !== patientMutationSequence || patientId !== props.patientId || planId !== props.planId) return
+      created = result
+      treatmentId = result.id
+    }
 
-  if (isPlanningMode.value && props.planId) {
-    await treatmentPlansApi.addItem(props.planId, { treatment_id: created.id })
+    undoStack.value.push({ treatmentId, type: cfg.key })
+    resetMultiToothSelection()
+    if (created) emit('treatmentAdd', created)
+    emit('treatmentsChanged')
+    selectedTooth.value = null
+    selectedTreatmentType.value = null
+    selectedCatalogItemId.value = null
+    toast.add({
+      title: t('odontogram.treatments.treatmentAdded'),
+      color: 'success',
+      actions: [{ label: t('common.undo'), onClick: handleUndo }]
+    })
+  } finally {
+    if (operationSequence === patientMutationSequence) isSavingTreatment.value = false
   }
-
-  undoStack.value.push({ treatmentId: created.id, type: cfg.key })
-  resetMultiToothSelection()
-  emit('treatmentAdd', created)
-  emit('treatmentsChanged')
-  selectedTreatmentType.value = null
-  selectedCatalogItemId.value = null
 }
 
 function resetMultiToothSelection() {
@@ -514,8 +612,11 @@ function handleToothContextMenu(toothNumber: number, event: MouseEvent) {
   // Context menu could be implemented here if needed
 }
 
-async function applyTreatment(toothNumber: number, surfaces?: Surface[]) {
-  if (!selectedTreatmentType.value && !selectedCatalogItemId.value) return
+async function applyTreatment(toothNumber: number, surfaces?: Surface[]): Promise<boolean> {
+  if (isSavingTreatment.value || (!selectedTreatmentType.value && !selectedCatalogItemId.value)) return false
+  const operationSequence = patientMutationSequence
+  const patientId = props.patientId
+  const planId = props.planId
 
   let status: TreatmentStatus = selectedTreatmentStatus.value
   if (isDiagnosisMode.value) status = 'existing'
@@ -534,41 +635,73 @@ async function applyTreatment(toothNumber: number, surfaces?: Surface[]) {
   }
   if (surfaces?.length) payload.surfaces = surfaces
 
-  const treatment = await createTreatment(props.patientId, payload)
-  if (!treatment) return
+  isSavingTreatment.value = true
+  try {
+    let treatment: Treatment | undefined
+    let treatmentId: string
+    let clinicalType = selectedTreatmentType.value || 'other'
+    if (isPlanningMode.value && planId) {
+      const item = await treatmentPlansApi.addItem(planId, { create_treatment: payload })
+      if (!item) return false
+      if (operationSequence !== patientMutationSequence || patientId !== props.patientId || planId !== props.planId) return false
+      treatmentId = item.treatment_id
+      await fetchTreatments(patientId)
+      if (operationSequence !== patientMutationSequence || patientId !== props.patientId || planId !== props.planId) return false
+      treatment = treatments.value.find(row => row.id === treatmentId)
+      clinicalType = treatment?.clinical_type || clinicalType
+    } else {
+      const created = await createTreatment(patientId, payload)
+      if (!created) return false
+      if (operationSequence !== patientMutationSequence || patientId !== props.patientId || planId !== props.planId) return false
+      treatment = created
+      treatmentId = created.id
+      clinicalType = created.clinical_type
+    }
 
-  // In planning mode linked to a specific plan, attach the new Treatment as a
-  // PlannedTreatmentItem so it shows up in the plan's list.
-  if (isPlanningMode.value && props.planId) {
-    await treatmentPlansApi.addItem(props.planId, { treatment_id: treatment.id })
+    undoStack.value.push({ treatmentId, type: clinicalType })
+    toast.add({
+      title: `${t(`odontogram.treatments.types.${clinicalType}`, clinicalType)} - ${t('odontogram.tooth')} ${toothNumber}`,
+      description: t('odontogram.treatments.treatmentAdded'),
+      color: 'success',
+      actions: [{ label: t('common.undo'), onClick: handleUndo }]
+    })
+    if (treatment) emit('treatmentAdd', treatment)
+    emit('treatmentsChanged')
+    if (isDiagnosisMode.value && selectedCatalogItemId.value) {
+      const diagnosis = catalogTreatments.value.find(item => item.id === selectedCatalogItemId.value)
+      if (diagnosis?.recommended_treatment_id) {
+        emit('treatmentRecommendation', {
+          catalogItemId: diagnosis.recommended_treatment_id,
+          diagnosisName: diagnosis.names[locale.value] || diagnosis.names.ru || diagnosis.names.en || diagnosis.internal_code,
+          toothNumber
+        })
+      }
+    }
+    selectedTooth.value = null
+    selectedTreatmentType.value = null
+    selectedCatalogItemId.value = null
+    showSurfaceSelector.value = false
+    return true
+  } finally {
+    if (operationSequence === patientMutationSequence) isSavingTreatment.value = false
   }
-
-  undoStack.value.push({ treatmentId: treatment.id, type: treatment.clinical_type })
-
-  toast.add({
-    title: `${t(`odontogram.treatments.types.${treatment.clinical_type}`, treatment.clinical_type)} - ${t('odontogram.tooth')} ${toothNumber}`,
-    description: t('odontogram.treatments.treatmentAdded'),
-    color: 'success',
-    actions: [{ label: t('common.undo'), onClick: handleUndo }]
-  })
-
-  emit('treatmentAdd', treatment)
-  emit('treatmentsChanged')
-  selectedTreatmentType.value = null
-  selectedCatalogItemId.value = null
 }
 
-function handleSurfaceConfirm(surfaces: Surface[]) {
-  if (selectedTooth.value && surfaces.length) {
-    applyTreatment(selectedTooth.value, surfaces)
+async function handleSurfaceConfirm(surfaces: Surface[]) {
+  if (selectedTooth.value && (surfaces.length || isDiagnosisMode.value)) {
+    const applied = await applyTreatment(selectedTooth.value, surfaces)
+    if (applied) selectedTooth.value = null
   }
-  selectedTooth.value = null
 }
 
 async function handleUndo() {
   const lastAction = undoStack.value.pop()
   if (!lastAction) return
-  await deleteTreatment(lastAction.treatmentId)
+  const deleted = await deleteTreatment(lastAction.treatmentId)
+  if (!deleted) {
+    undoStack.value.push(lastAction)
+    return
+  }
   emit('treatmentsChanged')
   toast.add({ title: t('common.undone'), color: 'neutral' })
 }
@@ -576,6 +709,8 @@ async function handleUndo() {
 function cancelClickToApplyMode() {
   selectedTreatmentType.value = null
   selectedCatalogItemId.value = null
+  selectedTooth.value = null
+  showSurfaceSelector.value = false
   hoveredTooth.value = null
   resetMultiToothSelection()
 }
@@ -583,9 +718,15 @@ function cancelClickToApplyMode() {
 // Global treatments are created inside TreatmentBar using its own useTreatments()
 // instance, so the chart's local treatments[] doesn't see them — refetch so the
 // globals strip and any parent listeners stay in sync.
-async function handleGlobalTreatmentApplied(treatment: Treatment) {
-  await fetchTreatments(props.patientId)
-  emit('treatmentAdd', treatment)
+async function handleGlobalTreatmentApplied(treatmentId: string) {
+  const patientId = props.patientId
+  await fetchTreatments(patientId)
+  if (patientId !== props.patientId) return
+  const treatment = treatments.value.find(row => row.id === treatmentId)
+  if (treatment) emit('treatmentAdd', treatment)
+  selectedTooth.value = null
+  selectedTreatmentType.value = null
+  selectedCatalogItemId.value = null
   emit('treatmentsChanged')
 }
 
@@ -671,10 +812,17 @@ async function handleTimelineDateChange(date: string | null) {
 
 async function onHistoryExpanded(expanded: boolean) {
   if (expanded && !historyData.value.length) {
+    const requestId = ++historyRequestSequence
+    const patientId = props.patientId
     historyLoading.value = true
-    const response = await fetchPatientHistory(props.patientId)
-    if (response) historyData.value = response.data
-    historyLoading.value = false
+    try {
+      const response = await fetchPatientHistory(patientId)
+      if (requestId === historyRequestSequence && patientId === props.patientId && response) {
+        historyData.value = response.data
+      }
+    } finally {
+      if (requestId === historyRequestSequence) historyLoading.value = false
+    }
   }
 }
 
@@ -694,7 +842,7 @@ defineExpose({
           {{ t('odontogram.title') }}
         </h3>
         <UBadge
-          v-if="mode === 'view-only'"
+          v-if="isReadonly"
           :label="t('odontogram.readOnly')"
           color="neutral"
           variant="subtle"
@@ -749,7 +897,7 @@ defineExpose({
 
     <!-- Load error — never fall through to a fabricated healthy mouth. -->
     <UAlert
-      v-else-if="error"
+      v-else-if="loadError"
       icon="i-lucide-triangle-alert"
       color="error"
       variant="subtle"
@@ -767,9 +915,28 @@ defineExpose({
       v-else
       class="flex flex-col gap-4"
     >
-      <div class="odontogram-wrapper" dir="ltr">
+      <UAlert
+        v-if="selectedTooth !== null && !isClickToApplyMode"
+        icon="i-lucide-tooth"
+        color="primary"
+        variant="subtle"
+        :title="`${t('odontogram.tooth')} ${selectedTooth}`"
+        :description="t('odontogram.instructions.selectTreatment')"
+        :actions="[{
+          label: t('common.cancel'),
+          color: 'neutral',
+          variant: 'ghost',
+          onClick: clearSelectedTooth
+        }]"
+        role="status"
+      />
+
+      <div
+        class="odontogram-wrapper"
+        dir="ltr"
+      >
         <div
-          class="odontogram-grid bg-surface rounded-lg border border-default p-4"
+          class="odontogram-grid bg-surface rounded-lg border border-default p-4 pb-10"
           :class="{ 'cursor-crosshair': isClickToApplyMode }"
         >
           <!-- Upper arch -->
@@ -790,7 +957,7 @@ defineExpose({
                 :teeth="teethLayout.upperRight"
                 :get-tooth-data="getToothData"
                 :get-treatments="getFilteredTreatments"
-                :readonly="isReadonly"
+                :readonly="isReadonly || isSavingTreatment"
                 :selected-tooth="selectedTooth"
                 :show-lateral="showLateral"
                 :hovered-tooth="hoveredTooth"
@@ -813,7 +980,7 @@ defineExpose({
                 :teeth="teethLayout.upperLeft"
                 :get-tooth-data="getToothData"
                 :get-treatments="getFilteredTreatments"
-                :readonly="isReadonly"
+                :readonly="isReadonly || isSavingTreatment"
                 :selected-tooth="selectedTooth"
                 :show-lateral="showLateral"
                 :hovered-tooth="hoveredTooth"
@@ -849,7 +1016,7 @@ defineExpose({
                 :teeth="teethLayout.lowerRight"
                 :get-tooth-data="getToothData"
                 :get-treatments="getFilteredTreatments"
-                :readonly="isReadonly"
+                :readonly="isReadonly || isSavingTreatment"
                 :selected-tooth="selectedTooth"
                 :show-lateral="showLateral"
                 :hovered-tooth="hoveredTooth"
@@ -872,7 +1039,7 @@ defineExpose({
                 :teeth="teethLayout.lowerLeft"
                 :get-tooth-data="getToothData"
                 :get-treatments="getFilteredTreatments"
-                :readonly="isReadonly"
+                :readonly="isReadonly || isSavingTreatment"
                 :selected-tooth="selectedTooth"
                 :show-lateral="showLateral"
                 :hovered-tooth="hoveredTooth"
@@ -908,7 +1075,7 @@ defineExpose({
 
       <!-- Treatment Bar -->
       <TreatmentBar
-        v-if="!isReadonly"
+        v-if="!isReadonly && !(isDiagnosisMode && showSurfaceSelector)"
         v-model:selected-treatment="selectedTreatmentType"
         v-model:selected-catalog-item-id="selectedCatalogItemId"
         :selected-status="selectedTreatmentStatus"
@@ -916,9 +1083,9 @@ defineExpose({
         :plan-context-title="planTitle"
         :patient-id="patientId"
         :mode="treatmentBarMode"
-        :disabled="isReadonly"
+        :disabled="isReadonly || isSavingTreatment"
         @update:selected-status="selectedTreatmentStatus = $event"
-        @treatment-select="selectedTreatmentType = $event"
+        @treatment-select="handleTreatmentSelected"
         @treatment-applied="handleGlobalTreatmentApplied"
         @cancel="cancelClickToApplyMode"
       />
@@ -945,9 +1112,12 @@ defineExpose({
     <!-- Surface selector popup -->
     <SurfaceSelectorPopup
       v-model:open="showSurfaceSelector"
+      v-model:selected-treatment="selectedTreatmentType"
+      v-model:selected-catalog-item-id="selectedCatalogItemId"
       :tooth-number="selectedTooth || 0"
       :treatment-type="(selectedTreatmentType as ClinicalType) || 'filling_composite'"
       :status="selectedTreatmentStatus"
+      :diagnosis-mode="isDiagnosisMode"
       @confirm="handleSurfaceConfirm"
       @cancel="selectedTooth = null"
     />
@@ -1007,7 +1177,7 @@ defineExpose({
     <!-- Free-mode selection summary bar (prompts user to confirm) -->
     <div
       v-if="multiToothConfig && multiToothConfig.selectionMode === 'free' && multiToothSelection.teeth.length > 0 && !showMultiToothConfirm"
-      class="fixed bottom-4 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 rounded-lg border border-default bg-surface shadow-lg px-4 py-2"
+      class="fixed bottom-[calc(5.5rem+env(safe-area-inset-bottom))] lg:bottom-4 left-1/2 -translate-x-1/2 z-40 flex max-w-[calc(100vw-1rem)] flex-wrap items-center justify-center gap-2 rounded-lg border border-default bg-surface px-4 py-2 shadow-lg"
     >
       <UIcon
         name="i-lucide-link"

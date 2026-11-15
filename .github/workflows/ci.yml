@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, develop, ru-locale]
   pull_request:
     branches: [main, develop]
 
@@ -386,6 +386,10 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm ci --no-audit --no-fund
+
+      - name: Generate modules.json with checkout layer paths
+        working-directory: frontend
+        run: node scripts/modules-json.mjs ./module_layers
 
       - name: Run tests
         working-directory: frontend

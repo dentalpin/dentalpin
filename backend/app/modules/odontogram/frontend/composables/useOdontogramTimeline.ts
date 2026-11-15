@@ -40,6 +40,21 @@ export function useOdontogramTimeline() {
   /** Loading state */
   const loading = ref(false)
 
+  let activePatientId: string | null = null
+  let timelineRequestSequence = 0
+  let historyRequestSequence = 0
+
+  function usePatient(patientId: string): void {
+    if (activePatientId === patientId) return
+    activePatientId = patientId
+    timelineRequestSequence++
+    historyRequestSequence++
+    timelineDates.value = []
+    viewingDate.value = null
+    historicalTeeth.value = []
+    historicalTreatments.value = []
+    loading.value = false
+  }
   // ============================================================================
   // Computed
   // ============================================================================
@@ -53,8 +68,11 @@ export function useOdontogramTimeline() {
 
   /** Fetch timeline dates for a patient */
   async function fetchTimeline(patientId: string): Promise<void> {
+    usePatient(patientId)
+    const requestId = ++timelineRequestSequence
     if (!can(PERMISSIONS.odontogram.read)) {
       timelineDates.value = []
+      loading.value = false
       return
     }
     loading.value = true
@@ -65,50 +83,62 @@ export function useOdontogramTimeline() {
       }>>(
         `/api/v1/odontogram/patients/${patientId}/odontogram/timeline`
       )
-      timelineDates.value = response.data.dates
+      if (requestId === timelineRequestSequence) timelineDates.value = response.data.dates
     } catch (err) {
       console.error('Error fetching timeline:', err)
-      timelineDates.value = []
+      if (requestId === timelineRequestSequence) timelineDates.value = []
     } finally {
-      loading.value = false
+      if (requestId === timelineRequestSequence) loading.value = false
     }
   }
 
   /** Fetch odontogram state at a specific date */
   async function fetchOdontogramAtDate(patientId: string, date: string): Promise<void> {
+    usePatient(patientId)
+    const requestId = ++historyRequestSequence
     loading.value = true
     try {
       const response = await api.get<ApiResponse<OdontogramData>>(
         `/api/v1/odontogram/patients/${patientId}/odontogram/at?date=${date}`,
         { errorToast: false }
       )
-      historicalTeeth.value = response.data.teeth
-      historicalTreatments.value = response.data.treatments || []
-      viewingDate.value = date
+      if (requestId === historyRequestSequence) {
+        historicalTeeth.value = response.data.teeth
+        historicalTreatments.value = response.data.treatments || []
+        viewingDate.value = date
+      }
     } catch (err) {
       console.error('Error fetching historical odontogram:', err)
-      toast.add({
-        title: t('common.error'),
-        color: 'error'
-      })
+      if (requestId === historyRequestSequence) {
+        toast.add({
+          title: t('common.error'),
+          color: 'error'
+        })
+      }
     } finally {
-      loading.value = false
+      if (requestId === historyRequestSequence) loading.value = false
     }
   }
 
   /** Return to current/live view */
   function returnToCurrentView(): void {
+    historyRequestSequence++
     viewingDate.value = null
     historicalTeeth.value = []
     historicalTreatments.value = []
+    loading.value = false
   }
 
   /** Reset all timeline state */
   function reset(): void {
+    timelineRequestSequence++
+    historyRequestSequence++
+    activePatientId = null
     timelineDates.value = []
     viewingDate.value = null
     historicalTeeth.value = []
     historicalTreatments.value = []
+    loading.value = false
   }
 
   // ============================================================================

@@ -124,7 +124,7 @@ const isActive = computed(() => Boolean(props.modelValue.from || props.modelValu
     </UButton>
 
     <template #content>
-      <div class="p-3 w-[260px] flex flex-col gap-3">
+      <div class="flex w-[min(260px,90vw)] flex-col gap-3 p-3">
         <div class="flex flex-wrap gap-1">
           <UButton
             size="xs"

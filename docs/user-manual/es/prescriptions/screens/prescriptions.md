@@ -2,7 +2,7 @@
 module: prescriptions
 screen: prescriptions
 route: /prescriptions
-last_verified_commit: b631b127955584bc7d5350275232ffa9b1abdfa9
+last_verified_commit: 71402014
 related_endpoints:
   - GET /api/v1/prescriptions/patients/{patient_id}/prescriptions
   - POST /api/v1/prescriptions/patients/{patient_id}/prescriptions
@@ -43,3 +43,5 @@ borrador desde la ficha del paciente (acción "Nueva receta").
 - El editor exige al menos una línea, incluye campo de vía y limpia
   `&new=1` de la URL al abrir.
 - Atiende el aviso de alergias/interacciones — avisa, nunca bloquea.
+- En pantallas estrechas, los campos del medicamento se apilan; en pantallas
+  amplias se muestran tres por fila.

@@ -1,20 +1,22 @@
 """Smoke tests for the treatment plan module after the Treatment refactor."""
 
 from decimal import Decimal
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth.models import Clinic, ClinicMembership
+from app.core.auth.models import Clinic, ClinicMembership, User
+from app.core.auth.service import hash_password
 from app.modules.catalog.models import (
     TreatmentCatalogItem,
     TreatmentCategory,
     TreatmentOdontogramMapping,
     VatType,
 )
+from app.modules.odontogram.models import Treatment
 
 
 async def _ensure_clinic_and_patient(
@@ -189,6 +191,89 @@ async def test_create_empty_plan(client: AsyncClient, auth_headers: dict, setup:
 
 
 @pytest.mark.asyncio
+async def test_batch_create_groups_multiple_diagnoses_and_keeps_plan_for_doctor_review(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """The complete estimate is persisted in one draft before confirmation."""
+    response = await client.post(
+        "/api/v1/treatment_plan/treatment-plans/batch",
+        headers=auth_headers,
+        json={
+            "plan": {
+                "patient_id": setup["patient_id"],
+                "title": "Multi-tooth treatment proposal",
+            },
+            "items": [
+                {
+                    "create_treatment": {
+                        "catalog_item_id": setup["crown_id"],
+                        "tooth_numbers": [14, 15],
+                    }
+                },
+                {
+                    "create_treatment": {
+                        "catalog_item_id": setup["crown_id"],
+                        "tooth_numbers": [26],
+                    }
+                },
+            ],
+        },
+    )
+
+    assert response.status_code == 201, response.text
+    plan = response.json()["data"]
+    assert plan["status"] == "draft"
+    assert plan["budget_id"] is None
+    assert len(plan["items"]) == 2
+    assert [item["sequence_order"] for item in plan["items"]] == [1, 2]
+    assert [
+        [tooth["tooth_number"] for tooth in item["treatment"]["teeth"]] for item in plan["items"]
+    ] == [[14, 15], [26]]
+
+
+@pytest.mark.asyncio
+async def test_batch_create_rolls_back_plan_and_valid_lines_when_any_line_is_invalid(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup: dict,
+    db_session: AsyncSession,
+) -> None:
+    response = await client.post(
+        "/api/v1/treatment_plan/treatment-plans/batch",
+        headers=auth_headers,
+        json={
+            "plan": {"patient_id": setup["patient_id"], "title": "Must roll back"},
+            "items": [
+                {
+                    "create_treatment": {
+                        "catalog_item_id": setup["crown_id"],
+                        "tooth_numbers": [14],
+                    }
+                },
+                {"treatment_id": str(uuid4())},
+            ],
+        },
+    )
+    assert response.status_code == 400, response.text
+
+    plans = await client.get(
+        "/api/v1/treatment_plan/treatment-plans?patient_id=" + setup["patient_id"],
+        headers=auth_headers,
+    )
+    assert all(plan["title"] != "Must roll back" for plan in plans.json()["data"])
+    treatments = (
+        (
+            await db_session.execute(
+                select(Treatment).where(Treatment.patient_id == UUID(setup["patient_id"]))
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert treatments == []
+
+
+@pytest.mark.asyncio
 async def test_add_treatment_item_to_plan(
     client: AsyncClient, auth_headers: dict, setup: dict
 ) -> None:
@@ -209,6 +294,80 @@ async def test_add_treatment_item_to_plan(
     data = r.json()["data"]
     assert data["treatment_id"] == treatment_id
     assert data["status"] == "pending"
+
+
+@pytest.mark.asyncio
+async def test_create_treatment_and_plan_item_atomically(
+    client: AsyncClient,
+    auth_headers: dict[str, str],
+    setup: dict,
+    db_session: AsyncSession,
+) -> None:
+    plan_resp = await client.post(
+        "/api/v1/treatment_plan/treatment-plans",
+        headers=auth_headers,
+        json={"patient_id": setup["patient_id"], "title": "Atomic plan"},
+    )
+    plan_id = plan_resp.json()["data"]["id"]
+
+    response = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
+        headers=auth_headers,
+        json={
+            "create_treatment": {
+                "catalog_item_id": setup["crown_id"],
+                "tooth_numbers": [14],
+                "status": "performed",  # plan creation always stores planned treatment
+            }
+        },
+    )
+    assert response.status_code == 201, response.text
+    item = response.json()["data"]
+    assert item["treatment_id"]
+    assert item["treatment"]["id"] == item["treatment_id"]
+
+    treatment = await db_session.get(Treatment, UUID(item["treatment_id"]))
+    assert treatment is not None
+    assert treatment.patient_id == UUID(setup["patient_id"])
+    assert treatment.status == "planned"
+    assert treatment.source_module == "treatment_plan"
+
+
+@pytest.mark.asyncio
+async def test_create_plan_item_rolls_back_invalid_treatment(
+    client: AsyncClient,
+    auth_headers: dict[str, str],
+    setup: dict,
+    db_session: AsyncSession,
+) -> None:
+    plan_resp = await client.post(
+        "/api/v1/treatment_plan/treatment-plans",
+        headers=auth_headers,
+        json={"patient_id": setup["patient_id"], "title": "Rollback plan"},
+    )
+    plan_id = plan_resp.json()["data"]["id"]
+
+    response = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
+        headers=auth_headers,
+        json={
+            "create_treatment": {
+                "catalog_item_id": str(uuid4()),
+                "tooth_numbers": [14],
+            }
+        },
+    )
+    assert response.status_code == 400, response.text
+    rows = (
+        (
+            await db_session.execute(
+                select(Treatment).where(Treatment.patient_id == UUID(setup["patient_id"]))
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert rows == []
 
 
 @pytest.mark.asyncio
@@ -1873,3 +2032,99 @@ async def test_remove_booked_item_answers_409_until_the_appointment_is_cancelled
 
     appointment = await client.get(appointment_url, headers=auth_headers)
     assert appointment.json()["data"]["treatments"] == []
+
+
+@pytest.mark.asyncio
+async def test_diagnosis_to_confirmed_plan_to_assistant_appointment(
+    client: AsyncClient,
+    auth_headers: dict[str, str],
+    setup: dict,
+    db_session: AsyncSession,
+) -> None:
+    crown = await db_session.get(TreatmentCatalogItem, UUID(setup["crown_id"]))
+    assert crown is not None
+    diagnosis = TreatmentCatalogItem(
+        clinic_id=UUID(setup["clinic_id"]),
+        category_id=crown.category_id,
+        internal_code="FLOW-DIAGNOSIS",
+        names={"ru": "Диагноз для проверки"},
+        is_diagnostic=True,
+        recommended_treatment_id=crown.id,
+        treatment_scope="tooth",
+    )
+    db_session.add(diagnosis)
+    await db_session.commit()
+
+    recorded = await client.post(
+        f"/api/v1/odontogram/patients/{setup['patient_id']}/treatments",
+        headers=auth_headers,
+        json={
+            "catalog_item_id": str(diagnosis.id),
+            "clinical_type": "caries",
+            "tooth_numbers": [16],
+            "status": "planned",
+        },
+    )
+    assert recorded.status_code == 201, recorded.text
+
+    plan = await client.post(
+        "/api/v1/treatment_plan/treatment-plans",
+        headers=auth_headers,
+        json={"patient_id": setup["patient_id"], "title": "Plan from diagnosis"},
+    )
+    assert plan.status_code == 201, plan.text
+    plan_id = plan.json()["data"]["id"]
+    planned = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
+        headers=auth_headers,
+        json={
+            "create_treatment": {
+                "catalog_item_id": setup["crown_id"],
+                "tooth_numbers": [16],
+                "status": "planned",
+            }
+        },
+    )
+    assert planned.status_code == 201, planned.text
+    confirmed = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/confirm",
+        headers=auth_headers,
+        json={},
+    )
+    assert confirmed.status_code == 200, confirmed.text
+    assert confirmed.json()["data"]["status"] == "pending"
+
+    assistant = User(
+        id=uuid4(),
+        email=f"flow-assistant-{uuid4().hex[:8]}@test.clinic",
+        password_hash=hash_password("TestPass1234"),
+        first_name="Mia",
+        last_name="Assistant",
+        is_active=True,
+    )
+    db_session.add(assistant)
+    await db_session.flush()
+    db_session.add(
+        ClinicMembership(
+            id=uuid4(), user_id=assistant.id, clinic_id=UUID(setup["clinic_id"]), role="assistant"
+        )
+    )
+    await db_session.commit()
+    appointment = await client.post(
+        "/api/v1/agenda/appointments",
+        headers=auth_headers,
+        json={
+            "patient_id": setup["patient_id"],
+            "professional_id": setup["user_id"],
+            "assistant_id": str(assistant.id),
+            "planned_item_ids": [planned.json()["data"]["id"]],
+            "start_time": "2026-12-01T09:00:00Z",
+            "end_time": "2026-12-01T09:30:00Z",
+        },
+    )
+    assert appointment.status_code == 201, appointment.text
+    assert appointment.json()["data"]["assistant_id"] == str(assistant.id)
+    assert (
+        appointment.json()["data"]["treatments"][0]["planned_item_id"]
+        == planned.json()["data"]["id"]
+    )

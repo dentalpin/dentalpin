@@ -96,13 +96,13 @@ function onReset() {
 
 <template>
   <div
-    class="flex items-center gap-2 w-full"
+    class="flex w-full flex-wrap items-center gap-2"
     :class="sticky && 'sticky top-0 z-10 bg-[var(--color-surface)] py-2'"
   >
     <!-- Search (always left) -->
     <div
       v-if="$slots.search"
-      class="shrink-0 w-full max-w-xs"
+      class="w-full max-w-xs shrink-0"
     >
       <slot name="search" />
     </div>
@@ -156,7 +156,7 @@ function onReset() {
     <!-- Right region: sort, pinned right -->
     <div
       v-if="$slots.right"
-      class="shrink-0 ms-auto md:ms-0"
+      class="ms-auto shrink-0"
     >
       <slot name="right" />
     </div>

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Ihr nächster Kontrolltermin bei {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}Ihr nächster Kontrolltermin bei {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>Es ist Zeit für Ihren nächsten Kontrolltermin</h2>
 
 <p>Hallo {{ patient_name }},</p>
 
-<p>wir haben Ihren nächsten Kontrolltermin{% if due_month %} für <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} bei <strong>{{ clinic_name | default('DentalPin') }}</strong> vorgemerkt.</p>
+<p>wir haben Ihren nächsten Kontrolltermin{% if due_month %} für <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} bei <strong>{{ clinic_name | default('Dentum') }}</strong> vorgemerkt.</p>
 
 <p>Kontaktieren Sie uns, um den Termin zu vereinbaren, der Ihnen am besten passt.</p>
 

@@ -746,6 +746,7 @@ class TreatmentService:
                 "created_by": str(user_id),
                 "created_at": now.isoformat(),
             },
+            db=db,
         )
 
         reloaded = await TreatmentService.get_treatment(db, clinic_id, treatment.id)
@@ -787,6 +788,7 @@ class TreatmentService:
                     else None,
                     "changed_by": str(user_id),
                 },
+                db=db,
             )
 
         if notes is not None:
@@ -890,5 +892,5 @@ class TreatmentService:
         }
         treatment.deleted_at = datetime.now(UTC)
         await db.flush()
-        await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_DELETED, event_data)
+        await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_DELETED, event_data, db=db)
         return True

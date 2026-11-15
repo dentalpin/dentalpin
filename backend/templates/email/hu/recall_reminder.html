@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}Az Ön következő kontrollvizsgálata – {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}Az Ön következő kontrollvizsgálata – {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>Itt az ideje a következő kontrollvizsgálatnak</h2>
 
 <p>Kedves {{ patient_name }}!</p>
 
-<p>Beütemeztük az Ön következő kontrollvizsgálatát{% if due_month %} erre az időszakra: <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} a(z) <strong>{{ clinic_name | default('DentalPin') }}</strong> rendelőben.</p>
+<p>Beütemeztük az Ön következő kontrollvizsgálatát{% if due_month %} erre az időszakra: <strong>{{ due_month }}</strong>{% endif %}{% if reason %} ({{ reason }}){% endif %} a(z) <strong>{{ clinic_name | default('Dentum') }}</strong> rendelőben.</p>
 
 <p>Vegye fel velünk a kapcsolatot, és foglalja le az Önnek legmegfelelőbb időpontot.</p>
 

@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 
-{% block title %}مرحباً بك في {{ clinic_name | default('DentalPin') }}{% endblock %}
+{% block title %}مرحباً بك في {{ clinic_name | default('Dentum') }}{% endblock %}
 
 {% block content %}
 <h2>أهلاً وسهلاً بك!</h2>
 
 <p>مرحباً {{ patient_name }}،</p>
 
-<p>يسعدنا جداً انضمامك وترحيبنا بك في <strong>{{ clinic_name | default('DentalPin') }}</strong>.</p>
+<p>يسعدنا جداً انضمامك وترحيبنا بك في <strong>{{ clinic_name | default('Dentum') }}</strong>.</p>
 
 <p>يمكنك الآن إدارة مواعيدك، والاطلاع على سجل علاجاتك، والوصول إلى كافة خدماتنا بكل سهولة عبر منصتنا.</p>
 

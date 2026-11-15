@@ -4,7 +4,9 @@ from datetime import date, datetime
 from decimal import Decimal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
+
+from app.modules.odontogram.schemas import TreatmentCreate as OdontogramTreatmentCreate
 
 # ---------------------------------------------------------------------------
 # Nested brief schemas
@@ -198,6 +200,7 @@ class TreatmentPlanDetailResponse(TreatmentPlanResponse):
     diagnosis_notes: str | None = None
     internal_notes: str | None = None
     items: list["PlannedTreatmentItemResponse"] = []
+    is_paid: bool = False
 
 
 # ---------------------------------------------------------------------------
@@ -206,14 +209,33 @@ class TreatmentPlanDetailResponse(TreatmentPlanResponse):
 
 
 class PlannedTreatmentItemCreate(BaseModel):
-    """Add a treatment to a plan by Treatment id."""
+    """Add an existing treatment or create one atomically with its plan item."""
 
-    treatment_id: UUID
+    treatment_id: UUID | None = None
+    create_treatment: OdontogramTreatmentCreate | None = None
     sequence_order: int | None = None
     notes: str | None = None
     # When omitted, the service inherits the plan's ``assigned_professional_id``.
     # Pass an explicit value to override at creation time.
     assigned_professional_id: UUID | None = None
+
+    @model_validator(mode="after")
+    def validate_treatment_source(self) -> "PlannedTreatmentItemCreate":
+        if (self.treatment_id is None) == (self.create_treatment is None):
+            raise ValueError("Provide exactly one of treatment_id or create_treatment")
+        return self
+
+
+class BatchTreatmentPlanCreate(BaseModel):
+    """Create a draft plan and its complete clinical proposal atomically.
+
+    Each item represents one diagnosis/procedure decision and may cover one
+    or more teeth. The plan remains a draft until a clinician reviews and
+    confirms the estimate through the existing confirmation workflow.
+    """
+
+    plan: TreatmentPlanCreate
+    items: list[PlannedTreatmentItemCreate] = Field(min_length=1, max_length=100)
 
 
 class PlannedTreatmentItemUpdate(BaseModel):

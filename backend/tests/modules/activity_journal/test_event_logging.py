@@ -149,6 +149,32 @@ async def test_actor_attribution_from_by_suffixed_keys(
 
 
 @pytest.mark.asyncio
+async def test_odontogram_treatment_delete_is_recorded_for_admin_journal(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    actor = uuid4()
+    await event_bus.publish(
+        EventType.ODONTOGRAM_TREATMENT_DELETED,
+        {
+            "clinic_id": str(test_clinic.id),
+            "patient_id": str(uuid4()),
+            "treatment_id": str(uuid4()),
+            "deleted_by": str(actor),
+        },
+        db=db_session,
+    )
+    entry = (
+        await db_session.execute(
+            select(ActivityJournalEntry).where(
+                ActivityJournalEntry.clinic_id == test_clinic.id
+            )
+        )
+    ).scalars().one()
+    assert entry.event_type == "odontogram.treatment.deleted"
+    assert entry.actor_id == actor
+
+
+@pytest.mark.asyncio
 async def test_malformed_ids_degrade_to_null_not_crash(
     db_session: AsyncSession, test_clinic: Clinic
 ):

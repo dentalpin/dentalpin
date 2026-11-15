@@ -34,6 +34,8 @@ export function useOdontogramData() {
   const odontogramData = ref<OdontogramData | null>(null)
   const loading = ref(false)
   const error = ref<string | null>(null)
+  let fetchSequence = 0
+  let activePatientId: string | null = null
 
   // ============================================================================
   // Computed
@@ -74,8 +76,18 @@ export function useOdontogramData() {
 
   /** Fetch odontogram for a patient */
   async function fetchOdontogram(patientId: string): Promise<void> {
+    const requestId = ++fetchSequence
+    if (activePatientId !== patientId) {
+      activePatientId = patientId
+      odontogramData.value = null
+    }
     // Roles without chart access (e.g. reception) see no chart at all.
-    if (!can(PERMISSIONS.odontogram.read)) return
+    if (!can(PERMISSIONS.odontogram.read)) {
+      odontogramData.value = null
+      error.value = 'Failed to load odontogram'
+      loading.value = false
+      return
+    }
     loading.value = true
     error.value = null
 
@@ -85,12 +97,15 @@ export function useOdontogramData() {
         `/api/v1/odontogram/patients/${patientId}/odontogram`,
         { errorToast: false }
       )
-      odontogramData.value = response.data
+      if (requestId === fetchSequence) odontogramData.value = response.data
     } catch (err) {
-      error.value = 'Failed to load odontogram'
       console.error('Error fetching odontogram:', err)
+      if (requestId === fetchSequence) {
+        odontogramData.value = null
+        error.value = 'Failed to load odontogram'
+      }
     } finally {
-      loading.value = false
+      if (requestId === fetchSequence) loading.value = false
     }
   }
 
@@ -212,8 +227,11 @@ export function useOdontogramData() {
 
   /** Reset local state */
   function reset(): void {
+    fetchSequence++
+    activePatientId = null
     odontogramData.value = null
     error.value = null
+    loading.value = false
   }
 
   // ============================================================================

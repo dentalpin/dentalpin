@@ -10,7 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.core.auth.models import ClinicMembership
+from app.core.auth.models import ClinicMembership, User
 
 from ..models import (
     ProfessionalOverride,
@@ -32,6 +32,36 @@ class ProfessionalHoursService:
             .limit(1)
         )
         return result.scalar_one_or_none() is not None
+
+    @staticmethod
+    async def is_assistant(db: AsyncSession, clinic_id: UUID, user_id: UUID) -> bool:
+        result = await db.execute(
+            select(ClinicMembership.id)
+            .where(
+                ClinicMembership.clinic_id == clinic_id,
+                ClinicMembership.user_id == user_id,
+                ClinicMembership.role == "assistant",
+            )
+            .limit(1)
+        )
+        return result.scalar_one_or_none() is not None
+
+    @staticmethod
+    async def list_assistants(db: AsyncSession, clinic_id: UUID) -> list[dict[str, object]]:
+        result = await db.execute(
+            select(User.id, User.first_name, User.last_name)
+            .join(ClinicMembership, ClinicMembership.user_id == User.id)
+            .where(
+                ClinicMembership.clinic_id == clinic_id,
+                ClinicMembership.role == "assistant",
+                User.is_active.is_(True),
+            )
+            .order_by(User.last_name, User.first_name)
+        )
+        return [
+            {"user_id": row.id, "first_name": row.first_name, "last_name": row.last_name}
+            for row in result.all()
+        ]
 
     @staticmethod
     async def get_or_create_weekly(

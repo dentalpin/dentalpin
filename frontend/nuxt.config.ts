@@ -149,7 +149,18 @@ export default defineNuxtConfig({
     tsConfig: {
       include: localLayers.map(layer => join('..', layer, '**/*')),
       // Layer nuxt.config files belong to the node tsconfig, not the app one.
-      exclude: localLayers.map(layer => join('..', layer, 'nuxt.config.*'))
+      exclude: localLayers.map(layer => join('..', layer, 'nuxt.config.*')),
+      // Module layers live outside frontend/, so TypeScript otherwise
+      // searches for their bare imports under backend/app/modules/**/node_modules.
+      // Keep the app's real package declarations visible to every layer.
+      compilerOptions: {
+        paths: {
+          '@nuxt/ui': ['../node_modules/@nuxt/ui'],
+          'isomorphic-dompurify': ['../node_modules/isomorphic-dompurify'],
+          'marked': ['../node_modules/marked'],
+          'vue-draggable-plus': ['../node_modules/vue-draggable-plus']
+        }
+      }
     }
   },
 

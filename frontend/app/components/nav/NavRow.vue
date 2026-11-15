@@ -11,6 +11,7 @@ defineProps<{
   active: boolean
   padded?: 'compact' | 'roomy'
   hideLabel?: boolean
+  count?: number
 }>()
 </script>
 
@@ -34,5 +35,14 @@ defineProps<{
       v-if="!hideLabel"
       class="truncate"
     >{{ label }}</span>
+    <UBadge
+      v-if="count && count > 0"
+      color="primary"
+      variant="subtle"
+      size="xs"
+      class="ms-auto tnum"
+    >
+      {{ count > 99 ? '99+' : count }}
+    </UBadge>
   </NuxtLink>
 </template>

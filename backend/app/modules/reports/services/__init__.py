@@ -6,6 +6,7 @@ from .budget import BudgetReportService
 from .financial import FinancialReportService
 from .operational import OperationalReportService
 from .patients import PatientStatsService
+from .plan_conversion import PlanConversionReportService
 from .scheduling import SchedulingReportService
 
 __all__ = [
@@ -15,5 +16,6 @@ __all__ = [
     "FinancialReportService",
     "OperationalReportService",
     "PatientStatsService",
+    "PlanConversionReportService",
     "SchedulingReportService",
 ]

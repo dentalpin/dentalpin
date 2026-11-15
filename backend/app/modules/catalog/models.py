@@ -180,6 +180,9 @@ class TreatmentCatalogItem(Base, TimestampMixin):
     treatment_scope: Mapped[str] = mapped_column(String(20), default="tooth")
     is_diagnostic: Mapped[bool] = mapped_column(Boolean, default=False)
     requires_surfaces: Mapped[bool] = mapped_column(Boolean, default=False)
+    recommended_treatment_id: Mapped[UUID | None] = mapped_column(
+        ForeignKey("treatment_catalog_items.id", ondelete="SET NULL"), nullable=True, index=True
+    )
 
     # Billing configuration
     billing_mode: Mapped[str] = mapped_column(

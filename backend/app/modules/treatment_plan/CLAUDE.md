@@ -35,7 +35,7 @@ it, so the detail endpoint is `/api/v1/treatment_plan/treatment-plans/{id}`).
 - `POST  /treatment-plans`              — create; `treatment_plan.plans.write`
 - `GET   /treatment-plans/{id}`         — detail
 - `PUT   /treatment-plans/{id}`         — update; status transitions
-- `POST  /treatment-plans/{id}/items`   — add item from catalog or odontogram tooth treatment
+- `POST  /treatment-plans/{id}/items`   — add an existing treatment (`treatment_id`) or atomically create one (`create_treatment`)
 - `PUT   /treatment-plans/{id}/items/reorder`
 - `POST  /treatment-plans/{id}/items/{item_id}/complete`
 - `POST  /treatment-plans/{id}/confirm`     — `plans.confirm`; draft → pending
@@ -72,7 +72,7 @@ the `clinical_notes` module since issue #60.
 | `treatment_plan.confirmed` | draft → pending | snapshot payload (items, totals, patient). Subscriber: `patient_timeline`. |
 | `treatment_plan.closed` | any → closed | payload includes `closure_reason`. Subscriber: `patient_timeline`. |
 | `treatment_plan.reactivated` | closed → draft | Subscriber: `patient_timeline`. |
-| `treatment_plan.treatment_added` | item added | snapshot payload (catalog_item_id, tooth, surfaces, unit_price, budget_id). Subscriber: `budget`. |
+| `treatment_plan.treatment_added` | item added | snapshot payload (catalog_item_id, tooth, surfaces, unit_price, budget_id, `created_by`). Subscriber: `budget`, admin journal. |
 | `treatment_plan.treatment_removed` | item removed | payload includes `budget_id`. Subscriber: `budget`. |
 | `treatment_plan.treatment_completed` | item marked done | consumed by `patient_timeline`, `recalls`. Payload includes `treatment_category_key` (snapshot, may be null) so subscribers can map a completed treatment to a follow-up policy without importing catalog or treatment_plan models (issue #62). Earned-ledger generation **moved out** of this event since the multi-session feature — see `item_session_completed` below. |
 | `treatment_plan.item_session_completed` | one session of a multi-session item marked done | payload: `{plan_id, item_id, session_id, sequence, label, amount, treatment_id, patient_id, completed_by, occurred_at}`. Consumed by `payments` (earned entry, idempotent on `(treatment_id, session_id)`). Fires for every completed session — single-session items publish it once on completion. |
