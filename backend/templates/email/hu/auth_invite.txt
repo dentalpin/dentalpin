@@ -1,0 +1,8 @@
+Kedves {{ first_name }}!
+
+A(z) {{ clinic_name }} rendelő meghívja Önt a Dentum munkaterületére.
+
+Hozza létre jelszavát, majd lépjen be az egyszer használható hivatkozással:
+{{ invite_url }}
+
+A hivatkozás {{ expires_days }} napig érvényes. Ha nem számított erre a meghívóra, hagyja figyelmen kívül ezt az e-mailt.

@@ -65,7 +65,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `telephony` | 0.1.0 | community | patients | manual | yes | 4 | 5 | 0 | yes |
 | `treasury` | 0.1.0 | community | — | manual | yes | 2 | 2 | 0 | yes |
 | `treatment_consumables` | 0.1.0 | community | catalog, inventory | manual | yes | 2 | 0 | 1 | yes |
-| `treatment_plan` | 0.1.0 | official | patients, agenda, odontogram, catalog, budget, media | auto | no | 5 | 13 | 7 | yes |
+| `treatment_plan` | 0.1.0 | official | patients, agenda, odontogram, catalog, budget, media, billing | auto | no | 5 | 13 | 7 | yes |
 | `verifactu` | 0.1.0 | official | billing, catalog | manual | yes | 5 | 1 | 2 | yes |
 | `whatsapp_kapso` | 0.1.0 | community | notifications, patients | manual | yes | 2 | 0 | 0 | yes |
 | `whatsapp_webhook` | 0.1.0 | community | notifications | manual | yes | 2 | 0 | 0 | yes |
@@ -1305,7 +1305,7 @@ Patient treatment plans with budget + odontogram sync.
 - **License:** BSL-1.1
 - **Category:** official
 - **Install policy:** installable=True · auto_install=True · removable=False
-- **Depends:** `patients`, `agenda`, `odontogram`, `catalog`, `budget`, `media`
+- **Depends:** `patients`, `agenda`, `odontogram`, `catalog`, `budget`, `media`, `billing`
 - **Frontend layer:** `frontend`
 - **Permissions:**
   - `treatment_plan.plans.close`

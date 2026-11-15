@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Dentum-இல் சேர அழைப்பு{% endblock %}
+{% block content %}
+<h2>நீங்கள் Dentum-இல் சேர அழைக்கப்பட்டுள்ளீர்கள்</h2>
+<p>வணக்கம் {{ first_name }},</p>
+<p><strong>{{ clinic_name }}</strong> மருத்துவமனை தனது Dentum பணியிடத்தில் சேர உங்களை அழைக்கிறது.</p>
+<div class="button-container"><a href="{{ invite_url }}" class="button">கடவுச்சொல் உருவாக்கி உள்நுழைக</a></div>
+<div class="info-box"><p>இந்த ஒருமுறை இணைப்பு {{ expires_days }} நாட்களுக்கு செல்லுபடியாகும்.</p></div>
+<p>இந்த அழைப்பை எதிர்பார்க்கவில்லை என்றால், இந்த மின்னஞ்சலைப் புறக்கணிக்கலாம்.</p>
+{% endblock %}
+{% block footer %}<p>{{ clinic_name }} மருத்துவமனை இந்த அழைப்பை Dentum வழியாக அனுப்பியுள்ளது.</p>{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Meghívó a Dentumba{% endblock %}
+{% block content %}
+<h2>Meghívást kapott a Dentumba</h2>
+<p>Kedves {{ first_name }}!</p>
+<p>A(z) <strong>{{ clinic_name }}</strong> rendelő meghívja Önt a Dentum munkaterületére.</p>
+<div class="button-container"><a href="{{ invite_url }}" class="button">Jelszó létrehozása és belépés</a></div>
+<div class="info-box"><p>Az egyszer használható hivatkozás {{ expires_days }} napig érvényes.</p></div>
+<p>Ha nem számított erre a meghívóra, hagyja figyelmen kívül ezt az e-mailt.</p>
+{% endblock %}
+{% block footer %}<p>A meghívót a(z) {{ clinic_name }} rendelő küldte a Dentumon keresztül.</p>{% endblock %}

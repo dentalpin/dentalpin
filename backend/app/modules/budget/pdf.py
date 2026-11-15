@@ -1203,6 +1203,51 @@ class BudgetPDFService:
                 "cancelled": "रद्द",
             },
         }
+        labels_ru = {
+            "budget": "Смета",
+            "version": "Версия",
+            "date": "Дата",
+            "draft": "ЧЕРНОВИК",
+            "patient_info": "Данные пациента",
+            "patient": "Пациент",
+            "professional": "Врач",
+            "treatments": "Процедуры",
+            "description": "Описание",
+            "qty": "Кол-во",
+            "unit_price": "Цена за ед.",
+            "discount": "Скидка",
+            "total": "Итого",
+            "subtotal": "Промежуточный итог",
+            "total_discount": "Общая скидка",
+            "tax": "НДС",
+            "grand_total": "ИТОГО К ОПЛАТЕ",
+            "validity": "Срок действия",
+            "from": "с",
+            "until": "по",
+            "no_expiry": "без срока действия",
+            "notes": "Примечания",
+            "patient_signature": "Подпись пациента",
+            "clinic_signature": "Подпись клиники",
+            "signed_by": "Подписал(а)",
+            "signed_at": "Дата подписания",
+            "signature_method": "Способ",
+            "signature_method_drawn": "Собственноручная подпись",
+            "signature_method_click_accept": "Электронное подтверждение",
+            "signature_method_external": "Внешняя подпись",
+            "document_hash": "Хеш документа",
+            "generated_by": "Создано в Dentum",
+            "status": {
+                "draft": "Черновик",
+                "sent": "Отправлена",
+                "accepted": "Принята",
+                "in_progress": "В работе",
+                "completed": "Завершена",
+                "invoiced": "Выставлен счёт",
+                "rejected": "Отклонена",
+                "expired": "Истёк срок действия",
+                "cancelled": "Отменена",
+            },
+        }
         # English is the fallback for a locale we have not translated yet
         # (#485): the route accepts every host locale, so returning the
         # Spanish set for everything non-es printed a Spanish quote to a
@@ -1221,5 +1266,6 @@ class BudgetPDFService:
             "ta": labels_ta,
             "te": labels_te,
             "hi": labels_hi,
+            "ru": labels_ru,
         }
         return by_locale.get(locale, labels_en)

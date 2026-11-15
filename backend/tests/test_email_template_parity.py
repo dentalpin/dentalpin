@@ -9,8 +9,9 @@ the verifactu ``.txt`` bodies and ``es``/``fr``/``pt`` never got
 ``invoice_sent`` before this test existed.
 
 ``pt-BR`` is a host overlay (#509): it may ship only the templates whose
-wording differs from European Portuguese. Missing keys fall through to
-``pt/`` in ``EmailService._render_template``.
+wording differs from European Portuguese. Russian currently overlays only
+the translated account-invitation templates. Missing keys use the renderer's
+locale fallback chain.
 """
 
 from __future__ import annotations
@@ -19,9 +20,23 @@ from pathlib import Path
 
 from app.core.email.service import TEMPLATES_DIR
 
-EXPECTED_LOCALES = {"es", "en", "fr", "pt", "ta", "te", "hi", "de", "hu", "pl", "it", "ar"}
+EXPECTED_LOCALES = {
+    "es",
+    "en",
+    "fr",
+    "pt",
+    "ta",
+    "te",
+    "hi",
+    "de",
+    "hu",
+    "pl",
+    "it",
+    "ar",
+}
 # Overlay dirs: subset of templates, not subject to full-file parity.
-OVERLAY_LOCALES = {"pt-BR"}
+OVERLAY_LOCALES = {"pt-BR", "ru"}
+ALL_COMMUNICATION_LOCALES = EXPECTED_LOCALES | {"ru"}
 
 # Country-specific templates a locale deliberately does not ship: Telugu
 # targets Indian clinics, which never run Spain's Verifactu (AEAT).
@@ -84,6 +99,19 @@ def test_pt_br_overlay_is_a_strict_subset_of_pt() -> None:
         )
 
 
+def test_ru_overlay_is_a_strict_subset_of_en() -> None:
+    """Russian invite copy is translated; other mail falls back to English."""
+    dirs = _locale_dirs()
+    ru_files = {f.name for f in dirs["ru"].iterdir() if f.is_file()}
+    en_files = {f.name for f in dirs["en"].iterdir() if f.is_file()}
+    assert ru_files == {"auth_invite.html", "auth_invite.txt"}
+    assert ru_files <= en_files
+    for name in sorted(ru_files):
+        assert (dirs["ru"] / name).read_text(encoding="utf-8") != (dirs["en"] / name).read_text(
+            encoding="utf-8"
+        )
+
+
 def test_language_gate_accepts_every_template_locale() -> None:
     """The SystemSetup / communications-PATCH gate must match the shipped
     template set — a locale with templates but no gate entry (or vice
@@ -91,7 +119,7 @@ def test_language_gate_accepts_every_template_locale() -> None:
     from app.core.auth.router import _CommunicationsSettingsPatch
     from app.core.auth.schemas import SystemSetup
 
-    for locale in sorted(EXPECTED_LOCALES):
+    for locale in sorted(ALL_COMMUNICATION_LOCALES):
         assert _CommunicationsSettingsPatch(language=locale).language == locale
         setup = SystemSetup(
             admin_first_name="A",
@@ -103,6 +131,10 @@ def test_language_gate_accepts_every_template_locale() -> None:
             language=locale,
         )
         assert setup.language == locale
+
+    from app.core.auth.router import _INVITE_EMAIL_SUBJECTS
+
+    assert set(_INVITE_EMAIL_SUBJECTS) == ALL_COMMUNICATION_LOCALES | {"pt-BR"}
 
 
 def test_language_gate_accepts_pt_br_overlay() -> None:
@@ -121,6 +153,53 @@ def test_language_gate_accepts_pt_br_overlay() -> None:
         language="pt-BR",
     )
     assert setup.language == "pt-BR"
+
+
+def test_ru_email_overlay_renders_and_falls_back_to_english() -> None:
+    from app.core.email.service import EmailService
+
+    service = EmailService()
+    service._initialize()
+    invite = service._render_template(
+        "auth_invite",
+        "ru",
+        {
+            "first_name": "Анна",
+            "clinic_name": "Клиника",
+            "invite_url": "https://example.test/invite",
+            "expires_days": 7,
+        },
+    )
+    assert invite is not None and "Вас пригласили в Dentum" in invite
+    appointment = service._render_template(
+        "appointment_confirmation",
+        "ru",
+        {"clinic_name": "Clinic", "patient_name": "Alex"},
+    )
+    assert appointment is not None
+    assert 'lang="ru"' in appointment
+    assert "Appointment" in appointment
+
+
+def test_invitation_email_renders_html_and_text_for_every_locale() -> None:
+    from app.core.email.service import EmailService
+
+    service = EmailService()
+    service._initialize()
+    context = {
+        "first_name": "Alex",
+        "clinic_name": "Test clinic",
+        "invite_url": "https://example.test/invite-token",
+        "expires_days": 7,
+    }
+    for locale in sorted(ALL_COMMUNICATION_LOCALES | {"pt-BR"}):
+        html = service._render_template("auth_invite", locale, context)
+        plain = service._render_template("auth_invite", locale, context, extension="txt")
+        assert html is not None and "Alex" in html and context["invite_url"] in html, locale
+        assert plain is not None and "Alex" in plain and context["invite_url"] in plain, locale
+        assert "{{" not in html and "{{" not in plain, locale
+        expected_direction = 'dir="rtl"' if locale == "ar" else 'dir="ltr"'
+        assert expected_direction in html, locale
 
 
 def test_pt_br_email_falls_back_to_pt_for_missing_templates() -> None:

@@ -61,7 +61,7 @@ def test_every_module_has_doc(discovered_module_names: list[str], doc_name: str)
         if not path.exists():
             missing.append(module_name)
             continue
-        non_blank = sum(1 for line in path.read_text().splitlines() if line.strip())
+        non_blank = sum(1 for line in path.read_text(encoding="utf-8").splitlines() if line.strip())
         if non_blank < threshold:
             too_short.append((module_name, non_blank))
 
@@ -95,7 +95,7 @@ def test_claude_md_states_the_real_mount_prefix(discovered_module_names: list[st
     wrong: list[str] = []
     checked = 0
     for module_name in discovered_module_names:
-        text = (MODULES_ROOT / module_name / "CLAUDE.md").read_text()
+        text = (MODULES_ROOT / module_name / "CLAUDE.md").read_text(encoding="utf-8")
         match = re.search(r"[Rr]outes mounted at\s*`([^`]+)`", text)
         if match is None:
             continue  # not every module exposes routes

@@ -1,0 +1,8 @@
+Olá, {{ first_name }}!
+
+A clínica {{ clinic_name }} convida-o(a) a juntar-se ao seu espaço de trabalho no Dentum.
+
+Crie a sua palavra-passe e inicie sessão através deste link de utilização única:
+{{ invite_url }}
+
+O link é válido durante {{ expires_days }} dias. Se não estava à espera deste convite, pode ignorar este e-mail.

@@ -80,6 +80,22 @@ from .service import (
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 logger = logging.getLogger(__name__)
+_INVITE_EMAIL_SUBJECTS = {
+    "es": "Invitación para acceder a Dentum",
+    "en": "Invitation to Dentum",
+    "fr": "Invitation à Dentum",
+    "pt": "Convite para o Dentum",
+    "pt-BR": "Convite para o Dentum",
+    "ta": "Dentum-இல் சேர அழைப்பு",
+    "te": "Dentumలో చేరడానికి ఆహ్వానం",
+    "hi": "Dentum में शामिल होने का आमंत्रण",
+    "de": "Einladung zu Dentum",
+    "hu": "Meghívó a Dentumba",
+    "pl": "Zaproszenie do Dentum",
+    "it": "Invito a Dentum",
+    "ar": "دعوة للانضمام إلى Dentum",
+    "ru": "Приглашение в Dentum",
+}
 # Rate limiting is on everywhere except test runs (#530): a reachable
 # non-production deploy (staging, preview, default compose on a public
 # host, or a typo in ENVIRONMENT) otherwise has unbounded password
@@ -658,10 +674,6 @@ async def create_user_invite_link(
                 clinic.settings if clinic and isinstance(clinic.settings, dict) else {}
             )
             locale = str(clinic_settings.get("communication_language", "es"))
-            subjects = {
-                "es": "Invitación para acceder a Dentum",
-                "ru": "Приглашение в Dentum",
-            }
             result = await email_service.send_templated(
                 to_email=user.email,
                 to_name=f"{user.first_name} {user.last_name}".strip(),
@@ -672,7 +684,7 @@ async def create_user_invite_link(
                     "invite_url": invite_url,
                     "expires_days": 7,
                 },
-                subject=subjects.get(locale, "Invitation to Dentum"),
+                subject=_INVITE_EMAIL_SUBJECTS.get(locale, "Invitation to Dentum"),
                 locale=locale,
             )
             email_sent = result.is_success
@@ -1074,7 +1086,7 @@ async def update_budget_settings(
 
 class _CommunicationsSettingsPatch(BaseModel):
     language: str | None = Field(
-        default=None, pattern="^(es|en|fr|pt|pt-BR|ta|te|hi|de|hu|pl|it|ar)$"
+        default=None, pattern="^(es|en|fr|pt|pt-BR|ta|te|hi|de|hu|pl|it|ar|ru)$"
     )
 
 

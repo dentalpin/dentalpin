@@ -40,6 +40,7 @@ BUDGET_HEADINGS = {
     "pl": "Kosztorys",
     "it": "Preventivo",
     "ar": "عرض أسعار",
+    "ru": "Смета",
     "ta": "மதிப்பீடு",
     "te": "అంచనా",
     "hi": "उपचार अनुमान",
@@ -206,6 +207,7 @@ def test_only_arabic_document_is_rtl() -> None:
         ("de", "Überweisungsschreiben"),
         ("hu", "Beutaló"),
         ("ar", "خطاب إحالة"),
+        ("ru", "Направление"),
     ],
 )
 def test_document_pdf_renders_its_own_title(locale: str, heading: str) -> None:

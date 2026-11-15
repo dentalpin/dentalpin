@@ -1,0 +1,8 @@
+Dzień dobry, {{ first_name }}!
+
+Gabinet {{ clinic_name }} zaprasza Cię do swojego obszaru pracy w Dentum.
+
+Utwórz hasło i zaloguj się za pomocą jednorazowego linku:
+{{ invite_url }}
+
+Link jest ważny przez {{ expires_days }} dni. Jeśli nie spodziewasz się tego zaproszenia, możesz zignorować tę wiadomość.

@@ -1238,6 +1238,45 @@ class InvoicePDFService:
             },
         }
 
+        labels_ru = {
+            "invoice": "Счёт",
+            "credit_note": "Корректировочный счёт",
+            "credit_note_for": "Корректирует счёт",
+            "draft": "ЧЕРНОВИК",
+            "issue_date": "Дата выставления",
+            "due_date": "Срок оплаты",
+            "billing_info": "Платёжные данные",
+            "billing_name": "Имя / организация",
+            "tax_id": "ИНН",
+            "address": "Адрес",
+            "patient": "Пациент",
+            "items": "Услуги",
+            "description": "Описание",
+            "qty": "Кол-во",
+            "unit_price": "Цена за ед.",
+            "discount": "Скидка",
+            "vat": "НДС",
+            "total": "Итого",
+            "subtotal": "Промежуточный итог",
+            "total_discount": "Общая скидка",
+            "tax": "НДС",
+            "grand_total": "ИТОГО К ОПЛАТЕ",
+            "total_paid": "Оплачено",
+            "balance_due": "Остаток к оплате",
+            "notes": "Примечания",
+            "payment_terms": "Срок оплаты",
+            "days": "дн.",
+            "generated_by": "Создано в Dentum",
+            "status": {
+                "draft": "Черновик",
+                "issued": "Выставлен",
+                "partial": "Оплачен частично",
+                "paid": "Оплачен",
+                "cancelled": "Отменён",
+                "voided": "Аннулирован",
+            },
+        }
+
         if locale == "es":
             return labels_es
         if locale == "ta":
@@ -1262,4 +1301,6 @@ class InvoicePDFService:
             return labels_it
         if locale == "ar":
             return labels_ar
+        if locale == "ru":
+            return labels_ru
         return labels_en

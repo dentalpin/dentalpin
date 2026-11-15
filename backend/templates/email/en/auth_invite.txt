@@ -1,0 +1,8 @@
+Hello {{ first_name }},
+
+{{ clinic_name }} has invited you to join its Dentum workspace.
+
+Create your password and sign in using this one-time link:
+{{ invite_url }}
+
+The link is valid for {{ expires_days }} days. If you weren't expecting this invitation, you can ignore this email.

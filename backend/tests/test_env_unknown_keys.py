@@ -33,6 +33,7 @@ def test_keys_belonging_to_compose_and_nuxt_stay_quiet(tmp_path: Path) -> None:
     path = _env(
         tmp_path,
         "POSTGRES_DB=dental\nPOSTGRES_USER=dental\nAPI_BASE_URL=http://localhost:8000\n"
+        "DOCS_URL=https://example.com/docs\n"
         "NUXT_PUBLIC_API_BASE_URL=http://localhost:8000\nSEED_ON_STARTUP=1\n"
         "DENTALPIN_VERSION=1.2.3\nPUBLIC_URL=https://example.com\n",
     )

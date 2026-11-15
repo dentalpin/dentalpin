@@ -1,10 +1,9 @@
 """Locales the generated PDFs accept (issues #422, #441).
 
 The download buttons send the viewer's UI language, so a PDF endpoint that
-only validates ``es|en`` answers 422 in eight of the ten languages the app
-ships — a dead button with no message. Every host locale is accepted
-instead: labels fall back to English where a module has not translated
-them, while amounts and dates still use the locale's own separators.
+only validates a subset of host languages answers 422 for other clinics.
+Every host locale is accepted, and a test requires each PDF generator to
+ship labels for each one. Amounts and dates follow the locale's own formats.
 
 Both label sets and the Babel locale map live here rather than in one
 module, because the list is a property of the host's ``i18n.locales``
@@ -28,6 +27,7 @@ PDF_LOCALES: tuple[str, ...] = (
     "pl",
     "it",
     "ar",
+    "ru",
 )
 PDF_LOCALE_PATTERN = "^(" + "|".join(PDF_LOCALES) + ")$"
 
@@ -47,4 +47,5 @@ LOCALE_BY_LANG: dict[str, str] = {
     "pl": "pl_PL",
     "it": "it_IT",
     "ar": "ar",
+    "ru": "ru_RU",
 }

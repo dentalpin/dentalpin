@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}دعوة للانضمام إلى Dentum{% endblock %}
+
+{% block content %}
+<h2>تمت دعوتك إلى Dentum</h2>
+
+<p>مرحبًا {{ first_name }}،</p>
+
+<p>تدعوكم عيادة <strong>{{ clinic_name }}</strong> للانضمام إلى مساحة العمل في Dentum.</p>
+
+<div class="button-container">
+    <a href="{{ invite_url }}" class="button">أنشئ كلمة مرورك وسجّل الدخول</a>
+</div>
+
+<div class="info-box">
+    <p>الرابط صالح لمرة واحدة ويعمل لمدة {{ expires_days }} أيام.</p>
+</div>
+
+<p>إذا لم تكن تتوقع هذه الدعوة، يمكنك تجاهل هذه الرسالة.</p>
+{% endblock %}
+
+{% block footer %}
+<p>أرسلت عيادة {{ clinic_name }} هذه الدعوة عبر Dentum.</p>
+{% endblock %}

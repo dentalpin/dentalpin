@@ -1,0 +1,8 @@
+Ciao {{ first_name }},
+
+La clinica {{ clinic_name }} ti invita a entrare nel suo spazio di lavoro Dentum.
+
+Crea la password e accedi con questo link monouso:
+{{ invite_url }}
+
+Il link è valido per {{ expires_days }} giorni. Se non aspettavi questo invito, puoi ignorare questa e-mail.

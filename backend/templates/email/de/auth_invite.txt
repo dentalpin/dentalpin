@@ -1,0 +1,8 @@
+Guten Tag {{ first_name }},
+
+Die Klinik {{ clinic_name }} lädt Sie in ihren Dentum-Arbeitsbereich ein.
+
+Erstellen Sie Ihr Passwort und melden Sie sich über diesen einmaligen Link an:
+{{ invite_url }}
+
+Der Link ist {{ expires_days }} Tage gültig. Wenn Sie diese Einladung nicht erwartet haben, können Sie diese E-Mail ignorieren.

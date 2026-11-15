@@ -1,0 +1,8 @@
+Bonjour {{ first_name }},
+
+La clinique {{ clinic_name }} vous invite à rejoindre son espace de travail Dentum.
+
+Créez votre mot de passe et connectez-vous avec ce lien à usage unique :
+{{ invite_url }}
+
+Le lien est valable pendant {{ expires_days }} jours. Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet e-mail.

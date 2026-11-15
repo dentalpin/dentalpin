@@ -34,7 +34,7 @@ const { currentLocale, availableLocales, changeLocale } = useLocale()
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 // Languages the backend accepts as clinic communication language
 // (mirrors the `language` pattern on SystemSetup).
-const COMM_LANGUAGES = ['es', 'en', 'fr', 'pt', 'pt-BR', 'ta', 'te', 'hi', 'de', 'hu', 'pl', 'it', 'ar']
+const COMM_LANGUAGES = ['es', 'en', 'fr', 'pt', 'pt-BR', 'ta', 'te', 'hi', 'de', 'hu', 'pl', 'it', 'ar', 'ru']
 
 const step = ref<1 | 2>(1)
 const isLoading = ref(false)
@@ -203,8 +203,7 @@ async function onSubmit() {
       currency: form.currency,
       // Patient-facing language: the country's when we know it, else the
       // language the admin picked for the UI — clamped to the languages
-      // the backend can send communications in (all 9 UI locales since
-      // the de/hu/pl/it email templates landed, including the pt-BR overlay).
+      // the backend can send communications in.
       language: isKnownCountry.value
         ? preset.value?.language
         : (COMM_LANGUAGES.includes(currentLocale.value) ? currentLocale.value : 'en')

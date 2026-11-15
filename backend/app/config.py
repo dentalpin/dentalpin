@@ -17,7 +17,7 @@ FOREIGN_ENV_PREFIXES = ("POSTGRES_", "NUXT_", "DENTALPIN_", "SEED_", "COMPOSE_",
 # FORWARDED_ALLOW_IPS is uvicorn's, not ours (#623): uvicorn reads it
 # directly when --forwarded-allow-ips is absent, so it belongs in the
 # templates without being a Settings field.
-FOREIGN_ENV_KEYS = frozenset({"API_BASE_URL", "PATH", "PWD", "FORWARDED_ALLOW_IPS"})
+FOREIGN_ENV_KEYS = frozenset({"API_BASE_URL", "DOCS_URL", "PATH", "PWD", "FORWARDED_ALLOW_IPS"})
 
 
 def unknown_env_keys(env_file: str | Path, declared: set[str]) -> list[str]:
