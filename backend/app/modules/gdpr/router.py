@@ -95,6 +95,8 @@ async def create_request(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[GdprRequestResponse]:
     row = await GdprService.create_request(db, ctx.clinic_id, data)
+    if row is None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
     return ApiResponse(data=GdprRequestResponse.model_validate(row))
 
 

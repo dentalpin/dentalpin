@@ -47,7 +47,20 @@ class GdprService:
     @staticmethod
     async def create_request(
         db: AsyncSession, clinic_id: UUID, payload: GdprRequestCreate
-    ) -> GdprRequest:
+    ) -> GdprRequest | None:
+        """Unknown or other-clinic ``patient_id`` returns ``None`` (404 upstream,
+        error in the tool), like ``ConsentService.grant_or_withdraw``.
+        ``patient_id`` stays optional: a requester may not be a patient yet."""
+        if payload.patient_id is not None:
+            from app.modules.patients.models import Patient
+
+            found = await db.scalar(
+                select(Patient.id).where(
+                    Patient.id == payload.patient_id, Patient.clinic_id == clinic_id
+                )
+            )
+            if found is None:
+                return None
         received_at = datetime.now(UTC)
         row = GdprRequest(
             clinic_id=clinic_id,

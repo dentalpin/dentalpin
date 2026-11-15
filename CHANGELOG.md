@@ -29,6 +29,9 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **A GDPR data-subject request could link another clinic's patient (#865).**
+  An unknown patient was a 500. Both now return 404, as consents and erasure
+  already did.
 - **A new treatment plan accepted any professional (#856).** Creating a plan
   did not check the assigned professional, unlike editing it: an unknown id
   was a 500, and another clinic's dentist was stored and then blocked every
