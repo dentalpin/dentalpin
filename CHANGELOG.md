@@ -29,6 +29,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **A catalog item could take another clinic's VAT type (#861).** Budget lines
+  made from it then quoted that clinic's rate. An unknown VAT type, or an
+  unknown category parent, was a 500. A category could be its own parent.
+  Each case is now a 400.
 - **A new treatment plan accepted any professional (#856).** Creating a plan
   did not check the assigned professional, unlike editing it: an unknown id
   was a 500, and another clinic's dentist was stored and then blocked every
