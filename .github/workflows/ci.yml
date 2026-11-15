@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main, develop, ru-locale]
+    branches: [main, develop, ru-locale, "codex/**"]
   pull_request:
     branches: [main, develop]
 
