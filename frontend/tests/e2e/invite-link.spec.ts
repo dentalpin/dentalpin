@@ -19,7 +19,9 @@ test.describe('invite link', () => {
     await dialog.getByRole('textbox', { name: /^nombre$|first name/i }).fill('Invitada')
     await dialog.getByRole('textbox', { name: /apellidos|last name/i }).fill('E2E')
     await dialog.getByRole('textbox', { name: /email|correo/i }).fill(EMAIL)
-    await dialog.getByRole('button', { name: /crear y generar enlace|create and generate link/i }).click()
+    await dialog.getByRole('button', {
+      name: /crear y (generar enlace|enviar invitaci[oó]n)|create and (generate link|invite)/i
+    }).click()
 
     const linkInput = dialog.locator('input[readonly]')
     await expect(linkInput).toBeVisible()
