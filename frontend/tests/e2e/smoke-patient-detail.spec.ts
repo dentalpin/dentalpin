@@ -51,4 +51,67 @@ test.describe('patient detail', () => {
       .first()
     await expect(interactive).toBeVisible()
   })
+
+  test('clinical diagnosis and surfaces fit with lateral view at desktop, tablet, and mobile widths', async ({ loggedIn }) => {
+    const ctx = loggedIn.context()
+    const cookies = await ctx.cookies()
+    const token = cookies.find(c => c.name === 'access_token')?.value
+    const res = await ctx.request.get(`${API_BASE}/api/v1/patients?page=1&page_size=1`, {
+      headers: token ? { Authorization: `Bearer ${token}` } : {}
+    })
+    if (!res.ok()) {
+      throw new Error(`failed to list patients: ${res.status()} ${await res.text()}`)
+    }
+    const body = (await res.json()) as { data: Array<{ id: string }> }
+    const patientId = body.data[0]?.id
+    if (!patientId) throw new Error('no seeded patient to open')
+
+    await loggedIn.goto(`/patients/${patientId}?tab=clinical`)
+    const chart = loggedIn.locator('.odontogram-wrapper')
+    await expect(chart).toBeVisible({ timeout: 20_000 })
+    const lateralView = chart.locator('.lateral-view').first()
+    await expect(lateralView).toBeVisible()
+
+    const measurements: Array<{ width: number, containerWidth: number, zoom: number }> = []
+    for (const width of [1280, 768, 390]) {
+      await loggedIn.setViewportSize({ width, height: 900 })
+      const layout = await chart.evaluate((element) => {
+        const grid = element.querySelector<HTMLElement>('.odontogram-grid')
+        if (!grid) throw new Error('odontogram grid is missing')
+        const container = element.getBoundingClientRect()
+        const gridBounds = grid.getBoundingClientRect()
+        return {
+          containerWidth: container.width,
+          zoom: Number.parseFloat(getComputedStyle(grid).zoom),
+          containerRight: container.right,
+          gridRight: gridBounds.right,
+          viewportWidth: window.innerWidth
+        }
+      })
+      expect(layout.containerWidth).toBeLessThanOrEqual(width)
+      expect(layout.zoom).toBeGreaterThan(0)
+      expect(layout.gridRight).toBeLessThanOrEqual(layout.containerRight + 1)
+      expect(layout.gridRight).toBeLessThanOrEqual(layout.viewportWidth + 1)
+      await expect(lateralView).toBeVisible()
+      measurements.push({ width, containerWidth: layout.containerWidth, zoom: layout.zoom })
+    }
+    expect(measurements[2]?.containerWidth).toBeLessThan(measurements[0]?.containerWidth ?? 0)
+    expect(measurements[2]?.zoom).toBeLessThan(measurements[0]?.zoom ?? 1)
+
+    // Clicking a tooth in diagnosis mode opens the combined diagnosis +
+    // surface workflow. Escape cancels the draft selection without saving.
+    const tooth = chart.locator('.tooth-dual-view-wrapper[aria-label$="(11)"]')
+    await expect(tooth).toBeVisible()
+    await tooth.click()
+    const dialog = loggedIn.getByRole('dialog')
+    await expect(dialog.getByText(/choose a diagnosis and mark surfaces if needed/i)).toBeVisible()
+    await expect(dialog.locator('.treatment-bar .diagnosis-mode-indicator')).toBeVisible()
+    await expect(dialog.locator('.surface-buttons .surface-btn')).toHaveCount(5)
+    await expect(dialog.locator('.tooth-views .view-label').filter({ hasText: 'Lateral View' })).toBeVisible()
+    await expect(dialog.locator('.tooth-svg.lateral')).toBeVisible()
+    await dialog.locator('.surface-buttons .surface-btn').first().click()
+    await expect(dialog.locator('.selected-summary')).toBeVisible()
+    await loggedIn.keyboard.press('Escape')
+    await expect(dialog).toBeHidden()
+  })
 })
