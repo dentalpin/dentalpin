@@ -1214,6 +1214,8 @@ defineExpose({
 <style scoped>
 .odontogram-wrapper {
   container-type: inline-size;
+  width: 100%;
+  min-width: 0;
   overflow: hidden;
 }
 
@@ -1245,7 +1247,7 @@ defineExpose({
   }
 }
 
-@container (max-width: 1030px) {
+@container (max-width: 960px) {
   .odontogram-grid {
     zoom: 0.8;
   }
