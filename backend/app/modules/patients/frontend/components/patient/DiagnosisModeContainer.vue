@@ -74,6 +74,7 @@ watch(activeKey, (value) => {
   <!-- No optional sub-tabs installed: keep the pre-slot UX intact. -->
   <DiagnosisMode
     v-if="subtabs.length === 0"
+    class="w-full min-w-0"
     :patient-id="patientId"
     :readonly="readonly"
     @create-plan="emit('create-plan')"
@@ -82,7 +83,7 @@ watch(activeKey, (value) => {
 
   <div
     v-else
-    class="space-y-3"
+    class="diagnosis-mode-container space-y-3 w-full min-w-0"
   >
     <UTabs
       v-model="activeKey"
@@ -91,7 +92,10 @@ watch(activeKey, (value) => {
       class="diagnosis-subtabs"
     />
 
-    <div v-if="activeKey === 'odontogram'">
+    <div
+      v-if="activeKey === 'odontogram'"
+      class="w-full min-w-0"
+    >
       <DiagnosisMode
         :patient-id="patientId"
         :readonly="readonly"
@@ -114,3 +118,10 @@ watch(activeKey, (value) => {
     </template>
   </div>
 </template>
+
+<style scoped>
+.diagnosis-mode-container {
+  container-type: inline-size;
+  container-name: diagnosis-mode;
+}
+</style>

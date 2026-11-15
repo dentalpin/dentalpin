@@ -375,6 +375,8 @@ async function confirmTreatmentRecommendation() {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   align-items: start;
+  width: 100%;
+  min-width: 0;
   gap: 1rem;
 }
 
@@ -414,7 +416,7 @@ async function confirmTreatmentRecommendation() {
   min-width: 0;
 }
 
-@media (min-width: 1280px) {
+@container diagnosis-mode (min-width: 1000px) {
   .diagnosis-workspace {
     grid-template-columns: minmax(0, 1fr) minmax(20rem, 23rem);
     gap: 1.25rem;

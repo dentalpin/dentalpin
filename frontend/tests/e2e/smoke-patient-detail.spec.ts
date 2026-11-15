@@ -93,7 +93,7 @@ test.describe('patient detail', () => {
           gridColumns: string
         }> = []
         let ancestor: HTMLElement | null = element
-        while (ancestor && ancestors.length < 8) {
+        while (ancestor && ancestors.length < 18) {
           const bounds = ancestor.getBoundingClientRect()
           const styles = getComputedStyle(ancestor)
           ancestors.push({
