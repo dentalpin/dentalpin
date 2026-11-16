@@ -1,6 +1,7 @@
 """sistema_ts API: settings gate, opposition, item types, documents."""
 
 from datetime import date
+from importlib import import_module
 from uuid import uuid4
 
 import pytest
@@ -113,7 +114,8 @@ async def test_opposition_roundtrip(
         return expected_today
 
     # Keep this endpoint test deterministic across UTC/local-midnight boundaries.
-    monkeypatch.setattr("app.modules.sistema_ts.router.clinic_today_for", fixed_clinic_today)
+    router_module = import_module("app.modules.sistema_ts.router")
+    monkeypatch.setattr(router_module, "clinic_today_for", fixed_clinic_today)
     url = f"/api/v1/sistema_ts/opposition/{test_patient.id}"
     res = await client.get(url, headers=auth_headers)
     assert res.status_code == 200 and res.json()["data"]["opposed"] is False

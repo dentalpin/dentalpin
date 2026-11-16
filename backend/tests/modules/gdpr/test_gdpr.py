@@ -1275,19 +1275,24 @@ async def test_breach_tools_report_and_list(db_session: AsyncSession, test_clini
 
 @pytest.mark.asyncio
 async def test_hold_boundary_today_holds_yesterday_releases(
-    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient, monkeypatch
 ):
     """RET-03: a hold through today still holds; yesterday's hold released."""
-    from datetime import UTC, datetime, timedelta
+    from datetime import date, timedelta
+    from importlib import import_module
 
     from app.modules.gdpr.schemas import RetentionPolicyCreate
     from app.modules.gdpr.service import ErasureService, RetentionService
 
-    # The service measures "today" as the UTC date, so the test must build
-    # its boundary from the same clock. `date.today()` is host-local and
-    # drifts a day in the east-of-utc CI job, which then reads a hold set
-    # for "yesterday" as still in force.
-    today = datetime.now(UTC).date()
+    # Pin the clinic clock so the boundary semantics don't change when this
+    # test runs across UTC or the clinic's local midnight.
+    today = date(2031, 4, 5)
+
+    async def fixed_clinic_today(_db, _clinic_id):
+        return today
+
+    service_module = import_module("app.modules.gdpr.service")
+    monkeypatch.setattr(service_module, "clinic_today_for", fixed_clinic_today)
     await RetentionService.create(
         db_session,
         test_clinic.id,
