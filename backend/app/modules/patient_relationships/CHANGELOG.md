@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#870): two concurrent link requests for the same pair stored it twice (A→B + B→A, since the unique key covers one direction only) or returned a 500 (A→B twice). `create_relationship` now locks both patient rows in id order before the "already linked" check, and the router maps an `IntegrityError` on commit to the same 409.
+
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
 - chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
 

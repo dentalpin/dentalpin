@@ -52,7 +52,18 @@ class PatientRelationshipsService:
             db, clinic_id, related_patient_id
         )
 
-        # A pair can only be linked once, in either direction.
+        # A pair can only be linked once, in either direction. The unique key
+        # covers one direction only, so serialise on the two patient rows
+        # (in id order, so A→B and B→A can't deadlock) before the check.
+        await db.execute(
+            select(Patient.id)
+            .where(
+                Patient.clinic_id == clinic_id,
+                Patient.id.in_([patient_id, related_patient_id]),
+            )
+            .order_by(Patient.id)
+            .with_for_update()
+        )
         existing_stmt = select(PatientRelationship.id).where(
             PatientRelationship.clinic_id == clinic_id,
             or_(

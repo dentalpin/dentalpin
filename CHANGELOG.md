@@ -29,6 +29,8 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Linking two patients twice at the same time stored the pair twice or
+  returned a 500 (#870).** The second request now gets the usual 409.
 - **A treatment's sessions could be changed after the patient accepted the
   quote (#867),** so payments booked a different total. Editing, adding or
   deleting a session on a locked plan is now a 409. Adding a manual session
