@@ -43,6 +43,7 @@ class SendStatus(StrEnum):
     SENT = "sent"
     FAILED = "failed"
     SKIPPED = "skipped"
+    DEFERRED = "deferred"
 
 
 @dataclass
@@ -63,8 +64,8 @@ class OutboundMessage:
     context: dict = field(default_factory=dict)
     to_name: str | None = None
     patient_id: UUID | None = None
-    # "template" = pre-approved template (the only kind allowed for proactive
-    # WhatsApp, outside the 24h session window); "session" = free-form.
+    # "template" = proactive and rendered from the clinic template when present;
+    # "session" = a free-form reply. Provider approval depends on the adapter.
     message_kind: str = "template"
     provider_template_name: str | None = None
     subject: str | None = None
@@ -95,6 +96,10 @@ class ChannelAdapter(Protocol):
     Adapters are stateless and registered process-wide; per-clinic
     activation is decided by :meth:`supports` (reads the clinic's config),
     never by the adapter's mere presence.
+
+    Adapters may declare ``requires_provider_template = False`` to accept
+    proactive WhatsApp without a provider-approved template. Omitting the
+    attribute preserves the approval requirement for existing adapters.
     """
 
     channel: Channel
