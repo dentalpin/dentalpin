@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#863): `assignee_id` must be a member of the task's clinic, on create and on update. An unknown id was a 500, and another clinic's user was stored with their name shown in `assignee_name`. Both now return 400.
+
 - fix: date-only fields (`YYYY-MM-DD`) are parsed as local midnight
   (`parseDateOnly`, host `utils/wallClock.ts`) instead of `new Date(s)`, which
   is UTC midnight and rendered every such date one day early in zones behind

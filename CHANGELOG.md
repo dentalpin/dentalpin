@@ -29,6 +29,9 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **A staff task could be assigned to another clinic's user (#863).** The
+  board then showed that person's name. An unknown assignee was a 500. Both
+  are now a 400.
 - **A catalog item could take another clinic's VAT type (#861).** Budget lines
   made from it then quoted that clinic's rate. An unknown VAT type, or an
   unknown category parent, was a 500. A category could be its own parent.

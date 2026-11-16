@@ -9,6 +9,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth.models import ClinicMembership
 from app.core.events import event_bus
 from app.core.events.types import EventType
 
@@ -23,6 +24,20 @@ _VALID_TRANSITIONS = {
 }
 
 
+async def _check_assignee(db: AsyncSession, clinic_id: UUID, user_id: UUID) -> None:
+    """400 unless ``user_id`` is a member of the task's clinic."""
+    member = await db.scalar(
+        select(ClinicMembership.id).where(
+            ClinicMembership.clinic_id == clinic_id, ClinicMembership.user_id == user_id
+        )
+    )
+    if member is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Assignee is not a member of this clinic",
+        )
+
+
 class StaffTaskService:
     @staticmethod
     async def create_task(
@@ -31,6 +46,8 @@ class StaffTaskService:
         payload: StaffTaskCreate,
         created_by: UUID | None,
     ) -> StaffTask:
+        if payload.assignee_id is not None:
+            await _check_assignee(db, clinic_id, payload.assignee_id)
         task = StaffTask(
             clinic_id=clinic_id,
             title=payload.title,
@@ -108,6 +125,9 @@ class StaffTaskService:
     ) -> StaffTask:
         task = await StaffTaskService.get_task(db, clinic_id, task_id)
         data = payload.model_dump(exclude_unset=True)
+        new_assignee = data.get("assignee_id")
+        if new_assignee is not None and new_assignee != task.assignee_id:
+            await _check_assignee(db, clinic_id, new_assignee)
 
         new_status = data.get("status")
         if new_status and new_status != task.status:
