@@ -29,6 +29,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **A treatment's sessions could be changed after the patient accepted the
+  quote (#867),** so payments booked a different total. Editing, adding or
+  deleting a session on a locked plan is now a 409. Adding a manual session
+  was also always a 500 (#868).
 - **A GDPR data-subject request could link another clinic's patient (#865).**
   An unknown patient was a 500. Both now return 404, as consents and erasure
   already did.
