@@ -51,6 +51,7 @@ class CatalogItemBrief(BaseModel):
     internal_code: str
     names: dict
     default_price: float | None = None
+    default_duration_minutes: int | None = None
 
 
 class TreatmentBrief(BaseModel):
