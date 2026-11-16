@@ -9,7 +9,7 @@ from fastapi import HTTPException
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth.models import Clinic, User
+from app.core.auth.models import Clinic, ClinicMembership, User
 from app.modules.staff_tasks.schemas import StaffTaskCreate, StaffTaskUpdate
 from app.modules.staff_tasks.service import StaffTaskService
 
@@ -96,6 +96,10 @@ async def test_unclaim_clears_assignee(db_session: AsyncSession, test_clinic: Cl
 @pytest.mark.asyncio
 async def test_status_filter_isolation_and_delete(db_session: AsyncSession, test_clinic: Clinic):
     assignee = await _make_user(db_session, "assignee@staff-tasks.test")
+    db_session.add(
+        ClinicMembership(user_id=assignee.id, clinic_id=test_clinic.id, role="assistant")
+    )
+    await db_session.commit()
     open_task = await StaffTaskService.create_task(
         db_session,
         test_clinic.id,

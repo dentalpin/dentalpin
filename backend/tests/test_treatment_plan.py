@@ -1873,3 +1873,54 @@ async def test_remove_booked_item_answers_409_until_the_appointment_is_cancelled
 
     appointment = await client.get(appointment_url, headers=auth_headers)
     assert appointment.json()["data"]["treatments"] == []
+
+
+@pytest.mark.asyncio
+async def test_session_edits_refused_once_the_quote_is_accepted(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup_multi_session: dict
+):
+    """Editing, adding or deleting a pending session is refused on a locked plan.
+
+    At acceptance the sessions are repriced so they add up to the accepted
+    line (800 €), and payments books each one on completion. Changing them
+    afterwards booked a different total than the patient accepted (#867).
+    """
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    base = f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}/sessions"
+
+    r = await client.put(f"{base}/{sessions[1]['id']}", headers=auth_headers, json={"amount": 1600})
+    assert r.status_code == 409, r.text
+    r = await client.post(base, headers=auth_headers, json={"label": "Extra", "amount": 300})
+    assert r.status_code == 409, r.text
+    r = await client.delete(f"{base}/{sessions[1]['id']}", headers=auth_headers)
+    assert r.status_code == 409, r.text
+
+    item = (
+        await client.get(f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers)
+    ).json()["data"]["items"][0]
+    assert len(item["sessions"]) == 2
+    assert sum(Decimal(str(s["amount"])) for s in item["sessions"]) == Decimal("800.00")
+
+
+@pytest.mark.asyncio
+async def test_session_edits_still_allowed_before_the_quote_is_sent(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup_multi_session: dict
+):
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session, activate=False
+    )
+    base = f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}/sessions"
+
+    r = await client.put(f"{base}/{sessions[1]['id']}", headers=auth_headers, json={"amount": 650})
+    assert r.status_code == 200, r.text
+    # Adding a manual session was a 500 on any plan: the new row had no id
+    # yet when the response was serialized (#868).
+    r = await client.post(base, headers=auth_headers, json={"label": "Extra", "amount": 50})
+    assert r.status_code == 201, r.text
+    added = r.json()["data"]["sessions"]
+    assert [s["sequence"] for s in added] == [1, 2, 3]
+    assert all(s["id"] for s in added)
+    r = await client.delete(f"{base}/{sessions[1]['id']}", headers=auth_headers)
+    assert r.status_code == 200, r.text

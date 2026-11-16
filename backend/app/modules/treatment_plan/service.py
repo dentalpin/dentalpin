@@ -914,6 +914,18 @@ class TreatmentPlanService:
         return result.scalar_one_or_none()
 
     @staticmethod
+    async def _ensure_unlocked(db: AsyncSession, clinic_id: UUID, plan_id: UUID) -> None:
+        """Session edits, adds and deletes change what the item books.
+
+        At acceptance ``_reprice_sessions`` makes Σ(sessions) equal the accepted
+        line, and payments books each session's amount on completion. So a
+        locked plan refuses these the same way it refuses item edits.
+        """
+        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        if plan is not None and _is_plan_locked(plan):
+            raise PlanLockedError("Plan is locked by an active budget")
+
+    @staticmethod
     async def complete_session(
         db: AsyncSession,
         clinic_id: UUID,
@@ -1179,6 +1191,7 @@ class TreatmentPlanService:
             raise ValueError("Session not found")
         if session.status != "pending":
             raise ValueError("Cannot edit a non-pending session")
+        await TreatmentPlanService._ensure_unlocked(db, clinic_id, plan_id)
 
         if "label" in data:
             session.label = data["label"]
@@ -1200,6 +1213,7 @@ class TreatmentPlanService:
         item = await TreatmentPlanService._load_item_with_sessions(db, clinic_id, plan_id, item_id)
         if not item:
             return None
+        await TreatmentPlanService._ensure_unlocked(db, clinic_id, plan_id)
         next_seq = (max((s.sequence for s in item.sessions), default=0)) + 1
         amount = data.get("amount")
         if amount is None:
@@ -1212,6 +1226,9 @@ class TreatmentPlanService:
                 status="pending",
             )
         )
+        # The id is a Python-side default applied at flush; without it the
+        # response serialized the new session with ``id: None`` (500).
+        await db.flush()
         return item
 
     @staticmethod
@@ -1231,6 +1248,7 @@ class TreatmentPlanService:
             raise ValueError("Session not found")
         if session.status != "pending":
             raise ValueError("Cannot delete a non-pending session")
+        await TreatmentPlanService._ensure_unlocked(db, clinic_id, plan_id)
         if (
             len([s for s in item.sessions if s.status == "pending"]) <= 1
             and len(item.sessions) == 1
