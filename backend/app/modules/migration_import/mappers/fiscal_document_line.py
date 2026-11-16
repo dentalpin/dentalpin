@@ -67,11 +67,7 @@ class FiscalDocumentLineMapper:
             )
             return None
 
-        # Optional FK to the source's TreatmentCatalogItem via the
-        # AppliedTreatment chain. The line in Gesdén carries ``identTM``
-        # (applied_treatment_uuid) — we resolve it to the migrated
-        # ``PlannedTreatmentItem`` and read its Treatment.catalog_item_id.
-        catalog_item_id = await _resolve_catalog_item(ctx, payload)
+        catalog_item_id = await _resolve_catalog_item(ctx, payload, source_id)
 
         quantity = _coerce_int(payload.get("units")) or 1
         quantity = max(quantity, 1)
@@ -154,7 +150,26 @@ class FiscalDocumentLineMapper:
         return item.id
 
 
-async def _resolve_catalog_item(ctx: MapperContext, payload: dict[str, Any]) -> UUID | None:
+async def _resolve_catalog_item(
+    ctx: MapperContext, payload: dict[str, Any], source_id: str
+) -> UUID | None:
+    # As for budget lines, resolve the parent first, then the tariff variant.
+    for field, entity_type in (
+        ("treatment_uuid", "treatment_catalog_item"),
+        ("treatment_variant_uuid", "treatment_catalog_variant"),
+    ):
+        if catalog_uuid := payload.get(field):
+            catalog_item_id = await ctx.resolver.get(entity_type, str(catalog_uuid))
+            if catalog_item_id is not None:
+                return catalog_item_id
+            await _warn(
+                ctx,
+                source_id,
+                "fiscal_document_line.unmapped_catalog_reference",
+                f"Referencia de catálogo no mapeada ({field}={catalog_uuid}).",
+            )
+
+    # Gesdén fiscal lines can recover their catalog link via the applied act.
     applied_uuid = payload.get("applied_treatment_uuid")
     if not applied_uuid:
         return None
