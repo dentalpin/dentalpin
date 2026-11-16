@@ -9,6 +9,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -69,7 +70,15 @@ async def create_relationship(
     row = await PatientRelationshipsService.create_relationship(
         db, ctx.clinic_id, patient_id, data.model_dump()
     )
-    await db.commit()
+    try:
+        await db.commit()
+    except IntegrityError as exc:
+        # Backstop for the ordered-pair unique key; the row lock in the
+        # service normally answers this as 409 before the insert.
+        await db.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT, detail="These two patients are already linked"
+        ) from exc
     await db.refresh(row)
     related = await PatientService.get_patient(db, ctx.clinic_id, row.related_patient_id)
     return ApiResponse(

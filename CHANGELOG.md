@@ -29,6 +29,8 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Linking two patients twice at the same time stored the pair twice or
+  returned a 500 (#870).** The second request now gets the usual 409.
 - **A new treatment plan accepted any professional (#856).** Creating a plan
   did not check the assigned professional, unlike editing it: an unknown id
   was a 500, and another clinic's dentist was stored and then blocked every
