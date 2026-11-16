@@ -29,6 +29,9 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **A GDPR data-subject request could link another clinic's patient (#865).**
+  An unknown patient was a 500. Both now return 404, as consents and erasure
+  already did.
 - **A staff task could be assigned to another clinic's user (#863).** The
   board then showed that person's name. An unknown assignee was a 500. Both
   are now a 400.
