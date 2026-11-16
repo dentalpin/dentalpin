@@ -55,6 +55,8 @@ def _row(
     raw: dict[str, Any] = {}
     if id_tto is not None:
         raw["IdTto"] = id_tto
+        # Real DPMF: a Gesdén IdTto always ships as a catalog variant.
+        payload["treatment_variant_uuid"] = f"variant-{id_tto}"
     if id_tipo_odg is not None:
         raw["IdTipoOdg"] = id_tipo_odg
     return (canonical_uuid, "src", "gesden", json.dumps(payload), json.dumps(raw), None)
@@ -212,3 +214,41 @@ def test_shadow_handles_null_tipo_odg_in_legacy_key() -> None:
     shadow = mapper._ensure_shadow_index(_StubCtx(handle=handle))  # type: ignore[arg-type]
 
     assert shadow == {planned_uuid: performed_uuid}
+
+
+def test_shadow_never_pairs_rows_routed_to_notes() -> None:
+    """Free-text notes (no IdTto, no clinical IdTipoOdg) all share the
+    legacy key (patient, None, None, ()). An unfinished note must not be
+    swallowed as the "planned twin" of a later one, nor of a non-clinical
+    entry such as IdTipoOdg=11 (Anotación)."""
+    patient = str(uuid4())
+    note_a, note_b, anot_a, anot_b = (str(uuid4()) for _ in range(4))
+
+    handle = _StubHandle(
+        rows=[
+            _row(note_a, patient_uuid=patient, status_code=0, start_date="2024-01-15"),
+            _row(
+                note_b,
+                patient_uuid=patient,
+                status_code=5,
+                start_date="2024-03-02",
+                end_date="2024-03-02",
+            ),
+            _row(
+                anot_a, patient_uuid=patient, status_code=0, start_date="2024-01-15", id_tipo_odg=11
+            ),
+            _row(
+                anot_b,
+                patient_uuid=patient,
+                status_code=5,
+                start_date="2024-03-02",
+                end_date="2024-03-02",
+                id_tipo_odg=11,
+            ),
+        ]
+    )
+
+    mapper = AppliedTreatmentMapper()
+    shadow = mapper._ensure_shadow_index(_StubCtx(handle=handle))  # type: ignore[arg-type]
+
+    assert shadow == {}

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#872): the planned/performed shadow dedup no longer pairs rows that become administrative notes. Free-text notes (no `IdTto`, no clinical `IdTipoOdg`, no teeth) all shared one legacy key per patient, so an unfinished note dated before a finished one was dropped as its "planned twin". A vTiger test import lost 195 notes this way.
+
 - fix(#848): the user and professional mappers find an existing account whatever the case of its stored email. An account written before #840 as `Anna.Kovacs@…` got a second, disabled account for the same mailbox, and login then preferred that one when she typed her address in lowercase.
 
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.

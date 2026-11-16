@@ -175,6 +175,21 @@ _NON_CLINICAL_TIPO_ODG: set[int] = {
 }
 
 
+def _routes_to_note(payload: dict[str, Any], raw: dict[str, Any]) -> bool:
+    """True when the row becomes an administrative ClinicalNote, not a Treatment.
+
+    Either ``IdTipoOdg`` is a known non-clinical code, or the row carries
+    no clinical signal at all (no catalog variant and no IdTipoOdg that
+    resolves to a ``clinical_type``).
+    """
+    id_tipo_odg = _coerce_int(raw.get("IdTipoOdg"))
+    if id_tipo_odg in _NON_CLINICAL_TIPO_ODG:
+        return True
+    return not payload.get("treatment_variant_uuid") and (
+        clinical_type_for_tipo_odg(id_tipo_odg) is None
+    )
+
+
 class AppliedTreatmentMapper:
     def __init__(self) -> None:
         # (clinic_id, patient_id, budget_id_or_year) -> plan_id. One
@@ -311,10 +326,8 @@ class AppliedTreatmentMapper:
         # separately by ``DebtMapper`` reading ``DeudaCli`` — this code
         # path never touches earned entries.
         id_tipo_odg = _coerce_int(raw.get("IdTipoOdg"))
-        is_non_clinical = id_tipo_odg in _NON_CLINICAL_TIPO_ODG
         has_no_catalog_variant = not payload.get("treatment_variant_uuid")
-        has_no_clinical_type = clinical_type_for_tipo_odg(id_tipo_odg) is None
-        if is_non_clinical or (has_no_catalog_variant and has_no_clinical_type):
+        if _routes_to_note(payload, raw):
             # Short-circuit re-runs.
             if await ctx.resolver.was_skipped("applied_treatment", canonical_uuid):
                 return None
@@ -660,6 +673,12 @@ class AppliedTreatmentMapper:
                 continue
             patient_uuid = payload.get("patient_uuid")
             if not patient_uuid:
+                continue
+            # Rows routed to an administrative note are not treatments:
+            # pairing them would drop free-text notes as "planned
+            # twins" (they all share the legacy key (patient, None,
+            # None, ())). Same predicate as apply() (#872).
+            if _routes_to_note(payload, raw):
                 continue
             start_dt = _parse_datetime(payload.get("start_date"))
             end_dt = _parse_datetime(payload.get("end_date"))
