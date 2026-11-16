@@ -88,8 +88,37 @@ async def create_category(
             detail=f"Category with key '{data.key}' already exists",
         )
 
+    if data.parent_id:
+        await _check_parent(db, ctx.clinic_id, data.parent_id)
+
     category = await CategoryService.create_category(db, ctx.clinic_id, data.model_dump())
     return ApiResponse(data=CategoryResponse.model_validate(category))
+
+
+async def _check_parent(
+    db: AsyncSession, clinic_id: UUID, parent_id: UUID, moving: UUID | None = None
+) -> None:
+    """400 unless ``parent_id`` is this clinic's and isn't ``moving`` or below it."""
+    seen: set[UUID] = set()
+    current: UUID | None = parent_id
+    while current is not None and current not in seen:
+        if current == moving:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="A category can't be its own parent or descendant",
+            )
+        seen.add(current)
+        node = await CategoryService.get_category(db, clinic_id, current, include_inactive=True)
+        if node is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, detail="Parent category not found"
+            )
+        current = node.parent_id
+
+
+async def _check_vat_type(db: AsyncSession, clinic_id: UUID, vat_type_id: UUID) -> None:
+    if not await VatTypeService.get_vat_type(db, clinic_id, vat_type_id):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="VAT type not found")
 
 
 @router.put("/categories/{category_id}", response_model=ApiResponse[CategoryResponse])
@@ -121,6 +150,9 @@ async def update_category(
                 status_code=status.HTTP_409_CONFLICT,
                 detail=f"Category with key '{data.key}' already exists",
             )
+
+    if data.parent_id and data.parent_id != category.parent_id:
+        await _check_parent(db, ctx.clinic_id, data.parent_id, moving=category.id)
 
     updated = await CategoryService.update_category(
         db, category, data.model_dump(exclude_unset=True)
@@ -365,6 +397,9 @@ async def create_item(
             detail="Category not found",
         )
 
+    if data.vat_type_id:
+        await _check_vat_type(db, ctx.clinic_id, data.vat_type_id)
+
     # Check for duplicate code
     existing = await CatalogService.get_item_by_code(db, ctx.clinic_id, data.internal_code)
     if existing:
@@ -436,6 +471,9 @@ async def update_item(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Category not found",
             )
+
+    if data.vat_type_id and data.vat_type_id != item.vat_type_id:
+        await _check_vat_type(db, ctx.clinic_id, data.vat_type_id)
 
     # Check code uniqueness if changing
     if data.internal_code and data.internal_code != item.internal_code:
