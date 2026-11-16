@@ -598,6 +598,8 @@ async def update_item_session(
             session_id,
             data.model_dump(exclude_unset=True),
         )
+    except PlanLockedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return _item_response_or_404(item)
@@ -625,6 +627,8 @@ async def add_item_session(
             item_id,
             data.model_dump(),
         )
+    except PlanLockedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return _item_response_or_404(item)
@@ -647,6 +651,8 @@ async def delete_item_session(
         item = await TreatmentPlanService.delete_session(
             db, ctx.clinic_id, plan_id, item_id, session_id
         )
+    except PlanLockedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return _item_response_or_404(item)

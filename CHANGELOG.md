@@ -29,6 +29,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **A treatment's sessions could be changed after the patient accepted the
+  quote (#867),** so payments booked a different total. Editing, adding or
+  deleting a session on a locked plan is now a 409. Adding a manual session
+  was also always a 500 (#868).
 - **A new treatment plan accepted any professional (#856).** Creating a plan
   did not check the assigned professional, unlike editing it: an unknown id
   was a 500, and another clinic's dentist was stored and then blocked every

@@ -140,7 +140,9 @@ migration — future ALTERs live on the ``tp`` Alembic branch.
   (issue #162). Don't revert the link condition to `budget_id is None`.
 - **A plan is locked only while its budget is `sent`/`accepted`.**
   Terminal budgets (cancelled/rejected/expired) are dead paper and do
-  not freeze the plan. Mirrored in `PlanDetailView.vue` and
+  not freeze the plan. The lock also covers session edits, adds and
+  deletes (`_ensure_unlocked`), because sessions carry the booked money
+  (#867). Completing or cancelling a session stays ungated. Mirrored in `PlanDetailView.vue` and
   keep the two predicates in sync. (`TreatmentPlanDetail.vue` was
   dead code and was removed in #167.)
 - **Every handler in `events.py` is transactional** (ADR 0019, issue
