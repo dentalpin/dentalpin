@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- refactor(#876): share the handwritten signature canvas between the public budget page and the in-clinic acceptance modal.
+
 - fix(#828): "Download PDF" and the signed PDF download saved the file as `….pdf_` on Windows. The filename regex kept the closing quote of `filename="….pdf"`, and the browser replaced the `"` with `_`.
 
 - fix(#779): the public link's expiry (`meta`, detail, `verify_public_access`), the resend draft's `valid_from` and the number's year now use the clinic's day (`clinic_today_for`). They read the server's UTC day, so from 18:00 in a UTC-6 clinic a quote on its last valid day already answered "expired".
