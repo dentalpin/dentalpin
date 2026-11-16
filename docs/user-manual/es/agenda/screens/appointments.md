@@ -30,7 +30,7 @@ related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
   - backend/app/modules/agenda/frontend/pages/p/check-in/[token].vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: 3f08dd038cc70b5d2d988e49b8029c06f42ad5b3
+last_verified_commit: cd84d7334f2898dd9d4ee83500da5cc25c3a36f0
 ---
 
 # Citas
@@ -82,6 +82,9 @@ escrito a mano.
 - Los planes en **borrador**, **pendiente de aceptación** y
   **activo** ofrecen sus tratamientos. Un tratamiento ya realizado, o
   uno de un plan completado o cerrado, no se ofrece.
+- Al elegir tratamientos, la duración pasa a ser la suma de sus
+  duraciones de catálogo (redondeada a la opción más cercana). Puedes
+  cambiarla igualmente.
 - Los tratamientos de un plan cuyo presupuesto el paciente todavía no
   ha aceptado llevan la etiqueta **Presupuesto sin aceptar** (icono de
   reloj de arena), tanto en el selector como en la lista de
