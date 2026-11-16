@@ -11,6 +11,14 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+## [2.11.0] - 2026-11-16
+
+A hardening release. Many endpoints now check that the ids they receive
+belong to the clinic, a set of race conditions is closed (invite links, RVG
+approvals, patient links), and approving a queued agent action now runs it.
+Also new: a CSV patient import screen and batch approve for the RVG queue.
+Thanks @ZoliQua, @lamanji, @ahmadalzaro1 and @JLFinance25.
+
 ### Upgrade notes
 
 - **API clients of the agent approval queue:** `POST
@@ -26,9 +34,44 @@ frontend as a Nuxt layer under its own Python package.
   *Import CSV* button. The new screen checks the file, lists rows with
   errors and possible duplicates, and imports after you confirm. Until now
   the CSV import was reachable only through the API.
+- **Batch approve in the RVG queue (#844).** A sensor session drops many
+  captures at once. They can now be approved in one go, with the same checks
+  as a single approval. Thanks @lamanji.
 
 ### Fixed
 
+- **Appointment duration from the catalog.** Picking treatments in the
+  appointment modal set 30 min per treatment that had a price. It now sums
+  the catalog's `default_duration_minutes` (#859).
+- **The migration import dropped free-text notes (#872).** An unfinished
+  note dated before a finished one was discarded as its "planned twin"; a
+  vTiger test import lost 195 notes this way (#873).
+- **The CSV patient import missed re-cased duplicates (#836).** A different
+  case in the email or the DNI letter created the patient twice (#837).
+- **S3 downloads blocked the server (#834).** The object body was read on
+  the event loop, so a large file stalled every other request (#835).
+- **Generated documents clipped the issuer (#822).** The patient metadata
+  row now wraps within the page. Thanks @ahmadalzaro1.
+- **Treatment consumables screen said stock is never deducted (#821).** It
+  can be when a linked treatment is performed. The text and docs are fixed,
+  and the links table fits on a phone. Thanks @ahmadalzaro1.
+- **RVG scans with a failed file showed a green summary (#831),** and the
+  patient pickers in the imaging viewer and AI queue searched on every
+  keystroke (#831, #832). Thanks @lamanji.
+- **Contextual help now covers the periodontogram sub-tab.** The help
+  drawer requested a fragment the docs portal published under a name no
+  app route can produce (`patients_{id}.html` vs `patients_id.html`), so
+  the periodontogram tab never reached its documentation: the drawer
+  loaded the patient-detail help from the top, the periodontogram
+  section nowhere in view. A named diagnosis sub-view
+  (`clinicalMode=diagnosis` + `diagnosisView=<view>`) now opens the
+  parent patient-detail fragment at a `#<view>` anchor; the diagnosis
+  container writes `clinicalMode` when a sub-tab is picked, so the
+  anchor also fires entering through the default mode rather than only
+  on deep links. The periodontogram documentation moved into the
+  patient-detail page (en/es) as that anchored section; the standalone
+  `periodontogram-view.md` screen docs are gone (#573).
+- **Docs:** `PUBLIC_URL`'s port must match the Caddy container port (#858).
 - **Linking two patients twice at the same time stored the pair twice or
   returned a 500 (#870).** The second request now gets the usual 409.
 - **A treatment's sessions could be changed after the patient accepted the
@@ -172,20 +215,6 @@ agenda, copilot and the odontogram. Thanks @ZoliQua and @lamanji.
   the cap reads as empty until it is re-entered.
 
 ### Fixed
-
-- **Contextual help now covers the periodontogram sub-tab.** The help
-  drawer requested a fragment the docs portal published under a name no
-  app route can produce (`patients_{id}.html` vs `patients_id.html`), so
-  the periodontogram tab never reached its documentation: the drawer
-  loaded the patient-detail help from the top, the periodontogram
-  section nowhere in view. A named diagnosis sub-view
-  (`clinicalMode=diagnosis` + `diagnosisView=<view>`) now opens the
-  parent patient-detail fragment at a `#<view>` anchor; the diagnosis
-  container writes `clinicalMode` when a sub-tab is picked, so the
-  anchor also fires entering through the default mode rather than only
-  on deep links. The periodontogram documentation moved into the
-  patient-detail page (en/es) as that anchored section; the standalone
-  `periodontogram-view.md` screen docs are gone (#573).
 
 - **Turning a patient's email off also silenced WhatsApp and SMS.** The
   consent check still treated the email switch as an opt-out of every
