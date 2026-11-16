@@ -98,6 +98,8 @@ async def _create_request(ctx: AgentContext, params: CreateRequestArgs) -> dict:
             notes=params.notes,
         ),
     )
+    if row is None:
+        return {"error": "patient not found"}
     return {
         "id": row.id,
         "status": row.status,

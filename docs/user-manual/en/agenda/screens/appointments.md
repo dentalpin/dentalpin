@@ -30,7 +30,7 @@ related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
   - backend/app/modules/agenda/frontend/pages/p/check-in/[token].vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: 3f08dd038cc70b5d2d988e49b8029c06f42ad5b3
+last_verified_commit: cd84d7334f2898dd9d4ee83500da5cc25c3a36f0
 ---
 
 # Appointments
@@ -80,6 +80,8 @@ planned work instead of a free-text reason.
 - Plans in **draft**, **awaiting acceptance** and **accepted** all
   offer their treatments. A treatment already done, or one from a
   completed or closed plan, is not offered.
+- Picking treatments sets the duration to the sum of their catalog
+  durations (rounded to the nearest option). You can still change it.
 - Treatments coming from a plan whose quote the patient has not
   accepted yet carry a **Quote awaiting acceptance** badge (hourglass
   icon), in both the picker and the selected list. Booking them is

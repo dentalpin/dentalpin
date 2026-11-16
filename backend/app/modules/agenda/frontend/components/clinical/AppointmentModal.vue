@@ -88,9 +88,9 @@ const isEditMode = computed(() => !!props.appointment)
 watch(selectedTreatments, (treatments) => {
   if (!initialDataLoaded.value) return
   const totalMinutes = treatments.reduce((acc, t) => {
-    // Get duration from catalog_item if available
-    const duration = t.catalog_item?.default_price ? 30 : 0 // Default 30 min
-    return acc + duration
+    // Catalog link lives on the Treatment; item.catalog_item may be absent.
+    const catalog = t.catalog_item || t.treatment?.catalog_item
+    return acc + (catalog?.default_duration_minutes || 0)
   }, 0)
   if (totalMinutes > 0) {
     formData.duration = validDurations.reduce((prev, curr) =>
@@ -389,7 +389,8 @@ watch(() => props.open, async (isOpen) => {
               id: t.catalog_item_id,
               internal_code: t.internal_code,
               names: t.names,
-              default_price: t.default_price != null ? String(t.default_price) : null
+              default_price: t.default_price != null ? String(t.default_price) : null,
+              default_duration_minutes: t.default_duration_minutes ?? null
             }
           : undefined
       }))

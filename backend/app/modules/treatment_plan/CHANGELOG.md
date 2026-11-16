@@ -5,6 +5,7 @@
 - fix(#867): editing, adding or deleting a session is refused (409) while the plan is locked by a `sent`/`accepted` budget, like item edits. Sessions are repriced to the accepted line and payments books their amounts, so changing them afterwards booked a different total than the patient accepted.
 - fix(#868): adding a manual session (`POST .../items/{item_id}/sessions`) was always a 500. The new session had no `id` until flush. `add_session_manual` now flushes.
 
+- feat: `CatalogItemBrief` exposes `default_duration_minutes`, so the appointment modal can derive duration from the catalog.
 - fix(#856): creating a plan checks `assigned_professional_id` with `_validate_professional_in_clinic`, as update and add-item already did. An unknown id was a 500; another clinic's dentist (or a non-professional member) was stored, shown on the plan, and made every later item fail with "Invalid professional for this clinic". Now 400.
 
 - fix(#779): the plan number's year is the clinic's year, not the server's UTC year (New Year's Eve gave the wrong year).
