@@ -1,9 +1,7 @@
 """DebtMapper gating rules + happy path.
 
-Stub-driven coverage of the early-exit branches (no DB needed) and a
-DB-backed happy path that asserts the resulting ``PatientEarnedEntry``
-carries ``amount = owed_amount`` with the ``migration_import:debt``
-source event.
+Stub-driven coverage of the early-exit branches (no DB needed) and
+DB-backed checks for signed amounts, ledger labels and idempotent imports.
 """
 
 from __future__ import annotations
@@ -22,6 +20,7 @@ from app.modules.migration_import.mappers.debt import DebtMapper
 from app.modules.migration_import.models import ImportJob, ImportWarning
 from app.modules.patients.models import Patient
 from app.modules.payments.models import PatientEarnedEntry
+from app.modules.payments.service import LedgerService
 
 CLINIC_ID = uuid4()
 
@@ -172,10 +171,39 @@ async def test_skip_when_patient_unmapped() -> None:
 
 
 @pytest.mark.asyncio
-async def test_books_earned_when_billed(db_session) -> None:
-    """A single Adeudo>0 debt with a mapped patient lands one
-    ``PatientEarnedEntry`` with ``amount = owed_amount`` and the
-    ``migration_import:debt`` source event."""
+@pytest.mark.parametrize(
+    ("overrides", "expected_event", "expected_description"),
+    [
+        ({}, "migration_import:debt", "Adeudo migrado · NumTto 1 · fase 1"),
+        (
+            {"description": "x" * 161},
+            "migration_import:debt",
+            "x" * 160,
+        ),
+        (
+            {"opening_balance": True, "description": "Saldo inicial vTiger"},
+            "migration_import:opening_balance",
+            "Saldo inicial vTiger",
+        ),
+        (
+            {"opening_balance": True, "description": "Crédito vTiger", "owed_amount": "-80.50"},
+            "migration_import:opening_balance",
+            "Crédito vTiger",
+        ),
+        (
+            {"opening_balance": True, "description": " "},
+            "migration_import:opening_balance",
+            "Saldo de apertura",
+        ),
+    ],
+)
+async def test_books_earned_when_billed(
+    db_session,
+    overrides: dict[str, Any],
+    expected_event: str,
+    expected_description: str,
+) -> None:
+    """Book the signed amount once and expose it on the patient ledger."""
     clinic, admin = await _bootstrap(db_session)
     patient = Patient(
         clinic_id=clinic.id,
@@ -196,7 +224,8 @@ async def test_books_earned_when_billed(db_session) -> None:
         dentalpin_id=patient.id,
     )
 
-    payload = _payload(patient_uuid=canonical_patient, owed_amount="250.00")
+    payload = _payload(patient_uuid=canonical_patient, **overrides)
+    amount = Decimal(payload["owed_amount"])
     result = await DebtMapper().apply(
         ctx,
         entity_type="debt",
@@ -213,12 +242,21 @@ async def test_books_earned_when_billed(db_session) -> None:
     )
     earned = rows.scalars().all()
     assert len(earned) == 1
-    assert earned[0].amount == Decimal("250.00")
-    assert earned[0].source_event == "migration_import:debt"
+    assert earned[0].amount == amount
+    assert earned[0].source_event == expected_event
+    assert earned[0].description == expected_description
 
-    # Re-running short-circuits via the resolver — no duplicate.
+    ledger = await LedgerService.get_patient_ledger(db_session, clinic.id, patient.id, "EUR")
+    assert ledger.clinic_receivable == max(Decimal("0"), amount)
+    assert ledger.patient_credit == max(Decimal("0"), -amount)
+    assert ledger.total_paid == ledger.on_account_balance == Decimal("0")
+    assert [entry.description for entry in ledger.timeline] == [expected_description]
+
+    # A new import job resolves the same canonical UUID from persistent mappings.
+    await db_session.commit()
+    retry_ctx = await _ctx(db_session, clinic.id, admin.id)
     again = await DebtMapper().apply(
-        ctx,
+        retry_ctx,
         entity_type="debt",
         payload=payload,
         raw={},

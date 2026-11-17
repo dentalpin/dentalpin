@@ -101,6 +101,14 @@ mappers. Used to bump `ImportJob.processed_entities`.
   if you add another writer of ``PatientEarnedEntry`` here, use a
   uuid5-derived ``source_session_id`` to keep multi-phase rows
   collision-free.
+- **Opening balances.** A canonical `debt` row with JSON boolean
+  `opening_balance: true` is recorded with
+  `source_event="migration_import:opening_balance"`. Producers should
+  supply one stable `canonical_uuid` per patient opening balance. Like
+  other debt rows, it accepts a signed `owed_amount` and an optional
+  `description` (stored up to 160 characters). A negative amount creates
+  ledger credit. A blank or missing description uses the mapper's
+  default label.
 - **`clinic_id` always comes from `ctx`**, never from the DPMF payload.
   Mappers that read `clinic_id` from the file are a tenancy bug.
 - **External IDs are never used as FKs.** Every cross-entity reference
