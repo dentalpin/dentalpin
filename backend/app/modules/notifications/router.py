@@ -10,7 +10,9 @@ from app.core.auth.dependencies import ClinicContext, get_clinic_context, requir
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
+from .channels import Channel
 from .gateway import NotificationGateway
+from .models import NotificationPreference
 from .schemas import (
     ChannelAvailabilityResponse,
     ClinicNotificationSettingsResponse,
@@ -208,6 +210,15 @@ async def _ensure_clinic_patient(db: AsyncSession, clinic_id: UUID, patient_id: 
         raise HTTPException(status_code=404, detail="Patient not found")
 
 
+async def _patient_preferences_response(
+    db: AsyncSession, prefs: NotificationPreference
+) -> NotificationPreferenceResponse:
+    whatsapp = await NotificationGateway._supporting_adapter(db, prefs.clinic_id, Channel.WHATSAPP)
+    response = NotificationPreferenceResponse.model_validate(prefs)
+    response.whatsapp_consent_required = getattr(whatsapp, "requires_whatsapp_opt_in", False)
+    return response
+
+
 @router.get(
     "/preferences/patient/{patient_id}",
     response_model=ApiResponse[NotificationPreferenceResponse],
@@ -226,7 +237,7 @@ async def get_patient_preferences(
     prefs = await NotificationService.get_or_create_patient_preferences(
         db, ctx.clinic_id, patient_id
     )
-    return ApiResponse(data=NotificationPreferenceResponse.model_validate(prefs))
+    return ApiResponse(data=await _patient_preferences_response(db, prefs))
 
 
 @router.put(
@@ -245,7 +256,7 @@ async def update_patient_preferences(
     prefs = await NotificationService.update_patient_preferences(
         db, ctx.clinic_id, patient_id, data.model_dump(exclude_unset=True)
     )
-    return ApiResponse(data=NotificationPreferenceResponse.model_validate(prefs))
+    return ApiResponse(data=await _patient_preferences_response(db, prefs))
 
 
 # ============================================================================
@@ -606,15 +617,22 @@ async def list_available_channels(
     Same permission as the conversation thread — the card that gates on
     this renders for every role that can read the thread.
     """
-    from .channels import channel_registry
+    from .channels import Channel
 
     available: list[str] = []
-    for channel in channel_registry.available_channels():
-        for adapter in channel_registry.adapters_for_channel(channel):
-            if await adapter.supports(db, ctx.clinic_id):
-                available.append(channel.value)
-                break
-    return ApiResponse(data=ChannelAvailabilityResponse(available=available))
+    whatsapp_session_available = False
+    for channel in Channel:
+        adapter = await NotificationGateway._supporting_adapter(db, ctx.clinic_id, channel)
+        if adapter is None:
+            continue
+        available.append(channel.value)
+        if channel == Channel.WHATSAPP:
+            whatsapp_session_available = getattr(adapter, "supports_session_replies", True)
+    return ApiResponse(
+        data=ChannelAvailabilityResponse(
+            available=available, whatsapp_session_available=whatsapp_session_available
+        )
+    )
 
 
 @router.get(

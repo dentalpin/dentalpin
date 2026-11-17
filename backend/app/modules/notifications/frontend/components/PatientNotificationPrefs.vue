@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PERMISSIONS } from '~~/app/config/permissions'
 import { errorDetail } from '~~/app/utils/error'
 
 type Channel = 'email_enabled' | 'whatsapp_enabled' | 'sms_enabled'
@@ -6,6 +7,8 @@ type Channel = 'email_enabled' | 'whatsapp_enabled' | 'sms_enabled'
 interface PatientPrefs {
   email_enabled: boolean
   whatsapp_enabled: boolean
+  whatsapp_opt_in_at: string | null
+  whatsapp_consent_required: boolean
   sms_enabled: boolean
   // Per-type opt-outs, keyed by the backend's NotificationType vocabulary.
   // An absent key is consent, so only an explicit false is an opt-out.
@@ -16,6 +19,7 @@ const props = defineProps<{ ctx: { patient: { id: string } } }>()
 const { t } = useI18n()
 const toast = useToast()
 const api = useApi()
+const { can } = usePermissions()
 // Same nine-type list the clinic settings page renders; the backend test
 // `test_every_enqueued_type_is_in_the_vocabulary` keeps it in step.
 const { notificationTypes } = useNotificationSettings()
@@ -37,6 +41,8 @@ onMounted(async () => {
     prefs.value = {
       email_enabled: res.data.email_enabled,
       whatsapp_enabled: res.data.whatsapp_enabled,
+      whatsapp_opt_in_at: res.data.whatsapp_opt_in_at,
+      whatsapp_consent_required: res.data.whatsapp_consent_required,
       sms_enabled: res.data.sms_enabled,
       preferences: { ...(res.data.preferences ?? {}) }
     }
@@ -82,9 +88,11 @@ async function onToggle(channel: Channel, value: boolean | 'indeterminate') {
   prefs.value[channel] = next
   saving.value = true
   try {
-    await api.put(`/api/v1/notifications/preferences/patient/${patientId}`, {
+    const response = await api.put<{ data: PatientPrefs }>(`/api/v1/notifications/preferences/patient/${patientId}`, {
       [channel]: next
     })
+    prefs.value.whatsapp_opt_in_at = response.data.whatsapp_opt_in_at
+    prefs.value.whatsapp_consent_required = response.data.whatsapp_consent_required
     toast.add({ title: t('notifications.prefs.saved'), color: 'success' })
   } catch (e: unknown) {
     if (prefs.value) prefs.value[channel] = previous
@@ -93,6 +101,23 @@ async function onToggle(channel: Channel, value: boolean | 'indeterminate') {
       description: errorDetail(e),
       color: 'error'
     })
+  } finally {
+    saving.value = false
+  }
+}
+async function onConsent(value: boolean) {
+  if (!patientId || !prefs.value || saving.value) return
+  saving.value = true
+  try {
+    const response = await api.put<{ data: PatientPrefs }>(
+      `/api/v1/notifications/preferences/patient/${patientId}`,
+      { whatsapp_consent: value }
+    )
+    prefs.value.whatsapp_opt_in_at = response.data.whatsapp_opt_in_at
+    prefs.value.whatsapp_consent_required = response.data.whatsapp_consent_required
+    toast.add({ title: t('notifications.prefs.saved'), color: 'success' })
+  } catch (e: unknown) {
+    toast.add({ title: t('errors.updateFailed'), description: errorDetail(e), color: 'error' })
   } finally {
     saving.value = false
   }
@@ -125,6 +150,14 @@ async function onToggle(channel: Channel, value: boolean | 'indeterminate') {
           :label="t('notifications.channels.whatsapp')"
           :disabled="saving"
           @update:model-value="(v) => onToggle('whatsapp_enabled', v)"
+        />
+        <USwitch
+          v-if="can(PERMISSIONS.notifications.preferencesWrite) && prefs.whatsapp_enabled && prefs.whatsapp_consent_required"
+          :model-value="!!prefs.whatsapp_opt_in_at"
+          :label="t('notifications.conversation.consent')"
+          :description="t('notifications.conversation.consentHelp')"
+          :disabled="saving"
+          @update:model-value="onConsent"
         />
         <USwitch
           :model-value="prefs.sms_enabled"

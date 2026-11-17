@@ -83,6 +83,7 @@ class AdapterResult:
     provider_message_id: str | None = None
     error_message: str | None = None
     sent_at: datetime | None = None
+    body_text: str | None = None  # rendered text to retain for deferred delivery
 
     @property
     def is_sent(self) -> bool:
@@ -99,7 +100,11 @@ class ChannelAdapter(Protocol):
 
     Adapters may declare ``requires_provider_template = False`` to accept
     proactive WhatsApp without a provider-approved template. Omitting the
-    attribute preserves the approval requirement for existing adapters.
+    attribute preserves the approval requirement for existing adapters. An
+    adapter may also declare ``requires_whatsapp_opt_in = True`` to require
+    recorded consent, or ``supports_session_replies = False`` to opt out of
+    session replies. An optional async ``normalize_recipient(db, clinic_id,
+    address)`` hook returns a canonical address or None to allow fallback.
     """
 
     channel: Channel

@@ -16,12 +16,14 @@ const draft = ref('')
 // (GET /notifications/channels asks each adapter's `supports`).
 const api = useApi()
 const channelReady = ref(false)
+const replyAvailable = ref(false)
 
 onMounted(async () => {
   if (!conv) return
   try {
-    const res = await api.get<{ data: { available: string[] } }>('/api/v1/notifications/channels')
+    const res = await api.get<{ data: { available: string[], whatsapp_session_available: boolean } }>('/api/v1/notifications/channels')
     channelReady.value = res.data.available.includes('whatsapp')
+    replyAvailable.value = res.data.whatsapp_session_available
   } catch {
     channelReady.value = false
   }
@@ -80,13 +82,28 @@ function label(m: { body_text: string | null, subject: string | null, template_k
           >
             <div>{{ label(m) }}</div>
             <div class="text-[10px] text-gray-400 mt-1">
-              {{ m.status }} · {{ new Date(m.created_at).toLocaleString() }}
+              <UBadge
+                v-if="m.status === 'awaiting_manual'"
+                color="warning"
+                variant="soft"
+                size="sm"
+              >
+                {{ t('notifications.conversation.awaitingManual') }}
+              </UBadge>
+              <span v-else-if="m.sent_manually">
+                {{ t('notifications.conversation.manuallySent') }}
+              </span>
+              <span v-else>{{ m.status }}</span>
+              · {{ new Date(m.created_at).toLocaleString() }}
             </div>
           </div>
         </li>
       </ul>
 
-      <div class="flex gap-2 mt-3">
+      <div
+        v-if="replyAvailable"
+        class="flex gap-2 mt-3"
+      >
         <UInput
           v-model="draft"
           class="flex-1"

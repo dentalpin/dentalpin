@@ -1,6 +1,10 @@
 {
  "notifications": {
   "conversation": {
+   "awaitingManual": "मैन्युअल रूप से भेजना बाकी है",
+   "manuallySent": "स्टाफ़ ने भेजने की पुष्टि दर्ज की",
+   "consent": "WhatsApp की सहमति दर्ज है",
+   "consentHelp": "मरीज़ की सहमति मिलने पर यह विकल्प चालू करें।",
    "title": "WhatsApp बातचीत",
    "empty": "अभी कोई संदेश नहीं।",
    "placeholder": "उत्तर लिखें…",

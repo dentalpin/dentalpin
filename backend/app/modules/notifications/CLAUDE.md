@@ -31,6 +31,24 @@ Heavy subscriber + now a publisher. See ADR 0016.
   `notification_preferences`, `clinic_notification_settings`,
   `clinic_channel_settings`, `clinic_smtp_settings`.
 
+## Optional adapter hooks
+
+- `normalize_recipient(db, clinic_id, address)` can normalize a recipient or
+  return `None` to let the gateway fall back to another channel.
+- `requires_whatsapp_opt_in = True` requires recorded consent. Only a clinic
+  using such an adapter sees the consent control on the patient screen.
+  `supports_session_replies = False` disables session replies for the adapter.
+- `requires_provider_template = False` allows proactive WhatsApp without a
+  provider template. Approved provider templates never receive the internal
+  `appointment_start_at` context key.
+- When `OutboundMessage.metadata["literal_body"]` is true, preserve
+  `body_text` as caller-supplied copy. Otherwise an adapter can render
+  template text with the supplied variables.
+- `SendStatus.DEFERRED` and an optional `AdapterResult.body_text` leave the
+  rendered draft awaiting manual delivery. Consent withdrawal, a disabled
+  WhatsApp preference, a transactional `patient.updated` event setting
+  `do_not_contact`, or erasure cancels an outstanding draft.
+
 ## Public API
 
 Routes mounted at `/api/v1/notifications/` (templates, preferences,
@@ -72,6 +90,7 @@ is the `NotificationType` Literal, so the model is shown the nine values.
 ## Events consumed
 
 - `patient.created`
+- `patient.updated` — cancels pending WhatsApp drafts in the same transaction when the patient is marked Do not contact.
 - `appointment.scheduled` / `appointment.cancelled`
 - `budget.sent` / `budget.accepted` / `budget.reminder_sent`
 - `invoice.sent`
@@ -80,7 +99,7 @@ is the `NotificationType` Literal, so the model is shown the nine values.
   inside the erasure transaction: it redacts recipient, subject, body,
   template context and failure text of the patient's messages whose
   channel matches an erased category, and cancels (`skipped`) any
-  queued, sending or failed row; the dispatched row stays as the send
+  queued, sending, failed or manually pending row; the dispatched row stays as the send
   audit (#546, ADR 0038). Transactional.
 
 ## Lifecycle

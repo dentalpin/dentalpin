@@ -72,6 +72,30 @@ in core; core only records which adapter serves which channel per clinic
   unavailable selection makes that channel unavailable rather than silently
   choosing a different adapter on the same channel.
 
+## Amendment — Optional delivery hooks (#875)
+
+- `requires_whatsapp_opt_in = True` requires affirmative WhatsApp consent
+  at enqueue and dispatch. `supports_session_replies = False` disables that
+  adapter's session replies. The session window still applies to adapters
+  that accept replies.
+- `normalize_recipient(db, clinic_id, address)` is an optional async hook.
+  It can return a canonical address or `None` to permit channel fallback.
+- The gateway resolves the clinic's selected adapter at dispatch. The
+  `provider` column records which adapter handled delivery.
+- `AdapterResult.body_text` can supply a rendered draft for deferred
+  delivery. `OutboundMessage.metadata["literal_body"]` is true when the
+  outgoing text was provided verbatim by the caller. Draft adapters should
+  preserve it as written and only substitute variables in template text.
+  Approved provider templates keep their own template rendering.
+- Appointment producers store offset-aware `appointment_start_at` so a
+  draft adapter can check whether the appointment is still current. The
+  gateway omits this key from the context sent to providers using an
+  approved template.
+- Withdrawing WhatsApp consent, turning off the WhatsApp preference or
+  marking the patient Do not contact cancels their outbound messages
+  awaiting manual delivery. Erasing a recipient also clears their draft
+  content. Draft finalization checks that consent still permits delivery.
+
 ## Alternatives considered
 
 - **Core-level `BaseModule.get_channel_adapters()` hook** — more idiomatic (no

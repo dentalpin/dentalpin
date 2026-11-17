@@ -1,6 +1,10 @@
 {
  "notifications": {
   "conversation": {
+   "awaitingManual": "మాన్యువల్‌గా పంపాల్సి ఉంది",
+   "manuallySent": "పంపినట్లు సిబ్బంది నమోదు చేశారు",
+   "consent": "WhatsApp సమ్మతి నమోదు అయింది",
+   "consentHelp": "రోగి సమ్మతి ఇచ్చిన తర్వాత ఈ ఎంపికను ఆన్ చేయండి.",
    "title": "WhatsApp సంభాషణ",
    "empty": "ఇంకా సందేశాలు లేవు.",
    "placeholder": "సమాధానం టైప్ చేయండి…",

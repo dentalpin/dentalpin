@@ -250,6 +250,18 @@ canales, también en los envíos manuales del personal; el encendido o
 apagado de cada tipo para toda la clínica sigue en los ajustes de
 notificaciones.
 
+Si el adaptador de WhatsApp de la clínica exige consentimiento expreso,
+el personal con permiso para editar las preferencias verá el interruptor
+**Consentimiento de WhatsApp**. Actívalo cuando hayas registrado la
+autorización del paciente. Retirarla, desactivar WhatsApp o marcar **No
+contactar** cancela los mensajes de WhatsApp pendientes de envío manual.
+Los mensajes que ya se enviaron siguen en el historial.
+
+El borrador manual usa la plantilla configurada salvo que el personal
+haya aportado su propio texto. Ese texto se conserva tal como se escribió.
+Un adaptador de borradores manuales puede desactivar las respuestas desde
+la conversación.
+
 ## Grupos
 
 La tarjeta de **Grupos** lista las etiquetas locales asignadas al

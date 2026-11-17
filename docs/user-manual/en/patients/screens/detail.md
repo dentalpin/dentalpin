@@ -244,6 +244,18 @@ quote sent, invoice sent, recall reminder…). Turning a type off blocks it
 on every channel, manual sends from staff included; the clinic-wide
 on/off for each type stays in notification settings.
 
+When the clinic's WhatsApp adapter requires explicit consent, the
+notification preferences show a **WhatsApp consent** switch to staff
+who can edit preferences. Turn it on after recording the patient's
+permission. Turning it off, disabling WhatsApp or setting **Do not
+contact** cancels WhatsApp messages awaiting manual delivery. Messages
+already sent stay in the conversation history.
+
+A manual draft uses the configured message template unless staff
+provided their own text. Staff-provided text is kept as written. An
+adapter that supports manual drafts may also disable replies from the
+conversation screen.
+
 ## Groups
 
 The **Groups** card lists the clinic-local tags assigned to the

@@ -308,7 +308,7 @@ class CommunicationMessage(Base, TimestampMixin):
     message_kind: Mapped[str] = mapped_column(String(20), default="template")  # template | session
     subject: Mapped[str | None] = mapped_column(String(255), default=None)
     # Literal text for inbound messages and free-form (session) outbound sends.
-    # Template outbound renders from the template, so this stays NULL there.
+    # Deferred delivery also retains the exact rendered draft.
     body_text: Mapped[str | None] = mapped_column(Text, default=None)
 
     # Lifecycle
@@ -343,6 +343,17 @@ class CommunicationMessage(Base, TimestampMixin):
 
     clinic: Mapped["Clinic"] = relationship(foreign_keys=[clinic_id])
     patient: Mapped["Patient | None"] = relationship(foreign_keys=[patient_id])
+
+    @property
+    def sent_manually(self) -> bool:
+        """Whether the send was declared by a member of staff."""
+        declaration = (self.context_data or {}).get("manual_delivery")
+        return (
+            self.status == "sent"
+            and isinstance(declaration, dict)
+            and declaration.get("action") == "mark_sent"
+            and bool(declaration.get("user_id"))
+        )
 
     __table_args__ = (
         Index("idx_communication_messages_clinic", "clinic_id"),

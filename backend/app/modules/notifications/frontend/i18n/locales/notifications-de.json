@@ -1,6 +1,10 @@
 {
   "notifications": {
     "conversation": {
+      "awaitingManual": "Manueller Versand ausstehend",
+      "manuallySent": "Versand vom Personal bestätigt",
+      "consent": "Einwilligung für WhatsApp erfasst",
+      "consentHelp": "Aktivieren Sie diese Option, sobald die Einwilligung der Patientin oder des Patienten vorliegt.",
       "title": "WhatsApp-Unterhaltung",
       "empty": "Noch keine Nachrichten.",
       "placeholder": "Antwort eingeben…",

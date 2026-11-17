@@ -31,9 +31,10 @@ These events exist in `EventType` but their publishers do not pass a
 session (`db=`), so subscribing would violate ADR 0019. Fixing them
 requires a publisher-side change, tracked as a follow-up:
 
-- `patient.updated` — patients/service.py
 - `invoice.issued` / `invoice.paid` — billing/service.py
 - `payment.recorded` — payments/service.py
+
+The transactional `patient.updated` event is not exposed as an integration webhook trigger.
 
 ## Adding a new event
 

@@ -177,6 +177,7 @@ class NotificationsModule(BaseModule):
             EventType.APPOINTMENT_SCHEDULED: NotificationHandlers.on_appointment_scheduled,
             EventType.APPOINTMENT_CANCELLED: NotificationHandlers.on_appointment_cancelled,
             EventType.PATIENT_CREATED: NotificationHandlers.on_patient_created,
+            EventType.PATIENT_UPDATED: NotificationHandlers.on_patient_updated,
             EventType.BUDGET_SENT: NotificationHandlers.on_budget_sent,
             EventType.BUDGET_ACCEPTED: NotificationHandlers.on_budget_accepted,
             EventType.BUDGET_REMINDER_SENT: NotificationHandlers.on_budget_reminder_sent,
