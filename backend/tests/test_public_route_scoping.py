@@ -19,12 +19,14 @@ from uuid import UUID, uuid4
 
 import pytest
 import pytest_asyncio
-from httpx import AsyncClient
+from httpx import ASGITransport, AsyncClient
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership, User
-from app.modules.budget.models import Budget
+from app.main import app
+from app.modules.budget.models import Budget, BudgetSignature
+from app.modules.budget.pdf import BudgetPDFService
 from app.modules.integrations.service import IntegrationsService
 from app.modules.notifications.models import PushSubscription
 from app.modules.notifications.push import PushSubscribeTokenService
@@ -232,6 +234,55 @@ async def test_budget_none_method_needs_no_cookie(
     await db_session.commit()
     response = await client.get(f"{BUDGET}/{budget.public_token}")
     assert response.status_code == 200, response.text
+
+
+@pytest.mark.asyncio
+async def test_public_signed_budget_pdf_uses_clinic_timezone(
+    client: AsyncClient,
+    db_session: AsyncSession,
+    t1_setup: dict,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    clinic, budget = t1_setup["clinic"], t1_setup["budget"]
+    clinic.timezone = "Europe/Madrid"
+    await db_session.commit()
+    path = f"{BUDGET}/{budget.public_token}"
+    verify = await client.post(f"{path}/verify", json={"method": "phone_last4", "value": "1222"})
+    assert verify.status_code == 204
+
+    budget.status = "accepted"
+    db_session.add(
+        BudgetSignature(
+            clinic_id=clinic.id,
+            budget_id=budget.id,
+            signature_type="full_acceptance",
+            signed_by_name="Test Patient",
+            relationship_to_patient="patient",
+            signature_method="click_accept",
+            signed_at=datetime(2026, 7, 7, 10, 34, tzinfo=UTC),
+        )
+    )
+    await db_session.commit()
+
+    rendered_html = []
+
+    def render_pdf(html: str) -> bytes:
+        rendered_html.append(html)
+        return b"%PDF-test"
+
+    # Exercise the real HTML template without requiring native PDF libraries.
+    monkeypatch.setattr(BudgetPDFService, "_html_to_pdf", staticmethod(render_pdf))
+    transport = ASGITransport(app=app, raise_app_exceptions=False)
+    async with AsyncClient(
+        transport=transport, base_url=client.base_url, cookies=client.cookies
+    ) as ac:
+        response = await ac.get(f"{path}/pdf/signed")
+
+    assert response.status_code == 200, response.text
+    assert response.headers["content-type"] == "application/pdf"
+    assert response.content == b"%PDF-test"
+    assert "Test Patient" in rendered_html[0]
+    assert "07/07/2026 12:34" in rendered_html[0]
 
 
 # ---------------------------------------------------------------------------

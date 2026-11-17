@@ -39,6 +39,7 @@ from pydantic import BaseModel, Field
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
+from app.core.auth.models import Clinic
 from app.core.auth.router import limiter
 from app.core.schemas import ApiResponse
 from app.core.utils.dates import clinic_today_for
@@ -438,25 +439,15 @@ async def download_public_signed_budget_pdf(
         db, budget.clinic_id, budget.id, include_items=True
     )
 
-    from sqlalchemy import text as _text
-
-    clinic_row = (
-        await db.execute(
-            _text(
-                "SELECT id, name, address, phone, email, settings, tax_id, legal_name "
-                "FROM clinics WHERE id = :id"
-            ),
-            {"id": budget.clinic_id},
-        )
-    ).first()
+    clinic = await db.get(Clinic, budget.clinic_id)
     clinic_settings = (
-        clinic_row.settings if clinic_row and isinstance(clinic_row.settings, dict) else {}
+        clinic.settings if clinic and isinstance(clinic.settings, dict) else {}
     ) or {}
     locale = str(clinic_settings.get("communication_language") or "es")
 
     pdf_bytes = await BudgetPDFService.generate_pdf(
         full_budget,
-        clinic_row,
+        clinic,
         is_preview=False,
         locale=locale,
         signature=signature,
