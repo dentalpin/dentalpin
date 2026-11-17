@@ -879,7 +879,7 @@ function openPatientFile() {
               </div>
               <ModuleSlot
                 name="appointment.detail.notes"
-                :ctx="{ appointmentId: appointment.id, patientId: appointment.patient_id }"
+                :ctx="{ appointment }"
               />
             </section>
           </form>
@@ -898,6 +898,12 @@ function openPatientFile() {
               >
                 {{ t('appointments.cancel') }}
               </UButton>
+
+              <ModuleSlot
+                v-if="isEditMode && appointment"
+                name="appointment.detail.actions"
+                :ctx="{ appointment }"
+              />
 
               <!-- Send menu in edit mode — items follow the clinic's
                    manual channels and the patient's contact details. -->
