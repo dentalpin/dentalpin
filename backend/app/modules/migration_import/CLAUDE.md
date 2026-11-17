@@ -109,6 +109,12 @@ mappers. Used to bump `ImportJob.processed_entities`.
   `description` (stored up to 160 characters). A negative amount creates
   ledger credit. A blank or missing description uses the mapper's
   default label.
+- **Invoice line catalog links.** `fiscal_document_line` accepts
+  `treatment_uuid` or `treatment_variant_uuid` as optional canonical
+  catalog references. Resolution prefers the treatment template, then the
+  tariff variant, then the existing `applied_treatment_uuid` path. Unmapped
+  catalog references emit a warning. A line with no resolved catalog item
+  can still be imported using its fiscal snapshot.
 - **`clinic_id` always comes from `ctx`**, never from the DPMF payload.
   Mappers that read `clinic_id` from the file are a tenancy bug.
 - **External IDs are never used as FKs.** Every cross-entity reference
