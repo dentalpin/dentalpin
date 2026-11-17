@@ -412,7 +412,7 @@ class NotificationGateway:
             msg.provider_message_id = result.provider_message_id
             msg.error_message = None
             await db.commit()
-            await NotificationGateway._publish(msg, EventType.NOTIFICATION_SENT)
+            await NotificationGateway.publish_sent(msg)
         elif result.status == SendStatus.DEFERRED:
             # The lock was released before calling the adapter. Erasure may
             # have cancelled and scrubbed the row while the adapter ran.
@@ -784,6 +784,11 @@ class NotificationGateway:
         db.add(msg)
         await db.flush()
         return msg
+
+    @staticmethod
+    async def publish_sent(msg: CommunicationMessage) -> None:
+        """Publish a recorded send after its transaction has committed."""
+        await NotificationGateway._publish(msg, EventType.NOTIFICATION_SENT)
 
     @staticmethod
     async def _publish(msg: CommunicationMessage, event_type: str) -> None:
