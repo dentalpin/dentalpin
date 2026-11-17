@@ -85,7 +85,13 @@ treatment_plan finalizes a sessioned item it publishes
 `odontogram.treatment.performed` with `unit_price: null` because the
 sessions already booked the money per-session. Exclusivity between the
 two earned paths is the publishers' responsibility
-(`docs/technical/payments/events.md`); this module stays a dumb ledger.
+(`docs/technical/payments/events.md`); this module stays a dumb ledger,
+with one guard: the NULL-session row books `unit_price` **minus what the
+treatment's session rows already booked**, and nothing when they cover it.
+Performing a sessioned treatment on the odontogram after one of its
+sessions was completed would otherwise count that session twice — the
+event carries the full price, and treatment_plan only cancels the
+*pending* sessions (#891).
 Idempotency is DB-level: `uq_earned_treatment_session` (session rows) +
 partial index `uq_earned_treatment_null_session` (NULL rows, `pay_0004`
 — plain unique constraints treat NULLs as distinct).

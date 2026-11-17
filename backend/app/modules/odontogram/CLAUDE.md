@@ -41,7 +41,10 @@ None.
   Validate at the boundary; don't trust caller-supplied tooth ids.
 - **Treatments fired on `performed`** are the trigger for budget +
   treatment_plan sync. Idempotency matters — a re-fire must not
-  double-charge.
+  double-charge. `perform` locks the row and refuses a treatment that is
+  already `performed` (`TreatmentAlreadyPerformedError` → 409, #891): a
+  sessioned treatment finalized with `unit_price: null` would otherwise
+  book its full price on a second perform.
 - **`unit_price: null` on `treatment.performed` is a contract**, not a
   missing field: `perform(publish_price=False)` is how treatment_plan
   finalizes a sessioned item whose amounts were already booked

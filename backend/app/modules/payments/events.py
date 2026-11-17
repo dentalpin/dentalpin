@@ -35,6 +35,7 @@ from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
+from sqlalchemy import func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -137,7 +138,45 @@ async def _upsert_earned_entry(
 
 
 async def on_treatment_performed(data: dict[str, Any], *, db: AsyncSession) -> None:
-    """Handler for ``odontogram.treatment.performed`` (single-session row)."""
+    """Handler for ``odontogram.treatment.performed`` (single-session row).
+
+    The NULL-session row books what the treatment's sessions have not booked
+    yet. Performing a sessioned treatment on the odontogram after one of its
+    sessions was completed would otherwise book that session's money twice:
+    the event carries the full price, and treatment_plan only cancels the
+    *pending* sessions (#891).
+    """
+    amount = _parse_amount(data.get("unit_price") or data.get("price_snapshot"))
+    treatment_id = _parse_uuid(data.get("treatment_id"))
+    clinic_id = _parse_uuid(data.get("clinic_id"))
+    if amount is not None and treatment_id and clinic_id:
+        booked = (
+            await db.execute(
+                select(func.coalesce(func.sum(PatientEarnedEntry.amount), 0)).where(
+                    PatientEarnedEntry.clinic_id == clinic_id,
+                    PatientEarnedEntry.treatment_id == treatment_id,
+                    PatientEarnedEntry.source_session_id.is_not(None),
+                )
+            )
+        ).scalar_one()
+        if booked:
+            remaining = amount - Decimal(booked)
+            if remaining <= 0:
+                logger.info(
+                    "odontogram.treatment.performed: sessions already booked %s of %s, "
+                    "skipping (treatment_id=%s)",
+                    booked,
+                    amount,
+                    treatment_id,
+                )
+                return
+            await _upsert_earned_entry(
+                data,
+                source_event="odontogram.treatment.performed",
+                db=db,
+                amount_override=remaining,
+            )
+            return
     await _upsert_earned_entry(data, source_event="odontogram.treatment.performed", db=db)
 
 

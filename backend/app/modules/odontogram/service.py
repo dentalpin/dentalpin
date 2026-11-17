@@ -479,6 +479,10 @@ class OdontogramService:
         }
 
 
+class TreatmentAlreadyPerformedError(ValueError):
+    """``perform`` on a treatment that is already performed."""
+
+
 class TreatmentService:
     """Service for Treatment (clinical act) operations."""
 
@@ -818,9 +822,29 @@ class TreatmentService:
         notes: str | None = None,
         publish_price: bool = True,
     ) -> Treatment | None:
+        # Lock the row and read the status as a column, not off a possibly
+        # stale identity-map instance: two concurrent requests must not both
+        # see ``planned``.
+        current_status = (
+            await db.execute(
+                select(Treatment.status)
+                .where(
+                    Treatment.clinic_id == clinic_id,
+                    Treatment.id == treatment_id,
+                    Treatment.deleted_at.is_(None),
+                )
+                .with_for_update()
+            )
+        ).scalar_one_or_none()
+        if current_status is None:
+            return None
         treatment = await TreatmentService.get_treatment(db, clinic_id, treatment_id)
         if not treatment:
             return None
+        if current_status == TreatmentStatus.PERFORMED.value:
+            # A second ``performed`` event re-books revenue and stock, and the
+            # write would overwrite who performed it and when (#891).
+            raise TreatmentAlreadyPerformedError("Treatment is already performed")
         old_status = treatment.status
         now = datetime.now(UTC)
         treatment.status = TreatmentStatus.PERFORMED.value
