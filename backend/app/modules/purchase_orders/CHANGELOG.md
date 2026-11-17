@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#892): `GET /{order_id}/receipts/{receipt_id}` returns 404 for a receipt of another order. It checked only that the order existed and then loaded the receipt by id.
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix(#705): the order PDF footer stamped the server's clock

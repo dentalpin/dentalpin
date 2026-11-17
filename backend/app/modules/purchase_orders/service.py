@@ -440,13 +440,16 @@ class PurchaseOrderService:
         return list((await db.execute(stmt)).scalars().all())
 
     @staticmethod
-    async def get_receipt_response(db: AsyncSession, clinic_id: UUID, receipt_id: UUID) -> dict:
+    async def get_receipt_response(
+        db: AsyncSession, clinic_id: UUID, receipt_id: UUID, order_id: UUID | None = None
+    ) -> dict:
+        conditions = [PurchaseReceipt.id == receipt_id, PurchaseReceipt.clinic_id == clinic_id]
+        if order_id is not None:
+            # The nested route names the order: a receipt of another order is
+            # not found under it (#892).
+            conditions.append(PurchaseReceipt.purchase_order_id == order_id)
         receipt = (
-            await db.execute(
-                select(PurchaseReceipt).where(
-                    PurchaseReceipt.id == receipt_id, PurchaseReceipt.clinic_id == clinic_id
-                )
-            )
+            await db.execute(select(PurchaseReceipt).where(*conditions))
         ).scalar_one_or_none()
         if receipt is None:
             raise HTTPException(http_status.HTTP_404_NOT_FOUND, "Receipt not found")
