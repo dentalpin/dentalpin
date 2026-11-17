@@ -173,9 +173,17 @@ async def test_appointment_timestamp_is_kept_for_manual_delivery_only(
         )
     )
     timestamp = "2026-11-20T09:00:00+01:00"
+    appointment_id = "synthetic-appointment"
     draft = await _enqueue(
-        db_session, test_patient, channels=["whatsapp"], body_text="Literal copy",
-        context={"patient_name": "Alex Example", "appointment_start_at": timestamp},
+        db_session,
+        test_patient,
+        channels=["whatsapp"],
+        body_text="Literal copy",
+        context={
+            "patient_name": "Alex Example",
+            "appointment_start_at": timestamp,
+            "appointment_id": appointment_id,
+        },
     )
 
     assert await NotificationGateway.dispatch_outbox(db_session) == 1
@@ -184,10 +192,12 @@ async def test_appointment_timestamp_is_kept_for_manual_delivery_only(
     assert outbound.context["patient_name"] == "Alex Example"
     if uses_provider_template:
         assert "appointment_start_at" not in outbound.context
+        assert "appointment_id" not in outbound.context
         assert outbound.body_text == "Template copy"
         assert outbound.metadata["literal_body"] is False
     else:
         assert outbound.context["appointment_start_at"] == timestamp
+        assert outbound.context["appointment_id"] == appointment_id
         assert outbound.body_text == "Literal copy"
         assert outbound.metadata["literal_body"] is True
 
@@ -385,29 +395,32 @@ async def test_erasure_select_locks_the_row_before_the_deferred_adapter_finishes
 
 
 @pytest.mark.asyncio
-async def test_conversation_exposes_pending_and_staff_declared_status(
-    client, db_session, auth_headers, test_patient
+async def test_conversation_labels_sent_rows_using_adapter_capability(
+    client, db_session, auth_headers, test_patient, adapters
 ):
-    for status in ("awaiting_manual", "sent"):
-        db_session.add(
-            CommunicationMessage(
-                clinic_id=test_patient.clinic_id,
-                patient_id=test_patient.id,
-                channel="whatsapp",
-                to_address=NORMALIZED_MOBILE,
-                template_key="appointment_reminder",
-                status=status,
-                context_data={"manual_delivery": {"action": "mark_sent", "user_id": "test-actor"}}
-                if status == "sent"
-                else {},
-            )
+    manual, regular = adapters
+    manual.manual_delivery = True
+    expected = {}
+    for status, provider, sent_manually in (
+        ("awaiting_manual", manual.adapter_name, False),
+        ("sent", manual.adapter_name, True),
+        ("sent", regular.adapter_name, False),
+        ("sent", "unregistered_adapter", False),
+    ):
+        message = CommunicationMessage(
+            clinic_id=test_patient.clinic_id,
+            patient_id=test_patient.id,
+            channel="whatsapp",
+            to_address=NORMALIZED_MOBILE,
+            template_key="appointment_reminder",
+            status=status,
+            provider=provider,
         )
-    await db_session.flush()
+        db_session.add(message)
+        await db_session.flush()
+        expected[str(message.id)] = sent_manually
     response = await client.get(
         f"/api/v1/notifications/conversations/{test_patient.id}", headers=auth_headers
     )
     assert response.status_code == 200
-    assert {row["status"]: row["sent_manually"] for row in response.json()["data"]} == {
-        "awaiting_manual": False,
-        "sent": True,
-    }
+    assert {row["id"]: row["sent_manually"] for row in response.json()["data"]} == expected

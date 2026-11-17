@@ -103,7 +103,9 @@ class ChannelAdapter(Protocol):
     attribute preserves the approval requirement for existing adapters. An
     adapter may also declare ``requires_whatsapp_opt_in = True`` to require
     recorded consent, or ``supports_session_replies = False`` to opt out of
-    session replies. An optional async ``normalize_recipient(db, clinic_id,
+    session replies. Adapters that defer delivery for staff can declare
+    ``manual_delivery = True`` so the conversation labels their sent rows.
+    An optional async ``normalize_recipient(db, clinic_id,
     address)`` hook returns a canonical address or None to allow fallback.
     """
 

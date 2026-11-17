@@ -40,12 +40,14 @@ Heavy subscriber + now a publisher. See ADR 0016.
   `supports_session_replies = False` disables session replies for the adapter.
 - `requires_provider_template = False` allows proactive WhatsApp without a
   provider template. Approved provider templates never receive the internal
-  `appointment_start_at` context key.
+  `appointment_id` and `appointment_start_at` context keys.
 - When `OutboundMessage.metadata["literal_body"]` is true, preserve
   `body_text` as caller-supplied copy. Otherwise an adapter can render
   template text with the supplied variables.
 - `SendStatus.DEFERRED` and an optional `AdapterResult.body_text` leave the
-  rendered draft awaiting manual delivery. Consent withdrawal, a disabled
+  rendered draft awaiting manual delivery. `manual_delivery = True` labels
+  a sent row as staff-declared when its recorded provider has that capability.
+  Consent withdrawal, a disabled
   WhatsApp preference, a transactional `patient.updated` event setting
   `do_not_contact`, or erasure cancels an outstanding draft.
 

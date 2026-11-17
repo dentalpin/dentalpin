@@ -347,12 +347,16 @@ class CommunicationMessage(Base, TimestampMixin):
     @property
     def sent_manually(self) -> bool:
         """Whether the send was declared by a member of staff."""
-        declaration = (self.context_data or {}).get("manual_delivery")
-        return (
-            self.status == "sent"
-            and isinstance(declaration, dict)
-            and declaration.get("action") == "mark_sent"
-            and bool(declaration.get("user_id"))
+        if self.status != "sent" or self.provider is None:
+            return False
+
+        from .channels import channel_registry
+
+        adapter = channel_registry.get_by_name(self.provider)
+        return bool(
+            adapter
+            and adapter.channel == self.channel
+            and getattr(adapter, "manual_delivery", False)
         )
 
     __table_args__ = (

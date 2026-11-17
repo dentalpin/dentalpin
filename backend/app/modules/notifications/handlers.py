@@ -77,7 +77,6 @@ class NotificationHandlers:
         if blocked:
             await NotificationService.cancel_pending_whatsapp(db, clinic_id, patient_id)
 
-
     @staticmethod
     async def on_appointment_scheduled(data: dict[str, Any], *, db: AsyncSession) -> None:
         """Handle appointment.scheduled event.
@@ -144,6 +143,7 @@ class NotificationHandlers:
                 # Build context
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
+                    "appointment_id": str(appointment.id),
                     "appointment_start_at": appointment.start_time.isoformat(),
                     "appointment_date": appointment.start_time.strftime("%d/%m/%Y"),
                     "appointment_time": appointment.start_time.strftime("%H:%M"),
@@ -230,6 +230,7 @@ class NotificationHandlers:
                 # Build context
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
+                    "appointment_id": str(appointment.id),
                     "appointment_start_at": appointment.start_time.isoformat(),
                     "appointment_date": appointment.start_time.strftime("%d/%m/%Y"),
                     "appointment_time": appointment.start_time.strftime("%H:%M"),

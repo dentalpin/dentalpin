@@ -102,7 +102,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `patient.created` | `EventType.PATIENT_CREATED` | `patients` | `activity_journal`, `integrations`, `notifications` |
 | `patient.medical_updated` | `EventType.PATIENT_MEDICAL_UPDATED` | `patients_clinical` | `patient_timeline` |
 | `patient.restored` | `EventType.PATIENT_RESTORED` | `patients` | `media` |
-| `patient.updated` | `EventType.PATIENT_UPDATED` | `patients` | — |
+| `patient.updated` | `EventType.PATIENT_UPDATED` | `patients` | `notifications` |
 | `payment.allocated` | `EventType.PAYMENT_ALLOCATED` | `payments` | `activity_journal`, `billing` |
 | `payment.recorded` | `EventType.PAYMENT_RECORDED` | `payments` | — |
 | `payment.refunded` | `EventType.PAYMENT_REFUNDED` | `payments` | `activity_journal`, `billing` |
@@ -880,7 +880,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.PATIENT_UPDATED`
 - **Publishers:**
   - `patients` — `backend/app/modules/patients/service.py`
-- **Subscribers:** —
+- **Subscribers:**
+  - `notifications`
 
 ### `payment.allocated`
 

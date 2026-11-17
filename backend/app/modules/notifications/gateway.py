@@ -386,6 +386,7 @@ class NotificationGateway:
         if provider_template:
             # Internal draft freshness metadata is not a provider variable.
             context.pop("appointment_start_at", None)
+            context.pop("appointment_id", None)
         outbound = OutboundMessage(
             channel=Channel(msg.channel),
             to_address=msg.to_address,

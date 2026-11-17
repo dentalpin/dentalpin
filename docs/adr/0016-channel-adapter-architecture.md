@@ -87,10 +87,12 @@ in core; core only records which adapter serves which channel per clinic
   outgoing text was provided verbatim by the caller. Draft adapters should
   preserve it as written and only substitute variables in template text.
   Approved provider templates keep their own template rendering.
-- Appointment producers store offset-aware `appointment_start_at` so a
-  draft adapter can check whether the appointment is still current. The
-  gateway omits this key from the context sent to providers using an
-  approved template.
+- Appointment producers store `appointment_id` and the offset-aware
+  `appointment_start_at` for draft freshness checks. The gateway excludes
+  both from approved provider template variables.
+- An adapter that defers sends to staff can declare `manual_delivery = True`.
+  The conversation label reads this capability from the recorded provider
+  when the communication status is sent.
 - Withdrawing WhatsApp consent, turning off the WhatsApp preference or
   marking the patient Do not contact cancels their outbound messages
   awaiting manual delivery. Erasing a recipient also clears their draft

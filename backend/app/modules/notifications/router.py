@@ -478,6 +478,8 @@ async def send_notification(
         if not appointment:
             raise HTTPException(status_code=404, detail="Appointment not found")
 
+        context["appointment_id"] = str(appointment.id)
+        context["appointment_start_at"] = appointment.start_time.isoformat()
         context["appointment_date"] = appointment.start_time.strftime("%d/%m/%Y")
         context["appointment_time"] = appointment.start_time.strftime("%H:%M")
 

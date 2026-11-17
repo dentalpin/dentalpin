@@ -318,9 +318,7 @@ class NotificationService:
         )
 
     @staticmethod
-    async def cancel_pending_whatsapp(
-        db: AsyncSession, clinic_id: UUID, patient_id: UUID
-    ) -> None:
+    async def cancel_pending_whatsapp(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> None:
         await db.execute(
             update(CommunicationMessage)
             .where(
