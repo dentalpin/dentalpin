@@ -54,6 +54,23 @@ in core; core only records which adapter serves which channel per clinic
 - A process crash mid-send can leave a row in `sending` (visible in the logs
   view). Upgrade path: sweep stale `sending` rows back to `failed`.
 - WhatsApp proactive sends are template-only (Meta 24h-window rule) in V1.
+  (amended by #874, see below)
+
+## Amendment — Manual delivery adapters (#874)
+
+- Adapters can return `SendStatus.DEFERRED` to hand delivery to staff.
+  The gateway moves the same outbox row to `awaiting_manual`, with no
+  sent timestamp, retry or `NOTIFICATION_SENT` event. The dispatcher
+  only picks `queued` and `failed`.
+- Proactive WhatsApp continues to require an approved provider template by
+  default, including for `whatsapp_webhook` because the downstream receiver
+  may use the Business API. An adapter that can handle proactive free text
+  can explicitly declare `requires_provider_template = False`. Consent and
+  the session reply window are unchanged.
+- The gateway honours `clinic_channel_settings.adapter_name` at enqueue
+  and dispatch. With no selection it uses registry order as before. An
+  unavailable selection makes that channel unavailable rather than silently
+  choosing a different adapter on the same channel.
 
 ## Alternatives considered
 

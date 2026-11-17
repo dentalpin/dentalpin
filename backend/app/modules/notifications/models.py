@@ -314,7 +314,7 @@ class CommunicationMessage(Base, TimestampMixin):
     # Lifecycle
     status: Mapped[str] = mapped_column(
         String(20), default="queued", index=True
-    )  # queued, sending, sent, failed, skipped, delivered, read
+    )  # queued, sending, awaiting_manual, sent, failed, skipped, delivered, read
     attempts: Mapped[int] = mapped_column(Integer, default=0)
     max_attempts: Mapped[int] = mapped_column(Integer, default=5)
     next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
