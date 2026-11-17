@@ -1,13 +1,13 @@
 """Community module for staff-operated WhatsApp delivery."""
 
 from fastapi import APIRouter
-from sqlalchemy import delete
+from sqlalchemy import delete, update
 
 from app.core.plugins import BaseModule
 from app.core.plugins.context import ModuleContext
 from app.core.scheduling import ScheduledJob
 from app.modules.notifications.channels import channel_registry
-from app.modules.notifications.models import ClinicChannelSettings
+from app.modules.notifications.models import ClinicChannelSettings, CommunicationMessage
 
 from .adapter import ADAPTER_NAME, ManualWhatsAppAdapter
 from .models import ManualDeliveryDeclaration
@@ -64,6 +64,18 @@ class WhatsappManualModule(BaseModule):
         channel_registry.register(ManualWhatsAppAdapter())
 
     async def uninstall(self, ctx: ModuleContext) -> None:
+        # The module lifecycle is instance-wide. Cancel only drafts owned
+        # by this adapter, including clinics that already changed selection.
+        await ctx.db.execute(
+            update(CommunicationMessage)
+            .where(
+                CommunicationMessage.direction == "outbound",
+                CommunicationMessage.channel == "whatsapp",
+                CommunicationMessage.provider == ADAPTER_NAME,
+                CommunicationMessage.status == "awaiting_manual",
+            )
+            .values(status="skipped", error_message="adapter_uninstalled", next_attempt_at=None)
+        )
         await ctx.db.execute(
             delete(ClinicChannelSettings).where(
                 ClinicChannelSettings.channel == "whatsapp",

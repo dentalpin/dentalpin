@@ -7,7 +7,9 @@ from alembic import op
 revision = "wam_0002"
 down_revision = "wam_0001"
 branch_labels = None
-depends_on = "notif_0001"
+# The FK target is renamed in notif_0002. The tray also uses the
+# direction and body_text columns introduced in notif_0003.
+depends_on = "notif_0003"
 
 
 def upgrade() -> None:

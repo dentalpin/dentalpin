@@ -12,6 +12,5 @@ last_verified_commit: 0000000
 | `whatsapp_manual.settings.write` | Select the clinic adapter | PUT `/settings` |
 
 Routes use the `/api/v1/whatsapp_manual` prefix and the active clinic.
-Draft creation also requires `patients.read`, plus `agenda.appointments.read`
-when an appointment is supplied. Admins have all three permissions.
+Draft creation also requires `patients.read`. Admins have all three permissions.
 Dentists, hygienists, assistants and receptionists have read and write.

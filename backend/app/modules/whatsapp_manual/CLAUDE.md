@@ -14,7 +14,7 @@ Routes under `/api/v1/whatsapp_manual`.
 | PUT `/settings` | `whatsapp_manual.settings.write` | Select or remove the manual adapter for the clinic |
 | POST `/tray/{id}/open` | `whatsapp_manual.write` | Revalidate consent, appointment and phone before returning a WhatsApp link |
 | POST `/tray/actions` | `whatsapp_manual.write` | Declare sending or dismiss pending drafts |
-| POST `/drafts` | `whatsapp_manual.write`, `patients.read`, plus `agenda.appointments.read` for appointment drafts | Enqueue a staff message |
+| POST `/drafts` | `whatsapp_manual.write`, `patients.read` | Enqueue a staff message |
 
 ## Setup and data
 
@@ -43,5 +43,5 @@ A staff declaration stores the user ID and time in
 Its communication transitions to sent and publishes `notification.sent`
 once through the notifications gateway after commit. Erasure clears the
 message context and preserves the declaration. Repeated declarations leave
-the audit intact. Uninstall removes adapter selection and the module's
-declaration table. Notification rows remain in the core history.
+the audit intact. Uninstall skips pending manual drafts and removes adapter selection and the
+module's declaration table. Notification rows remain in the core history.

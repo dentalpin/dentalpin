@@ -335,8 +335,14 @@ async def test_staff_queue_uses_current_adapter_and_is_idempotent(
 @pytest.mark.asyncio
 async def test_uninstall_and_reactivate_preserves_communications(db_session, test_clinic):
     await _enable(db_session, test_clinic.id)
-    row = _pending(test_clinic.id)
-    db_session.add(row)
+    other_clinic = Clinic(name="Second clinic", tax_id="TEST-SECOND")
+    db_session.add(other_clinic)
+    await db_session.flush()
+    first_draft = _pending(test_clinic.id)
+    other_draft = _pending(other_clinic.id)
+    sent = _pending(test_clinic.id, status="sent")
+    other_adapter = _pending(test_clinic.id, provider="other")
+    db_session.add_all([first_draft, other_draft, sent, other_adapter])
     await db_session.flush()
 
     module = WhatsappManualModule()
@@ -344,7 +350,14 @@ async def test_uninstall_and_reactivate_preserves_communications(db_session, tes
     try:
         await module.uninstall(ctx)
         assert await db_session.scalar(select(ClinicChannelSettings)) is None
-        assert await db_session.get(CommunicationMessage, row.id) is row
+        for row in (first_draft, other_draft, sent, other_adapter):
+            await db_session.refresh(row)
+        for draft in (first_draft, other_draft):
+            assert draft.status == "skipped"
+            assert draft.error_message == "adapter_uninstalled"
+            assert draft.body_text == "Hola, Alex & equipo."
+        assert sent.status == "sent"
+        assert other_adapter.status == "awaiting_manual"
         assert not await ManualWhatsAppAdapter().supports(db_session, test_clinic.id)
     finally:
         module.on_activate()
@@ -390,19 +403,30 @@ async def test_appointment_drafts_require_the_original_active_appointment(
     )
     db_session.add(appointment)
     await db_session.flush()
+    db_session.add(
+        NotificationTemplate(
+            clinic_id=test_patient.clinic_id,
+            channel="whatsapp",
+            template_key="appointment_reminder",
+            locale="es",
+            body_text="Recordatorio para {{ patient_name }}",
+        )
+    )
+    await db_session.flush()
     reply = await client.post(
-        f"{BASE}/drafts",
+        "/api/v1/notifications/send",
         headers=test_header,
         json={
+            "notification_type": "appointment_reminder",
             "patient_id": str(test_patient.id),
             "appointment_id": str(appointment.id),
-            "request_id": str(uuid4()),
-            "text": "Texto literal de la cita",
+            "channels": ["whatsapp"],
         },
     )
-    assert reply.status_code == 202, reply.text
+    assert reply.status_code == 200, reply.text
+    assert reply.json()["data"]["success"]
     row = await db_session.scalar(select(CommunicationMessage))
-    assert row.template_key == "whatsapp_manual_message"
+    assert row.template_key == "appointment_reminder"
     assert row.context_data["appointment_id"] == str(appointment.id)
     assert await NotificationGateway.dispatch_outbox(db_session) == 1
     path = f"{BASE}/tray/{row.id}/open"

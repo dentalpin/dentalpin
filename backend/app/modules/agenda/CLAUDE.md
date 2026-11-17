@@ -78,9 +78,6 @@ DESTRUCTIVE). Invalid transitions return the allowed next states from
   for a follow-up action. Modal stays hidden when no registrations
   exist. Slot ctx: `{ appointment }`.
 
-- `appointment.detail.actions` — extra actions in the existing appointment
-  modal footer. Slot ctx: `{ appointment }`.
-
 ## Events emitted
 
 - `appointment.scheduled` — new appointment

@@ -4,7 +4,6 @@ from datetime import UTC, datetime
 from typing import Annotated, Literal
 from urllib.parse import quote, urlencode
 from uuid import UUID
-from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from pydantic import BaseModel, Field, StringConstraints
@@ -14,11 +13,8 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
-from app.core.auth.rbac import has_permission_for
-from app.core.events import EventType
 from app.core.schemas import ApiResponse
 from app.database import get_db
-from app.modules.agenda.models import Appointment
 from app.modules.notifications.gateway import NotificationGateway
 from app.modules.notifications.models import ClinicChannelSettings, CommunicationMessage
 from app.modules.patients.models import Patient
@@ -26,7 +22,6 @@ from app.modules.patients.models import Patient
 from .adapter import ADAPTER_NAME, ManualWhatsAppAdapter
 from .models import ManualDeliveryDeclaration
 from .service import (
-    appointment_is_active,
     appointment_start,
     manual_messages,
     pending,
@@ -40,6 +35,8 @@ Read = Annotated[None, Depends(require_permission("whatsapp_manual.read"))]
 Write = Annotated[None, Depends(require_permission("whatsapp_manual.write"))]
 Configure = Annotated[None, Depends(require_permission("whatsapp_manual.settings.write"))]
 Draft = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1, max_length=4096)]
+# An ad-hoc staff draft has no clinic template or per-event preference.
+STAFF_DRAFT_TYPE = "whatsapp_manual_message"
 
 
 class TrayItem(BaseModel):
@@ -68,7 +65,6 @@ class TrayAction(BaseModel):
 
 class QueueDraft(BaseModel):
     patient_id: UUID
-    appointment_id: UUID | None = None
     text: Draft
     request_id: UUID
 
@@ -218,7 +214,7 @@ async def act_on_drafts(data: TrayAction, ctx: Context, db: Db, _: Write) -> Api
         # saving the declarations, and only for newly marked rows.
         await db.commit()
         for row in marked:
-            await NotificationGateway._publish(row, EventType.NOTIFICATION_SENT)
+            await NotificationGateway.publish_sent(row)
     return ApiResponse(data=len(rows))
 
 
@@ -239,39 +235,13 @@ async def queue_draft(
     if patient is None:
         raise HTTPException(404, "patient_not_found")
     context = {"patient_name": f"{patient.first_name} {patient.last_name}"}
-    notification_type = "whatsapp_manual_message"
-    if data.appointment_id:
-        if not await has_permission_for(db, ctx.clinic_id, ctx.role, "agenda.appointments.read"):
-            raise HTTPException(403, "permission_denied")
-        appointment = await db.scalar(
-            select(Appointment).where(
-                Appointment.clinic_id == ctx.clinic_id,
-                Appointment.id == data.appointment_id,
-                Appointment.patient_id == patient.id,
-            )
-        )
-        if appointment is None:
-            raise HTTPException(404, "appointment_not_found")
-        if appointment.start_time <= datetime.now(UTC):
-            raise HTTPException(409, "appointment_expired")
-        if not appointment_is_active(appointment):
-            raise HTTPException(409, "appointment_changed")
-        local_start = appointment.start_time.astimezone(ZoneInfo(ctx.clinic.timezone))
-        context.update(
-            appointment_id=str(appointment.id),
-            appointment_start_at=appointment.start_time.isoformat(),
-            appointment_date=local_start.strftime("%d/%m/%Y"),
-            appointment_time=local_start.strftime("%H:%M"),
-        )
-    dedup_key = (
-        f"whatsapp-manual:{ctx.user_id}:{patient.id}:{data.appointment_id}:{data.request_id}"
-    )
+    dedup_key = f"whatsapp-manual:{ctx.user_id}:{patient.id}:{data.request_id}"
     try:
         async with db.begin_nested():
             msg = await NotificationGateway.enqueue(
                 db,
                 ctx.clinic_id,
-                notification_type,
+                STAFF_DRAFT_TYPE,
                 context=context,
                 patient_id=patient.id,
                 channels=["whatsapp"],
