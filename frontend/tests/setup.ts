@@ -12,9 +12,19 @@ afterAll(async () => {
   // A navigation that never reached afterEach leaves the trickle timer
   // running too; finishing it stops that loop.
   if (NProgress.isStarted()) NProgress.done(true)
-  await vi.waitFor(() => {
-    if (document.getElementById('nprogress')) {
-      throw new Error('NProgress bar is still animating')
-    }
-  }, { timeout: 3000, interval: 50 })
+  try {
+    await vi.waitFor(() => {
+      if (document.getElementById('nprogress')) {
+        throw new Error('NProgress bar is still animating')
+      }
+    }, { timeout: 3000, interval: 50 })
+  } catch {
+    // NProgress schedules each finishing step from the previous step's
+    // timer. When a navigation finishes while a test has timers faked, the
+    // later steps land on the fake clock and vi.useRealTimers() discards
+    // them, so the bar stays forever (#889: usePeriodontogramSession,
+    // which fakes timers in every test). No timer is left to touch
+    // `document` after teardown, so removing the bar here is safe.
+    NProgress.remove()
+  }
 })
