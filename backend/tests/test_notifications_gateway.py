@@ -8,6 +8,7 @@ import pytest_asyncio
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.events import EventType
 from app.modules.notifications.channels import (
     AdapterResult,
     Channel,
@@ -18,6 +19,7 @@ from app.modules.notifications.channels import (
 from app.modules.notifications.channels.email_adapter import EmailAdapter
 from app.modules.notifications.gateway import NotificationGateway, _backoff_seconds
 from app.modules.notifications.models import (
+    ClinicChannelSettings,
     CommunicationMessage,
     NotificationPreference,
     NotificationTemplate,
@@ -184,6 +186,115 @@ async def test_skipped_send_is_recorded_not_retried(monkeypatch, db_session, tes
     assert msg.status == "skipped"
     assert msg.next_attempt_at is None
     assert "EMAIL_ENABLED=false" in (msg.error_message or "")
+
+
+@pytest.mark.asyncio
+async def test_manual_delivery_waits_without_retrying(
+    db_session, test_patient, whatsapp_adapter, monkeypatch
+):
+    from unittest.mock import AsyncMock
+
+    await _channel_settings(db_session, test_patient.clinic_id, fallback=False)
+    options = {
+        "context": {},
+        "patient_id": test_patient.id,
+        "body_text": "Synthetic appointment reminder",
+    }
+    blocked = await NotificationGateway.enqueue(
+        db_session, test_patient.clinic_id, "manual_reminder_test", **options
+    )
+    assert blocked.status == "skipped"
+
+    monkeypatch.setattr(whatsapp_adapter, "requires_provider_template", False, raising=False)
+    send = AsyncMock(return_value=AdapterResult(status=SendStatus.DEFERRED, provider="fake"))
+    monkeypatch.setattr(whatsapp_adapter, "send", send)
+    publish = AsyncMock()
+    monkeypatch.setattr(NotificationGateway, "_publish", publish)
+
+    msg = await NotificationGateway.enqueue(
+        db_session, test_patient.clinic_id, "manual_reminder_test", **options
+    )
+    assert msg.status == "queued"
+    assert msg.channel == "whatsapp"
+    assert await NotificationGateway.dispatch_outbox(db_session) == 1
+    await db_session.refresh(msg)
+    assert msg.status == "awaiting_manual"
+    assert msg.sent_at is None
+    assert msg.next_attempt_at is None
+    assert msg.attempts == 1
+    assert send.call_args.args[1].body_text == options["body_text"]
+    assert send.call_args.args[1].provider_template_name is None
+    assert await NotificationGateway.dispatch_outbox(db_session) == 0
+    send.assert_awaited_once()
+    publish.assert_awaited_once_with(msg, EventType.NOTIFICATION_QUEUED)
+
+
+@pytest.mark.asyncio
+async def test_explicit_adapter_overrides_registration_order(
+    db_session, test_patient, whatsapp_adapter
+):
+    from copy import copy
+
+    clinic_id = test_patient.clinic_id
+    alternate = copy(whatsapp_adapter)
+    alternate.adapter_name = "alternate_whatsapp_test"
+    channel_registry.register(alternate)
+    try:
+        assert (
+            await NotificationGateway._supporting_adapter(db_session, clinic_id, Channel.WHATSAPP)
+            is alternate
+        )
+        selection = ClinicChannelSettings(
+            clinic_id=clinic_id,
+            channel="whatsapp",
+            adapter_name=whatsapp_adapter.adapter_name,
+            is_enabled=True,
+        )
+        db_session.add(selection)
+        await db_session.flush()
+        assert (
+            await NotificationGateway._supporting_adapter(db_session, clinic_id, Channel.WHATSAPP)
+            is whatsapp_adapter
+        )
+
+        # Never redirect to another transport when a named adapter is unavailable.
+        selection.adapter_name = "uninstalled_adapter"
+        await db_session.flush()
+        assert (
+            await NotificationGateway._supporting_adapter(db_session, clinic_id, Channel.WHATSAPP)
+            is None
+        )
+    finally:
+        channel_registry.unregister(alternate.adapter_name)
+
+
+@pytest.mark.asyncio
+async def test_dispatch_rechecks_template_policy_after_adapter_change(
+    db_session, test_patient, whatsapp_adapter, monkeypatch
+):
+    from unittest.mock import AsyncMock
+
+    clinic_id = test_patient.clinic_id
+    await _channel_settings(db_session, clinic_id, fallback=False)
+    monkeypatch.setattr(whatsapp_adapter, "requires_provider_template", False, raising=False)
+    send = AsyncMock()
+    monkeypatch.setattr(whatsapp_adapter, "send", send)
+    msg = await NotificationGateway.enqueue(
+        db_session,
+        clinic_id,
+        "manual_reminder_test",
+        context={},
+        patient_id=test_patient.id,
+        body_text="Synthetic appointment reminder",
+    )
+    assert msg.status == "queued"
+
+    monkeypatch.setattr(whatsapp_adapter, "requires_provider_template", True)
+    assert await NotificationGateway.dispatch_outbox(db_session) == 1
+    await db_session.refresh(msg)
+    assert msg.status == "failed"
+    assert msg.error_message == "no approved WhatsApp template"
+    send.assert_not_awaited()
 
 
 @pytest.mark.asyncio

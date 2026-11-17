@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(debt): preserve imported descriptions and tag explicitly marked opening balances in the patient ledger, including credits from negative amounts.
+
 - fix(fiscal_document_line): link imported invoice lines directly to the treatment catalog, with a warning and applied-treatment fallback for unmapped references.
 
 - fix(#872): the planned/performed shadow dedup no longer pairs rows that become administrative notes. Free-text notes (no `IdTto`, no clinical `IdTipoOdg`, no teeth) all shared one legacy key per patient, so an unfinished note dated before a finished one was dropped as its "planned twin". A vTiger test import lost 195 notes this way.

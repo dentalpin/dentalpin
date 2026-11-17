@@ -101,6 +101,14 @@ mappers. Used to bump `ImportJob.processed_entities`.
   if you add another writer of ``PatientEarnedEntry`` here, use a
   uuid5-derived ``source_session_id`` to keep multi-phase rows
   collision-free.
+- **Opening balances.** A canonical `debt` row with JSON boolean
+  `opening_balance: true` is recorded with
+  `source_event="migration_import:opening_balance"`. Producers should
+  supply one stable `canonical_uuid` per patient opening balance. Like
+  other debt rows, it accepts a signed `owed_amount` and an optional
+  `description` (stored up to 160 characters). A negative amount creates
+  ledger credit. A blank or missing description uses the mapper's
+  default label.
 - **Invoice line catalog links.** `fiscal_document_line` accepts
   `treatment_uuid` or `treatment_variant_uuid` as optional canonical
   catalog references. Resolution prefers the treatment template, then the

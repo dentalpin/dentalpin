@@ -18,8 +18,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import EventType, event_bus
 
-from .channels import Channel, OutboundMessage, SendStatus, channel_registry
-from .models import CommunicationMessage
+from .channels import Channel, ChannelAdapter, OutboundMessage, SendStatus, channel_registry
+from .models import ClinicChannelSettings, CommunicationMessage, NotificationTemplate
 from .service import NotificationService, resolve_clinic_communication_locale
 
 logger = logging.getLogger(__name__)
@@ -47,6 +47,12 @@ def _session_window_open(prefs) -> bool:
 
 def _sanitize(context: dict[str, Any]) -> dict[str, Any]:
     return {k: v for k, v in context.items() if k not in ("password", "token")}
+
+
+def _approved_provider_template(template: NotificationTemplate | None) -> str | None:
+    if template and template.provider_template_status == "approved":
+        return template.provider_template_name or None
+    return None
 
 
 class NotificationGateway:
@@ -311,14 +317,22 @@ class NotificationGateway:
         return used < limit
 
     @staticmethod
-    async def _supporting_adapter(db: AsyncSession, clinic_id, channel):
-        """First adapter for ``channel`` that is configured for this clinic.
+    async def _supporting_adapter(
+        db: AsyncSession, clinic_id: UUID, channel: Channel | str
+    ) -> ChannelAdapter | None:
+        """Use the clinic's explicit adapter, or the registry's normal order."""
+        adapter_name = await db.scalar(
+            select(ClinicChannelSettings.adapter_name).where(
+                ClinicChannelSettings.clinic_id == clinic_id,
+                ClinicChannelSettings.channel == channel,
+            )
+        )
+        if adapter_name:
+            adapter = channel_registry.get_by_name(adapter_name)
+            if adapter and adapter.channel == channel and await adapter.supports(db, clinic_id):
+                return adapter
+            return None
 
-        With two vendors installed for one channel (kapso + webhook) the
-        registry alone can't pick — ``supports`` reads the clinic's config
-        and decides. Most-recently-registered wins only as a tie-break
-        between two *configured* adapters.
-        """
         for adapter in channel_registry.adapters_for_channel(channel):
             if await adapter.supports(db, clinic_id):
                 return adapter
@@ -331,14 +345,6 @@ class NotificationGateway:
             await NotificationGateway._mark_failed(db, msg, f"no adapter for channel {msg.channel}")
             return
 
-        msg.status = "sending"
-        msg.attempts += 1
-        # ponytail: commit before the network call so we don't hold a row lock
-        # across I/O. Ceiling: a crash mid-send leaves the row in 'sending'
-        # (visible in the logs view). Upgrade path: sweep 'sending' rows whose
-        # updated_at is older than N minutes back to 'failed'.
-        await db.commit()
-
         # Template sends (re)render from the template at send time; session
         # (free-form) sends carry the literal text in msg.body_text.
         template = None
@@ -346,6 +352,22 @@ class NotificationGateway:
             template = await NotificationService.get_template(
                 db, msg.clinic_id, msg.template_key, _locale_of(msg), channel=msg.channel
             )
+        msg.status = "sending"
+        msg.attempts += 1
+        # Recheck approval: adapter selection or template approval can change
+        # while a proactive WhatsApp message is in the outbox.
+        if (
+            msg.channel == Channel.WHATSAPP
+            and msg.message_kind == "template"
+            and getattr(adapter, "requires_provider_template", True)
+            and not _approved_provider_template(template)
+        ):
+            await NotificationGateway._mark_failed(db, msg, "no approved WhatsApp template")
+            return
+
+        # Release the row lock before delivery I/O.
+        await db.commit()
+
         outbound = OutboundMessage(
             channel=Channel(msg.channel),
             to_address=msg.to_address,
@@ -371,6 +393,13 @@ class NotificationGateway:
             msg.error_message = None
             await db.commit()
             await NotificationGateway._publish(msg, EventType.NOTIFICATION_SENT)
+        elif result.status == SendStatus.DEFERRED:
+            msg.status = "awaiting_manual"
+            msg.provider = result.provider
+            msg.provider_message_id = result.provider_message_id
+            msg.error_message = None
+            msg.next_attempt_at = None
+            await db.commit()
         elif result.status == SendStatus.SKIPPED:
             # The adapter resolved but had nothing to do (email globally
             # disabled, or a push with an empty body). That is an expected
@@ -615,18 +644,16 @@ class NotificationGateway:
                 # a recorded opt-out); a missing prefs row does not block.
                 if prefs is not None and not prefs.whatsapp_enabled:
                     continue
-                # An approved Meta template (HSM) is always required for
-                # proactive sends — never fall back to direct text.
+                if not getattr(adapter, "requires_provider_template", True):
+                    return channel, addr, "template", None
+                # Provider adapters require an approved Meta template (HSM).
                 tmpl = await NotificationService.get_template(
                     db, clinic_id, notification_type, locale, channel="whatsapp"
                 )
-                if (
-                    not tmpl
-                    or tmpl.provider_template_status != "approved"
-                    or not tmpl.provider_template_name
-                ):
+                provider_template = _approved_provider_template(tmpl)
+                if not provider_template:
                     continue
-                return channel, addr, "template", tmpl.provider_template_name
+                return channel, addr, "template", provider_template
 
             if channel == Channel.SMS:
                 # SMS rides patients.phone (E.164 single source of truth —

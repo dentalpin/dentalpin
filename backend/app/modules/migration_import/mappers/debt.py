@@ -192,7 +192,10 @@ class DebtMapper:
             bits.append(f"NumTto {treatment_number}")
         if phase_number is not None:
             bits.append(f"fase {phase_number}")
-        description = " · ".join(bits)[:160]
+        is_opening_balance = payload.get("opening_balance") is True
+        description = payload.get("description")
+        if not isinstance(description, str) or not description.strip():
+            description = "Saldo de apertura" if is_opening_balance else " · ".join(bits)
 
         # The earned-entries table enforces ``(treatment_id,
         # source_session_id)`` uniqueness. One treatment commonly
@@ -212,8 +215,12 @@ class DebtMapper:
             amount=owed,
             performed_at=when,
             professional_id=professional_id,
-            source_event="migration_import:debt",
-            description=description,
+            source_event=(
+                "migration_import:opening_balance"
+                if is_opening_balance
+                else "migration_import:debt"
+            ),
+            description=description[:160],
         )
         ctx.db.add(entry)
         await ctx.db.flush()
