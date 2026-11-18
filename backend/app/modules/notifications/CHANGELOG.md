@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Add optional adapter hooks for affirmative WhatsApp consent, recipient
+  normalization and session support. Retain and label deferred drafts,
+  and cancel pending drafts when the patient revokes contact permission (#875).
+
 - Support deferred delivery (`awaiting_manual`), adapter-specific provider
   template requirements, and explicit per-clinic adapter selection (#874).
 

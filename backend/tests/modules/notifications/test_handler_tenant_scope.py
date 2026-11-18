@@ -115,6 +115,7 @@ async def test_appointment_cancelled_enqueues_for_the_owning_clinic(
     assert len(calls) == 1
     assert calls[0]["clinic_id"] == test_clinic.id
     assert calls[0]["notification_type"] == "appointment_cancelled"
+    assert calls[0]["context"]["appointment_start_at"] == "2026-10-20T09:00:00+00:00"
 
 
 @pytest.mark.asyncio

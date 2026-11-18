@@ -1,6 +1,10 @@
 {
   "notifications": {
     "conversation": {
+      "awaitingManual": "Kézi küldésre vár",
+      "manuallySent": "A munkatárs elküldöttnek jelölte",
+      "consent": "WhatsApp-hozzájárulás rögzítve",
+      "consentHelp": "Kapcsolja be, miután a páciens hozzájárult.",
       "title": "WhatsApp-beszélgetés",
       "empty": "Még nincsenek üzenetek.",
       "placeholder": "Írjon választ…",

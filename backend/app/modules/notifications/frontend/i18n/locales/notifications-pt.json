@@ -1,6 +1,10 @@
 {
   "notifications": {
     "conversation": {
+      "awaitingManual": "A aguardar envio manual",
+      "manuallySent": "Envio declarado pela equipa",
+      "consent": "Consentimento para WhatsApp registado",
+      "consentHelp": "Ative esta opção quando o paciente tiver dado o seu consentimento.",
       "title": "Conversa de WhatsApp",
       "empty": "Ainda não há mensagens.",
       "placeholder": "Escreva uma resposta…",

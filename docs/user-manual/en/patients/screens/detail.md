@@ -29,7 +29,7 @@ related_paths:
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: 6dde74fc
+last_verified_commit: 87eb14ec
 ---
 
 # Patient detail
@@ -243,6 +243,18 @@ Below the channels, one switch per message type (appointment reminder,
 quote sent, invoice sent, recall reminder…). Turning a type off blocks it
 on every channel, manual sends from staff included; the clinic-wide
 on/off for each type stays in notification settings.
+
+When the clinic's WhatsApp adapter requires explicit consent, the
+notification preferences show a **WhatsApp consent** switch to staff
+who can edit preferences. Turn it on after recording the patient's
+permission. Turning it off, disabling WhatsApp or setting **Do not
+contact** cancels WhatsApp messages awaiting manual delivery. Messages
+already sent stay in the conversation history.
+
+A manual draft uses the configured message template unless staff
+provided their own text. Staff-provided text is kept as written. An
+adapter that supports manual drafts may also disable replies from the
+conversation screen.
 
 ## Groups
 

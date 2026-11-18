@@ -162,6 +162,7 @@ async def process_appointment_reminders() -> None:
                     # Build context
                     context = {
                         "patient_name": f"{patient.first_name} {patient.last_name}",
+                        "appointment_start_at": appointment.start_time.isoformat(),
                         "appointment_date": appointment.start_time.strftime("%d/%m/%Y"),
                         "appointment_time": appointment.start_time.strftime("%H:%M"),
                         "professional_name": professional_name,
@@ -265,6 +266,7 @@ async def send_single_reminder(appointment_id: UUID, clinic_id: UUID) -> bool:
             # Build context
             context = {
                 "patient_name": f"{patient.first_name} {patient.last_name}",
+                "appointment_start_at": appointment.start_time.isoformat(),
                 "appointment_date": appointment.start_time.strftime("%d/%m/%Y"),
                 "appointment_time": appointment.start_time.strftime("%H:%M"),
                 "professional_name": professional_name,

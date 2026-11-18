@@ -147,6 +147,9 @@ async def test_phone_erasure_redacts_sms_and_whatsapp(
         patient_id=test_patient.id,
         channel="whatsapp",
         to_address=test_patient.phone,
+        status="awaiting_manual",
+        body_text="Synthetic appointment",
+        context_data={"appointment_start_at": "2026-11-20T10:00:00+00:00"},
     )
     email = await _message(
         db_session,
@@ -165,6 +168,9 @@ async def test_phone_erasure_redacts_sms_and_whatsapp(
 
     assert sms.to_address == ERASED_PLACEHOLDER
     assert whatsapp.to_address == ERASED_PLACEHOLDER
+    assert whatsapp.status == "skipped"
+    assert whatsapp.body_text is None
+    assert whatsapp.context_data is None
     # Email was not erased: it survives.
     assert email.to_address == test_patient.email
 

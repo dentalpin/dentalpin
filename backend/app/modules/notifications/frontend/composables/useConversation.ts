@@ -6,6 +6,7 @@ export interface ConversationMessage {
   direction: 'outbound' | 'inbound'
   message_kind: string
   status: string
+  sent_manually: boolean
   subject: string | null
   body_text: string | null
   template_key: string

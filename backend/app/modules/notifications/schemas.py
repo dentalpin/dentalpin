@@ -84,6 +84,7 @@ class NotificationPreferenceUpdate(BaseModel):
 
     email_enabled: bool | None = None
     whatsapp_enabled: bool | None = None
+    whatsapp_consent: bool | None = None
     sms_enabled: bool | None = None
     push_enabled: bool | None = None
     # Keyed by the closed vocabulary, so a misspelt type is a 422 rather
@@ -100,6 +101,8 @@ class NotificationPreferenceResponse(NotificationPreferenceBase):
     clinic_id: UUID
     patient_id: UUID | None
     user_id: UUID | None
+    whatsapp_opt_in_at: datetime | None = None
+    whatsapp_consent_required: bool = False
     created_at: datetime
     updated_at: datetime
 
@@ -226,6 +229,7 @@ class ChannelAvailabilityResponse(BaseModel):
     """
 
     available: list[str]
+    whatsapp_session_available: bool = False
 
 
 class ConversationMessageResponse(BaseModel):
@@ -236,6 +240,7 @@ class ConversationMessageResponse(BaseModel):
     direction: str  # outbound | inbound
     message_kind: str  # template | session
     status: str
+    sent_manually: bool = False
     subject: str | None
     body_text: str | None
     template_key: str

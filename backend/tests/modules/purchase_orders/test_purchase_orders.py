@@ -381,3 +381,44 @@ async def test_update_metadata_and_lock_after_received(
             PurchaseOrderUpdate(notes="Too late"),
         )
     assert exc.value.status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_receipt_detail_is_scoped_to_its_order(
+    client, auth_headers: dict, db_session: AsyncSession, test_clinic: Clinic
+):
+    """``GET /{order_id}/receipts/{receipt_id}`` answers 404 when the receipt
+    belongs to another order (#892). It checked that the order exists and
+    then loaded the receipt by id alone."""
+    supplier = await _make_supplier(db_session, test_clinic.id)
+    item = await _make_item(db_session, test_clinic.id, name="Masks")
+    order_a = await _make_order(db_session, test_clinic.id, supplier.id, item.id, qty=5)
+    order_b = await _make_order(db_session, test_clinic.id, supplier.id, item.id, qty=5)
+    for status in ("sent", "confirmed"):
+        await PurchaseOrderService.transition_order(
+            db_session, test_clinic.id, order_b.id, StatusTransition(status=status)
+        )
+    line = await _line_of(db_session, test_clinic.id, order_b.id)
+    await PurchaseOrderService.receive_order(
+        db_session,
+        test_clinic.id,
+        order_b.id,
+        PurchaseReceiptCreate(
+            lines=[
+                ReceiptLineCreate(purchase_order_line_id=line.id, quantity_received=Decimal("5"))
+            ]
+        ),
+        received_by=None,
+    )
+    receipt = (await PurchaseOrderService.list_receipts(db_session, test_clinic.id, order_b.id))[0]
+    await db_session.commit()
+
+    own = await client.get(
+        f"/api/v1/purchase_orders/{order_b.id}/receipts/{receipt.id}", headers=auth_headers
+    )
+    assert own.status_code == 200, own.text
+
+    other = await client.get(
+        f"/api/v1/purchase_orders/{order_a.id}/receipts/{receipt.id}", headers=auth_headers
+    )
+    assert other.status_code == 404, other.text

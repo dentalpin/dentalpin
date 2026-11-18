@@ -4,14 +4,14 @@ import logging
 from datetime import UTC, datetime
 from uuid import UUID
 
-from sqlalchemy import func, select, text
+from sqlalchemy import func, select, text, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.email import EmailResult, email_service
 from app.core.i18n_names import catalog_name
 
-from .channels import channel_registry
+from .channels import Channel, channel_registry
 from .models import (
     ClinicNotificationSettings,
     ClinicSmtpSettings,
@@ -267,10 +267,12 @@ class NotificationService:
     ) -> NotificationPreference | None:
         """Get notification preferences for a patient."""
         result = await db.execute(
-            select(NotificationPreference).where(
+            select(NotificationPreference)
+            .where(
                 NotificationPreference.clinic_id == clinic_id,
                 NotificationPreference.patient_id == patient_id,
             )
+            .execution_options(populate_existing=True)
         )
         return result.scalar_one_or_none()
 
@@ -305,6 +307,31 @@ class NotificationService:
         return prefs
 
     @staticmethod
+    async def lock_whatsapp_patient(db: AsyncSession, clinic_id: UUID, patient_id: UUID):
+        from app.modules.patients.models import Patient
+
+        return await db.scalar(
+            select(Patient)
+            .where(Patient.clinic_id == clinic_id, Patient.id == patient_id)
+            .with_for_update()
+            .execution_options(populate_existing=True)
+        )
+
+    @staticmethod
+    async def cancel_pending_whatsapp(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> None:
+        await db.execute(
+            update(CommunicationMessage)
+            .where(
+                CommunicationMessage.clinic_id == clinic_id,
+                CommunicationMessage.patient_id == patient_id,
+                CommunicationMessage.channel == Channel.WHATSAPP,
+                CommunicationMessage.direction == "outbound",
+                CommunicationMessage.status == "awaiting_manual",
+            )
+            .values(status="skipped", next_attempt_at=None)
+        )
+
+    @staticmethod
     async def update_patient_preferences(
         db: AsyncSession,
         clinic_id: UUID,
@@ -316,14 +343,25 @@ class NotificationService:
             db, clinic_id, patient_id
         )
 
+        if data.get("whatsapp_consent") is not None or data.get("whatsapp_enabled") is not None:
+            await NotificationService.lock_whatsapp_patient(db, clinic_id, patient_id)
+            await db.refresh(prefs)
+
         for key, value in data.items():
-            if value is None:
+            if value is None or key == "whatsapp_consent":
                 continue
             if key == "preferences":
                 # Merge, never replace: recording one opt-out must not
                 # discard the patient's other recorded choices (#683).
                 value = {**(prefs.preferences or {}), **value}
             setattr(prefs, key, value)
+
+        consent = data.get("whatsapp_consent")
+        if data.get("whatsapp_enabled") is False or consent is False:
+            prefs.whatsapp_opt_in_at = None
+            await NotificationService.cancel_pending_whatsapp(db, clinic_id, patient_id)
+        elif consent is True and prefs.whatsapp_enabled and prefs.whatsapp_opt_in_at is None:
+            prefs.whatsapp_opt_in_at = datetime.now(UTC)
 
         await db.commit()
         await db.refresh(prefs)
