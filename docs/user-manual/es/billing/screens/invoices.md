@@ -36,7 +36,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 0000000
 ---
 
 # Listado de facturas
@@ -61,6 +61,8 @@ para emitir, enviar por email o anular.
   emitir una factura encola el envío a AEAT a través del *hook*
   asociado a `invoice.issued`. El estado de envío se ve en el
   detalle.
+
+El distintivo **Histórica** identifica las facturas importadas. Sus totales siguen disponibles en el listado y en los informes de facturación, en la fecha de emisión original. Las facturas históricas quedan fuera de los resultados de vencidas.
 
 ## Encontrar una factura
 

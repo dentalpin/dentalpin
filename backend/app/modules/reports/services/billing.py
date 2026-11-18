@@ -79,7 +79,7 @@ class BillingReportService:
             - work_completed: Sum of accepted budgets fully invoiced
             - total_invoiced: Sum of issued invoices
             - total_paid: Sum of payments
-            - balance_pending: total_invoiced - total_paid
+            - balance_pending: Balance due on operational invoices
         """
         from sqlalchemy import case
 
@@ -167,7 +167,7 @@ class BillingReportService:
             db, clinic_id, [row.id for row in invoices]
         )
         total_paid = sum((paid for paid, _ in paid_by_invoice.values()), Decimal("0"))
-        balance_pending = total_invoiced - total_paid
+        balance_pending = sum((due for _, due in paid_by_invoice.values()), Decimal("0"))
 
         return {
             "patient_id": patient_id,
@@ -228,6 +228,7 @@ class BillingReportService:
                     select(Invoice.id).where(
                         Invoice.clinic_id == clinic_id,
                         Invoice.status.in_(["issued", "partial"]),
+                        Invoice.is_historical.is_(False),
                         Invoice.deleted_at.is_(None),
                     )
                 )
@@ -248,8 +249,11 @@ class BillingReportService:
         result = await db.execute(
             select(
                 func.coalesce(func.sum(InvoicePayment.amount), Decimal("0")).label("total_paid"),
-            ).where(
+            )
+            .join(Invoice, Invoice.id == InvoicePayment.invoice_id)
+            .where(
                 InvoicePayment.clinic_id == clinic_id,
+                Invoice.is_historical.is_(False),
                 InvoicePayment.created_at
                 >= datetime.combine(date_from, datetime.min.time(), tzinfo=UTC),
                 InvoicePayment.created_at
@@ -263,6 +267,7 @@ class BillingReportService:
             select(func.count(Invoice.id)).where(
                 Invoice.clinic_id == clinic_id,
                 Invoice.status == "paid",
+                Invoice.is_historical.is_(False),
                 Invoice.issue_date >= date_from,
                 Invoice.issue_date <= date_to,
                 Invoice.deleted_at.is_(None),
@@ -277,6 +282,7 @@ class BillingReportService:
             select(func.count(Invoice.id)).where(
                 Invoice.clinic_id == clinic_id,
                 Invoice.status.in_(["issued", "partial"]),
+                Invoice.is_historical.is_(False),
                 Invoice.due_date < today,
                 Invoice.deleted_at.is_(None),
             )
@@ -370,6 +376,7 @@ class BillingReportService:
             .where(
                 Invoice.clinic_id == clinic_id,
                 Invoice.status.in_(["issued", "partial"]),
+                Invoice.is_historical.is_(False),
                 Invoice.due_date < today,
                 Invoice.deleted_at.is_(None),
             )
@@ -426,8 +433,10 @@ class BillingReportService:
                 func.coalesce(func.sum(InvoicePayment.amount), Decimal("0")).label("total_amount"),
             )
             .join(PaymentModel, PaymentModel.id == InvoicePayment.payment_id)
+            .join(Invoice, Invoice.id == InvoicePayment.invoice_id)
             .where(
                 InvoicePayment.clinic_id == clinic_id,
+                Invoice.is_historical.is_(False),
                 PaymentModel.payment_date >= date_from,
                 PaymentModel.payment_date <= date_to,
             )

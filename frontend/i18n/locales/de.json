@@ -2537,6 +2537,7 @@
     "emptyAction": "Erste Rechnung erstellen",
     "searchPlaceholder": "Nach Nummer oder Patient suchen...",
     "notFound": "Rechnung nicht gefunden",
+    "historical": "Historisch",
     "draftNoNumber": "Entwurf",
     "details": "Details",
     "invoiceNumber": "Rechnungsnummer",

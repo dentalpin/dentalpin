@@ -2537,6 +2537,7 @@
     "emptyAction": "Wystaw pierwszą fakturę",
     "searchPlaceholder": "Szukaj po numerze lub pacjencie...",
     "notFound": "Nie znaleziono faktury",
+    "historical": "Archiwalna",
     "draftNoNumber": "Wersja robocza",
     "details": "Szczegóły",
     "invoiceNumber": "Numer faktury",

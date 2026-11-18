@@ -2537,6 +2537,7 @@
     "emptyAction": "Criar primeira fatura",
     "searchPlaceholder": "Procurar por número ou paciente...",
     "notFound": "Fatura não encontrada",
+    "historical": "Histórica",
     "draftNoNumber": "Rascunho",
     "details": "Detalhes",
     "invoiceNumber": "Número da fatura",

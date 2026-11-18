@@ -2537,6 +2537,7 @@
     "emptyAction": "Créer la première facture",
     "searchPlaceholder": "Rechercher par numéro ou patient...",
     "notFound": "Facture introuvable",
+    "historical": "Historique",
     "draftNoNumber": "Brouillon",
     "details": "Détails",
     "invoiceNumber": "Numéro de facture",

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#877): leave historical invoices outside the live chain and omit the VeriFactu QR from their PDFs.
+
 - fix(#838): the certificate upload form declares `method="post"`, so a submit before the page has hydrated can't put the certificate password in the URL.
 - fix(#768): the row locks in the settings (chain head) now re-read the locked row (`populate_existing`). A `SELECT … FOR UPDATE` on a row already in the session returned the cached instance with its pre-lock values: `validate_before_issue` loads the settings first, so two issues on different series could chain two records off the same `huella`.
 

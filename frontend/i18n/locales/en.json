@@ -2537,6 +2537,7 @@
     "emptyAction": "Create first invoice",
     "searchPlaceholder": "Search by number or patient...",
     "notFound": "Invoice not found",
+    "historical": "Historical",
     "draftNoNumber": "Draft",
     "details": "Details",
     "invoiceNumber": "Invoice number",

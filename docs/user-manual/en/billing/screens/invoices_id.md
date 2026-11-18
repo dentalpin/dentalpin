@@ -30,7 +30,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/[id]/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: eab5bb31
+last_verified_commit: 0000000
 ---
 
 # Invoice detail
@@ -68,6 +68,8 @@ or issue a credit note.
 - **VeriFactu.** When the module is installed, issuing the invoice
   queues the AEAT submission. State (`pending`, `sent`, `rejected`)
   is shown in the sidebar.
+
+The **Historical** badge indicates a read-only imported invoice. You can consult the original date, amounts and lines. The actions to record a payment, send the invoice or create a credit note are unavailable.
 
 ## Issue an invoice
 
