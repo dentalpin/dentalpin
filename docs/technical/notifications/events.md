@@ -38,6 +38,7 @@ the erasure transaction (ADR 0038, #546).
 | `appointment.scheduled` | `handlers.on_appointment_scheduled` | Enqueue `appointment_confirmation`. |
 | `appointment.cancelled` | `handlers.on_appointment_cancelled` | Enqueue `appointment_cancelled`. |
 | `patient.created` | `handlers.on_patient_created` | Enqueue `welcome`. |
+| `patient.updated` | `handlers.on_patient_updated` | Transactional (ADR 0019). When `do_not_contact` is set, cancel the patient's pending WhatsApp drafts (`awaiting_manual` → `skipped`). |
 | `budget.sent` | `handlers.on_budget_sent` | Enqueue `budget_sent` (only when `send_method` is `email` or `whatsapp`; staff pick is honoured exactly). |
 | `budget.accepted` | `handlers.on_budget_accepted` | Enqueue `budget_accepted`. |
 | `budget.reminder_sent` | `handlers.on_budget_reminder_sent` | Enqueue `budget_reminder` with the public quote link (#287 bug 7). |
