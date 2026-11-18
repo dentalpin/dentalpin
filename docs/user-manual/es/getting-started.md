@@ -54,3 +54,19 @@ En *Tu equipo* (o *Configuración → Personas → Usuarios*), crea el usuario y
 El icono de enlace en cualquier fila de usuario genera un enlace nuevo, útil cuando alguien olvida su contraseña.
 
 > Trátalo como una contraseña: quien tenga el enlace puede entrar con esa cuenta hasta que se use.
+
+## Autenticación en dos pasos del personal
+
+En **Ajustes → General → Autenticación en dos pasos de la clínica** el
+administrador puede permitir el alta voluntaria, exigirla a todo el
+personal o exigirla a los roles seleccionados. El personal sujeto a la
+política configura su aplicación de autenticación en el siguiente acceso.
+
+Si el alta es opcional, abre **Ajustes → Cuenta → Perfil**. Escanea el QR,
+introduce un código de seis dígitos y guarda los códigos de recuperación
+antes de continuar. Inicia sesión con tu contraseña y el código de tu
+aplicación o un código de recuperación sin usar.
+
+Para restablecer la autenticación en dos pasos de otra persona, usa el
+icono del escudo en **Ajustes → Personas → Usuarios**. Esa persona volverá
+a iniciar sesión y configurará un segundo factor nuevo.

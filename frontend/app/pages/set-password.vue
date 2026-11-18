@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { MfaChallenge } from '~/composables/useMfa'
+import type { AuthTokens } from '~/types'
+
 /**
  * Invite landing: consume the one-time token from the URL, set a password
  * and sign in. Public route (guest layout).
@@ -19,6 +22,7 @@ const passwordConfirm = ref('')
 const errors = reactive<Record<string, string>>({})
 const errorMessage = ref('')
 const isLoading = ref(false)
+const challenge = ref<MfaChallenge>()
 
 function validate(): boolean {
   if (!password.value) errors.password = t('setup.passwordRequired')
@@ -34,21 +38,30 @@ async function onSubmit() {
   if (!validate()) return
   isLoading.value = true
   try {
-    const res = await api.post<{ access_token: string, refresh_token: string }>(
+    const res = await api.post<AuthTokens | MfaChallenge>(
       '/api/v1/auth/set-password',
       { token: token.value, password: password.value },
       // The catch renders errorMessage inline on the form.
       { skipAuth: true, errorToast: false }
     )
-    await auth.applyTokens(res.access_token, res.refresh_token)
-    toast.add({ title: t('setup.success'), color: 'success' })
-    await navigateTo('/')
+    password.value = ''
+    passwordConfirm.value = ''
+    if ('mfa_required' in res) {
+      challenge.value = res
+      return
+    }
+    await verified()
   } catch (error: unknown) {
     const status = (error as { statusCode?: number }).statusCode
     errorMessage.value = status === 400 ? t('settings.invite.invalidToken') : t('setup.error')
   } finally {
     isLoading.value = false
   }
+}
+async function verified() {
+  await auth.applyTokens()
+  toast.add({ title: t('setup.success'), color: 'success' })
+  await navigateTo('/')
 }
 </script>
 
@@ -71,8 +84,14 @@ async function onSubmit() {
     </div>
 
     <UCard>
+      <MfaChallengeForm
+        v-if="challenge"
+        :challenge="challenge"
+        @verified="verified"
+        @cancel="navigateTo('/login')"
+      />
       <div
-        v-if="!token"
+        v-else-if="!token"
         class="alert-surface-danger rounded-token-md px-3 py-2 text-body"
         role="alert"
       >

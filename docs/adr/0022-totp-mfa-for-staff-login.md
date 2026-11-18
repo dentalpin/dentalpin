@@ -1,8 +1,8 @@
 # 0022 — TOTP second factor for staff login, and a 12-character password floor
 
-- **Status:** deferred (decision 1 accepted and shipped in #380; decision 2
-  deferred on 2026-09-06 until a customer requires it — see *Decision*)
+- **Status:** accepted
 - **Date:** 2026-09-05
+- **Amended:** 2026-11-18 (#887)
 - **Deciders:** maintainers (@martinezsalmeron)
 - **Tags:** security, auth
 
@@ -16,8 +16,8 @@ one letter + one number (`backend/app/core/auth/service.py`,
 reused staff password is a full-clinic breach.
 
 Two decisions are bundled because they share the login surface. The
-password floor ships immediately (the PR carrying this ADR); TOTP follows
-once the ADR is accepted.
+password floor shipped in #380. The earlier opt-in-only TOTP proposal was
+deferred in September. This amendment accepts the clinic policy in #887.
 
 ## Decision
 
@@ -29,68 +29,64 @@ once the ADR is accepted.
    endpoint today) — never at login, so existing accounts keep working
    until their next change. The demo seed (`demo1234`) is unaffected by
    design: it is only ever *logged in with*.
-2. **TOTP (RFC 6238) as the staff second factor** — **deferred**
-   (2026-09-06): not built until a customer requires it. When it is, two
-   conditions override the design below: it is **always opt-in per
-   user** (no mandatory-for-admin, no clinic-wide enforcement toggle),
-   and it uses **`pyotp`** rather than a hand-rolled RFC 6238. The rest
-   stays as the reference design, implemented in core auth (login is
-   core, not a module):
-   - **Enrolment**: `POST /auth/mfa/totp/enroll` returns a provisioning
-     URI (`otpauth://totp/DentalPin:<email>?secret=…&issuer=DentalPin`)
-     rendered as a QR client-side; `POST /auth/mfa/totp/confirm` with one
-     valid code activates it and returns **10 single-use recovery codes**
-     (shown once, stored as bcrypt hashes).
-   - **Login**: `/login` with a correct password on an MFA-enabled
-     account returns `202 {"mfa_required": true, "mfa_token": …}` — a
-     short-lived (5 min) JWT of type `mfa` bound to the user and
-     `token_version` — instead of a session. `POST /auth/mfa/verify`
-     with `{mfa_token, code}` (TOTP or recovery code) mints the normal
-     access/refresh pair. ±1 step (30 s) window; the last accepted TOTP
-     counter is stored to reject replay inside the window.
-   - **Policy**: mandatory for `admin`; opt-in for other roles; a
-     per-clinic `settings.mfa_required_for_all` toggle (admin-only)
-     makes it mandatory for every member — members without MFA are
-     redirected to enrolment on next login, not locked out.
-   - **Recovery**: an admin can reset a member's MFA
-     (`DELETE /auth/mfa/users/{id}`), forcing re-enrolment; audit-logged.
-     Admins cannot reset their own — that is what recovery codes are
-     for; a solo-practice DB-level reset runbook lives in
-     `docs/workflows/`.
-   - **Storage**: `user_mfa_totp(user_id PK, secret_encrypted,
-     confirmed_at, last_counter, created_at)` +
-     `user_mfa_recovery_codes(id, user_id, code_hash, used_at)` on the
-     core linear chain. The secret is Fernet-encrypted at rest via
-     `app.core.email.encryption` (the project-wide scheme).
-   - **Rate limits**: `/mfa/verify` shares the login limiter's key
-     (10/min per identity); five consecutive failures on one
-     `mfa_token` invalidate that token.
-   - **Sessions**: enabling or resetting MFA bumps `token_version`, so
-     every existing session re-authenticates through the new gate.
+2. **Staff TOTP lives in core auth**, using PyOTP and an authenticator app.
+
+### Policy and enrollment
+
+Each clinic chooses off, optional, required for all staff, or required for
+selected roles. The account is global, so a requirement in any of the user's
+clinics applies at sign-in. Off disables voluntary enrollment for staff
+without an enabling policy. A staff member with an active factor continues to
+verify at sign-in.
+
+An unenrolled user subject to a requirement completes setup after password
+validation and before receiving a session. An optional user can start setup
+from their profile after re-entering their password. The API supplies a QR
+image and manual setup key. A valid code confirms enrollment and returns ten
+single-use recovery codes once. The account stores only hashes of these
+random, high-entropy codes.
+
+### Sessions and recovery
+
+Login and invitation completion return a `202` challenge when MFA is
+required. An opaque, hashed, five-minute challenge is bound to the user,
+purpose and token version. It can only complete its own auth flow. Completing
+it consumes the challenge and issues the normal ADR 0023 cookies and tokens.
+The renewal endpoint requires a new sign-in for an unenrolled account subject
+to a mandatory policy. An already-issued access token can run to its expiry.
+
+The verifier accepts the current TOTP interval and one interval of drift on
+either side. It serializes verification per account and rejects a counter at
+or below the last accepted counter. Five failed code attempts lock the account
+for 15 minutes across challenges, in addition to the request limiter.
+
+An optional user can disable MFA after proving the password and a valid
+authenticator or recovery code. Reset from the staff settings requires an
+administrator in every clinic where the user is a member. It revokes the
+user's existing sessions and recovery codes, then requires re-enrollment at
+the next sign-in. Enabling and disabling MFA also revoke the former sessions.
+
+### Storage and audit
+
+The TOTP secret and any pending enrollment secret use Fernet encryption with
+a key dedicated to MFA. The key can be rotated independently of the JWT
+signing key. See [Staff MFA operations](../workflows/staff-mfa.md).
+
+The core records enable, disable, reset and failed verification events in a
+durable audit table and publishes `auth.2fa_enabled`, `auth.2fa_disabled`,
+`auth.2fa_reset` and `auth.2fa_failed`. The payload carries account and actor
+IDs, the clinic ID when a reset has clinic context, and a timestamp.
 
 ## Consequences
 
-### Good
-
-- Phished/reused passwords stop being a full-clinic breach for admins by
-  default, and for everyone the clinic opts in.
-- No new dependency: the QR uses the `qrcode` package Verifactu already
-  ships, and RFC 6238 is ~40 lines of HMAC-SHA1 verified against the
-  RFC test vectors — one fewer supply-chain surface for a security
-  primitive (revisit `pyotp` only if step/drift configuration grows).
-- The `mfa_token` step leaves `/login` semantics for non-MFA users
-  unchanged (200 + tokens), so existing clients and the e2e login
-  fixture keep working.
-
-### Bad / accepted trade-offs
-
-- A second login step for admins on every new device. Mitigation: the
-  7-day refresh token — MFA is checked at *login*, not at refresh.
-- Recovery codes are a shared-secret fallback; losing both the
-  authenticator and the codes needs another admin or the runbook.
-- WebAuthn/passkeys are deliberately out (#354 says so) — the
-  `mfa_token` handshake is method-agnostic, so `POST /auth/mfa/webauthn/*`
-  slots in next to TOTP later.
+- A password by itself cannot establish a new staff session when a second
+  factor applies. Password-only login retains the existing response for
+  accounts without a factor or mandatory policy.
+- Setup and recovery become part of clinic operations. The deployment needs
+  a dedicated key before activating the policy, and staff need their
+  authenticator or recovery codes.
+- Public patient links keep their own verification. WebAuthn, SMS, trusted
+  devices and machine credentials are outside this change.
 
 ## Alternatives considered
 
@@ -108,9 +104,8 @@ once the ADR is accepted.
 - `backend/tests/test_auth.py::test_password_floor_is_12` — an
   11-character password is rejected on the setup path;
   `test_setup_weak_password` keeps covering composition.
-- When TOTP lands: `tests/test_auth_mfa.py` covers enrol → confirm → 202
-  handshake → verify (TOTP and recovery), replay rejection, admin reset,
-  and the mandatory-for-admin gate.
+- `backend/tests/test_auth_mfa.py` covers enrollment, session issuance,
+  replay and expiry, scoped reset, recovery, rate limiting and key rotation.
 
 ## References
 
@@ -120,3 +115,5 @@ once the ADR is accepted.
   `/set-password`
 - Issue #354; ADR 0006 (public-link second factor); ADR 0023 (cookie
   auth + refresh rotation — the login surface this shares)
+- [PyOTP documentation](https://pyauth.github.io/pyotp/)
+- [Fernet and MultiFernet](https://cryptography.io/en/stable/fernet/)
