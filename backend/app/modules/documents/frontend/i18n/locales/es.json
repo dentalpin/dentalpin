@@ -113,7 +113,16 @@
       "drawSignature": "Dibuja tu firma",
       "clear": "Borrar firma",
       "confirm": "Confirmar firma",
-      "loading": "Cargando consentimiento…"
+      "loading": "Cargando consentimiento…",
+      "linksInvalidated": "Los enlaces de firma pendientes se han invalidado.",
+      "consentTitle": "Título del consentimiento",
+      "consentText": "Texto del consentimiento",
+      "editInvalidates": "Guardar los cambios invalida los enlaces de firma pendientes.",
+      "editConsent": "Editar consentimiento",
+      "archiveConsent": "Archivar",
+      "generatePreview": "Generar vista previa",
+      "downloadPreview": "Descargar vista previa",
+      "evidenceUnavailable": "No se pudo comprobar el estado de la firma."
     }
   }
 }

@@ -94,8 +94,13 @@ fragment, and the client sends it in the Authorization header rather than
 the request path. Signing serializes on the document
 row, stores independent evidence and writes the signed PDF once; SHA-256
 is computed over those exact bytes. Downloads serve that file. Revocation
-creates separate evidence and a PDF; the original is unchanged. Signed
-consents cannot be edited, archived or regenerated.
+creates separate evidence and a PDF; the original is unchanged. Unsigned
+consents may be edited, archived or rendered as previews. Editing or
+archiving invalidates pending links under the document lock. The patient
+card reads the evidence-backed signature state in one clinic-scoped query; archived
+consents cannot receive new signing links. Regeneration does not unarchive
+a consent. Signed consents cannot be
+edited, archived or regenerated.
 
 Staff evidence views and signed or revocation PDF downloads use the core
 `RecordPatientAccess` dependency from #903. The public bearer-link flow has

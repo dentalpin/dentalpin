@@ -71,3 +71,5 @@ The letterhead editor requires `admin.clinic.write`.
 ## Informed consents
 
 From the patient record, create or select a clinic template and create the consent. Open the link on the tablet without a staff session; it expires after 30 minutes and accepts one signature. The patient or representative provides their name and relationship and draws their signature. Download the signed PDF from the record. To revoke, create a revocation link and collect a new signature; the original consent remains intact. Corrections require a new consent.
+
+Before signing, the consent can be edited, archived or rendered as a preview. Editing or archiving invalidates outstanding links; create a new link after editing.

@@ -8,7 +8,7 @@ import io
 import shutil
 import subprocess
 from datetime import UTC, datetime, timedelta
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from PIL import Image, ImageDraw
@@ -251,6 +251,12 @@ async def test_expired_link_and_clinic_isolation(client, auth_headers, test_pati
             headers=auth_headers,
         )
     ).status_code == 404
+    status_for_foreign = await client.get(
+        "/api/v1/documents/consents/signature-status",
+        headers=auth_headers,
+        params={"patient_id": str(patient.id)},
+    )
+    assert status_for_foreign.status_code == 404
     foreign_access = (
         (
             await db_session.execute(
@@ -386,3 +392,309 @@ async def test_changed_pdf_is_not_served(client, auth_headers, test_patient, db_
             f"/api/v1/documents/consents/{doc}/evidence/sign/download", headers=auth_headers
         )
     ).status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_unsigned_consent_can_be_regenerated_and_edited_with_links_invalidated(
+    client, auth_headers, test_patient
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    first = await make_link(client, auth_headers, doc)
+    second = await make_link(client, auth_headers, doc)
+    statuses = await client.get(
+        "/api/v1/documents/consents/signature-status",
+        headers=auth_headers,
+        params={"patient_id": str(test_patient.id)},
+    )
+    assert statuses.status_code == 200
+    assert {row["id"]: row["signed"] for row in statuses.json()["data"]}[doc] is False
+    # Generation without a signature is a preview and must not lock the consent.
+    for _ in range(2):
+        generated = await client.post(
+            "/api/v1/documents/generate", headers=auth_headers, json={"document_id": doc}
+        )
+        assert generated.status_code == 200, generated.text
+    preview = await client.get(f"/api/v1/documents/{doc}/download", headers=auth_headers)
+    assert preview.status_code == 200 and preview.content.startswith(b"%PDF-")
+    assert (
+        await client.get(
+            "/api/v1/documents/public/consents/current",
+            headers={"Authorization": f"Bearer {first}"},
+        )
+    ).status_code == 200
+    # Invalid content must not invalidate the existing link.
+    invalid = await client.patch(
+        f"/api/v1/documents/{doc}",
+        headers=auth_headers,
+        json={"content": {"text": "Synthetic", "signature": "https://invalid.example/"}},
+    )
+    assert invalid.status_code == 422
+    assert (
+        await client.get(
+            "/api/v1/documents/public/consents/current",
+            headers={"Authorization": f"Bearer {first}"},
+        )
+    ).status_code == 200
+    edited = await client.patch(
+        f"/api/v1/documents/{doc}",
+        headers=auth_headers,
+        json={"title": "Updated consent", "content": {"text": "Updated synthetic text"}},
+    )
+    assert edited.status_code == 200, edited.text
+    assert edited.json()["data"]["status"] == "draft"
+    assert (
+        await client.get(f"/api/v1/documents/{doc}/download", headers=auth_headers)
+    ).status_code == 409
+    payload = {
+        "signer_name": "Synthetic patient",
+        "relationship_to_patient": "patient",
+        "signature": signature(),
+    }
+    for token in (first, second):
+        headers = {"Authorization": f"Bearer {token}"}
+        assert (
+            await client.get("/api/v1/documents/public/consents/current", headers=headers)
+        ).status_code == 404
+        assert (
+            await client.post(
+                "/api/v1/documents/public/consents/current/sign", headers=headers, json=payload
+            )
+        ).status_code == 404
+    fresh = await make_link(client, auth_headers, doc)
+    data = await client.get(
+        "/api/v1/documents/public/consents/current", headers={"Authorization": f"Bearer {fresh}"}
+    )
+    assert data.json()["data"]["text"] == "Updated synthetic text"
+    assert (
+        await client.post(
+            "/api/v1/documents/public/consents/current/sign",
+            headers={"Authorization": f"Bearer {fresh}"},
+            json=payload,
+        )
+    ).status_code == 200
+    statuses = await client.get(
+        "/api/v1/documents/consents/signature-status",
+        headers=auth_headers,
+        params={"patient_id": str(test_patient.id)},
+    )
+    assert {row["id"]: row["signed"] for row in statuses.json()["data"]}[doc] is True
+    for method, path, kwargs in [
+        ("patch", f"/api/v1/documents/{doc}", {"json": {"title": "Another title"}}),
+        ("delete", f"/api/v1/documents/{doc}", {}),
+        ("post", "/api/v1/documents/generate", {"json": {"document_id": doc}}),
+    ]:
+        assert (
+            await getattr(client, method)(path, headers=auth_headers, **kwargs)
+        ).status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_archiving_unsigned_consent_invalidates_links_and_disallows_new_ones(
+    client, auth_headers, test_patient
+):
+    for archive_via_patch in (False, True):
+        doc = await new_consent(client, auth_headers, test_patient)
+        token = await make_link(client, auth_headers, doc)
+        if archive_via_patch:
+            result = await client.patch(
+                f"/api/v1/documents/{doc}", headers=auth_headers, json={"status": "archived"}
+            )
+            assert result.status_code == 200
+        else:
+            assert (
+                await client.delete(f"/api/v1/documents/{doc}", headers=auth_headers)
+            ).status_code == 204
+        assert (
+            await client.get(
+                "/api/v1/documents/public/consents/current",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+        ).status_code == 404
+        assert (
+            await client.post(
+                f"/api/v1/documents/consents/{doc}/links?purpose=sign", headers=auth_headers
+            )
+        ).status_code == 409
+        generated = await client.post(
+            "/api/v1/documents/generate", headers=auth_headers, json={"document_id": doc}
+        )
+        assert generated.status_code == 200
+        assert generated.json()["data"]["status"] == "archived"
+        assert (
+            await client.get(
+                "/api/v1/documents/public/consents/current",
+                headers={"Authorization": f"Bearer {token}"},
+            )
+        ).status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_signed_evidence_blocks_changes_even_if_status_is_draft(
+    client, auth_headers, test_patient, db_session
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    result = await client.post(
+        "/api/v1/documents/public/consents/current/sign",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "signer_name": "Synthetic",
+            "relationship_to_patient": "patient",
+            "signature": signature(),
+        },
+    )
+    assert result.status_code == 200
+    row = (
+        await db_session.execute(select(GeneratedDocument).where(GeneratedDocument.id == UUID(doc)))
+    ).scalar_one()
+    row.status = "draft"
+    await db_session.flush()
+    assert (
+        await client.patch(
+            f"/api/v1/documents/{doc}", headers=auth_headers, json={"title": "Changed"}
+        )
+    ).status_code == 409
+    assert (
+        await client.delete(f"/api/v1/documents/{doc}", headers=auth_headers)
+    ).status_code == 409
+    assert (
+        await client.post(
+            "/api/v1/documents/generate", headers=auth_headers, json={"document_id": doc}
+        )
+    ).status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_edit_and_sign_are_serialized(client, auth_headers, test_patient, db_session):
+    import asyncio
+
+    from httpx import ASGITransport, AsyncClient
+    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+    from sqlalchemy.pool import NullPool
+
+    from app.config import settings
+    from app.database import get_db
+    from app.main import app
+
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    await db_session.commit()
+    engine = create_async_engine(settings.DATABASE_URL, poolclass=NullPool)
+    factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    old_override = app.dependency_overrides[get_db]
+
+    async def per_request_db():
+        async with factory() as session:
+            try:
+                yield session
+                await session.commit()
+            except Exception:
+                await session.rollback()
+                raise
+
+    app.dependency_overrides[get_db] = per_request_db
+    try:
+        async with AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac:
+            edited, signed = await asyncio.gather(
+                ac.patch(
+                    f"/api/v1/documents/{doc}",
+                    headers=auth_headers,
+                    json={"content": {"text": "Edited synthetic text"}},
+                ),
+                ac.post(
+                    "/api/v1/documents/public/consents/current/sign",
+                    headers={"Authorization": f"Bearer {token}"},
+                    json={
+                        "signer_name": "Synthetic",
+                        "relationship_to_patient": "patient",
+                        "signature": signature(),
+                    },
+                ),
+            )
+        if signed.status_code == 200:
+            assert edited.status_code == 409
+        else:
+            assert edited.status_code == 200
+            assert signed.status_code in (404, 409)
+        assert (signed.status_code == 200) != (edited.status_code == 200)
+        db_session.expire_all()
+        current = (
+            await db_session.execute(
+                select(GeneratedDocument).where(GeneratedDocument.id == UUID(doc))
+            )
+        ).scalar_one()
+        assert current.content["text"] == (
+            "Synthetic treatment text" if signed.status_code == 200 else "Edited synthetic text"
+        )
+    finally:
+        app.dependency_overrides[get_db] = old_override
+        await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_racing_public_view_does_not_show_edited_text(
+    client, auth_headers, test_patient, db_session, monkeypatch
+):
+    import asyncio
+
+    from httpx import ASGITransport, AsyncClient
+    from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
+    from sqlalchemy.pool import NullPool
+
+    from app.config import settings
+    from app.database import get_db
+    from app.main import app
+    from app.modules.documents import consent as consent_module
+    from app.modules.documents.service import DocumentService
+
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    clinic_id = test_patient.clinic_id
+    await db_session.commit()
+    engine = create_async_engine(settings.DATABASE_URL, poolclass=NullPool)
+    factory = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+    old_override = app.dependency_overrides[get_db]
+    link_loaded = asyncio.Event()
+    original_link = consent_module._link
+
+    async def observed_link(db, token):
+        link = await original_link(db, token)
+        link_loaded.set()
+        return link
+
+    async def per_request_db():
+        async with factory() as session:
+            try:
+                yield session
+                await session.commit()
+            except Exception:
+                await session.rollback()
+                raise
+
+    monkeypatch.setattr(consent_module, "_link", observed_link)
+    app.dependency_overrides[get_db] = per_request_db
+    try:
+        async with (
+            factory() as editing,
+            AsyncClient(transport=ASGITransport(app=app), base_url="http://test") as ac,
+        ):
+            await editing.execute(
+                select(GeneratedDocument).where(GeneratedDocument.id == UUID(doc)).with_for_update()
+            )
+            view = asyncio.create_task(
+                ac.get(
+                    "/api/v1/documents/public/consents/current",
+                    headers={"Authorization": f"Bearer {token}"},
+                )
+            )
+            await asyncio.wait_for(link_loaded.wait(), timeout=5)
+            await DocumentService.update_document(
+                editing, clinic_id, UUID(doc), content={"text": "Updated synthetic text"}
+            )
+            await editing.commit()
+            response = await asyncio.wait_for(view, timeout=10)
+            assert response.status_code == 404
+            assert "Updated synthetic text" not in response.text
+    finally:
+        app.dependency_overrides[get_db] = old_override
+        await engine.dispose()

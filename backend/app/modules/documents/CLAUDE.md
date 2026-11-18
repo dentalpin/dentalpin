@@ -27,11 +27,17 @@ The token lives in the URL fragment and is sent to the API in the
 Authorization header, keeping it out of request paths and access logs.
 The original signature publishes the existing transactional `document.generated`
 event; revocation does not publish a second generation event.
-A signed consent cannot be edited, archived or regenerated; its persisted
+Unsigned consents may be edited, archived and rendered as previews; edits and
+archiving invalidate all pending links under the same document lock. Archived
+consents cannot receive new signing links. A signed consent cannot be edited,
+archived or regenerated; its persisted
 PDF is downloaded verbatim. Revocations have separate signatures, dates,
 PDFs and SHA-256 hashes, without rewriting the original. The public page
 uses no staff session. Evidence includes signer relationship, IP and user
 agent. The migration is on the documents branch and is reversible.
+
+The clinic-scoped `GET /consents/signature-status?patient_id=…` returns
+signature evidence state for the patient card and records a staff view.
 
 ## Dependencies
 

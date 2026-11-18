@@ -16,7 +16,7 @@ from typing import Annotated, Literal
 from fastapi import APIRouter, Depends, Header, HTTPException, Request, Response
 from PIL import Image, UnidentifiedImageError
 from pydantic import BaseModel, Field
-from sqlalchemy import select
+from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -108,7 +108,7 @@ async def _document(
         GeneratedDocument.document_type == "informed_consent",
     )
     if lock:
-        stmt = stmt.with_for_update()
+        stmt = stmt.with_for_update().execution_options(populate_existing=True)
     doc = (await db.execute(stmt)).scalar_one_or_none()
     if doc is None:
         raise HTTPException(404, "Consent not found")
@@ -171,6 +171,33 @@ async def update_template(
     return {"data": _template(t)}
 
 
+@router.get("/consents/signature-status")
+async def consent_signature_status(
+    patient_id: uuid.UUID, ctx: Ctx, _: Read, db: Db, record_access: RecordPatientAccess
+) -> dict:
+    """Return signature state for one clinic-scoped patient's consents."""
+    patient = await PatientService.get_patient(db, ctx.clinic_id, patient_id)
+    if patient is None:
+        raise HTTPException(404, "Patient not found")
+    signed = exists().where(
+        ConsentEvidence.clinic_id == ctx.clinic_id,
+        ConsentEvidence.document_id == GeneratedDocument.id,
+        ConsentEvidence.purpose == "sign",
+    )
+    rows = (
+        await db.execute(
+            select(GeneratedDocument.id, signed.label("signed")).where(
+                GeneratedDocument.clinic_id == ctx.clinic_id,
+                GeneratedDocument.patient_id == patient_id,
+                GeneratedDocument.document_type == "informed_consent",
+            )
+        )
+    ).all()
+    if rows:
+        await record_access(patient_id, "documents")
+    return {"data": [{"id": str(row.id), "signed": row.signed} for row in rows]}
+
+
 @router.post("/consents", status_code=201)
 async def create_consent(data: CreateConsent, ctx: Ctx, _: Write, db: Db) -> dict:
     template = (
@@ -201,6 +228,8 @@ async def create_consent(data: CreateConsent, ctx: Ctx, _: Write, db: Db) -> dic
 @router.post("/consents/{document_id}/links", status_code=201)
 async def create_link(document_id: uuid.UUID, purpose: Purpose, ctx: Ctx, _: Write, db: Db) -> dict:
     doc = await _document(db, ctx.clinic_id, document_id, lock=True)
+    if doc.status == "archived":
+        raise HTTPException(409, "Archived consents cannot be signed")
     signed = await _evidence(db, doc.id, "sign")
     revoked = await _evidence(db, doc.id, "revoke")
     if (purpose == "sign" and signed) or (purpose == "revoke" and (not signed or revoked)):
@@ -243,9 +272,24 @@ def _private(response: Response) -> None:
 @limiter.limit("30/minute")
 async def public_consent(request: Request, response: Response, db: Db, token: Token) -> dict:
     _private(response)
-    link = await _link(db, token)
-    doc = await _document(db, link.clinic_id, link.document_id)
-    if await _evidence(db, doc.id, link.purpose):
+    initial = await _link(db, token)
+    # Recheck the link after acquiring the same document lock as edits and
+    # signing: a view that raced an edit must not reveal the changed text.
+    doc = await _document(db, initial.clinic_id, initial.document_id, lock=True)
+    link = (
+        await db.execute(
+            select(ConsentSigningLink)
+            .where(ConsentSigningLink.id == initial.id)
+            .with_for_update()
+            .execution_options(populate_existing=True)
+        )
+    ).scalar_one()
+    if (
+        link.used_at
+        or link.expires_at <= datetime.now(UTC)
+        or doc.status == "archived"
+        or await _evidence(db, doc.id, link.purpose)
+    ):
         raise HTTPException(404, "Link not found or expired")
     patient = await PatientService.get_patient(db, link.clinic_id, doc.patient_id)
     clinic = await db.get(Clinic, link.clinic_id)
@@ -283,7 +327,12 @@ async def sign_consent(
         )
     ).scalar_one()
     now = datetime.now(UTC)
-    if link.used_at or link.expires_at <= now or await _evidence(db, doc.id, link.purpose):
+    if (
+        doc.status == "archived"
+        or link.used_at
+        or link.expires_at <= now
+        or await _evidence(db, doc.id, link.purpose)
+    ):
         raise HTTPException(409, "Link is no longer valid")
     if link.purpose == "revoke" and not await _evidence(db, doc.id, "sign"):
         raise HTTPException(409, "Consent is not signed")
@@ -327,6 +376,7 @@ async def sign_consent(
     link.used_at = now
     if link.purpose == "sign":
         doc.status = "generated"
+        doc.file_path = f"documents/{link.clinic_id}/consent-{evidence_id}.pdf"
     await db.flush()
     if link.purpose == "sign":
         payload = {

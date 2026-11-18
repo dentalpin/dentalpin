@@ -113,7 +113,16 @@
       "drawSignature": "Draw your signature",
       "clear": "Clear signature",
       "confirm": "Confirm signature",
-      "loading": "Loading consent…"
+      "loading": "Loading consent…",
+      "linksInvalidated": "Pending signing links have been invalidated.",
+      "consentTitle": "Consent title",
+      "consentText": "Consent text",
+      "editInvalidates": "Saving changes invalidates pending signing links.",
+      "editConsent": "Edit consent",
+      "archiveConsent": "Archive",
+      "generatePreview": "Generate preview",
+      "downloadPreview": "Download preview",
+      "evidenceUnavailable": "Could not verify the signature status."
     }
   }
 }

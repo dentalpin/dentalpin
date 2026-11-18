@@ -1,6 +1,15 @@
 <script setup lang="ts">
 interface ConsentTemplate { id: string, title: string, body: string }
-interface ConsentDocument { id: string, title: string, status: string }
+interface ConsentDocument {
+  id: string
+  title: string
+  status: string
+  content: { text?: string }
+  signed: boolean
+  evidenceAvailable: boolean
+}
+interface ConsentSignatureStatus { id: string, signed: boolean }
+
 const props = defineProps<{ ctx: { patient: { id: string } } }>()
 const { t } = useI18n()
 const api = useApi()
@@ -11,20 +20,33 @@ const templateId = ref('')
 const title = ref('')
 const body = ref('')
 const editing = ref('')
+const editingConsent = ref('')
+const consentTitle = ref('')
+const consentText = ref('')
 const signingUrl = ref('')
 const message = ref('')
 const busy = ref(false)
 
 async function refresh() {
-  const [a, b] = await Promise.all([
+  const [a, b, signatureStatus] = await Promise.all([
     api.get<{ data: ConsentTemplate[] }>('/api/v1/documents/consent-templates'),
     api.get<{ data: ConsentDocument[] }>('/api/v1/documents', { query: {
       patient_id: props.ctx.patient.id, document_type: 'informed_consent', page_size: 100
-    } })
+    } }),
+    api.get<{ data: ConsentSignatureStatus[] }>('/api/v1/documents/consents/signature-status', {
+      query: { patient_id: props.ctx.patient.id }, errorToast: false
+    }).catch(() => null)
   ])
   templates.value = a.data
-  documents.value = b.data
+  const statusById = new Map<string, boolean>(signatureStatus?.data.map(item => [item.id, item.signed]))
+  documents.value = b.data.map((doc) => {
+    if (doc.status === 'archived') return { ...doc, signed: false, evidenceAvailable: true }
+    const signed = statusById.get(doc.id)
+    // Do not offer edits if signature state could not be verified.
+    return { ...doc, signed: signed ?? true, evidenceAvailable: signed !== undefined }
+  })
 }
+
 async function saveTemplate() {
   busy.value = true
   try {
@@ -59,6 +81,53 @@ async function link(id: string, purpose: 'sign' | 'revoke') {
   const result = await api.post<{ data: { token: string } }>(`/api/v1/documents/consents/${id}/links?purpose=${purpose}`, {})
   signingUrl.value = `${window.location.origin}/p/consent#${result.data.token}`
   message.value = t('documents.consent.linkHelp')
+}
+function startEditConsent(doc: ConsentDocument) {
+  editingConsent.value = doc.id
+  consentTitle.value = doc.title
+  consentText.value = doc.content?.text || ''
+}
+async function saveConsent() {
+  busy.value = true
+  try {
+    await api.patch(`/api/v1/documents/${editingConsent.value}`, {
+      title: consentTitle.value, content: { text: consentText.value }
+    })
+    editingConsent.value = ''
+    signingUrl.value = ''
+    message.value = t('documents.consent.linksInvalidated')
+    await refresh()
+  } finally { busy.value = false }
+}
+async function archiveConsent(id: string) {
+  busy.value = true
+  try {
+    await api.del(`/api/v1/documents/${id}`)
+    signingUrl.value = ''
+    editingConsent.value = ''
+    message.value = t('documents.consent.linksInvalidated')
+    await refresh()
+  } finally { busy.value = false }
+}
+async function generatePreview(id: string) {
+  busy.value = true
+  try {
+    await api.post('/api/v1/documents/generate', { document_id: id })
+    await refresh()
+  } finally { busy.value = false }
+}
+async function downloadPreview(id: string) {
+  const response = await api.raw(`/api/v1/documents/${id}/download`)
+  if (!response.ok) {
+    message.value = t('documents.consent.noEvidence')
+    return
+  }
+  const url = URL.createObjectURL(await response.blob())
+  const a = document.createElement('a')
+  a.href = url
+  a.download = 'consent-preview.pdf'
+  a.click()
+  URL.revokeObjectURL(url)
 }
 function copyLink() {
   return navigator.clipboard.writeText(signingUrl.value)
@@ -178,15 +247,85 @@ onMounted(() => refresh())
         class="border-t pt-2"
       >
         <p>{{ doc.title }} · {{ doc.status }}</p>
-        <div class="flex flex-wrap gap-2">
+        <div
+          v-if="editingConsent === doc.id"
+          class="space-y-2 pt-2"
+        >
+          <label class="block">
+            {{ t('documents.consent.consentTitle') }}
+            <input
+              v-model="consentTitle"
+              class="w-full rounded border p-2"
+            >
+          </label>
+          <label class="block">
+            {{ t('documents.consent.consentText') }}
+            <textarea
+              v-model="consentText"
+              class="w-full rounded border p-2"
+              rows="6"
+            />
+          </label>
+          <p class="text-sm">
+            {{ t('documents.consent.editInvalidates') }}
+          </p>
           <UButton
-            v-if="doc.status === 'draft' && can('documents.write')"
-            size="xs"
-            @click="link(doc.id, 'sign')"
+            :disabled="busy || !consentTitle.trim() || !consentText.trim()"
+            @click="saveConsent"
           >
-            {{ t('documents.consent.signLink') }}
+            {{ t('common.save') }}
           </UButton>
-          <template v-else-if="doc.status !== 'draft'">
+          <UButton
+            variant="ghost"
+            @click="editingConsent = ''"
+          >
+            {{ t('common.cancel') }}
+          </UButton>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <template v-if="doc.status !== 'archived' && !doc.signed">
+            <template v-if="can('documents.write')">
+              <UButton
+                size="xs"
+                :disabled="busy"
+                @click="link(doc.id, 'sign')"
+              >
+                {{ t('documents.consent.signLink') }}
+              </UButton>
+              <UButton
+                size="xs"
+                variant="outline"
+                :disabled="busy"
+                @click="startEditConsent(doc)"
+              >
+                {{ t('documents.consent.editConsent') }}
+              </UButton>
+              <UButton
+                size="xs"
+                variant="outline"
+                :disabled="busy"
+                @click="archiveConsent(doc.id)"
+              >
+                {{ t('documents.consent.archiveConsent') }}
+              </UButton>
+              <UButton
+                size="xs"
+                variant="outline"
+                :disabled="busy"
+                @click="generatePreview(doc.id)"
+              >
+                {{ t('documents.consent.generatePreview') }}
+              </UButton>
+            </template>
+            <UButton
+              v-if="doc.status === 'generated'"
+              size="xs"
+              @click="downloadPreview(doc.id)"
+            >
+              {{ t('documents.consent.downloadPreview') }}
+            </UButton>
+          </template>
+          <template v-else-if="doc.status !== 'archived' && doc.signed && doc.evidenceAvailable">
             <UButton
               size="xs"
               @click="download(doc.id, 'sign')"
@@ -209,6 +348,9 @@ onMounted(() => refresh())
               {{ t('documents.consent.downloadRevocation') }}
             </UButton>
           </template>
+          <p v-else-if="!doc.evidenceAvailable">
+            {{ t('documents.consent.evidenceUnavailable') }}
+          </p>
         </div>
       </li>
     </ul>
