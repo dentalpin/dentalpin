@@ -67,3 +67,7 @@ Admins and dentists can create and generate documents. Assistants
 have read-only access. Other roles need to be granted
 `documents.read` / `.write` explicitly from the module admin UI.
 The letterhead editor requires `admin.clinic.write`.
+
+## Informed consents
+
+From the patient record, create or select a clinic template and create the consent. Open the link on the tablet without a staff session; it expires after 30 minutes and accepts one signature. The patient or representative provides their name and relationship and draws their signature. Download the signed PDF from the record. To revoke, create a revocation link and collect a new signature; the original consent remains intact. Corrections require a new consent.

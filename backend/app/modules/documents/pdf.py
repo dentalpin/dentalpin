@@ -46,6 +46,7 @@ _LABELS = {
         "notes": "Observaciones",
         "generated_by": "Generado con DentalPin",
         "registration_number": "Nº colegiado",
+        "informed_consent": "Consentimiento informado",
         "prescription": "Receta",
         "medical_certificate": "Certificado médico",
         "referral": "Carta de derivación",
@@ -75,6 +76,7 @@ _LABELS = {
         "notes": "Notes",
         "generated_by": "Generated with DentalPin",
         "registration_number": "License number",
+        "informed_consent": "Informed consent",
         "prescription": "Prescription",
         "medical_certificate": "Medical certificate",
         "referral": "Referral letter",
@@ -645,6 +647,26 @@ class DocumentPDFService:
 
         def esc(value: object) -> str:
             return escape("" if value is None else str(value))
+
+        if document_type == "informed_consent":
+            # Only validated PNG data URIs reach this renderer through the signing flow.
+            signature = esc(content.get("signature"))
+            title = (
+                "Revocación / Revocation"
+                if content.get("purpose") == "revoke"
+                else "Consentimiento informado / Informed consent"
+            )
+            return (
+                f'<div class="section"><div class="section-title">{title}</div>'
+                f'<div class="notes-content" style="white-space:pre-wrap">{esc(content.get("text"))}</div></div>'
+                + (
+                    "<p>El firmante revoca el consentimiento anterior. / The signer revokes the prior consent.</p>"
+                    if content.get("purpose") == "revoke"
+                    else ""
+                )
+                + f"<p>{esc(content.get('signer_name'))} · {esc(content.get('relationship_to_patient'))} · {esc(content.get('signed_at'))}</p>"
+                + f'<img src="{signature}" alt="Signature" style="max-width:250px;max-height:100px" />'
+            )
 
         if document_type == "prescription":
             rows = ""

@@ -27,6 +27,7 @@ export type GeneratedDocumentType
     | 'medical_certificate'
     | 'referral'
     | 'radiology_request'
+    | 'informed_consent'
 
 export type DocumentStatus = 'draft' | 'generated' | 'archived'
 

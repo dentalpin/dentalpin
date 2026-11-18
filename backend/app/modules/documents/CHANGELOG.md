@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Audit authenticated document views and generated PDF downloads. (#903).
+- feat(#876): add clinic consent templates, one-use tablet signing and independently signed revocations; retain the exact signed PDFs and SHA-256 evidence, and record authenticated evidence views and downloads.
 
 - fix(#828): "Download PDF" saved generated documents as `….pdf_` on Windows. The filename regex kept the closing quote of `filename="….pdf"`, and the browser replaced the `"` with `_`.
 

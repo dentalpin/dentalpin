@@ -84,3 +84,19 @@ branch label of its own, `doc_0001` declares
 `depends_on = ("pat_0003",)` (same pattern as
 `patient_relationships.prel_0001`) so a fresh install orders the
 patients chain first.
+
+## Informed consents
+
+Consent templates are scoped to the clinic and copied into each consent.
+Staff create a 30-minute, single-use signing or revocation link. The public
+endpoint only exposes that document. The link keeps its token in the URL
+fragment, and the client sends it in the Authorization header rather than
+the request path. Signing serializes on the document
+row, stores independent evidence and writes the signed PDF once; SHA-256
+is computed over those exact bytes. Downloads serve that file. Revocation
+creates separate evidence and a PDF; the original is unchanged. Signed
+consents cannot be edited, archived or regenerated.
+
+Staff evidence views and signed or revocation PDF downloads use the core
+`RecordPatientAccess` dependency from #903. The public bearer-link flow has
+no staff user; signing evidence records the signer, date, IP and user agent.
