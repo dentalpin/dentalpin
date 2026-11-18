@@ -1046,6 +1046,10 @@ class TreatmentPlanService:
             # → payments earned rows); publishing the full price here would
             # double-charge the patient.
             publish_price=False,
+            # The odontogram edit modal can mark the item's treatment
+            # performed ("existing") before its last session; the item must
+            # still finalize (#897). With no price, a repeat books nothing.
+            refuse_if_performed=False,
         )
 
         item_name: str | None = None
