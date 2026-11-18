@@ -100,7 +100,6 @@ def access_rows(filters: list):
             ),
         )
         .where(*filters)
-        .order_by(PatientAccessLog.occurred_at.desc(), PatientAccessLog.id.desc())
     )
 
 
@@ -134,7 +133,12 @@ async def list_access_log(
     page_size: int = Query(25, ge=1, le=100),
 ) -> PaginatedApiResponse[AccessRow]:
     total = await db.scalar(select(func.count()).select_from(PatientAccessLog).where(*filters))
-    rows = await db.execute(access_rows(filters).offset((page - 1) * page_size).limit(page_size))
+    rows = await db.execute(
+        access_rows(filters)
+        .order_by(PatientAccessLog.occurred_at.desc(), PatientAccessLog.id.desc())
+        .offset((page - 1) * page_size)
+        .limit(page_size)
+    )
     response.headers.update(PRIVATE_HEADERS)
     return PaginatedApiResponse(
         data=[_response(row) for row in rows],
@@ -167,7 +171,11 @@ async def list_access_users(response: Response, ctx: Context, _: CanRead, db: Db
 async def export_access_log(
     _: CanRead, db: Db, filters: Filters, start: date, end: date
 ) -> StreamingResponse:
-    result = await db.stream(access_rows(filters).execution_options(yield_per=500))
+    result = await db.stream(
+        access_rows(filters)
+        .order_by(PatientAccessLog.occurred_at.desc(), PatientAccessLog.id.desc())
+        .execution_options(yield_per=500)
+    )
 
     async def generate() -> AsyncIterator[str]:
         fields = list(AccessRow.model_fields)
