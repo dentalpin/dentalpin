@@ -308,6 +308,7 @@ class PatientService:
                     "clinic_id": str(patient.clinic_id),
                     "changes": list(fields.keys()),
                 },
+                db=db,
             )
 
         new_status = data.get("status")

@@ -60,7 +60,7 @@ class NotificationsErasureContributor(ErasureContributor):
         in ``error_message``). The row itself stays: the outbox is also the
         send audit, and a completed erasure must be visible without erasing
         the fact that messages were sent. A row still waiting to go out
-        (``queued``/``failed``) is additionally cancelled (``skipped``) so
+        (``queued``, ``failed`` or ``awaiting_manual``) is cancelled (``skipped``) so
         a later outbox tick skips it; a ``sending`` row is cancelled too,
         but a send already on the wire still reports its terminal status
         from the dispatcher, whose commit can land after ours and supersede
@@ -76,12 +76,16 @@ class NotificationsErasureContributor(ErasureContributor):
             rows = (
                 (
                     await db.execute(
-                        select(CommunicationMessage).where(
+                        select(CommunicationMessage)
+                        .where(
                             CommunicationMessage.clinic_id == clinic_id,
                             CommunicationMessage.patient_id == patient_id,
                             CommunicationMessage.channel.in_(channels),
                             CommunicationMessage.to_address != ERASED_PLACEHOLDER,
                         )
+                        .order_by(CommunicationMessage.id)
+                        .with_for_update()
+                        .execution_options(populate_existing=True)
                     )
                 )
                 .scalars()
@@ -93,7 +97,7 @@ class NotificationsErasureContributor(ErasureContributor):
                 message.body_text = None
                 message.context_data = None
                 message.error_message = None
-                if message.status in ("queued", "sending", "failed"):
+                if message.status in ("queued", "sending", "failed", "awaiting_manual"):
                     # Never dispatch an erased recipient or an emptied message:
                     # cancel the unsent row so the outbox tick skips it.
                     message.status = "skipped"

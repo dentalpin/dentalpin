@@ -1,6 +1,10 @@
 {
   "notifications": {
     "conversation": {
+      "awaitingManual": "Pendiente de envío manual",
+      "manuallySent": "Envío declarado por el personal",
+      "consent": "Consentimiento de WhatsApp registrado",
+      "consentHelp": "Activa esta opción cuando el paciente haya dado su consentimiento.",
       "title": "Conversación de WhatsApp",
       "empty": "Sin mensajes todavía.",
       "placeholder": "Escribe una respuesta…",

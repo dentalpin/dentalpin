@@ -35,7 +35,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `medication_catalog` | 0.1.0 | community | — | manual | yes | 2 | 0 | 1 | yes |
 | `migration_import` | 0.1.0 | official | patients, patients_clinical, clinical_notes, agenda, schedules, recalls, catalog, budget, odontogram, treatment_plan, billing, payments, media | manual | yes | 4 | 5 | 0 | yes |
 | `nav_online` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
-| `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 10 | 7 | 7 | yes |
+| `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 10 | 7 | 8 | yes |
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
 | `orthodontics` | 0.1.0 | official | patients, agenda, media, recalls, treatment_plan | manual | yes | 4 | 3 | 0 | yes |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
@@ -673,6 +673,7 @@ Email templates, preferences, SMTP, event-driven sending.
   - `budget.sent`
   - `invoice.sent`
   - `patient.created`
+  - `patient.updated`
 - **Module CLAUDE.md:** [`backend/app/modules/notifications/CLAUDE.md`](../backend/app/modules/notifications/CLAUDE.md)
 
 ### `odontogram` — v0.3.0

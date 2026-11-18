@@ -56,9 +56,10 @@ national_id, date_of_birth, status; no billing fields, no notes).
 | `budget.accepted` | budget/workflow.py | ✓ |
 | `budget.rejected` | budget/workflow.py | ✓ |
 
-Deferred (publish without `db=`): patient.updated, invoice.issued,
-invoice.paid, payment.recorded. Adding them requires fixing the publisher
-to pass a session.
+Deferred (publish without `db=`): invoice.issued, invoice.paid, and
+payment.recorded. Adding them requires fixing the publisher to pass a
+session. The transactional patient.updated event is not exposed as an
+integration webhook trigger.
 
 ## Data model
 

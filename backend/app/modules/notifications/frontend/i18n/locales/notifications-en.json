@@ -1,6 +1,10 @@
 {
  "notifications": {
   "conversation": {
+   "awaitingManual": "Awaiting manual delivery",
+   "manuallySent": "Sent as declared by staff",
+   "consent": "WhatsApp consent recorded",
+   "consentHelp": "Turn this on once the patient has given consent.",
    "title": "WhatsApp conversation",
    "empty": "No messages yet.",
    "placeholder": "Type a reply…",

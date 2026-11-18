@@ -176,7 +176,7 @@ class NotificationGateway:
                 triggered_by_event,
                 triggered_by_user_id,
             )
-        channel, addr, resolved_kind, _provider_template = resolved
+        channel, addr, resolved_kind = resolved
 
         # Per-clinic SMS cost guard (flat-rate transports are uncapped). An
         # exhausted cap behaves like an unreachable channel: the remaining
@@ -212,11 +212,9 @@ class NotificationGateway:
                     triggered_by_event,
                     triggered_by_user_id,
                 )
-            channel, addr, resolved_kind, _provider_template = resolved
+            channel, addr, resolved_kind = resolved
 
-        # Subject is resolved now (email) for the logs view; the body is
-        # (re)rendered at dispatch time. Session (free-form) sends carry the
-        # literal text in body_text and need no template.
+        # Template bodies are rendered at dispatch.
         subject = None
         if resolved_kind == "template":
             template = await NotificationService.get_template(
@@ -345,6 +343,18 @@ class NotificationGateway:
             await NotificationGateway._mark_failed(db, msg, f"no adapter for channel {msg.channel}")
             return
 
+        requires_opt_in = getattr(adapter, "requires_whatsapp_opt_in", False)
+        if requires_opt_in:
+            patient = await NotificationGateway._load_patient(db, msg.clinic_id, msg.patient_id)
+            if not await NotificationGateway.has_whatsapp_consent(
+                db, msg.clinic_id, patient, msg.template_key
+            ):
+                msg.status = "skipped"
+                msg.error_message = "whatsapp_consent_required"
+                msg.next_attempt_at = None
+                await db.commit()
+                return
+
         # Template sends (re)render from the template at send time; session
         # (free-form) sends carry the literal text in msg.body_text.
         template = None
@@ -356,32 +366,42 @@ class NotificationGateway:
         msg.attempts += 1
         # Recheck approval: adapter selection or template approval can change
         # while a proactive WhatsApp message is in the outbox.
-        if (
+        provider_template = (
             msg.channel == Channel.WHATSAPP
             and msg.message_kind == "template"
             and getattr(adapter, "requires_provider_template", True)
-            and not _approved_provider_template(template)
-        ):
+        )
+        if provider_template and not _approved_provider_template(template):
             await NotificationGateway._mark_failed(db, msg, "no approved WhatsApp template")
             return
 
         # Release the row lock before delivery I/O.
         await db.commit()
 
+        template_text = template.body_text if template else None
+        literal_body = msg.body_text is not None and (
+            not template_text or (msg.channel == Channel.WHATSAPP and not provider_template)
+        )
+        context = dict(msg.context_data or {})
+        if provider_template:
+            # Internal draft freshness metadata is not a provider variable.
+            context.pop("appointment_start_at", None)
+            context.pop("appointment_id", None)
         outbound = OutboundMessage(
             channel=Channel(msg.channel),
             to_address=msg.to_address,
             clinic_id=msg.clinic_id,
             template_key=msg.template_key,
             locale=_locale_of(msg),
-            context=msg.context_data or {},
-            to_name=(msg.context_data or {}).get("patient_name"),
+            context=context,
+            to_name=context.get("patient_name"),
             patient_id=msg.patient_id,
             message_kind=msg.message_kind,
             provider_template_name=template.provider_template_name if template else None,
             subject=template.subject if template else msg.subject,
             body_html=template.body_html if template else None,
-            body_text=(template.body_text if template else None) or msg.body_text,
+            body_text=msg.body_text if literal_body else template_text,
+            metadata={"literal_body": literal_body},
         )
 
         result = await adapter.send(db, outbound)
@@ -392,9 +412,35 @@ class NotificationGateway:
             msg.provider_message_id = result.provider_message_id
             msg.error_message = None
             await db.commit()
-            await NotificationGateway._publish(msg, EventType.NOTIFICATION_SENT)
+            await NotificationGateway.publish_sent(msg)
         elif result.status == SendStatus.DEFERRED:
+            # The lock was released before calling the adapter. Erasure may
+            # have cancelled and scrubbed the row while the adapter ran.
+            # Patient preferences and contact updates take the patient lock
+            # before cancelling drafts. Use the same order before publishing one.
+            patient = None
+            if msg.channel == Channel.WHATSAPP and msg.patient_id is not None:
+                patient = await NotificationService.lock_whatsapp_patient(
+                    db, msg.clinic_id, msg.patient_id
+                )
+            await db.refresh(msg, with_for_update=True)
+            if msg.status != "sending":
+                await db.commit()
+                return
+            if (patient is not None and patient.do_not_contact) or (
+                requires_opt_in
+                and not await NotificationGateway.has_whatsapp_consent(
+                    db, msg.clinic_id, patient, msg.template_key
+                )
+            ):
+                msg.status = "skipped"
+                msg.error_message = "whatsapp_consent_required"
+                msg.next_attempt_at = None
+                await db.commit()
+                return
             msg.status = "awaiting_manual"
+            if result.body_text is not None:
+                msg.body_text = result.body_text
             msg.provider = result.provider
             msg.provider_message_id = result.provider_message_id
             msg.error_message = None
@@ -574,6 +620,21 @@ class NotificationGateway:
         ).scalar_one_or_none()
 
     @staticmethod
+    async def has_whatsapp_consent(
+        db: AsyncSession, clinic_id: UUID, patient, notification_type: str
+    ) -> bool:
+        """Check the current affirmative WhatsApp consent and contact blocks."""
+        if patient is None or patient.do_not_contact:
+            return False
+        prefs = await NotificationService.get_patient_preferences(db, clinic_id, patient.id)
+        return bool(
+            prefs
+            and prefs.whatsapp_enabled
+            and prefs.whatsapp_opt_in_at
+            and not NotificationService.opted_out_of_type(prefs, notification_type)
+        )
+
+    @staticmethod
     async def _clinic_channels(db: AsyncSession, clinic_id: UUID) -> list[str]:
         """Clinic-wide auto-send channel order (never per-type).
 
@@ -624,28 +685,33 @@ class NotificationGateway:
                     continue
                 if prefs is not None and not prefs.email_enabled:
                     continue
-                return channel, addr, "template", None
+                return channel, addr, "template"
 
             if channel == Channel.WHATSAPP:
                 addr = patient.phone if patient else None
                 if not addr:
                     continue
-                # Free-form reply: allowed only inside the 24h session window
-                # the patient's last inbound message opened. No opt-in needed
-                # (the patient initiated), no template required.
+                if getattr(adapter, "requires_whatsapp_opt_in", False) and not (
+                    prefs and prefs.whatsapp_enabled and prefs.whatsapp_opt_in_at
+                ):
+                    continue
+                # A session reply still requires an open patient-initiated window.
                 if requested_kind == "session":
-                    if _session_window_open(prefs):
-                        return channel, addr, "session", None
+                    if not getattr(adapter, "supports_session_replies", True) or not (
+                        _session_window_open(prefs)
+                    ):
+                        continue
+                elif prefs is not None and not prefs.whatsapp_enabled:
                     continue
-                # Proactive: opt-out like email — an explicit
-                # whatsapp_enabled=False blocks (even force_send, exactly
-                # like email_enabled above: the reminder cron and staff
-                # Send buttons pass force_send, and neither may override
-                # a recorded opt-out); a missing prefs row does not block.
-                if prefs is not None and not prefs.whatsapp_enabled:
-                    continue
+                normalize = getattr(adapter, "normalize_recipient", None)
+                if normalize:
+                    addr = await normalize(db, clinic_id, addr)
+                    if not addr:
+                        continue
+                if requested_kind == "session":
+                    return channel, addr, "session"
                 if not getattr(adapter, "requires_provider_template", True):
-                    return channel, addr, "template", None
+                    return channel, addr, "template"
                 # Provider adapters require an approved Meta template (HSM).
                 tmpl = await NotificationService.get_template(
                     db, clinic_id, notification_type, locale, channel="whatsapp"
@@ -653,7 +719,7 @@ class NotificationGateway:
                 provider_template = _approved_provider_template(tmpl)
                 if not provider_template:
                     continue
-                return channel, addr, "template", provider_template
+                return channel, addr, "template"
 
             if channel == Channel.SMS:
                 # SMS rides patients.phone (E.164 single source of truth —
@@ -668,7 +734,7 @@ class NotificationGateway:
                 # prefs row does not block.
                 if prefs is not None and not prefs.sms_enabled:
                     continue
-                return channel, addr, requested_kind or "template", None
+                return channel, addr, requested_kind or "template"
             if channel == Channel.PUSH:
                 # Viable when the patient holds at least one browser
                 # subscription; explicit push_enabled=False opts out (missing
@@ -685,7 +751,7 @@ class NotificationGateway:
                 if prefs is not None and not prefs.push_enabled:
                     continue
                 addr = f"push:{len(subs)}"
-                return channel, addr, "template", None
+                return channel, addr, "template"
         return None
 
     @staticmethod
@@ -718,6 +784,11 @@ class NotificationGateway:
         db.add(msg)
         await db.flush()
         return msg
+
+    @staticmethod
+    async def publish_sent(msg: CommunicationMessage) -> None:
+        """Publish a recorded send after its transaction has committed."""
+        await NotificationGateway._publish(msg, EventType.NOTIFICATION_SENT)
 
     @staticmethod
     async def _publish(msg: CommunicationMessage, event_type: str) -> None:
