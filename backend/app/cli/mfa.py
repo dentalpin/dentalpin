@@ -17,7 +17,9 @@ async def rotate_keys(_args) -> int:
     try:
         keyring = cipher()
         async with async_session_maker.begin() as db:
-            credentials = await db.scalars(select(UserMfaTotp).with_for_update())
+            credentials = await db.scalars(
+                select(UserMfaTotp).with_for_update().execution_options(populate_existing=True)
+            )
             count = 0
             for credential in credentials:
                 credential.secret_encrypted = keyring.rotate(

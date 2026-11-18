@@ -182,7 +182,10 @@ async def rotate_refresh_token(
 
     user = (
         await db.execute(
-            select(User).where(User.id == UUID(payload["sub"])).with_for_update(of=User)
+            select(User)
+            .where(User.id == UUID(payload["sub"]))
+            .with_for_update(of=User)
+            .execution_options(populate_existing=True)
         )
     ).scalar_one_or_none()
     if user is None or not user.is_active:

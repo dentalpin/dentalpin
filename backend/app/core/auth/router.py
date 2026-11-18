@@ -278,6 +278,7 @@ async def login(
         .order_by((User.email == form_data.username.strip()).desc(), User.created_at)
         .limit(1)
         .with_for_update(of=User)
+        .execution_options(populate_existing=True)
     )
     user = result.scalar_one_or_none()
 
