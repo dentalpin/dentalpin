@@ -13,6 +13,7 @@ from fastapi import APIRouter, Depends, HTTPException, Response, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.patient_access import RecordPatientAccess
 from app.core.schemas import ApiResponse
 from app.database import get_db
 
@@ -181,6 +182,7 @@ async def download_prescription_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("prescriptions.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> Response:
     from app.modules.patients.service import PatientService
 
@@ -229,6 +231,7 @@ async def download_prescription_pdf(
         pdf = await asyncio.to_thread(render_pdf_bytes, data)
     except ImportError:
         return Response(content=render_html(data), media_type="text/html")
+    await record_access(row.patient_id, "prescription_pdf", action="download")
     return Response(content=pdf, media_type="application/pdf")
 
 

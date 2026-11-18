@@ -11,6 +11,7 @@ from apscheduler.triggers.cron import CronTrigger
 from apscheduler.triggers.interval import IntervalTrigger
 
 from app.config import settings
+from app.core.patient_access_retention import run_access_retention
 from app.core.plugins.registry import module_registry
 from app.core.scheduling import ScheduledJob
 
@@ -52,6 +53,14 @@ def init_scheduler() -> None:
         return
 
     scheduler = get_scheduler()
+
+    scheduler.add_job(
+        run_access_retention,
+        CronTrigger(hour=3, timezone="UTC"),
+        id="purge_patient_access_logs",
+        max_instances=1,
+        replace_existing=True,
+    )
 
     for module in module_registry.list_active():
         for job in module.get_scheduled_jobs():

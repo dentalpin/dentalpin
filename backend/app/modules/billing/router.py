@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.patient_access import RecordPatientAccess
 from app.core.pdf_locales import PDF_LOCALE_PATTERN
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.core.utils.dates import clinic_today
@@ -1057,6 +1058,7 @@ async def download_invoice_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("billing.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Download invoice as PDF."""
@@ -1098,6 +1100,8 @@ async def download_invoice_pdf(
     else:
         filename = f"factura_borrador_{str(invoice.id)[:8]}.pdf"
 
+    if invoice.patient_id is not None:
+        await record_access(invoice.patient_id, "invoice_pdf", action="download")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
@@ -1111,6 +1115,7 @@ async def preview_invoice_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("billing.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Preview invoice PDF (with watermark for drafts)."""
@@ -1143,6 +1148,8 @@ async def preview_invoice_pdf(
         balance_due=balance_due,
     )
 
+    if invoice.patient_id is not None:
+        await record_access(invoice.patient_id, "invoice_pdf")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",

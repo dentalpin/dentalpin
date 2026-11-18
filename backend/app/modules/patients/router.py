@@ -14,6 +14,7 @@ from fastapi import APIRouter, Depends, File, HTTPException, Query, UploadFile, 
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.patient_access import RecordPatientAccess
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
@@ -160,6 +161,7 @@ async def get_patient(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[PatientResponse]:
     """Get a patient by ID."""
     patient = await PatientService.get_patient(db, ctx.clinic_id, patient_id)
@@ -168,6 +170,7 @@ async def get_patient(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Patient not found",
         )
+    await record_access(patient_id, "patient_record")
     return ApiResponse(data=PatientResponse.model_validate(patient))
 
 
@@ -237,6 +240,7 @@ async def get_patient_extended(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[PatientExtendedResponse]:
     """Get patient with extended identity/demographics info."""
     patient = await PatientService.get_patient(db, ctx.clinic_id, patient_id)
@@ -245,6 +249,7 @@ async def get_patient_extended(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Patient not found",
         )
+    await record_access(patient_id, "patient_record")
     return ApiResponse(data=PatientExtendedResponse.model_validate(patient))
 
 

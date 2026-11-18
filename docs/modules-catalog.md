@@ -21,7 +21,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `copilot` | 0.1.0 | official | — | auto | yes | 5 | 3 | 1 | yes |
 | `documents` | 0.1.0 | official | patients | manual | yes | 2 | 1 | 0 | yes |
 | `expenses` | 0.1.0 | community | — | manual | yes | 2 | 0 | 0 | yes |
-| `gdpr` | 0.1.0 | official | patients | manual | yes | 9 | 6 | 0 | no |
+| `gdpr` | 0.1.0 | official | patients | manual | yes | 9 | 6 | 0 | yes |
 | `imaging_ai` | 0.1.0 | official | media, patients | manual | yes | 2 | 2 | 0 | yes |
 | `imaging_viewer` | 0.1.0 | official | media, patients | manual | yes | 4 | 2 | 2 | yes |
 | `india_gst` | 0.1.0 | official | billing, catalog | manual | yes | 4 | 0 | 0 | yes |
@@ -350,7 +350,7 @@ Data-subject rights, consents, retention and breach reporting (GDPR).
 - **Category:** official
 - **Install policy:** installable=True · auto_install=False · removable=True
 - **Depends:** `patients`
-- **Frontend layer:** —
+- **Frontend layer:** `frontend`
 - **Permissions:**
   - `gdpr.audit.read`
   - `gdpr.breaches.read`

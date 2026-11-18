@@ -15,3 +15,5 @@ existe en ambos idiomas).
 
 - [Pacientes](./patients/)
 - [Agenda y horarios](./schedules/)
+
+- [Protección de datos](./gdpr/)
