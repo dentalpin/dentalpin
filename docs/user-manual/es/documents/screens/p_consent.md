@@ -1,0 +1,15 @@
+---
+module: documents
+screen: p_consent
+route: /p/consent
+last_verified_commit: 0000000
+related_endpoints:
+  - GET /api/v1/documents/public/consents/current
+  - POST /api/v1/documents/public/consents/current/sign
+related_paths:
+  - backend/app/modules/documents/frontend/pages/p/consent/index.vue
+---
+
+# Firma de consentimiento en tablet
+
+Abre el enlace facilitado por la clínica en la tablet sin una sesión del personal. Lee el texto, indica si firmas como paciente, tutor o representante y escribe tu nombre. Dibuja la firma y confirma. El enlace caduca a los 30 minutos y solo admite una firma. Para revocar un consentimiento se utiliza otro enlace y se recoge una firma independiente.
