@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Purchase orders:** a receipt is only found under its own order's URL (#892).
+
 ## [2.11.0] - 2026-11-16
 
 A hardening release. Many endpoints now check that the ids they receive

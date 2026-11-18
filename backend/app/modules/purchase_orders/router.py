@@ -145,7 +145,9 @@ async def get_purchase_receipt(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[PurchaseReceiptResponse]:
     await PurchaseOrderService.get_order(db, ctx.clinic_id, order_id)  # 404 mapping
-    response = await PurchaseOrderService.get_receipt_response(db, ctx.clinic_id, receipt_id)
+    response = await PurchaseOrderService.get_receipt_response(
+        db, ctx.clinic_id, receipt_id, order_id=order_id
+    )
     return ApiResponse(data=PurchaseReceiptResponse.model_validate(response))
 
 
