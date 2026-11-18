@@ -29,6 +29,8 @@ leave an orphan entry behind (issue #183).
 | Event | Handler | Effect |
 |-------|---------|--------|
 | `odontogram.treatment.performed` | `payments/events.py::on_treatment_performed` | Upserts one `PatientEarnedEntry` with `source_session_id = NULL` for the event's `unit_price`. Skips when `unit_price` is `null` — that means the revenue was already attributed per-session (see below). |
+| `odontogram.treatment.deleted` | `payments/events.py::on_treatment_deleted` | Deletes the treatment's NULL-session `PatientEarnedEntry`: a deleted treatment was not earned, and the row made the patient owe its price (#896). Per-session rows stay — they record sessions treatment_plan completed. |
+| `odontogram.treatment.status_changed` | `payments/events.py::on_treatment_status_changed` | Same as above when `old_status` is `performed` and `new_status` is not (the edit modal can set a performed treatment back to planned). |
 | `treatment_plan.item_session_completed` | `payments/events.py::on_session_completed` | Upserts one `PatientEarnedEntry` per session, keyed on `(treatment_id, source_session_id)`. Replaced the legacy `treatment_plan.treatment_completed` subscription with the multi-session feature. |
 
 **Exactly-once booking.** A treatment's price lands in the earned

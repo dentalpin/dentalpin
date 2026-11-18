@@ -35,7 +35,7 @@ from decimal import Decimal
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import func, select
+from sqlalchemy import delete, func, select
 from sqlalchemy.dialects.postgresql import insert as pg_insert
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -178,6 +178,37 @@ async def on_treatment_performed(data: dict[str, Any], *, db: AsyncSession) -> N
             )
             return
     await _upsert_earned_entry(data, source_event="odontogram.treatment.performed", db=db)
+
+
+async def _unbook_performed_entry(data: dict[str, Any], *, db: AsyncSession) -> None:
+    """Remove the NULL-session row ``odontogram.treatment.performed`` booked.
+
+    A treatment that is deleted, or set back from ``performed``, was not
+    earned after all; leaving its row made the patient owe its price (#896).
+    Session rows stay: they record sessions treatment_plan completed.
+    """
+    clinic_id = _parse_uuid(data.get("clinic_id"))
+    treatment_id = _parse_uuid(data.get("treatment_id"))
+    if not (clinic_id and treatment_id):
+        return
+    await db.execute(
+        delete(PatientEarnedEntry).where(
+            PatientEarnedEntry.clinic_id == clinic_id,
+            PatientEarnedEntry.treatment_id == treatment_id,
+            PatientEarnedEntry.source_session_id.is_(None),
+        )
+    )
+
+
+async def on_treatment_deleted(data: dict[str, Any], *, db: AsyncSession) -> None:
+    """Handler for ``odontogram.treatment.deleted``."""
+    await _unbook_performed_entry(data, db=db)
+
+
+async def on_treatment_status_changed(data: dict[str, Any], *, db: AsyncSession) -> None:
+    """Handler for ``odontogram.treatment.status_changed``: un-book on leaving ``performed``."""
+    if data.get("old_status") == "performed" and data.get("new_status") != "performed":
+        await _unbook_performed_entry(data, db=db)
 
 
 async def on_session_completed(data: dict[str, Any], *, db: AsyncSession) -> None:

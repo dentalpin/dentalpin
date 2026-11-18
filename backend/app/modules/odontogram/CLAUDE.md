@@ -45,6 +45,10 @@ None.
   already `performed` (`TreatmentAlreadyPerformedError` → 409, #891): a
   sessioned treatment finalized with `unit_price: null` would otherwise
   book its full price on a second perform.
+- **`treatment.deleted` and `treatment.status_changed` are published
+  transactionally** (`db=db`): payments deletes the treatment's
+  NULL-session earned row when it is deleted or leaves `performed` (#896).
+  The deleted payload carries `old_status`.
 - **`unit_price: null` on `treatment.performed` is a contract**, not a
   missing field: `perform(publish_price=False)` is how treatment_plan
   finalizes a sessioned item whose amounts were already booked

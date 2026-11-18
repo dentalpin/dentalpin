@@ -19,8 +19,8 @@ the legacy surface/tooth update path).
 |-------|------|-----------|
 | `odontogram.treatment.performed` | A planned/charted treatment is marked performed | budget, patient_timeline, payments, periodontogram, treatment_plan |
 | `odontogram.treatment.added` | Treatment added to a tooth | — |
-| `odontogram.treatment.status_changed` | Treatment status transition | — |
-| `odontogram.treatment.deleted` | Treatment removed | — |
+| `odontogram.treatment.status_changed` | Treatment status transition (published transactionally) | payments |
+| `odontogram.treatment.deleted` | Treatment removed (published transactionally; payload carries `old_status`) | payments |
 | `odontogram.surface.updated` | A tooth surface condition changes | — |
 | `odontogram.tooth.updated` | A whole-tooth condition changes | — |
 | `odontogram.condition.changed` | A tooth condition is (re)assigned | — |
