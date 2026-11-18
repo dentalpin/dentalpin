@@ -109,9 +109,8 @@ Desde aquí se mueve el presupuesto por todo su flujo
 1. **Aceptar (online)** — usado cuando el paciente acepta por el
    enlace público. La aceptación crea una `BudgetSignature` y un
    PDF firmado. Publica `budget.accepted`.
-2. **Aceptar en clínica** — botón solo visible con permiso. Abre el
-   modal de firma en tablet (firma dibujada). Mismo resultado que
-   la aceptación online.
+2. La ficha del presupuesto incluye un formulario de aceptación o
+   rechazo con el nombre y la relación de quien firma.
 3. **Rechazar** — registra motivo y publica `budget.rejected`.
 
 ## Renegociar

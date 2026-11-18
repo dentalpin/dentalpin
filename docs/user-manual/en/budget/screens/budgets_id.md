@@ -103,9 +103,8 @@ signed, invoiced, or renegotiated.
 1. **Accept (online)** — used when the patient accepts via the
    public link. Creates a `BudgetSignature` and a signed PDF.
    Publishes `budget.accepted`.
-2. **Accept in clinic** — button only visible with the matching
-   permission. Opens the tablet signature modal (drawn signature).
-   Same result as the online acceptance.
+2. The budget detail page includes an acceptance or rejection form
+   with the signer’s name and relationship to the patient.
 3. **Reject** — records a reason and publishes `budget.rejected`.
 
 ## Renegotiate
