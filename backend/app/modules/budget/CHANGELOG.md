@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: persist the document fingerprint at budget acceptance using the clinic's timezone and currency, and reserve space below the signature block for the repeated PDF footer.
+
 - refactor(#876): share the handwritten signature canvas between the public budget page and the in-clinic acceptance modal.
 
 - fix(#828): "Download PDF" and the signed PDF download saved the file as `….pdf_` on Windows. The filename regex kept the closing quote of `filename="….pdf"`, and the browser replaced the `"` with `_`.
