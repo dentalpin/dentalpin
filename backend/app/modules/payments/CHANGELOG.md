@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#891): the NULL-session earned row (`odontogram.treatment.performed`) books the price minus what the treatment's sessions already booked. Performing a sessioned treatment on the odontogram after a session was completed booked that session twice (an 800 crown earned 1000).
+
 - fix(#779): aging-receivable buckets count days from the clinic's day, not the server's UTC day.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

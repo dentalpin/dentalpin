@@ -1286,8 +1286,8 @@ async def test_complete_first_session_does_not_finalize_item(
         assert session_events[0]["amount"] == "200.00"
         assert treatment_events == []
     finally:
-        event_bus._handlers.pop("treatment_plan.item_session_completed", None)  # noqa: SLF001
-        event_bus._handlers.pop("treatment_plan.treatment_completed", None)  # noqa: SLF001
+        event_bus.unsubscribe("treatment_plan.item_session_completed", _capture)
+        event_bus.unsubscribe("treatment_plan.treatment_completed", _capture)
 
 
 @pytest.mark.asyncio
@@ -1318,7 +1318,7 @@ async def test_complete_last_session_finalizes_item(
         assert item["status"] == "completed"
         assert len(events) == 1  # treatment_completed fires exactly once
     finally:
-        event_bus._handlers.pop("treatment_plan.treatment_completed", None)  # noqa: SLF001
+        event_bus.unsubscribe("treatment_plan.treatment_completed", _capture)
 
 
 @pytest.mark.asyncio
@@ -1356,7 +1356,7 @@ async def test_cancel_session_blocks_earned(
         # Only the completed session fired an earned event; cancelled didn't
         assert len(session_events) == 1
     finally:
-        event_bus._handlers.pop("treatment_plan.item_session_completed", None)  # noqa: SLF001
+        event_bus.unsubscribe("treatment_plan.item_session_completed", _capture)
 
 
 @pytest.mark.asyncio
@@ -1508,6 +1508,94 @@ async def test_odontogram_perform_first_cancels_pending_sessions(
         assert late.status_code == 400
     finally:
         event_bus.unsubscribe("odontogram.treatment.performed", _capture)
+
+
+async def _earned_by_session(db_session: AsyncSession, treatment_id: str) -> dict:
+    from app.modules.payments.models import PatientEarnedEntry
+
+    rows = (
+        await db_session.execute(
+            select(PatientEarnedEntry).where(PatientEarnedEntry.treatment_id == treatment_id)
+        )
+    ).scalars()
+    return {r.source_session_id: r.amount for r in rows}
+
+
+async def _item_treatment_id(client: AsyncClient, auth_headers: dict, plan_id, item_id) -> str:
+    plan = await client.get(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers
+    )
+    return next(i["treatment_id"] for i in plan.json()["data"]["items"] if i["id"] == item_id)
+
+
+@pytest.mark.asyncio
+async def test_odontogram_perform_after_a_session_books_only_the_rest(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """#891: session 1 booked 200; performing on the odontogram books 600, not 800.
+
+    The event carries the full price and the plan only cancels the pending
+    session, so the earned ledger used to reach 1000 for an 800 crown.
+    """
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    r = await client.patch(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}"
+        f"/sessions/{sessions[0]['id']}/complete",
+        headers=auth_headers,
+        json={},
+    )
+    assert r.status_code == 200, r.text
+    treatment_id = await _item_treatment_id(client, auth_headers, plan_id, item_id)
+    await db_session.commit()
+
+    r = await client.patch(
+        f"/api/v1/odontogram/treatments/{treatment_id}/perform", headers=auth_headers, json={}
+    )
+    assert r.status_code == 200, r.text
+    await db_session.commit()
+
+    earned = await _earned_by_session(db_session, treatment_id)
+    assert earned[None] == Decimal("600.00")
+    assert sum(earned.values()) == Decimal("800.00")
+
+
+@pytest.mark.asyncio
+async def test_odontogram_perform_refused_after_the_sessions_finalized_the_item(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """#891: the sessions booked 800 and finalized the treatment with no price;
+    a later odontogram perform used to book the full 800 again."""
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    for s in sessions:
+        r = await client.patch(
+            f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}"
+            f"/sessions/{s['id']}/complete",
+            headers=auth_headers,
+            json={},
+        )
+        assert r.status_code == 200, r.text
+    treatment_id = await _item_treatment_id(client, auth_headers, plan_id, item_id)
+    await db_session.commit()
+
+    r = await client.patch(
+        f"/api/v1/odontogram/treatments/{treatment_id}/perform", headers=auth_headers, json={}
+    )
+    assert r.status_code == 409, r.text
+    await db_session.commit()
+
+    earned = await _earned_by_session(db_session, treatment_id)
+    assert None not in earned
+    assert sum(earned.values()) == Decimal("800.00")
 
 
 # ---------------------------------------------------------------------------

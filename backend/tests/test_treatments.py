@@ -684,3 +684,83 @@ async def test_earned_entry_rolls_back_with_the_treatment(
     await db_session.rollback()
 
     assert await _earned_rows(db_session, tid) == []
+
+
+@pytest.mark.asyncio
+async def test_perform_twice_is_refused(
+    client: AsyncClient, auth_headers: dict, setup: dict, db_session: AsyncSession
+) -> None:
+    """A second perform would publish ``performed`` again (#891).
+
+    That re-books revenue where the first event booked none (a sessioned
+    treatment finalized with ``unit_price: null``), adds a second timeline
+    entry and overwrites who performed it and when.
+    """
+    create = await client.post(
+        f"/api/v1/odontogram/patients/{setup['patient_id']}/treatments",
+        headers=auth_headers,
+        json={"catalog_item_id": setup["crown_id"], "tooth_numbers": [36], "status": "planned"},
+    )
+    tid = create.json()["data"]["id"]
+    url = f"/api/v1/odontogram/treatments/{tid}/perform"
+
+    first = await client.patch(url, headers=auth_headers, json={})
+    assert first.status_code == 200, first.text
+    performed_at = first.json()["data"]["performed_at"]
+
+    again = await client.patch(url, headers=auth_headers, json={"notes": "again"})
+    assert again.status_code == 409, again.text
+
+    detail = await client.get(f"/api/v1/odontogram/treatments/{tid}", headers=auth_headers)
+    assert detail.json()["data"]["performed_at"] == performed_at
+    assert len(await _earned_rows(db_session, UUID(tid))) == 1
+
+
+async def _own_session_per_request():
+    # Production's get_db: one session per request, committed at the end.
+    from app.database import async_session_maker
+
+    async with async_session_maker() as session:
+        yield session
+        await session.commit()
+
+
+@pytest.mark.asyncio
+async def test_concurrent_performs_publish_once(
+    client: AsyncClient, auth_headers: dict, setup: dict, db_session: AsyncSession
+) -> None:
+    """Two requests racing on one treatment: one performs it, the other gets 409."""
+    import asyncio
+
+    from sqlalchemy import func, select
+
+    from app.database import async_session_maker, get_db
+    from app.main import app
+    from app.modules.patient_timeline.models import PatientTimeline
+
+    create = await client.post(
+        f"/api/v1/odontogram/patients/{setup['patient_id']}/treatments",
+        headers=auth_headers,
+        json={"catalog_item_id": setup["crown_id"], "tooth_numbers": [37], "status": "planned"},
+    )
+    tid = create.json()["data"]["id"]
+    await db_session.commit()  # the racing requests each open their own session
+    app.dependency_overrides[get_db] = _own_session_per_request
+    url = f"/api/v1/odontogram/treatments/{tid}/perform"
+
+    results = await asyncio.gather(
+        client.patch(url, headers=auth_headers, json={}),
+        client.patch(url, headers=auth_headers, json={}),
+    )
+
+    assert sorted(r.status_code for r in results) == [200, 409]
+    async with async_session_maker() as fresh:
+        performed_rows = (
+            await fresh.execute(
+                select(func.count()).where(
+                    PatientTimeline.source_id == UUID(tid),
+                    PatientTimeline.event_type == "odontogram.treatment.performed",
+                )
+            )
+        ).scalar_one()
+    assert performed_rows == 1

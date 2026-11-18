@@ -30,7 +30,12 @@ from .schemas import (
     TreatmentResponse,
     TreatmentUpdate,
 )
-from .service import OdontogramService, TreatmentService, build_treatment_response
+from .service import (
+    OdontogramService,
+    TreatmentAlreadyPerformedError,
+    TreatmentService,
+    build_treatment_response,
+)
 
 router = APIRouter()
 
@@ -438,13 +443,16 @@ async def perform_treatment(
     _: Annotated[None, Depends(require_permission("odontogram.treatments.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[TreatmentResponse]:
-    treatment = await TreatmentService.perform(
-        db=db,
-        clinic_id=ctx.clinic_id,
-        treatment_id=treatment_id,
-        user_id=ctx.user_id,
-        notes=data.notes,
-    )
+    try:
+        treatment = await TreatmentService.perform(
+            db=db,
+            clinic_id=ctx.clinic_id,
+            treatment_id=treatment_id,
+            user_id=ctx.user_id,
+            notes=data.notes,
+        )
+    except TreatmentAlreadyPerformedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     if not treatment:
         raise HTTPException(status_code=404, detail="Treatment not found")
     return ApiResponse(data=TreatmentResponse.model_validate(build_treatment_response(treatment)))
