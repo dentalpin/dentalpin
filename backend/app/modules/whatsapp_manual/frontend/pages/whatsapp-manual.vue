@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { errorDetail } from '~~/app/utils/error'
-import { WHATSAPP_MANUAL_PERMISSIONS } from '../permissions'
+import { PERMISSIONS } from '~~/app/config/permissions'
 import {
   MANUAL_WHATSAPP_PATH,
   useManualWhatsApp
@@ -22,14 +22,14 @@ const loading = ref(true)
 const busy = ref(false)
 const failed = ref(false)
 const configureOpen = ref(false)
-const canWrite = computed(() => can(WHATSAPP_MANUAL_PERMISSIONS.write))
+const canWrite = computed(() => can(PERMISSIONS.whatsappManual.write))
 const dateFormatter = computed(() => new Intl.DateTimeFormat(locale.value, {
   dateStyle: 'medium',
   timeStyle: 'short',
   timeZone: currentClinic.value?.timezone
 }))
 
-if (!can(WHATSAPP_MANUAL_PERMISSIONS.read)) {
+if (!can(PERMISSIONS.whatsappManual.read)) {
   await navigateTo('/')
 }
 
@@ -155,7 +155,7 @@ async function configure(enabled: boolean) {
       :title="t('whatsapp_manual.disabled')"
     >
       <template
-        v-if="can(WHATSAPP_MANUAL_PERMISSIONS.settingsWrite)"
+        v-if="can(PERMISSIONS.whatsappManual.settingsWrite)"
         #actions
       >
         <UModal
@@ -310,7 +310,7 @@ async function configure(enabled: boolean) {
     </section>
 
     <UButton
-      v-if="tray?.enabled && can(WHATSAPP_MANUAL_PERMISSIONS.settingsWrite)"
+      v-if="tray?.enabled && can(PERMISSIONS.whatsappManual.settingsWrite)"
       color="neutral"
       variant="ghost"
       size="sm"

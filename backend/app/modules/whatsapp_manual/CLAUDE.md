@@ -36,9 +36,11 @@ interpreted using `Clinic.settings.country`.
 
 ## Lifecycle and events
 
-Opening a draft checks the appointment ID, patient, active state and
-original start instant. The expiry job cancels drafts starting in the past.
-A staff declaration stores the user ID and time in
+Opening a draft checks the appointment ID, patient, status and original
+start instant. Cancellation drafts require a cancelled appointment. Other
+appointment drafts require an active appointment. The expiry job cancels
+drafts starting in the past.
+A staff declaration stores the clinic ID, user ID and time in
 `whatsapp_manual_delivery_declarations`, on the module's own Alembic branch.
 Its communication transitions to sent and publishes `notification.sent`
 once through the notifications gateway after commit. Erasure clears the

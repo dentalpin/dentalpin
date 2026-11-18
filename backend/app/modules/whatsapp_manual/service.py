@@ -66,11 +66,14 @@ async def unavailable_reason(
                 Appointment.patient_id == row.patient_id,
             )
         )
-        if (
-            appointment is None
-            or not appointment_is_active(appointment)
-            or appointment.start_time != start
-        ):
+        if appointment is None or appointment.start_time != start:
+            return "appointment_changed"
+        status_matches = (
+            appointment.status == "cancelled"
+            if row.template_key == "appointment_cancelled"
+            else appointment_is_active(appointment)
+        )
+        if not status_matches:
             return "appointment_changed"
     patient = await db.scalar(
         select(Patient).where(Patient.clinic_id == row.clinic_id, Patient.id == row.patient_id)

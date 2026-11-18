@@ -251,6 +251,7 @@ async def test_tray_open_actions_and_clinic_isolation(
 
     assert (await act("mark_sent", first, outside)).status_code == 409
     assert first.status == outside.status == "awaiting_manual"
+    assert await db_session.get(ManualDeliveryDeclaration, outside.id) is None
     sent_events = []
 
     async def on_sent(payload):
@@ -284,6 +285,13 @@ async def test_tray_open_actions_and_clinic_isolation(
     assert first.status == second.status == "sent"
     assert first.sent_at
     assert first.delivered_at is None
+    audit_ids = await db_session.scalars(
+        select(ManualDeliveryDeclaration.message_id).where(
+            ManualDeliveryDeclaration.clinic_id == test_patient.clinic_id
+        )
+    )
+    assert set(audit_ids) == {first.id, second.id}
+    assert declared.clinic_id == first.clinic_id == test_patient.clinic_id
     assert declared.marked_by_user_id is not None
     assert declared.marked_at == first_timestamp == first.sent_at
     assert not first.context_data
@@ -443,3 +451,52 @@ async def test_appointment_drafts_require_the_original_active_appointment(
     reply = await client.post(path, headers=test_header)
     assert reply.status_code == 409, reply.text
     assert reply.json()["message"] == "appointment_changed"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("case", "expected_error"),
+    [
+        ("cancelled", None),
+        ("reactivated", "appointment_changed"),
+        ("expired", "appointment_expired"),
+    ],
+)
+async def test_open_cancellation_draft(
+    client, db_session, test_patient, test_header, auth_headers, now, case, expected_error
+):
+    await _enable(db_session, test_patient.clinic_id)
+    await _consent(db_session, test_patient, now)
+    test_patient.phone = TEST_MOBILE
+    current_user = await client.get("/api/v1/auth/me", headers=auth_headers)
+    start = now + timedelta(days=-1 if case == "expired" else 1)
+    appointment = Appointment(
+        clinic_id=test_patient.clinic_id,
+        patient_id=test_patient.id,
+        professional_id=current_user.json()["data"]["user"]["id"],
+        start_time=start,
+        end_time=start + timedelta(minutes=30),
+        status="cancelled",
+    )
+    db_session.add(appointment)
+    await db_session.flush()
+    draft = _pending(
+        test_patient.clinic_id,
+        test_patient.id,
+        template_key="appointment_cancelled",
+        context={"appointment_id": str(appointment.id), "appointment_start_at": start.isoformat()},
+    )
+    db_session.add(draft)
+    await db_session.flush()
+    if case == "reactivated":
+        appointment.status = "scheduled"
+        await db_session.flush()
+
+    reply = await client.post(f"{BASE}/tray/{draft.id}/open", headers=test_header)
+
+    if expected_error is None:
+        assert reply.status_code == 200, reply.text
+        assert urlsplit(reply.json()["data"]).path == f"/{TEST_MOBILE[1:]}"
+    else:
+        assert reply.status_code == 409, reply.text
+        assert reply.json()["message"] == expected_error

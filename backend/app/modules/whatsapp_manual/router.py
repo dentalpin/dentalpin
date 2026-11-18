@@ -200,6 +200,7 @@ async def act_on_drafts(data: TrayAction, ctx: Context, db: Db, _: Write) -> Api
             db.add(
                 ManualDeliveryDeclaration(
                     message_id=row.id,
+                    clinic_id=row.clinic_id,
                     marked_by_user_id=ctx.user_id,
                     marked_at=now,
                 )

@@ -17,14 +17,17 @@ The adapter performs no outbound network calls.
 - The patient action queues literal text. The appointment action remains
   in agenda's existing Send message menu. Appointment drafts keep the
   source appointment ID and the original start instant. Opening checks
-  the clinic, patient, current appointment state and start time.
+  the clinic, patient, current appointment state and start time. Cancellation
+  drafts require the appointment to remain cancelled. Other appointment
+  drafts require an active appointment.
 - The expiry job cancels pending drafts when their start instant has passed.
   Staff can also dismiss a pending draft from the tray.
 
 ## Delivery audit
 
 The module's Alembic branch starts at `wam_0001`. Its table stores a
-declaration per communication, with the staff user ID and declaration time.
+declaration per communication, with the clinic ID, staff user ID and declaration
+time.
 Erasing message content or contact details does not erase this declaration.
 Notifications can read messages when the module is absent without querying
 its table. Downgrading the optional module drops its declaration table

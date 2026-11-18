@@ -8,6 +8,8 @@ from pathlib import Path
 
 import asyncpg
 import pytest
+from sqlalchemy import Connection, inspect
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from app.config import settings
 
@@ -43,6 +45,29 @@ def _list_tables() -> set[str]:
     return asyncio.run(_list_tables_async())
 
 
+def _check_declaration_clinic_schema(connection: Connection) -> None:
+    schema = inspect(connection)
+    table = "whatsapp_manual_delivery_declarations"
+    columns = {column["name"]: column for column in schema.get_columns(table)}
+    assert columns["clinic_id"]["nullable"] is False
+    assert any(
+        fk["constrained_columns"] == ["clinic_id"]
+        and fk["referred_table"] == "clinics"
+        and fk["referred_columns"] == ["id"]
+        for fk in schema.get_foreign_keys(table)
+    )
+    assert any(index["column_names"] == ["clinic_id"] for index in schema.get_indexes(table))
+
+
+async def _check_declaration_clinic_schema_async() -> None:
+    engine = create_async_engine(settings.DATABASE_URL)
+    try:
+        async with engine.connect() as connection:
+            await connection.run_sync(_check_declaration_clinic_schema)
+    finally:
+        await engine.dispose()
+
+
 def test_whatsapp_manual_uninstall_roundtrip_is_branch_scoped() -> None:
     # Install on an empty schema to verify that Alembic applies the
     # notifications dependency before creating the foreign key.
@@ -63,3 +88,4 @@ def test_whatsapp_manual_uninstall_roundtrip_is_branch_scoped() -> None:
     _alembic("upgrade", "whatsapp_manual@head")
     after_up = _list_tables()
     assert after_up == before, "reinstall did not restore the schema"
+    asyncio.run(_check_declaration_clinic_schema_async())

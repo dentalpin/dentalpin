@@ -16,9 +16,15 @@ def upgrade() -> None:
     op.create_table(
         "whatsapp_manual_delivery_declarations",
         sa.Column("message_id", sa.UUID(), primary_key=True),
+        sa.Column("clinic_id", sa.UUID(), sa.ForeignKey("clinics.id"), nullable=False),
         sa.Column("marked_by_user_id", sa.UUID(), nullable=False),
         sa.Column("marked_at", sa.DateTime(timezone=True), nullable=False),
         sa.ForeignKeyConstraint(["message_id"], ["communication_messages.id"], ondelete="CASCADE"),
+    )
+    op.create_index(
+        "ix_whatsapp_manual_delivery_declarations_clinic_id",
+        "whatsapp_manual_delivery_declarations",
+        ["clinic_id"],
     )
 
 
