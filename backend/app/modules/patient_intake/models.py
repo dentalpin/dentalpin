@@ -42,7 +42,10 @@ class Intake(Base, TimestampMixin):
 class ConsentProvenance(Base):
     __tablename__ = "patient_intake_consent_provenance"
 
-    consent_id: Mapped[UUID] = mapped_column(ForeignKey("patient_consents.id"), primary_key=True)
+    # The consent and provenance are appended in one transaction.
+    # The ledger UUID is a soft reference so a GDPR branch rollback
+    # never drops retained intake data.
+    consent_id: Mapped[UUID] = mapped_column(primary_key=True)
     clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"), index=True)
     intake_id: Mapped[UUID | None] = mapped_column(ForeignKey("patient_intake_submissions.id"))
     recorded_by: Mapped[UUID] = mapped_column(ForeignKey("users.id"))
