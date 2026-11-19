@@ -68,5 +68,5 @@ antes de continuar. Inicia sesión con tu contraseña y el código de tu
 aplicación o un código de recuperación sin usar.
 
 Para restablecer la autenticación en dos pasos de otra persona, usa el
-icono del escudo en **Ajustes → Personas → Usuarios**. Esa persona volverá
+icono del escudo en **Ajustes → Personas → Usuarios**. El icono aparece cuando esa persona tiene un segundo factor configurado. Esa persona volverá
 a iniciar sesión y configurará un segundo factor nuevo.

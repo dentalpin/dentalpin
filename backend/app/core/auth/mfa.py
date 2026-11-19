@@ -2,6 +2,7 @@
 
 import base64
 import hashlib
+import re
 import secrets
 from datetime import UTC, datetime, timedelta
 from io import BytesIO
@@ -78,17 +79,41 @@ class MfaStatus(BaseModel):
     required: bool
 
 
+def _fernet_keys() -> list[Fernet]:
+    primary = settings.MFA_ENCRYPTION_KEY
+    previous = settings.MFA_PREVIOUS_ENCRYPTION_KEY
+    if previous and previous.get_secret_value() and not (primary and primary.get_secret_value()):
+        raise ValueError("MFA_ENCRYPTION_KEY must be set before MFA_PREVIOUS_ENCRYPTION_KEY.")
+
+    keys = []
+    for name, secret in (
+        ("MFA_ENCRYPTION_KEY", primary),
+        ("MFA_PREVIOUS_ENCRYPTION_KEY", previous),
+    ):
+        value = secret.get_secret_value() if secret is not None else ""
+        if not value:
+            continue
+        if not re.fullmatch(r"[A-Za-z0-9_-]{43}=", value):
+            raise ValueError(f"{name} must be a 32-byte URL-safe base64 Fernet key.")
+        if value == settings.SECRET_KEY:
+            raise ValueError(f"{name} must be independent of SECRET_KEY.")
+        keys.append(Fernet(value))
+    return keys
+
+
+def validate_mfa_encryption() -> None:
+    """Validate configured MFA keys before the backend accepts requests."""
+    _fernet_keys()
+
+
 def cipher() -> MultiFernet:
-    keys = [settings.MFA_ENCRYPTION_KEY, settings.MFA_PREVIOUS_ENCRYPTION_KEY]
-    if keys[0] is None or not keys[0].get_secret_value():
-        raise HTTPException(503, "mfa_unavailable")
     try:
-        values = [key.get_secret_value() for key in keys if key and key.get_secret_value()]
-        if settings.SECRET_KEY in values:
-            raise ValueError("MFA key must be independent")
-        return MultiFernet([Fernet(value) for value in values])
-    except ValueError as exc:
-        raise HTTPException(503, "mfa_unavailable") from exc
+        keys = _fernet_keys()
+        if keys:
+            return MultiFernet(keys)
+    except ValueError:
+        pass
+    raise HTTPException(503, "mfa_unavailable")
 
 
 def _decrypt(secret_encrypted: str) -> str:
@@ -115,12 +140,16 @@ async def membership_policies(db: AsyncSession, user_id: UUID) -> list[tuple[Mfa
     return [(MfaPolicy.model_validate(policy), role) for policy, role in rows]
 
 
-async def mfa_status(db: AsyncSession, user: User) -> MfaStatus:
-    policies = await membership_policies(db, user.id)
-    required = user.mfa_reenroll_required or any(
+def policy_requires_mfa(policies: list[tuple[MfaPolicy, str]]) -> bool:
+    return any(
         policy.mode == "required_all" or policy.mode == "required_roles" and role in policy.roles
         for policy, role in policies
     )
+
+
+async def mfa_status(db: AsyncSession, user: User) -> MfaStatus:
+    policies = await membership_policies(db, user.id)
+    required = user.mfa_reenroll_required or policy_requires_mfa(policies)
     return MfaStatus(
         enabled=await db.get(UserMfaTotp, user.id) is not None,
         allowed=required or any(policy.mode != "off" for policy, _ in policies),
@@ -238,7 +267,7 @@ async def audit(
     db: AsyncSession,
     event: str,
     user_id: UUID,
-    actor_id: UUID,
+    actor_id: UUID | None,
     clinic_id: UUID | None = None,
 ) -> None:
     now = datetime.now(UTC)
@@ -250,7 +279,7 @@ async def audit(
     # The explicit names here are what the event catalog and consumers track.
     payload = {
         "user_id": str(user_id),
-        "actor_id": str(actor_id),
+        "actor_id": str(actor_id) if actor_id is not None else None,
         "clinic_id": str(clinic_id) if clinic_id is not None else None,
         "occurred_at": now.isoformat(),
     }
@@ -325,12 +354,21 @@ async def _revoke_sessions(db: AsyncSession, user: User) -> None:
 
 
 async def clear_enrollment(
-    db: AsyncSession, user: User, *, actor_id: UUID, reset_clinic: UUID | None = None
+    db: AsyncSession,
+    user: User,
+    *,
+    actor_id: UUID | None,
+    reset_clinic: UUID | None = None,
+    require_reenrollment: bool = False,
 ) -> None:
     for model in (UserMfaTotp, UserMfaRecoveryCode, UserMfaChallenge):
         await db.execute(delete(model).where(model.user_id == user.id))
     _clear_attempts(user)
-    user.mfa_reenroll_required = reset_clinic is not None
+    user.mfa_reenroll_required = require_reenrollment
     await _revoke_sessions(db, user)
-    event = EventType.AUTH_2FA_RESET if reset_clinic is not None else EventType.AUTH_2FA_DISABLED
+    event = (
+        EventType.AUTH_2FA_RESET
+        if actor_id is None or reset_clinic is not None
+        else EventType.AUTH_2FA_DISABLED
+    )
     await audit(db, event, user.id, actor_id, reset_clinic)
