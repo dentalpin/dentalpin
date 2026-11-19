@@ -41,7 +41,7 @@
     "noPatients": "No se encontraron pacientes. Prueba otra búsqueda o crea uno nuevo.",
     "noPermission": "Necesitas permisos para crear pacientes y citas.",
     "accepted": "Cita creada.",
-    "rejected": "Solicitud rechazada y mensaje enviado.",
+    "rejected": "Solicitud rechazada; el mensaje está en cola.",
     "pages": "Paginación de solicitudes",
     "previous": "Anterior",
     "next": "Siguiente",

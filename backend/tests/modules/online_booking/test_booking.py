@@ -98,7 +98,14 @@ async def test_request_confirm_accept_and_conflict(
     assert first.status_code == 201, first.text
     duplicate = await client.post(f"{url}/requests", json=body)
     assert duplicate.status_code == 409
+    from app.modules.online_booking.outbox import dispatch_one
+
+    await db_session.commit()
+    assert delivery == []
+    assert await dispatch_one(db_session)
+    await db_session.commit()
     token = delivery[0].body_text.split("#token=")[1]
+    assert "<a href=" in delivery[0].body_html and token in delivery[0].body_html
     response = await client.post(f"{url}/confirm", json={"token": token})
     assert response.status_code == 200
     assert (await client.post(f"{url}/confirm", json={"token": token})).status_code == 410
@@ -340,6 +347,11 @@ async def test_rejection_sends_message_and_releases_hold(
     )
     assert response.status_code == 200, response.text
     assert row.status == "rejected" and row.token_hash is None
+    from app.modules.online_booking.outbox import dispatch_one
+
+    await db_session.commit()
+    while await dispatch_one(db_session):
+        await db_session.commit()
     assert delivery[-1].body_text == "Please call us"
     assert (await client.post(f"{base}/requests", json=body)).status_code == 201
 
@@ -644,4 +656,51 @@ async def test_staff_list_paginates_and_excludes_expired_requests(
             json={"message": "Synthetic"},
         )
         assert result.status_code == 409
+    assert delivery == []
+
+
+@pytest.mark.asyncio
+async def test_failed_commit_never_dispatches_queued_mail(db_session, test_clinic, delivery):
+    from sqlalchemy.exc import IntegrityError
+
+    from app.modules.online_booking.models import BookingMail
+    from app.modules.online_booking.outbox import dispatch_one, enqueue
+
+    now = datetime.now(UTC)
+    request = BookingRequest(
+        id=uuid4(),
+        clinic_id=test_clinic.id,
+        start_time=now + timedelta(days=1),
+        end_time=now + timedelta(days=1, minutes=30),
+        status="pending_confirmation",
+        reason="checkup",
+        confirmation_deadline=now + timedelta(minutes=10),
+    )
+    db_session.add(request)
+    await db_session.flush()
+    enqueue(
+        db_session,
+        test_clinic.id,
+        request.id,
+        "confirmation",
+        {"email": "test@example.com", "subject": "Synthetic", "text": "synthetic-token"},
+    )
+    await db_session.flush()
+    queued = await db_session.scalar(
+        select(BookingMail).where(BookingMail.request_id == request.id)
+    )
+    assert queued is not None and "synthetic-token" not in queued.payload_encrypted
+    db_session.add(
+        BookingMail(
+            request_id=uuid4(),
+            clinic_id=test_clinic.id,
+            kind="confirmation",
+            payload_encrypted="synthetic",
+            attempts=0,
+        )
+    )
+    with pytest.raises(IntegrityError):
+        await db_session.commit()
+    await db_session.rollback()
+    assert not await dispatch_one(db_session)
     assert delivery == []

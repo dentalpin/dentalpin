@@ -11,6 +11,7 @@
 - The clinic advisory lock coordinates only this module's cooperating transactions.
 - Agenda writers do not acquire it; a concurrent agenda write can race (#905).
 - Confirm tokens are random, hashed at rest, one-use, and transmitted in URL fragments.
+- Emails are encrypted in a module-owned transactional outbox; workers only send committed rows.
 - The production delivery path uses TLS SMTP without logging recipients or token URLs.
 - The installed module schedules expiry, 30-day deletion and 90-day contact erasure.
 - The caller must provide a confirmation page that submits the token from the fragment.

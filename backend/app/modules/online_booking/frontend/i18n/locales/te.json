@@ -41,7 +41,7 @@
     "noPatients": "No patients found. Try another search or create a patient.",
     "noPermission": "You need permission to create patients and appointments.",
     "accepted": "Appointment created.",
-    "rejected": "Request rejected and message sent.",
+    "rejected": "Request rejected; the message is queued.",
     "pages": "Request pagination",
     "previous": "Previous",
     "next": "Next",

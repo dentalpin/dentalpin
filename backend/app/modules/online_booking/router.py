@@ -1,7 +1,6 @@
 """Public booking endpoints and authenticated reception actions."""
 
 import hashlib
-import html
 import secrets
 from datetime import UTC, date, datetime, timedelta
 from typing import Annotated
@@ -14,15 +13,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
 from app.core.auth.router import limiter
-from app.core.email.providers.base import EmailMessage
 from app.database import get_db
 from app.modules.agenda.service import AppointmentService
 from app.modules.patients.service import PatientService
 from app.modules.schedules.services.clinic_hours import ClinicHoursService
 
-from .delivery import deliver
 from .locking import lock_clinic
 from .models import BookingRequest, BookingSettings
+from .outbox import enqueue
 from .rate_limit import consume_rate
 from .schemas import AcceptInput, ConfirmInput, RejectInput, RequestInput, SettingsInput
 from .service import live_hold, occupied, reserve, slots
@@ -150,17 +148,19 @@ async def create_request(request: Request, clinic_id: UUID, data: RequestInput, 
         raise HTTPException(409, str(exc)) from exc
     # The client-side confirmation page must consume the fragment explicitly.
     link = f"{config.public_url}#token={token}"
-    await deliver(
+    enqueue(
         db,
         clinic_id,
-        EmailMessage(
-            to_email=email,
-            subject="Confirm your booking request",
-            body_text=f"Confirm your request within 10 minutes: {link}",
-            body_html=f'<p>Confirm your request within 10 minutes:</p><p><a href="{html.escape(link, quote=True)}">Confirm</a></p>',
-        ),
+        item.id,
+        "confirmation",
+        {
+            "email": email,
+            "subject": "Confirm your booking request",
+            "text": f"Confirm your request within 10 minutes: {link}",
+            "link": link,
+        },
     )
-    return {"data": {"message": "Check your email to confirm your request."}}
+    return {"data": {"message": "Your confirmation email has been queued."}}
 
 
 @router.post("/public/{clinic_id}/confirm")
@@ -330,15 +330,16 @@ async def reject(
     ):
         raise HTTPException(409, "Request expired or already decided")
     if row.contact_email:
-        await deliver(
+        enqueue(
             db,
             ctx.clinic_id,
-            EmailMessage(
-                to_email=row.contact_email,
-                subject="Update on your booking request",
-                body_text=data.message,
-                body_html=f"<p>{html.escape(data.message)}</p>",
-            ),
+            row.id,
+            "rejection",
+            {
+                "email": row.contact_email,
+                "subject": "Update on your booking request",
+                "text": data.message,
+            },
         )
     row.status = "rejected"
     row.decided_at = now

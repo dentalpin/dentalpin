@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Queue encrypted confirmation and rejection emails in the request transaction and send only after commit.
+
 - Add paginated reception inbox with explicit patient selection, acceptance and rejection.
 - Exclude expired requests from the inbox and refuse decisions after expiration.
 

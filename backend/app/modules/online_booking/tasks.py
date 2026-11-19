@@ -2,11 +2,11 @@
 
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import delete, update
+from sqlalchemy import delete, select, update
 
 from app.database import async_session_maker
 
-from .models import BookingRateLimit, BookingRequest
+from .models import BookingMail, BookingRateLimit, BookingRequest
 
 
 async def cleanup() -> None:
@@ -28,6 +28,14 @@ async def cleanup() -> None:
             .values(status="expired", decided_at=BookingRequest.start_time, token_hash=None)
         )
         await db.execute(
+            delete(BookingMail).where(
+                BookingMail.kind == "confirmation",
+                BookingMail.request_id.in_(
+                    select(BookingRequest.id).where(BookingRequest.status != "pending_confirmation")
+                ),
+            )
+        )
+        await db.execute(
             delete(BookingRequest).where(
                 BookingRequest.status.in_(("rejected", "expired")),
                 BookingRequest.decided_at <= now - timedelta(days=30),
@@ -45,3 +53,15 @@ async def cleanup() -> None:
             delete(BookingRateLimit).where(BookingRateLimit.window_start < now - timedelta(hours=2))
         )
         await db.commit()
+
+
+async def dispatch_mail() -> None:
+    from .outbox import dispatch_one
+
+    # Each row is locked and committed independently; concurrent workers skip locks.
+    for _ in range(20):
+        async with async_session_maker() as db:
+            processed = await dispatch_one(db)
+            await db.commit()
+        if not processed:
+            break
