@@ -22,6 +22,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from app.core.events import EventType, event_bus
+from app.core.utils.dates import clinic_zone_for
 
 from .constants import PERIO_TEETH, SITE_CODES, SnapshotStatus
 from .indices import compute_indices
@@ -138,9 +139,11 @@ class PeriodontogramService:
         )
 
         rows = (await db.execute(stmt)).all()
+        zone = await clinic_zone_for(db, clinic_id)
         by_date: dict[str, dict[str, object]] = {}
         for row in rows:
-            date_str = row.closed_at.date().isoformat()
+            # The clinic's calendar day, not the UTC one (#910).
+            date_str = row.closed_at.astimezone(zone).date().isoformat()
             # rows arrive ASC by closed_at, so the last write wins — i.e.
             # the latest snapshot of the day becomes the day's entry.
             by_date[date_str] = {

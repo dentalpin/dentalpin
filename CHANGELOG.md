@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Treatment plans:** completing the last session works again when the item's treatment was already marked performed on the odontogram. This regressed in #893 (#897).
 - **Treatments:** a sessioned treatment no longer books more revenue than its price. Marking it performed on the odontogram after one of its sessions was completed counted that session twice, and performing an already-performed treatment again booked the full price a second time. A treatment that is already performed now returns 409 (#891).
 - **Purchase orders:** a receipt is only found under its own order's URL (#892).
+- **Odontogram / periodontogram:** the history timelines date entries on the clinic's day instead of the UTC day (#910).
 - **Payments:** refunds and earned revenue in the payment reports fall on the clinic's day, not the UTC day (#909).
 - **Notifications:** appointment confirmations, cancellations and reminders show the appointment time in the clinic's timezone instead of UTC (#907).
 
