@@ -173,6 +173,10 @@ the public endpoints.
   allocated to a **budget** *is* mirrored onto that budget's invoices by
   billing (transactional `payment.allocated` subscriber) — that is
   billing's concern, this module only publishes.
+- **Report windows on timestamps use the clinic's days.** `payment_date`
+  is a local date; `refunded_at` / `performed_at` are instants. Filter them
+  with `_clinic_day_range` (`>= start`, `< end`), and bucket with
+  `.astimezone(zone).date()` — never UTC midnights (#909).
 - **`Clinic.currency` snapshot.** Payments capture the clinic currency
   at write time. If a clinic ever switches currency, historical
   payments stay in the old one (correct behaviour).

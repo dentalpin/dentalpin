@@ -7,7 +7,7 @@ date a clinic will read (an invoice's issue date, the year in its
 number) must ask the clinic's clock instead.
 """
 
-from datetime import date, datetime
+from datetime import date, datetime, time, timedelta
 from uuid import UUID
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
@@ -39,3 +39,15 @@ async def clinic_zone_for(db: AsyncSession, clinic_id: UUID) -> ZoneInfo:
 async def clinic_today_for(db: AsyncSession, clinic_id: UUID) -> date:
     """``clinic_today`` for a clinic known only by id (one indexed read)."""
     return datetime.now(await clinic_zone_for(db, clinic_id)).date()
+
+
+def clinic_day_range(zone: ZoneInfo, date_from: date, date_to: date) -> tuple[datetime, datetime]:
+    """``[start, end)`` instants covering ``date_from``..``date_to`` on the clinic's clock.
+
+    For filtering a ``timestamptz`` column by a report's calendar days: use
+    ``col >= start`` and ``col < end``. UTC midnights shift the window by the
+    clinic's offset — an evening refund in a UTC-6 clinic falls on the next day.
+    """
+    start = datetime.combine(date_from, time.min, tzinfo=zone)
+    end = datetime.combine(date_to + timedelta(days=1), time.min, tzinfo=zone)
+    return start, end
