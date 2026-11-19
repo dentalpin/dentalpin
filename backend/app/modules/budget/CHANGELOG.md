@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Remove the unused `AcceptInClinicModal` component; budget detail retains its existing inline acceptance form.
 - fix: persist the document fingerprint at budget acceptance using the clinic's timezone and currency, and reserve space below the signature block for the repeated PDF footer.
 
 - refactor(#876): share the handwritten signature canvas between the public budget page and the in-clinic acceptance modal.

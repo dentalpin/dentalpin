@@ -78,6 +78,11 @@ only — never combined with payments data.
 - `odontogram.treatment.performed` — mark line items done when the
   underlying tooth treatment is performed.
 
+## Frontend acceptance
+
+The budget detail page owns its inline accept/reject form. The shared
+`SignatureCanvas` remains in use by the public budget signing page.
+
 ## Frontend slots exposed
 
 | Slot | Ctx | Consumer |
