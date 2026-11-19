@@ -58,9 +58,32 @@ async def test_request_confirm_accept_and_conflict(
     start = datetime.combine(tomorrow, time(10), UTC)
     url = f"/api/v1/online_booking/public/{test_clinic.id}"
     headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    settings = await client.get("/api/v1/online_booking/settings", headers=headers)
+    assert settings.status_code == 200
+    config = {
+        **settings.json()["data"],
+        "title_es": "Reserva sintética",
+        "logo_url": "https://example.com/logo.png",
+        "accent_color": "#123456",
+    }
+    saved = await client.put("/api/v1/online_booking/settings", headers=headers, json=config)
+    assert saved.status_code == 200, saved.text
+    public = await client.get(f"{url}/config")
+    assert public.json()["data"]["branding"]["title_es"] == "Reserva sintética"
+    assert public.json()["data"]["branding"]["logo_url"] == "https://example.com/logo.png"
     availability = await client.get(f"{url}/availability", params={"day": tomorrow.isoformat()})
     assert availability.status_code == 200
     assert start.isoformat() in availability.json()["data"]["starts"]
+    week = await client.get(
+        f"{url}/availability", params={"from_day": tomorrow.isoformat(), "days": 7}
+    )
+    assert week.status_code == 200
+    assert start.isoformat() in week.json()["data"]["days"][0]["starts"]
+    assert (
+        await client.get(
+            f"{url}/availability", params={"from_day": tomorrow.isoformat(), "days": 32}
+        )
+    ).status_code == 422
     from altcha import Challenge, Payload, solve_challenge
 
     challenge_response = await client.get(f"{url}/challenge")
@@ -73,6 +96,7 @@ async def test_request_confirm_accept_and_conflict(
         "start_time": start.isoformat(),
         "contact_name": "Synthetic",
         "contact_email": "test@example.com",
+        "contact_phone": "+34600123456",
         "reason": "checkup",
         "altcha": Payload(issued, solution).to_base64(),
     }
@@ -88,8 +112,15 @@ async def test_request_confirm_accept_and_conflict(
     assert delivery[0].subject.startswith("Confirma tu solicitud de cita en ")
     assert "<a href=" in delivery[0].body_html and token in delivery[0].body_html
     assert "{{" not in delivery[0].body_html + delivery[0].body_text
+    assert "se pondrá en contacto contigo" in delivery[0].body_text
+    from zoneinfo import ZoneInfo
+
+    local = start.astimezone(ZoneInfo("Europe/Madrid"))
+    assert local.strftime("%d/%m/%Y") in delivery[0].body_text
+    assert local.strftime("%H:%M") in delivery[0].body_text
     response = await client.post(f"{url}/confirm", json={"token": token})
     assert response.status_code == 200
+    assert response.json()["data"]["start_time"] == start.isoformat()
     assert (await client.post(f"{url}/confirm", json={"token": token})).status_code == 410
     item = await db_session.scalar(
         select(BookingRequest).where(BookingRequest.clinic_id == test_clinic.id)
@@ -236,6 +267,7 @@ async def test_simultaneous_http_requests(client, db_session, test_clinic, open_
                 "start_time": start.isoformat(),
                 "contact_name": "Synthetic",
                 "contact_email": "parallel@example.com",
+                "contact_phone": "+34600123456",
                 "reason": "checkup",
                 "altcha": proof_for(test_clinic.id),
             }
@@ -336,6 +368,7 @@ async def test_rejection_sends_message_and_releases_hold(
         "start_time": start.isoformat(),
         "contact_name": "Synthetic",
         "contact_email": "reject@example.com",
+        "contact_phone": "+34600123456",
         "reason": "checkup",
         "altcha": proof_for(test_clinic.id),
     }
@@ -1188,3 +1221,38 @@ async def test_altcha_replay_is_atomic_across_transactions(db_session, test_clin
         assert sorted(await asyncio.gather(redeem(), redeem())) == [201, 409]
     finally:
         await engine.dispose()
+
+
+def test_contact_phone_and_public_settings_validation():
+    from pydantic import ValidationError
+
+    from app.modules.online_booking.schemas import RequestInput, SettingsInput
+
+    body = {
+        "start_time": datetime.now(UTC),
+        "contact_name": "Synthetic",
+        "contact_email": "a@example.com",
+        "contact_phone": "600 123 456",
+        "reason": "checkup",
+        "altcha": "x",
+    }
+    assert RequestInput(**body).contact_phone == "+34600123456"
+    assert (
+        RequestInput(**{**body, "contact_phone": "+44 20 7946 0958"}).contact_phone
+        == "+442079460958"
+    )
+    for invalid in ("", "123", "600123456abc"):
+        with pytest.raises(ValidationError):
+            RequestInput(**{**body, "contact_phone": invalid})
+    with pytest.raises(ValidationError):
+        RequestInput(**{k: v for k, v in body.items() if k != "contact_phone"})
+    assert (
+        SettingsInput(
+            logo_url="https://example.com/logo.png", accent_color="#123abc", title_es="Citas"
+        ).title_es
+        == "Citas"
+    )
+    with pytest.raises(ValidationError):
+        SettingsInput(logo_url="javascript:alert(1)")
+    with pytest.raises(ValidationError):
+        SettingsInput(accent_color="red")

@@ -8,3 +8,5 @@ La reserva online debe activarse por un administrador y requiere correo configur
 Una solicitud confirmada retiene el hueco hasta que recepción decide o empieza la hora solicitada. Antes de aceptar, el sistema vuelve a comprobar las citas; si existe un conflicto, muestra un error para que recepción lo resuelva. Las solicitudes rechazadas o caducadas se eliminan tras 30 días; los datos de contacto de las aceptadas se borran tras 90 días.
 
 La página pública permite elegir motivo y hueco, introducir datos de contacto y superar ALTCHA. El enlace recibido exige pulsar «Confirmar solicitud»; abrirlo no crea ni confirma una cita.
+
+El calendario destaca solo los días con huecos y permite avanzar por semanas. El teléfono y el correo son obligatorios. El personal autorizado puede cambiar el logotipo, color y textos de la página desde «Ajustes de la página pública».

@@ -9,6 +9,9 @@
 - Share the agenda clinic lock and recheck conflicts on request, confirmation and acceptance.
 
 - Render the reception accept action with the primary button style.
+- Highlight available dates by week and group times by morning and afternoon. Require a validated international or Spanish phone number.
+- Configure public page logo, color and bilingual text from reception settings; show the requested time in confirmation and email.
+
 - Add a standalone static public booking and confirmation widget and clinic-bound, single-use ALTCHA v2 challenges. Public request clients must now provide an ALTCHA solution.
 
 - Reception chooses professional, optional cabinet and duration, with per-reason defaults and conflict rechecks; patient contact fields are prefilled and matching contacts suggested.

@@ -52,6 +52,17 @@
     "duration": "Duración (minutos)",
     "email": "Correo electrónico",
     "phone": "Teléfono",
-    "resourcesRequired": "Selecciona un profesional y una duración válida."
+    "resourcesRequired": "Selecciona un profesional y una duración válida.",
+    "settingsTitle": "Ajustes de la página pública",
+    "settingsHint": "Deja los campos vacíos para usar los valores predeterminados. El logotipo debe tener una URL HTTPS.",
+    "logoUrl": "URL del logotipo",
+    "accentColor": "Color principal (hex)",
+    "titleEs": "Título en español",
+    "titleEn": "Título en inglés",
+    "introEs": "Introducción en español",
+    "introEn": "Introducción en inglés",
+    "saveSettings": "Guardar",
+    "settingsSaved": "Ajustes de la página pública guardados.",
+    "settingsError": "No se pudieron cargar o guardar los ajustes. Comprueba la URL y el color."
   }
 }

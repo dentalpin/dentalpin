@@ -22,3 +22,5 @@
 - Tests require isolated synthetic PostgreSQL, never patient data or real credentials.
 
 - The independent `public_widget/` builds static assets for same-origin public APIs. ALTCHA v2 is mandatory for requests; see its README for the exact public proxy allowlist and iframe CSP.
+
+- Public appearance fields are configured through the permission-gated reception settings. Availability supports a bounded 31-day range; phone is required and normalized to E.164.

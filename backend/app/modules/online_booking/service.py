@@ -206,6 +206,8 @@ async def _queue_email(
     clinic_id: UUID,
     item: BookingRequest,
     notification_type: str,
+    *,
+    locale: str | None = None,
     **extra: object,
 ) -> None:
     """Queue a message with the notifications gateway in the caller's transaction.
@@ -234,8 +236,14 @@ async def _queue_email(
         force_send=True,
         dedup_key=f"online_booking:{notification_type}:{item.id}",
     )
-    if queued is not None and queued.status == "skipped":
+    if queued is None:
+        return
+    if queued.status == "skipped":
         raise BookingUnavailableError("Email delivery unavailable")
+    if locale:
+        # The requester picked a language in the public widget; the gateway
+        # would otherwise use the clinic's. Dispatch renders in this locale.
+        queued.context_data = {**queued.context_data, "locale": locale}
 
 
 class BookingService:
@@ -283,18 +291,50 @@ class BookingService:
         config = await BookingService.public_settings(db, clinic_id)
         return {
             "slot_minutes": config.slot_minutes,
+            "window_days": config.window_days,
+            "branding": {
+                key: getattr(config, key)
+                for key in (
+                    "logo_url",
+                    "accent_color",
+                    "title_es",
+                    "intro_es",
+                    "title_en",
+                    "intro_en",
+                )
+            },
             "timezone": await ClinicHoursService.get_clinic_timezone(db, clinic_id),
             "reasons": ["first_visit", "checkup"],
         }
 
     @staticmethod
-    async def availability(db: AsyncSession, clinic_id: UUID, day: date) -> dict:
+    async def availability(
+        db: AsyncSession,
+        clinic_id: UUID,
+        day: date | None,
+        from_day: date | None,
+        days: int,
+    ) -> dict:
         config = await BookingService.public_settings(db, clinic_id)
-        starts = await slots(db, clinic_id, config, day, datetime.now(UTC))
-        return {
-            "starts": [start.isoformat() for start in starts],
-            "slot_minutes": config.slot_minutes,
-        }
+        if (day is None) == (from_day is None):
+            raise BookingValidationError("Provide day or from_day")
+        now = datetime.now(UTC)
+        if day is not None:
+            starts = await slots(db, clinic_id, config, day, now)
+            return {
+                "starts": [start.isoformat() for start in starts],
+                "slot_minutes": config.slot_minutes,
+            }
+        if from_day > date.max - timedelta(days=days - 1):
+            raise BookingValidationError("Date range exceeds supported calendar")
+        entries = []
+        for offset in range(days):
+            date_value = from_day + timedelta(days=offset)
+            starts = await slots(db, clinic_id, config, date_value, now)
+            entries.append(
+                {"date": date_value.isoformat(), "starts": [start.isoformat() for start in starts]}
+            )
+        return {"days": entries, "slot_minutes": config.slot_minutes}
 
     @staticmethod
     async def create_request(db: AsyncSession, clinic_id: UUID, data: RequestInput) -> str:
@@ -336,13 +376,14 @@ class BookingService:
             clinic_id,
             item,
             "booking_confirmation",
+            locale=data.language,
             confirm_url=f"{config.public_url}#token={token}",
             expires_minutes=CONFIRMATION_MINUTES,
         )
         return "Your confirmation email has been queued."
 
     @staticmethod
-    async def confirm(db: AsyncSession, clinic_id: UUID, token: str) -> str:
+    async def confirm(db: AsyncSession, clinic_id: UUID, token: str) -> dict:
         await BookingService.public_settings(db, clinic_id)
         await lock_clinic(db, clinic_id)
         item = await _locked_request(db, clinic_id, BookingRequest.token_hash == digest(token))
@@ -367,7 +408,11 @@ class BookingService:
         item.status = "confirmed"
         item.token_hash = None
         await db.flush()
-        return "confirmed"
+        return {
+            "status": "confirmed",
+            "start_time": item.start_time.isoformat(),
+            "timezone": await ClinicHoursService.get_clinic_timezone(db, clinic_id),
+        }
 
     @staticmethod
     async def count_confirmed(db: AsyncSession, clinic_id: UUID) -> int:

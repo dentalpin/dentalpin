@@ -26,6 +26,7 @@ from .schemas import (
     Availability,
     BookingRequestOut,
     ConfirmInput,
+    ConfirmOut,
     MessageOut,
     PatientSuggestion,
     PublicConfig,
@@ -69,13 +70,23 @@ async def public_config(request: Request, clinic_id: UUID, db: DB) -> ApiRespons
     return ApiResponse(data=PublicConfig(**await BookingService.public_config(db, clinic_id)))
 
 
-@router.get("/public/{clinic_id}/availability", response_model=ApiResponse[Availability])
+@router.get(
+    "/public/{clinic_id}/availability",
+    response_model=ApiResponse[Availability],
+    response_model_exclude_none=True,
+)
 @limiter.limit("60/minute")
 async def availability(
-    request: Request, clinic_id: UUID, day: date, db: DB
+    request: Request,
+    clinic_id: UUID,
+    db: DB,
+    day: date | None = None,
+    from_day: date | None = None,
+    days: int = Query(default=7, ge=1, le=31),
 ) -> ApiResponse[Availability]:
     await consume_rate("availability-ip", _client(request), 240)
-    return ApiResponse(data=Availability(**await BookingService.availability(db, clinic_id, day)))
+    result = await BookingService.availability(db, clinic_id, day, from_day, days)
+    return ApiResponse(data=Availability(**result))
 
 
 @router.get("/public/{clinic_id}/challenge")
@@ -104,15 +115,13 @@ async def create_request(
     return ApiResponse(data=MessageOut(message=message))
 
 
-@router.post("/public/{clinic_id}/confirm", response_model=ApiResponse[StatusOut])
+@router.post("/public/{clinic_id}/confirm", response_model=ApiResponse[ConfirmOut])
 @limiter.limit("10/minute")
 async def confirm(
     request: Request, clinic_id: UUID, data: ConfirmInput, db: DB
-) -> ApiResponse[StatusOut]:
+) -> ApiResponse[ConfirmOut]:
     await consume_rate("confirm-ip", _client(request), 120)
-    return ApiResponse(
-        data=StatusOut(status=await BookingService.confirm(db, clinic_id, data.token))
-    )
+    return ApiResponse(data=ConfirmOut(**await BookingService.confirm(db, clinic_id, data.token)))
 
 
 @router.get("/requests/count", response_model=ApiResponse[int])

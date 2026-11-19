@@ -26,6 +26,41 @@ const api = useApi()
 const dataBus = useDataBus()
 if (!can('online_booking.read')) await navigateTo('/')
 const canWrite = computed(() => can('online_booking.write'))
+const canSettings = computed(() => can('online_booking.settings'))
+const settingsOpen = ref(false)
+const settingsLoading = ref(false)
+const settingsReady = ref(false)
+const settingsError = ref('')
+interface SettingsForm { logo_url: string, accent_color: string, title_es: string, intro_es: string, title_en: string, intro_en: string, [key: string]: string | number | boolean | null }
+const settingsData = ref<SettingsForm>({ logo_url: '', accent_color: '', title_es: '', intro_es: '', title_en: '', intro_en: '' })
+async function openSettings() {
+  settingsOpen.value = true
+  settingsReady.value = false
+  settingsError.value = ''
+  try {
+    const received = (await api.get<{ data: SettingsForm }>('/api/v1/online_booking/settings')).data
+    settingsReady.value = true
+    settingsData.value = { ...received, logo_url: received.logo_url || '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
+  } catch {
+    settingsError.value = t('onlineBooking.settingsError')
+  }
+}
+async function saveSettings() {
+  if (!settingsReady.value) return
+  settingsLoading.value = true
+  settingsError.value = ''
+  try {
+    const data: Record<string, string | number | boolean | null> = { ...settingsData.value }
+    for (const key of ['logo_url', 'accent_color', 'title_es', 'intro_es', 'title_en', 'intro_en']) if (data[key] === '') data[key] = null
+    await api.put('/api/v1/online_booking/settings', data)
+    settingsOpen.value = false
+    success.value = t('onlineBooking.settingsSaved')
+  } catch {
+    settingsError.value = t('onlineBooking.settingsError')
+  } finally {
+    settingsLoading.value = false
+  }
+}
 const canAccept = computed(() => canWrite.value && can('agenda.appointments.write') && can('patients.write'))
 const items = ref<BookingRequest[]>([])
 const page = ref(1)
@@ -216,15 +251,102 @@ onMounted(load)
           {{ t('onlineBooking.subtitle') }}
         </p>
       </div>
-      <UButton
-        icon="i-lucide-refresh-cw"
-        variant="outline"
-        :loading="loading"
-        @click="load"
-      >
-        {{ t('onlineBooking.refresh') }}
-      </UButton>
+      <div class="flex gap-2">
+        <UButton
+          v-if="canSettings"
+          variant="outline"
+          icon="i-lucide-settings"
+          @click="openSettings"
+        >
+          {{ t('onlineBooking.settingsTitle') }}
+        </UButton>
+        <UButton
+          icon="i-lucide-refresh-cw"
+          variant="outline"
+          :loading="loading"
+          @click="load"
+        >
+          {{ t('onlineBooking.refresh') }}
+        </UButton>
+      </div>
     </header>
+    <section
+      v-if="settingsOpen"
+      class="space-y-4 rounded-lg border border-default p-4"
+    >
+      <h2 class="font-semibold">
+        {{ t('onlineBooking.settingsTitle') }}
+      </h2>
+      <p class="text-sm text-muted">
+        {{ t('onlineBooking.settingsHint') }}
+      </p>
+      <div class="grid gap-3 sm:grid-cols-2">
+        <UFormField :label="t('onlineBooking.logoUrl')">
+          <UInput
+            v-model="settingsData.logo_url"
+            type="url"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField :label="t('onlineBooking.accentColor')">
+          <UInput
+            v-model="settingsData.accent_color"
+            placeholder="#127f83"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField :label="t('onlineBooking.titleEs')">
+          <UInput
+            v-model="settingsData.title_es"
+            maxlength="120"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField :label="t('onlineBooking.titleEn')">
+          <UInput
+            v-model="settingsData.title_en"
+            maxlength="120"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField :label="t('onlineBooking.introEs')">
+          <UTextarea
+            v-model="settingsData.intro_es"
+            :maxlength="300"
+            class="w-full"
+          />
+        </UFormField>
+        <UFormField :label="t('onlineBooking.introEn')">
+          <UTextarea
+            v-model="settingsData.intro_en"
+            :maxlength="300"
+            class="w-full"
+          />
+        </UFormField>
+      </div>
+      <p
+        v-if="settingsError"
+        role="alert"
+        class="text-error"
+      >
+        {{ settingsError }}
+      </p>
+      <div class="flex gap-2">
+        <UButton
+          :loading="settingsLoading"
+          :disabled="!settingsReady"
+          @click="saveSettings"
+        >
+          {{ t('onlineBooking.saveSettings') }}
+        </UButton><UButton
+          variant="outline"
+          color="neutral"
+          @click="settingsOpen = false"
+        >
+          {{ t('onlineBooking.cancel') }}
+        </UButton>
+      </div>
+    </section>
     <p
       v-if="success"
       role="status"

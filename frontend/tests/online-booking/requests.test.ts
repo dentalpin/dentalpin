@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { VueWrapper } from '@vue/test-utils'
 import RequestsPage from '#module-layers/online_booking/frontend/pages/online-booking/index.vue'
 
-const { get, post } = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn() }))
-mockNuxtImport('useApi', () => () => ({ get, post }))
+const { get, post, put } = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), put: vi.fn() }))
+mockNuxtImport('useApi', () => () => ({ get, post, put }))
 mockNuxtImport('usePermissions', () => () => ({ can: () => true }))
 mockNuxtImport('useClinic', () => () => ({ currentClinic: ref({ timezone: 'Europe/Madrid' }) }))
 mockNuxtImport('useI18n', () => () => ({ t: (key: string) => key, locale: ref('en') }))
@@ -26,7 +26,10 @@ describe('online booking reception', () => {
   beforeEach(() => {
     get.mockReset()
     post.mockReset()
+    put.mockReset()
+    put.mockResolvedValue({ data: {} })
     get.mockImplementation(async (url: string) => {
+      if (url === '/api/v1/online_booking/settings') return { data: { enabled: false, slot_minutes: 30, logo_url: null, accent_color: null, title_es: 'Cita', intro_es: null, title_en: null, intro_en: null } }
       if (url.includes('/patient-suggestions') || url.startsWith('/api/v1/patients')) return { data: [{ id: 'patient-1', first_name: 'Synthetic', last_name: 'Patient', email: 'synthetic@example.com' }] }
       if (url === '/api/v1/auth/professionals') return { data: [{ id: 'professional-1', first_name: 'Test', last_name: 'Dentist' }] }
       if (url === '/api/v1/agenda/cabinets') return { data: [{ id: 'cabinet-1', name: 'Room' }] }
@@ -96,6 +99,15 @@ describe('online booking reception', () => {
     expect((fields[1]!.element as HTMLInputElement).value).toBe('')
     await fields[1]!.setValue('Prueba')
     expect((fields[1]!.element as HTMLInputElement).value).toBe('Prueba')
+  })
+
+  it('saves public branding without losing other settings', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.find('input[maxlength="120"]').exists()).toBe(true))
+    await wrapper.find('input[maxlength="120"]').setValue('Reserva dental')
+    await clickByText(wrapper, 'onlineBooking.saveSettings')
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, slot_minutes: 30, title_es: 'Reserva dental', logo_url: null })))
   })
 
   it('paginates the queue and announces successful rejection', async () => {

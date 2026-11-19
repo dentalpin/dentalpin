@@ -52,6 +52,17 @@
     "duration": "Duration (minutes)",
     "email": "Email",
     "phone": "Phone",
-    "resourcesRequired": "Select a professional and a valid duration."
+    "resourcesRequired": "Select a professional and a valid duration.",
+    "settingsTitle": "Public page settings",
+    "settingsHint": "Leave fields empty to use the defaults. The logo must use an HTTPS URL.",
+    "logoUrl": "Logo URL",
+    "accentColor": "Main color (hex)",
+    "titleEs": "Title in Spanish",
+    "titleEn": "Title in English",
+    "introEs": "Introduction in Spanish",
+    "introEn": "Introduction in English",
+    "saveSettings": "Save",
+    "settingsSaved": "Public page settings saved.",
+    "settingsError": "Could not load or save settings. Check the URL and color."
   }
 }

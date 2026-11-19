@@ -75,7 +75,7 @@ select,
 button {
   font: inherit;
 }
-input:not([type="checkbox"]),
+input:not([type='checkbox']),
 select {
   width: 100%;
   border: 1px solid #b8ccca;
@@ -117,7 +117,7 @@ button:disabled {
   background: #fff;
   color: #16343b;
 }
-.slot[aria-pressed="true"] {
+.slot[aria-pressed='true'] {
   background: var(--accent);
   color: white;
   border-color: var(--accent);
@@ -163,4 +163,56 @@ a {
   header {
     align-items: start;
   }
+}
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 28px 0 12px;
+}
+.calendar-header button {
+  background: #f1f6f5;
+  color: #16343b;
+  min-width: 44px;
+  font-size: 1.25rem;
+}
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+.calendar-day {
+  min-width: 0;
+  padding: 10px 2px;
+  color: #16343b;
+  background: #e8f4f1;
+  border: 1px solid #abcfc7;
+  font-size: 0.84rem;
+}
+.calendar-day:disabled {
+  background: #f4f5f5;
+  border-color: #eceeee;
+  color: #758382;
+  opacity: 1;
+}
+.calendar-day[aria-pressed='true'] {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.slot-group {
+  flex-basis: 100%;
+}
+.slot-group h4 {
+  margin: 16px 0 0;
+}
+small {
+  display: block;
+  margin-top: 6px;
+  color: #52676b;
+}
+.hero h1,
+.hero p,
+.brand span {
+  overflow-wrap: anywhere;
 }

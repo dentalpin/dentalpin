@@ -20,6 +20,12 @@ class BookingSettings(Base, TimestampMixin):
     professional_id: Mapped[UUID | None] = mapped_column(
         PGUUID(as_uuid=True), ForeignKey("users.id")
     )
+    logo_url: Mapped[str | None] = mapped_column(String(500))
+    accent_color: Mapped[str | None] = mapped_column(String(7))
+    title_es: Mapped[str | None] = mapped_column(String(120))
+    intro_es: Mapped[str | None] = mapped_column(String(300))
+    title_en: Mapped[str | None] = mapped_column(String(120))
+    intro_en: Mapped[str | None] = mapped_column(String(300))
     slot_minutes: Mapped[int] = mapped_column(Integer, default=30, nullable=False)
     first_visit_minutes: Mapped[int | None] = mapped_column(Integer)
     checkup_minutes: Mapped[int | None] = mapped_column(Integer)

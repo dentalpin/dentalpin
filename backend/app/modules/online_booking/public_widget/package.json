@@ -5,10 +5,11 @@
   "type": "module",
   "scripts": {
     "build": "vite build",
-    "test": "node --test tests/*.test.mjs"
+    "test": "node --test tests/*.node.mjs"
   },
   "dependencies": {
-    "altcha": "3.6.0"
+    "altcha": "3.6.0",
+    "libphonenumber-js": "1.12.29"
   },
   "devDependencies": {
     "vite": "7.3.8"

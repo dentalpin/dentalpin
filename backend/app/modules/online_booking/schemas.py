@@ -12,13 +12,19 @@ class SettingsInput(BaseModel):
     enabled: bool = False
     professional_id: UUID | None = None
     public_url: str | None = Field(default=None, max_length=500)
+    logo_url: str | None = Field(default=None, max_length=500)
+    accent_color: str | None = Field(default=None, pattern=r"^#[0-9a-fA-F]{6}$")
+    title_es: str | None = Field(default=None, max_length=120)
+    intro_es: str | None = Field(default=None, max_length=300)
+    title_en: str | None = Field(default=None, max_length=120)
+    intro_en: str | None = Field(default=None, max_length=300)
     slot_minutes: int = Field(default=30, ge=5, le=480)
     first_visit_minutes: int | None = Field(default=None, ge=5, le=480)
     checkup_minutes: int | None = Field(default=None, ge=5, le=480)
     window_days: int = Field(default=30, ge=1, le=365)
     min_notice_minutes: int = Field(default=60, ge=0, le=525600)
 
-    @field_validator("public_url")
+    @field_validator("public_url", "logo_url")
     @classmethod
     def valid_url(cls, value: str | None) -> str | None:
         from urllib.parse import urlsplit
@@ -42,10 +48,24 @@ class RequestInput(BaseModel):
     start_time: datetime
     contact_name: str = Field(min_length=1, max_length=120)
     contact_email: EmailStr
-    contact_phone: str | None = Field(default=None, max_length=20, pattern=r"^[+0-9 ()-]*$")
+    contact_phone: str = Field(min_length=1, max_length=30, pattern=r"^\+?[0-9 ()-]+$")
+    language: Literal["es", "en"] = "es"
     reason: Literal["first_visit", "checkup"]
     website: str = Field(default="", max_length=200)
     altcha: str = Field(min_length=1, max_length=4096)
+
+    @field_validator("contact_phone")
+    @classmethod
+    def valid_phone(cls, value: str) -> str:
+        import phonenumbers
+
+        try:
+            number = phonenumbers.parse(value, "ES")
+        except phonenumbers.NumberParseException as exc:
+            raise ValueError("Invalid phone number") from exc
+        if not phonenumbers.is_valid_number(number) or number.extension:
+            raise ValueError("Invalid phone number")
+        return phonenumbers.format_number(number, phonenumbers.PhoneNumberFormat.E164)
 
     @field_validator("start_time")
     @classmethod
@@ -79,13 +99,29 @@ class RejectInput(BaseModel):
 
 class PublicConfig(BaseModel):
     slot_minutes: int
+    window_days: int
+    branding: dict[str, str | None]
     timezone: str
     reasons: list[str]
 
 
-class Availability(BaseModel):
+class DayAvailability(BaseModel):
+    date: str
     starts: list[str]
+
+
+class Availability(BaseModel):
+    """One day (``starts``) or a range (``days``); the unused one is omitted."""
+
+    starts: list[str] | None = None
+    days: list[DayAvailability] | None = None
     slot_minutes: int
+
+
+class ConfirmOut(BaseModel):
+    status: str
+    start_time: str
+    timezone: str
 
 
 class MessageOut(BaseModel):
