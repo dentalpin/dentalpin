@@ -1,0 +1,126 @@
+"""Availability and transactional lifecycle for clinic-wide booking."""
+
+from datetime import UTC, date, datetime, timedelta
+from uuid import UUID
+from zoneinfo import ZoneInfo
+
+from sqlalchemy import and_, or_, select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.modules.agenda.models import Appointment
+from app.modules.schedules.services.availability import AvailabilityService
+
+from .locking import lock_clinic
+from .models import BookingRequest, BookingSettings
+
+ACTIVE = ("scheduled", "confirmed", "checked_in", "in_treatment")
+
+
+def live_hold(now: datetime):
+    return or_(
+        and_(
+            BookingRequest.status == "pending_confirmation",
+            BookingRequest.confirmation_deadline > now,
+        ),
+        and_(BookingRequest.status == "confirmed", BookingRequest.start_time > now),
+    )
+
+
+async def occupied(
+    db: AsyncSession,
+    clinic_id: UUID,
+    start: datetime,
+    end: datetime,
+    now: datetime,
+    exclude: UUID | None = None,
+) -> bool:
+    appointment = await db.scalar(
+        select(Appointment.id)
+        .where(
+            Appointment.clinic_id == clinic_id,
+            Appointment.status.in_(ACTIVE),
+            Appointment.start_time < end,
+            Appointment.end_time > start,
+        )
+        .limit(1)
+    )
+    if appointment is not None:
+        return True
+    query = select(BookingRequest.id).where(
+        BookingRequest.clinic_id == clinic_id,
+        live_hold(now),
+        BookingRequest.start_time < end,
+        BookingRequest.end_time > start,
+    )
+    if exclude is not None:
+        query = query.where(BookingRequest.id != exclude)
+    return await db.scalar(query.limit(1)) is not None
+
+
+async def slots(
+    db: AsyncSession, clinic_id: UUID, config: BookingSettings, day: date, now: datetime
+) -> list[datetime]:
+    tz_name, ranges = await AvailabilityService.resolve(db, clinic_id, day, day)
+    zone = ZoneInfo(tz_name)
+    today = now.astimezone(zone).date()
+    if day < today or day > today + timedelta(days=config.window_days):
+        return []
+    duration = timedelta(minutes=config.slot_minutes)
+    windows = [window for window in ranges if window.state == "open"]
+    if not windows:
+        return []
+    start = min(window.start for window in windows)
+    end = max(window.end for window in windows)
+    appointments = (
+        await db.execute(
+            select(Appointment.start_time, Appointment.end_time).where(
+                Appointment.clinic_id == clinic_id,
+                Appointment.status.in_(ACTIVE),
+                Appointment.start_time < end,
+                Appointment.end_time > start,
+            )
+        )
+    ).all()
+    holds = (
+        await db.execute(
+            select(BookingRequest.start_time, BookingRequest.end_time).where(
+                BookingRequest.clinic_id == clinic_id,
+                live_hold(now),
+                BookingRequest.start_time < end,
+                BookingRequest.end_time > start,
+            )
+        )
+    ).all()
+    busy = [*appointments, *holds]
+    result = []
+    for window in windows:
+        cursor = window.start.astimezone(UTC)
+        stop = window.end.astimezone(UTC)
+        while cursor + duration <= stop:
+            if cursor >= now + timedelta(minutes=config.min_notice_minutes) and not any(
+                begin < cursor + duration and finish > cursor for begin, finish in busy
+            ):
+                result.append(cursor)
+            cursor += duration
+    return result
+
+
+async def reserve(
+    db: AsyncSession, clinic_id: UUID, config: BookingSettings, item: BookingRequest, now: datetime
+) -> None:
+    await lock_clinic(db, clinic_id)
+    now = datetime.now(UTC)
+    # Reload settings after waiting; an administrator may have disabled booking.
+    await db.refresh(config)
+    if not config.enabled:
+        raise ValueError("Booking is disabled")
+    item.end_time = item.start_time + timedelta(minutes=config.slot_minutes)
+    zone_name, _ = await AvailabilityService.resolve(
+        db, clinic_id, item.start_time.date(), item.start_time.date()
+    )
+    day = item.start_time.astimezone(ZoneInfo(zone_name)).date()
+    allowed = await slots(db, clinic_id, config, day, now)
+    if item.start_time.astimezone(UTC) not in allowed:
+        raise ValueError("Time slot is no longer available")
+    db.add(item)
+    await db.flush()

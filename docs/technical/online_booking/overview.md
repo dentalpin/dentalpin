@@ -1,0 +1,10 @@
+---
+last_verified_commit: 0000000
+---
+# Online booking backend
+
+The optional `online_booking` module is disabled by default. Configure an HTTPS confirmation-page URL, a clinic professional and booking bounds through the authenticated settings endpoint. Public availability and request routes are under `/api/v1/online_booking/public/{clinic_id}`; staff settings and decision routes require authenticated, scoped permissions. Put only the required public paths and methods behind a TLS reverse proxy; keep staff paths, other modules, documentation and the database private. Trust forwarded addresses only from configured proxies.
+
+Pending requests hold for 10 minutes; confirmation consumes a hashed single-use token. Confirmed requests hold until a decision or the start time. A 15-minute job expires stale requests, deletes rejected/expired requests after 30 days and erases contact information on accepted requests after 90 days. Cleanup depends on the scheduler running. Email delivery requires a configured TLS-enabled SMTP provider (the module refuses console and plaintext SMTP providers) and a separate confirmation page which reads the URL fragment and submits the token; a link fetch alone must not confirm.
+
+The clinic-wide lock serializes online-booking mutations, not concurrent agenda writers. Acceptance checks active appointments again inside the lock; another agenda transaction may still write concurrently. See [issue #905](https://github.com/dentalpin/dentalpin/issues/905). Request-IP, availability-IP and contact limits use hashed, short-lived PostgreSQL counters shared between workers. A second existing IP limiter is process-local. Protect the perimeter as well and trust forwarded client addresses only from configured proxies. This phase supports only a single clinic-wide calendar.
