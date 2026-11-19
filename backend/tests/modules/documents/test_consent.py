@@ -12,7 +12,7 @@ from uuid import UUID, uuid4
 
 import pytest
 from PIL import Image, ImageDraw
-from sqlalchemy import select
+from sqlalchemy import delete, select
 
 from app.core.auth.models import Clinic
 from app.core.patient_access import PatientAccessLog
@@ -56,6 +56,52 @@ async def make_link(client, headers, doc, purpose="sign"):
     )
     assert response.status_code == 201, response.text
     return response.json()["data"]["token"]
+
+
+@pytest.mark.asyncio
+async def test_consent_access_log_distinguishes_view_and_download(
+    client, auth_headers, test_patient, db_session
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    signed = await client.post(
+        "/api/v1/documents/public/consents/current/sign",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "signer_name": "Synthetic patient",
+            "relationship_to_patient": "patient",
+            "signature": signature(),
+        },
+    )
+    assert signed.status_code == 200, signed.text
+    before = {row.id for row in (await db_session.execute(select(PatientAccessLog))).scalars()}
+    status = await client.get(
+        "/api/v1/documents/consents/signature-status",
+        params={"patient_id": str(test_patient.id)},
+        headers=auth_headers,
+    )
+    assert status.status_code == 200
+    status_rows = (await db_session.execute(select(PatientAccessLog))).scalars().all()
+    assert any(row.resource == "documents" and row.action == "view" for row in status_rows)
+    # Views of the same resource are deduplicated within a ten-minute window.
+    await db_session.execute(delete(PatientAccessLog))
+    await db_session.commit()
+    evidence = await client.get(f"/api/v1/documents/consents/{doc}/evidence", headers=auth_headers)
+    download = await client.get(
+        f"/api/v1/documents/consents/{doc}/evidence/sign/download", headers=auth_headers
+    )
+    assert evidence.status_code == download.status_code == 200
+    assert download.headers["content-disposition"].startswith("attachment;")
+    rows = [
+        row
+        for row in (await db_session.execute(select(PatientAccessLog))).scalars()
+        if row.id not in before
+    ]
+    assert sorted((row.resource, row.action) for row in rows) == [
+        ("document_pdf", "download"),
+        ("documents", "view"),
+    ]
+    assert all(row.patient_id == test_patient.id for row in rows)
 
 
 @pytest.mark.asyncio

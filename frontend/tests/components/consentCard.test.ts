@@ -37,25 +37,25 @@ describe('consent patient card', () => {
       const rows = wrapper.findAll('li')
       const unsigned = rows.find(row => row.text().includes('Unsigned preview'))!
       const signed = rows.find(row => row.text().includes('Signed consent'))!
-      expect(unsigned.text()).toContain('Edit consent')
-      expect(unsigned.text()).toContain('Archive')
-      expect(unsigned.text()).toContain('Generate preview')
-      expect(signed.text()).not.toContain('Edit consent')
-      expect(signed.text()).not.toContain('Archive')
-      expect(signed.text()).toContain('Download signed PDF')
+      expect(unsigned.text()).toMatch(/Edit consent|documents\.consent\.editConsent/)
+      expect(unsigned.text()).toMatch(/Archive|documents\.consent\.archiveConsent/)
+      expect(unsigned.text()).toMatch(/Generate preview|documents\.consent\.generatePreview/)
+      expect(signed.text()).not.toMatch(/Edit consent|documents\.consent\.editConsent/)
+      expect(signed.text()).not.toMatch(/Archive|documents\.consent\.archiveConsent/)
+      expect(signed.text()).toMatch(/Download signed PDF|documents\.consent\.download/)
       const signedDraft = rows.find(row => row.text().includes('Signed with draft status'))!
-      expect(signedDraft.text()).not.toContain('Edit consent')
-      expect(signedDraft.text()).not.toContain('Archive')
-      await unsigned.findAll('button').find(button => button.text().includes('Edit consent'))!.trigger('click')
+      expect(signedDraft.text()).not.toMatch(/Edit consent|documents\.consent\.editConsent/)
+      expect(signedDraft.text()).not.toMatch(/Archive|documents\.consent\.archiveConsent/)
+      await unsigned.findAll('button').find(button => /Edit consent|documents\.consent\.editConsent/.test(button.text()))!.trigger('click')
       await unsigned.get('input').setValue('Updated title')
       await unsigned.get('textarea').setValue('Updated text')
-      await unsigned.findAll('button').find(button => button.text() === 'Save')!.trigger('click')
+      await unsigned.findAll('button').find(button => /^(Save|common\.save)$/.test(button.text()))!.trigger('click')
       await flushPromises()
       expect(patch).toHaveBeenCalledWith('/api/v1/documents/unsigned', {
         title: 'Updated title', content: { text: 'Updated text' }
       })
       const refreshed = wrapper.findAll('li').find(row => row.text().includes('Unsigned preview'))!
-      await refreshed.findAll('button').find(button => button.text().includes('Archive'))!.trigger('click')
+      await refreshed.findAll('button').find(button => /Archive|documents\.consent\.archiveConsent/.test(button.text()))!.trigger('click')
       await flushPromises()
       expect(del).toHaveBeenCalledWith('/api/v1/documents/unsigned')
     } finally { wrapper.unmount() }
