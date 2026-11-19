@@ -140,12 +140,12 @@ async def test_query_and_csv_filter_clinic_subject_and_clinic_calendar(
     )
     db_session.add(limited)
     await db_session.flush()
-    db_session.add(
-        ClinicMembership(user_id=limited.id, clinic_id=test_clinic.id, role="receptionist")
-    )
+    db_session.add(ClinicMembership(user_id=limited.id, clinic_id=test_clinic.id, role="dentist"))
     await db_session.commit()
     headers = {"Authorization": f"Bearer {create_access_token(limited.id, token_version=0)}"}
-    for endpoint in (API, API + "/csv", API + "/users"):
+    erasure_audit = await client.get("/api/v1/gdpr/audit", headers=headers)
+    assert erasure_audit.status_code == 200
+    for endpoint in (API, API + "/csv", API + "/users", API + "/retention"):
         assert (await client.get(endpoint, params=params, headers=headers)).status_code == 403
 
 
