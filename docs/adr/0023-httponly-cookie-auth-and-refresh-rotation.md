@@ -41,7 +41,7 @@ whole lifetime with no server-side way to revoke just that token.
 1. **Tokens become `HttpOnly; Secure; SameSite=Lax` cookies set by the
    backend**, never readable by JS:
    - `/auth/setup`, `/auth/login`, `/auth/refresh`, `/auth/set-password`
-     (and `/auth/mfa/verify`, if ADR 0022's deferred TOTP ever ships)
+     (and `/auth/mfa/verify`, when staff TOTP applies under ADR 0022)
      respond with `Set-Cookie` for
      `dp_access` (path `/`, TTL = access TTL 15 min) and `dp_refresh`
      (path `/api/v1/auth/refresh`, TTL = refresh TTL) — the refresh

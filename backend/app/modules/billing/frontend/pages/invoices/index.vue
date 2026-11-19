@@ -150,7 +150,7 @@ function patientName(inv: InvoiceListItem): string {
 }
 
 function isOverdue(inv: InvoiceListItem): boolean {
-  if (!inv.due_date) return false
+  if (inv.is_historical || !inv.due_date) return false
   if (!['issued', 'partial'].includes(inv.status)) return false
   return new Date(inv.due_date) < new Date()
 }
@@ -168,7 +168,7 @@ function createInvoice() {
 async function handleDelete(inv: InvoiceListItem, ev: Event) {
   ev.preventDefault()
   ev.stopPropagation()
-  if (inv.status !== 'draft') {
+  if (inv.is_historical || inv.status !== 'draft') {
     toast.add({
       title: t('common.error'),
       description: t('invoice.errors.canOnlyDeleteDraft'),
@@ -300,6 +300,14 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
                 >
                   {{ t(`invoice.status.${invoice.status}`) }}
                 </UBadge>
+                <UBadge
+                  v-if="invoice.is_historical"
+                  color="neutral"
+                  variant="subtle"
+                  size="xs"
+                >
+                  {{ t('invoice.historical') }}
+                </UBadge>
                 <StatusBadge
                   v-if="isOverdue(invoice)"
                   role="danger"
@@ -308,6 +316,7 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
                   dot
                 />
                 <ModuleSlot
+                  v-if="!invoice.is_historical"
                   name="invoice.list.row.meta"
                   :ctx="{ invoice, clinic: currentClinic }"
                 />
@@ -342,7 +351,7 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
           </div>
           <div class="shrink-0 flex items-center gap-1">
             <UButton
-              v-if="invoice.status === 'draft' && can(PERMISSIONS.billing.admin)"
+              v-if="!invoice.is_historical && invoice.status === 'draft' && can(PERMISSIONS.billing.admin)"
               variant="ghost"
               color="error"
               icon="i-lucide-trash-2"
@@ -370,7 +379,16 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
                 >
                   {{ t(`invoice.status.${invoice.status}`) }}
                 </UBadge>
+                <UBadge
+                  v-if="invoice.is_historical"
+                  color="neutral"
+                  variant="subtle"
+                  size="xs"
+                >
+                  {{ t('invoice.historical') }}
+                </UBadge>
                 <ModuleSlot
+                  v-if="!invoice.is_historical"
                   name="invoice.list.row.meta"
                   :ctx="{ invoice, clinic: currentClinic }"
                 />
@@ -397,7 +415,7 @@ async function handleDelete(inv: InvoiceListItem, ev: Event) {
               {{ formatDate(invoice.issue_date) }}
             </span>
             <span
-              v-if="invoice.due_date"
+              v-if="!invoice.is_historical && invoice.due_date"
               :class="isOverdue(invoice) ? 'text-danger font-medium' : ''"
             >
               {{ isOverdue(invoice)

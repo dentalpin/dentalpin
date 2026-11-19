@@ -21,6 +21,10 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `appointment.scheduled` | `EventType.APPOINTMENT_SCHEDULED` | `agenda` | `activity_journal`, `integrations`, `notifications`, `patient_timeline`, `recalls`, `schedules` |
 | `appointment.status_changed` | `EventType.APPOINTMENT_STATUS_CHANGED` | `agenda` | — |
 | `appointment.updated` | `EventType.APPOINTMENT_UPDATED` | `agenda` | `schedules` |
+| `auth.2fa_disabled` | `EventType.AUTH_2FA_DISABLED` | `core:core` | — |
+| `auth.2fa_enabled` | `EventType.AUTH_2FA_ENABLED` | `core:core` | — |
+| `auth.2fa_failed` | `EventType.AUTH_2FA_FAILED` | `core:core` | — |
+| `auth.2fa_reset` | `EventType.AUTH_2FA_RESET` | `core:core` | — |
 | `budget.accepted` | `EventType.BUDGET_ACCEPTED` | `budget` | `activity_journal`, `integrations`, `notifications`, `patient_timeline`, `treatment_plan` |
 | `budget.cancelled` | `EventType.BUDGET_CANCELLED` | `budget` | `activity_journal`, `treatment_plan` |
 | `budget.created` | `EventType.BUDGET_CREATED` | — | — |
@@ -92,9 +96,9 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `odontogram.surface.updated` | `EventType.ODONTOGRAM_SURFACE_UPDATED` | `odontogram` | — |
 | `odontogram.tooth.updated` | `EventType.ODONTOGRAM_TOOTH_UPDATED` | `odontogram` | — |
 | `odontogram.treatment.added` | `EventType.ODONTOGRAM_TREATMENT_ADDED` | `odontogram` | — |
-| `odontogram.treatment.deleted` | `EventType.ODONTOGRAM_TREATMENT_DELETED` | `odontogram` | — |
+| `odontogram.treatment.deleted` | `EventType.ODONTOGRAM_TREATMENT_DELETED` | `odontogram` | `payments` |
 | `odontogram.treatment.performed` | `EventType.ODONTOGRAM_TREATMENT_PERFORMED` | `odontogram` | `activity_journal`, `patient_timeline`, `payments`, `periodontogram`, `treatment_consumables`, `treatment_plan` |
-| `odontogram.treatment.status_changed` | `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED` | `odontogram` | — |
+| `odontogram.treatment.status_changed` | `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED` | `odontogram` | `payments` |
 | `orthodontics.case_created` | `EventType.ORTHODONTICS_CASE_CREATED` | `orthodontics` | `patient_timeline` |
 | `orthodontics.case_status_changed` | `EventType.ORTHODONTICS_CASE_STATUS_CHANGED` | `orthodontics` | `patient_timeline` |
 | `orthodontics.control_registered` | `EventType.ORTHODONTICS_CONTROL_REGISTERED` | `orthodontics` | `patient_timeline` |
@@ -248,6 +252,34 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `agenda` — `backend/app/modules/agenda/service.py`
 - **Subscribers:**
   - `schedules`
+
+### `auth.2fa_disabled`
+
+- **Constant:** `EventType.AUTH_2FA_DISABLED`
+- **Publishers:**
+  - `core:core` — `backend/app/core/auth/mfa.py`
+- **Subscribers:** —
+
+### `auth.2fa_enabled`
+
+- **Constant:** `EventType.AUTH_2FA_ENABLED`
+- **Publishers:**
+  - `core:core` — `backend/app/core/auth/mfa.py`
+- **Subscribers:** —
+
+### `auth.2fa_failed`
+
+- **Constant:** `EventType.AUTH_2FA_FAILED`
+- **Publishers:**
+  - `core:core` — `backend/app/core/auth/mfa.py`
+- **Subscribers:** —
+
+### `auth.2fa_reset`
+
+- **Constant:** `EventType.AUTH_2FA_RESET`
+- **Publishers:**
+  - `core:core` — `backend/app/core/auth/mfa.py`
+- **Subscribers:** —
 
 ### `budget.accepted`
 
@@ -791,7 +823,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.ODONTOGRAM_TREATMENT_DELETED`
 - **Publishers:**
   - `odontogram` — `backend/app/modules/odontogram/service.py`
-- **Subscribers:** —
+- **Subscribers:**
+  - `payments`
 
 ### `odontogram.treatment.performed`
 
@@ -811,7 +844,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED`
 - **Publishers:**
   - `odontogram` — `backend/app/modules/odontogram/service.py`
-- **Subscribers:** —
+- **Subscribers:**
+  - `payments`
 
 ### `orthodontics.case_created`
 

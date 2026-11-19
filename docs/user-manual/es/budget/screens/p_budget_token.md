@@ -45,7 +45,7 @@ paciente cuando le pasan el enlace.
 - **Acciones del paciente.** *Aceptar* y *Rechazar* son acciones
   públicas: dejan la firma asociada y publican
   `budget.accepted` / `budget.rejected`. Aceptar genera el PDF
-  firmado y guarda su SHA-256 como huella anti-manipulación.
+  firmado y guarda la huella SHA-256 de ese renderizado.
 - **PDF firmado.** Tras aceptar, el botón *Descargar PDF firmado*
   llama a `GET /pdf/signed` con la cookie. Está limitado a 10
   descargas/minuto por token; cada acceso queda registrado en

@@ -11,13 +11,16 @@ defineProps<{
   active: boolean
   padded?: 'compact' | 'roomy'
   hideLabel?: boolean
+  badge?: number
 }>()
 </script>
 
 <template>
   <NuxtLink
     :to="to"
-    class="group flex items-center gap-3 px-3 rounded-token-md text-ui transition-colors"
+    :aria-label="badge ? `${label} (${badge})` : label"
+    :title="hideLabel ? label : undefined"
+    class="group relative flex items-center gap-3 px-3 rounded-token-md text-ui transition-colors"
     :class="[
       padded === 'roomy' ? 'py-3' : 'py-2',
       active
@@ -34,5 +37,14 @@ defineProps<{
       v-if="!hideLabel"
       class="truncate"
     >{{ label }}</span>
+    <UBadge
+      v-if="badge"
+      :class="hideLabel ? 'absolute -right-1 -top-1' : 'ms-auto'"
+      size="sm"
+      color="primary"
+      variant="soft"
+    >
+      {{ badge > 99 ? '99+' : badge }}
+    </UBadge>
   </NuxtLink>
 </template>

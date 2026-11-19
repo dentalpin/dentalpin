@@ -622,6 +622,9 @@ async def issue_invoice(
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
 
+    if invoice.is_historical:
+        raise HTTPException(status_code=400, detail="Historical invoices cannot be issued")
+
     # Serialize concurrent issue of the same draft (audit S3/C4, #97): lock
     # the row and refresh status, so a second request sees the committed
     # "issued" state and the workflow's draft-only guard rejects it —
@@ -711,6 +714,9 @@ async def send_invoice_email(
     )
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
+
+    if invoice.is_historical:
+        raise HTTPException(status_code=400, detail="Historical invoices cannot be sent")
 
     # Can only send non-draft invoices
     if invoice.status not in ["issued", "partial", "paid"]:
@@ -920,6 +926,8 @@ async def apply_payment_to_invoice(
     )
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
+    if invoice.is_historical:
+        raise HTTPException(status_code=400, detail="Historical invoices cannot receive payments")
     if not InvoiceWorkflowService.can_record_payment(invoice):
         raise HTTPException(
             status_code=400,

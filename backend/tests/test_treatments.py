@@ -764,3 +764,71 @@ async def test_concurrent_performs_publish_once(
             )
         ).scalar_one()
     assert performed_rows == 1
+
+
+async def _performed_crown(client: AsyncClient, auth_headers: dict, setup: dict, tooth: int) -> str:
+    create = await client.post(
+        f"/api/v1/odontogram/patients/{setup['patient_id']}/treatments",
+        headers=auth_headers,
+        json={"catalog_item_id": setup["crown_id"], "tooth_numbers": [tooth], "status": "planned"},
+    )
+    tid = create.json()["data"]["id"]
+    r = await client.patch(
+        f"/api/v1/odontogram/treatments/{tid}/perform", headers=auth_headers, json={}
+    )
+    assert r.status_code == 200, r.text
+    return tid
+
+
+@pytest.mark.asyncio
+async def test_deleting_a_performed_treatment_unbooks_its_revenue(
+    client: AsyncClient, auth_headers: dict, setup: dict, db_session: AsyncSession
+) -> None:
+    """#896: the earned row outlived the treatment, so the patient still owed
+    its price in the ledger and in pending charges."""
+    tid = await _performed_crown(client, auth_headers, setup, 46)
+    assert len(await _earned_rows(db_session, UUID(tid))) == 1
+
+    r = await client.delete(f"/api/v1/odontogram/treatments/{tid}", headers=auth_headers)
+    assert r.status_code == 204, r.text
+
+    assert await _earned_rows(db_session, UUID(tid)) == []
+    pending = await client.get(
+        f"/api/v1/payments/patients/{setup['patient_id']}/pending-charges", headers=auth_headers
+    )
+    assert pending.json()["data"] == []
+
+
+@pytest.mark.asyncio
+async def test_setting_a_performed_treatment_back_to_planned_unbooks_its_revenue(
+    client: AsyncClient, auth_headers: dict, setup: dict, db_session: AsyncSession
+) -> None:
+    """#896: the edit modal can set a performed treatment back to planned."""
+    tid = await _performed_crown(client, auth_headers, setup, 47)
+
+    r = await client.put(
+        f"/api/v1/odontogram/treatments/{tid}", headers=auth_headers, json={"status": "planned"}
+    )
+    assert r.status_code == 200, r.text
+    assert await _earned_rows(db_session, UUID(tid)) == []
+
+    # Performing it again books it again, once.
+    r = await client.patch(
+        f"/api/v1/odontogram/treatments/{tid}/perform", headers=auth_headers, json={}
+    )
+    assert r.status_code == 200, r.text
+    rows = await _earned_rows(db_session, UUID(tid))
+    assert [row.amount for row in rows] == [Decimal("500.00")]
+
+
+@pytest.mark.asyncio
+async def test_other_treatments_keep_their_revenue(
+    client: AsyncClient, auth_headers: dict, setup: dict, db_session: AsyncSession
+) -> None:
+    kept = await _performed_crown(client, auth_headers, setup, 44)
+    removed = await _performed_crown(client, auth_headers, setup, 45)
+
+    r = await client.delete(f"/api/v1/odontogram/treatments/{removed}", headers=auth_headers)
+    assert r.status_code == 204, r.text
+
+    assert len(await _earned_rows(db_session, UUID(kept))) == 1

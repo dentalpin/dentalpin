@@ -49,8 +49,24 @@ Two steps open ready to act: *Clinic details* lands directly on the edit form, a
 
 ## 4. Adding colleagues without email
 
-In *Your team* (or *Settings → People → Users*), create the user and **leave the password empty**. DentalPin shows a one-time **access link** you can **copy** or **send via WhatsApp**. Your colleague opens it, chooses a password and is signed in. The link works once and expires after seven days.
+In *Your team* (or *Settings → People → Users*), create the user and **leave the password empty**. DentalPin shows a one-time **access link** you can **copy** or **send via WhatsApp**. Your colleague opens it, chooses a password, completes two-factor verification if required, and is signed in. The link works once and expires after seven days.
 
 The link icon on any user row generates a new access link — useful when someone forgot their password.
 
-> Treat the link like a password: anyone who has it can sign in to that account until it is used.
+> Treat the link like a password. It grants access to the account’s password setup until it is used.
+
+## Staff two-factor authentication
+
+In **Settings → General → Clinic two-factor authentication**, an administrator
+can make enrollment optional, require it for all staff, or require it for
+selected roles. Staff subject to the policy set up their authenticator the
+next time they sign in.
+
+If enrollment is optional, open **Settings → Account → Profile** to set it
+up. Scan the QR code, enter a six-digit code and save the recovery codes
+before continuing. Sign in with your password and your authenticator or an
+unused recovery code.
+
+To reset another staff member’s factor, use the shield action under
+**Settings → People → Users**. The staff member signs in again and sets up a
+new factor.

@@ -64,10 +64,10 @@ Desde aquí se mueve el presupuesto por todo su flujo
 - **Versionado.** Cada renegociación crea una versión nueva
   enlazada con `parent_budget_id`; el historial se ve desde
   *Historial de versiones*.
-- **Firma y PDF.** Un presupuesto aceptado guarda la firma
-  (BudgetSignature) y un PDF firmado con su SHA-256 como sello
-  anti-manipulación. Hay dos descargas: PDF sin firmar y PDF
-  firmado.
+- **Firma y PDF.** Al aceptar se guarda la firma (`BudgetSignature`)
+  y la huella SHA-256 del PDF generado en ese momento. La descarga
+  del PDF firmado genera un documento nuevo y muestra esa huella.
+  El PDF sin firmar también está disponible.
 - **Crear factura.** Si el presupuesto está *aceptado* y aún tiene
   ítems sin facturar, aparece el botón *Crear factura* que lleva a
   `/invoices/from-budget/{id}`.

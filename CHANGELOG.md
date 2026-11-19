@@ -13,6 +13,8 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Treatments:** deleting a performed treatment, or setting it back to planned, no longer leaves its price owed in the patient's ledger and pending charges (#896).
+- **Treatment plans:** completing the last session works again when the item's treatment was already marked performed on the odontogram. This regressed in #893 (#897).
 - **Treatments:** a sessioned treatment no longer books more revenue than its price. Marking it performed on the odontogram after one of its sessions was completed counted that session twice, and performing an already-performed treatment again booked the full price a second time. A treatment that is already performed now returns 409 (#891).
 - **Purchase orders:** a receipt is only found under its own order's URL (#892).
 

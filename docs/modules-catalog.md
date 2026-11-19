@@ -44,7 +44,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `patients` | 0.1.0 | official | — | auto | no | 2 | 4 | 0 | yes |
 | `patients_clinical` | 0.1.0 | official | patients | auto | no | 4 | 1 | 0 | yes |
 | `payment_gateways` | 0.1.0 | official | patients, budget, payments | manual | yes | 0 | 0 | 0 | no |
-| `payments` | 0.1.0 | official | patients, budget | auto | no | 4 | 3 | 2 | yes |
+| `payments` | 0.1.0 | official | patients, budget | auto | no | 4 | 3 | 4 | yes |
 | `payroll` | 0.1.0 | official | — | manual | yes | 3 | 2 | 0 | yes |
 | `periodontogram` | 0.1.0 | official | patients, odontogram | manual | yes | 2 | 1 | 2 | yes |
 | `prescriptions` | 0.1.0 | official | patients, patients_clinical, medical_reference | manual | yes | 3 | 2 | 0 | yes |
@@ -68,6 +68,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `treatment_plan` | 0.1.0 | official | patients, agenda, odontogram, catalog, budget, media | auto | no | 5 | 13 | 7 | yes |
 | `verifactu` | 0.1.0 | official | billing, catalog | manual | yes | 5 | 1 | 2 | yes |
 | `whatsapp_kapso` | 0.1.0 | community | notifications, patients | manual | yes | 2 | 0 | 0 | yes |
+| `whatsapp_manual` | 0.1.0 | community | notifications, patients, agenda | manual | yes | 3 | 0 | 0 | yes |
 | `whatsapp_webhook` | 0.1.0 | community | notifications | manual | yes | 2 | 0 | 0 | yes |
 
 ## Modules
@@ -891,7 +892,9 @@ Patient-centric collections, allocations to budgets / on-account, refunds, patie
   - `payment.recorded`
   - `payment.refunded`
 - **Events consumed:**
+  - `odontogram.treatment.deleted`
   - `odontogram.treatment.performed`
+  - `odontogram.treatment.status_changed`
   - `treatment_plan.item_session_completed`
 - **Module CLAUDE.md:** [`backend/app/modules/payments/CLAUDE.md`](../backend/app/modules/payments/CLAUDE.md)
 
@@ -1367,6 +1370,24 @@ WhatsApp para notifications vía Kapso (Meta Cloud API).
 - **Events emitted:** —
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/whatsapp_kapso/CLAUDE.md`](../backend/app/modules/whatsapp_kapso/CLAUDE.md)
+
+### `whatsapp_manual` — v0.1.0
+
+Staff-operated WhatsApp delivery from a shared pending tray.
+
+- **Author:** Clínica Dental Araque
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `notifications`, `patients`, `agenda`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `whatsapp_manual.read`
+  - `whatsapp_manual.settings.write`
+  - `whatsapp_manual.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/whatsapp_manual/CLAUDE.md`](../backend/app/modules/whatsapp_manual/CLAUDE.md)
 
 ### `whatsapp_webhook` — v0.1.0
 
