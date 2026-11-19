@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add a clinic-scoped staff access audit for selected patient reads, with
+  per-patient and per-user views, CSV and configurable retention (#888).
+
 - fix(#865): a DSR's `patient_id` must be a patient of the clinic. An unknown id was a 500, and another clinic's patient was stored and published in `gdpr.request.created`. `create_request` now returns `None` first, as consents and erasure already did: 404 on the route, `{"error": "patient not found"}` in `create_gdpr_request`. A DSR without a patient is still accepted.
 
 - fix(#779): the retention window is measured from the clinic's day, not the server's UTC day.

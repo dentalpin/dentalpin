@@ -792,6 +792,7 @@ class TreatmentService:
                     else None,
                     "changed_by": str(user_id),
                 },
+                db=db,
             )
 
         if notes is not None:
@@ -822,6 +823,7 @@ class TreatmentService:
         user_id: UUID,
         notes: str | None = None,
         publish_price: bool = True,
+        refuse_if_performed: bool = True,
     ) -> Treatment | None:
         # Lock the row and read the status as a column, not off a possibly
         # stale identity-map instance: two concurrent requests must not both
@@ -842,7 +844,7 @@ class TreatmentService:
         treatment = await TreatmentService.get_treatment(db, clinic_id, treatment_id)
         if not treatment:
             return None
-        if current_status == TreatmentStatus.PERFORMED.value:
+        if refuse_if_performed and current_status == TreatmentStatus.PERFORMED.value:
             # A second ``performed`` event re-books revenue and stock, and the
             # write would overwrite who performed it and when (#891).
             raise TreatmentAlreadyPerformedError("Treatment is already performed")
@@ -913,7 +915,10 @@ class TreatmentService:
             "budget_item_id": str(treatment.budget_item_id) if treatment.budget_item_id else None,
             "deleted_by": str(user_id),
         }
+        event_data["old_status"] = treatment.status
         treatment.deleted_at = datetime.now(UTC)
         await db.flush()
-        await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_DELETED, event_data)
+        # Transactional: payments un-books the treatment's earned row in this
+        # same transaction (#896).
+        await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_DELETED, event_data, db=db)
         return True

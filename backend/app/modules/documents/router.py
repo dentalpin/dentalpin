@@ -19,6 +19,7 @@ from app.core.auth.dependencies import (
     get_clinic_context,
     require_permission,
 )
+from app.core.patient_access import RecordPatientAccess
 from app.core.pdf_locales import PDF_LOCALE_PATTERN
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
@@ -91,6 +92,7 @@ async def list_documents(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("documents.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     patient_id: uuid.UUID | None = Query(default=None),
     document_type: str | None = Query(default=None),
     status: str | None = Query(default=None),
@@ -107,6 +109,8 @@ async def list_documents(
         page=page,
         page_size=page_size,
     )
+    if patient_id is not None and items:
+        await record_access(patient_id, "documents")
     return PaginatedApiResponse(
         data=[DocumentResponse.model_validate(i) for i in items],
         total=total,
@@ -124,11 +128,13 @@ async def get_document(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("documents.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[DocumentResponse]:
     """Get a single document."""
     doc = await service.DocumentService.get_document(db, ctx.clinic_id, document_id)
     if doc is None:
         raise HTTPException(status_code=404, detail="Document not found")
+    await record_access(doc.patient_id, "documents")
     return ApiResponse(data=DocumentResponse.model_validate(doc))
 
 
@@ -141,6 +147,7 @@ async def download_document(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("documents.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> Response:
     """Download a generated document as branded PDF.
 
@@ -165,6 +172,7 @@ async def download_document(
         )
 
     filename = f"{doc.document_type}_{str(doc.id)[:8]}.pdf"
+    await record_access(doc.patient_id, "document_pdf", action="download")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",

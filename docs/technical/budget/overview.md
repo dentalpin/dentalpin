@@ -11,6 +11,11 @@ Auto-discovered facts about the `budget` module. See the module's
 own notes at `backend/app/modules/budget/CLAUDE.md` for context
 the scaffold could not infer.
 
+## Frontend acceptance
+
+The budget detail page owns its inline accept/reject form; the public
+budget page uses the shared signature canvas.
+
 ## API surface
 
 - `DELETE /api/v1/budget/budgets/{budget_id}`

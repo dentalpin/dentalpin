@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- feat(#877): mark invoices created by the fiscal document mapper as historical while keeping their original dates and totals.
+
 - fix(debt): preserve imported descriptions and tag explicitly marked opening balances in the patient ledger, including credits from negative amounts.
 
 - fix(fiscal_document_line): link imported invoice lines directly to the treatment catalog, with a warning and applied-treatment fallback for unmapped references.

@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.email import EmailResult, email_service
 from app.core.i18n_names import catalog_name
+from app.core.utils.dates import clinic_zone
 
 from .channels import Channel, channel_registry
 from .models import (
@@ -735,6 +736,20 @@ class NotificationService:
         )
 
         return await email_service.send(message)
+
+
+def appointment_when_context(start_time: datetime, clinic) -> dict[str, str]:
+    """``appointment_date`` / ``appointment_time`` on the clinic's wall clock.
+
+    ``Appointment.start_time`` is stored in UTC; formatting it as stored told a
+    Madrid patient booked for 10:00 to come at 09:00. ``clinic`` may be None
+    (UTC then, the same fallback as ``clinic_zone``).
+    """
+    local = start_time.astimezone(clinic_zone(clinic.timezone if clinic else None))
+    return {
+        "appointment_date": local.strftime("%d/%m/%Y"),
+        "appointment_time": local.strftime("%H:%M"),
+    }
 
 
 async def budget_treatments_context(db: AsyncSession, budget_id: UUID) -> list[dict]:

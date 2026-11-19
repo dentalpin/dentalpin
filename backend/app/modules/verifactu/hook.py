@@ -654,6 +654,8 @@ class VerifactuHook(BillingComplianceHook):
         return {}
 
     def enhance_pdf_data(self, pdf_data: dict, invoice) -> dict:
+        if getattr(invoice, "is_historical", False):
+            return pdf_data
         cd = (invoice.compliance_data or {}).get("ES") or {}
         if cd.get("qr_url"):
             pdf_data = dict(pdf_data)
@@ -675,6 +677,8 @@ class VerifactuHook(BillingComplianceHook):
     async def _build_record(
         self, invoice, db: AsyncSession, *, is_credit_note: bool
     ) -> dict[str, Any]:
+        if getattr(invoice, "is_historical", False):
+            return {}
         settings = await _get_or_create_settings(db, invoice.clinic_id)
         if not settings.enabled:
             return {}

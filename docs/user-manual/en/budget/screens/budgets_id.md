@@ -61,10 +61,10 @@ signed, invoiced, or renegotiated.
 - **Status chip** in the header. Available actions depend on it.
 - **Versioning.** Each renegotiation creates a new version linked
   via `parent_budget_id`; history is shown under *Version history*.
-- **Signature and PDFs.** An accepted budget stores a
-  `BudgetSignature` plus a signed PDF whose SHA-256 is kept as a
-  tamper-evident hash. Two downloads exist: unsigned PDF and
-  signed PDF.
+- **Signature and PDFs.** Acceptance stores a `BudgetSignature` and
+  the SHA-256 fingerprint of the PDF rendered at acceptance. The
+  signed download renders a fresh PDF and displays that fingerprint.
+  The unsigned PDF is also available.
 - **Create invoice.** When the budget is *accepted* and still has
   uninvoiced items, a *Create invoice* button appears and takes you
   to `/invoices/from-budget/{id}`.
@@ -103,9 +103,8 @@ signed, invoiced, or renegotiated.
 1. **Accept (online)** — used when the patient accepts via the
    public link. Creates a `BudgetSignature` and a signed PDF.
    Publishes `budget.accepted`.
-2. **Accept in clinic** — button only visible with the matching
-   permission. Opens the tablet signature modal (drawn signature).
-   Same result as the online acceptance.
+2. The budget detail page includes an acceptance or rejection form
+   with the signer’s name and relationship to the patient.
 3. **Reject** — records a reason and publishes `budget.rejected`.
 
 ## Renegotiate

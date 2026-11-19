@@ -39,6 +39,9 @@ class Clinic(Base, TimestampMixin):
     # that renders money — budgets, invoices, catalog, reports.
     currency: Mapped[str] = mapped_column(String(3), nullable=False, server_default="EUR")
     settings: Mapped[dict] = mapped_column(JSONB, default=dict)
+    mfa_policy: Mapped[dict] = mapped_column(
+        JSONB, default=dict, server_default=text("'{}'::jsonb")
+    )
 
     # Relationships
     memberships: Mapped[list["ClinicMembership"]] = relationship(
@@ -66,6 +69,9 @@ class User(Base, TimestampMixin):
     professional_id: Mapped[str | None] = mapped_column(String(50))  # Colegiado number
     is_active: Mapped[bool] = mapped_column(default=True)
     token_version: Mapped[int] = mapped_column(default=0)  # For token revocation
+    mfa_failed_attempts: Mapped[int] = mapped_column(default=0, server_default="0")
+    mfa_locked_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    mfa_reenroll_required: Mapped[bool] = mapped_column(default=False, server_default=text("false"))
 
     # Relationships
     memberships: Mapped[list["ClinicMembership"]] = relationship(
@@ -238,3 +244,48 @@ class RefreshToken(Base):
     replaced_by: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True), default=None)
     user_agent_hash: Mapped[str | None] = mapped_column(String(64), default=None)
     last_ip: Mapped[str | None] = mapped_column(String(64), default=None)
+
+
+class UserMfaTotp(Base):
+    __tablename__ = "auth_mfa_totp"
+
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    secret_encrypted: Mapped[str] = mapped_column(Text)
+    last_counter: Mapped[int] = mapped_column()
+    confirmed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+class UserMfaRecoveryCode(Base):
+    __tablename__ = "auth_mfa_recovery_codes"
+
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    code_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+
+
+class UserMfaChallenge(Base):
+    __tablename__ = "auth_mfa_challenges"
+
+    user_id: Mapped[UUID] = mapped_column(
+        ForeignKey("users.id", ondelete="CASCADE"), primary_key=True
+    )
+    token_hash: Mapped[str] = mapped_column(String(64), unique=True)
+    purpose: Mapped[str] = mapped_column(String(16))
+    token_version: Mapped[int]
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    secret_encrypted: Mapped[str | None] = mapped_column(Text)
+
+
+class MfaAuditEntry(Base):
+    # Keep recovery history even when a user or clinic is deleted.
+    __tablename__ = "auth_mfa_audit"
+
+    id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), default=uuid4, primary_key=True)
+    event: Mapped[str] = mapped_column(String(32))
+    user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), index=True)
+    actor_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True))
+    clinic_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))

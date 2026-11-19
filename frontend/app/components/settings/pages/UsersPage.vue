@@ -4,6 +4,7 @@ import type { ClinicUser } from '~/composables/useUsers'
 
 const { t, locale } = useI18n()
 const auth = useAuth()
+const toast = useToast()
 const { isAdmin } = usePermissions()
 const { users, isLoading, availableRoles, fetchUsers, createInviteLink, updateUser, deleteUser } = useUsers()
 
@@ -39,6 +40,32 @@ const showCreate = ref(false)
 // Admin-issued access link (new accounts without password, or a reset).
 const invite = ref<{ user: ClinicUser, url: string, expiresAt: string } | null>(null)
 const inviteCopied = ref(false)
+const { request: mfaRequest, message: mfaMessage } = useMfa()
+const { currentClinic } = useClinicState()
+const mfaReset = ref<ClinicUser>()
+const resettingMfa = ref(false)
+const mfaResetError = ref('')
+
+function openMfaReset(user: ClinicUser) {
+  mfaReset.value = user
+  mfaResetError.value = ''
+}
+
+async function resetMfa() {
+  if (!mfaReset.value) return
+  resettingMfa.value = true
+  mfaResetError.value = ''
+  try {
+    await mfaRequest(`mfa/users/${mfaReset.value.id}`, 'DELETE', undefined, currentClinic.value?.id)
+    mfaReset.value = undefined
+    toast.add({ title: t('mfa.resetDone'), color: 'success' })
+  } catch (cause) {
+    mfaResetError.value = mfaMessage(cause)
+  } finally {
+    resettingMfa.value = false
+  }
+}
+
 async function openInvite(user: ClinicUser) {
   const link = await createInviteLink(user.id)
   if (link) {
@@ -302,6 +329,16 @@ async function handleDelete() {
             @click="openEdit(user)"
           />
           <UButton
+            v-if="isAdmin && !isCurrentUser(user.id)"
+            icon="i-lucide-shield-off"
+            size="xs"
+            variant="ghost"
+            color="neutral"
+            :aria-label="t('mfa.reset')"
+            :title="t('mfa.reset')"
+            @click="openMfaReset(user)"
+          />
+          <UButton
             v-if="!isCurrentUser(user.id)"
             icon="i-lucide-trash-2"
             size="xs"
@@ -473,6 +510,41 @@ async function handleDelete() {
             </div>
           </form>
         </UCard>
+      </template>
+    </UModal>
+
+    <UModal
+      :open="!!mfaReset"
+      :title="t('mfa.reset')"
+      :dismissible="!resettingMfa"
+      @update:open="value => { if (!value) mfaReset = undefined }"
+    >
+      <template #body>
+        <p>{{ t('mfa.resetConfirm', { name: mfaReset?.email ?? '' }) }}</p>
+        <p
+          v-if="mfaResetError"
+          class="mt-3 text-sm text-error"
+          role="alert"
+        >
+          {{ mfaResetError }}
+        </p>
+      </template>
+      <template #footer>
+        <UButton
+          color="neutral"
+          variant="ghost"
+          :disabled="resettingMfa"
+          @click="mfaReset = undefined"
+        >
+          {{ t('common.cancel') }}
+        </UButton>
+        <UButton
+          color="error"
+          :loading="resettingMfa"
+          @click="resetMfa"
+        >
+          {{ t('mfa.reset') }}
+        </UButton>
       </template>
     </UModal>
 

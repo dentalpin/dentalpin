@@ -62,10 +62,9 @@ class BudgetPDFService:
                 replaces the empty patient signature line with the
                 captured PNG (for ``signature_method='drawn'``) and
                 appends an audit footer with signer name, date,
-                channel and document hash. ``generate_pdf_hash`` should
-                be called on the resulting bytes by the caller and
-                persisted on ``BudgetSignature.document_hash`` for
-                tamper detection.
+                channel and document hash. At acceptance, the caller
+                hashes this rendering and stores the fingerprint on
+                ``BudgetSignature.document_hash``.
 
         Returns:
             PDF content as bytes
@@ -453,6 +452,7 @@ class BudgetPDFService:
                 }}
 
                 .signature-section {{
+                    break-inside: avoid;
                     margin-top: 40px;
                     padding-top: 20px;
                 }}
@@ -501,9 +501,18 @@ class BudgetPDFService:
                     padding-top: 10px;
                 }}
 
+                @page {{
+                    margin: 20mm 20mm 28mm;
+                }}
+
                 @media print {{
                     body {{ padding: 0; }}
-                    .footer {{ position: fixed; }}
+                    /* Position the fixed footer in the reserved page margin. */
+                    .footer {{
+                        bottom: -13mm;
+                        left: 0;
+                        right: 0;
+                    }}
                 }}
             </style>
         </head>

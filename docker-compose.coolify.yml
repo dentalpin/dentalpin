@@ -23,6 +23,8 @@ services:
       SERVICE_FQDN_BACKEND_8000: ${BACKEND_FQDN}
       DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER:-dental}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:-dental_clinic}
       SECRET_KEY: ${SECRET_KEY}
+      MFA_ENCRYPTION_KEY: ${MFA_ENCRYPTION_KEY:-}
+      MFA_PREVIOUS_ENCRYPTION_KEY: ${MFA_PREVIOUS_ENCRYPTION_KEY:-}
       # Required in production since #538 (the backend refuses to boot
       # without it): generate with `openssl rand -hex 32` and store it in
       # Coolify alongside SECRET_KEY.

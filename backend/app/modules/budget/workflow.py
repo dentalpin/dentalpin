@@ -10,12 +10,13 @@ import bcrypt
 from sqlalchemy import delete, func, select, text
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.auth.models import Clinic
 from app.core.events import EventType, event_bus
 from app.core.utils.dates import clinic_today_for
 
 from .models import Budget, BudgetAccessLog, BudgetSignature
 from .pricing import allocate_global_discount, net_line_amount
-from .service import BudgetHistoryService
+from .service import BudgetHistoryService, BudgetService
 
 logger = logging.getLogger(__name__)
 
@@ -266,43 +267,22 @@ class BudgetWorkflowService:
 
         await db.flush()
 
-        # Render the signed PDF once and persist its SHA-256 hash on
-        # the signature row. Lets compliance tooling later detect any
-        # tampering with stored / re-rendered PDFs. Best-effort:
-        # WeasyPrint failures (e.g. missing system fonts in dev) must
-        # not block the acceptance — log and continue.
+        # Store the fingerprint of the PDF rendered at acceptance. Downloads
+        # are rendered separately. Rendering failures must not block acceptance.
         try:
             from .pdf import BudgetPDFService
 
-            clinic_row = await db.execute(
-                text(
-                    "SELECT id, name, address, phone, email, settings, "
-                    "tax_id, legal_name FROM clinics WHERE id = :id"
-                ),
-                {"id": budget.clinic_id},
-            )
-            clinic = clinic_row.first()
+            clinic = await db.get(Clinic, budget.clinic_id)
             if clinic is not None:
                 clinic_settings = (
                     clinic.settings if isinstance(clinic.settings, dict) else {}
                 ) or {}
                 locale = str(clinic_settings.get("communication_language") or "es")
-                # Re-fetch budget with items eagerly loaded for the PDF.
-                from sqlalchemy.orm import selectinload
-
-                from .models import Budget as _Budget
-
-                hydrated = (
-                    await db.execute(
-                        select(_Budget)
-                        .options(selectinload(_Budget.items))
-                        .where(_Budget.id == budget.id)
-                    )
-                ).scalar_one_or_none()
+                hydrated = await BudgetService.get_budget(db, budget.clinic_id, budget.id)
                 if hydrated is not None:
                     pdf_bytes = await BudgetPDFService.generate_pdf(
                         hydrated,
-                        clinic,  # type: ignore[arg-type]
+                        clinic,
                         is_preview=False,
                         locale=locale,
                         signature=signature,

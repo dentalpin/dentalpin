@@ -4,6 +4,8 @@
 
 - fix(#910): the history timeline groups changes by the clinic's calendar day, and `GET …/odontogram/at` returns the chart as it stood at the end of that day on the clinic's clock. Both used the UTC day, so evening work in a UTC-6 clinic was listed under the next day and missing from its own day's chart.
 
+- fix(#896): `odontogram.treatment.deleted` and `odontogram.treatment.status_changed` are published transactionally, so payments can un-book a treatment that is deleted or set back from performed. The deleted payload now carries `old_status`.
+- fix(#897): `TreatmentService.perform` takes `refuse_if_performed` (default `True`). The #891 guard also blocked treatment_plan from finalizing an item whose treatment had already been marked performed.
 - fix(#891): `PATCH /treatments/{id}/perform` returns 409 for a treatment that is already performed, and locks the row so two concurrent requests can't both perform it. A second perform published `performed` again: it booked the full price on top of the sessions that had already booked it, overwrote who performed it and when, and added a second timeline entry.
 - fix: picking a date on the clinical History tab now redraws the chart as it was on that date. `HistoryMode` kept the selected date in its own state, and the chart below it loaded today's treatments, so every date showed the current chart, including treatments added later. `OdontogramChart` takes an `atDate` prop, and `HistoryMode` passes the selected date.
 - fix: the "Continue plan" dropdown on the diagnosis banner rendered empty.

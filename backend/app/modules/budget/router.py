@@ -13,6 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
 from app.core.events import event_bus
 from app.core.events.types import EventType
+from app.core.patient_access import RecordPatientAccess
 from app.core.pdf_locales import PDF_LOCALE_PATTERN
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
@@ -774,6 +775,7 @@ async def download_budget_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("budget.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Download budget as PDF."""
@@ -795,6 +797,7 @@ async def download_budget_pdf(
 
     filename = f"presupuesto_{budget.budget_number}_v{budget.version}.pdf"
 
+    await record_access(budget.patient_id, "budget_pdf", action="download")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
@@ -808,6 +811,7 @@ async def download_signed_budget_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("budget.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Download the signed PDF for an accepted budget.
@@ -848,6 +852,7 @@ async def download_signed_budget_pdf(
     )
 
     filename = f"presupuesto_{budget.budget_number}_v{budget.version}_firmado.pdf"
+    await record_access(budget.patient_id, "signed_budget_pdf", action="download")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
@@ -901,6 +906,7 @@ async def preview_budget_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("budget.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Preview budget PDF (with watermark for drafts)."""
@@ -920,6 +926,7 @@ async def preview_budget_pdf(
         locale=locale,
     )
 
+    await record_access(budget.patient_id, "budget_pdf")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",

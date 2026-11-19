@@ -109,3 +109,7 @@ None.
 ## CHANGELOG
 
 See `./CHANGELOG.md`.
+
+For optional patient-detail tabs, register a `patient.detail.tabs` entry
+with a `labelKey` and permission. The host passes `{ patientId }` to the
+registered component.

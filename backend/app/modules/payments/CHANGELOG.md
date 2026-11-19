@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#909): `summary`, `refunds_report`, `trends` and `by_professional` cut refunds and earned revenue on the clinic's calendar days (`clinic_day_range`), like `payment_date`. They used UTC midnights, so a refund at 20:00 in a UTC-6 clinic was missing from that day's report and counted on the next day (or month).
+- fix(#896): a treatment that is deleted, or set back from performed, loses its NULL-session earned row. The patient was left owing its price in the ledger and in pending charges. Per-session rows stay.
+
 - fix(#891): the NULL-session earned row (`odontogram.treatment.performed`) books the price minus what the treatment's sessions already booked. Performing a sessioned treatment on the odontogram after a session was completed booked that session twice (an 800 crown earned 1000).
 
 - fix(#779): aging-receivable buckets count days from the clinic's day, not the server's UTC day.

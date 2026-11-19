@@ -76,6 +76,8 @@ returning. Enforced by tests in `tests/test_module_tools.py`.
 | Event | Handler | Effect |
 |---|---|---|
 | `odontogram.treatment.performed` | `on_treatment_performed` | Upsert `PatientEarnedEntry` (single-session row, `source_session_id=NULL`) |
+| `odontogram.treatment.deleted` | `on_treatment_deleted` | Delete the treatment's NULL-session row (#896). Session rows stay. |
+| `odontogram.treatment.status_changed` | `on_treatment_status_changed` | Same, when `old_status` is `performed` and `new_status` isn't (#896). |
 | `treatment_plan.item_session_completed` | `on_session_completed` | Upsert per-session `PatientEarnedEntry` keyed on `(treatment_id, source_session_id)`. Replaces the legacy `treatment_plan.treatment_completed` subscription since the multi-session feature — see ADR/changelog. |
 
 Both handlers require `unit_price`/`price_snapshot` in the payload. If
@@ -171,6 +173,10 @@ the public endpoints.
   allocated to a **budget** *is* mirrored onto that budget's invoices by
   billing (transactional `payment.allocated` subscriber) — that is
   billing's concern, this module only publishes.
+- **Report windows on timestamps use the clinic's days.** `payment_date`
+  is a local date; `refunded_at` / `performed_at` are instants. Filter them
+  with `_clinic_day_range` (`>= start`, `< end`), and bucket with
+  `.astimezone(zone).date()` — never UTC midnights (#909).
 - **`Clinic.currency` snapshot.** Payments capture the clinic currency
   at write time. If a clinic ever switches currency, historical
   payments stay in the old one (correct behaviour).

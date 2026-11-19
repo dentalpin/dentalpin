@@ -9,9 +9,11 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.patient_access import RecordPatientAccess
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
+from .access_log import router as access_log_router
 from .schemas import (
     BreachStatus,
     ConsentCreate,
@@ -44,6 +46,7 @@ from .service import (
 )
 
 router = APIRouter()
+router.include_router(access_log_router)
 
 
 # ---------------------------------------------------------------------------
@@ -354,10 +357,12 @@ async def export_patient_data(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("gdpr.requests.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[ExportResponse]:
     data = await ExportService.export(db, ctx.clinic_id, patient_id)
     if not data:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
+    await record_access(patient_id, "patient_export", action="export")
     return ApiResponse(
         data=ExportResponse(
             patient_id=patient_id,

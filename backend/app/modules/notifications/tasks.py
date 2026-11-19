@@ -12,6 +12,7 @@ from fastapi import HTTPException
 from sqlalchemy import and_, select
 
 from app.database import async_session_maker
+from app.modules.notifications.service import appointment_when_context
 
 logger = logging.getLogger(__name__)
 
@@ -163,8 +164,7 @@ async def process_appointment_reminders() -> None:
                     context = {
                         "patient_name": f"{patient.first_name} {patient.last_name}",
                         "appointment_start_at": appointment.start_time.isoformat(),
-                        "appointment_date": appointment.start_time.strftime("%d/%m/%Y"),
-                        "appointment_time": appointment.start_time.strftime("%H:%M"),
+                        **appointment_when_context(appointment.start_time, clinic),
                         "professional_name": professional_name,
                         "clinic_name": clinic.name if clinic else "DentalPin",
                         "clinic_phone": clinic.phone if clinic else None,
@@ -267,8 +267,7 @@ async def send_single_reminder(appointment_id: UUID, clinic_id: UUID) -> bool:
             context = {
                 "patient_name": f"{patient.first_name} {patient.last_name}",
                 "appointment_start_at": appointment.start_time.isoformat(),
-                "appointment_date": appointment.start_time.strftime("%d/%m/%Y"),
-                "appointment_time": appointment.start_time.strftime("%H:%M"),
+                **appointment_when_context(appointment.start_time, clinic),
                 "professional_name": professional_name,
                 "clinic_name": clinic.name if clinic else "DentalPin",
                 "clinic_phone": clinic.phone if clinic else None,
