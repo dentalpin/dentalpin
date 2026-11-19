@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#918): the budget list's date filter selects budgets by the clinic's calendar day (`clinic_day_range`). It compared `created_at` with naive midnights, read as UTC, so a budget created in the evening in a UTC-6 clinic was filed under the next day.
+
 - Remove the unused `AcceptInClinicModal` component; budget detail retains its existing inline acceptance form.
 - fix: persist the document fingerprint at budget acceptance using the clinic's timezone and currency, and reserve space below the signature block for the repeated PDF footer.
 
