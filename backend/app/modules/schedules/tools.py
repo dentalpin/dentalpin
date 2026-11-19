@@ -13,8 +13,8 @@ appointments from those windows and returns discrete bookable slots
 
 from __future__ import annotations
 
-from datetime import UTC, datetime, time, timedelta
 from datetime import date as date_cls
+from datetime import datetime, timedelta
 from typing import Literal
 from uuid import UUID
 from zoneinfo import ZoneInfo
@@ -22,7 +22,7 @@ from zoneinfo import ZoneInfo
 from pydantic import BaseModel, Field
 
 from app.core.agents import AgentContext, Tool, ToolCategory
-from app.core.utils.dates import clinic_today_for
+from app.core.utils.dates import clinic_day_range, clinic_today_for
 from app.modules.agenda.service import AppointmentService
 
 from .services.availability import AvailabilityService
@@ -98,11 +98,14 @@ async def _find_free_slots(ctx: AgentContext, params: FreeSlotsArgs) -> dict:
     if not open_ranges:
         return {"professional_id": params.professional_id, "free_windows": []}
 
+    # The open ranges are on the clinic's clock; fetch bookings over the same
+    # days, not UTC ones, or the last day's evening is never seen (#921).
+    fetch_from, fetch_to = clinic_day_range(ZoneInfo(tz_name), start_day, end_day)
     appts, _ = await AppointmentService.list_appointments(
         ctx.db,
         ctx.clinic_id,
-        start_date=datetime.combine(start_day, time.min, tzinfo=UTC),
-        end_date=datetime.combine(end_day, time.max, tzinfo=UTC),
+        start_date=fetch_from,
+        end_date=fetch_to,
         professional_id=params.professional_id,
         page_size=500,
     )
