@@ -65,9 +65,6 @@ class IntegrationsModule(BaseModule):
     def get_router(self) -> APIRouter:
         return router
 
-    def get_tools(self) -> list:
-        return []
-
     def get_scheduled_jobs(self) -> list[ScheduledJob]:
         from .tasks import dispatch_outbox
 
