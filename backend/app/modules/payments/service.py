@@ -23,7 +23,7 @@ from sqlalchemy.orm import joinedload, selectinload
 from app.core.auth.models import User
 from app.core.i18n_names import catalog_name
 from app.core.list_query import parse_sort
-from app.core.utils.dates import clinic_today_for
+from app.core.utils.dates import clinic_day_range, clinic_today_for, clinic_zone_for
 from app.modules.budget.models import Budget
 
 from .models import (
@@ -689,6 +689,13 @@ class LedgerService:
 # --- Reports ----------------------------------------------------------
 
 
+async def _clinic_day_range(
+    db: AsyncSession, clinic_id: UUID, date_from: date, date_to: date
+) -> tuple[datetime, datetime]:
+    """Report window over a timestamp column, on the clinic's calendar days."""
+    return clinic_day_range(await clinic_zone_for(db, clinic_id), date_from, date_to)
+
+
 class PaymentReportsService:
     """Clinic-wide payment reports.
 
@@ -706,6 +713,9 @@ class PaymentReportsService:
         date_from: date,
         date_to: date,
     ) -> PaymentsSummary:
+        # Refunds are instants; cut them on the clinic's days like payment_date.
+        dt_from, dt_to = await _clinic_day_range(db, clinic_id, date_from, date_to)
+
         # Collected (gross)
         result = await db.execute(
             select(
@@ -726,8 +736,8 @@ class PaymentReportsService:
                 func.count(Refund.id),
             ).where(
                 Refund.clinic_id == clinic_id,
-                Refund.refunded_at >= datetime.combine(date_from, datetime.min.time(), tzinfo=UTC),
-                Refund.refunded_at <= datetime.combine(date_to, datetime.max.time(), tzinfo=UTC),
+                Refund.refunded_at >= dt_from,
+                Refund.refunded_at < dt_to,
             )
         )
         total_refunded, refund_count = result.one()
@@ -836,6 +846,7 @@ class PaymentReportsService:
         date_to: date,
     ) -> list[ProfessionalBreakdown]:
         """Earned breakdown by professional (using earned ledger)."""
+        dt_from, dt_to = await _clinic_day_range(db, clinic_id, date_from, date_to)
         result = await db.execute(
             select(
                 PatientEarnedEntry.professional_id,
@@ -844,10 +855,8 @@ class PaymentReportsService:
             )
             .where(
                 PatientEarnedEntry.clinic_id == clinic_id,
-                PatientEarnedEntry.performed_at
-                >= datetime.combine(date_from, datetime.min.time(), tzinfo=UTC),
-                PatientEarnedEntry.performed_at
-                <= datetime.combine(date_to, datetime.max.time(), tzinfo=UTC),
+                PatientEarnedEntry.performed_at >= dt_from,
+                PatientEarnedEntry.performed_at < dt_to,
             )
             .group_by(PatientEarnedEntry.professional_id)
         )
@@ -962,8 +971,7 @@ class PaymentReportsService:
         date_from: date,
         date_to: date,
     ) -> RefundsReport:
-        dt_from = datetime.combine(date_from, datetime.min.time(), tzinfo=UTC)
-        dt_to = datetime.combine(date_to, datetime.max.time(), tzinfo=UTC)
+        dt_from, dt_to = await _clinic_day_range(db, clinic_id, date_from, date_to)
 
         # By reason
         by_reason_rows = await db.execute(
@@ -975,7 +983,7 @@ class PaymentReportsService:
             .where(
                 Refund.clinic_id == clinic_id,
                 Refund.refunded_at >= dt_from,
-                Refund.refunded_at <= dt_to,
+                Refund.refunded_at < dt_to,
             )
             .group_by(Refund.reason_code)
             .order_by(desc(func.sum(Refund.amount)))
@@ -995,7 +1003,7 @@ class PaymentReportsService:
             .where(
                 Refund.clinic_id == clinic_id,
                 Refund.refunded_at >= dt_from,
-                Refund.refunded_at <= dt_to,
+                Refund.refunded_at < dt_to,
             )
             .group_by(Refund.method)
         )
@@ -1038,6 +1046,8 @@ class PaymentReportsService:
     ) -> PaymentsTrends:
         # Compute bucket starts in Python from raw rows; portable across
         # SQL dialects and avoids dialect-specific date_trunc usage.
+        zone = await clinic_zone_for(db, clinic_id)
+        dt_from, dt_to = clinic_day_range(zone, date_from, date_to)
         coll_rows = await db.execute(
             select(Payment.payment_date, Payment.amount).where(
                 Payment.clinic_id == clinic_id,
@@ -1048,8 +1058,8 @@ class PaymentReportsService:
         refunds_rows = await db.execute(
             select(Refund.refunded_at, Refund.amount).where(
                 Refund.clinic_id == clinic_id,
-                Refund.refunded_at >= datetime.combine(date_from, datetime.min.time(), tzinfo=UTC),
-                Refund.refunded_at <= datetime.combine(date_to, datetime.max.time(), tzinfo=UTC),
+                Refund.refunded_at >= dt_from,
+                Refund.refunded_at < dt_to,
             )
         )
 
@@ -1070,7 +1080,7 @@ class PaymentReportsService:
         for dt, amount in coll_rows.all():
             agg[bucket(dt)]["collected"] += amount
         for refunded_at, amount in refunds_rows.all():
-            agg[bucket(refunded_at.date())]["refunded"] += amount
+            agg[bucket(refunded_at.astimezone(zone).date())]["refunded"] += amount
 
         points = [
             TrendPoint(
