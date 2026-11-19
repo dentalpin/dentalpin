@@ -23,7 +23,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .service import budget_treatments_context
+from .service import appointment_when_context, budget_treatments_context
 
 logger = logging.getLogger(__name__)
 
@@ -145,8 +145,7 @@ class NotificationHandlers:
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "appointment_id": str(appointment.id),
                     "appointment_start_at": appointment.start_time.isoformat(),
-                    "appointment_date": appointment.start_time.strftime("%d/%m/%Y"),
-                    "appointment_time": appointment.start_time.strftime("%H:%M"),
+                    **appointment_when_context(appointment.start_time, clinic),
                     "professional_name": professional_name,
                     "clinic_name": clinic.name if clinic else "DentalPin",
                     "clinic_phone": clinic.phone if clinic else None,
@@ -232,8 +231,7 @@ class NotificationHandlers:
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "appointment_id": str(appointment.id),
                     "appointment_start_at": appointment.start_time.isoformat(),
-                    "appointment_date": appointment.start_time.strftime("%d/%m/%Y"),
-                    "appointment_time": appointment.start_time.strftime("%H:%M"),
+                    **appointment_when_context(appointment.start_time, clinic),
                     "professional_name": professional_name,
                     "cancellation_reason": cancellation_reason,
                     "clinic_name": clinic.name if clinic else "DentalPin",

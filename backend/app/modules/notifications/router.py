@@ -37,7 +37,7 @@ from .schemas import (
     TestEmailRequest,
     TestEmailResponse,
 )
-from .service import NotificationService, budget_treatments_context
+from .service import NotificationService, appointment_when_context, budget_treatments_context
 
 router = APIRouter()
 
@@ -480,8 +480,7 @@ async def send_notification(
 
         context["appointment_id"] = str(appointment.id)
         context["appointment_start_at"] = appointment.start_time.isoformat()
-        context["appointment_date"] = appointment.start_time.strftime("%d/%m/%Y")
-        context["appointment_time"] = appointment.start_time.strftime("%H:%M")
+        context.update(appointment_when_context(appointment.start_time, clinic))
 
         # Get professional
         if appointment.professional_id:
