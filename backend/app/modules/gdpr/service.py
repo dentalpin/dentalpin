@@ -192,42 +192,58 @@ class ConsentService:
         ).scalar_one_or_none()
         if patient is None:
             return None
-        now = datetime.now(UTC)
-        row = PatientConsent(
-            clinic_id=clinic_id,
-            patient_id=payload.patient_id,
-            purpose=ConsentService.normalize_purpose(payload.purpose),
+        row = await ConsentService.append_event(
+            db,
+            clinic_id,
+            payload.patient_id,
+            payload.purpose,
             granted=payload.granted,
             provided_text=payload.provided_text,
-            granted_at=now if payload.granted else None,
-            withdrawn_at=None if payload.granted else now,
+            effective_at=datetime.now(UTC),
         )
-        db.add(row)
         await db.commit()
         await db.refresh(row)
-        if payload.granted:
-            await event_bus.publish(
-                EventType.GDPR_CONSENT_GRANTED,
-                {
-                    "clinic_id": str(clinic_id),
-                    "consent_id": str(row.id),
-                    "patient_id": str(payload.patient_id),
-                    "purpose": row.purpose,
-                },
-                db=db,
-            )
-        else:
-            await event_bus.publish(
-                EventType.GDPR_CONSENT_WITHDRAWN,
-                {
-                    "clinic_id": str(clinic_id),
-                    "consent_id": str(row.id),
-                    "patient_id": str(payload.patient_id),
-                    "purpose": row.purpose,
-                },
-                db=db,
-            )
+        await ConsentService.publish_event(db, row)
         return row
+
+    @staticmethod
+    async def append_event(
+        db: AsyncSession,
+        clinic_id: UUID,
+        patient_id: UUID,
+        purpose: str,
+        *,
+        granted: bool,
+        provided_text: str | None,
+        effective_at: datetime,
+    ) -> PatientConsent:
+        """Stage a ledger row for a caller that already verified the patient's clinic."""
+        row = PatientConsent(
+            clinic_id=clinic_id,
+            patient_id=patient_id,
+            purpose=ConsentService.normalize_purpose(purpose),
+            granted=granted,
+            provided_text=provided_text,
+            granted_at=effective_at if granted else None,
+            withdrawn_at=None if granted else effective_at,
+            created_at=datetime.now(UTC),
+        )
+        db.add(row)
+        await db.flush()
+        return row
+
+    @staticmethod
+    async def publish_event(db: AsyncSession, row: PatientConsent) -> None:
+        data = {
+            "clinic_id": str(row.clinic_id),
+            "consent_id": str(row.id),
+            "patient_id": str(row.patient_id),
+            "purpose": row.purpose,
+        }
+        if row.granted:
+            await event_bus.publish(EventType.GDPR_CONSENT_GRANTED, data, db=db)
+        else:
+            await event_bus.publish(EventType.GDPR_CONSENT_WITHDRAWN, data, db=db)
 
     @staticmethod
     async def list_consents(

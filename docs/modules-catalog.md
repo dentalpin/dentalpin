@@ -38,6 +38,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 10 | 7 | 8 | yes |
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
 | `orthodontics` | 0.1.0 | official | patients, agenda, media, recalls, treatment_plan | manual | yes | 4 | 3 | 0 | yes |
+| `patient_intake` | 0.1.0 | community | patients, patients_clinical, gdpr, notifications | manual | no | 5 | 1 | 0 | no |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_segments` | 0.1.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 41 | yes |
@@ -725,6 +726,27 @@ Orthodontic case tracking — monthly controls, wires, photo evolution.
   - `orthodontics.control_registered`
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/orthodontics/CLAUDE.md`](../backend/app/modules/orthodontics/CLAUDE.md)
+
+### `patient_intake` — v0.1.0
+
+Versioned first-visit forms, review of patient declarations and communication consent.
+
+- **Author:** Clínica Dental Araque
+- **License:** BSL-1.1
+- **Category:** community
+- **Install policy:** installable=True · auto_install=False · removable=False
+- **Depends:** `patients`, `patients_clinical`, `gdpr`, `notifications`
+- **Frontend layer:** —
+- **Permissions:**
+  - `patient_intake.configure`
+  - `patient_intake.issue`
+  - `patient_intake.review_admin`
+  - `patient_intake.review_clinical`
+  - `patient_intake.withdraw`
+- **Events emitted:**
+  - `patient.medical_updated`
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/patient_intake/CLAUDE.md`](../backend/app/modules/patient_intake/CLAUDE.md)
 
 ### `patient_relationships` — v0.2.0
 

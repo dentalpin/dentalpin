@@ -1,5 +1,6 @@
 """Notifications module business logic."""
 
+import hmac
 import logging
 from datetime import UTC, datetime
 from uuid import UUID
@@ -8,6 +9,7 @@ from sqlalchemy import func, select, text, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.core.email import EmailResult, email_service
 from app.core.i18n_names import catalog_name
 from app.core.utils.dates import clinic_zone
@@ -282,6 +284,8 @@ class NotificationService:
         db: AsyncSession,
         clinic_id: UUID,
         patient_id: UUID,
+        *,
+        commit: bool = True,
     ) -> NotificationPreference:
         """Get or create notification preferences for a patient."""
         prefs = await NotificationService.get_patient_preferences(db, clinic_id, patient_id)
@@ -303,8 +307,9 @@ class NotificationService:
             if existing is None:
                 raise
             return existing
-        await db.commit()
-        await db.refresh(prefs)
+        if commit:
+            await db.commit()
+            await db.refresh(prefs)
         return prefs
 
     @staticmethod
@@ -333,6 +338,100 @@ class NotificationService:
         )
 
     @staticmethod
+    def contact_binding(patient, address: str) -> str:
+        scope = f"verified-contact:{patient.clinic_id}:{patient.id}:{address}"
+        return hmac.digest(settings.SECRET_KEY.encode(), scope.encode(), "sha256").hex()
+
+    @staticmethod
+    def verified_consent_allows(
+        prefs: NotificationPreference | None,
+        patient,
+        channel: str,
+        notification_type: str,
+    ) -> bool:
+        if prefs is None or prefs.verified_consents is None:
+            return True
+        if patient is None or patient.status != "active":
+            return False
+        projection = prefs.verified_consents
+        if notification_type == "appointment_reminder" and not projection.get(notification_type):
+            return False
+        if channel not in ("email", "sms", "whatsapp"):
+            return False
+        address = patient.email if channel == "email" else patient.phone
+        return bool(
+            address
+            and projection.get(channel) == NotificationService.contact_binding(patient, address)
+        )
+
+    @staticmethod
+    async def require_verified_consent(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> None:
+        """Enroll once. Caller owns the patient lock and the transaction."""
+        prefs = await NotificationService.get_or_create_patient_preferences(
+            db, clinic_id, patient_id, commit=False
+        )
+        if prefs.verified_consents is None:
+            await NotificationService.set_verified_consents(
+                db, clinic_id, patient_id, {}, at=datetime.now(UTC)
+            )
+
+    @staticmethod
+    async def set_verified_consents(
+        db: AsyncSession,
+        clinic_id: UUID,
+        patient_id: UUID,
+        projection: dict[str, str | bool],
+        *,
+        at: datetime,
+        apply_all: bool = False,
+    ) -> None:
+        """Apply verified evidence and suppress pending delivery in the caller's transaction."""
+        prefs = await NotificationService.get_or_create_patient_preferences(
+            db, clinic_id, patient_id, commit=False
+        )
+        previous = prefs.verified_consents or {}
+        prefs.verified_consents = projection
+        prefs.preferences = {
+            **(prefs.preferences or {}),
+            "appointment_reminder": bool(projection.get("appointment_reminder")),
+        }
+        for channel in ("email", "sms", "whatsapp"):
+            # Keep any separate delivery disable when the verified grant did
+            # not change, e.g. when withdrawing a different channel.
+            if (
+                apply_all
+                or not projection.get(channel)
+                or previous.get(channel) != projection.get(channel)
+            ):
+                setattr(prefs, f"{channel}_enabled", bool(projection.get(channel)))
+                if channel != "email":
+                    setattr(prefs, f"{channel}_opt_in_at", at if projection.get(channel) else None)
+        blocked_channels = [
+            channel
+            for channel in ("email", "sms", "whatsapp")
+            if not projection.get(channel)
+            or (previous.get(channel) and previous[channel] != projection[channel])
+        ]
+        affected = CommunicationMessage.channel.in_(blocked_channels) | (
+            CommunicationMessage.channel.not_in(("email", "sms", "whatsapp"))
+        )
+        if not projection.get("appointment_reminder"):
+            affected = affected | (CommunicationMessage.template_key == "appointment_reminder")
+        await db.execute(
+            update(CommunicationMessage)
+            .where(
+                CommunicationMessage.clinic_id == clinic_id,
+                CommunicationMessage.patient_id == patient_id,
+                CommunicationMessage.direction == "outbound",
+                CommunicationMessage.status.in_(("queued", "failed", "awaiting_manual")),
+                affected,
+            )
+            .values(
+                status="skipped", error_message="verified_consent_required", next_attempt_at=None
+            )
+        )
+
+    @staticmethod
     async def update_patient_preferences(
         db: AsyncSession,
         clinic_id: UUID,
@@ -344,6 +443,12 @@ class NotificationService:
             db, clinic_id, patient_id
         )
 
+        if prefs.verified_consents is not None and data.get("whatsapp_consent") is not None:
+            # A managed opt-in is issued/withdrawn with its evidence by the
+            # intake workflow. A preference toggle cannot create consent.
+            from fastapi import HTTPException
+
+            raise HTTPException(409, "Use the patient intake communications controls")
         if data.get("whatsapp_consent") is not None or data.get("whatsapp_enabled") is not None:
             await NotificationService.lock_whatsapp_patient(db, clinic_id, patient_id)
             await db.refresh(prefs)
