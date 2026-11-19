@@ -23,7 +23,7 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .service import appointment_when_context, budget_treatments_context
+from .service import appointment_when_context, budget_treatments_context, clinic_date_label
 
 logger = logging.getLogger(__name__)
 
@@ -560,7 +560,7 @@ class NotificationHandlers:
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "budget_number": budget.budget_number,
-                    "accepted_date": budget.updated_at.strftime("%d/%m/%Y"),
+                    "accepted_date": clinic_date_label(budget.updated_at, clinic),
                     "total": float(budget.total),
                     "notes": budget.patient_notes,
                     "clinic_name": clinic.name if clinic else "DentalPin",
