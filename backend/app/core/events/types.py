@@ -7,6 +7,11 @@ class EventType:
     Naming convention: {entity}.{action}
     """
 
+    AUTH_2FA_ENABLED = "auth.2fa_enabled"
+    AUTH_2FA_DISABLED = "auth.2fa_disabled"
+    AUTH_2FA_RESET = "auth.2fa_reset"
+    AUTH_2FA_FAILED = "auth.2fa_failed"
+
     # Tenant lifecycle (multi-tenancy Fase 1 — declared; first publisher
     # arrives in Fase 2a when the resolver is wired into `get_db`).
     TENANT_RESOLVED = "tenant.resolved"

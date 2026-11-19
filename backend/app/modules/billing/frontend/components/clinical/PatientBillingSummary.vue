@@ -292,11 +292,12 @@ watch(() => props.patientId, () => {
               >
                 <!-- Invoice row -->
                 <tr
-                  class="hover:bg-surface-muted/30 cursor-pointer transition-colors"
-                  @click="toggleInvoice(invoice.id)"
+                  :class="{ 'hover:bg-surface-muted/30 cursor-pointer transition-colors': !invoice.is_historical }"
+                  @click="!invoice.is_historical && toggleInvoice(invoice.id)"
                 >
                   <td class="px-3 py-3">
                     <UIcon
+                      v-if="!invoice.is_historical"
                       :name="expandedInvoices.has(invoice.id) ? 'i-lucide-chevron-down' : 'i-lucide-chevron-right'"
                       class="w-4 h-4 text-subtle"
                     />
@@ -316,6 +317,15 @@ watch(() => props.patientId, () => {
                       size="xs"
                     >
                       {{ t(`invoice.status.${invoice.status}`) }}
+                    </UBadge>
+                    <UBadge
+                      v-if="invoice.is_historical"
+                      color="neutral"
+                      variant="subtle"
+                      size="xs"
+                      class="ms-1"
+                    >
+                      {{ t('invoice.historical') }}
                     </UBadge>
                   </td>
                   <td class="px-3 py-3 text-end font-medium text-default">

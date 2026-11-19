@@ -16,6 +16,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.patient_access import RecordPatientAccess
 from app.core.schemas import ApiResponse
 from app.database import get_db
 
@@ -135,16 +136,18 @@ async def list_notes(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("clinical_notes.notes.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     owner_type: str = Query(..., pattern=NOTE_OWNER_PATTERN),
     owner_id: UUID = Query(...),
 ) -> ApiResponse[list[ClinicalNoteResponse]]:
     """List clinical notes for a single owner (patient / treatment / plan)."""
     try:
-        await resolve_owner_patient(db, ctx.clinic_id, owner_type, owner_id)
+        patient_id = await resolve_owner_patient(db, ctx.clinic_id, owner_type, owner_id)
         notes = await NoteService.list_for_owner(db, ctx.clinic_id, owner_type, owner_id)
     except NoteOwnerError as e:
         raise HTTPException(status_code=404, detail=str(e)) from e
     decorated = [await _decorate_note(db, ctx.clinic_id, n) for n in notes]
+    await record_access(patient_id, "clinical_notes")
     return ApiResponse(data=decorated)
 
 
@@ -290,6 +293,7 @@ async def list_patient_recent_notes(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("clinical_notes.notes.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     types: list[str] | None = Query(default=None),
     limit: int = Query(default=20, ge=1, le=100),
     before: datetime | None = Query(default=None),
@@ -317,6 +321,7 @@ async def list_patient_recent_notes(
         raise HTTPException(status_code=404, detail=str(e)) from e
     for e in entries:
         e["attachments"] = [_decorate_attachment(a) for a in e["attachments"]]
+    await record_access(patient_id, "clinical_notes")
     return ApiResponse(data=[RecentNoteEntry.model_validate(e) for e in entries])
 
 
@@ -329,6 +334,7 @@ async def list_patient_clinical_notes_by_plan(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("clinical_notes.notes.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[list[PlanNotesGroup]]:
     """Clinical notes grouped by plan → treatment for one patient."""
     groups = await list_grouped_for_patient(db, ctx.clinic_id, patient_id)
@@ -338,6 +344,8 @@ async def list_patient_clinical_notes_by_plan(
         for tg in g.get("treatments", []):
             for entry in tg.get("notes", []):
                 entry["attachments"] = [_decorate_attachment(a) for a in entry["attachments"]]
+    if groups:
+        await record_access(patient_id, "clinical_notes")
     return ApiResponse(data=[PlanNotesGroup.model_validate(g) for g in groups])
 
 
@@ -350,11 +358,18 @@ async def list_plan_merged_clinical_notes(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("clinical_notes.notes.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[list[ClinicalNoteEntry]]:
     """Merged clinical-notes feed for a plan (plan + treatment + visit)."""
     entries = await list_merged_for_plan(db, ctx.clinic_id, plan_id)
     for e in entries:
         e["attachments"] = [_decorate_attachment(a) for a in e["attachments"]]
+    if entries:
+        try:
+            patient_id = await resolve_owner_patient(db, ctx.clinic_id, "plan", plan_id)
+        except NoteOwnerError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        await record_access(patient_id, "clinical_notes")
     return ApiResponse(data=[ClinicalNoteEntry.model_validate(e) for e in entries])
 
 

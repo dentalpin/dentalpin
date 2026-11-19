@@ -27,6 +27,10 @@ export const PERMISSIONS = {
     read: 'admin.users.read',
     write: 'admin.users.write'
   },
+  gdpr: {
+    auditRead: 'gdpr.audit.read',
+    retentionWrite: 'gdpr.retention.write'
+  },
   odontogram: {
     read: 'odontogram.read',
     write: 'odontogram.write',
@@ -50,6 +54,12 @@ export const PERMISSIONS = {
     write: 'billing.write',
     admin: 'billing.admin'
   },
+  whatsappManual: {
+    read: 'whatsapp_manual.read',
+    write: 'whatsapp_manual.write',
+    settingsWrite: 'whatsapp_manual.settings.write'
+  },
+
   notifications: {
     templatesRead: 'notifications.templates.read',
     templatesWrite: 'notifications.templates.write',

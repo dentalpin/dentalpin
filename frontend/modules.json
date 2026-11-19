@@ -11,6 +11,7 @@
     "/module_layers/copilot/frontend",
     "/module_layers/documents/frontend",
     "/module_layers/expenses/frontend",
+    "/module_layers/gdpr/frontend",
     "/module_layers/imaging_ai/frontend",
     "/module_layers/imaging_viewer/frontend",
     "/module_layers/india_gst/frontend",
@@ -51,6 +52,7 @@
     "/module_layers/treatment_plan/frontend",
     "/module_layers/verifactu/frontend",
     "/module_layers/whatsapp_kapso/frontend",
+    "/module_layers/whatsapp_manual/frontend",
     "/module_layers/whatsapp_webhook/frontend"
   ],
   "modules": [
@@ -138,6 +140,11 @@
       "routes": [
         "/expenses"
       ]
+    },
+    {
+      "name": "gdpr",
+      "path": "/module_layers/gdpr/frontend",
+      "routes": []
     },
     {
       "name": "imaging_ai",
@@ -407,6 +414,13 @@
       "name": "whatsapp_kapso",
       "path": "/module_layers/whatsapp_kapso/frontend",
       "routes": []
+    },
+    {
+      "name": "whatsapp_manual",
+      "path": "/module_layers/whatsapp_manual/frontend",
+      "routes": [
+        "/whatsapp-manual"
+      ]
     },
     {
       "name": "whatsapp_webhook",

@@ -1598,6 +1598,42 @@ async def test_odontogram_perform_refused_after_the_sessions_finalized_the_item(
     assert sum(earned.values()) == Decimal("800.00")
 
 
+@pytest.mark.asyncio
+async def test_last_session_finalizes_a_treatment_already_marked_performed(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """#897: the odontogram edit modal can set the item's treatment to
+    performed ("existing"). Finalizing the item then hit #891's repeat guard,
+    so the last session answered 400 and the item stayed pending forever."""
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    treatment_id = await _item_treatment_id(client, auth_headers, plan_id, item_id)
+    r = await client.put(
+        f"/api/v1/odontogram/treatments/{treatment_id}",
+        headers=auth_headers,
+        json={"status": "performed"},
+    )
+    assert r.status_code == 200, r.text
+
+    for s in sessions:
+        r = await client.patch(
+            f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}"
+            f"/sessions/{s['id']}/complete",
+            headers=auth_headers,
+            json={},
+        )
+        assert r.status_code == 200, r.text
+    assert r.json()["data"]["status"] == "completed"
+
+    earned = await _earned_by_session(db_session, treatment_id)
+    assert None not in earned
+    assert sum(earned.values()) == Decimal("800.00")
+
+
 # ---------------------------------------------------------------------------
 # Issue #167 — completion gated on plan status; sessions repriced on acceptance
 # ---------------------------------------------------------------------------

@@ -41,22 +41,22 @@ class InvoiceWorkflowService:
     @staticmethod
     def can_edit(invoice: Invoice) -> bool:
         """Check if invoice can be edited."""
-        return invoice.status == "draft"
+        return not invoice.is_historical and invoice.status == "draft"
 
     @staticmethod
     def can_issue(invoice: Invoice) -> bool:
         """Check if invoice can be issued."""
-        return invoice.status == "draft" and len(invoice.items) > 0
+        return InvoiceWorkflowService.can_edit(invoice) and len(invoice.items) > 0
 
     @staticmethod
     def can_record_payment(invoice: Invoice) -> bool:
         """Check if payment can be recorded for invoice."""
-        return invoice.status in ["issued", "partial"]
+        return not invoice.is_historical and invoice.status in ["issued", "partial"]
 
     @staticmethod
     def can_void(invoice: Invoice) -> bool:
         """Check if invoice can be voided (before issue)."""
-        return invoice.status == "draft"
+        return not invoice.is_historical and invoice.status == "draft"
 
     @staticmethod
     def can_create_credit_note(invoice: Invoice) -> bool:
@@ -66,7 +66,7 @@ class InvoiceWorkflowService:
         - Invoices that are not issued/partial/paid
         - Invoices that are already credit notes (rectificativas)
         """
-        if invoice.credit_note_for_id is not None:
+        if invoice.is_historical or invoice.credit_note_for_id is not None:
             return False
         return invoice.status in ["issued", "partial", "paid"]
 
@@ -150,6 +150,8 @@ class InvoiceWorkflowService:
             create_credit_note: For creating credit notes in draft status
             hooks.BillingComplianceHook.on_credit_note_issued: For country-specific behavior
         """
+        if invoice.is_historical:
+            raise InvoiceWorkflowError("Historical invoices cannot be issued")
         if not InvoiceWorkflowService.can_issue(invoice):
             if invoice.status != "draft":
                 raise InvoiceWorkflowError(f"Cannot issue invoice from status '{invoice.status}'")
@@ -371,6 +373,9 @@ class InvoiceWorkflowService:
         the user does not have to re-trigger from the compliance queue.
         """
 
+        if invoice.is_historical:
+            raise InvoiceWorkflowError("Historical invoices are read-only")
+
         if expected_updated_at is not None and invoice.updated_at is not None:
             # Treat both as UTC; the DB stores TIMESTAMPTZ so updated_at
             # is timezone-aware. The frontend echoes whatever was served.
@@ -486,10 +491,10 @@ class InvoiceWorkflowService:
         """
         from .service import InvoiceHistoryService, compute_paid_summary
 
-        total_paid, balance_due = await compute_paid_summary(db, invoice.clinic_id, invoice.id)
-
-        if invoice.status in ("draft", "cancelled", "voided"):
+        if invoice.is_historical or invoice.status in ("draft", "cancelled", "voided"):
             return invoice.status
+
+        total_paid, balance_due = await compute_paid_summary(db, invoice.clinic_id, invoice.id)
 
         previous_status = invoice.status
         if balance_due <= Decimal("0.00") and invoice.total > 0:
@@ -571,6 +576,8 @@ class InvoiceWorkflowService:
             issue_invoice: To issue the credit note after editing
             hooks.BillingComplianceHook.on_credit_note_issued: For country-specific behavior
         """
+        if original_invoice.is_historical:
+            raise InvoiceWorkflowError("Cannot create a credit note for a historical invoice")
         if not InvoiceWorkflowService.can_create_credit_note(original_invoice):
             raise InvoiceWorkflowError(
                 f"Cannot create credit note for invoice with status '{original_invoice.status}'"

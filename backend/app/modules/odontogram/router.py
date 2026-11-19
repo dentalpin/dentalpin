@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.patient_access import RecordPatientAccess
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 from app.modules.patients.models import Patient
@@ -70,6 +71,7 @@ async def get_odontogram(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[OdontogramResponse]:
     await validate_patient_access(db, ctx.clinic_id, patient_id)
     teeth = await OdontogramService.get_patient_odontogram(db, ctx.clinic_id, patient_id)
@@ -86,6 +88,7 @@ async def get_odontogram(
         available_conditions=[c.value for c in ToothCondition],
         surfaces=SURFACES,
     )
+    await record_access(patient_id, "odontogram")
     return ApiResponse(data=response)
 
 
@@ -99,6 +102,7 @@ async def get_tooth(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[ToothRecordResponse]:
     await validate_patient_access(db, ctx.clinic_id, patient_id)
     if not is_valid_tooth_number(tooth_number):
@@ -108,6 +112,7 @@ async def get_tooth(
         raise HTTPException(
             status_code=404, detail=f"Tooth {tooth_number} not found for this patient"
         )
+    await record_access(patient_id, "odontogram")
     return ApiResponse(data=ToothRecordResponse.model_validate(tooth))
 
 
@@ -205,6 +210,7 @@ async def get_tooth_history(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=50, ge=1, le=100),
 ) -> PaginatedApiResponse[HistoryEntryWithUser]:
@@ -220,6 +226,7 @@ async def get_tooth_history(
         if h.user:
             item.changed_by_name = f"{h.user.first_name} {h.user.last_name}"
         items.append(item)
+    await record_access(patient_id, "odontogram")
     return PaginatedApiResponse(data=items, total=total, page=page, page_size=page_size)
 
 
@@ -232,6 +239,7 @@ async def get_patient_odontogram_history(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     page: int = Query(default=1, ge=1),
     page_size: int = Query(default=50, ge=1, le=100),
 ) -> PaginatedApiResponse[HistoryEntryWithUser]:
@@ -245,6 +253,7 @@ async def get_patient_odontogram_history(
         if h.user:
             item.changed_by_name = f"{h.user.first_name} {h.user.last_name}"
         items.append(item)
+    await record_access(patient_id, "odontogram")
     return PaginatedApiResponse(data=items, total=total, page=page, page_size=page_size)
 
 
@@ -257,9 +266,11 @@ async def get_odontogram_timeline(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[TimelineResponse]:
     await validate_patient_access(db, ctx.clinic_id, patient_id)
     dates = await OdontogramService.get_timeline_dates(db, ctx.clinic_id, patient_id)
+    await record_access(patient_id, "odontogram")
     return ApiResponse(
         data=TimelineResponse(dates=[TimelineDateEntry(**d) for d in dates], total=len(dates))
     )
@@ -274,12 +285,14 @@ async def get_odontogram_at_date(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     target_date: date = Query(..., alias="date"),
 ) -> ApiResponse[HistoricalOdontogramResponse]:
     await validate_patient_access(db, ctx.clinic_id, patient_id)
     historical = await OdontogramService.get_odontogram_at_date(
         db, ctx.clinic_id, patient_id, target_date
     )
+    await record_access(patient_id, "odontogram")
     return ApiResponse(
         data=HistoricalOdontogramResponse(
             patient_id=str(patient_id),
@@ -352,6 +365,7 @@ async def list_patient_treatments(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.treatments.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     status_filter: str | None = Query(default=None, alias="status"),
     clinical_type: str | None = Query(default=None),
     tooth_number: int | None = Query(default=None),
@@ -371,6 +385,7 @@ async def list_patient_treatments(
         page=page,
         page_size=page_size,
     )
+    await record_access(patient_id, "odontogram")
     return PaginatedApiResponse(
         data=[TreatmentResponse.model_validate(build_treatment_response(t)) for t in treatments],
         total=total,
@@ -388,10 +403,12 @@ async def get_treatment(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.treatments.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[TreatmentResponse]:
     treatment = await TreatmentService.get_treatment(db, ctx.clinic_id, treatment_id)
     if not treatment:
         raise HTTPException(status_code=404, detail="Treatment not found")
+    await record_access(treatment.patient_id, "odontogram")
     return ApiResponse(data=TreatmentResponse.model_validate(build_treatment_response(treatment)))
 
 
@@ -468,6 +485,7 @@ async def get_tooth_with_treatments(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("odontogram.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[ToothRecordWithTreatmentsResponse]:
     await validate_patient_access(db, ctx.clinic_id, patient_id)
     if not is_valid_tooth_number(tooth_number):
@@ -481,4 +499,5 @@ async def get_tooth_with_treatments(
     response.treatments = [
         TreatmentResponse.model_validate(build_treatment_response(t)) for t in treatments
     ]
+    await record_access(patient_id, "odontogram")
     return ApiResponse(data=response)

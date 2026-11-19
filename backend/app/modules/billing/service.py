@@ -74,63 +74,9 @@ async def vat_legal_notes_for_invoice(
 async def compute_paid_summary(
     db: AsyncSession, clinic_id: UUID, invoice_id: UUID
 ) -> tuple[Decimal, Decimal]:
-    """Return ``(total_paid, balance_due)`` for an invoice.
-
-    ``total_paid`` is the sum of ``InvoicePayment.amount`` on this
-    invoice minus the proportional share of any refunds on the linked
-    payments. The proportional share is
-    ``refund.amount * imputed_amount / payment.amount`` summed across
-    refunds and invoice-payment links.
-    """
-    # Sum of imputed amounts per linked payment for this invoice.
-    rows = await db.execute(
-        select(InvoicePayment.payment_id, func.sum(InvoicePayment.amount))
-        .where(
-            InvoicePayment.clinic_id == clinic_id,
-            InvoicePayment.invoice_id == invoice_id,
-        )
-        .group_by(InvoicePayment.payment_id)
-    )
-    imputed_per_payment: dict[UUID, Decimal] = {row[0]: row[1] for row in rows.all()}
-
-    if not imputed_per_payment:
-        # Need the invoice.total to compute balance_due.
-        total_row = await db.execute(
-            select(Invoice.total).where(Invoice.id == invoice_id, Invoice.clinic_id == clinic_id)
-        )
-        total = total_row.scalar_one_or_none() or Decimal("0.00")
-        return Decimal("0.00"), total
-
-    payment_ids = list(imputed_per_payment.keys())
-
-    payment_rows = await db.execute(
-        select(PaymentModel.id, PaymentModel.amount).where(PaymentModel.id.in_(payment_ids))
-    )
-    payment_amount: dict[UUID, Decimal] = {row[0]: row[1] for row in payment_rows.all()}
-
-    refund_rows = await db.execute(
-        select(RefundModel.payment_id, func.coalesce(func.sum(RefundModel.amount), Decimal("0")))
-        .where(RefundModel.payment_id.in_(payment_ids))
-        .group_by(RefundModel.payment_id)
-    )
-    refunded_per_payment: dict[UUID, Decimal] = {row[0]: row[1] for row in refund_rows.all()}
-
-    net_paid = Decimal("0.00")
-    for pid, imputed in imputed_per_payment.items():
-        full_amount = payment_amount.get(pid, imputed)
-        refunded = refunded_per_payment.get(pid, Decimal("0"))
-        # Proportional share of refunds affecting this invoice link.
-        if full_amount > 0:
-            adjustment = refunded * (imputed / full_amount)
-        else:  # pragma: no cover - defensive
-            adjustment = Decimal("0")
-        net_paid += imputed - adjustment
-
-    total_row = await db.execute(
-        select(Invoice.total).where(Invoice.id == invoice_id, Invoice.clinic_id == clinic_id)
-    )
-    invoice_total = total_row.scalar_one_or_none() or Decimal("0.00")
-    return net_paid, invoice_total - net_paid
+    """Return the operational payment summary for one invoice."""
+    summaries = await compute_paid_summaries_for_invoices(db, clinic_id, [invoice_id])
+    return summaries[invoice_id]
 
 
 class InvoiceNumberService:
@@ -719,6 +665,7 @@ class InvoiceService:
             conditions.append(
                 and_(
                     Invoice.due_date < today,
+                    Invoice.is_historical.is_(False),
                     Invoice.status.in_(["issued", "partial"]),
                 )
             )
@@ -812,14 +759,14 @@ class InvoiceService:
         payments eager-loaded.
 
         Not paginated — an accounting period (month/quarter/year) is
-        bounded and fits in memory. Drafts are always excluded (they are
-        not fiscal documents). When ``statuses`` is given it further
-        narrows the set; otherwise all non-draft invoices are returned.
+        bounded and fits in memory. Draft and historical invoices are
+        excluded. When ``statuses`` is given it further narrows the set.
         """
         conditions = [
             Invoice.clinic_id == clinic_id,
             Invoice.deleted_at.is_(None),
             Invoice.status != "draft",
+            Invoice.is_historical.is_(False),
         ]
         if statuses:
             conditions.append(Invoice.status.in_(statuses))
@@ -1273,11 +1220,26 @@ async def compute_paid_summaries_for_invoices(
 ) -> dict[UUID, tuple[Decimal, Decimal]]:
     """Batch version of ``compute_paid_summary`` for list views.
 
-    Returns ``{invoice_id: (total_paid, balance_due)}``. Invoices with
-    no ``InvoicePayment`` rows still appear with ``(0, invoice.total)``.
+    Returns ``{invoice_id: (total_paid, balance_due)}``. Operational invoices
+    without payments have the full balance due. Historical invoices have
+    zero paid and zero due. Refunds reduce paid amounts in proportion to
+    each link's share of the original payment.
     """
     if not invoice_ids:
         return {}
+
+    zero = Decimal("0")
+    summaries = dict.fromkeys(invoice_ids, (zero, zero))
+    invoice_totals = await db.execute(
+        select(Invoice.id, Invoice.total).where(
+            Invoice.id.in_(invoice_ids),
+            Invoice.clinic_id == clinic_id,
+            Invoice.is_historical.is_(False),
+        )
+    )
+    totals = dict(invoice_totals.all())
+    if not totals:
+        return summaries
 
     # Imputed amounts per (invoice, payment).
     imp_rows = await db.execute(
@@ -1288,7 +1250,7 @@ async def compute_paid_summaries_for_invoices(
         )
         .where(
             InvoicePayment.clinic_id == clinic_id,
-            InvoicePayment.invoice_id.in_(invoice_ids),
+            InvoicePayment.invoice_id.in_(totals),
         )
         .group_by(InvoicePayment.invoice_id, InvoicePayment.payment_id)
     )
@@ -1314,22 +1276,15 @@ async def compute_paid_summaries_for_invoices(
         )
         refunded_per_payment = {row[0]: row[1] or Decimal("0") for row in ref_rows.all()}
 
-    totals_rows = await db.execute(
-        select(Invoice.id, Invoice.total).where(Invoice.id.in_(invoice_ids))
-    )
-    totals: dict[UUID, Decimal] = {row[0]: row[1] for row in totals_rows.all()}
-
-    out: dict[UUID, tuple[Decimal, Decimal]] = {}
-    for invoice_id in invoice_ids:
-        net_paid = Decimal("0")
+    for invoice_id, total in totals.items():
+        net_paid = zero
         for payment_id, imputed in imputed_by_invoice.get(invoice_id, {}).items():
             full = payment_amount.get(payment_id, imputed)
             refunded = refunded_per_payment.get(payment_id, Decimal("0"))
             adjustment = refunded * (imputed / full) if full > 0 else Decimal("0")
             net_paid += imputed - adjustment
-        total = totals.get(invoice_id, Decimal("0"))
-        out[invoice_id] = (net_paid, total - net_paid)
-    return out
+        summaries[invoice_id] = (net_paid, total - net_paid)
+    return summaries
 
 
 class InvoicePaymentService:

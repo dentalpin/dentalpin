@@ -29,7 +29,7 @@ related_paths:
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: 87eb14ec
+last_verified_commit: 0000000
 ---
 
 # Ficha del paciente
@@ -219,6 +219,8 @@ tarjeta de **Pendiente de cobrar** al principio.
   (mueve un anticipo a cuenta al presupuesto elegido y, si tiene
   facturas emitidas, las imputa) y **Reembolsar**. El menú muestra
   solo las acciones que tu rol permite.
+
+Las facturas importadas con el distintivo **Histórica** siguen visibles en la sección de facturación de la ficha. Su importe pendiente es cero y el saldo del paciente se conserva.
 
 ## Pestaña Presupuestos
 

@@ -1,4 +1,5 @@
-import type { User, LoginCredentials, AuthResponse, MeResponse, ApiResponse } from '~/types'
+import type { MfaChallenge } from '~/composables/useMfa'
+import type { User, LoginCredentials, AuthTokens, AuthResponse, MeResponse, ApiResponse } from '~/types'
 
 // Client-only module-level dedupe slot for the in-flight refresh promise.
 // Storing a Promise inside useState() leaks it into the SSR payload, which
@@ -35,13 +36,13 @@ export function useAuth() {
   const isAuthenticated = computed(() => !!user.value)
 
   // Actions
-  async function login(credentials: LoginCredentials): Promise<void> {
+  async function login(credentials: LoginCredentials): Promise<MfaChallenge | null> {
     // OAuth2PasswordRequestForm expects form data with 'username' field
     const formData = new URLSearchParams()
     formData.append('username', credentials.email)
     formData.append('password', credentials.password)
 
-    await $fetch<AuthResponse>('/api/v1/auth/login', {
+    const response = await $fetch<AuthTokens | MfaChallenge>('/api/v1/auth/login', {
       baseURL: apiBaseUrl.value,
       method: 'POST',
       body: formData,
@@ -51,8 +52,11 @@ export function useAuth() {
       }
     })
 
+    if ('mfa_required' in response) return response
+
     // The backend set the session cookies; load the user through them.
     await fetchUser()
+    return null
   }
 
   /** The backend already set the session cookies on the out-of-band call

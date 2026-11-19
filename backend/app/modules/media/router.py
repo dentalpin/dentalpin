@@ -18,6 +18,7 @@ from fastapi import (
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.patient_access import RecordPatientAccess
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 from app.modules.patients.service import PatientService
@@ -128,6 +129,7 @@ async def list_patient_documents(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("media.documents.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     document_type: str | None = Query(default=None),
     media_kind: str | None = Query(default=None),
     page: int = Query(default=1, ge=1),
@@ -152,6 +154,7 @@ async def list_patient_documents(
         page=page,
         page_size=page_size,
     )
+    await record_access(patient_id, "documents")
     return PaginatedApiResponse(
         data=[_decorate(d) for d in documents],
         total=total,
@@ -227,6 +230,7 @@ async def list_patient_photos(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("media.documents.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     media_kind: str | None = Query(default=None),
     media_category: str | None = Query(default=None),
     media_subtype: str | None = Query(default=None),
@@ -253,6 +257,7 @@ async def list_patient_photos(
         page=page,
         page_size=page_size,
     )
+    await record_access(patient_id, "documents")
     return PaginatedApiResponse(
         data=[_decorate(d) for d in documents],
         total=total,
@@ -275,10 +280,12 @@ async def get_document(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("media.documents.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[DocumentResponse]:
     document = await DocumentService.get_document(db, ctx.clinic_id, document_id)
     if not document:
         raise HTTPException(status_code=404, detail="Document not found")
+    await record_access(document.patient_id, "documents")
     return ApiResponse(data=_decorate(document))
 
 
@@ -288,6 +295,7 @@ async def download_document(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("media.documents.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     variant: Literal["thumb", "medium", "full"] = Query(default="full"),
 ) -> Response:
     document = await DocumentService.get_document(db, ctx.clinic_id, document_id)
@@ -323,6 +331,9 @@ async def download_document(
         headers["Content-Disposition"] = (
             f'attachment; filename="{_safe_filename(document.original_filename)}"'
         )
+    await record_access(
+        document.patient_id, "documents", action="download" if variant == "full" else "view"
+    )
     return Response(content=content, media_type=media_type, headers=headers)
 
 

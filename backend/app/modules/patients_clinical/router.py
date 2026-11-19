@@ -16,6 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
 from app.core.events import EventType, event_bus
+from app.core.patient_access import RecordPatientAccess
 from app.core.schemas import ApiResponse
 from app.database import get_db
 from app.modules.patients.service import PatientService
@@ -66,9 +67,11 @@ async def get_medical_context(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.medical.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[MedicalContextResponse]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     ctx_row = await PatientsClinicalService.get_medical_context(db, ctx.clinic_id, patient_id)
+    await record_access(patient_id, "medical_history")
     if ctx_row is None:
         return ApiResponse(data=MedicalContextResponse())
     return ApiResponse(data=MedicalContextResponse.model_validate(ctx_row))
@@ -116,9 +119,11 @@ async def list_allergies(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.medical.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[list[AllergyResponse]]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     allergies = await PatientsClinicalService.list_allergies(db, ctx.clinic_id, patient_id)
+    await record_access(patient_id, "medical_history")
     return ApiResponse(data=[AllergyResponse.model_validate(a) for a in allergies])
 
 
@@ -198,9 +203,11 @@ async def list_medications(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.medical.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[list[MedicationResponse]]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     meds = await PatientsClinicalService.list_medications(db, ctx.clinic_id, patient_id)
+    await record_access(patient_id, "medical_history")
     return ApiResponse(data=[MedicationResponse.model_validate(m) for m in meds])
 
 
@@ -280,9 +287,11 @@ async def list_systemic_diseases(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.medical.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[list[SystemicDiseaseResponse]]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     rows = await PatientsClinicalService.list_systemic_diseases(db, ctx.clinic_id, patient_id)
+    await record_access(patient_id, "medical_history")
     return ApiResponse(data=[SystemicDiseaseResponse.model_validate(r) for r in rows])
 
 
@@ -362,9 +371,11 @@ async def list_surgical_history(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.medical.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[list[SurgicalHistoryResponse]]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     rows = await PatientsClinicalService.list_surgical_history(db, ctx.clinic_id, patient_id)
+    await record_access(patient_id, "medical_history")
     return ApiResponse(data=[SurgicalHistoryResponse.model_validate(r) for r in rows])
 
 
@@ -444,10 +455,12 @@ async def get_emergency_contact(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.emergency.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[EmergencyContactResponse | None]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     contact = await PatientsClinicalService.get_emergency_contact(db, ctx.clinic_id, patient_id)
     # Archived (soft-deleted) rows stay in the table but read as "no contact".
+    await record_access(patient_id, "medical_history")
     if contact is None or contact.status != "active":
         return ApiResponse(data=None)
     return ApiResponse(data=EmergencyContactResponse.model_validate(contact))
@@ -505,10 +518,12 @@ async def get_legal_guardian(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.emergency.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[LegalGuardianResponse | None]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     guardian = await PatientsClinicalService.get_legal_guardian(db, ctx.clinic_id, patient_id)
     # Archived (soft-deleted) rows stay in the table but read as "no guardian".
+    await record_access(patient_id, "medical_history")
     if guardian is None or guardian.status != "active":
         return ApiResponse(data=None)
     return ApiResponse(data=LegalGuardianResponse.model_validate(guardian))
@@ -566,9 +581,11 @@ async def get_medical_history(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.medical.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[MedicalHistoryResponse]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     data = await PatientsClinicalService.build_medical_history(db, ctx.clinic_id, patient_id)
+    await record_access(patient_id, "medical_history")
     return ApiResponse(data=MedicalHistoryResponse.model_validate(data))
 
 
@@ -615,7 +632,9 @@ async def get_patient_alerts(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("patients_clinical.medical.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
 ) -> ApiResponse[PatientAlertsResponse]:
     await _ensure_patient(db, ctx.clinic_id, patient_id)
     alerts = await PatientsClinicalService.compute_alerts(db, ctx.clinic_id, patient_id)
+    await record_access(patient_id, "medical_history")
     return ApiResponse(data=PatientAlertsResponse(alerts=alerts))

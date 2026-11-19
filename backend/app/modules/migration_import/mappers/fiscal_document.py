@@ -94,6 +94,7 @@ class FiscalDocumentMapper:
             invoice_number=invoice_number[:50],
             issue_date=issue_date,
             status=_map_status(payload.get("status")),
+            is_historical=True,
             total=_decimal(payload.get("total"), default="0"),
             total_tax=_decimal(payload.get("tax_total"), default="0"),
             subtotal=_decimal(payload.get("subtotal"), default="0"),

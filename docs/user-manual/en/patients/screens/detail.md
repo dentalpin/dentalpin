@@ -29,7 +29,7 @@ related_paths:
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: 87eb14ec
+last_verified_commit: 0000000
 ---
 
 # Patient detail
@@ -216,6 +216,8 @@ a **Pending to charge** card at the top.
   (moves an on-account deposit to the chosen quote and, if it has
   issued invoices, applies it) and **Refund**. The menu shows only the
   actions your role allows.
+
+Imported invoices marked **Historical** remain visible in the billing section of the patient record. They add no pending amount and do not change the patient ledger.
 
 ## Budgets tab
 

@@ -62,6 +62,7 @@ async def _open_invoices(
             Invoice.clinic_id == clinic_id,
             Invoice.budget_id == budget_id,
             Invoice.status.in_(("issued", "partial")),
+            Invoice.is_historical.is_(False),
             Invoice.credit_note_for_id.is_(None),
             Invoice.deleted_at.is_(None),
         )

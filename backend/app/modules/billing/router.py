@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.patient_access import RecordPatientAccess
 from app.core.pdf_locales import PDF_LOCALE_PATTERN
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.core.utils.dates import clinic_today
@@ -621,6 +622,9 @@ async def issue_invoice(
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
 
+    if invoice.is_historical:
+        raise HTTPException(status_code=400, detail="Historical invoices cannot be issued")
+
     # Serialize concurrent issue of the same draft (audit S3/C4, #97): lock
     # the row and refresh status, so a second request sees the committed
     # "issued" state and the workflow's draft-only guard rejects it —
@@ -710,6 +714,9 @@ async def send_invoice_email(
     )
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
+
+    if invoice.is_historical:
+        raise HTTPException(status_code=400, detail="Historical invoices cannot be sent")
 
     # Can only send non-draft invoices
     if invoice.status not in ["issued", "partial", "paid"]:
@@ -919,6 +926,8 @@ async def apply_payment_to_invoice(
     )
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
+    if invoice.is_historical:
+        raise HTTPException(status_code=400, detail="Historical invoices cannot receive payments")
     if not InvoiceWorkflowService.can_record_payment(invoice):
         raise HTTPException(
             status_code=400,
@@ -1057,6 +1066,7 @@ async def download_invoice_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("billing.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Download invoice as PDF."""
@@ -1098,6 +1108,8 @@ async def download_invoice_pdf(
     else:
         filename = f"factura_borrador_{str(invoice.id)[:8]}.pdf"
 
+    if invoice.patient_id is not None:
+        await record_access(invoice.patient_id, "invoice_pdf", action="download")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
@@ -1111,6 +1123,7 @@ async def preview_invoice_pdf(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("billing.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
+    record_access: RecordPatientAccess,
     locale: str = Query(default="es", pattern=PDF_LOCALE_PATTERN),
 ) -> Response:
     """Preview invoice PDF (with watermark for drafts)."""
@@ -1143,6 +1156,8 @@ async def preview_invoice_pdf(
         balance_due=balance_due,
     )
 
+    if invoice.patient_id is not None:
+        await record_access(invoice.patient_id, "invoice_pdf")
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",

@@ -1649,6 +1649,7 @@ export interface Invoice {
   credit_note_for_id?: string
   // Status
   status: InvoiceStatus
+  is_historical: boolean
   // Dates
   issue_date?: string
   due_date?: string
@@ -1697,6 +1698,7 @@ export interface InvoiceListItem {
   id: string
   invoice_number: string | null // Null for drafts (assigned when issued)
   status: InvoiceStatus
+  is_historical: boolean
   issue_date?: string
   due_date?: string
   total: number

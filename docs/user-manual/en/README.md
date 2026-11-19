@@ -16,3 +16,5 @@ End-user and administrator guides in English. See the
 
 - [Patients](./patients/)
 - [Schedules](./schedules/)
+
+- [GDPR](./gdpr/)

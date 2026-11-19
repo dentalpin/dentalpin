@@ -24,6 +24,18 @@ export default defineNuxtPlugin(() => {
     order: 10
   })
 
+  registerSettingsPage({
+    path: 'mfa',
+    category: 'general',
+    labelKey: 'mfa.policy',
+    descriptionKey: 'mfa.policyDescription',
+    icon: 'i-lucide-shield-check',
+    permission: PERMISSIONS.admin.clinicRead,
+    component: () => import('~/components/settings/pages/MfaPolicyPage.vue'),
+    searchKeywords: ['2fa', 'totp', 'mfa'],
+    order: 20
+  })
+
   // ---- Workspace -----------------------------------------------------
   registerSettingsPage({
     path: 'cabinets',

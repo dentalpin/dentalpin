@@ -45,7 +45,7 @@ the link is forwarded to them.
 - **Patient actions.** *Accept* and *Reject* are public actions:
   they create the signature record and publish
   `budget.accepted` / `budget.rejected`. Acceptance generates the
-  signed PDF and stores its SHA-256 as a tamper-evident fingerprint.
+  signed PDF and stores the SHA-256 fingerprint of that rendering.
 - **Signed PDF.** After acceptance, *Download signed PDF* calls
   `GET /pdf/signed` with the cookie. Capped at 10 downloads per
   minute per token; each hit is logged in `BudgetAccessLog`.

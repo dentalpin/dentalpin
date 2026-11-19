@@ -17,6 +17,7 @@ from sqlalchemy import (
     String,
     Text,
     UniqueConstraint,
+    false,
     text,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
@@ -108,6 +109,8 @@ class Invoice(Base, TimestampMixin):
     status: Mapped[str] = mapped_column(
         String(20), default="draft"
     )  # draft, issued, partial, paid, cancelled, voided
+
+    is_historical: Mapped[bool] = mapped_column(Boolean, default=False, server_default=false())
 
     # Dates
     issue_date: Mapped[date | None] = mapped_column(Date, default=None)

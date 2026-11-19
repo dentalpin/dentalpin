@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import type { MfaChallenge } from '~/composables/useMfa'
+import { errorDetail } from '~/utils/error'
+
 definePageMeta({
   layout: 'guest'
 })
@@ -10,6 +13,7 @@ const toast = useToast()
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
 
 const isLoading = ref(false)
+const challenge = ref<MfaChallenge>()
 const formState = reactive({
   email: '',
   password: ''
@@ -44,6 +48,7 @@ function mapError(err: unknown): string {
     data?: { message?: string }
   }
   const status = e.statusCode ?? e.status
+  if (errorDetail(err) === 'mfa_unavailable') return t('mfa.unavailable')
 
   switch (status) {
     case 400:
@@ -72,23 +77,32 @@ async function onSubmit() {
 
   isLoading.value = true
   try {
-    await auth.login({
+    const pending = await auth.login({
       email: formState.email.trim(),
       password: formState.password
     })
 
-    toast.add({
-      title: t('auth.loginSuccess'),
-      color: 'success'
-    })
-
-    await navigateTo('/')
+    formState.password = ''
+    if (pending) {
+      challenge.value = pending
+      return
+    }
+    await entered()
   } catch (error: unknown) {
-    console.error('Login error:', error)
     errorMessage.value = mapError(error)
   } finally {
     isLoading.value = false
   }
+}
+
+async function entered() {
+  toast.add({ title: t('auth.loginSuccess'), color: 'success' })
+  await navigateTo('/')
+}
+
+async function verified() {
+  await auth.fetchUser()
+  await entered()
 }
 
 watch(() => formState.email, () => {
@@ -121,7 +135,14 @@ watch(() => formState.password, () => {
     </div>
 
     <UCard>
+      <MfaChallengeForm
+        v-if="challenge"
+        :challenge="challenge"
+        @verified="verified"
+        @cancel="challenge = undefined"
+      />
       <form
+        v-else
         method="post"
         class="space-y-4"
         @submit.prevent="onSubmit"

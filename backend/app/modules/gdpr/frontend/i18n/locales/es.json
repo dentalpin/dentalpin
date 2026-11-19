@@ -1,0 +1,46 @@
+{
+  "gdprAccess": {
+    "patientTab": "Accesos",
+    "settings": "Registro de accesos a pacientes",
+    "byUser": "Accesos por usuario",
+    "from": "Desde",
+    "to": "Hasta",
+    "invalidDates": "La fecha final debe coincidir con la inicial o ser posterior.",
+    "csv": "Exportar CSV",
+    "loading": "Cargando accesos…",
+    "loadError": "No se han podido cargar los accesos.",
+    "exportError": "No se ha podido exportar el CSV.",
+    "empty": "No hay accesos en el periodo seleccionado.",
+    "when": "Fecha y hora",
+    "staff": "Usuario",
+    "patient": "Paciente",
+    "action": "Acción",
+    "resource": "Recurso",
+    "ip": "Dirección IP",
+    "chooseStaff": "Seleccionar un usuario",
+    "retention": "Conservación del registro de accesos",
+    "retentionYears": "Años",
+    "save": "Guardar",
+    "saved": "Plazo de conservación guardado.",
+    "saveError": "No se ha podido guardar el plazo de conservación.",
+    "actions": {
+      "view": "Consulta",
+      "download": "Descarga",
+      "export": "Exportación",
+      "print": "Impresión"
+    },
+    "resources": {
+      "patient_record": "Ficha del paciente",
+      "medical_history": "Historia clínica",
+      "clinical_notes": "Notas clínicas",
+      "odontogram": "Odontograma",
+      "documents": "Documentos e imágenes",
+      "document_pdf": "PDF de documento",
+      "budget_pdf": "PDF de presupuesto",
+      "signed_budget_pdf": "PDF de presupuesto firmado",
+      "invoice_pdf": "PDF de factura",
+      "prescription_pdf": "PDF de receta",
+      "patient_export": "Portabilidad de datos"
+    }
+  }
+}

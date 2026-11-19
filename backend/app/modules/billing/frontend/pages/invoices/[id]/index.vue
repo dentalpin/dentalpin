@@ -123,7 +123,7 @@ function formatDate(dateStr: string | undefined): string {
 // invoices still chasing payment — drafts/paid/voided return null.
 const daysOverdue = computed<number | null>(() => {
   const inv = currentInvoice.value
-  if (!inv?.due_date) return null
+  if (inv?.is_historical || !inv?.due_date) return null
   if (!['issued', 'partial'].includes(inv.status)) return null
   const due = parseDateOnly(inv.due_date)
   const now = new Date()
@@ -136,7 +136,7 @@ const isOverdue = computed<boolean>(() => daysOverdue.value !== null)
 // Check if billing data is incomplete (for drafts, check patient billing info)
 const hasBillingDataIncomplete = computed(() => {
   if (!currentInvoice.value) return false
-  if (currentInvoice.value.status !== 'draft') return false
+  if (!canEdit(currentInvoice.value)) return false
   // For drafts, billing comes from patient - check patient's billing completeness
   return currentInvoice.value.patient?.has_complete_billing_info === false
 })
@@ -145,6 +145,7 @@ const hasBillingDataIncomplete = computed(() => {
 // all country-keyed compliance entries. Used to surface a critical
 // banner when the invoice was rejected.
 const complianceRejection = computed<{ message?: string } | null>(() => {
+  if (currentInvoice.value?.is_historical) return null
   const cd = currentInvoice.value?.compliance_data
   if (!cd) return null
   for (const country of Object.keys(cd)) {
@@ -369,6 +370,9 @@ const statusChips = computed<EntityChip[]>(() => {
       label: t(`invoice.status.${inv.status}`)
     }
   ]
+  if (inv.is_historical) {
+    chips.push({ key: 'historical', role: 'neutral', label: t('invoice.historical') })
+  }
   if (daysOverdue.value !== null) {
     chips.push({
       key: 'overdue',
@@ -504,7 +508,7 @@ const totalsLines = computed<TotalLine[]>(() => {
     emphasis: 'strong',
     divider: 'above'
   })
-  if (inv.status !== 'draft') {
+  if (!inv.is_historical && inv.status !== 'draft') {
     lines.push({
       key: 'paid',
       label: t('invoice.paid'),
@@ -531,7 +535,7 @@ const infoItems = computed<InfoItem[]>(() => {
   if (inv.issue_date) {
     items.push({ key: 'issueDate', label: t('invoice.info.issueDate'), value: formatDate(inv.issue_date) })
   }
-  if (inv.due_date) {
+  if (!inv.is_historical && inv.due_date) {
     items.push({ key: 'dueDate', label: t('invoice.info.dueDate'), value: formatDate(inv.due_date) })
   }
   if (inv.issuer) {
@@ -631,6 +635,7 @@ function goToCreditNoteFor() {
               active country.
             -->
             <ModuleSlot
+              v-if="!currentInvoice.is_historical"
               name="invoice.detail.header.meta"
               :ctx="complianceSlotCtx"
             />
@@ -855,7 +860,7 @@ function goToCreditNoteFor() {
                ``invoice_payments`` table; the underlying Payment is in
                the payments module. Refunds happen via
                /api/v1/payments/{id}/refunds — not from this screen. -->
-          <UCard v-if="currentInvoice.invoice_payments && currentInvoice.invoice_payments.length > 0">
+          <UCard v-if="!currentInvoice.is_historical && currentInvoice.invoice_payments?.length">
             <template #header>
               <h3 class="font-semibold text-default">
                 {{ t('invoice.payments.title') }}
