@@ -2574,6 +2574,7 @@
     "emptyAction": "Első számla kiállítása",
     "searchPlaceholder": "Keresés szám vagy páciens alapján...",
     "notFound": "A számla nem található",
+    "historical": "Történeti",
     "draftNoNumber": "Piszkozat",
     "details": "Részletek",
     "invoiceNumber": "Számlaszám",

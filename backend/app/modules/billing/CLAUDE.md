@@ -119,6 +119,11 @@ that event was never published.
   invoices). `reconcile_payment` is idempotent (objective − current);
   never write `invoice_payments` for a from-budget invoice anywhere
   else. Lock order is **budget row → invoice rows** (`lock_budget`).
+- **Historical invoices are read-only.** The migration importer sets
+  `is_historical` on new imported invoices. Their issue date and fiscal
+  totals count in billing reports, with zero paid and zero due in the
+  operational summary. The payment bridge, accountant export and live
+  compliance workflows exclude historical invoices.
 - **`compute_paid_summary` is the only paid arithmetic.** Refunds are
   subtracted proportionally there; any other surface (reports' patient
   summary, lists) must reuse it / `compute_paid_summaries_for_invoices`

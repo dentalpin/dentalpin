@@ -36,7 +36,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/[id]/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: eab5bb31
+last_verified_commit: 0000000
 ---
 
 # Detalle de factura
@@ -77,6 +77,8 @@ se emite un abono.
 - **VeriFactu.** Si el módulo está instalado, al emitir se encola el
   envío a AEAT. El estado (`pending`, `sent`, `rejected`) se ve en
   el lateral.
+
+El distintivo **Histórica** identifica una factura importada de solo lectura. Puedes consultar la fecha original, los importes y las líneas. Las acciones de registrar un cobro, enviar la factura y crear una rectificativa están deshabilitadas.
 
 ## Emitir una factura
 

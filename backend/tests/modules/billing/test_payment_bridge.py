@@ -373,3 +373,35 @@ async def test_invoice_payments_list_embeds_payment(
     assert payment["id"] == link["payment_id"]
     assert (payment["method"], payment["payment_date"]) == ("cash", TODAY)
     assert Decimal(str(payment["net_amount"])) == Decimal("50.00")
+
+
+@pytest.mark.asyncio
+async def test_budget_collection_skips_historical_invoice(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+) -> None:
+    budget = await _budget(db_session, test_clinic, test_patient, "300.00")
+    historical = await _draft_invoice(db_session, test_clinic, test_patient, "120.00", budget)
+    historical.is_historical = True
+    historical.status = "issued"
+    historical.issue_date = date(2020, 1, 1)
+    await db_session.commit()
+    current = await _draft_invoice(db_session, test_clinic, test_patient, "180.00", budget)
+    await _issue(client, auth_headers, current.id)
+
+    await _pay(
+        client,
+        auth_headers,
+        test_patient.id,
+        [{"target_type": "budget", "target_id": str(budget.id), "amount": "100.00"}],
+    )
+
+    links = (
+        await db_session.execute(select(InvoicePayment.invoice_id, InvoicePayment.amount))
+    ).all()
+    assert links == [(current.id, Decimal("100.00"))]
+    await db_session.refresh(historical)
+    assert historical.status == "issued"

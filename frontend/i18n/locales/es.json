@@ -2433,6 +2433,7 @@
     "emptyAction": "Crear primera factura",
     "searchPlaceholder": "Buscar por número o paciente...",
     "notFound": "Factura no encontrada",
+    "historical": "Histórica",
     "draftNoNumber": "Borrador",
     "details": "Detalles",
     "invoiceNumber": "Número",

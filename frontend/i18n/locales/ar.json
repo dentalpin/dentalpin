@@ -2574,6 +2574,7 @@
     "emptyAction": "إنشاء أول فاتورة",
     "searchPlaceholder": "ابحث بالرقم أو المريض...",
     "notFound": "الفاتورة غير موجودة",
+    "historical": "تاريخية",
     "draftNoNumber": "مسودة",
     "details": "التفاصيل",
     "invoiceNumber": "رقم الفاتورة",
