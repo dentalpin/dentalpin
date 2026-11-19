@@ -33,6 +33,10 @@ the scaffold could not infer.
 
 - `backend/app/modules/agenda/frontend/pages/appointments/index.vue` → `/appointments`
 
+The appointment editor keeps the stored elapsed duration, including values
+outside the standard presets. Its partial update omits start and end times
+when the schedule is untouched. Changing just the duration sends a new end time.
+
 ## Permissions
 
 `appointments.read`, `appointments.write`, `cabinets.read`, `cabinets.write`

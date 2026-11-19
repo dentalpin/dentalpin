@@ -30,7 +30,7 @@ related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
   - backend/app/modules/agenda/frontend/pages/p/check-in/[token].vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: cd84d7334f2898dd9d4ee83500da5cc25c3a36f0
+last_verified_commit: 0000000
 ---
 
 # Appointments
@@ -92,6 +92,13 @@ planned work instead of a free-text reason.
   accepted and the plan is active; that is where the money is booked.
 - If the patient has no plan with pending treatments, the selector
   explains so instead of showing an empty picker.
+
+## Edit an appointment
+
+Open the appointment from the calendar. When its saved duration falls
+outside the presets, it appears as an option such as **75 min (current)**.
+Changing the patient preserves the scheduled times. Choose a different
+duration to change the end time.
 
 ## Move or resize
 

@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type {
   Appointment,
-  AppointmentCreate,
   NotificationChannel,
   Patient,
   PlannedTreatmentItem,
   Surface
 } from '~~/app/types'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { appointmentTimes, editedAppointmentTimes, readAppointmentTiming } from '../../utils/appointmentTiming'
 import { formatLocalDate, isoPartsToDateKey, parseIsoParts } from '../../utils/date'
 import { errorMessage } from '~~/app/utils/error'
 
@@ -32,7 +32,7 @@ const emit = defineEmits<{
   'cancelled': [appointmentId: string]
 }>()
 
-const { t } = useI18n()
+const { t, n } = useI18n()
 const toast = useToast()
 const auth = useAuth()
 const clinic = useClinic()
@@ -68,7 +68,7 @@ const formData = reactive({
 })
 
 // Duration options (in minutes)
-const durationOptions = [
+const presetDurationOptions = [
   { value: 15, label: '15 min' },
   { value: 30, label: '30 min' },
   { value: 45, label: '45 min' },
@@ -76,7 +76,15 @@ const durationOptions = [
   { value: 90, label: '90 min' },
   { value: 120, label: '120 min' }
 ]
-const validDurations = durationOptions.map(d => d.value)
+const validDurations = presetDurationOptions.map(d => d.value)
+const originalTiming = ref<ReturnType<typeof readAppointmentTiming> | null>(null)
+const durationOptions = computed(() => {
+  const duration = originalTiming.value?.duration
+  if (duration === undefined || validDurations.includes(duration)) return presetDurationOptions
+
+  const label = t('appointments.currentDuration', { minutes: n(duration, { maximumFractionDigits: 2 }) })
+  return [...presetDurationOptions, { value: duration, label }].sort((a, b) => a.value - b.value)
+})
 
 // Edit mode check
 const isEditMode = computed(() => !!props.appointment)
@@ -174,6 +182,7 @@ const canSave = computed(() => {
   // Cabinet is optional (#51) — only patient + date + start time +
   // professional are required to book.
   return selectedPatient.value && formData.date && formData.startTime && selectedProfessionalId.value
+    && (!isEditMode.value || originalTiming.value !== null)
 })
 
 // Notification computed properties
@@ -326,6 +335,7 @@ watch(() => props.open, async (isOpen) => {
   }
   // Reset flags when modal opens
   initialDataLoaded.value = false
+  originalTiming.value = null
   lastOverlapWarningKey.value = ''
   initialOverlapIds.value = { professional: new Set(), cabinet: new Set() }
 
@@ -345,8 +355,11 @@ watch(() => props.open, async (isOpen) => {
     const apt = props.appointment
     selectedPatient.value = apt.patient || null
     selectedProfessionalId.value = apt.professional_id
-    formData.date = apt.start_time.split('T')[0] ?? ''
-    formData.startTime = apt.start_time.split('T')[1]?.substring(0, 5) ?? '09:00'
+    const timing = readAppointmentTiming(apt)
+    originalTiming.value = timing
+    formData.date = timing.date
+    formData.startTime = timing.startTime
+    formData.duration = timing.duration
     // null cabinet (#51) maps to the "assign later" option.
     formData.cabinet = apt.cabinet ?? UNASSIGNED_CABINET
 
@@ -397,14 +410,6 @@ watch(() => props.open, async (isOpen) => {
     } else {
       selectedTreatments.value = []
     }
-
-    // Calculate duration from start/end time, rounded to nearest valid option
-    const start = new Date(apt.start_time)
-    const end = new Date(apt.end_time)
-    const calculatedDuration = Math.round((end.getTime() - start.getTime()) / 60000)
-    formData.duration = validDurations.reduce((prev, curr) =>
-      Math.abs(curr - calculatedDuration) < Math.abs(prev - calculatedDuration) ? curr : prev
-    )
   } else {
     // Create mode - use initial values
     if (props.initialDate) {
@@ -486,25 +491,12 @@ watch(() => props.open, async (isOpen) => {
   initialDataLoaded.value = true
 })
 
-// Calculate end time from start time and duration
-function calculateEndTime(): string {
-  const timeParts = formData.startTime.split(':').map(Number)
-  const startHours = timeParts[0] ?? 9
-  const startMinutes = timeParts[1] ?? 0
-
-  // Add duration in minutes
-  const totalMinutes = startHours * 60 + startMinutes + formData.duration
-  const endHours = Math.floor(totalMinutes / 60) % 24
-  const endMinutes = totalMinutes % 60
-
-  // Build end time string in same format as start time
-  const endTimeStr = `${endHours.toString().padStart(2, '0')}:${endMinutes.toString().padStart(2, '0')}`
-
-  return `${formData.date}T${endTimeStr}:00`
-}
-
 async function handleSave() {
   if (!canSave.value || !selectedPatient.value) return
+  const appointment = props.appointment
+  const original = originalTiming.value
+  if (appointment && !original) return
+  const timing = { date: formData.date, startTime: formData.startTime, duration: formData.duration }
 
   isSubmitting.value = true
   // Silence the overlap watcher: createAppointment mutates the shared
@@ -513,17 +505,13 @@ async function handleSave() {
   initialDataLoaded.value = false
 
   try {
-    // Build start_time ISO string
-    const startTime = `${formData.date}T${formData.startTime}:00`
-    const endTime = calculateEndTime()
-
     // Schedules-module enforcement (UI-only). The composable is
     // 404-tolerant: if schedules is uninstalled it returns null and
     // we skip the check. Otherwise warn the user when the slot is
     // outside open hours and ask for confirmation.
     const availability = await scheduleAvailability.fetch({
-      start: formData.date,
-      end: formData.date,
+      start: timing.date,
+      end: timing.date,
       professional_id: selectedProfessionalId.value
     })
     if (availability) {
@@ -535,18 +523,18 @@ async function handleSave() {
       // slots as outside hours when the two zones disagree. Mirrors the
       // wall-clock approach used by ``useCalendarBounds`` /
       // ``useBlockedSegments``.
-      const [fh, fm] = formData.startTime.split(':').map(Number)
+      const [fh, fm] = timing.startTime.split(':').map(Number)
       const formStart = (fh ?? 0) * 60 + (fm ?? 0)
-      const formEnd = formStart + formData.duration
+      const formEnd = formStart + timing.duration
       const conflict = availability.ranges.find((r) => {
         if (r.state === 'open') return false
         const sParts = parseIsoParts(r.start)
         const eParts = parseIsoParts(r.end)
         const sDate = isoPartsToDateKey(sParts)
         const eDate = isoPartsToDateKey(eParts)
-        if (sDate !== formData.date && eDate !== formData.date) return false
-        const rStart = sDate === formData.date ? sParts.hour * 60 + sParts.minute : 0
-        const rEnd = eDate === formData.date ? eParts.hour * 60 + eParts.minute : 24 * 60
+        if (sDate !== timing.date && eDate !== timing.date) return false
+        const rStart = sDate === timing.date ? sParts.hour * 60 + sParts.minute : 0
+        const rEnd = eDate === timing.date ? eParts.hour * 60 + eParts.minute : 24 * 60
         return rStart < formEnd && rEnd > formStart
       })
       if (conflict) {
@@ -565,30 +553,31 @@ async function handleSave() {
       ? formData.cabinet
       : null
 
-    const appointmentData: AppointmentCreate = {
+    const appointmentData = {
       patient_id: selectedPatient.value.id,
       professional_id: selectedProfessionalId.value,
       cabinet: cabinetValue,
-      start_time: startTime,
-      end_time: endTime,
       // An omitted key keeps the existing links, so when the user removed
       // the last linked item on edit, [] has to be sent to unlink it (#743).
-      planned_item_ids: selectedTreatments.value.length > 0 || props.appointment?.treatments?.length
+      planned_item_ids: selectedTreatments.value.length > 0 || appointment?.treatments?.length
         ? selectedTreatments.value.map(t => t.id)
         : undefined
     }
 
     let savedAppointment: Appointment
 
-    if (isEditMode.value && props.appointment) {
-      savedAppointment = await updateAppointment(props.appointment.id, appointmentData)
+    if (appointment && original) {
+      savedAppointment = await updateAppointment(appointment.id, {
+        ...appointmentData,
+        ...editedAppointmentTimes(original, timing)
+      })
       toast.add({
         title: t('common.success'),
         description: t('appointments.updated'),
         color: 'success'
       })
     } else {
-      savedAppointment = await createAppointment(appointmentData)
+      savedAppointment = await createAppointment({ ...appointmentData, ...appointmentTimes(timing) })
       toast.add({
         title: t('common.success'),
         description: t('appointments.created'),
