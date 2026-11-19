@@ -4,7 +4,7 @@ import warnings
 from pathlib import Path
 from typing import ClassVar
 
-from pydantic import model_validator
+from pydantic import SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 MIN_SECRET_KEY_LENGTH = 32
@@ -67,6 +67,8 @@ class Settings(BaseSettings):
 
     # Security
     SECRET_KEY: str
+    MFA_ENCRYPTION_KEY: SecretStr | None = None
+    MFA_PREVIOUS_ENCRYPTION_KEY: SecretStr | None = None
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     # Session cookies (ADR 0023) are host-only by default, which is what a

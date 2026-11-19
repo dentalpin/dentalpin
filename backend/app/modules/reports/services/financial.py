@@ -55,6 +55,7 @@ class FinancialReportService:
                 .where(
                     Invoice.clinic_id == clinic_id,
                     Invoice.status.in_(OPEN_STATUSES),
+                    Invoice.is_historical.is_(False),
                     Invoice.deleted_at.is_(None),
                 )
                 .group_by(Invoice.due_date, Invoice.patient_id)

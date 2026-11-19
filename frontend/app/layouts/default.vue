@@ -5,6 +5,7 @@ const { t } = useI18n()
 const auth = useAuth()
 const clinic = useClinic()
 const { navigationItems, ensureLoaded } = useModules()
+const navigationBadges = useNavigationBadges()
 const { init: initDensity } = useDensity()
 const { isTablet } = useBreakpoint()
 const route = useRoute()
@@ -161,6 +162,7 @@ function isActive(to: string): boolean {
           :label="item.label"
           :icon="item.icon"
           :active="isActive(item.to)"
+          :badge="navigationBadges[item.to]"
           :hide-label="isSidebarCollapsed"
         />
         <div
@@ -200,6 +202,7 @@ function isActive(to: string): boolean {
               :label="item.label"
               :icon="item.icon"
               :active="isActive(item.to)"
+              :badge="navigationBadges[item.to]"
             />
           </div>
         </div>
@@ -294,6 +297,7 @@ function isActive(to: string): boolean {
               :label="item.label"
               :icon="item.icon"
               :active="isActive(item.to)"
+              :badge="navigationBadges[item.to]"
               padded="roomy"
             />
             <div
@@ -332,6 +336,7 @@ function isActive(to: string): boolean {
                   :label="item.label"
                   :icon="item.icon"
                   :active="isActive(item.to)"
+                  :badge="navigationBadges[item.to]"
                   padded="roomy"
                 />
               </div>

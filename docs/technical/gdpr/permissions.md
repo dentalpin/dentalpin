@@ -15,8 +15,8 @@ Returned by `GdprModule.get_permissions()`
 | `gdpr.consents.read` | List patient consents; read the current consent per purpose | `GET /api/v1/gdpr/consents`, `GET /api/v1/gdpr/consents/current` |
 | `gdpr.consents.write` | Record consent grant or withdrawal | `POST /api/v1/gdpr/consents` |
 | `gdpr.retention.read` | List active retention policies | `GET /api/v1/gdpr/retention` |
-| `gdpr.retention.write` | Create/update/delete retention policies | `POST /api/v1/gdpr/retention`, `PATCH /api/v1/gdpr/retention/{id}`, `DELETE /api/v1/gdpr/retention/{id}` |
-| `gdpr.audit.read` | View the erasure audit log | `GET /api/v1/gdpr/audit` |
+| `gdpr.retention.write` | Create/update/delete retention policies and change the access log retention via `PUT /api/v1/gdpr/access-log/retention` | `POST /api/v1/gdpr/retention`, `PATCH /api/v1/gdpr/retention/{id}`, `DELETE /api/v1/gdpr/retention/{id}` |
+| `gdpr.audit.read` | Review and export access metadata and view the erasure audit | `GET /api/v1/gdpr/audit`, `GET /api/v1/gdpr/access-log` and its `/csv`, `/users`, `/retention` subroutes |
 | `gdpr.breaches.read` | List and view data-breach reports | `GET /api/v1/gdpr/breaches`, `GET /api/v1/gdpr/breaches/{id}` |
 | `gdpr.breaches.write` | Create and update data-breach reports | `POST /api/v1/gdpr/breaches`, `PATCH /api/v1/gdpr/breaches/{id}` |
 

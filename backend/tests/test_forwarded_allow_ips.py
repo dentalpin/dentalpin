@@ -183,9 +183,9 @@ def test_uvicorn_reads_the_env_var_when_the_flag_is_absent() -> None:
 
 
 def test_client_ip_ignores_the_forwarded_header() -> None:
-    """``_client_ip`` stores the session's ``client_ip``; it must not
+    """``client_ip`` stores the session's ``client_ip``; it must not
     re-parse the header uvicorn already adjudicated."""
-    from app.core.auth.router import _client_ip
+    from app.core.auth.sessions import client_ip
 
     scope = {
         "type": "http",
@@ -195,11 +195,11 @@ def test_client_ip_ignores_the_forwarded_header() -> None:
         "headers": [(b"x-forwarded-for", b"9.9.9.9")],
         "client": (UNTRUSTED_PEER, 44321),
     }
-    assert _client_ip(Request(scope)) == UNTRUSTED_PEER
+    assert client_ip(Request(scope)) == UNTRUSTED_PEER
 
 
 def test_client_ip_survives_a_missing_peer() -> None:
-    from app.core.auth.router import _client_ip
+    from app.core.auth.sessions import client_ip
 
     scope = {"type": "http", "scheme": "http", "method": "GET", "path": "/", "headers": []}
-    assert _client_ip(Request(scope)) is None
+    assert client_ip(Request(scope)) is None

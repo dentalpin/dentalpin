@@ -181,6 +181,7 @@ export function useInvoices() {
       id: inv.id,
       invoice_number: inv.invoice_number,
       status: inv.status,
+      is_historical: inv.is_historical,
       issue_date: inv.issue_date,
       due_date: inv.due_date,
       total: inv.total,
@@ -488,30 +489,30 @@ export function useInvoices() {
   }
 
   function canEdit(invoice: Invoice | InvoiceDetail | InvoiceListItem): boolean {
-    return invoice.status === 'draft'
+    return !invoice.is_historical && invoice.status === 'draft'
   }
 
   function canIssue(invoice: Invoice | InvoiceDetail | InvoiceListItem): boolean {
-    return invoice.status === 'draft'
+    return !invoice.is_historical && invoice.status === 'draft'
   }
 
   function canRecordPayment(invoice: Invoice | InvoiceDetail | InvoiceListItem): boolean {
-    return ['issued', 'partial'].includes(invoice.status)
+    return !invoice.is_historical && ['issued', 'partial'].includes(invoice.status)
   }
 
   function canVoid(invoice: Invoice | InvoiceDetail | InvoiceListItem): boolean {
-    return invoice.status === 'draft'
+    return !invoice.is_historical && invoice.status === 'draft'
   }
 
   function canCreateCreditNote(invoice: Invoice | InvoiceDetail | InvoiceListItem): boolean {
     // Can't create credit note for a credit note (check if it's already a rectificativa)
     const isCreditNote = 'credit_note_for_id' in invoice && invoice.credit_note_for_id != null
-    return ['issued', 'partial', 'paid'].includes(invoice.status) && !isCreditNote
+    return !invoice.is_historical && ['issued', 'partial', 'paid'].includes(invoice.status) && !isCreditNote
   }
 
   function canSend(invoice: Invoice | InvoiceDetail | InvoiceListItem): boolean {
     // Can only send issued, partial, or paid invoices (not drafts or voided)
-    return ['issued', 'partial', 'paid'].includes(invoice.status)
+    return !invoice.is_historical && ['issued', 'partial', 'paid'].includes(invoice.status)
   }
 
   const { format: formatCurrency } = useCurrency()

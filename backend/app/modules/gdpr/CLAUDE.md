@@ -149,3 +149,22 @@ All tools filter by `ctx.clinic_id` and return native values (UUID/datetime).
 ## CHANGELOG
 
 See `./CHANGELOG.md`.
+
+## Patient access audit (#888)
+
+The staff audit table is owned by core (`app.core.patient_access`).
+Pass `RecordPatientAccess` to protected routers and call it after looking
+up the clinic-scoped subject and before returning a successful read.
+The recorder commits synchronously. Repeat views coalesce into fixed
+ten-minute UTC windows; downloads and patient exports each get a row.
+
+GDPR provides `GET /access-log` and `GET /access-log/csv` scoped by exactly
+one `patient_id` or `user_id`, `GET /access-log/users` and `GET /access-log/retention`
+under `gdpr.audit.read`. The date filter uses inclusive local dates and
+CSV requires both dates. `PUT /access-log/retention` requires
+`gdpr.retention.write`. The daily core job purges expired rows even
+when GDPR is uninstalled. Erasure leaves access rows and does not copy
+patient fields into them.
+
+The layer registers the **Access log** tab via `patient.detail.tabs`.
+The host passes `{ patientId }`; registered tabs supply `labelKey`.

@@ -34,6 +34,7 @@ class GdprModule(BaseModule):
         "installable": True,
         "auto_install": False,
         "removable": True,
+        "frontend": {"layer_path": "frontend"},
         "role_permissions": {
             "admin": ["*"],
             "dentist": ["requests.read", "consents.read", "audit.read", "retention.read"],

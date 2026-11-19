@@ -1,5 +1,8 @@
 """Tests for the budget module."""
 
+import re
+import shutil
+import subprocess
 from decimal import Decimal
 from types import SimpleNamespace
 from uuid import UUID, uuid4
@@ -729,6 +732,21 @@ async def test_accept_budget(client: AsyncClient, auth_headers: dict, budget_cli
     assert response.status_code == 200
     data = response.json()["data"]
     assert data["status"] == "accepted"
+
+    budget_url = f"/api/v1/budget/budgets/{budget_id}"
+    metadata = await client.get(f"{budget_url}/signature", headers=auth_headers)
+    assert metadata.status_code == 200, metadata.text
+    fingerprint = metadata.json()["data"]["document_hash"]
+    assert re.fullmatch(r"[0-9a-f]{64}", fingerprint or "")
+
+    signed_pdf = await client.get(f"{budget_url}/pdf/signed", headers=auth_headers)
+    assert signed_pdf.status_code == 200
+    assert signed_pdf.content.startswith(b"%PDF")
+    if shutil.which("pdftotext"):
+        text = subprocess.run(
+            ["pdftotext", "-", "-"], input=signed_pdf.content, capture_output=True, check=True
+        ).stdout.decode("utf-8")
+        assert fingerprint[:16] in text
 
 
 @pytest.mark.asyncio

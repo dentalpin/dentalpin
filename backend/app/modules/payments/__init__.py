@@ -21,7 +21,12 @@ from fastapi import APIRouter
 from app.core.events import EventType
 from app.core.plugins import BaseModule
 
-from .events import on_session_completed, on_treatment_performed
+from .events import (
+    on_session_completed,
+    on_treatment_deleted,
+    on_treatment_performed,
+    on_treatment_status_changed,
+)
 from .models import (
     PatientEarnedEntry,
     Payment,
@@ -88,6 +93,9 @@ class PaymentsModule(BaseModule):
     def get_event_handlers(self) -> dict:
         return {
             EventType.ODONTOGRAM_TREATMENT_PERFORMED: on_treatment_performed,
+            # A deleted or un-performed treatment drops its NULL-session row (#896).
+            EventType.ODONTOGRAM_TREATMENT_DELETED: on_treatment_deleted,
+            EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED: on_treatment_status_changed,
             # Per-session earned signal (multi-session billing).
             # Single-session items publish this once too — the legacy
             # ``treatment_plan.treatment_completed`` handler was removed

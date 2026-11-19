@@ -444,6 +444,7 @@ class InvoiceResponse(BaseModel):
 
     # Status
     status: str
+    is_historical: bool
 
     # Dates
     issue_date: date | None
@@ -513,6 +514,7 @@ class InvoiceListResponse(BaseModel):
     id: UUID
     invoice_number: str | None  # Null for drafts (assigned when issued)
     status: str
+    is_historical: bool
     issue_date: date | None
     due_date: date | None
     total: Decimal

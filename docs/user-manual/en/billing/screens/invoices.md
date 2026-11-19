@@ -36,7 +36,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 0000000
 ---
 
 # Invoice list
@@ -60,6 +60,8 @@ open invoices to issue, email, or void them.
   issuing an invoice queues the AEAT submission through the
   `invoice.issued` hook. The submission state is visible on the
   detail.
+
+The **Historical** badge identifies imported invoices. Their totals remain available in the list and in billing reports on the original issue date. Historical invoices do not appear in overdue results.
 
 ## Find an invoice
 
