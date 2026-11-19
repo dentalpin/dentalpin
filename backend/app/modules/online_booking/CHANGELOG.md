@@ -9,6 +9,7 @@
 - Share the agenda clinic lock and recheck conflicts on request, confirmation and acceptance.
 
 - Render the reception accept action with the primary button style.
+- Add a standalone static public booking and confirmation widget and clinic-bound, single-use ALTCHA v2 challenges. Public request clients must now provide an ALTCHA solution.
 
 - Reception chooses professional, optional cabinet and duration, with per-reason defaults and conflict rechecks; patient contact fields are prefilled and matching contacts suggested.
 - Show a permission-scoped count of confirmed pending requests in navigation.

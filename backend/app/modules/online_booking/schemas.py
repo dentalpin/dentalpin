@@ -45,6 +45,7 @@ class RequestInput(BaseModel):
     contact_phone: str | None = Field(default=None, max_length=20, pattern=r"^[+0-9 ()-]*$")
     reason: Literal["first_visit", "checkup"]
     website: str = Field(default="", max_length=200)
+    altcha: str = Field(min_length=1, max_length=4096)
 
     @field_validator("start_time")
     @classmethod

@@ -20,3 +20,5 @@
 - The caller must provide a confirmation page that submits the token from the fragment.
 - Expose only explicit public paths on the perimeter; never expose staff routes.
 - Tests require isolated synthetic PostgreSQL, never patient data or real credentials.
+
+- The independent `public_widget/` builds static assets for same-origin public APIs. ALTCHA v2 is mandatory for requests; see its README for the exact public proxy allowlist and iframe CSP.

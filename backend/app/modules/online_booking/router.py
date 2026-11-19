@@ -9,6 +9,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -16,6 +17,7 @@ from app.core.auth.router import limiter
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
+from .captcha import challenge, consume
 from .exceptions import BookingRoute
 from .rate_limit import consume_rate
 from .schemas import (
@@ -76,6 +78,14 @@ async def availability(
     return ApiResponse(data=Availability(**await BookingService.availability(db, clinic_id, day)))
 
 
+@router.get("/public/{clinic_id}/challenge")
+@limiter.limit("30/minute")
+async def public_challenge(request: Request, clinic_id: UUID, db: DB):
+    await consume_rate("challenge-ip", _client(request), 240)
+    await BookingService.public_settings(db, clinic_id)
+    return JSONResponse(challenge(clinic_id), headers={"Cache-Control": "no-store"})
+
+
 @router.post(
     "/public/{clinic_id}/requests", status_code=201, response_model=ApiResponse[MessageOut]
 )
@@ -88,6 +98,8 @@ async def create_request(
         # Honeypot: answer like any other malformed request.
         raise HTTPException(400, "Unable to process request")
     await consume_rate("request-contact", f"{clinic_id}:{str(data.contact_email).lower()}", 3)
+    await BookingService.public_settings(db, clinic_id)
+    await consume(db, clinic_id, data.altcha)
     message = await BookingService.create_request(db, clinic_id, data)
     return ApiResponse(data=MessageOut(message=message))
 
