@@ -36,6 +36,7 @@ from .dependencies import (
     get_current_user,
     require_permission,
 )
+from .mfa import MfaChallengeResponse, mfa_status, new_challenge, no_store
 from .models import Clinic, ClinicMembership, Role, User
 from .permissions import (
     CORE_PERMISSIONS,
@@ -69,12 +70,12 @@ from .service import (
     create_invite_token,
     decode_token,
     hash_password,
-    issue_refresh_token,
     revoke_family,
     rotate_refresh_token,
     validate_password_strength,
     verify_password,
 )
+from .sessions import client_ip, start_session
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 # Rate limiting is on everywhere except test runs (#530): a reachable
@@ -251,17 +252,21 @@ async def setup(
         },
     )
 
-    return await _start_session(request, response, db, user, clinic.id)
+    return await start_session(request, response, db, user, clinic.id)
 
 
-@router.post("/login", response_model=TokenResponse)
+@router.post(
+    "/login",
+    response_model=TokenResponse | MfaChallengeResponse,
+    responses={202: {"model": MfaChallengeResponse}},
+)
 @limiter.limit("5/minute")
 async def login(
     request: Request,
     response: Response,
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
     db: Annotated[AsyncSession, Depends(get_db)],
-) -> TokenResponse:
+) -> TokenResponse | MfaChallengeResponse:
     """Login and get access tokens."""
     # Find user by email
     result = await db.execute(
@@ -272,6 +277,8 @@ async def login(
         # case; the exact spelling wins, then the oldest account.
         .order_by((User.email == form_data.username.strip()).desc(), User.created_at)
         .limit(1)
+        .with_for_update(of=User)
+        .execution_options(populate_existing=True)
     )
     user = result.scalar_one_or_none()
 
@@ -288,49 +295,24 @@ async def login(
             detail="User account is inactive",
         )
 
-    # Get first clinic ID if user has any membership
-    clinic_id = None
-    if user.memberships:
-        clinic_id = user.memberships[0].clinic_id
-
-    return await _start_session(request, response, db, user, clinic_id)
+    return await _finish_primary_auth(request, response, db, user)
 
 
-def _client_ip(request: Request) -> str | None:
-    """The peer as uvicorn resolved it — never the raw header (#623).
-
-    This used to read ``X-Forwarded-For`` itself and take the leftmost
-    entry, which is the one the client writes, so the ``client_ip``
-    stored on a refresh family could be set to anything the caller
-    liked. ``request.client.host`` is what uvicorn's proxy-headers
-    middleware already settled using FORWARDED_ALLOW_IPS, and it is the
-    same value the login rate limit keys on (``get_remote_address``), so
-    the audit trail and the limiter can no longer disagree.
-    """
-    return request.client.host if request.client else None
-
-
-async def _start_session(
-    request: Request, response: Response, db: AsyncSession, user: User, clinic_id
-) -> TokenResponse:
-    """Issue a tracked refresh family + access token and set the session
-    cookies (ADR 0023). The body still carries the pair for one release so
-    bearer clients and the e2e API context keep working unchanged."""
-    refresh_token, family_id = await issue_refresh_token(
-        db, user, user_agent=request.headers.get("user-agent"), client_ip=_client_ip(request)
-    )
-    access_token = create_access_token(
-        user.id, clinic_id=clinic_id, token_version=user.token_version, family_id=family_id
-    )
-    await db.commit()
-    set_session_cookies(
-        response,
-        access_token=access_token,
-        refresh_token=refresh_token,
-        csrf_token=new_csrf_token(),
-        request=request,
-    )
-    return TokenResponse(access_token=access_token, refresh_token=refresh_token)
+async def _finish_primary_auth(
+    request: Request, response: Response, db: AsyncSession, user: User
+) -> TokenResponse | MfaChallengeResponse:
+    """Complete password or invite auth. The user row is already locked."""
+    mfa = await mfa_status(db, user)
+    if mfa.enabled or mfa.required:
+        challenge = await new_challenge(db, user, "verify" if mfa.enabled else "required")
+        await db.commit()
+        if request.cookies.get(ACCESS_COOKIE) or request.cookies.get(REFRESH_COOKIE):
+            clear_session_cookies(response)
+        no_store(response)
+        response.status_code = status.HTTP_202_ACCEPTED
+        return challenge
+    clinic_id = user.memberships[0].clinic_id if user.memberships else None
+    return await start_session(request, response, db, user, clinic_id)
 
 
 @router.post("/logout", status_code=status.HTTP_204_NO_CONTENT)
@@ -401,12 +383,18 @@ async def refresh_token(
             db,
             presented,
             user_agent=request.headers.get("user-agent"),
-            client_ip=_client_ip(request),
+            client_ip=client_ip(request),
         )
     except RefreshTokenError as exc:
         await db.commit()  # persist a reuse-detection family revoke
         clear_session_cookies(response)
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail=str(exc))
+
+    mfa = await mfa_status(db, user)
+    if mfa.required and not mfa.enabled:
+        await revoke_family(db, family_id)
+        await db.commit()
+        raise HTTPException(401, "mfa_login_required")
 
     # Fetch memberships with clinics for response
     memberships_result = await db.execute(
@@ -650,14 +638,18 @@ async def create_user_invite_link(
     return ApiResponse(data=InviteLinkResponse(token=token, expires_at=expires_at))
 
 
-@router.post("/set-password", response_model=TokenResponse)
+@router.post(
+    "/set-password",
+    response_model=TokenResponse | MfaChallengeResponse,
+    responses={202: {"model": MfaChallengeResponse}},
+)
 @limiter.limit("10/hour")
 async def set_password_from_invite(
     request: Request,
     response: Response,
     data: SetPasswordRequest,
     db: Annotated[AsyncSession, Depends(get_db)],
-) -> TokenResponse:
+) -> TokenResponse | MfaChallengeResponse:
     """Consume an invite token: set the password and log the user in.
 
     Single use — bumping ``token_version`` invalidates the token (and any
@@ -692,10 +684,7 @@ async def set_password_from_invite(
 
     user.password_hash = hash_password(data.password)
     user.token_version += 1
-    await db.commit()
-
-    clinic_id = user.memberships[0].clinic_id if user.memberships else None
-    return await _start_session(request, response, db, user, clinic_id)
+    return await _finish_primary_auth(request, response, db, user)
 
 
 async def _refuse_if_last_admin(db: AsyncSession, clinic_id: UUID, user_id: UUID) -> None:

@@ -7,6 +7,7 @@ import asyncio
 import sys
 
 from . import db as db_cli
+from . import mfa as mfa_cli
 from . import modules as modules_cli
 
 
@@ -19,6 +20,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     modules_cli.register(sub)
     db_cli.register(sub)
+    mfa_cli.register(sub)
     return parser
 
 

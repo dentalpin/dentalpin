@@ -21,6 +21,10 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `appointment.scheduled` | `EventType.APPOINTMENT_SCHEDULED` | `agenda` | `activity_journal`, `integrations`, `notifications`, `patient_timeline`, `recalls`, `schedules` |
 | `appointment.status_changed` | `EventType.APPOINTMENT_STATUS_CHANGED` | `agenda` | — |
 | `appointment.updated` | `EventType.APPOINTMENT_UPDATED` | `agenda` | `schedules` |
+| `auth.2fa_disabled` | `EventType.AUTH_2FA_DISABLED` | `core:core` | — |
+| `auth.2fa_enabled` | `EventType.AUTH_2FA_ENABLED` | `core:core` | — |
+| `auth.2fa_failed` | `EventType.AUTH_2FA_FAILED` | `core:core` | — |
+| `auth.2fa_reset` | `EventType.AUTH_2FA_RESET` | `core:core` | — |
 | `budget.accepted` | `EventType.BUDGET_ACCEPTED` | `budget` | `activity_journal`, `integrations`, `notifications`, `patient_timeline`, `treatment_plan` |
 | `budget.cancelled` | `EventType.BUDGET_CANCELLED` | `budget` | `activity_journal`, `treatment_plan` |
 | `budget.created` | `EventType.BUDGET_CREATED` | — | — |
@@ -248,6 +252,34 @@ Maintained by `backend/scripts/generate_catalogs.py`.
   - `agenda` — `backend/app/modules/agenda/service.py`
 - **Subscribers:**
   - `schedules`
+
+### `auth.2fa_disabled`
+
+- **Constant:** `EventType.AUTH_2FA_DISABLED`
+- **Publishers:**
+  - `core:core` — `backend/app/core/auth/mfa.py`
+- **Subscribers:** —
+
+### `auth.2fa_enabled`
+
+- **Constant:** `EventType.AUTH_2FA_ENABLED`
+- **Publishers:**
+  - `core:core` — `backend/app/core/auth/mfa.py`
+- **Subscribers:** —
+
+### `auth.2fa_failed`
+
+- **Constant:** `EventType.AUTH_2FA_FAILED`
+- **Publishers:**
+  - `core:core` — `backend/app/core/auth/mfa.py`
+- **Subscribers:** —
+
+### `auth.2fa_reset`
+
+- **Constant:** `EventType.AUTH_2FA_RESET`
+- **Publishers:**
+  - `core:core` — `backend/app/core/auth/mfa.py`
+- **Subscribers:** —
 
 ### `budget.accepted`
 
