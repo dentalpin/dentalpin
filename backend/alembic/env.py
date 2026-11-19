@@ -36,6 +36,7 @@ from app.core.agents.models import (  # noqa: F401
     AgentSession,
 )
 from app.core.auth.models import Clinic, ClinicMembership, User  # noqa: F401
+from app.core.patient_access import PatientAccessLog  # noqa: F401
 from app.core.plugins.alembic_paths import discover_version_locations
 from app.core.plugins.db_models import (  # noqa: F401
     ExternalId,

@@ -11,6 +11,7 @@
     "/module_layers/copilot/frontend",
     "/module_layers/documents/frontend",
     "/module_layers/expenses/frontend",
+    "/module_layers/gdpr/frontend",
     "/module_layers/imaging_ai/frontend",
     "/module_layers/imaging_viewer/frontend",
     "/module_layers/india_gst/frontend",
@@ -139,6 +140,11 @@
       "routes": [
         "/expenses"
       ]
+    },
+    {
+      "name": "gdpr",
+      "path": "/module_layers/gdpr/frontend",
+      "routes": []
     },
     {
       "name": "imaging_ai",

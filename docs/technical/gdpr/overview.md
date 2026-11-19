@@ -178,3 +178,22 @@ cross-module FK is the `patients.id` reference. `manifest.depends = ["patients"]
 
 See [`./permissions.md`](./permissions.md) and [`./events.md`](./events.md)
 for full detail.
+
+## Staff access audit
+
+`patient_access_logs` (core Alembic revision `0011`) records authorised
+staff reads of patient detail, medical history and clinical notes,
+odontograms, documents, and authenticated PDF downloads/previews. It also
+records GDPR portability exports. Public links are outside this audit.
+Individual browser print actions do not make a server request.
+
+The patient read handler awaits an insert and commit before returning
+data. A unique PostgreSQL index and `ON CONFLICT DO NOTHING` coalesce
+`view` records for the same clinic, user, patient and resource within a
+fixed ten-minute UTC window. Download and export actions have independent
+rows. The log stores identifiers, time, resource, action, IP observed by
+the application and a bounded user-agent string. Names in the UI and CSV
+are looked up from current records. Entries survive patient erasure and
+staff removal. A core job purges expired rows every day at 03:00 UTC.
+The clinic retention setting defaults to five calendar years and can
+be set to 1–30 years in Settings → People → Patient access log.

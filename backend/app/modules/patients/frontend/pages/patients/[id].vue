@@ -100,8 +100,15 @@ watch(
   { immediate: true }
 )
 
+const patientTabsContext = computed(() => ({ patientId }))
+const registeredTabs = computed(() =>
+  resolve('patient.detail.tabs', patientTabsContext.value).flatMap(entry =>
+    entry.labelKey ? [{ ...entry, label: t(entry.labelKey) }] : []
+  )
+)
+
 const tabs = computed(() => {
-  const items: Array<{ value: string, label: string, icon: string, slot: string }> = [
+  const items: Array<{ value: string, label: string, icon?: string, slot: string }> = [
     {
       value: 'summary',
       label: t('patientDetail.tabs.summary'),
@@ -150,6 +157,9 @@ const tabs = computed(() => {
     slot: 'timeline'
   })
 
+  for (const entry of registeredTabs.value) {
+    items.push({ value: entry.id, label: entry.label, slot: 'registered-tab' })
+  }
   return items
 })
 
@@ -472,6 +482,12 @@ function collect() {
             <UCard class="mt-4">
               <PatientTimeline :patient-id="patientId" />
             </UCard>
+          </template>
+          <template #registered-tab="{ item }">
+            <component
+              :is="registeredTabs.find(entry => entry.id === item.value)?.component"
+              :ctx="patientTabsContext"
+            />
           </template>
         </UTabs>
       </main>

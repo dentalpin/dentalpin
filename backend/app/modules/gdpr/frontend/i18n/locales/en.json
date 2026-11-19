@@ -1,0 +1,46 @@
+{
+  "gdprAccess": {
+    "patientTab": "Access log",
+    "settings": "Patient access log",
+    "byUser": "Accesses by staff member",
+    "from": "From",
+    "to": "Through",
+    "invalidDates": "The end date must be on or after the start date.",
+    "csv": "Export CSV",
+    "loading": "Loading accesses…",
+    "loadError": "Could not load access records.",
+    "exportError": "Could not export the CSV.",
+    "empty": "No accesses in the selected period.",
+    "when": "Date and time",
+    "staff": "Staff member",
+    "patient": "Patient",
+    "action": "Action",
+    "resource": "Resource",
+    "ip": "IP address",
+    "chooseStaff": "Select a staff member",
+    "retention": "Access log retention",
+    "retentionYears": "Years",
+    "save": "Save",
+    "saved": "Retention saved.",
+    "saveError": "Could not save retention.",
+    "actions": {
+      "view": "View",
+      "download": "Download",
+      "export": "Export",
+      "print": "Print"
+    },
+    "resources": {
+      "patient_record": "Patient record",
+      "medical_history": "Medical history",
+      "clinical_notes": "Clinical notes",
+      "odontogram": "Odontogram",
+      "documents": "Documents and images",
+      "document_pdf": "Document PDF",
+      "budget_pdf": "Budget PDF",
+      "signed_budget_pdf": "Signed budget PDF",
+      "invoice_pdf": "Invoice PDF",
+      "prescription_pdf": "Prescription PDF",
+      "patient_export": "Data portability"
+    }
+  }
+}
