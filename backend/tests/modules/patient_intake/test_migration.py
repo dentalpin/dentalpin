@@ -38,13 +38,13 @@ async def tables_and_projection():
 
 def test_intake_migration_branch_round_trip():
     migrate("upgrade", "patient_intake@head")
-    tables, projection = asyncio.run(tables_and_projection())
-    assert INTAKE_TABLES <= tables
-    assert "patient_consents" in tables
-    assert projection
+    tables, _ = asyncio.run(tables_and_projection())
+    assert {*INTAKE_TABLES, "patients"} <= tables
 
     migrate("upgrade", "heads")
-    installed, _ = asyncio.run(tables_and_projection())
+    installed, projection = asyncio.run(tables_and_projection())
+    assert "patient_consents" in installed
+    assert projection
     migrate("downgrade", "patient_intake@-2")
     remaining, projection = asyncio.run(tables_and_projection())
     assert remaining == installed - INTAKE_TABLES

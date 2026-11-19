@@ -8,7 +8,8 @@ from alembic import op
 revision = "pint_0002"
 down_revision = "pint_0001"
 branch_labels = None
-depends_on = ("gdpr_0004", "notif_0009", "pc_0003")
+# Intake links to the GDPR ledger by UUID. Runtime module dependencies live in the manifest.
+depends_on = "pat_0003"
 
 
 def _timestamps():
@@ -59,7 +60,7 @@ def upgrade() -> None:
     )
     op.create_table(
         "patient_intake_consent_provenance",
-        sa.Column("consent_id", sa.Uuid(), sa.ForeignKey("patient_consents.id"), primary_key=True),
+        sa.Column("consent_id", sa.Uuid(), primary_key=True),
         sa.Column("clinic_id", sa.Uuid(), sa.ForeignKey("clinics.id"), nullable=False),
         sa.Column("intake_id", sa.Uuid(), sa.ForeignKey("patient_intake_submissions.id")),
         sa.Column("recorded_by", sa.Uuid(), sa.ForeignKey("users.id"), nullable=False),

@@ -13,3 +13,5 @@ Optional backend for versioned first-visit forms and staff review.
   the application because it owns retained submissions and consent provenance.
 - Read the [workflow and retention settings](../../../../docs/technical/patient_intake/overview.md)
   and the [staff endpoint permissions](../../../../docs/technical/patient_intake/permissions.md) when changing the contract.
+- The consent provenance stores the GDPR ledger UUID without a foreign key. The
+  manifest requires GDPR at runtime. A GDPR branch downgrade leaves intake tables intact.
