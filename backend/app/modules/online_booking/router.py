@@ -175,6 +175,7 @@ async def confirm(request: Request, clinic_id: UUID, data: ConfirmInput, db: DB)
             BookingRequest.clinic_id == clinic_id, BookingRequest.token_hash == digest(data.token)
         )
         .with_for_update()
+        .execution_options(populate_existing=True)
     )
     now = datetime.now(UTC)
     if (
@@ -247,6 +248,7 @@ async def accept(
         select(BookingRequest)
         .where(BookingRequest.id == request_id, BookingRequest.clinic_id == ctx.clinic_id)
         .with_for_update()
+        .execution_options(populate_existing=True)
     )
     now = datetime.now(UTC)
     if row is None:
@@ -317,6 +319,7 @@ async def reject(
         select(BookingRequest)
         .where(BookingRequest.id == request_id, BookingRequest.clinic_id == ctx.clinic_id)
         .with_for_update()
+        .execution_options(populate_existing=True)
     )
     if row is None:
         raise HTTPException(404, "Request not found")

@@ -38,6 +38,7 @@ async def dispatch_one(db: AsyncSession) -> bool:
         )
         .order_by(BookingMail.created_at, BookingMail.id)
         .with_for_update(skip_locked=True)
+        .execution_options(populate_existing=True)
         .limit(1)
     )
     if mail is None:

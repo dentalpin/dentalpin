@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Refresh locked rows before evaluating request decisions or dispatch state.
+
 - Queue encrypted confirmation and rejection emails in the request transaction and send only after commit.
 
 - Add paginated reception inbox with explicit patient selection, acceptance and rejection.
