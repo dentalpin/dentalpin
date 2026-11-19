@@ -124,7 +124,12 @@ async def test_request_confirm_accept_and_conflict(
     result = await client.post(
         f"/api/v1/online_booking/requests/{item.id}/accept",
         headers=headers,
-        json={"first_name": "Synthetic", "last_name": "Person"},
+        json={
+            "first_name": "Synthetic",
+            "last_name": "Person",
+            "professional_id": str(professional.id),
+            "duration_minutes": 30,
+        },
     )
     assert result.status_code == 409, result.text
     assert item.status == "confirmed"
@@ -133,14 +138,24 @@ async def test_request_confirm_accept_and_conflict(
     accepted = await client.post(
         f"/api/v1/online_booking/requests/{item.id}/accept",
         headers=headers,
-        json={"first_name": "Synthetic", "last_name": "Person"},
+        json={
+            "first_name": "Synthetic",
+            "last_name": "Person",
+            "professional_id": str(professional.id),
+            "duration_minutes": 30,
+        },
     )
     assert accepted.status_code == 200, accepted.text
     assert item.status == "accepted" and item.patient_id and item.appointment_id
     repeat = await client.post(
         f"/api/v1/online_booking/requests/{item.id}/accept",
         headers=headers,
-        json={"first_name": "Synthetic", "last_name": "Person"},
+        json={
+            "first_name": "Synthetic",
+            "last_name": "Person",
+            "professional_id": str(professional.id),
+            "duration_minutes": 30,
+        },
     )
     assert repeat.status_code == 409
 
@@ -542,7 +557,12 @@ async def test_simultaneous_accept_creates_only_one_appointment(
         ) as parallel:
             url = f"/api/v1/online_booking/requests/{row.id}/accept"
             headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
-            payload = {"first_name": "Synthetic", "last_name": "Person"}
+            payload = {
+                "first_name": "Synthetic",
+                "last_name": "Person",
+                "professional_id": str(professional.id),
+                "duration_minutes": 30,
+            }
             responses = await asyncio.gather(
                 parallel.post(url, json=payload, headers=headers),
                 parallel.post(url, json=payload, headers=headers),
@@ -704,3 +724,164 @@ async def test_failed_commit_never_dispatches_queued_mail(db_session, test_clini
     await db_session.rollback()
     assert not await dispatch_one(db_session)
     assert delivery == []
+
+
+@pytest.mark.asyncio
+async def test_accept_validates_resources_and_extended_duration(
+    client, db_session, auth_headers, test_clinic
+):
+    from app.core.auth.service import hash_password
+    from app.modules.agenda.models import Cabinet
+
+    professional = User(
+        id=uuid4(),
+        email=f"{uuid4()}@example.com",
+        password_hash=hash_password("Synthetic123!"),
+        first_name="Test",
+        last_name="Professional",
+        is_active=True,
+    )
+    db_session.add(professional)
+    await db_session.flush()
+    db_session.add(
+        ClinicMembership(
+            id=uuid4(),
+            user_id=professional.id,
+            clinic_id=test_clinic.id,
+            role="dentist",
+            is_professional=True,
+        )
+    )
+    cabinet = Cabinet(
+        id=uuid4(),
+        clinic_id=test_clinic.id,
+        name="Synthetic room",
+        color="#123456",
+        display_order=0,
+        is_active=True,
+    )
+    db_session.add(cabinet)
+    start = datetime.now(UTC) + timedelta(days=1)
+    item = BookingRequest(
+        id=uuid4(),
+        clinic_id=test_clinic.id,
+        start_time=start,
+        end_time=start + timedelta(minutes=30),
+        status="confirmed",
+        reason="checkup",
+        confirmation_deadline=datetime.now(UTC),
+        contact_email="test@example.com",
+    )
+    db_session.add(item)
+    db_session.add(
+        Appointment(
+            clinic_id=test_clinic.id,
+            professional_id=professional.id,
+            start_time=start + timedelta(minutes=45),
+            end_time=start + timedelta(minutes=75),
+            status="scheduled",
+        )
+    )
+    await db_session.commit()
+    url = f"/api/v1/online_booking/requests/{item.id}/accept"
+    headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    body = {
+        "first_name": "Synthetic",
+        "last_name": "",
+        "email": None,
+        "phone": None,
+        "professional_id": str(professional.id),
+        "cabinet_id": str(cabinet.id),
+        "duration_minutes": 60,
+    }
+    assert (await client.post(url, headers=headers, json=body)).status_code == 409
+    assert (
+        await client.post(url, headers=headers, json={**body, "professional_id": str(uuid4())})
+    ).status_code == 422
+    professional.is_active = False
+    await db_session.flush()
+    assert (await client.post(url, headers=headers, json=body)).status_code == 422
+    professional.is_active = True
+    await db_session.flush()
+    assert (
+        await client.post(url, headers=headers, json={**body, "cabinet_id": str(uuid4())})
+    ).status_code == 422
+    response = await client.post(url, headers=headers, json={**body, "duration_minutes": 30})
+    assert response.status_code == 200, response.text
+    appointment = await db_session.get(Appointment, item.appointment_id)
+    assert appointment.professional_id == professional.id and appointment.cabinet_id == cabinet.id
+    from app.modules.patients.models import Patient
+
+    patient = await db_session.get(Patient, item.patient_id)
+    assert patient.email is None and patient.phone is None and patient.last_name == ""
+    assert appointment.end_time - appointment.start_time == timedelta(minutes=30)
+
+
+@pytest.mark.asyncio
+async def test_queue_count_and_visit_default(client, db_session, auth_headers, test_clinic):
+    now = datetime.now(UTC)
+    db_session.add(
+        BookingSettings(
+            clinic_id=test_clinic.id, slot_minutes=30, first_visit_minutes=60, checkup_minutes=45
+        )
+    )
+    for status, start, reason in (
+        ("confirmed", now + timedelta(days=1), "checkup"),
+        ("confirmed", now + timedelta(days=2), "first_visit"),
+        ("pending_confirmation", now + timedelta(days=3), "checkup"),
+        ("confirmed", now - timedelta(minutes=30), "checkup"),
+    ):
+        db_session.add(
+            BookingRequest(
+                clinic_id=test_clinic.id,
+                start_time=start,
+                end_time=start + timedelta(minutes=30),
+                status=status,
+                reason=reason,
+                confirmation_deadline=now + timedelta(minutes=10),
+            )
+        )
+    await db_session.commit()
+    headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    count = await client.get("/api/v1/online_booking/requests/count", headers=headers)
+    assert count.status_code == 200 and count.json()["data"] == 2
+    rows = (await client.get("/api/v1/online_booking/requests", headers=headers)).json()["data"]
+    assert {row["reason"]: row["default_duration_minutes"] for row in rows} == {
+        "checkup": 45,
+        "first_visit": 60,
+    }
+
+
+@pytest.mark.asyncio
+async def test_patient_suggestions_match_email_or_normalized_phone(
+    client, db_session, auth_headers, test_clinic, test_patient
+):
+    now = datetime.now(UTC)
+    test_patient.email = "contact@example.com"
+    test_patient.phone = "+34 600-123-456"
+    row = BookingRequest(
+        clinic_id=test_clinic.id,
+        start_time=now + timedelta(days=1),
+        end_time=now + timedelta(days=1, minutes=30),
+        status="confirmed",
+        reason="checkup",
+        confirmation_deadline=now,
+        contact_email="CONTACT@example.com",
+        contact_phone="34600123456",
+    )
+    db_session.add(row)
+    await db_session.commit()
+    headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    url = f"/api/v1/online_booking/requests/{row.id}/patient-suggestions"
+    response = await client.get(url, headers=headers)
+    assert response.status_code == 200
+    assert [p["id"] for p in response.json()["data"]] == [str(test_patient.id)]
+    row.contact_email = "different@example.com"
+    await db_session.commit()
+    response = await client.get(url, headers=headers)
+    assert [p["id"] for p in response.json()["data"]] == [str(test_patient.id)]
+    assert (
+        await client.get(
+            f"/api/v1/online_booking/requests/{uuid4()}/patient-suggestions", headers=headers
+        )
+    ).status_code == 404

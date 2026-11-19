@@ -21,10 +21,20 @@ class BookingSettings(Base, TimestampMixin):
         PGUUID(as_uuid=True), ForeignKey("users.id")
     )
     slot_minutes: Mapped[int] = mapped_column(Integer, default=30, nullable=False)
+    first_visit_minutes: Mapped[int | None] = mapped_column(Integer)
+    checkup_minutes: Mapped[int | None] = mapped_column(Integer)
     window_days: Mapped[int] = mapped_column(Integer, default=30, nullable=False)
     min_notice_minutes: Mapped[int] = mapped_column(Integer, default=60, nullable=False)
     __table_args__ = (
         CheckConstraint("slot_minutes BETWEEN 5 AND 480", name="ck_ob_slot_minutes"),
+        CheckConstraint(
+            "first_visit_minutes IS NULL OR first_visit_minutes BETWEEN 5 AND 480",
+            name="ck_ob_first_visit_minutes",
+        ),
+        CheckConstraint(
+            "checkup_minutes IS NULL OR checkup_minutes BETWEEN 5 AND 480",
+            name="ck_ob_checkup_minutes",
+        ),
         CheckConstraint("window_days BETWEEN 1 AND 365", name="ck_ob_window_days"),
         CheckConstraint("min_notice_minutes BETWEEN 0 AND 525600", name="ck_ob_notice"),
     )

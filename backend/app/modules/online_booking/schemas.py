@@ -13,6 +13,8 @@ class SettingsInput(BaseModel):
     professional_id: UUID | None = None
     public_url: str | None = Field(default=None, max_length=500)
     slot_minutes: int = Field(default=30, ge=5, le=480)
+    first_visit_minutes: int | None = Field(default=None, ge=5, le=480)
+    checkup_minutes: int | None = Field(default=None, ge=5, le=480)
     window_days: int = Field(default=30, ge=1, le=365)
     min_notice_minutes: int = Field(default=60, ge=0, le=525600)
 
@@ -61,7 +63,12 @@ class AcceptInput(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     patient_id: UUID | None = None
     first_name: str | None = Field(default=None, min_length=1, max_length=100)
-    last_name: str | None = Field(default=None, min_length=1, max_length=100)
+    last_name: str | None = Field(default=None, max_length=100)
+    email: EmailStr | None = None
+    phone: str | None = Field(default=None, max_length=20, pattern=r"^[+0-9 ()-]*$")
+    professional_id: UUID
+    cabinet_id: UUID | None = None
+    duration_minutes: int = Field(ge=5, le=480)
 
 
 class RejectInput(BaseModel):

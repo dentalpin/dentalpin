@@ -20,7 +20,7 @@
     "search": "Buscar",
     "searchError": "No se pudo buscar pacientes. Inténtalo de nuevo.",
     "selectPatient": "Selecciona un paciente para continuar.",
-    "nameRequired": "Introduce nombre y apellidos.",
+    "nameRequired": "Introduce el nombre.",
     "messageRequired": "Escribe un mensaje para el paciente.",
     "firstName": "Nombre",
     "lastName": "Apellidos",
@@ -45,6 +45,13 @@
     "pages": "Paginación de solicitudes",
     "previous": "Anterior",
     "next": "Siguiente",
-    "page": "Página"
+    "page": "Página",
+    "professional": "Profesional",
+    "cabinet": "Gabinete",
+    "noCabinet": "Sin asignar",
+    "duration": "Duración (minutos)",
+    "email": "Correo electrónico",
+    "phone": "Teléfono",
+    "resourcesRequired": "Selecciona un profesional y una duración válida."
   }
 }

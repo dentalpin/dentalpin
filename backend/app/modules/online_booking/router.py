@@ -1,20 +1,23 @@
 """Public booking endpoints and authenticated reception actions."""
 
 import hashlib
+import re
 import secrets
 from datetime import UTC, date, datetime, timedelta
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.auth.models import User
 from app.core.auth.router import limiter
 from app.database import get_db
-from app.modules.agenda.service import AppointmentService
+from app.modules.agenda.service import AppointmentService, CabinetService
+from app.modules.patients.models import Patient
 from app.modules.patients.service import PatientService
 from app.modules.schedules.services.clinic_hours import ClinicHoursService
 
@@ -191,6 +194,22 @@ async def confirm(request: Request, clinic_id: UUID, data: ConfirmInput, db: DB)
     return {"data": {"status": "confirmed"}}
 
 
+@router.get("/requests/count")
+async def count_requests(
+    ctx: CTX, db: DB, _: Annotated[None, Depends(require_permission("online_booking.read"))]
+):
+    total = await db.scalar(
+        select(func.count())
+        .select_from(BookingRequest)
+        .where(
+            BookingRequest.clinic_id == ctx.clinic_id,
+            BookingRequest.status == "confirmed",
+            BookingRequest.start_time > datetime.now(UTC),
+        )
+    )
+    return {"data": total or 0}
+
+
 @router.get("/requests")
 async def list_requests(
     ctx: CTX,
@@ -211,6 +230,7 @@ async def list_requests(
             .limit(page_size + 1)
         )
     ).all()
+    config = await db.get(BookingSettings, ctx.clinic_id)
     return {
         "data": [
             {
@@ -222,11 +242,65 @@ async def list_requests(
                 "contact_email": row.contact_email,
                 "contact_phone": row.contact_phone,
                 "reason": row.reason,
+                "default_duration_minutes": (
+                    getattr(config, f"{row.reason}_minutes", None)
+                    or (
+                        config.slot_minutes
+                        if config
+                        else int((row.end_time - row.start_time).total_seconds() / 60)
+                    )
+                ),
             }
             for row in rows[:page_size]
         ],
         "page": page,
         "has_more": len(rows) > page_size,
+    }
+
+
+@router.get("/requests/{request_id}/patient-suggestions")
+async def patient_suggestions(
+    request_id: UUID,
+    ctx: CTX,
+    db: DB,
+    _: Annotated[None, Depends(require_permission("online_booking.read"))],
+    __: Annotated[None, Depends(require_permission("patients.read"))],
+):
+    row = await db.scalar(
+        select(BookingRequest).where(
+            BookingRequest.id == request_id, BookingRequest.clinic_id == ctx.clinic_id
+        )
+    )
+    if row is None:
+        raise HTTPException(404, "Request not found")
+    matches = []
+    if row.contact_email:
+        matches.append(func.lower(Patient.email) == row.contact_email.strip().lower())
+    phone = re.sub(r"\D", "", row.contact_phone or "")
+    if phone:
+        matches.append(func.regexp_replace(Patient.phone, "[^0-9]", "", "g") == phone)
+    if not matches:
+        return {"data": []}
+    patients = (
+        await db.scalars(
+            select(Patient)
+            .where(Patient.clinic_id == ctx.clinic_id, Patient.status != "archived", or_(*matches))
+            .order_by(Patient.first_name, Patient.last_name, Patient.id)
+            .limit(10)
+        )
+    ).all()
+    return {
+        "data": [
+            {
+                "id": str(p.id),
+                "first_name": p.first_name,
+                "last_name": p.last_name,
+                "phone": p.phone,
+                "email": p.email,
+                "date_of_birth": p.date_of_birth.isoformat() if p.date_of_birth else None,
+            }
+            for p in patients
+        ]
     }
 
 
@@ -255,32 +329,38 @@ async def accept(
         raise HTTPException(404, "Request not found")
     if row.status != "confirmed" or row.start_time <= now:
         raise HTTPException(409, "Request cannot be accepted")
-    if await occupied(db, ctx.clinic_id, row.start_time, row.end_time, now, exclude=row.id):
-        raise HTTPException(409, "Time slot is occupied; choose another time")
-    config = await db.get(BookingSettings, ctx.clinic_id)
-    if (
-        not config
-        or not config.professional_id
-        or not await AppointmentService.validate_professional_access(
-            db, ctx.clinic_id, config.professional_id
-        )
+    if not await AppointmentService.validate_professional_access(
+        db, ctx.clinic_id, data.professional_id
+    ) or not await db.scalar(
+        select(User.id).where(User.id == data.professional_id, User.is_active.is_(True))
     ):
-        raise HTTPException(409, "Booking professional is unavailable")
+        raise HTTPException(422, "Invalid professional")
+    if data.cabinet_id:
+        cabinet = await CabinetService.get_cabinet(db, ctx.clinic_id, data.cabinet_id)
+        if not cabinet or not cabinet.is_active:
+            raise HTTPException(422, "Invalid cabinet")
+    end_time = row.start_time + timedelta(minutes=data.duration_minutes)
+    # Clinic-wide scope blocks any active appointment or live hold across all
+    # professionals and cabinets, including the selected resources.
+    if await occupied(db, ctx.clinic_id, row.start_time, end_time, now, exclude=row.id):
+        raise HTTPException(409, "Time slot is occupied; choose another time")
     if data.patient_id:
         if not await AppointmentService.validate_patient_access(db, ctx.clinic_id, data.patient_id):
             raise HTTPException(404, "Patient not found")
         patient_id = data.patient_id
     else:
-        if not data.first_name or not data.last_name:
-            raise HTTPException(422, "First and last name are required")
+        if not data.first_name or data.last_name is None:
+            raise HTTPException(422, "Enter a first name and confirm the surname field")
         patient = await PatientService.create_patient(
             db,
             ctx.clinic_id,
             {
                 "first_name": data.first_name,
                 "last_name": data.last_name,
-                "email": row.contact_email,
-                "phone": row.contact_phone,
+                "email": (str(data.email) if data.email else None)
+                if "email" in data.model_fields_set
+                else row.contact_email,
+                "phone": data.phone if "phone" in data.model_fields_set else row.contact_phone,
             },
         )
         patient_id = patient.id
@@ -290,15 +370,17 @@ async def accept(
             ctx.clinic_id,
             {
                 "patient_id": patient_id,
-                "professional_id": config.professional_id,
+                "professional_id": data.professional_id,
+                "cabinet_id": data.cabinet_id,
                 "start_time": row.start_time,
-                "end_time": row.end_time,
+                "end_time": end_time,
             },
             created_by=ctx.user_id,
         )
     except IntegrityError as exc:
         raise HTTPException(409, "Time slot is occupied; choose another time") from exc
     row.status = "accepted"
+    row.end_time = end_time
     row.decided_at = now
     row.patient_id = patient_id
     row.appointment_id = appt.id

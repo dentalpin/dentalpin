@@ -13,13 +13,16 @@ interface BookingRequest {
   contact_email: string
   contact_phone: string | null
   reason: 'first_visit' | 'checkup'
+  default_duration_minutes: number
 }
-interface PatientChoice { id: string, first_name: string, last_name: string, phone?: string | null, date_of_birth?: string | null }
+interface Resource { id: string, first_name?: string, last_name?: string, name?: string, is_active?: boolean }
+interface PatientChoice { id: string, first_name: string, last_name: string, phone?: string | null, email?: string | null, date_of_birth?: string | null }
 
 const { t, locale } = useI18n()
 const { can } = usePermissions()
 const { currentClinic } = useClinic()
 const api = useApi()
+const dataBus = useDataBus()
 if (!can('online_booking.read')) await navigateTo('/')
 const canWrite = computed(() => can('online_booking.write'))
 const canAccept = computed(() => canWrite.value && can('agenda.appointments.write') && can('patients.write'))
@@ -40,6 +43,13 @@ const searched = ref(false)
 const patientError = ref('')
 const firstName = ref('')
 const lastName = ref('')
+const email = ref('')
+const phone = ref('')
+const professionalId = ref('')
+const cabinetId = ref('__none__')
+const duration = ref(30)
+const professionals = ref<Resource[]>([])
+const cabinets = ref<Resource[]>([])
 const message = ref('')
 const saving = ref(false)
 const formError = ref('')
@@ -69,11 +79,35 @@ function open(row: BookingRequest, mode: 'accept' | 'reject') {
   patientResults.value = []
   patientError.value = ''
   searched.value = false
-  firstName.value = ''
-  lastName.value = ''
+  const names = row.contact_name.trim().split(/\s+/)
+  firstName.value = names.length === 2 ? names[0]! : row.contact_name.trim()
+  lastName.value = names.length === 2 ? names[1]! : ''
+  email.value = row.contact_email || ''
+  phone.value = row.contact_phone || ''
+  duration.value = row.default_duration_minutes || Math.round((Date.parse(row.end_time) - Date.parse(row.start_time)) / 60000)
+  professionalId.value = ''
+  cabinetId.value = '__none__'
   message.value = ''
   formError.value = ''
   searchVersion++
+  if (mode === 'accept') void nextTick(() => prepareAcceptance(row))
+}
+
+async function prepareAcceptance(row: BookingRequest) {
+  const version = ++searchVersion
+  const [staff, rooms, matches] = await Promise.allSettled([
+    api.get<{ data: Resource[] }>('/api/v1/auth/professionals'),
+    api.get<{ data: Resource[] }>('/api/v1/agenda/cabinets'),
+    api.get<{ data: PatientChoice[] }>(`/api/v1/online_booking/requests/${row.id}/patient-suggestions`, { errorToast: false })
+  ])
+  if (selected.value?.id !== row.id || action.value !== 'accept') return
+  professionals.value = staff.status === 'fulfilled' ? staff.value.data : []
+  cabinets.value = rooms.status === 'fulfilled' ? rooms.value.data.filter(room => room.is_active !== false) : []
+  if (staff.status === 'rejected' || rooms.status === 'rejected') formError.value = t('onlineBooking.resourcesRequired')
+  if (version !== searchVersion) return
+  patientResults.value = matches.status === 'fulfilled' ? matches.value.data : []
+  searched.value = true
+  if (matches.status === 'rejected') patientError.value = t('onlineBooking.searchError')
 }
 
 function close() {
@@ -117,8 +151,12 @@ async function submit() {
     formError.value = t('onlineBooking.selectPatient')
     return
   }
-  if (action.value === 'accept' && patientMode.value === 'new' && (!firstName.value.trim() || !lastName.value.trim())) {
+  if (action.value === 'accept' && patientMode.value === 'new' && !firstName.value.trim()) {
     formError.value = t('onlineBooking.nameRequired')
+    return
+  }
+  if (action.value === 'accept' && (!professionalId.value || duration.value < 5 || duration.value > 480)) {
+    formError.value = t('onlineBooking.resourcesRequired')
     return
   }
   if (action.value === 'reject' && !message.value.trim()) {
@@ -131,12 +169,13 @@ async function submit() {
     const id = selected.value.id
     if (action.value === 'accept') {
       const body = patientMode.value === 'existing'
-        ? { patient_id: patient.value!.id }
-        : { first_name: firstName.value.trim(), last_name: lastName.value.trim() }
+        ? { patient_id: patient.value!.id, professional_id: professionalId.value, cabinet_id: cabinetId.value === '__none__' ? null : cabinetId.value, duration_minutes: Number(duration.value) }
+        : { first_name: firstName.value.trim(), last_name: lastName.value.trim(), email: email.value.trim() || null, phone: phone.value.trim() || null, professional_id: professionalId.value, cabinet_id: cabinetId.value === '__none__' ? null : cabinetId.value, duration_minutes: Number(duration.value) }
       await api.post(`/api/v1/online_booking/requests/${id}/accept`, body, { errorToast: false })
     } else {
       await api.post(`/api/v1/online_booking/requests/${id}/reject`, { message: message.value.trim() }, { errorToast: false })
     }
+    dataBus.publish('online_booking')
     success.value = action.value === 'accept' ? t('onlineBooking.accepted') : t('onlineBooking.rejected')
     selected.value = null
     action.value = null
@@ -282,6 +321,37 @@ onMounted(load)
             {{ action === 'accept' ? t('onlineBooking.acceptTitle') : t('onlineBooking.rejectTitle') }}
           </h3>
           <template v-if="action === 'accept'">
+            <div class="grid gap-3 sm:grid-cols-3">
+              <UFormField
+                :label="t('onlineBooking.professional')"
+                required
+              >
+                <USelect
+                  v-model="professionalId"
+                  :items="professionals.map(p => ({ label: `${p.first_name} ${p.last_name}`, value: p.id }))"
+                  class="w-full"
+                />
+              </UFormField>
+              <UFormField :label="t('onlineBooking.cabinet')">
+                <USelect
+                  v-model="cabinetId"
+                  :items="[{ label: t('onlineBooking.noCabinet'), value: '__none__' }, ...cabinets.map(c => ({ label: c.name, value: c.id }))]"
+                  class="w-full"
+                />
+              </UFormField>
+              <UFormField
+                :label="t('onlineBooking.duration')"
+                required
+              >
+                <UInput
+                  v-model.number="duration"
+                  type="number"
+                  :min="5"
+                  :max="480"
+                  class="w-full"
+                />
+              </UFormField>
+            </div>
             <fieldset class="space-y-2">
               <legend class="text-sm font-medium">
                 {{ t('onlineBooking.patientChoice') }}
@@ -394,12 +464,26 @@ onMounted(load)
               </UFormField>
               <UFormField
                 :label="t('onlineBooking.lastName')"
-                required
               >
                 <UInput
                   v-model="lastName"
                   class="w-full"
                   maxlength="100"
+                />
+              </UFormField>
+              <UFormField :label="t('onlineBooking.email')">
+                <UInput
+                  v-model="email"
+                  type="email"
+                  class="w-full"
+                />
+              </UFormField>
+              <UFormField :label="t('onlineBooking.phone')">
+                <UInput
+                  v-model="phone"
+                  type="tel"
+                  class="w-full"
+                  maxlength="20"
                 />
               </UFormField>
             </div>
@@ -425,6 +509,8 @@ onMounted(load)
           </p>
           <div class="flex flex-wrap gap-2">
             <UButton
+              color="primary"
+              variant="solid"
               :loading="saving"
               @click="submit"
             >

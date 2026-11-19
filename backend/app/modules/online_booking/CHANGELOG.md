@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Reception chooses professional, optional cabinet and duration, with per-reason defaults and clinic-wide conflict rechecks; patient contact fields are prefilled and matching contacts suggested.
+- Show a permission-scoped count of confirmed pending requests in navigation.
+
 - Refresh locked rows before evaluating request decisions or dispatch state.
 
 - Queue encrypted confirmation and rejection emails in the request transaction and send only after commit.

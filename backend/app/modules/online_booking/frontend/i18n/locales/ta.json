@@ -20,7 +20,7 @@
     "search": "Search",
     "searchError": "Could not search patients. Try again.",
     "selectPatient": "Select a patient to continue.",
-    "nameRequired": "Enter a first and last name.",
+    "nameRequired": "Enter the first name.",
     "messageRequired": "Enter a message for the patient.",
     "firstName": "First name",
     "lastName": "Last name",
@@ -45,6 +45,13 @@
     "pages": "Request pagination",
     "previous": "Previous",
     "next": "Next",
-    "page": "Page"
+    "page": "Page",
+    "professional": "Professional",
+    "cabinet": "Cabinet",
+    "noCabinet": "Unassigned",
+    "duration": "Duration (minutes)",
+    "email": "Email",
+    "phone": "Phone",
+    "resourcesRequired": "Select a professional and a valid duration."
   }
 }
