@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Audit authenticated reads of patient and plan clinical notes. (#903).
+
 - fix(#699): `linkAttachment` / `unlinkAttachment` posted to
   `/api/v1/clinical_notes/attachments`, which does not exist — this
   module exposes only the note-aware read, while media owns the rows and
