@@ -154,6 +154,10 @@ class NotificationPreference(Base, TimestampMixin):
     # Last inbound message timestamp — opens the 24h free-form session window.
     last_inbound_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
 
+    # NULL leaves legacy preference behavior intact. For enrolled patients,
+    # only current verified destinations and explicitly allowed purposes pass.
+    verified_consents: Mapped[dict | None] = mapped_column(JSONB(none_as_null=True))
+
     # Per-type preferences (channel-agnostic opt-in)
     preferences: Mapped[dict] = mapped_column(JSONB, default=default_type_preferences)
 

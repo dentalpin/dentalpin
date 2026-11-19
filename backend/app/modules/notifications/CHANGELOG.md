@@ -6,6 +6,8 @@
 
 - fix(#922): the "budget accepted" message dates the acceptance on the clinic's calendar (`clinic_date_label`). It printed the UTC day of `updated_at`, so an evening acceptance in a UTC-6 clinic said the next day.
 
+- Add verified destination and appointment-reminder consent checks for enrolled patients, with transactional cancellation of pending delivery.
+
 - fix(#907): appointment confirmation, cancellation and reminder messages print the appointment's date and time on the clinic's clock. They formatted the stored UTC value, so a Madrid patient booked for 10:00 was told 09:00, and an evening appointment in the Americas showed the next day. `appointment_when_context` in `service.py` builds both keys for the handlers, the reminder jobs and the manual send.
 
 - Add optional adapter hooks for affirmative WhatsApp consent, recipient
