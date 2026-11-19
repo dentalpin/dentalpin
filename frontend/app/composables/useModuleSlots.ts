@@ -9,7 +9,6 @@
  * Canonical slot names (v1):
  *   - ``patient.detail.tabs``
  *   - ``patient.detail.sidebar``
- *   - ``appointment.detail.actions``
  *   - ``dashboard.widgets``
  *   - ``settings.sections``
  *

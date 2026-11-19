@@ -181,7 +181,12 @@ async def rotate_refresh_token(
         raise RefreshTokenError("Invalid refresh token")
 
     user = (
-        await db.execute(select(User).where(User.id == UUID(payload["sub"])))
+        await db.execute(
+            select(User)
+            .where(User.id == UUID(payload["sub"]))
+            .with_for_update(of=User)
+            .execution_options(populate_existing=True)
+        )
     ).scalar_one_or_none()
     if user is None or not user.is_active:
         raise RefreshTokenError("User not found or inactive")

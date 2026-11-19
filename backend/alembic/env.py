@@ -139,6 +139,7 @@ from app.modules.whatsapp_kapso.models import (  # noqa: F401
     WhatsappKapsoSettings,
     WhatsappKapsoTemplate,
 )
+from app.modules.whatsapp_manual.models import ManualDeliveryDeclaration  # noqa: F401
 from app.modules.whatsapp_webhook.models import (  # noqa: F401
     WhatsappWebhookSettings,
 )

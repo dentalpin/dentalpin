@@ -50,6 +50,12 @@ export const PERMISSIONS = {
     write: 'billing.write',
     admin: 'billing.admin'
   },
+  whatsappManual: {
+    read: 'whatsapp_manual.read',
+    write: 'whatsapp_manual.write',
+    settingsWrite: 'whatsapp_manual.settings.write'
+  },
+
   notifications: {
     templatesRead: 'notifications.templates.read',
     templatesWrite: 'notifications.templates.write',

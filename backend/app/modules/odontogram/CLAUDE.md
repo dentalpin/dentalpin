@@ -44,7 +44,10 @@ None.
   double-charge. `perform` locks the row and refuses a treatment that is
   already `performed` (`TreatmentAlreadyPerformedError` → 409, #891): a
   sessioned treatment finalized with `unit_price: null` would otherwise
-  book its full price on a second perform.
+  book its full price on a second perform. treatment_plan's item
+  finalization passes `refuse_if_performed=False` (it publishes with no
+  price): the edit modal can mark the treatment performed before the
+  item's last session (#897).
 - **`treatment.deleted` and `treatment.status_changed` are published
   transactionally** (`db=db`): payments deletes the treatment's
   NULL-session earned row when it is deleted or leaves `performed` (#896).
