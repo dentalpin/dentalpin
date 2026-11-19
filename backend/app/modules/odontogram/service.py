@@ -791,6 +791,7 @@ class TreatmentService:
                     else None,
                     "changed_by": str(user_id),
                 },
+                db=db,
             )
 
         if notes is not None:
@@ -913,7 +914,10 @@ class TreatmentService:
             "budget_item_id": str(treatment.budget_item_id) if treatment.budget_item_id else None,
             "deleted_by": str(user_id),
         }
+        event_data["old_status"] = treatment.status
         treatment.deleted_at = datetime.now(UTC)
         await db.flush()
-        await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_DELETED, event_data)
+        # Transactional: payments un-books the treatment's earned row in this
+        # same transaction (#896).
+        await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_DELETED, event_data, db=db)
         return True

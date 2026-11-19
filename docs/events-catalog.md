@@ -96,9 +96,9 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `odontogram.surface.updated` | `EventType.ODONTOGRAM_SURFACE_UPDATED` | `odontogram` | — |
 | `odontogram.tooth.updated` | `EventType.ODONTOGRAM_TOOTH_UPDATED` | `odontogram` | — |
 | `odontogram.treatment.added` | `EventType.ODONTOGRAM_TREATMENT_ADDED` | `odontogram` | — |
-| `odontogram.treatment.deleted` | `EventType.ODONTOGRAM_TREATMENT_DELETED` | `odontogram` | — |
+| `odontogram.treatment.deleted` | `EventType.ODONTOGRAM_TREATMENT_DELETED` | `odontogram` | `payments` |
 | `odontogram.treatment.performed` | `EventType.ODONTOGRAM_TREATMENT_PERFORMED` | `odontogram` | `activity_journal`, `patient_timeline`, `payments`, `periodontogram`, `treatment_consumables`, `treatment_plan` |
-| `odontogram.treatment.status_changed` | `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED` | `odontogram` | — |
+| `odontogram.treatment.status_changed` | `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED` | `odontogram` | `payments` |
 | `orthodontics.case_created` | `EventType.ORTHODONTICS_CASE_CREATED` | `orthodontics` | `patient_timeline` |
 | `orthodontics.case_status_changed` | `EventType.ORTHODONTICS_CASE_STATUS_CHANGED` | `orthodontics` | `patient_timeline` |
 | `orthodontics.control_registered` | `EventType.ORTHODONTICS_CONTROL_REGISTERED` | `orthodontics` | `patient_timeline` |
@@ -823,7 +823,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.ODONTOGRAM_TREATMENT_DELETED`
 - **Publishers:**
   - `odontogram` — `backend/app/modules/odontogram/service.py`
-- **Subscribers:** —
+- **Subscribers:**
+  - `payments`
 
 ### `odontogram.treatment.performed`
 
@@ -843,7 +844,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.ODONTOGRAM_TREATMENT_STATUS_CHANGED`
 - **Publishers:**
   - `odontogram` — `backend/app/modules/odontogram/service.py`
-- **Subscribers:** —
+- **Subscribers:**
+  - `payments`
 
 ### `orthodontics.case_created`
 
