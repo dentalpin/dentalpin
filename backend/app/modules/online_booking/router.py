@@ -7,7 +7,7 @@ from datetime import UTC, date, datetime, timedelta
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import func, select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -25,7 +25,7 @@ from .locking import lock_clinic
 from .models import BookingRequest, BookingSettings
 from .rate_limit import consume_rate
 from .schemas import AcceptInput, ConfirmInput, RejectInput, RequestInput, SettingsInput
-from .service import occupied, reserve, slots
+from .service import live_hold, occupied, reserve, slots
 
 router = APIRouter()
 DB = Annotated[AsyncSession, Depends(get_db)]
@@ -192,17 +192,22 @@ async def confirm(request: Request, clinic_id: UUID, data: ConfirmInput, db: DB)
 
 @router.get("/requests")
 async def list_requests(
-    ctx: CTX, db: DB, _: Annotated[None, Depends(require_permission("online_booking.read"))]
+    ctx: CTX,
+    db: DB,
+    _: Annotated[None, Depends(require_permission("online_booking.read"))],
+    page: int = Query(default=1, ge=1, le=100000),
 ):
+    page_size = 50
     rows = (
         await db.scalars(
             select(BookingRequest)
             .where(
                 BookingRequest.clinic_id == ctx.clinic_id,
-                BookingRequest.status.in_(("pending_confirmation", "confirmed")),
+                live_hold(datetime.now(UTC)),
             )
-            .order_by(BookingRequest.start_time)
-            .limit(200)
+            .order_by(BookingRequest.start_time, BookingRequest.id)
+            .offset((page - 1) * page_size)
+            .limit(page_size + 1)
         )
     ).all()
     return {
@@ -217,8 +222,10 @@ async def list_requests(
                 "contact_phone": row.contact_phone,
                 "reason": row.reason,
             }
-            for row in rows
-        ]
+            for row in rows[:page_size]
+        ],
+        "page": page,
+        "has_more": len(rows) > page_size,
     }
 
 
@@ -313,8 +320,15 @@ async def reject(
     )
     if row is None:
         raise HTTPException(404, "Request not found")
-    if row.status not in ("pending_confirmation", "confirmed"):
-        raise HTTPException(409, "Request already decided")
+    now = datetime.now(UTC)
+    if (
+        row.status not in ("pending_confirmation", "confirmed")
+        or row.status == "pending_confirmation"
+        and row.confirmation_deadline <= now
+        or row.status == "confirmed"
+        and row.start_time <= now
+    ):
+        raise HTTPException(409, "Request expired or already decided")
     if row.contact_email:
         await deliver(
             db,
@@ -327,7 +341,7 @@ async def reject(
             ),
         )
     row.status = "rejected"
-    row.decided_at = datetime.now(UTC)
+    row.decided_at = now
     row.token_hash = None
     row.rejection_message = data.message
     await db.flush()

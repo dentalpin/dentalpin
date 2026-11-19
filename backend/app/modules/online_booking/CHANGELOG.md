@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- Add paginated reception inbox with explicit patient selection, acceptance and rejection.
+- Exclude expired requests from the inbox and refuse decisions after expiration.
+
 - Add optional, disabled-by-default online booking requests for one clinic calendar.
 - Add transaction-scoped booking locks and recheck active agenda appointments.
 - Add expiring confirmation tokens, reception decisions and retention cleanup.

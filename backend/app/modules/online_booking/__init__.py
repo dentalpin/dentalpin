@@ -21,6 +21,18 @@ class OnlineBookingModule(BaseModule):
         "auto_install": False,
         "removable": True,
         "role_permissions": {"admin": ["*"], "receptionist": ["read", "write"]},
+        "frontend": {
+            "layer_path": "frontend",
+            "navigation": [
+                {
+                    "label": "onlineBooking.title",
+                    "icon": "i-lucide-calendar-check",
+                    "to": "/online-booking",
+                    "permission": "online_booking.read",
+                    "order": 26,
+                }
+            ],
+        },
     }
 
     def get_models(self) -> list:

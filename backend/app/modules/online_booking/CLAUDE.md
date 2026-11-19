@@ -4,6 +4,7 @@
 - Disabled by default; v1 supports one shared calendar per clinic.
 - Public endpoints use a clinic identifier and never accept clinical notes.
 - Staff settings and decisions require module permissions and a clinic context.
+- The `/online-booking` reception page uses the private API and clinic timezone.
 - Acceptance additionally checks patient and agenda write permissions.
 - Schedules supply opening hours; active appointments and live holds block slots.
 - Unconfirmed holds expire after ten minutes; confirmed holds end at decision or start.

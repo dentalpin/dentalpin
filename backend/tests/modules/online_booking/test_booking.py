@@ -599,3 +599,49 @@ async def test_appointment_timeline_is_transactional_and_savepoint_isolated(
     assert await db_session.scalar(select(Patient.id).where(Patient.id == patient.id)) == patient.id
     await db_session.rollback()
     assert await db_session.scalar(select(Patient.id).where(Patient.id == patient_id)) is None
+
+
+@pytest.mark.asyncio
+async def test_staff_list_paginates_and_excludes_expired_requests(
+    client, db_session, auth_headers, test_clinic, delivery
+):
+    now = datetime.now(UTC)
+
+    def request(status, start, deadline):
+        return BookingRequest(
+            id=uuid4(),
+            clinic_id=test_clinic.id,
+            start_time=start,
+            end_time=start + timedelta(minutes=30),
+            status=status,
+            reason="checkup",
+            confirmation_deadline=deadline,
+            contact_email="test@example.com",
+        )
+
+    for index in range(51):
+        db_session.add(
+            request(
+                "confirmed", now + timedelta(days=1, minutes=index), now + timedelta(minutes=10)
+            )
+        )
+    stale_pending = request(
+        "pending_confirmation", now + timedelta(days=1), now - timedelta(seconds=1)
+    )
+    stale_confirmed = request("confirmed", now - timedelta(minutes=1), now - timedelta(minutes=10))
+    db_session.add_all([stale_pending, stale_confirmed])
+    await db_session.commit()
+    headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    first = await client.get("/api/v1/online_booking/requests?page=1", headers=headers)
+    second = await client.get("/api/v1/online_booking/requests?page=2", headers=headers)
+    assert first.status_code == second.status_code == 200
+    assert len(first.json()["data"]) == 50 and first.json()["has_more"] is True
+    assert len(second.json()["data"]) == 1 and second.json()["has_more"] is False
+    for row in (stale_pending, stale_confirmed):
+        result = await client.post(
+            f"/api/v1/online_booking/requests/{row.id}/reject",
+            headers=headers,
+            json={"message": "Synthetic"},
+        )
+        assert result.status_code == 409
+    assert delivery == []

@@ -1,0 +1,50 @@
+{
+  "onlineBooking": {
+    "title": "Online requests",
+    "subtitle": "Review confirmed requests before creating appointments.",
+    "refresh": "Refresh",
+    "loadError": "Could not load requests. Try again.",
+    "emptyTitle": "No requests to review",
+    "emptyBody": "New online requests will appear here.",
+    "accept": "Accept",
+    "reject": "Reject",
+    "acceptTitle": "Accept request",
+    "rejectTitle": "Reject request",
+    "patientChoice": "Choose a patient",
+    "existing": "Link existing patient",
+    "newPatient": "Create patient",
+    "selected": "Selected patient",
+    "change": "Change",
+    "searchPatient": "Find patient",
+    "searchHint": "Enter at least two characters",
+    "search": "Search",
+    "searchError": "Could not search patients. Try again.",
+    "selectPatient": "Select a patient to continue.",
+    "nameRequired": "Enter a first and last name.",
+    "messageRequired": "Enter a message for the patient.",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "rejectionMessage": "Message to the patient",
+    "confirmAccept": "Create appointment",
+    "confirmReject": "Send rejection",
+    "cancel": "Cancel",
+    "actionError": "The action could not be completed. Try again.",
+    "status": {
+      "pending_confirmation": "Awaiting confirmation",
+      "confirmed": "Confirmed"
+    },
+    "reason": {
+      "first_visit": "First visit",
+      "checkup": "Checkup"
+    },
+    "conflict": "The slot is occupied or the request has changed. Refresh; if still pending, reject it and ask the patient to submit a new request for another time.",
+    "noPatients": "No patients found. Try another search or create a patient.",
+    "noPermission": "You need permission to create patients and appointments.",
+    "accepted": "Appointment created.",
+    "rejected": "Request rejected and message sent.",
+    "pages": "Request pagination",
+    "previous": "Previous",
+    "next": "Next",
+    "page": "Page"
+  }
+}
