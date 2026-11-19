@@ -127,6 +127,10 @@ is the `NotificationType` Literal, so the model is shown the nine values.
   manual send — and the copies diverged: one read `catalog_item.name`,
   which the model does not have (#527). Call the helper; do not inline
   a second loop.
+- **Appointment times are stored in UTC.** Build `appointment_date` /
+  `appointment_time` with `appointment_when_context(start_time, clinic)`
+  (`service.py`), never `start_time.strftime(...)`: that printed UTC, an
+  hour early in Madrid and a day late for evening slots in the Americas (#XXX).
 - **Locale resolution order**:
   1. Patient preference (``NotificationPreference.preferred_locale``).
   2. Clinic-wide default (``clinic.settings.communication_language``).
