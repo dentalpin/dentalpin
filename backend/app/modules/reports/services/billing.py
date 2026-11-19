@@ -1,6 +1,6 @@
 """Billing report service."""
 
-from datetime import UTC, date, datetime
+from datetime import date
 from decimal import Decimal
 from typing import Any
 from uuid import UUID
@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.core.auth.models import User
-from app.core.utils.dates import clinic_today_for
+from app.core.utils.dates import clinic_day_range, clinic_today_for, clinic_zone_for
 from app.modules.billing.models import Invoice, InvoiceItem, InvoicePayment, InvoiceSeries
 from app.modules.budget.models import Budget, BudgetItem
 from app.modules.catalog.models import VatType
@@ -241,6 +241,12 @@ class BillingReportService:
         )
         total_pending = sum((balance for _, balance in paid_by_invoice.values()), Decimal("0"))
 
+        # ``created_at`` is an instant: cut it on the clinic's days, like the
+        # invoices' local ``issue_date`` above (#919).
+        paid_from, paid_to = clinic_day_range(
+            await clinic_zone_for(db, clinic_id), date_from, date_to
+        )
+
         # Total paid in period for billed invoices. Computed from the
         # InvoicePayment link table — this represents the fiscal "cobrado
         # via factura" view (legitimate, fiscal-axis report). The
@@ -254,10 +260,8 @@ class BillingReportService:
             .where(
                 InvoicePayment.clinic_id == clinic_id,
                 Invoice.is_historical.is_(False),
-                InvoicePayment.created_at
-                >= datetime.combine(date_from, datetime.min.time(), tzinfo=UTC),
-                InvoicePayment.created_at
-                <= datetime.combine(date_to, datetime.max.time(), tzinfo=UTC),
+                InvoicePayment.created_at >= paid_from,
+                InvoicePayment.created_at < paid_to,
             )
         )
         payments_totals = result.one()
