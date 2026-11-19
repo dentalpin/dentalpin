@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#910): the timeline dates a closed exam on the clinic's calendar day. It used the UTC day, so an evening exam in a UTC-6 clinic showed under the next day.
+
 - docs(#573): the screen doc `periodontogram-view.md` (en/es) is
   absorbed as a `#periodontogram` section of the patients detail page.
   The view is a sub-tab of the patient clinical record; as a standalone

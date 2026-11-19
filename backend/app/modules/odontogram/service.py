@@ -1,6 +1,6 @@
 """Business logic service for odontogram module."""
 
-from datetime import UTC, date, datetime
+from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
 from uuid import UUID
 
@@ -10,6 +10,7 @@ from sqlalchemy.orm import selectinload
 
 from app.core.events import event_bus
 from app.core.events.types import EventType
+from app.core.utils.dates import clinic_zone_for
 from app.modules.catalog.models import TreatmentCatalogItem, TreatmentOdontogramMapping
 from app.modules.catalog.pricing import (
     PricingTooth,
@@ -384,26 +385,24 @@ class OdontogramService:
 
     @staticmethod
     async def get_timeline_dates(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> list[dict]:
+        # Group by the clinic's calendar day, not the UTC one (#910).
+        zone = (await clinic_zone_for(db, clinic_id)).key
+        change_day = func.date(func.timezone(zone, OdontogramHistory.changed_at))
         history_dates = await db.execute(
-            select(
-                func.date(OdontogramHistory.changed_at).label("change_date"),
-                func.count().label("count"),
-            )
+            select(change_day.label("change_date"), func.count().label("count"))
             .where(
                 OdontogramHistory.clinic_id == clinic_id,
                 OdontogramHistory.patient_id == patient_id,
             )
-            .group_by(func.date(OdontogramHistory.changed_at))
+            .group_by(change_day)
         )
         history_results = {row.change_date: row.count for row in history_dates.all()}
 
+        recorded_day = func.date(func.timezone(zone, Treatment.recorded_at))
         treatment_dates = await db.execute(
-            select(
-                func.date(Treatment.recorded_at).label("recorded_date"),
-                func.count().label("count"),
-            )
+            select(recorded_day.label("recorded_date"), func.count().label("count"))
             .where(Treatment.clinic_id == clinic_id, Treatment.patient_id == patient_id)
-            .group_by(func.date(Treatment.recorded_at))
+            .group_by(recorded_day)
         )
         treatment_results = {row.recorded_date: row.count for row in treatment_dates.all()}
 
@@ -421,14 +420,16 @@ class OdontogramService:
     async def get_odontogram_at_date(
         db: AsyncSession, clinic_id: UUID, patient_id: UUID, target_date: date
     ) -> dict:
-        target_dt = datetime.combine(target_date, datetime.max.time()).replace(tzinfo=UTC)
+        # The chart as it stood at the end of ``target_date`` on the clinic's clock.
+        zone = await clinic_zone_for(db, clinic_id)
+        day_end = datetime.combine(target_date + timedelta(days=1), time.min, tzinfo=zone)
 
         history_result = await db.execute(
             select(OdontogramHistory)
             .where(
                 OdontogramHistory.clinic_id == clinic_id,
                 OdontogramHistory.patient_id == patient_id,
-                OdontogramHistory.changed_at <= target_dt,
+                OdontogramHistory.changed_at < day_end,
             )
             .order_by(OdontogramHistory.changed_at.asc())
         )
@@ -444,8 +445,8 @@ class OdontogramService:
             .where(
                 Treatment.clinic_id == clinic_id,
                 Treatment.patient_id == patient_id,
-                Treatment.recorded_at <= target_dt,
-                or_(Treatment.deleted_at.is_(None), Treatment.deleted_at > target_dt),
+                Treatment.recorded_at < day_end,
+                or_(Treatment.deleted_at.is_(None), Treatment.deleted_at >= day_end),
             )
         )
         treatments = list(treatment_result.scalars().unique().all())
