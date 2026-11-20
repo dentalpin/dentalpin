@@ -198,6 +198,7 @@ class UserWithRoleResponse(BaseModel):
     is_active: bool
     role: str
     is_professional: bool = False
+    mfa_enabled: bool = False
     created_at: str
 
     model_config = ConfigDict(from_attributes=True)

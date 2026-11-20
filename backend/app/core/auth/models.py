@@ -286,6 +286,7 @@ class MfaAuditEntry(Base):
     id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), default=uuid4, primary_key=True)
     event: Mapped[str] = mapped_column(String(32))
     user_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True), index=True)
-    actor_id: Mapped[UUID] = mapped_column(UUID(as_uuid=True))
+    # A CLI reset has an authenticated deployment operator, no app user ID.
+    actor_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
     clinic_id: Mapped[UUID | None] = mapped_column(UUID(as_uuid=True))
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
