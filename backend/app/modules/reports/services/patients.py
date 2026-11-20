@@ -8,13 +8,13 @@ unparseable addresses land in explicit ``unknown`` buckets.
 
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import date
 from uuid import UUID
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.utils.dates import clinic_today_for
+from app.core.utils.dates import clinic_day_range, clinic_today_for, clinic_zone_for
 from app.modules.agenda.models import Appointment
 from app.modules.patients.models import Patient
 
@@ -89,15 +89,18 @@ class PatientStatsService:
         count as visits.
         """
         kept = ("scheduled", "confirmed", "checked_in", "in_treatment", "completed")
-        # date_to is inclusive: the window closes at the next midnight.
-        window_end = date_to + timedelta(days=1)
+        # date_to is inclusive. ``start_time`` is an instant, so the window
+        # opens and closes at the clinic's midnights, not UTC ones.
+        window_start, window_end = clinic_day_range(
+            await clinic_zone_for(db, clinic_id), date_from, date_to
+        )
         in_window = (
             select(Appointment.patient_id, func.count(Appointment.id).label("n"))
             .where(
                 Appointment.clinic_id == clinic_id,
                 Appointment.patient_id.is_not(None),
                 Appointment.status.in_(kept),
-                Appointment.start_time >= date_from,
+                Appointment.start_time >= window_start,
                 Appointment.start_time < window_end,
             )
             .group_by(Appointment.patient_id)
@@ -109,7 +112,7 @@ class PatientStatsService:
                 Appointment.clinic_id == clinic_id,
                 Appointment.patient_id.is_not(None),
                 Appointment.status.in_(kept),
-                Appointment.start_time < date_from,
+                Appointment.start_time < window_start,
             )
             .distinct()
             .subquery()

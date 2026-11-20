@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Reports:** productivity and visit-frequency count appointments on the clinic's days (#942).
 - **Reports:** the budget report counts budgets on the clinic's days (#941).
 - **Recalls:** the appointment auto-link matches recalls on the clinic's month, not the UTC one (#940).
 - **Payments:** the patient's Pagos panel shows payments on their own date in clinics behind UTC, not the day before (#939).

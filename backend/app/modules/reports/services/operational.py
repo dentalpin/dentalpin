@@ -8,13 +8,14 @@ per-professional and per-cabinet cuts the manager dashboard needs.
 
 from __future__ import annotations
 
-from datetime import date, timedelta
+from datetime import date
 from uuid import UUID
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import User
+from app.core.utils.dates import clinic_day_range, clinic_zone_for
 from app.modules.agenda.models import Appointment
 from app.modules.treatment_plan.models import TreatmentPlan
 
@@ -32,11 +33,15 @@ class OperationalReportService:
         names; cabinets fall back to ``unassigned`` (booking exists
         before any cabinet decision).
         """
-        window_end = date_to + timedelta(days=1)
+        # ``start_time`` is an instant: cut the window on the clinic's days.
+        # Bare dates compared with it are read as UTC midnights.
+        window_start, window_end = clinic_day_range(
+            await clinic_zone_for(db, clinic_id), date_from, date_to
+        )
         base = [
             Appointment.clinic_id == clinic_id,
             Appointment.status == "completed",
-            Appointment.start_time >= date_from,
+            Appointment.start_time >= window_start,
             Appointment.start_time < window_end,
         ]
         by_pro = (
