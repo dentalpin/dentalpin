@@ -19,6 +19,7 @@ from app.core.events import EventType, event_bus
 from app.modules.catalog.models import TreatmentCatalogItem  # noqa: F401
 from app.modules.patients.models import Patient
 
+from .locks import lock_clinic
 from .models import (
     Appointment,
     AppointmentCabinetEvent,
@@ -444,6 +445,7 @@ class AppointmentService:
         ``to_status=<status>``) so downstream analytics can always count on
         the history being complete from first principles.
         """
+        await lock_clinic(db, clinic_id)
         planned_item_ids = data.pop("planned_item_ids", None)
 
         await AppointmentService._normalize_times(db, clinic_id, data)
@@ -544,6 +546,9 @@ class AppointmentService:
         and the bus events stay consistent with every other path that mutates
         status.
         """
+        await lock_clinic(db, appointment.clinic_id)
+        # The caller may have loaded the appointment before we waited.
+        await db.refresh(appointment)
         requested_status = data.pop("status", None)
 
         planned_item_ids = data.pop("planned_item_ids", None)
@@ -803,6 +808,8 @@ class AppointmentService:
         Early-returns without touching anything if the target equals the
         current cabinet — a no-op from the operational perspective.
         """
+        await lock_clinic(db, appointment.clinic_id)
+        await db.refresh(appointment)
         from_cabinet_id = appointment.cabinet_id
         if cabinet_id == from_cabinet_id:
             return appointment
