@@ -11,14 +11,14 @@ npm test
 npm run build
 ```
 
-Deploy the generated `dist/` files to the root of the HTTPS booking origin. Edit **dist/config.js** for the target environment: set `clinicId` to the clinic UUID, `clinicName`, an HTTPS `privacyUrl`, and `language` (`es` or `en`). The public logo URL, accent color and Spanish/English title and introduction are configured in the staff inbox by users with `online_booking.settings`. The committed UUID and blank privacy URL are intentionally non-operational. The widget requires a functioning privacy URL and an enabled clinic. Set the module's authenticated `public_url` to this page's exact HTTPS URL: emails append the confirmation token in a URL fragment. Build artifacts and configuration are not credentials; do not put secrets in them.
+Deploy the generated `dist/` files to the root of the HTTPS booking origin. Edit **dist/config.js** for the target environment: set `clinicId` to the clinic UUID, `clinicName`, an HTTPS `privacyUrl`, and `language` (`es` or `en`). The uploaded logo, accent color and Spanish/English title and introduction are configured in the staff inbox by users with `online_booking.settings`. The committed UUID and blank privacy URL are intentionally non-operational. The widget requires a functioning privacy URL and an enabled clinic. Set the module's authenticated `public_url` to this page's exact HTTPS URL: emails append the confirmation token in a URL fragment. Build artifacts and configuration are not credentials; do not put secrets in them.
 
 The page may be linked directly or embedded with an iframe from the clinic website:
 
 ```html
 <iframe src="https://reservas.araquedental.es/" title="Solicitar cita" width="100%" height="900" loading="lazy"></iframe>
 ```
- The server must send a CSP `frame-ancestors` allowing only the approved clinic web origins and the booking origin itself; do not set `X-Frame-Options: DENY` or `SAMEORIGIN` if cross-origin embedding is required. The current self-hosted ALTCHA widget uses a local bundled script, injected styles and blob workers; configure CSP appropriately and test it in the target deployment. Do not load libraries from a CDN. Set `Referrer-Policy: no-referrer` and do not log request bodies, tokens, query strings or contacts.
+ The server must send a CSP `frame-ancestors` allowing only the approved clinic web origins and the booking origin itself; do not set `X-Frame-Options: DENY` or `SAMEORIGIN` if cross-origin embedding is required. The current self-hosted ALTCHA widget uses a local bundled script, injected styles and blob workers; configure CSP appropriately and test it in the target deployment. Do not load libraries from a CDN. Restrict `img-src` to the booking origin (and the clinic-approved static assets, if any); external logo URLs are not supported. Set `Referrer-Policy: no-referrer` and do not log request bodies, tokens, query strings or contacts.
 
 Proxy only these exact paths under the same origin, using a clinic UUID allowlist and method restrictions:
 

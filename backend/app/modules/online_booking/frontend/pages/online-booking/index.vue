@@ -34,8 +34,8 @@ const settingsLoading = ref(false)
 const settingsReady = ref(false)
 const settingsError = ref('')
 interface VisitReason { id: string, name_es: string, name_en: string, duration_minutes: number, active: boolean }
-interface SettingsForm { enabled: boolean, public_url: string, professional_id: string, slot_minutes: number, window_days: number, min_notice_minutes: number, reasons: VisitReason[], logo_url: string, accent_color: string, title_es: string, intro_es: string, title_en: string, intro_en: string, first_visit_minutes: number | null, checkup_minutes: number | null }
-const settingsData = ref<SettingsForm>({ enabled: false, public_url: '', professional_id: '', slot_minutes: 30, window_days: 30, min_notice_minutes: 60, reasons: [], first_visit_minutes: null, checkup_minutes: null, logo_url: '', accent_color: '', title_es: '', intro_es: '', title_en: '', intro_en: '' })
+interface SettingsForm { enabled: boolean, public_url: string, professional_id: string, slot_minutes: number, window_days: number, min_notice_minutes: number, reasons: VisitReason[], accent_color: string, title_es: string, intro_es: string, title_en: string, intro_en: string, first_visit_minutes: number | null, checkup_minutes: number | null }
+const settingsData = ref<SettingsForm>({ enabled: false, public_url: '', professional_id: '', slot_minutes: 30, window_days: 30, min_notice_minutes: 60, reasons: [], first_visit_minutes: null, checkup_minutes: null, accent_color: '', title_es: '', intro_es: '', title_en: '', intro_en: '' })
 const logoFile = ref<File | null>(null)
 function addReason() {
   settingsData.value.reasons.push({ id: `r_${crypto.randomUUID().replaceAll('-', '').slice(0, 24)}`, name_es: '', name_en: '', duration_minutes: 30, active: true })
@@ -74,7 +74,7 @@ async function openSettings() {
     const received = (await api.get<{ data: SettingsForm }>('/api/v1/online_booking/settings')).data
     professionals.value = (await api.get<{ data: Resource[] }>('/api/v1/auth/professionals')).data
     settingsReady.value = true
-    settingsData.value = { ...received, public_url: received.public_url || '', professional_id: received.professional_id || '', logo_url: received.logo_url || '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
+    settingsData.value = { ...received, public_url: received.public_url || '', professional_id: received.professional_id || '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
   } catch {
     settingsError.value = t('onlineBooking.settingsError')
   }
@@ -84,15 +84,15 @@ async function saveSettings() {
   settingsLoading.value = true
   settingsError.value = ''
   try {
-    if (logoFile.value && (logoFile.value.size > 1024 * 1024 || !['image/png', 'image/jpeg', 'image/svg+xml'].includes(logoFile.value.type))) {
+    if (logoFile.value && (logoFile.value.size > 512 * 1024 || !['image/png', 'image/jpeg', 'image/webp'].includes(logoFile.value.type))) {
       settingsError.value = t('onlineBooking.logoLimit')
       return
     }
     const data = { ...settingsData.value }
-    for (const key of ['logo_url', 'accent_color', 'title_es', 'intro_es', 'title_en', 'intro_en', 'public_url', 'professional_id'] as const) if (data[key] === '') (data as unknown as Record<string, unknown>)[key] = null
+    for (const key of ['accent_color', 'title_es', 'intro_es', 'title_en', 'intro_en', 'public_url', 'professional_id'] as const) if (data[key] === '') (data as unknown as Record<string, unknown>)[key] = null
     await api.put('/api/v1/online_booking/settings', data)
     if (logoFile.value) {
-      await api.put('/api/v1/online_booking/settings/logo', { content_type: logoFile.value.type, data: await logoBase64(logoFile.value) })
+      await api.put('/api/v1/online_booking/settings/logo', { filename: logoFile.value.name, data: await logoBase64(logoFile.value) })
       logoFile.value = null
     }
     settingsOpen.value = false
@@ -375,7 +375,7 @@ onMounted(load)
           <UFormField :label="t('onlineBooking.logoUpload')">
             <input
               type="file"
-              accept="image/png,image/jpeg,image/svg+xml"
+              accept="image/png,image/jpeg,image/webp"
               @change="chooseLogo"
             ><p class="text-xs text-muted">
               {{ t('onlineBooking.logoLimit') }}
@@ -456,13 +456,6 @@ onMounted(load)
         >{{ t('onlineBooking.previewPage') }}</a>
       </div>
       <div class="grid gap-3 sm:grid-cols-2">
-        <UFormField :label="t('onlineBooking.logoUrl')">
-          <UInput
-            v-model="settingsData.logo_url"
-            type="url"
-            class="w-full"
-          />
-        </UFormField>
         <UFormField :label="t('onlineBooking.accentColor')">
           <UInput
             v-model="settingsData.accent_color"

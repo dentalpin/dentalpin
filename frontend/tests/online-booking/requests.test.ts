@@ -29,7 +29,7 @@ describe('online booking reception', () => {
     put.mockReset()
     put.mockResolvedValue({ data: {} })
     get.mockImplementation(async (url: string) => {
-      if (url === '/api/v1/online_booking/settings') return { data: { enabled: false, slot_minutes: 30, window_days: 30, min_notice_minutes: 60, public_url: null, professional_id: null, reasons: [{ id: 'first_visit', name_es: 'Primera visita', name_en: 'First visit', duration_minutes: 30, active: true }], logo_url: null, accent_color: null, title_es: 'Cita', intro_es: null, title_en: null, intro_en: null } }
+      if (url === '/api/v1/online_booking/settings') return { data: { enabled: false, slot_minutes: 30, window_days: 30, min_notice_minutes: 60, public_url: null, professional_id: null, reasons: [{ id: 'first_visit', name_es: 'Primera visita', name_en: 'First visit', duration_minutes: 30, active: true }], accent_color: null, title_es: 'Cita', intro_es: null, title_en: null, intro_en: null } }
       if (url.includes('/patient-suggestions') || url.startsWith('/api/v1/patients')) return { data: [{ id: 'patient-1', first_name: 'Synthetic', last_name: 'Patient', email: 'synthetic@example.com' }] }
       if (url === '/api/v1/auth/professionals') return { data: [{ id: 'professional-1', first_name: 'Test', last_name: 'Dentist' }] }
       if (url === '/api/v1/agenda/cabinets') return { data: [{ id: 'cabinet-1', name: 'Room' }] }
@@ -107,7 +107,7 @@ describe('online booking reception', () => {
     await vi.waitFor(() => expect(wrapper!.find('input[maxlength="120"]').exists()).toBe(true))
     await wrapper.find('input[maxlength="120"]').setValue('Reserva dental')
     await clickByText(wrapper, 'onlineBooking.saveSettings')
-    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, slot_minutes: 30, title_es: 'Reserva dental', logo_url: null })))
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, slot_minutes: 30, title_es: 'Reserva dental' })))
   })
 
   it('allows adding a visit reason and saving its duration', async () => {

@@ -42,6 +42,7 @@ from .exceptions import (
     BookingUnavailableError,
     BookingValidationError,
 )
+from .logo import sanitize_logo
 from .models import BookingRequest, BookingSettings
 from .schemas import AcceptInput, LogoInput, RejectInput, RequestInput, SettingsInput
 
@@ -50,63 +51,6 @@ CONFIRMATION_MINUTES = 10
 PAGE_SIZE = 50
 SLOT_TAKEN = "Time slot is no longer available"
 SLOT_OCCUPIED = "Time slot is occupied; choose another time"
-LOGO_MAX_BYTES = 1024 * 1024
-SVG_ELEMENTS = {
-    "svg", "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "title", "desc",
-}  # fmt: skip
-
-
-def validate_logo(content_type: str, encoded: str) -> bytes:
-    """Decode and validate an uploaded logo; raise ``BookingValidationError``."""
-    import base64
-    import binascii
-    import io
-    import xml.etree.ElementTree as ET
-
-    from PIL import Image, UnidentifiedImageError
-
-    try:
-        raw = base64.b64decode(encoded, validate=True)
-        if not raw or len(raw) > LOGO_MAX_BYTES:
-            raise ValueError("Image must be at most 1 MiB")
-        if content_type == "image/svg+xml":
-            svg_content = re.sub(rb"^\s*<\?xml[^?]*\?>", b"", raw, count=1)
-            if b"<!" in svg_content or b"<?" in svg_content:
-                raise ValueError("Unsupported SVG markup")
-            root = ET.fromstring(svg_content)
-            if root.tag != "{http://www.w3.org/2000/svg}svg":
-                raise ValueError("Invalid SVG")
-            for element in root.iter():
-                if element.tag.split("}")[-1] not in SVG_ELEMENTS:
-                    raise ValueError("Unsupported SVG element")
-                for key, value in element.attrib.items():
-                    name = key.lower().split("}")[-1]
-                    if (
-                        name.startswith("on")
-                        or name in {"href", "style"}
-                        or any(
-                            x in value.lower()
-                            for x in ("url(", "javascript:", "data:", "http:", "https:")
-                        )
-                    ):
-                        raise ValueError("Unsupported SVG attribute")
-        else:
-            with Image.open(io.BytesIO(raw)) as image:
-                if image.format != {"image/png": "PNG", "image/jpeg": "JPEG"}[content_type]:
-                    raise ValueError("Image type does not match content")
-                if image.width * image.height > 16_000_000:
-                    raise ValueError("Image dimensions exceed limit")
-                image.verify()
-    except (
-        ValueError,
-        binascii.Error,
-        ET.ParseError,
-        UnidentifiedImageError,
-        Image.DecompressionBombError,
-        OSError,
-    ) as exc:
-        raise BookingValidationError("Invalid logo image") from exc
-    return raw
 
 
 def find_reason(config: BookingSettings, reason_id: str | None, *, active: bool = True):
@@ -371,12 +315,16 @@ class BookingService:
 
     @staticmethod
     async def upload_logo(db: AsyncSession, clinic_id: UUID, data: LogoInput) -> None:
-        raw = validate_logo(data.content_type, data.data)
+        try:
+            sanitized = sanitize_logo(data.data, data.filename)
+        except ValueError as exc:
+            raise BookingValidationError("Invalid logo image") from exc
         await lock_clinic(db, clinic_id)
         config = await db.get(BookingSettings, clinic_id)
         if config is None:
             raise BookingConflictError("Save booking settings first")
-        config.logo_data, config.logo_content_type = raw, data.content_type
+        config.logo_data, config.logo_content_type = sanitized, "image/png"
+        config.logo_sanitized = True
         await db.flush()
 
     @staticmethod
@@ -386,22 +334,27 @@ class BookingService:
         if config:
             config.logo_data = None
             config.logo_content_type = None
+            config.logo_sanitized = False
             await db.flush()
 
     @staticmethod
-    async def public_logo(db: AsyncSession, clinic_id: UUID) -> tuple[bytes, str]:
+    async def public_logo(db: AsyncSession, clinic_id: UUID) -> bytes:
         config = await BookingService.public_settings(db, clinic_id)
-        if not config.logo_data or not config.logo_content_type:
+        if (
+            not config.logo_data
+            or not config.logo_sanitized
+            or config.logo_content_type != "image/png"
+        ):
             raise BookingNotFoundError("Logo unavailable")
-        return config.logo_data, config.logo_content_type
+        return config.logo_data
 
     @staticmethod
     async def public_config(db: AsyncSession, clinic_id: UUID) -> dict:
         config = await BookingService.public_settings(db, clinic_id)
         logo = (
             f"/api/v1/online_booking/public/{clinic_id}/logo"
-            if config.logo_data
-            else config.logo_url
+            if config.logo_data and config.logo_sanitized
+            else None
         )
         return {
             "slot_minutes": config.slot_minutes,

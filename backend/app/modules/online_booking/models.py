@@ -43,6 +43,9 @@ class BookingSettings(Base, TimestampMixin):
     logo_url: Mapped[str | None] = mapped_column(String(500))
     logo_data: Mapped[bytes | None] = mapped_column(LargeBinary)
     logo_content_type: Mapped[str | None] = mapped_column(String(50))
+    logo_sanitized: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default="false", nullable=False
+    )
     reasons: Mapped[list] = mapped_column(JSONB, default=default_reasons, nullable=False)
     accent_color: Mapped[str | None] = mapped_column(String(7))
     title_es: Mapped[str | None] = mapped_column(String(120))

@@ -107,6 +107,7 @@ let timezone = 'UTC'
 let state = token ? 'confirm' : 'booking'
 let resultStart = ''
 let branding = {}
+let trustedLogo = ''
 let daysByDate = new Map()
 let firstDay = ''
 let weekOffset = 0
@@ -145,7 +146,7 @@ function frame(content) {
     language = e.target.value
     render()
   }
-  const logo = cfg.logoUrl && safeUrl(cfg.logoUrl, location.href)
+  const logo = trustedLogo
   if (logo) {
     node('logo').src = logo
     node('logo').alt = String(cfg.clinicName || '')
@@ -257,16 +258,16 @@ function render() {
     .then(async (response) => {
       timezone = response.data.timezone
       branding = response.data.branding || {}
-      cfg.logoUrl = branding.logo_url || ''
+      trustedLogo = branding.logo_url === `${base}/logo` ? `${base}/logo` : ''
       cfg.accentColor = branding.accent_color || '#127f83'
-      if (!cfg.logoUrl) node('logo').classList.add('hidden')
+      if (!trustedLogo) node('logo').classList.add('hidden')
       document.documentElement.style.setProperty('--accent', cfg.accentColor)
       node('hero-title').textContent
         = branding[`title_${language}`] || t('title')
       node('hero-intro').textContent
         = branding[`intro_${language}`] || t('intro')
-      if (branding.logo_url && safeUrl(branding.logo_url, location.href)) {
-        node('logo').src = branding.logo_url
+      if (trustedLogo) {
+        node('logo').src = trustedLogo
         node('logo').alt = String(cfg.clinicName || '')
         node('logo').classList.remove('hidden')
       }
@@ -485,12 +486,11 @@ if (state === 'confirm') {
     .then((response) => {
       const brand = response.data.branding || {}
       if (
-        brand.logo_url
-        && safeUrl(brand.logo_url, location.href)
+        brand.logo_url === `${base}/logo`
         && node('logo')
       ) {
-        cfg.logoUrl = brand.logo_url
-        node('logo').src = brand.logo_url
+        trustedLogo = `${base}/logo`
+        node('logo').src = trustedLogo
         node('logo').alt = String(cfg.clinicName || '')
         node('logo').classList.remove('hidden')
       }

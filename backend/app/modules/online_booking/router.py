@@ -4,6 +4,7 @@ Routes only parse input, apply the per-IP and per-contact abuse limits and
 delegate to ``BookingService``; domain errors map to HTTP in ``BookingRoute``.
 """
 
+import hashlib
 from datetime import date
 from typing import Annotated
 from uuid import UUID
@@ -89,16 +90,18 @@ async def delete_logo(
 @router.get("/public/{clinic_id}/logo")
 @limiter.limit("60/minute")
 async def public_logo(request: Request, clinic_id: UUID, db: DB) -> Response:
-    content, media_type = await BookingService.public_logo(db, clinic_id)
-    return Response(
-        content,
-        media_type=media_type,
-        headers={
-            "Content-Security-Policy": "default-src 'none'; sandbox",
-            "X-Content-Type-Options": "nosniff",
-            "Cache-Control": "no-store",
-        },
-    )
+    content = await BookingService.public_logo(db, clinic_id)
+    etag = f'"{hashlib.sha256(content).hexdigest()}"'
+    headers = {
+        "Content-Security-Policy": "default-src 'none'; sandbox",
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "ETag": etag,
+    }
+    validators = [value.strip() for value in request.headers.get("if-none-match", "").split(",")]
+    if "*" in validators or etag in validators or f"W/{etag}" in validators:
+        return Response(status_code=304, headers=headers)
+    return Response(content, media_type="image/png", headers=headers)
 
 
 @router.get("/public/{clinic_id}/config", response_model=ApiResponse[PublicConfig])

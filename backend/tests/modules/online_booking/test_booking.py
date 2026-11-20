@@ -63,14 +63,13 @@ async def test_request_confirm_accept_and_conflict(
     config = {
         **settings.json()["data"],
         "title_es": "Reserva sintética",
-        "logo_url": "https://example.com/logo.png",
         "accent_color": "#123456",
     }
     saved = await client.put("/api/v1/online_booking/settings", headers=headers, json=config)
     assert saved.status_code == 200, saved.text
     public = await client.get(f"{url}/config")
     assert public.json()["data"]["branding"]["title_es"] == "Reserva sintética"
-    assert public.json()["data"]["branding"]["logo_url"] == "https://example.com/logo.png"
+    assert public.json()["data"]["branding"]["logo_url"] is None
     availability = await client.get(f"{url}/availability", params={"day": tomorrow.isoformat()})
     assert availability.status_code == 200
     assert start.isoformat() in availability.json()["data"]["starts"]
@@ -440,6 +439,12 @@ async def test_public_api_is_disabled_by_default_and_rejects_clinical_fields(cli
 async def test_staff_routes_require_login(client):
     assert (await client.get("/api/v1/online_booking/requests")).status_code == 401
     assert (await client.get("/api/v1/online_booking/settings")).status_code == 401
+    assert (
+        await client.put(
+            "/api/v1/online_booking/settings/logo", json={"filename": "x.png", "data": "eA=="}
+        )
+    ).status_code == 401
+    assert (await client.delete("/api/v1/online_booking/settings/logo")).status_code == 401
 
 
 @pytest.mark.asyncio
@@ -1272,14 +1277,9 @@ def test_contact_phone_and_public_settings_validation():
             RequestInput(**{**body, "contact_phone": invalid})
     with pytest.raises(ValidationError):
         RequestInput(**{k: v for k, v in body.items() if k != "contact_phone"})
-    assert (
-        SettingsInput(
-            logo_url="https://example.com/logo.png", accent_color="#123abc", title_es="Citas"
-        ).title_es
-        == "Citas"
-    )
+    assert SettingsInput(accent_color="#123abc", title_es="Citas").title_es == "Citas"
     with pytest.raises(ValidationError):
-        SettingsInput(logo_url="javascript:alert(1)")
+        SettingsInput(logo_url="https://example.com/logo.png")
     with pytest.raises(ValidationError):
         SettingsInput(accent_color="red")
 
@@ -1358,25 +1358,62 @@ async def test_edit_reasons_duration_and_clinic_logo(
     )
     await reserve(db_session, test_clinic.id, config, item, datetime.now(UTC))
     assert item.end_time - item.start_time == timedelta(minutes=75)
-    svg = b'<svg xmlns="http://www.w3.org/2000/svg"><rect width="10" height="10"/></svg>'
-    response = await client.put(
-        settings_url + "/logo",
-        headers=headers,
-        json={"content_type": "image/svg+xml", "data": base64.b64encode(svg).decode()},
-    )
-    assert response.status_code == 200
-    logo = await client.get(f"{base}/logo")
-    assert logo.content == svg and logo.headers["x-content-type-options"] == "nosniff"
-    malicious = base64.b64encode(
-        b'<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>'
-    ).decode()
+    import io
+
+    from PIL import Image
+
+    image = Image.new("RGB", (8, 8), "blue")
+    exif = Image.Exif()
+    exif[270] = "Synthetic secret metadata"
+    source = io.BytesIO()
+    image.save(source, format="JPEG", exif=exif)
+    svg = b'<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>'
+    for filename, raw in (("logo.svg", svg), ("logo.png", svg), ("logo.png", source.getvalue())):
+        rejected = await client.put(
+            settings_url + "/logo",
+            headers=headers,
+            json={"filename": filename, "data": base64.b64encode(raw).decode()},
+        )
+        assert rejected.status_code == 422
+    too_large = base64.b64encode(b"x" * (512 * 1024 + 1)).decode()
     assert (
         await client.put(
             settings_url + "/logo",
             headers=headers,
-            json={"content_type": "image/svg+xml", "data": malicious},
+            json={"filename": "logo.png", "data": too_large},
         )
     ).status_code == 422
+    response = await client.put(
+        settings_url + "/logo",
+        headers=headers,
+        json={"filename": "logo.jpg", "data": base64.b64encode(source.getvalue()).decode()},
+    )
+    assert response.status_code == 200
+    logo = await client.get(f"{base}/logo")
+    assert logo.status_code == 200
+    assert logo.headers["content-type"] == "image/png"
+    assert logo.headers["x-content-type-options"] == "nosniff"
+    assert logo.headers["content-security-policy"] == "default-src 'none'; sandbox"
+    assert logo.headers["cache-control"] == "public, max-age=0, must-revalidate"
+    assert logo.headers["etag"]
+    with Image.open(io.BytesIO(logo.content)) as cleaned:
+        assert cleaned.format == "PNG" and not cleaned.getexif()
+        assert "exif" not in cleaned.info and "Synthetic secret metadata" not in repr(cleaned.info)
+    await db_session.refresh(config)
+    config.logo_sanitized = False
+    await db_session.flush()
+    assert (await client.get(f"{base}/logo")).status_code == 404
+    assert (await client.get(f"{base}/config")).json()["data"]["branding"]["logo_url"] is None
+    config.logo_sanitized = True
+    await db_session.flush()
+    cached = await client.get(f"{base}/logo", headers={"If-None-Match": logo.headers["etag"]})
+    assert cached.status_code == 304 and cached.content == b""
+    assert cached.headers["etag"] == logo.headers["etag"]
+    config.enabled = False
+    await db_session.flush()
+    assert (await client.get(f"{base}/logo")).status_code == 404
+    config.enabled = True
+    await db_session.flush()
     assert (await client.delete(settings_url + "/logo", headers=headers)).status_code == 200
     assert (await client.get(f"{base}/logo")).status_code == 404
 

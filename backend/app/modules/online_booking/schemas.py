@@ -6,6 +6,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
+from .logo import MAX_LOGO_BASE64
 from .models import default_reasons
 
 
@@ -26,7 +27,6 @@ class SettingsInput(BaseModel):
     enabled: bool = False
     professional_id: UUID | None = None
     public_url: str | None = Field(default=None, max_length=500)
-    logo_url: str | None = Field(default=None, max_length=500)
     accent_color: str | None = Field(default=None, pattern=r"^#[0-9a-fA-F]{6}$")
     title_es: str | None = Field(default=None, max_length=120)
     intro_es: str | None = Field(default=None, max_length=300)
@@ -47,7 +47,7 @@ class SettingsInput(BaseModel):
             raise ValueError("At least one reason must be active")
         return value
 
-    @field_validator("public_url", "logo_url")
+    @field_validator("public_url")
     @classmethod
     def valid_url(cls, value: str | None) -> str | None:
         from urllib.parse import urlsplit
@@ -68,8 +68,8 @@ class SettingsInput(BaseModel):
 
 class LogoInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
-    content_type: Literal["image/png", "image/jpeg", "image/svg+xml"]
-    data: str = Field(max_length=1400000)
+    filename: str = Field(min_length=1, max_length=255)
+    data: str = Field(min_length=1, max_length=MAX_LOGO_BASE64)
 
 
 class LogoState(BaseModel):
