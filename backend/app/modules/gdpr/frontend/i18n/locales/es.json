@@ -26,8 +26,7 @@
     "actions": {
       "view": "Consulta",
       "download": "Descarga",
-      "export": "Exportación",
-      "print": "Impresión"
+      "export": "Exportación"
     },
     "resources": {
       "patient_record": "Ficha del paciente",

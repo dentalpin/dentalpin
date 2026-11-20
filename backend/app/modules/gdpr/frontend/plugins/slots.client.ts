@@ -8,14 +8,14 @@ export default defineNuxtPlugin(() => {
     id: 'gdpr-access-log',
     component: defineAsyncComponent(() => import('../components/PatientAccessLogTab.vue')),
     labelKey: 'gdprAccess.patientTab',
-    permission: PERMISSIONS.gdpr.auditRead
+    permission: PERMISSIONS.gdpr.accessLogRead
   })
   registerSettingsPage({
     path: 'patient-access-log',
     category: 'people',
     labelKey: 'gdprAccess.settings',
     icon: 'i-lucide-shield',
-    permission: PERMISSIONS.gdpr.auditRead,
+    permission: PERMISSIONS.gdpr.accessLogRead,
     component: () => import('../components/AccessLogSettings.vue')
   })
 })

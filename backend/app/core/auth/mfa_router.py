@@ -180,7 +180,9 @@ async def reset(
         raise HTTPException(403, "mfa_reset_forbidden")
     if await db.get(UserMfaTotp, target.id) is None:
         raise HTTPException(409, "mfa_not_enabled")
-    await mfa.clear_enrollment(db, target, actor_id=ctx.user_id, reset_clinic=ctx.clinic_id)
+    await mfa.clear_enrollment(
+        db, target, actor_id=ctx.user_id, reset_clinic=ctx.clinic_id, require_reenrollment=True
+    )
     await db.commit()
 
 

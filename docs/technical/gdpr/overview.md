@@ -185,7 +185,7 @@ for full detail.
 staff reads of patient detail, medical history and clinical notes,
 odontograms, documents, and authenticated PDF downloads/previews. It also
 records GDPR portability exports. Public links are outside this audit.
-Individual browser print actions do not make a server request.
+Review and CSV export require `gdpr.access_log.read`, granted to admins by default.
 
 The patient read handler awaits an insert and commit before returning
 data. A unique PostgreSQL index and `ON CONFLICT DO NOTHING` coalesce

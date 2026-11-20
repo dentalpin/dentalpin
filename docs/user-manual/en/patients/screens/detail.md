@@ -21,6 +21,7 @@ related_endpoints:
 related_permissions:
   - patients.read
   - patients.write
+  - gdpr.access_log.read
   - periodontogram.read
   - periodontogram.write
 related_paths:
@@ -29,7 +30,7 @@ related_paths:
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: 0000000
+last_verified_commit: fdbdaf8d
 ---
 
 # Patient detail
@@ -40,6 +41,12 @@ The default **Summary** tab is a modular dashboard where each block
 is contributed by a different module (plans, agenda, payments,
 dental chart, medical history). Every block is also a deep link —
 one click reaches the detail.
+
+## Access log
+
+With the GDPR module and `gdpr.access_log.read`, the **Access log** tab
+shows who accessed this record and when. Use its date range and CSV export
+to review the recorded activity. See the [access log guide](../../gdpr/screens/access-log.md).
 
 ## Layout
 
