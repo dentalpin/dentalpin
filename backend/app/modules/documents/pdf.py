@@ -384,6 +384,123 @@ _LABELS = {
     },
 }
 # pt-BR reuses pt labels as there is no differing words so far.
+# Consent-specific text is translated for every supported PDF language.
+_CONSENT_LABELS = {
+    "es": (
+        "Revocación",
+        "El firmante revoca el consentimiento anterior.",
+        "Paciente",
+        "Tutor legal",
+        "Representante",
+        "BORRADOR",
+    ),
+    "en": (
+        "Revocation",
+        "The signer revokes the prior consent.",
+        "Patient",
+        "Legal guardian",
+        "Representative",
+        "DRAFT",
+    ),
+    "ta": (
+        "திரும்பப் பெறுதல்",
+        "கையொப்பமிட்டவர் முந்தைய ஒப்புதலைத் திரும்பப் பெறுகிறார்.",
+        "நோயாளர்",
+        "சட்டப்பூர்வ பாதுகாவலர்",
+        "பிரதிநிதி",
+        "வரைவு",
+    ),
+    "te": (
+        "ఉపసంహరణ",
+        "సంతకం చేసిన వ్యక్తి మునుపటి సమ్మతిని ఉపసంహరించుకుంటున్నారు.",
+        "రోగి",
+        "చట్టపరమైన సంరక్షకుడు",
+        "ప్రతినిధి",
+        "ముసాయిదా",
+    ),
+    "hi": (
+        "निरस्तीकरण",
+        "हस्ताक्षरकर्ता पिछली सहमति वापस लेता है।",
+        "रोगी",
+        "कानूनी अभिभावक",
+        "प्रतिनिधि",
+        "मसौदा",
+    ),
+    "fr": (
+        "Révocation",
+        "Le signataire révoque le consentement précédent.",
+        "Patient",
+        "Tuteur légal",
+        "Représentant",
+        "BROUILLON",
+    ),
+    "pt": (
+        "Revogação",
+        "O signatário revoga o consentimento anterior.",
+        "Paciente",
+        "Tutor legal",
+        "Representante",
+        "RASCUNHO",
+    ),
+    "de": (
+        "Widerruf",
+        "Die unterzeichnende Person widerruft die vorherige Einwilligung.",
+        "Patient",
+        "Gesetzlicher Vormund",
+        "Vertretung",
+        "ENTWURF",
+    ),
+    "hu": (
+        "Visszavonás",
+        "Az aláíró visszavonja a korábbi beleegyezést.",
+        "Páciens",
+        "Törvényes gyám",
+        "Képviselő",
+        "TERVEZET",
+    ),
+    "pl": (
+        "Wycofanie",
+        "Podpisujący wycofuje wcześniejszą zgodę.",
+        "Pacjent",
+        "Opiekun prawny",
+        "Przedstawiciel",
+        "PROJEKT",
+    ),
+    "it": (
+        "Revoca",
+        "Il firmatario revoca il consenso precedente.",
+        "Paziente",
+        "Tutore legale",
+        "Rappresentante",
+        "BOZZA",
+    ),
+    "ar": (
+        "سحب الموافقة",
+        "يسحب الموقّع الموافقة السابقة.",
+        "المريض",
+        "الوصي القانوني",
+        "الممثل",
+        "مسودة",
+    ),
+}
+for _locale, _values in _CONSENT_LABELS.items():
+    _LABELS[_locale].update(
+        dict(
+            zip(
+                (
+                    "consent_revocation",
+                    "consent_revocation_text",
+                    "consent_patient",
+                    "consent_guardian",
+                    "consent_representative",
+                    "consent_draft",
+                ),
+                _values,
+                strict=True,
+            )
+        )
+    )
+
 _LABELS["pt-BR"] = _LABELS["pt"]
 
 
@@ -662,20 +779,26 @@ class DocumentPDFService:
             # Only validated PNG data URIs reach this renderer through the signing flow.
             signature = esc(content.get("signature"))
             title = (
-                "Revocación / Revocation"
+                labels["consent_revocation"]
                 if content.get("purpose") == "revoke"
-                else "Consentimiento informado / Informed consent"
+                else labels["informed_consent"]
             )
+            relationship = labels.get(f"consent_{content.get('relationship_to_patient', '')}", "")
             return (
-                f'<div class="section"><div class="section-title">{title}</div>'
-                f'<div class="notes-content" style="white-space:pre-wrap">{esc(content.get("text"))}</div></div>'
+                f'<div class="section"><div class="section-title">{esc(title)}</div>'
                 + (
-                    "<p>El firmante revoca el consentimiento anterior. / The signer revokes the prior consent.</p>"
+                    f"<p><strong>{esc(labels['consent_draft'])}</strong></p>"
+                    if not signature
+                    else ""
+                )
+                + f'<div class="notes-content" style="white-space:pre-wrap">{esc(content.get("text"))}</div></div>'
+                + (
+                    f"<p>{esc(labels['consent_revocation_text'])}</p>"
                     if content.get("purpose") == "revoke"
                     else ""
                 )
                 + (
-                    f"<p>{esc(content.get('signer_name'))} · {esc(content.get('relationship_to_patient'))} · {esc(content.get('signed_at'))}</p>"
+                    f"<p>{esc(content.get('signer_name'))} · {esc(relationship)} · {esc(content.get('signed_at'))}</p>"
                     + f'<img src="{signature}" alt="Signature" style="max-width:250px;max-height:100px" />'
                     if signature
                     else ""

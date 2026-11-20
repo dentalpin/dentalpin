@@ -122,7 +122,14 @@
       "archiveConsent": "Archive",
       "generatePreview": "Generate preview",
       "downloadPreview": "Download preview",
-      "evidenceUnavailable": "Could not verify the signature status."
+      "evidenceUnavailable": "Could not verify the signature status.",
+      "revoked": "திரும்பப் பெறப்பட்டது",
+      "status": {
+        "draft": "வரைவு",
+        "generated": "உருவாக்கப்பட்டது",
+        "archived": "காப்பகப்படுத்தப்பட்டது"
+      },
+      "qrTitle": "கையொப்பமிட ஸ்கேன் செய்யவும்"
     }
   }
 }

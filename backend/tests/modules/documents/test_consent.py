@@ -213,6 +213,16 @@ async def test_signed_pdf_immutable_representative_and_revocation(
         await client.get(f"/api/v1/documents/consents/{doc}/evidence", headers=auth_headers)
     ).json()["data"]
     assert {e["purpose"] for e in evidence} == {"sign", "revoke"}
+    states = await client.get(
+        "/api/v1/documents/consents/signature-status",
+        headers=auth_headers,
+        params={"patient_id": str(test_patient.id)},
+    )
+    assert next(item for item in states.json()["data"] if item["id"] == doc) == {
+        "id": doc,
+        "signed": True,
+        "revoked": True,
+    }
     assert (
         next(e for e in evidence if e["purpose"] == "revoke")["sha256"]
         == hashlib.sha256(rev_pdf.content).hexdigest()
@@ -690,7 +700,7 @@ async def test_racing_public_view_does_not_show_edited_text(
     from app.config import settings
     from app.database import get_db
     from app.main import app
-    from app.modules.documents import consent as consent_module
+    from app.modules.documents import consent_service as consent_module
     from app.modules.documents.service import DocumentService
 
     doc = await new_consent(client, auth_headers, test_patient)
@@ -744,3 +754,97 @@ async def test_racing_public_view_does_not_show_edited_text(
     finally:
         app.dependency_overrides[get_db] = old_override
         await engine.dispose()
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("locale", "heading", "guardian", "revocation"),
+    [
+        (
+            "es",
+            "Consentimiento informado",
+            "Tutor legal",
+            "El firmante revoca el consentimiento anterior.",
+        ),
+        ("en", "Informed consent", "Legal guardian", "The signer revokes the prior consent."),
+    ],
+)
+async def test_signed_pdf_uses_link_locale_and_clinic_time(
+    client, auth_headers, test_patient, db_session, locale, heading, guardian, revocation
+):
+    if not shutil.which("pdftotext"):
+        pytest.skip("pdftotext is required to verify rendered PDF text")
+    clinic = await db_session.get(Clinic, test_patient.clinic_id)
+    clinic.timezone = "America/New_York"
+    clinic.settings = {**(clinic.settings or {}), "communication_language": locale}
+    await db_session.commit()
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    link = (await db_session.execute(select(ConsentSigningLink))).scalar_one()
+    assert link.locale == locale
+    clinic.settings = {
+        **clinic.settings,
+        "communication_language": "en" if locale == "es" else "es",
+    }
+    await db_session.commit()
+    response = await client.post(
+        "/api/v1/documents/public/consents/current/sign",
+        headers={"Authorization": f"Bearer {token}"},
+        json={
+            "signer_name": "Synthetic guardian",
+            "relationship_to_patient": "guardian",
+            "signature": signature(),
+        },
+    )
+    assert response.status_code == 200, response.text
+    evidence = (await db_session.execute(select(ConsentEvidence))).scalar_one()
+    from zoneinfo import ZoneInfo
+
+    local_time = evidence.signed_at.astimezone(ZoneInfo("America/New_York")).strftime(
+        "%d/%m/%Y %H:%M %Z"
+    )
+    pdf = await client.get(
+        f"/api/v1/documents/consents/{doc}/evidence/sign/download", headers=auth_headers
+    )
+    text = subprocess.run(
+        ["pdftotext", "-", "-"], input=pdf.content, capture_output=True, check=True
+    ).stdout.decode()
+    assert heading in text and guardian in text and local_time in text
+    assert "· guardian ·" not in text
+    clinic.settings = {**clinic.settings, "communication_language": locale}
+    await db_session.commit()
+    revoke_token = await make_link(client, auth_headers, doc, "revoke")
+    revoked = await client.post(
+        "/api/v1/documents/public/consents/current/sign",
+        headers={"Authorization": f"Bearer {revoke_token}"},
+        json={
+            "signer_name": "Synthetic guardian",
+            "relationship_to_patient": "guardian",
+            "signature": signature(),
+        },
+    )
+    assert revoked.status_code == 200, revoked.text
+    pdf = await client.get(
+        f"/api/v1/documents/consents/{doc}/evidence/revoke/download", headers=auth_headers
+    )
+    text = subprocess.run(
+        ["pdftotext", "-", "-"], input=pdf.content, capture_output=True, check=True
+    ).stdout.decode()
+    assert revocation in " ".join(text.split())
+
+
+@pytest.mark.asyncio
+async def test_signing_link_validates_explicit_locale(
+    client, auth_headers, test_patient, db_session
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    response = await client.post(
+        f"/api/v1/documents/consents/{doc}/links?purpose=sign&locale=en", headers=auth_headers
+    )
+    assert response.status_code == 201
+    link = (await db_session.execute(select(ConsentSigningLink))).scalar_one()
+    assert link.locale == "en"
+    invalid = await client.post(
+        f"/api/v1/documents/consents/{doc}/links?purpose=sign&locale=xx", headers=auth_headers
+    )
+    assert invalid.status_code == 422

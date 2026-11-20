@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { PERMISSIONS } from '~~/app/config/permissions'
+import QRCode from 'qrcode'
+
 interface ConsentTemplate { id: string, title: string, body: string }
 interface ConsentDocument {
   id: string
@@ -6,9 +9,10 @@ interface ConsentDocument {
   status: string
   content: { text?: string }
   signed: boolean
+  revoked: boolean
   evidenceAvailable: boolean
 }
-interface ConsentSignatureStatus { id: string, signed: boolean }
+interface ConsentSignatureStatus { id: string, signed: boolean, revoked: boolean }
 
 const props = defineProps<{ ctx: { patient: { id: string } } }>()
 const { t } = useI18n()
@@ -24,6 +28,9 @@ const editingConsent = ref('')
 const consentTitle = ref('')
 const consentText = ref('')
 const signingUrl = ref('')
+const qrImage = ref('')
+const qrOpen = ref(false)
+const templateOptions = computed(() => templates.value.map(item => ({ label: item.title, value: item.id })))
 const message = ref('')
 const busy = ref(false)
 
@@ -38,12 +45,11 @@ async function refresh() {
     }).catch(() => null)
   ])
   templates.value = a.data
-  const statusById = new Map<string, boolean>(signatureStatus?.data.map(item => [item.id, item.signed]))
+  const statusById = new Map(signatureStatus?.data.map(item => [item.id, item]))
   documents.value = b.data.map((doc) => {
-    if (doc.status === 'archived') return { ...doc, signed: false, evidenceAvailable: true }
-    const signed = statusById.get(doc.id)
+    const state = statusById.get(doc.id)
     // Do not offer edits if signature state could not be verified.
-    return { ...doc, signed: signed ?? true, evidenceAvailable: signed !== undefined }
+    return { ...doc, signed: state?.signed ?? true, revoked: state?.revoked ?? false, evidenceAvailable: state !== undefined }
   })
 }
 
@@ -80,6 +86,8 @@ async function create() {
 async function link(id: string, purpose: 'sign' | 'revoke') {
   const result = await api.post<{ data: { token: string } }>(`/api/v1/documents/consents/${id}/links?purpose=${purpose}`, {})
   signingUrl.value = `${window.location.origin}/p/consent#${result.data.token}`
+  qrImage.value = await QRCode.toDataURL(signingUrl.value, { errorCorrectionLevel: 'M', margin: 2, width: 256 })
+  qrOpen.value = true
   message.value = t('documents.consent.linkHelp')
 }
 function startEditConsent(doc: ConsentDocument) {
@@ -154,23 +162,14 @@ onMounted(() => refresh())
       {{ t('documents.consent.title') }}
     </h3>
     <label class="block text-sm">{{ t('documents.consent.template') }}</label>
-    <select
+    <USelect
       v-model="templateId"
-      class="w-full rounded border p-2"
-    >
-      <option value="">
-        {{ t('documents.consent.selectTemplate') }}
-      </option>
-      <option
-        v-for="item in templates"
-        :key="item.id"
-        :value="item.id"
-      >
-        {{ item.title }}
-      </option>
-    </select>
+      :items="templateOptions"
+      :placeholder="t('documents.consent.selectTemplate')"
+      class="w-full"
+    />
     <div
-      v-if="can('documents.write')"
+      v-if="can(PERMISSIONS.generatedDocuments.write)"
       class="flex flex-wrap gap-2"
     >
       <UButton
@@ -188,20 +187,20 @@ onMounted(() => refresh())
       </UButton>
     </div>
     <details
-      v-if="can('documents.write')"
+      v-if="can(PERMISSIONS.generatedDocuments.write)"
       :open="!!editing"
     >
       <summary>{{ t('documents.consent.manageTemplate') }}</summary>
       <div class="space-y-2 pt-2">
-        <input
+        <UInput
           v-model="title"
           class="w-full rounded border p-2"
           :placeholder="t('documents.consent.templateTitle')"
-        >
-        <textarea
+        />
+        <UTextarea
           v-model="body"
           class="w-full rounded border p-2"
-          rows="6"
+          :rows="6"
           :placeholder="t('documents.consent.templateText')"
         />
         <UButton
@@ -219,25 +218,31 @@ onMounted(() => refresh())
         </UButton>
       </div>
     </details>
-    <div
-      v-if="signingUrl"
-      class="space-y-1"
+    <UModal
+      v-model:open="qrOpen"
+      :title="t('documents.consent.qrTitle')"
+      :description="t('documents.consent.linkHelp')"
     >
-      <p>{{ message }}</p>
-      <input
-        :value="signingUrl"
-        readonly
-        class="w-full rounded border p-2"
-        @focus="($event.target as HTMLInputElement).select()"
-      >
-      <UButton
-        variant="outline"
-        @click="copyLink"
-      >
-        {{ t('documents.consent.copy') }}
-      </UButton>
-    </div>
-    <p v-else-if="message">
+      <template #body>
+        <div class="flex flex-col items-center gap-3 p-4">
+          <img
+            v-if="qrImage"
+            :src="qrImage"
+            :alt="t('documents.consent.qrTitle')"
+            class="h-48 w-48"
+          >
+          <UButton
+            color="neutral"
+            variant="ghost"
+            icon="i-lucide-copy"
+            @click="copyLink"
+          >
+            {{ t('documents.consent.copy') }}
+          </UButton>
+        </div>
+      </template>
+    </UModal>
+    <p v-if="message && !qrOpen">
       {{ message }}
     </p>
     <ul class="space-y-3">
@@ -246,24 +251,32 @@ onMounted(() => refresh())
         :key="doc.id"
         class="border-t pt-2"
       >
-        <p>{{ doc.title }} · {{ doc.status }}</p>
+        <p>
+          {{ doc.title }} · {{ t(`documents.consent.status.${doc.status}`) }}
+          <UBadge
+            v-if="doc.revoked"
+            color="warning"
+          >
+            {{ t('documents.consent.revoked') }}
+          </UBadge>
+        </p>
         <div
           v-if="editingConsent === doc.id"
           class="space-y-2 pt-2"
         >
           <label class="block">
             {{ t('documents.consent.consentTitle') }}
-            <input
+            <UInput
               v-model="consentTitle"
               class="w-full rounded border p-2"
-            >
+            />
           </label>
           <label class="block">
             {{ t('documents.consent.consentText') }}
-            <textarea
+            <UTextarea
               v-model="consentText"
               class="w-full rounded border p-2"
-              rows="6"
+              :rows="6"
             />
           </label>
           <p class="text-sm">
@@ -284,7 +297,7 @@ onMounted(() => refresh())
         </div>
         <div class="flex flex-wrap gap-2">
           <template v-if="doc.status !== 'archived' && !doc.signed">
-            <template v-if="can('documents.write')">
+            <template v-if="can(PERMISSIONS.generatedDocuments.write)">
               <UButton
                 size="xs"
                 :disabled="busy"
@@ -333,7 +346,7 @@ onMounted(() => refresh())
               {{ t('documents.consent.download') }}
             </UButton>
             <UButton
-              v-if="can('documents.write')"
+              v-if="can(PERMISSIONS.generatedDocuments.write) && !doc.revoked"
               size="xs"
               variant="outline"
               @click="link(doc.id, 'revoke')"
@@ -341,6 +354,7 @@ onMounted(() => refresh())
               {{ t('documents.consent.revoke') }}
             </UButton>
             <UButton
+              v-if="doc.revoked"
               size="xs"
               variant="outline"
               @click="download(doc.id, 'revoke')"

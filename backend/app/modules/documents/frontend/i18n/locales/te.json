@@ -122,7 +122,14 @@
       "archiveConsent": "Archive",
       "generatePreview": "Generate preview",
       "downloadPreview": "Download preview",
-      "evidenceUnavailable": "Could not verify the signature status."
+      "evidenceUnavailable": "Could not verify the signature status.",
+      "revoked": "ఉపసంహరించబడింది",
+      "status": {
+        "draft": "ముసాయిదా",
+        "generated": "సృష్టించబడింది",
+        "archived": "ఆర్కైవ్ చేయబడింది"
+      },
+      "qrTitle": "సంతకం చేయడానికి స్కాన్ చేయండి"
     }
   }
 }

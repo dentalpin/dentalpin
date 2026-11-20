@@ -1,6 +1,7 @@
 import { mockNuxtImport, mountSuspended } from '@nuxt/test-utils/runtime'
 import { flushPromises } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
+import { defineComponent } from 'vue'
 import ConsentPage from '../../module_layers/documents/frontend/pages/p/consent/index.vue'
 import SignatureCanvas from '../../app/components/shared/SignatureCanvas.vue'
 
@@ -19,7 +20,12 @@ describe('public consent signing', () => {
     })
     vi.stubGlobal('$fetch', fetch)
     window.history.replaceState(null, '', '/#synthetic-token')
-    const wrapper = await mountSuspended(ConsentPage)
+    const SelectStub = defineComponent({
+      props: ['modelValue', 'items'],
+      emits: ['update:modelValue'],
+      template: `<select :value="modelValue" @change="$emit('update:modelValue', $event.target.value)"><option v-for="item in items" :key="item.value" :value="item.value">{{ item.label }}</option></select>`
+    })
+    const wrapper = await mountSuspended(ConsentPage, { global: { stubs: { USelect: SelectStub } } })
     await new Promise(resolve => setTimeout(resolve, 0))
     await flushPromises()
     try {

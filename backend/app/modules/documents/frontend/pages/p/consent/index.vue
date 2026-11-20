@@ -11,6 +11,11 @@ interface PublicConsent { title: string, text: string, patient: string, clinic: 
 const item = ref<PublicConsent | null>(null)
 const signer = ref('')
 const relation = ref('patient')
+const relationOptions = computed(() => [
+  { label: t('documents.consent.patient'), value: 'patient' },
+  { label: t('documents.consent.guardian'), value: 'guardian' },
+  { label: t('documents.consent.representative'), value: 'representative' }
+])
 const signature = ref<string | null>(null)
 const canvas = ref<InstanceType<typeof SignatureCanvas> | null>(null)
 watch(relation, (value) => {
@@ -103,20 +108,27 @@ async function submit() {
       <div class="whitespace-pre-wrap rounded border p-5">
         {{ item.text }}
       </div>
-      <label class="block">{{ t('documents.consent.signer') }}<input
-        v-model="signer"
-        class="mt-1 block w-full rounded border p-3"
-      ></label>
-      <label class="block">{{ t('documents.consent.relationship') }}
-        <select
+      <UFormField
+        :label="t('documents.consent.signer')"
+        name="signer"
+      >
+        <UInput
+          v-model="signer"
+          class="w-full"
+          size="lg"
+        />
+      </UFormField>
+      <UFormField
+        :label="t('documents.consent.relationship')"
+        name="relationship"
+      >
+        <USelect
           v-model="relation"
-          class="mt-1 block w-full rounded border p-3"
-        >
-          <option value="patient">{{ t('documents.consent.patient') }}</option>
-          <option value="guardian">{{ t('documents.consent.guardian') }}</option>
-          <option value="representative">{{ t('documents.consent.representative') }}</option>
-        </select>
-      </label>
+          :items="relationOptions"
+          class="w-full"
+          size="lg"
+        />
+      </UFormField>
       <div>
         <p>{{ t('documents.consent.drawSignature') }}</p><SignatureCanvas
           ref="canvas"

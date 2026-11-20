@@ -88,6 +88,9 @@ patients chain first.
 ## Informed consents
 
 Consent templates are scoped to the clinic and copied into each consent.
+Each link stores its selected locale (default: clinic language); signed PDFs
+localize the relationship and show signing time in the clinic timezone. The
+QR is generated locally and carries the token in the URL fragment.
 Staff create a 30-minute, single-use signing or revocation link. The public
 endpoint only exposes that document. The link keeps its token in the URL
 fragment, and the client sends it in the Authorization header rather than

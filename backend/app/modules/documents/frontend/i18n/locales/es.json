@@ -122,7 +122,14 @@
       "archiveConsent": "Archivar",
       "generatePreview": "Generar vista previa",
       "downloadPreview": "Descargar vista previa",
-      "evidenceUnavailable": "No se pudo comprobar el estado de la firma."
+      "evidenceUnavailable": "No se pudo comprobar el estado de la firma.",
+      "revoked": "Revocado",
+      "status": {
+        "draft": "Borrador",
+        "generated": "Generado",
+        "archived": "Archivado"
+      },
+      "qrTitle": "Escanear para firmar"
     }
   }
 }

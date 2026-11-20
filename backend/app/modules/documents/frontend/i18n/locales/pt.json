@@ -122,7 +122,14 @@
       "archiveConsent": "Archive",
       "generatePreview": "Generate preview",
       "downloadPreview": "Download preview",
-      "evidenceUnavailable": "Could not verify the signature status."
+      "evidenceUnavailable": "Could not verify the signature status.",
+      "revoked": "Revogado",
+      "status": {
+        "draft": "Rascunho",
+        "generated": "Gerado",
+        "archived": "Arquivado"
+      },
+      "qrTitle": "Digitalizar para assinar"
     }
   }
 }

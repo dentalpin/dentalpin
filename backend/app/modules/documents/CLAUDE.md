@@ -37,7 +37,11 @@ uses no staff session. Evidence includes signer relationship, IP and user
 agent. The migration is on the documents branch and is reversible.
 
 The clinic-scoped `GET /consents/signature-status?patient_id=…` returns
-signature evidence state for the patient card and records a staff view.
+signature and revocation evidence state for the patient card and records a staff view.
+The signing link stores its PDF locale, defaulting to the clinic language;
+rendered signature times use the clinic timezone and localized relationship.
+`ConsentService` owns consent operations and raises domain errors; HTTP routes
+translate those errors. The handoff QR is rendered locally from the fragment URL.
 
 ## Dependencies
 

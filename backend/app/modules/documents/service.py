@@ -14,7 +14,6 @@ import uuid
 from datetime import UTC, datetime
 from pathlib import Path
 
-from fastapi import HTTPException
 from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,6 +22,10 @@ from app.core.events import event_bus
 from app.core.events.types import EventType
 from app.modules.patients.service import PatientService
 
+from .exceptions import (
+    ConsentConflictError,
+    ConsentValidationError,
+)
 from .models import ConsentEvidence, ConsentSigningLink, DocumentStatus, GeneratedDocument
 from .pdf import DocumentPDFService
 
@@ -81,7 +84,7 @@ async def _require_unsigned_consent(db: AsyncSession, doc: GeneratedDocument) ->
         )
     )
     if signed is not None:
-        raise HTTPException(409, "Signed consents cannot be modified")
+        raise ConsentConflictError("Signed consents cannot be modified")
 
 
 async def _invalidate_consent_links(db: AsyncSession, doc: GeneratedDocument) -> None:
@@ -200,7 +203,7 @@ class DocumentService:
         if doc.document_type == "informed_consent":
             await _require_unsigned_consent(db, doc)
             if title is not None and not title.strip():
-                raise HTTPException(422, "Consent title is required")
+                raise ConsentValidationError("Consent title is required")
             if content is not None:
                 text = content.get("text")
                 if (
@@ -209,9 +212,9 @@ class DocumentService:
                     or not text.strip()
                     or len(text) > 30000
                 ):
-                    raise HTTPException(422, "Consent text is required")
+                    raise ConsentValidationError("Consent text is required")
             if status == DocumentStatus.GENERATED:
-                raise HTTPException(422, "Generate a PDF using the generate endpoint")
+                raise ConsentValidationError("Generate a PDF using the generate endpoint")
             if title is not None or content is not None or status is not None:
                 await _invalidate_consent_links(db, doc)
             if title is not None or content is not None:
@@ -354,7 +357,7 @@ class DocumentService:
                 except (FileNotFoundError, IsADirectoryError, PermissionError):
                     return None
                 if not secrets.compare_digest(hashlib.sha256(data).hexdigest(), evidence.sha256):
-                    raise HTTPException(409, "Evidence file integrity check failed")
+                    raise ConsentConflictError("Evidence file integrity check failed")
                 return data
         if not doc.file_path:
             return None
