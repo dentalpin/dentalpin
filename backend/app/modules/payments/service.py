@@ -11,7 +11,7 @@ module hosts:
 from __future__ import annotations
 
 from collections import defaultdict
-from datetime import UTC, date, datetime, timedelta
+from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Literal
 from uuid import UUID
@@ -531,8 +531,11 @@ class LedgerService:
         db: AsyncSession, clinic_id: UUID, patient_id: UUID
     ) -> list[LedgerEntry]:
         entries: list[LedgerEntry] = []
+        zone = await clinic_zone_for(db, clinic_id)
 
-        # Payments
+        # Payments. ``payment_date`` is the clinic's calendar day: anchor it at
+        # the clinic's midnight. UTC midnight is the evening before in every
+        # zone behind UTC, so the panel showed the payment a day early.
         result = await db.execute(
             select(Payment)
             .where(Payment.clinic_id == clinic_id, Payment.patient_id == patient_id)
@@ -542,7 +545,7 @@ class LedgerService:
             entries.append(
                 LedgerEntry(
                     entry_type="payment",
-                    occurred_at=datetime.combine(p.payment_date, datetime.min.time(), tzinfo=UTC),
+                    occurred_at=datetime.combine(p.payment_date, datetime.min.time(), tzinfo=zone),
                     amount=p.amount,
                     reference_id=p.id,
                     description=p.method,

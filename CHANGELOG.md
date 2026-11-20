@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Payments:** the patient's Pagos panel shows payments on their own date in clinics behind UTC, not the day before (#939).
 - **Notifications:** the "budget accepted" message dates the acceptance on the clinic's day (#922).
 - **Schedules:** the copilot's free-slot search no longer offers booked evening slots on its last day (#921).
 - **Activity journal:** the date filter uses the clinic's day (#920).
