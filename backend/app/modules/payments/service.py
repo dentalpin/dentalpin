@@ -888,9 +888,10 @@ class PaymentReportsService:
     ) -> AgingBuckets:
         """Bucket clinic_receivable per patient by oldest unpaid earned entry.
 
-        For each patient with ``earned > paid``, find the oldest
-        ``PatientEarnedEntry`` and bucket by age. Receivable amount is
-        ``earned − paid`` for that patient (positive only).
+        For each patient with ``earned > paid``, apply the net paid amount
+        to the earned entries oldest first and bucket by the age (in clinic
+        days) of the first entry it does not fully cover. Receivable amount
+        is ``earned − paid`` for that patient (positive only).
         """
         # Per-patient net paid (paid − refunded)
         paid_rows = await db.execute(
@@ -914,17 +915,22 @@ class PaymentReportsService:
         )
         refunded_per_patient = dict(refund_rows.all())
 
-        # Earned with oldest performed_at per patient
+        # Earned entries oldest first: what the patient paid covers the
+        # oldest work first, so the age is the first entry it doesn't cover.
         earned_rows = await db.execute(
             select(
                 PatientEarnedEntry.patient_id,
-                func.coalesce(func.sum(PatientEarnedEntry.amount), Decimal("0")),
-                func.min(PatientEarnedEntry.performed_at),
+                PatientEarnedEntry.amount,
+                PatientEarnedEntry.performed_at,
             )
             .where(PatientEarnedEntry.clinic_id == clinic_id)
-            .group_by(PatientEarnedEntry.patient_id)
+            .order_by(PatientEarnedEntry.performed_at, PatientEarnedEntry.id)
         )
+        earned_per_patient: dict[UUID, list[tuple[Decimal, datetime]]] = defaultdict(list)
+        for pid, amount, performed_at in earned_rows.all():
+            earned_per_patient[pid].append((amount, performed_at))
 
+        zone = await clinic_zone_for(db, clinic_id)
         today = await clinic_today_for(db, clinic_id)
         buckets_data: dict[str, dict[str, object]] = {
             "0-30": {"total": Decimal("0"), "patients": set()},
@@ -933,15 +939,24 @@ class PaymentReportsService:
             "90+": {"total": Decimal("0"), "patients": set()},
         }
 
-        for pid, earned_total, oldest_at in earned_rows.all():
+        for pid, entries in earned_per_patient.items():
             net_paid = paid_per_patient.get(pid, Decimal("0")) - refunded_per_patient.get(
                 pid, Decimal("0")
             )
-            receivable = earned_total - net_paid
+            receivable = sum((amount for amount, _ in entries), Decimal("0")) - net_paid
             if receivable <= 0:
                 continue
 
-            age_days = (today - oldest_at.date()).days if oldest_at else 0
+            # Oldest entry the net paid amount does not fully cover (FIFO).
+            covered = net_paid
+            oldest_unpaid_at = entries[-1][1]
+            for amount, performed_at in entries:
+                if covered < amount:
+                    oldest_unpaid_at = performed_at
+                    break
+                covered -= amount
+            # ``performed_at`` is an instant; age it on the clinic's calendar.
+            age_days = (today - oldest_unpaid_at.astimezone(zone).date()).days
             if age_days <= 30:
                 key = "0-30"
             elif age_days <= 60:

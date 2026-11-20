@@ -1,14 +1,26 @@
 """Scheduling report service."""
 
-from datetime import date
+from datetime import date, datetime
 from typing import Any
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import case, extract, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import User
+from app.core.utils.dates import clinic_day_range, clinic_zone_for
 from app.modules.agenda.models import Appointment
+
+
+async def _clinic_days(
+    db: AsyncSession, clinic_id: UUID, date_from: date, date_to: date
+) -> tuple[datetime, datetime]:
+    """``[start, end)`` of the report period on the clinic's clock (#932).
+
+    ``start_time`` is stored in UTC; ``date(start_time)`` is the UTC date.
+    """
+    return clinic_day_range(await clinic_zone_for(db, clinic_id), date_from, date_to)
 
 
 class SchedulingReportService:
@@ -33,6 +45,7 @@ class SchedulingReportService:
             - cancellation_rate: cancelled / total decided
             - no_show_rate: no_show / total decided
         """
+        day_start, day_end = await _clinic_days(db, clinic_id, date_from, date_to)
         result = await db.execute(
             select(
                 func.count(Appointment.id).label("total"),
@@ -59,8 +72,8 @@ class SchedulingReportService:
                 ).label("in_treatment"),
             ).where(
                 Appointment.clinic_id == clinic_id,
-                func.date(Appointment.start_time) >= date_from,
-                func.date(Appointment.start_time) <= date_to,
+                Appointment.start_time >= day_start,
+                Appointment.start_time < day_end,
             )
         )
         totals = result.one()
@@ -98,6 +111,7 @@ class SchedulingReportService:
 
         A first visit is the first appointment for a patient in the clinic.
         """
+        day_start, day_end = await _clinic_days(db, clinic_id, date_from, date_to)
         # Get patients whose first appointment falls within the period
         # Subquery to find each patient's first appointment date
         first_apt_subq = (
@@ -116,8 +130,8 @@ class SchedulingReportService:
         # Count patients whose first appointment is in the period
         result = await db.execute(
             select(func.count(first_apt_subq.c.patient_id)).where(
-                func.date(first_apt_subq.c.first_appointment) >= date_from,
-                func.date(first_apt_subq.c.first_appointment) <= date_to,
+                first_apt_subq.c.first_appointment >= day_start,
+                first_apt_subq.c.first_appointment < day_end,
             )
         )
         new_patients = result.scalar() or 0
@@ -126,8 +140,8 @@ class SchedulingReportService:
         result = await db.execute(
             select(func.count(Appointment.id)).where(
                 Appointment.clinic_id == clinic_id,
-                func.date(Appointment.start_time) >= date_from,
-                func.date(Appointment.start_time) <= date_to,
+                Appointment.start_time >= day_start,
+                Appointment.start_time < day_end,
                 Appointment.status.notin_(["cancelled"]),
             )
         )
@@ -152,6 +166,7 @@ class SchedulingReportService:
         date_to: date,
     ) -> list[dict[str, Any]]:
         """Get hours worked by professional."""
+        day_start, day_end = await _clinic_days(db, clinic_id, date_from, date_to)
         # Calculate duration in minutes for each appointment
         result = await db.execute(
             select(
@@ -183,8 +198,8 @@ class SchedulingReportService:
             )
             .where(
                 Appointment.clinic_id == clinic_id,
-                func.date(Appointment.start_time) >= date_from,
-                func.date(Appointment.start_time) <= date_to,
+                Appointment.start_time >= day_start,
+                Appointment.start_time < day_end,
                 Appointment.professional_id.isnot(None),
             )
             .group_by(Appointment.professional_id)
@@ -221,6 +236,7 @@ class SchedulingReportService:
         date_to: date,
     ) -> list[dict[str, Any]]:
         """Get cabinet/chair utilization."""
+        day_start, day_end = await _clinic_days(db, clinic_id, date_from, date_to)
         result = await db.execute(
             select(
                 Appointment.cabinet,
@@ -236,8 +252,8 @@ class SchedulingReportService:
             )
             .where(
                 Appointment.clinic_id == clinic_id,
-                func.date(Appointment.start_time) >= date_from,
-                func.date(Appointment.start_time) <= date_to,
+                Appointment.start_time >= day_start,
+                Appointment.start_time < day_end,
                 Appointment.cabinet.isnot(None),
             )
             .group_by(Appointment.cabinet)
@@ -262,10 +278,12 @@ class SchedulingReportService:
         date_from: date,
         date_to: date,
     ) -> list[dict[str, Any]]:
-        """Get appointment distribution by day of week."""
+        """Get appointment distribution by day of week (the clinic's weekdays)."""
+        zone = (await clinic_zone_for(db, clinic_id)).key
+        day_start, day_end = clinic_day_range(ZoneInfo(zone), date_from, date_to)
         result = await db.execute(
             select(
-                extract("dow", Appointment.start_time).label("day_of_week"),
+                extract("dow", func.timezone(zone, Appointment.start_time)).label("day_of_week"),
                 func.count(Appointment.id).label("appointment_count"),
                 func.coalesce(
                     func.sum(case((Appointment.status == "completed", 1), else_=0)), 0
@@ -279,11 +297,11 @@ class SchedulingReportService:
             )
             .where(
                 Appointment.clinic_id == clinic_id,
-                func.date(Appointment.start_time) >= date_from,
-                func.date(Appointment.start_time) <= date_to,
+                Appointment.start_time >= day_start,
+                Appointment.start_time < day_end,
             )
-            .group_by(extract("dow", Appointment.start_time))
-            .order_by(extract("dow", Appointment.start_time))
+            .group_by("day_of_week")
+            .order_by("day_of_week")
         )
 
         day_names = {
