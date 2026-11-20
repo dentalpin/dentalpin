@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Budget:** the list's date filter uses the clinic's day, not the UTC day (#918).
 - **Staff 2FA:** Users shows the reset action only when the staff account has an enrolled factor.
 - **Treatments:** deleting a performed treatment, or setting it back to planned, no longer leaves its price owed in the patient's ledger and pending charges (#896).
 - **Treatment plans:** completing the last session works again when the item's treatment was already marked performed on the odontogram. This regressed in #893 (#897).
