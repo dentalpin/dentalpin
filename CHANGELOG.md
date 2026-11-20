@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications:** the "budget accepted" message dates the acceptance on the clinic's day (#922).
 - **Schedules:** the copilot's free-slot search no longer offers booked evening slots on its last day (#921).
 - **Activity journal:** the date filter uses the clinic's day (#920).
 - **Reports:** the billing summary's paid-in-period total uses the clinic's days (#919).

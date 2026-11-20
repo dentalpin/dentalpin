@@ -752,6 +752,11 @@ def appointment_when_context(start_time: datetime, clinic) -> dict[str, str]:
     }
 
 
+def clinic_date_label(instant: datetime, clinic) -> str:
+    """``dd/mm/YYYY`` of a stored UTC instant, on the clinic's calendar (#922)."""
+    return instant.astimezone(clinic_zone(clinic.timezone if clinic else None)).strftime("%d/%m/%Y")
+
+
 async def budget_treatments_context(db: AsyncSession, budget_id: UUID) -> list[dict]:
     """The ``treatments`` table every locale's ``budget_sent.html`` renders.
 
