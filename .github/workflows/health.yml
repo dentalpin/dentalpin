@@ -34,9 +34,34 @@ env:
 jobs:
   check:
     runs-on: ubuntu-latest
+    outputs:
+      # ok | fail | skipped. `resolve` only closes the alert on a real pass.
+      status: ${{ steps.verify.outputs.status }}
     steps:
       - name: Images are pullable without credentials and ship both arches
+        id: verify
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # A health check must tell "broken" apart from "never attempted".
+          # This verifies the images a release publishes, but until the first
+          # v* tag is cut there are no images at all — and GHCR answers
+          # "denied" for a package that does not exist exactly as it does for
+          # one flipped private. Without this guard a package that was never
+          # built reports as one that broke: a red check that means nothing.
+          # A v* tag exists today, so this branch is inert here — it keeps the
+          # check honest in the window before a first publish and anywhere the
+          # workflow runs against a repo with no release.
+          # Paginate past the default 30: a repo with many tags could otherwise
+          # report zero v* tags and skip a check it should have run.
+          tags=$(gh api "repos/${GITHUB_REPOSITORY}/tags?per_page=100" --jq '[.[] | select(.name | startswith("v"))] | length' 2>/dev/null || echo 0)
+          if [ "${tags:-0}" -eq 0 ]; then
+            echo "  skip no v* tag has been released yet, so there are no published images to verify"
+            echo "       release.yml publishes images on a v* tag; this check starts verifying then"
+            echo "status=skipped" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
           fail=0
           for image in backend frontend; do
             ref="ghcr.io/${GITHUB_REPOSITORY}-${image}:latest"
@@ -58,6 +83,11 @@ jobs:
               fi
             done
           done
+          if [ "$fail" -eq 0 ]; then
+            echo "status=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=fail" >> "$GITHUB_OUTPUT"
+          fi
           exit $fail
 
   alert:
@@ -76,6 +106,18 @@ jobs:
             --json number --jq '.[0].number // empty')
 
           if [ -n "$existing" ]; then
+            # Weekly reminder at most. This file warns that an alert which
+            # spams is an alert people mute, but it was commenting on every
+            # failing run — daily — so the warning was about itself.
+            last=$(gh issue view "$existing" --json comments \
+              --jq '.comments[-1].createdAt // empty' 2>/dev/null)
+            if [ -n "$last" ]; then
+              age_days=$(( ( $(date -u +%s) - $(date -u -d "$last" +%s) ) / 86400 ))
+              if [ "$age_days" -lt 7 ]; then
+                echo "already alerted ${age_days}d ago; staying quiet until it is a week old"
+                exit 0
+              fi
+            fi
             gh issue comment "$existing" --body "Still failing: $RUN_URL"
             exit 0
           fi
@@ -95,7 +137,10 @@ jobs:
 
   resolve:
     needs: check
-    if: success()
+    # Only a real verification closes the alert. 'skipped' means there was
+    # nothing to check, and closing then would assert the images are pullable
+    # when in fact none exist.
+    if: needs.check.outputs.status == 'ok'
     runs-on: ubuntu-latest
     steps:
       - name: Close the alert issue if one is open
