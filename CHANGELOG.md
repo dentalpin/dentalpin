@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Activity journal:** the date filter uses the clinic's day (#920).
 - **Reports:** the billing summary's paid-in-period total uses the clinic's days (#919).
 - **Budget:** the list's date filter uses the clinic's day, not the UTC day (#918).
 - **Staff 2FA:** Users shows the reset action only when the staff account has an enrolled factor.
