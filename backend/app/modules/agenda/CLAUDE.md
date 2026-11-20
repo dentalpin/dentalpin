@@ -70,6 +70,12 @@ DESTRUCTIVE). Invalid transitions return the allowed next states from
 `find_free_slots` is intentionally **not** here — free-slot computation belongs to
 `schedules`, which will register its own tool. Agenda does not cross that boundary.
 
+## Appointment editor
+
+Keep the saved duration as a selectable option when it falls outside the
+presets. Editing other fields omits both timestamps from the update. A
+duration-only edit uses the saved start instant to compute the new end.
+
 ## Frontend slots exposed
 
 - `appointment.completed.followup` — rendered by `AppointmentQuickActions.vue`
