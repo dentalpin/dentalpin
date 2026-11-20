@@ -11,6 +11,10 @@ interface BookingRequest {
   start_time: string
   end_time: string
   contact_name: string
+  contact_first_name?: string | null
+  contact_last_name?: string | null
+  existing_patient?: boolean | null
+  comment?: string | null
   contact_email: string
   contact_phone: string | null
   reason: string
@@ -33,12 +37,34 @@ const settingsOpen = ref(false)
 const settingsLoading = ref(false)
 const settingsReady = ref(false)
 const settingsError = ref('')
-interface VisitReason { id: string, name_es: string, name_en: string, duration_minutes: number, active: boolean }
-interface SettingsForm { enabled: boolean, public_url: string, professional_id: string, slot_minutes: number, window_days: number, min_notice_minutes: number, reasons: VisitReason[], accent_color: string, title_es: string, intro_es: string, title_en: string, intro_en: string, first_visit_minutes: number | null, checkup_minutes: number | null }
-const settingsData = ref<SettingsForm>({ enabled: false, public_url: '', professional_id: '', slot_minutes: 30, window_days: 30, min_notice_minutes: 60, reasons: [], first_visit_minutes: null, checkup_minutes: null, accent_color: '', title_es: '', intro_es: '', title_en: '', intro_en: '' })
+interface VisitReason { id: string, name_es: string, name_en: string, duration_minutes: number, active: boolean, buffer_before: number, buffer_after: number, daily_limit: number | null, weekly_limit: number | null }
+interface SettingsForm { enabled: boolean, public_url: string, professional_id: string, slot_minutes: number, window_days: number, min_notice_minutes: number, daily_limit: number | null, weekly_limit: number | null, active_patient_limit: number | null, redirect_url: string, ask_existing_patient: boolean, allow_comment: boolean, reasons: VisitReason[], accent_color: string, title_es: string, intro_es: string, title_en: string, intro_en: string, first_visit_minutes: number | null, checkup_minutes: number | null }
+const settingsData = ref<SettingsForm>({ enabled: false, public_url: '', professional_id: '', slot_minutes: 30, window_days: 30, min_notice_minutes: 60, daily_limit: null, weekly_limit: null, active_patient_limit: null, redirect_url: '', ask_existing_patient: false, allow_comment: false, reasons: [], first_visit_minutes: null, checkup_minutes: null, accent_color: '', title_es: '', intro_es: '', title_en: '', intro_en: '' })
+const noticeUnit = ref(1)
+const noticeValue = computed({
+  get: () => settingsData.value.min_notice_minutes / noticeUnit.value,
+  set: (value: number) => { settingsData.value.min_notice_minutes = Number(value) * noticeUnit.value }
+})
 const logoFile = ref<File | null>(null)
+const logoInput = ref<HTMLInputElement | null>(null)
+const logoPreview = ref('')
+const savedLogoUrl = ref('')
+const runtimeConfig = useRuntimeConfig()
+async function loadSavedLogo() {
+  if (savedLogoUrl.value) URL.revokeObjectURL(savedLogoUrl.value)
+  savedLogoUrl.value = ''
+  const response = await fetch(`${runtimeConfig.public.apiBaseUrl}/api/v1/online_booking/settings/logo`, {
+    credentials: 'include', headers: { 'X-Clinic-ID': currentClinic.value?.id || '' }
+  })
+  if (response.ok) savedLogoUrl.value = URL.createObjectURL(await response.blob())
+}
+onUnmounted(() => {
+  if (logoPreview.value) URL.revokeObjectURL(logoPreview.value)
+  if (savedLogoUrl.value) URL.revokeObjectURL(savedLogoUrl.value)
+})
+
 function addReason() {
-  settingsData.value.reasons.push({ id: `r_${crypto.randomUUID().replaceAll('-', '').slice(0, 24)}`, name_es: '', name_en: '', duration_minutes: 30, active: true })
+  settingsData.value.reasons.push({ id: `r_${crypto.randomUUID().replaceAll('-', '').slice(0, 24)}`, name_es: '', name_en: '', duration_minutes: 30, active: true, buffer_before: 0, buffer_after: 0, daily_limit: null, weekly_limit: null })
 }
 function moveReason(index: number, delta: number) {
   const list = settingsData.value.reasons
@@ -47,12 +73,18 @@ function moveReason(index: number, delta: number) {
   ;[list[index], list[target]] = [list[target]!, list[index]!]
 }
 function chooseLogo(event: Event) {
+  if (logoPreview.value) URL.revokeObjectURL(logoPreview.value)
   logoFile.value = (event.target as HTMLInputElement).files?.[0] || null
+  logoPreview.value = logoFile.value && logoFile.value.size <= 512 * 1024 && ['image/png', 'image/jpeg', 'image/webp'].includes(logoFile.value.type) ? URL.createObjectURL(logoFile.value) : ''
 }
 async function removeLogo() {
   try {
     await api.del('/api/v1/online_booking/settings/logo')
     logoFile.value = null
+    if (logoPreview.value) URL.revokeObjectURL(logoPreview.value)
+    logoPreview.value = ''
+    if (savedLogoUrl.value) URL.revokeObjectURL(savedLogoUrl.value)
+    savedLogoUrl.value = ''
     success.value = t('onlineBooking.logoRemoved')
   } catch {
     settingsError.value = t('onlineBooking.settingsError')
@@ -74,7 +106,8 @@ async function openSettings() {
     const received = (await api.get<{ data: SettingsForm }>('/api/v1/online_booking/settings')).data
     professionals.value = (await api.get<{ data: Resource[] }>('/api/v1/auth/professionals')).data
     settingsReady.value = true
-    settingsData.value = { ...received, public_url: received.public_url || '', professional_id: received.professional_id || '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
+    void loadSavedLogo().catch(() => {})
+    settingsData.value = { ...received, redirect_url: received.redirect_url || '', public_url: received.public_url || '', professional_id: received.professional_id || '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
   } catch {
     settingsError.value = t('onlineBooking.settingsError')
   }
@@ -88,12 +121,19 @@ async function saveSettings() {
       settingsError.value = t('onlineBooking.logoLimit')
       return
     }
-    const data = { ...settingsData.value }
-    for (const key of ['accent_color', 'title_es', 'intro_es', 'title_en', 'intro_en', 'public_url', 'professional_id'] as const) if (data[key] === '') (data as unknown as Record<string, unknown>)[key] = null
+    const data = { ...settingsData.value, reasons: settingsData.value.reasons.map(reason => ({
+      ...reason,
+      daily_limit: reason.daily_limit || null,
+      weekly_limit: reason.weekly_limit || null
+    })) }
+    for (const key of ['daily_limit', 'weekly_limit', 'active_patient_limit'] as const) if (!data[key]) data[key] = null
+    for (const key of ['accent_color', 'title_es', 'intro_es', 'title_en', 'intro_en', 'public_url', 'professional_id', 'redirect_url'] as const) if (data[key] === '') (data as unknown as Record<string, unknown>)[key] = null
     await api.put('/api/v1/online_booking/settings', data)
     if (logoFile.value) {
       await api.put('/api/v1/online_booking/settings/logo', { filename: logoFile.value.name, data: await logoBase64(logoFile.value) })
       logoFile.value = null
+      if (logoPreview.value) URL.revokeObjectURL(logoPreview.value)
+      logoPreview.value = ''
     }
     settingsOpen.value = false
     success.value = t('onlineBooking.settingsSaved')
@@ -158,8 +198,8 @@ function open(row: BookingRequest, mode: 'accept' | 'reject') {
   patientError.value = ''
   searched.value = false
   const names = row.contact_name.trim().split(/\s+/)
-  firstName.value = names.length === 2 ? names[0]! : row.contact_name.trim()
-  lastName.value = names.length === 2 ? names[1]! : ''
+  firstName.value = row.contact_first_name || (names.length === 2 ? names[0]! : row.contact_name.trim())
+  lastName.value = row.contact_last_name || (names.length === 2 ? names[1]! : '')
   email.value = row.contact_email || ''
   phone.value = row.contact_phone || ''
   duration.value = row.default_duration_minutes || Math.round((Date.parse(row.end_time) - Date.parse(row.start_time)) / 60000)
@@ -326,6 +366,9 @@ onMounted(load)
         v-if="settingsReady"
         class="space-y-4"
       >
+        <h3 class="font-semibold">
+          {{ t('onlineBooking.rules') }}
+        </h3>
         <label class="flex items-center gap-2"><input
           v-model="settingsData.enabled"
           type="checkbox"
@@ -365,27 +408,50 @@ onMounted(load)
           </UFormField>
           <UFormField :label="t('onlineBooking.minimumNotice')">
             <UInput
-              v-model.number="settingsData.min_notice_minutes"
+              v-model.number="noticeValue"
               type="number"
               :min="0"
               :max="525600"
               class="w-full"
             />
-          </UFormField>
-          <UFormField :label="t('onlineBooking.logoUpload')">
-            <input
-              type="file"
-              accept="image/png,image/jpeg,image/webp"
-              @change="chooseLogo"
-            ><p class="text-xs text-muted">
-              {{ t('onlineBooking.logoLimit') }}
-            </p><UButton
-              variant="link"
-              @click="removeLogo"
+            <select
+              v-model.number="noticeUnit"
+              class="rounded border p-2"
             >
-              {{ t('onlineBooking.removeLogo') }}
-            </UButton>
+              <option :value="1">
+                {{ t('onlineBooking.minutes') }}
+              </option><option :value="60">
+                {{ t('onlineBooking.hours') }}
+              </option><option :value="1440">
+                {{ t('onlineBooking.days') }}
+              </option>
+            </select>
           </UFormField>
+          <UFormField
+            v-for="key in (['daily_limit', 'weekly_limit', 'active_patient_limit'] as const)"
+            :key="key"
+            :label="t(`onlineBooking.${key === 'daily_limit' ? 'perDay' : key === 'weekly_limit' ? 'perWeek' : 'perPatient'}`)"
+          >
+            <UInput
+              v-model.number="settingsData[key]"
+              type="number"
+              min="1"
+            />
+          </UFormField>
+          <UFormField :label="t('onlineBooking.redirect')">
+            <UInput
+              v-model="settingsData.redirect_url"
+              type="url"
+            />
+          </UFormField>
+          <label><input
+            v-model="settingsData.ask_existing_patient"
+            type="checkbox"
+          > {{ t('onlineBooking.askExisting') }}</label>
+          <label><input
+            v-model="settingsData.allow_comment"
+            type="checkbox"
+          > {{ t('onlineBooking.allowComment') }}</label>
         </div>
         <p class="text-sm text-muted">
           {{ t('onlineBooking.scheduleExceptions') }}
@@ -425,6 +491,17 @@ onMounted(load)
               :max="480"
             />
           </UFormField>
+          <UFormField
+            v-for="key in (['buffer_before', 'buffer_after', 'daily_limit', 'weekly_limit'] as const)"
+            :key="key"
+            :label="t(`onlineBooking.${key === 'buffer_before' ? 'bufferBefore' : key === 'buffer_after' ? 'bufferAfter' : key === 'daily_limit' ? 'perDay' : 'perWeek'}`)"
+          >
+            <UInput
+              v-model.number="reason[key]"
+              type="number"
+              min="0"
+            />
+          </UFormField>
           <label class="flex gap-2"><input
             v-model="reason.active"
             type="checkbox"
@@ -456,7 +533,57 @@ onMounted(load)
         >{{ t('onlineBooking.previewPage') }}</a>
       </div>
       <div class="grid gap-3 sm:grid-cols-2">
+        <h3 class="font-semibold sm:col-span-2">
+          {{ t('onlineBooking.appearance') }}
+        </h3>
+        <UFormField :label="t('onlineBooking.logoUpload')">
+          <input
+            ref="logoInput"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            class="sr-only"
+            @change="chooseLogo"
+          >
+          <UButton
+            type="button"
+            variant="outline"
+            icon="i-lucide-upload"
+            @click="logoInput?.click()"
+          >
+            {{ t('onlineBooking.logoUpload') }}
+          </UButton>
+          <span
+            v-if="logoFile"
+            class="ml-2 text-sm"
+          >{{ logoFile.name }}</span>
+          <img
+            v-if="logoPreview"
+            :src="logoPreview"
+            :alt="t('onlineBooking.logoUpload')"
+            class="mt-3 max-h-24 max-w-48 rounded border p-2 object-contain"
+          >
+          <img
+            v-else-if="savedLogoUrl"
+            :src="savedLogoUrl"
+            :alt="t('onlineBooking.logoUpload')"
+            class="mt-3 max-h-24 max-w-48 rounded border p-2 object-contain"
+          >
+          <p class="text-xs text-muted">
+            {{ t('onlineBooking.logoLimit') }}
+          </p><UButton
+            variant="link"
+            @click="removeLogo"
+          >
+            {{ t('onlineBooking.removeLogo') }}
+          </UButton>
+        </UFormField>
         <UFormField :label="t('onlineBooking.accentColor')">
+          <input
+            type="color"
+            :value="settingsData.accent_color || '#127f83'"
+            :aria-label="t('onlineBooking.accentColor')"
+            @input="settingsData.accent_color = ($event.target as HTMLInputElement).value"
+          >
           <UInput
             v-model="settingsData.accent_color"
             placeholder="#127f83"
@@ -501,6 +628,8 @@ onMounted(load)
       </p>
       <div class="flex gap-2">
         <UButton
+          color="primary"
+          variant="solid"
           :loading="settingsLoading"
           :disabled="!settingsReady"
           @click="saveSettings"
@@ -576,6 +705,18 @@ onMounted(load)
             </div>
             <p class="text-sm">
               {{ formatDate(row.start_time) }} ({{ currentClinic?.timezone || 'UTC' }}) · {{ (locale === 'es' ? row.reason_name_es : row.reason_name_en) || t(`onlineBooking.reason.${row.reason}`) }}
+            </p>
+            <p
+              v-if="row.existing_patient !== null && row.existing_patient !== undefined"
+              class="text-sm"
+            >
+              {{ t('onlineBooking.askExisting') }}: {{ row.existing_patient ? (locale === 'es' ? 'Sí' : 'Yes') : 'No' }}
+            </p>
+            <p
+              v-if="row.comment"
+              class="break-words text-sm"
+            >
+              {{ row.comment }}
             </p>
             <p class="break-all text-sm text-muted">
               {{ row.contact_email }}<span v-if="row.contact_phone"> · {{ row.contact_phone }}</span>

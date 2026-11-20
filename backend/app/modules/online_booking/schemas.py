@@ -4,7 +4,7 @@ from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, model_validator
 
 from .logo import MAX_LOGO_BASE64
 from .models import default_reasons
@@ -17,6 +17,10 @@ class ReasonInput(BaseModel):
     name_en: str = Field(min_length=1, max_length=80)
     duration_minutes: int = Field(ge=5, le=480)
     active: bool = True
+    buffer_before: int = Field(default=0, ge=0, le=480)
+    buffer_after: int = Field(default=0, ge=0, le=480)
+    daily_limit: int | None = Field(default=None, ge=1, le=10000)
+    weekly_limit: int | None = Field(default=None, ge=1, le=10000)
 
 
 class SettingsInput(BaseModel):
@@ -37,6 +41,12 @@ class SettingsInput(BaseModel):
     checkup_minutes: int | None = Field(default=None, ge=5, le=480)
     window_days: int = Field(default=30, ge=1, le=365)
     min_notice_minutes: int = Field(default=60, ge=0, le=525600)
+    daily_limit: int | None = Field(default=None, ge=1, le=10000)
+    weekly_limit: int | None = Field(default=None, ge=1, le=10000)
+    active_patient_limit: int | None = Field(default=None, ge=1, le=100)
+    redirect_url: str | None = Field(default=None, max_length=500)
+    ask_existing_patient: bool = False
+    allow_comment: bool = False
 
     @field_validator("reasons")
     @classmethod
@@ -47,7 +57,7 @@ class SettingsInput(BaseModel):
             raise ValueError("At least one reason must be active")
         return value
 
-    @field_validator("public_url")
+    @field_validator("public_url", "redirect_url")
     @classmethod
     def valid_url(cls, value: str | None) -> str | None:
         from urllib.parse import urlsplit
@@ -80,12 +90,24 @@ class RequestInput(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     start_time: datetime
     contact_name: str = Field(min_length=1, max_length=120)
+    contact_first_name: str | None = Field(default=None, min_length=1, max_length=60)
+    contact_last_name: str | None = Field(default=None, min_length=1, max_length=59)
+    existing_patient: bool | None = None
+    comment: str | None = Field(default=None, max_length=500)
     contact_email: EmailStr
     contact_phone: str = Field(min_length=1, max_length=30, pattern=r"^\+?[0-9 ()-]+$")
     language: Literal["es", "en"] = "es"
     reason: str = Field(min_length=1, max_length=30, pattern=r"^[a-z0-9_]+$")
     website: str = Field(default="", max_length=200)
     altcha: str = Field(min_length=1, max_length=4096)
+
+    @model_validator(mode="after")
+    def consistent_name(self):
+        if bool(self.contact_first_name) != bool(self.contact_last_name):
+            raise ValueError("First and last name must be supplied together")
+        if self.contact_first_name and self.contact_last_name:
+            self.contact_name = f"{self.contact_first_name} {self.contact_last_name}"
+        return self
 
     @field_validator("contact_phone")
     @classmethod
@@ -133,6 +155,9 @@ class RejectInput(BaseModel):
 class PublicConfig(BaseModel):
     slot_minutes: int
     window_days: int
+    ask_existing_patient: bool
+    allow_comment: bool
+    redirect_url: str | None
     branding: dict[str, str | None]
     timezone: str
     reasons: list[ReasonInput]
@@ -176,6 +201,10 @@ class BookingRequestOut(BaseModel):
     start_time: datetime
     end_time: datetime
     contact_name: str | None
+    contact_first_name: str | None
+    contact_last_name: str | None
+    existing_patient: bool | None
+    comment: str | None
     contact_email: str | None
     contact_phone: str | None
     reason: str

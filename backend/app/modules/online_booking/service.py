@@ -13,7 +13,7 @@ The agenda only takes that lock; the hard overlap check lives here (#905).
 import hashlib
 import re
 import secrets
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime, time, timedelta
 from uuid import UUID
 from zoneinfo import ZoneInfo
 
@@ -51,6 +51,8 @@ CONFIRMATION_MINUTES = 10
 PAGE_SIZE = 50
 SLOT_TAKEN = "Time slot is no longer available"
 SLOT_OCCUPIED = "Time slot is occupied; choose another time"
+LIMIT_REACHED = "Booking limit reached"
+PATIENT_LIMIT_REACHED = "Active request limit reached"
 
 
 def find_reason(config: BookingSettings, reason_id: str | None, *, active: bool = True):
@@ -74,6 +76,11 @@ def live_hold(now: datetime):
     )
 
 
+def minutes(value):
+    """A SQL interval of ``value`` minutes (a column, expression or number)."""
+    return func.make_interval(0, 0, 0, 0, 0, value)
+
+
 async def occupied(
     db: AsyncSession,
     clinic_id: UUID,
@@ -89,17 +96,25 @@ async def occupied(
 
     Active appointments block when they use the same professional or the same
     cabinet; live holds belong to one professional and block only theirs.
+    An appointment created from a request keeps that request's buffers, and a
+    hold carries its own: both widen what they block.
     """
     resources = [Appointment.professional_id == professional_id]
     if cabinet_id is not None:
         resources.append(Appointment.cabinet_id == cabinet_id)
     appointment = await db.scalar(
         select(Appointment.id)
+        .outerjoin(
+            BookingRequest,
+            and_(
+                BookingRequest.appointment_id == Appointment.id, BookingRequest.status == "accepted"
+            ),
+        )
         .where(
             Appointment.clinic_id == clinic_id,
             Appointment.status.in_(ACTIVE),
-            Appointment.start_time < end,
-            Appointment.end_time > start,
+            Appointment.start_time - minutes(func.coalesce(BookingRequest.buffer_before, 0)) < end,
+            Appointment.end_time + minutes(func.coalesce(BookingRequest.buffer_after, 0)) > start,
             or_(*resources),
         )
         .limit(1)
@@ -110,12 +125,71 @@ async def occupied(
         BookingRequest.clinic_id == clinic_id,
         BookingRequest.professional_id == professional_id,
         live_hold(now),
-        BookingRequest.start_time < end,
-        BookingRequest.end_time > start,
+        BookingRequest.start_time - minutes(BookingRequest.buffer_before) < end,
+        BookingRequest.end_time + minutes(BookingRequest.buffer_after) > start,
     )
     if exclude is not None:
         query = query.where(BookingRequest.id != exclude)
     return await db.scalar(query.limit(1)) is not None
+
+
+def _local_day(day: date, zone: ZoneInfo) -> tuple[datetime, datetime]:
+    begin = datetime.combine(day, time.min, tzinfo=zone).astimezone(UTC)
+    finish = datetime.combine(day + timedelta(days=1), time.min, tzinfo=zone).astimezone(UTC)
+    return begin, finish
+
+
+async def limit_reached(
+    db: AsyncSession,
+    clinic_id: UUID,
+    config: BookingSettings,
+    reason: dict | None,
+    day: date,
+    zone: ZoneInfo,
+    now: datetime,
+) -> bool:
+    """Whether a clinic-wide or per-reason daily/weekly quota is used up.
+
+    Quotas belong to the configured professional: a request counts while it is
+    a live hold of theirs, or once accepted when the appointment is theirs
+    (reception may have given it to someone else, which frees their quota).
+    """
+    day_start, day_end = _local_day(day, zone)
+    monday = day - timedelta(days=day.weekday())
+    week_start, _ = _local_day(monday, zone)
+    _, week_end = _local_day(monday + timedelta(days=6), zone)
+    reason = reason or {}
+    for begin, finish, limit, reason_id in (
+        (day_start, day_end, config.daily_limit, None),
+        (week_start, week_end, config.weekly_limit, None),
+        (day_start, day_end, reason.get("daily_limit"), reason.get("id")),
+        (week_start, week_end, reason.get("weekly_limit"), reason.get("id")),
+    ):
+        if limit is None:
+            continue
+        query = (
+            select(func.count())
+            .select_from(BookingRequest)
+            .outerjoin(Appointment, Appointment.id == BookingRequest.appointment_id)
+            .where(
+                BookingRequest.clinic_id == clinic_id,
+                BookingRequest.start_time >= begin,
+                BookingRequest.start_time < finish,
+                or_(
+                    and_(live_hold(now), BookingRequest.professional_id == config.professional_id),
+                    and_(
+                        BookingRequest.status == "accepted",
+                        func.coalesce(Appointment.professional_id, BookingRequest.professional_id)
+                        == config.professional_id,
+                    ),
+                ),
+            )
+        )
+        if reason_id:
+            query = query.where(BookingRequest.reason == reason_id)
+        if await db.scalar(query) >= limit:
+            return True
+    return False
 
 
 async def slots(
@@ -125,6 +199,7 @@ async def slots(
     day: date,
     now: datetime,
     duration_minutes: int | None = None,
+    reason: dict | None = None,
 ) -> list[datetime]:
     professional_id = config.professional_id
     if professional_id is None:
@@ -136,43 +211,71 @@ async def slots(
     today = now.astimezone(zone).date()
     if day < today or day > today + timedelta(days=config.window_days):
         return []
+    if await limit_reached(db, clinic_id, config, reason, day, zone, now):
+        return []
     duration = timedelta(minutes=duration_minutes or config.slot_minutes)
     step = timedelta(minutes=config.slot_minutes)
+    before = timedelta(minutes=(reason or {}).get("buffer_before", 0))
+    after = timedelta(minutes=(reason or {}).get("buffer_after", 0))
     windows = [window for window in ranges if window.state == "open"]
     if not windows:
         return []
     start = min(window.start for window in windows)
     end = max(window.end for window in windows)
+    # Buffers are minutes (at most 8 h each), so widen the fetch by that much.
+    reach = timedelta(hours=8)
     appointments = (
         await db.execute(
-            select(Appointment.start_time, Appointment.end_time).where(
+            select(
+                Appointment.start_time,
+                Appointment.end_time,
+                func.coalesce(BookingRequest.buffer_before, 0),
+                func.coalesce(BookingRequest.buffer_after, 0),
+            )
+            .outerjoin(
+                BookingRequest,
+                and_(
+                    BookingRequest.appointment_id == Appointment.id,
+                    BookingRequest.status == "accepted",
+                ),
+            )
+            .where(
                 Appointment.clinic_id == clinic_id,
                 Appointment.professional_id == professional_id,
                 Appointment.status.in_(ACTIVE),
-                Appointment.start_time < end,
-                Appointment.end_time > start,
+                Appointment.start_time < end + after + reach,
+                Appointment.end_time > start - before - reach,
             )
         )
     ).all()
     holds = (
         await db.execute(
-            select(BookingRequest.start_time, BookingRequest.end_time).where(
+            select(
+                BookingRequest.start_time,
+                BookingRequest.end_time,
+                BookingRequest.buffer_before,
+                BookingRequest.buffer_after,
+            ).where(
                 BookingRequest.clinic_id == clinic_id,
                 BookingRequest.professional_id == professional_id,
                 live_hold(now),
-                BookingRequest.start_time < end,
-                BookingRequest.end_time > start,
+                BookingRequest.start_time < end + after + reach,
+                BookingRequest.end_time > start - before - reach,
             )
         )
     ).all()
-    busy = [*appointments, *holds]
+    busy = [
+        (begin - timedelta(minutes=pre), finish + timedelta(minutes=post))
+        for begin, finish, pre, post in (*appointments, *holds)
+    ]
     result = []
     for window in windows:
         cursor = window.start.astimezone(UTC)
         stop = window.end.astimezone(UTC)
         while cursor + duration <= stop:
             if cursor >= now + timedelta(minutes=config.min_notice_minutes) and not any(
-                begin < cursor + duration and finish > cursor for begin, finish in busy
+                begin < cursor + duration + after and finish > cursor - before
+                for begin, finish in busy
             ):
                 result.append(cursor)
             cursor += step
@@ -195,6 +298,8 @@ async def reserve(
         raise BookingConflictError("Visit reason is no longer available")
     duration_minutes = reason["duration_minutes"]
     item.end_time = item.start_time + timedelta(minutes=duration_minutes)
+    item.buffer_before = reason.get("buffer_before", 0)
+    item.buffer_after = reason.get("buffer_after", 0)
     zone_name, _ = await AvailabilityService.resolve(
         db,
         clinic_id,
@@ -202,8 +307,28 @@ async def reserve(
         item.start_time.date(),
         professional_id=config.professional_id,
     )
-    day = item.start_time.astimezone(ZoneInfo(zone_name)).date()
-    allowed = await slots(db, clinic_id, config, day, now, duration_minutes)
+    zone = ZoneInfo(zone_name)
+    day = item.start_time.astimezone(zone).date()
+    if await limit_reached(db, clinic_id, config, reason, day, zone, now):
+        raise BookingConflictError(LIMIT_REACHED)
+    if config.active_patient_limit:
+        # Pending holds the same contact already has with this professional.
+        active = await db.scalar(
+            select(func.count())
+            .select_from(BookingRequest)
+            .where(
+                BookingRequest.clinic_id == clinic_id,
+                BookingRequest.professional_id == config.professional_id,
+                live_hold(now),
+                or_(
+                    func.lower(BookingRequest.contact_email) == item.contact_email.lower(),
+                    BookingRequest.contact_phone == item.contact_phone,
+                ),
+            )
+        )
+        if active >= config.active_patient_limit:
+            raise BookingConflictError(PATIENT_LIMIT_REACHED)
+    allowed = await slots(db, clinic_id, config, day, now, duration_minutes, reason)
     if item.start_time.astimezone(UTC) not in allowed:
         raise BookingConflictError(SLOT_TAKEN)
     db.add(item)
@@ -328,6 +453,13 @@ class BookingService:
         await db.flush()
 
     @staticmethod
+    async def settings_logo(db: AsyncSession, clinic_id: UUID) -> bytes:
+        config = await db.get(BookingSettings, clinic_id)
+        if not config or not config.logo_data or not config.logo_sanitized:
+            raise BookingNotFoundError("Logo unavailable")
+        return config.logo_data
+
+    @staticmethod
     async def delete_logo(db: AsyncSession, clinic_id: UUID) -> None:
         await lock_clinic(db, clinic_id)
         config = await db.get(BookingSettings, clinic_id)
@@ -359,6 +491,9 @@ class BookingService:
         return {
             "slot_minutes": config.slot_minutes,
             "window_days": config.window_days,
+            "ask_existing_patient": config.ask_existing_patient,
+            "allow_comment": config.allow_comment,
+            "redirect_url": config.redirect_url,
             "branding": {
                 key: logo if key == "logo_url" else getattr(config, key)
                 for key in (
@@ -392,7 +527,7 @@ class BookingService:
             raise BookingValidationError("Invalid visit reason")
         duration_minutes = selected["duration_minutes"] if selected else None
         if day is not None:
-            starts = await slots(db, clinic_id, config, day, now, duration_minutes)
+            starts = await slots(db, clinic_id, config, day, now, duration_minutes, selected)
             return {
                 "starts": [start.isoformat() for start in starts],
                 "slot_minutes": config.slot_minutes,
@@ -402,7 +537,7 @@ class BookingService:
         entries = []
         for offset in range(days):
             date_value = from_day + timedelta(days=offset)
-            starts = await slots(db, clinic_id, config, date_value, now, duration_minutes)
+            starts = await slots(db, clinic_id, config, date_value, now, duration_minutes, selected)
             entries.append(
                 {"date": date_value.isoformat(), "starts": [start.isoformat() for start in starts]}
             )
@@ -435,8 +570,12 @@ class BookingService:
             end_time=start + timedelta(minutes=config.slot_minutes),
             status="pending_confirmation",
             contact_name=data.contact_name,
+            contact_first_name=data.contact_first_name,
+            contact_last_name=data.contact_last_name,
             contact_email=email,
             contact_phone=data.contact_phone,
+            existing_patient=data.existing_patient if config.ask_existing_patient else None,
+            comment=data.comment if config.allow_comment else None,
             reason=data.reason,
             confirmation_deadline=now + timedelta(minutes=CONFIRMATION_MINUTES),
             token_hash=digest(token),
@@ -470,8 +609,8 @@ class BookingService:
         if await occupied(
             db,
             clinic_id,
-            item.start_time,
-            item.end_time,
+            item.start_time - timedelta(minutes=item.buffer_before),
+            item.end_time + timedelta(minutes=item.buffer_after),
             now,
             professional_id=item.professional_id,
             exclude=item.id,
@@ -528,6 +667,10 @@ class BookingService:
                     "start_time": row.start_time,
                     "end_time": row.end_time,
                     "contact_name": row.contact_name,
+                    "contact_first_name": row.contact_first_name,
+                    "contact_last_name": row.contact_last_name,
+                    "existing_patient": row.existing_patient,
+                    "comment": row.comment,
                     "contact_email": row.contact_email,
                     "contact_phone": row.contact_phone,
                     "reason": row.reason,
@@ -596,8 +739,8 @@ class BookingService:
         if await occupied(
             db,
             ctx.clinic_id,
-            row.start_time,
-            end_time,
+            row.start_time - timedelta(minutes=row.buffer_before),
+            end_time + timedelta(minutes=row.buffer_after),
             now,
             professional_id=data.professional_id,
             cabinet_id=data.cabinet_id,

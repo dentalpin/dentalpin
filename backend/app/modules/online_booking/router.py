@@ -66,6 +66,21 @@ async def update_settings(
     return ApiResponse(data=await BookingService.update_settings(db, ctx.clinic_id, data))
 
 
+@router.get("/settings/logo")
+async def settings_logo(
+    ctx: CTX, db: DB, _: Annotated[None, Depends(require_permission("online_booking.settings"))]
+) -> Response:
+    return Response(
+        await BookingService.settings_logo(db, ctx.clinic_id),
+        media_type="image/png",
+        headers={
+            "Content-Security-Policy": "default-src 'none'; sandbox",
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "private, no-store",
+        },
+    )
+
+
 @router.put("/settings/logo", response_model=ApiResponse[LogoState])
 async def upload_logo(
     data: LogoInput,

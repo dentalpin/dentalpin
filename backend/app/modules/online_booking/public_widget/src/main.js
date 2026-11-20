@@ -18,7 +18,7 @@ const copy = {
     loading: 'Buscando huecos…',
     empty: 'No hay huecos disponibles para esta fecha.',
     contact: 'Tus datos de contacto',
-    name: 'Nombre y apellidos',
+    name: 'Nombre', surname: 'Apellidos', existing: '¿Ya eres paciente?', comment: 'Comentario opcional', noMedical: 'No incluyas datos médicos.', yes: 'Sí', no: 'No',
     email: 'Correo electrónico',
     phone: 'Teléfono',
     phoneHint:
@@ -63,7 +63,7 @@ const copy = {
     loading: 'Looking for times…',
     empty: 'There are no available times for this date.',
     contact: 'Your contact details',
-    name: 'Full name',
+    name: 'First name', surname: 'Last name', existing: 'Are you already a patient?', comment: 'Optional comment', noMedical: 'Do not include medical information.', yes: 'Yes', no: 'No',
     email: 'Email address',
     phone: 'Phone number',
     phoneHint:
@@ -107,6 +107,7 @@ let timezone = 'UTC'
 let state = token ? 'confirm' : 'booking'
 let resultStart = ''
 let branding = {}
+let questions = {}
 let trustedLogo = ''
 let daysByDate = new Map()
 let firstDay = ''
@@ -221,7 +222,7 @@ function render() {
   }
   selected = ''
   frame(
-    `<div class="hero"><h1 id="hero-title"></h1><p id="hero-intro"></p></div><section class="panel"><h2>1. ${t('choose')}</h2><div class="grid"><div><label for="reason">${t('reason')}</label><select id="reason"></select></div><div></div></div><div class="calendar-header"><button type="button" id="previous-week" aria-label="${t('previousWeek')}">‹</button><strong id="week-label"></strong><button type="button" id="next-week" aria-label="${t('nextWeek')}">›</button></div><div id="calendar" class="calendar" aria-label="${t('date')}"></div><h3>${t('slots')}</h3><p id="slot-message" class="note"></p><div id="slots" class="slots"></div></section><form id="form" class="panel"><h2>2. ${t('contact')}</h2><div class="grid"><div><label for="name">${t('name')}</label><input id="name" autocomplete="name" maxlength="120" required></div><div><label for="email">${t('email')}</label><input id="email" type="email" autocomplete="email" maxlength="254" required></div></div><label for="phone">${t('phone')}</label><input id="phone" type="tel" autocomplete="tel" maxlength="30" required aria-describedby="phone-hint"><small id="phone-hint">${t('phoneHint')}</small><input id="website" class="website" tabindex="-1" autocomplete="off" aria-hidden="true"><p class="note"><label class="consent"><input id="consent" type="checkbox" required><span><a id="privacy" target="_blank" rel="noopener noreferrer">${t('privacy')}</a></span></label></p><altcha-widget id="altcha" name="altcha" language="${language}"></altcha-widget><p id="error" class="error" role="alert"></p><a id="restart" class="hidden" href="${location.pathname}">${t('restart')}</a> <button id="submit" class="primary" type="submit">${t('submit')}</button></form>`
+    `<div class="hero"><h1 id="hero-title"></h1><p id="hero-intro"></p></div><section class="panel"><h2>1. ${t('choose')}</h2><div class="grid"><div><label for="reason">${t('reason')}</label><select id="reason"></select></div><div></div></div><div class="calendar-header"><button type="button" id="previous-week" aria-label="${t('previousWeek')}">‹</button><strong id="week-label"></strong><button type="button" id="next-week" aria-label="${t('nextWeek')}">›</button></div><div id="calendar" class="calendar" aria-label="${t('date')}"></div><h3>${t('slots')}</h3><p id="slot-message" class="note"></p><div id="slots" class="slots"></div></section><form id="form" class="panel"><h2>2. ${t('contact')}</h2><div class="grid"><div><label for="name">${t('name')}</label><input id="name" autocomplete="given-name" maxlength="60" required></div><div><label for="surname">${t('surname')}</label><input id="surname" autocomplete="family-name" maxlength="59" required></div><div><label for="email">${t('email')}</label><input id="email" type="email" autocomplete="email" maxlength="254" required></div></div><label for="phone">${t('phone')}</label><input id="phone" type="tel" autocomplete="tel" maxlength="30" required aria-describedby="phone-hint"><small id="phone-hint">${t('phoneHint')}</small><div id="optional-questions"></div><input id="website" class="website" tabindex="-1" autocomplete="off" aria-hidden="true"><p class="note"><label class="consent"><input id="consent" type="checkbox" required><span><a id="privacy" target="_blank" rel="noopener noreferrer">${t('privacy')}</a></span></label></p><altcha-widget id="altcha" name="altcha" language="${language}"></altcha-widget><p id="error" class="error" role="alert"></p><a id="restart" class="hidden" href="${location.pathname}">${t('restart')}</a> <button id="submit" class="primary" type="submit">${t('submit')}</button></form>`
   )
   node('hero-title').textContent = branding[`title_${language}`] || t('title')
   node('hero-intro').textContent = branding[`intro_${language}`] || t('intro')
@@ -258,6 +259,10 @@ function render() {
     .then(async (response) => {
       timezone = response.data.timezone
       branding = response.data.branding || {}
+      questions = response.data
+      const container = node('optional-questions')
+      if (questions.ask_existing_patient) container.insertAdjacentHTML('beforeend', `<label for="existing">${t('existing')}</label><select id="existing"><option value="">—</option><option value="yes">${t('yes')}</option><option value="no">${t('no')}</option></select>`)
+      if (questions.allow_comment) container.insertAdjacentHTML('beforeend', `<label for="comment">${t('comment')}</label><textarea id="comment" maxlength="500" aria-describedby="comment-hint"></textarea><small id="comment-hint">${t('noMedical')}</small>`)
       trustedLogo = branding.logo_url === `${base}/logo` ? `${base}/logo` : ''
       cfg.accentColor = branding.accent_color || '#127f83'
       if (!trustedLogo) node('logo').classList.add('hidden')
@@ -454,7 +459,11 @@ async function submit(event) {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({
         start_time: selected,
-        contact_name: node('name').value.trim(),
+        contact_name: `${node('name').value.trim()} ${node('surname').value.trim()}`,
+        contact_first_name: node('name').value.trim(),
+        contact_last_name: node('surname').value.trim(),
+        existing_patient: node('existing')?.value ? node('existing').value === 'yes' : null,
+        comment: node('comment')?.value.trim() || null,
         contact_email: node('email').value.trim(),
         contact_phone: node('phone').value.trim(),
         language,
@@ -465,6 +474,7 @@ async function submit(event) {
     })
     state = 'queued'
     render()
+    if (questions.redirect_url && safeUrl(questions.redirect_url, location.href)) location.assign(questions.redirect_url)
   } catch (err) {
     node('altcha').reset()
     if (err.status === 409) {

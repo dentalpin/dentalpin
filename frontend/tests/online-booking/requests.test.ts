@@ -101,6 +101,20 @@ describe('online booking reception', () => {
     expect((fields[1]!.element as HTMLInputElement).value).toBe('Prueba')
   })
 
+  it('shows booking limits, optional questions and the logo chooser', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.text()).toContain('onlineBooking.rules'))
+    expect(wrapper.text()).toContain('onlineBooking.perPatient')
+    expect(wrapper.text()).toContain('onlineBooking.bufferBefore')
+    expect(wrapper.text()).toContain('onlineBooking.askExisting')
+    expect(wrapper.text()).toContain('onlineBooking.allowComment')
+    expect(wrapper.find('input[type=color]').exists()).toBe(true)
+    expect(wrapper.find('input[type=file]').exists()).toBe(true)
+    const save = wrapper.findAll('button').find(button => button.text().includes('onlineBooking.saveSettings'))
+    expect(save?.classes()).toContain('bg-primary')
+  })
+
   it('saves public branding without losing other settings', async () => {
     wrapper = await mountSuspended(RequestsPage)
     await clickByText(wrapper, 'onlineBooking.settingsTitle')
@@ -119,7 +133,7 @@ describe('online booking reception', () => {
     await names[2]!.setValue('Tratamiento')
     await names[3]!.setValue('Treatment')
     const durations = wrapper.findAll('input[type="number"]')
-    await durations[durations.length - 1]!.setValue('75')
+    await durations[durations.length - 5]!.setValue('75')
     await clickByText(wrapper, 'onlineBooking.saveSettings')
     await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ reasons: expect.arrayContaining([expect.objectContaining({ name_es: 'Tratamiento', name_en: 'Treatment', duration_minutes: 75, active: true })]) })))
   })

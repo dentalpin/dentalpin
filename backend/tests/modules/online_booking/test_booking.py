@@ -1450,3 +1450,56 @@ async def test_availability_respects_existing_clinic_holiday(db_session, test_cl
     )
     await db_session.commit()
     assert await slots(db_session, test_clinic.id, config, tomorrow, datetime.now(UTC)) == []
+
+
+@pytest.mark.asyncio
+async def test_public_optional_questions_and_split_names(
+    client, db_session, test_clinic, open_hours, delivery
+):
+    professional_id = await db_session.scalar(
+        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)
+    )
+    config = BookingSettings(
+        clinic_id=test_clinic.id,
+        professional_id=professional_id,
+        enabled=True,
+        public_url="https://example.invalid/book",
+        slot_minutes=30,
+        window_days=30,
+        min_notice_minutes=0,
+        ask_existing_patient=True,
+        allow_comment=True,
+        redirect_url="https://example.invalid/thanks",
+    )
+    db_session.add(config)
+    await db_session.commit()
+    url = f"/api/v1/online_booking/public/{test_clinic.id}"
+    public = await client.get(f"{url}/config")
+    assert public.json()["data"]["ask_existing_patient"] is True
+    assert public.json()["data"]["redirect_url"] == "https://example.invalid/thanks"
+    start = datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(10), UTC)
+    response = await client.post(
+        f"{url}/requests",
+        json={
+            "start_time": start.isoformat(),
+            "contact_name": "Synthetic Person",
+            "contact_first_name": "Synthetic",
+            "contact_last_name": "Person",
+            "contact_email": "synthetic@example.com",
+            "contact_phone": "+34600000000",
+            "reason": "checkup",
+            "existing_patient": True,
+            "comment": "Contact after lunch",
+            "altcha": proof_for(test_clinic.id),
+        },
+    )
+    assert response.status_code == 201, response.text
+    item = await db_session.scalar(
+        select(BookingRequest).where(BookingRequest.clinic_id == test_clinic.id)
+    )
+    assert (
+        item.contact_first_name,
+        item.contact_last_name,
+        item.existing_patient,
+        item.comment,
+    ) == ("Synthetic", "Person", True, "Contact after lunch")

@@ -70,3 +70,28 @@ def test_animated_raster_is_rejected(fmt, filename):
     image.save(data, format=fmt, save_all=True, append_images=frames, duration=100, loop=0)
     with pytest.raises(ValueError, match="Animated"):
         sanitize_logo(encoded(data.getvalue()), filename)
+
+
+@pytest.mark.asyncio
+async def test_admin_can_preview_sanitized_logo_when_public_booking_disabled(
+    client, db_session, test_clinic, auth_headers
+):
+    from app.modules.online_booking.models import BookingSettings
+
+    config = BookingSettings(
+        clinic_id=test_clinic.id,
+        enabled=False,
+        logo_data=image_bytes("PNG"),
+        logo_content_type="image/png",
+        logo_sanitized=True,
+    )
+    db_session.add(config)
+    await db_session.commit()
+    headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    preview = await client.get("/api/v1/online_booking/settings/logo", headers=headers)
+    assert preview.status_code == 200
+    assert preview.headers["content-type"] == "image/png"
+    assert preview.headers["x-content-type-options"] == "nosniff"
+    assert preview.headers["cache-control"] == "private, no-store"
+    public = await client.get(f"/api/v1/online_booking/public/{test_clinic.id}/logo")
+    assert public.status_code == 404

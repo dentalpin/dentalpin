@@ -82,6 +82,19 @@
     "moveDown": "Bajar motivo",
     "previewPage": "Ver página pública",
     "logoRemoved": "Logo subido eliminado.",
-    "removeLogo": "Quitar logo subido"
+    "removeLogo": "Quitar logo subido",
+    "rules": "Reglas",
+    "appearance": "Aspecto",
+    "perDay": "Límite diario",
+    "perWeek": "Límite semanal",
+    "perPatient": "Solicitudes activas por paciente",
+    "bufferBefore": "Margen anterior (min)",
+    "bufferAfter": "Margen posterior (min)",
+    "redirect": "URL tras la reserva",
+    "askExisting": "Preguntar si ya es paciente",
+    "allowComment": "Permitir comentario opcional",
+    "minutes": "Minutos",
+    "hours": "Horas",
+    "days": "Días"
   }
 }

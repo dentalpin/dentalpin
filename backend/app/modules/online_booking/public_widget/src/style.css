@@ -72,11 +72,13 @@ label {
 }
 input,
 select,
+textarea,
 button {
   font: inherit;
 }
 input:not([type='checkbox']),
-select {
+select,
+textarea {
   width: 100%;
   border: 1px solid #b8ccca;
   border-radius: 8px;
@@ -86,6 +88,7 @@ select {
 }
 input:focus-visible,
 select:focus-visible,
+textarea:focus-visible,
 button:focus-visible,
 a:focus-visible {
   outline: 3px solid #80c5c4;

@@ -7,6 +7,8 @@
 - Scope availability to the configured professional: their `schedules` hours, their active appointments and their live holds. Other professionals' appointments no longer block a slot, and each request stores the professional it was made for (`professional_id`).
 - On acceptance, recheck overlaps for the professional and cabinet reception chooses (still under the shared `agenda:clinic:` lock; the hard overlap check stays in this module, #905).
 - Share the agenda clinic lock and recheck conflicts on request, confirmation and acceptance.
+- Configure per-reason buffers, daily and weekly quotas, per-contact active limits, all counted for the configured professional only, optional patient questions and a post-request redirect.
+- Group booking settings and provide an image preview, color picker and notice units.
 - Restrict uploaded logos to bounded static PNG, JPEG or WebP images and re-encode them without metadata; serve only sanitized PNG with cache validators and restrictive security headers. External logo URLs and SVG are unsupported.
 - Configure public booking rules and bilingual, ordered visit reasons in the administrator panel; check and hold the complete duration for each reason.
 - Store a size-limited validated clinic logo and expose it on a public, clinic-scoped image route; reuse clinic schedule closures.

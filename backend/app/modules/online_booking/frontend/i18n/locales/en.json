@@ -82,6 +82,19 @@
     "moveDown": "Move reason down",
     "previewPage": "View public page",
     "logoRemoved": "Uploaded logo removed.",
-    "removeLogo": "Remove uploaded logo"
+    "removeLogo": "Remove uploaded logo",
+    "rules": "Rules",
+    "appearance": "Appearance",
+    "perDay": "Daily limit",
+    "perWeek": "Weekly limit",
+    "perPatient": "Active requests per patient",
+    "bufferBefore": "Buffer before (min)",
+    "bufferAfter": "Buffer after (min)",
+    "redirect": "Redirect URL after booking",
+    "askExisting": "Ask if already a patient",
+    "allowComment": "Allow optional comment",
+    "minutes": "Minutes",
+    "hours": "Hours",
+    "days": "Days"
   }
 }

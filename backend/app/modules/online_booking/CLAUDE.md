@@ -28,3 +28,5 @@
 - Administrators configure enabled state, professional, public URL, interval, notice, booking window and ordered bilingual reasons in settings. Never remove a reason already configured; deactivate it to preserve old requests.
 - Availability accepts an optional reason ID and checks its duration; the interval controls start-time increments. Clinic closures come from schedules.
 - Uploaded logos accept PNG, JPEG and WebP only: 512 KiB input, 1024×1024 maximum, no animation. Inspect format and dimensions before loading pixels and re-encode to metadata-free PNG. Only sanitized images are public; older unsanitized logos must be uploaded again.
+
+- Quotas are checked under the clinic lock in clinic-local day/week boundaries. Active contacts match normalized email or E.164 phone. Buffers are snapshotted on the request. Optional comments and names follow contact retention.
