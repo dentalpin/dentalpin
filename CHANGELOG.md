@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Reports:** the billing summary's paid-in-period total uses the clinic's days (#919).
 - **Budget:** the list's date filter uses the clinic's day, not the UTC day (#918).
 - **Staff 2FA:** Users shows the reset action only when the staff account has an enrolled factor.
 - **Treatments:** deleting a performed treatment, or setting it back to planned, no longer leaves its price owed in the patient's ledger and pending charges (#896).
