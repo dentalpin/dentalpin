@@ -23,6 +23,6 @@ last_verified_commit: 0000000
 ---
 # Online requests
 
-The menu shows the number of confirmed requests awaiting a decision. Review the date, reason and status. To create an appointment, choose a professional, an optional cabinet and duration (initially the configured duration for the reason). Select a suggested patient matching the phone or email, search for one, or create one after reviewing the editable prefilled contact details. Select **Create appointment**.
+The menu shows the number of confirmed requests awaiting a decision. Review the date, reason and status. Select **Accept** on a confirmed request to open the form. To create an appointment, choose a professional, an optional cabinet and duration (initially the configured duration for the reason). Select a suggested patient matching the phone or email, search for one, or create one after reviewing the editable prefilled contact details. Select **Create appointment**.
 
 To reject it, provide a message sent by email. If the slot is occupied, refresh the list; if the request is still pending, reject it and ask the patient to submit a new request for another time.

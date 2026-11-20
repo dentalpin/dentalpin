@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Render the reception accept action with the primary button style.
+
 - Reception chooses professional, optional cabinet and duration, with per-reason defaults and clinic-wide conflict rechecks; patient contact fields are prefilled and matching contacts suggested.
 - Show a permission-scoped count of confirmed pending requests in navigation.
 

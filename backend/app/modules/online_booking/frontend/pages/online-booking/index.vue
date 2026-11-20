@@ -296,6 +296,8 @@ onMounted(load)
           >
             <UButton
               size="sm"
+              color="primary"
+              variant="solid"
               :disabled="row.status !== 'confirmed' || saving || !canAccept"
               :title="!canAccept ? t('onlineBooking.noPermission') : undefined"
               @click="open(row, 'accept')"

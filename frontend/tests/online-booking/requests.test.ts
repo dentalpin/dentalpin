@@ -36,6 +36,15 @@ describe('online booking reception', () => {
   })
   afterEach(() => wrapper?.unmount())
 
+  it('shows the primary action as enabled for a confirmed request', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await vi.waitFor(() => expect(wrapper!.text()).toContain('Synthetic Person'))
+    const button = wrapper.findAll('button').find(element => element.text() === 'onlineBooking.accept')
+    expect(button).toBeDefined()
+    expect(button!.attributes('disabled')).toBeUndefined()
+    expect(button!.classes()).toContain('bg-primary')
+  })
+
   it('requires a selected patient before accepting and reports conflicts', async () => {
     wrapper = await mountSuspended(RequestsPage)
     await vi.waitFor(() => expect(wrapper!.text()).toContain('Synthetic Person'))
