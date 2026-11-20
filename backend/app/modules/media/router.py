@@ -296,7 +296,7 @@ async def download_document(
     _: Annotated[None, Depends(require_permission("media.documents.read"))],
     db: Annotated[AsyncSession, Depends(get_db)],
     record_access: RecordPatientAccess,
-    variant: Literal["thumb", "medium", "full"] = Query(default="full"),
+    variant: Literal["thumb", "medium", "full"] | None = Query(default=None),
 ) -> Response:
     document = await DocumentService.get_document(db, ctx.clinic_id, document_id)
     if not document:
@@ -327,7 +327,7 @@ async def download_document(
         media_type = document.mime_type
 
     headers = {"Content-Length": str(len(content))}
-    if variant == "full":
+    if variant in (None, "full"):
         headers["Content-Disposition"] = (
             f'attachment; filename="{_safe_filename(document.original_filename)}"'
         )

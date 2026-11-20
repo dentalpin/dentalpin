@@ -76,6 +76,7 @@ class GdprModule(BaseModule):
             "retention.read",
             "retention.write",
             "audit.read",
+            "access_log.read",
             "breaches.read",
             "breaches.write",
         ]

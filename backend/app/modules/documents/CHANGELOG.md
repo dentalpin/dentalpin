@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Audit authenticated document views and generated PDF downloads. (#903).
+
 - fix(#828): "Download PDF" saved generated documents as `….pdf_` on Windows. The filename regex kept the closing quote of `filename="….pdf"`, and the browser replaced the `"` with `_`.
 
 - Wrap patient metadata on generated PDFs so details stay within the page in LTR and RTL layouts.

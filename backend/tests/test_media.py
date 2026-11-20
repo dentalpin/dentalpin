@@ -1,13 +1,16 @@
 """Tests for media module endpoints."""
 
+from datetime import UTC, datetime
 from io import BytesIO
 from uuid import uuid4
 
 import pytest
 from httpx import AsyncClient
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership
+from app.core.patient_access import PatientAccessLog
 from app.modules.patients.models import Patient
 
 
@@ -229,9 +232,20 @@ async def test_get_document(
 
 @pytest.mark.asyncio
 async def test_download_document(
-    client: AsyncClient, auth_headers: dict[str, str], media_setup: dict
+    client: AsyncClient,
+    auth_headers: dict[str, str],
+    media_setup: dict,
+    db_session: AsyncSession,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    """Test downloading a document."""
+    """Viewer requests coalesce as views and explicit downloads stay separate."""
+
+    class FrozenClock:
+        @staticmethod
+        def now(tz):
+            return datetime(2026, 11, 19, 12, tzinfo=UTC).astimezone(tz)
+
+    monkeypatch.setattr("app.core.patient_access.datetime", FrozenClock)
     patient_id = media_setup["patient_id"]
 
     # Upload a document first
@@ -247,16 +261,23 @@ async def test_download_document(
     )
     document_id = upload_response.json()["data"]["id"]
 
-    # Download document
-    response = await client.get(
-        f"/api/v1/media/documents/{document_id}/download",
-        headers=auth_headers,
-    )
+    path = f"/api/v1/media/documents/{document_id}/download"
+    for _ in range(2):
+        viewed = await client.get(path, headers=auth_headers)
+        assert viewed.status_code == 200
+        assert "attachment" in viewed.headers["content-disposition"]
+        assert viewed.content == original_content
 
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "application/pdf"
-    assert "attachment" in response.headers.get("content-disposition", "")
-    assert response.content == original_content
+        downloaded = await client.get(path, params={"variant": "full"}, headers=auth_headers)
+        assert downloaded.status_code == 200
+        assert downloaded.headers["content-type"] == "application/pdf"
+        assert "attachment" in downloaded.headers["content-disposition"]
+        assert downloaded.content == original_content
+
+    actions = await db_session.scalars(
+        select(PatientAccessLog.action).where(PatientAccessLog.resource == "documents")
+    )
+    assert sorted(actions.all()) == ["download", "download", "view"]
 
 
 @pytest.mark.asyncio

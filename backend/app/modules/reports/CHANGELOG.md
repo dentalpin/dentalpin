@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#919): the billing summary's `total_paid` cuts `InvoicePayment.created_at` on the clinic's calendar days, like `total_invoiced` does with the local `issue_date`. It used UTC midnights, so an evening payment in a UTC-6 clinic counted on the next day.
+
 - fix(#877): keep historical invoice totals on their original dates and exclude the invoices from collections, overdue lists and aging.
 
 - fix(#689): the numbering-gaps report groups sequentials by the invoice's `fiscal_year` (the year its number was drawn in) instead of the year the draft was created, so one year's counter can no longer fill another year's gap.

@@ -74,7 +74,8 @@ signing key. See [Staff MFA operations](../workflows/staff-mfa.md).
 
 The core records enable, disable, reset and failed verification events in a
 durable audit table and publishes `auth.2fa_enabled`, `auth.2fa_disabled`,
-`auth.2fa_reset` and `auth.2fa_failed`. The payload carries account and actor
+`auth.2fa_reset` and `auth.2fa_failed`. A CLI recovery reset has no staff actor, so its `actor_id` is null.
+The payload otherwise carries account and actor
 IDs, the clinic ID when a reset has clinic context, and a timestamp.
 
 ## Consequences

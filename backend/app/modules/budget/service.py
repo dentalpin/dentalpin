@@ -10,7 +10,7 @@ from sqlalchemy.orm import joinedload
 
 from app.core.auth.models import ClinicMembership
 from app.core.list_query import parse_sort
-from app.core.utils.dates import clinic_today_for
+from app.core.utils.dates import clinic_day_range, clinic_today_for, clinic_zone_for
 from app.modules.catalog.models import TreatmentCatalogItem, VatType
 
 from .models import Budget, BudgetHistory, BudgetItem
@@ -359,11 +359,15 @@ class BudgetService:
         if assigned_professional_id:
             conditions.append(Budget.assigned_professional_id == assigned_professional_id)
 
-        if date_from:
-            conditions.append(Budget.created_at >= datetime.combine(date_from, datetime.min.time()))
-
-        if date_to:
-            conditions.append(Budget.created_at <= datetime.combine(date_to, datetime.max.time()))
+        if date_from or date_to:
+            # ``created_at`` is an instant: cut it on the clinic's days (#918).
+            zone = await clinic_zone_for(db, clinic_id)
+            if date_from:
+                start, _ = clinic_day_range(zone, date_from, date_from)
+                conditions.append(Budget.created_at >= start)
+            if date_to:
+                _, end = clinic_day_range(zone, date_to, date_to)
+                conditions.append(Budget.created_at < end)
 
         if valid_until_before:
             conditions.append(Budget.valid_until <= valid_until_before)
