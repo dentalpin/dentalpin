@@ -30,7 +30,7 @@ related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
   - backend/app/modules/agenda/frontend/pages/p/check-in/[token].vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: cd84d7334f2898dd9d4ee83500da5cc25c3a36f0
+last_verified_commit: 0000000
 ---
 
 # Citas
@@ -97,6 +97,13 @@ escrito a mano.
   el dinero.
 - Si el paciente no tiene ningún plan con tratamientos pendientes, el
   selector lo explica en lugar de mostrar un selector vacío.
+
+## Editar una cita
+
+Abre la cita desde la agenda. Si su duración guardada queda fuera de las
+opciones habituales, aparece acompañada de «actual», por ejemplo
+**75 min (actual)**. Cambiar de paciente conserva el horario. Elige otra
+duración para cambiar la hora de fin.
 
 ## Mover o redimensionar
 

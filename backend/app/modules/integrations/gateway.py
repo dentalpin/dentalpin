@@ -32,7 +32,7 @@ _DISPATCH_BATCH = 50
 # Issue #65 §1: auto-disable a subscription after this many consecutive
 # delivery failures. CommunicationMessage has no equivalent — it tracks
 # per-message terminal state, not a per-subscriber circuit breaker.
-MAX_CONSECUTIVE_FAILURES = 10
+MAX_CONSECUTIVE_FAILURES = 25
 
 
 def _backoff_seconds(attempts: int) -> int:

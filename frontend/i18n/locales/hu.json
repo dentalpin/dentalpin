@@ -944,6 +944,7 @@
     "time": "Időpont",
     "startTime": "Kezdés",
     "duration": "Időtartam",
+    "currentDuration": "{minutes} perc (jelenlegi)",
     "treatmentType": "Kezelés típusa",
     "treatments": "Kezelések",
     "addTreatment": "Kezelés hozzáadása",

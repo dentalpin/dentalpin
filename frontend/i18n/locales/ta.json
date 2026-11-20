@@ -944,6 +944,7 @@
     "time": "நேரம்",
     "startTime": "தொடக்க நேரம்",
     "duration": "கால அளவு",
+    "currentDuration": "{minutes} நிமி (தற்போதையது)",
     "treatmentType": "சிகிச்சை வகை",
     "treatments": "சிகிச்சைகள்",
     "addTreatment": "சிகிச்சை சேர்க்கவும்",

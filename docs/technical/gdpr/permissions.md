@@ -16,13 +16,16 @@ Returned by `GdprModule.get_permissions()`
 | `gdpr.consents.write` | Record consent grant or withdrawal | `POST /api/v1/gdpr/consents` |
 | `gdpr.retention.read` | List active retention policies | `GET /api/v1/gdpr/retention` |
 | `gdpr.retention.write` | Create/update/delete retention policies and change the access log retention via `PUT /api/v1/gdpr/access-log/retention` | `POST /api/v1/gdpr/retention`, `PATCH /api/v1/gdpr/retention/{id}`, `DELETE /api/v1/gdpr/retention/{id}` |
-| `gdpr.audit.read` | Review and export access metadata and view the erasure audit | `GET /api/v1/gdpr/audit`, `GET /api/v1/gdpr/access-log` and its `/csv`, `/users`, `/retention` subroutes |
+| `gdpr.audit.read` | View the erasure audit | `GET /api/v1/gdpr/audit` |
+| `gdpr.access_log.read` | View and export recorded staff accesses | `GET /api/v1/gdpr/access-log` and its `/csv`, `/users`, `/retention` subroutes. Changing access log retention also requires `gdpr.retention.write`. |
 | `gdpr.breaches.read` | List and view data-breach reports | `GET /api/v1/gdpr/breaches`, `GET /api/v1/gdpr/breaches/{id}` |
 | `gdpr.breaches.write` | Create and update data-breach reports | `POST /api/v1/gdpr/breaches`, `PATCH /api/v1/gdpr/breaches/{id}` |
 
 ## Role assignment
 
-admin gets wildcard (`*`); dentist reads requests/consents/audit/retention;
+The admin wildcard grants `gdpr.access_log.read`. The other standard roles
+do not receive it. Dentists can read requests, consents, the erasure audit
+and retention policies.
 hygienist reads requests only; assistant reads requests + consents;
 receptionist reads+writes requests and consents and reads breaches
 (front-desk answers most DSRs day-to-day).

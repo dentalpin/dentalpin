@@ -944,6 +944,7 @@
     "time": "సమయం",
     "startTime": "ప్రారంభ సమయం",
     "duration": "వ్యవధి",
+    "currentDuration": "{minutes} నిమి (ప్రస్తుత)",
     "treatmentType": "చికిత్స రకం",
     "treatments": "చికిత్సలు",
     "addTreatment": "చికిత్స జోడించండి",

@@ -58,6 +58,7 @@ async function resetMfa() {
   try {
     await mfaRequest(`mfa/users/${mfaReset.value.id}`, 'DELETE', undefined, currentClinic.value?.id)
     mfaReset.value = undefined
+    await fetchUsers()
     toast.add({ title: t('mfa.resetDone'), color: 'success' })
   } catch (cause) {
     mfaResetError.value = mfaMessage(cause)
@@ -329,7 +330,7 @@ async function handleDelete() {
             @click="openEdit(user)"
           />
           <UButton
-            v-if="isAdmin && !isCurrentUser(user.id)"
+            v-if="isAdmin && user.mfa_enabled && !isCurrentUser(user.id)"
             icon="i-lucide-shield-off"
             size="xs"
             variant="ghost"
