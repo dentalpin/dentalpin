@@ -9,6 +9,7 @@ export interface ClinicUser {
   is_active: boolean
   role: UserRole
   is_professional: boolean
+  mfa_enabled?: boolean
   created_at: string
 }
 

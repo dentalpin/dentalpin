@@ -11,9 +11,16 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Added
+
+- **Staff 2FA:** deployment operators can reset a staff account through an audited recovery command. The backend validates configured MFA encryption keys at startup (#902).
+
 ### Fixed
 
 - **Activity journal:** the date filter uses the clinic's day (#920).
+- **Reports:** the billing summary's paid-in-period total uses the clinic's days (#919).
+- **Budget:** the list's date filter uses the clinic's day, not the UTC day (#918).
+- **Staff 2FA:** Users shows the reset action only when the staff account has an enrolled factor.
 - **Treatments:** deleting a performed treatment, or setting it back to planned, no longer leaves its price owed in the patient's ledger and pending charges (#896).
 - **Treatment plans:** completing the last session works again when the item's treatment was already marked performed on the odontogram. This regressed in #893 (#897).
 - **Treatments:** a sessioned treatment no longer books more revenue than its price. Marking it performed on the odontogram after one of its sessions was completed counted that session twice, and performing an already-performed treatment again booked the full price a second time. A treatment that is already performed now returns 409 (#891).

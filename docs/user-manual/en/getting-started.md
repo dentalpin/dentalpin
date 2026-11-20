@@ -68,5 +68,5 @@ before continuing. Sign in with your password and your authenticator or an
 unused recovery code.
 
 To reset another staff member’s factor, use the shield action under
-**Settings → People → Users**. The staff member signs in again and sets up a
+**Settings → People → Users**. The shield is available for staff who have enrolled a factor. The staff member signs in again and sets up a
 new factor.

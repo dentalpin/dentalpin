@@ -15,6 +15,8 @@ Routes mounted at `/api/v1/media/`.
 - `GET    /patients/{id}/documents`        — list, filter `document_type`, `media_kind`
 - `GET    /documents/{id}`                 — metadata
 - `GET    /documents/{id}/download?variant=full|medium|thumb`
+  Requests without a variant are recorded as views. Use `variant=full`
+  for an explicit download that creates a separate access event.
 - `PUT    /documents/{id}`                 — patch metadata
 - `DELETE /documents/{id}`                 — soft-archive
 
