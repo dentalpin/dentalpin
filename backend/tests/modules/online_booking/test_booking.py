@@ -1151,3 +1151,27 @@ async def test_confirmation_waits_for_concurrent_agenda_write_and_detects_confli
     finally:
         app.dependency_overrides[get_db] = original
         await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_shared_clinic_lock_uses_agenda_namespace():
+    from hashlib import blake2b
+    from unittest.mock import AsyncMock
+
+    from app.modules.agenda.locks import lock_clinic
+
+    clinic_id = uuid4()
+    db = AsyncMock()
+    await lock_clinic(db, clinic_id)
+    expected = int.from_bytes(
+        blake2b(b"agenda:clinic:" + clinic_id.bytes, digest_size=8).digest(),
+        byteorder="big",
+        signed=True,
+    )
+    old_key = int.from_bytes(
+        blake2b(b"online_booking:clinic:" + clinic_id.bytes, digest_size=8).digest(),
+        byteorder="big",
+        signed=True,
+    )
+    assert db.execute.await_args.args[1] == {"lock_key": expected}
+    assert expected != old_key
