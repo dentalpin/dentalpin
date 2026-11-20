@@ -1,6 +1,6 @@
 """Budget report service."""
 
-from datetime import date
+from datetime import date, datetime
 from decimal import Decimal
 from typing import Any
 from uuid import UUID
@@ -9,8 +9,20 @@ from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import User
+from app.core.utils.dates import clinic_day_range, clinic_zone_for
 from app.modules.budget.models import Budget, BudgetItem
 from app.modules.catalog.models import TreatmentCatalogItem
+
+
+async def _clinic_days(
+    db: AsyncSession, clinic_id: UUID, date_from: date, date_to: date
+) -> tuple[datetime, datetime]:
+    """``[start, end)`` of the report period on the clinic's clock.
+
+    ``created_at`` is an instant; a bare ``date`` compared with it is read as
+    UTC midnight, so the period was cut on UTC days.
+    """
+    return clinic_day_range(await clinic_zone_for(db, clinic_id), date_from, date_to)
 
 
 class BudgetReportService:
@@ -35,6 +47,7 @@ class BudgetReportService:
             - acceptance_rate: Percentage of accepted vs (accepted + rejected)
             - average_value: Average budget total
         """
+        day_start, day_end = await _clinic_days(db, clinic_id, date_from, date_to)
         # Get counts and totals by status
         result = await db.execute(
             select(
@@ -62,8 +75,8 @@ class BudgetReportService:
                 ).label("completed_amount"),
             ).where(
                 Budget.clinic_id == clinic_id,
-                Budget.created_at >= date_from,
-                Budget.created_at < date_to + __import__("datetime").timedelta(days=1),
+                Budget.created_at >= day_start,
+                Budget.created_at < day_end,
                 Budget.deleted_at.is_(None),
             )
         )
@@ -101,6 +114,7 @@ class BudgetReportService:
         date_to: date,
     ) -> list[dict[str, Any]]:
         """Get budget breakdown by professional (creator or assigned)."""
+        day_start, day_end = await _clinic_days(db, clinic_id, date_from, date_to)
         # Use created_by as the professional
         result = await db.execute(
             select(
@@ -113,8 +127,8 @@ class BudgetReportService:
             )
             .where(
                 Budget.clinic_id == clinic_id,
-                Budget.created_at >= date_from,
-                Budget.created_at < date_to + __import__("datetime").timedelta(days=1),
+                Budget.created_at >= day_start,
+                Budget.created_at < day_end,
                 Budget.deleted_at.is_(None),
             )
             .group_by(Budget.created_by)
@@ -153,6 +167,7 @@ class BudgetReportService:
         limit: int = 10,
     ) -> list[dict[str, Any]]:
         """Get most common treatments in budgets."""
+        day_start, day_end = await _clinic_days(db, clinic_id, date_from, date_to)
         result = await db.execute(
             select(
                 BudgetItem.catalog_item_id,
@@ -163,8 +178,8 @@ class BudgetReportService:
             .join(Budget, BudgetItem.budget_id == Budget.id)
             .where(
                 Budget.clinic_id == clinic_id,
-                Budget.created_at >= date_from,
-                Budget.created_at < date_to + __import__("datetime").timedelta(days=1),
+                Budget.created_at >= day_start,
+                Budget.created_at < day_end,
                 Budget.deleted_at.is_(None),
                 BudgetItem.catalog_item_id.isnot(None),
             )
@@ -203,6 +218,7 @@ class BudgetReportService:
         date_to: date,
     ) -> list[dict[str, Any]]:
         """Get budget breakdown by status."""
+        day_start, day_end = await _clinic_days(db, clinic_id, date_from, date_to)
         result = await db.execute(
             select(
                 Budget.status,
@@ -211,8 +227,8 @@ class BudgetReportService:
             )
             .where(
                 Budget.clinic_id == clinic_id,
-                Budget.created_at >= date_from,
-                Budget.created_at < date_to + __import__("datetime").timedelta(days=1),
+                Budget.created_at >= day_start,
+                Budget.created_at < day_end,
                 Budget.deleted_at.is_(None),
             )
             .group_by(Budget.status)

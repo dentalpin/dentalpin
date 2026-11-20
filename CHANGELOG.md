@@ -18,6 +18,12 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Reports:** productivity and visit-frequency count appointments on the clinic's days (#942).
+- **Reports:** the budget report counts budgets on the clinic's days (#941).
+- **Recalls:** the appointment auto-link matches recalls on the clinic's month, not the UTC one (#940).
+- **Payments:** the patient's Pagos panel shows payments on their own date in clinics behind UTC, not the day before (#939).
+- **Payments:** aging receivables buckets a patient by their oldest *unpaid* treatment, not their oldest treatment (#938).
+- **Reports:** the appointment lifecycle analytics select the period on the clinic's days (#933).
+- **Reports:** the scheduling report counts appointments on the clinic's days and weekdays (#932).
 - **Notifications:** the "budget accepted" message dates the acceptance on the clinic's day (#922).
 - **Schedules:** the copilot's free-slot search no longer offers booked evening slots on its last day (#921).
 - **Activity journal:** the date filter uses the clinic's day (#920).

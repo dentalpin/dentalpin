@@ -24,6 +24,13 @@ mail-scanner pre-fetches check nobody in; missing/unknown fails safe
 to `reminder`. Check-in is accepted only inside the start_time window
 (two hours before start until one hour after end).
 
+## Clinic write lock
+
+Agenda write services take `agenda.locks.lock_clinic(db, clinic_id)`
+before creating, updating or assigning a cabinet. Online booking may acquire
+the same lock before its scheduling checks. PostgreSQL releases it when the
+caller commits or rolls back.
+
 ## Dependencies
 
 `manifest.depends = ["patients", "catalog", "odontogram"]`.
