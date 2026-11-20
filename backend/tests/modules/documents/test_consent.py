@@ -14,6 +14,7 @@ import pytest
 from PIL import Image, ImageDraw
 from sqlalchemy import delete, select
 
+from app.config import settings
 from app.core.auth.models import Clinic
 from app.core.patient_access import PatientAccessLog
 from app.modules.activity_journal.models import ActivityJournalEntry
@@ -24,6 +25,11 @@ from app.modules.documents.models import (
     GeneratedDocument,
 )
 from app.modules.patients.models import Patient
+
+
+@pytest.fixture(autouse=True)
+def synthetic_public_origin(monkeypatch):
+    monkeypatch.setattr(settings, "ALLOWED_ORIGINS", "https://clinic.example")
 
 
 def signature() -> str:
@@ -848,3 +854,45 @@ async def test_signing_link_validates_explicit_locale(
         f"/api/v1/documents/consents/{doc}/links?purpose=sign&locale=xx", headers=auth_headers
     )
     assert invalid.status_code == 422
+
+
+@pytest.mark.asyncio
+async def test_link_returns_matching_fragment_url_and_png(
+    client, auth_headers, test_patient, monkeypatch
+):
+    from app.modules.documents import consent_service
+
+    seen = []
+    real = consent_service._signing_qr
+
+    def capture(url):
+        seen.append(url)
+        return real(url)
+
+    monkeypatch.setattr(consent_service, "_signing_qr", capture)
+    doc = await new_consent(client, auth_headers, test_patient)
+    response = await client.post(
+        f"/api/v1/documents/consents/{doc}/links?purpose=sign", headers=auth_headers
+    )
+    assert response.status_code == 201
+    assert response.headers["cache-control"] == "no-store"
+    data = response.json()["data"]
+    assert data["url"] == f"https://clinic.example/p/consent#{data['token']}"
+    assert seen == [data["url"]]
+    prefix = "data:image/png;base64,"
+    assert data["qr_data_url"].startswith(prefix)
+    image = Image.open(io.BytesIO(base64.b64decode(data["qr_data_url"][len(prefix) :])))
+    assert image.format == "PNG" and image.width == image.height and image.width > 100
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("invalid_origin", ["", "not-an-origin", "https://[invalid"])
+async def test_link_requires_configured_public_origin(
+    client, auth_headers, test_patient, monkeypatch, invalid_origin
+):
+    monkeypatch.setattr(settings, "ALLOWED_ORIGINS", invalid_origin)
+    doc = await new_consent(client, auth_headers, test_patient)
+    response = await client.post(
+        f"/api/v1/documents/consents/{doc}/links?purpose=sign", headers=auth_headers
+    )
+    assert response.status_code == 422

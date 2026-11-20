@@ -12,11 +12,15 @@ from datetime import UTC, datetime, timedelta
 from pathlib import Path
 from types import SimpleNamespace
 from typing import Literal
+from urllib.parse import urlparse
 
+import qrcode
 from PIL import Image, UnidentifiedImageError
+from qrcode.constants import ERROR_CORRECT_M
 from sqlalchemy import exists, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import settings
 from app.core.auth.models import Clinic
 from app.core.events import event_bus
 from app.core.events.types import EventType
@@ -35,6 +39,28 @@ from .pdf import DocumentPDFService
 from .service import _documents_root, _write_pdf_bytes
 
 Purpose = Literal["sign", "revoke"]
+
+
+def _signing_url(token: str) -> str:
+    """Use the configured patient-facing origin, matching agenda check-in."""
+    origins = settings.allowed_origins_list
+    try:
+        parsed = urlparse(origins[0]) if origins else None
+    except ValueError:
+        parsed = None
+    if not parsed or parsed.scheme not in ("http", "https") or not parsed.netloc:
+        raise ConsentValidationError("Set ALLOWED_ORIGINS to an http(s) patient-facing origin")
+    return f"{parsed.scheme}://{parsed.netloc}/p/consent#{token}"
+
+
+def _signing_qr(url: str) -> str:
+    """Return a PNG data URL without sending its bearer link to a third party."""
+    qr = qrcode.QRCode(error_correction=ERROR_CORRECT_M, box_size=8, border=4)
+    qr.add_data(url)
+    qr.make(fit=True)
+    png = io.BytesIO()
+    qr.make_image(fill_color="black", back_color="white").save(png, format="PNG")
+    return "data:image/png;base64," + base64.b64encode(png.getvalue()).decode("ascii")
 
 
 def _template(t: ConsentTemplate) -> dict:
@@ -228,6 +254,8 @@ class ConsentService:
         )
         selected_locale = locale or (clinic_locale if clinic_locale in PDF_LOCALES else "en")
         token = secrets.token_urlsafe(32)
+        url = _signing_url(token)
+        qr_data_url = await asyncio.to_thread(_signing_qr, url)
         expires = datetime.now(UTC) + timedelta(minutes=30)
         db.add(
             ConsentSigningLink(
@@ -241,7 +269,14 @@ class ConsentService:
             )
         )
         await db.flush()
-        return {"data": {"token": token, "expires_at": expires.isoformat()}}
+        return {
+            "data": {
+                "token": token,
+                "url": url,
+                "qr_data_url": qr_data_url,
+                "expires_at": expires.isoformat(),
+            }
+        }
 
     @staticmethod
     async def public_consent(db, token):

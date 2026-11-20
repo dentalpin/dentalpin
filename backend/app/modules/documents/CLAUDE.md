@@ -41,7 +41,8 @@ signature and revocation evidence state for the patient card and records a staff
 The signing link stores its PDF locale, defaulting to the clinic language;
 rendered signature times use the clinic timezone and localized relationship.
 `ConsentService` owns consent operations and raises domain errors; HTTP routes
-translate those errors. The handoff QR is rendered locally from the fragment URL.
+translate those errors. The backend renders the handoff QR using the first configured `ALLOWED_ORIGINS`
+entry; it returns the matching fragment URL and PNG data URL to staff.
 
 ## Dependencies
 

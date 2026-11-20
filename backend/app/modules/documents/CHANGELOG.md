@@ -1,6 +1,6 @@
 # Changelog — documents module
 
-- fix: Localize signed consents using the link locale and clinic time; show revoked state, QR handoff, and unsigned draft labels. Move consent operations to a domain service.
+- fix: Localize signed consents using the link locale and clinic time; show revoked state, backend-generated QR handoff, and unsigned draft labels. Move consent operations to a domain service.
 
 ## Unreleased
 

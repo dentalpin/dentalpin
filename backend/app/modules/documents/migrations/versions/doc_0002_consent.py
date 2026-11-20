@@ -39,6 +39,7 @@ def upgrade() -> None:
         ),
         sa.Column("token_hash", sa.String(64), nullable=False, unique=True),
         sa.Column("purpose", sa.String(12), nullable=False),
+        sa.Column("locale", sa.String(10), nullable=False, server_default="es"),
         sa.Column("expires_at", sa.DateTime(timezone=True), nullable=False),
         sa.Column("used_at", sa.DateTime(timezone=True)),
         sa.Column(

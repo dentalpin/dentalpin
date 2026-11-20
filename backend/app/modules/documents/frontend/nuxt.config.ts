@@ -2,7 +2,6 @@ export default defineNuxtConfig({
   components: [
     { path: './components', pathPrefix: false }
   ],
-  vite: { optimizeDeps: { include: ['qrcode'] } },
   i18n: {
     locales: [
       { code: 'en', file: 'en.json' },

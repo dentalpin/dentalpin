@@ -95,8 +95,10 @@ async def create_link(
     ctx: Ctx,
     _: Write,
     db: Db,
+    response: Response,
     locale: str | None = Query(default=None, pattern=PDF_LOCALE_PATTERN),
 ) -> dict:
+    response.headers["Cache-Control"] = "no-store"
     return await ConsentService.create_link(document_id, purpose, ctx, db, locale)
 
 

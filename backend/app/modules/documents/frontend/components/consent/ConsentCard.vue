@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { PERMISSIONS } from '~~/app/config/permissions'
-import QRCode from 'qrcode'
 
 interface ConsentTemplate { id: string, title: string, body: string }
 interface ConsentDocument {
@@ -84,9 +83,9 @@ async function create() {
   } finally { busy.value = false }
 }
 async function link(id: string, purpose: 'sign' | 'revoke') {
-  const result = await api.post<{ data: { token: string } }>(`/api/v1/documents/consents/${id}/links?purpose=${purpose}`, {})
-  signingUrl.value = `${window.location.origin}/p/consent#${result.data.token}`
-  qrImage.value = await QRCode.toDataURL(signingUrl.value, { errorCorrectionLevel: 'M', margin: 2, width: 256 })
+  const result = await api.post<{ data: { url: string, qr_data_url: string } }>(`/api/v1/documents/consents/${id}/links?purpose=${purpose}`, {})
+  signingUrl.value = result.data.url
+  qrImage.value = result.data.qr_data_url
   qrOpen.value = true
   message.value = t('documents.consent.linkHelp')
 }

@@ -3,9 +3,6 @@ import { flushPromises } from '@vue/test-utils'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import ConsentCard from '../../module_layers/documents/frontend/components/consent/ConsentCard.vue'
 
-const qr = vi.hoisted(() => vi.fn(async () => 'data:image/png;base64,c3ludGhldGlj'))
-vi.mock('qrcode', () => ({ default: { toDataURL: qr } }))
-
 const get = vi.fn(async (path: string) => {
   if (path.endsWith('/consent-templates')) return { data: [] }
   if (path.endsWith('/signature-status')) {
@@ -25,7 +22,7 @@ const get = vi.fn(async (path: string) => {
 })
 const patch = vi.fn(async () => ({}))
 const del = vi.fn(async () => ({}))
-const post = vi.fn(async () => ({ data: { token: 'synthetic-token' } }))
+const post = vi.fn(async () => ({ data: { url: 'https://clinic.example/p/consent#synthetic-token', qr_data_url: 'data:image/png;base64,c3ludGhldGlj' } }))
 mockNuxtImport('useApi', () => () => ({ get, patch, del, post, raw: vi.fn() }))
 mockNuxtImport('usePermissions', () => () => ({ can: () => true }))
 
@@ -34,7 +31,6 @@ afterEach(() => {
   patch.mockClear()
   del.mockClear()
   post.mockClear()
-  qr.mockClear()
 })
 
 describe('consent patient card', () => {
@@ -58,7 +54,20 @@ describe('consent patient card', () => {
       expect(signed.text()).not.toMatch(/Download revocation|documents\.consent\.downloadRevocation/)
       await unsigned.findAll('button').find(button => /New signing link|documents\.consent\.signLink/.test(button.text()))!.trigger('click')
       await flushPromises()
-      expect(qr).toHaveBeenCalledWith(`${window.location.origin}/p/consent#synthetic-token`, expect.any(Object))
+      expect(post).toHaveBeenCalledWith('/api/v1/documents/consents/unsigned/links?purpose=sign', {})
+      expect(document.querySelector('img[src="data:image/png;base64,c3ludGhldGlj"]')).not.toBeNull()
+      const copy = vi.fn(async () => {})
+      const originalClipboard = Object.getOwnPropertyDescriptor(navigator, 'clipboard')
+      Object.defineProperty(navigator, 'clipboard', { configurable: true, value: { writeText: copy } })
+      try {
+        const copyButton = Array.from(document.querySelectorAll('button')).find(button => /Copy link|Copiar enlace|documents\.consent\.copy/.test(button.textContent || ''))!
+        copyButton.click()
+        await flushPromises()
+        expect(copy).toHaveBeenCalledWith('https://clinic.example/p/consent#synthetic-token')
+      } finally {
+        if (originalClipboard) Object.defineProperty(navigator, 'clipboard', originalClipboard)
+        else Reflect.deleteProperty(navigator, 'clipboard')
+      }
       const signedDraft = rows.find(row => row.text().includes('Signed with draft status'))!
       expect(signedDraft.text()).not.toMatch(/Edit consent|documents\.consent\.editConsent/)
       expect(signedDraft.text()).not.toMatch(/Archive|documents\.consent\.archiveConsent/)
