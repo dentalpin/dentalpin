@@ -180,7 +180,7 @@ function render() {
         state = 'confirmed'
         render()
       } catch (err) {
-        error(err.status === 410 ? t('expired') : t('error'))
+        error(err.status === 410 ? t('expired') : err.status === 409 ? t('conflict') : t('error'))
         node('restart').classList.remove('hidden')
         e.target.disabled = false
       }
