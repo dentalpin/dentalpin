@@ -17,6 +17,7 @@ from sqlalchemy.exc import DBAPIError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
+from app.core.auth.mfa import validate_mfa_encryption
 from app.core.auth.mfa_router import router as mfa_router
 from app.core.auth.router import limiter
 from app.core.auth.router import router as auth_router
@@ -45,6 +46,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     # during startup / module install also carries the bound fields
     # (defaults to ``-`` outside a request).
     setup_logging()
+    validate_mfa_encryption()
 
     # Security posture (audit SEC-01): a production boot without
     # BUDGET_PUBLIC_SECRET_KEY already fails in app.config's Settings

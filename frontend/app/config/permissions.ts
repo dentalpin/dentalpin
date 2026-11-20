@@ -29,6 +29,7 @@ export const PERMISSIONS = {
   },
   gdpr: {
     auditRead: 'gdpr.audit.read',
+    accessLogRead: 'gdpr.access_log.read',
     retentionWrite: 'gdpr.retention.write'
   },
   odontogram: {

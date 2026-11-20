@@ -30,7 +30,7 @@ from app.modules.patients.models import Patient
 router = APIRouter(prefix="/access-log")
 Db = Annotated[AsyncSession, Depends(get_db)]
 Context = Annotated[ClinicContext, Depends(get_clinic_context)]
-CanRead = Annotated[None, Depends(require_permission("gdpr.audit.read"))]
+CanRead = Annotated[None, Depends(require_permission("gdpr.access_log.read"))]
 CanChangeRetention = Annotated[None, Depends(require_permission("gdpr.retention.write"))]
 PRIVATE_HEADERS = {"Cache-Control": "no-store"}
 
@@ -214,7 +214,7 @@ async def get_access_retention(ctx: Context, _: CanRead) -> ApiResponse[Retentio
 
 @router.put("/retention", response_model=ApiResponse[RetentionSettings])
 async def set_access_retention(
-    data: RetentionSettings, ctx: Context, _: CanChangeRetention, db: Db
+    data: RetentionSettings, ctx: Context, _: CanRead, __: CanChangeRetention, db: Db
 ) -> ApiResponse[RetentionSettings]:
     current = await db.scalar(
         select(Clinic.settings).where(Clinic.id == ctx.clinic_id).with_for_update()

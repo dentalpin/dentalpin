@@ -47,6 +47,20 @@ describe('useModuleSlots', () => {
     expect(isReactive(entries[0].component)).toBe(false)
   })
 
+  it('hides the GDPR access tab from dentists who can read the erasure audit', async () => {
+    const { resolveSlot } = await import('~/composables/useModuleSlots')
+    const { default: registerGdpr } = await import('#module-layers/gdpr/frontend/plugins/slots.client')
+    await registerGdpr(useNuxtApp())
+
+    const patient = { patientId: 'synthetic-patient' }
+    const dentistPermissions: string[] = [PERMISSIONS.patients.read, PERMISSIONS.gdpr.auditRead]
+    const adminPermissions = [...dentistPermissions, PERMISSIONS.gdpr.accessLogRead]
+
+    expect(resolveSlot('patient.detail.tabs', patient, { can: p => dentistPermissions.includes(p) })).toEqual([])
+    expect(resolveSlot('patient.detail.tabs', patient, { can: p => adminPermissions.includes(p) })
+      .map(entry => entry.id)).toContain('gdpr-access-log')
+  })
+
   it('preserves order and filters by permission gate', async () => {
     const { registerSlot, resolveSlot } = await import('~/composables/useModuleSlots')
 

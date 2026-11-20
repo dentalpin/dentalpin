@@ -944,6 +944,7 @@
     "time": "الوقت",
     "startTime": "وقت البدء",
     "duration": "المدة",
+    "currentDuration": "{minutes} دقيقة (الحالية)",
     "treatmentType": "نوع العلاج",
     "treatments": "العلاجات",
     "addTreatment": "إضافة علاج",

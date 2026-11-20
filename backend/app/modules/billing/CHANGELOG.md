@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Audit authenticated invoice PDF previews and downloads. (#903).
+
 - feat(#877): show imported invoices as historical and read-only, with no operational balance or accounting export.
 
 - fix(#854): an invoice's `series_id` and a line's `vat_type_id` / `catalog_item_id` must belong to the clinic, else 400. Unknown ids were a 500 (FK); another clinic's VAT type was stored with a silent 0 % rate, its catalog item was embedded in the response, and its series left a draft that failed at issue.

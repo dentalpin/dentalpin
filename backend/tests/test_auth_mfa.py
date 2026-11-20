@@ -336,3 +336,98 @@ def test_independent_encryption_and_rotation(monkeypatch, key):
     rotated = mfa.cipher().rotate(encrypted)
     monkeypatch.setattr(settings, "MFA_PREVIOUS_ENCRYPTION_KEY", None)
     assert mfa.cipher().decrypt(rotated) == b"synthetic-totp"
+
+
+@pytest.mark.parametrize("required", [False, True])
+async def test_cli_reset_revokes_and_audits_without_encryption_key(
+    client, db_session, auth_headers, test_clinic, monkeypatch, key, clock, required
+):
+    from uuid import uuid4
+
+    from app.cli.__main__ import build_parser
+    from app.core.auth.models import RefreshToken
+
+    await policy(client, auth_headers, "optional")
+    initial = await login(client)
+    setup = await client.post(
+        f"{AUTH}/mfa/totp/enroll", headers=access(initial), json={"password": PASSWORD}
+    )
+    challenge = setup.json()
+    enrolled = await verify(
+        client,
+        challenge,
+        code_at(challenge["secret"], clock),
+        path="mfa/totp/confirm",
+        headers=access(initial),
+    )
+    assert enrolled.status_code == 200
+    enrolled_auth = access(enrolled)
+    users = await client.get(f"{AUTH}/users", headers=enrolled_auth)
+    assert users.json()["data"][0]["mfa_enabled"] is True
+    user_id = (await db_session.scalar(select(User).where(User.email == EMAIL))).id
+    clinic_id = test_clinic.id
+    if required:
+        await policy(client, enrolled_auth, "required_roles", ("admin",))
+    pending = assert_challenge(await login(client), "verify")
+
+    parser = build_parser()
+    argv = ["mfa", "reset", "--email", EMAIL, "--clinic", str(clinic_id)]
+    outsider = parser.parse_args([*argv[:-1], str(uuid4()), "--yes"])
+    assert await outsider.func(outsider) == 1
+    args = parser.parse_args(argv)
+    monkeypatch.setattr("builtins.input", lambda _: "")
+    assert await args.func(args) == 1
+    assert await db_session.get(UserMfaTotp, user_id) is not None
+
+    monkeypatch.setattr(settings, "MFA_ENCRYPTION_KEY", None)
+    args = parser.parse_args([*argv, "--yes"])
+    assert await args.func(args) == 0
+    db_session.expire_all()
+
+    assert await db_session.get(UserMfaTotp, user_id) is None
+    assert not await db_session.scalar(
+        select(func.count())
+        .select_from(UserMfaRecoveryCode)
+        .where(UserMfaRecoveryCode.user_id == user_id)
+    )
+    assert await db_session.get(UserMfaChallenge, user_id) is None
+    assert (await db_session.get(User, user_id)).mfa_reenroll_required is required
+    sessions = list(
+        await db_session.scalars(select(RefreshToken).where(RefreshToken.user_id == user_id))
+    )
+    assert sessions and all(session.revoked_at is not None for session in sessions)
+    audit = await db_session.scalar(
+        select(MfaAuditEntry).where(MfaAuditEntry.event == "auth.2fa_reset")
+    )
+    assert (audit.user_id, audit.actor_id, audit.clinic_id) == (user_id, None, clinic_id)
+    assert (await client.get(f"{AUTH}/me", headers=enrolled_auth)).status_code == 401
+
+    monkeypatch.setattr(settings, "MFA_ENCRYPTION_KEY", SecretStr(key))
+    assert (await verify(client, pending, "123456")).status_code == 401
+    renewed = await login(client)
+    if required:
+        assert_challenge(renewed, "enroll")
+    else:
+        assert renewed.status_code == 200
+        users = await client.get(f"{AUTH}/users", headers=access(renewed))
+        assert users.json()["data"][0]["mfa_enabled"] is False
+
+
+@pytest.mark.parametrize("name", ["MFA_ENCRYPTION_KEY", "MFA_PREVIOUS_ENCRYPTION_KEY"])
+async def test_startup_rejects_invalid_mfa_keys_without_disclosing_value(monkeypatch, key, name):
+    from app.main import app, lifespan
+
+    invalid = "synthetic-invalid-format"
+    monkeypatch.setattr(settings, name, SecretStr(invalid))
+    with pytest.raises(
+        ValueError, match=rf"{name} must be a 32-byte URL-safe base64 Fernet key"
+    ) as error:
+        async with lifespan(app):
+            pytest.fail("The backend accepted an invalid MFA key.")
+    assert invalid not in str(error.value)
+
+
+def test_mfa_startup_key_check_allows_empty_or_valid_configuration(monkeypatch, key):
+    mfa.validate_mfa_encryption()
+    monkeypatch.setattr(settings, "MFA_ENCRYPTION_KEY", SecretStr(""))
+    mfa.validate_mfa_encryption()

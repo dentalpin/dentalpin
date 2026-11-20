@@ -944,6 +944,7 @@
     "time": "समय",
     "startTime": "आरंभ समय",
     "duration": "अवधि",
+    "currentDuration": "{minutes} मिनट (वर्तमान)",
     "treatmentType": "उपचार का प्रकार",
     "treatments": "उपचार",
     "addTreatment": "उपचार जोड़ें",

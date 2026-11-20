@@ -944,6 +944,7 @@
     "time": "Godzina",
     "startTime": "Rozpoczęcie",
     "duration": "Czas trwania",
+    "currentDuration": "{minutes} min (bieżący czas)",
     "treatmentType": "Rodzaj zabiegu",
     "treatments": "Zabiegi",
     "addTreatment": "Dodaj zabieg",

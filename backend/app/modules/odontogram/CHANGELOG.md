@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Audit authenticated views of odontograms and treatment history. (#903).
+
 - fix(#910): the history timeline groups changes by the clinic's calendar day, and `GET …/odontogram/at` returns the chart as it stood at the end of that day on the clinic's clock. Both used the UTC day, so evening work in a UTC-6 clinic was listed under the next day and missing from its own day's chart.
 
 - fix(#896): `odontogram.treatment.deleted` and `odontogram.treatment.status_changed` are published transactionally, so payments can un-book a treatment that is deleted or set back from performed. The deleted payload now carries `old_status`.

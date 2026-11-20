@@ -134,7 +134,7 @@ export function useDocuments() {
     try {
       // api.raw carries the session cookies and refreshes once on 401, so
       // a download after a long idle still works (#440).
-      const response = await api.raw(`/api/v1/media/documents/${documentId}/download`)
+      const response = await api.raw(`/api/v1/media/documents/${documentId}/download?variant=full`)
       if (!response.ok) throw new Error(`HTTP ${response.status}`)
 
       // Create download link

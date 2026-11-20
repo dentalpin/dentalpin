@@ -7,12 +7,14 @@ handlers in ``events.py`` (append-only by construction).
 
 from __future__ import annotations
 
-from datetime import UTC, date, datetime
+from datetime import date
 from uuid import UUID
 
 from fastapi import HTTPException, status
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+from app.core.utils.dates import clinic_day_range, clinic_zone_for
 
 from .models import ActivityJournalEntry
 
@@ -37,18 +39,15 @@ class ActivityJournalService:
             stmt = stmt.where(ActivityJournalEntry.actor_id == actor_id)
         if patient_id:
             stmt = stmt.where(ActivityJournalEntry.patient_id == patient_id)
-        if date_from:
-            # ``occurred_at`` is timestamptz; compare against an aware
-            # boundary so asyncpg never receives a bare string/date mix.
-            stmt = stmt.where(
-                ActivityJournalEntry.occurred_at
-                >= datetime.combine(date_from, datetime.min.time(), tzinfo=UTC)
-            )
-        if date_to:
-            stmt = stmt.where(
-                ActivityJournalEntry.occurred_at
-                <= datetime.combine(date_to, datetime.max.time(), tzinfo=UTC)
-            )
+        if date_from or date_to:
+            # ``occurred_at`` is an instant: cut it on the clinic's days (#920).
+            zone = await clinic_zone_for(db, clinic_id)
+            if date_from:
+                start, _ = clinic_day_range(zone, date_from, date_from)
+                stmt = stmt.where(ActivityJournalEntry.occurred_at >= start)
+            if date_to:
+                _, end = clinic_day_range(zone, date_to, date_to)
+                stmt = stmt.where(ActivityJournalEntry.occurred_at < end)
 
         count_stmt = select(func.count()).select_from(stmt.subquery())
         total = (await db.execute(count_stmt)).scalar_one()

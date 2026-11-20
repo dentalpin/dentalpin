@@ -944,6 +944,7 @@
     "time": "Hora",
     "startTime": "Hora de início",
     "duration": "Duração",
+    "currentDuration": "{minutes} min (atual)",
     "treatmentType": "Tipo de tratamento",
     "treatments": "Tratamentos",
     "addTreatment": "Adicionar tratamento",

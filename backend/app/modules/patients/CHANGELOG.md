@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Audit authenticated views of the patient record and extended details. (#903).
+
 - `patient.updated` is now published with `db=db`, so its handlers run inside the update's transaction (ADR 0019). The first transactional subscriber is notifications, which cancels pending WhatsApp drafts when `do_not_contact` is set (#875). A failing handler now rolls the patient update back.
 
 - fix(#836): the CSV import's duplicate check ignores upper/lower case in `national_id` and `email`. `Ana.Garcia@…` against `ana.garcia@…`, or a DNI letter in lower case, was not flagged, so the import created the same patient a second time. Patient search already ignored case. The check now reads the matching patients in two queries for the whole file instead of up to two per row (neither column is indexed): about 0.6 s → 0.07 s for 1000 rows against 1000 patients.

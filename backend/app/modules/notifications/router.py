@@ -37,7 +37,12 @@ from .schemas import (
     TestEmailRequest,
     TestEmailResponse,
 )
-from .service import NotificationService, appointment_when_context, budget_treatments_context
+from .service import (
+    NotificationService,
+    appointment_when_context,
+    budget_treatments_context,
+    clinic_date_label,
+)
 
 router = APIRouter()
 
@@ -530,7 +535,7 @@ async def send_notification(
             context["validity_days"] = (budget.valid_until - budget.valid_from).days
 
         if data.notification_type == "budget_accepted":
-            context["accepted_date"] = budget.updated_at.strftime("%d/%m/%Y")
+            context["accepted_date"] = clinic_date_label(budget.updated_at, clinic)
 
         # Get budget items for budget_sent
         if data.notification_type == "budget_sent":

@@ -21,6 +21,7 @@ related_endpoints:
 related_permissions:
   - patients.read
   - patients.write
+  - gdpr.access_log.read
   - periodontogram.read
   - periodontogram.write
 related_paths:
@@ -29,7 +30,7 @@ related_paths:
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: 0000000
+last_verified_commit: fdbdaf8d
 ---
 
 # Ficha del paciente
@@ -40,6 +41,12 @@ de pestañas. La pestaña por defecto **Resumen** es un dashboard
 modular donde cada bloque lo aporta un módulo distinto (planes,
 agenda, cobros, odontograma, historial médico). Los bloques son
 también deep-links — un click llega al detalle.
+
+## Accesos
+
+Con el módulo GDPR y el permiso `gdpr.access_log.read`, la pestaña **Accesos**
+muestra quién consultó la ficha y cuándo. Puedes elegir las fechas y
+exportar el resultado a CSV. Consulta la [guía de accesos](../../gdpr/screens/access-log.md).
 
 ## Diseño
 
