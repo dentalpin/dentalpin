@@ -54,7 +54,7 @@
     "phone": "Teléfono",
     "resourcesRequired": "Selecciona un profesional y una duración válida.",
     "settingsTitle": "Ajustes de la página pública",
-    "settingsHint": "Deja los campos vacíos para usar los valores predeterminados. El logotipo debe tener una URL HTTPS.",
+    "settingsHint": "Configura las reglas y guarda los cambios antes de abrir la página pública.",
     "logoUrl": "URL del logotipo",
     "accentColor": "Color principal (hex)",
     "titleEs": "Título en español",

@@ -54,7 +54,7 @@
     "phone": "Phone",
     "resourcesRequired": "Select a professional and a valid duration.",
     "settingsTitle": "Public page settings",
-    "settingsHint": "Leave fields empty to use the defaults. The logo must use an HTTPS URL.",
+    "settingsHint": "Configure the booking rules and save changes before viewing the public page.",
     "logoUrl": "Logo URL",
     "accentColor": "Main color (hex)",
     "titleEs": "Title in Spanish",
