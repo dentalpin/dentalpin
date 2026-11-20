@@ -60,6 +60,16 @@ Heavy subscriber + now a publisher. See ADR 0016.
 Routes mounted at `/api/v1/notifications/` (templates, preferences,
 settings, logs).
 
+The template editor lives at `/settings/communications/templates`. The
+`/templates/editor/{template_key}` API selects a clinic, message type, channel,
+and locale. Read holders can preview with a synthetic context. Write holders
+can save or restore email and manual WhatsApp copy. SMS and Push are
+read-only. The editor validates the supported Jinja subset and optional
+variables. Keep `template_variables.py` aligned with the event producers.
+Manual WhatsApp restoration clears only `body_text`, so provider mappings
+survive. The gateway uses existing system WhatsApp text where available
+and retains the skip behavior when it is missing.
+
 ## Dependencies
 
 `manifest.depends = ["patients", "agenda", "budget", "billing"]`.

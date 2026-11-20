@@ -37,6 +37,18 @@ export default defineNuxtPlugin(() => {
     order: 10
   })
 
+  registerSettingsPage({
+    path: 'templates',
+    category: 'communications',
+    labelKey: 'notifications.templateEditor.title',
+    descriptionKey: 'notifications.templateEditor.description',
+    icon: 'i-lucide-file-pen-line',
+    permission: PERMISSIONS.notifications.templatesRead,
+    component: () => import('../components/settings/NotificationTemplatesPage.vue'),
+    searchKeywords: ['plantillas', 'templates', 'notificaciones', 'notifications', 'WhatsApp'],
+    order: 20
+  })
+
   // Getting-started (optional): without an email sender the clinic can't
   // send confirmations / budgets. Global env SMTP counts as configured
   // only through the clinic-level override, so this stays advisory.

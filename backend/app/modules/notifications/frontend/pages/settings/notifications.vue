@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { PERMISSIONS } from '~~/app/config/permissions'
 import type {
   NotificationChannel,
   NotificationTypeSettings,
@@ -7,7 +8,7 @@ import type {
 } from '~~/app/types'
 
 const { t } = useI18n()
-const { isAdmin } = usePermissions()
+const { can, isAdmin } = usePermissions()
 const auth = useAuth()
 const {
   settings,
@@ -277,7 +278,7 @@ if (!isAdmin.value) {
 <template>
   <div class="space-y-6">
     <!-- Page header -->
-    <div class="flex items-center justify-between">
+    <div class="flex flex-wrap items-start justify-between gap-4">
       <div>
         <SettingsBackLink
           to="/settings/communications"
@@ -291,7 +292,15 @@ if (!isAdmin.value) {
         </p>
       </div>
 
-      <div class="flex gap-2">
+      <div class="flex flex-wrap gap-2">
+        <UButton
+          v-if="can(PERMISSIONS.notifications.templatesRead)"
+          to="/settings/communications/templates"
+          variant="outline"
+          icon="i-lucide-file-pen-line"
+        >
+          {{ t('notifications.templateEditor.title') }}
+        </UButton>
         <UButton
           variant="outline"
           icon="i-lucide-mail-check"
