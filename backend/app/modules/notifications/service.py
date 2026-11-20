@@ -385,7 +385,10 @@ class NotificationService:
         at: datetime,
         apply_all: bool = False,
     ) -> None:
-        """Apply verified evidence and suppress pending delivery in the caller's transaction."""
+        """Apply verified evidence and suppress pending delivery in the caller's transaction.
+
+        The caller holds the patient lock and owns commit or rollback.
+        """
         prefs = await NotificationService.get_or_create_patient_preferences(
             db, clinic_id, patient_id, commit=False
         )
