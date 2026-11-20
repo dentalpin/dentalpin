@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#940): `appointment.scheduled` auto-link compares the appointment's month on the clinic's calendar. It used the UTC date, so at a month boundary an evening appointment in a UTC-6 clinic linked next month's recall, and a morning one in a UTC+9 clinic missed this month's.
+
 - fix(#852): a linked appointment must belong to the clinic and to the recall's patient (`link-appointment`, contact attempts, `log_contact_attempt` tool), and an assigned professional must be a professional of the clinic (create, update, `create_recall` tool). Unknown ids were a 500; another patient's appointment was stored, and completing that visit closed this patient's recall. Both now answer 400.
 
 - fix(#804): a done or cancelled recall can no longer be changed. Logging an attempt used to put it back on the active call list, and a closed recall could be cancelled, completed or snoozed again. These actions now lock the row and answer 409, the agent tools return `recall_closed`, and `RecallRow` hides the actions on closed rows.

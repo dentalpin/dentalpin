@@ -18,6 +18,7 @@ from uuid import UUID
 from sqlalchemy import and_, case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.utils.dates import clinic_day_range, clinic_zone_for
 from app.modules.agenda.models import Appointment, AppointmentStatusEvent
 
 # A scan window of more than a year would make these queries expensive
@@ -33,18 +34,24 @@ def _validate_range(date_from: date, date_to: date) -> None:
         raise ValueError(f"date range exceeds {MAX_RANGE_DAYS} days")
 
 
-def _filtered_appointments(
+async def _filtered_appointments(
+    db: AsyncSession,
     clinic_id: UUID,
     date_from: date,
     date_to: date,
     cabinet_id: UUID | None,
     professional_id: UUID | None,
 ):
-    """Build the common Appointment filter used by every analytics method."""
+    """Build the common Appointment filter used by every analytics method.
+
+    ``start_time`` is stored in UTC, so the period is cut on the clinic's
+    days (``date(start_time)`` was the UTC date, #933).
+    """
+    day_start, day_end = clinic_day_range(await clinic_zone_for(db, clinic_id), date_from, date_to)
     conditions = [
         Appointment.clinic_id == clinic_id,
-        func.date(Appointment.start_time) >= date_from,
-        func.date(Appointment.start_time) <= date_to,
+        Appointment.start_time >= day_start,
+        Appointment.start_time < day_end,
     ]
     if cabinet_id is not None:
         conditions.append(Appointment.cabinet_id == cabinet_id)
@@ -104,8 +111,8 @@ class AppointmentLifecycleService:
             "wait_minutes"
         )
 
-        conditions = _filtered_appointments(
-            clinic_id, date_from, date_to, cabinet_id, professional_id
+        conditions = await _filtered_appointments(
+            db, clinic_id, date_from, date_to, cabinet_id, professional_id
         )
 
         base = (
@@ -184,8 +191,8 @@ class AppointmentLifecycleService:
             func.extract("epoch", checked_in.c.at - Appointment.start_time) / 60.0
         ).label("delta_minutes")
 
-        conditions = _filtered_appointments(
-            clinic_id, date_from, date_to, cabinet_id, professional_id
+        conditions = await _filtered_appointments(
+            db, clinic_id, date_from, date_to, cabinet_id, professional_id
         )
 
         base = (
@@ -289,8 +296,8 @@ class AppointmentLifecycleService:
             else_=None,
         ).label("overrun_pct")
 
-        conditions = _filtered_appointments(
-            clinic_id, date_from, date_to, cabinet_id, professional_id
+        conditions = await _filtered_appointments(
+            db, clinic_id, date_from, date_to, cabinet_id, professional_id
         )
 
         base = (
@@ -342,8 +349,8 @@ class AppointmentLifecycleService:
     ) -> dict:
         _validate_range(date_from, date_to)
 
-        conditions = _filtered_appointments(
-            clinic_id, date_from, date_to, cabinet_id, professional_id
+        conditions = await _filtered_appointments(
+            db, clinic_id, date_from, date_to, cabinet_id, professional_id
         )
 
         result = await db.execute(
