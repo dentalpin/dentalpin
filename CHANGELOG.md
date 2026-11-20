@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Schedules:** the copilot's free-slot search no longer offers booked evening slots on its last day (#921).
 - **Activity journal:** the date filter uses the clinic's day (#920).
 - **Reports:** the billing summary's paid-in-period total uses the clinic's days (#919).
 - **Budget:** the list's date filter uses the clinic's day, not the UTC day (#918).

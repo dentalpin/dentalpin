@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#921): `find_free_slots` fetches the professional's bookings over the clinic's days, the same days as the open hours. Between UTC midnights the last day's evening was never fetched in a UTC- clinic, so a booked slot was offered as free.
+
 - fix(#779): `find_free_slots` without `date_from` starts on the clinic's day, not the server's UTC day.
 
 - docs(#707): the permissions doc's role table missed `analytics.read`
