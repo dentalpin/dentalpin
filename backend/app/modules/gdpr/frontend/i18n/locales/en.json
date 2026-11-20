@@ -26,8 +26,7 @@
     "actions": {
       "view": "View",
       "download": "Download",
-      "export": "Export",
-      "print": "Print"
+      "export": "Export"
     },
     "resources": {
       "patient_record": "Patient record",

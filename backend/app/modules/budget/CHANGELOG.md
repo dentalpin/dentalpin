@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Audit authenticated budget PDF previews and downloads, including signed PDFs. (#903).
+
 - Remove the unused `AcceptInClinicModal` component; budget detail retains its existing inline acceptance form.
 - fix: persist the document fingerprint at budget acceptance using the clinic's timezone and currency, and reserve space below the signature block for the repeated PDF footer.
 

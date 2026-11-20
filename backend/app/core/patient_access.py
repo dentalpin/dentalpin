@@ -14,7 +14,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 from app.core.auth.dependencies import ClinicContext, get_clinic_context
 from app.database import Base, get_db
 
-Action = Literal["view", "download", "print", "export"]
+Action = Literal["view", "download", "export"]
 DEFAULT_RETENTION_YEARS = 5
 RETENTION_SETTINGS_KEY = "patient_access_retention_years"
 MAX_RETENTION_YEARS = 30
