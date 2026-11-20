@@ -272,6 +272,46 @@ async def test_withdrawal_cancels_pending_by_purpose_and_old_review_cannot_regra
     assert unaffected[1].status == "sent"
 
 
+async def test_failed_withdrawal_rolls_back_ledger_projection_and_manual_draft(
+    db_session, test_clinic, test_patient, desk, monkeypatch
+):
+    db = db_session
+    clinic_id, patient_id, user_id = test_clinic.id, test_patient.id, desk.user_id
+    intake = await signed(db, test_clinic, test_patient, user_id, whatsapp=True)
+    await service.review_admin(
+        db,
+        clinic_id,
+        intake.id,
+        user_id,
+        AdministrativeReview(fields={"phone"}, apply_choices=True, verified_channels={"whatsapp"}),
+    )
+    draft = message(clinic_id, patient_id, "whatsapp", "budget_sent", "awaiting_manual")
+    db.add(draft)
+    await db.flush()
+    draft_id = draft.id
+    await db.commit()
+    set_verified_consents = NotificationService.set_verified_consents
+
+    async def fail_after_cancellation(*args, **kwargs):
+        await set_verified_consents(*args, **kwargs)
+        assert draft.status == "skipped"
+        raise RuntimeError("synthetic failure after draft cancellation")
+
+    monkeypatch.setattr(NotificationService, "set_verified_consents", fail_after_cancellation)
+    with pytest.raises(RuntimeError, match="synthetic failure after draft cancellation"):
+        async with db.begin():
+            await service.withdraw(db, clinic_id, patient_id, user_id, "whatsapp")
+
+    ledger = (await db.scalars(select(PatientConsent))).all()
+    assert len(ledger) == 1 and ledger[0].granted
+    assert await db.scalar(select(func.count()).select_from(ConsentProvenance)) == 1
+    prefs = await NotificationService.get_patient_preferences(db, clinic_id, patient_id)
+    assert prefs.whatsapp_enabled and prefs.whatsapp_opt_in_at is not None
+    assert "whatsapp" in prefs.verified_consents
+    saved_draft = await db.get(CommunicationMessage, draft_id)
+    assert saved_draft.status == "awaiting_manual" and saved_draft.error_message is None
+
+
 async def test_review_rolls_back_chart_ledger_and_preference_together(
     db_session, test_clinic, test_patient, desk, monkeypatch
 ):

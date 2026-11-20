@@ -223,7 +223,10 @@ class ConsentService:
         provided_text: str | None,
         effective_at: datetime,
     ) -> PatientConsent:
-        """Stage a ledger row for a caller that already verified the patient's clinic."""
+        """Append and flush in the caller's transaction.
+
+        The caller verifies the patient's clinic and owns commit or rollback.
+        """
         row = PatientConsent(
             clinic_id=clinic_id,
             patient_id=patient_id,
@@ -240,6 +243,7 @@ class ConsentService:
 
     @staticmethod
     async def publish_event(db: AsyncSession, row: PatientConsent) -> None:
+        """Publish to consent subscribers using the caller's session."""
         data = {
             "clinic_id": str(row.clinic_id),
             "consent_id": str(row.id),
