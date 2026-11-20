@@ -29,6 +29,14 @@ the scaffold could not infer.
 - `PUT /api/v1/agenda/appointments/{appointment_id}`
 - `PUT /api/v1/agenda/cabinets/{cabinet_id}`
 
+## Concurrent writes
+
+Appointment creation, updates and cabinet assignment take a PostgreSQL
+transaction-scoped advisory lock per clinic. Other scheduling modules can
+import `app.modules.agenda.locks.lock_clinic` and acquire it on the same
+session before inspecting availability or writing. The lock serializes
+cooperating writers and the existing overlap rules still apply.
+
 ## Frontend
 
 - `backend/app/modules/agenda/frontend/pages/appointments/index.vue` → `/appointments`

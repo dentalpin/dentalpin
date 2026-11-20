@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Serialize appointment creation, edits and cabinet assignment with a transaction-scoped clinic lock (#905).
+
 - Preserve non-preset appointment durations and omit unchanged start and end times when editing.
 
 - fix: picking treatments in the appointment modal set the duration to 30 min per treatment that had a price, ignoring the catalog's `default_duration_minutes`. It now sums the catalog durations (from the item or its treatment's catalog link).
