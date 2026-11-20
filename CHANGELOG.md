@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Payments:** the patient's Pagos panel shows payments on their own date in clinics behind UTC, not the day before (#939).
 - **Payments:** aging receivables buckets a patient by their oldest *unpaid* treatment, not their oldest treatment (#938).
 - **Reports:** the appointment lifecycle analytics select the period on the clinic's days (#933).
 - **Reports:** the scheduling report counts appointments on the clinic's days and weekdays (#932).

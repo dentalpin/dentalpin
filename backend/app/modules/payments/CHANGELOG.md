@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#939): the patient ledger anchors a payment entry at the clinic's midnight on its `payment_date`. It used UTC midnight, which is the evening before in zones behind UTC, so the Pagos panel showed every payment a day early.
 - fix(#938): aging receivables ages a patient by the oldest earned entry their net payments don't cover (FIFO, as pending charges does), in clinic days. It used the oldest entry overall, so a patient who owed only last week's treatment showed as 90+ days overdue.
 
 - fix(#909): `summary`, `refunds_report`, `trends` and `by_professional` cut refunds and earned revenue on the clinic's calendar days (`clinic_day_range`), like `payment_date`. They used UTC midnights, so a refund at 20:00 in a UTC-6 clinic was missing from that day's report and counted on the next day (or month).
