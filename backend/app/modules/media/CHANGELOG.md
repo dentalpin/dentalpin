@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Audit document and photo views in ten-minute windows and each explicit download separately. (#903).
+
 - fix(#834): the S3 backend's `retrieve` read the object body (`StreamingBody.read()`, the actual download) on the event loop; only `get_object` ran in the worker thread. A large file stalled every other request for the length of the download. Both now run in the thread.
 
 - feat: S3-compatible object storage backend (`storage/s3.py`) behind the

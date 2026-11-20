@@ -10,7 +10,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 from jose import JWTError
 from slowapi import Limiter
 from slowapi.util import get_remote_address
-from sqlalchemy import func, select
+from sqlalchemy import exists, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -37,7 +37,7 @@ from .dependencies import (
     require_permission,
 )
 from .mfa import MfaChallengeResponse, mfa_status, new_challenge, no_store
-from .models import Clinic, ClinicMembership, Role, User
+from .models import Clinic, ClinicMembership, Role, User, UserMfaTotp
 from .permissions import (
     CORE_PERMISSIONS,
     PROFESSIONAL_ROLES,
@@ -497,11 +497,10 @@ async def list_users(
     """List all users in the current clinic (admin only)."""
     # Fetch all memberships for this clinic with user data
     result = await db.execute(
-        select(ClinicMembership)
+        select(ClinicMembership, exists().where(UserMfaTotp.user_id == ClinicMembership.user_id))
         .options(selectinload(ClinicMembership.user))
         .where(ClinicMembership.clinic_id == ctx.clinic_id)
     )
-    memberships = result.scalars().all()
 
     users = [
         UserWithRoleResponse(
@@ -512,9 +511,10 @@ async def list_users(
             is_active=m.user.is_active,
             role=m.role,
             is_professional=m.is_professional,
+            mfa_enabled=mfa_enabled,
             created_at=m.user.created_at.isoformat(),
         )
-        for m in memberships
+        for m, mfa_enabled in result
     ]
 
     return PaginatedApiResponse(
@@ -812,6 +812,7 @@ async def update_user(
             is_active=user.is_active,
             role=membership.role,
             is_professional=membership.is_professional,
+            mfa_enabled=await db.get(UserMfaTotp, user.id) is not None,
             created_at=user.created_at.isoformat(),
         )
     )
