@@ -54,7 +54,16 @@ jobs:
           # workflow runs against a repo with no release.
           # Paginate past the default 30: a repo with many tags could otherwise
           # report zero v* tags and skip a check it should have run.
-          tags=$(gh api "repos/${GITHUB_REPOSITORY}/tags?per_page=100" --jq '[.[] | select(.name | startswith("v"))] | length' 2>/dev/null || echo 0)
+          # A failed lookup is not "no release". Treating an API error as zero
+          # tags would skip the check exactly when GitHub is flaky, and a
+          # monitor that goes quiet because its own probe broke is worse than
+          # no monitor at all. Fail loudly instead; the run log says which it
+          # was, and the alert job's throttle keeps that from spamming.
+          if ! tags=$(gh api "repos/${GITHUB_REPOSITORY}/tags?per_page=100" --jq '[.[] | select(.name | startswith("v"))] | length' 2>/dev/null); then
+            echo "  FAIL could not list tags (gh api failed) — the check could not run"
+            echo "status=fail" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
           if [ "${tags:-0}" -eq 0 ]; then
             echo "  skip no v* tag has been released yet, so there are no published images to verify"
             echo "       release.yml publishes images on a v* tag; this check starts verifying then"
@@ -112,10 +121,19 @@ jobs:
             last=$(gh issue view "$existing" --json comments \
               --jq '.comments[-1].createdAt // empty' 2>/dev/null)
             if [ -n "$last" ]; then
-              age_days=$(( ( $(date -u +%s) - $(date -u -d "$last" +%s) ) / 86400 ))
-              if [ "$age_days" -lt 7 ]; then
-                echo "already alerted ${age_days}d ago; staying quiet until it is a week old"
-                exit 0
+              # If the timestamp cannot be read, alert rather than guess. An
+              # unparseable date used to throw an arithmetic error, skip the
+              # throttle, and fall through to `gh issue create` — opening a
+              # duplicate issue right beside the open one.
+              last_epoch=$(date -u -d "$last" +%s 2>/dev/null) || last_epoch=""
+              if [ -n "$last_epoch" ]; then
+                age_days=$(( ( $(date -u +%s) - last_epoch ) / 86400 ))
+                if [ "$age_days" -lt 7 ]; then
+                  echo "already alerted ${age_days}d ago; staying quiet until it is a week old"
+                  exit 0
+                fi
+              else
+                echo "could not read the last comment time (${last}); alerting instead of guessing"
               fi
             fi
             gh issue comment "$existing" --body "Still failing: $RUN_URL"
