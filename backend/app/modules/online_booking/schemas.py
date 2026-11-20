@@ -6,9 +6,23 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
+from .models import default_reasons
+
+
+class ReasonInput(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+    id: str = Field(min_length=1, max_length=30, pattern=r"^[a-z0-9_]+$")
+    name_es: str = Field(min_length=1, max_length=80)
+    name_en: str = Field(min_length=1, max_length=80)
+    duration_minutes: int = Field(ge=5, le=480)
+    active: bool = True
+
 
 class SettingsInput(BaseModel):
     model_config = ConfigDict(extra="forbid")
+    reasons: list[ReasonInput] = Field(
+        default_factory=default_reasons, min_length=1, max_length=30, validate_default=True
+    )
     enabled: bool = False
     professional_id: UUID | None = None
     public_url: str | None = Field(default=None, max_length=500)
@@ -23,6 +37,15 @@ class SettingsInput(BaseModel):
     checkup_minutes: int | None = Field(default=None, ge=5, le=480)
     window_days: int = Field(default=30, ge=1, le=365)
     min_notice_minutes: int = Field(default=60, ge=0, le=525600)
+
+    @field_validator("reasons")
+    @classmethod
+    def unique_reasons(cls, value: list[ReasonInput]) -> list[ReasonInput]:
+        if len({reason.id for reason in value}) != len(value):
+            raise ValueError("Reason IDs must be unique")
+        if not any(reason.active for reason in value):
+            raise ValueError("At least one reason must be active")
+        return value
 
     @field_validator("public_url", "logo_url")
     @classmethod
@@ -43,6 +66,16 @@ class SettingsInput(BaseModel):
         return value
 
 
+class LogoInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+    content_type: Literal["image/png", "image/jpeg", "image/svg+xml"]
+    data: str = Field(max_length=1400000)
+
+
+class LogoState(BaseModel):
+    uploaded: bool
+
+
 class RequestInput(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     start_time: datetime
@@ -50,7 +83,7 @@ class RequestInput(BaseModel):
     contact_email: EmailStr
     contact_phone: str = Field(min_length=1, max_length=30, pattern=r"^\+?[0-9 ()-]+$")
     language: Literal["es", "en"] = "es"
-    reason: Literal["first_visit", "checkup"]
+    reason: str = Field(min_length=1, max_length=30, pattern=r"^[a-z0-9_]+$")
     website: str = Field(default="", max_length=200)
     altcha: str = Field(min_length=1, max_length=4096)
 
@@ -102,7 +135,7 @@ class PublicConfig(BaseModel):
     window_days: int
     branding: dict[str, str | None]
     timezone: str
-    reasons: list[str]
+    reasons: list[ReasonInput]
 
 
 class DayAvailability(BaseModel):
@@ -146,6 +179,8 @@ class BookingRequestOut(BaseModel):
     contact_email: str | None
     contact_phone: str | None
     reason: str
+    reason_name_es: str
+    reason_name_en: str
     default_duration_minutes: int
 
 

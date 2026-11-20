@@ -63,6 +63,26 @@
     "introEn": "Introduction in English",
     "saveSettings": "Save",
     "settingsSaved": "Public page settings saved.",
-    "settingsError": "Could not load or save settings. Check the URL and color."
+    "settingsError": "Could not load or save settings. Check the URL and color.",
+    "enabled": "Enable online booking",
+    "publicUrl": "Public page URL",
+    "assignedProfessional": "Responsible professional",
+    "slotInterval": "Start interval (minutes)",
+    "windowDays": "Booking window (days)",
+    "minimumNotice": "Minimum notice (minutes)",
+    "logoUpload": "Upload PNG, JPG or SVG logo",
+    "logoLimit": "Maximum 1 MB. An uploaded image takes precedence over the URL.",
+    "scheduleExceptions": "Configure holidays and closures under Clinic hours, Special dates. Online booking respects these exceptions.",
+    "visitReasons": "Visit reasons",
+    "addReason": "Add reason",
+    "nameEs": "Spanish name",
+    "nameEn": "English name",
+    "reasonDuration": "Duration (minutes)",
+    "reasonActive": "Active",
+    "moveUp": "Move reason up",
+    "moveDown": "Move reason down",
+    "previewPage": "View public page",
+    "logoRemoved": "Uploaded logo removed.",
+    "removeLogo": "Remove uploaded logo"
   }
 }

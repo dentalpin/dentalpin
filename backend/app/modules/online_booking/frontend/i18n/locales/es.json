@@ -63,6 +63,26 @@
     "introEn": "Introducción en inglés",
     "saveSettings": "Guardar",
     "settingsSaved": "Ajustes de la página pública guardados.",
-    "settingsError": "No se pudieron cargar o guardar los ajustes. Comprueba la URL y el color."
+    "settingsError": "No se pudieron cargar o guardar los ajustes. Comprueba la URL y el color.",
+    "enabled": "Activar reserva online",
+    "publicUrl": "URL de la página pública",
+    "assignedProfessional": "Profesional responsable",
+    "slotInterval": "Intervalo de inicio (minutos)",
+    "windowDays": "Ventana de reserva (días)",
+    "minimumNotice": "Aviso mínimo (minutos)",
+    "logoUpload": "Subir logo PNG, JPG o SVG",
+    "logoLimit": "Máximo 1 MB. La imagen subida tiene prioridad sobre la URL.",
+    "scheduleExceptions": "Los festivos y cierres se configuran en Horarios de la clínica, en Fechas especiales. La reserva respeta esas excepciones.",
+    "visitReasons": "Motivos de visita",
+    "addReason": "Añadir motivo",
+    "nameEs": "Nombre en español",
+    "nameEn": "Nombre en inglés",
+    "reasonDuration": "Duración (minutos)",
+    "reasonActive": "Activo",
+    "moveUp": "Subir motivo",
+    "moveDown": "Bajar motivo",
+    "previewPage": "Ver página pública",
+    "logoRemoved": "Logo subido eliminado.",
+    "removeLogo": "Quitar logo subido"
   }
 }

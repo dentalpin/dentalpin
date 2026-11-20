@@ -13,7 +13,9 @@ interface BookingRequest {
   contact_name: string
   contact_email: string
   contact_phone: string | null
-  reason: 'first_visit' | 'checkup'
+  reason: string
+  reason_name_es?: string
+  reason_name_en?: string
   default_duration_minutes: number
 }
 interface Resource { id: string, first_name?: string, last_name?: string, name?: string, is_active?: boolean }
@@ -31,16 +33,48 @@ const settingsOpen = ref(false)
 const settingsLoading = ref(false)
 const settingsReady = ref(false)
 const settingsError = ref('')
-interface SettingsForm { logo_url: string, accent_color: string, title_es: string, intro_es: string, title_en: string, intro_en: string, [key: string]: string | number | boolean | null }
-const settingsData = ref<SettingsForm>({ logo_url: '', accent_color: '', title_es: '', intro_es: '', title_en: '', intro_en: '' })
+interface VisitReason { id: string, name_es: string, name_en: string, duration_minutes: number, active: boolean }
+interface SettingsForm { enabled: boolean, public_url: string, professional_id: string, slot_minutes: number, window_days: number, min_notice_minutes: number, reasons: VisitReason[], logo_url: string, accent_color: string, title_es: string, intro_es: string, title_en: string, intro_en: string, first_visit_minutes: number | null, checkup_minutes: number | null }
+const settingsData = ref<SettingsForm>({ enabled: false, public_url: '', professional_id: '', slot_minutes: 30, window_days: 30, min_notice_minutes: 60, reasons: [], first_visit_minutes: null, checkup_minutes: null, logo_url: '', accent_color: '', title_es: '', intro_es: '', title_en: '', intro_en: '' })
+const logoFile = ref<File | null>(null)
+function addReason() {
+  settingsData.value.reasons.push({ id: `r_${crypto.randomUUID().replaceAll('-', '').slice(0, 24)}`, name_es: '', name_en: '', duration_minutes: 30, active: true })
+}
+function moveReason(index: number, delta: number) {
+  const list = settingsData.value.reasons
+  const target = index + delta
+  if (target < 0 || target >= list.length) return
+  ;[list[index], list[target]] = [list[target]!, list[index]!]
+}
+function chooseLogo(event: Event) {
+  logoFile.value = (event.target as HTMLInputElement).files?.[0] || null
+}
+async function removeLogo() {
+  try {
+    await api.del('/api/v1/online_booking/settings/logo')
+    logoFile.value = null
+    success.value = t('onlineBooking.logoRemoved')
+  } catch {
+    settingsError.value = t('onlineBooking.settingsError')
+  }
+}
+async function logoBase64(file: File): Promise<string> {
+  return await new Promise((resolve, reject) => {
+    const reader = new FileReader()
+    reader.onerror = () => reject(new Error('Read failed'))
+    reader.onload = () => resolve(String(reader.result).split(',')[1] || '')
+    reader.readAsDataURL(file)
+  })
+}
 async function openSettings() {
   settingsOpen.value = true
   settingsReady.value = false
   settingsError.value = ''
   try {
     const received = (await api.get<{ data: SettingsForm }>('/api/v1/online_booking/settings')).data
+    professionals.value = (await api.get<{ data: Resource[] }>('/api/v1/auth/professionals')).data
     settingsReady.value = true
-    settingsData.value = { ...received, logo_url: received.logo_url || '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
+    settingsData.value = { ...received, public_url: received.public_url || '', professional_id: received.professional_id || '', logo_url: received.logo_url || '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
   } catch {
     settingsError.value = t('onlineBooking.settingsError')
   }
@@ -50,9 +84,17 @@ async function saveSettings() {
   settingsLoading.value = true
   settingsError.value = ''
   try {
-    const data: Record<string, string | number | boolean | null> = { ...settingsData.value }
-    for (const key of ['logo_url', 'accent_color', 'title_es', 'intro_es', 'title_en', 'intro_en']) if (data[key] === '') data[key] = null
+    if (logoFile.value && (logoFile.value.size > 1024 * 1024 || !['image/png', 'image/jpeg', 'image/svg+xml'].includes(logoFile.value.type))) {
+      settingsError.value = t('onlineBooking.logoLimit')
+      return
+    }
+    const data = { ...settingsData.value }
+    for (const key of ['logo_url', 'accent_color', 'title_es', 'intro_es', 'title_en', 'intro_en', 'public_url', 'professional_id'] as const) if (data[key] === '') (data as unknown as Record<string, unknown>)[key] = null
     await api.put('/api/v1/online_booking/settings', data)
+    if (logoFile.value) {
+      await api.put('/api/v1/online_booking/settings/logo', { content_type: logoFile.value.type, data: await logoBase64(logoFile.value) })
+      logoFile.value = null
+    }
     settingsOpen.value = false
     success.value = t('onlineBooking.settingsSaved')
   } catch {
@@ -280,6 +322,139 @@ onMounted(load)
       <p class="text-sm text-muted">
         {{ t('onlineBooking.settingsHint') }}
       </p>
+      <div
+        v-if="settingsReady"
+        class="space-y-4"
+      >
+        <label class="flex items-center gap-2"><input
+          v-model="settingsData.enabled"
+          type="checkbox"
+        > {{ t('onlineBooking.enabled') }}</label>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <UFormField :label="t('onlineBooking.publicUrl')">
+            <UInput
+              v-model="settingsData.public_url"
+              type="url"
+              class="w-full"
+            />
+          </UFormField>
+          <UFormField :label="t('onlineBooking.assignedProfessional')">
+            <USelect
+              v-model="settingsData.professional_id"
+              :items="professionals.map(p => ({ label: `${p.first_name} ${p.last_name}`, value: p.id }))"
+              class="w-full"
+            />
+          </UFormField>
+          <UFormField :label="t('onlineBooking.slotInterval')">
+            <UInput
+              v-model.number="settingsData.slot_minutes"
+              type="number"
+              :min="5"
+              :max="480"
+              class="w-full"
+            />
+          </UFormField>
+          <UFormField :label="t('onlineBooking.windowDays')">
+            <UInput
+              v-model.number="settingsData.window_days"
+              type="number"
+              :min="1"
+              :max="365"
+              class="w-full"
+            />
+          </UFormField>
+          <UFormField :label="t('onlineBooking.minimumNotice')">
+            <UInput
+              v-model.number="settingsData.min_notice_minutes"
+              type="number"
+              :min="0"
+              :max="525600"
+              class="w-full"
+            />
+          </UFormField>
+          <UFormField :label="t('onlineBooking.logoUpload')">
+            <input
+              type="file"
+              accept="image/png,image/jpeg,image/svg+xml"
+              @change="chooseLogo"
+            ><p class="text-xs text-muted">
+              {{ t('onlineBooking.logoLimit') }}
+            </p><UButton
+              variant="link"
+              @click="removeLogo"
+            >
+              {{ t('onlineBooking.removeLogo') }}
+            </UButton>
+          </UFormField>
+        </div>
+        <p class="text-sm text-muted">
+          {{ t('onlineBooking.scheduleExceptions') }}
+        </p>
+        <div class="flex items-center justify-between">
+          <h3 class="font-semibold">
+            {{ t('onlineBooking.visitReasons') }}
+          </h3><UButton
+            variant="outline"
+            @click="addReason"
+          >
+            {{ t('onlineBooking.addReason') }}
+          </UButton>
+        </div>
+        <div
+          v-for="(reason, index) in settingsData.reasons"
+          :key="reason.id"
+          class="grid items-end gap-2 border-b border-default pb-3 sm:grid-cols-5"
+        >
+          <UFormField :label="t('onlineBooking.nameEs')">
+            <UInput
+              v-model="reason.name_es"
+              maxlength="80"
+            />
+          </UFormField>
+          <UFormField :label="t('onlineBooking.nameEn')">
+            <UInput
+              v-model="reason.name_en"
+              maxlength="80"
+            />
+          </UFormField>
+          <UFormField :label="t('onlineBooking.reasonDuration')">
+            <UInput
+              v-model.number="reason.duration_minutes"
+              type="number"
+              :min="5"
+              :max="480"
+            />
+          </UFormField>
+          <label class="flex gap-2"><input
+            v-model="reason.active"
+            type="checkbox"
+          > {{ t('onlineBooking.reasonActive') }}</label>
+          <div class="flex gap-1">
+            <UButton
+              variant="outline"
+              :disabled="index === 0"
+              :aria-label="t('onlineBooking.moveUp')"
+              @click="moveReason(index, -1)"
+            >
+              ↑
+            </UButton><UButton
+              variant="outline"
+              :disabled="index === settingsData.reasons.length - 1"
+              :aria-label="t('onlineBooking.moveDown')"
+              @click="moveReason(index, 1)"
+            >
+              ↓
+            </UButton>
+          </div>
+        </div>
+        <a
+          v-if="settingsData.public_url"
+          :href="settingsData.public_url"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="text-primary underline"
+        >{{ t('onlineBooking.previewPage') }}</a>
+      </div>
       <div class="grid gap-3 sm:grid-cols-2">
         <UFormField :label="t('onlineBooking.logoUrl')">
           <UInput
@@ -407,7 +582,7 @@ onMounted(load)
               </UBadge>
             </div>
             <p class="text-sm">
-              {{ formatDate(row.start_time) }} ({{ currentClinic?.timezone || 'UTC' }}) · {{ t(`onlineBooking.reason.${row.reason}`) }}
+              {{ formatDate(row.start_time) }} ({{ currentClinic?.timezone || 'UTC' }}) · {{ (locale === 'es' ? row.reason_name_es : row.reason_name_en) || t(`onlineBooking.reason.${row.reason}`) }}
             </p>
             <p class="break-all text-sm text-muted">
               {{ row.contact_email }}<span v-if="row.contact_phone"> · {{ row.contact_phone }}</span>

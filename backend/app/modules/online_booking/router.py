@@ -9,7 +9,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -27,6 +27,8 @@ from .schemas import (
     BookingRequestOut,
     ConfirmInput,
     ConfirmOut,
+    LogoInput,
+    LogoState,
     MessageOut,
     PatientSuggestion,
     PublicConfig,
@@ -63,6 +65,42 @@ async def update_settings(
     return ApiResponse(data=await BookingService.update_settings(db, ctx.clinic_id, data))
 
 
+@router.put("/settings/logo", response_model=ApiResponse[LogoState])
+async def upload_logo(
+    data: LogoInput,
+    ctx: CTX,
+    db: DB,
+    _: Annotated[None, Depends(require_permission("online_booking.settings"))],
+) -> ApiResponse[LogoState]:
+    await BookingService.upload_logo(db, ctx.clinic_id, data)
+    return ApiResponse(data=LogoState(uploaded=True))
+
+
+@router.delete("/settings/logo", response_model=ApiResponse[LogoState])
+async def delete_logo(
+    ctx: CTX,
+    db: DB,
+    _: Annotated[None, Depends(require_permission("online_booking.settings"))],
+) -> ApiResponse[LogoState]:
+    await BookingService.delete_logo(db, ctx.clinic_id)
+    return ApiResponse(data=LogoState(uploaded=False))
+
+
+@router.get("/public/{clinic_id}/logo")
+@limiter.limit("60/minute")
+async def public_logo(request: Request, clinic_id: UUID, db: DB) -> Response:
+    content, media_type = await BookingService.public_logo(db, clinic_id)
+    return Response(
+        content,
+        media_type=media_type,
+        headers={
+            "Content-Security-Policy": "default-src 'none'; sandbox",
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "no-store",
+        },
+    )
+
+
 @router.get("/public/{clinic_id}/config", response_model=ApiResponse[PublicConfig])
 @limiter.limit("60/minute")
 async def public_config(request: Request, clinic_id: UUID, db: DB) -> ApiResponse[PublicConfig]:
@@ -83,9 +121,10 @@ async def availability(
     day: date | None = None,
     from_day: date | None = None,
     days: int = Query(default=7, ge=1, le=31),
+    reason: str | None = Query(default=None, max_length=30),
 ) -> ApiResponse[Availability]:
     await consume_rate("availability-ip", _client(request), 240)
-    result = await BookingService.availability(db, clinic_id, day, from_day, days)
+    result = await BookingService.availability(db, clinic_id, day, from_day, days, reason)
     return ApiResponse(data=Availability(**result))
 
 

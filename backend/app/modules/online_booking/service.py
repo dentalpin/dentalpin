@@ -43,13 +43,77 @@ from .exceptions import (
     BookingValidationError,
 )
 from .models import BookingRequest, BookingSettings
-from .schemas import AcceptInput, RejectInput, RequestInput, SettingsInput
+from .schemas import AcceptInput, LogoInput, RejectInput, RequestInput, SettingsInput
 
 ACTIVE = ("scheduled", "confirmed", "checked_in", "in_treatment")
 CONFIRMATION_MINUTES = 10
 PAGE_SIZE = 50
 SLOT_TAKEN = "Time slot is no longer available"
 SLOT_OCCUPIED = "Time slot is occupied; choose another time"
+LOGO_MAX_BYTES = 1024 * 1024
+SVG_ELEMENTS = {
+    "svg", "g", "path", "rect", "circle", "ellipse", "line", "polyline", "polygon", "title", "desc",
+}  # fmt: skip
+
+
+def validate_logo(content_type: str, encoded: str) -> bytes:
+    """Decode and validate an uploaded logo; raise ``BookingValidationError``."""
+    import base64
+    import binascii
+    import io
+    import xml.etree.ElementTree as ET
+
+    from PIL import Image, UnidentifiedImageError
+
+    try:
+        raw = base64.b64decode(encoded, validate=True)
+        if not raw or len(raw) > LOGO_MAX_BYTES:
+            raise ValueError("Image must be at most 1 MiB")
+        if content_type == "image/svg+xml":
+            svg_content = re.sub(rb"^\s*<\?xml[^?]*\?>", b"", raw, count=1)
+            if b"<!" in svg_content or b"<?" in svg_content:
+                raise ValueError("Unsupported SVG markup")
+            root = ET.fromstring(svg_content)
+            if root.tag != "{http://www.w3.org/2000/svg}svg":
+                raise ValueError("Invalid SVG")
+            for element in root.iter():
+                if element.tag.split("}")[-1] not in SVG_ELEMENTS:
+                    raise ValueError("Unsupported SVG element")
+                for key, value in element.attrib.items():
+                    name = key.lower().split("}")[-1]
+                    if (
+                        name.startswith("on")
+                        or name in {"href", "style"}
+                        or any(
+                            x in value.lower()
+                            for x in ("url(", "javascript:", "data:", "http:", "https:")
+                        )
+                    ):
+                        raise ValueError("Unsupported SVG attribute")
+        else:
+            with Image.open(io.BytesIO(raw)) as image:
+                if image.format != {"image/png": "PNG", "image/jpeg": "JPEG"}[content_type]:
+                    raise ValueError("Image type does not match content")
+                if image.width * image.height > 16_000_000:
+                    raise ValueError("Image dimensions exceed limit")
+                image.verify()
+    except (
+        ValueError,
+        binascii.Error,
+        ET.ParseError,
+        UnidentifiedImageError,
+        Image.DecompressionBombError,
+        OSError,
+    ) as exc:
+        raise BookingValidationError("Invalid logo image") from exc
+    return raw
+
+
+def find_reason(config: BookingSettings, reason_id: str | None, *, active: bool = True):
+    return next(
+        (r for r in (config.reasons or []) if r["id"] == reason_id and (r["active"] or not active)),
+        None,
+    )
 
 
 def digest(value: str) -> str:
@@ -111,7 +175,12 @@ async def occupied(
 
 
 async def slots(
-    db: AsyncSession, clinic_id: UUID, config: BookingSettings, day: date, now: datetime
+    db: AsyncSession,
+    clinic_id: UUID,
+    config: BookingSettings,
+    day: date,
+    now: datetime,
+    duration_minutes: int | None = None,
 ) -> list[datetime]:
     professional_id = config.professional_id
     if professional_id is None:
@@ -123,7 +192,8 @@ async def slots(
     today = now.astimezone(zone).date()
     if day < today or day > today + timedelta(days=config.window_days):
         return []
-    duration = timedelta(minutes=config.slot_minutes)
+    duration = timedelta(minutes=duration_minutes or config.slot_minutes)
+    step = timedelta(minutes=config.slot_minutes)
     windows = [window for window in ranges if window.state == "open"]
     if not windows:
         return []
@@ -161,7 +231,7 @@ async def slots(
                 begin < cursor + duration and finish > cursor for begin, finish in busy
             ):
                 result.append(cursor)
-            cursor += duration
+            cursor += step
     return result
 
 
@@ -176,7 +246,11 @@ async def reserve(
     if not config.enabled or config.professional_id is None:
         raise BookingConflictError("Booking is disabled")
     item.professional_id = config.professional_id
-    item.end_time = item.start_time + timedelta(minutes=config.slot_minutes)
+    reason = find_reason(config, item.reason)
+    if reason is None:
+        raise BookingConflictError("Visit reason is no longer available")
+    duration_minutes = reason["duration_minutes"]
+    item.end_time = item.start_time + timedelta(minutes=duration_minutes)
     zone_name, _ = await AvailabilityService.resolve(
         db,
         clinic_id,
@@ -185,7 +259,7 @@ async def reserve(
         professional_id=config.professional_id,
     )
     day = item.start_time.astimezone(ZoneInfo(zone_name)).date()
-    allowed = await slots(db, clinic_id, config, day, now)
+    allowed = await slots(db, clinic_id, config, day, now, duration_minutes)
     if item.start_time.astimezone(UTC) not in allowed:
         raise BookingConflictError(SLOT_TAKEN)
     db.add(item)
@@ -281,19 +355,59 @@ class BookingService:
         if config is None:
             config = BookingSettings(clinic_id=clinic_id)
             db.add(config)
+        elif config.reasons and not {r["id"] for r in config.reasons} <= {
+            r.id for r in data.reasons
+        }:
+            raise BookingValidationError(
+                "Existing reasons must be retained; deactivate them instead"
+            )
         for key, value in data.model_dump().items():
             setattr(config, key, value)
+        for reason in data.reasons:
+            if reason.id in {"first_visit", "checkup"}:
+                setattr(config, f"{reason.id}_minutes", reason.duration_minutes)
         await db.flush()
         return data
 
     @staticmethod
+    async def upload_logo(db: AsyncSession, clinic_id: UUID, data: LogoInput) -> None:
+        raw = validate_logo(data.content_type, data.data)
+        await lock_clinic(db, clinic_id)
+        config = await db.get(BookingSettings, clinic_id)
+        if config is None:
+            raise BookingConflictError("Save booking settings first")
+        config.logo_data, config.logo_content_type = raw, data.content_type
+        await db.flush()
+
+    @staticmethod
+    async def delete_logo(db: AsyncSession, clinic_id: UUID) -> None:
+        await lock_clinic(db, clinic_id)
+        config = await db.get(BookingSettings, clinic_id)
+        if config:
+            config.logo_data = None
+            config.logo_content_type = None
+            await db.flush()
+
+    @staticmethod
+    async def public_logo(db: AsyncSession, clinic_id: UUID) -> tuple[bytes, str]:
+        config = await BookingService.public_settings(db, clinic_id)
+        if not config.logo_data or not config.logo_content_type:
+            raise BookingNotFoundError("Logo unavailable")
+        return config.logo_data, config.logo_content_type
+
+    @staticmethod
     async def public_config(db: AsyncSession, clinic_id: UUID) -> dict:
         config = await BookingService.public_settings(db, clinic_id)
+        logo = (
+            f"/api/v1/online_booking/public/{clinic_id}/logo"
+            if config.logo_data
+            else config.logo_url
+        )
         return {
             "slot_minutes": config.slot_minutes,
             "window_days": config.window_days,
             "branding": {
-                key: getattr(config, key)
+                key: logo if key == "logo_url" else getattr(config, key)
                 for key in (
                     "logo_url",
                     "accent_color",
@@ -304,7 +418,7 @@ class BookingService:
                 )
             },
             "timezone": await ClinicHoursService.get_clinic_timezone(db, clinic_id),
-            "reasons": ["first_visit", "checkup"],
+            "reasons": [reason for reason in config.reasons if reason["active"]],
         }
 
     @staticmethod
@@ -314,13 +428,18 @@ class BookingService:
         day: date | None,
         from_day: date | None,
         days: int,
+        reason: str | None = None,
     ) -> dict:
         config = await BookingService.public_settings(db, clinic_id)
         if (day is None) == (from_day is None):
             raise BookingValidationError("Provide day or from_day")
         now = datetime.now(UTC)
+        selected = find_reason(config, reason) if reason else None
+        if reason and selected is None:
+            raise BookingValidationError("Invalid visit reason")
+        duration_minutes = selected["duration_minutes"] if selected else None
         if day is not None:
-            starts = await slots(db, clinic_id, config, day, now)
+            starts = await slots(db, clinic_id, config, day, now, duration_minutes)
             return {
                 "starts": [start.isoformat() for start in starts],
                 "slot_minutes": config.slot_minutes,
@@ -330,7 +449,7 @@ class BookingService:
         entries = []
         for offset in range(days):
             date_value = from_day + timedelta(days=offset)
-            starts = await slots(db, clinic_id, config, date_value, now)
+            starts = await slots(db, clinic_id, config, date_value, now, duration_minutes)
             entries.append(
                 {"date": date_value.isoformat(), "starts": [start.isoformat() for start in starts]}
             )
@@ -445,27 +564,25 @@ class BookingService:
             )
         ).all()
         config = await db.get(BookingSettings, clinic_id)
-        items = [
-            {
-                "id": row.id,
-                "status": row.status,
-                "start_time": row.start_time,
-                "end_time": row.end_time,
-                "contact_name": row.contact_name,
-                "contact_email": row.contact_email,
-                "contact_phone": row.contact_phone,
-                "reason": row.reason,
-                "default_duration_minutes": (
-                    getattr(config, f"{row.reason}_minutes", None)
-                    or (
-                        config.slot_minutes
-                        if config
-                        else int((row.end_time - row.start_time).total_seconds() / 60)
-                    )
-                ),
-            }
-            for row in rows
-        ]
+        items = []
+        for row in rows:
+            reason = find_reason(config, row.reason, active=False) if config else None
+            minutes = int((row.end_time - row.start_time).total_seconds() / 60)
+            items.append(
+                {
+                    "id": row.id,
+                    "status": row.status,
+                    "start_time": row.start_time,
+                    "end_time": row.end_time,
+                    "contact_name": row.contact_name,
+                    "contact_email": row.contact_email,
+                    "contact_phone": row.contact_phone,
+                    "reason": row.reason,
+                    "reason_name_es": reason["name_es"] if reason else row.reason,
+                    "reason_name_en": reason["name_en"] if reason else row.reason,
+                    "default_duration_minutes": reason["duration_minutes"] if reason else minutes,
+                }
+            )
         return items, total or 0
 
     @staticmethod

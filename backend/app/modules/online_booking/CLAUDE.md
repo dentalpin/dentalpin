@@ -24,3 +24,7 @@
 - The independent `public_widget/` builds static assets for same-origin public APIs. ALTCHA v2 is mandatory for requests; see its README for the exact public proxy allowlist and iframe CSP.
 
 - Public appearance fields are configured through the permission-gated reception settings. Availability supports a bounded 31-day range; phone is required and normalized to E.164.
+
+- Administrators configure enabled state, professional, public URL, interval, notice, booking window and ordered bilingual reasons in settings. Never remove a reason already configured; deactivate it to preserve old requests.
+- Availability accepts an optional reason ID and checks its duration; the interval controls start-time increments. Clinic closures come from schedules.
+- Uploaded logos are limited to 1 MiB, checked by type and served from the clinic-scoped public logo endpoint with restrictive headers.

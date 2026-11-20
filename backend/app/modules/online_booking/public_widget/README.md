@@ -23,7 +23,8 @@ The page may be linked directly or embedded with an iframe from the clinic websi
 Proxy only these exact paths under the same origin, using a clinic UUID allowlist and method restrictions:
 
 - `GET /api/v1/online_booking/public/{clinic_id}/config`
-- `GET /api/v1/online_booking/public/{clinic_id}/availability?day=YYYY-MM-DD` or `?from_day=YYYY-MM-DD&days=1..31`
+- `GET /api/v1/online_booking/public/{clinic_id}/logo` (uploaded clinic logo)
+- `GET /api/v1/online_booking/public/{clinic_id}/availability?day=YYYY-MM-DD` or `?from_day=YYYY-MM-DD&days=1..31`, optionally with `reason={reason_id}`
 - `GET /api/v1/online_booking/public/{clinic_id}/challenge`
 - `POST /api/v1/online_booking/public/{clinic_id}/requests`
 - `POST /api/v1/online_booking/public/{clinic_id}/confirm`

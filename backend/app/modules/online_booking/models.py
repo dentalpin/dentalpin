@@ -3,11 +3,31 @@
 from datetime import datetime
 from uuid import UUID, uuid4
 
-from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, String
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Integer, LargeBinary, String
+from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base, TimestampMixin
+
+
+def default_reasons():
+    return [
+        {
+            "id": "first_visit",
+            "name_es": "Primera visita",
+            "name_en": "First visit",
+            "duration_minutes": 30,
+            "active": True,
+        },
+        {
+            "id": "checkup",
+            "name_es": "Revisión",
+            "name_en": "Check-up",
+            "duration_minutes": 30,
+            "active": True,
+        },
+    ]
 
 
 class BookingSettings(Base, TimestampMixin):
@@ -21,6 +41,9 @@ class BookingSettings(Base, TimestampMixin):
         PGUUID(as_uuid=True), ForeignKey("users.id")
     )
     logo_url: Mapped[str | None] = mapped_column(String(500))
+    logo_data: Mapped[bytes | None] = mapped_column(LargeBinary)
+    logo_content_type: Mapped[str | None] = mapped_column(String(50))
+    reasons: Mapped[list] = mapped_column(JSONB, default=default_reasons, nullable=False)
     accent_color: Mapped[str | None] = mapped_column(String(7))
     title_es: Mapped[str | None] = mapped_column(String(120))
     intro_es: Mapped[str | None] = mapped_column(String(300))
@@ -83,7 +106,6 @@ class BookingRequest(Base, TimestampMixin):
             "status IN ('pending_confirmation','confirmed','accepted','rejected','expired')",
             name="ck_ob_request_status",
         ),
-        CheckConstraint("reason IN ('first_visit','checkup')", name="ck_ob_request_reason"),
     )
 
 

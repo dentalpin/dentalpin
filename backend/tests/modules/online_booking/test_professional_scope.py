@@ -7,7 +7,7 @@ from uuid import uuid4
 from zoneinfo import ZoneInfo
 
 import pytest
-from booking_helpers import appointment, configure, professional, tomorrow_at
+from booking_helpers import appointment, configure, professional, proof_for, tomorrow_at
 from sqlalchemy import select
 
 from app.modules.agenda.models import Appointment, Cabinet
@@ -108,7 +108,9 @@ async def test_other_professionals_appointments_do_not_block(
             "start_time": start.isoformat(),
             "contact_name": "Synthetic",
             "contact_email": "scope@example.com",
+            "contact_phone": "+34600123456",
             "reason": "checkup",
+            "altcha": proof_for(test_clinic.id),
         },
     )
     assert response.status_code == 201, response.text

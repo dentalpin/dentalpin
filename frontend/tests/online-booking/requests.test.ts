@@ -29,7 +29,7 @@ describe('online booking reception', () => {
     put.mockReset()
     put.mockResolvedValue({ data: {} })
     get.mockImplementation(async (url: string) => {
-      if (url === '/api/v1/online_booking/settings') return { data: { enabled: false, slot_minutes: 30, logo_url: null, accent_color: null, title_es: 'Cita', intro_es: null, title_en: null, intro_en: null } }
+      if (url === '/api/v1/online_booking/settings') return { data: { enabled: false, slot_minutes: 30, window_days: 30, min_notice_minutes: 60, public_url: null, professional_id: null, reasons: [{ id: 'first_visit', name_es: 'Primera visita', name_en: 'First visit', duration_minutes: 30, active: true }], logo_url: null, accent_color: null, title_es: 'Cita', intro_es: null, title_en: null, intro_en: null } }
       if (url.includes('/patient-suggestions') || url.startsWith('/api/v1/patients')) return { data: [{ id: 'patient-1', first_name: 'Synthetic', last_name: 'Patient', email: 'synthetic@example.com' }] }
       if (url === '/api/v1/auth/professionals') return { data: [{ id: 'professional-1', first_name: 'Test', last_name: 'Dentist' }] }
       if (url === '/api/v1/agenda/cabinets') return { data: [{ id: 'cabinet-1', name: 'Room' }] }
@@ -108,6 +108,20 @@ describe('online booking reception', () => {
     await wrapper.find('input[maxlength="120"]').setValue('Reserva dental')
     await clickByText(wrapper, 'onlineBooking.saveSettings')
     await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, slot_minutes: 30, title_es: 'Reserva dental', logo_url: null })))
+  })
+
+  it('allows adding a visit reason and saving its duration', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.text()).toContain('onlineBooking.visitReasons'))
+    await clickByText(wrapper, 'onlineBooking.addReason')
+    const names = wrapper.findAll('input[maxlength="80"]')
+    await names[2]!.setValue('Tratamiento')
+    await names[3]!.setValue('Treatment')
+    const durations = wrapper.findAll('input[type="number"]')
+    await durations[durations.length - 1]!.setValue('75')
+    await clickByText(wrapper, 'onlineBooking.saveSettings')
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ reasons: expect.arrayContaining([expect.objectContaining({ name_es: 'Tratamiento', name_en: 'Treatment', duration_minutes: 75, active: true })]) })))
   })
 
   it('paginates the queue and announces successful rejection', async () => {

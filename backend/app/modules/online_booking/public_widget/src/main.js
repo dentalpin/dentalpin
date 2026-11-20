@@ -220,7 +220,7 @@ function render() {
   }
   selected = ''
   frame(
-    `<div class="hero"><h1 id="hero-title"></h1><p id="hero-intro"></p></div><section class="panel"><h2>1. ${t('choose')}</h2><div class="grid"><div><label for="reason">${t('reason')}</label><select id="reason"><option value="first_visit">${t('first_visit')}</option><option value="checkup">${t('checkup')}</option></select></div><div></div></div><div class="calendar-header"><button type="button" id="previous-week" aria-label="${t('previousWeek')}">‹</button><strong id="week-label"></strong><button type="button" id="next-week" aria-label="${t('nextWeek')}">›</button></div><div id="calendar" class="calendar" aria-label="${t('date')}"></div><h3>${t('slots')}</h3><p id="slot-message" class="note"></p><div id="slots" class="slots"></div></section><form id="form" class="panel"><h2>2. ${t('contact')}</h2><div class="grid"><div><label for="name">${t('name')}</label><input id="name" autocomplete="name" maxlength="120" required></div><div><label for="email">${t('email')}</label><input id="email" type="email" autocomplete="email" maxlength="254" required></div></div><label for="phone">${t('phone')}</label><input id="phone" type="tel" autocomplete="tel" maxlength="30" required aria-describedby="phone-hint"><small id="phone-hint">${t('phoneHint')}</small><input id="website" class="website" tabindex="-1" autocomplete="off" aria-hidden="true"><p class="note"><label class="consent"><input id="consent" type="checkbox" required><span><a id="privacy" target="_blank" rel="noopener noreferrer">${t('privacy')}</a></span></label></p><altcha-widget id="altcha" name="altcha" language="${language}"></altcha-widget><p id="error" class="error" role="alert"></p><a id="restart" class="hidden" href="${location.pathname}">${t('restart')}</a> <button id="submit" class="primary" type="submit">${t('submit')}</button></form>`
+    `<div class="hero"><h1 id="hero-title"></h1><p id="hero-intro"></p></div><section class="panel"><h2>1. ${t('choose')}</h2><div class="grid"><div><label for="reason">${t('reason')}</label><select id="reason"></select></div><div></div></div><div class="calendar-header"><button type="button" id="previous-week" aria-label="${t('previousWeek')}">‹</button><strong id="week-label"></strong><button type="button" id="next-week" aria-label="${t('nextWeek')}">›</button></div><div id="calendar" class="calendar" aria-label="${t('date')}"></div><h3>${t('slots')}</h3><p id="slot-message" class="note"></p><div id="slots" class="slots"></div></section><form id="form" class="panel"><h2>2. ${t('contact')}</h2><div class="grid"><div><label for="name">${t('name')}</label><input id="name" autocomplete="name" maxlength="120" required></div><div><label for="email">${t('email')}</label><input id="email" type="email" autocomplete="email" maxlength="254" required></div></div><label for="phone">${t('phone')}</label><input id="phone" type="tel" autocomplete="tel" maxlength="30" required aria-describedby="phone-hint"><small id="phone-hint">${t('phoneHint')}</small><input id="website" class="website" tabindex="-1" autocomplete="off" aria-hidden="true"><p class="note"><label class="consent"><input id="consent" type="checkbox" required><span><a id="privacy" target="_blank" rel="noopener noreferrer">${t('privacy')}</a></span></label></p><altcha-widget id="altcha" name="altcha" language="${language}"></altcha-widget><p id="error" class="error" role="alert"></p><a id="restart" class="hidden" href="${location.pathname}">${t('restart')}</a> <button id="submit" class="primary" type="submit">${t('submit')}</button></form>`
   )
   node('hero-title').textContent = branding[`title_${language}`] || t('title')
   node('hero-intro').textContent = branding[`intro_${language}`] || t('intro')
@@ -281,26 +281,45 @@ function render() {
       const part = name => parts.find(item => item.type === name)?.value
       firstDay = `${part('year')}-${part('month')}-${part('day')}`
       maxDays = response.data.window_days + 1
-      daysByDate = new Map()
-      weekOffset = 0
-      node('slot-message').textContent = t('loading')
-      for (let offset = 0; offset < maxDays; offset += 31) {
-        await ensureDays(offset, Math.min(31, maxDays - offset))
-        const first = [...daysByDate.entries()].find(
-          ([, starts]) => starts.length
-        )
-        if (first) {
-          chosenDay = first[0]
-          weekOffset = Math.floor(dayDistance(firstDay, chosenDay) / 7) * 7
-          break
-        }
+      const reasonSelect = node('reason')
+      reasonSelect.replaceChildren()
+      for (const reason of response.data.reasons) {
+        const option = document.createElement('option')
+        option.value = reason.id
+        option.textContent = reason[`name_${language}`]
+        reasonSelect.append(option)
       }
-      drawCalendar()
+      if (!reasonSelect.options.length) throw new Error('No active visit reasons')
+      reasonSelect.onchange = () => refreshAvailability().catch(() => error(t('error')))
+      await refreshAvailability()
     })
     .catch(() => {
       node('submit').disabled = true
       error(t('unavailable'))
     })
+}
+async function refreshAvailability() {
+  const selector = node('reason')
+  selector.disabled = true
+  selected = ''
+  chosenDay = ''
+  daysByDate = new Map()
+  weekOffset = 0
+  node('slot-message').textContent = t('loading')
+  try {
+    for (let offset = 0; offset < maxDays; offset += 31) {
+      await ensureDays(offset, Math.min(31, maxDays - offset))
+      const first = [...daysByDate.entries()].find(([, starts]) => starts.length)
+      if (first) {
+        chosenDay = first[0]
+        weekOffset = Math.floor(dayDistance(firstDay, chosenDay) / 7) * 7
+        break
+      }
+    }
+    drawCalendar()
+  } finally {
+    selector.disabled = false
+  }
 }
 function offsetDay(day, offset) {
   const date = new Date(`${day}T12:00:00Z`)
@@ -316,7 +335,7 @@ async function ensureDays(offset, count) {
   if (offset >= maxDays) return
   const first = offsetDay(firstDay, offset)
   const response = await api(
-    `/availability?from_day=${first}&days=${Math.min(count, maxDays - offset)}`
+    `/availability?from_day=${first}&days=${Math.min(count, maxDays - offset)}&reason=${encodeURIComponent(node('reason').value)}`
   )
   for (const day of response.data.days) daysByDate.set(day.date, day.starts)
 }
