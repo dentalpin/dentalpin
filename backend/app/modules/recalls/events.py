@@ -26,6 +26,8 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.core.utils.dates import clinic_zone_for
+
 from .models import Recall
 from .service import RecallClosedError, RecallService, RecallSettingsService
 
@@ -75,12 +77,18 @@ async def on_appointment_scheduled(data: dict[str, Any], *, db: AsyncSession) ->
     settings = await RecallSettingsService.get_or_create(db, clinic_id)
     if not settings.auto_link_on_appointment_scheduled:
         return
+    # ``start_time`` is an instant; ``due_month`` is a clinic calendar month.
+    # Its UTC date put a Jan 31 evening appointment in a UTC-6 clinic in
+    # February, and a Feb 1 morning one in a UTC+9 clinic in January.
+    if start_time.tzinfo is None:
+        start_time = start_time.replace(tzinfo=UTC)
+    zone = await clinic_zone_for(db, clinic_id)
     await RecallService.auto_link_for_appointment(
         db,
         clinic_id=clinic_id,
         patient_id=patient_id,
         appointment_id=appointment_id,
-        appointment_date=start_time.date(),
+        appointment_date=start_time.astimezone(zone).date(),
     )
 
 
