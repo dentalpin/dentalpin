@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use the shared template renderer and support restoring existing system text from Notifications settings (#950).
+
 - Add a clinic-selected WhatsApp adapter, pending tray and staff-declared sends (#875).
 - Add point-send actions on the patient and appointment views.
 - Expire appointment drafts and preserve the staff declaration in communication history.

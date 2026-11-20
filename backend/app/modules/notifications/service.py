@@ -113,40 +113,45 @@ class NotificationService:
     @staticmethod
     async def get_template(
         db: AsyncSession,
-        clinic_id: UUID,
+        clinic_id: UUID | None,
         template_key: str,
         locale: str = "es",
         channel: str = "email",
+        *,
+        require_text: bool = False,
     ) -> NotificationTemplate | None:
-        """Get a template by key, locale and channel.
+        """Resolve the active clinic row, then the matching system row.
 
-        Priority: clinic-specific > system template.
+        Passing no clinic selects only system content. Manual delivery can
+        require text so a provider-only mapping does not hide system copy.
         """
-        # First try clinic-specific
-        result = await db.execute(
+        query = select(NotificationTemplate).where(
+            NotificationTemplate.template_key == template_key,
+            NotificationTemplate.locale == locale,
+            NotificationTemplate.channel == channel,
+            NotificationTemplate.is_active.is_(True),
+        )
+        if require_text:
+            query = query.where(NotificationTemplate.body_text != "")
+        if clinic_id is not None:
+            template = await db.scalar(query.where(NotificationTemplate.clinic_id == clinic_id))
+            if template is not None:
+                return template
+        return await db.scalar(query.where(NotificationTemplate.clinic_id.is_(None)))
+
+    @staticmethod
+    async def get_clinic_template(
+        db: AsyncSession, clinic_id: UUID, template_key: str, locale: str, channel: str
+    ) -> NotificationTemplate | None:
+        """Look up an exact clinic key, including inactive rows."""
+        return await db.scalar(
             select(NotificationTemplate).where(
                 NotificationTemplate.clinic_id == clinic_id,
                 NotificationTemplate.template_key == template_key,
                 NotificationTemplate.locale == locale,
                 NotificationTemplate.channel == channel,
-                NotificationTemplate.is_active == True,  # noqa: E712
             )
         )
-        template = result.scalar_one_or_none()
-        if template:
-            return template
-
-        # Fallback to system template
-        result = await db.execute(
-            select(NotificationTemplate).where(
-                NotificationTemplate.clinic_id.is_(None),
-                NotificationTemplate.template_key == template_key,
-                NotificationTemplate.locale == locale,
-                NotificationTemplate.channel == channel,
-                NotificationTemplate.is_active == True,  # noqa: E712
-            )
-        )
-        return result.scalar_one_or_none()
 
     @staticmethod
     async def get_template_by_id(

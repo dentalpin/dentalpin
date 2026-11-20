@@ -1,32 +1,16 @@
 <script setup lang="ts">
+import { communicationLanguages } from '../../utils/communicationLanguages'
+
 const { t } = useI18n()
 const { settings, loading, saving, fetch, update } = useCommunicationsSettings()
 
-const language = ref<'es' | 'en' | 'fr' | 'pt' | 'pt-BR' | 'ta' | 'te' | 'hi' | 'de' | 'hu' | 'pl' | 'it' | 'ar'>('es')
-
-const SUPPORTED = ['en', 'fr', 'pt', 'pt-BR', 'ta', 'te', 'hi', 'de', 'hu', 'pl', 'it', 'ar'] as const
+const language = ref('es')
 
 watch(settings, (s) => {
-  if (s) language.value = (SUPPORTED.includes(s.language as typeof SUPPORTED[number]) ? s.language as typeof language.value : 'es')
+  if (s) language.value = communicationLanguages.find(item => item.value === s.language)?.value ?? 'es'
 })
 
 onMounted(fetch)
-
-const options = [
-  { value: 'es', label: 'Español' },
-  { value: 'en', label: 'English' },
-  { value: 'fr', label: 'Français' },
-  { value: 'pt', label: 'Português (PT)' },
-  { value: 'pt-BR', label: 'Português (BR)' },
-  { value: 'ta', label: 'தமிழ்' },
-  { value: 'te', label: 'తెలుగు' },
-  { value: 'hi', label: 'हिन्दी' },
-  { value: 'de', label: 'Deutsch' },
-  { value: 'hu', label: 'Magyar' },
-  { value: 'pl', label: 'Polski' },
-  { value: 'it', label: 'Italiano' },
-  { value: 'ar', label: 'العربية' }
-]
 
 async function save() {
   await update({ language: language.value })
@@ -47,7 +31,7 @@ async function save() {
       <UFormField :label="t('notifications.communications.language.label')">
         <USelect
           v-model="language"
-          :items="options"
+          :items="communicationLanguages"
           class="w-full max-w-xs"
         />
       </UFormField>

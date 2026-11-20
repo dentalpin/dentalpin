@@ -53,6 +53,9 @@ _Screen `/settings/notifications` of the `notifications` module._
 
 Clinic-wide notification configuration.
 
+Open [Templates](notification_templates.md) to edit email or manual
+WhatsApp text by message type and language.
+
 ### Channels (#287)
 
 The **Channels** card at the top decides which wire the clinic talks to
