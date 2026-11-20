@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#933): the appointment lifecycle analytics (waiting times, punctuality, duration, funnel) select the period on the clinic's days. The shared filter used the UTC date of `start_time`.
 - fix(#932): the scheduling report (summary, first visits, hours by professional, cabinet utilization) cuts the period on the clinic's days, and the day-of-week breakdown uses the clinic's weekday. It used the UTC date and weekday, so a Monday-evening appointment in a UTC-6 clinic counted as Tuesday.
 
 - fix(#919): the billing summary's `total_paid` cuts `InvoicePayment.created_at` on the clinic's calendar days, like `total_invoiced` does with the local `issue_date`. It used UTC midnights, so an evening payment in a UTC-6 clinic counted on the next day.

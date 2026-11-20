@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Reports:** the appointment lifecycle analytics select the period on the clinic's days (#933).
 - **Reports:** the scheduling report counts appointments on the clinic's days and weekdays (#932).
 - **Notifications:** the "budget accepted" message dates the acceptance on the clinic's day (#922).
 - **Schedules:** the copilot's free-slot search no longer offers booked evening slots on its last day (#921).
