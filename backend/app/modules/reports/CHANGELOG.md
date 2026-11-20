@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#932): the scheduling report (summary, first visits, hours by professional, cabinet utilization) cuts the period on the clinic's days, and the day-of-week breakdown uses the clinic's weekday. It used the UTC date and weekday, so a Monday-evening appointment in a UTC-6 clinic counted as Tuesday.
+
 - fix(#877): keep historical invoice totals on their original dates and exclude the invoices from collections, overdue lists and aging.
 
 - fix(#689): the numbering-gaps report groups sequentials by the invoice's `fiscal_year` (the year its number was drawn in) instead of the year the draft was created, so one year's counter can no longer fill another year's gap.
