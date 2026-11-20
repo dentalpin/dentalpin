@@ -7,10 +7,10 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.modules.agenda.locks import lock_clinic
 from app.modules.agenda.models import Appointment
 from app.modules.schedules.services.availability import AvailabilityService
 
-from .locking import lock_clinic
 from .models import BookingRequest, BookingSettings
 
 ACTIVE = ("scheduled", "confirmed", "checked_in", "in_treatment")

@@ -26,3 +26,5 @@ last_verified_commit: 0000000
 El menú muestra el número de solicitudes confirmadas pendientes. Revisa la fecha, el motivo y el estado. Pulsa **Aceptar** en una solicitud confirmada para abrir el formulario. Para crear la cita, selecciona profesional, gabinete opcional y duración (se propone la configurada para el motivo). Selecciona un paciente existente entre las coincidencias de teléfono o email, búscalo, o crea uno revisando los datos prellenados y editables. Pulsa **Crear cita**.
 
 Para rechazarla, escribe un mensaje que se enviará por correo. Si el hueco ya está ocupado, actualiza la lista; si sigue pendiente, recházala y pide al paciente que envíe otra solicitud para el nuevo horario.
+
+Al crear, confirmar y aceptar una solicitud se comprueba el horario frente a todas las citas activas y las retenciones vigentes de la clínica. La agenda permite crear o mover citas solapadas; si una cita posterior ocupa el hueco, la siguiente decisión de reserva rechazará el conflicto.

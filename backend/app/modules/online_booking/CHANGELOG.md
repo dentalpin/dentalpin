@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Share the agenda clinic lock and recheck active appointments and live holds on request, confirmation and acceptance.
+
 - Render the reception accept action with the primary button style.
 
 - Reception chooses professional, optional cabinet and duration, with per-reason defaults and clinic-wide conflict rechecks; patient contact fields are prefilled and matching contacts suggested.
@@ -18,4 +20,4 @@
 - Add transaction-scoped booking locks and recheck active agenda appointments.
 - Add expiring confirmation tokens, reception decisions and retention cleanup.
 - Add shared pseudonymous abuse counters and TLS-only email delivery.
-- Document the concurrent agenda writer limitation tracked by issue #905.
+- Document the booking and agenda overlap responsibilities in issue #905.

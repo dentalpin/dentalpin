@@ -9,8 +9,8 @@
 - Acceptance additionally checks patient and agenda write permissions.
 - Schedules supply opening hours; active appointments and live holds block slots.
 - Unconfirmed holds expire after ten minutes; confirmed holds end at decision or start.
-- The clinic advisory lock coordinates only this module's cooperating transactions.
-- Agenda writers do not acquire it; a concurrent agenda write can race (#905).
+- Booking and agenda writers use the shared transaction-scoped clinic lock from `agenda.locks`.
+- Booking rechecks all active clinic appointments and live holds on request, confirmation and acceptance; agenda itself does not reject overlaps (#905). A later agenda write can still create one.
 - Confirm tokens are random, hashed at rest, one-use, and transmitted in URL fragments.
 - Emails are encrypted in a module-owned transactional outbox; workers only send committed rows.
 - The production delivery path uses TLS SMTP without logging recipients or token URLs.

@@ -885,3 +885,269 @@ async def test_patient_suggestions_match_email_or_normalized_phone(
             f"/api/v1/online_booking/requests/{uuid4()}/patient-suggestions", headers=headers
         )
     ).status_code == 404
+
+
+@pytest.mark.parametrize(
+    "status,blocked",
+    [
+        ("scheduled", True),
+        ("confirmed", True),
+        ("checked_in", True),
+        ("in_treatment", True),
+        ("completed", False),
+        ("cancelled", False),
+        ("no_show", False),
+    ],
+)
+@pytest.mark.asyncio
+async def test_occupied_checks_intervals_and_active_states(
+    db_session, test_clinic, status, blocked
+):
+    from app.modules.online_booking.service import occupied
+
+    professional_id = await db_session.scalar(
+        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)
+    )
+    start = datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(10), UTC)
+    appointment = Appointment(
+        clinic_id=test_clinic.id,
+        professional_id=professional_id,
+        cabinet_id=None,
+        start_time=start + timedelta(minutes=15),
+        end_time=start + timedelta(minutes=45),
+        status=status,
+    )
+    db_session.add(appointment)
+    await db_session.flush()
+    assert (
+        await occupied(
+            db_session, test_clinic.id, start, start + timedelta(minutes=30), datetime.now(UTC)
+        )
+        is blocked
+    )
+    assert not await occupied(
+        db_session,
+        test_clinic.id,
+        start - timedelta(minutes=15),
+        start + timedelta(minutes=15),
+        datetime.now(UTC),
+    )
+    assert not await occupied(
+        db_session,
+        test_clinic.id,
+        start + timedelta(minutes=45),
+        start + timedelta(minutes=60),
+        datetime.now(UTC),
+    )
+
+
+@pytest.mark.parametrize("phase", ["request", "confirm", "accept"])
+@pytest.mark.parametrize(
+    "resource_case", ["same_professional", "same_cabinet", "different_resources", "null_cabinet"]
+)
+@pytest.mark.asyncio
+async def test_each_booking_phase_rejects_overlapping_agenda_resources(
+    client, db_session, auth_headers, test_clinic, open_hours, phase, resource_case
+):
+    from app.core.auth.service import hash_password
+    from app.modules.agenda.models import Cabinet
+    from app.modules.online_booking.router import digest
+
+    users = [
+        User(
+            id=uuid4(),
+            email=f"{uuid4()}@example.invalid",
+            password_hash=hash_password("Synthetic123!"),
+            first_name="Test",
+            last_name="Dentist",
+            is_active=True,
+        )
+        for _ in range(2)
+    ]
+    db_session.add_all(users)
+    await db_session.flush()
+    for user in users:
+        db_session.add(
+            ClinicMembership(
+                id=uuid4(),
+                user_id=user.id,
+                clinic_id=test_clinic.id,
+                role="dentist",
+                is_professional=True,
+            )
+        )
+    cabinets = [
+        Cabinet(
+            id=uuid4(),
+            clinic_id=test_clinic.id,
+            name=f"Room {n}",
+            color="#123456",
+            display_order=n,
+            is_active=True,
+        )
+        for n in range(2)
+    ]
+    db_session.add_all(cabinets)
+    db_session.add(
+        BookingSettings(
+            clinic_id=test_clinic.id,
+            enabled=True,
+            professional_id=users[0].id,
+            public_url="https://example.invalid/booking",
+            slot_minutes=30,
+            window_days=30,
+            min_notice_minutes=0,
+        )
+    )
+    start = datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(10), UTC)
+    token = "synthetic-token-" + uuid4().hex
+    if phase != "request":
+        booking = BookingRequest(
+            id=uuid4(),
+            clinic_id=test_clinic.id,
+            start_time=start,
+            end_time=start + timedelta(minutes=30),
+            status="pending_confirmation" if phase == "confirm" else "confirmed",
+            reason="checkup",
+            token_hash=digest(token) if phase == "confirm" else None,
+            confirmation_deadline=datetime.now(UTC) + timedelta(minutes=10),
+        )
+        db_session.add(booking)
+    conflict_professional = users[0].id if resource_case == "same_professional" else users[1].id
+    conflict_cabinet = {
+        "same_professional": cabinets[1].id,
+        "same_cabinet": cabinets[0].id,
+        "different_resources": cabinets[1].id,
+        "null_cabinet": None,
+    }[resource_case]
+    appointment = Appointment(
+        clinic_id=test_clinic.id,
+        professional_id=conflict_professional,
+        cabinet_id=conflict_cabinet,
+        start_time=start + timedelta(minutes=15),
+        end_time=start + timedelta(minutes=45),
+        status="scheduled",
+    )
+    db_session.add(appointment)
+    await db_session.commit()
+    base = f"/api/v1/online_booking/public/{test_clinic.id}"
+    if phase == "request":
+        result = await client.post(
+            base + "/requests",
+            json={
+                "start_time": start.isoformat(),
+                "contact_name": "Synthetic",
+                "contact_email": f"{uuid4()}@example.com",
+                "contact_phone": "+34600123456",
+                "reason": "checkup",
+            },
+        )
+    elif phase == "confirm":
+        result = await client.post(base + "/confirm", json={"token": token})
+    else:
+        result = await client.post(
+            f"/api/v1/online_booking/requests/{booking.id}/accept",
+            headers={**auth_headers, "X-Clinic-ID": str(test_clinic.id)},
+            json={
+                "first_name": "Synthetic",
+                "last_name": "Patient",
+                "professional_id": str(users[0].id),
+                "cabinet_id": str(cabinets[0].id),
+                "duration_minutes": 30,
+            },
+        )
+    assert result.status_code == 409, result.text
+    if phase == "confirm":
+        await db_session.refresh(booking)
+        assert booking.status == "pending_confirmation" and booking.token_hash == digest(token)
+        await db_session.delete(appointment)
+        await db_session.flush()
+        assert (await client.post(base + "/confirm", json={"token": token})).status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_confirmation_waits_for_concurrent_agenda_write_and_detects_conflict(
+    db_session, test_clinic
+):
+    from collections.abc import AsyncGenerator
+
+    from httpx import ASGITransport, AsyncClient
+
+    from app.config import settings
+    from app.database import get_db
+    from app.main import app
+    from app.modules.agenda.service import AppointmentService
+    from app.modules.online_booking.router import digest
+
+    professional_id = await db_session.scalar(
+        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)
+    )
+    start = datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(10), UTC)
+    token = "synthetic-token-" + uuid4().hex
+    db_session.add(
+        BookingSettings(
+            clinic_id=test_clinic.id,
+            enabled=True,
+            professional_id=professional_id,
+            public_url="https://example.invalid/booking",
+            slot_minutes=30,
+            window_days=30,
+            min_notice_minutes=0,
+        )
+    )
+    db_session.add(
+        BookingRequest(
+            id=uuid4(),
+            clinic_id=test_clinic.id,
+            start_time=start,
+            end_time=start + timedelta(minutes=30),
+            status="pending_confirmation",
+            reason="checkup",
+            token_hash=digest(token),
+            confirmation_deadline=datetime.now(UTC) + timedelta(minutes=10),
+        )
+    )
+    await db_session.commit()
+    engine = create_async_engine(settings.DATABASE_URL)
+    maker = async_sessionmaker(engine, expire_on_commit=False)
+    original = app.dependency_overrides[get_db]
+
+    async def separate_sessions() -> AsyncGenerator:
+        async with maker() as db:
+            try:
+                yield db
+                await db.commit()
+            except Exception:
+                await db.rollback()
+                raise
+
+    app.dependency_overrides[get_db] = separate_sessions
+    try:
+        async with maker() as agenda_db:
+            await AppointmentService.create_appointment(
+                agenda_db,
+                test_clinic.id,
+                {
+                    "professional_id": professional_id,
+                    "start_time": start + timedelta(minutes=15),
+                    "end_time": start + timedelta(minutes=45),
+                    "status": "scheduled",
+                },
+            )
+            async with AsyncClient(
+                transport=ASGITransport(app=app), base_url="http://test"
+            ) as parallel:
+                task = asyncio.create_task(
+                    parallel.post(
+                        f"/api/v1/online_booking/public/{test_clinic.id}/confirm",
+                        json={"token": token},
+                    )
+                )
+                with pytest.raises(TimeoutError):
+                    await asyncio.wait_for(asyncio.shield(task), timeout=0.25)
+                await agenda_db.commit()
+                response = await asyncio.wait_for(task, timeout=10)
+                assert response.status_code == 409, response.text
+    finally:
+        app.dependency_overrides[get_db] = original
+        await engine.dispose()

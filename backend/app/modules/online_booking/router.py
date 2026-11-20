@@ -16,12 +16,12 @@ from app.core.auth.dependencies import ClinicContext, get_clinic_context, requir
 from app.core.auth.models import User
 from app.core.auth.router import limiter
 from app.database import get_db
+from app.modules.agenda.locks import lock_clinic
 from app.modules.agenda.service import AppointmentService, CabinetService
 from app.modules.patients.models import Patient
 from app.modules.patients.service import PatientService
 from app.modules.schedules.services.clinic_hours import ClinicHoursService
 
-from .locking import lock_clinic
 from .models import BookingRequest, BookingSettings
 from .outbox import enqueue
 from .rate_limit import consume_rate
@@ -188,6 +188,8 @@ async def confirm(request: Request, clinic_id: UUID, data: ConfirmInput, db: DB)
         or item.start_time <= now
     ):
         raise HTTPException(410, "Confirmation link expired or invalid")
+    if await occupied(db, clinic_id, item.start_time, item.end_time, now, exclude=item.id):
+        raise HTTPException(409, "Time slot is occupied; choose another time")
     item.status = "confirmed"
     item.token_hash = None
     await db.flush()
