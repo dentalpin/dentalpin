@@ -323,6 +323,8 @@ onMounted(load)
             class="flex flex-wrap items-center gap-2"
           >
             <UButton
+              color="primary"
+              variant="solid"
               icon="i-lucide-save"
               :label="t('common.save')"
               :loading="pending === 'save'"
