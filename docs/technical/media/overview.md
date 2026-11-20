@@ -19,6 +19,8 @@ the scaffold could not infer.
 - `GET /api/v1/media/attachments`
 - `GET /api/v1/media/documents/{document_id}`
 - `GET /api/v1/media/documents/{document_id}/download`
+  Requests without a variant are recorded as views. Use `variant=full`
+  for an explicit download that creates a separate access event.
 - `GET /api/v1/media/patients/{patient_id}/documents`
 - `GET /api/v1/media/patients/{patient_id}/photos`
 - `PATCH /api/v1/media/documents/{document_id}/photo-metadata`

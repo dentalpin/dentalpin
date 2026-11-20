@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Use the separate admin permission `gdpr.access_log.read` for staff access review and export (#903).
+
 - Add a clinic-scoped staff access audit for selected patient reads, with
   per-patient and per-user views, CSV and configurable retention (#888).
 
