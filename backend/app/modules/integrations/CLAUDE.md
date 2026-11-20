@@ -42,7 +42,7 @@ transaction queues nothing), the scheduled `dispatch_outbox` tick
 before each network call so no row lock is held across I/O. Backoff:
 `min(60 * 2**(attempts-1), 3600)`, same formula as
 `CommunicationMessage`. A subscription auto-disables after
-`MAX_CONSECUTIVE_FAILURES` (10) consecutive delivery failures —
+`MAX_CONSECUTIVE_FAILURES` (25) consecutive delivery failures —
 `CommunicationMessage` has no equivalent, since it tracks per-message
 terminal state, not a per-subscriber circuit breaker.
 

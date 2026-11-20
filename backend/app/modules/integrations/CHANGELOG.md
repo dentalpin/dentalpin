@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#65): a webhook subscription now auto-disables after 25 consecutive delivery failures instead of 10. With the 1h backoff cap that is roughly a day of receiver downtime before a subscription is cut off. Dropped the empty `get_tools()` override; `BaseModule` already returns `[]`.
+
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
 
 - fix(#750): deleting a webhook subscription that had fired at least once answered 500, because `webhook_deliveries.subscription_id` has no `ondelete`. The subscription's deliveries are now deleted with it.
