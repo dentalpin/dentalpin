@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#973): the caller match is confirmed on the whole normalized number, as the module contract says, not on the last nine digits again. A foreign number or a six-digit extension sharing a patient's tail used to link that patient.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
