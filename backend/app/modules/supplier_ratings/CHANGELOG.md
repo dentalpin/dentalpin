@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix(#976): `PATCH /reviews/{id}` with `null` for `score` is a 422 (was a 500 from the NOT NULL column).
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix(#677): the `get_supplier_rating` / `create_supplier_review` tool
