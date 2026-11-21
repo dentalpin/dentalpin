@@ -523,6 +523,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.DOCUMENT_GENERATED`
 - **Publishers:**
+  - `documents` — `backend/app/modules/documents/consent_service.py`
   - `documents` — `backend/app/modules/documents/service.py`
 - **Subscribers:**
   - `activity_journal`

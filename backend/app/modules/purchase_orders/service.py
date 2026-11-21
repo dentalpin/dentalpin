@@ -62,10 +62,21 @@ class PurchaseOrderService:
         return await InventoryService.get_item(db, clinic_id, item_id)
 
     @staticmethod
-    async def get_order(db: AsyncSession, clinic_id: UUID, order_id: UUID) -> PurchaseOrder:
+    async def get_order(
+        db: AsyncSession, clinic_id: UUID, order_id: UUID, *, for_update: bool = False
+    ) -> PurchaseOrder:
+        """Load an order; ``for_update`` row-locks it for a check-then-write.
+
+        Every write that checks the order's status or its lines' quantities
+        locks the header first, so concurrent receipts, transitions and edits
+        of one order run one after another. ``populate_existing`` makes the
+        locked read overwrite a copy already in the session (#768).
+        """
         stmt = select(PurchaseOrder).where(
             PurchaseOrder.id == order_id, PurchaseOrder.clinic_id == clinic_id
         )
+        if for_update:
+            stmt = stmt.with_for_update().execution_options(populate_existing=True)
         order = (await db.execute(stmt)).scalar_one_or_none()
         if order is None:
             raise HTTPException(http_status.HTTP_404_NOT_FOUND, "Purchase order not found")
@@ -87,12 +98,15 @@ class PurchaseOrderService:
 
     @staticmethod
     async def list_lines(
-        db: AsyncSession, clinic_id: UUID, order_id: UUID
+        db: AsyncSession, clinic_id: UUID, order_id: UUID, *, fresh: bool = False
     ) -> list[PurchaseOrderLine]:
         stmt = select(PurchaseOrderLine).where(
             PurchaseOrderLine.purchase_order_id == order_id,
             PurchaseOrderLine.clinic_id == clinic_id,
         )
+        if fresh:
+            # Read under the order lock: overwrite any stale copy in the session.
+            stmt = stmt.execution_options(populate_existing=True)
         return list((await db.execute(stmt)).scalars().all())
 
     @staticmethod
@@ -252,7 +266,7 @@ class PurchaseOrderService:
     async def update_order(
         db: AsyncSession, clinic_id: UUID, order_id: UUID, payload: PurchaseOrderUpdate
     ) -> PurchaseOrder:
-        order = await PurchaseOrderService.get_order(db, clinic_id, order_id)
+        order = await PurchaseOrderService.get_order(db, clinic_id, order_id, for_update=True)
         if order.status == "received":
             raise HTTPException(
                 http_status.HTTP_409_CONFLICT, "received purchase orders cannot be edited"
@@ -272,7 +286,7 @@ class PurchaseOrderService:
         payload,
     ) -> PurchaseOrder:
         """Apply an explicit status change (draft -> sent -> confirmed -> cancelled)."""
-        order = await PurchaseOrderService.get_order(db, clinic_id, order_id)
+        order = await PurchaseOrderService.get_order(db, clinic_id, order_id, for_update=True)
         to_status = payload.status
         if to_status not in ALLOWED_TRANSITIONS.get(order.status, frozenset()):
             raise HTTPException(
@@ -317,7 +331,7 @@ class PurchaseOrderService:
         ``received`` when every line fulfils all commit or roll back
         together.
         """
-        order = await PurchaseOrderService.get_order(db, clinic_id, order_id)
+        order = await PurchaseOrderService.get_order(db, clinic_id, order_id, for_update=True)
         if order.status not in RECEIVABLE_STATUSES:
             raise HTTPException(
                 http_status.HTTP_409_CONFLICT,
@@ -325,7 +339,8 @@ class PurchaseOrderService:
             )
 
         lines_by_id: dict[UUID, PurchaseOrderLine] = {
-            line.id: line for line in await PurchaseOrderService.list_lines(db, clinic_id, order_id)
+            line.id: line
+            for line in await PurchaseOrderService.list_lines(db, clinic_id, order_id, fresh=True)
         }
         if not lines_by_id:
             raise HTTPException(http_status.HTTP_409_CONFLICT, "purchase order has no lines")

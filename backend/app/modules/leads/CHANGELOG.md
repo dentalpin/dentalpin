@@ -1,6 +1,9 @@
 # Changelog — leads module
 
 ## Unreleased
+
+- fix(#954): `convert` locks the lead and re-reads its status first. Two simultaneous conversions (a double click) both passed the "already converted" check and each created a patient.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 - Added user-manual screenshots for the lead queue and web form settings screens (EN/ES).
 

@@ -7,11 +7,14 @@ Every query filters by ``clinic_id`` (multi-tenancy, mandatory).
 from __future__ import annotations
 
 import asyncio
+import hashlib
+import secrets
 import tempfile
 import uuid
+from datetime import UTC, datetime
 from pathlib import Path
 
-from sqlalchemy import func, select
+from sqlalchemy import func, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -19,7 +22,11 @@ from app.core.events import event_bus
 from app.core.events.types import EventType
 from app.modules.patients.service import PatientService
 
-from .models import DocumentStatus, GeneratedDocument
+from .exceptions import (
+    ConsentConflictError,
+    ConsentValidationError,
+)
+from .models import ConsentEvidence, ConsentSigningLink, DocumentStatus, GeneratedDocument
 from .pdf import DocumentPDFService
 
 
@@ -65,6 +72,36 @@ def _write_pdf_bytes(target: Path, data: bytes) -> None:
     target.write_bytes(data)
 
 
+async def _require_unsigned_consent(db: AsyncSession, doc: GeneratedDocument) -> None:
+    """Guard a consent after its document row has been locked."""
+    if doc.document_type != "informed_consent":
+        return
+    signed = await db.scalar(
+        select(ConsentEvidence.id).where(
+            ConsentEvidence.clinic_id == doc.clinic_id,
+            ConsentEvidence.document_id == doc.id,
+            ConsentEvidence.purpose == "sign",
+        )
+    )
+    if signed is not None:
+        raise ConsentConflictError("Signed consents cannot be modified")
+
+
+async def _invalidate_consent_links(db: AsyncSession, doc: GeneratedDocument) -> None:
+    """Invalidate pending links in the same transaction as an edit/archive."""
+    if doc.document_type != "informed_consent":
+        return
+    await db.execute(
+        update(ConsentSigningLink)
+        .where(
+            ConsentSigningLink.clinic_id == doc.clinic_id,
+            ConsentSigningLink.document_id == doc.id,
+            ConsentSigningLink.used_at.is_(None),
+        )
+        .values(used_at=datetime.now(UTC))
+    )
+
+
 class DocumentService:
     """Service layer for document CRUD and PDF generation."""
 
@@ -101,14 +138,17 @@ class DocumentService:
         db: AsyncSession,
         clinic_id: uuid.UUID,
         document_id: uuid.UUID,
+        *,
+        lock: bool = False,
     ) -> GeneratedDocument | None:
         """Get a single document by ID, scoped to clinic."""
-        result = await db.execute(
-            select(GeneratedDocument).where(
-                GeneratedDocument.clinic_id == clinic_id,
-                GeneratedDocument.id == document_id,
-            )
+        stmt = select(GeneratedDocument).where(
+            GeneratedDocument.clinic_id == clinic_id,
+            GeneratedDocument.id == document_id,
         )
+        if lock:
+            stmt = stmt.with_for_update().execution_options(populate_existing=True)
+        result = await db.execute(stmt)
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -157,9 +197,32 @@ class DocumentService:
         status: str | None = None,
     ) -> GeneratedDocument | None:
         """Partial update of a document."""
-        doc = await DocumentService.get_document(db, clinic_id, document_id)
+        doc = await DocumentService.get_document(db, clinic_id, document_id, lock=True)
         if doc is None:
             return None
+        if doc.document_type == "informed_consent":
+            await _require_unsigned_consent(db, doc)
+            if title is not None and not title.strip():
+                raise ConsentValidationError("Consent title is required")
+            if content is not None:
+                text = content.get("text")
+                if (
+                    set(content) != {"text"}
+                    or not isinstance(text, str)
+                    or not text.strip()
+                    or len(text) > 30000
+                ):
+                    raise ConsentValidationError("Consent text is required")
+            if status == DocumentStatus.GENERATED:
+                raise ConsentValidationError("Generate a PDF using the generate endpoint")
+            if title is not None or content is not None or status is not None:
+                await _invalidate_consent_links(db, doc)
+            if title is not None or content is not None:
+                doc.file_path = None
+                if status != DocumentStatus.ARCHIVED and not (
+                    status is None and doc.status == DocumentStatus.ARCHIVED
+                ):
+                    doc.status = DocumentStatus.DRAFT
 
         if title is not None:
             doc.title = title
@@ -179,9 +242,12 @@ class DocumentService:
         document_id: uuid.UUID,
     ) -> bool:
         """Soft-delete a document (set status to archived)."""
-        doc = await DocumentService.get_document(db, clinic_id, document_id)
+        doc = await DocumentService.get_document(db, clinic_id, document_id, lock=True)
         if doc is None:
             return False
+        if doc.document_type == "informed_consent":
+            await _require_unsigned_consent(db, doc)
+            await _invalidate_consent_links(db, doc)
         doc.status = DocumentStatus.ARCHIVED
         await db.flush()
         return True
@@ -226,9 +292,14 @@ class DocumentService:
 
         Returns the updated document, or None if not found.
         """
-        doc = await DocumentService.get_document(db, clinic_id, document_id)
+        doc = await DocumentService.get_document(db, clinic_id, document_id, lock=True)
         if doc is None:
             return None
+        archived_consent = (
+            doc.document_type == "informed_consent" and doc.status == DocumentStatus.ARCHIVED
+        )
+        if doc.document_type == "informed_consent":
+            await _require_unsigned_consent(db, doc)
 
         pdf_bytes = await DocumentService._render_bytes(db, clinic_id, doc, locale=locale)
 
@@ -236,7 +307,7 @@ class DocumentService:
         target = _documents_root() / str(clinic_id) / f"{doc.id}.pdf"
         await asyncio.to_thread(_write_pdf_bytes, target, pdf_bytes)
 
-        doc.status = DocumentStatus.GENERATED
+        doc.status = DocumentStatus.ARCHIVED if archived_consent else DocumentStatus.GENERATED
         doc.file_path = relative_path
         await db.flush()
 
@@ -267,7 +338,28 @@ class DocumentService:
         generated, or its rendered file is missing on disk.
         """
         doc = await DocumentService.get_document(db, clinic_id, document_id)
-        if doc is None or doc.status != DocumentStatus.GENERATED or not doc.file_path:
+        if doc is None or doc.status != DocumentStatus.GENERATED:
+            return None
+        if doc.document_type == "informed_consent":
+            evidence = (
+                await db.execute(
+                    select(ConsentEvidence).where(
+                        ConsentEvidence.clinic_id == clinic_id,
+                        ConsentEvidence.document_id == document_id,
+                        ConsentEvidence.purpose == "sign",
+                    )
+                )
+            ).scalar_one_or_none()
+            if evidence is not None:
+                target = _documents_root() / str(clinic_id) / f"consent-{evidence.id}.pdf"
+                try:
+                    data = await asyncio.to_thread(target.read_bytes)
+                except (FileNotFoundError, IsADirectoryError, PermissionError):
+                    return None
+                if not secrets.compare_digest(hashlib.sha256(data).hexdigest(), evidence.sha256):
+                    raise ConsentConflictError("Evidence file integrity check failed")
+                return data
+        if not doc.file_path:
             return None
 
         target = _documents_root() / str(clinic_id) / f"{doc.id}.pdf"
