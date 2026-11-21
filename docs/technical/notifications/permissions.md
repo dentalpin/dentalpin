@@ -12,8 +12,8 @@ Returned by `NotificationsModule.get_permissions()`
 
 | Permission | Allows | Required by |
 |------------|--------|-------------|
-| `notifications.templates.read` | _Describe what this allows._ | _List the endpoints._ |
-| `notifications.templates.write` | _Describe what this allows._ | _List the endpoints._ |
+| `notifications.templates.read` | View templates and preview with synthetic data. | `GET /api/v1/notifications/templates`, `GET /api/v1/notifications/templates/{template_id}`, `GET /api/v1/notifications/templates/editor/{template_key}`, `POST /api/v1/notifications/templates/editor/{template_key}/preview` |
+| `notifications.templates.write` | Change clinic copy. The editor supports email and selected manual WhatsApp. | `POST /api/v1/notifications/templates`, `PUT/DELETE /api/v1/notifications/templates/{template_id}`, `PUT/DELETE /api/v1/notifications/templates/editor/{template_key}` |
 | `notifications.preferences.read` | _Describe what this allows._ | _List the endpoints._ |
 | `notifications.preferences.write` | _Describe what this allows._ | _List the endpoints._ |
 | `notifications.logs.read` | Read message logs, a patient's conversation thread, and which channels are configured for the clinic. | `GET /notifications/conversations/{patient_id}`, `GET /notifications/channels` (#207), plus the log-listing endpoints. |

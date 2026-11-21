@@ -20,7 +20,8 @@ Routes under `/api/v1/whatsapp_manual`.
 
 Select the manual adapter on the tray as a clinic admin. Use the existing
 Notifications settings to pick WhatsApp as the preferred automatic channel.
-Templates are managed through the Notifications template API. For each event
+Edit templates in Settings → Notifications → Templates or use the
+Notifications template API. For each event
 and patient language, supply `channel=whatsapp` and a plain-text `body_text`
 with the event's Jinja variables, for example `{{ patient_name }}` and
 `{{ appointment_date }}` for reminders. The adapter uses the clinic template

@@ -9,7 +9,15 @@ import logging
 from pathlib import Path
 from uuid import UUID
 
-from jinja2 import Environment, FileSystemLoader, select_autoescape
+from jinja2 import (
+    Environment,
+    FileSystemLoader,
+    StrictUndefined,
+    Template,
+    TemplateNotFound,
+    select_autoescape,
+)
+from jinja2.sandbox import ImmutableSandboxedEnvironment
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.email.providers.base import (
@@ -95,7 +103,7 @@ class EmailService:
 
         # Initialize Jinja2 environment for templates
         if TEMPLATES_DIR.exists():
-            self._jinja_env = Environment(
+            self._jinja_env = ImmutableSandboxedEnvironment(
                 loader=FileSystemLoader(str(TEMPLATES_DIR)),
                 autoescape=select_autoescape(["html", "xml"]),
                 trim_blocks=True,
@@ -305,12 +313,11 @@ class EmailService:
         )
 
         # Render subject if it contains template syntax
-        rendered_subject = subject
-        if "{{" in subject or "{%" in subject:
-            try:
-                rendered_subject = self._jinja_env.from_string(subject).render(context)
-            except Exception as e:
-                logger.warning(f"Failed to render subject template: {e}")
+        try:
+            rendered_subject = self.render_subject(subject, context)
+        except Exception as e:
+            logger.warning(f"Failed to render subject template: {e}")
+            rendered_subject = subject
 
         message = EmailMessage(
             to_email=to_email,
@@ -327,6 +334,40 @@ class EmailService:
 
         return await self.send(message, db=db, clinic_id=clinic_id)
 
+    def render_subject(self, subject: str, context: dict) -> str:
+        """Render a subject without invoking a delivery provider."""
+        if "{{" not in subject and "{%" not in subject:
+            return subject
+        return self.render_custom_template(subject, context)
+
+    def render_custom_template(self, source: str, context: dict, *, strict: bool = False) -> str:
+        """Render clinic-authored email content in the send-time sandbox."""
+        self._initialize()
+        if self._jinja_env is None:
+            raise RuntimeError("Email templates are unavailable")
+        env = self._jinja_env.overlay(undefined=StrictUndefined) if strict else self._jinja_env
+        return env.from_string(source).render(context)
+
+    def bundled_template(
+        self, template_key: str, locale: str, extension: str
+    ) -> tuple[Template, str] | None:
+        """Find the shipped file and its language using the email fallback order."""
+        self._initialize()
+        if not self._jinja_env:
+            return None
+        languages = [locale]
+        if locale == "pt-BR":
+            languages.append("pt")
+        languages.extend(("en", "default", ""))
+        for language in languages:
+            filename = f"{template_key}.{extension}"
+            path = f"{language}/{filename}" if language else filename
+            try:
+                return self._jinja_env.get_template(path), language or locale
+            except TemplateNotFound:
+                continue
+        return None
+
     def _render_template(
         self,
         template_key: str,
@@ -335,53 +376,18 @@ class EmailService:
         extension: str = "html",
         custom_template: str | None = None,
     ) -> str | None:
-        """Render a Jinja2 template.
-
-        Args:
-            template_key: Template identifier.
-            locale: Language code.
-            context: Template context.
-            extension: File extension (html or txt).
-            custom_template: Custom template string (overrides file).
-
-        Returns:
-            Rendered template string, or None if template not found.
-        """
-        # If custom template provided, use it directly
-        if custom_template:
-            try:
-                return self._jinja_env.from_string(custom_template).render(context)
-            except Exception as e:
-                logger.error(f"Failed to render custom template: {e}")
-                return None
-
-        if not self._jinja_env:
-            logger.warning("Jinja2 environment not initialized")
-            return None
-
-        # Try locale-specific template first, then base locale(if overlay locale),
-        # then fallback to default
-        template_paths = [
-            f"{locale}/{template_key}.{extension}",
-        ]
-        if locale == "pt-BR":
-            template_paths.append(f"pt/{template_key}.{extension}")
-        template_paths.extend(
-            [
-                f"en/{template_key}.{extension}",
-                f"default/{template_key}.{extension}",
-                f"{template_key}.{extension}",
-            ]
-        )
-
-        for template_path in template_paths:
-            try:
-                template = self._jinja_env.get_template(template_path)
-                # base.html reads ``locale`` for ``lang``/``dir``.
+        """Render explicit content or the bundled fallback."""
+        try:
+            if custom_template:
+                return self.render_custom_template(custom_template, context)
+            bundled = self.bundled_template(template_key, locale, extension)
+            if bundled:
+                template, _ = bundled
+                # base.html reads locale for lang/dir.
                 return template.render({"locale": locale, **context})
-            except Exception:
-                continue
-
+        except Exception as e:
+            logger.error(f"Failed to render email template: {e}")
+            return None
         logger.warning(f"Template not found: {template_key}.{extension} for locale {locale}")
         return None
 
