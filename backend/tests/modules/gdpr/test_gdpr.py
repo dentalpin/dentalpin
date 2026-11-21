@@ -128,6 +128,47 @@ async def test_dsr_status_transition_completes(
 
 
 @pytest.mark.asyncio
+async def test_dsr_reopened_is_no_longer_resolved(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """``resolved_at`` describes the current state (#993).
+
+    Moving a completed request back to ``in_progress`` kept its resolution
+    timestamp (only ``received`` cleared it), so an open request read as
+    resolved in the accountability export; re-sending the same terminal
+    status also moved the timestamp.
+    """
+    row = await GdprService.create_request(
+        db_session,
+        test_clinic.id,
+        GdprRequestCreate(
+            requester_name="Test Patient",
+            requester_email="patient@test.com",
+            request_type="access",
+        ),
+    )
+    done = await GdprService.update_request(db_session, row, GdprRequestUpdate(status="completed"))
+    first_resolution = done.resolved_at
+    assert first_resolution is not None
+
+    again = await GdprService.update_request(
+        db_session, done, GdprRequestUpdate(status="completed", notes="sent by post too")
+    )
+    assert again.resolved_at == first_resolution
+
+    reopened = await GdprService.update_request(
+        db_session, again, GdprRequestUpdate(status="in_progress")
+    )
+    assert reopened.status == "in_progress"
+    assert reopened.resolved_at is None
+
+    rejected = await GdprService.update_request(
+        db_session, reopened, GdprRequestUpdate(status="rejected")
+    )
+    assert rejected.resolved_at is not None
+
+
+@pytest.mark.asyncio
 async def test_consent_grant_withdraw_regrant_keeps_full_trail(
     db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
 ):
