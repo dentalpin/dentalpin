@@ -20,6 +20,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
 - **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).
+- **SDI (Italy):** a scarto can be re-sent once; a second click no longer builds a second file for the same invoice (#955).
 - **Reports:** productivity and visit-frequency count appointments on the clinic's days (#942).
 - **Reports:** the budget report counts budgets on the clinic's days (#941).
 - **Recalls:** the appointment auto-link matches recalls on the clinic's month, not the UTC one (#940).
