@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#984): a template line with a `catalog_ref` is saved instead of answering 500 — template items are dumped in JSON mode before they reach the JSONB column, on create and on update.
+
 - Audit authenticated prescription PDF downloads. (#903).
 
 - fix(#774): issue and cancel lock the prescription row and re-read it before checking its status. Two issues at once both passed the draft check, ran the country hook twice and published `prescription.issued` twice; the second now answers 422 (409 for cancel).
