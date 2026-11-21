@@ -13,7 +13,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from fastapi import HTTPException
 from fastapi import status as http_status
-from sqlalchemy import desc, select
+from sqlalchemy import desc, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership, User
@@ -137,6 +137,18 @@ class AttendanceService:
                 status_code=http_status.HTTP_422_UNPROCESSABLE_ENTITY,
                 detail="Punch time is in the future",
             )
+        # Serialize punches per member: the neighbour checks below read
+        # without a row to lock, so a double tap ran both checks before
+        # either insert and stored two consecutive punches of one kind.
+        # The lock is held until the request commits; the second punch then
+        # reads the first one and gets the 409.
+        await db.execute(
+            select(
+                func.pg_advisory_xact_lock(
+                    func.hashtextextended(f"staff_attendance:{clinic_id}:{user_id}", 0)
+                )
+            )
+        )
         # Alternation is positional, not tail-based: the new punch must
         # differ from both neighbours, so backdated inserts cannot slip
         # past the duplicate guard.

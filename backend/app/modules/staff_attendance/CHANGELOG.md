@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#953): punches are serialized per member (transaction-scoped advisory lock). A double tap passed the alternation check twice and stored two consecutive punches of the same kind.
+
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
 
 - feat(i18n): Telugu (`te`) locale for the module's frontend layer.
