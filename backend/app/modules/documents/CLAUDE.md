@@ -18,6 +18,32 @@ Routes mounted at `/api/v1/documents/`.
 - `GET    /documents/{id}/download`  — stream the generated PDF; 404 if never generated / file missing; `documents.read`
 - `GET/PUT /documents/settings/letterhead` — letterhead overrides stored namespaced under `clinic.settings["documents"]["letterhead"]`; gated by core `admin.clinic.read`/`admin.clinic.write`; unset keys fall back to the clinic profile
 
+## Informed consents
+
+Clinic-owned templates are snapshotted into consent documents. Staff can
+issue a 30-minute bearer link for signing or revocation. Link tokens are
+stored as hashes and the document row is locked before consuming a link.
+The token lives in the URL fragment and is sent to the API in the
+Authorization header, keeping it out of request paths and access logs.
+The original signature publishes the existing transactional `document.generated`
+event; revocation does not publish a second generation event.
+Unsigned consents may be edited, archived and rendered as previews; edits and
+archiving invalidate all pending links under the same document lock. Archived
+consents cannot receive new signing links. A signed consent cannot be edited,
+archived or regenerated; its persisted
+PDF is downloaded verbatim. Revocations have separate signatures, dates,
+PDFs and SHA-256 hashes, without rewriting the original. The public page
+uses no staff session. Evidence includes signer relationship, IP and user
+agent. The migration is on the documents branch and is reversible.
+
+The clinic-scoped `GET /consents/signature-status?patient_id=…` returns
+signature and revocation evidence state for the patient card and records a staff view.
+The signing link stores its PDF locale, defaulting to the clinic language;
+rendered signature times use the clinic timezone and localized relationship.
+`ConsentService` owns consent operations and raises domain errors; HTTP routes
+translate those errors. The backend renders the handoff QR using the first configured `ALLOWED_ORIGINS`
+entry; it returns the matching fragment URL and PNG data URL to staff.
+
 ## Dependencies
 
 `manifest.depends = ["patients"]` — reads patient demographics for the
@@ -129,3 +155,7 @@ Nuxt layer at `frontend/` with:
 ## CHANGELOG
 
 See `./CHANGELOG.md`.
+
+Staff evidence views and signed or revocation PDF downloads use the core
+`RecordPatientAccess` dependency from #903. The public bearer-link flow has
+no staff user; signing evidence records the signer, date, IP and user agent.

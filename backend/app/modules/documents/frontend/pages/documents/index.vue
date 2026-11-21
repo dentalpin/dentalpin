@@ -93,14 +93,14 @@
             class="flex items-center gap-1"
           >
             <UButton
-              v-if="doc.status === 'draft'"
+              v-if="doc.status === 'draft' && doc.document_type !== 'informed_consent'"
               variant="ghost"
               size="sm"
               icon="i-lucide-pencil"
               @click="openEditModal(doc)"
             />
             <UButton
-              v-if="doc.status === 'draft'"
+              v-if="doc.status === 'draft' && doc.document_type !== 'informed_consent'"
               variant="ghost"
               size="sm"
               icon="i-lucide-file-down"
@@ -114,6 +114,7 @@
               @click="downloadDocument(doc)"
             />
             <UButton
+              v-if="doc.document_type !== 'informed_consent'"
               variant="ghost"
               size="sm"
               icon="i-lucide-archive"
@@ -177,7 +178,8 @@ const documentTypeOptions = computed(() => [
   { label: t('documents.types.prescription'), value: 'prescription' },
   { label: t('documents.types.medical_certificate'), value: 'medical_certificate' },
   { label: t('documents.types.referral'), value: 'referral' },
-  { label: t('documents.types.radiology_request'), value: 'radiology_request' }
+  { label: t('documents.types.radiology_request'), value: 'radiology_request' },
+  { label: t('documents.types.informed_consent'), value: 'informed_consent' }
 ])
 
 const statusOptions = computed(() => [

@@ -131,7 +131,8 @@
       "name": "documents",
       "path": "/module_layers/documents/frontend",
       "routes": [
-        "/documents"
+        "/documents",
+        "/p/consent"
       ]
     },
     {

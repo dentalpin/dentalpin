@@ -25,6 +25,7 @@ from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
 from . import service
+from .exceptions import ConsentRoute
 from .schemas import (
     DocumentCreate,
     DocumentGenerateRequest,
@@ -33,7 +34,7 @@ from .schemas import (
     LetterheadSettings,
 )
 
-router = APIRouter()
+router = APIRouter(route_class=ConsentRoute)
 
 
 @router.get(

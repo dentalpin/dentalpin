@@ -7,7 +7,7 @@ from app.core.erasure.types import ErasureContributor
 from app.core.plugins import BaseModule, ModuleContext
 
 from . import lifecycle
-from .models import GeneratedDocument
+from .models import ConsentEvidence, ConsentSigningLink, ConsentTemplate, GeneratedDocument
 from .router import router
 from .tools import get_tools as _get_tools
 
@@ -52,10 +52,17 @@ class DocumentsModule(BaseModule):
     }
 
     def get_models(self) -> list:
-        return [GeneratedDocument]
+        return [GeneratedDocument, ConsentTemplate, ConsentSigningLink, ConsentEvidence]
 
     def get_router(self) -> APIRouter:
-        return router
+        from .consent import router as consent_router
+
+        combined = APIRouter()
+        combined.include_router(consent_router)
+        # The existing router contains an empty root path, which cannot be
+        # nested with include_router without a prefix. Preserve those routes.
+        combined.routes.extend(router.routes)
+        return combined
 
     def get_permissions(self) -> list[str]:
         return ["read", "write"]
