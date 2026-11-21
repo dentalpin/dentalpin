@@ -11,7 +11,9 @@
   receipts are stored verbatim too. Regeneration only after a scarto
   (`requeue` endpoint, or billing's edit-billing-party flow through
   `can_edit_billing_party` / `regenerate_after_party_change`), with the
-  same number and date and a new progressivo.
+  same number and date and a new progressivo. Only the invoice's newest
+  record can be regenerated: the rejected one keeps `rejected` as history,
+  so the requeue route checks `latest_record` (#955).
 - **Bollo is the issuer's cost.** `DatiBollo` is declared but never added
   to `ImportoTotaleDocumento`: the XML total must equal the invoice total.
 - **Schema fidelity.** `tests/modules/sdi_it/test_xml_builder.py` validates
