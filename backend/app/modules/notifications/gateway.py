@@ -576,35 +576,47 @@ class NotificationGateway:
         """Resolve a clinic patient by phone, ignoring formatting.
 
         Exact match first, then a last-9-digits match so ``+34 600 11 22 33``
-        finds a patient stored as ``600112233``. Clinic-scoped.
+        finds a patient stored as ``600112233``. Clinic-scoped. Only a single
+        match counts: a number shared by several patients (a family mobile)
+        resolves to ``None`` rather than to whichever row comes back first,
+        the same rule telephony's caller match follows (#965).
         """
         from app.modules.patients.models import Patient
 
         exact = (
-            await db.execute(
-                select(Patient).where(Patient.clinic_id == clinic_id, Patient.phone == phone)
+            (
+                await db.execute(
+                    select(Patient)
+                    .where(Patient.clinic_id == clinic_id, Patient.phone == phone)
+                    .limit(2)
+                )
             )
-        ).scalar_one_or_none()
+            .scalars()
+            .all()
+        )
         if exact:
-            return exact
+            return exact[0] if len(exact) == 1 else None
 
         digits = re.sub(r"\D", "", phone or "")
         if len(digits) < 6:
             return None
         suffix = digits[-9:]
-        return (
+        matches = (
             (
                 await db.execute(
-                    select(Patient).where(
+                    select(Patient)
+                    .where(
                         Patient.clinic_id == clinic_id,
                         Patient.phone.is_not(None),
                         func.regexp_replace(Patient.phone, r"\D", "", "g").like(f"%{suffix}"),
                     )
+                    .limit(2)
                 )
             )
             .scalars()
-            .first()
+            .all()
         )
+        return matches[0] if len(matches) == 1 else None
 
     # ------------------------------------------------------------------ helpers
     @staticmethod
