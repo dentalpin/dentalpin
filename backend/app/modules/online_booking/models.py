@@ -49,6 +49,11 @@ class BookingRequest(Base, TimestampMixin):
         index=True,
         nullable=False,
     )
+    # The professional configured when the request was made: its hold blocks
+    # only that professional's availability.
+    professional_id: Mapped[UUID] = mapped_column(
+        PGUUID(as_uuid=True), ForeignKey("users.id"), nullable=False
+    )
     start_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     end_time: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     status: Mapped[str] = mapped_column(String(24), default="pending_confirmation", nullable=False)

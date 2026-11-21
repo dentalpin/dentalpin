@@ -1,4 +1,11 @@
-"""Availability and transactional lifecycle for clinic-wide booking."""
+"""Availability and transactional lifecycle for online booking.
+
+Availability is that of the one professional configured in the settings: the
+``schedules`` module supplies their hours, and only their active appointments
+and live holds block a slot. Other professionals' appointments never do. On
+acceptance reception may pick another professional or a cabinet; the overlap
+check then runs for the chosen resources.
+"""
 
 from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
@@ -36,8 +43,19 @@ async def occupied(
     start: datetime,
     end: datetime,
     now: datetime,
+    *,
+    professional_id: UUID,
+    cabinet_id: UUID | None = None,
     exclude: UUID | None = None,
 ) -> bool:
+    """Whether the professional (or the chosen cabinet) is busy in the interval.
+
+    Active appointments block when they use the same professional or the same
+    cabinet; live holds belong to one professional and block only theirs.
+    """
+    resources = [Appointment.professional_id == professional_id]
+    if cabinet_id is not None:
+        resources.append(Appointment.cabinet_id == cabinet_id)
     appointment = await db.scalar(
         select(Appointment.id)
         .where(
@@ -45,6 +63,7 @@ async def occupied(
             Appointment.status.in_(ACTIVE),
             Appointment.start_time < end,
             Appointment.end_time > start,
+            or_(*resources),
         )
         .limit(1)
     )
@@ -52,6 +71,7 @@ async def occupied(
         return True
     query = select(BookingRequest.id).where(
         BookingRequest.clinic_id == clinic_id,
+        BookingRequest.professional_id == professional_id,
         live_hold(now),
         BookingRequest.start_time < end,
         BookingRequest.end_time > start,
@@ -64,7 +84,12 @@ async def occupied(
 async def slots(
     db: AsyncSession, clinic_id: UUID, config: BookingSettings, day: date, now: datetime
 ) -> list[datetime]:
-    tz_name, ranges = await AvailabilityService.resolve(db, clinic_id, day, day)
+    professional_id = config.professional_id
+    if professional_id is None:
+        return []
+    tz_name, ranges = await AvailabilityService.resolve(
+        db, clinic_id, day, day, professional_id=professional_id
+    )
     zone = ZoneInfo(tz_name)
     today = now.astimezone(zone).date()
     if day < today or day > today + timedelta(days=config.window_days):
@@ -79,6 +104,7 @@ async def slots(
         await db.execute(
             select(Appointment.start_time, Appointment.end_time).where(
                 Appointment.clinic_id == clinic_id,
+                Appointment.professional_id == professional_id,
                 Appointment.status.in_(ACTIVE),
                 Appointment.start_time < end,
                 Appointment.end_time > start,
@@ -89,6 +115,7 @@ async def slots(
         await db.execute(
             select(BookingRequest.start_time, BookingRequest.end_time).where(
                 BookingRequest.clinic_id == clinic_id,
+                BookingRequest.professional_id == professional_id,
                 live_hold(now),
                 BookingRequest.start_time < end,
                 BookingRequest.end_time > start,
@@ -114,13 +141,19 @@ async def reserve(
 ) -> None:
     await lock_clinic(db, clinic_id)
     now = datetime.now(UTC)
-    # Reload settings after waiting; an administrator may have disabled booking.
+    # Reload settings after waiting; an administrator may have disabled booking
+    # or changed the professional.
     await db.refresh(config)
-    if not config.enabled:
+    if not config.enabled or config.professional_id is None:
         raise ValueError("Booking is disabled")
+    item.professional_id = config.professional_id
     item.end_time = item.start_time + timedelta(minutes=config.slot_minutes)
     zone_name, _ = await AvailabilityService.resolve(
-        db, clinic_id, item.start_time.date(), item.start_time.date()
+        db,
+        clinic_id,
+        item.start_time.date(),
+        item.start_time.date(),
+        professional_id=config.professional_id,
     )
     day = item.start_time.astimezone(ZoneInfo(zone_name)).date()
     allowed = await slots(db, clinic_id, config, day, now)

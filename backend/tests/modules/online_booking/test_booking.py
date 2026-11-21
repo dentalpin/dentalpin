@@ -5,7 +5,7 @@ from datetime import UTC, datetime, time, timedelta
 from uuid import uuid4
 
 import pytest
-from booking_helpers import dispatch
+from booking_helpers import clinic_user, dispatch
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
@@ -135,9 +135,11 @@ async def test_request_confirm_accept_and_conflict(
 async def test_simultaneous_reservations_serialize(db_session, test_clinic, open_hours):
     from app.config import settings
 
+    professional_id = await clinic_user(db_session, test_clinic.id)
     config = BookingSettings(
         clinic_id=test_clinic.id,
         enabled=True,
+        professional_id=professional_id,
         slot_minutes=30,
         window_days=30,
         min_notice_minutes=0,
@@ -153,6 +155,7 @@ async def test_simultaneous_reservations_serialize(db_session, test_clinic, open
             cfg = await db.get(BookingSettings, test_clinic.id)
             row = BookingRequest(
                 clinic_id=test_clinic.id,
+                professional_id=professional_id,
                 start_time=start,
                 end_time=start + timedelta(minutes=30),
                 status="pending_confirmation",
@@ -240,11 +243,13 @@ async def test_cleanup_expiry_and_contact_retention(db_session, test_clinic):
     from app.modules.online_booking.tasks import cleanup
 
     now = datetime.now(UTC)
+    professional_id = await clinic_user(db_session, test_clinic.id)
 
     def item(status, start_delta, decided_delta=None):
         return BookingRequest(
             id=uuid4(),
             clinic_id=test_clinic.id,
+            professional_id=professional_id,
             status=status,
             reason="checkup",
             start_time=now + start_delta,
@@ -438,6 +443,7 @@ async def test_simultaneous_accept_creates_only_one_appointment(
     row = BookingRequest(
         id=uuid4(),
         clinic_id=test_clinic.id,
+        professional_id=professional.id,
         start_time=start,
         end_time=start + timedelta(minutes=30),
         status="confirmed",
@@ -549,11 +555,13 @@ async def test_staff_list_paginates_and_excludes_expired_requests(
     client, db_session, auth_headers, test_clinic, delivery
 ):
     now = datetime.now(UTC)
+    professional_id = await clinic_user(db_session, test_clinic.id)
 
     def request(status, start, deadline):
         return BookingRequest(
             id=uuid4(),
             clinic_id=test_clinic.id,
+            professional_id=professional_id,
             start_time=start,
             end_time=start + timedelta(minutes=30),
             status=status,
@@ -630,6 +638,7 @@ async def test_accept_validates_resources_and_extended_duration(
     item = BookingRequest(
         id=uuid4(),
         clinic_id=test_clinic.id,
+        professional_id=professional.id,
         start_time=start,
         end_time=start + timedelta(minutes=30),
         status="confirmed",
@@ -699,6 +708,7 @@ async def test_queue_count_and_visit_default(client, db_session, auth_headers, t
         db_session.add(
             BookingRequest(
                 clinic_id=test_clinic.id,
+                professional_id=await clinic_user(db_session, test_clinic.id),
                 start_time=start,
                 end_time=start + timedelta(minutes=30),
                 status=status,
@@ -726,6 +736,7 @@ async def test_patient_suggestions_match_email_or_normalized_phone(
     test_patient.phone = "+34 600-123-456"
     row = BookingRequest(
         clinic_id=test_clinic.id,
+        professional_id=await clinic_user(db_session, test_clinic.id),
         start_time=now + timedelta(days=1),
         end_time=now + timedelta(days=1, minutes=30),
         status="confirmed",
@@ -786,7 +797,12 @@ async def test_occupied_checks_intervals_and_active_states(
     await db_session.flush()
     assert (
         await occupied(
-            db_session, test_clinic.id, start, start + timedelta(minutes=30), datetime.now(UTC)
+            db_session,
+            test_clinic.id,
+            start,
+            start + timedelta(minutes=30),
+            datetime.now(UTC),
+            professional_id=professional_id,
         )
         is blocked
     )
@@ -796,6 +812,7 @@ async def test_occupied_checks_intervals_and_active_states(
         start - timedelta(minutes=15),
         start + timedelta(minutes=15),
         datetime.now(UTC),
+        professional_id=professional_id,
     )
     assert not await occupied(
         db_session,
@@ -803,6 +820,7 @@ async def test_occupied_checks_intervals_and_active_states(
         start + timedelta(minutes=45),
         start + timedelta(minutes=60),
         datetime.now(UTC),
+        professional_id=professional_id,
     )
 
 
@@ -811,7 +829,7 @@ async def test_occupied_checks_intervals_and_active_states(
     "resource_case", ["same_professional", "same_cabinet", "different_resources", "null_cabinet"]
 )
 @pytest.mark.asyncio
-async def test_each_booking_phase_rejects_overlapping_agenda_resources(
+async def test_each_booking_phase_checks_only_the_relevant_resources(
     client, db_session, auth_headers, test_clinic, open_hours, phase, resource_case
 ):
     from app.core.auth.service import hash_password
@@ -870,6 +888,7 @@ async def test_each_booking_phase_rejects_overlapping_agenda_resources(
         booking = BookingRequest(
             id=uuid4(),
             clinic_id=test_clinic.id,
+            professional_id=users[0].id,
             start_time=start,
             end_time=start + timedelta(minutes=30),
             status="pending_confirmation" if phase == "confirm" else "confirmed",
@@ -921,8 +940,16 @@ async def test_each_booking_phase_rejects_overlapping_agenda_resources(
                 "duration_minutes": 30,
             },
         )
-    assert result.status_code == 409, result.text
-    if phase == "confirm":
+    # The configured professional is users[0]. Request and confirmation only
+    # see that professional; acceptance also checks the chosen cabinet.
+    blocked = resource_case == "same_professional" or (
+        phase == "accept" and resource_case == "same_cabinet"
+    )
+    if blocked:
+        assert result.status_code == 409, result.text
+    else:
+        assert result.status_code in (200, 201), result.text
+    if phase == "confirm" and blocked:
         await db_session.refresh(booking)
         assert booking.status == "pending_confirmation" and booking.token_hash == digest(token)
         await db_session.delete(appointment)
@@ -964,6 +991,7 @@ async def test_confirmation_waits_for_concurrent_agenda_write_and_detects_confli
         BookingRequest(
             id=uuid4(),
             clinic_id=test_clinic.id,
+            professional_id=professional_id,
             start_time=start,
             end_time=start + timedelta(minutes=30),
             status="pending_confirmation",

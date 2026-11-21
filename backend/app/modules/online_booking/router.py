@@ -134,6 +134,7 @@ async def create_request(request: Request, clinic_id: UUID, data: RequestInput, 
     start = data.start_time.astimezone(UTC)
     item = BookingRequest(
         clinic_id=clinic_id,
+        professional_id=config.professional_id,
         start_time=start,
         end_time=start + timedelta(minutes=config.slot_minutes),
         status="pending_confirmation",
@@ -183,7 +184,15 @@ async def confirm(request: Request, clinic_id: UUID, data: ConfirmInput, db: DB)
         or item.start_time <= now
     ):
         raise HTTPException(410, "Confirmation link expired or invalid")
-    if await occupied(db, clinic_id, item.start_time, item.end_time, now, exclude=item.id):
+    if await occupied(
+        db,
+        clinic_id,
+        item.start_time,
+        item.end_time,
+        now,
+        professional_id=item.professional_id,
+        exclude=item.id,
+    ):
         raise HTTPException(409, "Time slot is occupied; choose another time")
     item.status = "confirmed"
     item.token_hash = None
@@ -337,9 +346,18 @@ async def accept(
         if not cabinet or not cabinet.is_active:
             raise HTTPException(422, "Invalid cabinet")
     end_time = row.start_time + timedelta(minutes=data.duration_minutes)
-    # Clinic-wide scope blocks any active appointment or live hold across all
-    # professionals and cabinets, including the selected resources.
-    if await occupied(db, ctx.clinic_id, row.start_time, end_time, now, exclude=row.id):
+    # Reception may choose another professional or a cabinet: check those
+    # resources, not the configured one. This request's own hold is excluded.
+    if await occupied(
+        db,
+        ctx.clinic_id,
+        row.start_time,
+        end_time,
+        now,
+        professional_id=data.professional_id,
+        cabinet_id=data.cabinet_id,
+        exclude=row.id,
+    ):
         raise HTTPException(409, "Time slot is occupied; choose another time")
     if data.patient_id:
         if not await AppointmentService.validate_patient_access(db, ctx.clinic_id, data.patient_id):

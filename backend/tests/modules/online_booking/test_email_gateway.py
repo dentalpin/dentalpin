@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from booking_helpers import configure, dispatch, professional, tomorrow_at
+from booking_helpers import clinic_user, configure, dispatch, professional, tomorrow_at
 from sqlalchemy import select
 
 from app.modules.notifications.models import ClinicNotificationSettings, CommunicationMessage
@@ -108,6 +108,7 @@ async def test_rolled_back_transaction_queues_no_email(db_session, test_clinic, 
     now = datetime.now(UTC)
     request = BookingRequest(
         clinic_id=test_clinic.id,
+        professional_id=await clinic_user(db_session, test_clinic.id),
         start_time=now + timedelta(days=1),
         end_time=now + timedelta(days=1, minutes=30),
         status="pending_confirmation",

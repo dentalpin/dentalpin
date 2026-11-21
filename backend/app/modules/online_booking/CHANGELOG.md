@@ -2,11 +2,13 @@
 
 ## Unreleased
 
-- Share the agenda clinic lock and recheck active appointments and live holds on request, confirmation and acceptance.
+- Scope availability to the configured professional: their `schedules` hours, their active appointments and their live holds. Other professionals' appointments no longer block a slot, and each request stores the professional it was made for (`professional_id`).
+- On acceptance, recheck overlaps for the professional and cabinet reception chooses (still under the shared `agenda:clinic:` lock; the hard overlap check stays in this module, #905).
+- Share the agenda clinic lock and recheck conflicts on request, confirmation and acceptance.
 
 - Render the reception accept action with the primary button style.
 
-- Reception chooses professional, optional cabinet and duration, with per-reason defaults and clinic-wide conflict rechecks; patient contact fields are prefilled and matching contacts suggested.
+- Reception chooses professional, optional cabinet and duration, with per-reason defaults and conflict rechecks; patient contact fields are prefilled and matching contacts suggested.
 - Show a permission-scoped count of confirmed pending requests in navigation.
 
 - Refresh locked rows before evaluating request decisions or dispatch state.

@@ -45,6 +45,7 @@ def upgrade() -> None:
         sa.Column(
             "clinic_id", sa.UUID(), sa.ForeignKey("clinics.id", ondelete="CASCADE"), nullable=False
         ),
+        sa.Column("professional_id", sa.UUID(), sa.ForeignKey("users.id"), nullable=False),
         sa.Column("start_time", sa.DateTime(timezone=True), nullable=False),
         sa.Column("end_time", sa.DateTime(timezone=True), nullable=False),
         sa.Column("status", sa.String(24), nullable=False),
