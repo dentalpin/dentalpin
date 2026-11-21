@@ -310,6 +310,7 @@ class ConsentService:
                 "patient": f"{patient.first_name} {patient.last_name}",
                 "clinic": clinic.name,
                 "purpose": link.purpose,
+                "locale": link.locale,
             }
         }
 

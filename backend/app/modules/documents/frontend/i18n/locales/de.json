@@ -129,7 +129,8 @@
         "generated": "Erstellt",
         "archived": "Archiviert"
       },
-      "qrTitle": "Zum Unterschreiben scannen"
+      "qrTitle": "Zum Unterschreiben scannen",
+      "signedToast": "Einwilligung unterschrieben"
     }
   }
 }

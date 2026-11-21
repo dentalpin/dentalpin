@@ -129,7 +129,8 @@
         "generated": "Létrehozva",
         "archived": "Archivált"
       },
-      "qrTitle": "Aláíráshoz olvassa be"
+      "qrTitle": "Aláíráshoz olvassa be",
+      "signedToast": "Hozzájárulás aláírva"
     }
   }
 }

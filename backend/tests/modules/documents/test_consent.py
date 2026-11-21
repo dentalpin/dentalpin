@@ -850,6 +850,11 @@ async def test_signing_link_validates_explicit_locale(
     assert response.status_code == 201
     link = (await db_session.execute(select(ConsentSigningLink))).scalar_one()
     assert link.locale == "en"
+    public = await client.get(
+        "/api/v1/documents/public/consents/current",
+        headers={"Authorization": f"Bearer {response.json()['data']['token']}"},
+    )
+    assert public.json()["data"]["locale"] == "en"  # the tablet page renders in it
     invalid = await client.post(
         f"/api/v1/documents/consents/{doc}/links?purpose=sign&locale=xx", headers=auth_headers
     )

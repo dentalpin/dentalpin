@@ -32,6 +32,30 @@ const qrOpen = ref(false)
 const templateOptions = computed(() => templates.value.map(item => ({ label: item.title, value: item.id })))
 const message = ref('')
 const busy = ref(false)
+const toast = useToast()
+// The tablet signs on another device: poll while the QR is open so the card
+// flips to signed/revoked and the dialog closes without a manual reload.
+const pendingLink = ref<{ id: string, purpose: 'sign' | 'revoke' } | null>(null)
+let pollTimer: ReturnType<typeof setInterval> | undefined
+watch(qrOpen, (open) => {
+  clearInterval(pollTimer)
+  if (!open) {
+    pendingLink.value = null
+    return
+  }
+  pollTimer = setInterval(async () => {
+    await refresh()
+    const pending = pendingLink.value
+    const doc = pending && documents.value.find(d => d.id === pending.id)
+    if (!doc || !pending) return
+    if (pending.purpose === 'sign' ? doc.signed && doc.evidenceAvailable : doc.revoked) {
+      qrOpen.value = false
+      message.value = ''
+      toast.add({ title: t(pending.purpose === 'sign' ? 'documents.consent.signedToast' : 'documents.consent.revoked'), color: 'success' })
+    }
+  }, 3000)
+})
+onUnmounted(() => clearInterval(pollTimer))
 
 async function refresh() {
   const [a, b, signatureStatus] = await Promise.all([
@@ -86,6 +110,7 @@ async function link(id: string, purpose: 'sign' | 'revoke') {
   const result = await api.post<{ data: { url: string, qr_data_url: string } }>(`/api/v1/documents/consents/${id}/links?purpose=${purpose}`, {})
   signingUrl.value = result.data.url
   qrImage.value = result.data.qr_data_url
+  pendingLink.value = { id, purpose }
   qrOpen.value = true
   message.value = t('documents.consent.linkHelp')
 }
@@ -136,8 +161,9 @@ async function downloadPreview(id: string) {
   a.click()
   URL.revokeObjectURL(url)
 }
-function copyLink() {
-  return navigator.clipboard.writeText(signingUrl.value)
+async function copyLink() {
+  await navigator.clipboard.writeText(signingUrl.value)
+  toast.add({ title: t('common.copied'), color: 'success' })
 }
 async function download(id: string, purpose: 'sign' | 'revoke') {
   const response = await api.raw(`/api/v1/documents/consents/${id}/evidence/${purpose}/download`)
@@ -156,10 +182,12 @@ onMounted(() => refresh())
 </script>
 
 <template>
-  <div class="space-y-3">
-    <h3 class="font-semibold">
-      {{ t('documents.consent.title') }}
-    </h3>
+  <UCard :ui="{ body: 'space-y-3' }">
+    <template #header>
+      <h3 class="font-semibold">
+        {{ t('documents.consent.title') }}
+      </h3>
+    </template>
     <label class="block text-sm">{{ t('documents.consent.template') }}</label>
     <USelect
       v-model="templateId"
@@ -193,12 +221,12 @@ onMounted(() => refresh())
       <div class="space-y-2 pt-2">
         <UInput
           v-model="title"
-          class="w-full rounded border p-2"
+          class="w-full"
           :placeholder="t('documents.consent.templateTitle')"
         />
         <UTextarea
           v-model="body"
-          class="w-full rounded border p-2"
+          class="w-full"
           :rows="6"
           :placeholder="t('documents.consent.templateText')"
         />
@@ -267,14 +295,14 @@ onMounted(() => refresh())
             {{ t('documents.consent.consentTitle') }}
             <UInput
               v-model="consentTitle"
-              class="w-full rounded border p-2"
+              class="w-full"
             />
           </label>
           <label class="block">
             {{ t('documents.consent.consentText') }}
             <UTextarea
               v-model="consentText"
-              class="w-full rounded border p-2"
+              class="w-full"
               :rows="6"
             />
           </label>
@@ -367,5 +395,5 @@ onMounted(() => refresh())
         </div>
       </li>
     </ul>
-  </div>
+  </UCard>
 </template>

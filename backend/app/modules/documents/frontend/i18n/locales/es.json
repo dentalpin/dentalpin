@@ -129,7 +129,8 @@
         "generated": "Generado",
         "archived": "Archivado"
       },
-      "qrTitle": "Escanear para firmar"
+      "qrTitle": "Escanear para firmar",
+      "signedToast": "Consentimiento firmado"
     }
   }
 }

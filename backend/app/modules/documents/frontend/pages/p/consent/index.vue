@@ -3,11 +3,11 @@ import SignatureCanvas from '~~/app/components/shared/SignatureCanvas.vue'
 
 definePageMeta({ layout: 'public' })
 useHead({ meta: [{ name: 'referrer', content: 'no-referrer' }] })
-const { t } = useI18n()
+const { t, locale, loadLocaleMessages } = useI18n()
 const config = useRuntimeConfig()
 const token = ref('')
 const endpoint = `${config.public.apiBaseUrl}/api/v1/documents/public/consents/current`
-interface PublicConsent { title: string, text: string, patient: string, clinic: string, purpose: string }
+interface PublicConsent { title: string, text: string, patient: string, clinic: string, purpose: string, locale?: string }
 const item = ref<PublicConsent | null>(null)
 const signer = ref('')
 const relation = ref('patient')
@@ -25,6 +25,17 @@ const busy = ref(false)
 const error = ref(false)
 const done = ref(false)
 let loadGeneration = 0
+// In memory only, like /p/budget: setLocale would persist the cookie and
+// overwrite the tablet's own language for the next visitor (#235).
+async function applyLinkLanguage(lang?: string) {
+  if (!lang || lang === locale.value) return
+  try {
+    await loadLocaleMessages(lang as never)
+    locale.value = lang as never
+  } catch {
+    // keep the current locale
+  }
+}
 async function loadConsent() {
   const generation = ++loadGeneration
   token.value = window.location.hash.slice(1)
@@ -40,6 +51,8 @@ async function loadConsent() {
   }
   try {
     const result = await $fetch<{ data: PublicConsent }>(endpoint, { credentials: 'omit', headers: { Authorization: `Bearer ${token.value}` } })
+    if (generation !== loadGeneration) return
+    await applyLinkLanguage(result.data?.locale)
     if (generation !== loadGeneration) return
     item.value = result.data
     signer.value = result.data?.patient || ''
