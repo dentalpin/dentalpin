@@ -161,7 +161,12 @@ class LeadService:
         flushes and publishes patient.created with db=db, so the timeline,
         notifications and integrations webhooks fire exactly as for a
         normal creation. Never re-implement it.
+
+        Locks the lead and re-reads its status first: two concurrent
+        conversions both passed the check on their unlocked copy and each
+        created a patient. The second now waits, sees ``converted`` and 409s.
         """
+        await db.refresh(lead, attribute_names=["status"], with_for_update=True)
         if lead.status == "converted":
             raise HTTPException(
                 status_code=http_status.HTTP_409_CONFLICT,
