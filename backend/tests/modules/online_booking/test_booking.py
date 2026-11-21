@@ -5,14 +5,28 @@ from datetime import UTC, datetime, time, timedelta
 from uuid import uuid4
 
 import pytest
-from booking_helpers import clinic_user, dispatch
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.core.auth.models import ClinicMembership, User
 from app.modules.agenda.models import Appointment
+from app.modules.notifications.gateway import NotificationGateway
+from app.modules.notifications.models import CommunicationMessage
+from app.modules.online_booking.exceptions import BookingConflictError
 from app.modules.online_booking.models import BookingRequest, BookingSettings
-from app.modules.online_booking.service import reserve
+from app.modules.online_booking.service import digest, reserve
+
+
+async def dispatch(db) -> int:
+    """Commit, then let the notifications outbox deliver what was queued."""
+    await db.commit()
+    return await NotificationGateway.dispatch_outbox(db)
+
+
+async def clinic_user(db, clinic_id):
+    return await db.scalar(
+        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == clinic_id)
+    )
 
 
 @pytest.mark.asyncio
@@ -166,7 +180,7 @@ async def test_simultaneous_reservations_serialize(db_session, test_clinic, open
                 await reserve(db, test_clinic.id, cfg, row, datetime.now(UTC))
                 await db.commit()
                 return "created"
-            except ValueError:
+            except BookingConflictError:
                 await db.rollback()
                 return "conflict"
 
@@ -600,6 +614,53 @@ async def test_staff_list_paginates_and_excludes_expired_requests(
 
 
 @pytest.mark.asyncio
+async def test_rolled_back_request_queues_no_email(db_session, test_clinic, open_hours, delivery):
+    """The gateway enqueues inside the caller's transaction: no commit, no mail."""
+    professional_id = await clinic_user(db_session, test_clinic.id)
+    config = BookingSettings(
+        clinic_id=test_clinic.id,
+        enabled=True,
+        professional_id=professional_id,
+        public_url="https://example.invalid/book",
+        slot_minutes=30,
+        window_days=30,
+        min_notice_minutes=0,
+    )
+    db_session.add(config)
+    await db_session.commit()
+    from app.modules.online_booking.schemas import RequestInput
+    from app.modules.online_booking.service import BookingService
+
+    start = datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(10), UTC)
+    await BookingService.create_request(
+        db_session,
+        test_clinic.id,
+        RequestInput(
+            start_time=start,
+            contact_name="Synthetic",
+            contact_email="rollback@example.com",
+            reason="checkup",
+        ),
+    )
+    assert await db_session.scalar(
+        select(CommunicationMessage.id).where(
+            CommunicationMessage.template_key == "booking_confirmation"
+        )
+    )
+    await db_session.rollback()
+    assert await dispatch(db_session) == 0
+    assert delivery == []
+    assert (
+        await db_session.scalar(
+            select(CommunicationMessage.id).where(
+                CommunicationMessage.template_key == "booking_confirmation"
+            )
+        )
+        is None
+    )
+
+
+@pytest.mark.asyncio
 async def test_accept_validates_resources_and_extended_duration(
     client, db_session, auth_headers, test_clinic
 ):
@@ -834,7 +895,6 @@ async def test_each_booking_phase_checks_only_the_relevant_resources(
 ):
     from app.core.auth.service import hash_password
     from app.modules.agenda.models import Cabinet
-    from app.modules.online_booking.router import digest
 
     users = [
         User(
@@ -969,7 +1029,6 @@ async def test_confirmation_waits_for_concurrent_agenda_write_and_detects_confli
     from app.database import get_db
     from app.main import app
     from app.modules.agenda.service import AppointmentService
-    from app.modules.online_booking.router import digest
 
     professional_id = await db_session.scalar(
         select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)

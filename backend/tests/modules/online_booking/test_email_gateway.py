@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from booking_helpers import clinic_user, configure, dispatch, professional, tomorrow_at
+from booking_helpers import configure, dispatch, professional, tomorrow_at
 from sqlalchemy import select
 
 from app.modules.notifications.models import ClinicNotificationSettings, CommunicationMessage
@@ -101,33 +101,28 @@ async def test_cleanup_cancels_a_queued_confirmation_for_a_closed_request(
 
 
 @pytest.mark.asyncio
-async def test_rolled_back_transaction_queues_no_email(db_session, test_clinic, delivery):
+async def test_rolled_back_request_queues_no_email(db_session, test_clinic, open_hours, delivery):
     """The gateway enqueues inside the caller's transaction: no commit, no mail."""
-    from app.modules.online_booking.service import queue_email
+    from app.modules.online_booking.schemas import RequestInput
+    from app.modules.online_booking.service import BookingService
 
-    now = datetime.now(UTC)
-    request = BookingRequest(
-        clinic_id=test_clinic.id,
-        professional_id=await clinic_user(db_session, test_clinic.id),
-        start_time=now + timedelta(days=1),
-        end_time=now + timedelta(days=1, minutes=30),
-        status="pending_confirmation",
-        reason="checkup",
-        contact_name="Synthetic",
-        contact_email="rollback@example.com",
-        confirmation_deadline=now + timedelta(minutes=10),
-    )
-    db_session.add(request)
-    await db_session.flush()
-    await queue_email(
+    configured = await professional(db_session, test_clinic.id)
+    await configure(db_session, test_clinic.id, configured.id)
+    await BookingService.create_request(
         db_session,
         test_clinic.id,
-        request,
-        "booking_confirmation",
-        confirm_url="https://example.invalid/book#token=synthetic",
-        expires_minutes=10,
+        RequestInput(
+            start_time=tomorrow_at(10),
+            contact_name="Synthetic",
+            contact_email="rollback@example.com",
+            reason="checkup",
+        ),
     )
-    assert await db_session.scalar(select(CommunicationMessage.id))
+    assert await db_session.scalar(
+        select(CommunicationMessage.id).where(
+            CommunicationMessage.template_key == "booking_confirmation"
+        )
+    )
     await db_session.rollback()
     assert await dispatch(db_session) == 0
     assert delivery == []

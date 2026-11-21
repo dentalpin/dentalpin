@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Move the create, confirm, accept and reject flows (and settings, inbox and suggestions) from the router into `BookingService`, following `ConsentService`; routes only parse input and domain errors (`BookingError` subclasses) map to HTTP in `BookingRoute`.
 - Scope availability to the configured professional: their `schedules` hours, their active appointments and their live holds. Other professionals' appointments no longer block a slot, and each request stores the professional it was made for (`professional_id`).
 - On acceptance, recheck overlaps for the professional and cabinet reception chooses (still under the shared `agenda:clinic:` lock; the hard overlap check stays in this module, #905).
 - Share the agenda clinic lock and recheck conflicts on request, confirmation and acceptance.
