@@ -101,6 +101,12 @@ shell), not from another module, so `manifest.depends` stays at
   stays in agenda. Don't write back into agenda from here.
 - **Removable invariant.** Any new code in this module must keep the
   uninstall round-trip green (`backend/tests/test_uninstall_roundtrip.py`).
+- **Shifts of one day never overlap.** The weekly and override schemas
+  reject overlapping shifts with a 422 (touching 09–14 / 14–18 is fine),
+  and `_sorted_shifts` merges any overlap already stored: the range
+  builder walks a cursor forward, and a shift inside another used to paint
+  the rest of the day closed while the analytics counted the inner shift's
+  minutes twice (#991).
 - **Analytics permission.** Receptionists read analytics; hygienists
   do not. Don't widen.
 
