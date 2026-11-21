@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership, User
 from app.core.auth.service import hash_password
+from app.core.events import EventType
 from app.modules.orthodontics.models import OrthoControl
 from app.modules.orthodontics.schemas import (
     OrthoCaseCreate,
@@ -23,6 +24,7 @@ from app.modules.orthodontics.service import (
     OrthoControlService,
     OrthoSettingsService,
 )
+from app.modules.patient_timeline.models import PatientTimeline
 
 
 async def _professional(db_session, clinic_id, role="dentist"):
@@ -720,3 +722,58 @@ async def test_removing_the_linked_plan_item_unlinks_the_case(
     await db_session.refresh(case)
     assert case.plan_item_id is None
     assert case.treatment_plan_id == plan.id
+
+
+@pytest.mark.asyncio
+async def test_case_creation_lands_on_the_patient_timeline(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    """The case events publish with ``db=db``, so the ficha entry commits with
+    the case it describes instead of on a session of its own."""
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    await db_session.commit()
+
+    rows = (
+        (
+            await db_session.execute(
+                select(PatientTimeline).where(
+                    PatientTimeline.patient_id == test_patient.id,
+                    PatientTimeline.event_type == EventType.ORTHODONTICS_CASE_CREATED,
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert len(rows) == 1
+    assert rows[0].source_id == case.id
+
+
+@pytest.mark.asyncio
+async def test_case_timeline_entry_rolls_back_with_the_case(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    """Atomicity: if the request fails after the service returns, the ficha
+    entry must not survive on its own.
+
+    Before the handlers took ``db``, this entry was committed by its own
+    session while the case it describes was still uncommitted — a failed
+    request left a timeline entry pointing at a case that never existed.
+    """
+    patient_id = test_patient.id  # capture before the rollback expires the ORM object
+    await OrthoCaseService.create(db_session, test_clinic.id, _case_data(patient_id))
+    await db_session.rollback()  # the request abandoned after the service returned
+
+    rows = (
+        (
+            await db_session.execute(
+                select(PatientTimeline).where(
+                    PatientTimeline.patient_id == patient_id,
+                    PatientTimeline.event_type == EventType.ORTHODONTICS_CASE_CREATED,
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert rows == []

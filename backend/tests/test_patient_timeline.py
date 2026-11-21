@@ -90,7 +90,8 @@ async def test_on_appointment_scheduled_inserts_visit(
         "start_time": datetime.now(UTC).isoformat(),
         "cabinet": "Gabinete 1",
     }
-    await timeline_events.on_appointment_scheduled(payload)
+    await timeline_events.on_appointment_scheduled(payload, db=db_session)
+    await db_session.commit()
 
     entries = await _entries_for(db_session, test_patient.id)
     assert len(entries) == 1
@@ -111,7 +112,8 @@ async def test_on_appointment_completed_inserts_visit(
         "end_time": datetime.now(UTC).isoformat(),
         "notes": "Sin incidencias",
     }
-    await timeline_events.on_appointment_completed(payload)
+    await timeline_events.on_appointment_completed(payload, db=db_session)
+    await db_session.commit()
 
     entries = await _entries_for(db_session, test_patient.id)
     assert len(entries) == 1
@@ -128,7 +130,8 @@ async def test_on_appointment_cancelled_inserts_visit(
         "appointment_id": str(uuid4()),
         "treatment_type": "Endodoncia",
     }
-    await timeline_events.on_appointment_cancelled(payload)
+    await timeline_events.on_appointment_cancelled(payload, db=db_session)
+    await db_session.commit()
     entries = await _entries_for(db_session, test_patient.id)
     assert len(entries) == 1
     assert "cancelada" in entries[0].title.lower()
@@ -143,7 +146,8 @@ async def test_on_appointment_no_show_inserts_visit(
         "appointment_id": str(uuid4()),
         "start_time": datetime.now(UTC).isoformat(),
     }
-    await timeline_events.on_appointment_no_show(payload)
+    await timeline_events.on_appointment_no_show(payload, db=db_session)
+    await db_session.commit()
     entries = await _entries_for(db_session, test_patient.id)
     assert len(entries) == 1
     assert entries[0].event_type == EventType.APPOINTMENT_NO_SHOW
@@ -390,8 +394,8 @@ async def test_event_bus_dispatch_reaches_handler(
     ``(self, db, data)`` bug.
 
     ``db=`` is required because other modules subscribe to this event
-    transactionally (ADR 0019); timeline's own handlers stay own-session and
-    ignore it.
+    transactionally (ADR 0019); the appointment lifecycle handlers take the
+    publisher's session rather than opening their own.
     """
     payload = {
         **_base_payload(test_clinic, test_patient),
@@ -400,12 +404,88 @@ async def test_event_bus_dispatch_reaches_handler(
         "end_time": datetime.now(UTC).isoformat(),
     }
     await event_bus.publish(EventType.APPOINTMENT_COMPLETED, payload, db=db_session)
+    # The handler writes in this transaction, so the row becomes visible to
+    # another session only after we commit — that is the contract now.
+    await db_session.commit()
 
     # ``publish`` awaits every subscriber inline, so the timeline row
     # is already written by the time we get here.
     entries = await _entries_for(db_session, test_patient.id)
     assert len(entries) >= 1
     assert entries[0].event_type == EventType.APPOINTMENT_COMPLETED
+
+
+@pytest.mark.asyncio
+async def test_confirmed_lands_when_the_patient_is_not_committed_yet(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """A booking can create the patient and confirm the appointment in one
+    transaction, so the entry must be written inside that transaction.
+
+    A handler that opens its own session cannot see the uncommitted patient:
+    the FK on ``patient_timeline.patient_id`` fails, the insert rolls back and
+    the visit disappears from the ficha without a trace. This test creates the
+    patient without committing, publishes, then commits — before the handler
+    was made transactional it left zero entries behind.
+    """
+    patient = Patient(
+        id=uuid4(),
+        clinic_id=test_clinic.id,
+        first_name="Uncommitted",
+        last_name="Patient",
+        email="uncommitted@test.com",
+        phone="+34600000001",
+    )
+    db_session.add(patient)
+    await db_session.flush()  # the row exists, but only inside this transaction
+
+    payload = {
+        **_base_payload(test_clinic, patient),
+        "appointment_id": str(uuid4()),
+        "treatment_type": "Revisión",
+        "changed_at": datetime.now(UTC).isoformat(),
+    }
+    await event_bus.publish(EventType.APPOINTMENT_CONFIRMED, payload, db=db_session)
+    await db_session.commit()
+
+    entries = await _entries_for(db_session, patient.id)
+    assert [e.event_type for e in entries] == [EventType.APPOINTMENT_CONFIRMED]
+
+
+@pytest.mark.asyncio
+async def test_scheduled_lands_when_the_patient_is_not_committed_yet(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """The booking path: create_appointment publishes APPOINTMENT_SCHEDULED
+    with ``db=db`` while the patient it just created is still uncommitted.
+
+    The timeline entry must share that transaction. A handler on its own
+    session cannot see the uncommitted patient, the FK on
+    ``patient_timeline.patient_id`` fails, and the visit never reaches the
+    ficha. Before the handler was made transactional this left zero entries.
+    """
+    patient = Patient(
+        id=uuid4(),
+        clinic_id=test_clinic.id,
+        first_name="Uncommitted",
+        last_name="Booking",
+        email="uncommitted-booking@test.com",
+        phone="+346****0002",
+    )
+    db_session.add(patient)
+    await db_session.flush()  # exists only inside this transaction
+
+    payload = {
+        **_base_payload(test_clinic, patient),
+        "appointment_id": str(uuid4()),
+        "treatment_type": "Limpieza",
+        "start_time": datetime.now(UTC).isoformat(),
+    }
+    await event_bus.publish(EventType.APPOINTMENT_SCHEDULED, payload, db=db_session)
+    await db_session.commit()
+
+    entries = await _entries_for(db_session, patient.id)
+    assert [e.event_type for e in entries] == [EventType.APPOINTMENT_SCHEDULED]
 
 
 # ---------------------------------------------------------------------------
@@ -427,7 +507,8 @@ async def test_endpoint_returns_entries(
         "treatment_type": "Limpieza",
         "end_time": datetime.now(UTC).isoformat(),
     }
-    await timeline_events.on_appointment_completed(payload)
+    await timeline_events.on_appointment_completed(payload, db=db_session)
+    await db_session.commit()
 
     response = await client.get(
         f"/api/v1/patient_timeline/patients/{test_patient.id}",
@@ -453,7 +534,8 @@ async def test_endpoint_filters_by_category(
         "treatment_type": "Revisión",
         "end_time": datetime.now(UTC).isoformat(),
     }
-    await timeline_events.on_appointment_completed(visit_payload)
+    await timeline_events.on_appointment_completed(visit_payload, db=db_session)
+    await db_session.commit()
 
     financial_payload = {
         **_base_payload(test_clinic, test_patient),
@@ -488,8 +570,10 @@ async def test_endpoint_paginates(
                 "appointment_id": str(uuid4()),
                 "treatment_type": f"Tratamiento {i}",
                 "end_time": datetime.now(UTC).isoformat(),
-            }
+            },
+            db=db_session,
         )
+    await db_session.commit()
 
     response = await client.get(
         f"/api/v1/patient_timeline/patients/{test_patient.id}?page=1&page_size=2",
@@ -513,3 +597,44 @@ async def test_endpoint_returns_404_for_unknown_patient(
         headers=auth_headers,
     )
     assert response.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_a_timeline_failure_does_not_abort_the_publisher(
+    db_session: AsyncSession, test_clinic: Clinic, monkeypatch
+):
+    """The savepoint keeps issue #183 intact: the log cannot kill what it logs.
+
+    Transactional handlers write inside the publisher's transaction, which is
+    what makes an uncommitted patient visible to the insert. Wrapping the
+    insert in a savepoint means a failed timeline write rolls back only the
+    savepoint, so the appointment still commits — same-transaction visibility
+    without the payload-only guarantee being lost.
+    """
+    patient = Patient(
+        id=uuid4(),
+        clinic_id=test_clinic.id,
+        first_name="Savepoint",
+        last_name="Survivor",
+        email="savepoint-survivor@test.com",
+        phone="+34600111223",
+    )
+    db_session.add(patient)
+    await db_session.flush()  # exists only inside this transaction
+
+    async def _boom(*args, **kwargs):
+        raise RuntimeError("timeline is down")
+
+    monkeypatch.setattr(timeline_events.TimelineService, "add_entry", _boom)
+
+    payload = {
+        **_base_payload(test_clinic, patient),
+        "appointment_id": str(uuid4()),
+        "treatment_type": "Limpieza",
+        "start_time": datetime.now(UTC).isoformat(),
+    }
+    await event_bus.publish(EventType.APPOINTMENT_SCHEDULED, payload, db=db_session)
+    await db_session.commit()  # must not raise: the booking outlives the log
+
+    assert await _entries_for(db_session, patient.id) == []
+    assert await db_session.get(Patient, patient.id) is not None

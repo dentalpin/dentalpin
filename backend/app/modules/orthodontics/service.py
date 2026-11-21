@@ -232,6 +232,7 @@ class OrthoCaseService:
                 "patient_id": str(case.patient_id),
                 "appliance_type": case.appliance_type,
             },
+            db=db,
         )
         return case, await _annotate_case(db, case)
 
@@ -334,6 +335,7 @@ class OrthoCaseService:
                     previous_finished_at.isoformat() if previous_finished_at is not None else None
                 ),
             },
+            db=db,
         )
         annotation = await _annotate_case(db, case)
         # transferred_out with a linked plan: prompt (don't force) the
@@ -568,6 +570,7 @@ class OrthoControlService:
                 if _control_next_due(control)
                 else None,
             },
+            db=db,
         )
         return control
 
