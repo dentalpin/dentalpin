@@ -68,6 +68,8 @@ class ConsentCreate(BaseModel):
         compliance ledger (#562 CONS-05)."""
         if not value.strip():
             raise ValueError("purpose must not be blank")
+        if value.strip().lower().startswith("patient_intake:"):
+            raise ValueError("Use the patient intake workflow for this purpose")
         return value
 
     @model_validator(mode="after")
