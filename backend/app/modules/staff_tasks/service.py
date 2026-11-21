@@ -124,6 +124,10 @@ class StaffTaskService:
         actor_id: UUID | None,
     ) -> StaffTask:
         task = await StaffTaskService.get_task(db, clinic_id, task_id)
+        # Lock and re-read before checking the transition: two simultaneous
+        # claims both passed open -> claimed on their unlocked copy, each
+        # assigned its own caller and the status change was published twice.
+        await db.refresh(task, attribute_names=["status", "assignee_id"], with_for_update=True)
         data = payload.model_dump(exclude_unset=True)
         new_assignee = data.get("assignee_id")
         if new_assignee is not None and new_assignee != task.assignee_id:
