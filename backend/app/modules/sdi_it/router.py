@@ -23,7 +23,7 @@ from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 from app.modules.billing.models import Invoice
 
-from .hook import get_settings, requeue
+from .hook import get_settings, latest_record, requeue
 from .models import SdiItRecord, SdiItSettings
 from .schemas import (
     PecTestResult,
@@ -247,8 +247,14 @@ async def requeue_record(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[SdiRecordResponse]:
     """After a scarto: rebuild the file from the (corrected) invoice with the
-    same number and date and a new progressivo; the old record stays as history."""
+    same number and date and a new progressivo; the old record stays as history.
+
+    Only the invoice's newest record may be regenerated: the rejected one
+    keeps its state as history, so without that check a second click (or an
+    older scarto) built another file with the same number. The row lock makes
+    two simultaneous clicks run one after the other."""
     row = await _record(db, ctx.clinic_id, record_id)
+    await db.refresh(row, attribute_names=["state"], with_for_update=True)
     if row.state != "rejected":
         raise HTTPException(
             status.HTTP_409_CONFLICT, "Solo un record scartato può essere reinviato"
@@ -265,6 +271,12 @@ async def requeue_record(
     ).scalar_one_or_none()
     if invoice is None:
         raise HTTPException(status.HTTP_404_NOT_FOUND, "Fattura non trovata")
+    latest = await latest_record(db, invoice)
+    if latest is None or latest.id != row.id:
+        raise HTTPException(
+            status.HTTP_409_CONFLICT,
+            "Questo scarto è già stato reinviato: esiste un file più recente",
+        )
     try:
         new = await requeue(
             db,

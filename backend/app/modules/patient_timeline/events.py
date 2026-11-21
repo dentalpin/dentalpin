@@ -1,11 +1,13 @@
 """Event handlers for the patient_timeline module.
 
-Every handler follows the same contract:
+Most handlers follow the own-session contract:
 
 - Signature ``async def on_*(data: dict) -> None`` — matches the event bus
   calling convention (``handler(data)``).
-- Opens its own DB session via :func:`async_session_maker`, commits on
-  success and rolls back on failure — deliberately own-session (ADR 0019,
+- Except for the appointment lifecycle (scheduled, confirmed, checked-in,
+  in-treatment, completed, cancelled, no-show) and the orthodontic case
+  handlers, opens its own DB session via :func:`async_session_maker`, commits
+  on success and rolls back on failure — deliberately own-session (ADR 0019,
   audited in issue #183): the timeline is a log and must never be able to
   fail the event it is logging.
 - Never imports models from other modules. Everything it needs must come in
@@ -13,6 +15,21 @@ Every handler follows the same contract:
   whole point of the patient_timeline split in Fase B.3.
 - Skips events without a ``patient_id`` (administrative/clinic-scoped events
   have nowhere to land in the ficha del paciente).
+
+The appointment-lifecycle and orthodontic handlers instead declare a ``db``
+parameter and so run inside the publisher's transaction: the event bus offers
+the session via ``publish(..., db=db)``, and agenda and orthodontics already
+publish these events that way. Their timeline entries are written inside a
+savepoint of that transaction — the row is visible because it is the same
+transaction, and a failed insert rolls back only the savepoint, so the
+appointment or case still commits. Same-transaction visibility without giving
+up the #183 guarantee.
+
+Every appointment transition belongs on that path. A booking can create the
+patient and the appointment in one transaction; a second connection cannot see
+the uncommitted patient, so the FK on ``patient_timeline.patient_id`` fails,
+the insert is rolled back and the visit silently vanishes from the ficha — a
+log that drops entries without a trace is worse than no log.
 """
 
 from __future__ import annotations
@@ -21,6 +38,8 @@ import logging
 from datetime import UTC, datetime
 from typing import Any
 from uuid import UUID
+
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import EventType
 from app.database import async_session_maker
@@ -67,16 +86,21 @@ async def _record(
     event_data: dict | None = None,
     occurred_at_key: str = "occurred_at",
     created_by_key: str | None = None,
+    db: AsyncSession | None = None,
 ) -> None:
-    """Generic helper: insert one timeline row and commit.
+    """Insert a timeline row, using the caller's transaction when provided.
 
     Centralizes session management + error handling so each specific handler
     stays declarative.
 
-    own-session (issue #183): every handler in this module is payload-only —
-    the timeline records what the payload says happened and never re-reads
-    the publisher's rows, and ``source_id`` is polymorphic with no FK. The
-    timeline is a log: it must not be able to fail the thing it is logging.
+    Own-session handlers (issue #183) are payload-only — the timeline records
+    what the payload says happened and never re-reads the publisher's rows,
+    and ``source_id`` is polymorphic with no FK. The timeline is a log: it must
+    not be able to fail the thing it is logging. Transactional handlers (those
+    given ``db``) describe a row the publisher is still writing, so they must
+    share its transaction or miss it entirely; they run inside a savepoint so
+    that sharing the transaction does not cost the #183 guarantee — a failed
+    insert rolls back the savepoint, not the appointment.
     """
     ids = _required_ids(data, "clinic_id", "patient_id", source_id_key)
     if ids is None:
@@ -93,22 +117,37 @@ async def _record(
         except (TypeError, ValueError):
             created_by = None
 
+    async def insert(session: AsyncSession) -> None:
+        await TimelineService.add_entry(
+            db=session,
+            clinic_id=clinic_id,
+            patient_id=patient_id,
+            event_type=event_type,
+            event_category=event_category,
+            source_table=source_table,
+            source_id=source_id,
+            title=title,
+            description=description,
+            event_data=event_data,
+            occurred_at=_parse_dt(data.get(occurred_at_key)),
+            created_by=created_by,
+        )
+
+    if db is not None:
+        # Inside the publisher's transaction: no commit/rollback here — the
+        # publisher owns the commit. A savepoint contains a failure so the log
+        # still cannot kill what it logs (issue #183, ADR 0019): the row is
+        # visible because it is the same transaction, and only the timeline
+        # insert is rolled back if it fails.
+        try:
+            async with db.begin_nested():
+                await insert(db)
+        except Exception:
+            logger.exception("patient_timeline: failed to record %s", event_type)
+        return
     async with async_session_maker() as db:
         try:
-            await TimelineService.add_entry(
-                db=db,
-                clinic_id=clinic_id,
-                patient_id=patient_id,
-                event_type=event_type,
-                event_category=event_category,
-                source_table=source_table,
-                source_id=source_id,
-                title=title,
-                description=description,
-                event_data=event_data,
-                occurred_at=_parse_dt(data.get(occurred_at_key)),
-                created_by=created_by,
-            )
+            await insert(db)
             await db.commit()
         except Exception:
             await db.rollback()
@@ -120,7 +159,7 @@ async def _record(
 # ---------------------------------------------------------------------------
 
 
-async def on_appointment_scheduled(data: dict) -> None:
+async def on_appointment_scheduled(data: dict, *, db: AsyncSession) -> None:
     treatment = data.get("treatment_type") or "Consulta"
     await _record(
         event_type=EventType.APPOINTMENT_SCHEDULED,
@@ -135,10 +174,11 @@ async def on_appointment_scheduled(data: dict) -> None:
             "start_time": data.get("start_time"),
         },
         occurred_at_key="start_time",
+        db=db,
     )
 
 
-async def on_appointment_completed(data: dict) -> None:
+async def on_appointment_completed(data: dict, *, db: AsyncSession) -> None:
     treatment = data.get("treatment_type") or "Consulta"
     await _record(
         event_type=EventType.APPOINTMENT_COMPLETED,
@@ -153,10 +193,11 @@ async def on_appointment_completed(data: dict) -> None:
             "professional_id": data.get("professional_id"),
         },
         occurred_at_key="end_time",
+        db=db,
     )
 
 
-async def on_appointment_cancelled(data: dict) -> None:
+async def on_appointment_cancelled(data: dict, *, db: AsyncSession) -> None:
     treatment = data.get("treatment_type") or "Consulta"
     await _record(
         event_type=EventType.APPOINTMENT_CANCELLED,
@@ -166,10 +207,11 @@ async def on_appointment_cancelled(data: dict) -> None:
         source_id_key="appointment_id",
         title=f"Cita cancelada: {treatment}",
         event_data={"professional_id": data.get("professional_id")},
+        db=db,
     )
 
 
-async def on_appointment_no_show(data: dict) -> None:
+async def on_appointment_no_show(data: dict, *, db: AsyncSession) -> None:
     treatment = data.get("treatment_type") or "Consulta"
     await _record(
         event_type=EventType.APPOINTMENT_NO_SHOW,
@@ -183,10 +225,11 @@ async def on_appointment_no_show(data: dict) -> None:
             "professional_id": data.get("professional_id"),
         },
         occurred_at_key="start_time",
+        db=db,
     )
 
 
-async def on_appointment_confirmed(data: dict) -> None:
+async def on_appointment_confirmed(data: dict, *, db: AsyncSession) -> None:
     treatment = data.get("treatment_type") or "Consulta"
     await _record(
         event_type=EventType.APPOINTMENT_CONFIRMED,
@@ -198,10 +241,11 @@ async def on_appointment_confirmed(data: dict) -> None:
         event_data={"professional_id": data.get("professional_id")},
         occurred_at_key="changed_at",
         created_by_key="changed_by",
+        db=db,
     )
 
 
-async def on_appointment_checked_in(data: dict) -> None:
+async def on_appointment_checked_in(data: dict, *, db: AsyncSession) -> None:
     treatment = data.get("treatment_type") or "Consulta"
     await _record(
         event_type=EventType.APPOINTMENT_CHECKED_IN,
@@ -216,10 +260,11 @@ async def on_appointment_checked_in(data: dict) -> None:
         },
         occurred_at_key="changed_at",
         created_by_key="changed_by",
+        db=db,
     )
 
 
-async def on_appointment_in_treatment(data: dict) -> None:
+async def on_appointment_in_treatment(data: dict, *, db: AsyncSession) -> None:
     treatment = data.get("treatment_type") or "Consulta"
     await _record(
         event_type=EventType.APPOINTMENT_IN_TREATMENT,
@@ -234,6 +279,7 @@ async def on_appointment_in_treatment(data: dict) -> None:
         },
         occurred_at_key="changed_at",
         created_by_key="changed_by",
+        db=db,
     )
 
 
@@ -784,7 +830,7 @@ async def on_imaging_study_indexed(data: dict) -> None:
 # ---------------------------------------------------------------------------
 
 
-async def on_ortho_case_created(data: dict) -> None:
+async def on_ortho_case_created(data: dict, *, db: AsyncSession) -> None:
     data = {**data, "source_id": data.get("case_id")}
     await _record(
         event_type=EventType.ORTHODONTICS_CASE_CREATED,
@@ -793,10 +839,11 @@ async def on_ortho_case_created(data: dict) -> None:
         data=data,
         source_id_key="source_id",
         title="Caso de ortodoncia abierto",
+        db=db,
     )
 
 
-async def on_ortho_case_status_changed(data: dict) -> None:
+async def on_ortho_case_status_changed(data: dict, *, db: AsyncSession) -> None:
     data = {**data, "source_id": data.get("case_id")}
     await _record(
         event_type=EventType.ORTHODONTICS_CASE_STATUS_CHANGED,
@@ -805,10 +852,11 @@ async def on_ortho_case_status_changed(data: dict) -> None:
         data=data,
         source_id_key="source_id",
         title="Estado de ortodoncia actualizado",
+        db=db,
     )
 
 
-async def on_ortho_control_registered(data: dict) -> None:
+async def on_ortho_control_registered(data: dict, *, db: AsyncSession) -> None:
     data = {**data, "source_id": data.get("control_id")}
     await _record(
         event_type=EventType.ORTHODONTICS_CONTROL_REGISTERED,
@@ -817,4 +865,5 @@ async def on_ortho_control_registered(data: dict) -> None:
         data=data,
         source_id_key="source_id",
         title="Control de ortodoncia",
+        db=db,
     )
