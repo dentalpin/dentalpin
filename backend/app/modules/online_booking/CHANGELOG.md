@@ -8,6 +8,7 @@
 - On acceptance, recheck overlaps for the professional and cabinet reception chooses (still under the shared `agenda:clinic:` lock; the hard overlap check stays in this module, #905).
 - Share the agenda clinic lock and recheck conflicts on request, confirmation and acceptance.
 - Configure per-reason buffers, daily and weekly quotas, per-contact active limits, all counted for the configured professional only, optional patient questions and a post-request redirect.
+- Count quotas, per-contact limits and buffers for the configured professional only: other professionals' holds, accepted requests and appointments no longer use quota or widen blocked time.
 - Group booking settings and provide an image preview, color picker and notice units.
 - Restrict uploaded logos to bounded static PNG, JPEG or WebP images and re-encode them without metadata; serve only sanitized PNG with cache validators and restrictive security headers. External logo URLs and SVG are unsupported.
 - Configure public booking rules and bilingual, ordered visit reasons in the administrator panel; check and hold the complete duration for each reason.

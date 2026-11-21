@@ -17,4 +17,4 @@ Administrators manage the booking interval, window, minimum notice and an ordere
 
 Migration `ob_0005` marks existing logo data unsanitized without deleting it; administrators must re-upload to publish it under the stricter policy. Its downgrade removes the flag.
 
-Booking quotas are checked while holding the clinic lock and use the clinic local calendar. Hold buffers are snapshotted; optional contact fields are erased with contact data. Redirects require HTTPS.
+Booking quotas are checked while holding the clinic lock and use the clinic local calendar. Quotas, per-contact limits and buffers count only the configured professional: their live holds, accepted requests whose appointment is theirs, and (for buffers) their appointments; other professionals never use up a quota or widen a blocked slot. Hold buffers are snapshotted; optional contact fields are erased with contact data. Redirects require HTTPS.
