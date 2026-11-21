@@ -5,28 +5,16 @@ from datetime import UTC, datetime, time, timedelta
 from uuid import uuid4
 
 import pytest
+from booking_helpers import clinic_user, dispatch
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 from app.core.auth.models import ClinicMembership, User
 from app.modules.agenda.models import Appointment
-from app.modules.notifications.gateway import NotificationGateway
 from app.modules.notifications.models import CommunicationMessage
 from app.modules.online_booking.exceptions import BookingConflictError
 from app.modules.online_booking.models import BookingRequest, BookingSettings
 from app.modules.online_booking.service import digest, reserve
-
-
-async def dispatch(db) -> int:
-    """Commit, then let the notifications outbox deliver what was queued."""
-    await db.commit()
-    return await NotificationGateway.dispatch_outbox(db)
-
-
-async def clinic_user(db, clinic_id):
-    return await db.scalar(
-        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == clinic_id)
-    )
 
 
 @pytest.mark.asyncio
