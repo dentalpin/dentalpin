@@ -1,0 +1,221 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+  color: #16343b;
+  background: #f3f7f6;
+  --accent: #127f83;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+main {
+  max-width: 880px;
+  margin: auto;
+  padding: 28px 20px 64px;
+}
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 28px;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 700;
+}
+.brand img {
+  max-height: 52px;
+  max-width: 170px;
+}
+.hero {
+  max-width: 660px;
+  margin-bottom: 28px;
+}
+.eyebrow {
+  color: var(--accent);
+  text-transform: uppercase;
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+h1 {
+  font-size: clamp(2rem, 5vw, 3.15rem);
+  line-height: 1.08;
+  letter-spacing: -0.035em;
+  margin: 10px 0;
+}
+p {
+  line-height: 1.55;
+  color: #52676b;
+}
+.panel {
+  background: white;
+  border: 1px solid #dce8e5;
+  border-radius: 16px;
+  padding: clamp(20px, 4vw, 32px);
+  margin: 16px 0;
+}
+h2 {
+  font-size: 1.17rem;
+  margin: 0 0 18px;
+}
+label {
+  display: block;
+  font-weight: 600;
+  margin: 16px 0 6px;
+}
+input,
+select,
+textarea,
+button {
+  font: inherit;
+}
+input:not([type='checkbox']),
+select,
+textarea {
+  width: 100%;
+  border: 1px solid #b8ccca;
+  border-radius: 8px;
+  padding: 12px;
+  background: white;
+  color: #16343b;
+}
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #80c5c4;
+  outline-offset: 2px;
+}
+button {
+  border: 0;
+  cursor: pointer;
+  border-radius: 8px;
+  padding: 12px 18px;
+  font-weight: 700;
+}
+button.primary {
+  background: var(--accent);
+  color: white;
+}
+button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+.slots {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.slot {
+  border: 1px solid #bfd2ce;
+  background: #fff;
+  color: #16343b;
+}
+.slot[aria-pressed='true'] {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+}
+.error {
+  color: #a22929;
+  font-weight: 600;
+}
+.note {
+  font-size: 0.9rem;
+}
+.hidden {
+  display: none !important;
+}
+.website {
+  position: absolute;
+  left: -10000px;
+}
+.consent {
+  display: flex;
+  gap: 10px;
+  align-items: start;
+  font-weight: 400;
+}
+.consent input {
+  margin-top: 4px;
+}
+a {
+  color: var(--accent);
+}
+@media (max-width: 560px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  main {
+    padding: 20px 14px 48px;
+  }
+  header {
+    align-items: start;
+  }
+}
+.calendar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 28px 0 12px;
+}
+.calendar-header button {
+  background: #f1f6f5;
+  color: #16343b;
+  min-width: 44px;
+  font-size: 1.25rem;
+}
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+.calendar-day {
+  min-width: 0;
+  padding: 10px 2px;
+  color: #16343b;
+  background: #e8f4f1;
+  border: 1px solid #abcfc7;
+  font-size: 0.84rem;
+}
+.calendar-day:disabled {
+  background: #f4f5f5;
+  border-color: #eceeee;
+  color: #758382;
+  opacity: 1;
+}
+.calendar-day[aria-pressed='true'] {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.slot-group {
+  flex-basis: 100%;
+}
+.slot-group h4 {
+  margin: 16px 0 0;
+}
+small {
+  display: block;
+  margin-top: 6px;
+  color: #52676b;
+}
+.hero h1,
+.hero p,
+.brand span {
+  overflow-wrap: anywhere;
+}
