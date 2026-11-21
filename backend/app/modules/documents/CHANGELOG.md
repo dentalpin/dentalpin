@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- i18n: translate the consent templates, signing page and `informed_consent` type strings in ar, de, fr, hi, hu, it, pl, pt, ta and te (they held the English text since #906); the consent PDF labels were already translated. Add a test that fails when a `documents.consent.*` value equals English in a non-en locale. Native review is advisable for ar, hi, ta, te, hu, pl.
 - Audit authenticated document views and generated PDF downloads. (#903).
 - Allow editing, archiving and preview generation before a consent is signed; edits and archival invalidate outstanding signing links. Signed consent evidence remains immutable.
 
