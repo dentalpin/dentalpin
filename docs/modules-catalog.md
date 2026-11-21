@@ -19,7 +19,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `clinical_notes` | 0.2.0 | official | patients, odontogram, treatment_plan, media, agenda | auto | no | 2 | 6 | 0 | yes |
 | `contacts` | 0.1.0 | community | — | manual | yes | 2 | 0 | 0 | yes |
 | `copilot` | 0.1.0 | official | — | auto | yes | 5 | 3 | 1 | yes |
-| `documents` | 0.1.0 | official | patients | manual | yes | 2 | 1 | 0 | yes |
+| `documents` | 0.1.0 | official | patients | manual | yes | 2 | 2 | 0 | yes |
 | `expenses` | 0.1.0 | community | — | manual | yes | 2 | 0 | 0 | yes |
 | `gdpr` | 0.1.0 | official | patients | manual | yes | 10 | 6 | 0 | yes |
 | `imaging_ai` | 0.1.0 | official | media, patients | manual | yes | 2 | 2 | 0 | yes |

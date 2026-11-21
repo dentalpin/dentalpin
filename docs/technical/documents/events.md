@@ -8,7 +8,7 @@ module: documents
 
 | Event | Payload | When |
 |---|---|---|
-| `document.generated` | `{document_id, clinic_id, patient_id, document_type, title, created_by?}` | After successful PDF generation in `DocumentService.generate_pdf` (transactional, `db=db`) |
+| `document.generated` | `{document_id, clinic_id, patient_id, document_type, title, created_by?}` | After successful PDF generation in `DocumentService.generate_pdf` or the original signature in `ConsentService.sign_consent` (transactional, `db=db`); revocation does not publish |
 
 `activity_journal` picks up `document.generated` to create a
 timeline entry documenting the document creation.

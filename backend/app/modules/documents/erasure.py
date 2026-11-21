@@ -29,4 +29,4 @@ class DocumentsErasureContributor(RetainedScopeContributor):
 
     scope_name = "documents"
     categories = frozenset({"email", "phone", "identity"})
-    detail = "Issued prescriptions, certificates and referrals retained as clinical records (Art. 17(3)(c)/(h)); the stored snapshot may quote erased contacts."
+    detail = "Issued prescriptions, certificates, referrals, consents and signature evidence retained as clinical records (Art. 17(3)(c)/(h)); the stored snapshot may quote erased contacts."

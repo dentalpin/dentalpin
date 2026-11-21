@@ -17,6 +17,8 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
+- **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).
 - **Reports:** productivity and visit-frequency count appointments on the clinic's days (#942).
 - **Reports:** the budget report counts budgets on the clinic's days (#941).

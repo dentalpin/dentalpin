@@ -14,7 +14,12 @@ from app.config import settings
 pytestmark = pytest.mark.alembic_roundtrip
 BACKEND_ROOT = Path(__file__).resolve().parents[3]
 ALEMBIC_INI = BACKEND_ROOT / "alembic.ini"
-DOCUMENTS_TABLES = {"generated_documents"}
+DOCUMENTS_TABLES = {
+    "generated_documents",
+    "consent_templates",
+    "consent_signing_links",
+    "consent_evidence",
+}
 # No other module depends on the ``documents`` branch, so a downgrade
 # tears down only this branch's tables.
 DEPENDENT_TABLES: set[str] = set()

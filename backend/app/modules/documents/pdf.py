@@ -46,6 +46,7 @@ _LABELS = {
         "notes": "Observaciones",
         "generated_by": "Generado con DentalPin",
         "registration_number": "Nº colegiado",
+        "informed_consent": "Consentimiento informado",
         "prescription": "Receta",
         "medical_certificate": "Certificado médico",
         "referral": "Carta de derivación",
@@ -75,6 +76,7 @@ _LABELS = {
         "notes": "Notes",
         "generated_by": "Generated with DentalPin",
         "registration_number": "License number",
+        "informed_consent": "Informed consent",
         "prescription": "Prescription",
         "medical_certificate": "Medical certificate",
         "referral": "Referral letter",
@@ -104,6 +106,7 @@ _LABELS = {
         "notes": "குறிப்புகள்",
         "generated_by": "DentalPin மூலம் உருவாக்கப்பட்டது",
         "registration_number": "உரிம எண்",
+        "informed_consent": "தகவலறிந்த ஒப்புதல்",
         "prescription": "மருந்துச்சீட்டு",
         "medical_certificate": "மருத்துவச் சான்றிதழ்",
         "referral": "பரிந்துரைக் கடிதம்",
@@ -133,6 +136,7 @@ _LABELS = {
         "notes": "గమనికలు",
         "generated_by": "DentalPin ద్వారా రూపొందించబడింది",
         "registration_number": "లైసెన్స్ నంబర్",
+        "informed_consent": "సమాచారంతో కూడిన సమ్మతి",
         "prescription": "ప్రిస్క్రిప్షన్",
         "medical_certificate": "వైద్య సర్టిఫికెట్",
         "referral": "రిఫరల్ లేఖ",
@@ -162,6 +166,7 @@ _LABELS = {
         "notes": "टिप्पणियाँ",
         "generated_by": "DentalPin द्वारा तैयार",
         "registration_number": "पंजीकरण संख्या",
+        "informed_consent": "सूचित सहमति",
         "prescription": "पर्चा",
         "medical_certificate": "चिकित्सा प्रमाणपत्र",
         "referral": "रेफ़रल पत्र",
@@ -191,6 +196,7 @@ _LABELS = {
         "notes": "Notes",
         "generated_by": "Généré avec DentalPin",
         "registration_number": "N° de licence",
+        "informed_consent": "Consentement éclairé",
         "prescription": "Ordonnance",
         "medical_certificate": "Certificat médical",
         "referral": "Lettre d'orientation",
@@ -220,6 +226,7 @@ _LABELS = {
         "notes": "Notas",
         "generated_by": "Gerado com o DentalPin",
         "registration_number": "N.º de licença",
+        "informed_consent": "Consentimento informado",
         "prescription": "Receita médica",
         "medical_certificate": "Atestado médico",
         "referral": "Carta de encaminhamento",
@@ -249,6 +256,7 @@ _LABELS = {
         "notes": "Notizen",
         "generated_by": "Erstellt mit DentalPin",
         "registration_number": "Lizenznummer",
+        "informed_consent": "Einwilligung nach Aufklärung",
         "prescription": "Rezept",
         "medical_certificate": "Ärztliches Attest",
         "referral": "Überweisungsschreiben",
@@ -278,6 +286,7 @@ _LABELS = {
         "notes": "Megjegyzések",
         "generated_by": "Készült a DentalPin rendszerrel",
         "registration_number": "Pecsétszám",
+        "informed_consent": "Tájékozott beleegyezés",
         "prescription": "Recept",
         "medical_certificate": "Orvosi igazolás",
         "referral": "Beutaló",
@@ -307,6 +316,7 @@ _LABELS = {
         "notes": "Uwagi",
         "generated_by": "Wygenerowano w DentalPin",
         "registration_number": "Nr prawa wykonywania zawodu",
+        "informed_consent": "Świadoma zgoda",
         "prescription": "Recepta",
         "medical_certificate": "Zaświadczenie lekarskie",
         "referral": "Skierowanie",
@@ -336,6 +346,7 @@ _LABELS = {
         "notes": "Note",
         "generated_by": "Generato con DentalPin",
         "registration_number": "N. di licenza",
+        "informed_consent": "Consenso informato",
         "prescription": "Ricetta medica",
         "medical_certificate": "Certificato medico",
         "referral": "Lettera di invio",
@@ -365,6 +376,7 @@ _LABELS = {
         "notes": "ملاحظات",
         "generated_by": "أُنشئ باستخدام DentalPin",
         "registration_number": "رقم الترخيص",
+        "informed_consent": "الموافقة المستنيرة",
         "prescription": "وصفة طبية",
         "medical_certificate": "شهادة طبية",
         "referral": "خطاب إحالة",
@@ -372,6 +384,123 @@ _LABELS = {
     },
 }
 # pt-BR reuses pt labels as there is no differing words so far.
+# Consent-specific text is translated for every supported PDF language.
+_CONSENT_LABELS = {
+    "es": (
+        "Revocación",
+        "El firmante revoca el consentimiento anterior.",
+        "Paciente",
+        "Tutor legal",
+        "Representante",
+        "BORRADOR",
+    ),
+    "en": (
+        "Revocation",
+        "The signer revokes the prior consent.",
+        "Patient",
+        "Legal guardian",
+        "Representative",
+        "DRAFT",
+    ),
+    "ta": (
+        "திரும்பப் பெறுதல்",
+        "கையொப்பமிட்டவர் முந்தைய ஒப்புதலைத் திரும்பப் பெறுகிறார்.",
+        "நோயாளர்",
+        "சட்டப்பூர்வ பாதுகாவலர்",
+        "பிரதிநிதி",
+        "வரைவு",
+    ),
+    "te": (
+        "ఉపసంహరణ",
+        "సంతకం చేసిన వ్యక్తి మునుపటి సమ్మతిని ఉపసంహరించుకుంటున్నారు.",
+        "రోగి",
+        "చట్టపరమైన సంరక్షకుడు",
+        "ప్రతినిధి",
+        "ముసాయిదా",
+    ),
+    "hi": (
+        "निरस्तीकरण",
+        "हस्ताक्षरकर्ता पिछली सहमति वापस लेता है।",
+        "रोगी",
+        "कानूनी अभिभावक",
+        "प्रतिनिधि",
+        "मसौदा",
+    ),
+    "fr": (
+        "Révocation",
+        "Le signataire révoque le consentement précédent.",
+        "Patient",
+        "Tuteur légal",
+        "Représentant",
+        "BROUILLON",
+    ),
+    "pt": (
+        "Revogação",
+        "O signatário revoga o consentimento anterior.",
+        "Paciente",
+        "Tutor legal",
+        "Representante",
+        "RASCUNHO",
+    ),
+    "de": (
+        "Widerruf",
+        "Die unterzeichnende Person widerruft die vorherige Einwilligung.",
+        "Patient",
+        "Gesetzlicher Vormund",
+        "Vertretung",
+        "ENTWURF",
+    ),
+    "hu": (
+        "Visszavonás",
+        "Az aláíró visszavonja a korábbi beleegyezést.",
+        "Páciens",
+        "Törvényes gyám",
+        "Képviselő",
+        "TERVEZET",
+    ),
+    "pl": (
+        "Wycofanie",
+        "Podpisujący wycofuje wcześniejszą zgodę.",
+        "Pacjent",
+        "Opiekun prawny",
+        "Przedstawiciel",
+        "PROJEKT",
+    ),
+    "it": (
+        "Revoca",
+        "Il firmatario revoca il consenso precedente.",
+        "Paziente",
+        "Tutore legale",
+        "Rappresentante",
+        "BOZZA",
+    ),
+    "ar": (
+        "سحب الموافقة",
+        "يسحب الموقّع الموافقة السابقة.",
+        "المريض",
+        "الوصي القانوني",
+        "الممثل",
+        "مسودة",
+    ),
+}
+for _locale, _values in _CONSENT_LABELS.items():
+    _LABELS[_locale].update(
+        dict(
+            zip(
+                (
+                    "consent_revocation",
+                    "consent_revocation_text",
+                    "consent_patient",
+                    "consent_guardian",
+                    "consent_representative",
+                    "consent_draft",
+                ),
+                _values,
+                strict=True,
+            )
+        )
+    )
+
 _LABELS["pt-BR"] = _LABELS["pt"]
 
 
@@ -645,6 +774,36 @@ class DocumentPDFService:
 
         def esc(value: object) -> str:
             return escape("" if value is None else str(value))
+
+        if document_type == "informed_consent":
+            # Only validated PNG data URIs reach this renderer through the signing flow.
+            signature = esc(content.get("signature"))
+            title = (
+                labels["consent_revocation"]
+                if content.get("purpose") == "revoke"
+                else labels["informed_consent"]
+            )
+            relationship = labels.get(f"consent_{content.get('relationship_to_patient', '')}", "")
+            return (
+                f'<div class="section"><div class="section-title">{esc(title)}</div>'
+                + (
+                    f"<p><strong>{esc(labels['consent_draft'])}</strong></p>"
+                    if not signature
+                    else ""
+                )
+                + f'<div class="notes-content" style="white-space:pre-wrap">{esc(content.get("text"))}</div></div>'
+                + (
+                    f"<p>{esc(labels['consent_revocation_text'])}</p>"
+                    if content.get("purpose") == "revoke"
+                    else ""
+                )
+                + (
+                    f"<p>{esc(content.get('signer_name'))} · {esc(relationship)} · {esc(content.get('signed_at'))}</p>"
+                    + f'<img src="{signature}" alt="Signature" style="max-width:250px;max-height:100px" />'
+                    if signature
+                    else ""
+                )
+            )
 
         if document_type == "prescription":
             rows = ""

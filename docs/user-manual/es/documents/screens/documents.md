@@ -71,3 +71,9 @@ Los auxiliares tienen acceso de solo lectura. Otros roles necesitan
 que se les conceda `documents.read` / `.write` explícitamente desde
 la interfaz de administración de módulos. El editor de membrete
 requiere `admin.clinic.write`.
+
+## Consentimientos informados
+
+Desde la ficha del paciente, crea o selecciona una plantilla de la clínica y genera el consentimiento. Abre el enlace en la tablet sin iniciar sesión del personal; caduca a los 30 minutos y admite una firma. El paciente o su representante indica su nombre y relación y dibuja su firma. Descarga el PDF firmado desde la ficha. Para revocar, genera un enlace de revocación y recoge una nueva firma; el consentimiento original se conserva. Las correcciones requieren un nuevo consentimiento.
+
+Mientras no esté firmado, el consentimiento puede editarse, archivarse o generar una vista previa. Al editarlo o archivarlo se invalidan sus enlaces pendientes; tras editarlo, genera un enlace nuevo.

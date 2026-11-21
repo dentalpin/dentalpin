@@ -19,7 +19,8 @@
       "prescription": "Receta",
       "medical_certificate": "Certificado médico",
       "referral": "Carta de derivación",
-      "radiology_request": "Solicitud de radiología"
+      "radiology_request": "Solicitud de radiología",
+      "informed_consent": "Consentimiento informado"
     },
     "status": {
       "all": "Todos los estados",
@@ -83,6 +84,53 @@
         "save": "Guardar membrete",
         "saved": "Membrete guardado"
       }
+    },
+    "consent": {
+      "title": "Consentimientos informados",
+      "template": "Plantilla de la clínica",
+      "selectTemplate": "Selecciona una plantilla",
+      "create": "Crear y obtener enlace",
+      "editTemplate": "Editar plantilla",
+      "manageTemplate": "Crear o editar plantilla",
+      "templateTitle": "Título de la plantilla",
+      "templateText": "Texto del consentimiento",
+      "saveTemplate": "Guardar plantilla",
+      "linkHelp": "Abre este enlace en la tablet. Caduca en 30 minutos y solo permite una firma.",
+      "copy": "Copiar enlace",
+      "signLink": "Nuevo enlace de firma",
+      "download": "Descargar firmado",
+      "revoke": "Generar enlace de revocación",
+      "downloadRevocation": "Descargar revocación",
+      "noEvidence": "El documento solicitado aún no está disponible.",
+      "completed": "Firma registrada. Puedes devolver la tablet al personal.",
+      "linkError": "El enlace no es válido, ha caducado o ya se ha utilizado.",
+      "revocationNotice": "Al firmar, revocas el consentimiento mostrado.",
+      "signer": "Nombre de quien firma",
+      "relationship": "Relación con el paciente",
+      "patient": "Paciente",
+      "guardian": "Tutor o tutora",
+      "representative": "Representante",
+      "drawSignature": "Dibuja tu firma",
+      "clear": "Borrar firma",
+      "confirm": "Confirmar firma",
+      "loading": "Cargando consentimiento…",
+      "linksInvalidated": "Los enlaces de firma pendientes se han invalidado.",
+      "consentTitle": "Título del consentimiento",
+      "consentText": "Texto del consentimiento",
+      "editInvalidates": "Guardar los cambios invalida los enlaces de firma pendientes.",
+      "editConsent": "Editar consentimiento",
+      "archiveConsent": "Archivar",
+      "generatePreview": "Generar vista previa",
+      "downloadPreview": "Descargar vista previa",
+      "evidenceUnavailable": "No se pudo comprobar el estado de la firma.",
+      "revoked": "Revocado",
+      "status": {
+        "draft": "Borrador",
+        "generated": "Generado",
+        "archived": "Archivado"
+      },
+      "qrTitle": "Escanear para firmar",
+      "signedToast": "Consentimiento firmado"
     }
   }
 }
