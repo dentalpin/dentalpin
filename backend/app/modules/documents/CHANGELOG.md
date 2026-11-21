@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- feat: consent template create/edit moves from the patient consent card to a new Settings → Clinical → Consent templates page, gated on `documents.write` (the permission the template endpoints already require). The card keeps the template select and links to the new page. No API changes.
 - Audit authenticated document views and generated PDF downloads. (#903).
 - Allow editing, archiving and preview generation before a consent is signed; edits and archival invalidate outstanding signing links. Signed consent evidence remains immutable.
 
