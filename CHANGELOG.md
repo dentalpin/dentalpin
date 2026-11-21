@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Inventory reorder:** generating orders with a repeated item no longer leaves half the purchase orders created behind an error (#992).
 - **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
 - **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).
