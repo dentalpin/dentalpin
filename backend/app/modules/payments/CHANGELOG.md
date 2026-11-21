@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#989): payment, allocation and refund amounts (REST and the `record_payment` tool) accept at most two decimals (422 otherwise). A sub-cent value passed the sum check and was rounded per column, so 50.005 + 50.005 stored 100.02 of allocations against a 100.01 payment.
+
 - fix(#939): the patient ledger anchors a payment entry at the clinic's midnight on its `payment_date`. It used UTC midnight, which is the evening before in zones behind UTC, so the Pagos panel showed every payment a day early.
 - fix(#938): aging receivables ages a patient by the oldest earned entry their net payments don't cover (FIFO, as pending charges does), in clinic days. It used the oldest entry overall, so a patient who owed only last week's treatment showed as 90+ days overdue.
 
