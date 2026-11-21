@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#988): `InvoiceService.list_for_export` also eager-loads each allocated payment's refunds, for the accounting export.
+
 - Audit authenticated invoice PDF previews and downloads. (#903).
 
 - feat(#877): show imported invoices as historical and read-only, with no operational balance or accounting export.

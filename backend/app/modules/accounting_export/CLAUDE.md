@@ -59,6 +59,11 @@ payment not tied to any invoice does not appear. Drafts are excluded
   `Invoice.compliance_data['ES']` (a billing-owned field) — no new
   dependency.
 - **Taxable base** is `subtotal - total_discount`, not `subtotal`.
+- **Refunds are negative `cobros.csv` rows** (#988). Billing never edits
+  `InvoicePayment` on a refund, it nets refunds at read time in proportion
+  to each allocation's share of the payment; `payment_rows` does the same
+  and dates the row on the clinic's day of `refunded_at` (the router passes
+  the clinic zone). Still keyed to the invoice period like every cobro.
 - **VAT rate** column shows the single item rate, or `varios` when the
   invoice mixes rates.
 
