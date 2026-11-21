@@ -600,8 +600,9 @@ async def test_staff_list_paginates_and_excludes_expired_requests(
     first = await client.get("/api/v1/online_booking/requests?page=1", headers=headers)
     second = await client.get("/api/v1/online_booking/requests?page=2", headers=headers)
     assert first.status_code == second.status_code == 200
-    assert len(first.json()["data"]) == 50 and first.json()["has_more"] is True
-    assert len(second.json()["data"]) == 1 and second.json()["has_more"] is False
+    assert len(first.json()["data"]) == 50 and first.json()["total"] == 51
+    assert first.json()["page"] == 1 and first.json()["page_size"] == 50
+    assert len(second.json()["data"]) == 1 and second.json()["page"] == 2
     for row in (stale_pending, stale_confirmed):
         result = await client.post(
             f"/api/v1/online_booking/requests/{row.id}/reject",

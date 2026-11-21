@@ -1,3 +1,4 @@
+import type { ApiResponse } from '~~/app/types'
 import { defineComponent } from 'vue'
 
 export default defineComponent({
@@ -11,7 +12,7 @@ export default defineComponent({
     async function refresh() {
       const request = ++revision
       try {
-        const response = await api.get<{ data: number }>('/api/v1/online_booking/requests/count', { errorToast: false })
+        const response = await api.get<ApiResponse<number>>('/api/v1/online_booking/requests/count', { errorToast: false })
         if (request === revision) badges.value['/online-booking'] = response.data
       } catch {
         if (request === revision) badges.value['/online-booking'] = undefined

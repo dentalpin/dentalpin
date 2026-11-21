@@ -1,6 +1,6 @@
 """Validated input for the online booking API."""
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
@@ -74,3 +74,49 @@ class AcceptInput(BaseModel):
 class RejectInput(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     message: str = Field(min_length=1, max_length=500)
+
+
+class PublicConfig(BaseModel):
+    slot_minutes: int
+    timezone: str
+    reasons: list[str]
+
+
+class Availability(BaseModel):
+    starts: list[str]
+    slot_minutes: int
+
+
+class MessageOut(BaseModel):
+    message: str
+
+
+class StatusOut(BaseModel):
+    status: str
+
+
+class AcceptOut(BaseModel):
+    status: str
+    appointment_id: UUID
+
+
+class BookingRequestOut(BaseModel):
+    id: UUID
+    status: str
+    start_time: datetime
+    end_time: datetime
+    contact_name: str | None
+    contact_email: str | None
+    contact_phone: str | None
+    reason: str
+    default_duration_minutes: int
+
+
+class PatientSuggestion(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+    id: UUID
+    first_name: str
+    last_name: str
+    phone: str | None
+    email: str | None
+    date_of_birth: date | None

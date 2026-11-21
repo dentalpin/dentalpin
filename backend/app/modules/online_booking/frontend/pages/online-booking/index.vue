@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ApiResponse, PaginatedResponse } from '~~/app/types'
 import { errorMessage, errorStatus } from '~~/app/utils/error'
 
 definePageMeta({ middleware: ['auth'] })
@@ -59,9 +60,9 @@ async function load() {
   loading.value = true
   loadError.value = ''
   try {
-    const response = await api.get<{ data: BookingRequest[], has_more: boolean }>('/api/v1/online_booking/requests', { errorToast: false, query: { page: page.value } })
+    const response = await api.get<PaginatedResponse<BookingRequest>>('/api/v1/online_booking/requests', { errorToast: false, query: { page: page.value } })
     items.value = response.data
-    hasMore.value = response.has_more
+    hasMore.value = response.page * response.page_size < response.total
   } catch {
     loadError.value = t('onlineBooking.loadError')
   } finally {
@@ -96,9 +97,9 @@ function open(row: BookingRequest, mode: 'accept' | 'reject') {
 async function prepareAcceptance(row: BookingRequest) {
   const version = ++searchVersion
   const [staff, rooms, matches] = await Promise.allSettled([
-    api.get<{ data: Resource[] }>('/api/v1/auth/professionals'),
-    api.get<{ data: Resource[] }>('/api/v1/agenda/cabinets'),
-    api.get<{ data: PatientChoice[] }>(`/api/v1/online_booking/requests/${row.id}/patient-suggestions`, { errorToast: false })
+    api.get<ApiResponse<Resource[]>>('/api/v1/auth/professionals'),
+    api.get<ApiResponse<Resource[]>>('/api/v1/agenda/cabinets'),
+    api.get<ApiResponse<PatientChoice[]>>(`/api/v1/online_booking/requests/${row.id}/patient-suggestions`, { errorToast: false })
   ])
   if (selected.value?.id !== row.id || action.value !== 'accept') return
   professionals.value = staff.status === 'fulfilled' ? staff.value.data : []
@@ -133,7 +134,7 @@ async function searchPatients() {
   patientError.value = ''
   patientResults.value = []
   try {
-    const result = await api.get<{ data: PatientChoice[] }>(`/api/v1/patients?search=${encodeURIComponent(query)}&page_size=10`, { errorToast: false })
+    const result = await api.get<PaginatedResponse<PatientChoice>>(`/api/v1/patients?search=${encodeURIComponent(query)}&page_size=10`, { errorToast: false })
     if (version === searchVersion) {
       patientResults.value = result.data
       searched.value = true

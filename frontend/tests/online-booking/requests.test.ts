@@ -99,7 +99,7 @@ describe('online booking reception', () => {
   })
 
   it('paginates the queue and announces successful rejection', async () => {
-    get.mockResolvedValueOnce({ data: [row], has_more: true })
+    get.mockResolvedValueOnce({ data: [row], total: 51, page: 1, page_size: 50 })
     wrapper = await mountSuspended(RequestsPage)
     await vi.waitFor(() => expect(wrapper!.text()).toContain('Synthetic Person'))
     await clickByText(wrapper, 'onlineBooking.next')
