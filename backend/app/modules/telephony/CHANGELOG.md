@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#986): an inbound call that ends unanswered (stored as `missed`) is published as `call.missed`, as `docs/technical/telephony/events.md` documents; it used to go out as `call.ended`. A `call.ended` after an explicit `call.missed` stays `call.ended`.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.

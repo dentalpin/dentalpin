@@ -165,6 +165,7 @@ class TelephonyService:
         ).scalar_one_or_none()
 
         now = datetime.now(UTC)
+        previous_status = row.status if row is not None else None
         if row is None:
             patient = await TelephonyService.match_patient(db, clinic_id, from_number)
             fresh = CallLog(
@@ -213,6 +214,12 @@ class TelephonyService:
 
         settings.last_event_at = now
         await db.flush()
+
+        # The bus carries what was recorded: an ended call stored as missed
+        # is a ``call.missed`` (#986), unless an explicit missed event
+        # already announced it.
+        if event == "call.ended" and row.status == "missed" and previous_status != "missed":
+            event = "call.missed"
 
         bus_payload = {
             "clinic_id": str(clinic_id),
