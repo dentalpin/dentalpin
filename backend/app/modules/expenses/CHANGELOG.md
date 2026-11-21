@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#974): an unreadable `expense_date` in the CSV import is a row error. It raised `CsvImportError`, so one bad date rejected the whole file and the dry run never listed the other rows.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.

@@ -117,3 +117,23 @@ async def test_oversize_upload_422s_not_500s(
         headers=auth_headers,
     )
     assert response.status_code == 422
+
+
+def test_a_bad_date_is_a_row_error_not_a_whole_file_rejection() -> None:
+    """One unreadable date flags its row, like a bad category or amount (#974).
+
+    ``_parse_date`` raised ``CsvImportError`` (documented for whole-file
+    problems: encoding, header, caps), which the per-row ``except
+    ValidationError`` did not catch, so the dry run answered 422 for the
+    whole file and never listed the other rows' errors or the valid rows.
+    """
+    valid, errors, total = validate_expense_csv(
+        b"category,amount,expense_date\n"
+        b"rent,100,2026-08-01\n"
+        b"rent,5,2026/08/01\n"
+        b"yachts,1,2026-08-01\n"
+    )
+    assert total == 3
+    assert [v.amount for v in valid] == [Decimal("100")]
+    assert [e["row"] for e in errors] == [3, 4]
+    assert "expense_date" in errors[0]["message"]
