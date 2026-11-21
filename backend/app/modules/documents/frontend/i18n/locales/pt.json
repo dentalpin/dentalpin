@@ -68,6 +68,10 @@
         "letterhead": {
           "title": "Cabeçalho dos documentos",
           "description": "Imagem da clínica em prescrições, atestados, cartas de referenciação e pedidos de radiologia"
+        },
+        "consentTemplates": {
+          "title": "Consent templates",
+          "description": "Texts used for informed consents signed on the tablet"
         }
       },
       "letterhead": {
@@ -83,6 +87,12 @@
         "chooseLogo": "Escolher imagem",
         "save": "Guardar cabeçalho",
         "saved": "Cabeçalho guardado"
+      },
+      "consentTemplates": {
+        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
+        "empty": "No templates yet. Create the first one below.",
+        "manageLink": "Manage templates in Settings",
+        "saved": "Template saved"
       }
     },
     "consent": {

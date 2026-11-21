@@ -68,6 +68,10 @@
         "letterhead": {
           "title": "दस्तावेज़ लेटरहेड",
           "description": "पर्चों, प्रमाणपत्रों, रेफ़रल और रेडियोलॉजी अनुरोधों पर क्लिनिक की ब्रांडिंग"
+        },
+        "consentTemplates": {
+          "title": "Consent templates",
+          "description": "Texts used for informed consents signed on the tablet"
         }
       },
       "letterhead": {
@@ -83,6 +87,12 @@
         "chooseLogo": "छवि चुनें",
         "save": "लेटरहेड सहेजें",
         "saved": "लेटरहेड सहेजा गया"
+      },
+      "consentTemplates": {
+        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
+        "empty": "No templates yet. Create the first one below.",
+        "manageLink": "Manage templates in Settings",
+        "saved": "Template saved"
       }
     },
     "consent": {

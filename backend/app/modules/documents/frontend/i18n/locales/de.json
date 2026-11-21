@@ -68,6 +68,10 @@
         "letterhead": {
           "title": "Dokument-Briefkopf",
           "description": "Klinik-Branding auf Rezepten, Bescheinigungen, Überweisungen und Röntgenanfragen"
+        },
+        "consentTemplates": {
+          "title": "Consent templates",
+          "description": "Texts used for informed consents signed on the tablet"
         }
       },
       "letterhead": {
@@ -83,6 +87,12 @@
         "chooseLogo": "Bild wählen",
         "save": "Briefkopf speichern",
         "saved": "Briefkopf gespeichert"
+      },
+      "consentTemplates": {
+        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
+        "empty": "No templates yet. Create the first one below.",
+        "manageLink": "Manage templates in Settings",
+        "saved": "Template saved"
       }
     },
     "consent": {

@@ -68,6 +68,10 @@
         "letterhead": {
           "title": "En-tête des documents",
           "description": "Image de la clinique sur les ordonnances, certificats, lettres de liaison et demandes de radiologie"
+        },
+        "consentTemplates": {
+          "title": "Consent templates",
+          "description": "Texts used for informed consents signed on the tablet"
         }
       },
       "letterhead": {
@@ -83,6 +87,12 @@
         "chooseLogo": "Choisir une image",
         "save": "Enregistrer l'en-tête",
         "saved": "En-tête enregistré"
+      },
+      "consentTemplates": {
+        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
+        "empty": "No templates yet. Create the first one below.",
+        "manageLink": "Manage templates in Settings",
+        "saved": "Template saved"
       }
     },
     "consent": {

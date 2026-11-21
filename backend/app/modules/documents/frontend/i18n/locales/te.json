@@ -68,6 +68,10 @@
         "letterhead": {
           "title": "పత్రం లెటర్‌హెడ్",
           "description": "ప్రిస్క్రిప్షన్లు, సర్టిఫికెట్లు, రిఫరల్‌లు మరియు రేడియాలజీ అభ్యర్థనలపై క్లినిక్ బ్రాండింగ్"
+        },
+        "consentTemplates": {
+          "title": "Consent templates",
+          "description": "Texts used for informed consents signed on the tablet"
         }
       },
       "letterhead": {
@@ -83,6 +87,12 @@
         "chooseLogo": "చిత్రాన్ని ఎంచుకోండి",
         "save": "లెటర్‌హెడ్ సేవ్ చేయండి",
         "saved": "లెటర్‌హెడ్ సేవ్ అయింది"
+      },
+      "consentTemplates": {
+        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
+        "empty": "No templates yet. Create the first one below.",
+        "manageLink": "Manage templates in Settings",
+        "saved": "Template saved"
       }
     },
     "consent": {

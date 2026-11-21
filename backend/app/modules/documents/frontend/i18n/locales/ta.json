@@ -68,6 +68,10 @@
         "letterhead": {
           "title": "ஆவண தலைப்பு முகப்பு",
           "description": "மருந்துச் சீட்டுகள், சான்றிதழ்கள், பரிந்துரை கடிதங்கள் மற்றும் கதிரியக்க கோரிக்கைகளில் கிளினிக் முகப்பு"
+        },
+        "consentTemplates": {
+          "title": "Consent templates",
+          "description": "Texts used for informed consents signed on the tablet"
         }
       },
       "letterhead": {
@@ -83,6 +87,12 @@
         "chooseLogo": "படத்தைத் தேர்ந்தெடுக்கவும்",
         "save": "முகப்பைச் சேமி",
         "saved": "முகப்பு சேமிக்கப்பட்டது"
+      },
+      "consentTemplates": {
+        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
+        "empty": "No templates yet. Create the first one below.",
+        "manageLink": "Manage templates in Settings",
+        "saved": "Template saved"
       }
     },
     "consent": {
