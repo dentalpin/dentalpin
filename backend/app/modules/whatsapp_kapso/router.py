@@ -28,7 +28,7 @@ from .schemas import (
     KapsoTemplateResponse,
     KapsoTestRequest,
 )
-from .service import KapsoService
+from .service import KapsoService, PhoneNumberIdTakenError
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -65,7 +65,10 @@ async def update_settings(
     _: Annotated[None, Depends(require_permission("whatsapp_kapso.settings.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[KapsoSettingsResponse]:
-    settings = await KapsoService.upsert_settings(db, ctx.clinic_id, data.model_dump())
+    try:
+        settings = await KapsoService.upsert_settings(db, ctx.clinic_id, data.model_dump())
+    except PhoneNumberIdTakenError as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
     return ApiResponse(data=_settings_response(settings))
 
 
@@ -130,13 +133,16 @@ async def webhook(
     if not phone_number_id:
         return {"ok": True}  # nothing to route
 
-    settings = await KapsoService.resolve_by_phone_number_id(db, phone_number_id)
-    if settings is None:
+    candidates = await KapsoService.resolve_by_phone_number_id(db, phone_number_id)
+    if not candidates:
         # Unknown number — accept-and-ignore so Kapso doesn't hammer retries.
         return {"ok": True}
 
     signature = request.headers.get("X-Webhook-Signature", "")
-    if not KapsoService.verify_signature(settings, raw, signature):
+    settings = next(
+        (s for s in candidates if KapsoService.verify_signature(s, raw, signature)), None
+    )
+    if settings is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid signature")
 
     await _process_event(db, settings.clinic_id, payload)

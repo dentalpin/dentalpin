@@ -41,7 +41,10 @@ text (session) to Kapso and returns the `wamid` as `provider_message_id`.
 
 `POST /webhook` is public (auth is per-route; no global gate). It:
 1. resolves the clinic by `phone_number_id` (NEVER trusts a payload clinic_id),
-2. verifies `X-Webhook-Signature` = HMAC-SHA256(raw_body, clinic webhook_secret),
+2. verifies `X-Webhook-Signature` = HMAC-SHA256(raw_body, clinic webhook_secret);
+   if several clinics carry the same `phone_number_id` (saving one another
+   clinic already uses is a 409, but older rows may exist) the clinic whose
+   secret verifies wins, so one clinic's typo never cuts another off (#972),
 3. inbound → `NotificationGateway.record_inbound_reply` (publishes
    `notification.reply_received`); status → `NotificationGateway.record_delivery_status`.
 Idempotent on the Kapso `message.id` (the `dedup_key` unique index).

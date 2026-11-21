@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#972): a `phone_number_id` another clinic already uses is refused with 409, and the webhook picks, among the clinics carrying the id, the one whose secret verifies the signature. A second clinic saving the same id used to make every webhook for it raise `MultipleResultsFound` (500), so the first clinic stopped receiving replies and receipts.
+
 - fix: `POST /templates/map` types `notification_type` as the
   notifications `NotificationType`, so a template mapped to a type that is
   never sent answers 422 instead of being stored unused. The settings
