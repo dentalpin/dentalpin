@@ -2,11 +2,12 @@
 
 from datetime import UTC, datetime, timedelta
 
-from sqlalchemy import delete, select, update
+from sqlalchemy import String, cast, delete, func, select, update
 
 from app.database import async_session_maker
+from app.modules.notifications.models import CommunicationMessage
 
-from .models import BookingMail, BookingRateLimit, BookingRequest
+from .models import BookingRateLimit, BookingRequest
 
 
 async def cleanup() -> None:
@@ -27,12 +28,26 @@ async def cleanup() -> None:
             .where(BookingRequest.status == "confirmed", BookingRequest.start_time <= now)
             .values(status="expired", decided_at=BookingRequest.start_time, token_hash=None)
         )
+        # A confirmation still waiting in the gateway outbox is worthless once
+        # its request left ``pending_confirmation``: cancel it unsent.
         await db.execute(
-            delete(BookingMail).where(
-                BookingMail.kind == "confirmation",
-                BookingMail.request_id.in_(
-                    select(BookingRequest.id).where(BookingRequest.status != "pending_confirmation")
+            update(CommunicationMessage)
+            .where(
+                CommunicationMessage.template_key == "booking_confirmation",
+                CommunicationMessage.status.in_(("queued", "failed")),
+                CommunicationMessage.dedup_key.in_(
+                    select(
+                        func.concat(
+                            "online_booking:booking_confirmation:", cast(BookingRequest.id, String)
+                        )
+                    ).where(BookingRequest.status != "pending_confirmation")
                 ),
+            )
+            .values(
+                status="skipped",
+                error_message="booking_request_closed",
+                next_attempt_at=None,
+                context_data={},
             )
         )
         await db.execute(
@@ -53,15 +68,3 @@ async def cleanup() -> None:
             delete(BookingRateLimit).where(BookingRateLimit.window_start < now - timedelta(hours=2))
         )
         await db.commit()
-
-
-async def dispatch_mail() -> None:
-    from .outbox import dispatch_one
-
-    # Each row is locked and committed independently; concurrent workers skip locks.
-    for _ in range(20):
-        async with async_session_maker() as db:
-            processed = await dispatch_one(db)
-            await db.commit()
-        if not processed:
-            break

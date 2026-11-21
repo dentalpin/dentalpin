@@ -73,32 +73,8 @@ def upgrade() -> None:
         "ix_online_booking_requests_clinic_id", "online_booking_requests", ["clinic_id"]
     )
 
-    op.create_table(
-        "online_booking_mail",
-        sa.Column("id", sa.UUID(), primary_key=True),
-        sa.Column(
-            "request_id",
-            sa.UUID(),
-            sa.ForeignKey("online_booking_requests.id", ondelete="CASCADE"),
-            nullable=False,
-        ),
-        sa.Column(
-            "clinic_id", sa.UUID(), sa.ForeignKey("clinics.id", ondelete="CASCADE"), nullable=False
-        ),
-        sa.Column("kind", sa.String(20), nullable=False),
-        sa.Column("payload_encrypted", sa.String(4096), nullable=False),
-        sa.Column("attempts", sa.Integer(), nullable=False),
-        sa.Column("next_attempt_at", sa.DateTime(timezone=True)),
-        sa.Column("created_at", sa.DateTime(timezone=True), nullable=False),
-        sa.Column("updated_at", sa.DateTime(timezone=True), nullable=False),
-        sa.CheckConstraint("kind IN ('confirmation','rejection')", name="ck_ob_mail_kind"),
-    )
-    op.create_index("ix_online_booking_mail_request_id", "online_booking_mail", ["request_id"])
-
 
 def downgrade() -> None:
-    op.drop_index("ix_online_booking_mail_request_id", table_name="online_booking_mail")
-    op.drop_table("online_booking_mail")
     op.drop_index("ix_online_booking_requests_clinic_id", table_name="online_booking_requests")
     op.drop_table("online_booking_requests")
     op.drop_table("online_booking_settings")

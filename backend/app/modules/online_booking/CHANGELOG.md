@@ -11,7 +11,9 @@
 
 - Refresh locked rows before evaluating request decisions or dispatch state.
 
-- Queue encrypted confirmation and rejection emails in the request transaction and send only after commit.
+- Queue confirmation and rejection emails with the core notifications gateway (`NotificationGateway.enqueue`) inside the request transaction, so a rolled-back request sends nothing; the gateway outbox delivers after commit.
+- Add the `booking_confirmation` and `booking_rejection` email types with system templates seeded by `ob_0003` for es and en (informal "tú", no medical data). The ten other locales (ar, de, fr, hi, hu, it, pl, pt, ta, te) hold English copy pending translation.
+- Remove the module's own SMTP delivery, encrypted mail outbox and worker; a confirmation still queued when its request is no longer pending is cancelled by the cleanup job.
 
 - Add paginated reception inbox with explicit patient selection, acceptance and rejection.
 - Exclude expired requests from the inbox and refuse decisions after expiration.
@@ -19,5 +21,5 @@
 - Add optional, disabled-by-default online booking requests for one clinic calendar.
 - Add transaction-scoped booking locks and recheck active agenda appointments.
 - Add expiring confirmation tokens, reception decisions and retention cleanup.
-- Add shared pseudonymous abuse counters and TLS-only email delivery.
+- Add shared pseudonymous abuse counters.
 - Document the booking and agenda overlap responsibilities in issue #905.

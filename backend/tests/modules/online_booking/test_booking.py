@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import asyncio
 from datetime import UTC, datetime, time, timedelta
-from types import SimpleNamespace
 from uuid import uuid4
 
 import pytest
+from booking_helpers import dispatch
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
@@ -13,35 +13,6 @@ from app.core.auth.models import ClinicMembership, User
 from app.modules.agenda.models import Appointment
 from app.modules.online_booking.models import BookingRequest, BookingSettings
 from app.modules.online_booking.service import reserve
-from app.modules.schedules.services.availability import AvailabilityService, ResolvedRange
-
-
-@pytest.fixture
-def open_hours(monkeypatch):
-    async def resolve(db, clinic_id, start, end, professional_id=None):
-        return "UTC", [
-            ResolvedRange(
-                start=datetime.combine(start, time.min, UTC),
-                end=datetime.combine(start + timedelta(days=1), time.min, UTC),
-                state="open",
-            )
-        ]
-
-    monkeypatch.setattr(AvailabilityService, "resolve", resolve)
-
-
-@pytest.fixture
-def delivery(monkeypatch):
-    from app.core.email.service import email_service
-
-    sent = []
-
-    async def send(message, **kwargs):
-        sent.append(message)
-        return SimpleNamespace(is_success=True)
-
-    monkeypatch.setattr(email_service, "send", send)
-    return sent
 
 
 @pytest.mark.asyncio
@@ -98,14 +69,14 @@ async def test_request_confirm_accept_and_conflict(
     assert first.status_code == 201, first.text
     duplicate = await client.post(f"{url}/requests", json=body)
     assert duplicate.status_code == 409
-    from app.modules.online_booking.outbox import dispatch_one
-
     await db_session.commit()
     assert delivery == []
-    assert await dispatch_one(db_session)
-    await db_session.commit()
-    token = delivery[0].body_text.split("#token=")[1]
+    assert await dispatch(db_session) == 1
+    token = delivery[0].body_text.split("#token=")[1].split()[0]
+    assert delivery[0].to_email == "test@example.com"
+    assert delivery[0].subject.startswith("Confirma tu solicitud de cita en ")
     assert "<a href=" in delivery[0].body_html and token in delivery[0].body_html
+    assert "{{" not in delivery[0].body_html + delivery[0].body_text
     response = await client.post(f"{url}/confirm", json={"token": token})
     assert response.status_code == 200
     assert (await client.post(f"{url}/confirm", json={"token": token})).status_code == 410
@@ -362,12 +333,12 @@ async def test_rejection_sends_message_and_releases_hold(
     )
     assert response.status_code == 200, response.text
     assert row.status == "rejected" and row.token_hash is None
-    from app.modules.online_booking.outbox import dispatch_one
-
-    await db_session.commit()
-    while await dispatch_one(db_session):
-        await db_session.commit()
-    assert delivery[-1].body_text == "Please call us"
+    # Confirmation and rejection both go through the gateway outbox.
+    assert await dispatch(db_session) == 2
+    rejection = delivery[-1]
+    assert rejection.to_email == "reject@example.com"
+    assert rejection.subject.startswith("Novedades sobre tu solicitud de cita en ")
+    assert "Please call us" in rejection.body_text and "Please call us" in rejection.body_html
     assert (await client.post(f"{base}/requests", json=body)).status_code == 201
 
 
@@ -416,66 +387,6 @@ async def test_public_api_is_disabled_by_default_and_rejects_clinical_fields(cli
 async def test_staff_routes_require_login(client):
     assert (await client.get("/api/v1/online_booking/requests")).status_code == 401
     assert (await client.get("/api/v1/online_booking/settings")).status_code == 401
-
-
-@pytest.mark.asyncio
-async def test_console_email_provider_does_not_log_confirmation(
-    db_session, test_clinic, monkeypatch
-):
-    from fastapi import HTTPException
-
-    from app.config import settings
-    from app.core.email.providers.base import EmailMessage
-    from app.core.email.providers.console import ConsoleProvider
-    from app.core.email.service import email_service
-    from app.modules.online_booking.delivery import deliver
-
-    monkeypatch.setattr(settings, "TESTING", False)
-    monkeypatch.setattr(settings, "EMAIL_ENABLED", True)
-
-    async def console(*args, **kwargs):
-        return ConsoleProvider()
-
-    monkeypatch.setattr(email_service, "create_provider_for_clinic", console)
-    with pytest.raises(HTTPException) as caught:
-        await deliver(
-            db_session,
-            test_clinic.id,
-            EmailMessage(to_email="test@example.com", subject="Test", body_html="secret"),
-        )
-    assert caught.value.status_code == 503
-
-
-def test_private_smtp_delivery_uses_tls_and_does_not_log_recipient(monkeypatch, caplog):
-    from app.core.email.providers.base import EmailMessage
-    from app.core.email.providers.smtp import SMTPProvider
-    from app.modules.online_booking.delivery import _send_smtp
-
-    class FakeSMTP:
-        def __init__(self, *args, **kwargs):
-            self.tls = False
-
-        def starttls(self, **kwargs):
-            self.tls = True
-
-        def sendmail(self, sender, recipients, payload):
-            assert self.tls
-            assert recipients == ["patient@example.com"]
-            assert "Content-Type:" in payload
-            return {}
-
-        def quit(self):
-            pass
-
-    monkeypatch.setattr("app.modules.online_booking.delivery.smtplib.SMTP", FakeSMTP)
-    provider = SMTPProvider("localhost", 25, use_tls=True, default_from_email="clinic@example.com")
-    message = EmailMessage(
-        to_email="patient@example.com", subject="Test", body_html="synthetic-token"
-    )
-    assert _send_smtp(provider, message)
-    assert "patient@example.com" not in caplog.text and "synthetic-token" not in caplog.text
-    provider._use_tls = False
-    assert not _send_smtp(provider, message)
 
 
 @pytest.mark.asyncio
@@ -676,53 +587,7 @@ async def test_staff_list_paginates_and_excludes_expired_requests(
             json={"message": "Synthetic"},
         )
         assert result.status_code == 409
-    assert delivery == []
-
-
-@pytest.mark.asyncio
-async def test_failed_commit_never_dispatches_queued_mail(db_session, test_clinic, delivery):
-    from sqlalchemy.exc import IntegrityError
-
-    from app.modules.online_booking.models import BookingMail
-    from app.modules.online_booking.outbox import dispatch_one, enqueue
-
-    now = datetime.now(UTC)
-    request = BookingRequest(
-        id=uuid4(),
-        clinic_id=test_clinic.id,
-        start_time=now + timedelta(days=1),
-        end_time=now + timedelta(days=1, minutes=30),
-        status="pending_confirmation",
-        reason="checkup",
-        confirmation_deadline=now + timedelta(minutes=10),
-    )
-    db_session.add(request)
-    await db_session.flush()
-    enqueue(
-        db_session,
-        test_clinic.id,
-        request.id,
-        "confirmation",
-        {"email": "test@example.com", "subject": "Synthetic", "text": "synthetic-token"},
-    )
-    await db_session.flush()
-    queued = await db_session.scalar(
-        select(BookingMail).where(BookingMail.request_id == request.id)
-    )
-    assert queued is not None and "synthetic-token" not in queued.payload_encrypted
-    db_session.add(
-        BookingMail(
-            request_id=uuid4(),
-            clinic_id=test_clinic.id,
-            kind="confirmation",
-            payload_encrypted="synthetic",
-            attempts=0,
-        )
-    )
-    with pytest.raises(IntegrityError):
-        await db_session.commit()
-    await db_session.rollback()
-    assert not await dispatch_one(db_session)
+    assert await dispatch(db_session) == 0
     assert delivery == []
 
 

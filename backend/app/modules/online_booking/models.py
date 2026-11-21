@@ -83,26 +83,3 @@ class BookingRateLimit(Base):
     key: Mapped[str] = mapped_column(String(64), primary_key=True)
     window_start: Mapped[datetime] = mapped_column(DateTime(timezone=True), primary_key=True)
     attempts: Mapped[int] = mapped_column(Integer, nullable=False)
-
-
-class BookingMail(Base, TimestampMixin):
-    """Encrypted, transactionally queued mail; deleted after delivery."""
-
-    __tablename__ = "online_booking_mail"
-    id: Mapped[UUID] = mapped_column(PGUUID(as_uuid=True), primary_key=True, default=uuid4)
-    request_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True),
-        ForeignKey("online_booking_requests.id", ondelete="CASCADE"),
-        nullable=False,
-        index=True,
-    )
-    clinic_id: Mapped[UUID] = mapped_column(
-        PGUUID(as_uuid=True), ForeignKey("clinics.id", ondelete="CASCADE"), nullable=False
-    )
-    kind: Mapped[str] = mapped_column(String(20), nullable=False)
-    payload_encrypted: Mapped[str] = mapped_column(String(4096), nullable=False)
-    attempts: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
-    next_attempt_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
-    __table_args__ = (
-        CheckConstraint("kind IN ('confirmation','rejection')", name="ck_ob_mail_kind"),
-    )

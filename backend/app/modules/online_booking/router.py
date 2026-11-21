@@ -23,10 +23,9 @@ from app.modules.patients.service import PatientService
 from app.modules.schedules.services.clinic_hours import ClinicHoursService
 
 from .models import BookingRequest, BookingSettings
-from .outbox import enqueue
 from .rate_limit import consume_rate
 from .schemas import AcceptInput, ConfirmInput, RejectInput, RequestInput, SettingsInput
-from .service import live_hold, occupied, reserve, slots
+from .service import live_hold, occupied, queue_email, reserve, slots
 
 router = APIRouter()
 DB = Annotated[AsyncSession, Depends(get_db)]
@@ -151,17 +150,13 @@ async def create_request(request: Request, clinic_id: UUID, data: RequestInput, 
         raise HTTPException(409, str(exc)) from exc
     # The client-side confirmation page must consume the fragment explicitly.
     link = f"{config.public_url}#token={token}"
-    enqueue(
+    await queue_email(
         db,
         clinic_id,
-        item.id,
-        "confirmation",
-        {
-            "email": email,
-            "subject": "Confirm your booking request",
-            "text": f"Confirm your request within 10 minutes: {link}",
-            "link": link,
-        },
+        item,
+        "booking_confirmation",
+        confirm_url=link,
+        expires_minutes=10,
     )
     return {"data": {"message": "Your confirmation email has been queued."}}
 
@@ -417,16 +412,8 @@ async def reject(
     ):
         raise HTTPException(409, "Request expired or already decided")
     if row.contact_email:
-        enqueue(
-            db,
-            ctx.clinic_id,
-            row.id,
-            "rejection",
-            {
-                "email": row.contact_email,
-                "subject": "Update on your booking request",
-                "text": data.message,
-            },
+        await queue_email(
+            db, ctx.clinic_id, row, "booking_rejection", rejection_message=data.message
         )
     row.status = "rejected"
     row.decided_at = now

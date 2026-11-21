@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from app.core.plugins import BaseModule
 from app.core.scheduling import ScheduledJob
 
-from .models import BookingMail, BookingRateLimit, BookingRequest, BookingSettings
+from .models import BookingRateLimit, BookingRequest, BookingSettings
 
 
 class OnlineBookingModule(BaseModule):
@@ -36,7 +36,7 @@ class OnlineBookingModule(BaseModule):
     }
 
     def get_models(self) -> list:
-        return [BookingSettings, BookingRequest, BookingRateLimit, BookingMail]
+        return [BookingSettings, BookingRequest, BookingRateLimit]
 
     def get_router(self) -> APIRouter:
         from .router import router
@@ -47,16 +47,9 @@ class OnlineBookingModule(BaseModule):
         return ["read", "write", "settings"]
 
     def get_scheduled_jobs(self) -> list[ScheduledJob]:
-        from .tasks import cleanup, dispatch_mail
+        from .tasks import cleanup
 
         return [
-            ScheduledJob(
-                id="online_booking_dispatch_mail",
-                func=dispatch_mail,
-                trigger="interval",
-                trigger_args={"seconds": 15},
-                name="Dispatch booking emails",
-            ),
             ScheduledJob(
                 id="online_booking_cleanup",
                 func=cleanup,
