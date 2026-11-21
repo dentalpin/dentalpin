@@ -19,7 +19,7 @@ related_permissions:
   - agenda.cabinets.read
 related_paths:
   - backend/app/modules/online_booking/frontend/pages/online-booking/index.vue
-last_verified_commit: 0000000
+last_verified_commit: f44dbd9
 ---
 # Solicitudes online
 
@@ -27,4 +27,4 @@ El menú muestra el número de solicitudes confirmadas pendientes. Revisa la fec
 
 Para rechazarla, escribe un mensaje que se enviará por correo. Si el hueco ya está ocupado, actualiza la lista; si sigue pendiente, recházala y pide al paciente que envíe otra solicitud para el nuevo horario.
 
-Al crear, confirmar y aceptar una solicitud se comprueba el horario frente a todas las citas activas y las retenciones vigentes de la clínica. La agenda permite crear o mover citas solapadas; si una cita posterior ocupa el hueco, la siguiente decisión de reserva rechazará el conflicto.
+Al crear y confirmar una solicitud se comprueban las citas y retenciones del profesional configurado; al aceptarla, las del profesional y el gabinete que elijas. La agenda permite crear o mover citas solapadas; si una cita posterior ocupa el hueco, la siguiente decisión de reserva rechazará el conflicto.

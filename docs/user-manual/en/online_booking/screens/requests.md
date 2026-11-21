@@ -19,7 +19,7 @@ related_permissions:
   - agenda.cabinets.read
 related_paths:
   - backend/app/modules/online_booking/frontend/pages/online-booking/index.vue
-last_verified_commit: 0000000
+last_verified_commit: f44dbd9
 ---
 # Online requests
 
@@ -27,4 +27,4 @@ The menu shows the number of confirmed requests awaiting a decision. Review the 
 
 To reject it, provide a message sent by email. If the slot is occupied, refresh the list; if the request is still pending, reject it and ask the patient to submit a new request for another time.
 
-Creating, confirming and accepting requests checks active appointments and live holds across the clinic. Agenda permits overlapping appointments; if a later appointment occupies the slot, the next booking decision rejects the conflict.
+Creating and confirming a request checks the configured professional's appointments and holds; accepting checks the professional and cabinet you choose. Agenda permits overlapping appointments; if a later appointment occupies the slot, the next booking decision rejects the conflict.
