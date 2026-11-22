@@ -351,8 +351,10 @@ class NotificationGateway:
         )
         if msg is None:
             return
-        if msg.status not in ("queued", "failed") or (
-            msg.next_attempt_at and msg.next_attempt_at > datetime.now(UTC)
+        if (
+            msg.status not in ("queued", "failed")
+            or msg.attempts >= msg.max_attempts
+            or (msg.next_attempt_at and msg.next_attempt_at > datetime.now(UTC))
         ):
             await db.commit()
             return

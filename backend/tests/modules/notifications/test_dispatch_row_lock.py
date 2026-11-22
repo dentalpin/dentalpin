@@ -77,3 +77,54 @@ async def test_second_tick_does_not_resend_rows_of_a_running_batch(db_session, t
     await db_session.refresh(first)
     await db_session.refresh(second)
     assert (first.status, second.status) == ("sent", "sent")
+
+
+@pytest.mark.asyncio
+async def test_stale_batch_does_not_resend_a_row_that_used_its_last_attempt(
+    db_session, test_clinic
+):
+    """The re-read must apply the ``attempts < max_attempts`` filter too.
+
+    Tick B fails the second message on its last attempt. ``_mark_failed`` keeps
+    it ``failed`` and due, so tick A's stale batch would send it once more
+    without the attempts check.
+    """
+    first = _queued(test_clinic.id, "+34600000011", datetime(2026, 1, 1, tzinfo=UTC))
+    second = _queued(test_clinic.id, "+34600000012", datetime(2026, 1, 2, tzinfo=UTC))
+    second.attempts = 4
+    second.max_attempts = 5
+    db_session.add_all([first, second])
+    await db_session.commit()
+
+    engine = create_async_engine(settings.DATABASE_URL, poolclass=NullPool)
+    other_tick = async_sessionmaker(engine, expire_on_commit=False)
+    sent: list[str] = []
+
+    class FailingSms:
+        channel = Channel.SMS
+        adapter_name = "failing_sms_test"
+        raced = False
+
+        async def supports(self, db, clinic_id):  # noqa: ARG002
+            return True
+
+        async def send(self, db, msg):  # noqa: ARG002
+            sent.append(msg.to_address)
+            if not self.raced:
+                self.raced = True
+                async with other_tick() as session:
+                    await NotificationGateway.dispatch_outbox(session)
+            return AdapterResult(
+                status=SendStatus.FAILED, provider="fake_sms", error_message="boom"
+            )
+
+    channel_registry.register(FailingSms())
+    try:
+        await NotificationGateway.dispatch_outbox(db_session)
+    finally:
+        channel_registry.unregister("failing_sms_test")
+        await engine.dispose()
+
+    assert sent.count("+34600000012") == 1
+    await db_session.refresh(second)
+    assert second.attempts == second.max_attempts == 5
