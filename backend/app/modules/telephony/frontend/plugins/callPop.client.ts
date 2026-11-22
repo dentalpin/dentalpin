@@ -61,12 +61,15 @@ export default defineNuxtPlugin((nuxtApp) => {
       const res = await api.get<{ data: Array<{
         id: string
         status: string
+        direction: string
         from_number: string
         patient_id: string | null
         patient_name: string | null
       }> }>('/api/v1/telephony/calls/active', { errorToast: false })
       for (const call of res.data) {
-        if (call.status !== 'ringing' || seen.has(call.id)) continue
+        // The pop announces incoming calls; an outbound call ringing out
+        // from the clinic's own line is not one.
+        if (call.status !== 'ringing' || call.direction === 'outbound' || seen.has(call.id)) continue
         remember(call.id)
         toast.add({
           title: call.patient_name || t('telephony.calls.unknownCaller'),

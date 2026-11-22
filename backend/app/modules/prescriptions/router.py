@@ -277,7 +277,7 @@ async def create_template(
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[TemplateResponse]:
     row = await PrescriptionService.create_template(
-        db, ctx.clinic_id, data.name, [i.model_dump() for i in data.items]
+        db, ctx.clinic_id, data.name, [i.model_dump(mode="json") for i in data.items]
     )
     await db.commit()
     await db.refresh(row)
@@ -292,7 +292,9 @@ async def update_template(
     _: Annotated[None, Depends(require_permission("prescriptions.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[TemplateResponse]:
-    payload = data.model_dump(exclude_unset=True)
+    # JSON mode: template items live in a JSONB column, so a line's
+    # ``catalog_ref`` UUID must be dumped as a string (#984).
+    payload = data.model_dump(mode="json", exclude_unset=True)
     row = await PrescriptionService.update_template(db, ctx.clinic_id, template_id, payload)
     await db.commit()
     await db.refresh(row)

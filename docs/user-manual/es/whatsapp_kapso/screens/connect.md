@@ -8,7 +8,7 @@ related_endpoints:
   - POST /api/v1/whatsapp_kapso/templates/sync
   - POST /api/v1/whatsapp_kapso/templates/map
   - POST /api/v1/whatsapp_kapso/test
-last_verified_commit: 0000000
+last_verified_commit: f70d47ff
 ---
 
 # Conectar WhatsApp (Kapso)
@@ -19,7 +19,9 @@ Página en **Ajustes → Integraciones → WhatsApp (Kapso)** (solo administrado
 
 1. **Credenciales.** Pega la *API key* de Kapso, el *Phone number ID* y el
    *Business account ID* de tu número conectado, y el *secret del webhook*.
-   Guarda. Las claves se almacenan cifradas y nunca se vuelven a mostrar.
+   Guarda. Las claves se almacenan cifradas y nunca se vuelven a mostrar. Un
+   *Phone number ID* que otra clínica ya tiene conectado se rechaza: si el
+   guardado falla, revísalo.
 2. **Webhook.** Copia la URL del webhook que muestra la página y pégala en la
    configuración de webhooks de tu proyecto de Kapso. Así DentalPin recibe los
    estados de entrega y las respuestas de los pacientes.

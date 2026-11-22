@@ -37,6 +37,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `nav_online` | 0.1.0 | official | billing | manual | yes | 4 | 0 | 0 | yes |
 | `notifications` | 0.1.0 | official | patients, agenda, budget, billing, catalog | auto | no | 10 | 7 | 8 | yes |
 | `odontogram` | 0.3.0 | official | patients, catalog | auto | no | 4 | 7 | 0 | yes |
+| `online_booking` | 0.1.0 | official | agenda, schedules, patients, notifications | manual | yes | 3 | 0 | 0 | yes |
 | `orthodontics` | 0.1.0 | official | patients, agenda, media, recalls, treatment_plan | manual | yes | 4 | 3 | 0 | yes |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_segments` | 0.1.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
@@ -703,6 +704,24 @@ Dental charting, tooth state, clinical treatments.
   - `odontogram.treatment.status_changed`
 - **Events consumed:** —
 - **Module CLAUDE.md:** [`backend/app/modules/odontogram/CLAUDE.md`](../backend/app/modules/odontogram/CLAUDE.md)
+
+### `online_booking` — v0.1.0
+
+Online booking requests
+
+- **Author:** DentalPin Core Team
+- **License:** BSL-1.1
+- **Category:** official
+- **Install policy:** installable=True · auto_install=False · removable=True
+- **Depends:** `agenda`, `schedules`, `patients`, `notifications`
+- **Frontend layer:** `frontend`
+- **Permissions:**
+  - `online_booking.read`
+  - `online_booking.settings`
+  - `online_booking.write`
+- **Events emitted:** —
+- **Events consumed:** —
+- **Module CLAUDE.md:** [`backend/app/modules/online_booking/CLAUDE.md`](../backend/app/modules/online_booking/CLAUDE.md)
 
 ### `orthodontics` — v0.1.0
 

@@ -11,7 +11,11 @@ recorded* medications and diseases.
 Four flat reference lists (allergy, medication, disease, surgery), each
 clinic-managed (create/search/update/deactivate — deactivate is soft,
 same reasoning as `contacts`: existing patient records that reference an
-item by id shouldn't break if it's later retired). Two relationship
+item by id shouldn't break if it's later retired). Creating a name that
+matches a deactivated row reactivates that row (same id, so its
+interactions and contraindications come back) instead of answering 409:
+the patient form's picker only searches active rows and offers "create"
+for anything it can't find (#963). Two relationship
 tables on top: `ReferenceInteraction` (medication × medication) and
 `ReferenceContraindication` (disease × medication), each carrying a
 `risk_note`.
