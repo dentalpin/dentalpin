@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1016): a 0-day payment term survives invoicing from a quote (`or 30`) and the draft edit page, and clearing a draft's due date or notes clears them.
+
 - fix(#988): `InvoiceService.list_for_export` also eager-loads each allocated payment's refunds, for the accounting export.
 
 - Audit authenticated invoice PDF previews and downloads. (#903).

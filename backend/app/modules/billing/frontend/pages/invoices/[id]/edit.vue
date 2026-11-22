@@ -104,7 +104,7 @@ onMounted(async () => {
 
   // Populate form with invoice data (no billing fields)
   form.value = {
-    payment_term_days: invoice.payment_term_days || 30,
+    payment_term_days: invoice.payment_term_days ?? 30,
     due_date: invoice.due_date?.split('T')[0] || '',
     internal_notes: invoice.internal_notes || '',
     public_notes: invoice.public_notes || ''
@@ -178,9 +178,10 @@ async function handleSave() {
     await updateInvoice(invoiceId.value, {
       patient_id: patientChanged ? newPatientId : undefined,
       payment_term_days: form.value.payment_term_days,
-      due_date: form.value.due_date || undefined,
-      internal_notes: form.value.internal_notes || undefined,
-      public_notes: form.value.public_notes || undefined
+      // null clears; an omitted field would keep the old value (#1016).
+      due_date: form.value.due_date || null,
+      internal_notes: form.value.internal_notes || null,
+      public_notes: form.value.public_notes || null
     })
 
     // 2. Delete removed items

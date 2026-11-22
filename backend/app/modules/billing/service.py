@@ -1065,7 +1065,7 @@ class InvoiceService:
             clinic_id=clinic_id,
             created_by=created_by,
             patient_id=budget.patient_id,
-            payment_term_days=payment_term_days or 30,
+            payment_term_days=30 if payment_term_days is None else payment_term_days,
             due_date=due_date,
             notes=notes,
         )
