@@ -22,7 +22,7 @@ from __future__ import annotations
 import csv
 import io
 import re
-from datetime import datetime
+from datetime import date, datetime
 from uuid import UUID
 
 from pydantic import ValidationError
@@ -66,14 +66,15 @@ def _detect_reader(text: str) -> csv.DictReader:
     return csv.DictReader(io.StringIO(text), dialect=dialect)
 
 
-def _parse_date(raw: str, row_number: int) -> object:
+def _parse_date(raw: str) -> date | None:
+    """``None`` for an unreadable date: a row error, not a file rejection (#974)."""
     value = raw.strip()
     for fmt in ("%Y-%m-%d", "%d/%m/%Y"):
         try:
             return datetime.strptime(value, fmt).date()
         except ValueError:
             continue
-    raise CsvImportError(f"row {row_number}: expense_date must be YYYY-MM-DD or DD/MM/YYYY")
+    return None
 
 
 _GROUPED = re.compile(r"[1-9]\d{0,2}(?:[.,]\d{3})+")
@@ -142,7 +143,16 @@ def validate_expense_csv(content: bytes) -> tuple[list[ExpenseCreate], list[dict
             }
             data = {k: v for k, v in data.items() if v != ""}
             if "expense_date" in data:
-                data["expense_date"] = _parse_date(data["expense_date"], line_number)
+                parsed = _parse_date(data["expense_date"])
+                if parsed is None:
+                    errors.append(
+                        {
+                            "row": line_number,
+                            "message": "expense_date: must be YYYY-MM-DD or DD/MM/YYYY",
+                        }
+                    )
+                    continue
+                data["expense_date"] = parsed
             if "amount" in data:
                 data["amount"] = _normalize_amount(data["amount"])
             valid.append(ExpenseCreate.model_validate(data))
