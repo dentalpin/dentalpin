@@ -71,7 +71,7 @@
         },
         "consentTemplates": {
           "title": "Beleegyezési sablonok",
-          "description": "A tableten aláírt tájékozott beleegyezésekhez használt szövegek"
+          "description": "A táblagépen aláírt tájékozott beleegyezésekhez használt szövegek"
         }
       },
       "letterhead": {
@@ -140,7 +140,7 @@
         "archived": "Archivált"
       },
       "qrTitle": "Aláíráshoz olvassa be",
-      "signedToast": "Hozzájárulás aláírva"
+      "signedToast": "Beleegyezés aláírva"
     }
   }
 }
