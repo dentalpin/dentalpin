@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#989): an invoice's paid amount and balance are in cents also after a proportional refund share, so the offered balance is payable.
+
 - fix(#989): `POST /invoices/{id}/payments` accepts at most two decimals, like the payments endpoints.
 
 - fix(#988): `InvoiceService.list_for_export` also eager-loads each allocated payment's refunds, for the accounting export.
