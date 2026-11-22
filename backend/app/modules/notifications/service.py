@@ -1,6 +1,6 @@
 """Notifications module business logic."""
 
-import hmac
+import hashlib
 import logging
 from datetime import UTC, datetime
 from uuid import UUID
@@ -9,7 +9,6 @@ from sqlalchemy import func, select, text, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.config import settings
 from app.core.email import EmailResult, email_service
 from app.core.i18n_names import catalog_name
 from app.core.utils.dates import clinic_zone
@@ -343,8 +342,15 @@ class NotificationService:
 
     @staticmethod
     def contact_binding(patient, address: str) -> str:
-        scope = f"verified-contact:{patient.clinic_id}:{patient.id}:{address}"
-        return hmac.digest(settings.SECRET_KEY.encode(), scope.encode(), "sha256").hex()
+        """Fingerprint of a verified destination, scoped to the patient.
+
+        It only detects that the address changed since it was verified. The
+        address already sits in the patient row, so a secret adds no
+        protection, and keying it would silently stop delivery to every
+        enrolled patient whenever SECRET_KEY is rotated.
+        """
+        normalized = "".join(address.split()).casefold()
+        return hashlib.sha256(f"{patient.id}:{normalized}".encode()).hexdigest()
 
     @staticmethod
     def verified_consent_allows(

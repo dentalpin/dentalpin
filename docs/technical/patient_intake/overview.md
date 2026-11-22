@@ -31,8 +31,9 @@ Enrolled patients require verified contact bindings for email, WhatsApp and
 SMS, and affirmative purpose consent for appointment reminders. Other
 channels are outside this consent policy and are blocked for enrolled patients. Clinic
 adapter selection, notification preferences and `do_not_contact` still apply.
-The bindings are keyed digests scoped to clinic and patient. A destination or
-server secret change requires renewed verification. The default form enables
+The bindings are plain SHA-256 digests of the normalized destination, scoped to
+the patient. They involve no secret, so rotating `SECRET_KEY` does not affect
+delivery. A destination change requires renewed verification. The default form enables
 WhatsApp and email with SMS disabled. Clinics use existing notification settings
 to select the manual WhatsApp adapter.
 
