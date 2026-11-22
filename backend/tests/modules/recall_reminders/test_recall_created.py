@@ -63,7 +63,8 @@ async def test_recall_created_enqueues_reminder_for_correct_clinic_only(
         == f"{test_patient.first_name} {test_patient.last_name}"
     )
     assert rows[0].context_data["clinic_name"] == test_clinic.name
-    assert rows[0].context_data["due_month"] == "September 2026"
+    # The test clinic sets no communication language: Spanish, the default.
+    assert rows[0].context_data["due_month"] == "septiembre de 2026"
 
     other_rows = (
         (
@@ -142,5 +143,56 @@ async def test_recall_created_skips_silently_when_patient_missing(
 
 def test_humanize_due_month():
     assert _humanize_due_month("2026-09-01") == "September 2026"
+    assert _humanize_due_month("2026-09-01", "es") == "septiembre de 2026"
+    assert _humanize_due_month("2026-09-01", "xx") == "September 2026"
     assert _humanize_due_month(None) is None
     assert _humanize_due_month("not-a-date") == "not-a-date"
+
+
+async def _due_month_sent(db_session: AsyncSession, clinic_id, patient_id) -> str:
+    await _on_recall_created(
+        {
+            "clinic_id": str(clinic_id),
+            "patient_id": str(patient_id),
+            "recall_id": str(uuid4()),
+            "reason": "hygiene",
+            "due_month": "2026-09-01",
+        },
+        db=db_session,
+    )
+    row = (
+        await db_session.execute(
+            select(CommunicationMessage)
+            .where(CommunicationMessage.patient_id == patient_id)
+            .order_by(CommunicationMessage.created_at.desc())
+            .limit(1)
+        )
+    ).scalar_one()
+    return row.context_data["due_month"]
+
+
+@pytest.mark.asyncio
+async def test_due_month_is_written_in_the_language_the_message_is_sent_in(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """The reminder's month follows the message locale (#975).
+
+    ``strftime("%B %Y")`` always produced English, so the Spanish template
+    read "para September 2026". The locale is the one the gateway renders
+    the template in: the patient's preference, else the clinic's
+    communication language.
+    """
+    from app.modules.notifications.models import NotificationPreference
+
+    test_clinic.settings = {**(test_clinic.settings or {}), "communication_language": "es"}
+    ana = Patient(clinic_id=test_clinic.id, first_name="Ana", last_name="Ruiz", email="a@x.es")
+    luc = Patient(clinic_id=test_clinic.id, first_name="Luc", last_name="Bern", email="l@x.fr")
+    db_session.add_all([ana, luc])
+    await db_session.flush()
+    db_session.add(
+        NotificationPreference(clinic_id=test_clinic.id, patient_id=luc.id, preferred_locale="fr")
+    )
+    await db_session.commit()
+
+    assert await _due_month_sent(db_session, test_clinic.id, ana.id) == "septiembre de 2026"
+    assert await _due_month_sent(db_session, test_clinic.id, luc.id) == "septembre 2026"
