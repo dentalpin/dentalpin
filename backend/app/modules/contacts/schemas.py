@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+from app.core.schemas import NotNull
+
 ContactType = Literal["lab", "supplier", "delegate", "other"]
 
 
@@ -21,13 +23,13 @@ class ContactCreate(BaseModel):
 
 
 class ContactUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=200)
-    contact_type: ContactType | None = None
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=200)
+    contact_type: NotNull[ContactType] = None
     phone: str | None = Field(default=None, max_length=20)
     email: EmailStr | None = None
     address: str | None = Field(default=None, max_length=2000)
     notes: str | None = Field(default=None, max_length=2000)
-    is_active: bool | None = None
+    is_active: NotNull[bool] = None
 
 
 class ContactResponse(BaseModel):

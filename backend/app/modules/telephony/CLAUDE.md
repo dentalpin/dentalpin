@@ -59,15 +59,21 @@ path); authenticity is the HMAC — a guessed id without the secret is
 - Numbers normalize via `phonenumbers` with the clinic's
   `default_country`; unparseable input is kept verbatim (a call log with
   an odd number beats a dropped event).
-- Matching: SQL narrows on the last digits, Python confirms on the full
-  normalized value; **exactly one** match links `patient_id`, multiple
-  matches deliberately link none (phase 1 sends the user to the
+- Matching runs on the far end: `from_number` on an inbound call,
+  `to_number` on an outbound one (whose `from_number` is the clinic's
+  own line, #964). SQL narrows on the last digits, Python confirms on the
+  full normalized value (patient phone and far end both through
+  `normalize_number` with the clinic's `default_country`, so a foreign
+  number or an extension that only shares the tail links nobody, #973);
+  **exactly one** match links `patient_id`, multiple matches
+  deliberately link none (phase 1 sends the user to the
   pre-filtered patient search instead of guessing a household member).
 
 ## Events emitted
 
 `call.ringing` / `call.answered` / `call.ended` / `call.missed`, plus
-`call.unknown_caller` alongside a ringing event with no patient match.
+`call.unknown_caller` alongside an inbound ringing event with no patient
+match (an outbound call to an unmatched number is not an unknown caller).
 All published with `db=` (transactional). Payload: (clinic_id,
 call_log_id, call_id, event, direction, from_number, to_number,
 patient_id|null). No bundled subscriber — patient_timeline /

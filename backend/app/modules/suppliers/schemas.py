@@ -7,6 +7,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
+from app.core.schemas import NotNull
+
 
 def _blank_is_none(value: object) -> object:
     """A cleared input sends "" -- for a typed optional field that means "no value".
@@ -42,18 +44,18 @@ class SupplierUpdate(BaseModel):
     """Schema for atomic update of a Contact + Supplier row."""
 
     # Contact fields
-    name: str | None = Field(default=None, min_length=1, max_length=200)
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=200)
     phone: str | None = Field(default=None, max_length=20)
     email: EmailStr | None = None
     address: str | None = Field(default=None, max_length=2000)
     notes: str | None = Field(default=None, max_length=2000)
-    is_active: bool | None = None
+    is_active: NotNull[bool] = None
 
     # Supplier fields
     website: str | None = Field(default=None, max_length=2048)
     payment_terms: str | None = Field(default=None, max_length=255)
     lead_time_days: int | None = Field(default=None, ge=0)
-    is_preferred: bool | None = None
+    is_preferred: NotNull[bool] = None
 
     _clear_blank = field_validator("lead_time_days", mode="before")(_blank_is_none)
 

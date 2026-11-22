@@ -68,6 +68,10 @@
         "letterhead": {
           "title": "Membrete de documentos",
           "description": "Imagen de la clínica en recetas, certificados, derivaciones y solicitudes de radiología"
+        },
+        "consentTemplates": {
+          "title": "Plantillas de consentimiento",
+          "description": "Textos de los consentimientos informados que se firman en la tablet"
         }
       },
       "letterhead": {
@@ -83,6 +87,12 @@
         "chooseLogo": "Elegir imagen",
         "save": "Guardar membrete",
         "saved": "Membrete guardado"
+      },
+      "consentTemplates": {
+        "help": "Las plantillas son el texto de partida de los nuevos consentimientos informados. Editar una plantilla no modifica los consentimientos ya creados a partir de ella.",
+        "empty": "Aún no hay plantillas. Crea la primera abajo.",
+        "manageLink": "Gestionar plantillas en Configuración",
+        "saved": "Plantilla guardada"
       }
     },
     "consent": {

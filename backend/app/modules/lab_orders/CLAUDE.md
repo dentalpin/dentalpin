@@ -7,7 +7,7 @@ Tracks work sent to external laboratories for a specific patient, with a lifecyc
 `manifest.depends = ["patients", "contacts"]`.
 
 - `patient_id` references `patients.id`.
-- `lab_contact_id` references `contacts.id`.
+- `lab_contact_id` references `contacts.id` and must be a `contact_type='lab'` contact of the clinic (400 otherwise, on create and on update; #985).
 - Every service query and agent tool is scoped by `clinic_id`.
 - The initial Alembic revision declares `depends_on = ("pat_0003", "con_0001")` in addition to the module dependency manifest because migration-graph ordering is separate from module installation ordering.
 
