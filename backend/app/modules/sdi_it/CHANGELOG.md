@@ -2,6 +2,8 @@
 
 ## Unreleased — phase 3
 
+- fix(#1047): `ScontoMaggiorazione/Importo` is the per-unit discount (up to 8 decimals), as check 00423 computes it, also on a credit note's negative discount.
+
 - fix(#955): `POST /records/{id}/requeue` regenerates only the invoice's newest record (409 otherwise) and locks it. The rejected record keeps its state as history, so a second click, or an older scarto, built another file with the same number and date.
 
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.

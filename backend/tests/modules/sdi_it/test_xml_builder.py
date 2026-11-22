@@ -136,6 +136,30 @@ def test_credit_note_td04_references_original_and_discount_line():
     assert line.find("PrezzoTotale").text == "50.00"
 
 
+@pytest.mark.parametrize(
+    ("price", "qty", "discount"),
+    [("100.00", 2, "20.00"), ("100.00", 3, "10.00"), ("-100.00", 2, "-20.00")],
+)
+def test_discount_is_per_unit_as_check_00423_computes_it(price, qty, discount):
+    """Allegato A, 00423: PrezzoTotale = (PrezzoUnitario - Sconto) * Quantita, +/- 0.01 (#1047)."""
+    original = "E/2026/0007" if price.startswith("-") else None
+    res = build_fattura(
+        _invoice([_item("Visita", price, qty=qty, discount=discount)], number="E/2026/0009"),
+        cedente=CEDENTE,
+        cessionario=INSURER,
+        progressivo="00009",
+        original_invoice_number=original,
+        original_invoice_date="2026-09-07" if original else None,
+    )
+    line = _validate(res.xml).find("FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee")
+    value = {
+        tag: Decimal(line.find(tag).text) for tag in ("PrezzoUnitario", "Quantita", "PrezzoTotale")
+    }
+    per_unit = Decimal(line.find("ScontoMaggiorazione/Importo").text)
+    computed = (value["PrezzoUnitario"] - per_unit) * value["Quantita"]
+    assert abs(computed - value["PrezzoTotale"]) <= Decimal("0.01")
+
+
 def test_recipient_routing_from_billing_address():
     inv = _invoice([_item("Visita", "10.00")], address={"sdi_code": "abc1234"})
     res = build_fattura(inv, cedente=CEDENTE, cessionario=INSURER, progressivo="00003")
