@@ -41,6 +41,23 @@ class ImagingStudyResponse(BaseModel):
     updated_at: datetime
 
 
+class RoiStatsResponse(BaseModel):
+    """Native-value pixel statistics for one normalized rectangle.
+
+    Values are the study's measurement-space pixel values (modality LUT +
+    RescaleSlope/Intercept applied, no windowing and no VOI LUT), so they
+    are window-independent. ``std`` is the population standard deviation
+    (ddof=0). ``count`` is the number of pixels covered - the mapped
+    region is never empty (a click spans one pixel).
+    """
+
+    mean: float
+    std: float
+    min: float
+    max: float
+    count: int
+
+
 class RvgImportResponse(BaseModel):
     """One RVG watch-folder file and its queue state."""
 

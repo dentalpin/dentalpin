@@ -250,6 +250,7 @@ def _dicom_bytes(
     mono1: bool = False,
     rescale: tuple[float, float] | None = None,
     modality_lut: tuple[int, float] | None = None,
+    voi_lut: tuple[int, float] | None = None,
     frames: int | None = None,
     photometric: str | None = None,
     samples: int = 1,
@@ -298,6 +299,13 @@ def _dicom_bytes(
         item.RescaleIntercept = 0
         item.RescaleSlope = 1
         ds.ModalityLUTSequence = [item]
+    if voi_lut is not None:
+        length, first_value = voi_lut
+        item = Dataset()
+        # Same descriptor/packing contract as the modality fixture above.
+        item.LUTDescriptor = [length, 0, 16]
+        item.LUTData = np.arange(first_value, first_value + length, dtype=np.uint16).tobytes()
+        ds.VOILUTSequence = [item]
     ds.PixelData = arr.tobytes()
     buf = io.BytesIO()
     pydicom.dcmwrite(buf, ds)
@@ -536,6 +544,312 @@ def test_render_refuses_encapsulated_transfer_syntax() -> None:
 
     with pytest.raises(UnrenderableStudyError, match="compressed transfer syntax"):
         render_dicom_png(buf.getvalue())
+
+
+async def _indexed_study(db_session, clinic_id, patient_id, fake_storage, **kwargs):
+    """Index a synthetic study and return its plain study id.
+
+    Same shape as :func:`_renderable_study` minus the render: the stats
+    path also ends its transaction before the storage read, so tests keep
+    plain ids and never touch ORM rows afterwards.
+    """
+    from app.modules.imaging_viewer.service import ImagingStudyService
+
+    storage = fake_storage
+    path = f"{clinic_id}/{patient_id}/2026-11/{uuid4()}.dcm"
+    raw = _dicom_bytes(**kwargs)
+    storage.files[path] = raw
+    user_id = (await db_session.execute(select(User))).scalars().first().id
+    doc = Document(
+        clinic_id=clinic_id,
+        patient_id=patient_id,
+        document_type="other",
+        title="DX",
+        original_filename="dx.dcm",
+        storage_path=path,
+        mime_type="application/dicom",
+        file_size=len(raw),
+        uploaded_by=user_id,
+    )
+    db_session.add(doc)
+    await db_session.flush()
+    study, _ = await ImagingStudyService.index_study(
+        db_session, clinic_id, patient_id, doc.id, raw=raw
+    )
+    return study.id
+
+
+def test_roi_stats_native_values_are_window_independent() -> None:
+    """ROI statistics run the native pixel pipeline (modality LUT +
+    rescale) and stop before the display transforms: a window that
+    saturates the whole render must not move the reported numbers."""
+    import math
+
+    from app.modules.imaging_viewer.service import compute_roi_stats, render_dicom_png
+
+    raw = _dicom_bytes(rows=4, cols=4, rescale=(2.0, 10.0), window=(0, 8))
+    # The window is active in the dataset: every native value (10..40)
+    # sits above its high edge (4), so the render saturates to white.
+    assert set(_png_luma(render_dicom_png(raw))) == {255}
+    stats = compute_roi_stats(raw, 0.0, 0.0, 0.5, 0.5)
+    # Top-left 2x2 in native units: [[10, 12], [18, 20]].
+    assert stats == {
+        "mean": 15.0,
+        "std": pytest.approx(math.sqrt(17.0)),
+        "min": 10.0,
+        "max": 20.0,
+        "count": 4,
+    }
+
+
+def test_roi_stats_applies_the_modality_lut() -> None:
+    """A study carrying a Modality LUT Sequence reports LUT-corrected
+    values: stored value v maps to v + 2 (16-entry LUT starting at 2)."""
+    import math
+
+    from app.modules.imaging_viewer.service import compute_roi_stats
+
+    raw = _dicom_bytes(rows=4, cols=4, modality_lut=(16, 2))
+    stats = compute_roi_stats(raw, 0.0, 0.0, 0.5, 0.5)
+    # Stored [[0, 1], [4, 5]] through the LUT -> [[2, 3], [6, 7]].
+    assert stats == {
+        "mean": 4.5,
+        "std": pytest.approx(math.sqrt(4.25)),
+        "min": 2.0,
+        "max": 7.0,
+        "count": 4,
+    }
+
+
+def test_roi_stats_a_click_spans_one_pixel() -> None:
+    """A degenerate rectangle (both corners at the same normalized point)
+    still covers exactly one pixel - the mapped region is never empty."""
+    from app.modules.imaging_viewer.service import compute_roi_stats
+
+    stats = compute_roi_stats(_dicom_bytes(rows=4, cols=4), 0.5, 0.5, 0.5, 0.5)
+    # floor(0.5 * 4) = 2 on both axes -> the single pixel holding 10.
+    assert stats == {"mean": 10.0, "std": 0.0, "min": 10.0, "max": 10.0, "count": 1}
+
+
+def test_roi_stats_clamps_into_the_image_bounds() -> None:
+    """Corners at or beyond the image edge clamp to the last pixel
+    row/column instead of producing an empty region."""
+    import math
+
+    from app.modules.imaging_viewer.service import compute_roi_stats
+
+    raw = _dicom_bytes(rows=4, cols=4)
+    corner = compute_roi_stats(raw, 0.9, 0.9, 1.0, 1.0)
+    assert corner == {"mean": 15.0, "std": 0.0, "min": 15.0, "max": 15.0, "count": 1}
+    whole = compute_roi_stats(raw, 0.0, 0.0, 1.0, 1.0)
+    assert whole == {
+        "mean": 7.5,
+        "std": pytest.approx(math.sqrt(21.25)),
+        "min": 0.0,
+        "max": 15.0,
+        "count": 16,
+    }
+
+
+def test_roi_stats_stop_before_the_voi_lut() -> None:
+    """The VOI LUT is a display transform: the render applies it, the
+    statistics must not. The window is set explicitly - a min-max
+    auto-window would hide a constant +2 table shift, so the render
+    difference below is only visible against a fixed window."""
+    import math
+
+    from app.modules.imaging_viewer.service import compute_roi_stats, render_dicom_png
+
+    base = _dicom_bytes(rows=4, cols=4, window=(0, 8))
+    voi = _dicom_bytes(rows=4, cols=4, window=(0, 8), voi_lut=(16, 2))
+    assert set(_png_luma(render_dicom_png(base))) != set(_png_luma(render_dicom_png(voi)))
+    stats = compute_roi_stats(voi, 0.0, 0.0, 1.0, 1.0)
+    assert stats == {
+        "mean": 7.5,
+        "std": pytest.approx(math.sqrt(21.25)),
+        "min": 0.0,
+        "max": 15.0,
+        "count": 16,
+    }
+
+
+@pytest.mark.parametrize(
+    ("kwargs", "expected"),
+    [
+        ({"frames": 3}, "multi-frame"),
+        ({"samples": 3, "photometric": "RGB"}, "colour"),
+    ],
+)
+def test_roi_stats_refuses_unsupported_geometry_with_an_actionable_reason(
+    kwargs: dict, expected: str
+) -> None:
+    """Same refusals as the render, same reasons and remedies: the stats
+    path reuses the decode contract, it does not diverge from it."""
+    from app.modules.imaging_viewer.service import UnrenderableStudyError, compute_roi_stats
+
+    with pytest.raises(UnrenderableStudyError, match=expected):
+        compute_roi_stats(_dicom_bytes(**kwargs), 0.0, 0.0, 1.0, 1.0)
+
+
+def test_roi_stats_refuses_encapsulated_transfer_syntax() -> None:
+    """A compressed transfer syntax needs a decoder plugin that is
+    deliberately not in the backend image; the stats path says so with the
+    render's 422 reason instead of a pydicom NotImplementedError."""
+    pydicom = pytest.importorskip("pydicom")
+    from pydicom.dataset import Dataset, FileDataset
+    from pydicom.encaps import encapsulate
+    from pydicom.uid import JPEGBaseline8Bit, generate_uid
+
+    from app.modules.imaging_viewer.service import UnrenderableStudyError, compute_roi_stats
+
+    file_meta = Dataset()
+    file_meta.MediaStorageSOPClassUID = generate_uid()
+    file_meta.MediaStorageSOPInstanceUID = generate_uid()
+    file_meta.TransferSyntaxUID = JPEGBaseline8Bit
+    ds = FileDataset(None, {}, file_meta=file_meta, preamble=b"\0" * 128)
+    ds.SOPClassUID = file_meta.MediaStorageSOPClassUID
+    ds.SOPInstanceUID = file_meta.MediaStorageSOPInstanceUID
+    ds.Rows, ds.Columns = 4, 4
+    ds.BitsAllocated = 8
+    ds.BitsStored = 8
+    ds.HighBit = 7
+    ds.PixelRepresentation = 0
+    ds.SamplesPerPixel = 1
+    ds.PhotometricInterpretation = "MONOCHROME2"
+    ds.PixelData = encapsulate([b"\x00" * 16])
+    buf = io.BytesIO()
+    pydicom.dcmwrite(buf, ds)
+
+    with pytest.raises(UnrenderableStudyError, match="compressed transfer syntax"):
+        compute_roi_stats(buf.getvalue(), 0.0, 0.0, 1.0, 1.0)
+
+
+def test_roi_stats_maps_a_modality_lut_failure_to_the_refusal() -> None:
+    """A study whose pixel array decodes but whose modality transform
+    raises (float pixels carrying a Modality LUT Sequence: the LUT
+    indexes stored values, which a float array cannot do) answers the
+    render's 422 refusal, not a 500 - same stage wrap, same contract."""
+    pytest.importorskip("pydicom")
+    pytest.importorskip("numpy")
+    import numpy as np
+    import pydicom
+    from pydicom.dataset import Dataset, FileDataset
+    from pydicom.uid import ExplicitVRLittleEndian, generate_uid
+
+    from app.modules.imaging_viewer.service import UnrenderableStudyError, compute_roi_stats
+
+    file_meta = Dataset()
+    file_meta.MediaStorageSOPClassUID = generate_uid()
+    file_meta.MediaStorageSOPInstanceUID = generate_uid()
+    file_meta.TransferSyntaxUID = ExplicitVRLittleEndian
+    ds = FileDataset(None, {}, file_meta=file_meta, preamble=b"\0" * 128)
+    ds.SOPClassUID = file_meta.MediaStorageSOPClassUID
+    ds.SOPInstanceUID = file_meta.MediaStorageSOPInstanceUID
+    ds.Rows, ds.Columns = 4, 4
+    ds.BitsAllocated = 32
+    ds.BitsStored = 32
+    ds.HighBit = 31
+    ds.PixelRepresentation = 0
+    ds.SamplesPerPixel = 1
+    ds.PhotometricInterpretation = "MONOCHROME2"
+    ds.FloatPixelData = np.arange(16, dtype=np.float32).tobytes()
+    item = Dataset()
+    item.LUTDescriptor = [16, 0, 16]
+    item.LUTData = np.arange(2, 18, dtype=np.uint16).tobytes()
+    item.RescaleIntercept = 0
+    item.RescaleSlope = 1
+    ds.ModalityLUTSequence = [item]
+    buf = io.BytesIO()
+    pydicom.dcmwrite(buf, ds)
+
+    with pytest.raises(UnrenderableStudyError, match="pixels do not decode"):
+        compute_roi_stats(buf.getvalue(), 0.0, 0.0, 1.0, 1.0)
+
+
+@pytest.mark.asyncio
+async def test_roi_stats_service_scopes_to_clinic(
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    fake_storage: _FakeStorage,
+) -> None:
+    """Same clinic re-checks as the byte path: a foreign clinic id gets
+    LookupError (mapped to 404, never a cross-tenant oracle). Plain ids
+    only: the stats call rolls back before the storage read."""
+    study_id = await _indexed_study(
+        db_session, test_clinic.id, test_patient.id, fake_storage, rows=4, cols=4
+    )
+    with pytest.raises(LookupError):
+        await ImagingStudyService.roi_stats(db_session, uuid4(), study_id, 0.0, 0.0, 1.0, 1.0)
+    stats = await ImagingStudyService.roi_stats(
+        db_session, test_clinic.id, study_id, 0.0, 0.0, 1.0, 1.0
+    )
+    assert stats["count"] == 16
+
+
+@pytest.mark.asyncio
+async def test_roi_stats_over_http(
+    client,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+    fake_storage: _FakeStorage,
+) -> None:
+    """GET /studies/{id}/roi-stats: exact native values, 404 for an
+    unknown study, 422 for out-of-range coordinates and for bytes that do
+    not decode."""
+    import math
+
+    study_id = await _indexed_study(
+        db_session,
+        test_clinic.id,
+        test_patient.id,
+        fake_storage,
+        rows=4,
+        cols=4,
+        rescale=(2.0, 10.0),
+    )
+    garbage_doc = await _document(db_session, test_clinic, test_patient, fake_storage)
+    garbage_study, _ = await ImagingStudyService.index_study(
+        db_session, test_clinic.id, test_patient.id, garbage_doc.id
+    )
+    garbage_id = garbage_study.id
+
+    ok = await client.get(
+        f"/api/v1/imaging_viewer/studies/{study_id}/roi-stats",
+        params={"x0": 0.0, "y0": 0.0, "x1": 0.5, "y1": 0.5},
+        headers=auth_headers,
+    )
+    assert ok.status_code == 200, ok.text
+    assert ok.json()["data"] == {
+        "mean": 15.0,
+        "std": pytest.approx(math.sqrt(17.0)),
+        "min": 10.0,
+        "max": 20.0,
+        "count": 4,
+    }
+    assert (
+        await client.get(
+            f"/api/v1/imaging_viewer/studies/{uuid4()}/roi-stats",
+            params={"x0": 0.0, "y0": 0.0, "x1": 1.0, "y1": 1.0},
+            headers=auth_headers,
+        )
+    ).status_code == 404
+    assert (
+        await client.get(
+            f"/api/v1/imaging_viewer/studies/{study_id}/roi-stats",
+            params={"x0": 1.5, "y0": 0.0, "x1": 1.0, "y1": 1.0},
+            headers=auth_headers,
+        )
+    ).status_code == 422
+    bad = await client.get(
+        f"/api/v1/imaging_viewer/studies/{garbage_id}/roi-stats",
+        params={"x0": 0.0, "y0": 0.0, "x1": 1.0, "y1": 1.0},
+        headers=auth_headers,
+    )
+    assert bad.status_code == 422
+    assert "pixels do not decode" in bad.json()["message"]
 
 
 @pytest.mark.asyncio

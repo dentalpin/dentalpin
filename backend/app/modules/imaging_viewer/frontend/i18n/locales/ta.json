@@ -64,7 +64,15 @@
       "kind_note": "குறிப்பு",
       "loadFailed": "குறிப்புரைகளை ஏற்ற முடியவில்லை.",
       "actionFailed": "செயல் தோல்வியடைந்தது. மீண்டும் முயற்சிக்கவும்.",
-      "aidNote": "மேலடுக்குகள் காட்சிப்படுத்தல் உதவிகள் மட்டுமே — ஒருபோதும் நோயறிதல் அல்ல."
+      "aidNote": "மேலடுக்குகள் காட்சிப்படுத்தல் உதவிகள் மட்டுமே — ஒருபோதும் நோயறிதல் அல்ல.",
+      "stats": "ROI stats",
+      "statsHint": "Drag a rectangle on the image to measure it.",
+      "statsFailed": "Could not measure the stats.",
+      "statsMean": "Mean",
+      "statsStd": "Std dev",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixels"
     }
   }
 }

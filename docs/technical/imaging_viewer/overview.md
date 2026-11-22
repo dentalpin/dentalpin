@@ -1,6 +1,6 @@
 ---
 module: imaging_viewer
-last_verified_commit: 0000000
+last_verified_commit: 71565b1dc57bb78ce8606cb5ccfbe9ab82151def
 ---
 
 # imaging_viewer — technical overview
@@ -21,11 +21,13 @@ the scaffold could not infer.
 - `GET /api/v1/imaging_viewer/studies/{study_id}`
 - `POST /api/v1/imaging_viewer/patients/{patient_id}/studies/index`
 - `GET /api/v1/imaging_viewer/studies/{study_id}/render`
+- `GET /api/v1/imaging_viewer/studies/{study_id}/roi-stats` — native-value stats for a normalized rect
 - `DELETE /api/v1/imaging_viewer/studies/{study_id}`
 - `POST /api/v1/imaging_viewer/rvg/scan` — scan the clinic watch folder now
 - `GET /api/v1/imaging_viewer/rvg/imports` (+ `{id}`) — approval queue
 - `POST /api/v1/imaging_viewer/rvg/imports/{id}/approve` — materialize + link
 - `POST /api/v1/imaging_viewer/rvg/imports/{id}/reject`
+- `POST /api/v1/imaging_viewer/rvg/imports/approve-batch` - decide several pending imports, per-item outcomes
 - `GET /api/v1/imaging_viewer/rvg/links`, `DELETE /api/v1/imaging_viewer/rvg/links/{id}`
 - `GET /api/v1/imaging_viewer/studies/{id}/annotations` — overlay list
 - `POST /api/v1/imaging_viewer/studies/{id}/annotations` — draw (ruler/freehand/note)

@@ -64,7 +64,15 @@
       "kind_note": "Nota",
       "loadFailed": "No se pudieron cargar las anotaciones.",
       "actionFailed": "Falló la acción. Inténtalo de nuevo.",
-      "aidNote": "Las anotaciones son solo ayuda visual — nunca un diagnóstico."
+      "aidNote": "Las anotaciones son solo ayuda visual — nunca un diagnóstico.",
+      "stats": "Estadísticas ROI",
+      "statsHint": "Arrastra un rectángulo sobre la imagen para medirla.",
+      "statsFailed": "No se pudieron medir las estadísticas.",
+      "statsMean": "Media",
+      "statsStd": "Desv. típica",
+      "statsMin": "Mín",
+      "statsMax": "Máx",
+      "statsCount": "Píxeles"
     }
   }
 }

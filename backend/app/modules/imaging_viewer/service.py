@@ -366,6 +366,28 @@ class ImagingStudyService:
         raw = await fetch_storage_bytes(storage_path)
         return await asyncio.to_thread(render_dicom_png, raw)
 
+    @staticmethod
+    async def roi_stats(
+        db: AsyncSession,
+        clinic_id: UUID,
+        study_id: UUID,
+        x0: float,
+        y0: float,
+        x1: float,
+        y1: float,
+    ) -> dict:
+        """Native-value statistics for a normalized rectangle of one study.
+
+        Same clinic re-checks as the byte path (LookupError → 404) and the
+        render's decode contract (UnrenderableStudyError → 422). The
+        transaction is released before the storage read and the CPU-bound
+        reduction, exactly like the render.
+        """
+        storage_path, _mime = await ImagingStudyService.get_frame_source(db, clinic_id, study_id)
+        await db.rollback()
+        raw = await fetch_storage_bytes(storage_path)
+        return await asyncio.to_thread(compute_roi_stats, raw, x0, y0, x1, y1)
+
 
 def _reject_unsupported_geometry(ds) -> None:
     """Refuse pixel layouts the viewer cannot honestly draw (422).
@@ -403,19 +425,23 @@ def _reject_unsupported_geometry(ds) -> None:
         )
 
 
-def _apply_modality_lut(ds, arr):
-    """Modality LUT then VOI LUT when the study carries them.
+def _apply_modality_values(ds, arr):
+    """Modality LUT (on the integer array) then RescaleSlope/Intercept.
 
     Order is the DICOM one (PS3.3 C.11.1) and it is load-bearing: the
     modality LUT maps stored values to modality-specific units and indexes
     with them, so it must run on the INTEGER array, before the float
-    conversion, the rescale and the window. Skipping it (or running a VOI
-    LUT over raw stored values) is what produced plausible-looking but
+    conversion, the rescale and the window. Skipping it (or running the
+    rescale over raw stored values) is what produced plausible-looking but
     clinically wrong greys, and ``RescaleSlope``/``RescaleIntercept`` were
     ignored entirely before.
+
+    This is the measurement-space transform: quantitative values, no
+    display transforms. The render applies the VOI LUT on top; ROI stats
+    stop here so the reported numbers are window-independent.
     """
     import numpy as np
-    from pydicom.pixels import apply_modality_lut, apply_voi_lut
+    from pydicom.pixels import apply_modality_lut
 
     pixels = arr
     if "ModalityLUTSequence" in ds:
@@ -427,26 +453,36 @@ def _apply_modality_lut(ds, arr):
         pixels = pixels * (slope if slope is not None else 1.0) + (
             intercept if intercept is not None else 0.0
         )
+    return pixels
+
+
+def _apply_modality_lut(ds, arr):
+    """Modality LUT, rescale, then the VOI LUT when the study carries one.
+
+    The VOI LUT is a display transform and belongs to the render only:
+    ROI statistics must not pass through it. Value order is the DICOM one
+    (PS3.3 C.11.1); see :func:`_apply_modality_values` for why the order
+    is load-bearing.
+    """
+    from pydicom.pixels import apply_voi_lut
+
+    pixels = _apply_modality_values(ds, arr)
     if "VOILUTSequence" in ds:
         pixels = apply_voi_lut(pixels, ds)
     return pixels
 
 
-def render_dicom_png(raw: bytes) -> bytes:
-    """Render DICOM pixel data to grayscale PNG bytes.
+def _read_pixel_dataset(raw: bytes):
+    """Shared decode front-half for the render and ROI stats: pydicom
+    read, dimension and layout guards, then the pixel array.
 
-    Pipeline: decode → modality LUT + VOI LUT when present (plus
-    RescaleSlope/Intercept, which are applied to the stored values first) →
-    window. The window is explicit WindowCenter/WindowWidth when present
-    (first value of multi-valued), else a min/max stretch of the corrected
-    values. MONOCHROME1 is inverted so bones read bright. Raises
-    ``UnrenderableStudyError`` when the pixel libraries are missing, the
-    geometry is unsupported, or the pixels do not decode — callers map that
-    to 422, never 500.
+    Raises ``UnrenderableStudyError`` with the reason and the remedy for
+    missing pixel libraries, missing dimensions, oversized grids,
+    unsupported layouts and undecodable pixels - callers map it to 422,
+    never 500.
     """
     try:
         import pydicom
-        from PIL import Image
     except ImportError as exc:
         raise UnrenderableStudyError(f"pixel libraries unavailable: {exc}") from exc
     try:
@@ -465,6 +501,26 @@ def render_dicom_png(raw: bytes) -> bytes:
         raise
     except Exception as exc:
         raise UnrenderableStudyError(f"pixels do not decode: {exc}") from exc
+    return ds, arr
+
+
+def render_dicom_png(raw: bytes) -> bytes:
+    """Render DICOM pixel data to grayscale PNG bytes.
+
+    Pipeline: decode → modality LUT + VOI LUT when present (plus
+    RescaleSlope/Intercept, which are applied to the stored values first) →
+    window. The window is explicit WindowCenter/WindowWidth when present
+    (first value of multi-valued), else a min/max stretch of the corrected
+    values. MONOCHROME1 is inverted so bones read bright. Raises
+    ``UnrenderableStudyError`` when the pixel libraries are missing, the
+    geometry is unsupported, or the pixels do not decode — callers map that
+    to 422, never 500.
+    """
+    try:
+        from PIL import Image
+    except ImportError as exc:
+        raise UnrenderableStudyError(f"pixel libraries unavailable: {exc}") from exc
+    ds, arr = _read_pixel_dataset(raw)
     try:
         pixels = _apply_modality_lut(ds, arr)
         center = ds.get("WindowCenter", None)
@@ -490,6 +546,47 @@ def render_dicom_png(raw: bytes) -> bytes:
         raise
     except Exception as exc:
         raise UnrenderableStudyError(f"pixels do not render: {exc}") from exc
+
+
+def compute_roi_stats(raw: bytes, x0: float, y0: float, x1: float, y1: float) -> dict:
+    """Pixel statistics for a normalized rectangle of one study's native
+    pixel values.
+
+    Decode contract identical to the render (same guards, same refusals
+    with their reasons and remedies, modality LUT on the integer array,
+    then ``RescaleSlope``/``Intercept``) minus the display transforms: no
+    windowing and no VOI LUT, so the numbers do not move when the operator
+    changes the window. The rectangle comes in the annotation canvas's
+    normalized 0-1 coordinates and maps to pixel indices per edge as
+    ``floor(x * columns)`` / ``floor(y * rows)`` clamped into the image, so
+    a click still spans one pixel and the region is never empty.
+
+    Raises ``UnrenderableStudyError`` (the router maps it to 422) under
+    exactly the conditions the render refuses - reuse, not divergence.
+    The value stage is wrapped the same way the render wraps its display
+    pipeline: a transform that raises (a modality LUT applied to float
+    pixels, for instance) answers the same refusal, never a 500.
+    """
+    ds, arr = _read_pixel_dataset(raw)
+    try:
+        pixels = _apply_modality_values(ds, arr)
+    except UnrenderableStudyError:
+        raise
+    except Exception as exc:
+        raise UnrenderableStudyError(f"pixels do not decode: {exc}") from exc
+    rows, columns = pixels.shape[0], pixels.shape[1]
+    c0 = max(0, min(int(min(x0, x1) * columns), columns - 1))
+    c1 = min(max(int(max(x0, x1) * columns), c0 + 1), columns)
+    r0 = max(0, min(int(min(y0, y1) * rows), rows - 1))
+    r1 = min(max(int(max(y0, y1) * rows), r0 + 1), rows)
+    region = pixels[r0:r1, c0:c1]
+    return {
+        "mean": float(region.mean()),
+        "std": float(region.std()),
+        "min": float(region.min()),
+        "max": float(region.max()),
+        "count": int(region.size),
+    }
 
 
 class RvgConflictError(Exception):

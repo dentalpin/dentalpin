@@ -5,24 +5,29 @@
  * stored normalized 0-1; the original bytes are never touched. Overlays are
  * visualization aids, never diagnoses.
  */
-import { useImagingViewer, type StudyAnnotation } from '../composables/useImagingViewer'
+import { useImagingViewer, type StudyAnnotation, type RoiStats } from '../composables/useImagingViewer'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { errorDetail } from '~~/app/utils/error'
 
 const props = defineProps<{ studyId: string }>()
 
 const { t } = useI18n()
 const { can } = usePermissions()
-const { fetchRenderBlobUrl, fetchAnnotations, createAnnotation, deleteAnnotation } = useImagingViewer()
+const { fetchRenderBlobUrl, fetchAnnotations, createAnnotation, deleteAnnotation, fetchRoiStats } = useImagingViewer()
 
 const annotations = ref<StudyAnnotation[]>([])
 const renderBlobUrl = ref<string | null>(null)
 const renderError = ref<string | null>(null)
 const renderToken = ref(0)
-const tool = ref<'ruler' | 'freehand' | 'note' | null>(null)
+const tool = ref<'ruler' | 'freehand' | 'note' | 'stats' | null>(null)
 const draft = ref<Array<[number, number]>>([])
 const drawing = ref(false)
 const noteText = ref('')
 const noteAt = ref<[number, number] | null>(null)
+const roiRect = ref<Array<[number, number]> | null>(null)
+const roiStats = ref<RoiStats | null>(null)
+const roiError = ref<string | null>(null)
+const statsToken = ref(0)
 const actionError = ref<string | null>(null)
 const svgEl = ref<SVGSVGElement | null>(null)
 
@@ -74,7 +79,13 @@ function toNorm(e: PointerEvent): [number, number] {
 }
 
 function onPointerDown(e: PointerEvent) {
-  if (!tool.value || !canWrite.value) return
+  if (!tool.value) return
+  // The stats tool is read-only: it measures, it does not persist, so it
+  // stays available without the write permission.
+  if (tool.value !== 'stats' && !canWrite.value) return
+  // Nothing accepts pointers on the placeholder: an annotation or a
+  // measurement over an image that is not rendered is meaningless.
+  if (!renderBlobUrl.value) return
   const p = toNorm(e)
   if (tool.value === 'note') {
     noteAt.value = p
@@ -85,8 +96,13 @@ function onPointerDown(e: PointerEvent) {
 }
 
 function onPointerMove(e: PointerEvent) {
-  if (!drawing.value || tool.value !== 'freehand') return
-  draft.value = [...draft.value, toNorm(e)]
+  if (!drawing.value) return
+  if (tool.value === 'freehand') {
+    draft.value = [...draft.value, toNorm(e)]
+  } else if (tool.value === 'stats') {
+    const a = draft.value[0]
+    if (a) draft.value = [a, toNorm(e)]
+  }
 }
 
 async function onPointerUp(e: PointerEvent) {
@@ -97,9 +113,82 @@ async function onPointerUp(e: PointerEvent) {
   } else if (tool.value === 'ruler') {
     draft.value = [...draft.value, toNorm(e)]
     if (draft.value.length >= 2) await save('ruler', draft.value.slice(0, 2))
+  } else if (tool.value === 'stats') {
+    const a = draft.value[0]
+    const b = toNorm(e)
+    if (a) {
+      roiRect.value = [a, b]
+      await measure()
+    }
   }
   draft.value = []
 }
+
+/** Rectangle drawn over the image as SVG attrs: the live drag, or the
+ * last measured region. Corners are checked before use: a tuple indexed
+ * out of a shorter array is never trusted. */
+const statsRectAttrs = computed<{ x: number, y: number, width: number, height: number } | null>(() => {
+  const live = drawing.value && tool.value === 'stats'
+  const corners = live ? draft.value : roiRect.value
+  const a = corners?.[0]
+  const b = live ? (corners?.[1] ?? a) : corners?.[1]
+  if (!a || !b) return null
+  return {
+    x: Math.min(a[0], b[0]) * 100,
+    y: Math.min(a[1], b[1]) * 100,
+    width: Math.max(Math.abs(a[0] - b[0]) * 100, 0.4),
+    height: Math.max(Math.abs(a[1] - b[1]) * 100, 0.4)
+  }
+})
+
+function clearRoi() {
+  // Invalidate any measurement still in flight: its response must never
+  // paint into a cleared or switched-away panel.
+  statsToken.value++
+  roiRect.value = null
+  roiStats.value = null
+  roiError.value = null
+}
+
+async function measure() {
+  const rect = roiRect.value
+  const a = rect?.[0]
+  const b = rect?.[1] ?? a
+  if (!a || !b) return
+  roiError.value = null
+  roiStats.value = null
+  const token = ++statsToken.value
+  try {
+    const res = await fetchRoiStats(
+      props.studyId,
+      Math.min(a[0], b[0]),
+      Math.min(a[1], b[1]),
+      Math.max(a[0], b[0]),
+      Math.max(a[1], b[1])
+    )
+    if (token === statsToken.value) roiStats.value = res
+  } catch (error: unknown) {
+    if (token === statsToken.value) {
+      // errorToast is false on this call, so the backend's own reason
+      // (the render's refusal with its remedy) surfaces here.
+      roiError.value = errorDetail(error) ?? t('imagingViewer.annotations.statsFailed')
+    }
+  }
+}
+
+function toggleStats() {
+  if (tool.value === 'stats') {
+    tool.value = null
+    clearRoi()
+  } else {
+    tool.value = 'stats'
+    clearRoi()
+  }
+}
+
+watch(tool, (current) => {
+  if (current !== 'stats') clearRoi()
+})
 
 async function save(kind: 'ruler' | 'freehand' | 'note', points: Array<[number, number]>, text?: string) {
   actionError.value = null
@@ -143,34 +232,41 @@ watch(() => props.studyId, () => {
     <template #header>
       <div class="flex flex-wrap items-center justify-between gap-2">
         <span class="font-medium">{{ t('imagingViewer.annotations.title') }}</span>
-        <div
-          v-if="canWrite"
-          class="flex gap-2"
-        >
+        <div class="flex gap-2">
           <UButton
             size="sm"
-            :variant="tool === 'ruler' ? 'solid' : 'soft'"
-            icon="i-lucide-ruler"
-            @click="tool = tool === 'ruler' ? null : 'ruler'"
+            :variant="tool === 'stats' ? 'solid' : 'soft'"
+            icon="i-lucide-scan-search"
+            @click="toggleStats"
           >
-            {{ t('imagingViewer.annotations.ruler') }}
+            {{ t('imagingViewer.annotations.stats') }}
           </UButton>
-          <UButton
-            size="sm"
-            :variant="tool === 'freehand' ? 'solid' : 'soft'"
-            icon="i-lucide-pen-line"
-            @click="tool = tool === 'freehand' ? null : 'freehand'"
-          >
-            {{ t('imagingViewer.annotations.freehand') }}
-          </UButton>
-          <UButton
-            size="sm"
-            :variant="tool === 'note' ? 'solid' : 'soft'"
-            icon="i-lucide-sticky-note"
-            @click="tool = tool === 'note' ? null : 'note'"
-          >
-            {{ t('imagingViewer.annotations.note') }}
-          </UButton>
+          <template v-if="canWrite">
+            <UButton
+              size="sm"
+              :variant="tool === 'ruler' ? 'solid' : 'soft'"
+              icon="i-lucide-ruler"
+              @click="tool = tool === 'ruler' ? null : 'ruler'"
+            >
+              {{ t('imagingViewer.annotations.ruler') }}
+            </UButton>
+            <UButton
+              size="sm"
+              :variant="tool === 'freehand' ? 'solid' : 'soft'"
+              icon="i-lucide-pen-line"
+              @click="tool = tool === 'freehand' ? null : 'freehand'"
+            >
+              {{ t('imagingViewer.annotations.freehand') }}
+            </UButton>
+            <UButton
+              size="sm"
+              :variant="tool === 'note' ? 'solid' : 'soft'"
+              icon="i-lucide-sticky-note"
+              @click="tool = tool === 'note' ? null : 'note'"
+            >
+              {{ t('imagingViewer.annotations.note') }}
+            </UButton>
+          </template>
         </div>
       </div>
     </template>
@@ -237,7 +333,60 @@ watch(() => props.studyId, () => {
             fill="#f59e0b"
           />
         </g>
+        <rect
+          v-if="statsRectAttrs"
+          :x="statsRectAttrs.x"
+          :y="statsRectAttrs.y"
+          :width="statsRectAttrs.width"
+          :height="statsRectAttrs.height"
+          fill="rgba(245, 158, 11, 0.15)"
+          stroke="#f59e0b"
+          stroke-width="0.6"
+          stroke-dasharray="2 1"
+          vector-effect="non-scaling-stroke"
+        />
       </svg>
+    </div>
+    <div
+      v-if="tool === 'stats'"
+      class="mt-2"
+    >
+      <UAlert
+        v-if="roiError"
+        color="warning"
+        :title="roiError"
+      />
+      <p
+        v-else-if="!roiStats"
+        class="text-xs text-gray-500"
+      >
+        {{ t('imagingViewer.annotations.statsHint') }}
+      </p>
+      <div
+        v-else
+        class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm"
+      >
+        <span>
+          {{ t('imagingViewer.annotations.statsMean') }}:
+          <span class="font-medium">{{ roiStats.mean.toFixed(2) }}</span>
+        </span>
+        <span>
+          {{ t('imagingViewer.annotations.statsStd') }}:
+          <span class="font-medium">{{ roiStats.std.toFixed(2) }}</span>
+        </span>
+        <span>
+          {{ t('imagingViewer.annotations.statsMin') }}:
+          <span class="font-medium">{{ roiStats.min.toFixed(2) }}</span>
+        </span>
+        <span>
+          {{ t('imagingViewer.annotations.statsMax') }}:
+          <span class="font-medium">{{ roiStats.max.toFixed(2) }}</span>
+        </span>
+        <span>
+          {{ t('imagingViewer.annotations.statsCount') }}:
+          <span class="font-medium">{{ roiStats.count }}</span>
+        </span>
+      </div>
     </div>
     <div
       v-if="noteAt && tool === 'note'"

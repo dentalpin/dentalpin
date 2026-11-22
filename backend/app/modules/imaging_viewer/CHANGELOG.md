@@ -2,6 +2,23 @@
 
 ## Unreleased
 
+- feat: ROI statistics. New read-only endpoint
+  `GET /studies/{id}/roi-stats?x0&y0&x1&y1` (normalized 0-1 rectangle,
+  `imaging_viewer.studies.read`) reporting mean, population standard
+  deviation (ddof=0), min, max and pixel count of the study's native pixel
+  values: modality LUT
+  applied on the integer array, then `RescaleSlope`/`RescaleIntercept`,
+  never the window or the VOI LUT, so the numbers do not move when the
+  operator changes the display window. The decode front-half (dimension
+  guards, geometry refusals, oversized-grid guard) is now shared with the
+  render (`_read_pixel_dataset`), so both paths answer the same 422s with
+  the same reasons and remedies (the value stage included). The panel
+  gains a read-only "ROI stats"
+  tool (drag a rectangle, transient readout, nothing persisted) that is
+  available without the write permission, with locale strings in all 12
+  locales (en and es authored, de/fr/it/pt translated, the remaining six
+  carrying the English fallback).
+
 - fix(#850): approve and reject lock the queue row (`FOR UPDATE`, `populate_existing`). Two decisions at once both passed the `pending` check: two approvals could file one X-ray under two patients (or the loser hit a 500 on the link's unique key), and an approval that started during a reject approved the rejected file. The second decision now waits and gets 409.
 
 - feat: batch approve for the RVG queue. New `POST /rvg/imports/approve-batch`

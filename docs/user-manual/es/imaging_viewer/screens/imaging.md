@@ -7,13 +7,15 @@ related_endpoints:
   - GET /api/v1/imaging_viewer/studies/{study_id}
   - GET /api/v1/imaging_viewer/studies/{study_id}/render
   - POST /api/v1/imaging_viewer/rvg/imports/approve-batch
+  - GET /api/v1/imaging_viewer/studies/{study_id}/roi-stats
 related_permissions:
   - imaging_viewer.studies.read
   - imaging_viewer.rvg.write
 related_paths:
   - backend/app/modules/imaging_viewer/router.py
   - backend/app/modules/imaging_viewer/frontend/pages/imaging/index.vue
-last_verified_commit: 0fbdf545d47ce839a5ce0d20c13129f21275388a
+  - backend/app/modules/imaging_viewer/frontend/components/AnnotationPanel.vue
+last_verified_commit: 71565b1dc57bb78ce8606cb5ccfbe9ab82151def
 screenshots: []
 ---
 
@@ -46,6 +48,17 @@ del paciente, con acción para desvincular un emparejamiento DICOM erróneo.
 La imagen se genera en el servidor (con ventana aplicada) desde el
 archivo de la propia clínica. Si un estudio no se puede mostrar, la
 página lo indica en lugar de mostrar una imagen rota.
+
+## Estadísticas ROI
+
+La herramienta "Estadísticas ROI" está disponible sin permiso de
+escritura: arrastra un rectángulo sobre la imagen y el panel muestra las
+estadísticas de píxel (media, desviación típica poblacional, mínimo, máximo y
+recuento de píxeles) en los valores nativos del estudio - valores de
+medida que no cambian con la ventana de visualización, no los grises de
+pantalla. Un estudio que no se pueda decodificar da el mismo rechazo y
+remedio que el render. El rectángulo es transitorio: desaparece al
+cambiar de herramienta o de estudio y no se guarda nada.
 
 Los estudios mostrados aquí son solo una ayuda visual — nunca un
 diagnóstico.

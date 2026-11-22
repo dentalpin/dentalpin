@@ -64,7 +64,15 @@
       "kind_note": "Notatka",
       "loadFailed": "Nie można wczytać adnotacji.",
       "actionFailed": "Akcja nie powiodła się. Spróbuj ponownie.",
-      "aidNote": "Nakładki służą wyłącznie jako pomoc wizualna — nigdy jako diagnoza."
+      "aidNote": "Nakładki służą wyłącznie jako pomoc wizualna — nigdy jako diagnoza.",
+      "stats": "ROI stats",
+      "statsHint": "Drag a rectangle on the image to measure it.",
+      "statsFailed": "Could not measure the stats.",
+      "statsMean": "Mean",
+      "statsStd": "Std dev",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixels"
     }
   }
 }

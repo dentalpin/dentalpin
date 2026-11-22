@@ -64,7 +64,15 @@
       "kind_note": "Megjegyzés",
       "loadFailed": "Az annotációk betöltése nem sikerült.",
       "actionFailed": "A művelet nem sikerült. Kérjük, próbálja újra.",
-      "aidNote": "Az átfedések csak megjelenítési segédletek — soha nem diagnózis."
+      "aidNote": "Az átfedések csak megjelenítési segédletek — soha nem diagnózis.",
+      "stats": "ROI stats",
+      "statsHint": "Drag a rectangle on the image to measure it.",
+      "statsFailed": "Could not measure the stats.",
+      "statsMean": "Mean",
+      "statsStd": "Std dev",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixels"
     }
   }
 }

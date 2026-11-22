@@ -64,7 +64,15 @@
       "kind_note": "Note",
       "loadFailed": "Impossible de charger les annotations.",
       "actionFailed": "Échec de l'action. Veuillez réessayer.",
-      "aidNote": "Les superpositions sont des aides visuelles uniquement — jamais un diagnostic."
+      "aidNote": "Les superpositions sont des aides visuelles uniquement — jamais un diagnostic.",
+      "stats": "Statistiques ROI",
+      "statsHint": "Tracez un rectangle sur l'image pour la mesurer.",
+      "statsFailed": "Impossible de mesurer les statistiques.",
+      "statsMean": "Moyenne",
+      "statsStd": "Écart-type",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixels"
     }
   }
 }

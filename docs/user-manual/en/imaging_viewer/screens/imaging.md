@@ -7,13 +7,15 @@ related_endpoints:
   - GET /api/v1/imaging_viewer/studies/{study_id}
   - GET /api/v1/imaging_viewer/studies/{study_id}/render
   - POST /api/v1/imaging_viewer/rvg/imports/approve-batch
+  - GET /api/v1/imaging_viewer/studies/{study_id}/roi-stats
 related_permissions:
   - imaging_viewer.studies.read
   - imaging_viewer.rvg.write
 related_paths:
   - backend/app/modules/imaging_viewer/router.py
   - backend/app/modules/imaging_viewer/frontend/pages/imaging/index.vue
-last_verified_commit: 0fbdf545d47ce839a5ce0d20c13129f21275388a
+  - backend/app/modules/imaging_viewer/frontend/components/AnnotationPanel.vue
+last_verified_commit: 71565b1dc57bb78ce8606cb5ccfbe9ab82151def
 screenshots: []
 ---
 
@@ -45,5 +47,16 @@ unlink action for correcting a wrong DICOM pairing.
 The image is rendered server-side (windowing applied) from the
 clinic's own archive. If a study cannot be rendered, the page says so
 instead of showing a broken image.
+
+## ROI stats
+
+The "ROI stats" tool is available without any write permission: drag a
+rectangle over the image and the panel reports the pixel statistics
+(mean, population standard deviation, min, max, pixel count) in the study's native
+values - measurement values that do not move with the display window,
+not the on-screen greys. A study that cannot be decoded reports the
+same refusal and remedy as the render. The rectangle is transient: it
+disappears when the tool changes or the study switches, and nothing is
+persisted.
 
 Studies shown here are a visualization aid only — never a diagnosis.

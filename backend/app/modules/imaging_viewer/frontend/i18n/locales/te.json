@@ -64,7 +64,15 @@
       "kind_note": "గమనిక",
       "loadFailed": "వ్యాఖ్యానాలను లోడ్ చేయలేకపోయాము.",
       "actionFailed": "చర్య విఫలమైంది. దయచేసి మళ్ళీ ప్రయత్నించండి.",
-      "aidNote": "ఓవర్‌లేలు దృశ్య సహాయం మాత్రమే — ఇవి ఎప్పుడూ రోగనిర్ధారణ కాదు."
+      "aidNote": "ఓవర్‌లేలు దృశ్య సహాయం మాత్రమే — ఇవి ఎప్పుడూ రోగనిర్ధారణ కాదు.",
+      "stats": "ROI stats",
+      "statsHint": "Drag a rectangle on the image to measure it.",
+      "statsFailed": "Could not measure the stats.",
+      "statsMean": "Mean",
+      "statsStd": "Std dev",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixels"
     }
   }
 }

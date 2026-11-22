@@ -64,7 +64,15 @@
       "kind_note": "टिप्पणी",
       "loadFailed": "टिप्पणियाँ लोड नहीं हो सकीं।",
       "actionFailed": "कार्रवाई विफल। कृपया फिर कोशिश करें।",
-      "aidNote": "ओवरले केवल दृश्य सहायता हैं — कभी भी निदान नहीं।"
+      "aidNote": "ओवरले केवल दृश्य सहायता हैं — कभी भी निदान नहीं।",
+      "stats": "ROI stats",
+      "statsHint": "Drag a rectangle on the image to measure it.",
+      "statsFailed": "Could not measure the stats.",
+      "statsMean": "Mean",
+      "statsStd": "Std dev",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixels"
     }
   }
 }
