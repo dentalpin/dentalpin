@@ -22,6 +22,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Telephony:** outbound calls are linked to the patient dialled and no longer pop up as incoming calls from the clinic's own number (#964).
 - **WhatsApp (Kapso):** a reply from a phone number shared by several patients is recorded instead of failing, and is no longer attached to an arbitrary family member (#965).
 - **Prescriptions:** a line added after applying a template keeps its place on the prescription and its PDF (#966).
+- **Recall reminders:** the reminder names the month in the patient's language, not always in English (#975).
 - **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
 - **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).

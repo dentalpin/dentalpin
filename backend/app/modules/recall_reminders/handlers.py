@@ -16,19 +16,45 @@ import logging
 from datetime import datetime
 from uuid import UUID
 
+from babel import UnknownLocaleError
+from babel.dates import format_skeleton
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
 
 
-def _humanize_due_month(due_month: str | None) -> str | None:
+def _humanize_due_month(due_month: str | None, locale: str = "en") -> str | None:
+    """``2026-09-01`` → "September 2026" / "septiembre de 2026" / … (#975).
+
+    ``strftime("%B")`` only ever spoke English, so every non-English
+    template printed an English month.
+    """
     if not due_month:
         return None
     try:
-        return datetime.strptime(due_month, "%Y-%m-%d").strftime("%B %Y")
+        day = datetime.strptime(due_month, "%Y-%m-%d").date()
     except ValueError:
         return due_month
+    try:
+        return format_skeleton("yMMMM", day, locale=locale)
+    except (UnknownLocaleError, ValueError):
+        return day.strftime("%B %Y")
+
+
+async def _message_locale(db: AsyncSession, clinic_id: UUID, patient_id: UUID) -> str:
+    """The locale the gateway renders this patient's message in: the
+    patient's preference, else the clinic's communication language."""
+    from app.modules.notifications.models import NotificationPreference
+    from app.modules.notifications.service import resolve_clinic_communication_locale
+
+    preferred = await db.scalar(
+        select(NotificationPreference.preferred_locale).where(
+            NotificationPreference.clinic_id == clinic_id,
+            NotificationPreference.patient_id == patient_id,
+        )
+    )
+    return preferred or await resolve_clinic_communication_locale(db, clinic_id)
 
 
 async def _on_recall_created(payload: dict, *, db: AsyncSession) -> None:
@@ -63,7 +89,9 @@ async def _on_recall_created(payload: dict, *, db: AsyncSession) -> None:
             "patient_name": f"{patient.first_name} {patient.last_name}",
             "clinic_name": clinic.name if clinic else "DentalPin",
             "reason": payload.get("reason"),
-            "due_month": _humanize_due_month(payload.get("due_month")),
+            "due_month": _humanize_due_month(
+                payload.get("due_month"), await _message_locale(db, clinic_id, patient_id)
+            ),
         }
 
         await NotificationGateway.enqueue(
