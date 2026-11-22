@@ -142,6 +142,9 @@ Nuxt layer at `frontend/` with:
 
 ## Gotchas
 
+- **The PDF footer lives in the `@page` bottom margin** (#1039): a fixed
+  box inside the content area printed over the text of every full page.
+
 - **GDPR erasure retains generated documents.**
   `erasure.DocumentsErasureContributor` owns the `documents` coverage
   scope (ADR 0038, #657) and writes nothing: a prescription or
