@@ -30,7 +30,19 @@ function updateDay(weekday: number, shifts: Shift[]) {
 
 function addShift(weekday: number) {
   const current = shiftsForDay(weekday)
-  current.push({ start_time: '09:00:00', end_time: '14:00:00' })
+  // Start the new shift where the day's latest one ends: the fixed 09–14
+  // default overlapped a 09–18 day, which the API now rejects (#991).
+  const lastEnd = current.reduce((latest, s) => (s.end_time > latest ? s.end_time : latest), '')
+  if (!lastEnd) {
+    current.push({ start_time: '09:00:00', end_time: '14:00:00' })
+  } else if (lastEnd < '23:00:00') {
+    const [h, m] = lastEnd.split(':').map(Number)
+    const endHour = Math.min((h ?? 0) + 4, 23)
+    const end = endHour === 23 ? '23:59:00' : `${String(endHour).padStart(2, '0')}:${String(m ?? 0).padStart(2, '0')}:00`
+    current.push({ start_time: lastEnd, end_time: end })
+  } else {
+    return
+  }
   updateDay(weekday, current)
 }
 

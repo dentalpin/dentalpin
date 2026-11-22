@@ -9,6 +9,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.schemas import NotNull
+
 ExpenseCategory = Literal[
     "rent",
     "utilities",
@@ -29,9 +31,9 @@ class ExpenseCreate(BaseModel):
 
 
 class ExpenseUpdate(BaseModel):
-    category: ExpenseCategory | None = None
-    amount: Decimal | None = Field(default=None, gt=0, max_digits=10, decimal_places=2)
-    expense_date: date | None = None
+    category: NotNull[ExpenseCategory] = None
+    amount: NotNull[Decimal] = Field(default=None, gt=0, max_digits=10, decimal_places=2)
+    expense_date: NotNull[date] = None
     description: str | None = Field(default=None, max_length=2000)
 
 

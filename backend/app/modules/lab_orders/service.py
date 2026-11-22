@@ -55,11 +55,17 @@ class LabOrderService:
 
     @staticmethod
     async def _assert_contact(db: AsyncSession, clinic_id: UUID, contact_id: UUID) -> None:
-        stmt = select(Contact.id).where(Contact.id == contact_id, Contact.clinic_id == clinic_id)
+        # Only a lab contact: the form lists ``contact_type='lab'`` only, but
+        # the API and the copilot tool took a supplier or delegate too (#985).
+        stmt = select(Contact.id).where(
+            Contact.id == contact_id,
+            Contact.clinic_id == clinic_id,
+            Contact.contact_type == "lab",
+        )
         if (await db.execute(stmt)).scalar_one_or_none() is None:
             raise HTTPException(
                 http_status.HTTP_400_BAD_REQUEST,
-                "lab_contact_id does not match a contact in this clinic",
+                "lab_contact_id does not match a lab contact in this clinic",
             )
 
     @staticmethod

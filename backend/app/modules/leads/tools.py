@@ -189,7 +189,7 @@ async def _convert_lead_to_patient(ctx: AgentContext, params: ConvertLeadArgs) -
     lead = await LeadService.get_lead(ctx.db, ctx.clinic_id, params.lead_id)
     if lead is None:
         return {"error": "not_found"}
-    if lead.status == "converted":
+    if lead.patient_id is not None:
         return {"error": "already_converted"}
     patient_data = params.model_dump(exclude={"lead_id"})
     lead, patient = await LeadService.convert(ctx.db, ctx.clinic_id, lead, patient_data)

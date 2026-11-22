@@ -69,7 +69,10 @@ drives the recall upsert.
 
 - **Controls refused on terminal cases** (`finished`,
   `transferred_out`) — corrections need reopening a finished case to
-  `active` (a transferred-out case has no exit).
+  `active` (a transferred-out case has no exit). This covers edits too:
+  `PATCH /controls/{id}` answers 400 on a terminal case and re-runs
+  register's appointment / linked-session checks on a re-pointed link
+  (#990).
 - **Status machine is explicit** (`VALID_TRANSITIONS` in service.py):
   `transferred_out` terminal, `finished` reopens only to `active`.
   `finished_at` is stamped on each entry into a terminal state and never cleared; reopen stamps `reopened_at`.

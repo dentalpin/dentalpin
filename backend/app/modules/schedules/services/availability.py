@@ -272,7 +272,19 @@ def _pick_override(overrides: list, day: date):
 
 
 def _sorted_shifts(pairs: list[tuple[time, time]]) -> list[tuple[time, time]]:
-    return sorted((p for p in pairs if p[0] < p[1]), key=lambda p: p[0])
+    """Valid shifts by start, overlapping ones merged (#991).
+
+    ``_intervals_to_ranges`` walks a cursor forward and needs disjoint
+    intervals: a shift inside another moved it back and painted the rest of
+    the day closed. Touching shifts (09–14, 14–18) stay separate ranges.
+    """
+    merged: list[tuple[time, time]] = []
+    for start, end in sorted((p for p in pairs if p[0] < p[1]), key=lambda p: p[0]):
+        if merged and start < merged[-1][1]:
+            merged[-1] = (merged[-1][0], max(merged[-1][1], end))
+        else:
+            merged.append((start, end))
+    return merged
 
 
 def _combine(day: date, t: time, tz: ZoneInfo) -> datetime:

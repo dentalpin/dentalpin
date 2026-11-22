@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix(#992): a repeated `item_ids` entry counts once. Each supplier's PO is committed by `create_order`, so a duplicate used to leave the earlier suppliers' drafts behind and answer 400.
 - fix(#677): the `generate_reorder_orders` tool parameter `item_ids` is
   typed `list[UUID]` instead of `list[str]`.
   The tool schema now advertises `format: uuid`, and a malformed id is

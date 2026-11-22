@@ -22,6 +22,17 @@ class ShiftIn(BaseModel):
         return self
 
 
+def _reject_overlaps(shifts: list[ShiftIn]) -> None:
+    """Shifts of one day may touch (09–14, 14–18) but not overlap (#991)."""
+    ordered = sorted(shifts, key=lambda s: s.start_time)
+    for previous, current in zip(ordered, ordered[1:], strict=False):
+        if current.start_time < previous.end_time:
+            raise ValueError(
+                f"shifts overlap: {previous.start_time:%H:%M}–{previous.end_time:%H:%M} "
+                f"and {current.start_time:%H:%M}–{current.end_time:%H:%M}"
+            )
+
+
 class ShiftOut(ShiftIn):
     id: UUID
 
@@ -33,6 +44,11 @@ class WeekdayShiftsIn(BaseModel):
 
     weekday: int = Field(ge=0, le=6)
     shifts: list[ShiftIn] = Field(default_factory=list)
+
+    @model_validator(mode="after")
+    def check_overlaps(self) -> WeekdayShiftsIn:
+        _reject_overlaps(self.shifts)
+        return self
 
 
 class WeekdayShiftsOut(BaseModel):
@@ -84,6 +100,7 @@ class ClinicOverrideBase(BaseModel):
             raise ValueError("closed overrides must have no shifts")
         if self.kind == "custom_hours" and not self.shifts:
             raise ValueError("custom_hours overrides require at least one shift")
+        _reject_overlaps(self.shifts)
         return self
 
 
@@ -142,6 +159,7 @@ class ProfessionalOverrideBase(BaseModel):
             raise ValueError("unavailable overrides must have no shifts")
         if self.kind == "custom_hours" and not self.shifts:
             raise ValueError("custom_hours overrides require at least one shift")
+        _reject_overlaps(self.shifts)
         return self
 
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#990): `PATCH /controls/{id}` applies `register()`'s rules — 400 on a finished / transferred-out case, and a re-pointed `appointment_id` / `session_id` must be the case patient's appointment / a session of the linked plan item. It used to store any of them.
+
 - fix(#948): the case-created, case-status-changed and control-registered events are published with `db=db`, so their timeline entries commit or roll back with the case.
 - fix(#750): removing the plan item a case is linked to answered 500, because `fk_ortho_cases_item` had no `ondelete`. `ort_0004` recreates it `ON DELETE SET NULL`, so the case keeps its plan and loses only the item link, which `_annotate_case` already reads as "no installments". The uninstall roundtrip now targets `orthodontics@-4`.
 - fix(#740): a control whose aligner-number input was typed in and then cleared saves. The cleared input sent `""`, which the `int` field answered with 422.

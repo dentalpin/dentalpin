@@ -189,6 +189,75 @@ async def test_patch_with_empty_body_keeps_fields(
 
 
 @pytest.mark.asyncio
+async def test_a_converted_lead_never_makes_a_second_patient(
+    client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_clinic: Clinic
+):
+    """Once /convert linked a patient, the lead keeps ``converted`` (#987).
+
+    Discarding (or reopening) a converted lead used to reopen /convert,
+    which created a second patient and repointed ``patient_id``.
+    """
+    lead = await _create_lead(client, auth_headers)
+    converted = await client.post(
+        f"{BASE}{lead['id']}/convert", json=PATIENT_BODY, headers=auth_headers
+    )
+    assert converted.status_code == 200, converted.text
+    first_patient = converted.json()["data"]["patient"]["id"]
+
+    for status_value in ("discarded", "new", "contacted"):
+        moved = await client.patch(
+            f"{BASE}{lead['id']}", json={"status": status_value}, headers=auth_headers
+        )
+        assert moved.status_code == 409, (status_value, moved.text)
+
+    # The edit modal resends the current status with every save: fine.
+    kept = await client.patch(
+        f"{BASE}{lead['id']}",
+        json={"status": "converted", "description": "Llamó de nuevo."},
+        headers=auth_headers,
+    )
+    assert kept.status_code == 200, kept.text
+    assert kept.json()["data"]["patient_id"] == first_patient
+
+    again = await client.post(
+        f"{BASE}{lead['id']}/convert", json=PATIENT_BODY, headers=auth_headers
+    )
+    assert again.status_code == 409
+    patients = (
+        (
+            await db_session.execute(
+                select(Patient).where(
+                    Patient.clinic_id == test_clinic.id, Patient.last_name == "Ruiz"
+                )
+            )
+        )
+        .scalars()
+        .all()
+    )
+    assert len(patients) == 1
+
+
+@pytest.mark.asyncio
+async def test_a_card_labelled_converted_by_hand_can_still_be_converted(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+):
+    """The edit form's *Converted* only labels the card (user manual); the
+    convert drawer must still be able to create its patient (#987)."""
+    lead = await _create_lead(client, auth_headers)
+    labelled = await client.patch(
+        f"{BASE}{lead['id']}", json={"status": "converted"}, headers=auth_headers
+    )
+    assert labelled.status_code == 200
+    assert labelled.json()["data"]["patient_id"] is None
+
+    converted = await client.post(
+        f"{BASE}{lead['id']}/convert", json=PATIENT_BODY, headers=auth_headers
+    )
+    assert converted.status_code == 200, converted.text
+    assert converted.json()["data"]["lead"]["patient_id"] is not None
+
+
+@pytest.mark.asyncio
 async def test_status_filter_and_search(
     client: AsyncClient, auth_headers: dict, test_clinic: Clinic
 ):
