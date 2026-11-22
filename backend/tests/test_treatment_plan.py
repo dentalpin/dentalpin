@@ -520,6 +520,28 @@ async def test_reactivate_restores_what_closing_removed(
     assert await _treatment_is_deleted(client, auth_headers, pid, by_hand)
 
 
+@pytest.mark.asyncio
+async def test_reopening_through_the_status_route_restores_too(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """``PATCH /status`` is the third way out of closed (#1034)."""
+    base = "/api/v1/treatment_plan/treatment-plans"
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    r = await client.get(f"{base}/{plan_id}", headers=auth_headers)
+    treatment_id = r.json()["data"]["items"][0]["treatment"]["id"]
+    r = await client.post(
+        f"{base}/{plan_id}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert r.status_code == 200, r.text
+    r = await client.patch(
+        f"{base}/{plan_id}/status", headers=auth_headers, json={"status": "draft"}
+    )
+    assert r.status_code == 200, r.text
+    assert not await _treatment_is_deleted(client, auth_headers, setup["patient_id"], treatment_id)
+
+
 # -----------------------------------------------------------------------------
 # Lock / unlock on budget generation
 # -----------------------------------------------------------------------------
