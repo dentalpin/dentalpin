@@ -756,7 +756,7 @@ class InvoiceService:
         statuses: list[str] | None = None,
     ) -> list[Invoice]:
         """Fetch issued invoices for accountant export, items + allocated
-        payments eager-loaded.
+        payments (with their refunds) eager-loaded.
 
         Not paginated — an accounting period (month/quarter/year) is
         bounded and fits in memory. Draft and historical invoices are
@@ -782,7 +782,9 @@ class InvoiceService:
                 joinedload(Invoice.patient),
                 joinedload(Invoice.series),
                 selectinload(Invoice.items),
-                selectinload(Invoice.invoice_payments).joinedload(InvoicePayment.payment),
+                selectinload(Invoice.invoice_payments)
+                .joinedload(InvoicePayment.payment)
+                .selectinload(PaymentModel.refunds),
             )
             .order_by(Invoice.issue_date, Invoice.invoice_number)
         )

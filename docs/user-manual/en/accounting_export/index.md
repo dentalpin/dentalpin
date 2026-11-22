@@ -1,6 +1,6 @@
 ---
 module: accounting_export
-last_verified_commit: 0f7fa8c
+last_verified_commit: f70d47ff
 ---
 
 # Accountant export
@@ -27,7 +27,9 @@ The ZIP contains two CSV files:
 
 - `facturas.csv` — number, series, date, customer, tax ID, base, VAT
   rate, VAT amount, total and status.
-- `cobros.csv` — payment date, invoice, amount, method and reference.
+- `cobros.csv` — payment date, invoice, amount, method and reference. A
+  refund appears as its own row with a **negative** amount, on the day it
+  was refunded.
 
 ## Quick reference
 

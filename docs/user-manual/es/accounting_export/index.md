@@ -1,6 +1,6 @@
 ---
 module: accounting_export
-last_verified_commit: 0f7fa8c
+last_verified_commit: f70d47ff
 ---
 
 # Exportar a gestoría
@@ -28,6 +28,8 @@ El ZIP contiene dos ficheros CSV:
 - `facturas.csv` — número, serie, fecha, cliente, NIF, base, tipo de
   IVA, cuota de IVA, total y estado.
 - `cobros.csv` — fecha del cobro, factura, importe, método y referencia.
+  Una devolución aparece como una fila propia con importe **negativo**, en
+  el día en que se devolvió.
 
 ## Referencia rápida
 
