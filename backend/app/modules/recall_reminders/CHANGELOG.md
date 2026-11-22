@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#975): the reminder's `due_month` is written in the message's language (the patient's preferred locale, else the clinic's communication language) via babel. `strftime("%B %Y")` printed an English month in every template ("para September 2026").
+
 - test(#552): branch-scoped uninstall round-trip test (heads, branch downgrade, reinstall).
 
 - `due_month` humanization fixed: the event payload carries the full

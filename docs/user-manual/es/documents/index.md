@@ -14,3 +14,5 @@ archivar.
 
 - [Lista de documentos](./screens/documents.md): búsqueda, filtros
   por tipo/estado, alta, edición, generación de PDF, archivo.
+- [Plantillas de consentimiento](./screens/settings_consent-templates.md):
+  crear y editar los textos de consentimiento informado (Configuración → Clínico).

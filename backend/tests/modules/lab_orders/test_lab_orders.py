@@ -96,3 +96,54 @@ async def test_lab_order_lookup_is_clinic_scoped(
     with pytest.raises(HTTPException) as exc_info:
         await LabOrderService.get_order(db_session, test_clinic.id, order.id)
     assert exc_info.value.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_lab_must_be_a_lab_contact(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """A supplier, delegate or other contact is not a lab (#985).
+
+    The create form only lists ``contact_type='lab'``, but the API and the
+    ``create_lab_order`` copilot tool took any contact id, so an order could
+    be "sent" to a supplier — the way purchase_orders refuses a non-supplier.
+    """
+    from fastapi import HTTPException
+
+    lab = Contact(clinic_id=test_clinic.id, name="Lab", contact_type="lab", is_active=True)
+    supplier = Contact(
+        clinic_id=test_clinic.id, name="Depot", contact_type="supplier", is_active=True
+    )
+    db_session.add_all([lab, supplier])
+    await db_session.commit()
+
+    with pytest.raises(HTTPException) as created:
+        await LabOrderService.create_order(
+            db_session,
+            test_clinic.id,
+            LabOrderCreate(
+                patient_id=test_patient.id,
+                lab_contact_id=supplier.id,
+                work_type="crown",
+                sent_date=date(2026, 8, 22),
+            ),
+            None,
+        )
+    assert created.value.status_code == 400
+
+    order = await LabOrderService.create_order(
+        db_session,
+        test_clinic.id,
+        LabOrderCreate(
+            patient_id=test_patient.id,
+            lab_contact_id=lab.id,
+            work_type="crown",
+            sent_date=date(2026, 8, 22),
+        ),
+        None,
+    )
+    with pytest.raises(HTTPException) as moved:
+        await LabOrderService.update_order(
+            db_session, test_clinic.id, order.id, LabOrderUpdate(lab_contact_id=supplier.id)
+        )
+    assert moved.value.status_code == 400

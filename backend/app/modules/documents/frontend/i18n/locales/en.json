@@ -68,6 +68,10 @@
         "letterhead": {
           "title": "Document letterhead",
           "description": "Clinic branding on prescriptions, certificates, referrals and radiology requests"
+        },
+        "consentTemplates": {
+          "title": "Consent templates",
+          "description": "Texts used for informed consents signed on the tablet"
         }
       },
       "letterhead": {
@@ -83,6 +87,12 @@
         "chooseLogo": "Choose image",
         "save": "Save letterhead",
         "saved": "Letterhead saved"
+      },
+      "consentTemplates": {
+        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
+        "empty": "No templates yet. Create the first one below.",
+        "manageLink": "Manage templates in Settings",
+        "saved": "Template saved"
       }
     },
     "consent": {

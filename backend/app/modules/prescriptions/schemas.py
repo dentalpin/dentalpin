@@ -15,7 +15,8 @@ class PrescriptionItemCreate(BaseModel):
     frequency: str | None = Field(default=None, max_length=100)
     duration: str | None = Field(default=None, max_length=100)
     instructions: str | None = None
-    sort_order: int = 0
+    # No sort_order: a line's position in the submitted list is its order
+    # (#966). A defaulted field let unnumbered lines sort before numbered ones.
 
 
 class PrescriptionCreate(BaseModel):

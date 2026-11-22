@@ -245,6 +245,33 @@ async def test_http_codes(client, auth_headers, test_clinic: Clinic, test_patien
 
 
 @pytest.mark.asyncio
+async def test_template_keeps_catalog_ref(client, auth_headers, test_clinic: Clinic):
+    """A template line with a ``catalog_ref`` is stored, not a 500 (#984).
+
+    Template items live in a JSONB column; the UUID has to be dumped as a
+    JSON string, on create and on update.
+    """
+    ref = str(uuid4())
+    line = {"medication_name": "Amoxicilina", "catalog_ref": ref}
+    created = await client.post(
+        "/api/v1/prescriptions/templates",
+        json={"name": "with-ref", "items": [line]},
+        headers=auth_headers,
+    )
+    assert created.status_code == 201, created.text
+    assert created.json()["data"]["items"][0]["catalog_ref"] == ref
+
+    other = str(uuid4())
+    updated = await client.patch(
+        f"/api/v1/prescriptions/templates/{created.json()['data']['id']}",
+        json={"items": [{**line, "catalog_ref": other}]},
+        headers=auth_headers,
+    )
+    assert updated.status_code == 200, updated.text
+    assert updated.json()["data"]["items"][0]["catalog_ref"] == other
+
+
+@pytest.mark.asyncio
 async def test_archived_allergies_excluded_from_warnings(
     db_session: AsyncSession, test_clinic: Clinic
 ):

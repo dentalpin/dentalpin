@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.schemas import NotNull
+
 
 class SupplierReviewCreate(BaseModel):
     supplier_id: UUID
@@ -18,7 +20,7 @@ class SupplierReviewCreate(BaseModel):
 class SupplierReviewUpdate(BaseModel):
     """PATCH body: only the fields sent are changed."""
 
-    score: int | None = Field(default=None, ge=1, le=5, description="1-5 communication rating")
+    score: NotNull[int] = Field(default=None, ge=1, le=5, description="1-5 communication rating")
     comment: str | None = Field(default=None, max_length=2000)
 
 

@@ -143,7 +143,20 @@ class LeadService:
 
     @staticmethod
     async def update_lead(db: AsyncSession, lead: Lead, data: dict) -> Lead:
-        """Callers pass model_dump(exclude_unset=True) — PATCH semantics."""
+        """Callers pass model_dump(exclude_unset=True) — PATCH semantics.
+
+        A lead that :meth:`convert` linked to a patient keeps ``converted``
+        (#987): moving it back to new/contacted/discarded reopened /convert,
+        which created a second patient and repointed ``patient_id``.
+        Resending ``converted`` (the edit form does) is fine, and a card
+        labelled converted by hand (no patient) stays editable.
+        """
+        new_status = data.get("status")
+        if lead.patient_id is not None and new_status not in (None, "converted"):
+            raise HTTPException(
+                status_code=http_status.HTTP_409_CONFLICT,
+                detail="A converted lead keeps its status",
+            )
         if "availability_days" in data:
             data["availability_days"] = canonical_days(data["availability_days"])
         for key, value in data.items():
@@ -166,8 +179,11 @@ class LeadService:
         conversions both passed the check on their unlocked copy and each
         created a patient. The second now waits, sees ``converted`` and 409s.
         """
-        await db.refresh(lead, attribute_names=["status"], with_for_update=True)
-        if lead.status == "converted":
+        await db.refresh(lead, attribute_names=["status", "patient_id"], with_for_update=True)
+        # Converted means linked to a patient. A card only labelled
+        # converted by hand from the edit form has none and can still be
+        # converted; one that has a patient never gets a second (#987).
+        if lead.patient_id is not None:
             raise HTTPException(
                 status_code=http_status.HTTP_409_CONFLICT,
                 detail="Lead is already converted",
