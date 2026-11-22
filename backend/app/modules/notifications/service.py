@@ -57,6 +57,10 @@ async def resolve_clinic_communication_locale(
 logger = logging.getLogger(__name__)
 
 
+class ManagedConsentError(Exception):
+    """A manual preference change would bypass consent managed by verified evidence."""
+
+
 class NotificationService:
     """Service for managing notifications and sending emails."""
 
@@ -447,11 +451,10 @@ class NotificationService:
         )
 
         if prefs.verified_consents is not None and data.get("whatsapp_consent") is not None:
-            # A managed opt-in is issued/withdrawn with its evidence by the
-            # intake workflow. A preference toggle cannot create consent.
-            from fastapi import HTTPException
-
-            raise HTTPException(409, "Use the patient intake communications controls")
+            # A managed opt-in is issued and withdrawn together with its
+            # evidence by whichever module enrolled the patient. A preference
+            # toggle cannot create or revoke it.
+            raise ManagedConsentError("Consent for this patient is managed by verified evidence")
         if data.get("whatsapp_consent") is not None or data.get("whatsapp_enabled") is not None:
             await NotificationService.lock_whatsapp_patient(db, clinic_id, patient_id)
             await db.refresh(prefs)
