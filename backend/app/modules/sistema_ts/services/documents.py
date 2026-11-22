@@ -119,6 +119,9 @@ async def _payment_info(db: AsyncSession, invoice: Invoice) -> tuple[date | None
 
 def _voci_from_items(invoice: Invoice, item_types, default_tipo: str) -> list[dict]:
     groups: dict[tuple[str, str | None, str | None, str | None], Decimal] = {}
+    # Billing stores a credit note's lines negative; the spec wants positive
+    # amounts "anche in caso di rimborso" (#1048).
+    sign = -1 if invoice.credit_note_for_id else 1
     for item in invoice.items:
         tipo, flag = (
             item_types.get(item.catalog_item_id, (default_tipo, None))
@@ -129,7 +132,7 @@ def _voci_from_items(invoice: Invoice, item_types, default_tipo: str) -> list[di
         aliquota = str(rate.quantize(Decimal("0.01"))) if rate > 0 else None
         natura = None if rate > 0 else EXEMPT_NATURA
         key = (tipo, flag, aliquota, natura)
-        groups[key] = groups.get(key, Decimal(0)) + Decimal(str(item.line_total or 0))
+        groups[key] = groups.get(key, Decimal(0)) + sign * Decimal(str(item.line_total or 0))
     if not groups:
         raise DocumentError("La fattura non ha righe.")
     return [
