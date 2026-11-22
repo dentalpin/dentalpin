@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#963): adding a name that matches a deactivated item reactivates that item (same id, so its interactions and contraindications apply again) instead of answering 409 for an item no list shows. The patient form's picker offered "create" for it and failed, leaving the medication as free text with no warnings.
+
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
 - chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
 

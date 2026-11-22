@@ -42,7 +42,9 @@ tipo_iva, cuota_iva, total, estado. `base` is `subtotal - total_discount`;
 `tipo_iva` is the single item rate or `varios` when mixed.
 
 `cobros.csv`: fecha_pago, factura, importe, metodo, referencia (one row
-per invoice↔payment allocation).
+per invoice↔payment allocation, then one **negative** row per refund of
+that payment for the invoice's share, dated on the clinic's day of the
+refund — #988).
 
 ## Dependencies
 

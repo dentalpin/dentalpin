@@ -15,6 +15,7 @@ from app.core.auth.dependencies import (
     require_permission,
 )
 from app.core.schemas import ApiResponse
+from app.core.utils.dates import clinic_zone_for
 from app.database import get_db
 
 from .schemas import ExportPreview
@@ -46,7 +47,9 @@ async def preview(
         db, ctx.clinic_id, date_from, date_to, _statuses(status)
     )
     inv_rows = AccountingExportService.invoice_rows(invoices)
-    pay_rows = AccountingExportService.payment_rows(invoices)
+    pay_rows = AccountingExportService.payment_rows(
+        invoices, await clinic_zone_for(db, ctx.clinic_id)
+    )
     base, cuota, total = AccountingExportService.totals(inv_rows)
     return ApiResponse(
         data=ExportPreview(
@@ -74,7 +77,9 @@ async def run(
     invoices = await AccountingExportService.fetch(
         db, ctx.clinic_id, date_from, date_to, _statuses(status)
     )
-    content = AccountingExportService.build_zip(invoices, separator)
+    content = AccountingExportService.build_zip(
+        invoices, separator, await clinic_zone_for(db, ctx.clinic_id)
+    )
     suffix = f"{date_from or 'inicio'}_{date_to or 'fin'}"
     return Response(
         content=content,

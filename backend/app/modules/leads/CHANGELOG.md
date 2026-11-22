@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#987): a lead that `/convert` linked to a patient keeps `converted` — PATCH to another status is a 409 and the edit modal locks the selector and hides *Mark as contacted* / *Discard*; `/convert` (and the `convert_lead_to_patient` tool) refuses on `patient_id`, not on the status label. Discarding a converted lead used to reopen `/convert`, which created a second patient. A card only labelled converted by hand can still be converted.
+
 - fix(#954): `convert` locks the lead and re-reads its status first. Two simultaneous conversions (a double click) both passed the "already converted" check and each created a patient.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

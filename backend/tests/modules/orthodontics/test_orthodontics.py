@@ -777,3 +777,70 @@ async def test_case_timeline_entry_rolls_back_with_the_case(
         .all()
     )
     assert rows == []
+
+
+@pytest.mark.asyncio
+async def test_editing_a_control_keeps_the_registration_rules(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    """PATCH /controls/{id} enforces what registering a control does (#990):
+    the appointment must be the case patient's, the session must belong to
+    the linked plan item, and a finished / transferred-out case is closed."""
+    from app.modules.agenda.models import Appointment
+    from app.modules.patients.models import Patient
+
+    doc = await _professional(db_session, test_clinic.id)
+    other = Patient(clinic_id=test_clinic.id, first_name="Otra", last_name="Persona")
+    db_session.add(other)
+    await db_session.commit()
+    start = datetime.now(UTC) + timedelta(days=1)
+    foreign_visit = Appointment(
+        clinic_id=test_clinic.id,
+        patient_id=other.id,
+        professional_id=doc.id,
+        start_time=start,
+        end_time=start + timedelta(minutes=30),
+        status="scheduled",
+    )
+    db_session.add(foreign_visit)
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    await db_session.commit()
+    control = await OrthoControlService.register(
+        db_session, test_clinic.id, case.id, OrthoControlCreate(upper_wire="NiTi .014")
+    )
+    await db_session.commit()
+    # Capture: the rollbacks below expire the ORM instances (#188).
+    clinic_id, case_id, control_id, visit_id = (
+        test_clinic.id,
+        case.id,
+        control.id,
+        foreign_visit.id,
+    )
+
+    with pytest.raises(ValueError, match="Invalid appointment"):
+        await OrthoControlService.update(
+            db_session,
+            clinic_id,
+            control_id,
+            OrthoControlUpdate(appointment_id=visit_id),
+        )
+    await db_session.rollback()
+    with pytest.raises(ValueError):
+        await OrthoControlService.update(
+            db_session, clinic_id, control_id, OrthoControlUpdate(session_id=uuid4())
+        )
+    await db_session.rollback()
+
+    await OrthoCaseService.change_status(
+        db_session, clinic_id, case_id, "transferred_out", "moved away"
+    )
+    await db_session.commit()
+    with pytest.raises(ValueError, match="transferred_out"):
+        await OrthoControlService.update(
+            db_session, clinic_id, control_id, OrthoControlUpdate(notes="late edit")
+        )
+    await db_session.rollback()
+    stored = await db_session.get(OrthoControl, control_id)
+    assert stored.appointment_id is None
+    assert stored.session_id is None
+    assert stored.notes is None

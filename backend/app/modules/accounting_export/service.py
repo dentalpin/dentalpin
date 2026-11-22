@@ -15,7 +15,7 @@ from __future__ import annotations
 import csv
 import io
 import zipfile
-from datetime import date
+from datetime import UTC, date, tzinfo
 from decimal import Decimal
 from uuid import UUID
 
@@ -91,8 +91,16 @@ class AccountingExportService:
         return rows
 
     @staticmethod
-    def payment_rows(invoices: list) -> list[dict]:
-        """One row per invoice↔payment allocation (off-books safe)."""
+    def payment_rows(invoices: list, zone: tzinfo = UTC) -> list[dict]:
+        """One row per invoice↔payment allocation (off-books safe), then one
+        negative row per refund of that payment (#988).
+
+        Billing never edits ``InvoicePayment`` on a refund — it nets refunds
+        at read time, in proportion to each allocation's share of the
+        payment (``compute_paid_summaries_for_invoices``). The export does
+        the same, so a refunded collection no longer reads as collected.
+        The refund row is dated on the clinic's day of ``refunded_at``.
+        """
         rows: list[dict] = []
         for inv in invoices:
             for ip in inv.invoice_payments:
@@ -106,6 +114,19 @@ class AccountingExportService:
                         "referencia": (p.reference if p else "") or "",
                     }
                 )
+                if p is None or not p.amount:
+                    continue
+                for refund in sorted(p.refunds, key=lambda r: r.refunded_at):
+                    share = (refund.amount * ip.amount / p.amount).quantize(Decimal("0.01"))
+                    rows.append(
+                        {
+                            "fecha_pago": refund.refunded_at.astimezone(zone).date().isoformat(),
+                            "factura": inv.invoice_number or "",
+                            "importe": -share,
+                            "metodo": refund.method,
+                            "referencia": p.reference or "",
+                        }
+                    )
         return rows
 
     @staticmethod
@@ -117,9 +138,11 @@ class AccountingExportService:
         return base, cuota, total
 
     @staticmethod
-    def build_zip(invoices: list, separator: str = ",") -> bytes:
+    def build_zip(invoices: list, separator: str = ",", zone: tzinfo = UTC) -> bytes:
         inv_csv = to_csv(AccountingExportService.invoice_rows(invoices), INVOICE_HEADERS, separator)
-        pay_csv = to_csv(AccountingExportService.payment_rows(invoices), PAYMENT_HEADERS, separator)
+        pay_csv = to_csv(
+            AccountingExportService.payment_rows(invoices, zone), PAYMENT_HEADERS, separator
+        )
         return to_zip({"facturas.csv": inv_csv, "cobros.csv": pay_csv})
 
 
