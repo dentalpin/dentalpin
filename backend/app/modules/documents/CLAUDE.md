@@ -142,6 +142,9 @@ Nuxt layer at `frontend/` with:
 
 ## Gotchas
 
+- **The consent PDF prints `document.title`** (#1040): it is what the
+  tablet showed, so it is part of the signed evidence.
+
 - **GDPR erasure retains generated documents.**
   `erasure.DocumentsErasureContributor` owns the `documents` coverage
   scope (ADR 0038, #657) and writes nothing: a prescription or
