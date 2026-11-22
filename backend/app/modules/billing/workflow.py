@@ -1,7 +1,7 @@
 """Invoice workflow service - state machine and status transitions."""
 
 from datetime import UTC, date, datetime
-from decimal import ROUND_CEILING, Decimal
+from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -114,9 +114,12 @@ class InvoiceWorkflowService:
             )
         ).scalar_one()
         remaining = original_total - already_credited
-        if -credit_note.total > remaining:
+        # The fresh note's total is unrounded in memory, the stored ones are
+        # cents (Postgres rounds half away from zero): compare in cents (#1013).
+        crediting = (-credit_note.total).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        if crediting > remaining:
             raise InvoiceWorkflowError(
-                f"Credit note of {-credit_note.total} exceeds the amount still creditable "
+                f"Credit note of {crediting} exceeds the amount still creditable "
                 f"on this invoice ({remaining}); other credit notes, drafts included, "
                 f"already cover {already_credited}"
             )
