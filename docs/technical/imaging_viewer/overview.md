@@ -1,6 +1,6 @@
 ---
 module: imaging_viewer
-last_verified_commit: 71565b1dc57bb78ce8606cb5ccfbe9ab82151def
+last_verified_commit: 3d001b2bd80bd9387c7d4307024faa89715dc13e
 ---
 
 # imaging_viewer — technical overview

@@ -15,7 +15,7 @@ related_paths:
   - backend/app/modules/imaging_viewer/router.py
   - backend/app/modules/imaging_viewer/frontend/pages/imaging/index.vue
   - backend/app/modules/imaging_viewer/frontend/components/AnnotationPanel.vue
-last_verified_commit: 71565b1dc57bb78ce8606cb5ccfbe9ab82151def
+last_verified_commit: 3d001b2bd80bd9387c7d4307024faa89715dc13e
 screenshots: []
 ---
 
