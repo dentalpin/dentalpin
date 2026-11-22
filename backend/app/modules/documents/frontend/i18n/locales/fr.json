@@ -88,6 +88,14 @@
         "save": "Enregistrer l'en-tête",
         "saved": "En-tête enregistré"
       },
+      "consentTemplateArchive": {
+        "archive": "Archiver",
+        "restore": "Restaurer",
+        "archived": "Archivé",
+        "archivedToast": "Modèle archivé",
+        "restoredToast": "Modèle restauré",
+        "help": "Les modèles archivés sont masqués dans la sélection des consentements. Les consentements déjà créés à partir de ceux-ci ne sont pas modifiés."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",

@@ -88,6 +88,14 @@
         "save": "Zapisz nagłówek",
         "saved": "Zapisano nagłówek"
       },
+      "consentTemplateArchive": {
+        "archive": "Archiwizuj",
+        "restore": "Przywróć",
+        "archived": "Zarchiwizowany",
+        "archivedToast": "Wzór zarchiwizowano",
+        "restoredToast": "Wzór przywrócono",
+        "help": "Zarchiwizowane wzory nie są wyświetlane na liście wyboru zgód. Zgody utworzone wcześniej na ich podstawie pozostają bez zmian."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",

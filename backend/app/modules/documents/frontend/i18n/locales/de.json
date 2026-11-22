@@ -88,6 +88,14 @@
         "save": "Briefkopf speichern",
         "saved": "Briefkopf gespeichert"
       },
+      "consentTemplateArchive": {
+        "archive": "Archivieren",
+        "restore": "Wiederherstellen",
+        "archived": "Archiviert",
+        "archivedToast": "Vorlage archiviert",
+        "restoredToast": "Vorlage wiederhergestellt",
+        "help": "Archivierte Vorlagen werden in der Auswahl für neue Einwilligungen ausgeblendet. Bereits daraus erstellte Einwilligungen bleiben unverändert."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",

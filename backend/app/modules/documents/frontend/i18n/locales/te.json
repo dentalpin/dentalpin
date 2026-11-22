@@ -88,6 +88,14 @@
         "save": "లెటర్‌హెడ్ సేవ్ చేయండి",
         "saved": "లెటర్‌హెడ్ సేవ్ అయింది"
       },
+      "consentTemplateArchive": {
+        "archive": "ఆర్కైవ్ చేయండి",
+        "restore": "పునరుద్ధరించండి",
+        "archived": "ఆర్కైవ్ చేసినది",
+        "archivedToast": "టెంప్లేట్ ఆర్కైవ్ చేయబడింది",
+        "restoredToast": "టెంప్లేట్ పునరుద్ధరించబడింది",
+        "help": "ఆర్కైవ్ చేసిన టెంప్లేట్‌లు సమ్మతి ఎంపిక జాబితాలో కనిపించవు. వాటి నుండి ఇప్పటికే సృష్టించిన సమ్మతులపై ఎలాంటి ప్రభావం ఉండదు."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",

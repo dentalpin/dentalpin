@@ -88,6 +88,14 @@
         "save": "Salva intestazione",
         "saved": "Intestazione salvata"
       },
+      "consentTemplateArchive": {
+        "archive": "Archivia",
+        "restore": "Ripristina",
+        "archived": "Archiviato",
+        "archivedToast": "Modello archiviato",
+        "restoredToast": "Modello ripristinato",
+        "help": "I modelli archiviati non compaiono nella selezione dei consensi. I consensi già creati a partire da essi non vengono modificati."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",

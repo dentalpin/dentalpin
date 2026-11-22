@@ -88,6 +88,14 @@
         "save": "முகப்பைச் சேமி",
         "saved": "முகப்பு சேமிக்கப்பட்டது"
       },
+      "consentTemplateArchive": {
+        "archive": "காப்பகப்படுத்து",
+        "restore": "மீட்டெடு",
+        "archived": "காப்பகப்படுத்தப்பட்டது",
+        "archivedToast": "வார்ப்புரு காப்பகப்படுத்தப்பட்டது",
+        "restoredToast": "வார்ப்புரு மீட்டெடுக்கப்பட்டது",
+        "help": "காப்பகப்படுத்தப்பட்ட வார்ப்புருக்கள் ஒப்புதல் தேர்வுப் பட்டியலில் தோன்றாது. அவற்றிலிருந்து ஏற்கனவே உருவாக்கப்பட்ட ஒப்புதல்கள் பாதிக்கப்படாது."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",

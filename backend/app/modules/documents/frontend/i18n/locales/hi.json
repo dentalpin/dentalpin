@@ -88,6 +88,14 @@
         "save": "लेटरहेड सहेजें",
         "saved": "लेटरहेड सहेजा गया"
       },
+      "consentTemplateArchive": {
+        "archive": "संग्रहित करें",
+        "restore": "पुनः सक्रिय करें",
+        "archived": "संग्रहित",
+        "archivedToast": "टेम्पलेट संग्रहित किया गया",
+        "restoredToast": "टेम्पलेट पुनः सक्रिय किया गया",
+        "help": "संग्रहित टेम्पलेट सहमति चयन सूची में नहीं दिखते। उनसे पहले बनाई जा चुकी सहमतियाँ प्रभावित नहीं होतीं।"
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",

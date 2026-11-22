@@ -88,6 +88,14 @@
         "save": "حفظ الترويسة",
         "saved": "تم حفظ الترويسة"
       },
+      "consentTemplateArchive": {
+        "archive": "أرشفة",
+        "restore": "استعادة",
+        "archived": "مؤرشف",
+        "archivedToast": "تمت أرشفة النموذج",
+        "restoredToast": "تمت استعادة النموذج",
+        "help": "تُخفى النماذج المؤرشفة من قائمة اختيار الموافقات. ولا تتأثر الموافقات التي أُنشئت منها سابقًا."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",

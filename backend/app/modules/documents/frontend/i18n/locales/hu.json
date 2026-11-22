@@ -88,6 +88,14 @@
         "save": "Fejléc mentése",
         "saved": "Fejléc mentve"
       },
+      "consentTemplateArchive": {
+        "archive": "Archiválás",
+        "restore": "Visszaállítás",
+        "archived": "Archivált",
+        "archivedToast": "Sablon archiválva",
+        "restoredToast": "Sablon visszaállítva",
+        "help": "Az archivált sablonok nem jelennek meg a beleegyezések sablonválasztójában. A belőlük korábban létrehozott beleegyezéseket ez nem érinti."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",
