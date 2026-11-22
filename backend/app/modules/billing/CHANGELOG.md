@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1013): a credit note's absolute discount takes the line's sign. `min(value, negative subtotal)` made the discount the whole line, so the note credited 0.00. A partial note takes its share of the discount.
+
 - fix(#988): `InvoiceService.list_for_export` also eager-loads each allocated payment's refunds, for the accounting export.
 
 - Audit authenticated invoice PDF previews and downloads. (#903).

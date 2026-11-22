@@ -581,7 +581,9 @@ class InvoiceService:
             if item.discount_type == "percentage":
                 item.line_discount = item.line_subtotal * item.discount_value / Decimal("100")
             else:  # absolute
-                item.line_discount = min(item.discount_value, item.line_subtotal)
+                capped = min(item.discount_value, abs(item.line_subtotal))
+                # A credit note's line is negative, and so is its discount (#1013).
+                item.line_discount = -capped if item.line_subtotal < 0 else capped
 
         # Subtotal after discount
         taxable_amount = item.line_subtotal - item.line_discount

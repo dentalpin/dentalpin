@@ -2,6 +2,8 @@
 
 ## Unreleased — phase 3
 
+- fix(#1013): a credit note's negative line discount is written as `ScontoMaggiorazione` (it was dropped by a `> 0` check).
+
 - fix(#955): `POST /records/{id}/requeue` regenerates only the invoice's newest record (409 otherwise) and locks it. The rejected record keeps its state as history, so a second click, or an older scarto, built another file with the same number and date.
 
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
