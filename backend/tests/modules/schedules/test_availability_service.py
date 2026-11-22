@@ -153,3 +153,28 @@ async def test_professional_override_unavailable(
     )
     assert all(r.state == "professional_off" for r in ranges)
     assert any(r.reason == "Vacation" for r in ranges)
+
+
+@pytest.mark.asyncio
+async def test_overlapping_shifts_resolve_as_one_open_span(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """A shift inside another no longer reports the day closed from its end
+    (#991): 09–18 plus 10–12 used to yield "closed from 12:00" on top of
+    the open 09–18, and the analytics summed both open ranges."""
+    weekly = ClinicWeeklySchedule(clinic_id=test_clinic.id, is_active=True)
+    db_session.add(weekly)
+    await db_session.flush()
+    for start, end in ((time(9, 0), time(18, 0)), (time(10, 0), time(12, 0))):
+        db_session.add(
+            ScheduleShift(clinic_weekly_id=weekly.id, weekday=0, start_time=start, end_time=end)
+        )
+    await db_session.commit()
+
+    _, ranges = await AvailabilityService.resolve(
+        db_session, test_clinic.id, date(2026, 4, 27), date(2026, 4, 27)
+    )
+    spans = [(r.state, r.start.time(), r.end.time()) for r in ranges]
+    assert [s for s in spans if s[0] == "open"] == [("open", time(9, 0), time(18, 0))]
+    closed = [s for s in spans if s[0] == "clinic_closed"]
+    assert all(end <= time(9, 0) or start >= time(18, 0) for _, start, end in closed), spans

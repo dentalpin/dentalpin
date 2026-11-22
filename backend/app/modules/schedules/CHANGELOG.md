@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#991): overlapping shifts on one day are a 422 (weekly hours and overrides; touching shifts stay valid), overlaps already stored are merged when resolving, and *Add shift* starts where the day's last shift ends. A shift inside another used to report the rest of the day closed and count its minutes twice in the analytics.
+
 - fix(#921): `find_free_slots` fetches the professional's bookings over the clinic's days, the same days as the open hours. Between UTC midnights the last day's evening was never fetched in a UTC- clinic, so a booked slot was offered as free.
 
 - fix(#779): `find_free_slots` without `date_from` starts on the clinic's day, not the server's UTC day.
