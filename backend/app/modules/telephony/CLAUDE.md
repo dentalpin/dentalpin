@@ -58,9 +58,12 @@ path); authenticity is the HMAC — a guessed id without the secret is
   an odd number beats a dropped event).
 - Matching runs on the far end: `from_number` on an inbound call,
   `to_number` on an outbound one (whose `from_number` is the clinic's
-  own line, #964). SQL narrows on the last digits, Python confirms on the full
-  normalized value; **exactly one** match links `patient_id`, multiple
-  matches deliberately link none (phase 1 sends the user to the
+  own line, #964). SQL narrows on the last digits, Python confirms on the
+  full normalized value (patient phone and far end both through
+  `normalize_number` with the clinic's `default_country`, so a foreign
+  number or an extension that only shares the tail links nobody, #973);
+  **exactly one** match links `patient_id`, multiple matches
+  deliberately link none (phase 1 sends the user to the
   pre-filtered patient search instead of guessing a household member).
 
 ## Events emitted

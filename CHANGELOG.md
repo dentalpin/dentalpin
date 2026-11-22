@@ -25,6 +25,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Recall reminders:** the reminder names the month in the patient's language, not always in English (#975).
 - **API:** a `PATCH` that sends `null` for a required field returns 422 naming the field instead of a 500, in expenses, contacts, medication catalog, suppliers, lab orders and supplier ratings (`app.core.schemas.NotNull`) (#976).
 - **WhatsApp (Kapso):** one clinic saving another clinic's phone number id no longer cuts off that clinic's replies and delivery receipts (#972).
+- **Telephony:** a call from a foreign number or an internal extension is no longer linked to a patient whose number merely ends in the same digits (#973).
 - **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
 - **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).
