@@ -107,6 +107,7 @@ class NotificationGateway:
                 "do_not_contact",
                 triggered_by_event,
                 triggered_by_user_id,
+                dedup_key=dedup_key,
             )
 
         # A per-type opt-out is the patient's own record, so like
@@ -128,6 +129,7 @@ class NotificationGateway:
                 f"patient_opted_out_of_{notification_type}",
                 triggered_by_event,
                 triggered_by_user_id,
+                dedup_key=dedup_key,
             )
 
         # Clinic-level enable / auto_send + per-patient per-type opt-in.
@@ -145,6 +147,7 @@ class NotificationGateway:
                     reason,
                     triggered_by_event,
                     triggered_by_user_id,
+                    dedup_key=dedup_key,
                 )
 
         # Locale: clinic default → patient preference override.
@@ -175,6 +178,7 @@ class NotificationGateway:
                 "no_viable_channel",
                 triggered_by_event,
                 triggered_by_user_id,
+                dedup_key=dedup_key,
             )
         channel, addr, resolved_kind = resolved
 
@@ -211,6 +215,7 @@ class NotificationGateway:
                     "sms_rate_limited",
                     triggered_by_event,
                     triggered_by_user_id,
+                    dedup_key=dedup_key,
                 )
             channel, addr, resolved_kind = resolved
 
@@ -776,7 +781,20 @@ class NotificationGateway:
         reason,
         triggered_by_event,
         triggered_by_user_id,
+        dedup_key: str | None = None,
     ) -> CommunicationMessage:
+        # A skip is logged once per message and reason (#1036), under its own
+        # key: the message's key stays free for when the block is lifted.
+        skip_key = f"skip:{reason}:{dedup_key}"[:200] if dedup_key else None
+        if skip_key:
+            logged = await db.scalar(
+                select(CommunicationMessage).where(
+                    CommunicationMessage.clinic_id == clinic_id,
+                    CommunicationMessage.dedup_key == skip_key,
+                )
+            )
+            if logged is not None:
+                return logged
         logger.info("skip notification %s: %s", notification_type, reason)
         # Label the skip with the clinic's preferred channel — never a
         # hardcoded "email" when the attempt would have been WhatsApp.
@@ -790,6 +808,7 @@ class NotificationGateway:
             template_key=notification_type,
             status="skipped",
             error_message=reason,
+            dedup_key=skip_key,
             triggered_by_event=triggered_by_event,
             triggered_by_user_id=triggered_by_user_id,
         )

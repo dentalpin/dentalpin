@@ -659,11 +659,12 @@ class NotificationService:
         query = (
             select(CommunicationMessage)
             .where(*conditions)
-            .order_by(CommunicationMessage.created_at.asc())
+            # The newest ``limit``, returned oldest first (#1036).
+            .order_by(CommunicationMessage.created_at.desc())
             .limit(limit)
         )
         result = await db.execute(query)
-        return list(result.scalars().all())
+        return list(reversed(result.scalars().all()))
 
     # ========================================================================
     # Consent gate (used by the gateway)

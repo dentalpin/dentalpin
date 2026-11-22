@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1036): a repeated skip is logged once per message and reason, without using up the send, and a patient's thread returns its newest messages instead of the oldest 200.
+
 - fix(#965): `resolve_patient_by_phone` links a patient only when exactly one matches. A number shared by several patients raised `MultipleResultsFound` (identical strings) or returned an arbitrary one (suffix match); it now resolves to `None`, as telephony's caller match does.
 
 - fix(#922): the "budget accepted" message dates the acceptance on the clinic's calendar (`clinic_date_label`). It printed the UTC day of `updated_at`, so an evening acceptance in a UTC-6 clinic said the next day.
