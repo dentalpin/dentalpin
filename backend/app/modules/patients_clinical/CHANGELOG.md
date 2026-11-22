@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1064): the emergency contact and guardian forms hand over incomplete edits for the API to refuse; they held them back, so the previous value (or a delete) was saved with a success toast.
+
 - Audit authenticated views of the medical history and patient alerts. (#903).
 
 - fix(#793): allergy `severity` accepted any string, and a value such as

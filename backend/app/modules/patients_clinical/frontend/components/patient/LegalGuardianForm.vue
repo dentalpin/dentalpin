@@ -50,11 +50,9 @@ watch(() => props.modelValue, (newVal) => {
 // Watch local changes and emit (skip if update came from props)
 watch([hasGuardian, localGuardian], () => {
   if (isUpdatingFromProps.value) return
-  if (hasGuardian.value && localGuardian.value.name && localGuardian.value.phone) {
-    emit('update:modelValue', { ...localGuardian.value })
-  } else if (!hasGuardian.value) {
-    emit('update:modelValue', null)
-  }
+  // Incomplete edits go up too: the API refuses them, where holding them
+  // back saved the previous value, or deleted, with a success toast (#1064).
+  emit('update:modelValue', hasGuardian.value ? { ...localGuardian.value } : null)
 }, { deep: true })
 
 // Relationship options
