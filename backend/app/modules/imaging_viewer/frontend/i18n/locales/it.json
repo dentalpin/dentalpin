@@ -64,7 +64,15 @@
       "kind_note": "Nota",
       "loadFailed": "Impossibile caricare le annotazioni.",
       "actionFailed": "Azione non riuscita. Riprova.",
-      "aidNote": "Le sovrapposizioni sono solo ausili visivi — mai una diagnosi."
+      "aidNote": "Le sovrapposizioni sono solo ausili visivi — mai una diagnosi.",
+      "stats": "Statistiche ROI",
+      "statsHint": "Trascina un rettangolo sull'immagine per misurarla.",
+      "statsFailed": "Impossibile misurare le statistiche.",
+      "statsMean": "Media",
+      "statsStd": "Dev. std",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixel"
     }
   }
 }

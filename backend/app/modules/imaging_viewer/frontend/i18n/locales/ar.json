@@ -64,7 +64,15 @@
       "kind_note": "ملاحظة",
       "loadFailed": "تعذر تحميل الشروحات.",
       "actionFailed": "فشل الإجراء. يرجى إعادة المحاولة.",
-      "aidNote": "التراكبات مساعدات بصرية فقط — وليست تشخيصاً أبداً."
+      "aidNote": "التراكبات مساعدات بصرية فقط — وليست تشخيصاً أبداً.",
+      "stats": "ROI stats",
+      "statsHint": "Drag a rectangle on the image to measure it.",
+      "statsFailed": "Could not measure the stats.",
+      "statsMean": "Mean",
+      "statsStd": "Std dev",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixels"
     }
   }
 }

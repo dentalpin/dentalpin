@@ -64,7 +64,15 @@
       "kind_note": "Nota",
       "loadFailed": "Não foi possível carregar as anotações.",
       "actionFailed": "A ação falhou. Tente novamente.",
-      "aidNote": "As sobreposições são apenas ajuda visual — nunca um diagnóstico."
+      "aidNote": "As sobreposições são apenas ajuda visual — nunca um diagnóstico.",
+      "stats": "Estatísticas ROI",
+      "statsHint": "Arraste um retângulo sobre a imagem para medi-la.",
+      "statsFailed": "Não foi possível medir as estatísticas.",
+      "statsMean": "Média",
+      "statsStd": "Desv. padrão",
+      "statsMin": "Mín",
+      "statsMax": "Máx",
+      "statsCount": "Pixéis"
     }
   }
 }

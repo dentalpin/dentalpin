@@ -75,7 +75,36 @@ export function useImagingViewer() {
     await api.del(`/api/v1/imaging_viewer/annotations/${annotationId}`)
   }
 
-  return { fetchStudies, fetchStudy, fetchRenderBlobUrl, fetchAnnotations, createAnnotation, deleteAnnotation }
+  /**
+   * Native-value statistics for one normalized rectangle.
+   *
+   * Read-only: same permission surface as the render, no write gate. The
+   * 422s (undecodable study) surface in the panel, so the generic error
+   * toast is suppressed here.
+   */
+  async function fetchRoiStats(
+    studyId: string,
+    x0: number,
+    y0: number,
+    x1: number,
+    y1: number
+  ) {
+    const res = await api.get<ApiResponse<RoiStats>>(
+      `/api/v1/imaging_viewer/studies/${studyId}/roi-stats`,
+      { query: { x0, y0, x1, y1 }, errorToast: false }
+    )
+    return res.data
+  }
+
+  return { fetchStudies, fetchStudy, fetchRenderBlobUrl, fetchAnnotations, createAnnotation, deleteAnnotation, fetchRoiStats }
+}
+
+export interface RoiStats {
+  mean: number
+  std: number
+  min: number
+  max: number
+  count: number
 }
 
 export interface StudyAnnotation {

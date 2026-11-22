@@ -64,7 +64,15 @@
       "kind_note": "Notiz",
       "loadFailed": "Annotationen konnten nicht geladen werden.",
       "actionFailed": "Aktion fehlgeschlagen. Bitte erneut versuchen.",
-      "aidNote": "Overlays sind nur Visualisierungshilfen — niemals eine Diagnose."
+      "aidNote": "Overlays sind nur Visualisierungshilfen — niemals eine Diagnose.",
+      "stats": "ROI-Statistik",
+      "statsHint": "Ziehen Sie ein Rechteck über das Bild, um es zu messen.",
+      "statsFailed": "Die Statistik konnte nicht gemessen werden.",
+      "statsMean": "Mittelwert",
+      "statsStd": "Std.-Abw.",
+      "statsMin": "Min",
+      "statsMax": "Max",
+      "statsCount": "Pixel"
     }
   }
 }

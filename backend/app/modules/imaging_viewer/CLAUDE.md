@@ -14,6 +14,7 @@ Routes mounted at `/api/v1/imaging_viewer/`.
 - `GET    /studies/{id}`                 — single study metadata; `imaging_viewer.studies.read`
 - `POST   /patients/{id}/studies/index`  — index a media document as a study (201 new, 200 already indexed); `imaging_viewer.studies.write`
 - `GET    /studies/{id}/render`          — PNG render (422 when undecodable); `imaging_viewer.studies.read`
+- `GET    /studies/{id}/roi-stats`       — native-value stats for a normalized rect (422 when undecodable); `imaging_viewer.studies.read`
 - `DELETE /studies/{id}`                 — soft-archive (204); `imaging_viewer.studies.write`
 - `POST   /rvg/scan`                     — scan the clinic watch folder now; `imaging_viewer.rvg.write`
 - `GET    /rvg/imports` (+`/{id}`)       — approval queue (filter `?status=`); `imaging_viewer.rvg.read`
@@ -57,8 +58,11 @@ Annotation overlays (T2): `ImagingAnnotation` rows hold normalized
 0-1 coordinates + optional server-computed mm (ruler + pixel spacing only —
 never guessed). Originals immutable; study archive cascades; no new
 permissions (read→`studies.read`, draw→`studies.write`). Display rules follow
-`docs/technical/pano-overlay-design.md`. ROI statistics deferred: compressed
-transfer syntaxes need native pixel codecs we don't ship.
+`docs/technical/pano-overlay-design.md`. ROI statistics live on
+`GET /studies/{id}/roi-stats`: native pixel values (modality LUT +
+rescale, no windowing) over a normalized rectangle, same decode contract
+and refusals as the render - compressed transfer syntaxes still answer
+422 with the codec remedy.
 
 ## Dependencies
 

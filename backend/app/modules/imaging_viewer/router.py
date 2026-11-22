@@ -17,6 +17,7 @@ from .schemas import (
     AnnotationCreateRequest,
     AnnotationResponse,
     ImagingStudyResponse,
+    RoiStatsResponse,
     RvgApproveRequest,
     RvgBatchApproveRequest,
     RvgBatchApproveResponse,
@@ -136,6 +137,32 @@ async def render_study(
         media_type="image/png",
         headers={"Content-Length": str(len(content))},
     )
+
+
+@router.get("/studies/{study_id}/roi-stats", response_model=ApiResponse[RoiStatsResponse])
+async def get_roi_stats(
+    study_id: UUID,
+    ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
+    _: Annotated[None, Depends(require_permission("imaging_viewer.studies.read"))],
+    db: Annotated[AsyncSession, Depends(get_db)],
+    x0: float = Query(..., ge=0.0, le=1.0),
+    y0: float = Query(..., ge=0.0, le=1.0),
+    x1: float = Query(..., ge=0.0, le=1.0),
+    y1: float = Query(..., ge=0.0, le=1.0),
+) -> ApiResponse[RoiStatsResponse]:
+    """Native-value pixel statistics for a normalized rectangle.
+
+    Same decode contract as the render (LookupError → 404, undecodable →
+    422) without the display transforms, so the reported values are
+    window-independent.
+    """
+    try:
+        stats = await ImagingStudyService.roi_stats(db, ctx.clinic_id, study_id, x0, y0, x1, y1)
+    except LookupError:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Study not found")
+    except UnrenderableStudyError as exc:
+        raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=str(exc))
+    return ApiResponse(data=RoiStatsResponse(**stats))
 
 
 @router.delete("/studies/{study_id}", status_code=status.HTTP_204_NO_CONTENT)
