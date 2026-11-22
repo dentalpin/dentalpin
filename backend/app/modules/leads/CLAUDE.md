@@ -240,6 +240,12 @@ Two surfaces, and the cap is not in the environment:
   the **first** whitespace (`Marta de la Fuente` → `Marta` / `de la Fuente`); a
   single-token name leaves `last_name` empty for the user to complete. Both
   fields stay editable and nothing is written until the user confirms.
+- **"Converted" means `patient_id` is set.** Only `/convert` links a patient;
+  after that the lead's status cannot leave `converted` (PATCH 409, the edit
+  modal locks the selector) and `/convert` refuses on `patient_id`, not on the
+  status label — a card the edit form only *labelled* converted (documented in
+  the user manual) can still be converted. Leaving `converted` used to reopen
+  `/convert` and create a second patient (#987).
 - **No `recall_id` column on `leads`.** The link is
   `(clinic_id, patient_id, reason)` and the dedupe lives in the recalls module;
   an FK would buy nothing and couple the two branches.

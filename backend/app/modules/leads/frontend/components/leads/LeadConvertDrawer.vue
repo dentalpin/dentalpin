@@ -61,7 +61,9 @@ const form = reactive({
   notes: ''
 })
 
-const isConverted = computed(() => props.lead?.status === 'converted')
+// Converted = linked to a patient; a card only labelled converted by hand
+// can still be converted (#987).
+const isConverted = computed(() => Boolean(props.lead?.patient_id))
 const convertedPatientId = computed(() => createdPatientId.value ?? props.lead?.patient_id ?? null)
 // Mirrors the backend: PATCH needs leads.write, /convert needs leads.write + patients.write.
 // Gating on patients.write alone let a dentist (patients.*, leads.read) click into a 403.
@@ -141,7 +143,7 @@ watch(
     submitted.value = false
     touched.value = {}
     resetFrom(props.lead ?? null)
-    if (props.lead && props.lead.status !== 'converted') void checkDuplicate(props.lead.phone)
+    if (props.lead && !props.lead.patient_id) void checkDuplicate(props.lead.phone)
   },
   { immediate: true }
 )

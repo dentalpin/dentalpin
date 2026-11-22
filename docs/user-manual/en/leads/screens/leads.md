@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/leads/router.py
   - backend/app/modules/leads/frontend/pages/leads/index.vue
-last_verified_commit: 5e89d9b3
+last_verified_commit: f70d47ff
 screenshots:
   - leads/leads-list.png
 ---
@@ -124,7 +124,12 @@ call.
 **Marking a lead as Converted here does not create a patient** and does not
 link one. It only labels the card. To actually create the patient, use the
 convert drawer — that is the action that writes the patient record, and it is
-the only one that links the card to it.
+the only one that links the card to it. A card you only labelled *Converted*
+can still be converted from the drawer.
+
+Once the drawer has created the patient, the card stays **Converted** for good:
+the status selector is locked and *Mark as contacted* / *Discard* are hidden, so the
+card can never be converted a second time into a duplicate patient.
 ## What the forms refuse to send
 
 Both forms (the manual lead form and the convert drawer) validate before they
