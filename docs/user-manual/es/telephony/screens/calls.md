@@ -12,7 +12,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/telephony/router.py
   - backend/app/modules/telephony/frontend/pages/calls/index.vue
-last_verified_commit: 0000000
+last_verified_commit: f70d47ff
 screenshots: []
 ---
 
@@ -20,13 +20,14 @@ screenshots: []
 
 El registro muestra todas las llamadas recibidas por la pasarela de
 telefonía, vinculadas al paciente cuando exactamente una ficha tiene el
-número del llamante.
+número del otro interlocutor: quien llama en una llamada entrante, el
+número marcado en una saliente.
 
 ## Llamadas en curso
 
 Las llamadas que están sonando o en curso aparecen como un aviso en la
-parte superior de la página (y como notificación emergente en cualquier
-pantalla para el personal con acceso a llamadas). **Abrir ficha** lleva
+parte superior de la página (y, si son entrantes, como notificación
+emergente en cualquier pantalla para el personal con acceso a llamadas). **Abrir ficha** lleva
 al paciente identificado; si el llamante es desconocido, **Buscar
 paciente** abre el listado de pacientes filtrado por ese número.
 

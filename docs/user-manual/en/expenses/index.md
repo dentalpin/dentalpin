@@ -1,6 +1,6 @@
 ---
 module: expenses
-last_verified_commit: 3d0fc1d1
+last_verified_commit: f70d47ff
 ---
 
 # Expenses
@@ -30,7 +30,9 @@ curl -X POST "https://clinic/api/v1/expenses/import.csv?dry_run=false" \
 ```
 
 Columns: `category*` (rent|utilities|salaries|supplies|equipment|
-insurance|maintenance|other), `amount*` (decimal > 0, `.` or `,`),
+insurance|maintenance|other), `amount*` (decimal > 0, `.` or `,`;
+thousands separators such as `1,234.56` or `1.234,56` are read as
+thousands, so `1.200` is 1200),
 `expense_date*` (YYYY-MM-DD or DD/MM/YYYY), `description`.
 Delimiter `,` or `;` (auto-detected), UTF-8, max 1000 rows / 1 MiB.
 Commit is all-or-nothing. Report shape: `{total, valid, created,

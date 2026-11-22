@@ -37,8 +37,11 @@ file-fallback when no DB row exists.
 
 Available template variables (from the event payload, resolved inside
 the handler): `patient_name`, `clinic_name`, `reason`,
-`due_month` (humanized, e.g. `"September 2026"`, not the raw
-`"2026-09-01"` from the payload).
+`due_month` (humanized in the message's locale, e.g. `"September 2026"`
+/ `"septiembre de 2026"`, not the raw `"2026-09-01"` from the payload;
+the locale is the patient's `preferred_locale`, else the clinic's
+communication language, the same order the gateway renders the template
+in, #975). `reason` is still the stored code (`hygiene`, `checkup`, …).
 
 ## Dependencies
 
