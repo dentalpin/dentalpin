@@ -13,3 +13,5 @@ and can be re-generated or archived.
 
 - [Document list](./screens/documents.md): search, type/status
   filters, create, edit, generate PDF, archive.
+- [Consent templates](./screens/settings_consent-templates.md): create and
+  edit the clinic's informed-consent texts (Settings → Clinical).

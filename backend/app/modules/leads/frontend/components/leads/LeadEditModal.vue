@@ -327,6 +327,7 @@ async function quickStatus(status: LeadStatus) {
             <USelect
               v-model="form.status"
               :items="STATUSES.map(value => ({ value, label: t(`leads.status.${value}`) }))"
+              :disabled="Boolean(lead?.patient_id)"
             />
           </UFormField>
         </form>
@@ -338,7 +339,7 @@ async function quickStatus(status: LeadStatus) {
               class="flex flex-wrap gap-2"
             >
               <UButton
-                v-if="lead && lead.status !== 'contacted'"
+                v-if="lead && lead.status !== 'contacted' && !lead.patient_id"
                 variant="outline"
                 color="neutral"
                 size="sm"
@@ -349,7 +350,7 @@ async function quickStatus(status: LeadStatus) {
                 {{ t('leads.actions.markContacted') }}
               </UButton>
               <UButton
-                v-if="lead && lead.status !== 'discarded'"
+                v-if="lead && lead.status !== 'discarded' && !lead.patient_id"
                 variant="ghost"
                 color="error"
                 size="sm"

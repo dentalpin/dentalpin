@@ -20,9 +20,6 @@ const { can } = usePermissions()
 const templates = ref<ConsentTemplate[]>([])
 const documents = ref<ConsentDocument[]>([])
 const templateId = ref('')
-const title = ref('')
-const body = ref('')
-const editing = ref('')
 const editingConsent = ref('')
 const consentTitle = ref('')
 const consentText = ref('')
@@ -76,26 +73,6 @@ async function refresh() {
   })
 }
 
-async function saveTemplate() {
-  busy.value = true
-  try {
-    const payload = { title: title.value, body: body.value }
-    if (editing.value) await api.put(`/api/v1/documents/consent-templates/${editing.value}`, payload)
-    else await api.post('/api/v1/documents/consent-templates', payload)
-    title.value = ''
-    body.value = ''
-    editing.value = ''
-    await refresh()
-  } finally { busy.value = false }
-}
-function editTemplate() {
-  const selected = templates.value.find(x => x.id === templateId.value)
-  if (selected) {
-    editing.value = selected.id
-    title.value = selected.title
-    body.value = selected.body
-  }
-}
 async function create() {
   busy.value = true
   try {
@@ -205,46 +182,14 @@ onMounted(() => refresh())
       >
         {{ t('documents.consent.create') }}
       </UButton>
-      <UButton
-        :disabled="!templateId"
-        variant="outline"
-        @click="editTemplate"
-      >
-        {{ t('documents.consent.editTemplate') }}
-      </UButton>
     </div>
-    <details
+    <NuxtLink
       v-if="can(PERMISSIONS.generatedDocuments.write)"
-      :open="!!editing"
+      to="/settings/clinical/consent-templates"
+      class="inline-block text-sm text-primary hover:underline"
     >
-      <summary>{{ t('documents.consent.manageTemplate') }}</summary>
-      <div class="space-y-2 pt-2">
-        <UInput
-          v-model="title"
-          class="w-full"
-          :placeholder="t('documents.consent.templateTitle')"
-        />
-        <UTextarea
-          v-model="body"
-          class="w-full"
-          :rows="6"
-          :placeholder="t('documents.consent.templateText')"
-        />
-        <UButton
-          :disabled="!title.trim() || !body.trim() || busy"
-          @click="saveTemplate"
-        >
-          {{ t('documents.consent.saveTemplate') }}
-        </UButton>
-        <UButton
-          v-if="editing"
-          variant="ghost"
-          @click="editing = ''; title = ''; body = ''"
-        >
-          {{ t('common.cancel') }}
-        </UButton>
-      </div>
-    </details>
+      {{ t('documents.settings.consentTemplates.manageLink') }}
+    </NuxtLink>
     <UModal
       v-model:open="qrOpen"
       :title="t('documents.consent.qrTitle')"

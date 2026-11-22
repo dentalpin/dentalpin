@@ -159,6 +159,70 @@ async def test_rows_and_offbooks_boundary(
 
 
 @pytest.mark.asyncio
+async def test_refunds_are_exported_as_negative_collections(
+    db_session: AsyncSession,
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+):
+    """A refunded collection is not money collected (#988).
+
+    Billing never edits ``InvoicePayment`` on a refund (it nets refunds at
+    read time), so ``cobros.csv`` kept listing a fully refunded payment as
+    collected while ``facturas.csv`` showed the invoice unpaid again. Each
+    refund is now a negative row on its own (clinic) date, for the
+    invoice's share of the payment.
+    """
+    from datetime import UTC, datetime
+
+    from app.modules.payments.models import Refund
+
+    user_id = await _me(client, auth_headers)
+    full = await _invoice(db_session, test_clinic.id, test_patient.id, user_id, number="FAC-R1")
+    pay_full = await _pay_invoice(
+        db_session, test_clinic.id, test_patient.id, user_id, full.id, Decimal("121.00")
+    )
+    part = await _invoice(db_session, test_clinic.id, test_patient.id, user_id, number="FAC-R2")
+    pay_part = await _pay_invoice(
+        db_session, test_clinic.id, test_patient.id, user_id, part.id, Decimal("121.00")
+    )
+    for pay, amount, at in (
+        (pay_full, Decimal("121.00"), datetime(2026, 5, 20, 10, 0, tzinfo=UTC)),
+        (pay_part, Decimal("21.00"), datetime(2026, 5, 21, 10, 0, tzinfo=UTC)),
+    ):
+        db_session.add(
+            Refund(
+                id=uuid4(),
+                clinic_id=test_clinic.id,
+                payment_id=pay.id,
+                amount=amount,
+                method="card",
+                reason_code="other",
+                refunded_at=at,
+                refunded_by=user_id,
+            )
+        )
+    await db_session.commit()
+
+    invoices = await AccountingExportService.fetch(db_session, test_clinic.id, None, None, None)
+    rows = AccountingExportService.payment_rows(invoices)
+    by_invoice: dict[str, list] = {}
+    for row in rows:
+        by_invoice.setdefault(row["factura"], []).append((row["fecha_pago"], row["importe"]))
+
+    assert by_invoice["FAC-R1"] == [
+        ("2026-05-16", Decimal("121.00")),
+        ("2026-05-20", Decimal("-121.00")),
+    ]
+    assert by_invoice["FAC-R2"] == [
+        ("2026-05-16", Decimal("121.00")),
+        ("2026-05-21", Decimal("-21.00")),
+    ]
+    assert sum(amount for _, amount in by_invoice["FAC-R1"]) == Decimal("0.00")
+
+
+@pytest.mark.asyncio
 async def test_mixed_vat_rate_is_varios(
     db_session: AsyncSession,
     client: AsyncClient,

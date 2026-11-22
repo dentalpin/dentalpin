@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/leads/router.py
   - backend/app/modules/leads/frontend/pages/leads/index.vue
-last_verified_commit: 5e89d9b3
+last_verified_commit: f70d47ff
 screenshots:
   - leads/leads-list-es.png
 ---
@@ -127,7 +127,13 @@ escrito, cambiar el motivo o mover la tarjeta a *Contactada*, *Convertida* o
 **Marcar aquí una solicitud como Convertida no crea ningún paciente** ni lo
 enlaza. Solo etiqueta la tarjeta. Para crear el paciente de verdad, usa el panel
 de conversión: esa es la acción que escribe la ficha del paciente y la única que
-la enlaza con la tarjeta.
+la enlaza con la tarjeta. Una tarjeta que solo etiquetaste como *Convertida*
+se puede seguir convirtiendo desde el panel.
+
+Cuando el panel ya creó el paciente, la tarjeta queda **Convertida** para
+siempre: el selector de estado se bloquea y *Marcar como contactado* y *Descartar* se
+ocultan, así que nunca puede convertirse por segunda vez en un paciente
+duplicado.
 ## Lo que los formularios no dejan enviar
 
 Los dos formularios (el de alta manual y el panel de conversión) validan antes

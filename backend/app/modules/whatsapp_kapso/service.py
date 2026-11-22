@@ -17,6 +17,10 @@ from . import client
 from .models import WhatsappKapsoSettings, WhatsappKapsoTemplate
 
 
+class PhoneNumberIdTakenError(ValueError):
+    """Another clinic already routes this Kapso ``phone_number_id``."""
+
+
 class KapsoService:
     """All clinic-scoped. Secrets encrypted at rest (Fernet)."""
 
@@ -31,20 +35,40 @@ class KapsoService:
     @staticmethod
     async def resolve_by_phone_number_id(
         db: AsyncSession, phone_number_id: str
-    ) -> WhatsappKapsoSettings | None:
-        """Webhook tenant resolution — NEVER trust a clinic_id in the payload."""
-        return (
-            await db.execute(
-                select(WhatsappKapsoSettings).where(
-                    WhatsappKapsoSettings.phone_number_id == phone_number_id
+    ) -> list[WhatsappKapsoSettings]:
+        """Webhook tenant resolution — NEVER trust a clinic_id in the payload.
+
+        Returns every clinic configured with this ``phone_number_id``; the
+        webhook keeps the one whose secret verifies the signature. The
+        column is not unique, and a second clinic saving the same id must
+        not cut the first one off (#972).
+        """
+        return list(
+            (
+                await db.execute(
+                    select(WhatsappKapsoSettings)
+                    .where(WhatsappKapsoSettings.phone_number_id == phone_number_id)
+                    .order_by(WhatsappKapsoSettings.id)
                 )
-            )
-        ).scalar_one_or_none()
+            ).scalars()
+        )
 
     @staticmethod
     async def upsert_settings(
         db: AsyncSession, clinic_id: UUID, data: dict
     ) -> WhatsappKapsoSettings:
+        new_number = data.get("phone_number_id")
+        if new_number:
+            taken = await db.scalar(
+                select(WhatsappKapsoSettings.id).where(
+                    WhatsappKapsoSettings.phone_number_id == new_number,
+                    WhatsappKapsoSettings.clinic_id != clinic_id,
+                )
+            )
+            if taken is not None:
+                raise PhoneNumberIdTakenError(
+                    "Este phone_number_id ya está configurado en otra clínica."
+                )
         settings = await KapsoService.get_settings(db, clinic_id)
         if settings is None:
             settings = WhatsappKapsoSettings(
