@@ -274,7 +274,7 @@ class InvoicePaymentApply(BaseModel):
     directly when the cobro is not tied to a specific invoice.
     """
 
-    amount: Decimal = Field(gt=0)
+    amount: Decimal = Field(gt=0, decimal_places=2)
     method: PaymentMethod
     payment_date: date = Field(default_factory=date.today)
     reference: str | None = Field(default=None, max_length=100)

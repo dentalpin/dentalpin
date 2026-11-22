@@ -120,3 +120,26 @@ async def test_invoice_cannot_be_overpaid(
         headers=auth_headers,
     )
     assert r2.status_code == 400, r2.text
+
+
+@pytest.mark.asyncio
+async def test_invoice_payment_is_cents_only(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+) -> None:
+    """Invoice + collect has its own schema, with the same rule (#989)."""
+    inv = await _draft_invoice(db_session, test_clinic, test_patient, await _user_id(db_session))
+    issued = await client.post(
+        f"/api/v1/billing/invoices/{inv.id}/issue", json={}, headers=auth_headers
+    )
+    assert issued.status_code == 200, issued.text
+
+    res = await client.post(
+        f"/api/v1/billing/invoices/{inv.id}/payments",
+        json={"amount": "10.005", "method": "cash", "payment_date": date.today().isoformat()},
+        headers=auth_headers,
+    )
+    assert res.status_code == 422, res.text
