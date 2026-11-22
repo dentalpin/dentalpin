@@ -47,6 +47,10 @@ See `hook.py` and `README.md` for the architecture.
 
 ## Gotchas
 
+- **No NIF on a credit note means R5, not R1** (#1049): AEAT only accepts
+  a record without Destinatarios for F2 and R5. A rejected R1 blocked the
+  clinic's issuing and regenerating rendered R1 again.
+
 - **Producer wizard must be filled before `prod`.** The backend rejects
   enabling Veri\*Factu in production until the declaración is signed.
 - **Chained hash invariant.** Records form a SHA-256 chain. Skipping or
