@@ -47,7 +47,8 @@ See `hook.py` and `README.md` for the architecture.
 
 ## Gotchas
 
-- **No NIF on a credit note means R5, not R1** (#1049): AEAT only accepts
+- **Rectifying an invoice without NIF means R5, not R1** (#1049): decide
+  from the rectified invoice, not the note. AEAT only accepts
   a record without Destinatarios for F2 and R5. A rejected R1 blocked the
   clinic's issuing and regenerating rendered R1 again.
 
