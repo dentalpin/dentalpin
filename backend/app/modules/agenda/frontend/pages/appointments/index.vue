@@ -3,6 +3,7 @@ import type { Appointment } from '~~/app/types'
 import { defineAsyncComponent } from 'vue'
 import { formatLocalDate } from '../../utils/date'
 import { countAppointmentOverlaps } from '../../composables/countAppointmentOverlaps'
+import { createAppointmentDate } from '../../utils/createDate'
 
 // Mode-specific scheduler views are heavy (drag grids, overlap math, mobile
 // timeline). Lazy-load each so the initial /agenda payload only ships the
@@ -532,9 +533,9 @@ async function handleAppointmentResize(appointmentId: string, newEndTime: string
 }
 
 // Open create modal from header button
-function openCreateModal() {
+function openCreateModal(requested?: Date) {
   selectedAppointment.value = null
-  initialDate.value = viewMode.value === 'day' ? currentDate.value : new Date()
+  initialDate.value = createAppointmentDate(viewMode.value, currentDate.value, new Date(), requested)
   initialTime.value = '09:00'
   initialEndTime.value = undefined
   initialProfessionalId.value = undefined
@@ -596,7 +597,7 @@ watch(isMobile, async (mobile) => {
           color="primary"
           variant="soft"
           icon="i-lucide-plus"
-          @click="openCreateModal"
+          @click="openCreateModal()"
         >
           {{ t('appointments.create') }}
         </UButton>
@@ -695,7 +696,7 @@ watch(isMobile, async (mobile) => {
         :highlighted-appointment-id="highlightedAppointmentId"
         @appointment-click="handleAppointmentClick"
         @date-change="handleDateChange"
-        @create-at="(d) => { currentDate = d; openCreateModal() }"
+        @create-at="(d) => { currentDate = d; openCreateModal(d) }"
         @free-slot-tap="handleFreeSlotTap"
         @highlight-cleared="clearHighlight"
       />

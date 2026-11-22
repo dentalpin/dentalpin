@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1037): creating from the mobile day view and the kanban header starts on the viewed day, not today.
+
 - Serialize appointment creation, edits and cabinet assignment with a transaction-scoped clinic lock (#905).
 
 - Preserve non-preset appointment durations and omit unchanged start and end times when editing.
