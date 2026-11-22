@@ -61,6 +61,7 @@ class PollResult:
     receipts: list[InboundReceipt] = field(default_factory=list)
     sdi_reply_address: str | None = None  # the dedicated SDI mailbox, if it answered
     skipped: int = 0  # SDI messages without a receipt attachment
+    uids: list[bytes] = field(default_factory=list)  # for mark_seen, once saved
 
 
 def build_message(creds: PecCredentials, to_address: str, file_name: str, xml: str) -> EmailMessage:
@@ -170,7 +171,8 @@ def _poll_sync(creds: PecCredentials, *, limit: int = 50) -> PollResult:
                 raise PecError(f"IMAP search failed: {status}")
             uids = data[0].split()[:limit] if data and data[0] else []
             for uid in uids:
-                status, parts = box.uid("fetch", uid, "(RFC822)")
+                # PEEK: plain RFC822 sets \Seen as it downloads (RFC 3501, 6.4.5).
+                status, parts = box.uid("fetch", uid, "(BODY.PEEK[])")
                 if status != "OK" or not parts or not isinstance(parts[0], tuple):
                     continue
                 receipts, sender = _extract_receipts(parts[0][1])
@@ -182,16 +184,39 @@ def _poll_sync(creds: PecCredentials, *, limit: int = 50) -> PollResult:
                     result.receipts.append(
                         InboundReceipt(uid=uid, file_name=file_name, xml=xml, sender=sender)
                     )
-                box.uid("store", uid, "+FLAGS", "(\\Seen)")
+                result.uids.append(uid)
     except (imaplib.IMAP4.error, OSError) as exc:
         raise PecError(f"IMAP: {exc}") from exc
     return result
 
 
 async def poll_receipts(creds: PecCredentials, *, limit: int = 50) -> PollResult:
-    """Fetch unseen SDI messages, return their receipt attachments, mark them seen."""
+    """Fetch unseen SDI messages and their receipts, leaving them unseen.
+
+    Only unseen messages are read, so the caller saves the receipts first and
+    then passes ``PollResult.uids`` to :func:`mark_seen`.
+    """
     loop = asyncio.get_running_loop()
     return await loop.run_in_executor(None, partial(_poll_sync, creds, limit=limit))
+
+
+def _mark_seen_sync(creds: PecCredentials, uids: list[bytes]) -> None:
+    try:
+        box = imaplib.IMAP4_SSL(creds.imap_host, creds.imap_port, timeout=30)
+        with box:
+            box.login(creds.username, creds.password)
+            box.select(creds.imap_folder)
+            status, _ = box.uid("store", b",".join(uids), "+FLAGS", "(\\Seen)")
+            if status != "OK":
+                raise PecError(f"IMAP store failed: {status}")
+    except (imaplib.IMAP4.error, OSError) as exc:
+        raise PecError(f"IMAP: {exc}") from exc
+
+
+async def mark_seen(creds: PecCredentials, uids: list[bytes]) -> None:
+    """Flag handled messages so the next poll doesn't return them."""
+    loop = asyncio.get_running_loop()
+    await loop.run_in_executor(None, partial(_mark_seen_sync, creds, uids))
 
 
 def _test_sync(creds: PecCredentials) -> dict[str, str]:

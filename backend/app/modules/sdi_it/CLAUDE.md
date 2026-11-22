@@ -19,5 +19,7 @@
 - **Schema fidelity.** `tests/modules/sdi_it/test_xml_builder.py` validates
   every generated file against the vendored official XSD; keep that test
   green before touching element order in `services/xml_builder.py`.
+- **A receipt is marked seen only after its commit** (#1079): the poll reads
+  UNSEEN only, so fetch with `BODY.PEEK` and flag through `mark_seen`.
 - Transport drivers: `manual` (this PR), `pec` (planned). Both feed the
   same record states: `pending → exported → delivered | undeliverable | rejected`.
