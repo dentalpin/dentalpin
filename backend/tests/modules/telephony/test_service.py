@@ -237,3 +237,55 @@ async def test_the_same_number_in_another_format_still_matches(
         db_session, settings, _event("call.ringing", call_id="fmt-1", from_number="600112233")
     )
     assert row.patient_id == patient.id
+
+
+@pytest.mark.asyncio
+async def test_outbound_call_matches_the_called_patient(db_session: AsyncSession, test_clinic):
+    """An outbound call is matched on the number dialled, not the clinic's line (#964).
+
+    ``from_number`` of an outbound call is the clinic's own number, so the
+    call used to link nobody (or whichever patient record held the
+    clinic's number) and was announced as an unknown caller.
+    """
+    from app.core.events import EventType, event_bus
+
+    settings = await _settings(db_session, test_clinic.id)
+    patient = await _patient(db_session, test_clinic.id, phone="600112233")
+    await _patient(db_session, test_clinic.id, phone="910000000", first="Front", last="Desk")
+
+    unknown: list[dict] = []
+
+    async def record(data, *, db):
+        unknown.append(data)
+
+    event_bus.subscribe(EventType.CALL_UNKNOWN_CALLER, record)
+    try:
+        row = await TelephonyService.ingest_event(
+            db_session,
+            settings,
+            _event(
+                "call.ringing",
+                call_id="out-1",
+                direction="outbound",
+                from_number="+34910000000",
+                to_number="600 11 22 33",
+            ),
+        )
+        assert row.patient_id == patient.id
+
+        # Dialling a number no patient holds is not an "unknown caller".
+        row = await TelephonyService.ingest_event(
+            db_session,
+            settings,
+            _event(
+                "call.ringing",
+                call_id="out-2",
+                direction="outbound",
+                from_number="+34910000000",
+                to_number="+34699999999",
+            ),
+        )
+        assert row.patient_id is None
+        assert unknown == []
+    finally:
+        event_bus.unsubscribe(EventType.CALL_UNKNOWN_CALLER, record)
