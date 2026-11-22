@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1028): a treatment added to an invoice starts with its own VAT type; the default (exempt in the Spanish seed) is only the fallback.
+
 - fix(#988): `InvoiceService.list_for_export` also eager-loads each allocated payment's refunds, for the accounting export.
 
 - Audit authenticated invoice PDF previews and downloads. (#903).

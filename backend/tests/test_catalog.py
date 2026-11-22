@@ -664,6 +664,34 @@ async def test_search_catalog_items(
 
 
 @pytest.mark.asyncio
+async def test_search_returns_the_items_own_vat_type(
+    client: AsyncClient, auth_headers: dict, catalog_clinic_setup: dict
+):
+    """The invoice line picker needs it: the default VAT type is exempt (#1028)."""
+    category = await client.post(
+        "/api/v1/catalog/categories",
+        json={"key": "vat_search", "names": {"es": "Estética", "en": "Cosmetic"}},
+        headers=auth_headers,
+    )
+    created = await client.post(
+        "/api/v1/catalog/items",
+        json={
+            "category_id": category.json()["data"]["id"],
+            "internal_code": "SRCH-BLANQ",
+            "names": {"es": "Blanqueamiento", "en": "Whitening"},
+            "vat_type_id": catalog_clinic_setup["vat_standard_id"],
+            "treatment_scope": "global_mouth",
+        },
+        headers=auth_headers,
+    )
+    assert created.status_code == 201, created.text
+
+    found = await client.get("/api/v1/catalog/items/search?q=BLANQ", headers=auth_headers)
+    assert found.status_code == 200
+    assert found.json()["data"][0]["vat_type_id"] == catalog_clinic_setup["vat_standard_id"]
+
+
+@pytest.mark.asyncio
 async def test_list_items_with_category_filter(
     client: AsyncClient, auth_headers: dict, catalog_clinic_setup: dict
 ):
