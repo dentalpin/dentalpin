@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix(#965): an inbound reply from a number several patients share is recorded without a patient instead of failing with a 500 (so Kapso retried and the reply was lost) or being attached, with its 24h window, to an arbitrary family member.
+- fix(#972): a `phone_number_id` another clinic already uses is refused with 409, and the webhook picks, among the clinics carrying the id, the one whose secret verifies the signature. A second clinic saving the same id used to make every webhook for it raise `MultipleResultsFound` (500), so the first clinic stopped receiving replies and receipts.
 
 - fix: `POST /templates/map` types `notification_type` as the
   notifications `NotificationType`, so a template mapped to a type that is
