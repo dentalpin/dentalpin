@@ -161,6 +161,11 @@ class GdprService:
         return row
 
 
+class ConsentManagedError(ValueError):
+    """The patient's consent for this purpose is managed by verified evidence
+    and cannot be changed through the manual ledger. Answered 409 upstream."""
+
+
 class ConsentService:
     @staticmethod
     def normalize_purpose(purpose: str) -> str:
@@ -198,6 +203,8 @@ class ConsentService:
         ).scalar_one_or_none()
         if patient is None:
             return None
+        if await ConsentService.is_managed(db, clinic_id, payload.patient_id, payload.purpose):
+            raise ConsentManagedError("Consent for this patient is managed by verified evidence")
         row = await ConsentService.append_event(
             db,
             clinic_id,
@@ -222,10 +229,14 @@ class ConsentService:
         granted: bool,
         provided_text: str | None,
         effective_at: datetime,
+        managed: bool = False,
     ) -> PatientConsent:
         """Append and flush in the caller's transaction.
 
         The caller verifies the patient's clinic and owns commit or rollback.
+        ``managed`` marks an entry recorded together with the caller's own
+        verified evidence; manual entries for that patient and purpose are
+        then refused.
         """
         row = PatientConsent(
             clinic_id=clinic_id,
@@ -235,11 +246,29 @@ class ConsentService:
             provided_text=provided_text,
             granted_at=effective_at if granted else None,
             withdrawn_at=None if granted else effective_at,
+            managed=managed,
             created_at=datetime.now(UTC),
         )
         db.add(row)
         await db.flush()
         return row
+
+    @staticmethod
+    async def is_managed(db: AsyncSession, clinic_id: UUID, patient_id: UUID, purpose: str) -> bool:
+        """True once any managed entry exists for this patient and purpose."""
+        return (
+            await db.scalar(
+                select(PatientConsent.id)
+                .where(
+                    PatientConsent.clinic_id == clinic_id,
+                    PatientConsent.patient_id == patient_id,
+                    PatientConsent.purpose == ConsentService.normalize_purpose(purpose),
+                    PatientConsent.managed.is_(True),
+                )
+                .limit(1)
+            )
+            is not None
+        )
 
     @staticmethod
     async def publish_event(db: AsyncSession, row: PatientConsent) -> None:

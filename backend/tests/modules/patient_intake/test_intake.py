@@ -431,3 +431,36 @@ async def test_staging_retention_keeps_live_and_pending_signed_rows(
             await service.get_intake(db, clinic_id, row.id)
     for row in (live, pending):
         assert await service.get_intake(db, clinic_id, row.id) is not None
+
+
+async def test_intake_consent_is_managed_so_staff_cannot_override_it(
+    client, auth_headers, db_session, test_clinic, test_patient, desk
+):
+    intake = await signed(db_session, test_clinic, test_patient, desk.user_id, email=True)
+    await service.review_admin(
+        db_session,
+        test_clinic.id,
+        intake.id,
+        desk.user_id,
+        AdministrativeReview(fields={"email"}, apply_choices=True, verified_channels={"email"}),
+    )
+    await db_session.commit()
+    rows = (
+        await db_session.scalars(
+            select(PatientConsent).where(PatientConsent.patient_id == test_patient.id)
+        )
+    ).all()
+    assert rows
+    assert all(row.managed for row in rows)
+
+    response = await client.post(
+        "/api/v1/gdpr/consents",
+        json={
+            "patient_id": str(test_patient.id),
+            "purpose": "patient_intake:email",
+            "granted": False,
+        },
+        headers=auth_headers,
+    )
+    assert response.status_code == 409
+    assert response.json()["message"] == "Consent for this patient is managed by verified evidence"

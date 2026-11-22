@@ -19,8 +19,9 @@ active entries and conflicting changes require staff resolution.
 
 ## Consent
 
-The intake workflow writes `patient_intake:` purposes to the GDPR ledger in
-the same transaction as the delivery projection and cancellation of pending
+The intake workflow writes `patient_intake:` purposes to the GDPR ledger as
+`managed` entries (the staff consent endpoint refuses further manual entries for
+them) in the same transaction as the delivery projection and cancellation of pending
 messages. Provenance links the ledger to the signed submission and immutable
 form, with attribution. The time of signing differs from the time of review.
 An older form cannot override a newer recorded consent decision. Delivery

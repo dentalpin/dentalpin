@@ -185,6 +185,7 @@ async def _record_consent(
         granted=granted,
         provided_text=text,
         effective_at=at,
+        managed=True,
     )
     db.add(
         ConsentProvenance(
