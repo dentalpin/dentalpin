@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#964): an outbound call is matched on the number dialled (`to_number`), not on the clinic's own line. It used to link nobody (or whichever patient record held the clinic's number), publish `call.unknown_caller` and pop up as an incoming call. `call.unknown_caller` and the call pop are now inbound-only.
+- fix(#973): the caller match is confirmed on the whole normalized number, as the module contract says, not on the last nine digits again. A foreign number or a six-digit extension sharing a patient's tail used to link that patient.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.

@@ -49,10 +49,21 @@ class MedicalReferenceService:
 
     @staticmethod
     async def create(db: AsyncSession, model, clinic_id: UUID, data: dict) -> ReferenceModel:
+        """Add an item, or bring back a deactivated one with the same name.
+
+        Deactivated rows are hidden from every search, so the patient form
+        offers to create them; reactivating the same row (#963) keeps its
+        id, and with it the interactions and contraindications that point
+        at it, instead of answering 409 for an item no list shows.
+        """
         existing_stmt = select(model).where(
             model.clinic_id == clinic_id, func.lower(model.name) == data["name"].lower()
         )
         existing = (await db.execute(existing_stmt)).scalar_one_or_none()
+        if existing is not None and not existing.is_active:
+            existing.is_active = True
+            await db.flush()
+            return existing
         if existing is not None:
             raise HTTPException(
                 status_code=http_status.HTTP_409_CONFLICT,

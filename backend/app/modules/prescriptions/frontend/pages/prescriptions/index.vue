@@ -106,7 +106,7 @@ function removeLine(idx: number) {
 }
 
 function applyTemplate(tpl: PrescriptionTemplate) {
-  editItems.value = tpl.items.map((i, idx) => ({ ...blankLine(i), sort_order: idx }))
+  editItems.value = tpl.items.map(i => blankLine(i))
 }
 
 async function save() {

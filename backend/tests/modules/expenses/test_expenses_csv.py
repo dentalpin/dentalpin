@@ -137,3 +137,40 @@ def test_a_bad_date_is_a_row_error_not_a_whole_file_rejection() -> None:
     assert [v.amount for v in valid] == [Decimal("100")]
     assert [e["row"] for e in errors] == [3, 4]
     assert "expense_date" in errors[0]["message"]
+
+
+@pytest.mark.parametrize(
+    ("raw", "expected"),
+    [
+        ('"1,200"', Decimal("1200")),  # English Excel thousands
+        ('"1,234.56"', Decimal("1234.56")),
+        ("1.200", Decimal("1200")),  # Spanish Excel thousands
+        ('"1.234,56"', Decimal("1234.56")),
+        ('"1200,5"', Decimal("1200.50")),
+        ("1200.50", Decimal("1200.50")),
+        ('"1,200,000"', Decimal("1200000")),
+        ("0.50", Decimal("0.50")),
+        ('"0,5"', Decimal("0.50")),
+    ],
+)
+def test_validate_reads_thousands_separators(raw: str, expected: Decimal) -> None:
+    """A thousands separator is never read as a decimal point (#962).
+
+    "1,200" and "1.200" used to become 1.20: the row was valid and the
+    expense was stored 1000 times too small.
+    """
+    valid, errors, total = validate_expense_csv(
+        f"category,amount,expense_date\nrent,{raw},2026-08-01\n".encode()
+    )
+    assert total == 1 and not errors, errors
+    assert valid[0].amount == expected
+
+
+def test_validate_reports_an_ambiguous_amount_as_a_row_error() -> None:
+    """A separator followed by neither 1-2 nor groups of 3 digits is refused."""
+    valid, errors, total = validate_expense_csv(
+        b"category,amount,expense_date\nrent,1.2345,2026-08-01\nrent,10,2026-08-01\n"
+    )
+    assert total == 2
+    assert len(valid) == 1
+    assert errors and errors[0]["row"] == 2
