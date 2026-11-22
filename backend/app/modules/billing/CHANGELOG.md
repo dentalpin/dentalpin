@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1015): the invoice PDF downloads when the series prefix has a character outside latin-1.
+
 - fix(#988): `InvoiceService.list_for_export` also eager-loads each allocated payment's refunds, for the accounting export.
 
 - Audit authenticated invoice PDF previews and downloads. (#903).
