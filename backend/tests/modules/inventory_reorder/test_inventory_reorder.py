@@ -292,6 +292,41 @@ async def test_generate_orders_groups_one_po_per_supplier(
 
 
 @pytest.mark.asyncio
+async def test_generate_orders_ignores_a_repeated_item_id(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """A repeated id is one line, not a half-done run (#992).
+
+    ``create_order`` commits each supplier's PO and refuses duplicate lines,
+    so [A (supplier 1), B (supplier 2), B] committed supplier 1's draft and
+    then answered 400; the retry then failed too, since A was on order.
+    """
+    from sqlalchemy import func, select
+
+    from app.modules.purchase_orders.models import PurchaseOrder
+
+    _, supplier_a = await _make_supplier(db_session, test_clinic.id, name="Supplier A")
+    _, supplier_b = await _make_supplier(db_session, test_clinic.id, name="Supplier B")
+    item_a = await _make_item(db_session, test_clinic.id, name="Item A", stock=0)
+    item_b = await _make_item(db_session, test_clinic.id, name="Item B", stock=0)
+    await _make_link(db_session, test_clinic.id, supplier_a.id, item_a.id)
+    await _make_link(db_session, test_clinic.id, supplier_b.id, item_b.id)
+    for item in (item_a, item_b):
+        await _add_consumption(db_session, test_clinic.id, item.id, 45, 10)
+    clinic_id, a_id, b_id = test_clinic.id, item_a.id, item_b.id
+
+    orders = await ReorderService.generate_orders(
+        db_session, clinic_id, [a_id, b_id, b_id], created_by=None
+    )
+    assert len(orders) == 2
+    assert sorted(len(o["lines"]) for o in orders) == [1, 1]
+    stored = await db_session.scalar(
+        select(func.count()).select_from(PurchaseOrder).where(PurchaseOrder.clinic_id == clinic_id)
+    )
+    assert stored == 2
+
+
+@pytest.mark.asyncio
 async def test_generate_orders_400_on_unsuggested_item(
     db_session: AsyncSession, test_clinic: Clinic
 ):

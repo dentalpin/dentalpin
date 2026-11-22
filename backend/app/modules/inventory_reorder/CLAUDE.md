@@ -16,7 +16,8 @@ Routes mounted at `/api/v1/inventory_reorder/` (the loader uses
 - `POST /inventory_reorder/orders` — body `ReorderOrdersCreate
   {item_ids: [UUID]}`; creates draft POs grouped one per supplier (201);
   `inventory_reorder.write`. 400 when an item_id has no current
-  suggestion.
+  suggestion. A repeated item_id counts once (#992) — each supplier's PO
+  is committed by `create_order`, so a 400 halfway left orders behind.
 
 ### Suggestion formula
 

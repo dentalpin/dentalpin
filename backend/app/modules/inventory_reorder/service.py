@@ -183,6 +183,10 @@ class ReorderService:
         created_by: UUID | None,
     ) -> list[dict]:
         """Turn the requested suggestions into one draft PO per supplier."""
+        # A repeated id is one line (#992): create_order commits each PO and
+        # refuses duplicate lines, so a repeat used to leave the suppliers
+        # before it ordered and answer 400.
+        item_ids = list(dict.fromkeys(item_ids))
         suggestions = await ReorderService.compute_suggestions(db, clinic_id)
         by_item = {s["inventory_item_id"]: s for s in suggestions}
         missing = [str(i) for i in item_ids if i not in by_item]
