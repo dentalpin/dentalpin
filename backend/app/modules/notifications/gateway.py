@@ -338,18 +338,6 @@ class NotificationGateway:
 
     @staticmethod
     async def _dispatch_one(db: AsyncSession, msg: CommunicationMessage) -> None:
-        msg = await db.scalar(
-            select(CommunicationMessage)
-            .where(CommunicationMessage.id == msg.id)
-            .with_for_update(skip_locked=True)
-            .execution_options(populate_existing=True)
-        )
-        if (
-            msg is None
-            or msg.status not in ("queued", "failed")
-            or (msg.next_attempt_at and msg.next_attempt_at > datetime.now(UTC))
-        ):
-            return
         adapter = await NotificationGateway._supporting_adapter(db, msg.clinic_id, msg.channel)
         if adapter is None:
             await NotificationGateway._mark_failed(db, msg, f"no adapter for channel {msg.channel}")
