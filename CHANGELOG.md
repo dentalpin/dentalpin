@@ -32,6 +32,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Telephony:** an unanswered call reported by the PBX as ended now reaches `call.missed` subscribers (#986).
 - **Leads:** discarding or reopening a converted lead no longer lets it be converted into a second, duplicate patient (#987).
 - **Accounting export:** refunds appear in `cobros.csv` as negative rows instead of the refunded money staying listed as collected (#988).
+- **Orthodontics:** editing a control no longer links another patient's appointment or an arbitrary session, and no longer changes controls of a closed case (#990).
 - **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
 - **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).
