@@ -144,7 +144,9 @@ All tools filter by `ctx.clinic_id` and return native values (UUID/datetime).
   (minimum-honest anchor until a last-visit provider exists) — and erasure
   still needs any `legal_hold_until` to have passed.
 - **Approvals are additive:** `update_request` moves `received → in_progress →
-  completed/rejected`; going back to `received` clears `resolved_at`.
+  completed/rejected`; `resolved_at` is stamped on entering completed/rejected,
+  kept when that same status is re-sent, and cleared on any move back to
+  `received` or `in_progress` (#993).
 
 ## CHANGELOG
 

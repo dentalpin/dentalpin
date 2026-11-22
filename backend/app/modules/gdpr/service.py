@@ -133,9 +133,15 @@ class GdprService:
         old_status = row.status
         for field, value in changes.items():
             setattr(row, field, value)
-        if "status" in changes and changes["status"] in ("completed", "rejected"):
-            row.resolved_at = datetime.now(UTC)
-        elif "status" in changes and changes["status"] == "received":
+        # resolved_at tracks the current state (#993): stamped when the
+        # request becomes completed/rejected, kept when that same status is
+        # re-sent, cleared on any move back to an open state (in_progress
+        # too, not only received).
+        new_status = changes.get("status")
+        if new_status in ("completed", "rejected"):
+            if new_status != old_status or row.resolved_at is None:
+                row.resolved_at = datetime.now(UTC)
+        elif new_status is not None:
             row.resolved_at = None
         await db.commit()
         await db.refresh(row)
