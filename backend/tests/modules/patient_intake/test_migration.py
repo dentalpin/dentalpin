@@ -67,7 +67,8 @@ def test_notifications_verified_consent_revision_round_trips_independently():
     assert "notif_0009" in heads
 
     migrate("downgrade", "notif_0009@-1")
-    assert asyncio.run(schema_state()) == (tables, False, (heads - {"notif_0009"}) | {"notif_0008"})
+    # notif_0008 is not a stored head: online_booking's ob_0003 depends on it.
+    assert asyncio.run(schema_state()) == (tables, False, heads - {"notif_0009"})
 
     migrate("upgrade", "notif_0009")
     assert asyncio.run(schema_state()) == (tables, True, heads)
