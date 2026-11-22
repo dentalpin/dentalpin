@@ -901,3 +901,151 @@ async def test_link_requires_configured_public_origin(
         f"/api/v1/documents/consents/{doc}/links?purpose=sign", headers=auth_headers
     )
     assert response.status_code == 422
+
+
+# --- Template archive (soft is_active) ------------------------------------
+
+
+async def make_template(client, headers, title="Archivable template"):
+    response = await client.post(
+        "/api/v1/documents/consent-templates",
+        headers=headers,
+        json={"title": title, "body": "Synthetic body"},
+    )
+    assert response.status_code == 201, response.text
+    return response.json()["data"]
+
+
+async def template_ids(client, headers, include_archived=False):
+    url = "/api/v1/documents/consent-templates"
+    if include_archived:
+        url += "?include_archived=true"
+    response = await client.get(url, headers=headers)
+    assert response.status_code == 200, response.text
+    return {t["id"]: t for t in response.json()["data"]}
+
+
+@pytest.mark.asyncio
+async def test_template_archive_unarchive_and_list_filter(client, auth_headers, test_patient):
+    template = await make_template(client, auth_headers)
+    assert template["is_active"] is True
+    base = f"/api/v1/documents/consent-templates/{template['id']}"
+
+    archived = await client.post(f"{base}/archive", headers=auth_headers)
+    assert archived.status_code == 200, archived.text
+    assert archived.json()["data"]["is_active"] is False
+    # Idempotent.
+    assert (await client.post(f"{base}/archive", headers=auth_headers)).status_code == 200
+
+    assert template["id"] not in await template_ids(client, auth_headers)
+    with_archived = await template_ids(client, auth_headers, include_archived=True)
+    assert with_archived[template["id"]]["is_active"] is False
+
+    restored = await client.post(f"{base}/unarchive", headers=auth_headers)
+    assert restored.status_code == 200, restored.text
+    assert restored.json()["data"]["is_active"] is True
+    assert template["id"] in await template_ids(client, auth_headers)
+
+
+@pytest.mark.asyncio
+async def test_archived_template_is_refused_for_new_consents_but_can_be_restored(
+    client, auth_headers, test_patient
+):
+    template = await make_template(client, auth_headers)
+    base = f"/api/v1/documents/consent-templates/{template['id']}"
+    payload = {"template_id": template["id"], "patient_id": str(test_patient.id)}
+    await client.post(f"{base}/archive", headers=auth_headers)
+
+    refused = await client.post("/api/v1/documents/consents", headers=auth_headers, json=payload)
+    assert refused.status_code == 409, refused.text
+
+    await client.post(f"{base}/unarchive", headers=auth_headers)
+    created = await client.post("/api/v1/documents/consents", headers=auth_headers, json=payload)
+    assert created.status_code == 201, created.text
+
+
+@pytest.mark.asyncio
+async def test_consent_from_archived_template_stays_readable_and_signable(
+    client, auth_headers, test_patient, db_session
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    template = (await db_session.execute(select(ConsentTemplate))).scalar_one()
+    await client.post(
+        f"/api/v1/documents/consent-templates/{template.id}/archive", headers=auth_headers
+    )
+
+    status = await client.get(
+        f"/api/v1/documents/consents/signature-status?patient_id={test_patient.id}",
+        headers=auth_headers,
+    )
+    assert status.status_code == 200
+    assert [row["id"] for row in status.json()["data"]] == [doc]
+    assert (await client.get(f"/api/v1/documents/{doc}", headers=auth_headers)).status_code == 200
+
+    token = await make_link(client, auth_headers, doc)
+    bearer = {"Authorization": f"Bearer {token}"}
+    assert (
+        await client.get("/api/v1/documents/public/consents/current", headers=bearer)
+    ).status_code == 200
+    signed = await client.post(
+        "/api/v1/documents/public/consents/current/sign",
+        headers=bearer,
+        json={
+            "signer_name": "Synthetic patient",
+            "relationship_to_patient": "patient",
+            "signature": signature(),
+        },
+    )
+    assert signed.status_code in (200, 201), signed.text
+    evidence = await client.get(f"/api/v1/documents/consents/{doc}/evidence", headers=auth_headers)
+    assert evidence.status_code == 200
+    # Revocation still works after the source template was archived.
+    revoke = await client.post(
+        f"/api/v1/documents/consents/{doc}/links?purpose=revoke", headers=auth_headers
+    )
+    assert revoke.status_code == 201, revoke.text
+
+
+@pytest.mark.asyncio
+async def test_template_archive_is_clinic_scoped(client, auth_headers, test_patient, db_session):
+    foreign = Clinic(id=uuid4(), name="Other synthetic clinic", tax_id="B87654322")
+    db_session.add(foreign)
+    await db_session.flush()
+    foreign_template = ConsentTemplate(
+        id=uuid4(), clinic_id=foreign.id, title="Foreign", body="Foreign text"
+    )
+    db_session.add(foreign_template)
+    await db_session.commit()
+    base = f"/api/v1/documents/consent-templates/{foreign_template.id}"
+
+    for action in ("archive", "unarchive"):
+        response = await client.post(f"{base}/{action}", headers=auth_headers)
+        assert response.status_code == 404, response.text
+    await db_session.refresh(foreign_template)
+    assert foreign_template.is_active is True
+    assert str(foreign_template.id) not in await template_ids(
+        client, auth_headers, include_archived=True
+    )
+
+
+@pytest.mark.asyncio
+async def test_template_archive_requires_write_permission(
+    client, auth_headers, test_patient, db_session
+):
+    from app.core.auth.models import ClinicMembership
+
+    template = await make_template(client, auth_headers)
+    membership = (
+        await db_session.execute(
+            select(ClinicMembership).where(ClinicMembership.clinic_id == test_patient.clinic_id)
+        )
+    ).scalar_one()
+    membership.role = "assistant"  # documents.read only
+    await db_session.commit()
+
+    base = f"/api/v1/documents/consent-templates/{template['id']}"
+    assert (await client.post(f"{base}/archive", headers=auth_headers)).status_code == 403
+    assert (await client.post(f"{base}/unarchive", headers=auth_headers)).status_code == 403
+    assert (
+        await client.get("/api/v1/documents/consent-templates", headers=auth_headers)
+    ).status_code == 200
