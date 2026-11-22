@@ -117,6 +117,64 @@ async def test_ended_without_answer_becomes_missed(db_session: AsyncSession, tes
 
 
 @pytest.mark.asyncio
+async def test_ended_without_answer_publishes_call_missed(db_session: AsyncSession, test_clinic):
+    """The call recorded as missed goes on the bus as ``call.missed`` (#986).
+
+    A PBX that never sends an explicit missed event used to publish
+    ``call.ended`` for a row stored as ``missed``, so a ``call.missed``
+    subscriber never heard about those calls.
+    """
+    from app.core.events import EventType, event_bus
+
+    settings = await _settings(db_session, test_clinic.id)
+    missed: list[dict] = []
+    ended: list[dict] = []
+
+    async def on_missed(data, *, db):
+        missed.append(data)
+
+    async def on_ended(data, *, db):
+        ended.append(data)
+
+    event_bus.subscribe(EventType.CALL_MISSED, on_missed)
+    event_bus.subscribe(EventType.CALL_ENDED, on_ended)
+    try:
+        await TelephonyService.ingest_event(
+            db_session, settings, _event("call.ringing", call_id="c-m")
+        )
+        row = await TelephonyService.ingest_event(
+            db_session, settings, _event("call.ended", call_id="c-m")
+        )
+        assert row.status == "missed"
+        assert [d["event"] for d in missed] == ["call.missed"]
+        assert ended == []
+
+        # A PBX that sends both (missed, then ended) still yields one
+        # call.missed: the trailing ended stays an ended event.
+        await TelephonyService.ingest_event(
+            db_session, settings, _event("call.missed", call_id="c-b")
+        )
+        await TelephonyService.ingest_event(
+            db_session, settings, _event("call.ended", call_id="c-b")
+        )
+        assert [d["call_id"] for d in missed] == ["c-m", "c-b"]
+        assert [d["call_id"] for d in ended] == ["c-b"]
+
+        # An answered call that ends is a plain call.ended.
+        await TelephonyService.ingest_event(
+            db_session, settings, _event("call.answered", call_id="c-a")
+        )
+        await TelephonyService.ingest_event(
+            db_session, settings, _event("call.ended", call_id="c-a")
+        )
+        assert [d["call_id"] for d in ended] == ["c-b", "c-a"]
+        assert len(missed) == 2
+    finally:
+        event_bus.unsubscribe(EventType.CALL_MISSED, on_missed)
+        event_bus.unsubscribe(EventType.CALL_ENDED, on_ended)
+
+
+@pytest.mark.asyncio
 async def test_unusable_event_is_ignored(db_session: AsyncSession, test_clinic):
     settings = await _settings(db_session, test_clinic.id)
     assert (

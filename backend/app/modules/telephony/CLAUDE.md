@@ -52,7 +52,10 @@ path); authenticity is the HMAC — a guessed id without the secret is
 - One `CallLog` row per `(clinic, provider, call_id)` — created on the
   first event, updated by the rest.
 - `call.ended` on an inbound call that was never answered records
-  `missed` (some PBXs don't send an explicit missed event).
+  `missed` (some PBXs don't send an explicit missed event) and is
+  published as `call.missed`, so a missed-call subscriber hears about it
+  whichever way the PBX reports it (#986). A `call.ended` after an
+  explicit `call.missed` stays `call.ended`.
 - Numbers normalize via `phonenumbers` with the clinic's
   `default_country`; unparseable input is kept verbatim (a call log with
   an odd number beats a dropped event).
