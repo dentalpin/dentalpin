@@ -126,6 +126,9 @@ migration — future ALTERs live on the ``tp`` Alembic branch.
 
 ## Gotchas
 
+- **Both searches match term by term** (#1038) on number, title and
+  patient name, so "Juan Pérez" works. Keep `list` and `list_pipeline` alike.
+
 - **Plan → budget direct call is the carve-out.** `confirm()` calls
   `BudgetService.create_from_plan_snapshot` synchronously to keep the
   draft-budget creation transactional with the state transition.
