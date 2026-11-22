@@ -96,7 +96,7 @@ class TelephonyService:
     # ------------------------------------------------------------- matching
     @staticmethod
     async def match_patient(
-        db: AsyncSession, clinic_id: UUID, number: str | None
+        db: AsyncSession, clinic_id: UUID, number: str | None, *, default_country: str = "ES"
     ) -> Patient | None:
         """Caller → patient: exactly-one match on the normalized phone.
 
@@ -127,7 +127,11 @@ class TelephonyService:
             .scalars()
             .all()
         )
-        exact = [p for p in rows if _digits(p.phone).endswith(tail)]
+        # Confirm on the whole number, normalized the same way as the
+        # caller's: a foreign number or a short extension that only shares
+        # the last digits is someone else (#973).
+        wanted = normalize_number(number, default_country)
+        exact = [p for p in rows if normalize_number(p.phone, default_country) == wanted]
         return exact[0] if len(exact) == 1 else None
 
     # ------------------------------------------------------------- ingest
@@ -166,12 +170,19 @@ class TelephonyService:
 
         now = datetime.now(UTC)
         if row is None:
-            patient = await TelephonyService.match_patient(db, clinic_id, from_number)
+            direction = payload.get("direction") or "inbound"
+            # The patient is the far end: the caller on an inbound call, the
+            # number dialled on an outbound one (whose from_number is the
+            # clinic's own line).
+            far_end = to_number if direction == "outbound" else from_number
+            patient = await TelephonyService.match_patient(
+                db, clinic_id, far_end, default_country=settings.default_country
+            )
             fresh = CallLog(
                 clinic_id=clinic_id,
                 provider=provider,
                 call_id=call_id,
-                direction=payload.get("direction") or "inbound",
+                direction=direction,
                 from_number=from_number or "",
                 to_number=to_number,
                 agent_extension=payload.get("agent_extension"),
@@ -225,7 +236,7 @@ class TelephonyService:
             "patient_id": str(row.patient_id) if row.patient_id else None,
         }
         await event_bus.publish(_BUS_EVENT[event], bus_payload, db=db)
-        if event == "call.ringing" and row.patient_id is None:
+        if event == "call.ringing" and row.patient_id is None and row.direction == "inbound":
             await event_bus.publish(EventType.CALL_UNKNOWN_CALLER, bus_payload, db=db)
         return row
 
@@ -284,10 +295,6 @@ class TelephonyService:
             .all()
         )
         return [r for r in rows if (r.started_at or r.created_at).timestamp() >= cutoff]
-
-
-def _digits(value: str | None) -> str:
-    return "".join(c for c in (value or "") if c.isdigit())
 
 
 def _parse_ts(value: Any) -> datetime | None:

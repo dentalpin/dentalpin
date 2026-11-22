@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#966): prescription lines keep the order they were entered in. `sort_order` defaulted to 0 on the request, so a line added after applying a template, or while editing a draft, sorted before the numbered lines and printed in the wrong position. The submitted list order is now the line order.
 - fix(#984): a template line with a `catalog_ref` is saved instead of answering 500 — template items are dumped in JSON mode before they reach the JSONB column, on create and on update.
 
 - Audit authenticated prescription PDF downloads. (#903).

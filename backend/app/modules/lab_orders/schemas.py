@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.schemas import NotNull
+
 WorkType = Literal[
     "crown", "bridge", "denture", "implant", "veneer", "orthodontic", "repair", "other"
 ]
@@ -45,13 +47,13 @@ class LabOrderCreate(BaseModel):
 
 
 class LabOrderUpdate(BaseModel):
-    lab_contact_id: UUID | None = None
-    work_type: WorkType | None = None
+    lab_contact_id: NotNull[UUID] = None
+    work_type: NotNull[WorkType] = None
     tooth_reference: str | None = Field(default=None, max_length=50)
     impression_type: ImpressionType | None = None
     antagonist_info: str | None = Field(default=None, max_length=500)
     shade: ShadeSelection | None = None
-    status: OrderStatus | None = None
+    status: NotNull[OrderStatus] = None
     expected_date: date | None = None
     received_date: date | None = None
     notes: str | None = Field(default=None, max_length=2000)

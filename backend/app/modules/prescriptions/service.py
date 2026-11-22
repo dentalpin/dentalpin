@@ -117,7 +117,7 @@ class PrescriptionService:
                 PrescriptionItem(
                     clinic_id=clinic_id,
                     prescription_id=row.id,
-                    sort_order=item.pop("sort_order", position),
+                    sort_order=position,
                     **item,
                 )
             )
@@ -146,7 +146,7 @@ class PrescriptionService:
                     PrescriptionItem(
                         clinic_id=clinic_id,
                         prescription_id=row.id,
-                        sort_order=item.pop("sort_order", position),
+                        sort_order=position,
                         **item,
                     )
                 )
