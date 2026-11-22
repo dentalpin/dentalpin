@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.schemas import NotNull
+
 from .models import MEDICATION_FORMS
 
 MedicationForm = Literal[
@@ -40,12 +42,12 @@ class MedicationCatalogCreate(BaseModel):
 
 
 class MedicationCatalogUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=150)
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=150)
     dose: str | None = Field(default=None, max_length=50)
     unit: str | None = Field(default=None, max_length=20)
-    form: MedicationForm | None = None
-    requires_prescription: bool | None = None
-    is_active: bool | None = None
+    form: NotNull[MedicationForm] = None
+    requires_prescription: NotNull[bool] = None
+    is_active: NotNull[bool] = None
 
 
 class MedicationCatalogResponse(BaseModel):
