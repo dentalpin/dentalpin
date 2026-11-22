@@ -364,6 +364,8 @@ class NotificationService:
         if patient is None or patient.status != "active":
             return False
         projection = prefs.verified_consents
+        # Only appointment reminders are gated by a purpose for now; widening
+        # the purpose vocabulary is the scope of #917.
         if notification_type == "appointment_reminder" and not projection.get(notification_type):
             return False
         if channel not in ("email", "sms", "whatsapp"):
@@ -404,6 +406,8 @@ class NotificationService:
         )
         previous = prefs.verified_consents or {}
         prefs.verified_consents = projection
+        # appointment_reminder is hardcoded here on purpose: it is the only
+        # purpose in scope until #917 generalizes the purpose mapping.
         prefs.preferences = {
             **(prefs.preferences or {}),
             "appointment_reminder": bool(projection.get("appointment_reminder")),

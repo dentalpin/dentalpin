@@ -11,6 +11,7 @@ Optional backend for versioned first-visit forms and staff review.
   transaction. The medical update event carries IDs and a generic summary.
 - `pint_0001` uses the module branch. The module cannot be uninstalled through
   the application because it owns retained submissions and consent provenance.
+- The manifest sets `removable: False` because retained consent evidence must outlive the module.
 - Read the [workflow and retention settings](../../../../docs/technical/patient_intake/overview.md)
   and the [staff endpoint permissions](../../../../docs/technical/patient_intake/permissions.md) when changing the contract.
 - The consent provenance stores the GDPR ledger UUID without a foreign key. The
