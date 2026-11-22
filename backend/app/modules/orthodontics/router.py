@@ -190,6 +190,8 @@ async def update_control(
 ) -> ApiResponse[OrthoControlResponse]:
     try:
         control = await OrthoControlService.update(db, ctx.clinic_id, control_id, data)
+    except LookupError as exc:
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     if control is None:

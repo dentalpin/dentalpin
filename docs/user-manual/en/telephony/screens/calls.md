@@ -12,20 +12,22 @@ related_permissions:
 related_paths:
   - backend/app/modules/telephony/router.py
   - backend/app/modules/telephony/frontend/pages/calls/index.vue
-last_verified_commit: 0000000
+last_verified_commit: f70d47ff
 screenshots: []
 ---
 
 # Call log
 
 The call log lists every phone call the telephony gateway received —
-matched to a patient when exactly one record owns the caller's number.
+matched to a patient when exactly one record owns the other party's
+number: the caller on an incoming call, the number dialled on an
+outgoing one.
 
 ## Live calls
 
 Calls currently ringing or in progress appear as a banner at the top of
-the page (and as a pop-up toast anywhere in the app for staff with call
-access). **Open record** jumps to the matched patient; for an unknown
+the page (and, for incoming calls, as a pop-up toast anywhere in the
+app for staff with call access). **Open record** jumps to the matched patient; for an unknown
 caller, **Search patient** opens the patient list pre-filtered by the
 number.
 

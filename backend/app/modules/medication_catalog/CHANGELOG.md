@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#976): `PATCH` with `null` for `name`, `form`, `requires_prescription` or `is_active` is a 422 (was a 500 from the NOT NULL column).
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix(#703): `mc_0002` makes `created_at` / `updated_at` NOT NULL.

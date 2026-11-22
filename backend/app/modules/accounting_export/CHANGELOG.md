@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#988): `cobros.csv` exports each refund as a negative row (the invoice's share of the refund, on the clinic's day of the refund). A refunded payment used to stay listed as collected.
+
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
 - test(#552): branch-scoped uninstall round-trip test (heads, branch downgrade, reinstall).
 

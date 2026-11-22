@@ -586,12 +586,23 @@ class OrthoControlService:
         control = result.scalar_one_or_none()
         if control is None:
             return None
-        for key, value in data.model_dump(exclude_unset=True).items():
+        case = await _get_case(db, clinic_id, control.case_id)
+        if case is None:
+            raise LookupError("Case not found in this clinic")
+        # Same rules as register() (#990): a closed case takes no control
+        # edits (reopen a finished case first), and a re-pointed link must be
+        # this patient's appointment / a session of the linked plan item.
+        if case.status in TERMINAL_STATUSES:
+            raise ValueError(f"Cannot edit controls on a {case.status} case")
+        changes = data.model_dump(exclude_unset=True)
+        if changes.get("appointment_id") is not None:
+            await _require_appointment(db, clinic_id, case.patient_id, changes["appointment_id"])
+        if changes.get("session_id") is not None:
+            await _require_linked_session(db, clinic_id, case, changes["session_id"])
+        for key, value in changes.items():
             setattr(control, key, value)
         await db.flush()
-        case = await _get_case(db, clinic_id, control.case_id)
-        if case is not None:
-            await _refresh_current_wires(db, case)
+        await _refresh_current_wires(db, case)
         return control
 
     @staticmethod

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#976): `PATCH` with `null` for `lab_contact_id`, `work_type` or `status` is a 422 (was a 500 from the NOT NULL column).
+- fix(#985): `lab_contact_id` must be a `contact_type='lab'` contact (400 otherwise), on create, on update and through the `create_lab_order` tool. A supplier or delegate was accepted as the order's lab.
+
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.
 
 - fix(#718): `received_date` is stamped with the clinic's calendar date, not
