@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#962): the CSV import reads thousands separators in both conventions (`1,200`, `1.200`, `1,234.56`, `1.234,56`). `1,200` and `1.200` used to be imported as 1.20, valid and silent, so the expense was stored 1000 times too small; `1,234.56` and `1.234,56` were refused.
 - fix(#976): `PATCH` with `null` for `category`, `amount` or `expense_date` is a 422 (was a 500 from the NOT NULL column).
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

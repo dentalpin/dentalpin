@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#965): an inbound reply from a number several patients share is recorded without a patient instead of failing with a 500 (so Kapso retried and the reply was lost) or being attached, with its 24h window, to an arbitrary family member.
+
 - fix: `POST /templates/map` types `notification_type` as the
   notifications `NotificationType`, so a template mapped to a type that is
   never sent answers 422 instead of being stored unused. The settings

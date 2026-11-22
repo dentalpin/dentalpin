@@ -42,7 +42,9 @@ text (session) to Kapso and returns the `wamid` as `provider_message_id`.
 `POST /webhook` is public (auth is per-route; no global gate). It:
 1. resolves the clinic by `phone_number_id` (NEVER trusts a payload clinic_id),
 2. verifies `X-Webhook-Signature` = HMAC-SHA256(raw_body, clinic webhook_secret),
-3. inbound → `NotificationGateway.record_inbound_reply` (publishes
+3. inbound → `NotificationGateway.resolve_patient_by_phone` (a number
+   shared by several patients links none, #965) then
+   `NotificationGateway.record_inbound_reply` (publishes
    `notification.reply_received`); status → `NotificationGateway.record_delivery_status`.
 Idempotent on the Kapso `message.id` (the `dedup_key` unique index).
 

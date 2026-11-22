@@ -1,6 +1,6 @@
 ---
 module: expenses
-last_verified_commit: 3d0fc1d1
+last_verified_commit: f70d47ff
 ---
 
 # Gastos
@@ -31,7 +31,9 @@ curl -X POST "https://clinica/api/v1/expenses/import.csv?dry_run=false" \
 ```
 
 Columnas: `category*` (rent|utilities|salaries|supplies|equipment|
-insurance|maintenance|other), `amount*` (decimal > 0, con `.` o `,`),
+insurance|maintenance|other), `amount*` (decimal > 0, con `.` o `,`;
+los separadores de miles como `1.234,56` o `1,234.56` se leen como
+miles, así que `1.200` es 1200),
 `expense_date*` (AAAA-MM-DD o DD/MM/AAAA), `description`.
 Separador `,` o `;` (autodetectado), UTF-8, máximo 1000 filas /
 1 MiB. La confirmación es todo o nada. Respuesta: `{total, valid,
