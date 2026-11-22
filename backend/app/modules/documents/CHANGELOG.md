@@ -8,6 +8,7 @@
 - Audit authenticated document views and generated PDF downloads. (#903).
 - Allow editing, archiving and preview generation before a consent is signed; edits and archival invalidate outstanding signing links. Signed consent evidence remains immutable.
 - feat: consent template create/edit moves from the patient consent card to a new Settings → Clinical → Consent templates page, gated on `documents.write` (the permission the template endpoints already require). The card keeps the template select and links to the new page. No API changes.
+- feat: archive and unarchive consent templates (`POST /documents/consent-templates/{id}/archive` and `/unarchive`, `documents.write`; new `consent_templates.is_active` column, migration `doc_0003`). `GET /documents/consent-templates` returns active templates by default and takes `include_archived=true`; creating a consent from an archived template is refused with 409. Consents already created from an archived template stay readable, signable and revocable. Settings → Consent templates lists archived templates (muted, "Archived" badge) with Archive/Restore actions; the patient card select only offers active ones. Translated in all locales.
 
 - feat(#876): add clinic consent templates, one-use tablet signing and independently signed revocations; retain the exact signed PDFs and SHA-256 evidence, and record authenticated evidence views and downloads.
 
