@@ -485,6 +485,41 @@ async def test_delete_plan_keeps_performed_treatments(
     )
 
 
+@pytest.mark.asyncio
+async def test_reactivate_restores_what_closing_removed(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """Closing drops planned treatments from the chart, reactivating brings them back (#1034)."""
+    plans = "/api/v1/treatment_plan/treatment-plans"
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16, 15])
+    r = await client.get(f"{plans}/{plan_id}", headers=auth_headers)
+    treatment_ids = [i["treatment"]["id"] for i in r.json()["data"]["items"]]
+    pid = setup["patient_id"]
+    # Removed by hand before closing: not closing's to restore.
+    by_hand = await _create_treatment(client, auth_headers, setup, tooth_number=14)
+    r = await client.post(
+        f"{plans}/{plan_id}/items", headers=auth_headers, json={"treatment_id": by_hand}
+    )
+    assert r.status_code == 201, r.text
+    r = await client.delete(f"/api/v1/odontogram/treatments/{by_hand}", headers=auth_headers)
+    assert r.status_code == 204, r.text
+
+    r = await client.post(
+        f"{plans}/{plan_id}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert r.status_code == 200, r.text
+    for tid in treatment_ids:
+        assert await _treatment_is_deleted(client, auth_headers, pid, tid)
+
+    r = await client.post(f"{plans}/{plan_id}/reactivate", headers=auth_headers)
+    assert r.status_code == 200, r.text
+    for tid in treatment_ids:
+        assert not await _treatment_is_deleted(client, auth_headers, pid, tid)
+    assert await _treatment_is_deleted(client, auth_headers, pid, by_hand)
+
+
 # -----------------------------------------------------------------------------
 # Lock / unlock on budget generation
 # -----------------------------------------------------------------------------

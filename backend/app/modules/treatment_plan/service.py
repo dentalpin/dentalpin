@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID
 
@@ -472,6 +472,8 @@ class TreatmentPlanService:
             raise ValueError("Cannot activate plan without treatments")
 
         plan.status = new_status
+        if new_status == "closed":
+            plan.closed_at = datetime.now(UTC)  # reactivation restores from here (#1034)
 
         # Terminal transitions drop the plan's hold on its planned Treatments — clean
         # up any that become orphaned so the odontogram reflects reality.
@@ -558,6 +560,25 @@ class TreatmentPlanService:
             treatment = await db.get(Treatment, treatment_id)
             if treatment and treatment.deleted_at is None and treatment.status == "planned":
                 await TreatmentService.delete(db, clinic_id, treatment_id, user_id)
+
+    @staticmethod
+    async def _restore_removed_by_closing(
+        db: AsyncSession, clinic_id: UUID, plan: TreatmentPlan
+    ) -> None:
+        """Bring back the treatments closing took off the chart (#1034).
+
+        Closing deletes them in the transaction that stamps ``closed_at``.
+        The short interval after it tells those apart from what staff
+        deleted by hand before or later, and covers plans closed earlier.
+        """
+        from app.modules.odontogram.service import TreatmentService
+
+        treatment_ids = {item.treatment_id for item in plan.items if item.treatment_id}
+        if plan.closed_at is None or not treatment_ids:
+            return
+        await TreatmentService.restore_planned(
+            db, clinic_id, treatment_ids, plan.closed_at, plan.closed_at + timedelta(minutes=1)
+        )
 
     # -------------------------------------------------------------------------
     # Item Operations
@@ -1912,6 +1933,7 @@ class TreatmentPlanService:
         if plan.status != "closed":
             raise ValueError(f"Cannot reactivate plan in status '{plan.status}'")
 
+        await TreatmentPlanService._restore_removed_by_closing(db, clinic_id, plan)
         previous_reason = plan.closure_reason
         plan.status = "draft"
         plan.closure_reason = None
@@ -2007,6 +2029,7 @@ class TreatmentPlanService:
             return plan
 
         if plan.status == "closed" and plan.closure_reason == "rejected_by_patient":
+            await TreatmentPlanService._restore_removed_by_closing(db, clinic_id, plan)
             previous_reason = plan.closure_reason
             plan.status = "active"
             plan.closure_reason = None

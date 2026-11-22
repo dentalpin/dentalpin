@@ -4,7 +4,7 @@ from datetime import UTC, date, datetime, time, timedelta
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import func, or_, select
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -922,3 +922,28 @@ class TreatmentService:
         # same transaction (#896).
         await event_bus.publish(EventType.ODONTOGRAM_TREATMENT_DELETED, event_data, db=db)
         return True
+
+    @staticmethod
+    async def restore_planned(
+        db: AsyncSession,
+        clinic_id: UUID,
+        treatment_ids: set[UUID],
+        deleted_from: datetime,
+        deleted_until: datetime,
+    ) -> None:
+        """Undo the soft delete of planned treatments removed in that interval (#1034).
+
+        No event: a planned treatment booked nothing, so there is nothing to
+        re-book when it comes back.
+        """
+        await db.execute(
+            update(Treatment)
+            .where(
+                Treatment.id.in_(treatment_ids),
+                Treatment.clinic_id == clinic_id,
+                Treatment.status == TreatmentStatus.PLANNED.value,
+                Treatment.deleted_at.between(deleted_from, deleted_until),
+            )
+            .values(deleted_at=None)
+            .execution_options(synchronize_session="fetch")
+        )
