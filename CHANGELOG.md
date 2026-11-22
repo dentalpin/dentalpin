@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Orthodontics:** a back-dated control leaves the current wires and the next control date to the latest one (#1007).
 - **Expenses:** the CSV import no longer reads a thousands separator as a decimal point; `1.200` is 1200, not 1.20 (#962).
 - **Medical reference:** a deactivated medication, allergy, disease or surgery can be added again from the patient form; it comes back with its interaction warnings (#963).
 - **Telephony:** outbound calls are linked to the patient dialled and no longer pop up as incoming calls from the clinic's own number (#964).
