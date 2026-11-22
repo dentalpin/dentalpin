@@ -27,6 +27,7 @@ frontend as a Nuxt layer under its own Python package.
 - **WhatsApp (Kapso):** one clinic saving another clinic's phone number id no longer cuts off that clinic's replies and delivery receipts (#972).
 - **Telephony:** a call from a foreign number or an internal extension is no longer linked to a patient whose number merely ends in the same digits (#973).
 - **Expenses:** one unreadable date in a CSV import is reported on its row instead of rejecting the whole file (#974).
+- **Prescriptions:** a template line that carries a catalog reference is saved instead of failing with a server error (#984).
 - **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
 - **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).
