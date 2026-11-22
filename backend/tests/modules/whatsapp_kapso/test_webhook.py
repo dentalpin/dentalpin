@@ -113,3 +113,61 @@ async def test_delivery_status_updates_message(
     await db_session.refresh(sent)
     assert sent.status == "delivered"
     assert sent.delivered_at is not None
+
+
+async def _post_inbound(client: AsyncClient, wamid: str, from_addr: str) -> int:
+    payload = {
+        "phone_number_id": "PNIDH",
+        "message": {
+            "id": wamid,
+            "from": from_addr,
+            "type": "text",
+            "text": {"body": "Ok"},
+            "kapso": {"direction": "inbound", "content": "Ok"},
+        },
+    }
+    raw, sig = _signed(payload, "whsec")
+    resp = await client.post(
+        WEBHOOK,
+        content=raw,
+        headers={"X-Webhook-Signature": sig, "Content-Type": "application/json"},
+    )
+    return resp.status_code
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("stored", "sent"),
+    [
+        ("34600112233", "34600112233"),  # identical strings: used to 500
+        ("600112233", "34600112233"),  # suffix match: used to pick one at random
+    ],
+)
+async def test_inbound_from_a_shared_household_number_links_nobody(
+    client: AsyncClient, db_session: AsyncSession, test_clinic, stored: str, sent: str
+):
+    """A reply from a number two patients share is not pinned on either (#965).
+
+    Parents and children often share one mobile. The exact lookup used
+    ``scalar_one_or_none`` (MultipleResultsFound → 500, so Kapso retried and
+    the reply was never stored) and the suffix lookup took ``.first()``
+    with no order, attaching the reply and the 24h window to whichever
+    sibling the database returned.
+    """
+    from app.modules.patients.models import Patient
+
+    await _settings(db_session, test_clinic.id, pnid="PNIDH", secret="whsec")
+    for first in ("Ana", "Leo"):
+        db_session.add(
+            Patient(clinic_id=test_clinic.id, first_name=first, last_name="Ruiz", phone=stored)
+        )
+    await db_session.commit()
+
+    assert await _post_inbound(client, "wamid.house.1", sent) == 200
+    row = (
+        await db_session.execute(
+            select(CommunicationMessage).where(CommunicationMessage.dedup_key == "wamid.house.1")
+        )
+    ).scalar_one()
+    assert row.patient_id is None
+    assert row.body_text == "Ok"
