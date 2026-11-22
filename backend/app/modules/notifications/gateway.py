@@ -254,7 +254,8 @@ class NotificationGateway:
     async def dispatch_outbox(db: AsyncSession, limit: int = _DISPATCH_BATCH) -> int:
         """Send a batch of due queued/failed messages. Returns count attempted.
 
-        Each row is locked ``FOR UPDATE SKIP LOCKED`` so concurrent dispatch
+        The batch and each row (re-read in ``_dispatch_one``) are locked
+        ``FOR UPDATE SKIP LOCKED`` so concurrent dispatch
         ticks never grab the same message. Per-row exceptions are isolated.
         """
         now = datetime.now(UTC)
@@ -338,6 +339,23 @@ class NotificationGateway:
 
     @staticmethod
     async def _dispatch_one(db: AsyncSession, msg: CommunicationMessage) -> None:
+        # The batch lock taken in ``dispatch_outbox`` is released by the first
+        # commit of an earlier row, so another tick can pick up and send this
+        # one while we are still working through the batch. Re-read it under
+        # its own lock and skip it if it is no longer due.
+        msg = await db.scalar(
+            select(CommunicationMessage)
+            .where(CommunicationMessage.id == msg.id)
+            .with_for_update(skip_locked=True)
+            .execution_options(populate_existing=True)
+        )
+        if msg is None:
+            return
+        if msg.status not in ("queued", "failed") or (
+            msg.next_attempt_at and msg.next_attempt_at > datetime.now(UTC)
+        ):
+            await db.commit()
+            return
         adapter = await NotificationGateway._supporting_adapter(db, msg.clinic_id, msg.channel)
         if adapter is None:
             await NotificationGateway._mark_failed(db, msg, f"no adapter for channel {msg.channel}")
