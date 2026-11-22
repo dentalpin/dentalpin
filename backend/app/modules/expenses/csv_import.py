@@ -6,7 +6,9 @@ Column contract (header row required; unknown columns ignored):
     maintenance|other), amount* (decimal > 0), expense_date* (YYYY-MM-DD
     or DD/MM/YYYY), description
 
-Decimal comma in ``amount`` (``1200,50``) is accepted alongside the dot.
+Decimal comma in ``amount`` (``1200,50``) is accepted alongside the dot,
+and so are thousands separators in either convention (``1,234.56``,
+``1.234,56``, ``1,200``, ``1.200``); see ``_normalize_amount``.
 
 Delimiter is sniffed (`,` or `;`, comma fallback for Spanish Excel).
 ``*`` required. Validation reuses ``ExpenseCreate`` itself, so the import
@@ -19,7 +21,8 @@ from __future__ import annotations
 
 import csv
 import io
-from datetime import datetime
+import re
+from datetime import date, datetime
 from uuid import UUID
 
 from pydantic import ValidationError
@@ -63,14 +66,43 @@ def _detect_reader(text: str) -> csv.DictReader:
     return csv.DictReader(io.StringIO(text), dialect=dialect)
 
 
-def _parse_date(raw: str, row_number: int) -> object:
+def _parse_date(raw: str) -> date | None:
+    """``None`` for an unreadable date: a row error, not a file rejection (#974)."""
     value = raw.strip()
     for fmt in ("%Y-%m-%d", "%d/%m/%Y"):
         try:
             return datetime.strptime(value, fmt).date()
         except ValueError:
             continue
-    raise CsvImportError(f"row {row_number}: expense_date must be YYYY-MM-DD or DD/MM/YYYY")
+    return None
+
+
+_GROUPED = re.compile(r"[1-9]\d{0,2}(?:[.,]\d{3})+")
+
+
+def _normalize_amount(raw: str) -> str:
+    """Turn a spreadsheet amount into a plain ``1234.56`` string.
+
+    Excel writes thousands separators in both conventions: ``1,200`` and
+    ``1,234.56`` (English) or ``1.200`` and ``1.234,56`` (Spanish). With
+    both marks present, the last one is the decimal point. With one mark,
+    it is a thousands separator when it only ever sits before groups of
+    three digits (money never has three decimals), otherwise the decimal
+    point. Anything else is returned untouched so validation reports it.
+    """
+    value = raw.replace(" ", "")
+    if "," in value and "." in value:
+        decimal = "," if value.rfind(",") > value.rfind(".") else "."
+        thousands = "." if decimal == "," else ","
+        return value.replace(thousands, "").replace(decimal, ".")
+    mark = "," if "," in value else "." if "." in value else None
+    if mark is None:
+        return value
+    if _GROUPED.fullmatch(value.lstrip("+-")):
+        return value.replace(mark, "")
+    if value.count(mark) == 1:
+        return value.replace(mark, ".")
+    return value
 
 
 def validate_expense_csv(content: bytes) -> tuple[list[ExpenseCreate], list[dict], int]:
@@ -111,10 +143,18 @@ def validate_expense_csv(content: bytes) -> tuple[list[ExpenseCreate], list[dict
             }
             data = {k: v for k, v in data.items() if v != ""}
             if "expense_date" in data:
-                data["expense_date"] = _parse_date(data["expense_date"], line_number)
-            amount = data.get("amount", "")
-            if "," in amount and "." not in amount:
-                data["amount"] = amount.replace(",", ".")  # Spanish Excel: 1200,50
+                parsed = _parse_date(data["expense_date"])
+                if parsed is None:
+                    errors.append(
+                        {
+                            "row": line_number,
+                            "message": "expense_date: must be YYYY-MM-DD or DD/MM/YYYY",
+                        }
+                    )
+                    continue
+                data["expense_date"] = parsed
+            if "amount" in data:
+                data["amount"] = _normalize_amount(data["amount"])
             valid.append(ExpenseCreate.model_validate(data))
         except ValidationError as exc:
             first = exc.errors()[0]

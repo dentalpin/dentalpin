@@ -164,7 +164,7 @@ async def test_first_event_race_adopts_winner_row(
 
     original = TelephonyService.match_patient
 
-    async def match_and_race(db, clinic_id, number):
+    async def match_and_race(db, clinic_id, number, **kwargs):
         # Simulate the concurrent writer landing between our SELECT (which
         # found nothing) and our INSERT: the row exists by flush time.
         await db.execute(
@@ -177,7 +177,7 @@ async def test_first_event_race_adopts_winner_row(
             ),
             {"clinic": str(clinic_id)},
         )
-        return await original(db, clinic_id, number)
+        return await original(db, clinic_id, number, **kwargs)
 
     monkeypatch.setattr(TelephonyService, "match_patient", match_and_race)
     row = await TelephonyService.ingest_event(
@@ -197,3 +197,95 @@ async def test_first_event_race_adopts_winner_row(
         )
     ).scalar_one()
     assert count == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "caller",
+    [
+        "+447600112233",  # UK mobile whose last nine digits are a Spanish patient's
+        "203456",  # an internal extension: six digits, the tail of a patient's number
+    ],
+)
+async def test_a_different_number_with_the_same_tail_links_nobody(
+    db_session: AsyncSession, test_clinic, caller: str
+):
+    """The match is confirmed on the whole normalized number (#973).
+
+    The module contract says SQL narrows on the last digits and Python
+    confirms on the full normalized value, but the Python step re-checked
+    the same nine-digit tail, so any number sharing it put that patient's
+    record on screen.
+    """
+    settings = await _settings(db_session, test_clinic.id)
+    await _patient(db_session, test_clinic.id, phone="+34 600 112 233")
+    await _patient(db_session, test_clinic.id, phone="+34 910 203 456", first="Eva")
+
+    row = await TelephonyService.ingest_event(
+        db_session, settings, _event("call.ringing", call_id=f"t-{caller}", from_number=caller)
+    )
+    assert row.patient_id is None
+
+
+@pytest.mark.asyncio
+async def test_the_same_number_in_another_format_still_matches(
+    db_session: AsyncSession, test_clinic
+):
+    settings = await _settings(db_session, test_clinic.id)
+    patient = await _patient(db_session, test_clinic.id, phone="0034 600-11-22-33")
+    row = await TelephonyService.ingest_event(
+        db_session, settings, _event("call.ringing", call_id="fmt-1", from_number="600112233")
+    )
+    assert row.patient_id == patient.id
+
+
+@pytest.mark.asyncio
+async def test_outbound_call_matches_the_called_patient(db_session: AsyncSession, test_clinic):
+    """An outbound call is matched on the number dialled, not the clinic's line (#964).
+
+    ``from_number`` of an outbound call is the clinic's own number, so the
+    call used to link nobody (or whichever patient record held the
+    clinic's number) and was announced as an unknown caller.
+    """
+    from app.core.events import EventType, event_bus
+
+    settings = await _settings(db_session, test_clinic.id)
+    patient = await _patient(db_session, test_clinic.id, phone="600112233")
+    await _patient(db_session, test_clinic.id, phone="910000000", first="Front", last="Desk")
+
+    unknown: list[dict] = []
+
+    async def record(data, *, db):
+        unknown.append(data)
+
+    event_bus.subscribe(EventType.CALL_UNKNOWN_CALLER, record)
+    try:
+        row = await TelephonyService.ingest_event(
+            db_session,
+            settings,
+            _event(
+                "call.ringing",
+                call_id="out-1",
+                direction="outbound",
+                from_number="+34910000000",
+                to_number="600 11 22 33",
+            ),
+        )
+        assert row.patient_id == patient.id
+
+        # Dialling a number no patient holds is not an "unknown caller".
+        row = await TelephonyService.ingest_event(
+            db_session,
+            settings,
+            _event(
+                "call.ringing",
+                call_id="out-2",
+                direction="outbound",
+                from_number="+34910000000",
+                to_number="+34699999999",
+            ),
+        )
+        assert row.patient_id is None
+        assert unknown == []
+    finally:
+        event_bus.unsubscribe(EventType.CALL_UNKNOWN_CALLER, record)
