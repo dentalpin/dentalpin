@@ -45,7 +45,9 @@ text (session) to Kapso and returns the `wamid` as `provider_message_id`.
    if several clinics carry the same `phone_number_id` (saving one another
    clinic already uses is a 409, but older rows may exist) the clinic whose
    secret verifies wins, so one clinic's typo never cuts another off (#972),
-3. inbound → `NotificationGateway.record_inbound_reply` (publishes
+3. inbound → `NotificationGateway.resolve_patient_by_phone` (a number
+   shared by several patients links none, #965) then
+   `NotificationGateway.record_inbound_reply` (publishes
    `notification.reply_received`); status → `NotificationGateway.record_delivery_status`.
 Idempotent on the Kapso `message.id` (the `dedup_key` unique index).
 
