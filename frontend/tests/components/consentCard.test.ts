@@ -24,9 +24,11 @@ const patch = vi.fn(async () => ({}))
 const del = vi.fn(async () => ({}))
 const post = vi.fn(async () => ({ data: { url: 'https://clinic.example/p/consent#synthetic-token', qr_data_url: 'data:image/png;base64,c3ludGhldGlj' } }))
 mockNuxtImport('useApi', () => () => ({ get, patch, del, post, raw: vi.fn() }))
-mockNuxtImport('usePermissions', () => () => ({ can: () => true }))
+const canWrite = vi.hoisted(() => ({ value: true }))
+mockNuxtImport('usePermissions', () => () => ({ can: () => canWrite.value }))
 
 afterEach(() => {
+  canWrite.value = true
   get.mockClear()
   patch.mockClear()
   del.mockClear()
@@ -83,6 +85,32 @@ describe('consent patient card', () => {
       await refreshed.findAll('button').find(button => /Archive|documents\.consent\.archiveConsent/.test(button.text()))!.trigger('click')
       await flushPromises()
       expect(del).toHaveBeenCalledWith('/api/v1/documents/unsigned')
+    } finally { wrapper.unmount() }
+  })
+
+  it('keeps the template select but manages templates in Settings, not in the card', async () => {
+    const wrapper = await mountSuspended(ConsentCard, { props: { ctx: { patient: { id: 'patient' } } } })
+    await flushPromises()
+    try {
+      // The select (needed to sign) stays; the inline create/edit form is gone.
+      expect(wrapper.text()).toMatch(/Clinic template|documents\.consent\.template/)
+      expect(wrapper.find('details').exists()).toBe(false)
+      expect(wrapper.text()).not.toMatch(/Save template|documents\.consent\.saveTemplate/)
+      expect(wrapper.text()).not.toMatch(/Edit template|documents\.consent\.editTemplate/)
+      const link = wrapper.find('a[href="/settings/clinical/consent-templates"]')
+      expect(link.exists()).toBe(true)
+      // The card no longer writes templates.
+      expect(post).not.toHaveBeenCalledWith('/api/v1/documents/consent-templates', expect.anything())
+    } finally { wrapper.unmount() }
+  })
+
+  it('hides the Settings link from users without documents.write', async () => {
+    canWrite.value = false
+    const wrapper = await mountSuspended(ConsentCard, { props: { ctx: { patient: { id: 'patient' } } } })
+    await flushPromises()
+    try {
+      expect(wrapper.find('a[href="/settings/clinical/consent-templates"]').exists()).toBe(false)
+      expect(wrapper.text()).toMatch(/Clinic template|documents\.consent\.template/)
     } finally { wrapper.unmount() }
   })
 })
