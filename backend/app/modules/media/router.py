@@ -18,6 +18,7 @@ from fastapi import (
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.http_headers import content_disposition
 from app.core.patient_access import RecordPatientAccess
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
@@ -328,8 +329,8 @@ async def download_document(
 
     headers = {"Content-Length": str(len(content))}
     if variant in (None, "full"):
-        headers["Content-Disposition"] = (
-            f'attachment; filename="{_safe_filename(document.original_filename)}"'
+        headers["Content-Disposition"] = content_disposition(
+            _safe_filename(document.original_filename)
         )
     await record_access(
         document.patient_id, "documents", action="download" if variant == "full" else "view"

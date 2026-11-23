@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1015): the invoice PDF downloads when the series prefix has a character outside latin-1.
 - fix(#1013): the over-credit check compares in cents (a full note of a total that rounded down was refused), and a negative discount shows with the right sign on the invoice page and the PDF.
 
 - fix(#1013): a credit note's absolute discount takes the line's sign. `min(value, negative subtotal)` made the discount the whole line, so the note credited 0.00. A partial note takes its share of the discount.
