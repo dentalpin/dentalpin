@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Verifactu:** a credit note of a simplified invoice is sent as R5 instead of an invalid R1 that blocked invoicing (#1049).
 - **Italy (Sistema TS):** refunds are sent with their expense lines (#1048).
 - **Italy (SdI):** discounted lines with a quantity above one no longer fail check 00423 (#1047).
 - **NAV Online Számla:** a cancellation is reported with negative amounts; it went out positive, as a second sale (#1046).

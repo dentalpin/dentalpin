@@ -11,7 +11,7 @@ Flow on ``on_invoice_issued``:
    clinic hasn't activated it).
 2. Pessimistically lock the settings row (``SELECT ... FOR UPDATE``)
    to read ``last_huella`` without racing other concurrent issues.
-3. Determine the ``TipoFactura`` (F1/F2/R1) and build the XML payload.
+3. Determine the ``TipoFactura`` (F1/F2/R1/R5) and build the XML payload.
 4. Compute the ``Huella`` for the chain.
 5. Insert a :class:`VerifactuRecord` in ``state="pending"`` with the
    full XML pre-rendered (it will be sent to AEAT by the worker).
@@ -270,10 +270,23 @@ async def _compose_payload(
             "La clínica no tiene CIF/NIF configurado; imposible firmar el registro Verifactu."
         )
 
+    original = None
+    if is_credit_note:
+        original = getattr(invoice, "_verifactu_original", None)
+        if original is None and invoice.credit_note_for_id:
+            # Regeneration has no side channel: load it (#1049).
+            original = await db.scalar(
+                select(type(invoice)).where(
+                    type(invoice).id == invoice.credit_note_for_id,
+                    type(invoice).clinic_id == invoice.clinic_id,
+                )
+            )
+
     importe_total_raw = Decimal(str(invoice.total or 0))
     tipo_factura = iva_classifier.determine_tipo_factura(
         has_credit_note_for=is_credit_note,
-        billing_tax_id=invoice.billing_tax_id,
+        # R5 or R1 follows the rectified invoice, not the note's current NIF.
+        billing_tax_id=original.billing_tax_id if original else invoice.billing_tax_id,
         importe_total=importe_total_raw,
     )
 
@@ -296,7 +309,7 @@ async def _compose_payload(
     id_factura_anterior = await _resolve_id_factura_anterior(db, settings, nif_emisor, is_first)
 
     destinatario = None
-    if invoice.billing_tax_id:
+    if invoice.billing_tax_id and tipo_factura != "R5":  # R5 takes no Destinatarios
         destinatario = xml_builder.Destinatario(
             nombre_razon=invoice.billing_name or "",
             nif=invoice.billing_tax_id,
@@ -306,7 +319,6 @@ async def _compose_payload(
     tipo_rectificativa = None
     if is_credit_note:
         tipo_rectificativa = "I"
-        original = getattr(invoice, "_verifactu_original", None)
         if original is not None:
             facturas_rectificadas.append(
                 xml_builder.IDFacturaRef(

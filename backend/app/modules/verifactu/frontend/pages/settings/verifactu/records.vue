@@ -20,7 +20,8 @@ const tipoItems = computed(() => [
   { label: t('verifactu.records.all'), value: 'all' },
   { label: 'F1', value: 'F1' },
   { label: 'F2', value: 'F2' },
-  { label: 'R1', value: 'R1' }
+  { label: 'R1', value: 'R1' },
+  { label: 'R5', value: 'R5' }
 ])
 const data = ref<Awaited<ReturnType<typeof listRecords>> | null>(null)
 const loading = ref(false)

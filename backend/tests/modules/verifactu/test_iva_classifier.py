@@ -47,6 +47,16 @@ def test_determine_tipo_factura_credit_note_is_r1():
     )
 
 
+def test_determine_tipo_factura_simplified_credit_note_is_r5():
+    # AEAT FAQ: the rectification of a simplified invoice is R5 whatever the reason (#1049).
+    assert (
+        iva_classifier.determine_tipo_factura(
+            has_credit_note_for=True, billing_tax_id=None, importe_total=Decimal("-72.60")
+        )
+        == "R5"
+    )
+
+
 def test_determine_tipo_factura_with_nif_is_f1():
     assert (
         iva_classifier.determine_tipo_factura(
