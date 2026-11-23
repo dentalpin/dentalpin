@@ -146,6 +146,9 @@ Nuxt layer at `frontend/` with:
 
 ## Gotchas
 
+- **The consent PDF prints `document.title`** (#1040): it is what the
+  tablet showed, so it is part of the signed evidence.
+
 - **The PDF footer lives in the `@page` bottom margin** (#1039): a fixed
   box inside the content area printed over the text of every full page.
 

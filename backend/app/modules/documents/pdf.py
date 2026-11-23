@@ -661,6 +661,9 @@ class DocumentPDFService:
             )
 
         body_html = DocumentPDFService._render_body(document.document_type, content, labels)
+        if document.document_type == "informed_consent" and getattr(document, "title", None):
+            # The evidence carries what the patient saw and signed (#1040).
+            body_html = f'<h2 class="consent-title">{escape(document.title)}</h2>' + body_html
 
         # Arabic is a supported PDF locale, so the page has to be mirrored —
         # the same attribute billing's invoice sets (#524).
@@ -691,6 +694,7 @@ class DocumentPDFService:
                 .clinic-name {{ font-size: 18pt; font-weight: bold; color: #1e40af; margin-bottom: 5px; }}
                 .clinic-details {{ font-size: 9pt; color: #666; }}
                 .doc-title {{ font-size: 16pt; font-weight: bold; color: #1e40af; text-align: right; }}
+                .consent-title {{ font-size: 13pt; margin-bottom: 12px; overflow-wrap: anywhere; }}
                 .section {{ margin-bottom: 25px; }}
                 .section-title {{
                     font-size: 11pt; font-weight: bold; color: #1e40af;

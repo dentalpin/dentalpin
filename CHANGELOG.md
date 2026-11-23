@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Documents:** signed consent PDFs include the title the patient signed (#1040).
 - **Documents:** the PDF footer no longer prints over the text of full pages, signed consents included (#1039).
 - **Patients:** an incomplete emergency contact or guardian is refused instead of reported as saved, and a failed load can't delete the stored one (#1064).
 - **Email:** a clinic's SMTP mail is sent from the sender configured by the clinic (#1052).
