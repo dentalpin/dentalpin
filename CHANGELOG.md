@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Odontogram:** past charts in the History tab show performed treatments (#1065).
 - **Notifications:** skipped reminders no longer flood the patient's thread and hide new messages (#1036).
 - **Notifications:** a rescheduled appointment gets a reminder for its new time (#1035).
 - **Documents:** a failed signature submit no longer discards the signature and claims the link was used (#1042).
