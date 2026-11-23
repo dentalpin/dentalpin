@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Italy (Sistema TS):** refunds are sent with their expense lines (#1048).
 - **Italy (SdI):** discounted lines with a quantity above one no longer fail check 00423 (#1047).
 - **NAV Online Számla:** a cancellation is reported with negative amounts; it went out positive, as a second sale (#1046).
 - **Treatment plans:** reactivating a closed plan brings its planned treatments back to the odontogram (#1034).
