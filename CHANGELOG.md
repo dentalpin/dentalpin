@@ -47,6 +47,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Downloads:** patient files and invoice PDFs with names outside latin-1 download instead of failing with a server error (#1015).
 - **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
 - **Billing:** a credit note of a discounted line credits what was billed instead of 0.00, and the Italian e-invoice keeps its discount (#1013).
+- **Billing:** an issued credit note is no longer listed or counted as an overdue invoice (#1090).
 - **Copilot:** a confirmed action stays saved when the AI reply after it fails; confirming again does not repeat it (#1093).
 - **Periodontogram:** teeth marked missing or extracted in the odontogram are no longer counted as present, so BoP, plaque and mean CAL are correct (#1091).
 - **Documents:** the consent preview generated from the patient card now uses the interface language instead of always Spanish (#1041).

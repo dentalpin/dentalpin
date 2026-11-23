@@ -113,6 +113,12 @@ that event was never published.
   absolute discount. Never compare either against 0 with `> 0` downstream.
 - **Credit notes** are issued via the same workflow as invoices,
   flagged via the document type. Don't introduce a parallel pipeline.
+- **"Overdue" is one predicate: `service.overdue_invoice_conditions`.**
+  An issued credit note stays `issued` with a negative total and a
+  0-day term, so a bare `issued/partial` + `due_date < today` filter
+  lists it as overdue forever (#1090). The list filter and the reports'
+  overdue count and list all use the helper; any new overdue surface
+  must too.
 - **Budget ↔ invoice bridge (`payment_bridge.py`, issue #178).** One
   rule: money allocated to a budget is money for that budget's
   invoices. Three entry points, all in-tx: the `payment.allocated`
