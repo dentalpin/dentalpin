@@ -121,4 +121,26 @@ describe('online booking reception', () => {
     await clickByText(wrapper, 'onlineBooking.confirmReject')
     expect(post).toHaveBeenCalledWith('/api/v1/online_booking/requests/request-1/reject', { message: 'Please call us' }, { errorToast: false })
   })
+
+  it('requires a surname before creating a patient from a one-word name (#1044)', async () => {
+    get.mockImplementation(async (url: string) => {
+      if (url.includes('/patient-suggestions')) return { data: [] }
+      if (url === '/api/v1/auth/professionals') return { data: [{ id: 'professional-1', first_name: 'Test', last_name: 'Dentist' }] }
+      if (url === '/api/v1/agenda/cabinets') return { data: [] }
+      return { data: [{ ...row, contact_name: 'Cher' }] }
+    })
+    wrapper = await mountSuspended(RequestsPage)
+    await vi.waitFor(() => expect(wrapper!.text()).toContain('Cher'))
+    await clickByText(wrapper, 'onlineBooking.accept')
+    await wrapper.find('input[value="new"]').setValue()
+    ;(wrapper.vm as unknown as { professionalId: string }).professionalId = 'professional-1'
+    const fields = wrapper.findAll('input[maxlength="100"]')
+    expect((fields[1]!.element as HTMLInputElement).value).toBe('')
+    await clickByText(wrapper, 'onlineBooking.confirmAccept')
+    expect(post).not.toHaveBeenCalled()
+    expect(wrapper.text()).toContain('onlineBooking.nameRequired')
+    await fields[1]!.setValue('Synthetic')
+    await clickByText(wrapper, 'onlineBooking.confirmAccept')
+    expect(post).toHaveBeenCalledWith('/api/v1/online_booking/requests/request-1/accept', expect.objectContaining({ first_name: 'Cher', last_name: 'Synthetic' }), { errorToast: false })
+  })
 })
