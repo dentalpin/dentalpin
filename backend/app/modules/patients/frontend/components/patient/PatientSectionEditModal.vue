@@ -203,6 +203,8 @@ async function handleSave() {
       if (emergencyForm.value) {
         updateData = emergencyForm.value
       } else {
+        // Nothing loaded is not "removed": a failed GET reads the same (#1064).
+        if (!props.patient.emergency_contact) return closeModal()
         method = 'del'
         updateData = null
       }
@@ -211,6 +213,7 @@ async function handleSave() {
       if (guardianForm.value) {
         updateData = guardianForm.value
       } else {
+        if (!props.patient.legal_guardian) return closeModal()
         method = 'del'
         updateData = null
       }

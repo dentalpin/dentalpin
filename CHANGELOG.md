@@ -17,6 +17,16 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Italy (SdI):** receipts can no longer be lost when the PEC poll or the save fails (#1079).
+- **Agenda:** the mobile + button books on the day being viewed (#1037).
+- **Treatment plans:** search works in the list and finds full names in the pipeline (#1038).
+- **Odontogram:** past charts in the History tab show performed treatments (#1065).
+- **Notifications:** skipped reminders no longer flood the patient's thread and hide new messages (#1036).
+- **Notifications:** a rescheduled appointment gets a reminder for its new time (#1035).
+- **Documents:** a failed signature submit no longer discards the signature and claims the link was used (#1042).
+- **Documents:** signed consent PDFs include the title the patient signed (#1040).
+- **Documents:** the PDF footer no longer prints over the text of full pages, signed consents included (#1039).
+- **Patients:** an incomplete emergency contact or guardian is refused instead of reported as saved, and a failed load can't delete the stored one (#1064).
 - **Email:** a clinic's SMTP mail is sent from the sender configured by the clinic (#1052).
 - **Accounts:** a password over bcrypt's 72 bytes is refused with a message instead of failing with a server error (#1051).
 - **Billing:** a treatment added to a manual invoice gets its own VAT instead of the exempt default (#1028).
