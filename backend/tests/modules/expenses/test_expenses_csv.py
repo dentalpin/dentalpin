@@ -174,3 +174,38 @@ def test_validate_reports_an_ambiguous_amount_as_a_row_error() -> None:
     assert total == 2
     assert len(valid) == 1
     assert errors and errors[0]["row"] == 2
+
+
+# #1114: a spreadsheet's trailing ",,," line has one cell more than the header.
+RAGGED_CSV = b"category,amount,expense_date\nrent,100.00,2026-11-01\n,,,\n"
+
+
+def test_validate_ignores_cells_beyond_the_header() -> None:
+    valid, errors, total = validate_expense_csv(RAGGED_CSV)
+    assert (total, errors) == (1, [])
+    assert valid[0].amount == Decimal("100.00")
+
+    extra = b"category,amount,expense_date\nrent,100.00,2026-11-01,stray\n"
+    valid, errors, total = validate_expense_csv(extra)
+    assert (total, errors) == (1, [])
+
+
+def test_validate_reads_a_column_whose_header_is_padded() -> None:
+    padded = b"category, amount ,expense_date\nrent,100.00,2026-11-01\n"
+    valid, errors, total = validate_expense_csv(padded)
+    assert (total, errors) == (1, [])
+    assert valid[0].amount == Decimal("100.00")
+
+
+@pytest.mark.asyncio
+async def test_endpoint_answers_a_ragged_file_without_a_500(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+) -> None:
+    response = await client.post(
+        "/api/v1/expenses/import.csv",
+        files={"file": ("ragged.csv", RAGGED_CSV, "text/csv")},
+        headers=auth_headers,
+    )
+    assert response.status_code == 200, response.text
+    body = response.json()["data"]
+    assert (body["total"], body["valid"], body["errors"]) == (1, 1, [])

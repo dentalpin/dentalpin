@@ -1,7 +1,8 @@
 """CSV patient import — parse, validate (dry-run), and commit.
 
-Column contract (header row required; unknown columns ignored so exports
-from other systems import without pre-cleaning):
+Column contract (header row required; header names are trimmed; unknown
+columns and cells beyond the header are ignored so exports from other
+systems import without pre-cleaning):
 
     first_name*, last_name*, phone, email, date_of_birth (YYYY-MM-DD
     or DD/MM/YYYY), notes, do_not_contact (true/1/yes/sí | false/0/no/blank),
@@ -115,12 +116,16 @@ def validate_patient_csv(content: bytes) -> tuple[list[PatientCreate], list[dict
     missing = [c for c in REQUIRED_COLUMNS if c not in headers]
     if missing:
         raise CsvImportError(f"CSV missing required columns: {', '.join(missing)}")
+    # Key every row by the stripped header, so `last_name ` reads as `last_name` (#1114).
+    reader.fieldnames = [(h or "").strip() for h in reader.fieldnames]
 
     valid: list[PatientCreate] = []
     lines: list[int] = []
     errors: list[dict] = []
     total = 0
     for line_number, raw_row in enumerate(reader, start=2):
+        # Cells beyond the header land under the ``None`` key as a list: ignore them (#1114).
+        raw_row.pop(None, None)
         if all((v or "").strip() == "" for v in raw_row.values()):
             continue  # skip blank lines
         total += 1
