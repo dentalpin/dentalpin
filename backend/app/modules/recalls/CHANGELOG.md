@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix(#1010): snoozing unlinks the appointment, whose completion used to close the snoozed recall, and `PATCH` on a closed recall is a 409.
+- fix(#1004): "Due this week" counts recalls whose `due_date` falls in the clinic's Monday-to-Sunday week; it used to count the whole current month, plus next month near month end. Month-only recalls count under the month only.
 
 - fix(#940): `appointment.scheduled` auto-link compares the appointment's month on the clinic's calendar. It used the UTC date, so at a month boundary an evening appointment in a UTC-6 clinic linked next month's recall, and a morning one in a UTC+9 clinic missed this month's.
 

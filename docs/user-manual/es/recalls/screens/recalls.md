@@ -27,7 +27,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/recalls/frontend/pages/recalls/index.vue
   - backend/app/modules/recalls/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: b40a1d2
 ---
 
 # Lista de llamadas
@@ -44,7 +44,10 @@ registrar el intento, mover el recall al siguiente estado.
 - **Cuatro contadores arriba** — *Vencen esta semana*, *Vencidos*,
   *Programadas este mes*, *Tasa de conversión*. Se recalculan al
   cambiar cualquier filtro. La conversión es citas programadas /
-  recalls vencidos del mes.
+  recalls vencidos del mes. *Vencen esta semana* cuenta los recalls
+  abiertos con fecha exacta dentro de la semana actual, de lunes a
+  domingo (hora de la clínica); los recalls solo con mes cuentan en el
+  mes, no en la semana.
 - **Filtros adicionales** — motivo, estado, prioridad y un
   conmutador *Vencidos*. Los filtros van en la URL: puedes guardar o
   compartir el enlace.

@@ -619,7 +619,12 @@ class RecallService:
         today = today or datetime.now(tz).date()
         month_start = _normalize_due_month(today)
         month_end = _add_months(month_start, 1)
-        week_end = today + timedelta(days=7)
+        # "This week" is the clinic's ISO week, Monday to Sunday (the same
+        # week start as the payments report buckets). It needs a precise
+        # date: a month-only recall (``due_date`` NULL) is due "this month",
+        # not in any particular week, so it never counts here (#1004).
+        week_start = today - timedelta(days=today.weekday())
+        week_end = week_start + timedelta(days=6)
         # "This month" is the clinic's month. A naive bound would be read in
         # the app process's zone, so the KPI moved with the container's TZ.
         month_start_at = datetime.combine(month_start, datetime.min.time(), tzinfo=tz)
@@ -641,8 +646,8 @@ class RecallService:
 
         due_this_week = await count_where(
             Recall.status.in_(ACTIVE_STATUSES),
-            Recall.due_month <= week_end,
-            Recall.due_month >= month_start,
+            Recall.due_date >= week_start,
+            Recall.due_date <= week_end,
         )
         due_this_month = await count_where(
             Recall.status.in_(ACTIVE_STATUSES),
