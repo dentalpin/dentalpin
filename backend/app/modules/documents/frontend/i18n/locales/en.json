@@ -122,6 +122,7 @@
       "noEvidence": "The requested document is not available yet.",
       "completed": "Signature recorded. You may return the tablet to staff.",
       "linkError": "The link is invalid, expired or already used.",
+      "submitFailed": "Your signature could not be sent. Please try again.",
       "revocationNotice": "By signing, you revoke the consent shown.",
       "signer": "Signer name",
       "relationship": "Relationship to patient",

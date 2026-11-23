@@ -122,6 +122,7 @@
       "noEvidence": "Le document demandé n’est pas encore disponible.",
       "completed": "Signature enregistrée. Vous pouvez rendre la tablette au personnel.",
       "linkError": "Le lien n’est pas valide, a expiré ou a déjà été utilisé.",
+      "submitFailed": "Votre signature n’a pas pu être envoyée. Veuillez réessayer.",
       "revocationNotice": "En signant, vous révoquez le consentement présenté.",
       "signer": "Nom du signataire",
       "relationship": "Lien avec le patient",

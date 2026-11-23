@@ -122,6 +122,7 @@
       "noEvidence": "El documento solicitado aún no está disponible.",
       "completed": "Firma registrada. Puedes devolver la tablet al personal.",
       "linkError": "El enlace no es válido, ha caducado o ya se ha utilizado.",
+      "submitFailed": "No se pudo enviar tu firma. Inténtalo de nuevo.",
       "revocationNotice": "Al firmar, revocas el consentimiento mostrado.",
       "signer": "Nombre de quien firma",
       "relationship": "Relación con el paciente",

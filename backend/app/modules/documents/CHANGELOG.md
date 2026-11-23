@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- fix(#1042): a failed signature submit keeps the form and offers a retry; only 404 / 409 mean the link is spent.
 - fix(#1040): the consent and revocation PDFs print the consent's title.
 - fix(#1039): the PDF footer sits in the page's bottom margin; it printed over the text of every full page.
 - fix(#1006): editing the title or content of any document drops its PDF (only consents did), and `status=generated` can't be set on a document without a matching file.
