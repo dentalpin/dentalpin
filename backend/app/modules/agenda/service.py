@@ -580,10 +580,19 @@ class AppointmentService:
             resolved_cabinet_id = tmp["cabinet_id"]
 
         if planned_item_ids:
+            planned_item_ids = list(dict.fromkeys(planned_item_ids))
             patient_id = data.get("patient_id") or appointment.patient_id
             if patient_id:
+                to_validate = planned_item_ids
+                if patient_id == appointment.patient_id:
+                    # The modal resends every link on save. Only a new one is
+                    # a booking: an item completed since it was booked may
+                    # stay (#1017).
+                    await db.refresh(appointment, ["treatments"])
+                    linked = {t.planned_treatment_item_id for t in appointment.treatments}
+                    to_validate = [i for i in planned_item_ids if i not in linked]
                 await AppointmentService.validate_planned_items(
-                    db, appointment.clinic_id, patient_id, planned_item_ids
+                    db, appointment.clinic_id, patient_id, to_validate
                 )
 
         for key, value in data.items():
@@ -597,14 +606,29 @@ class AppointmentService:
             raise
 
         if planned_item_ids is not None:
+            # Sync, don't re-create: a link row holds the visit note and the
+            # completed flag (#1017).
+            position = {item_id: i for i, item_id in enumerate(planned_item_ids)}
+            await db.refresh(appointment, ["treatments"])
+            kept = set()
             for existing in list(appointment.treatments):
-                await db.delete(existing)
+                if existing.planned_treatment_item_id in position:
+                    kept.add(existing.planned_treatment_item_id)
+                else:
+                    await db.delete(existing)
             await db.flush()
 
+            added = [i for i in planned_item_ids if i not in kept]
             provider = planned_work_registry.get()
-            if provider:
-                await provider.attach_planned_items(db, appointment.id, planned_item_ids)
+            if provider and added:
+                await provider.attach_planned_items(db, appointment.id, added)
 
+            await db.refresh(appointment, ["treatments"])
+            for link in appointment.treatments:
+                link.display_order = position.get(
+                    link.planned_treatment_item_id, link.display_order
+                )
+            await db.flush()
             await db.refresh(appointment, ["treatments"])
             for treatment in appointment.treatments:
                 await db.refresh(treatment, ["planned_item", "catalog_item"])

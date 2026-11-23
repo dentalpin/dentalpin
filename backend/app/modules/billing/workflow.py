@@ -1,7 +1,7 @@
 """Invoice workflow service - state machine and status transitions."""
 
 from datetime import UTC, date, datetime
-from decimal import Decimal
+from decimal import ROUND_CEILING, ROUND_HALF_UP, Decimal
 from uuid import UUID
 
 from sqlalchemy import func, select
@@ -21,6 +21,19 @@ VALID_TRANSITIONS: dict[str, list[str]] = {
     "cancelled": [],  # Terminal
     "voided": [],  # Terminal
 }
+
+
+def _credited_discount(original: InvoiceItem, quantity: int) -> Decimal | None:
+    """The discount a credit note of ``quantity`` units carries (#1013).
+
+    An absolute discount covers the whole line, so a partial note takes its
+    share, rounded up so the notes of one line never add up past the invoice.
+    """
+    value = original.discount_value
+    if not value or original.discount_type == "percentage" or quantity == original.quantity:
+        return value
+    share = min(value, original.line_subtotal) * quantity / original.quantity
+    return share.quantize(Decimal("0.01"), rounding=ROUND_CEILING)
 
 
 class InvoiceWorkflowError(Exception):
@@ -101,9 +114,12 @@ class InvoiceWorkflowService:
             )
         ).scalar_one()
         remaining = original_total - already_credited
-        if -credit_note.total > remaining:
+        # The fresh note's total is unrounded in memory, the stored ones are
+        # cents (Postgres rounds half away from zero): compare in cents (#1013).
+        crediting = (-credit_note.total).quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
+        if crediting > remaining:
             raise InvoiceWorkflowError(
-                f"Credit note of {-credit_note.total} exceeds the amount still creditable "
+                f"Credit note of {crediting} exceeds the amount still creditable "
                 f"on this invoice ({remaining}); other credit notes, drafts included, "
                 f"already cover {already_credited}"
             )
@@ -637,7 +653,7 @@ class InvoiceWorkflowService:
                     unit_price=-original_item.unit_price,  # Negative
                     quantity=quantity,
                     discount_type=original_item.discount_type,
-                    discount_value=original_item.discount_value,
+                    discount_value=_credited_discount(original_item, quantity),
                     vat_type_id=original_item.vat_type_id,
                     vat_rate=original_item.vat_rate,
                     vat_exempt_reason=original_item.vat_exempt_reason,
