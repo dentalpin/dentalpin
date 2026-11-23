@@ -88,6 +88,8 @@ async def test_credit_note_and_void_follow_an_accepted_inserimento(db_session):
         status="issued",
         pay=None,
         credit_note_for=inv.id,
+        # Billing stores a credit note's lines negative (#1048).
+        lines=(("Visita", "-60.00", 0.0), ("Sbiancamento", "-40.00", 22.0)),
     )
     await sync_clinic(db_session, settings)
     # Not yet: the original is still pending.
@@ -112,7 +114,10 @@ async def test_credit_note_and_void_follow_an_accepted_inserimento(db_session):
         )
     ).scalar_one()
     assert rimborso.invoice_id == note.id and rimborso.refers_to_id == original.id
+    # The spec wants positive amounts "anche in caso di rimborso" (#1048).
+    assert sorted(v["importo"] for v in rimborso.voci) == ["40.00", "60.00"]
     xml = await build_request(db_session, settings, rimborso)
+    assert xml.count("<doc:importo>") == 2 and "<doc:importo>-" not in xml
     assert "<doc:idRimborsoDocumentoFiscale>" in xml and "FAC/2026/0001" in xml and "NC/1" in xml
     inv.status = "voided"
     await db_session.flush()

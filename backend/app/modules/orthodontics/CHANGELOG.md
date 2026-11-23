@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1007): a back-dated control doesn't overwrite the wires set by a later one or move the next-control recall.
+
 - fix(#990): `PATCH /controls/{id}` applies `register()`'s rules — 400 on a finished / transferred-out case, and a re-pointed `appointment_id` / `session_id` must be the case patient's appointment / a session of the linked plan item. It used to store any of them.
 
 - fix(#948): the case-created, case-status-changed and control-registered events are published with `db=db`, so their timeline entries commit or roll back with the case.

@@ -90,6 +90,7 @@ class ConsentResponse(BaseModel):
     provided_text: str | None
     granted_at: datetime | None
     withdrawn_at: datetime | None
+    managed: bool
     created_at: datetime
     updated_at: datetime
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1049): a credit note without NIF is R5 (R1 without Destinatarios is rejected and blocked issuing), and regenerating a credit note keeps `FacturasRectificadas`.
+
 - fix(#877): leave historical invoices outside the live chain and omit the VeriFactu QR from their PDFs.
 
 - fix(#838): the certificate upload form declares `method="post"`, so a submit before the page has hydrated can't put the certificate password in the URL.

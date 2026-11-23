@@ -2,7 +2,7 @@
 import type { ApiResponse } from '~~/app/types'
 import { errorMessage } from '~~/app/utils/error'
 
-interface ConsentTemplate { id: string, title: string, body: string }
+interface ConsentTemplate { id: string, title: string, body: string, is_active?: boolean }
 
 const { t } = useI18n()
 const api = useApi()
@@ -11,6 +11,7 @@ const toast = useToast()
 const templates = ref<ConsentTemplate[]>([])
 const loading = ref(true)
 const saving = ref(false)
+const archivingId = ref('')
 const editing = ref('')
 const title = ref('')
 const body = ref('')
@@ -20,7 +21,7 @@ const canSave = computed(() => !!title.value.trim() && !!body.value.trim() && !s
 async function fetchTemplates(): Promise<void> {
   loading.value = true
   try {
-    const res = await api.get<ApiResponse<ConsentTemplate[]>>('/api/v1/documents/consent-templates')
+    const res = await api.get<ApiResponse<ConsentTemplate[]>>('/api/v1/documents/consent-templates?include_archived=true')
     templates.value = res.data
   } catch (error: unknown) {
     toast.add({ title: errorMessage(error, t('common.error')), color: 'error' })
@@ -57,6 +58,22 @@ async function save(): Promise<void> {
   }
 }
 
+async function setArchived(template: ConsentTemplate, archived: boolean): Promise<void> {
+  archivingId.value = template.id
+  try {
+    await api.post(`/api/v1/documents/consent-templates/${template.id}/${archived ? 'archive' : 'unarchive'}`, {})
+    toast.add({
+      title: t(archived ? 'documents.settings.consentTemplateArchive.archivedToast' : 'documents.settings.consentTemplateArchive.restoredToast'),
+      color: 'success'
+    })
+    await fetchTemplates()
+  } catch (error: unknown) {
+    toast.add({ title: errorMessage(error, t('common.error')), color: 'error' })
+  } finally {
+    archivingId.value = ''
+  }
+}
+
 onMounted(fetchTemplates)
 </script>
 
@@ -65,6 +82,7 @@ onMounted(fetchTemplates)
     <UCard :loading="loading">
       <p class="text-sm text-muted-foreground">
         {{ t('documents.settings.consentTemplates.help') }}
+        {{ t('documents.settings.consentTemplateArchive.help') }}
       </p>
       <p
         v-if="!loading && !templates.length"
@@ -81,23 +99,47 @@ onMounted(fetchTemplates)
           :key="template.id"
           class="flex items-start justify-between gap-3 py-3"
         >
-          <div class="min-w-0">
-            <p class="font-medium">
+          <div
+            class="min-w-0"
+            :class="template.is_active === false && 'opacity-60'"
+          >
+            <p class="flex items-center gap-2 font-medium">
               {{ template.title }}
+              <UBadge
+                v-if="template.is_active === false"
+                color="neutral"
+                variant="subtle"
+                size="sm"
+              >
+                {{ t('documents.settings.consentTemplateArchive.archived') }}
+              </UBadge>
             </p>
             <p class="line-clamp-2 text-sm text-muted-foreground">
               {{ template.body }}
             </p>
           </div>
-          <UButton
-            size="xs"
-            variant="outline"
-            icon="i-lucide-pencil"
-            :disabled="saving"
-            @click="edit(template)"
-          >
-            {{ t('documents.consent.editTemplate') }}
-          </UButton>
+          <div class="flex shrink-0 gap-2">
+            <UButton
+              size="xs"
+              variant="outline"
+              icon="i-lucide-pencil"
+              :disabled="saving"
+              @click="edit(template)"
+            >
+              {{ t('documents.consent.editTemplate') }}
+            </UButton>
+            <UButton
+              size="xs"
+              variant="outline"
+              color="neutral"
+              :icon="template.is_active === false ? 'i-lucide-archive-restore' : 'i-lucide-archive'"
+              :loading="archivingId === template.id"
+              :disabled="saving || !!archivingId"
+              @click="setArchived(template, template.is_active !== false)"
+            >
+              {{ t(template.is_active === false ? 'documents.settings.consentTemplateArchive.restore' : 'documents.settings.consentTemplateArchive.archive') }}
+            </UButton>
+          </div>
         </li>
       </ul>
     </UCard>
