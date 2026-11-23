@@ -19,6 +19,7 @@ from .schemas import (
     RetentionPolicyCreate,
 )
 from .service import (
+    ConsentManagedError,
     ConsentService,
     DataBreachService,
     ErasureService,
@@ -132,16 +133,19 @@ async def _list_requests(ctx: AgentContext, params: ListRequestsArgs) -> dict:
 
 
 async def _record_consent(ctx: AgentContext, params: RecordConsentArgs) -> dict:
-    row = await ConsentService.grant_or_withdraw(
-        ctx.db,
-        ctx.clinic_id,
-        ConsentCreate(
-            patient_id=params.patient_id,
-            purpose=params.purpose,
-            granted=params.granted,
-            provided_text=params.provided_text,
-        ),
-    )
+    try:
+        row = await ConsentService.grant_or_withdraw(
+            ctx.db,
+            ctx.clinic_id,
+            ConsentCreate(
+                patient_id=params.patient_id,
+                purpose=params.purpose,
+                granted=params.granted,
+                provided_text=params.provided_text,
+            ),
+        )
+    except ConsentManagedError as exc:
+        return {"error": str(exc)}
     if row is None:
         return {"error": "patient not found"}
     return {

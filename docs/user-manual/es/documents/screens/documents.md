@@ -2,7 +2,7 @@
 module: documents
 screen: documents
 route: /documents
-last_verified_commit: 823a556c
+last_verified_commit: cf47bbfb
 related_endpoints:
   - GET /api/v1/documents
   - POST /api/v1/documents
@@ -75,6 +75,6 @@ requiere `admin.clinic.write`.
 
 ## Consentimientos informados
 
-Desde la ficha del paciente, selecciona una plantilla de la clínica y genera el consentimiento. Las plantillas se crean y editan en **Configuración → Clínico → Plantillas de consentimiento** (ver [Plantillas de consentimiento](./settings_consent-templates.md)); la ficha del paciente enlaza allí a quienes pueden escribir documentos. Abre el enlace en la tablet sin iniciar sesión del personal; caduca a los 30 minutos y admite una firma. El paciente o su representante indica su nombre y relación y dibuja su firma. Descarga el PDF firmado desde la ficha. Para revocar, genera un enlace de revocación y recoge una nueva firma; el consentimiento original se conserva. Las correcciones requieren un nuevo consentimiento.
+Desde la ficha del paciente, selecciona una plantilla de la clínica (las archivadas no se ofrecen) y genera el consentimiento. Las plantillas se crean y editan en **Configuración → Clínico → Plantillas de consentimiento** (ver [Plantillas de consentimiento](./settings_consent-templates.md)); la ficha del paciente enlaza allí a quienes pueden escribir documentos. Abre el enlace en la tablet sin iniciar sesión del personal; caduca a los 30 minutos y admite una firma. El paciente o su representante indica su nombre y relación y dibuja su firma. Descarga el PDF firmado desde la ficha. Para revocar, genera un enlace de revocación y recoge una nueva firma; el consentimiento original se conserva. Las correcciones requieren un nuevo consentimiento.
 
 Mientras no esté firmado, el consentimiento puede editarse, archivarse o generar una vista previa. Al editarlo o archivarlo se invalidan sus enlaces pendientes; tras editarlo, genera un enlace nuevo.

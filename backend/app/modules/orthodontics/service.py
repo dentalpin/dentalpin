@@ -532,14 +532,26 @@ class OrthoControlService:
             session_id=data.session_id,
         )
         db.add(control)
-        if control.upper_wire is not None:
-            case.current_upper_wire = control.upper_wire
-        if control.lower_wire is not None:
-            case.current_lower_wire = control.lower_wire
         await db.flush()
+        # A control can be back-dated: the latest one by performed_at decides
+        # what is in the mouth and when the next control is due (#1007).
+        await _refresh_current_wires(db, case)
+        superseded = await db.scalar(
+            select(OrthoControl.id)
+            .where(
+                OrthoControl.case_id == case.id,
+                OrthoControl.clinic_id == clinic_id,
+                OrthoControl.performed_at > control.performed_at,
+            )
+            .limit(1)
+        )
         # Next-control recall (duplicate-guarded upsert). Paused cases
         # freeze generation (Q3); terminal cases can't register at all.
-        if control.next_control_weeks is not None and case.status != "paused":
+        if (
+            superseded is None
+            and control.next_control_weeks is not None
+            and case.status != "paused"
+        ):
             due = _control_next_due(control)
             if due is None:
                 raise ValueError("Cannot compute the next control date")

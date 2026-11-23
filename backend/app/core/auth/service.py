@@ -38,6 +38,8 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
 # calls out once composition checks are kept minimal; the letter+number
 # check stays because it's what the UI already teaches.
 MIN_PASSWORD_LENGTH = 12
+# bcrypt's limit, in UTF-8 bytes: bcrypt 5 raises past it (#1051).
+MAX_PASSWORD_BYTES = 72
 
 
 def validate_password_strength(password: str) -> tuple[bool, str]:
@@ -47,6 +49,11 @@ def validate_password_strength(password: str) -> tuple[bool, str]:
     """
     if len(password) < MIN_PASSWORD_LENGTH:
         return False, f"Password must be at least {MIN_PASSWORD_LENGTH} characters"
+    if len(password.encode("utf-8")) > MAX_PASSWORD_BYTES:
+        return False, (
+            f"Password must be at most {MAX_PASSWORD_BYTES} bytes "
+            "(72 unaccented characters, fewer with accents or other alphabets)"
+        )
 
     has_letter = any(c.isalpha() for c in password)
     has_number = any(c.isdigit() for c in password)

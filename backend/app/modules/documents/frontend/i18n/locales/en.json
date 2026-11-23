@@ -88,6 +88,14 @@
         "save": "Save letterhead",
         "saved": "Letterhead saved"
       },
+      "consentTemplateArchive": {
+        "archive": "Archive",
+        "restore": "Restore",
+        "archived": "Archived",
+        "archivedToast": "Template archived",
+        "restoredToast": "Template restored",
+        "help": "Archived templates are hidden from the consent picker. Consents already created from them are not affected."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",
