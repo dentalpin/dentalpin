@@ -70,8 +70,8 @@
           "description": "Imagem da clínica em prescrições, atestados, cartas de referenciação e pedidos de radiologia"
         },
         "consentTemplates": {
-          "title": "Consent templates",
-          "description": "Texts used for informed consents signed on the tablet"
+          "title": "Modelos de consentimento",
+          "description": "Textos utilizados nos consentimentos informados assinados no tablet"
         }
       },
       "letterhead": {
@@ -89,10 +89,10 @@
         "saved": "Cabeçalho guardado"
       },
       "consentTemplates": {
-        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
-        "empty": "No templates yet. Create the first one below.",
-        "manageLink": "Manage templates in Settings",
-        "saved": "Template saved"
+        "help": "Os modelos são o texto inicial dos novos consentimentos informados. A edição de um modelo não altera os consentimentos já criados a partir dele.",
+        "empty": "Ainda não existem modelos. Crie o primeiro abaixo.",
+        "manageLink": "Gerir modelos nas Definições",
+        "saved": "Modelo guardado"
       }
     },
     "consent": {
