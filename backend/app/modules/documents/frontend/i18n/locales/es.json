@@ -88,6 +88,14 @@
         "save": "Guardar membrete",
         "saved": "Membrete guardado"
       },
+      "consentTemplateArchive": {
+        "archive": "Archivar",
+        "restore": "Restaurar",
+        "archived": "Archivada",
+        "archivedToast": "Plantilla archivada",
+        "restoredToast": "Plantilla restaurada",
+        "help": "Las plantillas archivadas no aparecen al crear un consentimiento. Los consentimientos ya creados a partir de ellas no se ven afectados."
+      },
       "consentTemplates": {
         "help": "Las plantillas son el texto de partida de los nuevos consentimientos informados. Editar una plantilla no modifica los consentimientos ya creados a partir de ella.",
         "empty": "Aún no hay plantillas. Crea la primera abajo.",
@@ -114,6 +122,7 @@
       "noEvidence": "El documento solicitado aún no está disponible.",
       "completed": "Firma registrada. Puedes devolver la tablet al personal.",
       "linkError": "El enlace no es válido, ha caducado o ya se ha utilizado.",
+      "submitFailed": "No se pudo enviar tu firma. Inténtalo de nuevo.",
       "revocationNotice": "Al firmar, revocas el consentimiento mostrado.",
       "signer": "Nombre de quien firma",
       "relationship": "Relación con el paciente",

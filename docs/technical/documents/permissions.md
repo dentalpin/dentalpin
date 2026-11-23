@@ -8,8 +8,8 @@ Namespaced by the registry from the module's `get_permissions()`.
 
 | Permission | Gates | Endpoints / tools |
 |---|---|---|
-| `documents.read` | List, view, download, consent evidence | `GET /api/v1/documents`, `GET /api/v1/documents/{id}`, `GET /api/v1/documents/{id}/download`, `GET /api/v1/documents/consent-templates`, `GET /api/v1/documents/consents/signature-status`, `GET /api/v1/documents/consents/{id}/evidence`, `GET /api/v1/documents/consents/{id}/evidence/{purpose}/download` |
-| `documents.write` | Create, edit, archive, generate, manage consents | `POST /api/v1/documents`, `PATCH /api/v1/documents/{id}`, `DELETE /api/v1/documents/{id}`, `POST /api/v1/documents/generate`, `POST /api/v1/documents/consent-templates`, `PUT /api/v1/documents/consent-templates/{template_id}`, `POST /api/v1/documents/consents`, `POST /api/v1/documents/consents/{id}/links`, agent tool `generate_document` |
+| `documents.read` | List, view, download, consent evidence | `GET /api/v1/documents`, `GET /api/v1/documents/{id}`, `GET /api/v1/documents/{id}/download`, `GET /api/v1/documents/consent-templates` (active only; `?include_archived=true` adds archived), `GET /api/v1/documents/consents/signature-status`, `GET /api/v1/documents/consents/{id}/evidence`, `GET /api/v1/documents/consents/{id}/evidence/{purpose}/download` |
+| `documents.write` | Create, edit, archive, generate, manage consents | `POST /api/v1/documents`, `PATCH /api/v1/documents/{id}`, `DELETE /api/v1/documents/{id}`, `POST /api/v1/documents/generate`, `POST /api/v1/documents/consent-templates`, `PUT /api/v1/documents/consent-templates/{template_id}`, `POST /api/v1/documents/consent-templates/{template_id}/archive`, `POST /api/v1/documents/consent-templates/{template_id}/unarchive`, `POST /api/v1/documents/consents`, `POST /api/v1/documents/consents/{id}/links`, agent tool `generate_document` |
 | `admin.clinic.read` | View letterhead overrides | `GET /api/v1/documents/settings/letterhead` |
 | `admin.clinic.write` | Persist letterhead overrides | `PUT /api/v1/documents/settings/letterhead` |
 

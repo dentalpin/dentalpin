@@ -108,11 +108,11 @@ def build_invoice_data(
     """Render ``InvoiceData`` for ``invoice``.
 
     ``original_invoice_number`` set ⇒ the document is a STORNO of that
-    invoice (credit note): lines and totals are negated and an
-    ``invoiceReference`` is emitted.
+    invoice (credit note): an ``invoiceReference`` is emitted and the
+    quantities are negative. Billing already stores the note's lines
+    negative, so the amounts are never negated again here (#1046).
     """
     is_storno = original_invoice_number is not None
-    sign = Decimal("-1") if is_storno else Decimal("1")
     issue_date = invoice.issue_date.isoformat() if invoice.issue_date else ""
     number = invoice.invoice_number or ""
 
@@ -147,7 +147,7 @@ def build_invoice_data(
     for idx, item in enumerate(invoice.items or [], start=1):
         # Net after the line discount — billing keeps unit_price*quantity in
         # line_subtotal and the discount apart; NAV wants the taxable base.
-        net = (Decimal(str(item.line_subtotal or 0)) - Decimal(str(item.line_discount or 0))) * sign
+        net = Decimal(str(item.line_subtotal or 0)) - Decimal(str(item.line_discount or 0))
         rate = Decimal(str(item.vat_rate or 0))
         vat = (net * rate / Decimal(100)).quantize(_Q, rounding=ROUND_HALF_UP)
         gross = net + vat
@@ -167,6 +167,8 @@ def build_invoice_data(
         net_total += net
         vat_total += vat
         qty = Decimal(str(item.quantity or 1))
+        if is_storno:
+            qty = -qty  # negative quantity × positive unit price, as in NAV's sample
         unit_price = (net / qty).quantize(_Q, rounding=ROUND_HALF_UP) if qty else net
         lines_xml.append(
             "<line>"

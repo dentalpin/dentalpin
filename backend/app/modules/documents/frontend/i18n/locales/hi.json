@@ -70,8 +70,8 @@
           "description": "पर्चों, प्रमाणपत्रों, रेफ़रल और रेडियोलॉजी अनुरोधों पर क्लिनिक की ब्रांडिंग"
         },
         "consentTemplates": {
-          "title": "Consent templates",
-          "description": "Texts used for informed consents signed on the tablet"
+          "title": "सहमति टेम्पलेट",
+          "description": "टैबलेट पर हस्ताक्षरित सूचित सहमतियों के लिए उपयोग किए जाने वाले पाठ"
         }
       },
       "letterhead": {
@@ -88,11 +88,19 @@
         "save": "लेटरहेड सहेजें",
         "saved": "लेटरहेड सहेजा गया"
       },
+      "consentTemplateArchive": {
+        "archive": "संग्रहित करें",
+        "restore": "पुनः सक्रिय करें",
+        "archived": "संग्रहित",
+        "archivedToast": "टेम्पलेट संग्रहित किया गया",
+        "restoredToast": "टेम्पलेट पुनः सक्रिय किया गया",
+        "help": "संग्रहित टेम्पलेट सहमति चयन सूची में नहीं दिखते। उनसे पहले बनाई जा चुकी सहमतियाँ प्रभावित नहीं होतीं।"
+      },
       "consentTemplates": {
-        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
-        "empty": "No templates yet. Create the first one below.",
-        "manageLink": "Manage templates in Settings",
-        "saved": "Template saved"
+        "help": "टेम्पलेट नई सूचित सहमतियों के लिए प्रारंभिक पाठ होते हैं। किसी टेम्पलेट को संपादित करने से उससे पहले बनाई जा चुकी सहमतियाँ नहीं बदलतीं।",
+        "empty": "अभी तक कोई टेम्पलेट नहीं है। नीचे पहला टेम्पलेट बनाएँ।",
+        "manageLink": "सेटिंग्स में टेम्पलेट प्रबंधित करें",
+        "saved": "टेम्पलेट सहेजा गया"
       }
     },
     "consent": {
@@ -114,6 +122,7 @@
       "noEvidence": "अनुरोधित दस्तावेज़ अभी उपलब्ध नहीं है।",
       "completed": "हस्ताक्षर दर्ज हो गया है। आप टैबलेट क्लिनिक के कर्मचारी को लौटा सकते हैं।",
       "linkError": "यह लिंक अमान्य है, समाप्त हो चुका है या पहले ही उपयोग हो चुका है।",
+      "submitFailed": "आपका हस्ताक्षर भेजा नहीं जा सका। कृपया पुनः प्रयास करें।",
       "revocationNotice": "हस्ताक्षर करके आप दिखाई गई सहमति को वापस लेते हैं।",
       "signer": "हस्ताक्षरकर्ता का नाम",
       "relationship": "मरीज़ से संबंध",

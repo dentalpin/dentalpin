@@ -114,6 +114,11 @@ async def test_issue_queues_create_record_with_xml(db_session, test_clinic):
 @pytest.mark.asyncio
 async def test_credit_note_queues_storno(db_session, test_clinic):
     clinic, inv = await _setup(db_session)
+    # Billing stores a credit note's lines negative (#1046).
+    inv.items[0].unit_price = Decimal("-15000")
+    inv.items[0].line_subtotal = inv.items[0].line_total = inv.total = Decimal("-15000")
+    await db_session.flush()
+    await db_session.refresh(inv, ["items"])
     data = await NavOnlineHook().on_credit_note_issued(inv, inv, db_session)
     await db_session.commit()
     assert data["HU"]["operation"] == "STORNO"

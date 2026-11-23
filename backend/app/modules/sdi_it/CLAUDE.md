@@ -16,6 +16,9 @@
   so the requeue route checks `latest_record` (#955).
 - **Bollo is the issuer's cost.** `DatiBollo` is declared but never added
   to `ImportoTotaleDocumento`: the XML total must equal the invoice total.
+- **`ScontoMaggiorazione/Importo` is per unit** (#1047). Billing's
+  `line_discount` is per line; SdI check 00423 computes
+  `(PrezzoUnitario - Importo) * Quantita`, which the XSD can't catch.
 - **Schema fidelity.** `tests/modules/sdi_it/test_xml_builder.py` validates
   every generated file against the vendored official XSD; keep that test
   green before touching element order in `services/xml_builder.py`.
