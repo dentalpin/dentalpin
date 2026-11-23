@@ -36,7 +36,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: 0000000
+last_verified_commit: b40a1d2
 ---
 
 # Invoice list
@@ -62,6 +62,8 @@ open invoices to issue, email, or void them.
   detail.
 
 The **Historical** badge identifies imported invoices. Their totals remain available in the list and in billing reports on the original issue date. Historical invoices do not appear in overdue results.
+
+An issued credit note is never overdue: it has no overdue marker and stays out of the overdue filter, even though its status stays *issued*.
 
 ## Find an invoice
 

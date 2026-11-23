@@ -150,7 +150,8 @@ function patientName(inv: InvoiceListItem): string {
 }
 
 function isOverdue(inv: InvoiceListItem): boolean {
-  if (inv.is_historical || !inv.due_date) return false
+  // A credit note is never overdue (#1090).
+  if (inv.is_historical || inv.credit_note_for_id || !inv.due_date) return false
   if (!['issued', 'partial'].includes(inv.status)) return false
   return new Date(inv.due_date) < new Date()
 }

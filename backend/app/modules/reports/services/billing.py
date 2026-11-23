@@ -279,15 +279,15 @@ class BillingReportService:
         )
         paid_count = result.scalar() or 0
 
-        # Count overdue invoices. ``status in (issued, partial)`` implies
-        # balance > 0 — fully paid invoices transition to ``paid``.
+        # Count overdue invoices — billing's shared predicate (credit notes
+        # are never overdue, #1090).
+        from app.modules.billing.service import overdue_invoice_conditions
+
         today = await clinic_today_for(db, clinic_id)
         result = await db.execute(
             select(func.count(Invoice.id)).where(
                 Invoice.clinic_id == clinic_id,
-                Invoice.status.in_(["issued", "partial"]),
-                Invoice.is_historical.is_(False),
-                Invoice.due_date < today,
+                *overdue_invoice_conditions(today),
                 Invoice.deleted_at.is_(None),
             )
         )
@@ -373,15 +373,15 @@ class BillingReportService:
         cover the action board; callers that need the full list should
         paginate (no usage today, surface added when needed).
         """
+        from app.modules.billing.service import overdue_invoice_conditions
+
         today = await clinic_today_for(db, clinic_id)
 
         result = await db.execute(
             select(Invoice)
             .where(
                 Invoice.clinic_id == clinic_id,
-                Invoice.status.in_(["issued", "partial"]),
-                Invoice.is_historical.is_(False),
-                Invoice.due_date < today,
+                *overdue_invoice_conditions(today),
                 Invoice.deleted_at.is_(None),
             )
             .options(joinedload(Invoice.patient))

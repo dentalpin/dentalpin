@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1090): the billing summary's `overdue_count` and the overdue invoice list use billing's `overdue_invoice_conditions`, so an issued credit note no longer counts as overdue.
+
 - fix(#942): the productivity and visit-frequency reports cut `Appointment.start_time` on the clinic's days, including the "seen before" bound. They compared the instant with bare dates, i.e. UTC midnights.
 - fix(#941): the budget report (summary, by professional, by treatment, by status) cuts `Budget.created_at` on the clinic's days. It compared the instant with bare dates, i.e. UTC midnights.
 - fix(#933): the appointment lifecycle analytics (waiting times, punctuality, duration, funnel) select the period on the clinic's days. The shared filter used the UTC date of `start_time`.
