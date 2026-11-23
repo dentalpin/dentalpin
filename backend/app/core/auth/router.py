@@ -70,6 +70,7 @@ from .service import (
     create_invite_token,
     decode_token,
     hash_password,
+    revoke_all_for_user,
     revoke_family,
     rotate_refresh_token,
     validate_password_strength,
@@ -572,23 +573,45 @@ async def create_user(
                 detail=error_msg,
             )
 
-    # Check if email already exists
-    result = await db.execute(select(User.id).where(func.lower(User.email) == data.email).limit(1))
-    if result.scalar_one_or_none():
+    # Removing a member deletes the membership and keeps the account, so an
+    # existing email is either a current member somewhere (409) or a person
+    # removed from every clinic, who is restored here (#1068). An account that
+    # still belongs to any clinic is never attached by email (#95).
+    existing = await db.scalar(
+        select(User)
+        .options(selectinload(User.memberships))
+        .where(func.lower(User.email) == data.email)
+        .order_by(User.created_at)
+        .limit(1)
+        .with_for_update(of=User)
+        .execution_options(populate_existing=True)
+    )
+    if existing is not None and existing.memberships:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
             detail="Email already registered",
         )
 
-    # Create user
-    user = User(
-        email=data.email,
-        password_hash=hash_password(data.password or secrets.token_urlsafe(32)),
-        first_name=data.first_name,
-        last_name=data.last_name,
-    )
-    db.add(user)
-    await db.flush()
+    password_hash = hash_password(data.password or secrets.token_urlsafe(32))
+    if existing is not None:
+        # Restore the same account so its history stays joined. The old
+        # password, invite links and sessions must not come back with it.
+        user = existing
+        user.password_hash = password_hash
+        user.first_name = data.first_name
+        user.last_name = data.last_name
+        user.is_active = True
+        user.token_version += 1
+        await revoke_all_for_user(db, user.id)
+    else:
+        user = User(
+            email=data.email,
+            password_hash=password_hash,
+            first_name=data.first_name,
+            last_name=data.last_name,
+        )
+        db.add(user)
+        await db.flush()
 
     # Create clinic membership. Professional-ness defaults from the
     # role but is an independent axis — an admin can also practise.
@@ -869,6 +892,7 @@ async def delete_user(
     """Remove a user from the current clinic (admin only).
 
     This removes the clinic membership but does not delete the user account.
+    Creating a user with the same email later restores the account (#1068).
     """
     # Prevent admin from removing themselves
     if user_id == ctx.user_id:
