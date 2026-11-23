@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Integrations:** webhook deliveries of a paused subscription stop retrying after their attempts (#1009).
 - **Copilot:** free-slot search no longer offers times that have already passed today (#1008).
 - **Orthodontics:** a back-dated control leaves the current wires and the next control date to the latest one (#1007).
 - **Documents:** an edited document no longer serves the PDF of its previous content (#1006).

@@ -139,6 +139,9 @@ class WebhookGateway:
     @staticmethod
     async def _dispatch_one(db: AsyncSession, delivery: WebhookDelivery) -> None:
         subscription = await db.get(WebhookSubscription, delivery.subscription_id)
+        # Every pick spends an attempt, also one that can't be sent: otherwise
+        # a delivery of a paused subscription was retried forever (#1009).
+        delivery.attempts += 1
         if subscription is None or not subscription.is_active:
             await WebhookGateway._mark_failed(db, delivery, "subscription inactive or deleted")
             return
@@ -149,7 +152,6 @@ class WebhookGateway:
             return
 
         delivery.status = "sending"
-        delivery.attempts += 1
         # Commit before the network call so we don't hold a row lock across
         # I/O — same reasoning as NotificationGateway._dispatch_one.
         await db.commit()
