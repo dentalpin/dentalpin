@@ -138,7 +138,7 @@ test.describe('patient detail', () => {
     await expect(tooth).toBeVisible()
     await tooth.click()
     const diagnosisDialog = loggedIn.getByRole('dialog').filter({ hasText: /tooth 11/i })
-    await expect(diagnosisDialog.getByText(/choose a diagnosis and mark surfaces if needed/i)).toBeVisible()
+    await expect(diagnosisDialog.getByText(/choose a diagnosis, then mark affected surfaces/i)).toBeVisible()
     await expect(diagnosisDialog.locator('.treatment-bar .diagnosis-mode-indicator')).toBeVisible()
     const nextStep = diagnosisDialog.getByTestId('diagnosis-next')
     await expect(nextStep).toBeDisabled()
