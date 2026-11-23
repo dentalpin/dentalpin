@@ -74,7 +74,7 @@ onMounted(fetchTemplates)
       </p>
       <ul
         v-else
-        class="divide-y"
+        class="divide-y divide-[var(--color-border-subtle)]"
       >
         <li
           v-for="template in templates"

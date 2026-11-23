@@ -479,10 +479,10 @@ function goBack() {
                   <div class="text-caption text-subtle mt-1">
                     {{ item.quantity }} x {{ formatCurrency(item.unit_price) }}
                     <span
-                      v-if="item.line_discount > 0"
+                      v-if="Number(item.line_discount)"
                       class="text-success-accent"
                     >
-                      -{{ formatCurrency(item.line_discount) }}
+                      {{ formatCurrency(-Number(item.line_discount)) }}
                     </span>
                   </div>
                   <p
