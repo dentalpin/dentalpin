@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1045): `useMedicalHistory` saves only a history it loaded and gives every patient a fresh default. A failed or unfinished load let Save wipe the history, and shared default arrays carried entries into the next patient.
+
 - Audit authenticated views of the medical history and patient alerts. (#903).
 
 - fix(#793): allergy `severity` accepted any string, and a value such as
