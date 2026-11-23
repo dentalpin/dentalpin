@@ -20,7 +20,7 @@
     "search": "Buscar",
     "searchError": "No se pudo buscar pacientes. Inténtalo de nuevo.",
     "selectPatient": "Selecciona un paciente para continuar.",
-    "nameRequired": "Introduce el nombre.",
+    "nameRequired": "Introduce el nombre y los apellidos.",
     "messageRequired": "Escribe un mensaje para el paciente.",
     "firstName": "Nombre",
     "lastName": "Apellidos",

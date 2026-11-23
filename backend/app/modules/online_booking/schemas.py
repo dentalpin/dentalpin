@@ -63,7 +63,7 @@ class AcceptInput(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
     patient_id: UUID | None = None
     first_name: str | None = Field(default=None, min_length=1, max_length=100)
-    last_name: str | None = Field(default=None, max_length=100)
+    last_name: str | None = Field(default=None, min_length=1, max_length=100)
     email: EmailStr | None = None
     phone: str | None = Field(default=None, max_length=20, pattern=r"^[+0-9 ()-]*$")
     professional_id: UUID

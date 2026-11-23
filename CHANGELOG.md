@@ -47,6 +47,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Downloads:** patient files and invoice PDFs with names outside latin-1 download instead of failing with a server error (#1015).
 - **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
 - **Billing:** a credit note of a discounted line credits what was billed instead of 0.00, and the Italian e-invoice keeps its discount (#1013).
+- **Online booking:** accepting a request as a new patient requires a surname, so the patient record stays editable (#1044).
 - **Auth:** a staff member removed from the clinic can be added back by creating the user again with the same email; the account comes back with its old password and sessions revoked, and an account that still belongs to another clinic is not attached (#1068).
 - **Billing:** an issued credit note is no longer listed or counted as an overdue invoice (#1090).
 - **Copilot:** a confirmed action stays saved when the AI reply after it fails; confirming again does not repeat it (#1093).
