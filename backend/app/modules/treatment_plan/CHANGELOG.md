@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1038): the plan list takes `search`, and both it and the pipeline search match number, title and patient name term by term.
 - fix(#1034): reactivating a closed plan (by hand, or by accepting a re-sent quote) restores the planned treatments that closing took off the chart; closing through a status change stamps `closed_at` too.
 
 - fix(#897): completing the last session finalizes the item even when its treatment was already marked performed on the odontogram. Since #893 it answered 400, and the item stayed pending for good.
