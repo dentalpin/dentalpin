@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Billing:** a treatment added to a manual invoice gets its own VAT instead of the exempt default (#1028).
 - **Inventory:** editing an item's details no longer writes back an out-of-date stock quantity (#1050).
 - **Verifactu:** a credit note of a simplified invoice is sent as R5 instead of an invalid R1 that blocked invoicing (#1049).
 - **Italy (Sistema TS):** refunds are sent with their expense lines (#1048).
