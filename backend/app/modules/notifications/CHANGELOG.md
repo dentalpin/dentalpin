@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: `dispatch_outbox` re-reads each row `FOR UPDATE SKIP LOCKED` in `_dispatch_one` and skips it when it is no longer due. The batch lock taken by the initial select is released by the first commit, so a concurrent tick could send the remaining rows of the batch a second time.
+
 - fix(#965): `resolve_patient_by_phone` links a patient only when exactly one matches. A number shared by several patients raised `MultipleResultsFound` (identical strings) or returned an arbitrary one (suffix match); it now resolves to `None`, as telephony's caller match does.
 
 - fix(#922): the "budget accepted" message dates the acceptance on the clinic's calendar (`clinic_date_label`). It printed the UTC day of `updated_at`, so an evening acceptance in a UTC-6 clinic said the next day.
