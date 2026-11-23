@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications:** a rescheduled appointment gets a reminder for its new time (#1035).
 - **Documents:** a failed signature submit no longer discards the signature and claims the link was used (#1042).
 - **Documents:** signed consent PDFs include the title the patient signed (#1040).
 - **Documents:** the PDF footer no longer prints over the text of full pages, signed consents included (#1039).
