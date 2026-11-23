@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Agenda:** the mobile + button books on the day being viewed (#1037).
 - **Treatment plans:** search works in the list and finds full names in the pipeline (#1038).
 - **Odontogram:** past charts in the History tab show performed treatments (#1065).
 - **Notifications:** skipped reminders no longer flood the patient's thread and hide new messages (#1036).
