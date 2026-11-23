@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1028): `CatalogItemBrief` (search, popular) carries `vat_type_id`.
+
 - fix(#861): an item's `vat_type_id` and a category's `parent_id` must be the clinic's. An unknown id was a 500. Another clinic's VAT type was stored, and budget lines made from the item snapshotted its rate. A category could be its own parent or descendant. Now each case is a 400, the same as the existing `category_id` check.
 
 - fix: `POST /catalog/seed` answered 500 (`MultipleResultsFound`) when the clinic had its own VAT type at one of the preset's rates, such as a second 0% type next to the seeded exempt one. `_ensure_vat_types` now reuses the system row first, then the active one, the same tolerance #736 gave the treatment lookup.

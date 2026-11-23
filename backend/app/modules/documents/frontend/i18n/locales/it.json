@@ -70,8 +70,8 @@
           "description": "Immagine della clinica su prescrizioni, certificati, lettere di invio e richieste radiologiche"
         },
         "consentTemplates": {
-          "title": "Consent templates",
-          "description": "Texts used for informed consents signed on the tablet"
+          "title": "Modelli di consenso",
+          "description": "Testi utilizzati per i consensi informati firmati sul tablet"
         }
       },
       "letterhead": {
@@ -88,11 +88,19 @@
         "save": "Salva intestazione",
         "saved": "Intestazione salvata"
       },
+      "consentTemplateArchive": {
+        "archive": "Archivia",
+        "restore": "Ripristina",
+        "archived": "Archiviato",
+        "archivedToast": "Modello archiviato",
+        "restoredToast": "Modello ripristinato",
+        "help": "I modelli archiviati non compaiono nella selezione dei consensi. I consensi già creati a partire da essi non vengono modificati."
+      },
       "consentTemplates": {
-        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
-        "empty": "No templates yet. Create the first one below.",
-        "manageLink": "Manage templates in Settings",
-        "saved": "Template saved"
+        "help": "I modelli sono il testo di partenza per i nuovi consensi informati. La modifica di un modello non cambia i consensi già creati a partire da esso.",
+        "empty": "Nessun modello presente. Creare il primo qui sotto.",
+        "manageLink": "Gestisci i modelli nelle Impostazioni",
+        "saved": "Modello salvato"
       }
     },
     "consent": {

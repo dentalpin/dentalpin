@@ -120,3 +120,95 @@ async def test_invoice_cannot_be_overpaid(
         headers=auth_headers,
     )
     assert r2.status_code == 400, r2.text
+
+
+@pytest.mark.asyncio
+async def test_invoice_payment_is_cents_only(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+) -> None:
+    """Invoice + collect has its own schema, with the same rule (#989)."""
+    inv = await _draft_invoice(db_session, test_clinic, test_patient, await _user_id(db_session))
+    issued = await client.post(
+        f"/api/v1/billing/invoices/{inv.id}/issue", json={}, headers=auth_headers
+    )
+    assert issued.status_code == 200, issued.text
+
+    res = await client.post(
+        f"/api/v1/billing/invoices/{inv.id}/payments",
+        json={"amount": "10.005", "method": "cash", "payment_date": date.today().isoformat()},
+        headers=auth_headers,
+    )
+    assert res.status_code == 422, res.text
+
+
+@pytest.mark.asyncio
+async def test_the_balance_offered_for_collection_is_payable(
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    db_session: AsyncSession,
+) -> None:
+    """A refund's proportional share is in cents, so the balance is too (#989).
+
+    100 imputed of a 300 payment with 250 refunded left 83.333... due, which
+    the cents-only endpoint refused and no typed amount could settle.
+    """
+    from datetime import UTC, datetime
+
+    from app.modules.billing.models import InvoicePayment
+    from app.modules.payments.models import Payment, Refund
+
+    user_id = await _user_id(db_session)
+    clinic_id, patient_id = test_clinic.id, test_patient.id
+    inv = await _draft_invoice(db_session, test_clinic, test_patient, user_id)
+    url = f"/api/v1/billing/invoices/{inv.id}"
+    issued = await client.post(f"{url}/issue", json={}, headers=auth_headers)
+    assert issued.status_code == 200, issued.text
+
+    pay = Payment(
+        clinic_id=clinic_id,
+        patient_id=patient_id,
+        amount=Decimal("300.00"),
+        currency="EUR",
+        method="cash",
+        payment_date=date.today(),
+        recorded_by=user_id,
+    )
+    db_session.add(pay)
+    await db_session.flush()
+    db_session.add_all(
+        [
+            InvoicePayment(
+                clinic_id=clinic_id,
+                invoice_id=inv.id,
+                payment_id=pay.id,
+                amount=Decimal("100.00"),
+                created_by=user_id,
+            ),
+            Refund(
+                clinic_id=clinic_id,
+                payment_id=pay.id,
+                amount=Decimal("250.00"),
+                method="cash",
+                reason_code="other",
+                refunded_at=datetime.now(UTC),
+                refunded_by=user_id,
+            ),
+        ]
+    )
+    await db_session.commit()
+
+    due = (await client.get(url, headers=auth_headers)).json()["data"]["balance_due"]
+    assert Decimal(due) == Decimal("83.33")
+    paid = await client.post(
+        f"{url}/payments",
+        json={"amount": due, "method": "cash", "payment_date": date.today().isoformat()},
+        headers=auth_headers,
+    )
+    assert paid.status_code == 201, paid.text
+    assert (await client.get(url, headers=auth_headers)).json()["data"]["status"] == "paid"

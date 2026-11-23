@@ -38,6 +38,7 @@ from .schemas import (
     TestEmailResponse,
 )
 from .service import (
+    ManagedConsentError,
     NotificationService,
     appointment_when_context,
     budget_treatments_context,
@@ -258,9 +259,12 @@ async def update_patient_preferences(
 ) -> ApiResponse[NotificationPreferenceResponse]:
     """Update notification preferences for a patient."""
     await _ensure_clinic_patient(db, ctx.clinic_id, patient_id)
-    prefs = await NotificationService.update_patient_preferences(
-        db, ctx.clinic_id, patient_id, data.model_dump(exclude_unset=True)
-    )
+    try:
+        prefs = await NotificationService.update_patient_preferences(
+            db, ctx.clinic_id, patient_id, data.model_dump(exclude_unset=True)
+        )
+    except ManagedConsentError as exc:
+        raise HTTPException(status.HTTP_409_CONFLICT, str(exc)) from exc
     return ApiResponse(data=await _patient_preferences_response(db, prefs))
 
 

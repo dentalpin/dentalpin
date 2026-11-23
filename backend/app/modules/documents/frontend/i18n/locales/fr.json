@@ -70,8 +70,8 @@
           "description": "Image de la clinique sur les ordonnances, certificats, lettres de liaison et demandes de radiologie"
         },
         "consentTemplates": {
-          "title": "Consent templates",
-          "description": "Texts used for informed consents signed on the tablet"
+          "title": "Modèles de consentement",
+          "description": "Textes utilisés pour les consentements éclairés signés sur la tablette"
         }
       },
       "letterhead": {
@@ -88,11 +88,19 @@
         "save": "Enregistrer l'en-tête",
         "saved": "En-tête enregistré"
       },
+      "consentTemplateArchive": {
+        "archive": "Archiver",
+        "restore": "Restaurer",
+        "archived": "Archivé",
+        "archivedToast": "Modèle archivé",
+        "restoredToast": "Modèle restauré",
+        "help": "Les modèles archivés sont masqués dans la sélection des consentements. Les consentements déjà créés à partir de ceux-ci ne sont pas modifiés."
+      },
       "consentTemplates": {
-        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
-        "empty": "No templates yet. Create the first one below.",
-        "manageLink": "Manage templates in Settings",
-        "saved": "Template saved"
+        "help": "Les modèles servent de texte de départ pour les nouveaux consentements éclairés. La modification d'un modèle ne change pas les consentements déjà créés à partir de celui-ci.",
+        "empty": "Aucun modèle pour le moment. Créez le premier ci-dessous.",
+        "manageLink": "Gérer les modèles dans les paramètres",
+        "saved": "Modèle enregistré"
       }
     },
     "consent": {

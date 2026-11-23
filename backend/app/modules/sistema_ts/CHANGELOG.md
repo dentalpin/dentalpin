@@ -2,6 +2,8 @@
 
 ## Unreleased — phase 2
 
+- fix(#1048): a rimborso carries its expense lines with positive amounts; the negative credit-note lines were filtered out and it went out empty.
+
 - fix(#779): the settings year counts and the opposition date use the clinic's day, not the server's UTC day.
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
 

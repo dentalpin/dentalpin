@@ -70,8 +70,8 @@
           "description": "மருந்துச் சீட்டுகள், சான்றிதழ்கள், பரிந்துரை கடிதங்கள் மற்றும் கதிரியக்க கோரிக்கைகளில் கிளினிக் முகப்பு"
         },
         "consentTemplates": {
-          "title": "Consent templates",
-          "description": "Texts used for informed consents signed on the tablet"
+          "title": "ஒப்புதல் வார்ப்புருக்கள்",
+          "description": "டேப்லெட்டில் கையொப்பமிடப்படும் தகவலறிந்த ஒப்புதல்களுக்குப் பயன்படுத்தப்படும் உரைகள்"
         }
       },
       "letterhead": {
@@ -88,11 +88,19 @@
         "save": "முகப்பைச் சேமி",
         "saved": "முகப்பு சேமிக்கப்பட்டது"
       },
+      "consentTemplateArchive": {
+        "archive": "காப்பகப்படுத்து",
+        "restore": "மீட்டெடு",
+        "archived": "காப்பகப்படுத்தப்பட்டது",
+        "archivedToast": "வார்ப்புரு காப்பகப்படுத்தப்பட்டது",
+        "restoredToast": "வார்ப்புரு மீட்டெடுக்கப்பட்டது",
+        "help": "காப்பகப்படுத்தப்பட்ட வார்ப்புருக்கள் ஒப்புதல் தேர்வுப் பட்டியலில் தோன்றாது. அவற்றிலிருந்து ஏற்கனவே உருவாக்கப்பட்ட ஒப்புதல்கள் பாதிக்கப்படாது."
+      },
       "consentTemplates": {
-        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
-        "empty": "No templates yet. Create the first one below.",
-        "manageLink": "Manage templates in Settings",
-        "saved": "Template saved"
+        "help": "புதிய தகவலறிந்த ஒப்புதல்களுக்கான தொடக்க உரையே வார்ப்புருக்கள். வார்ப்புருவைத் திருத்தினாலும், அதிலிருந்து ஏற்கனவே உருவாக்கப்பட்ட ஒப்புதல்கள் மாறாது.",
+        "empty": "இன்னும் வார்ப்புருக்கள் இல்லை. முதல் வார்ப்புருவை கீழே உருவாக்கவும்.",
+        "manageLink": "அமைப்புகளில் வார்ப்புருக்களை நிர்வகிக்கவும்",
+        "saved": "வார்ப்புரு சேமிக்கப்பட்டது"
       }
     },
     "consent": {

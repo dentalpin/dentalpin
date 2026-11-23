@@ -70,8 +70,8 @@
           "description": "Branding kliniki na receptach, zaświadczeniach, skierowaniach i zleceniach radiologicznych"
         },
         "consentTemplates": {
-          "title": "Consent templates",
-          "description": "Texts used for informed consents signed on the tablet"
+          "title": "Wzory zgód",
+          "description": "Teksty używane w świadomych zgodach podpisywanych na tablecie"
         }
       },
       "letterhead": {
@@ -88,11 +88,19 @@
         "save": "Zapisz nagłówek",
         "saved": "Zapisano nagłówek"
       },
+      "consentTemplateArchive": {
+        "archive": "Archiwizuj",
+        "restore": "Przywróć",
+        "archived": "Zarchiwizowany",
+        "archivedToast": "Wzór zarchiwizowano",
+        "restoredToast": "Wzór przywrócono",
+        "help": "Zarchiwizowane wzory nie są wyświetlane na liście wyboru zgód. Zgody utworzone wcześniej na ich podstawie pozostają bez zmian."
+      },
       "consentTemplates": {
-        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
-        "empty": "No templates yet. Create the first one below.",
-        "manageLink": "Manage templates in Settings",
-        "saved": "Template saved"
+        "help": "Wzory stanowią tekst wyjściowy dla nowych świadomych zgód. Edycja wzoru nie zmienia zgód utworzonych wcześniej na jego podstawie.",
+        "empty": "Brak wzorów. Utwórz pierwszy poniżej.",
+        "manageLink": "Zarządzaj wzorami w Ustawieniach",
+        "saved": "Wzór zapisany"
       }
     },
     "consent": {
