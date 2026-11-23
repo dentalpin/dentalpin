@@ -111,6 +111,8 @@ is the `NotificationType` Literal, so the model is shown the nine values.
 
 ## Gotchas
 
+- **A skip never takes the message's `dedup_key`** (#1036): it is logged
+  once under `skip:<reason>:<key>`, so the send still happens once unblocked.
 - **A reminder is per appointment and start time** (#1035): take the
   `dedup_key` from `tasks._reminder_key`, never from the appointment id alone.
 
