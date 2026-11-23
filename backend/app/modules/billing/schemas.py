@@ -515,6 +515,8 @@ class InvoiceListResponse(BaseModel):
     invoice_number: str | None  # Null for drafts (assigned when issued)
     status: str
     is_historical: bool
+    # Set on credit notes; the list's overdue marker skips them (#1090).
+    credit_note_for_id: UUID | None = None
     issue_date: date | None
     due_date: date | None
     total: Decimal

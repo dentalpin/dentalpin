@@ -1699,6 +1699,7 @@ export interface InvoiceListItem {
   invoice_number: string | null // Null for drafts (assigned when issued)
   status: InvoiceStatus
   is_historical: boolean
+  credit_note_for_id?: string | null
   issue_date?: string
   due_date?: string
   total: number

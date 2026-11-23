@@ -152,7 +152,7 @@ async function submit() {
     formError.value = t('onlineBooking.selectPatient')
     return
   }
-  if (action.value === 'accept' && patientMode.value === 'new' && !firstName.value.trim()) {
+  if (action.value === 'accept' && patientMode.value === 'new' && (!firstName.value.trim() || !lastName.value.trim())) {
     formError.value = t('onlineBooking.nameRequired')
     return
   }
@@ -467,6 +467,7 @@ onMounted(load)
               </UFormField>
               <UFormField
                 :label="t('onlineBooking.lastName')"
+                required
               >
                 <UInput
                   v-model="lastName"

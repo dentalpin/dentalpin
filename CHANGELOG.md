@@ -17,6 +17,16 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Italy (SdI):** receipts can no longer be lost when the PEC poll or the save fails (#1079).
+- **Agenda:** the mobile + button books on the day being viewed (#1037).
+- **Treatment plans:** search works in the list and finds full names in the pipeline (#1038).
+- **Odontogram:** past charts in the History tab show performed treatments (#1065).
+- **Notifications:** skipped reminders no longer flood the patient's thread and hide new messages (#1036).
+- **Notifications:** a rescheduled appointment gets a reminder for its new time (#1035).
+- **Documents:** a failed signature submit no longer discards the signature and claims the link was used (#1042).
+- **Documents:** signed consent PDFs include the title the patient signed (#1040).
+- **Documents:** the PDF footer no longer prints over the text of full pages, signed consents included (#1039).
+- **Patients:** an incomplete emergency contact or guardian is refused instead of reported as saved, and a failed load can't delete the stored one (#1064).
 - **Email:** a clinic's SMTP mail is sent from the sender configured by the clinic (#1052).
 - **Accounts:** a password over bcrypt's 72 bytes is refused with a message instead of failing with a server error (#1051).
 - **Billing:** a treatment added to a manual invoice gets its own VAT instead of the exempt default (#1028).
@@ -38,6 +48,14 @@ frontend as a Nuxt layer under its own Python package.
 - **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
 - **Billing:** a credit note of a discounted line credits what was billed instead of 0.00, and the Italian e-invoice keeps its discount (#1013).
 - **Email:** the clinic address in the email footer prints as one formatted line instead of a raw dict, and subjects no longer show HTML entities such as `&amp;` (#1043).
+- **Treatment plans:** adding a treatment that already sits on a plan now shows which plan holds it instead of failing with a server error (#1073).
+- **Online booking:** accepting a request as a new patient requires a surname, so the patient record stays editable (#1044).
+- **Auth:** a staff member removed from the clinic can be added back by creating the user again with the same email; the account comes back with its old password and sessions revoked, and an account that still belongs to another clinic is not attached (#1068).
+- **Billing:** an issued credit note is no longer listed or counted as an overdue invoice (#1090).
+- **Copilot:** a confirmed action stays saved when the AI reply after it fails; confirming again does not repeat it (#1093).
+- **Periodontogram:** teeth marked missing or extracted in the odontogram are no longer counted as present, so BoP, plaque and mean CAL are correct (#1091).
+- **Documents:** the consent preview generated from the patient card now uses the interface language instead of always Spanish (#1041).
+- **Patients:** saving demographics or billing no longer erases an address without a street (#1092).
 - **Expenses:** the CSV import no longer reads a thousands separator as a decimal point; `1.200` is 1200, not 1.20 (#962).
 - **Medical reference:** a deactivated medication, allergy, disease or surgery can be added again from the patient form; it comes back with its interaction warnings (#963).
 - **Telephony:** outbound calls are linked to the patient dialled and no longer pop up as incoming calls from the clinic's own number (#964).

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PERMISSIONS } from '~~/app/config/permissions'
 
-interface ConsentTemplate { id: string, title: string, body: string }
+interface ConsentTemplate { id: string, title: string, body: string, is_active?: boolean }
 interface ConsentDocument {
   id: string
   title: string
@@ -14,7 +14,7 @@ interface ConsentDocument {
 interface ConsentSignatureStatus { id: string, signed: boolean, revoked: boolean }
 
 const props = defineProps<{ ctx: { patient: { id: string } } }>()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const api = useApi()
 const { can } = usePermissions()
 const templates = ref<ConsentTemplate[]>([])
@@ -26,7 +26,7 @@ const consentText = ref('')
 const signingUrl = ref('')
 const qrImage = ref('')
 const qrOpen = ref(false)
-const templateOptions = computed(() => templates.value.map(item => ({ label: item.title, value: item.id })))
+const templateOptions = computed(() => templates.value.filter(item => item.is_active !== false).map(item => ({ label: item.title, value: item.id })))
 const message = ref('')
 const busy = ref(false)
 const toast = useToast()
@@ -121,7 +121,9 @@ async function archiveConsent(id: string) {
 async function generatePreview(id: string) {
   busy.value = true
   try {
-    await api.post('/api/v1/documents/generate', { document_id: id })
+    // Render the captions and draft watermark in the UI language, as the
+    // documents page does (#524); without it the route falls back to es (#1041).
+    await api.post(`/api/v1/documents/generate?locale=${encodeURIComponent(locale.value)}`, { document_id: id })
     await refresh()
   } finally { busy.value = false }
 }

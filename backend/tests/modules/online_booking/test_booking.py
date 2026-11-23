@@ -711,7 +711,7 @@ async def test_accept_validates_resources_and_extended_duration(
     headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
     body = {
         "first_name": "Synthetic",
-        "last_name": "",
+        "last_name": "Person",
         "email": None,
         "phone": None,
         "professional_id": str(professional.id),
@@ -737,7 +737,7 @@ async def test_accept_validates_resources_and_extended_duration(
     from app.modules.patients.models import Patient
 
     patient = await db_session.get(Patient, item.patient_id)
-    assert patient.email is None and patient.phone is None and patient.last_name == ""
+    assert patient.email is None and patient.phone is None and patient.last_name == "Person"
     assert appointment.end_time - appointment.start_time == timedelta(minutes=30)
 
 

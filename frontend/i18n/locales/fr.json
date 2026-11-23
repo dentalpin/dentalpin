@@ -1899,7 +1899,8 @@
       "load": "Erreur lors du chargement des plans de traitement",
       "create": "Erreur lors de la création du plan de traitement",
       "update": "Erreur lors de la mise à jour du plan de traitement",
-      "delete": "Erreur lors de la suppression du plan de traitement"
+      "delete": "Erreur lors de la suppression du plan de traitement",
+      "treatmentAlreadyPlanned": "Ce traitement figure déjà dans le plan {plan}"
     },
     "notes": {
       "title": "Notes cliniques",

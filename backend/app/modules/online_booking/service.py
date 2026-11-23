@@ -496,8 +496,10 @@ class BookingService:
                 raise BookingNotFoundError("Patient not found")
             patient_id = data.patient_id
         else:
-            if not data.first_name or data.last_name is None:
-                raise BookingValidationError("Enter a first name and confirm the surname field")
+            # Same rule as PatientCreate/PatientUpdate: a patient created here
+            # without a surname could not be edited afterwards (#1044).
+            if not data.first_name or not data.last_name:
+                raise BookingValidationError("Enter a first name and a surname")
             patient = await PatientService.create_patient(
                 db,
                 ctx.clinic_id,

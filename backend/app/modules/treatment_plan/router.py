@@ -31,7 +31,12 @@ from .schemas import (
     TreatmentPlanUpdate,
     UpdateSessionRequest,
 )
-from .service import PlanItemBookedError, PlanLockedError, TreatmentPlanService
+from .service import (
+    PlanItemBookedError,
+    PlanLockedError,
+    TreatmentAlreadyPlannedError,
+    TreatmentPlanService,
+)
 
 router = APIRouter()
 
@@ -106,10 +111,11 @@ async def list_treatment_plans(
     page_size: int = Query(default=20, ge=1, le=100),
     patient_id: UUID | None = None,
     status: list[str] | None = Query(default=None),
+    search: str | None = Query(default=None, max_length=200, description="Free-text search"),
 ) -> PaginatedApiResponse[TreatmentPlanResponse]:
     """List treatment plans with pagination and filters."""
     plans, total = await TreatmentPlanService.list(
-        db, ctx.clinic_id, page, page_size, patient_id=patient_id, status=status
+        db, ctx.clinic_id, page, page_size, patient_id=patient_id, status=status, search=search
     )
     # Compute counts and totals from loaded items
     for p in plans:
@@ -396,7 +402,10 @@ async def add_plan_item(
     try:
         item = await TreatmentPlanService.add_item(db, ctx.clinic_id, plan_id, data.model_dump())
         return ApiResponse(data=PlannedTreatmentItemResponse.model_validate(item))
-    except PlanLockedError as e:
+    except (PlanLockedError, TreatmentAlreadyPlannedError) as e:
+        # TreatmentAlreadyPlannedError's detail is the machine-stable
+        # ``treatment_already_planned:<plan_number>`` the client splits
+        # on the first colon to show a translated message (#1073).
         raise HTTPException(status_code=409, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

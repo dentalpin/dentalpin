@@ -56,7 +56,9 @@ close time. They show in the banner above the chart.
 
 1. **Open session** from the *Periodontogram* sub-tab. The system
    creates a draft (status `draft`) and pre-fills missing teeth +
-   implants by reading the patient's odontogram.
+   implants by reading the patient's odontogram. A tooth recorded
+   there as *missing* or with a performed *extraction* is left out of
+   the indices; a planned extraction is not.
 2. **Capture data** by clicking any cell. Edits autosave after
    600 ms; the bottom bar shows the state (Saving… / Pending
    changes / Saved).

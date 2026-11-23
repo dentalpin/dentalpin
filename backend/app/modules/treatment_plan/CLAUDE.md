@@ -35,7 +35,7 @@ it, so the detail endpoint is `/api/v1/treatment_plan/treatment-plans/{id}`).
 - `POST  /treatment-plans`              — create; `treatment_plan.plans.write`
 - `GET   /treatment-plans/{id}`         — detail
 - `PUT   /treatment-plans/{id}`         — update; status transitions
-- `POST  /treatment-plans/{id}/items`   — add item from catalog or odontogram tooth treatment
+- `POST  /treatment-plans/{id}/items`   — add item from catalog or odontogram tooth treatment. A Treatment already on any plan item (`uq_planned_item_treatment`, closed and deleted plans included) answers 409 `treatment_already_planned:<plan_number>` (#1073); the composable turns it into `treatmentPlans.errors.treatmentAlreadyPlanned`.
 - `PUT   /treatment-plans/{id}/items/reorder`
 - `POST  /treatment-plans/{id}/items/{item_id}/complete`
 - `POST  /treatment-plans/{id}/confirm`     — `plans.confirm`; draft → pending
@@ -126,6 +126,8 @@ migration — future ALTERs live on the ``tp`` Alembic branch.
 
 ## Gotchas
 
+- **Both searches match term by term** (#1038) on number, title and
+  patient name, so "Juan Pérez" works. Keep `list` and `list_pipeline` alike.
 - **Reactivation undoes closing on the chart** (#1034): closing soft-deletes
   the plan's planned treatments in the transaction that stamps `closed_at`,
   and both revive paths restore those. Any new way into `closed` must stamp

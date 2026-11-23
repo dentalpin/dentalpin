@@ -88,6 +88,12 @@ Subscription only — copilot never imports the publisher (ADR 0003), so
   What the redactor does and does not guarantee (pseudonymization, the
   free-text gap, cross-session correlation):
   `docs/technical/copilot-agentic-architecture.md` §15.
+- **A confirmed write commits before the follow-up call (#1093).**
+  `bridge.resume_turn` commits the tool's write, its audit row and the
+  `tool_result` message (or the rejection marker) before streaming
+  `tool_result` and before calling the provider again. The router's
+  rollback on a later error then loses only the model's reply; a
+  re-confirm finds the stored result and replays it (#532).
 - **SSE owns its DB session.** Streaming endpoints open their own
   `async_session_maker` session for the stream, not `Depends(get_db)`.
 - **Morning digest (proactivity v1).** `tasks.py::send_morning_digests`

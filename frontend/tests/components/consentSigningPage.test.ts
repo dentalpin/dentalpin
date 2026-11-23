@@ -13,6 +13,32 @@ afterEach(() => {
 })
 
 describe('public consent signing', () => {
+  it.each([
+    [undefined, true],
+    [500, true],
+    [429, true],
+    [422, true],
+    [404, false],
+    [409, false]
+  ])('after a failed submit (%s) keeps the form: %s (#1042)', async (statusCode, keeps) => {
+    vi.stubGlobal('$fetch', vi.fn(async (_url: string, options: { method?: string }) => {
+      if (options?.method === 'POST') throw Object.assign(new Error('failed'), { statusCode })
+      return { data: { title: 'Synthetic consent', text: 'Synthetic text', patient: 'Patient Example', clinic: 'Example clinic', purpose: 'sign' } }
+    }))
+    window.history.replaceState(null, '', '/#synthetic-token')
+    const wrapper = await mountSuspended(ConsentPage)
+    await new Promise(resolve => setTimeout(resolve, 0))
+    await flushPromises()
+    try {
+      wrapper.getComponent(SignatureCanvas).vm.$emit('update:modelValue', 'data:image/png;base64,synthetic')
+      await flushPromises()
+      await wrapper.findAll('button').at(-1)!.trigger('click')
+      await flushPromises()
+      expect(wrapper.find('canvas').exists()).toBe(keeps)
+      expect(wrapper.find('[role="alert"]').exists()).toBe(true)
+    } finally { wrapper.unmount() }
+  })
+
   it('requires a drawn signature and a representative name', async () => {
     const fetch = vi.fn(async (_url: string, options: { method?: string }) => {
       if (options?.method === 'POST') return { data: { signed: true } }
