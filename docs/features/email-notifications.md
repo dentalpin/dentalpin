@@ -256,6 +256,11 @@ Templates use Jinja2 syntax:
 </html>
 ```
 
+`clinic_address` arrives as the clinic's address dict; `EmailService.send_templated`
+turns it into one line (`street, postal_code city, country`) before rendering, so
+templates print `{{ clinic_address }}` directly. HTML bodies are autoescaped; the
+subject is plain text and renders without escaping.
+
 ### Database Template Override
 
 Clinics can customize templates via the database:
