@@ -2,6 +2,7 @@
 
 from datetime import UTC, datetime
 from io import BytesIO
+from urllib.parse import unquote
 from uuid import uuid4
 
 import pytest
@@ -435,3 +436,31 @@ async def test_invalid_document_type(
     body = response.json()
     # HTTPException returns detail field
     assert "Invalid document type" in body.get("detail", body.get("message", ""))
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    "name", ["őr.pdf", "Informe – 2026.pdf", "रिपोर्ट.pdf", "García.pdf", "test.pdf"]
+)
+async def test_download_with_a_unicode_filename(
+    client: AsyncClient, auth_headers: dict[str, str], media_setup: dict, name: str
+) -> None:
+    """A filename outside latin-1 downloads instead of failing in the header (#1015)."""
+    uploaded = await client.post(
+        f"/api/v1/media/patients/{media_setup['patient_id']}/documents",
+        headers=auth_headers,
+        files={"file": (name, create_pdf_file(), "application/pdf")},
+        data={"document_type": "other", "title": "Report"},
+    )
+    assert uploaded.status_code == 201, uploaded.text
+
+    got = await client.get(
+        f"/api/v1/media/documents/{uploaded.json()['data']['id']}/download", headers=auth_headers
+    )
+    assert got.status_code == 200
+    header = got.headers["content-disposition"]
+    assert header.isascii()
+    if name.isascii():
+        assert header == f'attachment; filename="{name}"'
+    else:
+        assert unquote(header.split("filename*=UTF-8''")[1]) == name

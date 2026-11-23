@@ -20,6 +20,7 @@ from app.modules.gdpr.schemas import (
     RetentionPolicyCreate,
 )
 from app.modules.gdpr.service import (
+    ConsentManagedError,
     ConsentService,
     DataBreachService,
     ErasureService,
@@ -759,6 +760,84 @@ async def test_consent_http_unknown_patient_404(
     )
     assert response.status_code == 404
     assert response.json()["message"] == "Patient not found"
+
+
+@pytest.mark.asyncio
+async def test_managed_consent_refuses_manual_entries_for_that_purpose(
+    db_session: AsyncSession,
+    client: AsyncClient,
+    auth_headers: dict,
+    test_clinic: Clinic,
+    test_patient: Patient,
+):
+    """A module that records consent with its own evidence flags the entry
+    ``managed``; the staff endpoint, the service and the agent tool then
+    refuse manual entries for that patient and purpose, and only that one."""
+    from datetime import UTC, datetime
+
+    row = await ConsentService.append_event(
+        db_session,
+        test_clinic.id,
+        test_patient.id,
+        "Verified:Email ",
+        granted=True,
+        provided_text="Signed text",
+        effective_at=datetime.now(UTC),
+        managed=True,
+    )
+    await db_session.commit()
+    assert row.managed is True
+    # No module-specific vocabulary: any purpose can be managed.
+    assert await ConsentService.is_managed(
+        db_session, test_clinic.id, test_patient.id, "verified:email"
+    )
+    assert not await ConsentService.is_managed(db_session, test_clinic.id, test_patient.id, "sms")
+
+    body = {"patient_id": str(test_patient.id), "purpose": "verified:email", "granted": False}
+    response = await client.post("/api/v1/gdpr/consents", json=body, headers=auth_headers)
+    assert response.status_code == 409
+    assert response.json()["message"] == "Consent for this patient is managed by verified evidence"
+    with pytest.raises(ConsentManagedError):
+        await ConsentService.grant_or_withdraw(db_session, test_clinic.id, ConsentCreate(**body))
+    result = await _record_consent(
+        SimpleNamespace(db=db_session, clinic_id=test_clinic.id),
+        SimpleNamespace(
+            patient_id=test_patient.id, purpose="verified:email", granted=False, provided_text=None
+        ),
+    )
+    assert result == {"error": "Consent for this patient is managed by verified evidence"}
+
+    other = await client.post(
+        "/api/v1/gdpr/consents",
+        json={**body, "purpose": "sms", "granted": True, "provided_text": "I accept SMS."},
+        headers=auth_headers,
+    )
+    assert other.status_code == 201
+    assert other.json()["data"]["managed"] is False
+    ledger, _ = await ConsentService.list_consents(
+        db_session, test_clinic.id, patient_id=test_patient.id
+    )
+    assert sorted(c.purpose for c in ledger) == ["sms", "verified:email"]
+
+
+@pytest.mark.asyncio
+async def test_consent_purposes_are_not_reserved_without_a_managing_module(
+    client: AsyncClient, auth_headers: dict, test_patient: Patient
+):
+    """The ledger does not know module-specific names: with nothing managed,
+    every purpose spelling is accepted."""
+    response = await client.post(
+        "/api/v1/gdpr/consents",
+        json={
+            "patient_id": str(test_patient.id),
+            "purpose": "partner:email",
+            "granted": True,
+            "provided_text": "Plain staff entry.",
+        },
+        headers=auth_headers,
+    )
+    assert response.status_code == 201
+    assert response.json()["data"]["managed"] is False
 
 
 @pytest.mark.asyncio
