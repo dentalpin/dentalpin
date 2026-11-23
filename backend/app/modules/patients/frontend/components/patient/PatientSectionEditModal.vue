@@ -47,6 +47,16 @@ const sectionTitles: Record<SectionType, string> = {
 
 const modalTitle = computed(() => t(sectionTitles[props.section]))
 
+const emptyAddress = (): PatientAddress => ({ street: '', city: '', postal_code: '', province: '', country: 'ES' })
+
+// Send the address as entered; null only when every line is blank
+// (country alone does not count, it always defaults to ES). #1092
+function addressPayload<T extends PatientAddress>(address: T | null | undefined): T | null {
+  if (!address) return null
+  const lines = [address.street, address.city, address.postal_code, address.province]
+  return lines.some(line => line?.trim()) ? { ...address } : null
+}
+
 // Form data for demographics
 const demographicsForm = reactive({
   first_name: '',
@@ -136,7 +146,7 @@ function initializeForm() {
     demographicsForm.profession = props.patient.profession || ''
     demographicsForm.workplace = props.patient.workplace || ''
     demographicsForm.preferred_language = props.patient.preferred_language || 'es'
-    demographicsForm.address = props.patient.address || { street: '', city: '', postal_code: '', province: '', country: 'ES' }
+    demographicsForm.address = props.patient.address ? { ...props.patient.address } : emptyAddress()
   } else if (props.section === 'emergency') {
     emergencyForm.value = props.patient.emergency_contact ? { ...props.patient.emergency_contact } : null
   } else if (props.section === 'guardian') {
@@ -149,7 +159,7 @@ function initializeForm() {
     billingForm.billing_name = props.patient.billing_name || ''
     billingForm.billing_tax_id = props.patient.billing_tax_id || ''
     billingForm.billing_email = props.patient.billing_email || ''
-    billingForm.billing_address = props.patient.billing_address || { street: '', city: '', postal_code: '', province: '', country: 'ES' }
+    billingForm.billing_address = props.patient.billing_address ? { ...props.patient.billing_address } : emptyAddress()
   }
 }
 
@@ -171,7 +181,7 @@ async function handleSave() {
     let method: 'put' | 'del' = 'put'
 
     if (props.section === 'demographics') {
-      const address = demographicsForm.address?.street ? demographicsForm.address : null
+      const address = addressPayload(demographicsForm.address)
       updateData = {
         first_name: demographicsForm.first_name,
         last_name: demographicsForm.last_name,
@@ -205,7 +215,7 @@ async function handleSave() {
         updateData = null
       }
     } else if (props.section === 'billing') {
-      const billingAddress = billingForm.billing_address?.street ? billingForm.billing_address : null
+      const billingAddress = addressPayload(billingForm.billing_address)
       updateData = {
         billing_name: billingForm.billing_name || null,
         billing_tax_id: billingForm.billing_tax_id || null,
