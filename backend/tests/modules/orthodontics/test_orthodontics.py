@@ -844,3 +844,43 @@ async def test_editing_a_control_keeps_the_registration_rules(
     assert stored.appointment_id is None
     assert stored.session_id is None
     assert stored.notes is None
+
+
+@pytest.mark.asyncio
+async def test_a_backdated_control_leaves_the_latest_in_charge(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    """An older control fills gaps only: the latest one keeps the wire it set
+    and the next-control recall (#1007)."""
+    from app.modules.recalls.models import Recall
+
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    today = datetime(2026, 11, 20, 10, tzinfo=UTC)
+    await OrthoControlService.register(
+        db_session,
+        test_clinic.id,
+        case.id,
+        OrthoControlCreate(performed_at=today, upper_wire="NiTi .018", next_control_weeks=6),
+    )
+    await OrthoControlService.register(
+        db_session,
+        test_clinic.id,
+        case.id,
+        OrthoControlCreate(
+            performed_at=today - timedelta(days=60),
+            upper_wire="NiTi .014",
+            lower_wire="NiTi .012",
+            next_control_weeks=4,
+        ),
+    )
+    await db_session.refresh(case)
+    assert case.current_upper_wire == "NiTi .018"
+    assert case.current_lower_wire == "NiTi .012"  # never set by the later control
+    due = await db_session.scalar(
+        select(Recall.due_date).where(
+            Recall.clinic_id == test_clinic.id,
+            Recall.patient_id == test_patient.id,
+            Recall.reason == "ortho_review",
+        )
+    )
+    assert due == date(2027, 1, 1)

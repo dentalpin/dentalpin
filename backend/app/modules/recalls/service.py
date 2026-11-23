@@ -354,7 +354,7 @@ class RecallService:
         recall_id: UUID,
         data: dict[str, Any],
     ) -> Recall | None:
-        recall = await RecallService.get(db, clinic_id, recall_id)
+        recall = await RecallService._get_open(db, clinic_id, recall_id)
         if not recall:
             return None
         if "due_month" in data and data["due_month"]:
@@ -411,6 +411,9 @@ class RecallService:
                 + f"snoozed +{months}mo · {reason_note}"
             )
         recall.status = "pending"
+        # Put off means no longer that visit's recall: left linked, the old
+        # appointment's completion closed it (#1010).
+        recall.linked_appointment_id = None
         await db.flush()
         payload = _build_event_payload(recall)
         payload["snoozed_months"] = months

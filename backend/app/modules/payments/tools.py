@@ -39,12 +39,12 @@ class AllocationArg(BaseModel):
     target_id: UUID | None = Field(
         default=None, description="Id del presupuesto (solo target_type=budget)."
     )
-    amount: Decimal = Field(gt=0)
+    amount: Decimal = Field(gt=0, decimal_places=2)
 
 
 class RecordPaymentArgs(BaseModel):
     patient_id: UUID
-    amount: Decimal = Field(gt=0)
+    amount: Decimal = Field(gt=0, decimal_places=2)
     method: PaymentMethod
     payment_date: date_cls
     allocations: list[AllocationArg] = Field(

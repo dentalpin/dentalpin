@@ -79,6 +79,8 @@ through `attachment_registry`.
 
 ## Gotchas
 
+- **Filenames go out through `core.http_headers.content_disposition`**
+  (#1015): headers are latin-1, so a raw `ő` or `–` in the name was a 500.
 - **GDPR erasure retains files and imaging.**
   `erasure.MediaErasureContributor` owns the `media` coverage scope
   (ADR 0038, #657) and writes nothing: radiographs, clinical photos and

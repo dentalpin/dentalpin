@@ -73,6 +73,9 @@ drives the recall upsert.
   `PATCH /controls/{id}` answers 400 on a terminal case and re-runs
   register's appointment / linked-session checks on a re-pointed link
   (#990).
+- **The latest control by `performed_at` is in charge** (#1007): wires are
+  always re-derived with `_refresh_current_wires`, and a back-dated control
+  never moves the next-control recall.
 - **Status machine is explicit** (`VALID_TRANSITIONS` in service.py):
   `transferred_out` terminal, `finished` reopens only to `active`.
   `finished_at` is stamped on each entry into a terminal state and never cleared; reopen stamps `reopened_at`.
