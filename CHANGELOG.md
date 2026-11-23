@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Agenda:** saving an appointment no longer deletes its visit notes, and works after a linked treatment was completed (#1017).
 - **Billing:** a 0-day payment term is no longer turned into 30 days, and clearing a draft's due date or notes works (#1016).
 - **Downloads:** patient files and invoice PDFs with names outside latin-1 download instead of failing with a server error (#1015).
 - **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
