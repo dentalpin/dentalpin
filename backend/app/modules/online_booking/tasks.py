@@ -62,7 +62,16 @@ async def cleanup() -> None:
                 BookingRequest.status == "accepted",
                 BookingRequest.decided_at <= now - timedelta(days=90),
             )
-            .values(contact_name=None, contact_email=None, contact_phone=None, token_hash=None)
+            .values(
+                contact_name=None,
+                contact_first_name=None,
+                contact_last_name=None,
+                contact_email=None,
+                contact_phone=None,
+                comment=None,
+                existing_patient=None,
+                token_hash=None,
+            )
         )
         await db.execute(
             delete(BookingRateLimit).where(BookingRateLimit.window_start < now - timedelta(hours=2))
