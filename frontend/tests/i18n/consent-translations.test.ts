@@ -8,7 +8,8 @@ import { resolve } from 'node:path'
  * English leftover in a translated locale is a real defect, not a cosmetic
  * one (#906 follow-up). `locale-parity.test.ts` only checks key sets and
  * placeholders; this guard additionally fails when a `documents.consent.*`
- * value (or the consent document type label) is identical to English.
+ * value (or the consent document type label, or the consent-template
+ * Settings strings under `documents.settings.*`) is identical to English.
  *
  * Genuine cognates are listed in ALLOWED_SAME_AS_ENGLISH as `locale:key`
  * with the reason; anything else must be translated.
@@ -41,7 +42,10 @@ function load(file: string): Map<string, string> {
 }
 
 const isConsentKey = (key: string) =>
-  key.startsWith('documents.consent.') || key === 'documents.types.informed_consent'
+  key.startsWith('documents.consent.')
+  || key.startsWith('documents.settings.consentTemplates.')
+  || key.startsWith('documents.settings.cards.consentTemplates.')
+  || key === 'documents.types.informed_consent'
 
 describe('documents consent translations', () => {
   const en = load('en.json')
