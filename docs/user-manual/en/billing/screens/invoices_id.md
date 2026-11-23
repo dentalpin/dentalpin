@@ -57,7 +57,9 @@ or issue a credit note.
   an invoice from a quote that was already collected (deposit) makes
   the invoice born `paid`.
 - **PDF.** Two formats: draft (watermarked preview) and final (only
-  for `issued`). PDF generation uses WeasyPrint. When a line uses a
+  for `issued`). The draft PDF shows the patient's current billing
+  details (billing name, else the patient's name; tax id; billing
+  address), the same data issuing will freeze on the invoice. PDF generation uses WeasyPrint. When a line uses a
   VAT type carrying a statutory note (e.g. the Spanish exemption,
   art. 20.Uno.5º LIVA, seeded by the `es` preset), the note prints in
   the legal-notices block. The footer shows the generation date and
