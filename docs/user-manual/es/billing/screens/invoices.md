@@ -36,7 +36,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: 0000000
+last_verified_commit: b40a1d2
 ---
 
 # Listado de facturas
@@ -63,6 +63,8 @@ para emitir, enviar por email o anular.
   detalle.
 
 El distintivo **Histórica** identifica las facturas importadas. Sus totales siguen disponibles en el listado y en los informes de facturación, en la fecha de emisión original. Las facturas históricas quedan fuera de los resultados de vencidas.
+
+Una rectificativa emitida nunca está vencida: no lleva la marca de vencida y queda fuera del filtro de vencidas, aunque su estado siga siendo *emitida*.
 
 ## Encontrar una factura
 

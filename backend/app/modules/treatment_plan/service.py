@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -279,6 +279,7 @@ class TreatmentPlanService:
         page_size: int = 20,
         patient_id: UUID | None = None,
         status: str | list[str] | None = None,
+        search: str | None = None,
     ) -> tuple[list[TreatmentPlan], int]:
         """List treatment plans with pagination and filters."""
         page_size = min(max(page_size, 1), 100)
@@ -300,6 +301,22 @@ class TreatmentPlanService:
                 base_where.append(TreatmentPlan.status == statuses[0])
             else:
                 base_where.append(TreatmentPlan.status.in_(statuses))
+
+        # Every term must match one field, as in the patient search (#1038).
+        for term in (search or "").split():
+            like = f"%{term}%"
+            base_where.append(
+                or_(
+                    TreatmentPlan.plan_number.ilike(like),
+                    TreatmentPlan.title.ilike(like),
+                    TreatmentPlan.patient_id.in_(
+                        select(Patient.id).where(
+                            Patient.clinic_id == clinic_id,
+                            or_(Patient.first_name.ilike(like), Patient.last_name.ilike(like)),
+                        )
+                    ),
+                )
+            )
 
         # Count
         count_result = await db.execute(select(func.count(TreatmentPlan.id)).where(*base_where))
@@ -1549,11 +1566,13 @@ class TreatmentPlanService:
         if doctor_id is not None:
             extra_where += " AND p.assigned_professional_id = :doctor_id"
             params["doctor_id"] = doctor_id
-        if search:
+        for i, term in enumerate((search or "").split()):
+            # Only the index is interpolated; the term is a bound parameter.
             extra_where += (
-                " AND (p.plan_number ILIKE :q OR pat.first_name ILIKE :q OR pat.last_name ILIKE :q)"
+                f" AND (p.plan_number ILIKE :q{i} OR p.title ILIKE :q{i}"
+                f" OR pat.first_name ILIKE :q{i} OR pat.last_name ILIKE :q{i})"
             )
-            params["q"] = f"%{search}%"
+            params[f"q{i}"] = f"%{term}%"
 
         # ----- shared SELECT --------------------------------------------
         base_sql = f"""

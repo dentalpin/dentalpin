@@ -661,6 +661,9 @@ class DocumentPDFService:
             )
 
         body_html = DocumentPDFService._render_body(document.document_type, content, labels)
+        if document.document_type == "informed_consent" and getattr(document, "title", None):
+            # The evidence carries what the patient saw and signed (#1040).
+            body_html = f'<h2 class="consent-title">{escape(document.title)}</h2>' + body_html
 
         # Arabic is a supported PDF locale, so the page has to be mirrored —
         # the same attribute billing's invoice sets (#524).
@@ -673,10 +676,11 @@ class DocumentPDFService:
             <title>{escape(doc_title)} — {escape(patient_name)}</title>
             <style>
                 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+                /* The bottom margin is the footer's: text never flows into it (#1039). */
+                @page {{ margin: 20mm 20mm 30mm; }}
                 body {{
                     font-family: 'Helvetica Neue', Arial, sans-serif;
                     font-size: 11pt; line-height: 1.4; color: #333;
-                    padding: 20mm;
                 }}
                 .header {{
                     display: flex; justify-content: space-between;
@@ -690,6 +694,7 @@ class DocumentPDFService:
                 .clinic-name {{ font-size: 18pt; font-weight: bold; color: #1e40af; margin-bottom: 5px; }}
                 .clinic-details {{ font-size: 9pt; color: #666; }}
                 .doc-title {{ font-size: 16pt; font-weight: bold; color: #1e40af; text-align: right; }}
+                .consent-title {{ font-size: 13pt; margin-bottom: 12px; overflow-wrap: anywhere; }}
                 .section {{ margin-bottom: 25px; }}
                 .section-title {{
                     font-size: 11pt; font-weight: bold; color: #1e40af;
@@ -711,11 +716,10 @@ class DocumentPDFService:
                 tr:last-child td {{ border-bottom: none; }}
                 .notes-content {{ background: #f9fafb; padding: 12px; border-radius: 8px; font-size: 10pt; }}
                 .footer {{
-                    position: fixed; bottom: 15mm; left: 20mm; right: 20mm;
+                    position: fixed; bottom: -20mm; left: 0; right: 0;
                     font-size: 8pt; color: #9ca3af; text-align: center;
                     border-top: 1px solid #e5e7eb; padding-top: 10px;
                 }}
-                @media print {{ body {{ padding: 0; }} .footer {{ position: fixed; }} }}
             </style>
         </head>
         <body>

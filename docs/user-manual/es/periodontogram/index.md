@@ -55,7 +55,9 @@ al cerrar. Se muestran en el banner superior del periodontograma.
 
 1. **Abrir sesión** desde la sub-pestaña *Periodontograma*. El sistema
    crea un borrador (estado `draft`) y prerellena dientes ausentes e
-   implantes leyendo el odontograma del paciente.
+   implantes leyendo el odontograma del paciente. Un diente marcado
+   allí como *ausente* o con una *exodoncia* realizada queda fuera de
+   los índices; una exodoncia planificada no.
 2. **Capturar datos** clicando en cualquier celda. Los cambios se
    autoguardan a los 600 ms; el banner inferior indica el estado
    (Guardando… / Cambios pendientes / Guardado).

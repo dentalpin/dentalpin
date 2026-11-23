@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1038): the plan list takes `search`, and both it and the pipeline search match number, title and patient name term by term.
 - fix(#1034): reactivating a closed plan (by hand, or by accepting a re-sent quote) restores the planned treatments that closing took off the chart; closing through a status change stamps `closed_at` too.
 
 - fix(#1073): adding a treatment that is already on a plan answers 409 naming that plan instead of a 500; the UI shows a translated message

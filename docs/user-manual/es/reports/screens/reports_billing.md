@@ -17,7 +17,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/reports/frontend/pages/reports/billing.vue
   - backend/app/modules/reports/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: b40a1d2
 ---
 
 # Informes de facturación
@@ -41,8 +41,9 @@ preparación de IVA.
 - **Por profesional** — facturación atribuida a cada profesional.
 - **IVA** — agregado por tipo de IVA. Útil para preparar el modelo
   fiscal del periodo.
-- **Vencidos y huecos** — facturas pasadas de fecha y series con
-  saltos en la numeración (gaps), si los hay.
+- **Vencidos y huecos** — facturas pasadas de fecha (las rectificativas
+  nunca cuentan como vencidas) y series con saltos en la numeración
+  (gaps), si los hay.
 - **Antigüedad** — totales emitidos pendientes por tramo
   (no vencidas aparte, luego 0–30/31–60/61–90/90+ días, solo importes
   emitidos). Etiquetado como antigüedad de facturas — definición

@@ -20,7 +20,11 @@ Routes mounted at `/api/v1/documents/`.
 
 ## Informed consents
 
-Clinic-owned templates are snapshotted into consent documents. Staff can
+Clinic-owned templates are snapshotted into consent documents. Templates can
+be archived (`is_active=false`, `POST /consent-templates/{id}/archive|unarchive`,
+`documents.write`): the list hides them unless `?include_archived=true`, and
+`create_consent` raises `ConsentConflictError` (409) for an archived template.
+Existing consents are unaffected. Staff can
 issue a 30-minute bearer link for signing or revocation. Link tokens are
 stored as hashes and the document row is locked before consuming a link.
 The token lives in the URL fragment and is sent to the API in the
@@ -75,7 +79,7 @@ reference an out-of-clinic patient.
 - Alias `pdf.py:DocumentPDFService` — never hand-render HTML elsewhere.
 - **Every host locale renders** (#524). `_LABELS` carries all ten in
   `PDF_LOCALES`, the endpoint validates with `PDF_LOCALE_PATTERN`, and
-  the page passes the UI locale. Arabic sets `dir="rtl"` on `<html>`,
+  the page and the patient-card consent preview (#1041) pass the UI locale. Arabic sets `dir="rtl"` on `<html>`,
   as billing's invoice does. Adding a locale to `PDF_LOCALES` without a
   label set here fails `tests/test_pdf_label_coverage.py`, which
   discovers every module shipping a `pdf.py`. Clinical text the user
@@ -141,6 +145,12 @@ Nuxt layer at `frontend/` with:
 - Navigation: sidebar entry gated on `documents.read`, order 75.
 
 ## Gotchas
+
+- **The consent PDF prints `document.title`** (#1040): it is what the
+  tablet showed, so it is part of the signed evidence.
+
+- **The PDF footer lives in the `@page` bottom margin** (#1039): a fixed
+  box inside the content area printed over the text of every full page.
 
 - **An edit drops the PDF (#1006).** Changing the title or content of any
   document clears `file_path` and returns a generated one to draft. A

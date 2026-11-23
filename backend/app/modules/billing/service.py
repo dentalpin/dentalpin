@@ -5,7 +5,7 @@ from datetime import UTC, date, datetime
 from decimal import ROUND_HALF_UP, Decimal
 from uuid import UUID
 
-from sqlalchemy import and_, case, desc, func, or_, select
+from sqlalchemy import case, desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -36,6 +36,25 @@ _INVOICE_SORT_ALLOW = {
     "invoice_number": Invoice.invoice_number,
 }
 _INVOICE_SORT_DEFAULT = "created_at:desc"
+
+
+def overdue_invoice_conditions(today: date) -> tuple:
+    """SQL conditions for an overdue invoice, shared by every overdue surface.
+
+    Overdue = still chasing payment (``issued``/``partial``), past its due
+    date, not imported history, and not a credit note. A credit note is
+    issued with a 0-day term and stays ``issued`` with a negative total
+    (it is a credit in the patient's favour, never a debt), so without the
+    last condition it read as overdue from the day after issue (#1090).
+    Callers add ``clinic_id`` / ``deleted_at`` themselves.
+    """
+    return (
+        Invoice.status.in_(["issued", "partial"]),
+        Invoice.due_date < today,
+        Invoice.is_historical.is_(False),
+        Invoice.credit_note_for_id.is_(None),
+    )
+
 
 # --- VAT legal notes for the invoice PDF -----------------------------------
 
@@ -664,13 +683,7 @@ class InvoiceService:
 
         if overdue:
             today = await clinic_today_for(db, clinic_id)
-            conditions.append(
-                and_(
-                    Invoice.due_date < today,
-                    Invoice.is_historical.is_(False),
-                    Invoice.status.in_(["issued", "partial"]),
-                )
-            )
+            conditions.extend(overdue_invoice_conditions(today))
 
         if budget_id:
             conditions.append(Invoice.budget_id == budget_id)
