@@ -121,6 +121,9 @@ monthly call list. Mobile-first layout via `useBreakpoint`.
   that already has an `active` row updates the existing row instead
   of inserting. The endpoint returns 201 either way; `recall.created`
   is published only when a new row was actually inserted.
+- **Snooze unlinks, closed is final** (#1010). Snoozing clears
+  `linked_appointment_id`, so the old visit can't close the recall; `PATCH`
+  on a done / cancelled recall is a 409 like every other write.
 - **Patient exclusions.** Active call list excludes
   `Patient.status="archived"` AND `Patient.do_not_contact=True`.
   Affected recalls go to the `needs_review` bucket (separate filter,

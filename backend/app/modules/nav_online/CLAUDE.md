@@ -77,6 +77,9 @@ to flip on without complete credentials.
 - **The XML is a snapshot** at issue time; editing an invoice afterwards
   does not re-render it — billing's `regenerate_after_party_change` is a
   phase-2 item (NAV needs a MODIFY operation, not an overwrite).
+- **The sign comes from billing** (#1046): a credit note's lines are already
+  negative. A STORNO only flips the quantity (unit price stays positive).
+  Test with negative lines; positive ones hid a double negation.
 - **NAV rejects are terminal**; the worker never retries them — the admin
   corrects and retries explicitly. Retry also accepts `sending` rows (a
   worker that died mid-request leaves them there).

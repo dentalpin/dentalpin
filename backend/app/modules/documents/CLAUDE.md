@@ -146,6 +146,10 @@ Nuxt layer at `frontend/` with:
 
 ## Gotchas
 
+- **An edit drops the PDF (#1006).** Changing the title or content of any
+  document clears `file_path` and returns a generated one to draft. A
+  `PATCH status=generated` is a 422 unless it restores an unedited document
+  that still has its file; only `/generate` creates one.
 - **GDPR erasure retains generated documents.**
   `erasure.DocumentsErasureContributor` owns the `documents` coverage
   scope (ADR 0038, #657) and writes nothing: a prescription or

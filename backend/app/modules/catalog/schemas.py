@@ -339,6 +339,8 @@ class CatalogItemBrief(BaseModel):
     names: dict[str, str]
     default_price: Decimal | None
     default_duration_minutes: int | None
+    # The invoice line picker starts from the treatment's own VAT (#1028).
+    vat_type_id: UUID | None
     is_active: bool
 
     model_config = ConfigDict(from_attributes=True)

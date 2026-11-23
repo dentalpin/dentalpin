@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+- fix(#1006): editing the title or content of any document drops its PDF (only consents did), and `status=generated` can't be set on a document without a matching file.
+
+- i18n: translate the consent-template Settings strings (`documents.settings.cards.consentTemplates.*`, `documents.settings.consentTemplates.*`) in ar, de, fr, hi, hu, it, pl, pt, ta and te, and extend the consent translation guard test to cover them. Native review is advisable for ar, hi, ta, te, hu, pl.
+- fix: the consent templates list in Settings uses the same subtle row separator as the other Settings cards instead of the default heavy border.
 - i18n: translate the consent templates, signing page and `informed_consent` type strings in ar, de, fr, hi, hu, it, pl, pt, ta and te (they held the English text since #906); the consent PDF labels were already translated. Add a test that fails when a `documents.consent.*` value equals English in a non-en locale. Native review is advisable for ar, hi, ta, te, hu, pl.
 - Audit authenticated document views and generated PDF downloads. (#903).
 - Allow editing, archiving and preview generation before a consent is signed; edits and archival invalidate outstanding signing links. Signed consent evidence remains immutable.

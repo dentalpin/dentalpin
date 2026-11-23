@@ -70,8 +70,8 @@
           "description": "الهوية البصرية للعيادة على الوصفات والشهادات وخطابات الإحالة وطلبات الأشعة"
         },
         "consentTemplates": {
-          "title": "Consent templates",
-          "description": "Texts used for informed consents signed on the tablet"
+          "title": "نماذج الموافقة",
+          "description": "النصوص المستخدمة للموافقات المستنيرة التي يتم توقيعها على الجهاز اللوحي"
         }
       },
       "letterhead": {
@@ -97,10 +97,10 @@
         "help": "تُخفى النماذج المؤرشفة من قائمة اختيار الموافقات. ولا تتأثر الموافقات التي أُنشئت منها سابقًا."
       },
       "consentTemplates": {
-        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
-        "empty": "No templates yet. Create the first one below.",
-        "manageLink": "Manage templates in Settings",
-        "saved": "Template saved"
+        "help": "النماذج هي النص الأولي للموافقات المستنيرة الجديدة. لا يؤدي تعديل النموذج إلى تغيير الموافقات التي أُنشئت منه سابقًا.",
+        "empty": "لا توجد نماذج بعد. أنشئ النموذج الأول أدناه.",
+        "manageLink": "إدارة النماذج في الإعدادات",
+        "saved": "تم حفظ النموذج"
       }
     },
     "consent": {
