@@ -27,6 +27,23 @@ logger = logging.getLogger(__name__)
 TEMPLATES_DIR = Path(__file__).parent.parent.parent.parent / "templates" / "email"
 
 
+def format_address_line(address: dict) -> str | None:
+    """One-line clinic address (street, postal code + city, country).
+
+    ``Clinic.address`` is a JSONB dict; templates print the result, never the
+    dict itself (#1043). Same shape as the billing PDF letterhead.
+    """
+    parts = []
+    if address.get("street"):
+        parts.append(address["street"])
+    city_line = " ".join(filter(None, [address.get("postal_code"), address.get("city")]))
+    if city_line:
+        parts.append(city_line)
+    if address.get("country"):
+        parts.append(address["country"])
+    return ", ".join(parts) or None
+
+
 class EmailService:
     """Facade for sending emails through configured providers.
 
@@ -281,6 +298,9 @@ class EmailService:
             # fail on) a template it is never going to deliver.
             return self._disabled_result()
 
+        if isinstance(context.get("clinic_address"), dict):
+            context = {**context, "clinic_address": format_address_line(context["clinic_address"])}
+
         # Render HTML template
         body_html = self._render_template(
             template_key=template_key,
@@ -307,11 +327,14 @@ class EmailService:
             custom_template=template_text,
         )
 
-        # Render subject if it contains template syntax
+        # Render subject if it contains template syntax. A subject is plain
+        # text, so it renders without HTML autoescaping (#1043).
         rendered_subject = subject
         if "{{" in subject or "{%" in subject:
             try:
-                rendered_subject = self._jinja_env.from_string(subject).render(context)
+                rendered_subject = (
+                    self._jinja_env.overlay(autoescape=False).from_string(subject).render(context)
+                )
             except Exception as e:
                 logger.warning(f"Failed to render subject template: {e}")
 

@@ -4,7 +4,13 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import ConsentCard from '../../module_layers/documents/frontend/components/consent/ConsentCard.vue'
 
 const get = vi.fn(async (path: string) => {
-  if (path.endsWith('/consent-templates')) return { data: [] }
+  if (path.endsWith('/consent-templates')) {
+    return { data: [
+      { id: 'tpl-active', title: 'Active template', body: 'Synthetic text', is_active: true },
+      { id: 'tpl-legacy', title: 'Legacy payload template', body: 'Synthetic text' },
+      { id: 'tpl-archived', title: 'Archived template', body: 'Synthetic text', is_active: false }
+    ] }
+  }
   if (path.endsWith('/signature-status')) {
     return { data: [
       { id: 'unsigned', signed: false },
@@ -101,6 +107,17 @@ describe('consent patient card', () => {
       expect(link.exists()).toBe(true)
       // The card no longer writes templates.
       expect(post).not.toHaveBeenCalledWith('/api/v1/documents/consent-templates', expect.anything())
+    } finally { wrapper.unmount() }
+  })
+
+  it('offers only active templates in the select', async () => {
+    const wrapper = await mountSuspended(ConsentCard, { props: { ctx: { patient: { id: 'patient' } } } })
+    await flushPromises()
+    try {
+      const items = wrapper.findComponent({ name: 'USelect' }).props('items') as Array<{ label: string }>
+      expect(items.map(item => item.label)).toEqual(['Active template', 'Legacy payload template'])
+      // The card asks for the default (active-only) list, never for archived ones.
+      expect(get).toHaveBeenCalledWith('/api/v1/documents/consent-templates')
     } finally { wrapper.unmount() }
   })
 

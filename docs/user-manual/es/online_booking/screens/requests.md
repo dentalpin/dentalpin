@@ -19,12 +19,14 @@ related_permissions:
   - agenda.cabinets.read
 related_paths:
   - backend/app/modules/online_booking/frontend/pages/online-booking/index.vue
-last_verified_commit: f44dbd9
+last_verified_commit: b40a1d2
 ---
 # Solicitudes online
 
 El menú muestra el número de solicitudes confirmadas pendientes. Revisa la fecha, el motivo y el estado. Pulsa **Aceptar** en una solicitud confirmada para abrir el formulario. Para crear la cita, selecciona profesional, gabinete opcional y duración (se propone la configurada para el motivo). Selecciona un paciente existente entre las coincidencias de teléfono o email, búscalo, o crea uno revisando los datos prellenados y editables. Pulsa **Crear cita**.
 
 Para rechazarla, escribe un mensaje que se enviará por correo. Si el hueco ya está ocupado, actualiza la lista; si sigue pendiente, recházala y pide al paciente que envíe otra solicitud para el nuevo horario.
+
+Al crear un paciente nuevo, el nombre y los apellidos son obligatorios, igual que en la ficha del paciente. Si el nombre de la solicitud no tiene exactamente dos palabras, queda entero en el nombre, con los apellidos vacíos para que los completes.
 
 Al crear y confirmar una solicitud se comprueban las citas y retenciones del profesional configurado; al aceptarla, las del profesional y el gabinete que elijas. La agenda permite crear o mover citas solapadas; si una cita posterior ocupa el hueco, la siguiente decisión de reserva rechazará el conflicto.

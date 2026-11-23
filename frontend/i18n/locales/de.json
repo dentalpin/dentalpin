@@ -1899,7 +1899,8 @@
       "load": "Fehler beim Laden der Behandlungspläne",
       "create": "Fehler beim Erstellen des Behandlungsplans",
       "update": "Fehler beim Aktualisieren des Behandlungsplans",
-      "delete": "Fehler beim Löschen des Behandlungsplans"
+      "delete": "Fehler beim Löschen des Behandlungsplans",
+      "treatmentAlreadyPlanned": "Diese Behandlung ist bereits im Plan {plan}"
     },
     "notes": {
       "title": "Klinische Notizen",

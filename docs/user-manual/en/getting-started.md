@@ -53,6 +53,8 @@ In *Your team* (or *Settings → People → Users*), create the user and **leave
 
 The link icon on any user row generates a new access link — useful when someone forgot their password.
 
+To bring back someone you removed from the clinic, create the user again with the same email. DentalPin restores their account with the new role and their past records stay linked. Their old password and sessions no longer work: set a new password or send them a new access link. An email that already belongs to staff of another clinic can't be added this way.
+
 > Treat the link like a password. It grants access to the account’s password setup until it is used.
 
 ## Staff two-factor authentication

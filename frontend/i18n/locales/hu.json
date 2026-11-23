@@ -1899,7 +1899,8 @@
       "load": "Hiba a kezelési tervek betöltésekor",
       "create": "Hiba a kezelési terv létrehozásakor",
       "update": "Hiba a kezelési terv frissítésekor",
-      "delete": "Hiba a kezelési terv törlésekor"
+      "delete": "Hiba a kezelési terv törlésekor",
+      "treatmentAlreadyPlanned": "Ez a kezelés már szerepel a(z) {plan} tervben"
     },
     "notes": {
       "title": "Klinikai jegyzetek",

@@ -31,7 +31,7 @@ function fromBackendStatus(v: string | undefined | null): TreatmentStatus {
   return v === 'performed' ? 'existing' : 'planned'
 }
 
-function normalizeTreatment<T extends { status: string }>(treatment: T): T {
+export function normalizeTreatment<T extends { status: string }>(treatment: T): T {
   return { ...treatment, status: fromBackendStatus(treatment.status) }
 }
 

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1044): accepting a booking for a new patient now requires a surname, matching the patients schema, so the created patient can be edited afterwards.
+
 - Answer with `ApiResponse` / `PaginatedApiResponse` like the rest of the API; the inbox now returns `total`, `page` and `page_size` instead of `has_more`, and the reception page and navigation badge read the typed responses.
 - Move the create, confirm, accept and reject flows (and settings, inbox and suggestions) from the router into `BookingService`, following `ConsentService`; routes only parse input and domain errors (`BookingError` subclasses) map to HTTP in `BookingRoute`.
 - Scope availability to the configured professional: their `schedules` hours, their active appointments and their live holds. Other professionals' appointments no longer block a slot, and each request stores the professional it was made for (`professional_id`).

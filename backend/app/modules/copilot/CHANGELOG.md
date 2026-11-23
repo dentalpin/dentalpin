@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1093): a confirmed write, its audit row and its tool result are committed before the follow-up model call, so a provider failure no longer rolls back a write shown as done, and a retry replays it instead of running it again.
 - fix(#686): approving a request in the core agent approval queue (`POST /api/v1/agents/approvals/{id}/approve`) runs the queued call; it used to record the decision only, so an approved erasure erased nothing. The call runs with the reviewer's permissions and re-validated arguments, the request ends `executed` or `failed`, and a failed run's error comes back in the response. `approved` now means "decided but never finished" and is not retried. `GET /approvals?status=` takes only `pending`, `approved`, `rejected`, `executed`, `failed` (422 otherwise). The copilot itself does not use the queue (inline confirm), so its behaviour is unchanged; logged here because this module's architecture doc owns the agent layer (`docs/technical/copilot-agentic-architecture.md` §2.5).
 - fix(#797): `PATCH /settings` with a `null` monthly limit now removes it, where it was silently ignored. A negative limit answers 422; a negative token limit used to be stored and stopped the copilot for the clinic.
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

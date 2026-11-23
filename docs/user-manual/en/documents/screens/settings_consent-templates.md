@@ -2,11 +2,13 @@
 module: documents
 screen: settings_consent-templates
 route: /settings/clinical/consent-templates
-last_verified_commit: 823a556c
+last_verified_commit: cf47bbfb
 related_endpoints:
   - GET /api/v1/documents/consent-templates
   - POST /api/v1/documents/consent-templates
   - PUT /api/v1/documents/consent-templates/{template_id}
+  - POST /api/v1/documents/consent-templates/{template_id}/archive
+  - POST /api/v1/documents/consent-templates/{template_id}/unarchive
 related_permissions:
   - documents.write
 related_paths:
@@ -24,15 +26,23 @@ and editing happens here.
 ## What you can do
 
 - **See** the clinic's templates, ordered by title, with the first lines
-  of each text.
+  of each text. Archived templates are listed too, muted and marked
+  **Archived**.
 - **Create** a template — enter a title (up to 200 characters) and the
   consent text, then **Save template**.
 - **Edit** a template — press **Edit template** on its row, change the
   title or text and save. **Cancel** discards the change.
 
-Editing a template does not change consents already created from it: the
-text is copied into each consent when it is created. Templates cannot be
-deleted or archived from this screen yet.
+- **Archive** a template — press **Archive** on its row when the clinic no
+  longer uses it. An archived template disappears from the template
+  select on the patient card, so no new consent can be created from it.
+- **Restore** an archived template — press **Restore** to make it
+  available again.
+
+Editing or archiving a template does not change consents already created
+from it: the text is copied into each consent when it is created, and
+those consents stay visible and can still be signed or revoked. Templates
+cannot be deleted.
 
 ## Who can use it
 
