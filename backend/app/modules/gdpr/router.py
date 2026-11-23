@@ -36,6 +36,7 @@ from .schemas import (
 )
 from .service import (
     BreachTransitionError,
+    ConsentManagedError,
     ConsentService,
     DataBreachService,
     ErasureService,
@@ -154,7 +155,10 @@ async def record_consent(
     _: Annotated[None, Depends(require_permission("gdpr.consents.write"))],
     db: Annotated[AsyncSession, Depends(get_db)],
 ) -> ApiResponse[ConsentResponse]:
-    row = await ConsentService.grant_or_withdraw(db, ctx.clinic_id, data)
+    try:
+        row = await ConsentService.grant_or_withdraw(db, ctx.clinic_id, data)
+    except ConsentManagedError as exc:
+        raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc)) from exc
     if row is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Patient not found")
     return ApiResponse(data=ConsentResponse.model_validate(row))

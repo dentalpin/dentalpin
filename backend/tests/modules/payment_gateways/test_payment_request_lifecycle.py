@@ -357,3 +357,36 @@ def test_illegal_transition_from_succeeded_back_to_pending_is_rejected():
         validate_payment_request_transition(
             PaymentRequestState.SUCCEEDED, PaymentRequestState.PENDING
         )
+
+
+def test_gateway_amounts_are_cents_only():
+    """A sub-cent request amount was stored rounded while the allocations
+    kept the raw value, so the captured payment could never be recorded
+    (allocation sum ≠ amount); refunds the same (#989)."""
+    from uuid import uuid4
+
+    from pydantic import ValidationError
+
+    from app.modules.payment_gateways.schemas import (
+        GatewayRefundRequestCreate,
+        PaymentRequestCreate,
+    )
+
+    with pytest.raises(ValidationError):
+        PaymentRequestCreate(
+            patient_id=uuid4(),
+            provider_key="fake",
+            amount=Decimal("100.005"),
+            method="upi",
+            allocations=[{"target_type": "on_account", "amount": Decimal("100.005")}],
+        )
+    with pytest.raises(ValidationError):
+        GatewayRefundRequestCreate(payment_id=uuid4(), amount=Decimal("1.001"), reason_code="other")
+    ok = PaymentRequestCreate(
+        patient_id=uuid4(),
+        provider_key="fake",
+        amount=Decimal("100.00"),
+        method="upi",
+        allocations=[{"target_type": "on_account", "amount": Decimal("100")}],
+    )
+    assert ok.amount == Decimal("100.00")
