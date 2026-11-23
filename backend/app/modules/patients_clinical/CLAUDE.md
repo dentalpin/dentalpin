@@ -37,6 +37,10 @@ Routes mounted at `/api/v1/patients_clinical/`.
 
 ## Gotchas
 
+- **The medical-history PUT replaces everything** (#1045), so the client
+  only saves a history it loaded (`isLoaded`), and the edit modal works on
+  a copy: never hand the live object to `MedicalHistoryForm` for editing.
+
 - **Hygienists do NOT have write access** to medical history.
   Receptionists read only emergency contacts (in some clinic
   configurations not even that — check role policy).
