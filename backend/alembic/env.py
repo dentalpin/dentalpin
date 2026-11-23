@@ -90,6 +90,7 @@ from app.modules.odontogram.models import (  # noqa: F401
     Treatment,
     TreatmentTooth,
 )
+from app.modules.patient_intake.models import ConsentProvenance, FormVersion, Intake  # noqa: F401
 from app.modules.patient_timeline.models import PatientTimeline  # noqa: F401
 from app.modules.patients.models import Patient  # noqa: F401
 from app.modules.patients_clinical.models import (  # noqa: F401
