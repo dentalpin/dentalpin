@@ -3,6 +3,7 @@
 ## Unreleased — phase 3
 
 - fix(#1047): `ScontoMaggiorazione/Importo` is the per-unit discount (up to 8 decimals), as check 00423 computes it, also on a credit note's negative discount.
+- fix(#1013): a credit note's negative line discount is written as `ScontoMaggiorazione` (it was dropped by a `> 0` check).
 
 - fix(#955): `POST /records/{id}/requeue` regenerates only the invoice's newest record (409 otherwise) and locks it. The rejected record keeps its state as history, so a second click, or an older scarto, built another file with the same number and date.
 
