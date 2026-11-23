@@ -20,7 +20,11 @@ Routes mounted at `/api/v1/documents/`.
 
 ## Informed consents
 
-Clinic-owned templates are snapshotted into consent documents. Staff can
+Clinic-owned templates are snapshotted into consent documents. Templates can
+be archived (`is_active=false`, `POST /consent-templates/{id}/archive|unarchive`,
+`documents.write`): the list hides them unless `?include_archived=true`, and
+`create_consent` raises `ConsentConflictError` (409) for an archived template.
+Existing consents are unaffected. Staff can
 issue a 30-minute bearer link for signing or revocation. Link tokens are
 stored as hashes and the document row is locked before consuming a link.
 The token lives in the URL fragment and is sent to the API in the

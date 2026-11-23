@@ -64,7 +64,7 @@ def _signing_qr(url: str) -> str:
 
 
 def _template(t: ConsentTemplate) -> dict:
-    return {"id": str(t.id), "title": t.title, "body": t.body}
+    return {"id": str(t.id), "title": t.title, "body": t.body, "is_active": t.is_active}
 
 
 def _token_hash(token: str) -> str:
@@ -140,13 +140,12 @@ class ConsentService:
     """Clinic-scoped consent operations; HTTP transport is handled by the router."""
 
     @staticmethod
-    async def list_templates(ctx, db):
+    async def list_templates(ctx, db, include_archived: bool = False):
+        stmt = select(ConsentTemplate).where(ConsentTemplate.clinic_id == ctx.clinic_id)
+        if not include_archived:
+            stmt = stmt.where(ConsentTemplate.is_active.is_(True))
         rows = (
-            await db.execute(
-                select(ConsentTemplate)
-                .where(ConsentTemplate.clinic_id == ctx.clinic_id)
-                .order_by(ConsentTemplate.title, ConsentTemplate.id)
-            )
+            await db.execute(stmt.order_by(ConsentTemplate.title, ConsentTemplate.id))
         ).scalars()
         return {"data": [_template(t) for t in rows]}
 
@@ -161,7 +160,7 @@ class ConsentService:
         return {"data": _template(t)}
 
     @staticmethod
-    async def update_template(template_id, data, ctx, db):
+    async def _clinic_template(template_id, ctx, db) -> ConsentTemplate:
         t = (
             await db.execute(
                 select(ConsentTemplate).where(
@@ -171,6 +170,19 @@ class ConsentService:
         ).scalar_one_or_none()
         if t is None:
             raise ConsentNotFoundError("Template not found")
+        return t
+
+    @staticmethod
+    async def set_template_active(template_id, active: bool, ctx, db):
+        """Archive (hide from the picker) or restore a template; idempotent."""
+        t = await ConsentService._clinic_template(template_id, ctx, db)
+        t.is_active = active
+        await db.flush()
+        return {"data": _template(t)}
+
+    @staticmethod
+    async def update_template(template_id, data, ctx, db):
+        t = await ConsentService._clinic_template(template_id, ctx, db)
         if not data.title.strip() or not data.body.strip():
             raise ConsentValidationError("Title and text are required")
         t.title, t.body = data.title.strip(), data.body.strip()
@@ -225,6 +237,8 @@ class ConsentService:
         patient = await PatientService.get_patient(db, ctx.clinic_id, data.patient_id)
         if template is None or patient is None:
             raise ConsentNotFoundError("Patient or template not found")
+        if not template.is_active:
+            raise ConsentConflictError("Archived templates cannot be used for new consents")
         doc = GeneratedDocument(
             id=uuid.uuid4(),
             clinic_id=ctx.clinic_id,
