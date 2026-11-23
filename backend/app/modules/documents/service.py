@@ -223,6 +223,18 @@ class DocumentService:
                     status is None and doc.status == DocumentStatus.ARCHIVED
                 ):
                     doc.status = DocumentStatus.DRAFT
+        else:
+            # The stored PDF never outlives the content it was rendered from
+            # (#1006). Re-sending unchanged values keeps it.
+            edited = (title is not None and title != doc.title) or (
+                content is not None and content != doc.content
+            )
+            if status == DocumentStatus.GENERATED and (edited or not doc.file_path):
+                raise ConsentValidationError("Generate a PDF using the generate endpoint")
+            if edited:
+                doc.file_path = None
+                if doc.status == DocumentStatus.GENERATED:
+                    doc.status = DocumentStatus.DRAFT
 
         if title is not None:
             doc.title = title
