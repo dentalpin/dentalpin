@@ -467,7 +467,7 @@
     "createBudget": "उपचार अनुमान बनाएँ",
     "viewAllBudgets": "सभी उपचार अनुमान देखें",
     "activePlan": "सक्रिय योजना",
-    "noActivePlan": "कोई सक्रिय योजना नहीं",
+    "noActivePlan": "अभी तक कोई उपचार योजना नहीं बनाई गई है",
     "viewPlan": "योजना खोलें",
     "createPlan": "योजना बनाएँ",
     "nextAppointment": "अगला अपॉइंटमेंट",
@@ -780,13 +780,14 @@
       "continue": "जारी रखें",
       "odontogramTab": "ओडोंटोग्राम",
       "openNotes": "टिप्पणियाँ खोलें",
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "निदान चुनें, फिर प्रभावित सतहें चिह्नित करें",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
       "createNewPlanOption": "Create a new plan",
       "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
-      "addToPlan": "Add to plan"
+      "addToPlan": "Add to plan",
+      "selectDiagnosis": "निदान चुनें"
     },
     "plans": {
       "title": "उपचार योजनाएँ",
@@ -2084,7 +2085,8 @@
       "resend": "फिर से भेजें",
       "sendReminder": "अनुस्मारक भेजें",
       "setPublicCode": "एक्सेस कोड सेट करें",
-      "unlockPublic": "पहुँच अनलॉक करें"
+      "unlockPublic": "पहुँच अनलॉक करें",
+      "openPreview": "कोट खोलें"
     },
     "items": {
       "title": "उपचार",

@@ -467,7 +467,7 @@
     "createBudget": "Utwórz kosztorys",
     "viewAllBudgets": "Zobacz wszystkie kosztorysy",
     "activePlan": "Aktywny plan",
-    "noActivePlan": "Brak aktywnego planu",
+    "noActivePlan": "Nie utworzono jeszcze planu leczenia",
     "viewPlan": "Otwórz plan",
     "createPlan": "Utwórz plan",
     "nextAppointment": "Następna wizyta",
@@ -780,13 +780,14 @@
       "continue": "Kontynuuj",
       "odontogramTab": "Diagram zębowy",
       "openNotes": "Otwórz notatki",
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "Wybierz diagnozę, a następnie zaznacz zajęte powierzchnie",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
       "createNewPlanOption": "Create a new plan",
       "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
-      "addToPlan": "Add to plan"
+      "addToPlan": "Add to plan",
+      "selectDiagnosis": "Wybierz diagnozę"
     },
     "plans": {
       "title": "Plany leczenia",
@@ -2084,7 +2085,8 @@
       "resend": "Wyślij ponownie",
       "sendReminder": "Wyślij przypomnienie",
       "setPublicCode": "Ustaw kod dostępu",
-      "unlockPublic": "Odblokuj dostęp"
+      "unlockPublic": "Odblokuj dostęp",
+      "openPreview": "Otwórz kosztorys"
     },
     "items": {
       "title": "Zabiegi",

@@ -378,6 +378,7 @@ class OrthoCaseService:
         monthly_amount: Decimal,
         down_payment_label: str | None = None,
         installment_labels: list[str] | None = None,
+        user_id: UUID | None = None,
     ) -> dict:
         """Build the installment schedule through the plan's session
         API — never raw rows — so the plan-owns-lines (#176) and
@@ -396,6 +397,8 @@ class OrthoCaseService:
             raise LookupError("Case not found in this clinic")
         if case.treatment_plan_id is None or case.plan_item_id is None:
             raise ValueError("Link a treatment plan item before generating installments")
+        if user_id is None:
+            raise ValueError("user_id is required to revise plan installments")
         plan = await TreatmentPlanService.get(db, clinic_id, case.treatment_plan_id)
         if plan is None:
             raise LookupError("Linked treatment plan not found")
@@ -419,6 +422,7 @@ class OrthoCaseService:
             case.treatment_plan_id,
             case.plan_item_id,
             {"label": down_payment_label or "Down payment", "amount": down_payment},
+            user_id=user_id,
         )
         for month in range(1, months + 1):
             await TreatmentPlanService.add_session_manual(
@@ -430,10 +434,11 @@ class OrthoCaseService:
                     "label": _installment_label(installment_labels, month),
                     "amount": monthly_amount,
                 },
+                user_id=user_id,
             )
         for old in pending:
             await TreatmentPlanService.delete_session(
-                db, clinic_id, case.treatment_plan_id, case.plan_item_id, old.id
+                db, clinic_id, case.treatment_plan_id, case.plan_item_id, old.id, user_id=user_id
             )
         await db.flush()
         return await OrthoCaseService.installments(db, clinic_id, case_id)

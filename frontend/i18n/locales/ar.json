@@ -467,7 +467,7 @@
     "createBudget": "إنشاء عرض سعر",
     "viewAllBudgets": "عرض كل عروض السعر",
     "activePlan": "الخطة النشطة",
-    "noActivePlan": "لا توجد خطة نشطة",
+    "noActivePlan": "لم يتم إنشاء خطة علاج بعد",
     "viewPlan": "فتح الخطة",
     "createPlan": "إنشاء خطة",
     "nextAppointment": "الموعد القادم",
@@ -780,13 +780,14 @@
       "continue": "متابعة",
       "odontogramTab": "مخطط الأسنان",
       "openNotes": "فتح الملاحظات",
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "اختر التشخيص، ثم حدّد الأسطح المتأثرة",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
       "createNewPlanOption": "Create a new plan",
       "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
-      "addToPlan": "Add to plan"
+      "addToPlan": "Add to plan",
+      "selectDiagnosis": "اختر التشخيص"
     },
     "plans": {
       "title": "خطط العلاج",
@@ -2084,7 +2085,8 @@
       "resend": "إعادة الإرسال",
       "sendReminder": "إرسال تذكير",
       "setPublicCode": "تعيين رمز الوصول",
-      "unlockPublic": "فتح الوصول"
+      "unlockPublic": "فتح الوصول",
+      "openPreview": "فتح عرض السعر"
     },
     "items": {
       "title": "العلاجات",

@@ -268,6 +268,8 @@ async def update_treatment_plan(
         plan = await TreatmentPlanService.update(
             db, ctx.clinic_id, plan_id, data.model_dump(exclude_unset=True), user_id=ctx.user_id
         )
+    except PlanLockedError as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     if not plan:
@@ -337,6 +339,8 @@ async def reopen_treatment_plan(
     """Reopen a confirmed plan back to ``draft`` and cancel its budget."""
     try:
         plan = await TreatmentPlanService.reopen(db, ctx.clinic_id, plan_id, ctx.user_id)
+    except PlanLockedError as e:
+        raise HTTPException(status_code=409, detail=str(e)) from e
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
     return ApiResponse(data=TreatmentPlanResponse.model_validate(plan))
@@ -477,7 +481,12 @@ async def update_plan_item(
     """Update a planned treatment item."""
     try:
         item = await TreatmentPlanService.update_item(
-            db, ctx.clinic_id, plan_id, item_id, data.model_dump(exclude_unset=True)
+            db,
+            ctx.clinic_id,
+            plan_id,
+            item_id,
+            data.model_dump(exclude_unset=True),
+            user_id=ctx.user_id,
         )
     except PlanLockedError as e:
         raise HTTPException(status_code=409, detail=str(e))
@@ -527,7 +536,9 @@ async def reorder_plan_items(
     with items in the new order so the caller doesn't need a second round-trip.
     """
     try:
-        items = await TreatmentPlanService.reorder_items(db, ctx.clinic_id, plan_id, data.item_ids)
+        items = await TreatmentPlanService.reorder_items(
+            db, ctx.clinic_id, plan_id, data.item_ids, user_id=ctx.user_id
+        )
     except PlanLockedError as e:
         raise HTTPException(status_code=409, detail=str(e)) from e
     except ValueError as e:
@@ -630,6 +641,8 @@ async def cancel_item_session(
         item = await TreatmentPlanService.cancel_session(
             db, ctx.clinic_id, plan_id, item_id, session_id, ctx.user_id, data.notes
         )
+    except PlanLockedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return _item_response_or_404(item)
@@ -657,7 +670,10 @@ async def update_item_session(
             item_id,
             session_id,
             data.model_dump(exclude_unset=True),
+            user_id=ctx.user_id,
         )
+    except PlanLockedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return _item_response_or_404(item)
@@ -684,7 +700,10 @@ async def add_item_session(
             plan_id,
             item_id,
             data.model_dump(),
+            user_id=ctx.user_id,
         )
+    except PlanLockedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return _item_response_or_404(item)
@@ -705,8 +724,10 @@ async def delete_item_session(
     """Remove a pending session. Returns the updated item."""
     try:
         item = await TreatmentPlanService.delete_session(
-            db, ctx.clinic_id, plan_id, item_id, session_id
+            db, ctx.clinic_id, plan_id, item_id, session_id, user_id=ctx.user_id
         )
+    except PlanLockedError as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     return _item_response_or_404(item)

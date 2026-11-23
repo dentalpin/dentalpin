@@ -42,21 +42,14 @@ function handleContinue() {
 </script>
 
 <template>
-  <UCard class="bg-[var(--color-primary-soft)] border-[var(--color-primary)]">
-    <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-      <div class="flex items-center gap-2">
-        <UIcon
-          name="i-lucide-lightbulb"
-          class="w-5 h-5 text-primary-accent"
-        />
-        <span class="font-medium">{{ t('clinical.diagnosis.readyToCreatePlan') }}</span>
-      </div>
-
+  <div class="flex flex-col sm:flex-row gap-2">
       <!-- No drafts: Create new plan -->
       <UButton
         v-if="draftPlans.length === 0"
         color="primary"
         icon="i-lucide-plus"
+        size="lg"
+        class="w-full sm:flex-1 justify-center"
         @click="emit('create')"
       >
         {{ t('clinical.diagnosis.createPlan') }}
@@ -67,6 +60,8 @@ function handleContinue() {
         v-else-if="soleDraft"
         color="primary"
         icon="i-lucide-arrow-right"
+        size="lg"
+        class="w-full sm:flex-1 justify-center"
         @click="emit('continue', soleDraft.id)"
       >
         {{ t('clinical.diagnosis.continuePlan', { name: soleDraft.title || t('treatmentPlans.untitledPlan') }) }}
@@ -75,7 +70,7 @@ function handleContinue() {
       <!-- N drafts: Dropdown to select -->
       <div
         v-else
-        class="flex items-center gap-2"
+        class="flex w-full items-center gap-2"
       >
         <USelectMenu
           v-model="selectedDraftId"
@@ -83,17 +78,17 @@ function handleContinue() {
           value-key="value"
           label-key="label"
           :placeholder="t('clinical.diagnosis.selectPlan')"
-          class="w-48"
+          class="min-w-0 flex-1"
         />
         <UButton
           color="primary"
           icon="i-lucide-arrow-right"
+          size="lg"
           :disabled="!selectedDraftId"
           @click="handleContinue"
         >
           {{ t('clinical.diagnosis.continue') }}
         </UButton>
       </div>
-    </div>
-  </UCard>
+  </div>
 </template>

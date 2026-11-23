@@ -228,7 +228,7 @@ async def test_plan_link_schedule_installments(
     assert linked.plan_item_id == item.id
 
     schedule = await OrthoCaseService.generate_schedule(
-        db_session, test_clinic.id, case.id, 200.0, 2, 500.0
+        db_session, test_clinic.id, case.id, 200.0, 2, 500.0, user_id=doc.id
     )
     await db_session.commit()
     # The item's default session (1200 pending) is REPLACED, not kept
@@ -256,7 +256,7 @@ async def test_generate_schedule_rejects_sum_mismatch(
     # 200 + 2 x 100 = 400 against 1200 pending.
     with pytest.raises(ValueError, match="does not match"):
         await OrthoCaseService.generate_schedule(
-            db_session, test_clinic.id, case.id, 200.0, 2, 100.0
+            db_session, test_clinic.id, case.id, 200.0, 2, 100.0, user_id=doc.id
         )
 
 
@@ -287,7 +287,7 @@ async def test_generate_schedule_refuses_completed_sessions(
     await db_session.commit()
     with pytest.raises(ValueError, match="completed"):
         await OrthoCaseService.generate_schedule(
-            db_session, test_clinic.id, case.id, 200.0, 2, 500.0
+            db_session, test_clinic.id, case.id, 200.0, 2, 500.0, user_id=doc.id
         )
 
     unlinked, _ = await OrthoCaseService.unlink_plan(db_session, test_clinic.id, case.id)

@@ -467,7 +467,7 @@
     "createBudget": "Create budget",
     "viewAllBudgets": "View all budgets",
     "activePlan": "Active plan",
-    "noActivePlan": "No active plan",
+    "noActivePlan": "No treatment plan has been created yet",
     "viewPlan": "Open plan",
     "createPlan": "Create plan",
     "nextAppointment": "Next appointment",
@@ -768,7 +768,7 @@
       "noChanges": "No changes recorded"
     },
     "diagnosis": {
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "Choose a diagnosis, then mark affected surfaces",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
@@ -786,7 +786,8 @@
       "selectPlan": "Select plan",
       "continue": "Continue",
       "odontogramTab": "Odontogram",
-      "openNotes": "Open notes"
+      "openNotes": "Open notes",
+      "selectDiagnosis": "Select diagnosis"
     },
     "plans": {
       "title": "Treatment Plans",
@@ -2084,7 +2085,8 @@
       "resend": "Resend",
       "sendReminder": "Send reminder",
       "setPublicCode": "Set access code",
-      "unlockPublic": "Unlock access"
+      "unlockPublic": "Unlock access",
+      "openPreview": "Open quote"
     },
     "items": {
       "title": "Treatments",

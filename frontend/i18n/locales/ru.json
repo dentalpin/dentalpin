@@ -467,7 +467,7 @@
     "createBudget": "Создать смету",
     "viewAllBudgets": "Все сметы",
     "activePlan": "Активный план",
-    "noActivePlan": "Нет активного плана",
+    "noActivePlan": "План лечения еще не создан",
     "viewPlan": "Открыть план",
     "createPlan": "Создать план",
     "nextAppointment": "Следующий приём",
@@ -778,7 +778,7 @@
       "continuePlan": "Продолжить план «{name}»",
       "selectPlan": "Выберите план",
       "continue": "Продолжить",
-      "chooseDiagnosisAndSurfaces": "Выберите диагноз и при необходимости отметьте поверхности",
+      "chooseDiagnosisAndSurfaces": "Выберите диагноз, затем отметьте затронутые поверхности",
       "recommendedTreatmentTitle": "Добавить процедуру в план?",
       "recommendedTreatmentDescription": "Для диагноза «{diagnosis}» на зубе {tooth} настроена процедура. Выберите план и подтвердите добавление.",
       "planForTreatment": "План лечения",
@@ -786,7 +786,8 @@
       "planFromDiagnosis": "План лечения по диагнозу «{diagnosis}»",
       "addToPlan": "Добавить в план",
       "odontogramTab": "Зубная формула",
-      "openNotes": "Открыть записи"
+      "openNotes": "Открыть записи",
+      "selectDiagnosis": "Выберите диагноз"
     },
     "plans": {
       "title": "Планы лечения",
@@ -2084,7 +2085,8 @@
       "resend": "Отправить повторно",
       "sendReminder": "Отправить напоминание",
       "setPublicCode": "Задать код доступа",
-      "unlockPublic": "Разблокировать доступ"
+      "unlockPublic": "Разблокировать доступ",
+      "openPreview": "Открыть смету"
     },
     "items": {
       "title": "Процедуры",

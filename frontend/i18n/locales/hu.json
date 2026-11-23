@@ -467,7 +467,7 @@
     "createBudget": "Árajánlat készítése",
     "viewAllBudgets": "Összes árajánlat megtekintése",
     "activePlan": "Aktív terv",
-    "noActivePlan": "Nincs aktív terv",
+    "noActivePlan": "Még nem készült kezelési terv",
     "viewPlan": "Terv megnyitása",
     "createPlan": "Terv létrehozása",
     "nextAppointment": "Következő időpont",
@@ -780,13 +780,14 @@
       "continue": "Folytatás",
       "odontogramTab": "Fogtérkép",
       "openNotes": "Megjegyzések megnyitása",
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "Válasszon diagnózist, majd jelölje meg az érintett felszíneket",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
       "createNewPlanOption": "Create a new plan",
       "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
-      "addToPlan": "Add to plan"
+      "addToPlan": "Add to plan",
+      "selectDiagnosis": "Diagnózis kiválasztása"
     },
     "plans": {
       "title": "Kezelési tervek",
@@ -2084,7 +2085,8 @@
       "resend": "Újraküldés",
       "sendReminder": "Emlékeztető küldése",
       "setPublicCode": "Hozzáférési kód beállítása",
-      "unlockPublic": "Hozzáférés feloldása"
+      "unlockPublic": "Hozzáférés feloldása",
+      "openPreview": "Árajánlat megnyitása"
     },
     "items": {
       "title": "Kezelések",

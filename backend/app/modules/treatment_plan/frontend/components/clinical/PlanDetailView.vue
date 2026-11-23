@@ -164,8 +164,8 @@ const isLocked = computed(() => {
   return status === 'sent' || status === 'accepted'
 })
 
-const effectiveReadonly = computed(() => props.readonly || isLocked.value)
 const isPaid = computed(() => props.plan.is_paid === true)
+const effectiveReadonly = computed(() => props.readonly || isLocked.value || isPaid.value)
 const canEditPlan = computed(() => !props.readonly && !isPaid.value && !isLocked.value && !['closed', 'completed'].includes(props.plan.status))
 
 function beginEditPlan() {
@@ -416,13 +416,16 @@ function handleGenerateBudget() {
           {{ plan.patient.first_name }} {{ plan.patient.last_name }}
         </NuxtLink>
       </div>
-      <UBadge
-        :color="plan.status === 'pending' ? 'warning' : plan.status === 'active' ? 'success' : 'neutral'"
-        variant="subtle"
-        class="justify-self-start"
+      <span
+        class="plan-header-status text-caption font-semibold justify-self-start"
+        :class="{
+          'text-warning-accent': plan.status === 'pending',
+          'text-success-accent': plan.status === 'active',
+          'text-muted': !['pending', 'active'].includes(plan.status)
+        }"
       >
         {{ t(`treatmentPlans.status.${plan.status}`, plan.status) }}
-      </UBadge>
+      </span>
 
       <!-- Action buttons: ghost/disabled for draft, live for active/completed. -->
       <div
@@ -561,13 +564,6 @@ function handleGenerateBudget() {
                 />
                 <span class="font-medium">{{ t('clinical.plans.treatments') }}</span>
               </div>
-              <UBadge
-                v-if="pendingCount > 0"
-                color="primary"
-                variant="subtle"
-              >
-                {{ pendingCount }} {{ t('clinical.plans.pending') }}
-              </UBadge>
             </div>
           </template>
 
@@ -575,7 +571,8 @@ function handleGenerateBudget() {
             :items="plan.items"
             :highlighted-items="highlightedItems"
             :readonly="effectiveReadonly"
-            :allow-complete="isLocked && !readonly"
+            :allow-complete="(isLocked || isPaid) && !readonly"
+            :doctor-readonly="isPaid"
             :plan-status="plan.status"
             :plan-professional-id="plan.assigned_professional_id ?? null"
             @item-hover="hoveredItemId = $event"

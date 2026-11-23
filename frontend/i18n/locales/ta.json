@@ -467,7 +467,7 @@
     "createBudget": "மதிப்பீட்டை உருவாக்கு",
     "viewAllBudgets": "அனைத்து மதிப்பீடுகளையும் காண்க",
     "activePlan": "செயலில் உள்ள திட்டம்",
-    "noActivePlan": "செயலில் உள்ள திட்டம் இல்லை",
+    "noActivePlan": "சிகிச்சைத் திட்டம் இன்னும் உருவாக்கப்படவில்லை",
     "viewPlan": "திட்டத்தைத் திற",
     "createPlan": "திட்டத்தை உருவாக்கு",
     "nextAppointment": "அடுத்த சந்திப்பு",
@@ -780,13 +780,14 @@
       "continue": "தொடரவும்",
       "odontogramTab": "பல் வரைபடம்",
       "openNotes": "குறிப்புகளைத் திற",
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "நோயறிதலைத் தேர்ந்தெடுத்து, பாதிக்கப்பட்ட மேற்பரப்புகளைக் குறிக்கவும்",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
       "createNewPlanOption": "Create a new plan",
       "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
-      "addToPlan": "Add to plan"
+      "addToPlan": "Add to plan",
+      "selectDiagnosis": "நோயறிதலைத் தேர்ந்தெடுக்கவும்"
     },
     "plans": {
       "title": "சிகிச்சை திட்டங்கள்",
@@ -2084,7 +2085,8 @@
       "resend": "மீண்டும் அனுப்பு",
       "sendReminder": "நினைவூட்டலை அனுப்பு",
       "setPublicCode": "அணுகல் குறியீட்டை அமை",
-      "unlockPublic": "அணுகலைத் திற"
+      "unlockPublic": "அணுகலைத் திற",
+      "openPreview": "மதிப்பீட்டைத் திற"
     },
     "items": {
       "title": "சிகிச்சைகள்",

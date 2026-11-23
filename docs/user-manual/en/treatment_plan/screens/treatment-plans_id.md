@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: 68b0262
+last_verified_commit: 4e5364c6
 ---
 
 # Treatment plan detail
@@ -104,6 +104,16 @@ categories (Restorative, Surgery, Endodontics, Orthodontics) plus the
    `pending`.
 3. If no budget was linked, **Generate budget** creates a new one
    on the `budget` module.
+
+## Changes after confirmation
+
+Changing a confirmed plan's treatments, order, or session pricing sends
+it back to `draft` and cancels its previous draft quote. Review the
+updated plan and confirm it again before a new quote is created. A plan
+with a sent or accepted quote stays locked; use the budget's supported
+renegotiation flow for a patient-facing contract. A paid invoice blocks
+plan edits, session schedule changes, reopening, and deletion. Recording
+clinical completion remains available so treatment history can be kept.
 
 ## Mark items as performed
 

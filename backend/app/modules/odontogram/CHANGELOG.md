@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- ui: diagnosis entry now uses a two-step diagnosis/surface modal with a keyboard-accessible clickable lateral view; plan CTA is a direct action without an alert card, and the patient summary names the empty state clearly.
+- design: set Dentum clinical blue to `#00A7EF` as the default primary token and update the design-system reference.
 - fix: treatment and plan-item creation now share one transaction, so a failed plan link cannot leave an orphaned treatment. The doctor flow supports selecting either the tooth or procedure first, searches long procedure lists, supports keyboard tooth selection, clears stale patient data, and prevents duplicate submissions.
 
 - fix(rbac): `assistant` gets `treatments.read` with `read` — the chart is drawn from the treatments list, so assistants hit a 403 on every patient. The chart composables no longer call the API for roles without the permission (reception).

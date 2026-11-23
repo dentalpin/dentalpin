@@ -467,7 +467,7 @@
     "createBudget": "అంచనా సృష్టించండి",
     "viewAllBudgets": "అన్ని అంచనాలు చూడండి",
     "activePlan": "సక్రియ ప్రణాళిక",
-    "noActivePlan": "సక్రియ ప్రణాళిక లేదు",
+    "noActivePlan": "చికిత్స ప్రణాళిక ఇంకా సృష్టించబడలేదు",
     "viewPlan": "ప్రణాళిక తెరవండి",
     "createPlan": "ప్రణాళిక సృష్టించండి",
     "nextAppointment": "తదుపరి అపాయింట్‌మెంట్",
@@ -780,13 +780,14 @@
       "continue": "కొనసాగించండి",
       "odontogramTab": "ఓడోంటోగ్రామ్",
       "openNotes": "గమనికలు తెరవండి",
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "రోగ నిర్ధారణను ఎంచుకుని, ప్రభావిత ఉపరితలాలను గుర్తించండి",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
       "createNewPlanOption": "Create a new plan",
       "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
-      "addToPlan": "Add to plan"
+      "addToPlan": "Add to plan",
+      "selectDiagnosis": "రోగ నిర్ధారణను ఎంచుకోండి"
     },
     "plans": {
       "title": "చికిత్స ప్రణాళికలు",
@@ -2084,7 +2085,8 @@
       "resend": "మళ్ళీ పంపండి",
       "sendReminder": "రిమైండర్ పంపండి",
       "setPublicCode": "యాక్సెస్ కోడ్ సెట్ చేయండి",
-      "unlockPublic": "యాక్సెస్ అన్‌లాక్ చేయండి"
+      "unlockPublic": "యాక్సెస్ అన్‌లాక్ చేయండి",
+      "openPreview": "అంచనాను తెరవండి"
     },
     "items": {
       "title": "చికిత్సలు",

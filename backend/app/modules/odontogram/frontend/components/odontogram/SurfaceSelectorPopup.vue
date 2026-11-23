@@ -24,6 +24,7 @@ const { t } = useI18n()
 
 // Selected surfaces
 const selectedSurfaces = ref<Surface[]>([])
+const diagnosisStep = ref(false)
 
 // All surfaces
 const allSurfaces: Surface[] = ['M', 'D', 'O', 'V', 'L']
@@ -180,10 +181,15 @@ function handleCancel() {
   emit('update:open', false)
 }
 
+function continueToSurfaceSelection() {
+  if (selectedTreatment.value) diagnosisStep.value = true
+}
+
 // Reset when opening
 watch(() => props.open, (isOpen) => {
   if (isOpen) {
     selectedSurfaces.value = []
+    diagnosisStep.value = false
   }
 })
 </script>
@@ -206,7 +212,9 @@ watch(() => props.open, (isOpen) => {
         </div>
         <div>
           <h3 class="text-base font-semibold">
-            {{ t('odontogram.selectSurfaces') }}
+            {{ diagnosisMode && !diagnosisStep
+              ? t('clinical.diagnosis.selectDiagnosis', 'Выберите диагноз')
+              : t('odontogram.selectSurfaces') }}
           </h3>
           <p class="text-caption text-subtle">
             {{ t(`odontogram.treatments.types.${treatmentType}`) }} - {{ t('odontogram.tooth') }} {{ toothNumber }}
@@ -218,19 +226,24 @@ watch(() => props.open, (isOpen) => {
     <template #body>
       <div class="surface-selector">
         <TreatmentBar
-          v-if="diagnosisMode"
+          v-if="diagnosisMode && !diagnosisStep"
           v-model:selected-treatment="selectedTreatment"
           v-model:selected-catalog-item-id="selectedCatalogItemId"
           selected-status="existing"
           mode="diagnosis"
         />
         <p
-          v-if="diagnosisMode"
+          v-if="diagnosisMode && !diagnosisStep"
           class="text-caption text-subtle"
         >
           {{ t('clinical.diagnosis.chooseDiagnosisAndSurfaces', 'Выберите диагноз и при необходимости отметьте поверхности') }}
         </p>
         <!-- Tooth visualization -->
+        <div
+          v-if="!diagnosisMode || diagnosisStep"
+          class="surface-selection-step"
+          data-testid="surface-selection-step"
+        >
         <div class="tooth-views">
           <!-- Occlusal View -->
           <div class="view-container">
@@ -394,6 +407,24 @@ watch(() => props.open, (isOpen) => {
                 stroke-width="0.75"
                 stroke-linecap="round"
               />
+
+              <!-- The lateral aspect is the vestibular face. Making the
+                   crown itself a keyboard-accessible hit target lets a
+                   clinician select it directly from the side view. -->
+              <path
+                :d="lateralPaths.crown"
+                fill="transparent"
+                stroke="transparent"
+                class="lateral-surface-target"
+                role="button"
+                tabindex="0"
+                data-testid="lateral-surface-v"
+                :aria-label="t('odontogram.surfaces.V')"
+                :aria-pressed="isSurfaceSelected('V')"
+                @click="toggleSurface('V')"
+                @keydown.enter.prevent="toggleSurface('V')"
+                @keydown.space.prevent="toggleSurface('V')"
+              />
             </svg>
           </div>
         </div>
@@ -440,12 +471,14 @@ watch(() => props.open, (isOpen) => {
           />
           <span>{{ toothName }}</span>
         </div>
+        </div>
       </div>
     </template>
 
     <template #footer>
       <div class="flex justify-between items-center w-full">
         <span class="text-caption text-subtle">
+          <template v-if="diagnosisMode">{{ diagnosisStep ? '2 / 2' : '1 / 2' }} · </template>
           {{ selectedSurfaces.length }} {{ t('odontogram.surfacesSelected') }}
         </span>
         <div class="flex gap-2">
@@ -457,6 +490,26 @@ watch(() => props.open, (isOpen) => {
             {{ t('common.cancel') }}
           </UButton>
           <UButton
+            v-if="diagnosisMode && diagnosisStep"
+            color="neutral"
+            variant="outline"
+            icon="i-lucide-arrow-left"
+            @click="diagnosisStep = false"
+          >
+            {{ t('common.back') }}
+          </UButton>
+          <UButton
+            v-if="diagnosisMode && !diagnosisStep"
+            color="primary"
+            trailing-icon="i-lucide-arrow-right"
+            :disabled="!selectedTreatment"
+            data-testid="diagnosis-next"
+            @click="continueToSurfaceSelection"
+          >
+            {{ t('common.next') }}
+          </UButton>
+          <UButton
+            v-else
             color="primary"
             :disabled="diagnosisMode ? !selectedTreatment : selectedSurfaces.length === 0"
             @click="handleConfirm"
@@ -508,6 +561,17 @@ watch(() => props.open, (isOpen) => {
 
 .tooth-svg.lateral {
   transform-origin: center;
+}
+
+.lateral-surface-target {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.lateral-surface-target:focus-visible {
+  stroke: var(--color-primary) !important;
+  stroke-width: 3px;
+  outline: none;
 }
 
 .surface-path {

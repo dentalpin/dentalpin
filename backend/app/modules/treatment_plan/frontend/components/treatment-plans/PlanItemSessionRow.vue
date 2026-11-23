@@ -11,6 +11,7 @@ import type { PlanItemSession } from '~~/app/types'
 defineProps<{
   session: PlanItemSession
   canComplete?: boolean
+  canCancel?: boolean
 }>()
 
 const emit = defineEmits<{
@@ -79,7 +80,7 @@ function amountValue(amount: number | string): number {
       @click.stop="emit('complete', session.id)"
     />
     <UButton
-      v-if="canComplete && session.status === 'pending'"
+      v-if="canCancel && session.status === 'pending'"
       size="xs"
       variant="ghost"
       color="error"

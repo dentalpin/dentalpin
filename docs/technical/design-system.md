@@ -66,21 +66,21 @@ Inspired by Linear/Height. Surfaces get **lighter as elevation increases** (the 
 
 ### 2.3 Primary
 
-The default palette uses Tailwind `sky`, with the 500 used as the canonical primary in light and the 400 in dark. Users can select one of four accent palettes from the app toolbar; the chosen accent is stored per browser and remains independent from light/dark mode. Semantic colors do not change with the selected accent.
+The default palette uses Dentum clinical blue (`#00A7EF`) as the canonical primary in light mode and a lighter blue in dark mode. Users can select one of four accent palettes from the app toolbar; the chosen accent is stored per browser and remains independent from light/dark mode. Semantic colors do not change with the selected accent.
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| `--color-primary` | `#0EA5E9` (sky-500) | `#38BDF8` (sky-400) | Primary CTAs, links, selection rings |
-| `--color-primary-hover` | `#0284C7` (sky-600) | `#7DD3FC` (sky-300) | Hover state |
-| `--color-primary-soft` | `#E0F2FE` (sky-100) | `rgba(56,189,248,0.12)` | Active nav pill, highlight backgrounds |
-| `--color-primary-soft-text` | `#0369A1` (sky-700) | `#7DD3FC` (sky-300) | Text on `--color-primary-soft` |
-| `--color-primary-accent` | `#0284C7` (sky-600) | `#38BDF8` (sky-400) | Accent icons and focus treatments |
+| `--color-primary` | `#00A7EF` | `#42C2FF` | Primary CTAs, links, selection rings |
+| `--color-primary-hover` | `#0089C6` | `#8AD9FF` | Hover state |
+| `--color-primary-soft` | `#E3F7FF` | `rgba(66,194,255,0.12)` | Active nav pill, highlight backgrounds |
+| `--color-primary-soft-text` | `#00658F` | `#8AD9FF` | Text on `--color-primary-soft` |
+| `--color-primary-accent` | `#007FAF` | `#42C2FF` | Accent icons and focus treatments |
 
 ### 2.3.1 User-selectable accents
 
 | Palette | Light primary | Dark primary | Soft treatment |
 |---|---|---|---|
-| Clinical blue (default) | `#0EA5E9` | `#38BDF8` | Sky |
+| Clinical blue (default) | `#00A7EF` | `#42C2FF` | Dentum blue |
 | Mint | `#059669` | `#34D399` | Emerald |
 | Lavender | `#7C3AED` | `#A78BFA` | Violet |
 | Coral | `#E11D48` | `#FB7185` | Rose |

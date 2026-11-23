@@ -36,7 +36,8 @@ const {
   canSend,
   canAccept,
   canCancel,
-  canResend
+  canResend,
+  getPDFPreviewUrl
 } = useBudgets()
 
 // Manual Send buttons follow the clinic channel config (issue #287).
@@ -169,6 +170,11 @@ function startEditing() {
   editForm.internal_notes = currentBudget.value.internal_notes || ''
   editForm.patient_notes = currentBudget.value.patient_notes || ''
   isEditing.value = true
+}
+
+function openBudgetPreview() {
+  if (!currentBudget.value) return
+  window.open(getPDFPreviewUrl(currentBudget.value.id, locale.value), '_blank', 'noopener,noreferrer')
 }
 
 async function saveEdits() {
@@ -443,6 +449,15 @@ const primaryActions = computed<EntityAction[]>(() => {
   if (!budget) return []
   const actions: EntityAction[] = []
 
+  if (canEdit(budget) && can(PERMISSIONS.budget.write)) {
+    actions.push({
+      key: 'edit',
+      label: t('common.edit'),
+      icon: 'i-lucide-pencil',
+      onClick: startEditing
+    })
+  }
+
   if (canSend(budget) && can(PERMISSIONS.budget.write)) {
     actions.push({
       key: 'send',
@@ -590,6 +605,35 @@ const infoItems = computed<InfoItem[]>(() => {
       value: `${budget.creator.first_name} ${budget.creator.last_name}`
     })
   }
+  items.push(
+    {
+      key: 'validFrom',
+      label: t('budget.validFrom'),
+      value: formatDate(budget.valid_from)
+    },
+    {
+      key: 'validUntil',
+      label: t('budget.validUntil'),
+      value: budget.valid_until ? formatDate(budget.valid_until) : t('budget.noExpiry')
+    }
+  )
+  if (budget.global_discount_value) {
+    items.push({
+      key: 'discount',
+      label: t('budget.globalDiscount'),
+      value: budget.global_discount_type === 'percentage'
+        ? `${budget.global_discount_value}%`
+        : formatMoney(budget.global_discount_value)
+    })
+  }
+  if (budget.patient_notes) {
+    items.push({
+      key: 'patientNotes',
+      label: t('budget.patientNotes'),
+      value: budget.patient_notes,
+      multiline: true
+    })
+  }
   items.push({
     key: 'createdAt',
     label: t('common.date'),
@@ -649,10 +693,20 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
           </NuxtLink>
         </template>
         <template #actions>
-          <EntityActionBar
-            :primary="primaryActions"
-            :overflow="overflowActions"
-          />
+          <div class="flex flex-wrap items-center justify-end gap-2">
+            <UButton
+              icon="i-lucide-file-text"
+              variant="outline"
+              color="neutral"
+              @click="openBudgetPreview"
+            >
+              {{ t('budget.actions.openPreview', 'Открыть смету') }}
+            </UButton>
+            <EntityActionBar
+              :primary="primaryActions"
+              :overflow="overflowActions"
+            />
+          </div>
         </template>
       </DetailPageHeader>
 
@@ -660,61 +714,16 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
         <!-- Main content -->
         <div class="lg:col-span-2 space-y-6">
           <!-- Budget details -->
-          <UCard>
+          <UCard v-if="isEditing">
             <template #header>
               <div class="flex items-center justify-between">
                 <h2 class="text-h1 text-default">
-                  {{ t('budget.view') }}
-                </h2>
-                <UButton
-                  v-if="canEdit(currentBudget) && can(PERMISSIONS.budget.write) && !isEditing"
-                  variant="ghost"
-                  color="neutral"
-                  icon="i-lucide-pencil"
-                  size="sm"
-                  @click="startEditing"
-                >
                   {{ t('common.edit') }}
-                </UButton>
+                </h2>
               </div>
             </template>
 
-            <!-- View mode -->
-            <div
-              v-if="!isEditing"
-              class="grid grid-cols-1 sm:grid-cols-2 gap-4"
-            >
-              <div>
-                <span class="text-caption text-subtle">{{ t('budget.validFrom') }}</span>
-                <p class="font-medium">
-                  {{ formatDate(currentBudget.valid_from) }}
-                </p>
-              </div>
-              <div>
-                <span class="text-caption text-subtle">{{ t('budget.validUntil') }}</span>
-                <p class="font-medium">
-                  {{ currentBudget.valid_until ? formatDate(currentBudget.valid_until) : t('budget.noExpiry') }}
-                </p>
-              </div>
-              <div v-if="currentBudget.global_discount_value">
-                <span class="text-caption text-subtle">{{ t('budget.globalDiscount') }}</span>
-                <p class="font-medium">
-                  {{ currentBudget.global_discount_type === 'percentage'
-                    ? `${currentBudget.global_discount_value}%`
-                    : formatMoney(currentBudget.global_discount_value) }}
-                </p>
-              </div>
-              <div v-if="currentBudget.patient_notes">
-                <span class="text-caption text-subtle">{{ t('budget.patientNotes') }}</span>
-                <p class="mt-1">
-                  {{ currentBudget.patient_notes }}
-                </p>
-              </div>
-            </div>
-
-            <!-- Edit mode -->
             <form
-              v-else
               class="space-y-4"
               @submit.prevent="saveEdits"
             >
@@ -804,16 +813,6 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
                   {{ t('budget.items.add') }}
                 </UButton>
               </div>
-              <!-- Plan-linked quote: lines live on the plan (issue #176). -->
-              <UAlert
-                v-if="canEdit(currentBudget) && currentBudget.treatment_plan"
-                class="mt-3"
-                color="info"
-                variant="subtle"
-                icon="i-lucide-clipboard-list"
-                :description="t('budget.items.managedByPlan', { plan: currentBudget.treatment_plan.plan_number })"
-                :actions="[{ label: t('budget.treatmentPlan'), to: `/treatment-plans/${currentBudget.treatment_plan.id}`, variant: 'link' }]"
-              />
             </template>
 
             <div

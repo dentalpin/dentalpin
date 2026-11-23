@@ -26,6 +26,8 @@ const props = defineProps<{
    * completing items is still a valid clinical action.
    */
   allowComplete?: boolean
+  /** Prevent operational doctor reassignment when the plan has a paid invoice. */
+  doctorReadonly?: boolean
   /** Plan status — drives empty-state guidance copy (draft shows 3-step onboarding). */
   planStatus?: string
   /** Doctor of the parent plan. Drives "override" detection on each item chip. */
@@ -36,6 +38,9 @@ const props = defineProps<{
 // quote is accepted (plan `active`) — mirrors the backend gate.
 const completeEnabled = computed(
   () => props.planStatus === 'active' && (!props.readonly || props.allowComplete)
+)
+const cancelSessionEnabled = computed(
+  () => ['draft', 'pending'].includes(props.planStatus ?? '') && !props.readonly
 )
 
 const emit = defineEmits<{
@@ -309,13 +314,12 @@ const { format: formatCurrency } = useCurrency()
               <span class="text-subtle text-caption tnum w-6 text-center shrink-0">
                 {{ index + 1 }}.
               </span>
-              <!-- Doctor chip stays editable on pending items regardless of
-                   the plan-lock state — reassignment is operational and does
-                   not touch the patient-facing contract. -->
+              <!-- Doctor reassignment is operational on active plans, but a
+                   paid contract is fully read-only. -->
               <PlanItemDoctorChip
                 :professional-id="item.assigned_professional_id ?? null"
                 :plan-professional-id="planProfessionalId"
-                :readonly="item.status !== 'pending'"
+                :readonly="item.status !== 'pending' || doctorReadonly"
                 @change="(professionalId) => emit('item-doctor-change', item.id, professionalId)"
               />
               <span
@@ -394,6 +398,7 @@ const { format: formatCurrency } = useCurrency()
             :key="session.id"
             :session="session"
             :can-complete="completeEnabled"
+            :can-cancel="cancelSessionEnabled"
             @complete="(sessionId) => emit('session-complete', item.id, sessionId)"
             @cancel="(sessionId) => emit('session-cancel', item.id, sessionId)"
           />

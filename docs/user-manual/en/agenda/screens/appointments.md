@@ -30,7 +30,7 @@ related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
   - backend/app/modules/agenda/frontend/pages/p/check-in/[token].vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: 3f08dd038cc70b5d2d988e49b8029c06f42ad5b3
+last_verified_commit: 4e5364c6
 ---
 
 # Appointments
@@ -150,3 +150,12 @@ planned work instead of a free-text reason.
 - **The calendar only runs 08:00–21:00.** The `schedules` module is
   not installed or has no schedule configured; the agenda falls back
   to its default window.
+
+## Create an appointment with an assistant
+
+Choose a patient, date, start time, and professional before saving.
+The save control stays visibly disabled until required values are
+present; clicking while a value is missing highlights the incomplete
+fields without sending a request. The optional assistant list includes
+only active members of this clinic with an assistant role. A user from
+another clinic cannot be assigned through the API.

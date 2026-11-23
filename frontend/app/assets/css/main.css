@@ -28,11 +28,23 @@
   --color-text-disabled: #BAB6B0;
 
   /* Primary */
-  --color-primary: #0EA5E9;
-  --color-primary-hover: #0284C7;
-  --color-primary-soft: #E0F2FE;
-  --color-primary-soft-text: #0369A1;
-  --color-primary-accent: #0284C7;
+  --color-primary: #00A7EF;
+  --color-primary-hover: #0089C6;
+  --color-primary-soft: #E3F7FF;
+  --color-primary-soft-text: #00658F;
+  --color-primary-accent: #007FAF;
+  --ui-primary: #00A7EF;
+  --ui-color-primary-50: #F0FBFF;
+  --ui-color-primary-100: #E3F7FF;
+  --ui-color-primary-200: #BDEBFF;
+  --ui-color-primary-300: #8AD9FF;
+  --ui-color-primary-400: #42C2FF;
+  --ui-color-primary-500: #00A7EF;
+  --ui-color-primary-600: #0089C6;
+  --ui-color-primary-700: #006E9F;
+  --ui-color-primary-800: #075B80;
+  --ui-color-primary-900: #0B4B68;
+  --ui-color-primary-950: #073248;
 
   /* Semantics — accent / soft bg / text */
   --color-success-accent: #0F9D58;
@@ -83,11 +95,23 @@
   --color-text-disabled: #525049;
 
   /* Primary — sky-400 for better punch on dark */
-  --color-primary: #38BDF8;
-  --color-primary-hover: #7DD3FC;
-  --color-primary-soft: rgba(56, 189, 248, 0.12);
-  --color-primary-soft-text: #7DD3FC;
-  --color-primary-accent: #38BDF8;
+  --color-primary: #42C2FF;
+  --color-primary-hover: #8AD9FF;
+  --color-primary-soft: rgba(66, 194, 255, 0.12);
+  --color-primary-soft-text: #8AD9FF;
+  --color-primary-accent: #42C2FF;
+  --ui-primary: #42C2FF;
+  --ui-color-primary-50: #F0FBFF;
+  --ui-color-primary-100: #DDF5FF;
+  --ui-color-primary-200: #BDEBFF;
+  --ui-color-primary-300: #8AD9FF;
+  --ui-color-primary-400: #42C2FF;
+  --ui-color-primary-500: #42C2FF;
+  --ui-color-primary-600: #19A8E6;
+  --ui-color-primary-700: #0089C6;
+  --ui-color-primary-800: #075B80;
+  --ui-color-primary-900: #0B4B68;
+  --ui-color-primary-950: #073248;
 
   /* Semantics — dark */
   --color-success-accent: #34D399;

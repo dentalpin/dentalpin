@@ -752,6 +752,7 @@ function openPatientFile() {
         >
           <form
             class="space-y-6"
+            novalidate
             @submit.prevent="handleSave"
           >
             <!-- Section 1: Paciente -->
@@ -801,6 +802,7 @@ function openPatientFile() {
                     :size="isMobile ? 'lg' : 'md'"
                     icon="i-lucide-calendar"
                     :class="attemptedSave && !formData.date ? 'ring-2 ring-error' : ''"
+                    :aria-invalid="attemptedSave && !formData.date"
                     required
                   />
                 </UFormField>
@@ -814,6 +816,7 @@ function openPatientFile() {
                     :size="isMobile ? 'lg' : 'md'"
                     icon="i-lucide-clock"
                     :class="attemptedSave && !formData.startTime ? 'ring-2 ring-error' : ''"
+                    :aria-invalid="attemptedSave && !formData.startTime"
                     required
                   />
                 </UFormField>
@@ -868,6 +871,7 @@ function openPatientFile() {
                 <div
                   class="flex flex-wrap gap-2 rounded-token-md"
                   :class="attemptedSave && !selectedProfessionalId ? 'ring-2 ring-error p-1' : ''"
+                  :aria-invalid="attemptedSave && !selectedProfessionalId"
                 >
                   <button
                     v-for="p in professionalOptions"
@@ -991,7 +995,8 @@ function openPatientFile() {
                 <UButton
                   icon="i-lucide-calendar-plus"
                   :loading="isSubmitting"
-                  :disabled="!canSave"
+                  :aria-disabled="!canSave || undefined"
+                  :class="!canSave ? 'opacity-50 cursor-not-allowed' : ''"
                   @click="handleSave"
                 >
                   {{ t('common.save') }}

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix: item, ordering, and session contract edits on a confirmed plan now lock and reopen the plan, cancel the obsolete draft quote, and require a fresh clinician confirmation. A paid invoice blocks all contract mutations, including session edits and explicit reopen; clinical completion remains available.
+- fix: orthodontic installment generation now supplies the acting user to the plan session API, preserving the clinic's confirmation, lock, and paid-invoice rules.
 - feat: plan items can atomically create their odontogram treatment (`create_treatment`), with planned status enforced server-side and rollback on any validation or persistence error.
 
 - fix(i18n): pipeline row showed the raw budget status code and a hardcoded `€`; now `budget.status.*` and the clinic currency (also in the confirm-plan modal).

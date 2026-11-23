@@ -175,6 +175,10 @@ class PlanLockedError(ValueError):
     """Raised when a mutation is attempted on a plan locked by an active budget."""
 
 
+class PlanPaidError(PlanLockedError):
+    """Raised when a financial contract has a paid invoice attached."""
+
+
 class PlanItemBookedError(ValueError):
     """Raised when removing an item still booked into a non-cancelled appointment."""
 
@@ -190,12 +194,11 @@ def _is_plan_locked(plan: TreatmentPlan) -> bool:
     mutations must go through the explicit unlock flow (which cancels
     the budget).
 
-    A ``draft`` budget is NOT a contract: it never left the clinic, and
-    the budget module already mirrors plan edits into draft budgets via
-    the ``treatment_plan.treatment_added``/``treatment_removed`` events
-    (its handlers no-op on any non-draft status). Locking on draft froze
-    the plan before the patient had seen anything — users had to accept
-    the quote just to keep choosing treatments.
+    A ``draft`` budget is NOT a patient-facing contract. The plan service
+    still cancels it and returns ``pending`` plans to ``draft`` before a
+    clinical contract edit, so the clinician reconfirms the changed plan
+    and a fresh quote is created. This guard decides whether the attached
+    budget itself is a hard lock.
 
     Terminal budgets (``cancelled``/``rejected``/``expired``) are dead
     paper, not contracts either — a reactivated plan keeps its link to
@@ -446,7 +449,7 @@ class TreatmentPlanService:
         user_id: UUID | None = None,
     ) -> TreatmentPlan | None:
         """Update a treatment plan."""
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             return None
 
@@ -520,6 +523,8 @@ class TreatmentPlanService:
             from app.modules.budget.models import Budget
 
             await db.execute(select(Budget.id).where(Budget.id == plan.budget_id).with_for_update())
+            if plan.budget is not None:
+                await db.refresh(plan.budget, attribute_names=["status"])
         await db.refresh(plan, attribute_names=["status"], with_for_update=True)
         return plan
 
@@ -582,7 +587,7 @@ class TreatmentPlanService:
         plan are soft-deleted so they disappear from the odontogram. `performed`
         Treatments are always preserved as clinical history.
         """
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             return False
 
@@ -613,7 +618,34 @@ class TreatmentPlanService:
             .limit(1)
         )
         if paid_invoice.scalar_one_or_none() is not None:
-            raise ValueError("A plan with a paid invoice cannot be edited or deleted")
+            raise PlanPaidError("A plan with a paid invoice cannot be edited or deleted")
+
+    @staticmethod
+    async def _prepare_plan_for_contract_edit(
+        db: AsyncSession,
+        clinic_id: UUID,
+        plan_id: UUID,
+        user_id: UUID,
+    ) -> TreatmentPlan | None:
+        """Lock a plan before changing its confirmed treatment contract.
+
+        A pending plan has already been confirmed by a clinician. Any change
+        to its procedures, order, or session pricing invalidates that review,
+        so cancel the draft quote and return the plan to ``draft`` first.
+        Sent/accepted quotes remain immutable; a paid quote is rejected even
+        when its invoice is the only remaining link to the contract.
+        """
+        plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
+        if plan is None:
+            return None
+
+        await TreatmentPlanService._ensure_plan_not_paid(db, clinic_id, plan)
+        if _is_plan_locked(plan):
+            raise PlanLockedError("Plan is locked by an active budget")
+
+        if plan.status == "pending":
+            plan = await TreatmentPlanService.reopen(db, clinic_id, plan_id, user_id)
+        return plan
 
     @staticmethod
     async def _cleanup_orphan_planned_treatments(
@@ -673,18 +705,27 @@ class TreatmentPlanService:
         user_id: UUID | None = None,
     ) -> PlannedTreatmentItem:
         """Add a Treatment to the plan as a new item."""
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = (
+            await TreatmentPlanService._prepare_plan_for_contract_edit(
+                db, clinic_id, plan_id, user_id
+            )
+            if user_id is not None
+            else await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
+        )
         if not plan:
             raise ValueError("Treatment plan not found")
 
-        # Terminal states only — whether the plan is contractually frozen
-        # is the lock's job below, not the status's. `pending` with a
-        # draft budget stays editable and syncs into that budget.
-        if plan.status not in ("draft", "pending", "active"):
-            raise ValueError("Cannot add items to a completed/closed plan")
+        if user_id is None:
+            await TreatmentPlanService._ensure_plan_not_paid(db, clinic_id, plan)
+            if _is_plan_locked(plan):
+                raise PlanLockedError("Plan is locked by an active budget")
+            if plan.status == "pending":
+                raise ValueError("user_id is required to reopen a confirmed plan")
 
-        if _is_plan_locked(plan):
-            raise PlanLockedError("Plan is locked by an active budget")
+        # Contract edits are made on a draft. A confirmed plan is reopened
+        # above, while an accepted/active plan remains locked.
+        if plan.status != "draft":
+            raise ValueError("Cannot add items to a completed/closed plan")
 
         treatment_id = data.get("treatment_id")
         create_treatment = data.get("create_treatment")
@@ -827,20 +868,30 @@ class TreatmentPlanService:
         plan_id: UUID,
         item_id: UUID,
         data: dict,
+        user_id: UUID,
     ) -> PlannedTreatmentItem | None:
         """Update scheduling metadata on a planned treatment item."""
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        non_doctor_keys = {k for k in data if k != "assigned_professional_id"}
+        if non_doctor_keys:
+            plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
+                db, clinic_id, plan_id, user_id
+            )
+        else:
+            plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
+            if plan:
+                await TreatmentPlanService._ensure_plan_not_paid(db, clinic_id, plan)
+                if plan.status == "pending":
+                    plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
+                        db, clinic_id, plan_id, user_id
+                    )
         if not plan:
             return None
 
         # The plan-lock guard protects the patient-facing contract: items,
-        # prices, sequence. Reassigning who performs a treatment doesn't
-        # change that contract, so doctor-only updates skip the guard —
-        # clinicians need to swap responsibility even after the plan is
-        # validated. Any other field still respects the lock.
-        non_doctor_keys = {k for k in data if k != "assigned_professional_id"}
-        if non_doctor_keys and _is_plan_locked(plan):
-            raise PlanLockedError("Plan is locked by an active budget")
+        # prices, sequence. Reassigning the doctor on an active plan is
+        # operational, but any edit after confirmation reopens it for review.
+        if non_doctor_keys and plan.status != "draft":
+            raise ValueError("Only draft plans can be edited")
 
         result = await db.execute(
             select(PlannedTreatmentItem)
@@ -882,6 +933,7 @@ class TreatmentPlanService:
         clinic_id: UUID,
         plan_id: UUID,
         item_ids: list[UUID],
+        user_id: UUID,
     ) -> list[PlannedTreatmentItem] | None:
         """Set `sequence_order` of items to match the position in `item_ids`.
 
@@ -889,21 +941,13 @@ class TreatmentPlanService:
         extras). Returns the reordered items or None if the plan does not exist.
         Raises ValueError on validation failure.
         """
-        # Load plan to confirm ownership (with budget for lock check).
-        plan_q = await db.execute(
-            select(TreatmentPlan)
-            .where(
-                TreatmentPlan.id == plan_id,
-                TreatmentPlan.clinic_id == clinic_id,
-                TreatmentPlan.deleted_at.is_(None),
-            )
-            .options(selectinload(TreatmentPlan.budget))
+        plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
+            db, clinic_id, plan_id, user_id
         )
-        plan = plan_q.scalar_one_or_none()
         if not plan:
             return None
-        if _is_plan_locked(plan):
-            raise PlanLockedError("Plan is locked by an active budget")
+        if plan.status != "draft":
+            raise ValueError("Only draft plans can be edited")
 
         # Load current items.
         items_q = await db.execute(
@@ -953,11 +997,13 @@ class TreatmentPlanService:
         the Treatment so the odontogram reflects the removal. `performed` Treatments
         are kept (clinical history).
         """
-        plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
+        plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
+            db, clinic_id, plan_id, user_id
+        )
         if not plan:
             return False
-        if _is_plan_locked(plan):
-            raise PlanLockedError("Plan is locked by an active budget")
+        if plan.status != "draft":
+            raise ValueError("Only draft plans can be edited")
 
         result = await db.execute(
             select(PlannedTreatmentItem).where(
@@ -1256,6 +1302,13 @@ class TreatmentPlanService:
         notes: str | None = None,
     ) -> PlannedTreatmentItem | None:
         """Mark a pending session as cancelled (no earned entry generated)."""
+        plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
+            db, clinic_id, plan_id, user_id
+        )
+        if not plan:
+            return None
+        if plan.status != "draft":
+            raise ValueError("Only draft plans can be edited")
         item = await TreatmentPlanService._load_item_with_sessions(db, clinic_id, plan_id, item_id)
         if not item:
             return None
@@ -1297,8 +1350,16 @@ class TreatmentPlanService:
         item_id: UUID,
         session_id: UUID,
         data: dict,
+        user_id: UUID,
     ) -> PlannedTreatmentItem | None:
         """Edit a pending session's label/amount/notes."""
+        plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
+            db, clinic_id, plan_id, user_id
+        )
+        if not plan:
+            return None
+        if plan.status != "draft":
+            raise ValueError("Only draft plans can be edited")
         item = await TreatmentPlanService._load_item_with_sessions(db, clinic_id, plan_id, item_id)
         if not item:
             return None
@@ -1323,8 +1384,16 @@ class TreatmentPlanService:
         plan_id: UUID,
         item_id: UUID,
         data: dict,
+        user_id: UUID,
     ) -> PlannedTreatmentItem | None:
         """Append a new session row at the next sequence number."""
+        plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
+            db, clinic_id, plan_id, user_id
+        )
+        if not plan:
+            return None
+        if plan.status != "draft":
+            raise ValueError("Only draft plans can be edited")
         item = await TreatmentPlanService._load_item_with_sessions(db, clinic_id, plan_id, item_id)
         if not item:
             return None
@@ -1349,8 +1418,16 @@ class TreatmentPlanService:
         plan_id: UUID,
         item_id: UUID,
         session_id: UUID,
+        user_id: UUID,
     ) -> PlannedTreatmentItem | None:
         """Remove a pending session. Refuses on completed/cancelled sessions."""
+        plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
+            db, clinic_id, plan_id, user_id
+        )
+        if not plan:
+            return None
+        if plan.status != "draft":
+            raise ValueError("Only draft plans can be edited")
         item = await TreatmentPlanService._load_item_with_sessions(db, clinic_id, plan_id, item_id)
         if not item:
             return None
@@ -1870,6 +1947,8 @@ class TreatmentPlanService:
             raise ValueError("Plan not found")
         if plan.status != "pending":
             raise ValueError(f"Cannot reopen plan in status '{plan.status}'")
+
+        await TreatmentPlanService._ensure_plan_not_paid(db, clinic_id, plan)
 
         # Cancel linked budget if one exists. The plan ↔ budget unlock
         # is the established carve-out (treatment_plan depends on

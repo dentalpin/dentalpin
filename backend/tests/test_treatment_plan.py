@@ -669,15 +669,10 @@ async def _send_plan_budget(client: AsyncClient, auth_headers: dict, plan_id: st
 
 
 @pytest.mark.asyncio
-async def test_add_item_allowed_on_draft_budget_blocked_once_sent(
+async def test_adding_item_after_confirmation_reopens_and_requires_reconfirmation(
     client: AsyncClient, auth_headers: dict, setup: dict
 ) -> None:
-    """A draft budget does not lock the plan; sending it does.
-
-    The draft never left the clinic, so the plan stays editable and the
-    budget module mirrors the edit into the draft. Once the budget is
-    sent it becomes a patient-facing contract — 409 from then on.
-    """
+    """A confirmed plan returns to draft when its treatment contract changes."""
     plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
 
     # Confirm the plan (auto-creates a draft budget).
@@ -686,16 +681,29 @@ async def test_add_item_allowed_on_draft_budget_blocked_once_sent(
         headers=auth_headers,
     )
     assert r.status_code == 200, r.text
+    original_budget_id = r.json()["data"]["budget_id"]
 
-    # Draft budget → still editable (Telegram report: users had to
-    # accept the quote just to keep choosing treatments).
+    # Any change after confirmation cancels the old draft quote and reopens
+    # the plan, so the clinician must review the new procedure list again.
     new_treatment_id = await _create_treatment(client, auth_headers, setup, tooth_number=15)
     r = await client.post(
         f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
         headers=auth_headers,
         json={"treatment_id": new_treatment_id},
     )
-    assert r.status_code in (200, 201), r.text
+    assert r.status_code == 201, r.text
+    reopened = await client.get(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers
+    )
+    assert reopened.json()["data"]["status"] == "draft", reopened.text
+    assert reopened.json()["data"]["budget"]["status"] == "cancelled", reopened.text
+
+    confirmed = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/confirm", headers=auth_headers
+    )
+    assert confirmed.status_code == 200, confirmed.text
+    assert confirmed.json()["data"]["status"] == "pending"
+    assert confirmed.json()["data"]["budget_id"] != original_budget_id
 
     # Sent budget → locked.
     await _send_plan_budget(client, auth_headers, plan_id)
@@ -709,27 +717,29 @@ async def test_add_item_allowed_on_draft_budget_blocked_once_sent(
 
 
 @pytest.mark.asyncio
-async def test_remove_item_allowed_on_draft_budget_blocked_once_sent(
+async def test_removing_item_after_confirmation_reopens_and_sent_budget_stays_locked(
     client: AsyncClient, auth_headers: dict, setup: dict
 ) -> None:
     plan_id, item_ids = await _create_plan_with_items(client, auth_headers, setup, [16, 15])
-
-    await client.patch(
-        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/status",
-        headers=auth_headers,
-        json={"status": "active"},
+    confirmed = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/confirm", headers=auth_headers
     )
-    await client.post(
-        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/generate-budget",
-        headers=auth_headers,
-    )
+    assert confirmed.status_code == 200, confirmed.text
 
-    # Draft budget → removal allowed.
     r = await client.delete(
         f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}",
         headers=auth_headers,
     )
-    assert r.status_code in (200, 204), r.text
+    assert r.status_code == 204, r.text
+    reopened = await client.get(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers
+    )
+    assert reopened.json()["data"]["status"] == "draft", reopened.text
+
+    confirmed = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/confirm", headers=auth_headers
+    )
+    assert confirmed.status_code == 200, confirmed.text
 
     # Sent budget → locked.
     await _send_plan_budget(client, auth_headers, plan_id)
@@ -738,6 +748,110 @@ async def test_remove_item_allowed_on_draft_budget_blocked_once_sent(
         headers=auth_headers,
     )
     assert r.status_code == 409, r.text
+
+
+@pytest.mark.asyncio
+async def test_paid_plan_rejects_item_session_and_delete_mutations(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup: dict,
+    db_session: AsyncSession,
+) -> None:
+    """A paid quote is immutable through every contract-edit route."""
+    from app.modules.billing.models import Invoice
+
+    plan_id, item_ids = await _create_plan_with_items(client, auth_headers, setup, [16])
+    budget_id = await _activate_plan(client, auth_headers, db_session, plan_id)
+    item = (
+        await client.get(f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers)
+    ).json()["data"]["items"][0]
+    session_id = item["sessions"][0]["id"]
+    db_session.add(
+        Invoice(
+            clinic_id=UUID(setup["clinic_id"]),
+            patient_id=UUID(setup["patient_id"]),
+            created_by=UUID(setup["user_id"]),
+            budget_id=UUID(budget_id),
+            status="paid",
+        )
+    )
+    await db_session.commit()
+
+    add = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
+        headers=auth_headers,
+        json={
+            "create_treatment": {
+                "catalog_item_id": setup["crown_id"],
+                "tooth_numbers": [15],
+            }
+        },
+    )
+    assert add.status_code == 409, add.text
+
+    update_plan = await client.put(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}",
+        headers=auth_headers,
+        json={"title": "Changed after payment"},
+    )
+    assert update_plan.status_code == 409, update_plan.text
+
+    update_item = await client.put(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}",
+        headers=auth_headers,
+        json={"notes": "Changed after payment"},
+    )
+    assert update_item.status_code == 409, update_item.text
+
+    reorder = await client.patch(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/reorder",
+        headers=auth_headers,
+        json={"item_ids": item_ids},
+    )
+    assert reorder.status_code == 409, reorder.text
+
+    update_session = await client.put(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}/sessions/{session_id}",
+        headers=auth_headers,
+        json={"amount": 1},
+    )
+    assert update_session.status_code == 409, update_session.text
+
+    add_session = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}/sessions",
+        headers=auth_headers,
+        json={"label": "Extra", "amount": 1},
+    )
+    assert add_session.status_code == 409, add_session.text
+
+    delete_session = await client.delete(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}/sessions/{session_id}",
+        headers=auth_headers,
+    )
+    assert delete_session.status_code == 409, delete_session.text
+
+    cancel_session = await client.patch(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}/sessions/{session_id}/cancel",
+        headers=auth_headers,
+        json={},
+    )
+    assert cancel_session.status_code == 409, cancel_session.text
+
+    remove_item = await client.delete(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_ids[0]}",
+        headers=auth_headers,
+    )
+    assert remove_item.status_code == 409, remove_item.text
+
+    reopen_plan = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/reopen", headers=auth_headers
+    )
+    assert reopen_plan.status_code == 409, reopen_plan.text
+
+    delete_plan = await client.delete(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers
+    )
+    assert delete_plan.status_code == 409, delete_plan.text
 
 
 @pytest.mark.asyncio

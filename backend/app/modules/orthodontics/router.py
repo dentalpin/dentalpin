@@ -283,6 +283,7 @@ async def generate_schedule(
             data.monthly_amount,
             data.down_payment_label,
             data.installment_labels,
+            user_id=ctx.user_id,
         )
     except LookupError as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc

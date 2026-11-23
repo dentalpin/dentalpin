@@ -30,7 +30,7 @@ related_paths:
   - backend/app/modules/agenda/frontend/pages/appointments/index.vue
   - backend/app/modules/agenda/frontend/pages/p/check-in/[token].vue
   - backend/app/modules/agenda/router.py
-last_verified_commit: 3f08dd038cc70b5d2d988e49b8029c06f42ad5b3
+last_verified_commit: 4e5364c6
 ---
 
 # Citas
@@ -155,3 +155,12 @@ escrito a mano.
 - **El calendario solo va de 08:00 a 21:00.** El módulo `schedules`
   no está instalado o no tiene horario configurado; la agenda usa la
   ventana por defecto.
+
+## Crear una cita con asistente
+
+Selecciona paciente, fecha, hora de inicio y profesional antes de
+guardar. El botón se muestra deshabilitado hasta completar los datos
+obligatorios; al pulsarlo cuando falta alguno, resalta los campos
+incompletos y no envía la solicitud. La lista opcional solo incluye
+asistentes activos de esta clínica. La API no permite asignar usuarios
+de otra clínica.

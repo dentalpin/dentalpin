@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- ui: appointment validation now allows a disabled-looking save action to reveal missing required fields, marks them invalid accessibly, and still prevents incomplete requests; the assistant selector remains validated against clinic membership server-side.
 - fix(i18n): closed-clinic / off-duty tooltips and the appointment duration options used hardcoded Spanish / English text; now `appointments.freeSlots.*` and `common.durationMinutes`.
 
 - fix: moving an unassigned appointment over another unassigned one warned about a "same cabinet" overlap, because `null === null` counted as a match. An appointment with no cabinet now shares no cabinet; the warning about the same professional is unchanged. Found while checking #786.

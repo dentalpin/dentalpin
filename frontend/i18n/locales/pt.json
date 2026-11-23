@@ -467,7 +467,7 @@
     "createBudget": "Criar orçamento",
     "viewAllBudgets": "Ver todos os orçamentos",
     "activePlan": "Plano ativo",
-    "noActivePlan": "Sem plano ativo",
+    "noActivePlan": "Ainda não foi criado um plano de tratamento",
     "viewPlan": "Abrir plano",
     "createPlan": "Criar plano",
     "nextAppointment": "Próxima consulta",
@@ -780,13 +780,14 @@
       "continue": "Continuar",
       "odontogramTab": "Odontograma",
       "openNotes": "Abrir notas",
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "Escolha um diagnóstico e, em seguida, marque as superfícies afetadas",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
       "createNewPlanOption": "Create a new plan",
       "planFromDiagnosis": "Treatment plan for ‘{diagnosis}’",
-      "addToPlan": "Add to plan"
+      "addToPlan": "Add to plan",
+      "selectDiagnosis": "Selecionar diagnóstico"
     },
     "plans": {
       "title": "Planos de tratamento",
@@ -2084,7 +2085,8 @@
       "resend": "Reenviar",
       "sendReminder": "Enviar lembrete",
       "setPublicCode": "Definir código de acesso",
-      "unlockPublic": "Desbloquear acesso"
+      "unlockPublic": "Desbloquear acesso",
+      "openPreview": "Abrir orçamento"
     },
     "items": {
       "title": "Tratamentos",

@@ -5,6 +5,7 @@ export interface InfoItem {
   value?: string | number | null
   link?: { to: string, label?: string }
   copyable?: boolean
+  multiline?: boolean
 }
 
 interface Props {
@@ -48,17 +49,22 @@ async function copy(value: string | number) {
         <dt class="text-body text-muted shrink-0">
           {{ item.label }}
         </dt>
-        <dd class="text-body text-default text-end min-w-0 truncate flex items-center gap-1.5">
+        <dd
+          class="text-body text-default min-w-0"
+          :class="item.multiline
+            ? 'text-start whitespace-pre-wrap break-words'
+            : 'text-end truncate flex items-center justify-end gap-1.5'"
+        >
           <NuxtLink
             v-if="item.link"
             :to="item.link.to"
-            class="text-primary-accent hover:underline truncate"
+            :class="item.multiline ? 'text-primary-accent hover:underline break-words' : 'text-primary-accent hover:underline truncate'"
           >
             {{ item.link.label ?? item.value ?? '—' }}
           </NuxtLink>
           <span
             v-else
-            class="truncate"
+            :class="item.multiline ? 'break-words' : 'truncate'"
           >{{ item.value ?? '—' }}</span>
 
           <UButton

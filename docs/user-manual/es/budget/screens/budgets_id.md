@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: a13bd29
+last_verified_commit: 4e5364c6
 ---
 
 # Detalle del presupuesto
@@ -71,6 +71,13 @@ Desde aquí se mueve el presupuesto por todo su flujo
 - **Crear factura.** Si el presupuesto está *aceptado* y aún tiene
   ítems sin facturar, aparece el botón *Crear factura* que lleva a
   `/invoices/from-budget/{id}`.
+- **Abrir presupuesto.** El botón de la cabecera abre el PDF actual en
+  una pestaña nueva. La validez, el descuento global, las notas para el
+  paciente y el plan vinculado aparecen en la tarjeta lateral **Info**.
+- **Editar datos.** Usa **Editar** en las acciones de la cabecera. El
+  formulario aparece en la columna principal; guarda o cancela allí.
+  Si el presupuesto está vinculado a un plan, sus tratamientos siguen
+  gestionándose desde el plan.
 
 ## Editar líneas
 

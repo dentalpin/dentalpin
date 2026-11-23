@@ -82,7 +82,7 @@
       "noChanges": "No changes recorded"
     },
     "diagnosis": {
-      "chooseDiagnosisAndSurfaces": "Choose a diagnosis and mark surfaces if needed",
+      "chooseDiagnosisAndSurfaces": "Escolha um diagnóstico e depois marque as superfícies afetadas",
       "recommendedTreatmentTitle": "Add the procedure to a plan?",
       "recommendedTreatmentDescription": "The diagnosis ‘{diagnosis}’ on tooth {tooth} has a configured procedure. Choose a plan and confirm the addition.",
       "planForTreatment": "Treatment plan",
@@ -100,7 +100,8 @@
       "selectPlan": "Select plan",
       "continue": "Continue",
       "odontogramTab": "Odontogram",
-      "openNotes": "Open notes"
+      "openNotes": "Open notes",
+      "selectDiagnosis": "Selecionar diagnóstico"
     },
     "tooth": "Tooth"
   },
@@ -822,7 +823,7 @@
     "createBudget": "Create budget",
     "viewAllBudgets": "View all budgets",
     "activePlan": "Active plan",
-    "noActivePlan": "No active plan",
+    "noActivePlan": "Ainda não foi criado um plano de tratamento",
     "viewPlan": "Open plan",
     "createPlan": "Create plan",
     "nextAppointment": "Next appointment",
@@ -1817,7 +1818,8 @@
       "resend": "Resend",
       "sendReminder": "Send reminder",
       "setPublicCode": "Set access code",
-      "unlockPublic": "Unlock access"
+      "unlockPublic": "Unlock access",
+      "openPreview": "Abrir orçamento"
     },
     "items": {
       "title": "Treatments",

@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: 68b0262
+last_verified_commit: 4e5364c6
 ---
 
 # Detalle del plan de tratamiento
@@ -105,6 +105,17 @@ pestaña **Boca completa**:
 2. Se publica `treatment_plan.confirmed`. El plan pasa a `pending`.
 3. Si no había presupuesto enlazado, **Generar presupuesto** crea
    uno nuevo en el módulo `budget`.
+
+## Cambios tras la confirmación
+
+Al cambiar los tratamientos, el orden o el precio de las sesiones de un
+plan confirmado, este vuelve a `draft` y se cancela el presupuesto
+borrador anterior. Revisa el plan actualizado y vuelve a confirmarlo
+antes de generar otro presupuesto. Un presupuesto enviado o aceptado
+mantiene el plan bloqueado; usa el flujo de renegociación del presupuesto
+para modificar un acuerdo con el paciente. Una factura pagada impide
+editar el plan o las sesiones, reabrirlo y eliminarlo. Se permite
+registrar la finalización clínica para conservar el historial.
 
 ## Marcar ítems como ejecutados
 

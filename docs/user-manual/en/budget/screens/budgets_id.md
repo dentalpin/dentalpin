@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: a13bd29
+last_verified_commit: 4e5364c6
 ---
 
 # Budget detail
@@ -68,6 +68,12 @@ signed, invoiced, or renegotiated.
 - **Create invoice.** When the budget is *accepted* and still has
   uninvoiced items, a *Create invoice* button appears and takes you
   to `/invoices/from-budget/{id}`.
+- **Open quote.** The button in the header opens the current budget PDF
+  in a new tab. Validity dates, global discount, patient notes, and the
+  linked plan are grouped in the right-side **Info** card.
+- **Edit details.** Use **Edit** in the header action bar. The form
+  appears in the main column; save or cancel there. A plan-linked
+  budget still gets its treatment lines from the plan.
 
 ## Edit lines
 
