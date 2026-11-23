@@ -43,52 +43,52 @@ function handleContinue() {
 
 <template>
   <div class="flex flex-col sm:flex-row gap-2">
-      <!-- No drafts: Create new plan -->
-      <UButton
-        v-if="draftPlans.length === 0"
-        color="primary"
-        icon="i-lucide-plus"
-        size="lg"
-        class="w-full sm:flex-1 justify-center"
-        @click="emit('create')"
-      >
-        {{ t('clinical.diagnosis.createPlan') }}
-      </UButton>
+    <!-- No drafts: Create new plan -->
+    <UButton
+      v-if="draftPlans.length === 0"
+      color="primary"
+      icon="i-lucide-plus"
+      size="lg"
+      class="w-full sm:flex-1 justify-center"
+      @click="emit('create')"
+    >
+      {{ t('clinical.diagnosis.createPlan') }}
+    </UButton>
 
-      <!-- 1 draft: Continue that plan -->
+    <!-- 1 draft: Continue that plan -->
+    <UButton
+      v-else-if="soleDraft"
+      color="primary"
+      icon="i-lucide-arrow-right"
+      size="lg"
+      class="w-full sm:flex-1 justify-center"
+      @click="emit('continue', soleDraft.id)"
+    >
+      {{ t('clinical.diagnosis.continuePlan', { name: soleDraft.title || t('treatmentPlans.untitledPlan') }) }}
+    </UButton>
+
+    <!-- N drafts: Dropdown to select -->
+    <div
+      v-else
+      class="flex w-full items-center gap-2"
+    >
+      <USelectMenu
+        v-model="selectedDraftId"
+        :items="draftOptions"
+        value-key="value"
+        label-key="label"
+        :placeholder="t('clinical.diagnosis.selectPlan')"
+        class="min-w-0 flex-1"
+      />
       <UButton
-        v-else-if="soleDraft"
         color="primary"
         icon="i-lucide-arrow-right"
         size="lg"
-        class="w-full sm:flex-1 justify-center"
-        @click="emit('continue', soleDraft.id)"
+        :disabled="!selectedDraftId"
+        @click="handleContinue"
       >
-        {{ t('clinical.diagnosis.continuePlan', { name: soleDraft.title || t('treatmentPlans.untitledPlan') }) }}
+        {{ t('clinical.diagnosis.continue') }}
       </UButton>
-
-      <!-- N drafts: Dropdown to select -->
-      <div
-        v-else
-        class="flex w-full items-center gap-2"
-      >
-        <USelectMenu
-          v-model="selectedDraftId"
-          :items="draftOptions"
-          value-key="value"
-          label-key="label"
-          :placeholder="t('clinical.diagnosis.selectPlan')"
-          class="min-w-0 flex-1"
-        />
-        <UButton
-          color="primary"
-          icon="i-lucide-arrow-right"
-          size="lg"
-          :disabled="!selectedDraftId"
-          @click="handleContinue"
-        >
-          {{ t('clinical.diagnosis.continue') }}
-        </UButton>
-      </div>
+    </div>
   </div>
 </template>

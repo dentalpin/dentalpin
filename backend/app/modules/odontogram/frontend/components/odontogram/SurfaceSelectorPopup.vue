@@ -244,233 +244,233 @@ watch(() => props.open, (isOpen) => {
           class="surface-selection-step"
           data-testid="surface-selection-step"
         >
-        <div class="tooth-views">
-          <!-- Occlusal View -->
-          <div class="view-container">
-            <div class="view-label">
-              {{ t('odontogram.views.occlusal') }}
-            </div>
-            <svg
-              width="160"
-              height="160"
-              viewBox="0 0 50 50"
-              class="tooth-svg"
-            >
-              <!-- Pattern definition -->
-              <defs>
-                <clipPath :id="`occlusal-surface-clip-${toothNumber}`">
-                  <path :d="occlusalPaths.outline" />
-                </clipPath>
-                <pattern
-                  id="surface-pattern"
-                  patternUnits="userSpaceOnUse"
-                  width="4"
-                  height="4"
-                  patternTransform="rotate(45)"
-                >
-                  <line
-                    x1="0"
-                    y1="0"
-                    x2="0"
-                    y2="4"
-                    :stroke="treatmentColor"
-                    stroke-width="2"
-                  />
-                </pattern>
-              </defs>
+          <div class="tooth-views">
+            <!-- Occlusal View -->
+            <div class="view-container">
+              <div class="view-label">
+                {{ t('odontogram.views.occlusal') }}
+              </div>
+              <svg
+                width="160"
+                height="160"
+                viewBox="0 0 50 50"
+                class="tooth-svg"
+              >
+                <!-- Pattern definition -->
+                <defs>
+                  <clipPath :id="`occlusal-surface-clip-${toothNumber}`">
+                    <path :d="occlusalPaths.outline" />
+                  </clipPath>
+                  <pattern
+                    id="surface-pattern"
+                    patternUnits="userSpaceOnUse"
+                    width="4"
+                    height="4"
+                    patternTransform="rotate(45)"
+                  >
+                    <line
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="4"
+                      :stroke="treatmentColor"
+                      stroke-width="2"
+                    />
+                  </pattern>
+                </defs>
 
-              <!-- Tooth paths group with transform for quadrant symmetry -->
-              <g :transform="occlusalGroupTransform">
-                <!-- Outline (fill under, stroke redrawn after surfaces) -->
-                <path
-                  :d="occlusalPaths.outline"
-                  fill="var(--odontogram-fill-shade)"
-                  stroke="none"
-                />
-
-                <!-- Surfaces (clickable), clipped so silhouette stays anatomical -->
-                <g :clip-path="`url(#occlusal-surface-clip-${toothNumber})`">
+                <!-- Tooth paths group with transform for quadrant symmetry -->
+                <g :transform="occlusalGroupTransform">
+                  <!-- Outline (fill under, stroke redrawn after surfaces) -->
                   <path
-                    v-for="(path, surface) in occlusalPaths.surfaces"
-                    :key="surface"
-                    :d="path"
-                    :fill="getSurfaceFill(surface as Surface)"
-                    :opacity="getSurfaceOpacity(surface as Surface)"
-                    :stroke="isSurfaceSelected(surface as Surface) ? treatmentColor : 'var(--odontogram-outline-light)'"
-                    :stroke-width="isSurfaceSelected(surface as Surface) ? 2 : 0.5"
+                    :d="occlusalPaths.outline"
+                    fill="var(--odontogram-fill-shade)"
+                    stroke="none"
+                  />
+
+                  <!-- Surfaces (clickable), clipped so silhouette stays anatomical -->
+                  <g :clip-path="`url(#occlusal-surface-clip-${toothNumber})`">
+                    <path
+                      v-for="(path, surface) in occlusalPaths.surfaces"
+                      :key="surface"
+                      :d="path"
+                      :fill="getSurfaceFill(surface as Surface)"
+                      :opacity="getSurfaceOpacity(surface as Surface)"
+                      :stroke="isSurfaceSelected(surface as Surface) ? treatmentColor : 'var(--odontogram-outline-light)'"
+                      :stroke-width="isSurfaceSelected(surface as Surface) ? 2 : 0.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      class="surface-path"
+                      @click="toggleSurface(surface as Surface)"
+                    />
+                  </g>
+
+                  <!-- Highlight details (fissures) — drawn after fills so they remain visible -->
+                  <g
+                    :clip-path="`url(#occlusal-surface-clip-${toothNumber})`"
+                    pointer-events="none"
+                  >
+                    <path
+                      v-for="(highlightPath, idx) in occlusalPaths.highlight"
+                      :key="`occlusal-highlight-${idx}`"
+                      :d="highlightPath"
+                      fill="none"
+                      stroke="var(--odontogram-detail)"
+                      stroke-width="0.75"
+                      stroke-linecap="round"
+                    />
+                  </g>
+
+                  <!-- Crisp outline on top so the anatomical edge is never covered -->
+                  <path
+                    :d="occlusalPaths.outline"
+                    fill="none"
+                    stroke="var(--odontogram-outline)"
+                    stroke-width="1.25"
                     stroke-linecap="round"
                     stroke-linejoin="round"
-                    class="surface-path"
-                    @click="toggleSurface(surface as Surface)"
+                    pointer-events="none"
                   />
                 </g>
 
-                <!-- Highlight details (fissures) — drawn after fills so they remain visible -->
-                <g
-                  :clip-path="`url(#occlusal-surface-clip-${toothNumber})`"
-                  pointer-events="none"
-                >
-                  <path
-                    v-for="(highlightPath, idx) in occlusalPaths.highlight"
-                    :key="`occlusal-highlight-${idx}`"
-                    :d="highlightPath"
-                    fill="none"
-                    stroke="var(--odontogram-detail)"
-                    stroke-width="0.75"
-                    stroke-linecap="round"
-                  />
-                </g>
+                <!-- Surface labels (outside transform to remain readable) -->
+                <text
+                  :x="labelAnchors.M.x"
+                  :y="labelAnchors.M.y"
+                  class="surface-label"
+                  @click="toggleSurface('M')"
+                >M</text>
+                <text
+                  :x="labelAnchors.D.x"
+                  :y="labelAnchors.D.y"
+                  class="surface-label"
+                  @click="toggleSurface('D')"
+                >D</text>
+                <text
+                  :x="labelAnchors.V.x"
+                  :y="labelAnchors.V.y"
+                  class="surface-label"
+                  @click="toggleSurface('V')"
+                >V</text>
+                <text
+                  :x="labelAnchors.L.x"
+                  :y="labelAnchors.L.y"
+                  class="surface-label"
+                  @click="toggleSurface('L')"
+                >L</text>
+                <text
+                  :x="labelAnchors.O.x"
+                  :y="labelAnchors.O.y"
+                  class="surface-label-center"
+                  @click="toggleSurface('O')"
+                >O</text>
+              </svg>
+            </div>
 
-                <!-- Crisp outline on top so the anatomical edge is never covered -->
+            <!-- Lateral View -->
+            <div class="view-container">
+              <div class="view-label">
+                {{ t('odontogram.views.lateral') }}
+              </div>
+              <svg
+                :width="lateralDimensions.displayWidth"
+                :height="lateralDimensions.displayHeight"
+                :viewBox="lateralViewBox"
+                class="tooth-svg lateral"
+                :style="{ transform: toothTransform, transformOrigin: 'center center' }"
+              >
+                <!-- Gum line -->
                 <path
-                  :d="occlusalPaths.outline"
+                  :d="lateralPaths.gumLine"
                   fill="none"
+                  stroke="var(--odontogram-gum)"
+                  stroke-width="1.5"
+                />
+
+                <!-- Crown -->
+                <path
+                  :d="lateralPaths.crown"
+                  fill="var(--odontogram-fill)"
                   stroke="var(--odontogram-outline)"
                   stroke-width="1.25"
                   stroke-linecap="round"
                   stroke-linejoin="round"
-                  pointer-events="none"
                 />
-              </g>
 
-              <!-- Surface labels (outside transform to remain readable) -->
-              <text
-                :x="labelAnchors.M.x"
-                :y="labelAnchors.M.y"
-                class="surface-label"
-                @click="toggleSurface('M')"
-              >M</text>
-              <text
-                :x="labelAnchors.D.x"
-                :y="labelAnchors.D.y"
-                class="surface-label"
-                @click="toggleSurface('D')"
-              >D</text>
-              <text
-                :x="labelAnchors.V.x"
-                :y="labelAnchors.V.y"
-                class="surface-label"
-                @click="toggleSurface('V')"
-              >V</text>
-              <text
-                :x="labelAnchors.L.x"
-                :y="labelAnchors.L.y"
-                class="surface-label"
-                @click="toggleSurface('L')"
-              >L</text>
-              <text
-                :x="labelAnchors.O.x"
-                :y="labelAnchors.O.y"
-                class="surface-label-center"
-                @click="toggleSurface('O')"
-              >O</text>
-            </svg>
-          </div>
+                <!-- Highlight details -->
+                <path
+                  v-for="(highlightPath, idx) in lateralPaths.highlight"
+                  :key="`highlight-${idx}`"
+                  :d="highlightPath"
+                  fill="none"
+                  stroke="var(--odontogram-detail)"
+                  stroke-width="0.75"
+                  stroke-linecap="round"
+                />
 
-          <!-- Lateral View -->
-          <div class="view-container">
-            <div class="view-label">
-              {{ t('odontogram.views.lateral') }}
-            </div>
-            <svg
-              :width="lateralDimensions.displayWidth"
-              :height="lateralDimensions.displayHeight"
-              :viewBox="lateralViewBox"
-              class="tooth-svg lateral"
-              :style="{ transform: toothTransform, transformOrigin: 'center center' }"
-            >
-              <!-- Gum line -->
-              <path
-                :d="lateralPaths.gumLine"
-                fill="none"
-                stroke="var(--odontogram-gum)"
-                stroke-width="1.5"
-              />
-
-              <!-- Crown -->
-              <path
-                :d="lateralPaths.crown"
-                fill="var(--odontogram-fill)"
-                stroke="var(--odontogram-outline)"
-                stroke-width="1.25"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-              />
-
-              <!-- Highlight details -->
-              <path
-                v-for="(highlightPath, idx) in lateralPaths.highlight"
-                :key="`highlight-${idx}`"
-                :d="highlightPath"
-                fill="none"
-                stroke="var(--odontogram-detail)"
-                stroke-width="0.75"
-                stroke-linecap="round"
-              />
-
-              <!-- The lateral aspect is the vestibular face. Making the
+                <!-- The lateral aspect is the vestibular face. Making the
                    crown itself a keyboard-accessible hit target lets a
                    clinician select it directly from the side view. -->
-              <path
-                :d="lateralPaths.crown"
-                fill="transparent"
-                stroke="transparent"
-                class="lateral-surface-target"
-                role="button"
-                tabindex="0"
-                data-testid="lateral-surface-v"
-                :aria-label="t('odontogram.surfaces.V')"
-                :aria-pressed="isSurfaceSelected('V')"
-                @click="toggleSurface('V')"
-                @keydown.enter.prevent="toggleSurface('V')"
-                @keydown.space.prevent="toggleSurface('V')"
-              />
-            </svg>
+                <path
+                  :d="lateralPaths.crown"
+                  fill="transparent"
+                  stroke="transparent"
+                  class="lateral-surface-target"
+                  role="button"
+                  tabindex="0"
+                  data-testid="lateral-surface-v"
+                  :aria-label="t('odontogram.surfaces.V')"
+                  :aria-pressed="isSurfaceSelected('V')"
+                  @click="toggleSurface('V')"
+                  @keydown.enter.prevent="toggleSurface('V')"
+                  @keydown.space.prevent="toggleSurface('V')"
+                />
+              </svg>
+            </div>
           </div>
-        </div>
 
-        <!-- Surface buttons -->
-        <div class="surface-buttons">
-          <button
-            v-for="surface in allSurfaces"
-            :key="surface"
-            type="button"
-            class="surface-btn"
-            :class="{ selected: isSurfaceSelected(surface) }"
-            :style="isSurfaceSelected(surface) ? { borderColor: treatmentColor, backgroundColor: treatmentColor + '15' } : {}"
-            @click="toggleSurface(surface)"
-          >
-            <span class="surface-letter">{{ surface }}</span>
-            <span class="surface-name">{{ t(`odontogram.surfaces.${surface}`) }}</span>
-          </button>
-        </div>
-
-        <!-- Selected surfaces summary -->
-        <div
-          v-if="selectedSurfaces.length > 0"
-          class="selected-summary"
-        >
-          <span class="summary-label">{{ t('odontogram.selectedSurfaces') }}:</span>
-          <div class="summary-badges">
-            <span
-              v-for="surface in selectedSurfaces"
+          <!-- Surface buttons -->
+          <div class="surface-buttons">
+            <button
+              v-for="surface in allSurfaces"
               :key="surface"
-              class="summary-badge"
-              :style="{ backgroundColor: treatmentColor + '20', color: treatmentColor }"
+              type="button"
+              class="surface-btn"
+              :class="{ selected: isSurfaceSelected(surface) }"
+              :style="isSurfaceSelected(surface) ? { borderColor: treatmentColor, backgroundColor: treatmentColor + '15' } : {}"
+              @click="toggleSurface(surface)"
             >
-              {{ surface }} - {{ t(`odontogram.surfaces.${surface}`) }}
-            </span>
+              <span class="surface-letter">{{ surface }}</span>
+              <span class="surface-name">{{ t(`odontogram.surfaces.${surface}`) }}</span>
+            </button>
           </div>
-        </div>
 
-        <!-- Tooth info -->
-        <div class="tooth-info">
-          <UIcon
-            name="i-lucide-info"
-            class="w-4 h-4"
-          />
-          <span>{{ toothName }}</span>
-        </div>
+          <!-- Selected surfaces summary -->
+          <div
+            v-if="selectedSurfaces.length > 0"
+            class="selected-summary"
+          >
+            <span class="summary-label">{{ t('odontogram.selectedSurfaces') }}:</span>
+            <div class="summary-badges">
+              <span
+                v-for="surface in selectedSurfaces"
+                :key="surface"
+                class="summary-badge"
+                :style="{ backgroundColor: treatmentColor + '20', color: treatmentColor }"
+              >
+                {{ surface }} - {{ t(`odontogram.surfaces.${surface}`) }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Tooth info -->
+          <div class="tooth-info">
+            <UIcon
+              name="i-lucide-info"
+              class="w-4 h-4"
+            />
+            <span>{{ toothName }}</span>
+          </div>
         </div>
       </div>
     </template>
