@@ -1899,7 +1899,8 @@
       "load": "Błąd podczas wczytywania planów leczenia",
       "create": "Błąd podczas tworzenia planu leczenia",
       "update": "Błąd podczas aktualizacji planu leczenia",
-      "delete": "Błąd podczas usuwania planu leczenia"
+      "delete": "Błąd podczas usuwania planu leczenia",
+      "treatmentAlreadyPlanned": "Ten zabieg jest już w planie {plan}"
     },
     "notes": {
       "title": "Notatki kliniczne",

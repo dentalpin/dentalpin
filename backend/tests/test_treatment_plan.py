@@ -277,39 +277,112 @@ async def test_add_global_treatment_from_unmapped_item_to_plan(
     assert items[0]["treatment_id"] == treatment["id"]
 
 
-@pytest.mark.asyncio
-async def test_duplicate_treatment_id_rejected(
-    client: AsyncClient, auth_headers: dict, setup: dict
-) -> None:
-    plan_resp = await client.post(
+async def _new_plan(client: AsyncClient, auth_headers: dict, setup: dict) -> dict:
+    resp = await client.post(
         "/api/v1/treatment_plan/treatment-plans",
         headers=auth_headers,
         json={"patient_id": setup["patient_id"]},
     )
-    plan_id = plan_resp.json()["data"]["id"]
-    treatment_id = await _create_treatment(client, auth_headers, setup)
+    assert resp.status_code == 201, resp.text
+    return resp.json()["data"]
 
-    first = await client.post(
-        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
+
+@pytest.mark.asyncio
+async def test_duplicate_treatment_id_rejected(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """Re-adding a Treatment to the same plan is a 409, not an IntegrityError 500 (#1073)."""
+    plan = await _new_plan(client, auth_headers, setup)
+    treatment_id = await _create_treatment(client, auth_headers, setup)
+    url = f"/api/v1/treatment_plan/treatment-plans/{plan['id']}/items"
+
+    first = await client.post(url, headers=auth_headers, json={"treatment_id": treatment_id})
+    assert first.status_code == 201, first.text
+
+    second = await client.post(url, headers=auth_headers, json={"treatment_id": treatment_id})
+    assert second.status_code == 409, second.text
+    assert second.json()["message"] == f"treatment_already_planned:{plan['plan_number']}"
+
+    # The session stayed usable and nothing was half-written.
+    detail = await client.get(
+        f"/api/v1/treatment_plan/treatment-plans/{plan['id']}", headers=auth_headers
+    )
+    assert [i["treatment_id"] for i in detail.json()["data"]["items"]] == [treatment_id]
+
+
+@pytest.mark.asyncio
+async def test_treatment_held_by_another_plan_rejected_naming_that_plan(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """A Treatment on another plan answers 409 naming that plan (#1073)."""
+    holder = await _new_plan(client, auth_headers, setup)
+    treatment_id = await _create_treatment(client, auth_headers, setup)
+    added = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{holder['id']}/items",
         headers=auth_headers,
         json={"treatment_id": treatment_id},
     )
-    assert first.status_code == 201
+    assert added.status_code == 201, added.text
 
-    # Unique constraint on treatment_id — second add raises IntegrityError
-    # which the handler surfaces as a 5xx. Capture the exception to keep the
-    # assertion focused on "the duplicate was blocked".
-    from sqlalchemy.exc import IntegrityError
+    other = await _new_plan(client, auth_headers, setup)
+    resp = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{other['id']}/items",
+        headers=auth_headers,
+        json={"treatment_id": treatment_id},
+    )
+    assert resp.status_code == 409, resp.text
+    assert resp.json()["message"] == f"treatment_already_planned:{holder['plan_number']}"
 
-    try:
-        second = await client.post(
-            f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
-            headers=auth_headers,
-            json={"treatment_id": treatment_id},
+
+@pytest.mark.asyncio
+async def test_add_item_race_backstop_maps_integrity_error(
+    db_session: AsyncSession,
+    client: AsyncClient,
+    auth_headers: dict,
+    setup: dict,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A concurrent add that slips past the pre-check still ends as the domain error.
+
+    The pre-check is blinded once so the INSERT hits
+    ``uq_planned_item_treatment``; the savepoint must turn that into
+    ``TreatmentAlreadyPlannedError`` and leave the session usable.
+    """
+    from uuid import UUID
+
+    from app.modules.treatment_plan import service as tp_service
+
+    plan = await _new_plan(client, auth_headers, setup)
+    treatment_id = await _create_treatment(client, auth_headers, setup)
+    added = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan['id']}/items",
+        headers=auth_headers,
+        json={"treatment_id": treatment_id},
+    )
+    assert added.status_code == 201, added.text
+
+    real = tp_service._plan_number_holding
+    calls = {"n": 0}
+
+    async def blind_once(db, clinic_id, tid):
+        calls["n"] += 1
+        if calls["n"] == 1:
+            return None
+        return await real(db, clinic_id, tid)
+
+    monkeypatch.setattr(tp_service, "_plan_number_holding", blind_once)
+
+    with pytest.raises(tp_service.TreatmentAlreadyPlannedError) as exc_info:
+        await tp_service.TreatmentPlanService.add_item(
+            db_session,
+            UUID(setup["clinic_id"]),
+            UUID(plan["id"]),
+            {"treatment_id": UUID(treatment_id)},
         )
-        assert second.status_code in (400, 409, 500)
-    except IntegrityError:
-        pass
+    assert exc_info.value.plan_number == plan["plan_number"]
+    assert calls["n"] == 2
+    # Savepoint rolled back only the failed INSERT: the session still works.
+    assert (await db_session.execute(select(1))).scalar_one() == 1
 
 
 # ---------------------------------------------------------------------------

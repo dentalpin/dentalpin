@@ -13,6 +13,7 @@ import type {
   TreatmentPlanStatusUpdate,
   TreatmentPlanUpdate
 } from '~~/app/types'
+import { alreadyPlannedIn } from '../utils/addItemError'
 
 /**
  * Price the patient actually pays for a plan item: the sum of its
@@ -240,8 +241,11 @@ export function useTreatmentPlans() {
       return response.data
     } catch (error) {
       console.error('Error adding treatment item:', error)
+      const holder = alreadyPlannedIn(error)
       toast.add({
-        title: t('errors.createFailed'),
+        title: holder === null
+          ? t('errors.createFailed')
+          : t('treatmentPlans.errors.treatmentAlreadyPlanned', { plan: holder }),
         color: 'error'
       })
       return null

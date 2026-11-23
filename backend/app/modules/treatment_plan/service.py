@@ -8,6 +8,7 @@ from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import func, or_, select, update
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -177,6 +178,43 @@ class PlanLockedError(ValueError):
 
 class PlanItemBookedError(ValueError):
     """Raised when removing an item still booked into a non-cancelled appointment."""
+
+
+class TreatmentAlreadyPlannedError(ValueError):
+    """Raised when a Treatment already sits on a plan item (#1073).
+
+    ``uq_planned_item_treatment`` allows one item per Treatment across
+    every plan, closed or deleted ones included. ``plan_number`` names
+    the plan that holds it so the client can say where it is.
+    """
+
+    code = "treatment_already_planned"
+
+    def __init__(self, plan_number: str | None) -> None:
+        self.plan_number = plan_number
+        super().__init__(f"{self.code}:{plan_number or ''}")
+
+
+async def _plan_number_holding(db: AsyncSession, clinic_id: UUID, treatment_id: UUID) -> str | None:
+    """Plan number of the item already holding ``treatment_id``, if any.
+
+    Ignores ``deleted_at`` on purpose: the unique constraint does too.
+    Returns ``""`` when an item exists but its plan has no number.
+    """
+    result = await db.execute(
+        select(TreatmentPlan.plan_number)
+        .join(
+            PlannedTreatmentItem,
+            PlannedTreatmentItem.treatment_plan_id == TreatmentPlan.id,
+        )
+        .where(
+            PlannedTreatmentItem.treatment_id == treatment_id,
+            PlannedTreatmentItem.clinic_id == clinic_id,
+        )
+        .limit(1)
+    )
+    row = result.first()
+    return None if row is None else (row[0] or "")
 
 
 TERMINAL_BUDGET_STATUSES = frozenset({"cancelled", "rejected", "expired"})
@@ -646,6 +684,13 @@ class TreatmentPlanService:
         ):
             raise ValueError("Invalid treatment for this plan")
 
+        # One plan item per Treatment (``uq_planned_item_treatment``).
+        # Answer the clash as a domain error instead of an IntegrityError
+        # 500 (#1073); the savepoint below backstops the race.
+        holder = await _plan_number_holding(db, clinic_id, treatment_id)
+        if holder is not None:
+            raise TreatmentAlreadyPlannedError(holder)
+
         sequence_order = data.get("sequence_order")
         if sequence_order is None:
             result = await db.execute(
@@ -673,8 +718,17 @@ class TreatmentPlanService:
             notes=data.get("notes"),
             assigned_professional_id=assigned_professional_id,
         )
-        db.add(item)
-        await db.flush()
+        try:
+            async with db.begin_nested():
+                db.add(item)
+                await db.flush()
+        except IntegrityError as exc:
+            # A concurrent add won between the check above and this flush.
+            # The savepoint rollback keeps the session usable.
+            holder = await _plan_number_holding(db, clinic_id, treatment_id)
+            if holder is None:
+                raise
+            raise TreatmentAlreadyPlannedError(holder) from exc
 
         # Pre-load the catalog template before snapshotting sessions.
         from app.modules.catalog.models import TreatmentCatalogItem

@@ -31,7 +31,12 @@ from .schemas import (
     TreatmentPlanUpdate,
     UpdateSessionRequest,
 )
-from .service import PlanItemBookedError, PlanLockedError, TreatmentPlanService
+from .service import (
+    PlanItemBookedError,
+    PlanLockedError,
+    TreatmentAlreadyPlannedError,
+    TreatmentPlanService,
+)
 
 router = APIRouter()
 
@@ -397,7 +402,10 @@ async def add_plan_item(
     try:
         item = await TreatmentPlanService.add_item(db, ctx.clinic_id, plan_id, data.model_dump())
         return ApiResponse(data=PlannedTreatmentItemResponse.model_validate(item))
-    except PlanLockedError as e:
+    except (PlanLockedError, TreatmentAlreadyPlannedError) as e:
+        # TreatmentAlreadyPlannedError's detail is the machine-stable
+        # ``treatment_already_planned:<plan_number>`` the client splits
+        # on the first colon to show a translated message (#1073).
         raise HTTPException(status_code=409, detail=str(e))
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))

@@ -1899,7 +1899,8 @@
       "load": "Errore nel caricamento dei piani di cura",
       "create": "Errore nella creazione del piano di cura",
       "update": "Errore nell'aggiornamento del piano di cura",
-      "delete": "Errore nell'eliminazione del piano di cura"
+      "delete": "Errore nell'eliminazione del piano di cura",
+      "treatmentAlreadyPlanned": "Questo trattamento è già nel piano {plan}"
     },
     "notes": {
       "title": "Note cliniche",
