@@ -3,8 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import type { VueWrapper } from '@vue/test-utils'
 import RequestsPage from '#module-layers/online_booking/frontend/pages/online-booking/index.vue'
 
-const { get, post } = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn() }))
-mockNuxtImport('useApi', () => () => ({ get, post }))
+const { get, post, put } = vi.hoisted(() => ({ get: vi.fn(), post: vi.fn(), put: vi.fn() }))
+mockNuxtImport('useApi', () => () => ({ get, post, put }))
 mockNuxtImport('usePermissions', () => () => ({ can: () => true }))
 mockNuxtImport('useClinic', () => () => ({ currentClinic: ref({ timezone: 'Europe/Madrid' }) }))
 mockNuxtImport('useI18n', () => () => ({ t: (key: string) => key, locale: ref('en') }))
@@ -26,7 +26,10 @@ describe('online booking reception', () => {
   beforeEach(() => {
     get.mockReset()
     post.mockReset()
+    put.mockReset()
+    put.mockResolvedValue({ data: {} })
     get.mockImplementation(async (url: string) => {
+      if (url === '/api/v1/online_booking/settings') return { data: { enabled: false, slot_minutes: 30, window_days: 30, min_notice_minutes: 60, public_url: null, professional_id: null, reasons: [{ id: 'first_visit', name_es: 'Primera visita', name_en: 'First visit', duration_minutes: 30, active: true }], accent_color: null, title_es: 'Cita', intro_es: null, title_en: null, intro_en: null } }
       if (url.includes('/patient-suggestions') || url.startsWith('/api/v1/patients')) return { data: [{ id: 'patient-1', first_name: 'Synthetic', last_name: 'Patient', email: 'synthetic@example.com' }] }
       if (url === '/api/v1/auth/professionals') return { data: [{ id: 'professional-1', first_name: 'Test', last_name: 'Dentist' }] }
       if (url === '/api/v1/agenda/cabinets') return { data: [{ id: 'cabinet-1', name: 'Room' }] }
@@ -79,7 +82,7 @@ describe('online booking reception', () => {
     expect(post).toHaveBeenCalledWith('/api/v1/online_booking/requests/request-1/accept', { first_name: 'Synthetic', last_name: 'Person', email: 'synthetic@example.com', phone: '+34 600 000 000', professional_id: 'professional-1', cabinet_id: null, duration_minutes: 45 }, { errorToast: false })
   })
 
-  it('suggests contact matches and leaves a complex name unsplit and editable', async () => {
+  it('suggests contact matches and splits a long name on its last space, editable', async () => {
     get.mockImplementation(async (url: string) => {
       if (url.includes('/patient-suggestions')) return { data: [{ id: 'match', first_name: 'Match', last_name: 'Patient', phone: '+34 600 000 000' }] }
       if (url === '/api/v1/auth/professionals') return { data: [{ id: 'professional-1', first_name: 'Test', last_name: 'Dentist' }] }
@@ -92,10 +95,85 @@ describe('online booking reception', () => {
     await vi.waitFor(() => expect(wrapper!.text()).toContain('Match Patient'))
     await wrapper.find('input[value="new"]').setValue()
     const fields = wrapper.findAll('input[maxlength="100"]')
-    expect((fields[0]!.element as HTMLInputElement).value).toBe('María de la Prueba')
-    expect((fields[1]!.element as HTMLInputElement).value).toBe('')
-    await fields[1]!.setValue('Prueba')
+    expect((fields[0]!.element as HTMLInputElement).value).toBe('María de la')
     expect((fields[1]!.element as HTMLInputElement).value).toBe('Prueba')
+    await fields[1]!.setValue('Otra')
+    expect((fields[1]!.element as HTMLInputElement).value).toBe('Otra')
+  })
+
+  async function openNewPatientForm(requestRow: Record<string, unknown>) {
+    get.mockImplementation(async (url: string) => {
+      if (url.includes('/patient-suggestions')) return { data: [] }
+      if (url === '/api/v1/auth/professionals') return { data: [{ id: 'professional-1', first_name: 'Test', last_name: 'Dentist' }, { id: 'professional-2', first_name: 'Other', last_name: 'Dentist' }] }
+      if (url === '/api/v1/agenda/cabinets') return { data: [] }
+      return { data: [requestRow] }
+    })
+    wrapper = await mountSuspended(RequestsPage)
+    await vi.waitFor(() => expect(wrapper!.text()).toContain(String(requestRow.contact_name)))
+    await clickByText(wrapper, 'onlineBooking.accept')
+    await vi.waitFor(() => expect(get).toHaveBeenCalledWith('/api/v1/agenda/cabinets'))
+    await wrapper.find('input[value="new"]').setValue()
+    return wrapper.findAll('input[maxlength="100"]').map(field => (field.element as HTMLInputElement).value)
+  }
+
+  it('keeps a single-word contact name in the first name only', async () => {
+    expect(await openNewPatientForm({ ...row, contact_name: 'Synthetic' })).toEqual(['Synthetic', ''])
+  })
+
+  it('prefers the separately captured first and last name over splitting', async () => {
+    const values = await openNewPatientForm({ ...row, contact_name: 'Ana Maria Lopez Ruiz', contact_first_name: 'Ana Maria', contact_last_name: 'Lopez Ruiz' })
+    expect(values).toEqual(['Ana Maria', 'Lopez Ruiz'])
+  })
+
+  it('preselects the professional configured on the request', async () => {
+    await openNewPatientForm({ ...row, professional_id: 'professional-2' })
+    await vi.waitFor(() => expect((wrapper!.vm as unknown as { professionalId: string }).professionalId).toBe('professional-2'))
+    await clickByText(wrapper!, 'onlineBooking.confirmAccept')
+    expect(post).toHaveBeenCalledWith('/api/v1/online_booking/requests/request-1/accept', expect.objectContaining({ professional_id: 'professional-2' }), { errorToast: false })
+  })
+
+  it('leaves the professional empty when the request professional is no longer listed', async () => {
+    await openNewPatientForm({ ...row, professional_id: 'professional-gone' })
+    expect((wrapper!.vm as unknown as { professionalId: string }).professionalId).toBe('')
+    await clickByText(wrapper!, 'onlineBooking.confirmAccept')
+    expect(post).not.toHaveBeenCalled()
+  })
+
+  it('shows booking limits, optional questions and the logo chooser', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.text()).toContain('onlineBooking.rules'))
+    expect(wrapper.text()).toContain('onlineBooking.perPatient')
+    expect(wrapper.text()).toContain('onlineBooking.bufferBefore')
+    expect(wrapper.text()).toContain('onlineBooking.askExisting')
+    expect(wrapper.text()).toContain('onlineBooking.allowComment')
+    expect(wrapper.find('input[type=color]').exists()).toBe(true)
+    expect(wrapper.find('input[type=file]').exists()).toBe(true)
+    const save = wrapper.findAll('button').find(button => button.text().includes('onlineBooking.saveSettings'))
+    expect(save?.classes()).toContain('bg-primary')
+  })
+
+  it('saves public branding without losing other settings', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.find('input[maxlength="120"]').exists()).toBe(true))
+    await wrapper.find('input[maxlength="120"]').setValue('Reserva dental')
+    await clickByText(wrapper, 'onlineBooking.saveSettings')
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, slot_minutes: 30, title_es: 'Reserva dental' })))
+  })
+
+  it('allows adding a visit reason and saving its duration', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.text()).toContain('onlineBooking.visitReasons'))
+    await clickByText(wrapper, 'onlineBooking.addReason')
+    const names = wrapper.findAll('input[maxlength="80"]')
+    await names[2]!.setValue('Tratamiento')
+    await names[3]!.setValue('Treatment')
+    const durations = wrapper.findAll('input[type="number"]')
+    await durations[durations.length - 5]!.setValue('75')
+    await clickByText(wrapper, 'onlineBooking.saveSettings')
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ reasons: expect.arrayContaining([expect.objectContaining({ name_es: 'Tratamiento', name_en: 'Treatment', duration_minutes: 75, active: true })]) })))
   })
 
   it('paginates the queue and announces successful rejection', async () => {
