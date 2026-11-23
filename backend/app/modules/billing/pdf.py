@@ -715,7 +715,7 @@ class InvoicePDFService:
             f'''
                         <tr>
                             <td class="label">{labels["total_discount"]}:</td>
-                            <td class="value discount">-{format_currency(invoice.total_discount)}</td>
+                            <td class="value discount">{format_currency(-invoice.total_discount)}</td>
                         </tr>
                         '''
             if invoice.total_discount

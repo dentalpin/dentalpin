@@ -52,6 +52,8 @@ None.
   transactionally** (`db=db`): payments deletes the treatment's
   NULL-session earned row when it is deleted or leaves `performed` (#896).
   The deleted payload carries `old_status`.
+- **`price_snapshot` is the whole treatment's price** (#1014): per-tooth and
+  per-role pricing are already applied, so `unit_price` carries it as is.
 - **`unit_price: null` on `treatment.performed` is a contract**, not a
   missing field: `perform(publish_price=False)` is how treatment_plan
   finalizes a sessioned item whose amounts were already booked
