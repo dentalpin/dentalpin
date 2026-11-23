@@ -2,6 +2,7 @@
 
 ## Unreleased — phase 3
 
+- fix(#1079): a PEC receipt is marked seen only once it is saved (an IMAP or DB error lost it), and the same receipt read twice isn't applied twice.
 - fix(#1047): `ScontoMaggiorazione/Importo` is the per-unit discount (up to 8 decimals), as check 00423 computes it, also on a credit note's negative discount.
 - fix(#1013): a credit note's negative line discount is written as `ScontoMaggiorazione` (it was dropped by a `> 0` check).
 

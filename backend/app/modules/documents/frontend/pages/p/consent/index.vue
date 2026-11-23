@@ -23,6 +23,7 @@ watch(relation, (value) => {
 })
 const busy = ref(false)
 const error = ref(false)
+const submitFailed = ref(false)
 const done = ref(false)
 let loadGeneration = 0
 // In memory only, like /p/budget: setLocale would persist the cookie and
@@ -44,6 +45,7 @@ async function loadConsent() {
   relation.value = 'patient'
   signature.value = null
   error.value = false
+  submitFailed.value = false
   done.value = false
   if (!token.value) {
     error.value = true
@@ -76,6 +78,7 @@ async function submit() {
   if (!signature.value || !signer.value.trim()) return
   const generation = loadGeneration
   busy.value = true
+  submitFailed.value = false
   try {
     await $fetch(`${endpoint}/sign`, { method: 'POST', credentials: 'omit', headers: { Authorization: `Bearer ${token.value}` }, body: {
       signer_name: signer.value, relationship_to_patient: relation.value, signature: signature.value
@@ -84,8 +87,12 @@ async function submit() {
       done.value = true
       item.value = null
     }
-  } catch {
-    if (generation === loadGeneration) error.value = true
+  } catch (e: unknown) {
+    if (generation !== loadGeneration) return
+    // Only these two mean the link is spent; anything else keeps the signature (#1042).
+    const status = (e as { statusCode?: number }).statusCode
+    if (status === 404 || status === 409) error.value = true
+    else submitFailed.value = true
   } finally {
     busy.value = false
   }
@@ -154,6 +161,12 @@ async function submit() {
           {{ t('documents.consent.clear') }}
         </UButton>
       </div>
+      <p
+        v-if="submitFailed"
+        role="alert"
+      >
+        {{ t('documents.consent.submitFailed') }}
+      </p>
       <UButton
         :disabled="busy || !signature || !signer.trim()"
         size="lg"

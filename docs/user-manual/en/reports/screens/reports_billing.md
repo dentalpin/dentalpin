@@ -17,7 +17,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/reports/frontend/pages/reports/billing.vue
   - backend/app/modules/reports/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: b40a1d2
 ---
 
 # Billing reports
@@ -41,8 +41,8 @@ reconciliation, and VAT filing.
 - **By professional** — invoicing attributed to each professional.
 - **VAT** — aggregate by VAT type. Handy for preparing the period's
   fiscal return.
-- **Overdue and gaps** — past-due invoices and numbering gaps in
-  series, if any.
+- **Overdue and gaps** — past-due invoices (credit notes never count
+  as overdue) and numbering gaps in series, if any.
 - **Aging** — outstanding issued invoice totals per age bucket
   (not-yet-due/"no vencidas" apart, then 0–30/31–60/61–90/90+ days
   past due, issued amounts only). Labelled as invoice aging — a

@@ -40,8 +40,9 @@ invoices to persone fisiche may not be electronic (art. 10-bis DL
 `services/pec_transport.py` (stdlib `smtplib`/`imaplib` in the default
 executor, no new dependency): `send_file` attaches the FPR12 to a message
 for the SDI mailbox; `poll_receipts` reads unseen messages from
-`pec.fatturapa.it`, extracts receipt attachments (XML or inside a zip),
-marks them seen and reports the SDI's dedicated reply address.
+`pec.fatturapa.it` without flagging them (`BODY.PEEK`), extracts receipt
+attachments (XML or inside a zip) and reports the SDI's dedicated reply
+address. The queue calls `mark_seen` once the receipts are committed.
 `services/submission_queue.process_clinic` drains one clinic (rows locked
 `FOR UPDATE SKIP LOCKED`, commit before every network call, backoff per
 row, clinic paused ten minutes on mailbox errors) and applies receipts via
