@@ -15,6 +15,13 @@ export const PERMISSIONS = {
     read: 'patients_clinical.medical.read',
     write: 'patients_clinical.medical.write'
   },
+  patientIntake: {
+    configure: 'patient_intake.configure',
+    issue: 'patient_intake.issue',
+    reviewAdmin: 'patient_intake.review_admin',
+    reviewClinical: 'patient_intake.review_clinical',
+    withdraw: 'patient_intake.withdraw'
+  },
   emergencyContact: {
     read: 'patients_clinical.emergency.read',
     write: 'patients_clinical.emergency.write'
