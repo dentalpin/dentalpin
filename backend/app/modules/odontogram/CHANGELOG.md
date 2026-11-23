@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1034): `TreatmentService.restore_planned`, for treatment_plan's reactivation.
 - fix(#1014): `treatment.performed` carries `price_snapshot` as `unit_price`. It was multiplied by the tooth count although the snapshot already covers every tooth, so a 3-crown treatment booked three times its price as earned.
 
 - Audit authenticated views of odontograms and treatment history. (#903).

@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Treatment plans:** reactivating a closed plan brings its planned treatments back to the odontogram (#1034).
 - **Patients:** editing the medical history can no longer wipe it after a failed load or carry an entry into another patient, and Cancel discards the changes (#1045).
 - **Recalls:** a snoozed recall is no longer closed by the appointment it was linked to (#1010).
 - **Integrations:** webhook deliveries of a paused subscription stop retrying after their attempts (#1009).
