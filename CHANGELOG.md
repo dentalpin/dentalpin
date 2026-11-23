@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Modules:** a forced uninstall now includes the tables of still-installed dependent modules in its pg_dump backup; the branch downgrade drops them too (#1067).
+
 ## [2.12.0] - 2026-11-23
 
 New: staff two-factor authentication with a per-clinic policy, a patient
