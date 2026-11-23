@@ -77,9 +77,15 @@ return **404**; DELETE on a closed snapshot returns 409.
 
 Declared via `manifest.depends = ["patients", "odontogram"]`.
 **Read-only, no FK**: at draft creation the service calls
-`OdontogramService.get_patient_odontogram` plus a Treatment query
-filtered on `clinical_type='implant'` and `status='performed'` to
-seed `is_present` / `is_implant` flags on the snapshot's tooth rows.
+`OdontogramService.get_patient_odontogram` plus one Treatment query
+(`status='performed'`, not soft-deleted) to seed `is_present` /
+`is_implant` flags on the snapshot's tooth rows. A tooth is absent
+when its `ToothRecord.general_condition` is `missing` or it carries a
+`missing` finding or an `extraction` treatment — the odontogram UI
+records absence as a Treatment, never on `general_condition` — the
+same rule the chart uses to draw a tooth faded. A performed `implant`
+wins over absence (`is_present=True, is_implant=True`). Planned
+treatments do not change the flags.
 Snapshots persist `tooth_number` (FDI int) only, never
 `tooth_records.id` — uninstalling odontogram would not orphan any
 periodontogram row.

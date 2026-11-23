@@ -66,6 +66,11 @@ se detiene y te muestra una tarjeta de confirmación antes de ejecutarse.
 Las acciones irreversibles (cancelar cita, enviar presupuesto) se marcan
 en rojo.
 
+Cuando confirmas y la acción aparece como hecha, queda guardada. Si
+después el copiloto no consigue escribir su respuesta (por ejemplo,
+porque el proveedor de IA no responde a tiempo), verás un mensaje de
+error, pero la acción sigue guardada; confirmar de nuevo no la repite.
+
 ## Briefing matinal por email
 
 En **Ajustes → Integraciones → Copilot** puedes activar un email diario

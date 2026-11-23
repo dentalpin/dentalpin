@@ -120,10 +120,11 @@ function formatDate(dateStr: string | undefined): string {
 }
 
 // Days overdue (positive when due_date is past). Only meaningful for
-// invoices still chasing payment — drafts/paid/voided return null.
+// invoices still chasing payment — drafts/paid/voided and credit notes
+// (#1090) return null.
 const daysOverdue = computed<number | null>(() => {
   const inv = currentInvoice.value
-  if (inv?.is_historical || !inv?.due_date) return null
+  if (inv?.is_historical || inv?.credit_note_for_id || !inv?.due_date) return null
   if (!['issued', 'partial'].includes(inv.status)) return null
   const due = parseDateOnly(inv.due_date)
   const now = new Date()

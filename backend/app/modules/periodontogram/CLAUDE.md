@@ -22,7 +22,10 @@ tooth, computed BoP/PI/CAL indices. **Optional, removable**.
 ## Dependencies
 
 `manifest.depends = ["patients", "odontogram"]`. Reads `OdontogramService`
-at draft creation to pre-fill `is_present` / `is_implant` per tooth.
+at draft creation to pre-fill `is_present` / `is_implant` per tooth:
+absent = `general_condition == "missing"` or a performed, non-deleted
+`missing` / `extraction` Treatment (the UI only writes the Treatment);
+a performed `implant` overrides absence.
 **No FK** to `tooth_records` — uninstall stays clean.
 
 ## Permissions

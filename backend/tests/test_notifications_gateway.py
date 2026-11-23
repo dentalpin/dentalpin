@@ -809,3 +809,58 @@ async def test_explicit_whatsapp_opt_out_blocks_even_force_send(
     )
     assert msg.status == "skipped"
     assert msg.error_message == "no_viable_channel"
+
+
+@pytest.mark.asyncio
+async def test_a_repeated_skip_is_logged_once(db_session, test_patient):
+    """The reminder sweep retries every 5 minutes (#1036)."""
+    clinic_id, patient_id = test_patient.clinic_id, test_patient.id
+    test_patient.do_not_contact = True
+    await db_session.commit()
+    key = f"appointment_reminder:{uuid4()}"
+
+    async def attempt():
+        return await NotificationGateway.enqueue(
+            db_session,
+            clinic_id,
+            "appointment_confirmation",
+            context={},
+            patient_id=patient_id,
+            dedup_key=key,
+        )
+
+    first = await attempt()
+    again = await attempt()
+    assert first.status == again.status == "skipped"
+    assert first.id == again.id
+
+    # A skip doesn't use up the reminder: it goes once the block is lifted.
+    test_patient.do_not_contact = False
+    await _email_template(db_session, clinic_id)
+    sent = await attempt()
+    assert sent is not None and sent.status == "queued"
+
+
+@pytest.mark.asyncio
+async def test_the_thread_keeps_its_newest_messages(db_session, test_patient):
+    """Past the limit the oldest drop out, not the reply that just arrived (#1036)."""
+    now = datetime.now(UTC)
+    for i in range(4):
+        db_session.add(
+            CommunicationMessage(
+                clinic_id=test_patient.clinic_id,
+                patient_id=test_patient.id,
+                channel="sms",
+                to_address="+34600000000",
+                template_key="manual",
+                body_text=str(i),
+                status="sent",
+                created_at=now - timedelta(minutes=10 - i),
+            )
+        )
+    await db_session.commit()
+
+    thread = await NotificationService.list_conversation(
+        db_session, test_patient.clinic_id, test_patient.id, limit=2
+    )
+    assert [message.body_text for message in thread] == ["2", "3"]

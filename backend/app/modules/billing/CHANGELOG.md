@@ -11,6 +11,7 @@
 - fix(#989): an invoice's paid amount and balance are in cents also after a proportional refund share, so the offered balance is payable.
 
 - fix(#989): `POST /invoices/{id}/payments` accepts at most two decimals, like the payments endpoints.
+- fix(#1090): an issued credit note is never overdue. `overdue_invoice_conditions` is the one overdue predicate (it excludes `credit_note_for_id IS NOT NULL`); the `overdue` list filter uses it, list rows carry `credit_note_for_id`, and the list/detail overdue markers skip credit notes.
 
 - fix(#988): `InvoiceService.list_for_export` also eager-loads each allocated payment's refunds, for the accounting export.
 

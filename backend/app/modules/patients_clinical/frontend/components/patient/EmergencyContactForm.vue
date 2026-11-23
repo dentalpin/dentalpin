@@ -48,11 +48,9 @@ watch(() => props.modelValue, (newVal) => {
 // Watch local changes and emit (skip if update came from props)
 watch([hasContact, localContact], () => {
   if (isUpdatingFromProps.value) return
-  if (hasContact.value && localContact.value.name && localContact.value.phone) {
-    emit('update:modelValue', { ...localContact.value })
-  } else if (!hasContact.value) {
-    emit('update:modelValue', null)
-  }
+  // Incomplete edits go up too: the API refuses them, where holding them
+  // back saved the previous value, or deleted, with a success toast (#1064).
+  emit('update:modelValue', hasContact.value ? { ...localContact.value } : null)
 }, { deep: true })
 
 // Relationship options - computed for reactivity

@@ -88,6 +88,14 @@
         "save": "Salva intestazione",
         "saved": "Intestazione salvata"
       },
+      "consentTemplateArchive": {
+        "archive": "Archivia",
+        "restore": "Ripristina",
+        "archived": "Archiviato",
+        "archivedToast": "Modello archiviato",
+        "restoredToast": "Modello ripristinato",
+        "help": "I modelli archiviati non compaiono nella selezione dei consensi. I consensi già creati a partire da essi non vengono modificati."
+      },
       "consentTemplates": {
         "help": "I modelli sono il testo di partenza per i nuovi consensi informati. La modifica di un modello non cambia i consensi già creati a partire da esso.",
         "empty": "Nessun modello presente. Creare il primo qui sotto.",
@@ -114,6 +122,7 @@
       "noEvidence": "Il documento richiesto non è ancora disponibile.",
       "completed": "Firma registrata. È possibile riconsegnare il tablet al personale.",
       "linkError": "Il link non è valido, è scaduto o è già stato utilizzato.",
+      "submitFailed": "Non è stato possibile inviare la firma. Riprovi.",
       "revocationNotice": "Firmando, si revoca il consenso mostrato.",
       "signer": "Nome del firmatario",
       "relationship": "Rapporto con il paziente",
