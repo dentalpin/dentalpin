@@ -11,12 +11,94 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+## [2.12.0] - 2026-11-23
+
+New: staff two-factor authentication with a per-clinic policy, a patient
+access log, informed consent signed on a tablet, online booking requests
+with a reception inbox, first-visit intake, and a manual WhatsApp delivery
+tray. Historical invoices from a migration are now read-only records. Also
+a long list of fixes: dates on the clinic's day instead of UTC, double
+clicks and concurrent writes, and fiscal edge cases in Italy, Hungary and
+Spain. Thanks @ricksesp, @ZoliQua, @lamanji, @ahmadalzaro1 and @hirad121.
+
+### Upgrade notes
+
+- **Staff 2FA (optional):** set `MFA_ENCRYPTION_KEY` (a Fernet key, see
+  `.env.example`) before enabling TOTP, and back it up: losing it locks out
+  every enrolled authenticator. On Coolify, add the variable in the UI.
+  Key rotation and recovery: `docs/workflows/staff-mfa.md`.
+- **Database:** three core migrations (`0010` staff MFA, `0011` patient
+  access log, `0012` MFA CLI audit) and module migrations in billing
+  (`bil_0007` historical invoices), documents (`doc_0002`, `doc_0003`
+  consent), gdpr (`gdpr_0005`) and notifications (`notif_0009`). Run
+  `python -m app.cli db upgrade` as usual.
+- **New optional modules** (`online_booking`, `patient_intake`,
+  `whatsapp_manual`) ship uninstalled; install them from Settings →
+  Modules if wanted.
+
 ### Added
 
-- **Staff 2FA:** deployment operators can reset a staff account through an audited recovery command. The backend validates configured MFA encryption keys at startup (#902).
+- **Staff two-factor authentication (#902, #915).** Staff can enrol a TOTP
+  authenticator, and each clinic can require it. Deployment operators can
+  reset an account with `python -m app.cli mfa reset` (audited, sessions
+  revoked); Users shows the reset action for accounts with an enrolled
+  factor. The backend validates configured MFA keys at startup.
+- **Patient access log (#903, #914).** Staff reads of patient records,
+  medical history, notes, odontograms, documents and PDFs are logged. A
+  patient *Access log* tab and *Settings → People → Patient access log*
+  list them with CSV export, gated by `gdpr.access_log.read`. Retention
+  defaults to five years per clinic.
+- **Informed consent on a tablet (#906, #982, #983, #1063, #1074).**
+  Clinics create consent templates under *Settings → Clinical → Consent
+  templates*, issue a 30-minute single-use signing link from the patient
+  record, and keep signed and revocation PDFs as evidence. Templates can
+  be archived. Translated into all 12 locales.
+- **Online booking requests (#913).** New optional `online_booking`
+  module: public slot list and booking requests with a reception inbox to
+  accept or reject them, with confirmation emails. Agenda writes are now
+  serialized per clinic so both writers never double-book (#937).
+- **First-visit intake (#916).** New optional `patient_intake` module:
+  locale-specific first-visit forms, verified representative data, and
+  review by reception and clinicians before answers reach the patient
+  record. Consent provenance is stored in the GDPR ledger.
+- **Manual WhatsApp delivery tray (#880, #885, #886).** New optional
+  `whatsapp_manual` adapter for clinics whose staff send WhatsApp
+  messages themselves: staff open a pre-filled draft and declare it sent,
+  and the patient timeline records it. Notifications gained deferred
+  delivery and per-clinic adapter selection; withdrawing consent cancels
+  pending drafts.
+- **Historical invoices (#900).** Invoices imported from another system
+  keep their original date, number and amounts, show a *Historical* badge,
+  and are read-only: outside VeriFactu, the accounting export, collections
+  and aging.
+- **Imaging viewer:** ROI statistics over a rectangle, in native pixel
+  values that do not change with the window (#1011, thanks @lamanji).
+
+### Changed
+
+- **Integrations:** a webhook subscription is auto-disabled after 25
+  consecutive failures instead of 10, about a day of downtime (#931,
+  thanks @hirad121).
+- **Budget:** the signature canvas is shared between flows and draws
+  where the finger touches on high-DPI tablets (#882, #883); the unused
+  in-clinic accept modal is gone (#904). Signed budget PDFs store their
+  SHA-256 fingerprint and the footer no longer overlaps the text (#901).
+- **Appointments:** editing an appointment keeps its saved duration even
+  when it is not one of the presets (#930).
 
 ### Fixed
 
+- **Budget:** downloading a signed budget PDF from the public link works
+  again instead of answering 500 (#884).
+- **Migration import:** opening balances keep their description, and
+  imported invoice lines link to catalog items (#879, #881).
+- **Patient timeline:** appointment and orthodontic events created with a
+  new patient are recorded instead of failing on the foreign key (#948,
+  thanks @ahmadalzaro1).
+- **Notifications:** two dispatcher ticks can no longer send the same
+  message twice (#1075).
+- **CI:** the images-health alert comments once instead of daily and only
+  closes on a verified pass (#949, thanks @ahmadalzaro1).
 - **Italy (SdI):** receipts can no longer be lost when the PEC poll or the save fails (#1079).
 - **Agenda:** the mobile + button books on the day being viewed (#1037).
 - **Treatment plans:** search works in the list and finds full names in the pipeline (#1038).
@@ -94,7 +176,6 @@ frontend as a Nuxt layer under its own Python package.
 - **Activity journal:** the date filter uses the clinic's day (#920).
 - **Reports:** the billing summary's paid-in-period total uses the clinic's days (#919).
 - **Budget:** the list's date filter uses the clinic's day, not the UTC day (#918).
-- **Staff 2FA:** Users shows the reset action only when the staff account has an enrolled factor.
 - **Treatments:** deleting a performed treatment, or setting it back to planned, no longer leaves its price owed in the patient's ledger and pending charges (#896).
 - **Treatment plans:** completing the last session works again when the item's treatment was already marked performed on the odontogram. This regressed in #893 (#897).
 - **Treatments:** a sessioned treatment no longer books more revenue than its price. Marking it performed on the odontogram after one of its sessions was completed counted that session twice, and performing an already-performed treatment again booked the full price a second time. A treatment that is already performed now returns 409 (#891).
