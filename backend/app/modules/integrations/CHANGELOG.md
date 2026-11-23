@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1009): a delivery of a paused, auto-disabled or undecryptable subscription spends its attempts and ends `failed`; it was retried forever.
+
 - fix(#65): a webhook subscription now auto-disables after 25 consecutive delivery failures instead of 10. With the 1h backoff cap that is roughly a day of receiver downtime before a subscription is cut off. Dropped the empty `get_tools()` override; `BaseModule` already returns `[]`.
 
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.

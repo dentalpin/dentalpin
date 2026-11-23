@@ -242,3 +242,53 @@ async def test_generate_writes_activity_journal_row(
     assert str(entry.source_entity_id) == doc_id
     assert entry.actor_id is not None
     assert entry.payload["title"] == "Referred to ortho"
+
+
+@pytest.mark.asyncio
+async def test_editing_a_generated_document_drops_its_pdf(
+    client, auth_headers, test_clinic: Clinic, test_patient
+) -> None:
+    """The stored PDF never outlives the content it was rendered from (#1006)."""
+    created = await client.post(
+        "/api/v1/documents",
+        headers=auth_headers,
+        json={
+            "patient_id": str(test_patient.id),
+            "document_type": "medical_certificate",
+            "title": "Sick leave",
+            "content": {"diagnosis": "flu", "description": "5 days rest"},
+        },
+    )
+    assert created.status_code == 201
+    url = f"/api/v1/documents/{created.json()['data']['id']}"
+
+    no_file = await client.patch(url, headers=auth_headers, json={"status": "generated"})
+    assert no_file.status_code == 422, no_file.text
+
+    generate = {"document_id": created.json()["data"]["id"]}
+    assert (
+        await client.post("/api/v1/documents/generate", headers=auth_headers, json=generate)
+    ).status_code == 200
+
+    # Re-sending what is stored keeps the file, also through archive and restore.
+    for body in ({"title": "Sick leave"}, {"status": "archived"}, {"status": "generated"}):
+        assert (await client.patch(url, headers=auth_headers, json=body)).status_code == 200
+    assert (await client.get(f"{url}/download", headers=auth_headers)).status_code == 200
+
+    edited = await client.patch(
+        url,
+        headers=auth_headers,
+        json={"content": {"diagnosis": "flu", "description": "10 days rest"}},
+    )
+    assert edited.status_code == 200, edited.text
+    assert edited.json()["data"]["status"] == "draft"
+    assert edited.json()["data"]["file_path"] is None
+    assert (await client.get(f"{url}/download", headers=auth_headers)).status_code == 409
+
+    assert (
+        await client.post("/api/v1/documents/generate", headers=auth_headers, json=generate)
+    ).status_code == 200
+    stale = await client.patch(
+        url, headers=auth_headers, json={"title": "Sick note", "status": "generated"}
+    )
+    assert stale.status_code == 422, stale.text

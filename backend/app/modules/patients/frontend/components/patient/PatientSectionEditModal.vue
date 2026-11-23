@@ -16,7 +16,9 @@ interface Props {
   open: boolean
   section: SectionType
   patient: PatientExtended
+  /** Undefined until it loaded: there is nothing safe to edit before that. */
   medicalHistory?: MedicalHistory
+  medicalHistoryError?: string | null
   isSavingMedical?: boolean
 }
 
@@ -25,7 +27,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   'update:open': [value: boolean]
   'save': [section: SectionType, data: Record<string, unknown>]
-  'saveMedical': []
+  'saveMedical': [history: MedicalHistory]
 }>()
 
 const { t } = useI18n()
@@ -75,6 +77,9 @@ const emergencyForm = ref<EmergencyContact | null>(null)
 // Form data for legal guardian
 const guardianForm = ref<LegalGuardian | null>(null)
 
+// The form edits in place, so it gets its own copy: Cancel discards it (#1045).
+const medicalDraft = ref<MedicalHistory | null>(null)
+
 // Form data for billing
 const billingForm = reactive({
   billing_name: '',
@@ -111,6 +116,11 @@ watch(() => props.open, (isOpen) => {
   }
 }, { immediate: true })
 
+// Opened by deep link, the modal can be up before the history arrives.
+watch(() => props.medicalHistory, () => {
+  if (props.open && props.section === 'medical' && !medicalDraft.value) initializeForm()
+})
+
 function initializeForm() {
   if (props.section === 'demographics') {
     demographicsForm.first_name = props.patient.first_name
@@ -131,6 +141,10 @@ function initializeForm() {
     emergencyForm.value = props.patient.emergency_contact ? { ...props.patient.emergency_contact } : null
   } else if (props.section === 'guardian') {
     guardianForm.value = props.patient.legal_guardian ? { ...props.patient.legal_guardian } : null
+  } else if (props.section === 'medical') {
+    medicalDraft.value = props.medicalHistory
+      ? JSON.parse(JSON.stringify(props.medicalHistory)) as MedicalHistory
+      : null
   } else if (props.section === 'billing') {
     billingForm.billing_name = props.patient.billing_name || ''
     billingForm.billing_tax_id = props.patient.billing_tax_id || ''
@@ -145,7 +159,7 @@ function closeModal() {
 
 async function handleSave() {
   if (props.section === 'medical') {
-    emit('saveMedical')
+    if (medicalDraft.value) emit('saveMedical', medicalDraft.value)
     return
   }
 
@@ -235,6 +249,7 @@ async function handleSave() {
 }
 
 const canSave = computed(() => {
+  if (props.section === 'medical') return medicalDraft.value !== null
   if (props.section === 'demographics') {
     return demographicsForm.first_name && demographicsForm.last_name
   }
@@ -421,9 +436,19 @@ const canSave = computed(() => {
           class="max-h-[65vh] overflow-y-auto pe-1"
         >
           <MedicalHistoryForm
-            v-if="medicalHistory"
-            :model-value="medicalHistory"
+            v-if="medicalDraft"
+            v-model="medicalDraft"
             hide-actions
+          />
+          <UAlert
+            v-else-if="medicalHistoryError"
+            color="error"
+            variant="subtle"
+            :title="medicalHistoryError"
+          />
+          <USkeleton
+            v-else
+            class="h-40 w-full"
           />
         </div>
 

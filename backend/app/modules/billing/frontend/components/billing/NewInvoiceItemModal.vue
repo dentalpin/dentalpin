@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { InvoiceItemCreate, TreatmentCatalogItem, VatType } from '~~/app/types'
+import { lineVatTypeId } from '../../utils/itemVat'
 
 const props = defineProps<{
   open: boolean
@@ -67,11 +68,7 @@ function handleItemSelect(item: TreatmentCatalogItem | null) {
     form.description = getItemName(item)
     form.internal_code = item.internal_code
     form.unit_price = item.default_price || 0
-    // Set default VAT type
-    const defaultVat = vatTypes.value.find(v => v.is_default)
-    if (defaultVat) {
-      form.vat_type_id = defaultVat.id
-    }
+    form.vat_type_id = lineVatTypeId(item, vatTypes.value) ?? form.vat_type_id
   } else {
     form.catalog_item_id = undefined
     form.description = ''
