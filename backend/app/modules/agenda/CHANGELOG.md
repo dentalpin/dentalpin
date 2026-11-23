@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1017): saving an appointment syncs its treatment links instead of re-creating them, so visit notes and completed flags survive; only newly added items must be bookable, so an appointment with a since-completed treatment can be saved.
+
 - Serialize appointment creation, edits and cabinet assignment with a transaction-scoped clinic lock (#905).
 
 - Preserve non-preset appointment durations and omit unchanged start and end times when editing.

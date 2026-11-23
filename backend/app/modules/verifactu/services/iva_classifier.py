@@ -101,13 +101,15 @@ def determine_tipo_factura(
     billing_tax_id: str | None,
     importe_total: Decimal,
 ) -> str:
-    """Decide ``F1``/``F2``/``R1`` for a DentalPin invoice.
+    """Decide ``F1``/``F2``/``R1``/``R5`` for a DentalPin invoice.
 
     Rules:
 
-    * Rectificativa (credit note) → ``R1`` (rectificación por error
-      fundado en derecho, art. 80.1/80.2 LIVA — the most common case for
-      dental clinics).
+    * Rectificativa of a simplified invoice (no NIF) → ``R5``, whatever
+      the reason (AEAT FAQ). ``R1`` needs a destinatario (#1049).
+    * Any other rectificativa (credit note) → ``R1`` (rectificación por
+      error fundado en derecho, art. 80.1/80.2 LIVA — the most common case
+      for dental clinics).
     * With NIF destinatario → ``F1``.
     * No NIF and total ≤ 400 € → ``F2`` (factura simplificada).
     * No NIF and total > 400 € → ``ValueError`` (caller must surface a
@@ -115,7 +117,7 @@ def determine_tipo_factura(
     """
 
     if has_credit_note_for:
-        return "R1"
+        return "R1" if billing_tax_id else "R5"
     if billing_tax_id:
         return "F1"
     if importe_total <= Decimal("400"):

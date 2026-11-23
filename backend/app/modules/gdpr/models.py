@@ -83,6 +83,12 @@ class PatientConsent(Base, TimestampMixin):
     provided_text: Mapped[str | None] = mapped_column(Text, nullable=True)
     granted_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     withdrawn_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # Set by the module that records the entry together with verified evidence.
+    # Once a patient has a managed entry for a purpose, manual entries for that
+    # purpose are refused: only the owning workflow may change it.
+    managed: Mapped[bool] = mapped_column(
+        Boolean, default=False, server_default=text("false"), nullable=False
+    )
 
     clinic: Mapped[Clinic] = relationship(foreign_keys=[clinic_id])
     patient: Mapped[Patient] = relationship(foreign_keys=[patient_id])

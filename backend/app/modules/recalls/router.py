@@ -292,6 +292,8 @@ async def update_recall(
         recall = await RecallService.update(
             db, ctx.clinic_id, recall_id, data.model_dump(exclude_unset=True)
         )
+    except RecallClosedError as exc:
+        raise HTTPException(status_code=409, detail="Recall is closed") from exc
     except RecallReferenceError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     if not recall:
