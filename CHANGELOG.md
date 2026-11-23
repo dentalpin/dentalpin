@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Billing:** a 0-day payment term is no longer turned into 30 days, and clearing a draft's due date or notes works (#1016).
 - **Downloads:** patient files and invoice PDFs with names outside latin-1 download instead of failing with a server error (#1015).
 - **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
 - **Billing:** a credit note of a discounted line credits what was billed instead of 0.00, and the Italian e-invoice keeps its discount (#1013).

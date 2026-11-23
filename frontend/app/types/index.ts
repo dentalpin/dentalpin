@@ -1744,9 +1744,10 @@ export interface InvoiceUpdate {
   patient_id?: string // Can change patient for draft invoices (without budget)
   // Billing data removed - drafts get it from patient dynamically
   payment_term_days?: number
-  due_date?: string
-  internal_notes?: string
-  public_notes?: string
+  // null clears the field
+  due_date?: string | null
+  internal_notes?: string | null
+  public_notes?: string | null
 }
 
 // Workflow

@@ -386,7 +386,7 @@ class InvoiceFromBudgetCreate(BaseModel):
     items: list[InvoiceItemFromBudget]
 
     # Payment terms
-    payment_term_days: int | None = None
+    payment_term_days: int | None = Field(default=None, ge=0)
     due_date: date | None = None
 
     # Notes

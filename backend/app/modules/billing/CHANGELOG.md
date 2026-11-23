@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1016): a 0-day payment term survives invoicing from a quote (`or 30`) and the draft edit page, and clearing a draft's due date or notes clears them.
 - fix(#1015): the invoice PDF downloads when the series prefix has a character outside latin-1.
 - fix(#1013): the over-credit check compares in cents (a full note of a total that rounded down was refused), and a negative discount shows with the right sign on the invoice page and the PDF.
 
