@@ -53,6 +53,8 @@ En *Tu equipo* (o *Configuración → Personas → Usuarios*), crea el usuario y
 
 El icono de enlace en cualquier fila de usuario genera un enlace nuevo, útil cuando alguien olvida su contraseña.
 
+Para volver a dar de alta a alguien que quitaste de la clínica, crea el usuario de nuevo con el mismo email. DentalPin recupera su cuenta con el rol nuevo y su historial sigue enlazado. Su contraseña y sesiones anteriores dejan de funcionar: pon una contraseña nueva o envíale un enlace de acceso nuevo. Un email que ya pertenece al personal de otra clínica no se puede añadir así.
+
 > Trátalo como una contraseña: quien tenga el enlace puede entrar con esa cuenta hasta que se use.
 
 ## Autenticación en dos pasos del personal
