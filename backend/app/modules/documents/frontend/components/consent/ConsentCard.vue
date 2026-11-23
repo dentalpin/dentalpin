@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { PERMISSIONS } from '~~/app/config/permissions'
 
-interface ConsentTemplate { id: string, title: string, body: string }
+interface ConsentTemplate { id: string, title: string, body: string, is_active?: boolean }
 interface ConsentDocument {
   id: string
   title: string
@@ -26,7 +26,7 @@ const consentText = ref('')
 const signingUrl = ref('')
 const qrImage = ref('')
 const qrOpen = ref(false)
-const templateOptions = computed(() => templates.value.map(item => ({ label: item.title, value: item.id })))
+const templateOptions = computed(() => templates.value.filter(item => item.is_active !== false).map(item => ({ label: item.title, value: item.id })))
 const message = ref('')
 const busy = ref(false)
 const toast = useToast()

@@ -20,7 +20,11 @@ Routes mounted at `/api/v1/documents/`.
 
 ## Informed consents
 
-Clinic-owned templates are snapshotted into consent documents. Staff can
+Clinic-owned templates are snapshotted into consent documents. Templates can
+be archived (`is_active=false`, `POST /consent-templates/{id}/archive|unarchive`,
+`documents.write`): the list hides them unless `?include_archived=true`, and
+`create_consent` raises `ConsentConflictError` (409) for an archived template.
+Existing consents are unaffected. Staff can
 issue a 30-minute bearer link for signing or revocation. Link tokens are
 stored as hashes and the document row is locked before consuming a link.
 The token lives in the URL fragment and is sent to the API in the
@@ -141,6 +145,12 @@ Nuxt layer at `frontend/` with:
 - Navigation: sidebar entry gated on `documents.read`, order 75.
 
 ## Gotchas
+
+- **The consent PDF prints `document.title`** (#1040): it is what the
+  tablet showed, so it is part of the signed evidence.
+
+- **The PDF footer lives in the `@page` bottom margin** (#1039): a fixed
+  box inside the content area printed over the text of every full page.
 
 - **An edit drops the PDF (#1006).** Changing the title or content of any
   document clears `file_path` and returns a generated one to draft. A
