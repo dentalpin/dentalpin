@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1091): a new exam now treats teeth with a performed `missing` finding or `extraction` in the odontogram as absent, so BoP/PI/CAL use the right denominator.
+
 - fix(#910): the timeline dates a closed exam on the clinic's calendar day. It used the UTC day, so an evening exam in a UTC-6 clinic showed under the next day.
 
 - docs(#573): the screen doc `periodontogram-view.md` (en/es) is
