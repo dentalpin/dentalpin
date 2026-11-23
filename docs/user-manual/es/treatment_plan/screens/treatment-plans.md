@@ -51,7 +51,7 @@ más una vista de pipeline con la cola de seguimiento.
 - **Pipeline.** Vista de bandeja agregada (`GET /pipeline`) con
   totales por columna y los planes que necesitan acción de recepción
   (pendientes sin contacto reciente, presupuesto sin enviar, etc.).
-- **Búsqueda y filtros.** Buscar por paciente o número de plan;
+- **Búsqueda y filtros.** Buscar por paciente, título o número de plan;
   filtros por profesional asignado, fecha de creación y motivo de
   cierre.
 - **Sincronización con presupuesto.** Cada plan tiene un

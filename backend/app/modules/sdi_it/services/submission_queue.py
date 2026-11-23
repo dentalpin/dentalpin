@@ -142,6 +142,13 @@ async def process_clinic(db: AsyncSession, clinic_id: UUID) -> dict[str, int]:
             counters["unmatched"] += 1
             logger.info("sdi_it: receipt %s not applied: %s", inbound.file_name, exc)
     await db.commit()
+    # Only now: whatever failed above is read again by the next poll (#1079).
+    if poll.uids:
+        try:
+            await pec_transport.mark_seen(creds, poll.uids)
+        except pec_transport.PecError as exc:
+            settings.last_error = f"PEC: {exc}"[:500]
+            await db.commit()
     return counters
 
 

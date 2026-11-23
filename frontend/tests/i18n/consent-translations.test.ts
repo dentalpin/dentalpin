@@ -74,3 +74,22 @@ describe('documents consent translations', () => {
     })
   }
 })
+
+describe('documents consent template archive translations', () => {
+  const en = load('en.json')
+  const locales = readdirSync(LOCALES_DIR)
+    .filter(f => f.endsWith('.json') && f !== 'en.json' && f !== 'es.json')
+    .map(f => f.replace('.json', ''))
+
+  for (const locale of locales) {
+    it(`${locale}: no template archive string is left in English`, () => {
+      const xx = load(`${locale}.json`)
+      const leftovers = [...en.keys()].filter(
+        key => key.startsWith('documents.settings.consentTemplateArchive.')
+          && xx.get(key) === en.get(key)
+          && !ALLOWED_SAME_AS_ENGLISH.has(`${locale}:${key}`)
+      )
+      expect(leftovers, `${locale}.json still holds English for:\n${leftovers.join('\n')}`).toEqual([])
+    })
+  }
+})

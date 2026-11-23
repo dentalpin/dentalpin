@@ -134,13 +134,13 @@ class _FakeIMAP:
         if cmd == "fetch":
             return "OK", [(b"1 (RFC822 {n})", self.messages[args[0]])]
         if cmd == "store":
-            _FakeIMAP.flagged.append(args[0])
+            _FakeIMAP.flagged.extend(args[0].split(b","))
             return "OK", [b""]
         raise AssertionError(cmd)
 
 
 @pytest.mark.asyncio
-async def test_poll_receipts_returns_attachments_marks_seen_and_learns_the_sdi_address(monkeypatch):
+async def test_poll_receipts_returns_attachments_and_learns_the_sdi_address(monkeypatch):
     _FakeIMAP.messages = {
         b"11": _sdi_message(
             "sdi07@pec.fatturapa.it", [("IT01234567897_00001_RC_001.xml", _rc().encode())]
@@ -153,6 +153,8 @@ async def test_poll_receipts_returns_attachments_marks_seen_and_learns_the_sdi_a
     assert [r.file_name for r in result.receipts] == ["IT01234567897_00001_RC_001.xml"]
     assert result.receipts[0].xml.startswith("<ns3:RicevutaConsegna")
     assert result.sdi_reply_address == "sdi07@pec.fatturapa.it" and result.skipped == 1
+    assert _FakeIMAP.flagged == []  # the queue flags them once they are saved
+    await pt.mark_seen(CREDS, result.uids)
     assert sorted(_FakeIMAP.flagged) == [b"11", b"12"]
 
 

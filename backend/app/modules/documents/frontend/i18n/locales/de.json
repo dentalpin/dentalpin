@@ -88,6 +88,14 @@
         "save": "Briefkopf speichern",
         "saved": "Briefkopf gespeichert"
       },
+      "consentTemplateArchive": {
+        "archive": "Archivieren",
+        "restore": "Wiederherstellen",
+        "archived": "Archiviert",
+        "archivedToast": "Vorlage archiviert",
+        "restoredToast": "Vorlage wiederhergestellt",
+        "help": "Archivierte Vorlagen werden in der Auswahl für neue Einwilligungen ausgeblendet. Bereits daraus erstellte Einwilligungen bleiben unverändert."
+      },
       "consentTemplates": {
         "help": "Vorlagen sind der Ausgangstext für neue Einwilligungserklärungen. Das Bearbeiten einer Vorlage ändert keine Einwilligungen, die bereits daraus erstellt wurden.",
         "empty": "Noch keine Vorlagen vorhanden. Erstellen Sie unten die erste.",
@@ -114,6 +122,7 @@
       "noEvidence": "Das angeforderte Dokument ist noch nicht verfügbar.",
       "completed": "Unterschrift gespeichert. Sie können das Tablet nun an das Praxispersonal zurückgeben.",
       "linkError": "Der Link ist ungültig, abgelaufen oder wurde bereits verwendet.",
+      "submitFailed": "Ihre Unterschrift konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
       "revocationNotice": "Mit Ihrer Unterschrift widerrufen Sie die angezeigte Einwilligung.",
       "signer": "Name der unterzeichnenden Person",
       "relationship": "Beziehung zum Patienten",
