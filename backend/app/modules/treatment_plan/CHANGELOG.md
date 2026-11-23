@@ -4,6 +4,7 @@
 
 - fix(#1034): reactivating a closed plan (by hand, or by accepting a re-sent quote) restores the planned treatments that closing took off the chart; closing through a status change stamps `closed_at` too.
 
+- fix(#1073): adding a treatment that is already on a plan answers 409 naming that plan instead of a 500; the UI shows a translated message
 - fix(#897): completing the last session finalizes the item even when its treatment was already marked performed on the odontogram. Since #893 it answered 400, and the item stayed pending for good.
 - fix(#867): editing, adding or deleting a session is refused (409) while the plan is locked by a `sent`/`accepted` budget, like item edits. Sessions are repriced to the accepted line and payments books their amounts, so changing them afterwards booked a different total than the patient accepted.
 - fix(#868): adding a manual session (`POST .../items/{item_id}/sessions`) was always a 500. The new session had no `id` until flush. `add_session_manual` now flushes.

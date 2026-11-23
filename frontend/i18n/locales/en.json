@@ -1899,7 +1899,8 @@
       "load": "Error loading treatment plans",
       "create": "Error creating treatment plan",
       "update": "Error updating treatment plan",
-      "delete": "Error deleting treatment plan"
+      "delete": "Error deleting treatment plan",
+      "treatmentAlreadyPlanned": "This treatment is already in plan {plan}"
     },
     "notes": {
       "title": "Clinical notes",
