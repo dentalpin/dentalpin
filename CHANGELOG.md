@@ -37,6 +37,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Downloads:** patient files and invoice PDFs with names outside latin-1 download instead of failing with a server error (#1015).
 - **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
 - **Billing:** a credit note of a discounted line credits what was billed instead of 0.00, and the Italian e-invoice keeps its discount (#1013).
+- **Online booking:** accepting a request as a new patient requires a surname, so the patient record stays editable (#1044).
 - **Expenses:** the CSV import no longer reads a thousands separator as a decimal point; `1.200` is 1200, not 1.20 (#962).
 - **Medical reference:** a deactivated medication, allergy, disease or surgery can be added again from the patient form; it comes back with its interaction warnings (#963).
 - **Telephony:** outbound calls are linked to the patient dialled and no longer pop up as incoming calls from the clinic's own number (#964).

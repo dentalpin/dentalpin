@@ -20,7 +20,7 @@
     "search": "Search",
     "searchError": "Could not search patients. Try again.",
     "selectPatient": "Select a patient to continue.",
-    "nameRequired": "Enter the first name.",
+    "nameRequired": "Enter the first name and last name.",
     "messageRequired": "Enter a message for the patient.",
     "firstName": "First name",
     "lastName": "Last name",

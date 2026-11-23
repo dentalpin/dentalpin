@@ -8,6 +8,7 @@
 - The `/online-booking` reception page uses the private API and clinic timezone.
 - The confirmed-request accept action uses the solid primary button style.
 - Acceptance additionally checks patient and agenda write permissions.
+- Accepting for a new patient requires a non-blank first name and surname, the same rule as `PatientCreate`/`PatientUpdate`; a patient without a surname could not be edited afterwards (#1044).
 - Availability is that of the professional configured in the settings: their `schedules` hours, their active appointments and their live holds. Other professionals' appointments never block. Each request stores that professional (`professional_id`).
 - Unconfirmed holds expire after ten minutes; confirmed holds end at decision or start.
 - Booking and agenda writers use the shared transaction-scoped clinic lock from `agenda.locks`.
