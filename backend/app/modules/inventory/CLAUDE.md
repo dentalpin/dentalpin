@@ -29,6 +29,9 @@ post-mortem. Auto-deduction idempotency: partial unique index
 `uq_stock_movements_consumption_ref` + check-then-act under the row
 lock, `ON CONFLICT DO NOTHING` as the concurrency backstop.
 
+- **An absolute set can be stale.** The row lock can't see that, so the
+  edit form only sends `stock_quantity` when the user changed it (#1050).
+
 ## Dependencies
 
 `manifest.depends = []` — standalone. FKs point only at core tables.

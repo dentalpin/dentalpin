@@ -265,3 +265,68 @@ async def test_validate_before_issue_passes_when_only_failed_transient(
     ok, err = await hook.validate_before_issue(invoice_two, db_session)
     assert ok is True
     assert err is None
+
+
+@pytest.mark.asyncio
+async def test_simplified_credit_note_is_r5_and_keeps_its_reference(
+    db_session: AsyncSession,
+) -> None:
+    """No NIF: R5, and regenerating still names the rectified invoice (#1049)."""
+    clinic = await _seed_clinic(db_session, tax_id="A28000000")
+    user = await _seed_user(db_session, clinic)
+    patient = await _seed_patient(db_session, clinic)
+    await _seed_settings(db_session, clinic)
+    original = await _seed_invoice(db_session, clinic, user, patient)
+    note = await _seed_invoice(
+        db_session, clinic, user, patient, total=Decimal("-100.00"), invoice_number="RECT-0001"
+    )
+    note.credit_note_for_id = original.id
+    note.sequential_number = 2
+    await db_session.flush()
+
+    payload = await VerifactuHook().on_credit_note_issued(note, original, db_session)
+    record = await db_session.get(VerifactuRecord, payload["ES"]["record_id"])
+    assert record.tipo_factura == "R5"
+    assert "<TipoFactura>R5</TipoFactura>" in record.xml_payload
+    assert "FAC-2026-0001" in record.xml_payload
+
+    record.state = "rejected"
+    record.aeat_codigo_error = 1189
+    await db_session.flush()
+    regenerated = await regenerate_record(db_session, record)
+    assert "<TipoFactura>R5</TipoFactura>" in regenerated.xml_payload
+    assert "<FacturasRectificadas>" in regenerated.xml_payload
+    assert "FAC-2026-0001" in regenerated.xml_payload
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("original_nif", "note_nif", "tipo", "has_destinatario"),
+    [("12345678Z", None, "R1", False), (None, "12345678Z", "R5", False)],
+)
+async def test_the_rectified_invoice_decides_the_type(
+    db_session: AsyncSession, original_nif, note_nif, tipo, has_destinatario
+) -> None:
+    """R5 is for rectifying a simplified invoice, whatever the note's NIF is now (#1049)."""
+    clinic = await _seed_clinic(db_session, tax_id="A28000000")
+    user = await _seed_user(db_session, clinic)
+    patient = await _seed_patient(db_session, clinic)
+    await _seed_settings(db_session, clinic)
+    original = await _seed_invoice(db_session, clinic, user, patient, billing_tax_id=original_nif)
+    note = await _seed_invoice(
+        db_session,
+        clinic,
+        user,
+        patient,
+        total=Decimal("-100.00"),
+        billing_tax_id=note_nif,
+        invoice_number="RECT-0002",
+    )
+    note.credit_note_for_id = original.id
+    note.sequential_number = 2
+    await db_session.flush()
+
+    payload = await VerifactuHook().on_credit_note_issued(note, original, db_session)
+    record = await db_session.get(VerifactuRecord, payload["ES"]["record_id"])
+    assert record.tipo_factura == tipo
+    assert ("<Destinatarios>" in record.xml_payload) is has_destinatario

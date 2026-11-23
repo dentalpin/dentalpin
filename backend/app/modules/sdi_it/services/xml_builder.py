@@ -55,6 +55,12 @@ def _money(value: Decimal | float | int | str | None) -> str:
     return str(abs(_d(value)).quantize(_Q2, rounding=ROUND_HALF_UP))
 
 
+def _unit_amount(value: Decimal) -> str:
+    """``Amount8DecimalType``: two to eight decimals, sign carried by TipoDocumento."""
+    whole, decimals = f"{abs(value):.8f}".split(".")
+    return f"{whole}.{decimals.rstrip('0'):0<2}"
+
+
 def _rate(value: float | Decimal | None) -> str:
     return str(_d(value).quantize(_Q2, rounding=ROUND_HALF_UP))
 
@@ -299,9 +305,12 @@ def build_fattura(
 
     dettaglio = ""
     for n, ln in enumerate(lines, start=1):
+        # Per unit (check 00423): PrezzoTotale = (PrezzoUnitario - Sconto) * Quantita
+        # within a cent, so the line's discount is divided, unrounded (#1047).
         sconto = (
-            f"<ScontoMaggiorazione><Tipo>SC</Tipo><Importo>{_money(ln.sconto)}</Importo></ScontoMaggiorazione>"
-            if ln.sconto > 0
+            "<ScontoMaggiorazione><Tipo>SC</Tipo>"
+            f"<Importo>{_unit_amount(ln.sconto / ln.quantita)}</Importo></ScontoMaggiorazione>"
+            if ln.sconto
             else ""
         )
         dettaglio += (

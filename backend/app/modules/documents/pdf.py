@@ -676,10 +676,11 @@ class DocumentPDFService:
             <title>{escape(doc_title)} — {escape(patient_name)}</title>
             <style>
                 * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+                /* The bottom margin is the footer's: text never flows into it (#1039). */
+                @page {{ margin: 20mm 20mm 30mm; }}
                 body {{
                     font-family: 'Helvetica Neue', Arial, sans-serif;
                     font-size: 11pt; line-height: 1.4; color: #333;
-                    padding: 20mm;
                 }}
                 .header {{
                     display: flex; justify-content: space-between;
@@ -715,11 +716,10 @@ class DocumentPDFService:
                 tr:last-child td {{ border-bottom: none; }}
                 .notes-content {{ background: #f9fafb; padding: 12px; border-radius: 8px; font-size: 10pt; }}
                 .footer {{
-                    position: fixed; bottom: 15mm; left: 20mm; right: 20mm;
+                    position: fixed; bottom: -20mm; left: 0; right: 0;
                     font-size: 8pt; color: #9ca3af; text-align: center;
                     border-top: 1px solid #e5e7eb; padding-top: 10px;
                 }}
-                @media print {{ body {{ padding: 0; }} .footer {{ position: fixed; }} }}
             </style>
         </head>
         <body>
