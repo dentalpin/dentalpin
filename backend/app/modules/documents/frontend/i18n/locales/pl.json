@@ -88,6 +88,14 @@
         "save": "Zapisz nagłówek",
         "saved": "Zapisano nagłówek"
       },
+      "consentTemplateArchive": {
+        "archive": "Archiwizuj",
+        "restore": "Przywróć",
+        "archived": "Zarchiwizowany",
+        "archivedToast": "Wzór zarchiwizowano",
+        "restoredToast": "Wzór przywrócono",
+        "help": "Zarchiwizowane wzory nie są wyświetlane na liście wyboru zgód. Zgody utworzone wcześniej na ich podstawie pozostają bez zmian."
+      },
       "consentTemplates": {
         "help": "Wzory stanowią tekst wyjściowy dla nowych świadomych zgód. Edycja wzoru nie zmienia zgód utworzonych wcześniej na jego podstawie.",
         "empty": "Brak wzorów. Utwórz pierwszy poniżej.",
@@ -114,6 +122,7 @@
       "noEvidence": "Żądany dokument nie jest jeszcze dostępny.",
       "completed": "Podpis został zapisany. Można zwrócić tablet pracownikowi kliniki.",
       "linkError": "Link jest nieprawidłowy, wygasł lub został już użyty.",
+      "submitFailed": "Nie udało się wysłać podpisu. Proszę spróbować ponownie.",
       "revocationNotice": "Składając podpis, wycofują Państwo przedstawioną zgodę.",
       "signer": "Imię i nazwisko osoby podpisującej",
       "relationship": "Relacja z pacjentem",

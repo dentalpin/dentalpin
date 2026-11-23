@@ -65,6 +65,11 @@ Every action that modifies data (create, move, cancel, charge, send)
 pauses and shows you a confirmation card before executing. Irreversible
 actions (cancel appointment, send budget) are highlighted in red.
 
+Once you confirm and the action shows as done, it is saved. If the
+copilot then fails to write its reply (for example the AI provider
+times out), you see an error message, but the action stays saved;
+confirming again does not repeat it.
+
 ## Morning briefing email
 
 In **Settings → Integrations → Copilot** you can enable an automatic

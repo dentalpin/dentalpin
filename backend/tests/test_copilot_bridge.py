@@ -368,3 +368,120 @@ async def test_reject_does_not_execute(db_session, test_clinic) -> None:
         select(func.count()).select_from(Patient).where(Patient.first_name == "Ana")
     )
     assert count == 0  # rejected → never created
+
+
+class _FailingProvider:
+    """A provider whose call fails — a timeout, a rate limit, an outage."""
+
+    async def complete(self, *, system, messages, tools, model, max_tokens) -> AsyncIterator:
+        raise RuntimeError("provider timeout")
+        yield  # pragma: no cover — makes this an async generator
+
+
+async def _stream_frames(monkeypatch, db, factory) -> list[tuple[str, dict]]:
+    """Run ``factory`` through the router's real SSE wrapper on ``db``.
+
+    ``_stream`` opens its own session; point it at the test session so the
+    commit/rollback it does is the one under test.
+    """
+    import contextlib
+    import importlib
+    import json
+
+    # ``app.modules.copilot.router`` the attribute is the APIRouter; the
+    # module is what holds ``async_session_maker`` and ``_stream``.
+    copilot_router = importlib.import_module("app.modules.copilot.router")
+
+    @contextlib.asynccontextmanager
+    async def _session():
+        yield db
+
+    monkeypatch.setattr(copilot_router, "async_session_maker", _session)
+    response = copilot_router._stream(factory)
+    frames = []
+    async for chunk in response.body_iterator:
+        text = chunk.decode() if isinstance(chunk, bytes) else chunk
+        head, data = text.strip().split("\n", 1)
+        frames.append((head.removeprefix("event: "), json.loads(data.removeprefix("data: "))))
+    return frames
+
+
+@pytest.mark.asyncio
+async def test_confirmed_write_survives_a_failing_follow_up_call(
+    db_session, test_clinic, monkeypatch
+) -> None:
+    """#1093: the write the user saw succeed must not be rolled back when
+    the model call after it fails, and a retry must not run it again."""
+    conv, settings_row, user_id, agent_id, session_id = await _setup(db_session, test_clinic.id)
+    conv_id, clinic_id = conv.id, test_clinic.id
+    p1 = _FakeProvider(
+        [
+            [
+                ToolUse(
+                    "c1",
+                    "patients.create_patient",
+                    {"first_name": "María", "last_name": "González"},
+                ),
+                Done("tool_calls"),
+            ]
+        ]
+    )
+    events = await _drive(
+        db_session, conv, settings_row, user_id, agent_id, session_id, p1, "crea a María"
+    )
+    assert isinstance(events[-1], ConfirmationRequired)
+    await db_session.commit()  # the router commits the suspended turn
+
+    def _resume(provider):
+        def factory(db):
+            return resume_turn(
+                db=db,
+                conv=conv,
+                settings_row=settings_row,
+                permissions=["*"],
+                user_id=user_id,
+                agent_id=agent_id,
+                session_id=session_id,
+                call_id="c1",
+                approve=True,
+                provider=provider,
+            )
+
+        return factory
+
+    frames = await _stream_frames(monkeypatch, db_session, _resume(_FailingProvider()))
+
+    # The user is told the write happened, then that the reply failed.
+    assert ("tool_result", "c1", True) in [(e, d.get("call_id"), d.get("ok")) for e, d in frames]
+    assert frames[-1] == ("error", {"detail": "provider timeout"})
+
+    async def _count_marias() -> int:
+        return int(
+            await db_session.scalar(
+                select(func.count())
+                .select_from(Patient)
+                .where(Patient.clinic_id == clinic_id, Patient.first_name == "María")
+            )
+        )
+
+    assert await _count_marias() == 1, "confirmed write was rolled back"
+    roles = [
+        r
+        for (r,) in (
+            await db_session.execute(
+                select(CopilotMessage.role)
+                .where(CopilotMessage.conversation_id == conv_id)
+                .order_by(CopilotMessage.seq)
+            )
+        ).all()
+    ]
+    assert roles == ["user", "assistant", "tool"]  # tool result kept, no reply
+
+    # Retrying the confirmation replays the stored result (#532).
+    conv = await db_session.get(type(conv), conv_id)
+    settings_row = await CopilotSettingsService.get_or_create(db_session, clinic_id)
+    p3 = _FakeProvider([[TextDelta("Hecho."), Done("stop")]])
+    retry = await _stream_frames(monkeypatch, db_session, _resume(p3))
+    assert ("tool_result", "c1", True) in [(e, d.get("call_id"), d.get("ok")) for e, d in retry]
+    assert retry[-1][0] == "done"
+    assert await _count_marias() == 1, "retry executed the write a second time"

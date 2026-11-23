@@ -126,6 +126,8 @@ migration — future ALTERs live on the ``tp`` Alembic branch.
 
 ## Gotchas
 
+- **Both searches match term by term** (#1038) on number, title and
+  patient name, so "Juan Pérez" works. Keep `list` and `list_pipeline` alike.
 - **Reactivation undoes closing on the chart** (#1034): closing soft-deletes
   the plan's planned treatments in the transaction that stamps `closed_at`,
   and both revive paths restore those. Any new way into `closed` must stamp

@@ -116,7 +116,7 @@ class ReceiptUnmatchedError(ReceiptError):
 
 
 class ReceiptAlreadyAppliedError(ReceiptError):
-    """The record already holds this receipt type in a terminal state."""
+    """The record already holds this receipt, or this type in a terminal state."""
 
 
 _TERMINAL = {"delivered", "undeliverable"}
@@ -162,7 +162,8 @@ async def apply_receipt(
     )
     if row is None:
         raise ReceiptUnmatchedError(f"Nessun record per il file {receipt.nome_file}")
-    if row.state in _TERMINAL and row.receipt_type == receipt.type:
+    # The same file again covers a scarto, which isn't terminal (#1079).
+    if (row.state in _TERMINAL and row.receipt_type == receipt.type) or row.receipt_xml == xml:
         raise ReceiptAlreadyAppliedError("Ricevuta già importata")
     now = datetime.now(UTC)
     row.state = new_state

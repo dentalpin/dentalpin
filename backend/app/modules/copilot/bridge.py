@@ -249,15 +249,24 @@ async def resume_turn(
             res = await ctx.tools.call(ctx, pending.name, pending.input)
             payload = res.data if res.ok else {"error": res.error}
             is_error = not res.ok
-            yield ToolCallFinished(call_id, pending.name, res.ok, payload)
             tool_msg = ProviderMessage(Role.TOOL, [ToolResultBlock(call_id, payload, is_error)])
             history.append(tool_msg)
             await ConversationService.append_message(db, conv, role="tool", blocks=tool_msg.content)
+            # Commit the write, its audit row and its tool message before
+            # the follow-up model call (#1093): if that call fails, the
+            # router rolls back only the model's reply, the user is not
+            # told "done" about a write that never landed, and a retry
+            # finds the stored result (#532) instead of executing again.
+            await db.commit()
+            yield ToolCallFinished(call_id, pending.name, res.ok, payload)
     else:
         payload = {"status": "cancelled_by_user"}
         tool_msg = ProviderMessage(Role.TOOL, [ToolResultBlock(call_id, payload, False)])
         history.append(tool_msg)
         await ConversationService.append_message(db, conv, role="tool", blocks=tool_msg.content)
+        # Same boundary for a rejection: the decision is kept even if
+        # the follow-up model call fails.
+        await db.commit()
 
     start = len(history)
     async for ev in run_turn(

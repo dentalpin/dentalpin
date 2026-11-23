@@ -2105,3 +2105,42 @@ async def test_session_edits_still_allowed_before_the_quote_is_sent(
     assert all(s["id"] for s in added)
     r = await client.delete(f"{base}/{sessions[1]['id']}", headers=auth_headers)
     assert r.status_code == 200, r.text
+
+
+@pytest.mark.asyncio
+async def test_plan_search_matches_number_title_and_full_name(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """Listado and pipeline search term by term (#1038)."""
+    base = "/api/v1/treatment_plan/treatment-plans"
+    patient = await client.put(
+        f"/api/v1/patients/{setup['patient_id']}",
+        headers=auth_headers,
+        json={"first_name": "Juan", "last_name": "Pérez"},
+    )
+    assert patient.status_code == 200, patient.text
+    plan = await client.post(
+        base, headers=auth_headers, json={"patient_id": setup["patient_id"], "title": "Implante"}
+    )
+    assert plan.status_code == 201, plan.text
+    number = plan.json()["data"]["plan_number"]
+
+    for term in ("Juan Pérez", "pérez juan", number, "implante"):
+        found = await client.get(base, headers=auth_headers, params={"search": term})
+        assert found.json()["total"] == 1, term
+    for term in ("Nadie", "Juan Nadie"):
+        found = await client.get(base, headers=auth_headers, params={"search": term})
+        assert found.json()["total"] == 0, term
+        assert found.json()["data"] == []
+
+    closed = await client.post(
+        f"{base}/{plan.json()['data']['id']}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert closed.status_code == 200, closed.text
+    for term in ("Juan Pérez", number, "implante"):
+        tab = await client.get(
+            f"{base}/pipeline", headers=auth_headers, params={"tab": "cerrados", "q": term}
+        )
+        assert tab.json()["total"] == 1, term
