@@ -37,6 +37,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Schedules:** a shift inside another no longer shows the rest of the day as closed; overlapping shifts are refused when saving (#991).
 - **Inventory reorder:** generating orders with a repeated item no longer leaves half the purchase orders created behind an error (#992).
 - **GDPR:** a reopened data-subject request no longer keeps its resolution date (#993).
+- **Payments:** amounts with more than two decimals are refused instead of being stored so that a payment's allocations no longer add up to it (#989).
 - **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
 - **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).

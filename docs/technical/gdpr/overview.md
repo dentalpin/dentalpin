@@ -25,7 +25,7 @@ Art. 5(2), immutable except for status transitions):
 - `POST /api/v1/gdpr/requests` — create a DSR (201)
 - `PATCH /api/v1/gdpr/requests/{id}` — transition DSR status
 - `GET /api/v1/gdpr/consents` — list consents (per patient)
-- `POST /api/v1/gdpr/consents` — record consent grant/withdrawal (201)
+- `POST /api/v1/gdpr/consents` — record consent grant/withdrawal (201); 409 when a module has recorded that patient's consent for the purpose together with verified evidence (`managed` entries)
 - `GET /api/v1/gdpr/consents/current` — latest consent for one (patient, purpose)
 - `GET /api/v1/gdpr/retention` — list active retention policies
 - `POST /api/v1/gdpr/retention` — create a policy (201)

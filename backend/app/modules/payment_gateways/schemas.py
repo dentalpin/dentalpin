@@ -24,7 +24,7 @@ GatewayMethod = str  # validated against GATEWAY_METHODS in the router/service, 
 class PaymentRequestCreate(BaseModel):
     patient_id: UUID
     provider_key: str = Field(min_length=1, max_length=50)
-    amount: Decimal = Field(gt=0)
+    amount: Decimal = Field(gt=0, decimal_places=2)  # cents only (#989)
     method: str = Field(min_length=1, max_length=20)
     allocations: list[AllocationCreate] = Field(min_length=1)
     context: dict | None = None
@@ -104,7 +104,7 @@ class PaymentRequestResponse(BaseModel):
 
 class GatewayRefundRequestCreate(BaseModel):
     payment_id: UUID
-    amount: Decimal = Field(gt=0)
+    amount: Decimal = Field(gt=0, decimal_places=2)  # cents only (#989)
     method: PaymentMethod | None = None  # unused by gateway refunds; accepted for UI symmetry
     reason_code: RefundReason
     reason_note: str | None = None
