@@ -88,6 +88,14 @@
         "save": "Save letterhead",
         "saved": "Letterhead saved"
       },
+      "consentTemplateArchive": {
+        "archive": "Archive",
+        "restore": "Restore",
+        "archived": "Archived",
+        "archivedToast": "Template archived",
+        "restoredToast": "Template restored",
+        "help": "Archived templates are hidden from the consent picker. Consents already created from them are not affected."
+      },
       "consentTemplates": {
         "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
         "empty": "No templates yet. Create the first one below.",
@@ -114,6 +122,7 @@
       "noEvidence": "The requested document is not available yet.",
       "completed": "Signature recorded. You may return the tablet to staff.",
       "linkError": "The link is invalid, expired or already used.",
+      "submitFailed": "Your signature could not be sent. Please try again.",
       "revocationNotice": "By signing, you revoke the consent shown.",
       "signer": "Signer name",
       "relationship": "Relationship to patient",

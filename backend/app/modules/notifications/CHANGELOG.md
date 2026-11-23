@@ -3,11 +3,14 @@
 ## Unreleased
 
 - fix(#1036): a repeated skip is logged once per message and reason, without using up the send, and a patient's thread returns its newest messages instead of the oldest 200.
+- fix(#1035): the reminder's dedup key follows the start time, so a rescheduled appointment is reminded for its new time.
 - fix: `dispatch_outbox` re-reads each row `FOR UPDATE SKIP LOCKED` in `_dispatch_one` and skips it when it is no longer due. The batch lock taken by the initial select is released by the first commit, so a concurrent tick could send the remaining rows of the batch a second time.
 
 - fix(#965): `resolve_patient_by_phone` links a patient only when exactly one matches. A number shared by several patients raised `MultipleResultsFound` (identical strings) or returned an arbitrary one (suffix match); it now resolves to `None`, as telephony's caller match does.
 
 - fix(#922): the "budget accepted" message dates the acceptance on the clinic's calendar (`clinic_date_label`). It printed the UTC day of `updated_at`, so an evening acceptance in a UTC-6 clinic said the next day.
+
+- Add verified destination and appointment-reminder consent checks for patients whose consent is managed by verified evidence (`notification_preferences.verified_consents`), with transactional cancellation of pending delivery. The destination fingerprint is a plain patient-scoped SHA-256, so rotating `SECRET_KEY` does not affect delivery. A manual WhatsApp consent change for such a patient raises `ManagedConsentError` (409).
 
 - fix(#907): appointment confirmation, cancellation and reminder messages print the appointment's date and time on the clinic's clock. They formatted the stored UTC value, so a Madrid patient booked for 10:00 was told 09:00, and an evening appointment in the Americas showed the next day. `appointment_when_context` in `service.py` builds both keys for the handlers, the reminder jobs and the manual send.
 

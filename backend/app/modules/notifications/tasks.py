@@ -69,6 +69,27 @@ async def dispatch_outbox() -> None:
         logger.error("Outbox dispatch tick failed: %s", exc, exc_info=True)
 
 
+async def _reminder_key(db, appointment) -> str:
+    """One reminder per appointment and start time (#1035).
+
+    The first keeps the plain key, which is what rows sent so far carry. A
+    later start time gets its own, so a moved appointment is reminded again.
+    """
+    from app.modules.notifications.models import CommunicationMessage
+
+    key = f"appointment_reminder:{appointment.id}"
+    context = await db.scalar(
+        select(CommunicationMessage.context_data).where(
+            CommunicationMessage.clinic_id == appointment.clinic_id,
+            CommunicationMessage.dedup_key == key,
+        )
+    )
+    reminded_for = (context or {}).get("appointment_start_at")
+    if not reminded_for or datetime.fromisoformat(reminded_for) == appointment.start_time:
+        return key
+    return f"{key}:{appointment.start_time.astimezone(UTC).isoformat()}"
+
+
 async def process_appointment_reminders() -> None:
     """Process and send appointment reminders.
 
@@ -183,7 +204,7 @@ async def process_appointment_reminders() -> None:
                         patient_id=patient.id,
                         triggered_by_event="scheduler.appointment_reminder",
                         force_send=True,  # Skip preference check (already checked auto_send)
-                        dedup_key=f"appointment_reminder:{appointment.id}",
+                        dedup_key=await _reminder_key(db, appointment),
                     )
 
                     if msg is None or msg.status == "skipped":
@@ -287,7 +308,7 @@ async def send_single_reminder(appointment_id: UUID, clinic_id: UUID) -> bool:
                 patient_id=patient.id,
                 triggered_by_event="manual.appointment_reminder",
                 force_send=True,
-                dedup_key=f"appointment_reminder:{appointment.id}",
+                dedup_key=await _reminder_key(db, appointment),
             )
             await db.commit()  # own session → own commit (``enqueue`` only flushes)
 

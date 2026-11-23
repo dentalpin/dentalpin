@@ -15,7 +15,7 @@
  * patients_clinical slots — the page no longer reaches into other
  * modules' APIs directly.
  */
-import type { PatientExtended, ApiResponse } from '~~/app/types'
+import type { PatientExtended, MedicalHistory, ApiResponse } from '~~/app/types'
 import { errorMessage } from '~~/app/utils/error'
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { parseDateOnly } from '~~/app/utils/wallClock'
@@ -83,7 +83,14 @@ const { data: patient, status, refresh } = await useAsyncData(
 // via auto-import. We only need it here to drive the section-edit modal
 // (medical history form). The Resumen surfaces the same data through a
 // patients_clinical-owned card.
-const { medicalHistory, isSaving: isSavingMedical, saveMedicalHistory } = useMedicalHistory(patientIdRef)
+const {
+  medicalHistory,
+  isLoaded: medicalHistoryLoaded,
+  error: medicalHistoryError,
+  isSaving: isSavingMedical,
+  fetchMedicalHistory,
+  saveMedicalHistory
+} = useMedicalHistory(patientIdRef)
 
 // Tabs — Resumen is the landing.
 const activeTab = ref('summary')
@@ -174,6 +181,8 @@ const editModalSection = ref<SectionType>('demographics')
 const isSubmitting = ref(false)
 
 function openSectionModal(section: SectionType) {
+  // A failed load is retried on open; the modal can't save without it (#1045).
+  if (section === 'medical' && medicalHistoryError.value && !medicalHistoryLoaded.value) fetchMedicalHistory()
   editModalSection.value = section
   editModalOpen.value = true
 }
@@ -194,8 +203,8 @@ async function handleSectionSave(_section: SectionType, _data: Record<string, un
   await refresh()
 }
 
-async function handleMedicalSave() {
-  const success = await saveMedicalHistory()
+async function handleMedicalSave(edited: MedicalHistory) {
+  const success = await saveMedicalHistory(edited)
   if (success) {
     editModalOpen.value = false
   }
@@ -507,7 +516,8 @@ function collect() {
       v-model:open="editModalOpen"
       :section="editModalSection"
       :patient="patient"
-      :medical-history="medicalHistory"
+      :medical-history="medicalHistoryLoaded ? medicalHistory : undefined"
+      :medical-history-error="medicalHistoryError"
       :is-saving-medical="isSavingMedical"
       @save="handleSectionSave"
       @save-medical="handleMedicalSave"

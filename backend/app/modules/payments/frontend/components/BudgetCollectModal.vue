@@ -6,6 +6,7 @@
  */
 
 import type { PaymentMethod, PaymentRecord, PaymentAllocationCreate } from '~~/app/types'
+import { splitBudgetCollection, toCents } from '../utils/money'
 
 const props = withDefaults(defineProps<{
   open: boolean
@@ -41,9 +42,8 @@ function fmt(value: number | string) {
 }
 
 function buildAllocations(amount: number): PaymentAllocationCreate[] {
-  const pending = Math.max(0, Number(props.pendingAmount || 0))
-  const toBudget = Math.min(amount, pending)
-  const toOnAccount = Math.max(0, amount - pending)
+  // Cents only: a float difference (120.3 - 100.1) would be a 422 (#989).
+  const { toBudget, toOnAccount } = splitBudgetCollection(amount, Number(props.pendingAmount || 0))
   const allocs: PaymentAllocationCreate[] = []
   if (toBudget > 0) {
     allocs.push({ target_type: 'budget', target_id: props.budgetId, amount: toBudget })
@@ -66,7 +66,7 @@ async function handleSubmit(payload: {
   try {
     const created = await create({
       patient_id: props.patientId,
-      amount: payload.amount,
+      amount: toCents(payload.amount),
       method: payload.method,
       payment_date: payload.payment_date,
       reference: payload.reference,
