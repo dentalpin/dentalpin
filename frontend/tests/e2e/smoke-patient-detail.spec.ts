@@ -167,5 +167,6 @@ test.describe('patient detail', () => {
     await expect(diagnosisDialog.locator('.selected-summary')).toBeVisible()
     await loggedIn.keyboard.press('Escape')
     await expect(diagnosisDialog).toBeHidden()
+    await expect(chart.locator('.treatment-bar .treatment-btn[aria-pressed="true"]')).toHaveCount(0)
   })
 })

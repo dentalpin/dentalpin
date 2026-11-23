@@ -177,6 +177,12 @@ function handleConfirm() {
 // Cancel selection
 function handleCancel() {
   selectedSurfaces.value = []
+  if (props.diagnosisMode) {
+    // A cancelled diagnosis must not remain armed in the chart toolbar,
+    // where a later tooth click could apply it without a fresh review.
+    selectedTreatment.value = null
+    selectedCatalogItemId.value = null
+  }
   emit('cancel')
   emit('update:open', false)
 }
@@ -190,6 +196,10 @@ watch(() => props.open, (isOpen) => {
   if (isOpen) {
     selectedSurfaces.value = []
     diagnosisStep.value = false
+    if (props.diagnosisMode) {
+      selectedTreatment.value = null
+      selectedCatalogItemId.value = null
+    }
   }
 })
 </script>
