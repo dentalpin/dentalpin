@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1045): the medical-history modal edits a copy (Cancel discards it) and can't save before the history loaded.
+
 - Audit authenticated views of the patient record and extended details. (#903).
 
 - `patient.updated` is now published with `db=db`, so its handlers run inside the update's transaction (ADR 0019). The first transactional subscriber is notifications, which cancels pending WhatsApp drafts when `do_not_contact` is set (#875). A failing handler now rolls the patient update back.

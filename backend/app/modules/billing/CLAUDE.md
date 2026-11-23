@@ -107,6 +107,10 @@ that event was never published.
   `invoice.total`; a header discount would desync the AEAT record
   (issue #167). The from-budget wizard mirrors this via
   `items[].global_discount_share` from the budget API.
+- **A credit note's discount is negative like its line** (#1013).
+  `discount_value` stays positive; `calculate_item_totals` gives
+  `line_discount` the line's sign, and a partial note takes its share of an
+  absolute discount. Never compare either against 0 with `> 0` downstream.
 - **Credit notes** are issued via the same workflow as invoices,
   flagged via the document type. Don't introduce a parallel pipeline.
 - **Budget ↔ invoice bridge (`payment_bridge.py`, issue #178).** One

@@ -7,7 +7,9 @@ import type {
   SystemicDiseaseEntry
 } from '~~/app/types'
 
-const DEFAULT_MEDICAL_HISTORY: MedicalHistory = {
+// A new object on every call: shared arrays carried one patient's entries
+// into the next patient's history (#1045).
+const emptyMedicalHistory = (): MedicalHistory => ({
   allergies: [],
   medications: [],
   systemic_diseases: [],
@@ -27,14 +29,16 @@ const DEFAULT_MEDICAL_HISTORY: MedicalHistory = {
   anesthesia_reaction_details: undefined,
   last_updated_at: undefined,
   last_updated_by: undefined
-}
+})
 
 export function useMedicalHistory(patientId: Ref<string | undefined>) {
   const api = useApi()
   const { t } = useI18n()
   const toast = useToast()
 
-  const medicalHistory = ref<MedicalHistory>({ ...DEFAULT_MEDICAL_HISTORY })
+  const medicalHistory = ref<MedicalHistory>(emptyMedicalHistory())
+  // The PUT replaces the whole history: saving is only safe on a loaded one.
+  const isLoaded = ref(false)
   const isLoading = ref(false)
   const isSaving = ref(false)
   const error = ref<string | null>(null)
@@ -49,7 +53,8 @@ export function useMedicalHistory(patientId: Ref<string | undefined>) {
       const response = await api.get<ApiResponse<MedicalHistory>>(
         `/api/v1/patients_clinical/patients/${patientId.value}/medical-history`
       )
-      medicalHistory.value = response.data || { ...DEFAULT_MEDICAL_HISTORY }
+      medicalHistory.value = response.data || emptyMedicalHistory()
+      isLoaded.value = true
     } catch (e) {
       error.value = t('patients.medicalHistory.fetchError')
       console.error('Failed to fetch medical history:', e)
@@ -58,8 +63,9 @@ export function useMedicalHistory(patientId: Ref<string | undefined>) {
     }
   }
 
-  async function saveMedicalHistory(): Promise<boolean> {
-    if (!patientId.value) return false
+  /** Saves ``edited`` (the edit modal's copy), or the current history. */
+  async function saveMedicalHistory(edited?: MedicalHistory): Promise<boolean> {
+    if (!patientId.value || !isLoaded.value) return false
 
     isSaving.value = true
     error.value = null
@@ -67,7 +73,7 @@ export function useMedicalHistory(patientId: Ref<string | undefined>) {
     try {
       const response = await api.put<ApiResponse<MedicalHistory>>(
         `/api/v1/patients_clinical/patients/${patientId.value}/medical-history`,
-        medicalHistory.value,
+        edited ?? medicalHistory.value,
         // The catch below toasts its own save-error message.
         { errorToast: false }
       )
@@ -151,15 +157,14 @@ export function useMedicalHistory(patientId: Ref<string | undefined>) {
 
   // Watch patientId and fetch when it changes
   watch(patientId, (newId) => {
-    if (newId) {
-      fetchMedicalHistory()
-    } else {
-      medicalHistory.value = { ...DEFAULT_MEDICAL_HISTORY }
-    }
+    medicalHistory.value = emptyMedicalHistory()
+    isLoaded.value = false
+    if (newId) fetchMedicalHistory()
   }, { immediate: true })
 
   return {
     medicalHistory,
+    isLoaded,
     isLoading,
     isSaving,
     error,

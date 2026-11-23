@@ -13,8 +13,8 @@ appointments from those windows and returns discrete bookable slots
 
 from __future__ import annotations
 
+from datetime import UTC, datetime, timedelta
 from datetime import date as date_cls
-from datetime import datetime, timedelta
 from typing import Literal
 from uuid import UUID
 from zoneinfo import ZoneInfo
@@ -118,7 +118,12 @@ async def _find_free_slots(ctx: AgentContext, params: FreeSlotsArgs) -> dict:
     tz = ZoneInfo(tz_name)
     min_dur = timedelta(minutes=params.slot_minutes)
     windows: list[tuple[datetime, datetime]] = []
-    for win_start, win_end in open_ranges:
+    # Time already gone today is not free (#1008); start on a whole minute.
+    earliest = datetime.now(UTC).replace(second=0, microsecond=0) + timedelta(minutes=1)
+    for open_start, win_end in open_ranges:
+        win_start = max(open_start, earliest)
+        if win_start >= win_end:
+            continue
         for free_start, free_end in _subtract(win_start, win_end, busy):
             if free_end - free_start < min_dur:
                 continue

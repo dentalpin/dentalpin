@@ -43,6 +43,16 @@ def _invoice(*, tax_id=None):
     )
 
 
+def _credit_note(*, tax_id=None):
+    """The same invoice as billing stores its credit note: negative unit price and lines."""
+    inv = _invoice(tax_id=tax_id)
+    inv.invoice_number = "HU-NC-2026-0001"
+    for item in inv.items:
+        item.line_subtotal = -item.line_subtotal
+        item.line_discount = -item.line_discount
+    return inv
+
+
 def _xp(root, path):
     return root.xpath(path, namespaces=_NSMAP)
 
@@ -89,7 +99,7 @@ def test_private_person_invoice_lines_and_summary():
 
 def test_domestic_customer_and_storno_negation():
     res = build_invoice_data(
-        _invoice(tax_id="11111111-2-13"),
+        _credit_note(tax_id="11111111-2-13"),
         supplier_tax_number=HungarianTaxNumber("87654321", "2", "41"),
         supplier_name="Mosoly Dental Kft.",
         supplier_address=None,
@@ -101,3 +111,9 @@ def test_domestic_customer_and_storno_negation():
     assert _xp(root, "//d:originalInvoiceNumber/text()") == ["HU-2026-0001"]
     assert _xp(root, "//d:invoiceGrossAmount/text()") == ["-40400.00"]
     assert res.gross_amount == Decimal("-40400.00")
+    # NAV's "Modositas es ervenytelenites" sample: negative quantity and
+    # amounts, positive unit price (#1046).
+    assert _xp(root, "//d:quantity/text()") == ["-1", "-2"]
+    assert _xp(root, "//d:unitPrice/text()") == ["15000.00", "10000.00"]
+    assert _xp(root, "//d:lineNetAmount/text()") == ["-15000.00", "-20000.00"]
+    assert _xp(root, "//d:invoiceVatAmount/text()") == ["-5400.00"]

@@ -184,3 +184,95 @@ async def test_item_from_another_clinic_is_rejected(db_session: AsyncSession) ->
         await AppointmentService.validate_planned_items(
             db_session, clinic_a, patient_a, [item_b.id]
         )
+
+
+async def _visit_with(
+    db: AsyncSession, clinic_id: UUID, user_id: UUID, patient_id: UUID, items: list
+):
+    start = datetime.now(UTC) + timedelta(days=3)
+    visit = await AppointmentService.create_appointment(
+        db,
+        clinic_id,
+        {
+            "patient_id": patient_id,
+            "professional_id": user_id,
+            "start_time": start,
+            "end_time": start + timedelta(minutes=30),
+            "planned_item_ids": [item.id for item in items],
+        },
+    )
+    visit_id = visit.id
+    db.expunge(visit)
+    return await AppointmentService.get_appointment(db, clinic_id, visit_id)
+
+
+@pytest.mark.asyncio
+async def test_saving_an_appointment_keeps_its_visit_note(db_session: AsyncSession) -> None:
+    """The edit modal resends the links on every save (#1017).
+
+    They were deleted and re-created, which wiped the visit note and the
+    completed flag stored on each link.
+    """
+    clinic_id, user_id, patient_id = await _mkclinic(
+        db_session, name="Note Clinic", tax_id=f"B{uuid4().int % 10**8:08d}"
+    )
+    first = await _mkitem(db_session, clinic_id, user_id, patient_id, plan_status="active")
+    second = await _mkitem(db_session, clinic_id, user_id, patient_id, plan_status="active")
+    visit = await _visit_with(db_session, clinic_id, user_id, patient_id, [first])
+    link = visit.treatments[0]
+    link.notes = "Impression taken"
+    link.completed_in_appointment = True
+    await db_session.flush()
+    link_id = link.id
+
+    await AppointmentService.update_appointment(
+        db_session, visit, {"planned_item_ids": [second.id, first.id]}
+    )
+
+    await db_session.refresh(visit, ["treatments"])
+    assert [t.planned_treatment_item_id for t in visit.treatments] == [second.id, first.id]
+    kept = visit.treatments[1]
+    assert kept.id == link_id
+    assert kept.notes == "Impression taken"
+    assert kept.completed_in_appointment is True
+
+
+@pytest.mark.asyncio
+async def test_saving_accepts_an_item_completed_since_booking(db_session: AsyncSession) -> None:
+    """Only newly added items must be bookable (#1017)."""
+    clinic_id, user_id, patient_id = await _mkclinic(
+        db_session, name="Since Clinic", tax_id=f"B{uuid4().int % 10**8:08d}"
+    )
+    item = await _mkitem(db_session, clinic_id, user_id, patient_id, plan_status="active")
+    visit = await _visit_with(db_session, clinic_id, user_id, patient_id, [item])
+    item.status = "completed"
+    await db_session.flush()
+
+    await AppointmentService.update_appointment(
+        db_session, visit, {"planned_item_ids": [item.id], "notes": "Moved"}
+    )
+    assert visit.notes == "Moved"
+
+    done = await _mkitem(
+        db_session, clinic_id, user_id, patient_id, plan_status="active", item_status="completed"
+    )
+    with pytest.raises(ValueError, match="is already completed"):
+        await AppointmentService.update_appointment(
+            db_session, visit, {"planned_item_ids": [item.id, done.id]}
+        )
+
+
+@pytest.mark.asyncio
+async def test_changing_the_patient_revalidates_kept_items(db_session: AsyncSession) -> None:
+    clinic_id, user_id, patient_id = await _mkclinic(
+        db_session, name="Swap Clinic", tax_id=f"B{uuid4().int % 10**8:08d}"
+    )
+    other = Patient(id=uuid4(), clinic_id=clinic_id, first_name="Otro", last_name="Paciente")
+    db_session.add(other)
+    item = await _mkitem(db_session, clinic_id, user_id, patient_id, plan_status="active")
+    visit = await _visit_with(db_session, clinic_id, user_id, patient_id, [item])
+
+    with pytest.raises(ValueError, match="does not belong to patient"):
+        await AppointmentService.update_appointment(
+            db_session, visit, {"patient_id": other.id, "planned_item_ids": [item.id]}
+        )
