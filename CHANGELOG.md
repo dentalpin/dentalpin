@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Italy (SdI):** receipts can no longer be lost when the PEC poll or the save fails (#1079).
 - **Agenda:** the mobile + button books on the day being viewed (#1037).
 - **Treatment plans:** search works in the list and finds full names in the pipeline (#1038).
 - **Odontogram:** past charts in the History tab show performed treatments (#1065).
