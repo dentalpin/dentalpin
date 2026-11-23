@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Copilot:** free-slot search no longer offers times that have already passed today (#1008).
 - **Orthodontics:** a back-dated control leaves the current wires and the next control date to the latest one (#1007).
 - **Documents:** an edited document no longer serves the PDF of its previous content (#1006).
 - **Agenda:** saving an appointment no longer deletes its visit notes, and works after a linked treatment was completed (#1017).
