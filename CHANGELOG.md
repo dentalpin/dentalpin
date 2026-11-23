@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
 - **Billing:** a credit note of a discounted line credits what was billed instead of 0.00, and the Italian e-invoice keeps its discount (#1013).
 - **Expenses:** the CSV import no longer reads a thousands separator as a decimal point; `1.200` is 1200, not 1.20 (#962).
 - **Medical reference:** a deactivated medication, allergy, disease or surgery can be added again from the patient form; it comes back with its interaction warnings (#963).
