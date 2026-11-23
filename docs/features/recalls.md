@@ -105,7 +105,9 @@ Snooze bumps `due_month` forward N months, keeps status `pending`.
 - Filters: month, reason, professional, status, priority, overdue
   toggle, patient.
 - Counters strip: due this week, overdue, scheduled this month,
-  conversion rate.
+  conversion rate. "Due this week" reads `due_date` inside the
+  clinic's Monday-to-Sunday week; month-only recalls (`due_date`
+  NULL) are not in any week and count only under the month.
 - Per-row inline actions: click-to-call (`tel:` on mobile), log
   attempt (one tap for "no answer"), book appointment (opens agenda
   composer pre-filled, links recall on save), snooze, cancel.

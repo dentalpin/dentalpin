@@ -47,6 +47,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Downloads:** patient files and invoice PDFs with names outside latin-1 download instead of failing with a server error (#1015).
 - **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
 - **Billing:** a credit note of a discounted line credits what was billed instead of 0.00, and the Italian e-invoice keeps its discount (#1013).
+- **Recalls:** the *Due this week* counter now counts the current week (Monday to Sunday, clinic time) instead of the whole month (#1004).
 - **Email:** the clinic address in the email footer prints as one formatted line instead of a raw dict, and subjects no longer show HTML entities such as `&amp;` (#1043).
 - **Treatment plans:** adding a treatment that already sits on a plan now shows which plan holds it instead of failing with a server error (#1073).
 - **Online booking:** accepting a request as a new patient requires a surname, so the patient record stays editable (#1044).

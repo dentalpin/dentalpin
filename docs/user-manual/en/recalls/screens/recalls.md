@@ -27,7 +27,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/recalls/frontend/pages/recalls/index.vue
   - backend/app/modules/recalls/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: b40a1d2
 ---
 
 # Call list
@@ -44,7 +44,9 @@ move the recall to its next state.
 - **Four counters at the top** — *Due this week*, *Overdue*,
   *Scheduled this month*, *Conversion rate*. They recompute as
   filters change. Conversion is scheduled appointments / overdue
-  recalls for the month.
+  recalls for the month. *Due this week* counts open recalls with an
+  exact due date in the current Monday-to-Sunday week (clinic time);
+  month-only recalls count under the month, not the week.
 - **Extra filters** — reason, status, priority, plus an *Overdue*
   toggle. Filter state lives in the URL so links are shareable.
 - **Default status:** *pending*. *Done*, *cancelled*, and *needs
