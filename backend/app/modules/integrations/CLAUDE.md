@@ -41,7 +41,11 @@ transaction queues nothing), the scheduled `dispatch_outbox` tick
 (every 45s) sends with `FOR UPDATE SKIP LOCKED` batching and commits
 before each network call so no row lock is held across I/O. Backoff:
 `min(60 * 2**(attempts-1), 3600)`, same formula as
-`CommunicationMessage`. A subscription auto-disables after
+`CommunicationMessage`. Every pick spends an attempt, also when the
+subscription is paused or its secret can't be decrypted, so such a
+delivery ends `failed` after `max_attempts` instead of looping (#1009);
+re-enabling only resumes the ones that still had attempts left.
+A subscription auto-disables after
 `MAX_CONSECUTIVE_FAILURES` (25) consecutive delivery failures —
 `CommunicationMessage` has no equivalent, since it tracks per-message
 terminal state, not a per-subscriber circuit breaker.

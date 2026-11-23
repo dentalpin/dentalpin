@@ -106,10 +106,11 @@ async def list_treatment_plans(
     page_size: int = Query(default=20, ge=1, le=100),
     patient_id: UUID | None = None,
     status: list[str] | None = Query(default=None),
+    search: str | None = Query(default=None, max_length=200, description="Free-text search"),
 ) -> PaginatedApiResponse[TreatmentPlanResponse]:
     """List treatment plans with pagination and filters."""
     plans, total = await TreatmentPlanService.list(
-        db, ctx.clinic_id, page, page_size, patient_id=patient_id, status=status
+        db, ctx.clinic_id, page, page_size, patient_id=patient_id, status=status, search=search
     )
     # Compute counts and totals from loaded items
     for p in plans:

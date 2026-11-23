@@ -2,6 +2,7 @@
 import type { DeepReadonly } from 'vue'
 import type { InvoiceItem, InvoiceItemCreate, TreatmentCatalogItem, VatType } from '~~/app/types'
 import { errorMessage } from '~~/app/utils/error'
+import { lineVatTypeId } from '../../utils/itemVat'
 
 const props = defineProps<{
   invoiceId: string
@@ -75,11 +76,7 @@ function handleItemSelect(item: TreatmentCatalogItem | null) {
     form.catalog_item_id = item.id
     form.description = getItemName(item)
     form.unit_price = item.default_price || 0
-    // Set default VAT type
-    const defaultVat = vatTypes.value.find(v => v.is_default)
-    if (defaultVat) {
-      form.vat_type_id = defaultVat.id
-    }
+    form.vat_type_id = lineVatTypeId(item, vatTypes.value) ?? form.vat_type_id
   } else {
     form.catalog_item_id = undefined
     form.description = ''

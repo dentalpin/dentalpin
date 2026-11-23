@@ -11,6 +11,8 @@
   billing events are published before the request commits, so a handler on
   its own session cannot see the invoice. `services/documents.sync_clinic`
   runs every tick and is idempotent (one `inserimento` per invoice).
+- **A rimborso's `importo` is positive** (#1048): billing stores credit-note
+  lines negative, the spec wants positive values in a refund too.
 - **Opposition is honoured, never a skip**: the document still goes, with
   `flagOpposizione=1` and no `cfCittadino` (spec table 5). Changing it
   after acceptance queues a `variazione`.

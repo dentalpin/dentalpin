@@ -485,6 +485,63 @@ async def test_delete_plan_keeps_performed_treatments(
     )
 
 
+@pytest.mark.asyncio
+async def test_reactivate_restores_what_closing_removed(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """Closing drops planned treatments from the chart, reactivating brings them back (#1034)."""
+    plans = "/api/v1/treatment_plan/treatment-plans"
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16, 15])
+    r = await client.get(f"{plans}/{plan_id}", headers=auth_headers)
+    treatment_ids = [i["treatment"]["id"] for i in r.json()["data"]["items"]]
+    pid = setup["patient_id"]
+    # Removed by hand before closing: not closing's to restore.
+    by_hand = await _create_treatment(client, auth_headers, setup, tooth_number=14)
+    r = await client.post(
+        f"{plans}/{plan_id}/items", headers=auth_headers, json={"treatment_id": by_hand}
+    )
+    assert r.status_code == 201, r.text
+    r = await client.delete(f"/api/v1/odontogram/treatments/{by_hand}", headers=auth_headers)
+    assert r.status_code == 204, r.text
+
+    r = await client.post(
+        f"{plans}/{plan_id}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert r.status_code == 200, r.text
+    for tid in treatment_ids:
+        assert await _treatment_is_deleted(client, auth_headers, pid, tid)
+
+    r = await client.post(f"{plans}/{plan_id}/reactivate", headers=auth_headers)
+    assert r.status_code == 200, r.text
+    for tid in treatment_ids:
+        assert not await _treatment_is_deleted(client, auth_headers, pid, tid)
+    assert await _treatment_is_deleted(client, auth_headers, pid, by_hand)
+
+
+@pytest.mark.asyncio
+async def test_reopening_through_the_status_route_restores_too(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """``PATCH /status`` is the third way out of closed (#1034)."""
+    base = "/api/v1/treatment_plan/treatment-plans"
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    r = await client.get(f"{base}/{plan_id}", headers=auth_headers)
+    treatment_id = r.json()["data"]["items"][0]["treatment"]["id"]
+    r = await client.post(
+        f"{base}/{plan_id}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert r.status_code == 200, r.text
+    r = await client.patch(
+        f"{base}/{plan_id}/status", headers=auth_headers, json={"status": "draft"}
+    )
+    assert r.status_code == 200, r.text
+    assert not await _treatment_is_deleted(client, auth_headers, setup["patient_id"], treatment_id)
+
+
 # -----------------------------------------------------------------------------
 # Lock / unlock on budget generation
 # -----------------------------------------------------------------------------
@@ -2048,3 +2105,42 @@ async def test_session_edits_still_allowed_before_the_quote_is_sent(
     assert all(s["id"] for s in added)
     r = await client.delete(f"{base}/{sessions[1]['id']}", headers=auth_headers)
     assert r.status_code == 200, r.text
+
+
+@pytest.mark.asyncio
+async def test_plan_search_matches_number_title_and_full_name(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """Listado and pipeline search term by term (#1038)."""
+    base = "/api/v1/treatment_plan/treatment-plans"
+    patient = await client.put(
+        f"/api/v1/patients/{setup['patient_id']}",
+        headers=auth_headers,
+        json={"first_name": "Juan", "last_name": "Pérez"},
+    )
+    assert patient.status_code == 200, patient.text
+    plan = await client.post(
+        base, headers=auth_headers, json={"patient_id": setup["patient_id"], "title": "Implante"}
+    )
+    assert plan.status_code == 201, plan.text
+    number = plan.json()["data"]["plan_number"]
+
+    for term in ("Juan Pérez", "pérez juan", number, "implante"):
+        found = await client.get(base, headers=auth_headers, params={"search": term})
+        assert found.json()["total"] == 1, term
+    for term in ("Nadie", "Juan Nadie"):
+        found = await client.get(base, headers=auth_headers, params={"search": term})
+        assert found.json()["total"] == 0, term
+        assert found.json()["data"] == []
+
+    closed = await client.post(
+        f"{base}/{plan.json()['data']['id']}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert closed.status_code == 200, closed.text
+    for term in ("Juan Pérez", number, "implante"):
+        tab = await client.get(
+            f"{base}/pipeline", headers=auth_headers, params={"tab": "cerrados", "q": term}
+        )
+        assert tab.json()["total"] == 1, term

@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import logging
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID
 
-from sqlalchemy import func, select, update
+from sqlalchemy import func, or_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -241,6 +241,7 @@ class TreatmentPlanService:
         page_size: int = 20,
         patient_id: UUID | None = None,
         status: str | list[str] | None = None,
+        search: str | None = None,
     ) -> tuple[list[TreatmentPlan], int]:
         """List treatment plans with pagination and filters."""
         page_size = min(max(page_size, 1), 100)
@@ -262,6 +263,22 @@ class TreatmentPlanService:
                 base_where.append(TreatmentPlan.status == statuses[0])
             else:
                 base_where.append(TreatmentPlan.status.in_(statuses))
+
+        # Every term must match one field, as in the patient search (#1038).
+        for term in (search or "").split():
+            like = f"%{term}%"
+            base_where.append(
+                or_(
+                    TreatmentPlan.plan_number.ilike(like),
+                    TreatmentPlan.title.ilike(like),
+                    TreatmentPlan.patient_id.in_(
+                        select(Patient.id).where(
+                            Patient.clinic_id == clinic_id,
+                            or_(Patient.first_name.ilike(like), Patient.last_name.ilike(like)),
+                        )
+                    ),
+                )
+            )
 
         # Count
         count_result = await db.execute(select(func.count(TreatmentPlan.id)).where(*base_where))
@@ -471,7 +488,14 @@ class TreatmentPlanService:
         if new_status == "active" and not plan.items:
             raise ValueError("Cannot activate plan without treatments")
 
+        if old_status == "closed":
+            await TreatmentPlanService._restore_removed_by_closing(db, clinic_id, plan)
+            plan.closed_at = None
+            plan.closure_reason = None
+            plan.closure_note = None
         plan.status = new_status
+        if new_status == "closed":
+            plan.closed_at = datetime.now(UTC)  # reactivation restores from here (#1034)
 
         # Terminal transitions drop the plan's hold on its planned Treatments — clean
         # up any that become orphaned so the odontogram reflects reality.
@@ -558,6 +582,30 @@ class TreatmentPlanService:
             treatment = await db.get(Treatment, treatment_id)
             if treatment and treatment.deleted_at is None and treatment.status == "planned":
                 await TreatmentService.delete(db, clinic_id, treatment_id, user_id)
+                if plan.status == "closed" and plan.closed_at:
+                    treatment.deleted_at = plan.closed_at  # marks it as closing's (#1034)
+
+    @staticmethod
+    async def _restore_removed_by_closing(
+        db: AsyncSession, clinic_id: UUID, plan: TreatmentPlan
+    ) -> None:
+        """Bring back the treatments closing took off the chart (#1034).
+
+        Closing stamps them with the plan's ``closed_at``. Plans closed before
+        that stamp existed had them deleted moments after it, in the same
+        transaction, hence the minute. A rejected quote closes without
+        removing anything, so for that reason only the exact stamp counts:
+        anything else is a deletion by hand.
+        """
+        from app.modules.odontogram.service import TreatmentService
+
+        treatment_ids = {item.treatment_id for item in plan.items if item.treatment_id}
+        if plan.closed_at is None or not treatment_ids:
+            return
+        until = plan.closed_at
+        if plan.closure_reason != "rejected_by_patient":
+            until += timedelta(minutes=1)
+        await TreatmentService.restore_planned(db, clinic_id, treatment_ids, plan.closed_at, until)
 
     # -------------------------------------------------------------------------
     # Item Operations
@@ -1464,11 +1512,13 @@ class TreatmentPlanService:
         if doctor_id is not None:
             extra_where += " AND p.assigned_professional_id = :doctor_id"
             params["doctor_id"] = doctor_id
-        if search:
+        for i, term in enumerate((search or "").split()):
+            # Only the index is interpolated; the term is a bound parameter.
             extra_where += (
-                " AND (p.plan_number ILIKE :q OR pat.first_name ILIKE :q OR pat.last_name ILIKE :q)"
+                f" AND (p.plan_number ILIKE :q{i} OR p.title ILIKE :q{i}"
+                f" OR pat.first_name ILIKE :q{i} OR pat.last_name ILIKE :q{i})"
             )
-            params["q"] = f"%{search}%"
+            params[f"q{i}"] = f"%{term}%"
 
         # ----- shared SELECT --------------------------------------------
         base_sql = f"""
@@ -1912,6 +1962,7 @@ class TreatmentPlanService:
         if plan.status != "closed":
             raise ValueError(f"Cannot reactivate plan in status '{plan.status}'")
 
+        await TreatmentPlanService._restore_removed_by_closing(db, clinic_id, plan)
         previous_reason = plan.closure_reason
         plan.status = "draft"
         plan.closure_reason = None
@@ -2007,6 +2058,7 @@ class TreatmentPlanService:
             return plan
 
         if plan.status == "closed" and plan.closure_reason == "rejected_by_patient":
+            await TreatmentPlanService._restore_removed_by_closing(db, clinic_id, plan)
             previous_reason = plan.closure_reason
             plan.status = "active"
             plan.closure_reason = None
