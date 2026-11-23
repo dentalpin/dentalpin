@@ -485,12 +485,14 @@ const totalsLines = computed<TotalLine[]>(() => {
   const lines: TotalLine[] = [
     { key: 'subtotal', label: t('invoice.subtotal'), value: inv.subtotal }
   ]
-  if (inv.total_discount > 0) {
+  // Negative on a credit note, where it reduces what is credited (#1013).
+  const discount = Number(inv.total_discount)
+  if (discount) {
     lines.push({
       key: 'discount',
       label: t('invoice.discount'),
-      value: inv.total_discount,
-      sign: '-',
+      value: Math.abs(discount),
+      sign: discount > 0 ? '-' : '+',
       role: 'success'
     })
   }
@@ -839,10 +841,10 @@ function goToCreditNoteFor() {
                       {{ item.quantity }} x {{ formatCurrency(item.unit_price) }}
                     </p>
                     <p
-                      v-if="item.line_discount > 0"
+                      v-if="Number(item.line_discount)"
                       class="text-sm text-success-accent"
                     >
-                      -{{ formatCurrency(item.line_discount) }}
+                      {{ formatCurrency(-Number(item.line_discount)) }}
                     </p>
                     <p class="font-semibold text-default">
                       {{ formatCurrency(item.line_total) }}

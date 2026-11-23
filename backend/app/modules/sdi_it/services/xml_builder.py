@@ -301,7 +301,7 @@ def build_fattura(
     for n, ln in enumerate(lines, start=1):
         sconto = (
             f"<ScontoMaggiorazione><Tipo>SC</Tipo><Importo>{_money(ln.sconto)}</Importo></ScontoMaggiorazione>"
-            if ln.sconto > 0
+            if ln.sconto  # negative on a credit note, rendered positive (#1013)
             else ""
         )
         dettaglio += (

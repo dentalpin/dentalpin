@@ -136,6 +136,23 @@ def test_credit_note_td04_references_original_and_discount_line():
     assert line.find("PrezzoTotale").text == "50.00"
 
 
+def test_credit_note_keeps_the_discount_of_a_negative_line():
+    """Billing stores a credit note's line and discount negative (#1013)."""
+    inv = _invoice([_item("Storno visita", "-60.00", discount="-10.00")], number="NC/2026/0002")
+    res = build_fattura(
+        inv,
+        cedente=CEDENTE,
+        cessionario=INSURER,
+        progressivo="00003",
+        original_invoice_number="E/2026/0007",
+        original_invoice_date="2026-09-07",
+    )
+    line = _validate(res.xml).find("FatturaElettronicaBody/DatiBeniServizi/DettaglioLinee")
+    assert line.find("PrezzoUnitario").text == "60.00"
+    assert line.find("ScontoMaggiorazione/Importo").text == "10.00"
+    assert line.find("PrezzoTotale").text == "50.00"
+
+
 def test_recipient_routing_from_billing_address():
     inv = _invoice([_item("Visita", "10.00")], address={"sdi_code": "abc1234"})
     res = build_fattura(inv, cedente=CEDENTE, cessionario=INSURER, progressivo="00003")

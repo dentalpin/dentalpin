@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#1013): the over-credit check compares in cents (a full note of a total that rounded down was refused), and a negative discount shows with the right sign on the invoice page and the PDF.
+
+- fix(#1013): a credit note's absolute discount takes the line's sign. `min(value, negative subtotal)` made the discount the whole line, so the note credited 0.00. A partial note takes its share of the discount.
 - fix(#989): an invoice's paid amount and balance are in cents also after a proportional refund share, so the offered balance is payable.
 
 - fix(#989): `POST /invoices/{id}/payments` accepts at most two decimals, like the payments endpoints.
