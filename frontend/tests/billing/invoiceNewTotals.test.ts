@@ -11,7 +11,11 @@ mockNuxtImport('useClinic', () => () => ({
   fetchClinic: vi.fn(),
   defaultPaymentTermDays: ref(30)
 }))
-mockNuxtImport('useInvoices', () => () => ({ createInvoice: vi.fn() }))
+// useInvoices lives in the billing layer. CI's frontend-test runs without the
+// module layers, so it is not a Nuxt auto-import there and mockNuxtImport
+// can't find it; a global stub covers that case, and with the layers loaded
+// the real composable runs on the mocked useApi.
+vi.stubGlobal('useInvoices', () => ({ createInvoice: vi.fn() }))
 mockNuxtImport('useI18n', () => () => ({ t: (key: string) => key, locale: ref('en') }))
 mockNuxtImport('useCurrency', () => () => ({ format: (n: number) => `€${Number(n).toFixed(2)}` }))
 
