@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- fix(#1039): the PDF footer sits in the page's bottom margin; it printed over the text of every full page.
 - fix(#1006): editing the title or content of any document drops its PDF (only consents did), and `status=generated` can't be set on a document without a matching file.
 
 - i18n: translate the consent-template Settings strings (`documents.settings.cards.consentTemplates.*`, `documents.settings.consentTemplates.*`) in ar, de, fr, hi, hu, it, pl, pt, ta and te, and extend the consent translation guard test to cover them. Native review is advisable for ar, hi, ta, te, hu, pl.

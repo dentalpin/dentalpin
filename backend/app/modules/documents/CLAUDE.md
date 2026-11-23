@@ -146,6 +146,9 @@ Nuxt layer at `frontend/` with:
 
 ## Gotchas
 
+- **The PDF footer lives in the `@page` bottom margin** (#1039): a fixed
+  box inside the content area printed over the text of every full page.
+
 - **An edit drops the PDF (#1006).** Changing the title or content of any
   document clears `file_path` and returns a generated one to draft. A
   `PATCH status=generated` is a 422 unless it restores an unedited document
