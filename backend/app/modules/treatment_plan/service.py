@@ -522,9 +522,18 @@ class TreatmentPlanService:
         if plan.budget_id is not None:
             from app.modules.budget.models import Budget
 
-            await db.execute(select(Budget.id).where(Budget.id == plan.budget_id).with_for_update())
-            if plan.budget is not None:
-                await db.refresh(plan.budget, attribute_names=["status"])
+            budget_result = await db.execute(
+                select(Budget).where(Budget.id == plan.budget_id).with_for_update()
+            )
+            budget = budget_result.scalar_one_or_none()
+            if budget is not None:
+                await db.refresh(budget, attribute_names=["status"])
+                # `confirm()` can replace a cancelled quote while the plan
+                # object is still in SQLAlchemy's identity map. Refresh the
+                # relationship from the current FK so lock checks and event
+                # publishers never inspect the superseded quote.
+                if plan.budget is not budget:
+                    plan.budget = budget
         await db.refresh(plan, attribute_names=["status"], with_for_update=True)
         return plan
 
@@ -859,6 +868,10 @@ class TreatmentPlanService:
             db=db,
         )
 
+        # `get()` eager-loads this collection before the insert. Keep a later
+        # confirmation in the same request/session from snapshotting the old
+        # item list instead of the now-persisted plan contents.
+        db.expire(plan, ["items"])
         return item
 
     @staticmethod
@@ -1040,6 +1053,9 @@ class TreatmentPlanService:
         treatment_id = item.treatment_id
         await db.delete(item)
         await db.flush()
+        # Confirmation can follow this edit in the same ORM session. Force its
+        # snapshot builder to read the remaining rows from the database.
+        db.expire(plan, ["items"])
 
         # Orphan check — any other active item still referencing the Treatment?
         other_refs = await db.execute(
@@ -1353,6 +1369,20 @@ class TreatmentPlanService:
         user_id: UUID,
     ) -> PlannedTreatmentItem | None:
         """Edit a pending session's label/amount/notes."""
+        # A completed/cancelled session is invalid for editing regardless of
+        # the plan's commercial state. Check that invariant first so callers
+        # receive the specific validation error instead of a generic budget
+        # lock. The mutation still goes through the locked contract check and
+        # reloads the session before writing.
+        item = await TreatmentPlanService._load_item_with_sessions(db, clinic_id, plan_id, item_id)
+        if not item:
+            return None
+        session = next((s for s in item.sessions if s.id == session_id), None)
+        if not session:
+            raise ValueError("Session not found")
+        if session.status != "pending":
+            raise ValueError("Cannot edit a non-pending session")
+
         plan = await TreatmentPlanService._prepare_plan_for_contract_edit(
             db, clinic_id, plan_id, user_id
         )
@@ -1914,6 +1944,7 @@ class TreatmentPlanService:
         # (issue #162). Single-row repoint — no unique-index conflict.
         if budget is not None and plan.budget_id != budget.id:
             plan.budget_id = budget.id
+            plan.budget = budget
 
         await db.flush()
 
@@ -1945,10 +1976,9 @@ class TreatmentPlanService:
         plan = await TreatmentPlanService._get_locked(db, clinic_id, plan_id)
         if not plan:
             raise ValueError("Plan not found")
+        await TreatmentPlanService._ensure_plan_not_paid(db, clinic_id, plan)
         if plan.status != "pending":
             raise ValueError(f"Cannot reopen plan in status '{plan.status}'")
-
-        await TreatmentPlanService._ensure_plan_not_paid(db, clinic_id, plan)
 
         # Cancel linked budget if one exists. The plan ↔ budget unlock
         # is the established carve-out (treatment_plan depends on

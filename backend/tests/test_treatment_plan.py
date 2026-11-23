@@ -740,6 +740,11 @@ async def test_removing_item_after_confirmation_reopens_and_sent_budget_stays_lo
         f"/api/v1/treatment_plan/treatment-plans/{plan_id}/confirm", headers=auth_headers
     )
     assert confirmed.status_code == 200, confirmed.text
+    replacement_budget_id = confirmed.json()["data"]["budget_id"]
+    replacement_budget = await client.get(
+        f"/api/v1/budget/budgets/{replacement_budget_id}", headers=auth_headers
+    )
+    assert len(replacement_budget.json()["data"]["items"]) == 1
 
     # Sent budget → locked.
     await _send_plan_budget(client, auth_headers, plan_id)
@@ -1609,27 +1614,44 @@ async def test_cancel_session_blocks_earned(
     event_bus.subscribe("treatment_plan.item_session_completed", _capture)
     try:
         plan_id, item_id, sessions = await _add_multi_session_item(
-            client, auth_headers, db_session, setup_multi_session
+            client, auth_headers, db_session, setup_multi_session, activate=False
         )
-        # Cancel the 2nd session, complete the 1st
+        # A draft-plan cancellation must not create an earned entry.
         cancel = await client.patch(
             f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}/sessions/{sessions[1]['id']}/cancel",
             headers=auth_headers,
             json={},
         )
         assert cancel.status_code == 200, cancel.text
-        complete = await client.patch(
-            f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}/sessions/{sessions[0]['id']}/complete",
-            headers=auth_headers,
-            json={},
+        assert len(session_events) == 0
+        item = cancel.json()["data"]
+        assert next(s for s in item["sessions"] if s["id"] == sessions[1]["id"])["status"] == (
+            "cancelled"
         )
-        item = complete.json()["data"]
-        # Item finalizes since all sessions are terminal and one is completed
-        assert item["status"] == "completed"
-        # Only the completed session fired an earned event; cancelled didn't
-        assert len(session_events) == 1
     finally:
         event_bus._handlers.pop("treatment_plan.item_session_completed", None)  # noqa: SLF001
+
+
+@pytest.mark.asyncio
+async def test_cancel_session_is_blocked_after_budget_acceptance(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup_multi_session: dict
+):
+    """Cancellation changes the signed session contract and needs a draft plan."""
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    cancel = await client.patch(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}/sessions/{sessions[1]['id']}/cancel",
+        headers=auth_headers,
+        json={},
+    )
+    assert cancel.status_code == 409, cancel.text
+
+    detail = await client.get(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers
+    )
+    stored_sessions = detail.json()["data"]["items"][0]["sessions"]
+    assert next(s for s in stored_sessions if s["id"] == sessions[1]["id"])["status"] == "pending"
 
 
 @pytest.mark.asyncio
@@ -1956,7 +1978,8 @@ async def test_plan_linked_quote_rejects_manual_lines(
     )
     assert r.status_code == 409, r.text
 
-    # Plan side still mirrors into the draft quote.
+    # Editing a confirmed plan cancels its quote and returns it to draft.
+    # The changed plan must be confirmed again before it gets a fresh quote.
     treatment_id = await _create_treatment(client, auth_headers, setup, tooth_number=14)
     r = await client.post(
         f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items",
@@ -1964,7 +1987,19 @@ async def test_plan_linked_quote_rejects_manual_lines(
         json={"treatment_id": treatment_id},
     )
     assert r.status_code == 201, r.text
-    detail = await client.get(f"/api/v1/budget/budgets/{budget_id}", headers=auth_headers)
+    reopened = await client.get(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers
+    )
+    assert reopened.json()["data"]["status"] == "draft", reopened.text
+    assert reopened.json()["data"]["budget"]["status"] == "cancelled", reopened.text
+
+    confirmed = await client.post(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/confirm", headers=auth_headers
+    )
+    assert confirmed.status_code == 200, confirmed.text
+    new_budget_id = confirmed.json()["data"]["budget_id"]
+    assert new_budget_id != budget_id
+    detail = await client.get(f"/api/v1/budget/budgets/{new_budget_id}", headers=auth_headers)
     assert len(detail.json()["data"]["items"]) == 2
 
 

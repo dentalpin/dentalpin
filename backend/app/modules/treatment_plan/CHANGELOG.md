@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix: item, ordering, and session contract edits on a confirmed plan now lock and reopen the plan, cancel the obsolete draft quote, and require a fresh clinician confirmation. A paid invoice blocks all contract mutations, including session edits and explicit reopen; clinical completion remains available.
+- fix: repointing a reopened plan to its replacement quote now refreshes the ORM relationship as well as the foreign key, and item edits expire the cached item collection. Lock checks, quote mirroring, and a replacement quote snapshot therefore use the current plan state. Explicit reopen checks for paid invoices before reporting a workflow-state error.
 - fix: orthodontic installment generation now supplies the acting user to the plan session API, preserving the clinic's confirmation, lock, and paid-invoice rules.
 - feat: plan items can atomically create their odontogram treatment (`create_treatment`), with planned status enforced server-side and rollback on any validation or persistence error.
 
