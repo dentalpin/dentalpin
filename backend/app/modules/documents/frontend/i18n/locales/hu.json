@@ -88,6 +88,14 @@
         "save": "Fejléc mentése",
         "saved": "Fejléc mentve"
       },
+      "consentTemplateArchive": {
+        "archive": "Archiválás",
+        "restore": "Visszaállítás",
+        "archived": "Archivált",
+        "archivedToast": "Sablon archiválva",
+        "restoredToast": "Sablon visszaállítva",
+        "help": "Az archivált sablonok nem jelennek meg a beleegyezések sablonválasztójában. A belőlük korábban létrehozott beleegyezéseket ez nem érinti."
+      },
       "consentTemplates": {
         "help": "A sablonok az új tájékozott beleegyezések kiindulási szövegei. A sablon szerkesztése nem módosítja a belőle korábban létrehozott beleegyezéseket.",
         "empty": "Még nincs sablon. Hozza létre az elsőt alább.",

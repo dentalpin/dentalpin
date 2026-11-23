@@ -363,6 +363,35 @@ class NotificationGateway:
             await NotificationGateway._mark_failed(db, msg, f"no adapter for channel {msg.channel}")
             return
 
+        prefs = (
+            await NotificationService.get_patient_preferences(db, msg.clinic_id, msg.patient_id)
+            if msg.patient_id
+            else None
+        )
+        if prefs is not None and prefs.verified_consents is not None:
+            patient = await NotificationGateway._load_patient(db, msg.clinic_id, msg.patient_id)
+            allowed = (
+                patient is not None
+                and not patient.do_not_contact
+                and NotificationService.verified_consent_allows(
+                    prefs, patient, msg.channel, msg.template_key
+                )
+                and not NotificationService.opted_out_of_type(prefs, msg.template_key)
+                and getattr(prefs, f"{msg.channel}_enabled", True)
+            )
+            if allowed and msg.channel in ("email", "sms", "whatsapp"):
+                address = patient.email if msg.channel == "email" else patient.phone
+                normalize = getattr(adapter, "normalize_recipient", None)
+                if msg.channel == "whatsapp" and normalize:
+                    address = await normalize(db, msg.clinic_id, address)
+                allowed = msg.to_address == address
+            if not allowed:
+                msg.status = "skipped"
+                msg.error_message = "verified_consent_required"
+                msg.next_attempt_at = None
+                await db.commit()
+                return
+
         requires_opt_in = getattr(adapter, "requires_whatsapp_opt_in", False)
         if requires_opt_in:
             patient = await NotificationGateway._load_patient(db, msg.clinic_id, msg.patient_id)
@@ -647,7 +676,9 @@ class NotificationGateway:
 
         return (
             await db.execute(
-                select(Patient).where(Patient.clinic_id == clinic_id, Patient.id == patient_id)
+                select(Patient)
+                .where(Patient.clinic_id == clinic_id, Patient.id == patient_id)
+                .execution_options(populate_existing=True)
             )
         ).scalar_one_or_none()
 
@@ -663,6 +694,9 @@ class NotificationGateway:
             prefs
             and prefs.whatsapp_enabled
             and prefs.whatsapp_opt_in_at
+            and NotificationService.verified_consent_allows(
+                prefs, patient, "whatsapp", notification_type
+            )
             and not NotificationService.opted_out_of_type(prefs, notification_type)
         )
 
@@ -706,6 +740,10 @@ class NotificationGateway:
             try:
                 channel = Channel(name)
             except ValueError:
+                continue
+            if not NotificationService.verified_consent_allows(
+                prefs, patient, channel, notification_type
+            ):
                 continue
             adapter = await NotificationGateway._supporting_adapter(db, clinic_id, channel)
             if adapter is None:

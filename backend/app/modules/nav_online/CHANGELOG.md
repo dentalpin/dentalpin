@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1046): a STORNO reports negative amounts and quantities with a positive unit price. The builder negated lines billing had already negated, so cancellations read as second sales.
+
 - fix(#779): the fallback `issue_date` of a queued record is the clinic's day, not the server's UTC day.
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.
 

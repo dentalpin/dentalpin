@@ -88,6 +88,14 @@
         "save": "Guardar cabeçalho",
         "saved": "Cabeçalho guardado"
       },
+      "consentTemplateArchive": {
+        "archive": "Arquivar",
+        "restore": "Restaurar",
+        "archived": "Arquivado",
+        "archivedToast": "Modelo arquivado",
+        "restoredToast": "Modelo restaurado",
+        "help": "Os modelos arquivados deixam de aparecer na seleção de consentimentos. Os consentimentos já criados a partir deles não são afetados."
+      },
       "consentTemplates": {
         "help": "Os modelos são o texto inicial dos novos consentimentos informados. A edição de um modelo não altera os consentimentos já criados a partir dele.",
         "empty": "Ainda não existem modelos. Crie o primeiro abaixo.",

@@ -689,3 +689,29 @@ async def test_concurrent_confirms_create_one_budget(
             (await db.execute(select(Budget).where(Budget.clinic_id == clinic_id))).scalars().all()
         )
     assert len(budgets) == 1
+
+
+@pytest.mark.asyncio
+async def test_reactivating_a_rejected_plan_leaves_a_hand_deleted_treatment(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """A rejection removes nothing, so it has nothing to restore (#1034)."""
+    base = "/api/v1/treatment_plan/treatment-plans"
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    r = await client.get(f"{base}/{plan_id}", headers=auth_headers)
+    treatment_id = r.json()["data"]["items"][0]["treatment"]["id"]
+    budget_id = await _confirm_plan(client, auth_headers, plan_id)
+    await _sync(db_session)
+    await _send_budget(client, auth_headers, budget_id)
+    await _reject_budget(client, auth_headers, budget_id)
+    await _sync(db_session)
+
+    r = await client.delete(f"/api/v1/odontogram/treatments/{treatment_id}", headers=auth_headers)
+    assert r.status_code == 204, r.text
+    r = await client.post(f"{base}/{plan_id}/reactivate", headers=auth_headers)
+    assert r.status_code == 200, r.text
+
+    r = await client.get(
+        f"/api/v1/odontogram/patients/{setup['patient_id']}/treatments", headers=auth_headers
+    )
+    assert treatment_id not in [t["id"] for t in r.json()["data"]]

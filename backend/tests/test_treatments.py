@@ -832,3 +832,48 @@ async def test_other_treatments_keep_their_revenue(
     assert r.status_code == 204, r.text
 
     assert len(await _earned_rows(db_session, UUID(kept))) == 1
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("item", "teeth", "total"),
+    [("crown_id", [12, 11, 21], "1500.00"), ("bridge_id", [14, 15, 16], "1300.00")],
+)
+async def test_performing_a_multi_tooth_treatment_books_its_price_once(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup: dict,
+    db_session: AsyncSession,
+    item: str,
+    teeth: list[int],
+    total: str,
+) -> None:
+    """``price_snapshot`` already covers every tooth, so it is booked as is (#1014)."""
+    from sqlalchemy import func, select
+
+    from app.modules.payments.models import PatientEarnedEntry
+
+    r = await client.post(
+        f"/api/v1/odontogram/patients/{setup['patient_id']}/treatments",
+        headers=auth_headers,
+        json={
+            "catalog_item_id": setup[item],
+            "scope": "multi_tooth",
+            "tooth_numbers": teeth,
+            "status": "planned",
+        },
+    )
+    assert r.status_code == 201, r.text
+    treatment = r.json()["data"]
+    assert Decimal(treatment["price_snapshot"]) == Decimal(total)
+
+    r = await client.patch(
+        f"/api/v1/odontogram/treatments/{treatment['id']}/perform", headers=auth_headers, json={}
+    )
+    assert r.status_code == 200, r.text
+    booked = await db_session.scalar(
+        select(func.sum(PatientEarnedEntry.amount)).where(
+            PatientEarnedEntry.treatment_id == UUID(treatment["id"])
+        )
+    )
+    assert booked == Decimal(total)
