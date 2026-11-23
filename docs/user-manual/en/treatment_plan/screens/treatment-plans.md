@@ -51,7 +51,7 @@ surfaces the follow-up queue.
 - **Pipeline.** Aggregate inbox view (`GET /pipeline`) with totals
   per column and plans that need front-desk action (pending with no
   recent contact, unsent budget, etc.).
-- **Search and filters.** Search by patient or plan number; filter
+- **Search and filters.** Search by patient, title or plan number; filter
   by assigned professional, creation date, and closure reason.
 - **Budget sync.** Each plan has a linked budget (or creates one on
   confirm). Plan changes propagate to the budget via snapshot

@@ -13,6 +13,7 @@ import type {
   ToothRecord,
   Treatment
 } from '~~/app/types'
+import { normalizeTreatment } from './useTreatments'
 
 export function useOdontogramTimeline() {
   const api = useApi()
@@ -77,7 +78,8 @@ export function useOdontogramTimeline() {
         { errorToast: false }
       )
       historicalTeeth.value = response.data.teeth
-      historicalTreatments.value = response.data.treatments || []
+      // The API says performed, the charts say existing (#1065).
+      historicalTreatments.value = (response.data.treatments || []).map(normalizeTreatment)
       viewingDate.value = date
     } catch (err) {
       console.error('Error fetching historical odontogram:', err)

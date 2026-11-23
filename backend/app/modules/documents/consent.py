@@ -60,8 +60,10 @@ def _private(response: Response) -> None:
 
 
 @router.get("/consent-templates")
-async def list_templates(ctx: Ctx, _: Read, db: Db) -> dict:
-    return await ConsentService.list_templates(ctx, db)
+async def list_templates(
+    ctx: Ctx, _: Read, db: Db, include_archived: bool = Query(default=False)
+) -> dict:
+    return await ConsentService.list_templates(ctx, db, include_archived)
 
 
 @router.post("/consent-templates", status_code=201)
@@ -74,6 +76,16 @@ async def update_template(
     template_id: uuid.UUID, data: TemplateBody, ctx: Ctx, _: Write, db: Db
 ) -> dict:
     return await ConsentService.update_template(template_id, data, ctx, db)
+
+
+@router.post("/consent-templates/{template_id}/archive")
+async def archive_template(template_id: uuid.UUID, ctx: Ctx, _: Write, db: Db) -> dict:
+    return await ConsentService.set_template_active(template_id, False, ctx, db)
+
+
+@router.post("/consent-templates/{template_id}/unarchive")
+async def unarchive_template(template_id: uuid.UUID, ctx: Ctx, _: Write, db: Db) -> dict:
+    return await ConsentService.set_template_active(template_id, True, ctx, db)
 
 
 @router.get("/consents/signature-status")
