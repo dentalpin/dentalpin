@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Payments:** the payment list search and multi-method filter now cover every payment, and the pager counts only the matches (#1033).
+
 ## [2.12.0] - 2026-11-23
 
 New: staff two-factor authentication with a per-clinic policy, a patient

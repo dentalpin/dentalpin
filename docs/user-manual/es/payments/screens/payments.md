@@ -29,7 +29,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/payments/frontend/pages/payments/index.vue
   - backend/app/modules/payments/router.py
-last_verified_commit: 10085df
+last_verified_commit: 0a9b730
 ---
 
 # Listado de cobros
@@ -48,6 +48,10 @@ registra un cobro nuevo, se reasigna o se emite un reembolso.
 - **Filtros activos en la URL** — método, paciente, rango de fechas,
   *Con reembolsos*, *Con saldo a cuenta*. Compartir el enlace
   comparte los filtros.
+- **La búsqueda** encuentra por nombre del paciente o referencia del
+  cobro en todos los cobros, no solo en la página visible. Con varios
+  métodos marcados se muestran los cobros de cualquiera de ellos; el
+  contador y el paginador reflejan el total filtrado.
 - **Orden:** por defecto por fecha de cobro descendente. Disponible
   también por importe.
 - **Off-books.** El listado nunca cruza *cobrado* contra
