@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Patients:** an incomplete emergency contact or guardian is refused instead of reported as saved, and a failed load can't delete the stored one (#1064).
 - **Email:** a clinic's SMTP mail is sent from the sender configured by the clinic (#1052).
 - **Accounts:** a password over bcrypt's 72 bytes is refused with a message instead of failing with a server error (#1051).
 - **Billing:** a treatment added to a manual invoice gets its own VAT instead of the exempt default (#1028).

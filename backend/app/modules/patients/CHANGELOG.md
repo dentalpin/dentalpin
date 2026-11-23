@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1064): the edit modal never sends a DELETE for a contact or guardian it didn't load.
 - fix(#1045): the medical-history modal edits a copy (Cancel discards it) and can't save before the history loaded.
 
 - Audit authenticated views of the patient record and extended details. (#903).
