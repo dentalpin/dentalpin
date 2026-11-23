@@ -523,7 +523,10 @@ class TreatmentPlanService:
             from app.modules.budget.models import Budget
 
             budget_result = await db.execute(
-                select(Budget).where(Budget.id == plan.budget_id).with_for_update()
+                select(Budget)
+                .where(Budget.id == plan.budget_id)
+                .execution_options(populate_existing=True)
+                .with_for_update()
             )
             budget = budget_result.scalar_one_or_none()
             if budget is not None:
