@@ -10,6 +10,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
+from app.core.http_headers import content_disposition
 from app.core.patient_access import RecordPatientAccess
 from app.core.pdf_locales import PDF_LOCALE_PATTERN
 from app.core.schemas import ApiResponse, PaginatedApiResponse
@@ -1113,7 +1114,7 @@ async def download_invoice_pdf(
     return Response(
         content=pdf_bytes,
         media_type="application/pdf",
-        headers={"Content-Disposition": f'attachment; filename="{filename}"'},
+        headers={"Content-Disposition": content_disposition(filename)},
     )
 
 

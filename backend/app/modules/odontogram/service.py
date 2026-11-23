@@ -1,7 +1,6 @@
 """Business logic service for odontogram module."""
 
 from datetime import UTC, date, datetime, time, timedelta
-from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import func, or_, select, update
@@ -883,14 +882,12 @@ class TreatmentService:
                 # Snapshot price so subscribers (e.g. payments earned
                 # ledger) can attribute revenue without importing
                 # odontogram models. `Treatment.price_snapshot` is the
-                # frozen catalog price captured at treatment creation;
-                # multiply by tooth count for multi-tooth headers.
+                # frozen price of the whole treatment, every tooth included
+                # (``compute_price_snapshot``): never multiply it again (#1014).
                 # ``None`` means "revenue already attributed elsewhere"
                 # (``publish_price=False``): treatment_plan finalizes a
                 # sessioned item whose amounts were booked per-session.
-                "unit_price": str(
-                    (treatment.price_snapshot or Decimal("0")) * (len(treatment.teeth) or 1)
-                )
+                "unit_price": str(treatment.price_snapshot)
                 if publish_price and treatment.price_snapshot is not None
                 else None,
             },

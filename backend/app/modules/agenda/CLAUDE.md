@@ -109,6 +109,10 @@ None.
 
 ## Gotchas
 
+- **Saving syncs the treatment links, never re-creates them** (#1017): a
+  link row holds the visit note and completed flag. Only newly added items
+  go through booking validation, unless the patient changed.
+
 - **Datetime semantics (issue #161).** Naive `start_time`/`end_time`
   entering the module (payloads, filters) are **clinic-local wall-clock**
   (`clinics.timezone`); aware values are instants. Storage is UTC; API

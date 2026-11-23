@@ -18,6 +18,17 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Treatment plans:** reactivating a closed plan brings its planned treatments back to the odontogram (#1034).
+- **Patients:** editing the medical history can no longer wipe it after a failed load or carry an entry into another patient, and Cancel discards the changes (#1045).
+- **Recalls:** a snoozed recall is no longer closed by the appointment it was linked to (#1010).
+- **Integrations:** webhook deliveries of a paused subscription stop retrying after their attempts (#1009).
+- **Copilot:** free-slot search no longer offers times that have already passed today (#1008).
+- **Orthodontics:** a back-dated control leaves the current wires and the next control date to the latest one (#1007).
+- **Documents:** an edited document no longer serves the PDF of its previous content (#1006).
+- **Agenda:** saving an appointment no longer deletes its visit notes, and works after a linked treatment was completed (#1017).
+- **Billing:** a 0-day payment term is no longer turned into 30 days, and clearing a draft's due date or notes works (#1016).
+- **Downloads:** patient files and invoice PDFs with names outside latin-1 download instead of failing with a server error (#1015).
+- **Odontogram:** performing a multi-tooth treatment books its price once, not once per tooth (#1014).
+- **Billing:** a credit note of a discounted line credits what was billed instead of 0.00, and the Italian e-invoice keeps its discount (#1013).
 - **Expenses:** the CSV import no longer reads a thousands separator as a decimal point; `1.200` is 1200, not 1.20 (#962).
 - **Medical reference:** a deactivated medication, allergy, disease or surgery can be added again from the patient form; it comes back with its interaction warnings (#963).
 - **Telephony:** outbound calls are linked to the patient dialled and no longer pop up as incoming calls from the clinic's own number (#964).
@@ -37,6 +48,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Schedules:** a shift inside another no longer shows the rest of the day as closed; overlapping shifts are refused when saving (#991).
 - **Inventory reorder:** generating orders with a repeated item no longer leaves half the purchase orders created behind an error (#992).
 - **GDPR:** a reopened data-subject request no longer keeps its resolution date (#993).
+- **Payments:** amounts with more than two decimals are refused instead of being stored so that a payment's allocations no longer add up to it (#989).
 - **Purchase orders:** two receipts recorded at the same moment no longer book the stock twice or receive more than was ordered (#952).
 - **Staff attendance:** a double tap on Clock in/out stores one punch, not two of the same kind (#953).
 - **Leads:** a double click on Convert creates one patient, not two (#954).
