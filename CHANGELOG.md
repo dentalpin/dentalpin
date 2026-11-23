@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Backups:** new `python -m app.cli db restore` restores a `db backup` dump with the backend image's `pg_restore`; the documented restore used the `db` service's PostgreSQL 15 `pg_restore`, which cannot read the newer dumps (#1066).
+
 ## [2.12.0] - 2026-11-23
 
 New: staff two-factor authentication with a per-clinic policy, a patient

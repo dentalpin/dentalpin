@@ -288,6 +288,19 @@ copia de seguridad. Procedimiento completo de restauración,
 migración de hardware y verificación mensual: la guía
 `docs/workflows/backup-restore.md`.
 
+Restaura un volcado completo con la imagen del backend, no con el
+servicio `db`: el `pg_restore` de la imagen `db` (PostgreSQL 15) no
+puede leer los volcados que escribe el `pg_dump` más reciente del
+backend. Restaura sobre una base de datos vacía (un volumen `db` nuevo,
+ver `docs/workflows/backup-restore.md` §3): el comando no se ejecuta en
+una sola transacción, así que un fallo a mitad deja la base de datos
+restaurada a medias.
+
+```bash
+docker compose run --rm -T -e RUN_MIGRATIONS=0 backend \
+  python -m app.cli db restore - < full_20260907T230000Z.dump
+```
+
 Con `STORAGE_BACKEND=s3` el tarball cubre solo el volumen local
 (`documents/` y `migration-import/` siguen en el volumen incluso en
 ese modo), mientras que los medios subidos viven en el bucket de S3,
