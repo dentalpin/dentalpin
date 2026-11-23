@@ -2,7 +2,7 @@
 
 from collections.abc import Iterable
 from datetime import UTC, date, datetime
-from decimal import Decimal
+from decimal import ROUND_HALF_UP, Decimal
 from uuid import UUID
 
 from sqlalchemy import and_, case, desc, func, or_, select
@@ -581,7 +581,9 @@ class InvoiceService:
             if item.discount_type == "percentage":
                 item.line_discount = item.line_subtotal * item.discount_value / Decimal("100")
             else:  # absolute
-                item.line_discount = min(item.discount_value, item.line_subtotal)
+                capped = min(item.discount_value, abs(item.line_subtotal))
+                # A credit note's line is negative, and so is its discount (#1013).
+                item.line_discount = -capped if item.line_subtotal < 0 else capped
 
         # Subtotal after discount
         taxable_amount = item.line_subtotal - item.line_discount
@@ -1285,6 +1287,9 @@ async def compute_paid_summaries_for_invoices(
             refunded = refunded_per_payment.get(payment_id, Decimal("0"))
             adjustment = refunded * (imputed / full) if full > 0 else Decimal("0")
             net_paid += imputed - adjustment
+        # In cents, as a proportional refund share isn't: the balance is what
+        # the collect endpoint (cents only, #989) is offered and checks against.
+        net_paid = net_paid.quantize(Decimal("0.01"), rounding=ROUND_HALF_UP)
         summaries[invoice_id] = (net_paid, total - net_paid)
     return summaries
 

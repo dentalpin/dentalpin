@@ -102,6 +102,61 @@ async def test_allocation_sum_invariant_enforced(
 
 
 @pytest.mark.asyncio
+async def test_sub_cent_amounts_are_rejected(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+):
+    """Money is entered in cents (#989).
+
+    The sum check ran on the unrounded body, then each value was rounded
+    into its ``Numeric(12, 2)`` column on its own: 50.005 + 50.005 passed
+    as 100.01 and was stored as 50.01 + 50.01 = 100.02 against a 100.01
+    payment, breaking the allocation invariant in the ledger.
+    """
+    setup = await _setup_clinic(db_session, auth_headers, client)
+
+    body = {
+        "patient_id": setup["patient_id"],
+        "amount": "100.01",
+        "method": "cash",
+        "payment_date": date.today().isoformat(),
+        "allocations": [
+            {"target_type": "on_account", "amount": "50.005"},
+            {"target_type": "on_account", "amount": "50.005"},
+        ],
+    }
+    resp = await client.post(
+        f"/api/v1/payments?clinic_id={setup['clinic_id']}",
+        headers=auth_headers,
+        json=body,
+    )
+    assert resp.status_code == 422, resp.text
+
+    ok = await client.post(
+        f"/api/v1/payments?clinic_id={setup['clinic_id']}",
+        headers=auth_headers,
+        json={
+            **body,
+            "amount": "100.00",
+            "allocations": [
+                {"target_type": "on_account", "amount": "50"},
+                {"target_type": "on_account", "amount": "50.0"},
+            ],
+        },
+    )
+    assert ok.status_code == 201, ok.text
+    payment_id = ok.json()["data"]["id"]
+
+    refund = await client.post(
+        f"/api/v1/payments/{payment_id}/refunds?clinic_id={setup['clinic_id']}",
+        headers=auth_headers,
+        json={"amount": "10.005", "method": "cash", "reason_code": "other"},
+    )
+    assert refund.status_code == 422, refund.text
+
+
+@pytest.mark.asyncio
 async def test_refund_partial_then_full(
     client: AsyncClient,
     auth_headers: dict,
