@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Orthodontics:** a back-dated control leaves the current wires and the next control date to the latest one (#1007).
 - **Documents:** an edited document no longer serves the PDF of its previous content (#1006).
 - **Agenda:** saving an appointment no longer deletes its visit notes, and works after a linked treatment was completed (#1017).
 - **Billing:** a 0-day payment term is no longer turned into 30 days, and clearing a draft's due date or notes works (#1016).
