@@ -6,6 +6,8 @@
 
 - Use the separate admin permission `gdpr.access_log.read` for staff access review and export (#903).
 
+- Expose a transactional ledger append (`ConsentService.append_event`) for modules that record consent together with their own verified evidence. Entries flagged `managed` (new `patient_consents.managed` column, `gdpr_0005`) make `POST /consents` answer 409 for that patient and purpose.
+
 - Add a clinic-scoped staff access audit for selected patient reads, with
   per-patient and per-user views, CSV and configurable retention (#888).
 

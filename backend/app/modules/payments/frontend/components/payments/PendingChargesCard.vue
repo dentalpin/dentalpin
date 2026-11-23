@@ -14,6 +14,7 @@
  */
 import { useCurrency } from '~~/app/composables/useCurrency'
 import { parseDateOnly } from '~~/app/utils/wallClock'
+import { toCents } from '../../utils/money'
 
 interface PendingCharge {
   entry_id: string
@@ -36,8 +37,10 @@ const emit = defineEmits<{
 const { t, locale } = useI18n()
 const { format: formatCurrency } = useCurrency()
 
+// Emitted as the prefilled amount to collect: a float sum (0.1 + 0.2)
+// would be refused by the API's cents-only amounts (#989).
 const total = computed(() =>
-  props.charges.reduce((acc, c) => acc + (Number(c.amount) || 0), 0)
+  toCents(props.charges.reduce((acc, c) => acc + (Number(c.amount) || 0), 0))
 )
 
 const visibleCharges = computed(() => props.charges.slice(0, 5))
