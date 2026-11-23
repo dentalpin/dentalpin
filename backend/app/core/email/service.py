@@ -135,6 +135,7 @@ class EmailService:
         """
         from sqlalchemy import select
 
+        from app.config import settings as app_settings
         from app.core.email.encryption import decrypt_password
         from app.modules.notifications.models import ClinicSmtpSettings
 
@@ -169,8 +170,8 @@ class EmailService:
                 password=password,
                 use_tls=settings.use_tls,
                 use_ssl=settings.use_ssl,
-                default_from_email=settings.from_email or "",
-                default_from_name=settings.from_name or "DentalPin",
+                default_from_email=settings.from_email or app_settings.EMAIL_FROM_ADDRESS,
+                default_from_name=settings.from_name or app_settings.EMAIL_FROM_NAME,
             )
 
         # Fallback to global
@@ -213,14 +214,16 @@ class EmailService:
 
         # Try to get clinic-specific provider
         provider = self.provider  # Default to global
+        clinic_provider = None
         if db and clinic_id:
             clinic_provider = await self.create_provider_for_clinic(db, clinic_id)
             if clinic_provider:
                 provider = clinic_provider
                 logger.info(f"Using clinic-specific email provider for clinic {clinic_id}")
 
-        # Apply default from address if not set
-        if not message.from_email:
+        # The instance's sender is for the instance's provider. A clinic's
+        # provider has its own default, which this used to shadow (#1052).
+        if not clinic_provider and not message.from_email:
             message.from_email = settings.EMAIL_FROM_ADDRESS
             message.from_name = message.from_name or settings.EMAIL_FROM_NAME
 

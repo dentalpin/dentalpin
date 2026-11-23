@@ -39,7 +39,9 @@ class PatientBrief(BaseModel):
 class AllocationCreate(BaseModel):
     target_type: AllocationTarget
     target_id: UUID | None = None  # required iff target_type == 'budget'
-    amount: Decimal = Field(gt=0)
+    # Cents only (#989): each value is rounded into its own Numeric(12, 2)
+    # column, so a sub-cent input passed the sum check and broke it once stored.
+    amount: Decimal = Field(gt=0, decimal_places=2)
 
     @model_validator(mode="after")
     def _check_target_id(self) -> "AllocationCreate":
@@ -79,7 +81,7 @@ class AllocationResponse(BaseModel):
 
 class PaymentCreate(BaseModel):
     patient_id: UUID
-    amount: Decimal = Field(gt=0)
+    amount: Decimal = Field(gt=0, decimal_places=2)
     method: PaymentMethod
     payment_date: date = Field(default_factory=date.today)
     reference: str | None = Field(default=None, max_length=100)
@@ -158,7 +160,7 @@ class PaymentResponse(BaseModel):
 
 
 class RefundCreate(BaseModel):
-    amount: Decimal = Field(gt=0)
+    amount: Decimal = Field(gt=0, decimal_places=2)
     method: PaymentMethod
     reason_code: RefundReason
     reason_note: str | None = None

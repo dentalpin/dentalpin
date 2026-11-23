@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1015): downloads of files named outside latin-1 (`ő`, `–`, Hindi, decomposed accents) work; the name goes out as `filename*` with an ASCII fallback.
+
 - Audit document and photo views in ten-minute windows and each explicit download separately. (#903).
 
 - fix(#834): the S3 backend's `retrieve` read the object body (`StreamingBody.read()`, the actual download) on the event loop; only `get_object` ran in the worker thread. A large file stalled every other request for the length of the download. Both now run in the thread.

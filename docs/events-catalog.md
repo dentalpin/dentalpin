@@ -104,7 +104,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `orthodontics.control_registered` | `EventType.ORTHODONTICS_CONTROL_REGISTERED` | `orthodontics` | `patient_timeline` |
 | `patient.archived` | `EventType.PATIENT_ARCHIVED` | `patients` | `activity_journal`, `imaging_viewer`, `media`, `periodontogram`, `recalls` |
 | `patient.created` | `EventType.PATIENT_CREATED` | `patients` | `activity_journal`, `integrations`, `notifications` |
-| `patient.medical_updated` | `EventType.PATIENT_MEDICAL_UPDATED` | `patients_clinical` | `patient_timeline` |
+| `patient.medical_updated` | `EventType.PATIENT_MEDICAL_UPDATED` | `patient_intake`, `patients_clinical` | `patient_timeline` |
 | `patient.restored` | `EventType.PATIENT_RESTORED` | `patients` | `media` |
 | `patient.updated` | `EventType.PATIENT_UPDATED` | `patients` | `notifications` |
 | `payment.allocated` | `EventType.PAYMENT_ALLOCATED` | `payments` | `activity_journal`, `billing` |
@@ -898,6 +898,7 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 - **Constant:** `EventType.PATIENT_MEDICAL_UPDATED`
 - **Publishers:**
+  - `patient_intake` — `backend/app/modules/patient_intake/router.py`
   - `patients_clinical` — `backend/app/modules/patients_clinical/router.py`
 - **Subscribers:**
   - `patient_timeline`

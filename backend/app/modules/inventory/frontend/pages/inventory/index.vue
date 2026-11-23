@@ -8,6 +8,7 @@ import {
   type MovementReason,
   type StockMovement
 } from '../../composables/useInventory'
+import { itemUpdatePayload } from '../../utils/itemUpdate'
 
 definePageMeta({ middleware: ['auth'] })
 
@@ -133,7 +134,7 @@ async function submit() {
   saving.value = true
   try {
     if (editing.value) {
-      await inventoryApi.update(editing.value.id, { ...form.value })
+      await inventoryApi.update(editing.value.id, itemUpdatePayload(form.value, editing.value))
     } else {
       await inventoryApi.create({ ...form.value })
     }

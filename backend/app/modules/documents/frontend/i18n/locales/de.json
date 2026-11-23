@@ -70,8 +70,8 @@
           "description": "Klinik-Branding auf Rezepten, Bescheinigungen, Überweisungen und Röntgenanfragen"
         },
         "consentTemplates": {
-          "title": "Consent templates",
-          "description": "Texts used for informed consents signed on the tablet"
+          "title": "Einwilligungsvorlagen",
+          "description": "Texte für Einwilligungserklärungen, die auf dem Tablet unterschrieben werden"
         }
       },
       "letterhead": {
@@ -88,11 +88,19 @@
         "save": "Briefkopf speichern",
         "saved": "Briefkopf gespeichert"
       },
+      "consentTemplateArchive": {
+        "archive": "Archivieren",
+        "restore": "Wiederherstellen",
+        "archived": "Archiviert",
+        "archivedToast": "Vorlage archiviert",
+        "restoredToast": "Vorlage wiederhergestellt",
+        "help": "Archivierte Vorlagen werden in der Auswahl für neue Einwilligungen ausgeblendet. Bereits daraus erstellte Einwilligungen bleiben unverändert."
+      },
       "consentTemplates": {
-        "help": "Templates are the starting text for new informed consents. Editing a template does not change consents already created from it.",
-        "empty": "No templates yet. Create the first one below.",
-        "manageLink": "Manage templates in Settings",
-        "saved": "Template saved"
+        "help": "Vorlagen sind der Ausgangstext für neue Einwilligungserklärungen. Das Bearbeiten einer Vorlage ändert keine Einwilligungen, die bereits daraus erstellt wurden.",
+        "empty": "Noch keine Vorlagen vorhanden. Erstellen Sie unten die erste.",
+        "manageLink": "Vorlagen in den Einstellungen verwalten",
+        "saved": "Vorlage gespeichert"
       }
     },
     "consent": {
@@ -114,6 +122,7 @@
       "noEvidence": "Das angeforderte Dokument ist noch nicht verfügbar.",
       "completed": "Unterschrift gespeichert. Sie können das Tablet nun an das Praxispersonal zurückgeben.",
       "linkError": "Der Link ist ungültig, abgelaufen oder wurde bereits verwendet.",
+      "submitFailed": "Ihre Unterschrift konnte nicht gesendet werden. Bitte versuchen Sie es erneut.",
       "revocationNotice": "Mit Ihrer Unterschrift widerrufen Sie die angezeigte Einwilligung.",
       "signer": "Name der unterzeichnenden Person",
       "relationship": "Beziehung zum Patienten",

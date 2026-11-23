@@ -107,6 +107,7 @@ class NotificationGateway:
                 "do_not_contact",
                 triggered_by_event,
                 triggered_by_user_id,
+                dedup_key=dedup_key,
             )
 
         # A per-type opt-out is the patient's own record, so like
@@ -128,6 +129,7 @@ class NotificationGateway:
                 f"patient_opted_out_of_{notification_type}",
                 triggered_by_event,
                 triggered_by_user_id,
+                dedup_key=dedup_key,
             )
 
         # Clinic-level enable / auto_send + per-patient per-type opt-in.
@@ -145,6 +147,7 @@ class NotificationGateway:
                     reason,
                     triggered_by_event,
                     triggered_by_user_id,
+                    dedup_key=dedup_key,
                 )
 
         # Locale: clinic default → patient preference override.
@@ -175,6 +178,7 @@ class NotificationGateway:
                 "no_viable_channel",
                 triggered_by_event,
                 triggered_by_user_id,
+                dedup_key=dedup_key,
             )
         channel, addr, resolved_kind = resolved
 
@@ -211,6 +215,7 @@ class NotificationGateway:
                     "sms_rate_limited",
                     triggered_by_event,
                     triggered_by_user_id,
+                    dedup_key=dedup_key,
                 )
             channel, addr, resolved_kind = resolved
 
@@ -254,7 +259,8 @@ class NotificationGateway:
     async def dispatch_outbox(db: AsyncSession, limit: int = _DISPATCH_BATCH) -> int:
         """Send a batch of due queued/failed messages. Returns count attempted.
 
-        Each row is locked ``FOR UPDATE SKIP LOCKED`` so concurrent dispatch
+        The batch and each row (re-read in ``_dispatch_one``) are locked
+        ``FOR UPDATE SKIP LOCKED`` so concurrent dispatch
         ticks never grab the same message. Per-row exceptions are isolated.
         """
         now = datetime.now(UTC)
@@ -338,10 +344,58 @@ class NotificationGateway:
 
     @staticmethod
     async def _dispatch_one(db: AsyncSession, msg: CommunicationMessage) -> None:
+        # The batch lock taken in ``dispatch_outbox`` is released by the first
+        # commit of an earlier row, so another tick can pick up and send this
+        # one while we are still working through the batch. Re-read it under
+        # its own lock and skip it if it is no longer due.
+        msg = await db.scalar(
+            select(CommunicationMessage)
+            .where(CommunicationMessage.id == msg.id)
+            .with_for_update(skip_locked=True)
+            .execution_options(populate_existing=True)
+        )
+        if msg is None:
+            return
+        if (
+            msg.status not in ("queued", "failed")
+            or msg.attempts >= msg.max_attempts
+            or (msg.next_attempt_at and msg.next_attempt_at > datetime.now(UTC))
+        ):
+            await db.commit()
+            return
         adapter = await NotificationGateway._supporting_adapter(db, msg.clinic_id, msg.channel)
         if adapter is None:
             await NotificationGateway._mark_failed(db, msg, f"no adapter for channel {msg.channel}")
             return
+
+        prefs = (
+            await NotificationService.get_patient_preferences(db, msg.clinic_id, msg.patient_id)
+            if msg.patient_id
+            else None
+        )
+        if prefs is not None and prefs.verified_consents is not None:
+            patient = await NotificationGateway._load_patient(db, msg.clinic_id, msg.patient_id)
+            allowed = (
+                patient is not None
+                and not patient.do_not_contact
+                and NotificationService.verified_consent_allows(
+                    prefs, patient, msg.channel, msg.template_key
+                )
+                and not NotificationService.opted_out_of_type(prefs, msg.template_key)
+                and getattr(prefs, f"{msg.channel}_enabled", True)
+            )
+            if allowed and msg.channel in ("email", "sms", "whatsapp"):
+                address = patient.email if msg.channel == "email" else patient.phone
+                normalize = getattr(adapter, "normalize_recipient", None)
+                if msg.channel == "whatsapp" and normalize:
+                    address = await normalize(db, msg.clinic_id, address)
+                allowed = msg.to_address == address
+            if not allowed:
+                msg.status = "skipped"
+                msg.error_message = "verified_consent_required"
+                msg.next_attempt_at = None
+                await db.commit()
+                return
 
         requires_opt_in = getattr(adapter, "requires_whatsapp_opt_in", False)
         if requires_opt_in:
@@ -627,7 +681,9 @@ class NotificationGateway:
 
         return (
             await db.execute(
-                select(Patient).where(Patient.clinic_id == clinic_id, Patient.id == patient_id)
+                select(Patient)
+                .where(Patient.clinic_id == clinic_id, Patient.id == patient_id)
+                .execution_options(populate_existing=True)
             )
         ).scalar_one_or_none()
 
@@ -643,6 +699,9 @@ class NotificationGateway:
             prefs
             and prefs.whatsapp_enabled
             and prefs.whatsapp_opt_in_at
+            and NotificationService.verified_consent_allows(
+                prefs, patient, "whatsapp", notification_type
+            )
             and not NotificationService.opted_out_of_type(prefs, notification_type)
         )
 
@@ -686,6 +745,10 @@ class NotificationGateway:
             try:
                 channel = Channel(name)
             except ValueError:
+                continue
+            if not NotificationService.verified_consent_allows(
+                prefs, patient, channel, notification_type
+            ):
                 continue
             adapter = await NotificationGateway._supporting_adapter(db, clinic_id, channel)
             if adapter is None:
@@ -776,7 +839,20 @@ class NotificationGateway:
         reason,
         triggered_by_event,
         triggered_by_user_id,
+        dedup_key: str | None = None,
     ) -> CommunicationMessage:
+        # A skip is logged once per message and reason (#1036), under its own
+        # key: the message's key stays free for when the block is lifted.
+        skip_key = f"skip:{reason}:{dedup_key}"[:200] if dedup_key else None
+        if skip_key:
+            logged = await db.scalar(
+                select(CommunicationMessage).where(
+                    CommunicationMessage.clinic_id == clinic_id,
+                    CommunicationMessage.dedup_key == skip_key,
+                )
+            )
+            if logged is not None:
+                return logged
         logger.info("skip notification %s: %s", notification_type, reason)
         # Label the skip with the clinic's preferred channel — never a
         # hardcoded "email" when the attempt would have been WhatsApp.
@@ -790,6 +866,7 @@ class NotificationGateway:
             template_key=notification_type,
             status="skipped",
             error_message=reason,
+            dedup_key=skip_key,
             triggered_by_event=triggered_by_event,
             triggered_by_user_id=triggered_by_user_id,
         )

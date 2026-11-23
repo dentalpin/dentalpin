@@ -318,3 +318,39 @@ async def test_dispatch_envelope_carries_event_id(
 
     assert "event_id" in captured["body"]
     assert captured["body"]["event_id"] == str(deliveries[0].event_id)
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("broken", ["inactive", "secret"])
+async def test_undeliverable_delivery_stops_after_max_attempts(
+    db_session: AsyncSession, test_clinic, monkeypatch, broken
+):
+    """A paused subscription, or an unreadable secret, spends the attempts (#1009).
+
+    Both returned before ``attempts`` grew, so the row was retried forever.
+    """
+    sub = await _subscription(db_session, test_clinic.id, is_active=broken != "inactive")
+    delivery = WebhookDelivery(
+        subscription_id=sub.id,
+        clinic_id=test_clinic.id,
+        event_type=EVENT,
+        payload={},
+        status="queued",
+        next_attempt_at=datetime.now(UTC),
+    )
+    db_session.add(delivery)
+    await db_session.commit()
+    if broken == "secret":
+        monkeypatch.setattr("app.modules.integrations.gateway.decrypt_password", lambda _: None)
+
+    picked = 0
+    for _ in range(8):
+        picked += await WebhookGateway.dispatch_outbox(db_session)
+        await db_session.refresh(delivery)
+        delivery.next_attempt_at = datetime.now(UTC) - timedelta(seconds=1)
+        await db_session.commit()
+
+    await db_session.refresh(delivery)
+    assert picked == delivery.max_attempts
+    assert delivery.attempts == delivery.max_attempts
+    assert delivery.status == "failed"
