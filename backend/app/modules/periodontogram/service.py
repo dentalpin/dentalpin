@@ -29,6 +29,9 @@ from .indices import compute_indices
 from .models import PeriodontogramSite, PeriodontogramSnapshot, PeriodontogramTooth
 from .schemas import SitePatch, ToothPatch
 
+# Odontogram treatment types that mean the tooth is no longer in the mouth.
+_ABSENT_TYPES: tuple[str, ...] = ("missing", "extraction")
+
 
 class PeriodontogramService:
     """Static service. Async methods, ``clinic_id`` always required."""
@@ -239,24 +242,32 @@ class PeriodontogramService:
             if record.general_condition == "missing":
                 flags[record.tooth_number] = {"is_present": False, "is_implant": False}
 
-        # Performed implants override is_present (treatments live on a
-        # separate table; one query keeps it cheap).
-        implant_stmt = (
+        # The odontogram UI records absence as a Treatment, not on
+        # ``ToothRecord.general_condition``: a ``missing`` finding or an
+        # ``extraction``, both with status ``performed`` (the UI's
+        # "existing"). Mirrors the chart's ``isToothTransparent`` rule.
+        # A performed implant overrides absence (implant placed after the
+        # extraction). One query keeps it cheap.
+        stmt = (
             select(Treatment)
             .where(
                 Treatment.clinic_id == clinic_id,
                 Treatment.patient_id == patient_id,
-                Treatment.clinical_type == "implant",
+                Treatment.clinical_type.in_(_ABSENT_TYPES + ("implant",)),
                 Treatment.status == "performed",
                 Treatment.deleted_at.is_(None),
             )
             .options(selectinload(Treatment.teeth))
         )
-        implants = (await db.execute(implant_stmt)).scalars().all()
-        for treatment in implants:
-            for link in treatment.teeth:
-                tn = link.tooth_number
-                flags[tn] = {"is_present": True, "is_implant": True}
+        treatments = (await db.execute(stmt)).scalars().all()
+        for treatment in treatments:
+            if treatment.clinical_type in _ABSENT_TYPES:
+                for link in treatment.teeth:
+                    flags.setdefault(link.tooth_number, {"is_present": False, "is_implant": False})
+        for treatment in treatments:
+            if treatment.clinical_type == "implant":
+                for link in treatment.teeth:
+                    flags[link.tooth_number] = {"is_present": True, "is_implant": True}
 
         return flags
 
