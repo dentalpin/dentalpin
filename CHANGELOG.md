@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Online booking:** the public booking page stops offering times and taking requests for a professional who was deactivated or removed from the clinic (#1100).
+
 ## [2.12.0] - 2026-11-23
 
 New: staff two-factor authentication with a per-clinic policy, a patient

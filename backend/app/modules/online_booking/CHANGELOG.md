@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1100): the public page answers 404 and `reserve` refuses when the configured professional is inactive or no longer a professional member of the clinic; enabling settings for an inactive user is rejected.
+
 - fix(#1044): accepting a booking for a new patient now requires a surname, matching the patients schema, so the created patient can be edited afterwards.
 
 - Answer with `ApiResponse` / `PaginatedApiResponse` like the rest of the API; the inbox now returns `total`, `page` and `page_size` instead of `has_more`, and the reception page and navigation badge read the typed responses.

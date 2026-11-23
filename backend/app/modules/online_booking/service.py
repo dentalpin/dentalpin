@@ -110,6 +110,19 @@ async def occupied(
     return await db.scalar(query.limit(1)) is not None
 
 
+async def bookable_professional(db: AsyncSession, clinic_id: UUID, professional_id: UUID) -> bool:
+    """Whether the user is active and still a professional member of the clinic.
+
+    Settings validate the professional only when saved; a later deactivation or
+    removal from the clinic must stop the public page from booking them (#1100).
+    """
+    return await AppointmentService.validate_professional_access(
+        db, clinic_id, professional_id
+    ) and bool(
+        await db.scalar(select(User.id).where(User.id == professional_id, User.is_active.is_(True)))
+    )
+
+
 async def slots(
     db: AsyncSession, clinic_id: UUID, config: BookingSettings, day: date, now: datetime
 ) -> list[datetime]:
@@ -173,7 +186,11 @@ async def reserve(
     # Reload settings after waiting; an administrator may have disabled booking
     # or changed the professional.
     await db.refresh(config)
-    if not config.enabled or config.professional_id is None:
+    if (
+        not config.enabled
+        or config.professional_id is None
+        or not await bookable_professional(db, clinic_id, config.professional_id)
+    ):
         raise BookingConflictError("Booking is disabled")
     item.professional_id = config.professional_id
     item.end_time = item.start_time + timedelta(minutes=config.slot_minutes)
@@ -249,6 +266,7 @@ class BookingService:
             or not config.enabled
             or not config.public_url
             or not config.professional_id
+            or not await bookable_professional(db, clinic_id, config.professional_id)
         ):
             raise BookingNotFoundError("Booking unavailable")
         return config
@@ -267,6 +285,9 @@ class BookingService:
         if data.professional_id and not await AppointmentService.validate_professional_access(
             db, clinic_id, data.professional_id
         ):
+            raise BookingValidationError("Invalid professional")
+        # Enabling for an inactive user would leave the public page unavailable.
+        if data.enabled and not await bookable_professional(db, clinic_id, data.professional_id):
             raise BookingValidationError("Invalid professional")
         await lock_clinic(db, clinic_id)
         config = await db.get(BookingSettings, clinic_id)
@@ -465,11 +486,7 @@ class BookingService:
             raise BookingNotFoundError("Request not found")
         if row.status != "confirmed" or row.start_time <= now:
             raise BookingConflictError("Request cannot be accepted")
-        if not await AppointmentService.validate_professional_access(
-            db, ctx.clinic_id, data.professional_id
-        ) or not await db.scalar(
-            select(User.id).where(User.id == data.professional_id, User.is_active.is_(True))
-        ):
+        if not await bookable_professional(db, ctx.clinic_id, data.professional_id):
             raise BookingValidationError("Invalid professional")
         if data.cabinet_id:
             cabinet = await CabinetService.get_cabinet(db, ctx.clinic_id, data.cabinet_id)

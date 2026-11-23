@@ -5,7 +5,7 @@ from datetime import UTC, datetime, time, timedelta
 from uuid import uuid4
 
 import pytest
-from booking_helpers import clinic_user, dispatch
+from booking_helpers import clinic_user, dispatch, professional
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
@@ -137,7 +137,7 @@ async def test_request_confirm_accept_and_conflict(
 async def test_simultaneous_reservations_serialize(db_session, test_clinic, open_hours):
     from app.config import settings
 
-    professional_id = await clinic_user(db_session, test_clinic.id)
+    professional_id = (await professional(db_session, test_clinic.id)).id
     config = BookingSettings(
         clinic_id=test_clinic.id,
         enabled=True,
@@ -188,9 +188,7 @@ async def test_simultaneous_http_requests(client, db_session, test_clinic, open_
     from app.database import get_db
     from app.main import app
 
-    professional_id = await db_session.scalar(
-        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)
-    )
+    professional_id = (await professional(db_session, test_clinic.id)).id
     db_session.add(
         BookingSettings(
             clinic_id=test_clinic.id,
@@ -605,7 +603,7 @@ async def test_staff_list_paginates_and_excludes_expired_requests(
 @pytest.mark.asyncio
 async def test_rolled_back_request_queues_no_email(db_session, test_clinic, open_hours, delivery):
     """The gateway enqueues inside the caller's transaction: no commit, no mail."""
-    professional_id = await clinic_user(db_session, test_clinic.id)
+    professional_id = (await professional(db_session, test_clinic.id)).id
     config = BookingSettings(
         clinic_id=test_clinic.id,
         enabled=True,
@@ -1019,9 +1017,7 @@ async def test_confirmation_waits_for_concurrent_agenda_write_and_detects_confli
     from app.main import app
     from app.modules.agenda.service import AppointmentService
 
-    professional_id = await db_session.scalar(
-        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)
-    )
+    professional_id = (await professional(db_session, test_clinic.id)).id
     start = datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(10), UTC)
     token = "synthetic-token-" + uuid4().hex
     db_session.add(
