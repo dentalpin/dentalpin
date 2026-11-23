@@ -75,7 +75,7 @@ reference an out-of-clinic patient.
 - Alias `pdf.py:DocumentPDFService` — never hand-render HTML elsewhere.
 - **Every host locale renders** (#524). `_LABELS` carries all ten in
   `PDF_LOCALES`, the endpoint validates with `PDF_LOCALE_PATTERN`, and
-  the page passes the UI locale. Arabic sets `dir="rtl"` on `<html>`,
+  the page and the patient-card consent preview (#1041) pass the UI locale. Arabic sets `dir="rtl"` on `<html>`,
   as billing's invoice does. Adding a locale to `PDF_LOCALES` without a
   label set here fails `tests/test_pdf_label_coverage.py`, which
   discovers every module shipping a `pdf.py`. Clinical text the user

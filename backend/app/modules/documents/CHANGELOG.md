@@ -5,6 +5,7 @@
 ## Unreleased
 
 - fix(#1006): editing the title or content of any document drops its PDF (only consents did), and `status=generated` can't be set on a document without a matching file.
+- fix(#1041): the patient-card consent preview passes the UI locale to `/documents/generate`, so captions and the DRAFT watermark are no longer always Spanish.
 
 - i18n: translate the consent-template Settings strings (`documents.settings.cards.consentTemplates.*`, `documents.settings.consentTemplates.*`) in ar, de, fr, hi, hu, it, pl, pt, ta and te, and extend the consent translation guard test to cover them. Native review is advisable for ar, hi, ta, te, hu, pl.
 - fix: the consent templates list in Settings uses the same subtle row separator as the other Settings cards instead of the default heavy border.

@@ -2,7 +2,7 @@
 module: documents
 screen: documents
 route: /documents
-last_verified_commit: 823a556c
+last_verified_commit: b40a1d23
 related_endpoints:
   - GET /api/v1/documents
   - POST /api/v1/documents
@@ -73,4 +73,4 @@ The letterhead editor requires `admin.clinic.write`.
 
 From the patient record, select a clinic template and create the consent. Templates are created and edited under **Settings → Clinical → Consent templates** (see [Consent templates](./settings_consent-templates.md)); the patient card links there for users who can write documents. Open the link on the tablet without a staff session; it expires after 30 minutes and accepts one signature. The patient or representative provides their name and relationship and draws their signature. Download the signed PDF from the record. To revoke, create a revocation link and collect a new signature; the original consent remains intact. Corrections require a new consent.
 
-Before signing, the consent can be edited, archived or rendered as a preview. Editing or archiving invalidates outstanding links; create a new link after editing.
+Before signing, the consent can be edited, archived or rendered as a preview. The preview is rendered in your interface language. Editing or archiving invalidates outstanding links; create a new link after editing.
