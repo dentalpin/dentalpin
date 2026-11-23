@@ -17,6 +17,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Accounts:** a password over bcrypt's 72 bytes is refused with a message instead of failing with a server error (#1051).
 - **Billing:** a treatment added to a manual invoice gets its own VAT instead of the exempt default (#1028).
 - **Inventory:** editing an item's details no longer writes back an out-of-date stock quantity (#1050).
 - **Verifactu:** a credit note of a simplified invoice is sent as R5 instead of an invalid R1 that blocked invoicing (#1049).
