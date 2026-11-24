@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from booking_helpers import configure, professional, tomorrow_at
+from booking_helpers import configure, professional, proof_for, tomorrow_at
 from sqlalchemy import delete
 
 from app.core.auth.models import ClinicMembership
@@ -17,6 +17,7 @@ from app.modules.online_booking.service import BookingService, reserve
 REQUEST = {
     "contact_name": "Synthetic",
     "contact_email": "synthetic@example.com",
+    "contact_phone": "+34600000000",
     "reason": "checkup",
 }
 
@@ -26,7 +27,12 @@ async def _public(client, clinic_id):
     day = tomorrow_at(10).date().isoformat()
     availability = await client.get(f"{url}/availability", params={"day": day})
     request = await client.post(
-        f"{url}/requests", json={**REQUEST, "start_time": tomorrow_at(10).isoformat()}
+        f"{url}/requests",
+        json={
+            **REQUEST,
+            "start_time": tomorrow_at(10).isoformat(),
+            "altcha": proof_for(clinic_id),
+        },
     )
     return availability, request
 

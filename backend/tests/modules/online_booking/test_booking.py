@@ -1455,9 +1455,7 @@ async def test_availability_respects_existing_clinic_holiday(db_session, test_cl
 async def test_public_optional_questions_and_split_names(
     client, db_session, test_clinic, open_hours, delivery
 ):
-    professional_id = await db_session.scalar(
-        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)
-    )
+    professional_id = (await professional(db_session, test_clinic.id)).id
     config = BookingSettings(
         clinic_id=test_clinic.id,
         professional_id=professional_id,
