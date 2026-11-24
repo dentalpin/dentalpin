@@ -27,6 +27,10 @@ Heavy subscriber + now a publisher. See ADR 0016.
   `sms_rate_limited`).
 - `service.py` — CRUD for templates/preferences/settings/SMTP + the
   `should_send_notification` consent check. No send path here anymore.
+  `get_template` resolves clinic row before system row; inside each tier a
+  regional locale falls back to its base (`pt-BR` -> `pt`), like the file
+  loader in `core/email`. WhatsApp (provider templates are approved per
+  language) and `exact_locale=True` (the create duplicate check) match exactly.
 - Tables: `communication_messages` (outbox + audit), `notification_templates`,
   `notification_preferences`, `clinic_notification_settings`,
   `clinic_channel_settings`, `clinic_smtp_settings`.
@@ -126,12 +130,21 @@ is the `NotificationType` Literal, so the model is shown the nine values.
 - **Templates are i18n-aware** (Spanish UI strings). Never hardcode
   copy in handlers — use a template.
 - **Template context that needs a query lives in `service.py`, once.**
-  `budget_treatments_context(db, budget_id)` builds the `treatments`
+  `budget_treatments_context(db, budget_id, money)` builds the `treatments`
   table `budget_sent.html` renders. It used to exist twice — in
   `handlers.py` for the event-driven enqueue and in `router.py` for the
   manual send — and the copies diverged: one read `catalog_item.name`,
   which the model does not have (#527). Call the helper; do not inline
   a second loop.
+- **Money in a template context is a formatted string** (#1133). Build
+  `money = money_formatter(clinic, locale)` (`service.py`) with the locale
+  from `resolve_patient_communication_locale` — the same rule the gateway
+  picks the template by — and pass `money(amount)`, never `float(...)`.
+  It is `format_currency` with `clinic.currency` and the PDFs' Babel
+  locale map, so templates print `{{ total }}` with no `€` of their own.
+  A key the template tests for truthiness (`discount_amount`,
+  `total_tax`, `balance_due`, the reminder's `total`) is `None` when the
+  amount is zero: `"0,00 €"` is truthy.
 - **Appointment times are stored in UTC.** Build `appointment_date` /
   `appointment_time` with `appointment_when_context(start_time, clinic)`
   (`service.py`), never `start_time.strftime(...)`: that printed UTC, an

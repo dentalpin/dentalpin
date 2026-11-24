@@ -17,13 +17,13 @@ import logging
 from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
 
-from sqlalchemy import select, text
+from sqlalchemy import func, select, text
 
 from app.core.auth.models import Clinic
-from app.core.utils.dates import clinic_today
+from app.core.utils.dates import clinic_today, clinic_zone_for
 from app.database import async_session_maker
 
-from .models import Budget
+from .models import Budget, BudgetHistory
 from .workflow import BudgetWorkflowService
 
 logger = logging.getLogger(__name__)
@@ -70,47 +70,68 @@ async def expire_budgets() -> None:
     )
 
 
+# Automatic reminders: one at each milestone, counted in clinic calendar
+# days from when the quote was sent (#1115).
+_REMINDER_MILESTONES = (7, 14)
+
+
+def _due_milestone(today: date, sent_day: date, last_reminder_day: date | None) -> int | None:
+    """The milestone to remind for today, or ``None``.
+
+    Only the latest milestone reached counts (a cron that was down from day
+    7 to day 15 sends the 14-day reminder, not both). A milestone is done
+    once a reminder went out on or after its day, so it never repeats; a
+    manual reminder sent after that day counts too.
+    """
+    days = (today - sent_day).days
+    reached = [m for m in _REMINDER_MILESTONES if days >= m]
+    if not reached:
+        return None
+    milestone = reached[-1]
+    if last_reminder_day is not None and last_reminder_day >= sent_day + timedelta(days=milestone):
+        return None
+    return milestone
+
+
 async def _send_reminders_for_clinic(clinic_id: UUID, today: date, sem: asyncio.Semaphore) -> None:
     async with sem, async_session_maker() as db:
         try:
-            seven_ago = today - timedelta(days=7)
-            # Fetch sent budgets created up to 14 days ago without a
-            # reminder in the last 5 days. We cap the rolling cooldown
-            # at 5 days so neither the 7d nor the 14d milestone
-            # double-fires within the same cycle.
-            cutoff_no_reminder = datetime.combine(
-                today - timedelta(days=5),
-                datetime.min.time(),
-                tzinfo=UTC,
+            zone = await clinic_zone_for(db, clinic_id)
+            # The send moment is the latest ``sent`` history entry. A resend
+            # is a new budget version (new row), so it gets its own count.
+            sent_at = (
+                select(
+                    BudgetHistory.budget_id,
+                    func.max(BudgetHistory.changed_at).label("sent_at"),
+                )
+                .where(BudgetHistory.clinic_id == clinic_id, BudgetHistory.action == "sent")
+                .group_by(BudgetHistory.budget_id)
+                .subquery()
             )
             rows = (
-                (
-                    await db.execute(
-                        select(Budget).where(
-                            Budget.clinic_id == clinic_id,
-                            Budget.status == "sent",
-                            Budget.deleted_at.is_(None),
-                            Budget.valid_from <= seven_ago,
-                            (
-                                Budget.last_reminder_sent_at.is_(None)
-                                | (Budget.last_reminder_sent_at <= cutoff_no_reminder)
-                            ),
-                        )
+                await db.execute(
+                    select(Budget, sent_at.c.sent_at)
+                    .outerjoin(sent_at, sent_at.c.budget_id == Budget.id)
+                    .where(
+                        Budget.clinic_id == clinic_id,
+                        Budget.status == "sent",
+                        Budget.deleted_at.is_(None),
                     )
                 )
-                .scalars()
-                .all()
-            )
+            ).all()
 
-            for budget in rows:
-                days_since_send = (today - budget.valid_from).days
-                if days_since_send >= 14:
-                    milestone = 14
-                elif days_since_send >= 7:
-                    milestone = 7
-                else:
+            for budget, sent_moment in rows:
+                # A ``sent`` budget without the history entry (rows written
+                # outside ``send_budget``, e.g. seeds) falls back to valid_from.
+                sent_day = sent_moment.astimezone(zone).date() if sent_moment else budget.valid_from
+                last = budget.last_reminder_sent_at
+                last_day = last.astimezone(zone).date() if last else None
+                milestone = _due_milestone(today, sent_day, last_day)
+                if milestone is None:
                     continue
-                await BudgetWorkflowService.send_reminder(db, budget, milestone_days=milestone)
+                await BudgetWorkflowService.send_reminder(
+                    db, budget, milestone_days=milestone, automatic=True
+                )
             await db.commit()
         except Exception as exc:
             logger.error(
@@ -123,7 +144,7 @@ async def _send_reminders_for_clinic(clinic_id: UUID, today: date, sem: asyncio.
 
 
 async def send_budget_reminders() -> None:
-    """Send 7-day / 14-day reminders for sent budgets without response.
+    """Send one reminder 7 days and one 14 days after a budget was sent.
 
     Honours the per-clinic toggle ``budget_reminders_enabled`` (default
     off). The function only emits the ``budget.reminder_sent`` event;

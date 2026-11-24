@@ -41,7 +41,7 @@ the erasure transaction (ADR 0038, #546).
 | `patient.updated` | `handlers.on_patient_updated` | Transactional (ADR 0019). When `do_not_contact` is set, cancel the patient's pending WhatsApp drafts (`awaiting_manual` → `skipped`). |
 | `budget.sent` | `handlers.on_budget_sent` | Enqueue `budget_sent` (only when `send_method` is `email` or `whatsapp`; staff pick is honoured exactly). |
 | `budget.accepted` | `handlers.on_budget_accepted` | Enqueue `budget_accepted`. |
-| `budget.reminder_sent` | `handlers.on_budget_reminder_sent` | Enqueue `budget_reminder` with the public quote link (#287 bug 7). |
+| `budget.reminder_sent` | `handlers.on_budget_reminder_sent` | Enqueue `budget_reminder` with the public quote link (#287 bug 7). Automatic milestones carry `dedup_key` `budget_reminder:<budget_id>:<milestone_days>` (#1115); manual reminders are not deduplicated. |
 | `invoice.sent` | `handlers.on_invoice_sent` | Enqueue `invoice_sent` (only when `send_method` is `email` or `whatsapp`). |
 
 ## Adding a new event

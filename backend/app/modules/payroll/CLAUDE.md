@@ -36,7 +36,8 @@ driven nav via `useModules`, self-hides without the grants):
 - `pages/payroll/periods/index.vue` — open `YYYY-MM`, confirmed
   draft → closed → paid transitions; closed/paid read-only.
 - `pages/payroll/periods/[id].vue` — per-period entries table with
-  client-side `net == gross - deductions` validation; edit disabled
+  client-side `net == gross - deductions` validation in whole cents
+  (`utils/entryBalance.ts`, same rule as the API); edit disabled
   outside draft. Remove actions wait for #399 (draft deletes).
 - `pages/payroll/reports/index.vue` — monthly + annual rollups.
 - `composables/usePayroll.ts` — typed endpoint wrappers.
@@ -105,6 +106,12 @@ roundtrip uninstall test.
 - **Entries mutate only in draft periods** (409 otherwise); periods move
   strictly draft → closed → paid (409 on skips).
 - **`net` is validated, not computed** — unbalanced books are a 422.
+- **Cents only (#1138).** Entry amounts and `base_amount` carry
+  `decimal_places=2`. `_assert_balanced` compares the values as sent and
+  each `Numeric(12, 2)` column rounds on its own, so without the schema
+  rule 1000.004 − 0.005 = 999.999 passed and was stored as
+  1000.00 − 0.01 = 1000.00. The form only sends typed values (no client
+  arithmetic), so no client rounding is needed.
 - **No hard deletes except draft corrections (issue #390).** Profiles
   deactivate via `is_active`; `DELETE /entries/{id}` and
   `DELETE /periods/{id}` (204) work only in `draft` periods (409

@@ -22,6 +22,7 @@
     "pending": {
       "empty": "Nic nie oczekuje. Wszystko jest na bieżąco.",
       "unknownPatient": "Nieznany pacjent",
+      "more": "Wyświetlono {shown} z {total} · Pokaż wszystkie",
       "group": {
         "recall": "Wizyty kontrolne do obdzwonienia",
         "budget": "Kosztorysy oczekujące na odpowiedź"

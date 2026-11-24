@@ -21,8 +21,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.auth.models import Clinic, ClinicMembership
 from app.modules.budget.models import Budget, BudgetItem
 from app.modules.catalog.models import TreatmentCatalogItem, TreatmentCategory
-from app.modules.notifications.service import budget_treatments_context
+from app.modules.notifications.service import budget_treatments_context, money_formatter
 from app.modules.patients.models import Patient
+
+# es + EUR, the formatter every caller builds from the clinic (#1133).
+MONEY = money_formatter(None, "es")
 
 
 async def _budget_with_items(db: AsyncSession, clinic: Clinic, count: int) -> UUID:
@@ -108,11 +111,11 @@ async def test_names_come_from_the_locale_dict(
     assert not hasattr(TreatmentCatalogItem, "name")
 
     budget_id = await _budget_with_items(db_session, test_clinic, 3)
-    treatments = await budget_treatments_context(db_session, budget_id)
+    treatments = await budget_treatments_context(db_session, budget_id, MONEY)
 
     assert len(treatments) == 3
     assert sorted(t["name"] for t in treatments) == ["Corona 0", "Corona 1", "Corona 2"]
-    assert all(t["price"] == 100.0 for t in treatments)
+    assert all(t["price"] == "100,00\xa0€" for t in treatments)
     assert sorted(t["tooth"] for t in treatments) == [11, 12, 13]
 
 
@@ -169,9 +172,9 @@ async def test_query_count_does_not_grow_with_the_number_of_lines(
 
     seen, stop = _count_statements(db_session)
     try:
-        await budget_treatments_context(db_session, small)
+        await budget_treatments_context(db_session, small, MONEY)
         after_small = len(seen)
-        await budget_treatments_context(db_session, large)
+        await budget_treatments_context(db_session, large, MONEY)
         after_large = len(seen) - after_small
     finally:
         stop()
@@ -190,7 +193,7 @@ async def test_empty_budget_issues_no_name_lookup(
 
     seen, stop = _count_statements(db_session)
     try:
-        assert await budget_treatments_context(db_session, budget_id) == []
+        assert await budget_treatments_context(db_session, budget_id, MONEY) == []
     finally:
         stop()
 

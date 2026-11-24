@@ -17,7 +17,7 @@ from pydantic import BaseModel, ConfigDict, Field
 class PayrollProfileCreate(BaseModel):
     user_id: UUID
     payment_type: str = Field(default="monthly", pattern="^(monthly|hourly)$")
-    base_amount: Decimal | None = Field(default=None, ge=0)
+    base_amount: Decimal | None = Field(default=None, ge=0, decimal_places=2)
     currency: str = Field(default="EUR", min_length=3, max_length=3)
     bank_account: str | None = Field(default=None, max_length=100)
     tax_id: str | None = Field(default=None, max_length=50)
@@ -26,7 +26,7 @@ class PayrollProfileCreate(BaseModel):
 
 class PayrollProfileUpdate(BaseModel):
     payment_type: str | None = Field(default=None, pattern="^(monthly|hourly)$")
-    base_amount: Decimal | None = Field(default=None, ge=0)
+    base_amount: Decimal | None = Field(default=None, ge=0, decimal_places=2)
     currency: str | None = Field(default=None, min_length=3, max_length=3)
     # Replace-to-edit: send the full new value to change it; omitted means
     # keep the stored ciphertext. Plaintext is never returned.
@@ -77,18 +77,21 @@ class PeriodTransition(BaseModel):
 
 
 class PayrollEntryCreate(BaseModel):
+    # Cents only (#1138): the balance check compares these values as sent,
+    # and each Numeric(12, 2) column rounds on its own afterwards, so a
+    # sub-cent amount could pass the check and be stored unbalanced.
     period_id: UUID
     user_id: UUID
-    gross: Decimal = Field(ge=0)
-    deductions: Decimal = Field(ge=0)
-    net: Decimal = Field(ge=0)
+    gross: Decimal = Field(ge=0, decimal_places=2)
+    deductions: Decimal = Field(ge=0, decimal_places=2)
+    net: Decimal = Field(ge=0, decimal_places=2)
     notes: str | None = Field(default=None, max_length=2000)
 
 
 class PayrollEntryUpdate(BaseModel):
-    gross: Decimal | None = Field(default=None, ge=0)
-    deductions: Decimal | None = Field(default=None, ge=0)
-    net: Decimal | None = Field(default=None, ge=0)
+    gross: Decimal | None = Field(default=None, ge=0, decimal_places=2)
+    deductions: Decimal | None = Field(default=None, ge=0, decimal_places=2)
+    net: Decimal | None = Field(default=None, ge=0, decimal_places=2)
     notes: str | None = Field(default=None, max_length=2000)
 
 

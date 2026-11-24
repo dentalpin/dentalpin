@@ -18,6 +18,7 @@ if TYPE_CHECKING:
     from app.core.auth.models import Clinic
 
 from .models import Invoice
+from .workflow import patient_billing_snapshot
 
 
 class InvoicePDFService:
@@ -207,6 +208,19 @@ class InvoicePDFService:
         patient_name = ""
         if invoice.patient:
             patient_name = f"{invoice.patient.first_name} {invoice.patient.last_name}"
+
+        # Billing block. Issued documents print their frozen snapshot; a
+        # draft has none yet, so it shows what issuing will snapshot from
+        # the patient (#1103).
+        billing_name = invoice.billing_name
+        billing_tax_id = invoice.billing_tax_id
+        billing_address = invoice.billing_address
+        if invoice.status == "draft" and billing_name is None and invoice.patient:
+            snapshot = patient_billing_snapshot(invoice.patient)
+            billing_name = snapshot["billing_name"]
+            billing_tax_id = snapshot["billing_tax_id"]
+            billing_address = snapshot["billing_address"]
+        billing_name = billing_name or ""
 
         # Format dates
         issue_date = invoice.issue_date.strftime("%d/%m/%Y") if invoice.issue_date else "-"
@@ -660,17 +674,17 @@ class InvoicePDFService:
                 <div class="billing-info">
                     <div class="info-group">
                         <div class="info-label">{labels["billing_name"]}</div>
-                        <div class="info-value">{invoice.billing_name}</div>
+                        <div class="info-value">{billing_name}</div>
                         {
-            f'<div class="info-label" style="margin-top: 8px;">{labels["tax_id"]}</div><div class="info-value">{invoice.billing_tax_id}</div>'
-            if invoice.billing_tax_id
+            f'<div class="info-label" style="margin-top: 8px;">{labels["tax_id"]}</div><div class="info-value">{billing_tax_id}</div>'
+            if billing_tax_id
             else ""
         }
                     </div>
                     <div class="info-group">
                         <div class="info-label">{labels["address"]}</div>
                         <div class="info-value">{
-            InvoicePDFService._format_address(invoice.billing_address)
+            InvoicePDFService._format_address(billing_address)
         }</div>
                     </div>
                     {
@@ -680,7 +694,7 @@ class InvoicePDFService:
                         <div class="info-value">{patient_name}</div>
                     </div>
                     '''
-            if patient_name and patient_name != invoice.billing_name
+            if patient_name and patient_name != billing_name
             else ""
         }
                 </div>

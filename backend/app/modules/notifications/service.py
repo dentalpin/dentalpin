@@ -2,7 +2,9 @@
 
 import hashlib
 import logging
+from collections.abc import Callable
 from datetime import UTC, datetime
+from decimal import Decimal
 from uuid import UUID
 
 from sqlalchemy import func, select, text, update
@@ -11,6 +13,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.email import EmailResult, email_service
 from app.core.i18n_names import catalog_name
+from app.core.pdf_locales import LOCALE_BY_LANG
+from app.core.utils.currency import format_currency
 from app.core.utils.dates import clinic_zone
 
 from .channels import Channel, channel_registry
@@ -51,6 +55,55 @@ async def resolve_clinic_communication_locale(
     settings = row.settings or {}
     lang = settings.get("communication_language") if isinstance(settings, dict) else None
     return lang or DEFAULT_COMMUNICATION_LOCALE
+
+
+async def resolve_communication_locale(
+    db: AsyncSession,
+    clinic_id: UUID,
+    prefs: NotificationPreference | None,
+) -> str:
+    """The locale a patient's message renders in: the clinic default,
+    overridden by the patient's ``preferred_locale``.
+
+    The gateway picks the template with it; a context builder that formats
+    for the locale (money, #1133) must use the same answer.
+    """
+    if prefs is not None and prefs.preferred_locale:
+        return prefs.preferred_locale
+    return await resolve_clinic_communication_locale(db, clinic_id)
+
+
+async def resolve_patient_communication_locale(
+    db: AsyncSession,
+    clinic_id: UUID,
+    patient_id: UUID,
+) -> str:
+    """:func:`resolve_communication_locale` for a patient id."""
+    prefs = await NotificationService.get_patient_preferences(db, clinic_id, patient_id)
+    return await resolve_communication_locale(db, clinic_id, prefs)
+
+
+Money = Callable[[Decimal | float | int | None], str | None]
+
+
+def money_formatter(clinic, locale: str) -> Money:
+    """Format amounts for a message context in the clinic's currency (#1133).
+
+    Same formatter and locale map as the PDFs: ``format_currency`` with
+    ``clinic.currency`` and the Babel locale of the message's language, so
+    an es email reads ``1.300,00 €``, an en one ``€1,300.00`` and an INR
+    clinic gets ``₹``. Templates render the string as is — they never add
+    a currency symbol of their own. ``None`` stays ``None``.
+    """
+    currency = clinic.currency if clinic and clinic.currency else "EUR"
+    babel_locale = LOCALE_BY_LANG.get(locale, LOCALE_BY_LANG[DEFAULT_COMMUNICATION_LOCALE])
+
+    def money(amount: Decimal | float | int | None) -> str | None:
+        if amount is None:
+            return None
+        return format_currency(amount, currency, babel_locale)
+
+    return money
 
 
 logger = logging.getLogger(__name__)
@@ -122,36 +175,40 @@ class NotificationService:
         template_key: str,
         locale: str = "es",
         channel: str = "email",
+        *,
+        exact_locale: bool = False,
     ) -> NotificationTemplate | None:
         """Get a template by key, locale and channel.
 
-        Priority: clinic-specific > system template.
+        Priority: clinic-specific > system template. Within each tier a
+        regional locale falls back to its base language (``pt-BR`` -> ``pt``),
+        like the file template loader (#1136). WhatsApp provider templates are
+        approved per language and sent with the message locale, so that
+        channel, and ``exact_locale=True`` callers, match the locale exactly.
         """
-        # First try clinic-specific
-        result = await db.execute(
-            select(NotificationTemplate).where(
-                NotificationTemplate.clinic_id == clinic_id,
-                NotificationTemplate.template_key == template_key,
-                NotificationTemplate.locale == locale,
-                NotificationTemplate.channel == channel,
-                NotificationTemplate.is_active == True,  # noqa: E712
-            )
-        )
-        template = result.scalar_one_or_none()
-        if template:
-            return template
+        locales = [locale]
+        base = locale.split("-", 1)[0]
+        if not exact_locale and channel != "whatsapp" and base != locale:
+            locales.append(base)
 
-        # Fallback to system template
-        result = await db.execute(
-            select(NotificationTemplate).where(
-                NotificationTemplate.clinic_id.is_(None),
-                NotificationTemplate.template_key == template_key,
-                NotificationTemplate.locale == locale,
-                NotificationTemplate.channel == channel,
-                NotificationTemplate.is_active == True,  # noqa: E712
-            )
-        )
-        return result.scalar_one_or_none()
+        for owner in (
+            NotificationTemplate.clinic_id == clinic_id,
+            NotificationTemplate.clinic_id.is_(None),
+        ):
+            for candidate in locales:
+                result = await db.execute(
+                    select(NotificationTemplate).where(
+                        owner,
+                        NotificationTemplate.template_key == template_key,
+                        NotificationTemplate.locale == candidate,
+                        NotificationTemplate.channel == channel,
+                        NotificationTemplate.is_active == True,  # noqa: E712
+                    )
+                )
+                template = result.scalar_one_or_none()
+                if template:
+                    return template
+        return None
 
     @staticmethod
     async def get_template_by_id(
@@ -879,8 +936,10 @@ def clinic_date_label(instant: datetime, clinic) -> str:
     return instant.astimezone(clinic_zone(clinic.timezone if clinic else None)).strftime("%d/%m/%Y")
 
 
-async def budget_treatments_context(db: AsyncSession, budget_id: UUID) -> list[dict]:
+async def budget_treatments_context(db: AsyncSession, budget_id: UUID, money: Money) -> list[dict]:
     """The ``treatments`` table every locale's ``budget_sent.html`` renders.
+
+    ``price`` is already formatted by ``money`` (see :func:`money_formatter`).
 
     Lived twice — once in ``handlers.py`` for the event-driven enqueue and
     once in ``router.py`` for the manual send. The copies diverged: #287
@@ -929,7 +988,7 @@ async def budget_treatments_context(db: AsyncSession, budget_id: UUID) -> list[d
         {
             "name": catalog_name(names_by_id.get(item.catalog_item_id, {})) or "Tratamiento",
             "tooth": item.tooth_number,
-            "price": float(item.line_total),
+            "price": money(item.line_total),
         }
         for item in items
     ]

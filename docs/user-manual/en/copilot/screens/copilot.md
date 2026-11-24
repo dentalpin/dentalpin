@@ -59,6 +59,14 @@ several steps:
 
 You only see chips for actions your role allows.
 
+## To do (Pendientes)
+
+The **To do** tab lists open work you can act on: overdue recalls and
+budgets awaiting a response. Each group shows up to 20 rows. When there
+are more, the group ends with "Showing 20 of N · See all", which opens
+the full, filtered list (overdue recalls, or budgets with status
+*sent*).
+
 ## Confirmations
 
 Every action that modifies data (create, move, cancel, charge, send)

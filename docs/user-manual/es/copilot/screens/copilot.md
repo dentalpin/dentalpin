@@ -59,6 +59,14 @@ primeras encadenan varios pasos:
 
 Solo ves los chips de las acciones que tu rol permite.
 
+## Pendientes
+
+La pestaña **Pendientes** reúne el trabajo abierto sobre el que puedes
+actuar: rellamadas vencidas y presupuestos sin respuesta. Cada grupo
+muestra hasta 20 filas. Si hay más, el grupo termina con "Mostrando 20
+de N · Ver todos", que abre la lista completa ya filtrada (rellamadas
+vencidas, o presupuestos en estado *enviado*).
+
 ## Confirmaciones
 
 Toda acción que modifica datos (crear, mover, cancelar, cobrar, enviar)

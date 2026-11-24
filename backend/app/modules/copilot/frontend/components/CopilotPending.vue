@@ -3,6 +3,8 @@
 // caller can act on — overdue recalls, budgets awaiting response —
 // aggregated server-side via the same tools chat uses. Each row
 // deep-links to the owning module; the agent performs no writes here.
+// Each kind shows a bounded slice; when its section total is larger the
+// group says "showing N of M" and links to the full list (#1137).
 import type { ApiResponse } from '~~/app/types'
 
 interface PendingItem {
@@ -17,22 +19,36 @@ interface PendingItem {
   amount: number | null
 }
 
+interface PendingSection {
+  kind: 'recall' | 'budget'
+  total: number
+  link: string
+}
+
+interface PendingResponse {
+  items: PendingItem[]
+  sections: PendingSection[]
+}
+
 const { t } = useI18n()
 const api = useApi()
 const { open } = useCopilot()
 const { money } = useCopilotFormat()
 
 const items = ref<PendingItem[]>([])
+const sections = ref<PendingSection[]>([])
 const isLoading = ref(false)
 const loaded = ref(false)
 
 async function load() {
   isLoading.value = true
   try {
-    const res = await api.get<ApiResponse<PendingItem[]>>('/api/v1/copilot/pending')
-    items.value = res.data
+    const res = await api.get<ApiResponse<PendingResponse>>('/api/v1/copilot/pending')
+    items.value = res.data.items
+    sections.value = res.data.sections
   } catch {
     items.value = []
+    sections.value = []
   } finally {
     isLoading.value = false
     loaded.value = true
@@ -42,10 +58,19 @@ async function load() {
 onMounted(load)
 defineExpose({ refresh: load })
 
-const groups = computed(() => [
-  { kind: 'recall' as const, items: items.value.filter(i => i.kind === 'recall') },
-  { kind: 'budget' as const, items: items.value.filter(i => i.kind === 'budget') }
-].filter(g => g.items.length))
+const groups = computed(() => (['recall', 'budget'] as const)
+  .map((kind) => {
+    const groupItems = items.value.filter(i => i.kind === kind)
+    const section = sections.value.find(s => s.kind === kind)
+    const total = Math.max(section?.total ?? 0, groupItems.length)
+    return {
+      kind,
+      items: groupItems,
+      total,
+      moreLink: section && total > groupItems.length ? section.link : null
+    }
+  })
+  .filter(g => g.items.length))
 
 function iconFor(kind: string): string {
   return kind === 'recall' ? 'i-lucide-phone-call' : 'i-lucide-file-clock'
@@ -58,9 +83,9 @@ function subtitleFor(item: PendingItem): string {
     .join(' · ')
 }
 
-async function go(item: PendingItem) {
+async function go(link: string) {
   open.value = false
-  await navigateTo(item.link)
+  await navigateTo(link)
 }
 </script>
 
@@ -98,7 +123,7 @@ async function go(item: PendingItem) {
         :key="`${item.kind}-${item.id}`"
         type="button"
         class="flex items-center gap-3 rounded-lg border border-default p-3 text-start transition hover:bg-elevated"
-        @click="go(item)"
+        @click="go(item.link)"
       >
         <UIcon
           :name="iconFor(item.kind)"
@@ -120,6 +145,17 @@ async function go(item: PendingItem) {
           class="size-4 shrink-0 text-muted"
         />
       </button>
+      <UButton
+        v-if="g.moreLink"
+        :data-testid="`pending-more-${g.kind}`"
+        variant="link"
+        size="sm"
+        class="self-start"
+        trailing-icon="i-lucide-arrow-right"
+        @click="go(g.moreLink)"
+      >
+        {{ t('copilot.pending.more', { shown: g.items.length, total: g.total }) }}
+      </UButton>
     </div>
   </div>
 </template>

@@ -42,7 +42,7 @@ from .schemas import (
     MessageResponse,
     MetricsResponse,
     NudgeResponse,
-    PendingItem,
+    PendingResponse,
     SessionCreate,
     SettingsResponse,
     SettingsUpdate,
@@ -330,15 +330,15 @@ async def update_settings(
     return ApiResponse(data=SettingsResponse.model_validate(row))
 
 
-@router.get("/pending", response_model=ApiResponse[list[PendingItem]])
+@router.get("/pending", response_model=ApiResponse[PendingResponse])
 async def list_pending(
     ctx: Annotated[ClinicContext, Depends(get_clinic_context)],
     _: Annotated[None, Depends(require_permission("copilot.chat"))],
     db: Annotated[AsyncSession, Depends(get_db)],
-) -> ApiResponse[list[PendingItem]]:
-    items = await PendingService.get(db, ctx.clinic_id, role=ctx.role, user_id=ctx.user_id)
+) -> ApiResponse[PendingResponse]:
+    pending = await PendingService.get(db, ctx.clinic_id, role=ctx.role, user_id=ctx.user_id)
     await db.commit()
-    return ApiResponse(data=[PendingItem.model_validate(i) for i in items])
+    return ApiResponse(data=PendingResponse.model_validate(pending))
 
 
 @router.get("/nudges", response_model=ApiResponse[list[NudgeResponse]])

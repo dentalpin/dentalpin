@@ -9,16 +9,40 @@
  * ``sessionRequest()`` into their init instead of building a bearer
  * header from a token JS can no longer see.
  */
-const UNSAFE = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
+import { customRef, type Ref } from 'vue'
 
+const UNSAFE = new Set(['POST', 'PUT', 'PATCH', 'DELETE'])
+const CSRF_RE = /(?:^|;\s*)dp_csrf=([^;]*)/
+
+/**
+ * ``dp_csrf`` is owned by the backend (set on login/refresh, cleared on
+ * logout); the app only ever reads it, fresh on every access. It is
+ * deliberately not a ``useCookie`` ref: on the client ``useCookie`` writes
+ * ``dp_csrf=undefined; Max-Age=-1`` whenever it is created while the
+ * cookie is absent. A page that read the jar a moment before a login
+ * response landed then deleted the cookie that response had just set, and
+ * the next SSR saw no session and redirected to /login (#928). Reading on
+ * access also sees a cookie set after the composable was created.
+ */
 export function useSessionRequest() {
-  const csrf = useCookie<string | null>('dp_csrf')
+  // SSR: the forwarded jar (incoming header, plus any rotation this render
+  // did). Captured here, synchronously, while the Nuxt instance exists.
+  const { cookieHeader } = useSsrCookies()
+
+  function readCsrf(): string | null {
+    const jar = import.meta.server ? cookieHeader() ?? '' : document.cookie
+    const match = CSRF_RE.exec(jar)
+    if (!match?.[1]) return null
+    try {
+      return decodeURIComponent(match[1])
+    } catch {
+      return match[1]
+    }
+  }
 
   function csrfHeaders(method?: string): Record<string, string> {
-    if (method && UNSAFE.has(method.toUpperCase()) && csrf.value) {
-      return { 'X-CSRF-Token': csrf.value }
-    }
-    return {}
+    const csrf = method && UNSAFE.has(method.toUpperCase()) ? readCsrf() : null
+    return csrf ? { 'X-CSRF-Token': csrf } : {}
   }
 
   /** Options to spread into a raw ``fetch``/``$fetch`` init. */
@@ -29,8 +53,12 @@ export function useSessionRequest() {
     }
   }
 
-  /** ``true`` when a session cookie set is present (the readable half). */
-  const hasSession = computed(() => !!csrf.value)
+  /** ``true`` when a session cookie set is present (the readable half).
+   *  Not cached: every ``.value`` reads the jar. */
+  const hasSession: Readonly<Ref<boolean>> = customRef(() => ({
+    get: () => readCsrf() !== null,
+    set: () => {}
+  }))
 
   return { csrfHeaders, sessionRequest, hasSession }
 }

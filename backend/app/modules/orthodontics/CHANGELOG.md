@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1134): `PATCH /controls/{id}` with `procedures: null` and `PATCH /cases/{id}` with `appliance_type: null` are a 422; a null `procedures` used to be stored as JSON null and break the case's control list (500).
+
 - fix(#1007): a back-dated control doesn't overwrite the wires set by a later one or move the next-control recall.
 
 - fix(#990): `PATCH /controls/{id}` applies `register()`'s rules — 400 on a finished / transferred-out case, and a re-pointed `appointment_id` / `session_id` must be the case patient's appointment / a session of the linked plan item. It used to store any of them.

@@ -556,3 +556,84 @@ async def test_refund_processed_webhook_completes_refund_exactly_once(
         )
     ).scalar()
     assert count == 1
+
+
+async def test_refund_processed_webhook_for_failed_refund_answers_200_and_stays_failed(
+    client: AsyncClient,
+    db_session: AsyncSession,
+    razorpay_settings: RazorpaySettings,
+    test_clinic,
+    test_patient,
+    auth_headers,
+):
+    """#1132: Razorpay confirming a refund we already marked ``failed``
+    (e.g. the core cap check failed after a synchronous provider
+    success) must answer 200 so Razorpay stops retrying, leave the
+    request ``failed`` with no core ``Refund``, and record the event as
+    not applied in the webhook health fields."""
+    me = await client.get("/api/v1/auth/me", headers=auth_headers)
+    user_id = me.json()["data"]["user"]["id"]
+    # The handler's rollback expires every ORM object in this shared
+    # session — capture the plain id up front.
+    clinic_id = test_clinic.id
+    request = await _make_request(
+        db_session,
+        clinic=test_clinic,
+        patient=test_patient,
+        user_id=user_id,
+        provider_reference="order_RFF1",
+    )
+    body, sig = sign(_captured_payload("order_RFF1", "pay_RFF1"))
+    await client.post(
+        f"/api/v1/razorpay/webhook/{clinic_id}",
+        content=body,
+        headers={"X-Razorpay-Signature": sig, "Content-Type": "application/json"},
+    )
+    await db_session.refresh(request)
+    payment_id = request.payment_id
+
+    refund_request = GatewayRefundRequest(
+        id=uuid4(),
+        clinic_id=clinic_id,
+        payment_id=payment_id,
+        payment_request_id=request.id,
+        provider_key="razorpay",
+        provider_payment_reference="pay_RFF1",
+        requested_amount=Decimal("100.00"),
+        reason_code="duplicate",
+        state=GatewayRefundState.FAILED,
+        idempotency_key=str(uuid4()),
+        provider_refund_reference="rfnd_RFF1",
+        requested_by=user_id,
+        error_message="Refund exceeds refundable amount",
+    )
+    db_session.add(refund_request)
+    await db_session.commit()
+
+    refund_payload = {
+        "event": "refund.processed",
+        "payload": {"refund": {"entity": {"id": "rfnd_RFF1"}}},
+    }
+    rbody, rsig = sign(refund_payload)
+    resp = await client.post(
+        f"/api/v1/razorpay/webhook/{clinic_id}",
+        content=rbody,
+        headers={"X-Razorpay-Signature": rsig, "Content-Type": "application/json"},
+    )
+    assert resp.status_code == 200
+
+    await db_session.refresh(refund_request)
+    assert refund_request.state == GatewayRefundState.FAILED
+    assert refund_request.refund_id is None
+    assert refund_request.error_message == "Refund exceeds refundable amount"
+    count = (
+        await db_session.execute(
+            select(func.count()).select_from(Refund).where(Refund.payment_id == payment_id)
+        )
+    ).scalar()
+    assert count == 0
+
+    await db_session.refresh(razorpay_settings)
+    assert razorpay_settings.last_webhook_error is not None
+    assert "rfnd_RFF1" in razorpay_settings.last_webhook_error
+    assert "not applied" in razorpay_settings.last_webhook_error

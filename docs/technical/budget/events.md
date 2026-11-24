@@ -20,7 +20,7 @@ Per-module slice of [`docs/events-catalog.md`](../../events-catalog.md)
 | `budget.cancelled` | `POST /budgets/{id}/cancel` — staff cancels directly (issue #162). **Not** published when the cancel is initiated by `treatment_plan.reopen()` (`publish_event=False`) — the plan module owns that transition and an echo would deadlock. | `clinic_id`, `budget_id`, `patient_id`, `budget_number`, `plan_id` (nullable), `reason`, `cancelled_by`, `occurred_at`. Subscriber: `treatment_plan` (pending → draft). |
 | `budget.superseded` | `POST /budgets/{id}/resend` clones a terminal (rejected/expired/cancelled) budget to a new draft version (issue #162). **Published after the request transaction commits** — sole deviation from the pre-commit pattern; the subscriber points an FK at the new row, which is invisible pre-commit. | `clinic_id`, `budget_id` (old), `new_budget_id`, `patient_id`, `plan_id`, `version` (new), `resent_by`, `occurred_at`. Subscriber: `treatment_plan` (repoints `budget_id`). |
 | `budget.viewed` | Patient opens the public link (first time, idempotent). | `budget_id`, `plan_id`, `patient_id`, `viewed_at`, `ip_hash`. |
-| `budget.reminder_sent` | Automatic reminder milestone (7d / 14d). | `budget_id`, `plan_id`, `patient_id`, `milestone_days`, `sent_at`. |
+| `budget.reminder_sent` | Reminder dispatched: the cron fires once 7 and once 14 clinic days after the budget was sent (its latest `sent` history entry), or reception sends one manually. | `budget_id`, `plan_id`, `patient_id`, `milestone_days`, `automatic` (true for the cron milestones), `sent_at`. |
 
 `plan_id` is resolved by reverse raw-SQL lookup
 (`BudgetWorkflowService._lookup_plan`) — never by importing

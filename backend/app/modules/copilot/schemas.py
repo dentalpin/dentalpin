@@ -72,6 +72,20 @@ class PendingItem(BaseModel):
     amount: float | None = None
 
 
+class PendingSection(BaseModel):
+    """Per-kind summary: ``items`` holds at most a bounded slice of each
+    kind; ``total`` is the full count and ``link`` the full list (#1137)."""
+
+    kind: Literal["recall", "budget"]
+    total: int
+    link: str
+
+
+class PendingResponse(BaseModel):
+    items: list[PendingItem]
+    sections: list[PendingSection]
+
+
 class NudgeResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
