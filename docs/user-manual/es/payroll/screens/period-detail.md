@@ -25,9 +25,10 @@ insignia de estado y una fila por movimiento de empleado
 ## Qué puedes hacer
 
 - **Añadir** un movimiento mientras el período es borrador: empleado,
-  bruto, deducciones, neto y nota opcional. El formulario bloquea el
-  guardado salvo que el neto sea bruto menos deducciones (si no, el
-  backend devuelve 422).
+  bruto, deducciones, neto y nota opcional. Los importes admiten como
+  máximo dos decimales. El formulario bloquea el guardado salvo que el
+  neto sea bruto menos deducciones al céntimo (si no, el backend
+  devuelve 422).
 - **Editar** importes o notas de un movimiento en borrador. Fuera de
   borrador las acciones desaparecen — lo cerrado y pagado es inmutable.
 - **Eliminar** un movimiento en borrador con confirmación (corrección
