@@ -14,6 +14,8 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Auth:** a login landing in the browser while a page was still loading no longer loses the readable session cookie and bounces back to the login screen; the app now only reads `dp_csrf` and never writes it (#928).
+- **CI:** a new push to a pull request cancels that PR's older run, so superseded runs no longer hold the queue; push runs on `main` are never cancelled (#1072).
+- **Activity journal:** a clock punch an admin records for a team member is now logged as done by the admin, not by the member (#1102).
 
 ## [2.12.0] - 2026-11-23
 
