@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Auth:** a login landing in the browser while a page was still loading no longer loses the readable session cookie and bounces back to the login screen; the app now only reads `dp_csrf` and never writes it (#928).
+
 ## [2.12.0] - 2026-11-23
 
 New: staff two-factor authentication with a per-clinic policy, a patient
