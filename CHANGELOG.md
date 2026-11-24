@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Budget:** a sent quote gets one reminder 7 days and one 14 days after it was sent, instead of one every 5-6 days counted from the day it was drafted (#1115).
 - **Budgets:** resending an expired quote no longer creates a draft that is already expired; resend and duplicate start the validity window today (#1113).
 - **Patients / expenses:** the CSV import accepts files with a trailing `,,,` line or a padded header name instead of failing (#1114).
 - **Backups:** new `python -m app.cli db restore` restores a `db backup` dump with the backend image's `pg_restore`; the documented restore used the `db` service's PostgreSQL 15 `pg_restore`, which cannot read the newer dumps (#1066).
