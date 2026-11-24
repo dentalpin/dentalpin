@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1032): the New invoice page's row totals and summary apply line discounts (percentage and absolute) before VAT, rounded per line like the saved draft; the item modals' previews share the same helper (`utils/lineAmounts.ts`).
+
 - fix(#1103): the draft invoice PDF printed "None" as the billing name and an empty address; it now shows the patient billing data that issuing snapshots (shared `patient_billing_snapshot` helper).
 - fix(#1028): a treatment added to an invoice starts with its own VAT type; the default (exempt in the Spanish seed) is only the fallback.
 - fix(#1016): a 0-day payment term survives invoicing from a quote (`or 30`) and the draft edit page, and clearing a draft's due date or notes clears them.

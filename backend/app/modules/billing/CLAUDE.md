@@ -111,6 +111,11 @@ that event was never published.
   `discount_value` stays positive; `calculate_item_totals` gives
   `line_discount` the line's sign, and a partial note takes its share of an
   absolute discount. Never compare either against 0 with `> 0` downstream.
+- **Frontend line math is one helper: `frontend/utils/lineAmounts.ts`**
+  (#1032). It mirrors `InvoiceService.calculate_item_totals`: discount
+  (absolute capped at the line) before VAT, each line amount rounded to
+  cents on its own, invoice totals summed from the rounded lines. The New
+  invoice page and both item modals use it; don't inline another copy.
 - **Credit notes** are issued via the same workflow as invoices,
   flagged via the document type. Don't introduce a parallel pipeline.
 - **"Overdue" is one predicate: `service.overdue_invoice_conditions`.**
