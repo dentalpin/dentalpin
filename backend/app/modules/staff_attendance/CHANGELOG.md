@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1102): the `staff_attendance.clocked` payload names the punched member `member_id` (was `user_id`), so activity_journal attributes a punch an admin records for someone else to the admin (`created_by`).
+
 - fix(#953): punches are serialized per member (transaction-scoped advisory lock). A double tap passed the alternation check twice and stored two consecutive punches of the same kind.
 
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.

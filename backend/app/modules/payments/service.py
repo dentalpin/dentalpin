@@ -11,12 +11,13 @@ module hosts:
 from __future__ import annotations
 
 from collections import defaultdict
+from collections.abc import Sequence
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
-from sqlalchemy import desc, func, select
+from sqlalchemy import desc, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload, selectinload
 
@@ -25,6 +26,7 @@ from app.core.i18n_names import catalog_name
 from app.core.list_query import parse_sort
 from app.core.utils.dates import clinic_day_range, clinic_today_for, clinic_zone_for
 from app.modules.budget.models import Budget
+from app.modules.patients.models import Patient
 
 from .models import (
     PatientEarnedEntry,
@@ -72,6 +74,8 @@ class PaymentService:
         date_from: date | None = None,
         date_to: date | None = None,
         method: str | None = None,
+        methods: Sequence[str] | None = None,
+        search: str | None = None,
         patient_id: UUID | None = None,
         page: int = 1,
         page_size: int = 20,
@@ -88,8 +92,21 @@ class PaymentService:
             filters.append(Payment.payment_date <= date_to)
         if method:
             filters.append(Payment.method == method)
+        if methods:
+            filters.append(Payment.method.in_(list(methods)))
         if patient_id:
             filters.append(Payment.patient_id == patient_id)
+        term = (search or "").strip()
+        if term:
+            # Patient "first last" or the payment reference, case-insensitive
+            # substring. ``autoescape`` keeps a typed ``%`` / ``_`` literal.
+            full_name = func.concat(Patient.first_name, " ", Patient.last_name)
+            filters.append(
+                or_(
+                    Payment.patient.has(full_name.icontains(term, autoescape=True)),
+                    Payment.reference.icontains(term, autoescape=True),
+                )
+            )
         if amount_min is not None:
             filters.append(Payment.amount >= amount_min)
         if amount_max is not None:

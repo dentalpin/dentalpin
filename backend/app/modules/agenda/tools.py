@@ -18,6 +18,7 @@ from datetime import date as date_cls
 from datetime import datetime, time
 from typing import Literal
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from pydantic import BaseModel, Field
 from sqlalchemy.exc import IntegrityError
@@ -33,6 +34,7 @@ from .service import (
     CabinetService,
     InvalidTransitionError,
 )
+from .tz import get_clinic_tz
 
 
 class DayOverviewArgs(BaseModel):
@@ -75,15 +77,16 @@ class UpdateAppointmentStatusArgs(BaseModel):
     note: str | None = Field(default=None, max_length=500)
 
 
-def _appt_summary(appt) -> dict:
+def _appt_summary(appt, tz: ZoneInfo) -> dict:
+    """Times in the clinic timezone, like the REST router (#161, #1104)."""
     patient = appt.patient
     return {
         "id": appt.id,
         "patient_id": appt.patient_id,
         "patient_name": f"{patient.first_name} {patient.last_name}" if patient else None,
         "professional_id": appt.professional_id,
-        "start_time": appt.start_time,
-        "end_time": appt.end_time,
+        "start_time": appt.start_time.astimezone(tz),
+        "end_time": appt.end_time.astimezone(tz),
         "status": appt.status,
         "cabinet": appt.cabinet,
     }
@@ -93,7 +96,7 @@ async def _get_appointment(ctx: AgentContext, params: GetAppointmentArgs) -> dic
     appt = await AppointmentService.get_appointment(ctx.db, ctx.clinic_id, params.appointment_id)
     if appt is None:
         return {"error": "not_found"}
-    return _appt_summary(appt)
+    return _appt_summary(appt, await get_clinic_tz(ctx.db, ctx.clinic_id))
 
 
 async def _list_cabinets(ctx: AgentContext, params: NoArgs) -> dict:
@@ -121,10 +124,11 @@ async def _get_day_overview(ctx: AgentContext, params: DayOverviewArgs) -> dict:
     items, total = await AppointmentService.list_appointments(
         ctx.db, ctx.clinic_id, start_date=start, end_date=end
     )
+    tz = await get_clinic_tz(ctx.db, ctx.clinic_id)
     return {
         "date": params.date,
         "total": total,
-        "appointments": [_appt_summary(a) for a in items],
+        "appointments": [_appt_summary(a, tz) for a in items],
     }
 
 
@@ -142,7 +146,8 @@ async def _book_appointment(ctx: AgentContext, params: BookAppointmentArgs) -> d
         # model can explain instead of a raw 500.
         await ctx.db.rollback()
         return {"error": "slot_conflict", "detail": "El hueco solicitado no está disponible."}
-    return {"id": appt.id, "start_time": appt.start_time, "status": appt.status}
+    tz = await get_clinic_tz(ctx.db, ctx.clinic_id)
+    return {"id": appt.id, "start_time": appt.start_time.astimezone(tz), "status": appt.status}
 
 
 async def _reschedule_appointment(ctx: AgentContext, params: RescheduleAppointmentArgs) -> dict:
@@ -158,7 +163,7 @@ async def _reschedule_appointment(ctx: AgentContext, params: RescheduleAppointme
     except IntegrityError:
         # update_appointment already rolled the session back.
         return {"error": "slot_conflict", "detail": "El hueco solicitado no está disponible."}
-    return _appt_summary(appt)
+    return _appt_summary(appt, await get_clinic_tz(ctx.db, ctx.clinic_id))
 
 
 async def _update_appointment_status(

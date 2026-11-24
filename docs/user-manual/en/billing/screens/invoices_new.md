@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/new.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: eab5bb31
+last_verified_commit: 0a9b7300
 ---
 
 # New invoice
@@ -53,7 +53,9 @@ entry errors.
 1. Pick the patient. If the badge says billing data is missing,
    complete it on the patient card first (link under the selector).
 2. Add lines: catalog item, quantity, discount, VAT.
-3. Review totals (subtotal, discount, VAT, total).
+3. Review totals (subtotal, discount, VAT, total). Each line's
+   discount comes off before VAT, so the row totals and the summary
+   match the draft that gets saved.
 4. **Save**. The invoice is born in `draft`. To issue, open the
    [detail](./invoices_id.md) and click **Issue**.
 
