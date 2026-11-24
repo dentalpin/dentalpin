@@ -27,6 +27,11 @@ UI of its own.
 - Ships its own system-level email template
   (`backend/templates/email/{locale}/recall_reminder.html`, en/es/fr/pt/ta)
   — no per-clinic setup step required.
+- The template context is resolved in the message's locale (patient
+  preference, else clinic communication language): `due_month` is a
+  babel month name ("dezembro de 2026" for `pt-BR`), and `reason` is the
+  label the recalls UI shows for the code ("Revisão de ortodontia", not
+  `ortho_review`), from `reason_labels.py`. An unknown code is left out.
 
 ## Data model
 

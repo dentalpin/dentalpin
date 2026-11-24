@@ -23,6 +23,20 @@ VALID_TRANSITIONS: dict[str, list[str]] = {
 }
 
 
+def patient_billing_snapshot(patient) -> dict:  # noqa: ANN001 - patients.Patient
+    """The billing columns ``issue_invoice`` freezes from the patient.
+
+    Drafts store no billing data; the draft PDF renders this same dict so
+    the copy a patient checks matches what issuing will print (#1103).
+    """
+    return {
+        "billing_name": patient.effective_billing_name,
+        "billing_tax_id": patient.effective_billing_tax_id,
+        "billing_address": patient.billing_address,
+        "billing_email": patient.billing_email or patient.email,
+    }
+
+
 def _credited_discount(original: InvoiceItem, quantity: int) -> Decimal | None:
     """The discount a credit note of ``quantity`` units carries (#1013).
 
@@ -185,11 +199,8 @@ class InvoiceWorkflowService:
             if not patient:
                 raise InvoiceWorkflowError("Patient not found")
 
-            # Snapshot billing data from patient
-            invoice.billing_name = patient.effective_billing_name
-            invoice.billing_tax_id = patient.effective_billing_tax_id
-            invoice.billing_address = patient.billing_address
-            invoice.billing_email = patient.billing_email or patient.email
+            for field, value in patient_billing_snapshot(patient).items():
+                setattr(invoice, field, value)
 
         # Validate billing data completeness.
         #

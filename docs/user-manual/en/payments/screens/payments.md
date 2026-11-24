@@ -29,7 +29,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/payments/frontend/pages/payments/index.vue
   - backend/app/modules/payments/router.py
-last_verified_commit: 10085df
+last_verified_commit: 0a9b730
 ---
 
 # Payment list
@@ -48,6 +48,10 @@ reallocate it, or issue a refund from the same screen.
 - **Filters live in the URL** — method, patient, date range, *With
   refunds*, *With on-account balance*. Sharing the link shares the
   filters.
+- **Search** matches the patient's name or the payment reference
+  across every payment, not just the visible page. Picking several
+  methods shows payments in any of them; the counter and pager
+  reflect the filtered total.
 - **Sort:** payment date descending by default. Amount sort is also
   available.
 - **Off-books.** The list never crosses *paid* against *invoiced* —
