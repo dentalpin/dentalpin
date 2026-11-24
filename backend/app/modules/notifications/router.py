@@ -43,6 +43,9 @@ from .service import (
     appointment_when_context,
     budget_treatments_context,
     clinic_date_label,
+    money_formatter,
+    resolve_clinic_communication_locale,
+    resolve_patient_communication_locale,
 )
 
 router = APIRouter()
@@ -528,11 +531,28 @@ async def send_notification(
         if not budget:
             raise HTTPException(status_code=404, detail="Budget not found")
 
+        # Use patient from budget if not provided
+        if not patient:
+            result = await db.execute(select(Patient).where(Patient.id == budget.patient_id))
+            patient = result.scalar_one_or_none()
+            if patient:
+                context["patient_name"] = f"{patient.first_name} {patient.last_name}"
+                patient_email = patient.email
+
+        # Amounts in the clinic's currency, for the locale the gateway will
+        # render in (#1133).
+        locale = (
+            await resolve_patient_communication_locale(db, ctx.clinic_id, patient.id)
+            if patient
+            else await resolve_clinic_communication_locale(db, ctx.clinic_id)
+        )
+        money = money_formatter(clinic, locale)
+
         context["budget_number"] = budget.budget_number
         context["budget_date"] = budget.valid_from.strftime("%d/%m/%Y")
-        context["total"] = float(budget.total)
-        context["subtotal"] = float(budget.subtotal)
-        context["discount_amount"] = float(budget.total_discount) if budget.total_discount else None
+        context["total"] = money(budget.total)
+        context["subtotal"] = money(budget.subtotal)
+        context["discount_amount"] = money(budget.total_discount) if budget.total_discount else None
         context["notes"] = budget.patient_notes
 
         if budget.valid_until:
@@ -543,15 +563,7 @@ async def send_notification(
 
         # Get budget items for budget_sent
         if data.notification_type == "budget_sent":
-            context["treatments"] = await budget_treatments_context(db, budget.id)
-
-        # Use patient from budget if not provided
-        if not patient:
-            result = await db.execute(select(Patient).where(Patient.id == budget.patient_id))
-            patient = result.scalar_one_or_none()
-            if patient:
-                context["patient_name"] = f"{patient.first_name} {patient.last_name}"
-                patient_email = patient.email
+            context["treatments"] = await budget_treatments_context(db, budget.id, money)
 
     if data.channels:
         # Recipient per requested channel: phone for WhatsApp/SMS, email

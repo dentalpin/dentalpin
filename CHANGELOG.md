@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications:** quote and invoice emails show amounts in the clinic's currency with the language's separators (e.g. `1.300,00 €`, `€1,300.00`, `₹1,300.00`), and invoice emails are queued again (#1133).
 - **Notifications:** a pt-BR clinic or patient gets the Portuguese (pt) template instead of a failed send, for example the online booking rejection email (#1136).
 - **Prescriptions / Orthodontics / Patient segments:** an explicit null on a required PATCH field (template items or name, control procedures, case appliance type, segment name) is now refused with a 422 instead of breaking the list with a 500 or answering a wrong 409 (#1134).
 - **Payroll:** amounts with more than two decimals are refused instead of being stored as an unbalanced entry (#1138).
