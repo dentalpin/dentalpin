@@ -18,6 +18,24 @@ Caddy keeps its minimal `frame-ancestors 'self'` header (applies to API
 responses too). A document therefore carries two CSP headers in prod;
 browsers enforce the intersection, which is what we want.
 
+### Embeddable route: the public booking page
+
+`/p/booking/<clinicId>` (online_booking layer) is the only route a clinic
+may embed in an iframe on its own website. Its `frame-ancestors` is
+`'self'` plus the clinic's `embed_origins` setting (https origins,
+validated by the backend):
+
+- `frontend/server/middleware/booking-embed.ts` sends an *enforced*
+  `Content-Security-Policy: frame-ancestors 'self' <origins>` for that
+  route in every `NUXT_CSP_MODE` (a Report-Only policy cannot enforce
+  `frame-ancestors`); `csp.ts` reuses the same value in `enforce` mode.
+- The origins come from the clinic's public config endpoint through
+  `server/utils/bookingEmbed.ts` (cached 60 s, fail closed to `'self'`;
+  top-level navigations skip the lookup).
+- The Caddyfile does not add its `frame-ancestors 'self'` header on
+  `/p/booking/*` (two CSP headers would intersect and block the embed).
+  A different reverse proxy must do the same.
+
 Mode is `NUXT_CSP_MODE`:
 
 | value | header | used where |

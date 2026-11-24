@@ -14,6 +14,8 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Budget:** a sent quote gets one reminder 7 days and one 14 days after it was sent, instead of one every 5-6 days counted from the day it was drafted (#1115).
+- **CI:** a new push to a pull request cancels that PR's older run, so superseded runs no longer hold the queue; push runs on `main` are never cancelled (#1072).
+- **Activity journal:** a clock punch an admin records for a team member is now logged as done by the admin, not by the member (#1102).
 
 ## [2.12.0] - 2026-11-23
 
