@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1132): `GatewayRefundService.complete()` on a request already `failed` raises `GatewayError` and leaves it `failed` (with a warning log), instead of an uncaught `RefundTransitionError` that provider webhooks answered with 500.
+
 - fix(#989): payment request and gateway refund amounts accept at most two decimals (422 otherwise). A sub-cent request was stored rounded while its allocations kept the raw value, so the captured payment could never be recorded.
 
 - fix(#768): every `SELECT … FOR UPDATE` in this module now re-reads the locked row (`populate_existing`). A locking select on a row already in the session returned the cached instance with its pre-lock values. A guard test now enforces this across the tree.

@@ -10,6 +10,7 @@ refunds. Both delegate the actual financial write to
 
 from __future__ import annotations
 
+import logging
 from datetime import UTC, datetime
 from decimal import Decimal
 from uuid import UUID, uuid4
@@ -35,6 +36,8 @@ from .constants import (
     validate_refund_transition,
 )
 from .models import GatewayRefundRequest, PaymentRequest
+
+logger = logging.getLogger(__name__)
 
 
 class GatewayError(ValueError):
@@ -665,9 +668,32 @@ class GatewayRefundService:
         no-op. Caller must hold a row lock (see
         :meth:`get_locked_by_provider_reference`) for the idempotency
         check to be race-free when called from a webhook.
+
+        A request already ``failed`` is left ``failed`` and raises
+        :class:`GatewayError` (not the ``ValueError`` from
+        ``validate_refund_transition``) — a provider confirming a refund
+        we already gave up on (e.g. the core cap check failed after a
+        synchronous provider success) is a data problem a webhook retry
+        can't fix, so provider webhook handlers record it as not applied
+        and still answer 200. What to do with that money is deliberately
+        not decided here.
         """
         if refund_request.state == GatewayRefundState.COMPLETED:
             return refund_request
+        if refund_request.state == GatewayRefundState.FAILED:
+            logger.warning(
+                "%s confirmed refund %s (gateway refund request %s, payment %s, clinic %s) "
+                "after it was marked failed; not applied",
+                refund_request.provider_key,
+                refund_request.provider_refund_reference,
+                refund_request.id,
+                refund_request.payment_id,
+                refund_request.clinic_id,
+            )
+            raise GatewayError(
+                f"Refund {refund_request.provider_refund_reference} confirmed by "
+                f"{refund_request.provider_key} after it was marked failed; not applied"
+            )
 
         validate_refund_transition(
             GatewayRefundState(refund_request.state), GatewayRefundState.COMPLETED
