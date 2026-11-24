@@ -23,7 +23,13 @@ from uuid import UUID
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .service import appointment_when_context, budget_treatments_context, clinic_date_label
+from .service import (
+    appointment_when_context,
+    budget_treatments_context,
+    clinic_date_label,
+    money_formatter,
+    resolve_patient_communication_locale,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -357,8 +363,14 @@ class NotificationHandlers:
                 result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
                 clinic = result.scalar_one_or_none()
 
+                # Amounts are formatted for the locale the gateway will
+                # render in, in the clinic's currency (#1133).
+                money = money_formatter(
+                    clinic, await resolve_patient_communication_locale(db, clinic_id, patient.id)
+                )
+
                 # Get budget items
-                treatments = await budget_treatments_context(db, budget_id)
+                treatments = await budget_treatments_context(db, budget_id, money)
 
                 # Build context
                 context = {
@@ -366,11 +378,11 @@ class NotificationHandlers:
                     "budget_number": budget.budget_number,
                     "budget_date": budget.valid_from.strftime("%d/%m/%Y"),
                     "treatments": treatments,
-                    "subtotal": float(budget.subtotal),
-                    "discount_amount": float(budget.total_discount)
+                    "subtotal": money(budget.subtotal),
+                    "discount_amount": money(budget.total_discount)
                     if budget.total_discount
                     else None,
-                    "total": float(budget.total),
+                    "total": money(budget.total),
                     "validity_days": (budget.valid_until - budget.valid_from).days
                     if budget.valid_until
                     else None,
@@ -415,6 +427,7 @@ class NotificationHandlers:
         reads are the publisher's own (issue #183).
         """
         from app.modules.billing.models import Invoice, InvoiceItem
+        from app.modules.billing.service import compute_paid_summary
         from app.modules.notifications.gateway import NotificationGateway
         from app.modules.patients.models import Patient
 
@@ -461,6 +474,17 @@ class NotificationHandlers:
                 )
                 items = result.scalars().all()
 
+                # Amounts are formatted for the locale the gateway will
+                # render in, in the clinic's currency (#1133).
+                money = money_formatter(
+                    clinic, await resolve_patient_communication_locale(db, clinic_id, patient.id)
+                )
+
+                # ``balance_due`` is computed from payments, not a column:
+                # reading ``invoice.balance_due`` raised and the handler
+                # never queued the email.
+                _, balance_due = await compute_paid_summary(db, clinic_id, invoice_id)
+
                 # Build items list for template
                 invoice_items = []
                 for item in items:
@@ -468,8 +492,8 @@ class NotificationHandlers:
                         {
                             "description": item.description,
                             "quantity": item.quantity,
-                            "unit_price": float(item.unit_price),
-                            "line_total": float(item.line_total),
+                            "unit_price": money(item.unit_price),
+                            "line_total": money(item.line_total),
                         }
                     )
 
@@ -482,13 +506,15 @@ class NotificationHandlers:
                     else None,
                     "due_date": invoice.due_date.strftime("%d/%m/%Y") if invoice.due_date else None,
                     "items": invoice_items,
-                    "subtotal": float(invoice.subtotal),
-                    "total_discount": float(invoice.total_discount)
+                    "subtotal": money(invoice.subtotal),
+                    "total_discount": money(invoice.total_discount)
                     if invoice.total_discount
                     else None,
-                    "total_tax": float(invoice.total_tax) if invoice.total_tax else None,
-                    "total": float(invoice.total),
-                    "balance_due": float(invoice.balance_due),
+                    "total_tax": money(invoice.total_tax) if invoice.total_tax else None,
+                    "total": money(invoice.total),
+                    # A settled invoice hides the balance row: the template
+                    # tests its truthiness, and "0,00 €" is truthy.
+                    "balance_due": money(balance_due) if balance_due else None,
                     "billing_name": invoice.billing_name,
                     "custom_message": data.get("custom_message"),
                     "clinic_name": clinic.name if clinic else "DentalPin",
@@ -556,12 +582,16 @@ class NotificationHandlers:
                 result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
                 clinic = result.scalar_one_or_none()
 
+                money = money_formatter(
+                    clinic, await resolve_patient_communication_locale(db, clinic_id, patient.id)
+                )
+
                 # Build context
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "budget_number": budget.budget_number,
                     "accepted_date": clinic_date_label(budget.updated_at, clinic),
-                    "total": float(budget.total),
+                    "total": money(budget.total),
                     "notes": budget.patient_notes,
                     "clinic_name": clinic.name if clinic else "DentalPin",
                     "clinic_phone": clinic.phone if clinic else None,
@@ -631,11 +661,17 @@ class NotificationHandlers:
                 result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
                 clinic = result.scalar_one_or_none()
 
+                money = money_formatter(
+                    clinic, await resolve_patient_communication_locale(db, clinic_id, patient.id)
+                )
+
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "budget_number": budget.budget_number,
                     "milestone_days": milestone_days,
-                    "total": float(budget.total) if budget.total is not None else None,
+                    # The template hides the row when falsy; keep a zero
+                    # total hidden as the old 0.0 did.
+                    "total": money(budget.total) if budget.total else None,
                     "valid_until": budget.valid_until.strftime("%d/%m/%Y")
                     if budget.valid_until
                     else None,

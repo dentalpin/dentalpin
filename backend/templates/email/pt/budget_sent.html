@@ -37,7 +37,7 @@
                 <div style="font-size: 14px; color: #71717a;">Dente: {{ treatment.tooth }}</div>
                 {% endif %}
             </td>
-            <td style="text-align: right; padding: 12px 0;">{{ treatment.price }} €</td>
+            <td style="text-align: right; padding: 12px 0;">{{ treatment.price }}</td>
         </tr>
         {% endfor %}
     </tbody>
@@ -45,18 +45,18 @@
         {% if subtotal and total != subtotal %}
         <tr>
             <td style="padding: 12px 0; text-align: right; font-weight: 500;">Subtotal:</td>
-            <td style="padding: 12px 0; text-align: right;">{{ subtotal }} €</td>
+            <td style="padding: 12px 0; text-align: right;">{{ subtotal }}</td>
         </tr>
         {% endif %}
         {% if discount_amount %}
         <tr>
             <td style="padding: 12px 0; text-align: right; font-weight: 500; color: #22c55e;">Desconto:</td>
-            <td style="padding: 12px 0; text-align: right; color: #22c55e;">-{{ discount_amount }} €</td>
+            <td style="padding: 12px 0; text-align: right; color: #22c55e;">-{{ discount_amount }}</td>
         </tr>
         {% endif %}
         <tr style="border-top: 2px solid #18181b;">
             <td style="padding: 16px 0; text-align: right; font-size: 18px; font-weight: 600;">Total:</td>
-            <td style="padding: 16px 0; text-align: right; font-size: 18px; font-weight: 600;">{{ total }} €</td>
+            <td style="padding: 16px 0; text-align: right; font-size: 18px; font-weight: 600;">{{ total }}</td>
         </tr>
     </tfoot>
 </table>
