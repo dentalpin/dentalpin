@@ -655,6 +655,13 @@ class NotificationHandlers:
                     context=context,
                     patient_id=patient.id,
                     triggered_by_event="budget.reminder_sent",
+                    # One automatic reminder per budget and milestone (#1115);
+                    # manual reminders from reception always go out.
+                    dedup_key=(
+                        f"budget_reminder:{budget_id}:{milestone_days}"
+                        if data.get("automatic")
+                        else None
+                    ),
                 )
 
         except Exception as e:

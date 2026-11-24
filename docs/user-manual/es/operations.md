@@ -209,7 +209,11 @@ Dos salvaguardas:
   downgrade limpio; la desinstalación está bloqueada incluso con
   `--force`. Espera a la Fase B.
 - Dependencias inversas — otro módulo instalado lista este en su
-  `depends`. Desinstala primero los dependientes, o pasa `--force`.
+  `depends`. Desinstala primero los dependientes, o pasa `--force`. Con
+  `--force` los dependientes siguen `installed` pero dejan de cargarse, y
+  la desinstalación también borra las tablas de los dependientes cuyas
+  migraciones se apoyan en este módulo. Sus filas van al mismo volcado
+  `storage/backups/module_<nombre>_<timestamp>.sql`.
 
 ---
 
@@ -287,6 +291,19 @@ archivos fuera del servidor: una copia en el mismo disco no es una
 copia de seguridad. Procedimiento completo de restauración,
 migración de hardware y verificación mensual: la guía
 `docs/workflows/backup-restore.md`.
+
+Restaura un volcado completo con la imagen del backend, no con el
+servicio `db`: el `pg_restore` de la imagen `db` (PostgreSQL 15) no
+puede leer los volcados que escribe el `pg_dump` más reciente del
+backend. Restaura sobre una base de datos vacía (un volumen `db` nuevo,
+ver `docs/workflows/backup-restore.md` §3): el comando no se ejecuta en
+una sola transacción, así que un fallo a mitad deja la base de datos
+restaurada a medias.
+
+```bash
+docker compose run --rm -T -e RUN_MIGRATIONS=0 backend \
+  python -m app.cli db restore - < full_20260907T230000Z.dump
+```
 
 Con `STORAGE_BACKEND=s3` el tarball cubre solo el volumen local
 (`documents/` y `migration-import/` siguen en el volumen incluso en
