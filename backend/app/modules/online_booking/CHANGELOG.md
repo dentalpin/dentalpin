@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1101): public availability checks the booking window in the clinic timezone before resolving hours, so a day far outside it (e.g. `9999-12-31`) answers an empty list instead of a 500.
 - fix(#1044): accepting a booking for a new patient now requires a surname, matching the patients schema, so the created patient can be edited afterwards.
 - Serve the public booking page from the application itself: Nuxt page `/p/booking/{clinicId}` in the module layer (public layout, no auth, cookie-free same-origin API calls, twelve locales, ALTCHA, honeypot, branding, confirmation landing).
 - Let a clinic embed the page in an iframe on its own website: new `embed_origins` setting (https origins) applied as `frame-ancestors` for that route only; new `privacy_url` setting (the form cannot be sent without it).
