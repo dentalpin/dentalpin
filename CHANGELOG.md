@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Modules:** a forced uninstall now includes the tables of still-installed dependent modules in its pg_dump backup; the branch downgrade drops them too (#1067).
 - **Billing:** the New invoice page's row totals and summary now take line discounts into account, matching the draft that gets saved (#1032).
 - **Payments:** the payment list search and multi-method filter now cover every payment, and the pager counts only the matches (#1033).
 - **Billing:** A draft invoice PDF shows the patient's billing name, tax id and address instead of "None" (#1103).
