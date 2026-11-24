@@ -88,6 +88,10 @@ retry a webhook URL forever. A `GatewayError` (data problem — amount
 mismatch, illegal transition) is logged to `RazorpaySettings` webhook
 health and still answers `200` (retrying won't fix a data problem); a
 genuine transport/programmer error answers `500` so Razorpay retries.
+A `refund.processed` for a `GatewayRefundRequest` already `failed`
+(e.g. the core cap check failed after Razorpay's synchronous success)
+is one such `GatewayError`: the request stays `failed`, no core
+`Refund` is booked, and a warning with the ids is logged (#1132).
 
 ## Razorpay method → core payment method mapping
 

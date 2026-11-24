@@ -3,6 +3,7 @@ import type { DeepReadonly } from 'vue'
 import type { InvoiceItem, InvoiceItemCreate, TreatmentCatalogItem, VatType } from '~~/app/types'
 import { errorMessage } from '~~/app/utils/error'
 import { lineVatTypeId } from '../../utils/itemVat'
+import { lineAmounts } from '../../utils/lineAmounts'
 
 const props = defineProps<{
   invoiceId: string
@@ -97,25 +98,10 @@ function toggleSurface(surface: string) {
   }
 }
 
-// Calculate preview total
+// Preview total: the same line arithmetic as the draft (#1032)
 const previewTotal = computed(() => {
-  const subtotal = form.unit_price * (form.quantity || 1)
-
-  let discountedSubtotal = subtotal
-  if (form.discount_type && form.discount_value) {
-    if (form.discount_type === 'percentage') {
-      discountedSubtotal = subtotal * (1 - form.discount_value / 100)
-    } else {
-      discountedSubtotal = subtotal - form.discount_value
-    }
-  }
-
-  // Add VAT
-  const vatType = vatTypes.value.find(v => v.id === form.vat_type_id)
-  const vatRate = vatType?.rate || 0
-  const tax = discountedSubtotal * (vatRate / 100)
-
-  return discountedSubtotal + tax
+  const vatRate = vatTypes.value.find(v => v.id === form.vat_type_id)?.rate || 0
+  return lineAmounts(form, vatRate).total
 })
 
 // Submit

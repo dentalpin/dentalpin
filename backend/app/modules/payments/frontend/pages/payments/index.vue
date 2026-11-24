@@ -58,9 +58,10 @@ async function fetcher(q: {
   const params = new URLSearchParams()
   params.set('page', String(q.page))
   params.set('page_size', String(q.pageSize))
-  if (q.filters.method.length === 1) params.set('method', q.filters.method[0]!)
-  // For multi-method, do client-side intersect would require multiple calls.
-  // Keep server-side single-method for now (matches existing API surface).
+  // Repeated ?method= — the server ORs them and paginates after (#1033).
+  for (const m of q.filters.method) params.append('method', m)
+  // Patient name or reference, matched server-side before pagination.
+  if (q.filters.q.trim()) params.set('search', q.filters.q.trim())
   if (q.filters.patient_id) params.set('patient_id', q.filters.patient_id)
   if (q.filters.has_refunds) params.set('has_refunds', 'true')
   if (q.filters.has_unallocated) params.set('has_unallocated', 'true')
@@ -69,21 +70,7 @@ async function fetcher(q: {
   if (q.sort) params.set('sort', q.sort)
 
   // useListQuery surfaces failures via the `error` banner.
-  const response = await api.get<PaginatedResponse<PaymentRecord>>(`/api/v1/payments?${params.toString()}`, { errorToast: false })
-  // Client-side multi-method filter (until backend accepts list).
-  let data = response.data
-  if (q.filters.method.length > 1) {
-    data = data.filter(p => q.filters.method.includes(p.method))
-  }
-  // Search filter (client-side, since /payments doesn't expose ?search yet).
-  if (q.filters.q) {
-    const term = q.filters.q.toLowerCase()
-    data = data.filter((p) => {
-      const name = p.patient ? `${p.patient.first_name} ${p.patient.last_name}`.toLowerCase() : ''
-      return name.includes(term) || (p.reference ?? '').toLowerCase().includes(term)
-    })
-  }
-  return { data, total: response.total }
+  return await api.get<PaginatedResponse<PaymentRecord>>(`/api/v1/payments?${params.toString()}`, { errorToast: false })
 }
 
 const {

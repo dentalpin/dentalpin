@@ -149,6 +149,94 @@ def test_humanize_due_month():
     assert _humanize_due_month("not-a-date") == "not-a-date"
 
 
+@pytest.mark.parametrize(
+    ("locale", "expected"),
+    [
+        ("es", "diciembre de 2026"),
+        ("pt", "dezembro de 2026"),
+        # Babel wants ``pt_BR``; the hyphenated tag raised and fell back to
+        # an English "December 2026" (#1135).
+        ("pt-BR", "dezembro de 2026"),
+    ],
+)
+def test_humanize_due_month_accepts_hyphenated_locales(locale: str, expected: str):
+    assert _humanize_due_month("2026-12-01", locale) == expected
+
+
+async def _reminder_context(db_session: AsyncSession, clinic: Clinic, locale: str, reason: str):
+    """Fire the handler for a patient whose preferred locale is ``locale``
+    and return the context the gateway stored for the message."""
+    from app.modules.notifications.models import NotificationPreference
+
+    patient = Patient(clinic_id=clinic.id, first_name="Ana", last_name="Ruiz", email="a@x.es")
+    db_session.add(patient)
+    await db_session.flush()
+    db_session.add(
+        NotificationPreference(clinic_id=clinic.id, patient_id=patient.id, preferred_locale=locale)
+    )
+    await db_session.commit()
+
+    await _on_recall_created(
+        {
+            "clinic_id": str(clinic.id),
+            "patient_id": str(patient.id),
+            "recall_id": str(uuid4()),
+            "reason": reason,
+            "due_month": "2026-12-01",
+        },
+        db=db_session,
+    )
+    row = (
+        await db_session.execute(
+            select(CommunicationMessage).where(CommunicationMessage.patient_id == patient.id)
+        )
+    ).scalar_one()
+    return row.context_data
+
+
+def _render_reminder(locale: str, context: dict) -> str:
+    from app.core.email.service import EmailService
+
+    service = EmailService()
+    service._initialize()
+    html = service._render_template("recall_reminder", locale, context)
+    assert html is not None
+    return html
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("locale", "label", "month"),
+    [
+        ("es", "Revisión ortodoncia", "diciembre de 2026"),
+        ("en", "Ortho review", "December 2026"),
+        # No pt-BR wording for the reasons: the frontend falls back to pt,
+        # and so does the email.
+        ("pt-BR", "Revisão de ortodontia", "dezembro de 2026"),
+    ],
+)
+async def test_reminder_email_shows_the_translated_reason_not_the_code(
+    db_session: AsyncSession, test_clinic: Clinic, locale: str, label: str, month: str
+):
+    """The email read "(ortho_review)" and, for pt-BR, an English month (#1135)."""
+    context = await _reminder_context(db_session, test_clinic, locale, "ortho_review")
+    html = _render_reminder(locale, context)
+
+    assert f"({label})" in html
+    assert "ortho_review" not in html
+    assert month in html
+
+
+@pytest.mark.asyncio
+async def test_reminder_email_omits_an_unknown_reason(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """A code with no label is left out rather than printed raw."""
+    context = await _reminder_context(db_session, test_clinic, "en", "6-month checkup")
+    assert context["reason"] is None
+    assert "6-month checkup" not in _render_reminder("en", context)
+
+
 async def _due_month_sent(db_session: AsyncSession, clinic_id, patient_id) -> str:
     await _on_recall_created(
         {
@@ -196,3 +284,24 @@ async def test_due_month_is_written_in_the_language_the_message_is_sent_in(
 
     assert await _due_month_sent(db_session, test_clinic.id, ana.id) == "septiembre de 2026"
     assert await _due_month_sent(db_session, test_clinic.id, luc.id) == "septembre 2026"
+
+
+def test_reason_labels_match_the_recalls_ui_in_every_email_locale():
+    """The backend copy of the labels may not drift from the recalls UI,
+    and every locale an email template ships in gets a label."""
+    import json
+    from pathlib import Path
+
+    from app.modules.recall_reminders.reason_labels import REASON_LABELS, reason_label
+    from app.modules.recalls.models import REASONS
+
+    backend = Path(__file__).resolve().parents[3]
+    ui_dir = backend / "app/modules/recalls/frontend/i18n/locales"
+    for path in sorted(ui_dir.glob("*.json")):
+        ui = json.loads(path.read_text(encoding="utf-8"))["recalls"]["reasons"]
+        assert REASON_LABELS[path.stem] == {code: ui[code] for code in REASONS}, path.stem
+
+    for template in (backend / "templates/email").glob("*/recall_reminder.html"):
+        locale = template.parent.name
+        for code in REASONS:
+            assert reason_label(code, locale), (locale, code)
