@@ -144,3 +144,46 @@ async def test_dump_tables_still_raises_on_other_pg_dump_errors(
     monkeypatch.setattr(subprocess, "run", fake_run)
     with pytest.raises(RuntimeError, match="connection to server failed"):
         await processor._dump_tables("mod", ["mod_table"])
+
+
+class _StopAfterBackupError(Exception):
+    pass
+
+
+@pytest.mark.asyncio
+async def test_forced_remove_backs_up_dependents_tables(db_session, monkeypatch) -> None:
+    """#1067: force-uninstalling ``contacts`` while ``suppliers`` (and,
+    through it, ``supplier_items``) stay installed must back up their
+    tables too — the ``contacts`` branch downgrade drops them
+    (``supp_0001`` declares ``depends_on`` ``con_0001``)."""
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+
+    from app.core.plugins.processor import _tables_for
+    from app.core.plugins.registry import module_registry
+
+    contacts = _record("contacts", ModuleState.TO_REMOVE)
+    suppliers = _record("suppliers", ModuleState.INSTALLED, ["contacts"])
+    items = _record("supplier_items", ModuleState.INSTALLED, ["contacts", "suppliers"])
+    lab = _record("lab_orders", ModuleState.UNINSTALLED, ["patients", "contacts"])
+    db_session.add_all([contacts, suppliers, items, lab])
+    await db_session.commit()
+
+    proc = PendingProcessor(async_sessionmaker(db_session.bind, expire_on_commit=False))
+    dumped: list[str] = []
+
+    async def fake_dump(module_name, tables):  # noqa: ANN001
+        dumped.extend(tables)
+        raise _StopAfterBackupError
+
+    monkeypatch.setattr(proc, "_dump_tables", fake_dump)
+    with pytest.raises(_StopAfterBackupError):
+        await proc._remove(contacts)
+
+    for name in ("contacts", "suppliers", "supplier_items"):
+        module = module_registry.get(name)
+        assert module is not None
+        for table in _tables_for(module):
+            assert table in dumped, f"{name} table {table} missing from backup"
+    lab_module = module_registry.get("lab_orders")
+    assert lab_module is not None
+    assert not set(_tables_for(lab_module)) & set(dumped)

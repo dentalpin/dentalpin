@@ -349,7 +349,8 @@ async def test_reschedule_appointment(db_session, test_clinic) -> None:
         },
     )
     assert res.ok
-    assert res.data["start_time"].startswith("2031-03-04T10:00")
+    # 10:00 UTC, answered in the test clinic's zone (Europe/Madrid, #1104).
+    assert res.data["start_time"] == "2031-03-04T11:00:00+01:00"
 
 
 @pytest.mark.asyncio
@@ -970,3 +971,48 @@ async def test_book_appointment_denied_without_write(db_session, test_clinic) ->
     )
     assert res.ok is False
     assert "permission denied" in (res.error or "")
+
+
+@pytest.mark.asyncio
+async def test_agenda_tools_answer_in_clinic_time(db_session, test_clinic) -> None:
+    """Booking "10:00" in a Madrid clinic reads back as 10:00 (+01:00), not 09:00 UTC (#1104)."""
+    from datetime import datetime
+
+    test_clinic.timezone = "Europe/Madrid"
+    world = await _appointment_world(db_session, test_clinic.id)
+    supervisor = await _supervisor(db_session)
+    ctx = await _ctx(
+        db_session,
+        test_clinic.id,
+        ["agenda.appointments.read", "agenda.appointments.write"],
+        supervisor_id=supervisor.id,
+    )
+    booked = await tool_registry.call(
+        ctx,
+        "agenda.book_appointment",
+        {
+            "patient_id": str(world["patient"].id),
+            "professional_id": str(world["dentist_id"]),
+            "cabinet": "Gabinete 1",
+            "start_time": "2031-03-05T10:00:00",
+            "end_time": "2031-03-05T10:30:00",
+        },
+    )
+    assert booked.ok, booked.error
+    assert booked.data["start_time"] == "2031-03-05T10:00:00+01:00"
+
+    got = await tool_registry.call(
+        ctx, "agenda.get_appointment", {"appointment_id": booked.data["id"]}
+    )
+    assert got.ok
+    assert got.data["start_time"] == "2031-03-05T10:00:00+01:00"
+    assert got.data["end_time"] == "2031-03-05T10:30:00+01:00"
+
+    overview = await tool_registry.call(ctx, "agenda.get_day_overview", {"date": "2031-03-05"})
+    assert overview.ok
+    assert [a["start_time"] for a in overview.data["appointments"]] == ["2031-03-05T10:00:00+01:00"]
+
+    # Same instant as stored: only the offset it is written in changes.
+    assert datetime.fromisoformat(got.data["start_time"]) == datetime.fromisoformat(
+        "2031-03-05T09:00:00+00:00"
+    )

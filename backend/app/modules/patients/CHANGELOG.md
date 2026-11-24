@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1114): CSV import no longer answers 500 on a row with more cells than the header (extra cells are ignored), and reads a column whose header has surrounding spaces.
+
 - fix(#1064): the edit modal never sends a DELETE for a contact or guardian it didn't load.
 - fix(#1045): the medical-history modal edits a copy (Cancel discards it) and can't save before the history loaded.
 - fix(#1092): the patient edit modal no longer erases an address or billing address that has no street; it sends null only when every line is blank, and edits a copy so Cancel leaves the shown patient unchanged.
