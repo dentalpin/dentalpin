@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Patients / expenses:** the CSV import accepts files with a trailing `,,,` line or a padded header name instead of failing (#1114).
 - **Backups:** new `python -m app.cli db restore` restores a `db backup` dump with the backend image's `pg_restore`; the documented restore used the `db` service's PostgreSQL 15 `pg_restore`, which cannot read the newer dumps (#1066).
 - **Modules:** a forced uninstall now includes the tables of still-installed dependent modules in its pg_dump backup; the branch downgrade drops them too (#1067).
 - **Billing:** the New invoice page's row totals and summary now take line discounts into account, matching the draft that gets saved (#1032).

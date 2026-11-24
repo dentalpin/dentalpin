@@ -263,3 +263,39 @@ async def test_intra_file_duplicates_match_regardless_of_case(
     assert dry.status_code == 200, dry.text
     rows = sorted((d["row"], d["matched_on"]) for d in dry.json()["data"]["duplicates"])
     assert rows == [(3, "same_file"), (5, "same_file")]
+
+
+# #1114: a spreadsheet's trailing ",,," line has one cell more than the header.
+RAGGED_CSV = b"first_name,last_name,email\nAna,Diaz,ana@example.com\n,,,\n"
+
+
+def test_validate_ignores_cells_beyond_the_header() -> None:
+    valid, errors, total, lines = validate_patient_csv(RAGGED_CSV)
+    assert (total, errors, lines) == (1, [], [2])
+    assert valid[0].email == "ana@example.com"
+
+    extra = b"first_name,last_name\nAna,Diaz,stray\n"
+    valid, errors, total, _ = validate_patient_csv(extra)
+    assert (total, errors) == (1, [])
+    assert (valid[0].first_name, valid[0].last_name) == ("Ana", "Diaz")
+
+
+def test_validate_reads_a_column_whose_header_is_padded() -> None:
+    padded = b"first_name, last_name ,email\nAna,Diaz,ana@example.com\n"
+    valid, errors, total, _ = validate_patient_csv(padded)
+    assert (total, errors) == (1, [])
+    assert valid[0].last_name == "Diaz"
+
+
+@pytest.mark.asyncio
+async def test_endpoint_answers_a_ragged_file_without_a_500(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic
+) -> None:
+    response = await client.post(
+        "/api/v1/patients/import.csv",
+        files={"file": ("ragged.csv", RAGGED_CSV, "text/csv")},
+        headers=auth_headers,
+    )
+    assert response.status_code == 200, response.text
+    body = response.json()["data"]
+    assert (body["total"], body["valid"], body["errors"]) == (1, 1, [])
