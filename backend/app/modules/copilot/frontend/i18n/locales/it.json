@@ -22,6 +22,7 @@
     "pending": {
       "empty": "Niente in sospeso. Sei in pari con tutto.",
       "unknownPatient": "Paziente sconosciuto",
+      "more": "{shown} di {total} mostrati · Vedi tutti",
       "group": {
         "recall": "Richiami da seguire",
         "budget": "Preventivi in attesa di risposta"

@@ -22,6 +22,7 @@
     "pending": {
       "empty": "Nada pendente. Está tudo em dia.",
       "unknownPatient": "Paciente desconhecido",
+      "more": "A mostrar {shown} de {total} · Ver todos",
       "group": {
         "recall": "Reconvocações a seguir",
         "budget": "Orçamentos a aguardar resposta"

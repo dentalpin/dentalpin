@@ -129,6 +129,11 @@ Subscription only — copilot never imports the publisher (ADR 0003), so
   per-clinic agent + one session (metadata `surface=copilot_pending`) so a
   drawer open doesn't insert rows each time. Read-only: items deep-link to
   the owning module; the agent writes nothing here.
+  `GET /pending` returns `{items, sections}`: each source is called with
+  an explicit `limit=PENDING_SECTION_LIMIT` (20) and its `section` carries
+  the tool's real `total` plus a link to the full filtered list, so the
+  drawer shows "Showing N of M · See all" instead of a silent cap (#1137).
+  A new source must report its `total` the same way.
 
 ## Related ADRs / docs
 

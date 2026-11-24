@@ -22,6 +22,7 @@
     "pending": {
       "empty": "Rien en attente. Vous êtes à jour.",
       "unknownPatient": "Patient inconnu",
+      "more": "{shown} sur {total} affichés · Tout voir",
       "group": {
         "recall": "Rappels à suivre",
         "budget": "Devis en attente de réponse"
