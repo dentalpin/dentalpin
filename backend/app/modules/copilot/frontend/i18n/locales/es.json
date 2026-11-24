@@ -22,6 +22,7 @@
     "pending": {
       "empty": "No hay nada pendiente. Todo al día.",
       "unknownPatient": "Paciente desconocido",
+      "more": "Mostrando {shown} de {total} · Ver todos",
       "group": {
         "recall": "Rellamadas por gestionar",
         "budget": "Presupuestos sin respuesta"

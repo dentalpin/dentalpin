@@ -22,6 +22,7 @@
     "pending": {
       "empty": "Nincs függőben lévő teendő. Minden naprakész.",
       "unknownPatient": "Ismeretlen páciens",
+      "more": "{shown} / {total} megjelenítve · Összes megtekintése",
       "group": {
         "recall": "Utánkövetendő visszahívások",
         "budget": "Válaszra váró árajánlatok"

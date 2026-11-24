@@ -22,6 +22,7 @@
     "pending": {
       "empty": "Nichts Offenes. Sie sind auf dem neuesten Stand.",
       "unknownPatient": "Unbekannter Patient",
+      "more": "{shown} von {total} angezeigt · Alle anzeigen",
       "group": {
         "recall": "Nachzufassende Recalls",
         "budget": "Kostenvoranschläge ohne Antwort"

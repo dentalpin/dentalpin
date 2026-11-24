@@ -206,6 +206,11 @@ class NudgeService:
         return True
 
 
+# Rows shown per Pendientes section. The list stays bounded for the drawer;
+# the section's ``total`` reports what lies beyond it (#1137).
+PENDING_SECTION_LIMIT = 20
+
+
 class PendingService:
     """Read-only "Pendientes" feed (IA redesign Fase 2).
 
@@ -265,9 +270,7 @@ class PendingService:
         )
 
     @staticmethod
-    async def get(
-        db: AsyncSession, clinic_id: UUID, *, role: str, user_id: UUID
-    ) -> list[dict[str, Any]]:
+    async def get(db: AsyncSession, clinic_id: UUID, *, role: str, user_id: UUID) -> dict[str, Any]:
         from app.core.agents.tools.registry import tool_registry
 
         ctx = await PendingService._context(db, clinic_id, role, user_id)
@@ -279,9 +282,35 @@ class PendingService:
             return res.data if res.ok else None  # permission denied → omit
 
         items: list[dict[str, Any]] = []
+        # One entry per section that answered. ``total`` is the tool's real
+        # count, so the drawer can say "and N more" when the bounded item
+        # list is shorter (#1137); ``link`` opens the full, filtered list.
+        sections: list[dict[str, Any]] = []
 
-        recalls = await call("recalls.list_due_recalls", {"overdue": True})
-        for r in (recalls or {}).get("recalls", []):
+        def section(kind: str, data: dict | None, key: str, link: str) -> list[dict]:
+            if data is None:
+                return []
+            rows = data.get(key) or []
+            total = data.get("total")
+            sections.append(
+                {
+                    "kind": kind,
+                    "total": max(total if isinstance(total, int) else 0, len(rows)),
+                    "link": link,
+                }
+            )
+            return rows
+
+        # ``status=__any__`` is the recalls page's "any status" value: the
+        # overdue filter already limits to active statuses, and the page
+        # would otherwise narrow to ``pending``. ``month=`` clears its
+        # current-month default, which would empty an overdue list.
+        recalls = await call(
+            "recalls.list_due_recalls", {"overdue": True, "limit": PENDING_SECTION_LIMIT}
+        )
+        for r in section(
+            "recall", recalls, "recalls", "/recalls?overdue=true&month=&status=__any__"
+        ):
             items.append(
                 {
                     "kind": "recall",
@@ -294,8 +323,10 @@ class PendingService:
                 }
             )
 
-        budgets = await call("budget.list_budgets", {"status": ["sent"]})
-        for b in (budgets or {}).get("budgets", []):
+        budgets = await call(
+            "budget.list_budgets", {"status": ["sent"], "limit": PENDING_SECTION_LIMIT}
+        )
+        for b in section("budget", budgets, "budgets", "/budgets?status=sent"):
             items.append(
                 {
                     "kind": "budget",
@@ -308,7 +339,7 @@ class PendingService:
                 }
             )
 
-        return items
+        return {"items": items, "sections": sections}
 
 
 class CopilotMetricsService:
