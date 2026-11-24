@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix(#1115): automatic reminders fire once 7 and once 14 clinic days after the budget was sent (latest `sent` history entry), instead of every 5-6 days counted from `valid_from`; `budget.reminder_sent` carries `automatic`.
+- fix(#1113): resend and duplicate give the new draft a validity window from today (clinic default days) instead of copying the source's `valid_until`.
 
 - fix(#918): the budget list's date filter selects budgets by the clinic's calendar day (`clinic_day_range`). It compared `created_at` with naive midnights, read as UTC, so a budget created in the evening in a UTC-6 clinic was filed under the next day.
 - Audit authenticated budget PDF previews and downloads, including signed PDFs. (#903).

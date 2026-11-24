@@ -3,7 +3,7 @@
 import hashlib
 import logging
 import secrets
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, date, datetime, timedelta
 from uuid import UUID
 
 import bcrypt
@@ -88,6 +88,22 @@ async def _resolve_clinic_settings(db: AsyncSession, clinic_id: UUID) -> dict:
         )
     ).first()
     return (row.settings if row and row.settings else {}) or {}
+
+
+async def fresh_valid_until(db: AsyncSession, source: Budget) -> date | None:
+    """``valid_until`` for a new draft cloned from ``source`` (resend/duplicate).
+
+    The window restarts today with the clinic's ``budget_expiry_days``,
+    the same rule ``create_from_plan_snapshot`` uses for a new quote.
+    Copying the source's date gave an expired quote's resend a window
+    that had already ended (issue #1113). A source with no expiry keeps
+    none.
+    """
+    if source.valid_until is None:
+        return None
+    clinic_settings = await _resolve_clinic_settings(db, source.clinic_id)
+    validity_days = int(clinic_settings.get("budget_expiry_days", DEFAULT_BUDGET_VALIDITY_DAYS))
+    return await clinic_today_for(db, source.clinic_id) + timedelta(days=validity_days)
 
 
 class BudgetWorkflowError(Exception):
@@ -860,9 +876,10 @@ class BudgetWorkflowService:
         """Clone a finished (rejected/expired/cancelled) budget to a new
         draft. Used by reception to "Resend" a budget.
 
-        The new draft inherits the line items, valid window and plan
-        snapshots; it gets a fresh ``public_token`` and re-resolves the
-        ``public_auth_method`` against the current Patient record.
+        The new draft inherits the line items and plan snapshots; its
+        validity window restarts today (``fresh_valid_until``). It gets a
+        fresh ``public_token`` and re-resolves the ``public_auth_method``
+        against the current Patient record.
         """
         from .service import BudgetItemService, BudgetService
 
@@ -878,7 +895,7 @@ class BudgetWorkflowService:
             parent_budget_id=budget.id,
             status="draft",
             valid_from=await clinic_today_for(db, budget.clinic_id),
-            valid_until=budget.valid_until,
+            valid_until=await fresh_valid_until(db, budget),
             created_by=cloned_by,
             assigned_professional_id=budget.assigned_professional_id,
             global_discount_type=budget.global_discount_type,

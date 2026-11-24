@@ -8,17 +8,19 @@ see the rows, and expires so the test session picks up their writes instead
 of stale identity-map state.
 """
 
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from uuid import UUID, uuid4
 
 import pytest
 from httpx import AsyncClient
-from sqlalchemy import select
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership
 from app.core.events import event_bus
+from app.core.utils.dates import clinic_today_for
 from app.modules.budget.models import Budget
+from app.modules.budget.workflow import BudgetWorkflowService
 from app.modules.treatment_plan.models import TreatmentPlan
 from tests.test_treatment_plan import (
     _create_plan_with_items,
@@ -392,6 +394,89 @@ async def test_resending_a_terminal_budget_twice_does_not_500(
     # `current_version` is the version of the row that was asked about
     # (v1 here), not the newest in the chain — unchanged by this fix.
     assert chain["current_version"] == 1
+
+
+async def _set_clinic_validity_days(db_session: AsyncSession, clinic_id: UUID, days: int) -> None:
+    clinic = await db_session.get(Clinic, clinic_id)
+    clinic.settings = {**(clinic.settings or {}), "budget_expiry_days": days}
+    await _sync(db_session)
+
+
+@pytest.mark.asyncio
+async def test_resent_expired_budget_gets_a_fresh_validity_window(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """Resend copied the source's `valid_until` (issue #1113).
+
+    For an expired quote that date is already past, so the new draft was
+    born expired: the nightly job expired it again and the public link
+    refused it. The window now restarts today with the clinic's
+    `budget_expiry_days`, as for a quote created from a plan.
+    """
+    clinic_id = UUID(setup["clinic_id"])
+    await _set_clinic_validity_days(db_session, clinic_id, 45)
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    old_id = await _confirm_plan(client, auth_headers, plan_id)
+    await _sync(db_session)
+    await _send_budget(client, auth_headers, old_id)
+    await _sync(db_session)
+
+    today = await clinic_today_for(db_session, clinic_id)
+    await db_session.execute(
+        update(Budget)
+        .where(Budget.id == UUID(old_id))
+        .values(valid_until=today - timedelta(days=1))
+    )
+    await BudgetWorkflowService.check_expired_budgets(db_session, clinic_id)
+    await _sync(db_session)
+
+    r = await client.post(f"/api/v1/budget/budgets/{old_id}/resend", headers=auth_headers)
+    assert r.status_code == 200, r.text
+    new = r.json()["data"]
+    assert new["valid_from"] == today.isoformat()
+    assert new["valid_until"] == (today + timedelta(days=45)).isoformat()
+    await _sync(db_session)
+
+    # The nightly expiry job must leave the new draft alone.
+    await BudgetWorkflowService.check_expired_budgets(db_session, clinic_id)
+    await _sync(db_session)
+    again = await client.get(f"/api/v1/budget/budgets/{new['id']}", headers=auth_headers)
+    assert again.json()["data"]["status"] == "draft"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("source_offset_days", [-1, 3, None])
+async def test_duplicate_restarts_the_validity_window(
+    db_session: AsyncSession,
+    client: AsyncClient,
+    auth_headers: dict,
+    setup: dict,
+    source_offset_days: int | None,
+) -> None:
+    """Duplicate gets the same rule as resend (issue #1113): a past or
+    in-date `valid_until` becomes today + `budget_expiry_days`; a quote
+    with no expiry stays without one."""
+    clinic_id = UUID(setup["clinic_id"])
+    await _set_clinic_validity_days(db_session, clinic_id, 45)
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    source_id = await _confirm_plan(client, auth_headers, plan_id)
+    await _sync(db_session)
+
+    today = await clinic_today_for(db_session, clinic_id)
+    source_until = (
+        None if source_offset_days is None else today + timedelta(days=source_offset_days)
+    )
+    await db_session.execute(
+        update(Budget).where(Budget.id == UUID(source_id)).values(valid_until=source_until)
+    )
+    await _sync(db_session)
+
+    r = await client.post(f"/api/v1/budget/budgets/{source_id}/duplicate", headers=auth_headers)
+    assert r.status_code == 201, r.text
+    new = r.json()["data"]
+    assert new["valid_from"] == today.isoformat()
+    expected = None if source_offset_days is None else (today + timedelta(days=45)).isoformat()
+    assert new["valid_until"] == expected
 
 
 @pytest.mark.asyncio

@@ -14,6 +14,14 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Budget:** a sent quote gets one reminder 7 days and one 14 days after it was sent, instead of one every 5-6 days counted from the day it was drafted (#1115).
+- **Budgets:** resending an expired quote no longer creates a draft that is already expired; resend and duplicate start the validity window today (#1113).
+- **Patients / expenses:** the CSV import accepts files with a trailing `,,,` line or a padded header name instead of failing (#1114).
+- **Backups:** new `python -m app.cli db restore` restores a `db backup` dump with the backend image's `pg_restore`; the documented restore used the `db` service's PostgreSQL 15 `pg_restore`, which cannot read the newer dumps (#1066).
+- **Modules:** a forced uninstall now includes the tables of still-installed dependent modules in its pg_dump backup; the branch downgrade drops them too (#1067).
+- **Billing:** the New invoice page's row totals and summary now take line discounts into account, matching the draft that gets saved (#1032).
+- **Payments:** the payment list search and multi-method filter now cover every payment, and the pager counts only the matches (#1033).
+- **Billing:** A draft invoice PDF shows the patient's billing name, tax id and address instead of "None" (#1103).
+- **Online booking:** the public booking page stops offering times and taking requests for a professional who was deactivated or removed from the clinic (#1100).
 - **CI:** a new push to a pull request cancels that PR's older run, so superseded runs no longer hold the queue; push runs on `main` are never cancelled (#1072).
 - **Activity journal:** a clock punch an admin records for a team member is now logged as done by the admin, not by the member (#1102).
 
