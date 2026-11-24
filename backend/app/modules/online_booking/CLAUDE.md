@@ -22,3 +22,15 @@
 - The caller must provide a confirmation page that submits the token from the fragment.
 - Expose only explicit public paths on the perimeter; never expose staff routes.
 - Tests require isolated synthetic PostgreSQL, never patient data or real credentials.
+
+- The public page is the layer's Nuxt page `/p/booking/{clinicId}` (public layout, no auth, cookie-free same-origin calls, 12 locales). ALTCHA v2 is mandatory for requests. It may be embedded in an iframe: `embed_origins` (https origins, max 10) becomes `frame-ancestors` for that route only, set by Nitro (`frontend/server/middleware/booking-embed.ts`); see `docs/technical/online_booking/overview.md` for the proxy allowlist.
+- `captcha.consume` raises domain errors (`CaptchaInvalidError` 400, `CaptchaReusedError` 409); the service layer stays HTTP-free and `BookingRoute` maps them.
+
+- Public appearance fields are configured through the permission-gated reception settings. Availability supports a bounded 31-day range; phone is required and normalized to E.164.
+
+- Administrators configure enabled state, professional, public URL, interval, notice, booking window and ordered bilingual reasons in settings. Never remove a reason already configured; deactivate it to preserve old requests.
+- Availability accepts an optional reason ID and checks its duration; the interval controls start-time increments. Clinic closures come from schedules.
+- Uploaded logos accept PNG, JPEG and WebP only: 512 KiB input, 1024×1024 maximum, no animation. Inspect format and dimensions before loading pixels and re-encode to metadata-free PNG. Only sanitized PNGs are stored and public.
+
+- Quotas are checked under the clinic lock in clinic-local day/week boundaries. Active contacts match normalized email or E.164 phone. Buffers are snapshotted on the request. Optional comments and names follow contact retention.
+- One migration per PR: `ob_0004` holds every column of the public page (no state that never shipped).

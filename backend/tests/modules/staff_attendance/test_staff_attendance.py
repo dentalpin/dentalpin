@@ -7,10 +7,12 @@ from uuid import uuid4
 
 import pytest
 from fastapi import HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership, User
 from app.core.auth.service import hash_password
+from app.modules.activity_journal.models import ActivityJournalEntry
 from app.modules.staff_attendance.service import AttendanceService
 
 
@@ -439,3 +441,29 @@ async def test_open_shift_from_yesterday_appears_today(db_session: AsyncSession)
     assert len(rows) == 1
     assert rows[0]["open"] is True
     assert rows[0]["seconds"] == 12 * 3600
+
+
+@pytest.mark.asyncio
+async def test_punch_for_someone_else_journals_the_recorder_as_actor(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """#1102: a manager punching a member in is logged as the manager's
+    action, not the member's. The member stays in the payload."""
+    employee = await _member(db_session, test_clinic.id)
+    manager = await _member(db_session, test_clinic.id, role="admin")
+    row = await AttendanceService.clock(
+        db_session, test_clinic.id, employee.id, "in", created_by=manager.id
+    )
+    await db_session.commit()
+
+    entry = (
+        await db_session.execute(
+            select(ActivityJournalEntry).where(
+                ActivityJournalEntry.clinic_id == test_clinic.id,
+                ActivityJournalEntry.event_type == "staff_attendance.clocked",
+            )
+        )
+    ).scalar_one()
+    assert entry.actor_id == manager.id
+    assert entry.source_entity_id == row.id
+    assert entry.payload["member_id"] == str(employee.id)
