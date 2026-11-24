@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import UTC, date, datetime, time, timedelta
+from datetime import UTC, datetime, time, timedelta
 from uuid import uuid4
 from zoneinfo import ZoneInfo
 
@@ -72,7 +72,10 @@ async def test_resolver_receives_the_configured_professional(db_session, test_cl
         return "UTC", []
 
     monkeypatch.setattr(AvailabilityService, "resolve", resolve)
-    assert await slots(db_session, test_clinic.id, config, date.today(), datetime.now(UTC)) == []
+    # A day safely inside the window in any clinic timezone: the window is
+    # now checked in the clinic's zone before the resolver runs (#1101).
+    day = (datetime.now(UTC) + timedelta(days=1)).date()
+    assert await slots(db_session, test_clinic.id, config, day, datetime.now(UTC)) == []
     assert seen == [configured.id]
 
 

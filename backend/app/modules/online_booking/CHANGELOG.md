@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1101): public availability checks the booking window in the clinic timezone before resolving hours, so a day far outside it (e.g. `9999-12-31`) answers an empty list instead of a 500.
 - fix(#1044): accepting a booking for a new patient now requires a surname, matching the patients schema, so the created patient can be edited afterwards.
 
 - Answer with `ApiResponse` / `PaginatedApiResponse` like the rest of the API; the inbox now returns `total`, `page` and `page_size` instead of `has_more`, and the reception page and navigation badge read the typed responses.

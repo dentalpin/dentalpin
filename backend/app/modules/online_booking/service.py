@@ -116,13 +116,15 @@ async def slots(
     professional_id = config.professional_id
     if professional_id is None:
         return []
-    tz_name, ranges = await AvailabilityService.resolve(
-        db, clinic_id, day, day, professional_id=professional_id
-    )
-    zone = ZoneInfo(tz_name)
+    # Check the booking window before resolving hours, so a day far outside
+    # it (e.g. 9999-12-31) answers [] instead of reaching the resolver (#1101).
+    zone = ZoneInfo(await ClinicHoursService.get_clinic_timezone(db, clinic_id))
     today = now.astimezone(zone).date()
     if day < today or day > today + timedelta(days=config.window_days):
         return []
+    _, ranges = await AvailabilityService.resolve(
+        db, clinic_id, day, day, professional_id=professional_id
+    )
     duration = timedelta(minutes=config.slot_minutes)
     windows = [window for window in ranges if window.state == "open"]
     if not windows:
