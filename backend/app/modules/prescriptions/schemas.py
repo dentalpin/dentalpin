@@ -5,6 +5,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.schemas import NotNull
+
 
 class PrescriptionItemCreate(BaseModel):
     medication_name: str = Field(min_length=1, max_length=150)
@@ -71,8 +73,10 @@ class TemplateCreate(BaseModel):
 
 
 class TemplateUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=100)
-    items: list[PrescriptionItemCreate] | None = None
+    # Both columns are NOT NULL; ``items`` is JSONB, where ``None`` would be
+    # stored as JSON 'null' and break every later list (#1134).
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=100)
+    items: NotNull[list[PrescriptionItemCreate]] = None
 
 
 class TemplateResponse(BaseModel):
