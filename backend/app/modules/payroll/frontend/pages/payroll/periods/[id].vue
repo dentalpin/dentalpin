@@ -154,10 +154,10 @@
               </UFormField>
             </div>
             <p
-              v-if="netMismatch"
+              v-if="balanceIssue"
               class="text-sm text-error"
             >
-              {{ t('payroll.entries.netMismatch') }}
+              {{ t(balanceIssue === 'subCent' ? 'payroll.entries.subCent' : 'payroll.entries.netMismatch') }}
             </p>
             <UFormField :label="t('payroll.entries.notes')">
               <UInput
@@ -220,6 +220,7 @@
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { errorMessage } from '~~/app/utils/error'
 import type { PayrollEntry, PayrollPeriod, StaffUser } from '../../../composables/usePayroll'
+import { entryBalanceIssue } from '../../../utils/entryBalance'
 
 const { t } = useI18n()
 const { can } = usePermissions()
@@ -256,19 +257,16 @@ const staffOptions = computed(() =>
   }))
 )
 
-const netMismatch = computed(() => {
-  const g = Number(form.value.gross)
-  const d = Number(form.value.deductions)
-  const n = Number(form.value.net)
-  if (form.value.gross === '' || form.value.deductions === '' || form.value.net === '') return false
-  if (Number.isNaN(g) || Number.isNaN(d) || Number.isNaN(n)) return true
-  return Math.abs(n - (g - d)) > 0.005
+// Same rule as the API: cents only, net == gross - deductions exactly.
+const balanceIssue = computed(() => {
+  if (form.value.gross === '' || form.value.deductions === '' || form.value.net === '') return null
+  return entryBalanceIssue(form.value.gross, form.value.deductions, form.value.net)
 })
 
 const formValid = computed(() => {
   if (!editing.value && !form.value.user_id) return false
   if (form.value.gross === '' || form.value.deductions === '' || form.value.net === '') return false
-  return !netMismatch.value
+  return !balanceIssue.value
 })
 
 function staffName(userId: string): string {

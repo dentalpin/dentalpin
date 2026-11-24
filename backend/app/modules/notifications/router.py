@@ -117,7 +117,7 @@ async def create_template(
     """
     # Check if template already exists for this clinic
     existing = await NotificationService.get_template(
-        db, ctx.clinic_id, data.template_key, data.locale
+        db, ctx.clinic_id, data.template_key, data.locale, exact_locale=True
     )
     if existing and existing.clinic_id == ctx.clinic_id:
         raise HTTPException(

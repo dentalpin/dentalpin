@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1135): the reminder shows the reason's label in the message language ("Revisión ortodoncia", not `ortho_review`; an unknown code is left out), and `pt-BR` gets a Portuguese month (babel needs `pt_BR`, the hyphenated tag fell back to English).
+
 - fix(#975): the reminder's `due_month` is written in the message's language (the patient's preferred locale, else the clinic's communication language) via babel. `strftime("%B %Y")` printed an English month in every template ("para September 2026").
 
 - test(#552): branch-scoped uninstall round-trip test (heads, branch downgrade, reinstall).

@@ -27,6 +27,10 @@ Heavy subscriber + now a publisher. See ADR 0016.
   `sms_rate_limited`).
 - `service.py` — CRUD for templates/preferences/settings/SMTP + the
   `should_send_notification` consent check. No send path here anymore.
+  `get_template` resolves clinic row before system row; inside each tier a
+  regional locale falls back to its base (`pt-BR` -> `pt`), like the file
+  loader in `core/email`. WhatsApp (provider templates are approved per
+  language) and `exact_locale=True` (the create duplicate check) match exactly.
 - Tables: `communication_messages` (outbox + audit), `notification_templates`,
   `notification_preferences`, `clinic_notification_settings`,
   `clinic_channel_settings`, `clinic_smtp_settings`.

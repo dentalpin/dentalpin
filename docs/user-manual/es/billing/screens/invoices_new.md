@@ -13,7 +13,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/invoices/new.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: eab5bb31
+last_verified_commit: 0a9b7300
 ---
 
 # Nueva factura
@@ -54,7 +54,9 @@ Para facturar a partir de un presupuesto aceptado usa la
    facturación, complétalos en la ficha del paciente (enlace bajo el
    selector).
 2. Añade líneas: ítem del catálogo, cantidad, descuento, IVA.
-3. Revisa totales (subtotal, descuento, IVA, total).
+3. Revisa totales (subtotal, descuento, IVA, total). El descuento
+   de cada línea se resta antes del IVA, así que los totales de las
+   filas y el resumen coinciden con el borrador que se guarda.
 4. **Guardar**. La factura nace en `draft`. Para emitirla, abre el
    [detalle](./invoices_id.md) y pulsa **Emitir**.
 

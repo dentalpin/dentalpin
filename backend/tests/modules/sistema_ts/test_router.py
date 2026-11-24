@@ -2,11 +2,13 @@
 
 from datetime import UTC, date, datetime
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 import pytest
 from httpx import AsyncClient
 from sqlalchemy import select
 
+from app.core.utils.dates import clinic_today_for
 from app.modules.sistema_ts.models import SistemaTsDocument, SistemaTsSettings
 
 SETTINGS = "/api/v1/sistema_ts/settings"
@@ -104,7 +106,18 @@ async def test_clearing_a_credential_of_an_enabled_clinic_answers_400(
 
 
 @pytest.mark.asyncio
-async def test_opposition_roundtrip(client: AsyncClient, auth_headers, test_clinic, test_patient):
+async def test_opposition_roundtrip(
+    client: AsyncClient, auth_headers, test_clinic, test_patient, db_session
+):
+    # A clinic whose calendar date differs from the server's right now
+    # (UTC+14 and UTC-12 are 26 hours apart), so comparing against the
+    # server's day fails at any hour, not only around the clinic's midnight.
+    test_clinic.timezone = next(
+        z
+        for z in ("Pacific/Kiritimati", "Etc/GMT+12")
+        if datetime.now(ZoneInfo(z)).date() != datetime.now(UTC).date()
+    )
+    await db_session.commit()
     url = f"/api/v1/sistema_ts/opposition/{test_patient.id}"
     res = await client.get(url, headers=auth_headers)
     assert res.status_code == 200 and res.json()["data"]["opposed"] is False
@@ -112,10 +125,9 @@ async def test_opposition_roundtrip(client: AsyncClient, auth_headers, test_clin
         url, json={"opposed": True, "note": "richiesta verbale"}, headers=auth_headers
     )
     assert res.status_code == 200 and res.json()["data"]["opposed"] is True
-    # The route stamps datetime.now(UTC).date() (router.py:349), so compare
-    # against the same clock: local date.today() is a day ahead of it for
-    # part of every day in any timezone east of UTC.
-    assert res.json()["data"]["opposed_since"] == datetime.now(UTC).date().isoformat()
+    # The route stamps the clinic's calendar date (clinic_today_for).
+    today = await clinic_today_for(db_session, test_clinic.id)
+    assert res.json()["data"]["opposed_since"] == today.isoformat()
     res = await client.put(url, json={"opposed": False}, headers=auth_headers)
     assert res.json()["data"]["opposed"] is False and res.json()["data"]["revoked_at"] is not None
 
