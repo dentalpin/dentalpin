@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1136): a DB template lookup for a regional locale falls back to its base language (`pt-BR` -> `pt`), clinic rows before system rows, so pt-BR clinics get the seeded pt templates instead of a FAILED "Template not found" send. WhatsApp provider templates and the create duplicate check stay exact.
+
 - fix(#1036): a repeated skip is logged once per message and reason, without using up the send, and a patient's thread returns its newest messages instead of the oldest 200.
 - fix(#1035): the reminder's dedup key follows the start time, so a rescheduled appointment is reminded for its new time.
 - fix: `dispatch_outbox` re-reads each row `FOR UPDATE SKIP LOCKED` in `_dispatch_one` and skips it when it is no longer due. The batch lock taken by the initial select is released by the first commit, so a concurrent tick could send the remaining rows of the batch a second time.

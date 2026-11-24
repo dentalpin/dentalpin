@@ -36,7 +36,7 @@ channel preferences, clinic settings, delivery logs, and a single
   (`GET`/`POST /public/push/subscribe/<token>`, no auth — the token
   is the auth). 410/404 endpoints prune on send; logs show
   `push:<n>` recipients. System push templates (title + body, es/en)
-  are seeded by `notif_0008`; clinic rows per key/locale override them. Service worker:
+  are seeded by `notif_0008`; clinic rows per key/locale override them. A regional locale with no row of its own uses its base language's row (`pt-BR` -> `pt`; clinic rows first, then system rows; not for WhatsApp provider templates). Service worker:
   `backend/app/modules/notifications/frontend/public/push-sw.js`
   (served at `/push-sw.js`; uninstalling the module drops it).
 
