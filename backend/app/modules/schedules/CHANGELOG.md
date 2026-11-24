@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1101): `AvailabilityService.resolve` stops on its last day instead of stepping past it, so a range ending on `9999-12-31` no longer raises `OverflowError`.
+
 - fix(#1008): `find_free_slots` starts windows from now instead of offering hours already gone today.
 
 - fix(#991): overlapping shifts on one day are a 422 (weekly hours and overrides; touching shifts stay valid), overlaps already stored are merged when resolving, and *Add shift* starts where the day's last shift ends. A shift inside another used to report the rest of the day closed and count its minutes twice in the analytics.
