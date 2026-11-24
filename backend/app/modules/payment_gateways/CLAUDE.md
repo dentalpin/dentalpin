@@ -107,6 +107,12 @@ None.
   refund synchronously in its initiate response still routes through
   `complete()` rather than constructing a `Refund` inline. One code
   path, one place the idempotency/cap logic can drift.
+- **`GatewayRefundService.complete()` on a `failed` request raises
+  `GatewayError`**, leaving it `failed` and logging a warning with the
+  ids — never the bare `RefundTransitionError` (a `ValueError` provider
+  webhooks would answer `500` to, so the provider retries forever).
+  `completed` stays a silent no-op. Deciding what to do with money a
+  provider confirms after we gave up is still open (#1132).
 - **The refundable-amount pre-check only counts *completed* core
   refunds**, not other `GatewayRefundRequest`s still `requested`/
   `processing`. Two refund attempts issued in fast succession could

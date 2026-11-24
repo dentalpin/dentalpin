@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Razorpay:** a refund confirmation from Razorpay for a refund DentalPin had already marked failed no longer makes Razorpay retry the webhook forever; the refund stays failed and the event is recorded as a webhook error (#1132).
 - **CI:** a new push to a pull request cancels that PR's older run, so superseded runs no longer hold the queue; push runs on `main` are never cancelled (#1072).
 - **Activity journal:** a clock punch an admin records for a team member is now logged as done by the admin, not by the member (#1102).
 
