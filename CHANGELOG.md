@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Recall reminders:** the reminder email names the recall reason in the patient's language instead of its internal code, and Brazilian Portuguese emails show the month in Portuguese (#1135).
 - **Auth:** a login landing in the browser while a page was still loading no longer loses the readable session cookie and bounces back to the login screen; the app now only reads `dp_csrf` and never writes it (#928).
 - **Budget:** a sent quote gets one reminder 7 days and one 14 days after it was sent, instead of one every 5-6 days counted from the day it was drafted (#1115).
 - **Budgets:** resending an expired quote no longer creates a draft that is already expired; resend and duplicate start the validity window today (#1113).
