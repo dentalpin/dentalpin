@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **Budget:** a sent quote gets one reminder 7 days and one 14 days after it was sent, instead of one every 5-6 days counted from the day it was drafted (#1115).
+
 ## [2.12.0] - 2026-11-23
 
 New: staff two-factor authentication with a per-clinic policy, a patient

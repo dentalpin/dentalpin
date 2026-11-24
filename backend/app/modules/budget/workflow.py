@@ -630,8 +630,13 @@ class BudgetWorkflowService:
         db: AsyncSession,
         budget: Budget,
         milestone_days: int,
+        automatic: bool = False,
     ) -> Budget:
         """Stamp a reminder dispatch and publish ``budget.reminder_sent``.
+
+        ``automatic`` marks the cron's 7d / 14d milestones; the
+        notifications handler queues those at most once per budget and
+        milestone. Manual reminders are never deduplicated.
 
         Does not put anything on the wire itself — the notifications
         module subscribes to the event and queues the message through
@@ -650,6 +655,7 @@ class BudgetWorkflowService:
                 "plan_id": str(plan_id) if plan_id else None,
                 "budget_number": budget.budget_number,
                 "milestone_days": milestone_days,
+                "automatic": automatic,
                 "sent_at": budget.last_reminder_sent_at.isoformat(),
             },
             db=db,

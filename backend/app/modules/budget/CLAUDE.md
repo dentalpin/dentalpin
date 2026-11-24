@@ -68,7 +68,11 @@ only — never combined with payments data.
   version; payload with old `budget_id`, `new_budget_id`, `plan_id`.
   Published **after** commit — see gotchas).
 - `budget.viewed` (idempotent first-open, snapshot payload).
-- `budget.reminder_sent` (snapshot payload with `milestone_days`).
+- `budget.reminder_sent` (snapshot payload with `milestone_days` and
+  `automatic`). The `send_budget_reminders` cron fires once at 7 and once
+  at 14 clinic days after the latest `sent` history entry (not
+  `valid_from`); a milestone is done once `last_reminder_sent_at` falls on
+  or after its day, and only the latest milestone reached is sent (#1115).
 
 ## Events consumed
 
