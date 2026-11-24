@@ -20,7 +20,7 @@ from app.core.events import EventType, event_bus
 
 from .channels import Channel, ChannelAdapter, OutboundMessage, SendStatus, channel_registry
 from .models import ClinicChannelSettings, CommunicationMessage, NotificationTemplate
-from .service import NotificationService, resolve_clinic_communication_locale
+from .service import NotificationService, resolve_communication_locale
 
 logger = logging.getLogger(__name__)
 
@@ -151,9 +151,7 @@ class NotificationGateway:
                 )
 
         # Locale: clinic default → patient preference override.
-        locale = await resolve_clinic_communication_locale(db, clinic_id)
-        if prefs and prefs.preferred_locale:
-            locale = prefs.preferred_locale
+        locale = await resolve_communication_locale(db, clinic_id, prefs)
 
         # Channel resolution: first viable channel from the ordered list.
         requested = channels or await NotificationGateway._clinic_channels(db, clinic_id)

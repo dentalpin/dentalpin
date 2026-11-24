@@ -50,6 +50,7 @@
       "deductions": "Abzüge",
       "net": "Netto",
       "netMismatch": "Netto muss Brutto minus Abzüge entsprechen",
+      "subCent": "Beträge haben höchstens zwei Nachkommastellen",
       "notes": "Notizen",
       "add": "Buchung hinzufügen",
       "edit": "Buchung bearbeiten",

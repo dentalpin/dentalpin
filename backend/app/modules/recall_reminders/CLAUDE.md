@@ -41,7 +41,13 @@ the handler): `patient_name`, `clinic_name`, `reason`,
 / `"septiembre de 2026"`, not the raw `"2026-09-01"` from the payload;
 the locale is the patient's `preferred_locale`, else the clinic's
 communication language, the same order the gateway renders the template
-in, #975). `reason` is still the stored code (`hygiene`, `checkup`, …).
+in, #975; `pt-BR` is passed to babel as `pt_BR`, #1135). `reason` is the
+label of the stored code in that same locale (`ortho_review` → "Ortho
+review" / "Revisión ortodoncia", #1135), from `reason_labels.py`: a
+backend copy of the recalls UI's `recalls.reasons` strings, kept equal by
+a test. `pt-BR` uses the `pt` labels, an unknown locale the `en` ones,
+and an unknown code gives `None` so the template's `{% if reason %}`
+leaves it out. The `RECALL_CREATED` payload still carries the code.
 
 ## Dependencies
 

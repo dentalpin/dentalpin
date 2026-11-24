@@ -68,7 +68,11 @@ only — never combined with payments data.
   version; payload with old `budget_id`, `new_budget_id`, `plan_id`.
   Published **after** commit — see gotchas).
 - `budget.viewed` (idempotent first-open, snapshot payload).
-- `budget.reminder_sent` (snapshot payload with `milestone_days`).
+- `budget.reminder_sent` (snapshot payload with `milestone_days` and
+  `automatic`). The `send_budget_reminders` cron fires once at 7 and once
+  at 14 clinic days after the latest `sent` history entry (not
+  `valid_from`); a milestone is done once `last_reminder_sent_at` falls on
+  or after its day, and only the latest milestone reached is sent (#1115).
 
 ## Events consumed
 
@@ -121,6 +125,13 @@ contract.
   product decision (2026-10-16): each resend becomes a new draft version,
   and the plan link follows the last `budget.superseded`. Don't add a
   "newer version exists" 409.
+
+- **Resend and duplicate restart the validity window.**
+  `workflow.fresh_valid_until` gives the new draft today +
+  `budget_expiry_days` (the rule `create_from_plan_snapshot` uses), in-date
+  source or not; a source with no `valid_until` keeps none. Copying the
+  source's date made a resent expired quote expire again overnight
+  (#1113).
 
 - **GDPR erasure retains the signer's email.**
   `erasure.BudgetErasureContributor` owns the `budget` coverage scope

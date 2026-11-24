@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1134): `PATCH /segments/{id}` with `name: null` is a 422, not the duplicate-name 409.
+
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
 - chore(#557): slot/settings permission gates now reference PERMISSIONS constants (no behavior change).
 

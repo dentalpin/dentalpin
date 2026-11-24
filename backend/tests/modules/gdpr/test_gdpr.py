@@ -1399,15 +1399,24 @@ async def test_hold_boundary_today_holds_yesterday_releases(
 ):
     """RET-03: a hold through today still holds; yesterday's hold released."""
     from datetime import UTC, datetime, timedelta
+    from zoneinfo import ZoneInfo
 
+    from app.core.utils.dates import clinic_today_for
     from app.modules.gdpr.schemas import RetentionPolicyCreate
     from app.modules.gdpr.service import ErasureService, RetentionService
 
-    # The service measures "today" as the UTC date, so the test must build
-    # its boundary from the same clock. `date.today()` is host-local and
-    # drifts a day in the east-of-utc CI job, which then reads a hold set
-    # for "yesterday" as still in force.
-    today = datetime.now(UTC).date()
+    # The service judges a hold against the clinic's calendar date
+    # (clinic_today_for), so the boundary must come from the same clock.
+    # The clinic sits in a zone whose date differs from UTC's right now
+    # (UTC+14 and UTC-12 are 26 hours apart), so a UTC-built boundary
+    # fails at any hour, not only around the clinic's midnight.
+    test_clinic.timezone = next(
+        z
+        for z in ("Pacific/Kiritimati", "Etc/GMT+12")
+        if datetime.now(ZoneInfo(z)).date() != datetime.now(UTC).date()
+    )
+    await db_session.flush()
+    today = await clinic_today_for(db_session, test_clinic.id)
     await RetentionService.create(
         db_session,
         test_clinic.id,

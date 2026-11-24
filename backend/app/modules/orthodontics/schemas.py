@@ -9,6 +9,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.core.schemas import NotNull
+
 ApplianceType = Literal[
     "brackets_metal",
     "brackets_esthetic",
@@ -44,7 +46,7 @@ class OrthoCaseCreate(BaseModel):
 
 
 class OrthoCaseUpdate(BaseModel):
-    appliance_type: ApplianceType | None = None
+    appliance_type: NotNull[ApplianceType] = None  # NOT NULL column (#1134)
     estimated_months: int | None = Field(default=None, ge=1, le=120)
     professional_id: UUID | None = None
     diagnosis_notes: str | None = Field(default=None, max_length=5000)
@@ -100,7 +102,9 @@ class OrthoControlCreate(BaseModel):
 class OrthoControlUpdate(BaseModel):
     upper_wire: str | None = Field(default=None, max_length=40)
     lower_wire: str | None = Field(default=None, max_length=40)
-    procedures: list[str] | None = Field(default=None, max_length=50)
+    # JSONB NOT NULL: ``None`` would be stored as JSON 'null' and break the
+    # case's control list (#1134).
+    procedures: NotNull[list[str]] = Field(default=None, max_length=50)
     procedures_other: str | None = Field(default=None, max_length=2000)
     aligner_number: int | None = Field(default=None, ge=1)
     hygiene: Hygiene | None = None

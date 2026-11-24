@@ -5,6 +5,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.core.schemas import NotNull
+
 _HEX_COLOR = r"^#[0-9a-fA-F]{6}$"
 
 
@@ -28,7 +30,8 @@ class SegmentCreate(BaseModel):
 class SegmentUpdate(BaseModel):
     """All-optional: PATCH semantics with exclude_unset (M4)."""
 
-    name: str | None = Field(default=None, min_length=1, max_length=60)
+    # NOT NULL column: a null is a 422, not the duplicate-name 409 (#1134).
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=60)
     color: str | None = Field(default=None, pattern=_HEX_COLOR)
     description: str | None = None
 

@@ -70,6 +70,16 @@ def register(sub: argparse._SubParsersAction) -> None:
     )
     p_backup.set_defaults(func=_cmd_backup)
 
+    p_restore = db_sub.add_parser(
+        "restore",
+        help="pg_restore a full_<ts>.dump from `db backup` into DATABASE_URL",
+    )
+    p_restore.add_argument(
+        "dump",
+        help="Path to the full_<ts>.dump file, or - to read it from stdin",
+    )
+    p_restore.set_defaults(func=_cmd_restore)
+
 
 def _cmd_upgrade(args: argparse.Namespace) -> int:
     modules = register_discovered()
@@ -187,6 +197,34 @@ def dump_database(dsn: str, target: Path) -> str | None:
     return None
 
 
+def restore_database(dsn: str, source: Path | None) -> str | None:
+    """``pg_restore`` a ``db backup`` dump into ``dsn``; ``source=None``
+    reads the archive from stdin. None on success, else an error.
+
+    Uses this image's ``pg_restore``, the same version as the
+    ``pg_dump`` that wrote the file (#1066). The ``db`` service's
+    client is older (postgres:15) and refuses newer archive headers
+    with ``unsupported version (1.16) in file header``.
+    """
+    if shutil.which("pg_restore") is None:
+        return "pg_restore not found on PATH; cannot restore the database"
+    if source is not None and not source.is_file():
+        return f"dump file not found: {source}"
+    clean_dsn, env = _dsn_and_env(dsn)
+    # --clean --if-exists: no fatal "does not exist" noise on an empty
+    # DB; --no-owner: keeps the clinic role intact.
+    args = ["pg_restore", "--clean", "--if-exists", "--no-owner", "--dbname", clean_dsn]
+    if source is not None:
+        args.append(str(source))
+    try:
+        proc = subprocess.run(args, stderr=subprocess.PIPE, timeout=3600, env=env)
+    except subprocess.TimeoutExpired:
+        return "pg_restore timed out after 3600 seconds"
+    if proc.returncode != 0:
+        return f"pg_restore failed: {proc.stderr.decode(errors='replace').strip()}"
+    return None
+
+
 def snapshot_storage(storage_root: Path, target: Path, out_dir: Path) -> str | None:
     """Tarball the storage volume, excluding the backup destination
     itself (it may live inside the volume at any depth — archiving it
@@ -271,4 +309,16 @@ def _cmd_backup(args: argparse.Namespace) -> int:
     pruned += prune_backups(out_dir, "full_", args.keep, protect=written)
     for path in pruned:
         print(f"db backup: pruned {path.name}")
+    return 0
+
+
+def _cmd_restore(args: argparse.Namespace) -> int:
+    from app.core.plugins.processor import _pg_dump_dsn
+
+    source = None if args.dump == "-" else Path(args.dump)
+    error = restore_database(_pg_dump_dsn(settings.DATABASE_URL), source)
+    if error is not None:
+        print(f"db restore: {error}", flush=True)
+        return 3
+    print(f"db restore: {args.dump} -> database")
     return 0

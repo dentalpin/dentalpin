@@ -50,6 +50,7 @@
       "deductions": "Deductions",
       "net": "Net",
       "netMismatch": "Net must equal gross minus deductions",
+      "subCent": "Amounts take at most two decimals",
       "notes": "Notes",
       "add": "Add entry",
       "edit": "Edit entry",
