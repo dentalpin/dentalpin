@@ -58,6 +58,7 @@ Agenda touches the rows only duck-typed. The FK allowlist in
 
 Agent tools in `tools.py` (wrap `AppointmentService`, no logic duplicated).
 Write tools use `ctx.supervisor_id` (the human in the loop) for audit columns.
+Appointment times in tool results are in the clinic timezone (`get_clinic_tz`), the same as the REST API (#161, #1104).
 
 | Tool | Category | Wraps | Permission |
 |---|---|---|---|

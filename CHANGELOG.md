@@ -14,6 +14,10 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Payments:** the payment list search and multi-method filter now cover every payment, and the pager counts only the matches (#1033).
+- **Billing:** A draft invoice PDF shows the patient's billing name, tax id and address instead of "None" (#1103).
+- **Online booking:** the public booking page stops offering times and taking requests for a professional who was deactivated or removed from the clinic (#1100).
+- **CI:** a new push to a pull request cancels that PR's older run, so superseded runs no longer hold the queue; push runs on `main` are never cancelled (#1072).
+- **Activity journal:** a clock punch an admin records for a team member is now logged as done by the admin, not by the member (#1102).
 
 ## [2.12.0] - 2026-11-23
 
