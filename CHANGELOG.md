@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Prescriptions / Orthodontics / Patient segments:** an explicit null on a required PATCH field (template items or name, control procedures, case appliance type, segment name) is now refused with a 422 instead of breaking the list with a 500 or answering a wrong 409 (#1134).
 - **CI:** a new push to a pull request cancels that PR's older run, so superseded runs no longer hold the queue; push runs on `main` are never cancelled (#1072).
 - **Activity journal:** a clock punch an admin records for a team member is now logged as done by the admin, not by the member (#1102).
 
