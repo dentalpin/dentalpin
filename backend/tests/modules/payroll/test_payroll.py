@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from decimal import Decimal
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from fastapi import HTTPException
@@ -399,3 +399,74 @@ async def test_transition_rechecks_a_concurrently_changed_status(
         with pytest.raises(HTTPException) as exc:
             await PeriodService.transition(second, stale, PeriodTransition(status="closed"))
         assert exc.value.status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_http_sub_cent_amounts_are_rejected(
+    client: AsyncClient, auth_headers: dict, test_clinic: Clinic, db_session: AsyncSession
+):
+    """Money is entered in cents (#1138).
+
+    The balance check compared the values as sent, then each
+    ``Numeric(12, 2)`` column rounded on its own: 1000.004 - 0.005 = 999.999
+    passed and was stored as 1000.00 - 0.01 = 1000.00, unbalanced.
+    """
+    clinic_id = test_clinic.id
+    user = await _make_user(db_session, clinic_id)
+    period = await _make_period(db_session, clinic_id)
+    base = {"period_id": str(period.id), "user_id": str(user.id)}
+
+    sub_cent_bodies = [
+        {"gross": "1000.004", "deductions": "0.005", "net": "999.999"},
+        {"gross": "1000.005", "deductions": "0", "net": "1000.005"},
+        {"gross": "100", "deductions": "0.001", "net": "99.999"},
+    ]
+    for amounts in sub_cent_bodies:
+        resp = await client.post(
+            "/api/v1/payroll/entries", json={**base, **amounts}, headers=auth_headers
+        )
+        assert resp.status_code == 422, (amounts, resp.text)
+    _, total = await EntryService.list_entries(db_session, clinic_id, period.id)
+    assert total == 0
+
+    # A balanced cents entry is still accepted, trailing zeros included.
+    ok = await client.post(
+        "/api/v1/payroll/entries",
+        json={**base, "gross": "1000.10", "deductions": "0.500", "net": "999.6"},
+        headers=auth_headers,
+    )
+    assert ok.status_code == 201, ok.text
+    entry_id = UUID(ok.json()["data"]["id"])
+
+    # Edits follow the same rule.
+    bad_edit = await client.patch(
+        f"/api/v1/payroll/entries/{entry_id}",
+        json={"gross": "1000.104", "net": "999.604"},
+        headers=auth_headers,
+    )
+    assert bad_edit.status_code == 422, bad_edit.text
+    good_edit = await client.patch(
+        f"/api/v1/payroll/entries/{entry_id}",
+        json={"gross": "1000.11", "net": "999.61"},
+        headers=auth_headers,
+    )
+    assert good_edit.status_code == 200, good_edit.text
+
+    row = await EntryService.get_entry(db_session, clinic_id, entry_id)
+    assert row is not None
+    await db_session.refresh(row)
+    assert (row.gross, row.deductions, row.net) == (
+        Decimal("1000.11"),
+        Decimal("0.50"),
+        Decimal("999.61"),
+    )
+    assert row.net == row.gross - row.deductions
+
+    # The profile base amount is a cents field too.
+    staff = await _make_user(db_session, clinic_id)
+    profile = await client.post(
+        "/api/v1/payroll/profiles",
+        json={"user_id": str(staff.id), "base_amount": "2500.005"},
+        headers=auth_headers,
+    )
+    assert profile.status_code == 422, profile.text

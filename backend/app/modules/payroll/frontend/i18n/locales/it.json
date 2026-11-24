@@ -50,6 +50,7 @@
       "deductions": "Trattenute",
       "net": "Netto",
       "netMismatch": "Il netto deve essere pari al lordo meno le trattenute",
+      "subCent": "Gli importi ammettono al massimo due decimali",
       "notes": "Note",
       "add": "Aggiungi voce",
       "edit": "Modifica voce",

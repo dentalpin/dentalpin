@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Payroll:** amounts with more than two decimals are refused instead of being stored as an unbalanced entry (#1138).
 - **Razorpay:** a refund confirmation from Razorpay for a refund DentalPin had already marked failed no longer makes Razorpay retry the webhook forever; the refund stays failed and the event is recorded as a webhook error (#1132).
 - **Recall reminders:** the reminder email names the recall reason in the patient's language instead of its internal code, and Brazilian Portuguese emails show the month in Portuguese (#1135).
 - **Auth:** a login landing in the browser while a page was still loading no longer loses the readable session cookie and bounces back to the login screen; the app now only reads `dp_csrf` and never writes it (#928).

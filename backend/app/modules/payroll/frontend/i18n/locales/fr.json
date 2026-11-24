@@ -50,6 +50,7 @@
       "deductions": "Déductions",
       "net": "Net",
       "netMismatch": "Le net doit égaler le brut moins les déductions",
+      "subCent": "Les montants acceptent au plus deux décimales",
       "notes": "Notes",
       "add": "Ajouter une écriture",
       "edit": "Modifier l'écriture",
