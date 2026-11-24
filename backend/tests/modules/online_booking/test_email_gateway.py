@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import UTC, datetime, timedelta
 
 import pytest
-from booking_helpers import configure, dispatch, professional, tomorrow_at
+from booking_helpers import configure, dispatch, professional, proof_for, tomorrow_at
 from sqlalchemy import select
 
 from app.modules.notifications.models import ClinicNotificationSettings, CommunicationMessage
@@ -32,7 +32,9 @@ async def test_confirmation_is_queued_in_the_gateway_and_rendered_from_seeded_te
             "start_time": tomorrow_at(16).isoformat(),
             "contact_name": "Synthetic <b>",
             "contact_email": "locale@example.com",
+            "contact_phone": "+34600123456",
             "reason": "checkup",
+            "altcha": proof_for(test_clinic.id),
         },
     )
     assert response.status_code == 201, response.text
@@ -64,7 +66,10 @@ async def test_english_clinics_get_english_copy(
             "start_time": tomorrow_at(16).isoformat(),
             "contact_name": "Synthetic",
             "contact_email": "english@example.com",
+            "language": "en",
+            "contact_phone": "+34600123456",
             "reason": "checkup",
+            "altcha": proof_for(test_clinic.id),
         },
     )
     assert response.status_code == 201, response.text
@@ -85,7 +90,9 @@ async def test_cleanup_cancels_a_queued_confirmation_for_a_closed_request(
             "start_time": tomorrow_at(17).isoformat(),
             "contact_name": "Synthetic",
             "contact_email": "closed@example.com",
+            "contact_phone": "+34600123456",
             "reason": "checkup",
+            "altcha": proof_for(test_clinic.id),
         },
     )
     assert response.status_code == 201, response.text
@@ -115,7 +122,9 @@ async def test_rolled_back_request_queues_no_email(db_session, test_clinic, open
             start_time=tomorrow_at(10),
             contact_name="Synthetic",
             contact_email="rollback@example.com",
+            contact_phone="+34600123456",
             reason="checkup",
+            altcha="verified-by-the-route",
         ),
     )
     assert await db_session.scalar(

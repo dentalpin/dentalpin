@@ -2,10 +2,10 @@ from __future__ import annotations
 
 import asyncio
 from datetime import UTC, datetime, time, timedelta
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
-from booking_helpers import clinic_user, dispatch
+from booking_helpers import clinic_user, configure, dispatch, professional, proof_for
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
@@ -58,14 +58,46 @@ async def test_request_confirm_accept_and_conflict(
     start = datetime.combine(tomorrow, time(10), UTC)
     url = f"/api/v1/online_booking/public/{test_clinic.id}"
     headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    settings = await client.get("/api/v1/online_booking/settings", headers=headers)
+    assert settings.status_code == 200
+    config = {
+        **settings.json()["data"],
+        "title_es": "Reserva sintética",
+        "accent_color": "#123456",
+    }
+    saved = await client.put("/api/v1/online_booking/settings", headers=headers, json=config)
+    assert saved.status_code == 200, saved.text
+    public = await client.get(f"{url}/config")
+    assert public.json()["data"]["branding"]["title_es"] == "Reserva sintética"
+    assert public.json()["data"]["branding"]["logo_url"] is None
     availability = await client.get(f"{url}/availability", params={"day": tomorrow.isoformat()})
     assert availability.status_code == 200
     assert start.isoformat() in availability.json()["data"]["starts"]
+    week = await client.get(
+        f"{url}/availability", params={"from_day": tomorrow.isoformat(), "days": 7}
+    )
+    assert week.status_code == 200
+    assert start.isoformat() in week.json()["data"]["days"][0]["starts"]
+    assert (
+        await client.get(
+            f"{url}/availability", params={"from_day": tomorrow.isoformat(), "days": 32}
+        )
+    ).status_code == 422
+    from altcha import Challenge, Payload, solve_challenge
+
+    challenge_response = await client.get(f"{url}/challenge")
+    assert challenge_response.status_code == 200
+    assert challenge_response.headers["cache-control"] == "no-store"
+    issued = Challenge.from_dict(challenge_response.json())
+    solution = solve_challenge(issued, timeout=20)
+    assert solution is not None
     body = {
         "start_time": start.isoformat(),
         "contact_name": "Synthetic",
         "contact_email": "test@example.com",
+        "contact_phone": "+34600123456",
         "reason": "checkup",
+        "altcha": Payload(issued, solution).to_base64(),
     }
     first = await client.post(f"{url}/requests", json=body)
     assert first.status_code == 201, first.text
@@ -79,8 +111,15 @@ async def test_request_confirm_accept_and_conflict(
     assert delivery[0].subject.startswith("Confirma tu solicitud de cita en ")
     assert "<a href=" in delivery[0].body_html and token in delivery[0].body_html
     assert "{{" not in delivery[0].body_html + delivery[0].body_text
+    assert "se pondrá en contacto contigo" in delivery[0].body_text
+    from zoneinfo import ZoneInfo
+
+    local = start.astimezone(ZoneInfo("Europe/Madrid"))
+    assert local.strftime("%d/%m/%Y") in delivery[0].body_text
+    assert local.strftime("%H:%M") in delivery[0].body_text
     response = await client.post(f"{url}/confirm", json={"token": token})
     assert response.status_code == 200
+    assert response.json()["data"]["start_time"] == start.isoformat()
     assert (await client.post(f"{url}/confirm", json={"token": token})).status_code == 410
     item = await db_session.scalar(
         select(BookingRequest).where(BookingRequest.clinic_id == test_clinic.id)
@@ -137,7 +176,7 @@ async def test_request_confirm_accept_and_conflict(
 async def test_simultaneous_reservations_serialize(db_session, test_clinic, open_hours):
     from app.config import settings
 
-    professional_id = await clinic_user(db_session, test_clinic.id)
+    professional_id = (await professional(db_session, test_clinic.id)).id
     config = BookingSettings(
         clinic_id=test_clinic.id,
         enabled=True,
@@ -188,9 +227,7 @@ async def test_simultaneous_http_requests(client, db_session, test_clinic, open_
     from app.database import get_db
     from app.main import app
 
-    professional_id = await db_session.scalar(
-        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)
-    )
+    professional_id = (await professional(db_session, test_clinic.id)).id
     db_session.add(
         BookingSettings(
             clinic_id=test_clinic.id,
@@ -227,10 +264,13 @@ async def test_simultaneous_http_requests(client, db_session, test_clinic, open_
                 "start_time": start.isoformat(),
                 "contact_name": "Synthetic",
                 "contact_email": "parallel@example.com",
+                "contact_phone": "+34600123456",
                 "reason": "checkup",
+                "altcha": proof_for(test_clinic.id),
             }
             responses = await asyncio.gather(
-                parallel.post(url, json=body), parallel.post(url, json=body)
+                parallel.post(url, json=body),
+                parallel.post(url, json={**body, "altcha": proof_for(test_clinic.id)}),
             )
             assert sorted(r.status_code for r in responses) == [201, 409], [
                 r.text for r in responses
@@ -325,7 +365,9 @@ async def test_rejection_sends_message_and_releases_hold(
         "start_time": start.isoformat(),
         "contact_name": "Synthetic",
         "contact_email": "reject@example.com",
+        "contact_phone": "+34600123456",
         "reason": "checkup",
+        "altcha": proof_for(test_clinic.id),
     }
     response = await client.post(f"{base}/requests", json=body)
     assert response.status_code == 201, response.text
@@ -346,6 +388,7 @@ async def test_rejection_sends_message_and_releases_hold(
     assert rejection.to_email == "reject@example.com"
     assert rejection.subject.startswith("Novedades sobre tu solicitud de cita en ")
     assert "Please call us" in rejection.body_text and "Please call us" in rejection.body_html
+    body["altcha"] = proof_for(test_clinic.id)
     assert (await client.post(f"{base}/requests", json=body)).status_code == 201
 
 
@@ -394,6 +437,12 @@ async def test_public_api_is_disabled_by_default_and_rejects_clinical_fields(cli
 async def test_staff_routes_require_login(client):
     assert (await client.get("/api/v1/online_booking/requests")).status_code == 401
     assert (await client.get("/api/v1/online_booking/settings")).status_code == 401
+    assert (
+        await client.put(
+            "/api/v1/online_booking/settings/logo", json={"filename": "x.png", "data": "eA=="}
+        )
+    ).status_code == 401
+    assert (await client.delete("/api/v1/online_booking/settings/logo")).status_code == 401
 
 
 @pytest.mark.asyncio
@@ -605,7 +654,7 @@ async def test_staff_list_paginates_and_excludes_expired_requests(
 @pytest.mark.asyncio
 async def test_rolled_back_request_queues_no_email(db_session, test_clinic, open_hours, delivery):
     """The gateway enqueues inside the caller's transaction: no commit, no mail."""
-    professional_id = await clinic_user(db_session, test_clinic.id)
+    professional_id = (await professional(db_session, test_clinic.id)).id
     config = BookingSettings(
         clinic_id=test_clinic.id,
         enabled=True,
@@ -628,7 +677,9 @@ async def test_rolled_back_request_queues_no_email(db_session, test_clinic, open
             start_time=start,
             contact_name="Synthetic",
             contact_email="rollback@example.com",
+            contact_phone="+34600000000",
             reason="checkup",
+            altcha="verified-by-the-route",
         ),
     )
     assert await db_session.scalar(
@@ -746,7 +797,24 @@ async def test_queue_count_and_visit_default(client, db_session, auth_headers, t
     now = datetime.now(UTC)
     db_session.add(
         BookingSettings(
-            clinic_id=test_clinic.id, slot_minutes=30, first_visit_minutes=60, checkup_minutes=45
+            clinic_id=test_clinic.id,
+            slot_minutes=30,
+            reasons=[
+                {
+                    "id": "first_visit",
+                    "name_es": "Primera visita",
+                    "name_en": "First visit",
+                    "duration_minutes": 60,
+                    "active": True,
+                },
+                {
+                    "id": "checkup",
+                    "name_es": "Revisión",
+                    "name_en": "Check-up",
+                    "duration_minutes": 45,
+                    "active": True,
+                },
+            ],
         )
     )
     for status, start, reason in (
@@ -775,6 +843,8 @@ async def test_queue_count_and_visit_default(client, db_session, auth_headers, t
         "checkup": 45,
         "first_visit": 60,
     }
+    assert {row["professional_id"] for row in rows} == {rows[0]["professional_id"]}
+    assert UUID(rows[0]["professional_id"])
 
 
 @pytest.mark.asyncio
@@ -965,9 +1035,16 @@ async def test_each_booking_phase_checks_only_the_relevant_resources(
     await db_session.commit()
     base = f"/api/v1/online_booking/public/{test_clinic.id}"
     if phase == "request":
+        from altcha import Challenge, Payload, solve_challenge
+
+        challenge_response = await client.get(base + "/challenge")
+        issued = Challenge.from_dict(challenge_response.json())
+        solution = solve_challenge(issued, timeout=20)
+        assert solution is not None
         result = await client.post(
             base + "/requests",
             json={
+                "altcha": Payload(issued, solution).to_base64(),
                 "start_time": start.isoformat(),
                 "contact_name": "Synthetic",
                 "contact_email": f"{uuid4()}@example.com",
@@ -1019,9 +1096,7 @@ async def test_confirmation_waits_for_concurrent_agenda_write_and_detects_confli
     from app.main import app
     from app.modules.agenda.service import AppointmentService
 
-    professional_id = await db_session.scalar(
-        select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == test_clinic.id)
-    )
+    professional_id = (await professional(db_session, test_clinic.id)).id
     start = datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(10), UTC)
     token = "synthetic-token-" + uuid4().hex
     db_session.add(
@@ -1116,3 +1191,312 @@ async def test_shared_clinic_lock_uses_agenda_namespace():
     )
     assert db.execute.await_args.args[1] == {"lock_key": expected}
     assert expected != old_key
+
+
+@pytest.mark.asyncio
+async def test_altcha_rejects_forgery_expiration_cross_clinic_and_replay(db_session, test_clinic):
+    from altcha import Payload, create_challenge, solve_challenge
+
+    from app.modules.online_booking.captcha import _secret, consume
+    from app.modules.online_booking.exceptions import CaptchaInvalidError, CaptchaReusedError
+
+    async def rejected(proof, clinic_id=test_clinic.id):
+        with pytest.raises(CaptchaInvalidError) as invalid:
+            await consume(db_session, clinic_id, proof)
+        assert invalid.value.status_code == 400
+
+    await rejected("not-a-payload")
+    valid = proof_for(test_clinic.id)
+    await rejected(valid, uuid4())
+    expired = create_challenge(
+        "PBKDF2/SHA-256",
+        1000,
+        counter=0,
+        expires_at=datetime.now(UTC) - timedelta(seconds=1),
+        data={"clinic": str(test_clinic.id)},
+        hmac_secret=_secret(test_clinic.id),
+    )
+    await rejected(Payload(expired, solve_challenge(expired)).to_base64())
+    parsed = Payload.from_base64(valid)
+    parsed.challenge.parameters.cost = 1
+    await rejected(parsed.to_base64())
+    await consume(db_session, test_clinic.id, valid)
+    with pytest.raises(CaptchaReusedError) as replay:
+        await consume(db_session, test_clinic.id, valid)
+    assert replay.value.status_code == 409
+
+
+@pytest.mark.asyncio
+async def test_altcha_replay_is_atomic_across_transactions(db_session, test_clinic):
+    from app.config import settings
+    from app.modules.online_booking.captcha import consume
+    from app.modules.online_booking.exceptions import BookingError
+
+    encoded = proof_for(test_clinic.id)
+    engine = create_async_engine(settings.DATABASE_URL)
+    maker = async_sessionmaker(engine, expire_on_commit=False)
+
+    async def redeem():
+        async with maker() as session:
+            try:
+                await consume(session, test_clinic.id, encoded)
+                await session.commit()
+                return 201
+            except BookingError as exc:
+                await session.rollback()
+                return exc.status_code
+
+    try:
+        assert sorted(await asyncio.gather(redeem(), redeem())) == [201, 409]
+    finally:
+        await engine.dispose()
+
+
+def test_contact_phone_and_public_settings_validation():
+    from pydantic import ValidationError
+
+    from app.modules.online_booking.schemas import RequestInput, SettingsInput
+
+    body = {
+        "start_time": datetime.now(UTC),
+        "contact_name": "Synthetic",
+        "contact_email": "a@example.com",
+        "contact_phone": "600 123 456",
+        "reason": "checkup",
+        "altcha": "x",
+    }
+    assert RequestInput(**body).contact_phone == "+34600123456"
+    assert (
+        RequestInput(**{**body, "contact_phone": "+44 20 7946 0958"}).contact_phone
+        == "+442079460958"
+    )
+    for invalid in ("", "123", "600123456abc"):
+        with pytest.raises(ValidationError):
+            RequestInput(**{**body, "contact_phone": invalid})
+    with pytest.raises(ValidationError):
+        RequestInput(**{k: v for k, v in body.items() if k != "contact_phone"})
+    assert SettingsInput(accent_color="#123abc", title_es="Citas").title_es == "Citas"
+    with pytest.raises(ValidationError):
+        SettingsInput(logo_url="https://example.com/logo.png")
+    with pytest.raises(ValidationError):
+        SettingsInput(accent_color="red")
+
+
+@pytest.mark.asyncio
+async def test_edit_reasons_duration_and_clinic_logo(
+    client, db_session, auth_headers, test_clinic, open_hours
+):
+    import base64
+
+    from app.core.auth.service import hash_password
+
+    professional = User(
+        id=uuid4(),
+        email=f"{uuid4()}@example.invalid",
+        password_hash=hash_password("Synthetic123!"),
+        first_name="Test",
+        last_name="Dentist",
+        is_active=True,
+    )
+    db_session.add(professional)
+    await db_session.flush()
+    db_session.add(
+        ClinicMembership(
+            id=uuid4(),
+            user_id=professional.id,
+            clinic_id=test_clinic.id,
+            role="dentist",
+            is_professional=True,
+        )
+    )
+    db_session.add(
+        BookingSettings(
+            clinic_id=test_clinic.id,
+            enabled=True,
+            professional_id=professional.id,
+            public_url="https://example.invalid/book",
+            slot_minutes=30,
+            window_days=30,
+            min_notice_minutes=0,
+        )
+    )
+    await db_session.commit()
+    headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    settings_url = "/api/v1/online_booking/settings"
+    data = (await client.get(settings_url, headers=headers)).json()["data"]
+    data["reasons"].append(
+        {
+            "id": "extended",
+            "name_es": "Tratamiento largo",
+            "name_en": "Long treatment",
+            "duration_minutes": 75,
+            "active": True,
+        }
+    )
+    assert (await client.put(settings_url, headers=headers, json=data)).status_code == 200
+    base = f"/api/v1/online_booking/public/{test_clinic.id}"
+    reasons = (await client.get(f"{base}/config")).json()["data"]["reasons"]
+    assert reasons[-1]["id"] == "extended" and reasons[-1]["duration_minutes"] == 75
+    invalid = {**data, "reasons": data["reasons"] + [data["reasons"][-1]]}
+    assert (await client.put(settings_url, headers=headers, json=invalid)).status_code == 422
+    removed = {**data, "reasons": data["reasons"][:-1]}
+    assert (await client.put(settings_url, headers=headers, json=removed)).status_code == 422
+    tomorrow = (datetime.now(UTC) + timedelta(days=1)).date()
+    start = datetime.combine(tomorrow, time(10), UTC)
+    config = await db_session.get(BookingSettings, test_clinic.id)
+    await db_session.refresh(config)
+    item = BookingRequest(
+        id=uuid4(),
+        clinic_id=test_clinic.id,
+        start_time=start,
+        end_time=start + timedelta(minutes=30),
+        status="pending_confirmation",
+        reason="extended",
+        confirmation_deadline=datetime.now(UTC) + timedelta(minutes=10),
+    )
+    await reserve(db_session, test_clinic.id, config, item, datetime.now(UTC))
+    assert item.end_time - item.start_time == timedelta(minutes=75)
+    import io
+
+    from PIL import Image
+
+    image = Image.new("RGB", (8, 8), "blue")
+    exif = Image.Exif()
+    exif[270] = "Synthetic secret metadata"
+    source = io.BytesIO()
+    image.save(source, format="JPEG", exif=exif)
+    svg = b'<svg xmlns="http://www.w3.org/2000/svg"><rect width="1" height="1"/></svg>'
+    for filename, raw in (("logo.svg", svg), ("logo.png", svg), ("logo.png", source.getvalue())):
+        rejected = await client.put(
+            settings_url + "/logo",
+            headers=headers,
+            json={"filename": filename, "data": base64.b64encode(raw).decode()},
+        )
+        assert rejected.status_code == 422
+    too_large = base64.b64encode(b"x" * (512 * 1024 + 1)).decode()
+    assert (
+        await client.put(
+            settings_url + "/logo",
+            headers=headers,
+            json={"filename": "logo.png", "data": too_large},
+        )
+    ).status_code == 422
+    response = await client.put(
+        settings_url + "/logo",
+        headers=headers,
+        json={"filename": "logo.jpg", "data": base64.b64encode(source.getvalue()).decode()},
+    )
+    assert response.status_code == 200
+    logo = await client.get(f"{base}/logo")
+    assert logo.status_code == 200
+    assert logo.headers["content-type"] == "image/png"
+    assert logo.headers["x-content-type-options"] == "nosniff"
+    assert logo.headers["content-security-policy"] == "default-src 'none'; sandbox"
+    assert logo.headers["cache-control"] == "public, max-age=0, must-revalidate"
+    assert logo.headers["etag"]
+    with Image.open(io.BytesIO(logo.content)) as cleaned:
+        assert cleaned.format == "PNG" and not cleaned.getexif()
+        assert "exif" not in cleaned.info and "Synthetic secret metadata" not in repr(cleaned.info)
+    await db_session.refresh(config)
+    stored = config.logo_data
+    config.logo_data = None
+    await db_session.flush()
+    assert (await client.get(f"{base}/logo")).status_code == 404
+    assert (await client.get(f"{base}/config")).json()["data"]["branding"]["logo_url"] is None
+    config.logo_data = stored
+    await db_session.flush()
+    cached = await client.get(f"{base}/logo", headers={"If-None-Match": logo.headers["etag"]})
+    assert cached.status_code == 304 and cached.content == b""
+    assert cached.headers["etag"] == logo.headers["etag"]
+    config.enabled = False
+    await db_session.flush()
+    assert (await client.get(f"{base}/logo")).status_code == 404
+    config.enabled = True
+    await db_session.flush()
+    assert (await client.delete(settings_url + "/logo", headers=headers)).status_code == 200
+    assert (await client.get(f"{base}/logo")).status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_availability_respects_existing_clinic_holiday(db_session, test_clinic):
+    from app.modules.online_booking.service import slots
+    from app.modules.schedules.models import ClinicOverride, ClinicWeeklySchedule, ScheduleShift
+
+    tomorrow = (datetime.now(UTC) + timedelta(days=1)).date()
+    weekly = ClinicWeeklySchedule(clinic_id=test_clinic.id, is_active=True)
+    db_session.add(weekly)
+    await db_session.flush()
+    db_session.add(
+        ScheduleShift(
+            clinic_weekly_id=weekly.id,
+            weekday=tomorrow.weekday(),
+            start_time=time(9),
+            end_time=time(14),
+        )
+    )
+    config = await configure(
+        db_session, test_clinic.id, (await professional(db_session, test_clinic.id)).id
+    )
+    assert await slots(db_session, test_clinic.id, config, tomorrow, datetime.now(UTC))
+    db_session.add(
+        ClinicOverride(
+            clinic_id=test_clinic.id,
+            start_date=tomorrow,
+            end_date=tomorrow,
+            kind="closed",
+            reason="Synthetic holiday",
+        )
+    )
+    await db_session.commit()
+    assert await slots(db_session, test_clinic.id, config, tomorrow, datetime.now(UTC)) == []
+
+
+@pytest.mark.asyncio
+async def test_public_optional_questions_and_split_names(
+    client, db_session, test_clinic, open_hours, delivery
+):
+    professional_id = (await professional(db_session, test_clinic.id)).id
+    config = BookingSettings(
+        clinic_id=test_clinic.id,
+        professional_id=professional_id,
+        enabled=True,
+        public_url="https://example.invalid/book",
+        slot_minutes=30,
+        window_days=30,
+        min_notice_minutes=0,
+        ask_existing_patient=True,
+        allow_comment=True,
+        redirect_url="https://example.invalid/thanks",
+    )
+    db_session.add(config)
+    await db_session.commit()
+    url = f"/api/v1/online_booking/public/{test_clinic.id}"
+    public = await client.get(f"{url}/config")
+    assert public.json()["data"]["ask_existing_patient"] is True
+    assert public.json()["data"]["redirect_url"] == "https://example.invalid/thanks"
+    start = datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(10), UTC)
+    response = await client.post(
+        f"{url}/requests",
+        json={
+            "start_time": start.isoformat(),
+            "contact_name": "Synthetic Person",
+            "contact_first_name": "Synthetic",
+            "contact_last_name": "Person",
+            "contact_email": "synthetic@example.com",
+            "contact_phone": "+34600000000",
+            "reason": "checkup",
+            "existing_patient": True,
+            "comment": "Contact after lunch",
+            "altcha": proof_for(test_clinic.id),
+        },
+    )
+    assert response.status_code == 201, response.text
+    item = await db_session.scalar(
+        select(BookingRequest).where(BookingRequest.clinic_id == test_clinic.id)
+    )
+    assert (
+        item.contact_first_name,
+        item.contact_last_name,
+        item.existing_patient,
+        item.comment,
+    ) == ("Synthetic", "Person", True, "Contact after lunch")

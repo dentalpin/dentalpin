@@ -122,6 +122,13 @@ contract.
   and the plan link follows the last `budget.superseded`. Don't add a
   "newer version exists" 409.
 
+- **Resend and duplicate restart the validity window.**
+  `workflow.fresh_valid_until` gives the new draft today +
+  `budget_expiry_days` (the rule `create_from_plan_snapshot` uses), in-date
+  source or not; a source with no `valid_until` keeps none. Copying the
+  source's date made a resent expired quote expire again overnight
+  (#1113).
+
 - **GDPR erasure retains the signer's email.**
   `erasure.BudgetErasureContributor` owns the `budget` coverage scope
   (ADR 0038, #657) and writes nothing: blanking

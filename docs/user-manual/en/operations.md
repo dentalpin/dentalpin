@@ -201,7 +201,11 @@ Two guardrails:
 - No Alembic branch (Fase A legacy modules). These cannot downgrade
   cleanly; uninstall is blocked even with `--force`. Wait for Fase B.
 - Reverse dependencies — another installed module lists this one in
-  its `depends`. Uninstall them first, or pass `--force`.
+  its `depends`. Uninstall them first, or pass `--force`. With `--force`
+  the dependents stay `installed` but stop loading, and the uninstall
+  also drops the tables of dependents whose migrations build on this
+  module. Their rows go into the same
+  `storage/backups/module_<name>_<timestamp>.sql` dump.
 
 ---
 
@@ -275,6 +279,18 @@ Produces `full_<timestamp>.dump` (whole database) and
 server: a backup on the same disk is not a backup. Full restore,
 hardware-migration, and monthly-verification procedure:
 `docs/workflows/backup-restore.md`.
+
+Restore a full dump with the backend image, not the `db` service: the
+`db` image's `pg_restore` (PostgreSQL 15) cannot read dumps written by
+the backend's newer `pg_dump`. Restore into an empty database (a fresh
+`db` volume, see `docs/workflows/backup-restore.md` §3): the command
+does not run in one transaction, so a failure part-way through leaves a
+half-restored database.
+
+```bash
+docker compose run --rm -T -e RUN_MIGRATIONS=0 backend \
+  python -m app.cli db restore - < full_20260907T230000Z.dump
+```
 
 With `STORAGE_BACKEND=s3` the tarball still covers only the local
 volume - `documents/` and `migration-import/` stay on the volume even

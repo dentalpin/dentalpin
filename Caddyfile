@@ -28,10 +28,16 @@
 	# NUXT_CSP_MODE — see docs/technical/security-csp.md, #355) so the e2e
 	# job enforces the same policy prod ships. Two CSP headers on a page
 	# are enforced as their intersection, which is intended.
+	#
+	# The public booking page (/p/booking/<clinicId>) is the one route a
+	# clinic may embed in an iframe on its own website: its frame-ancestors
+	# comes from the clinic's embed_origins setting, set by the frontend
+	# (server/middleware/booking-embed.ts), so Caddy must not add 'self' on top.
+	@not_embeddable not path /p/booking/*
 	header {
 		Strict-Transport-Security "max-age=31536000; includeSubDomains"
 		X-Content-Type-Options "nosniff"
 		Referrer-Policy "strict-origin-when-cross-origin"
-		Content-Security-Policy "frame-ancestors 'self'"
 	}
+	header @not_embeddable Content-Security-Policy "frame-ancestors 'self'"
 }

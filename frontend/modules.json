@@ -234,7 +234,8 @@
       "name": "online_booking",
       "path": "/module_layers/online_booking/frontend",
       "routes": [
-        "/online-booking"
+        "/online-booking",
+        "/p/booking/:clinicId"
       ]
     },
     {
