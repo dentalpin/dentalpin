@@ -194,12 +194,15 @@ class AttendanceService:
         )
         db.add(row)
         await db.flush()
+        # The punched member is ``member_id``, not ``user_id``: consumers
+        # (activity_journal) read ``user_id`` as the actor, and the actor
+        # here is ``created_by`` — a manager may punch for someone (#1102).
         await event_bus.publish(
             EventType.STAFF_ATTENDANCE_CLOCKED,
             {
                 "event_id": str(row.id),
                 "clinic_id": str(clinic_id),
-                "user_id": str(user_id),
+                "member_id": str(user_id),
                 "kind": kind,
                 "created_by": str(created_by),
             },

@@ -44,7 +44,7 @@ def delivery(monkeypatch, email_templates):
 
     async def send(message, **kwargs):
         sent.append(message)
-        return SimpleNamespace(is_success=True, status="success")
+        return SimpleNamespace(is_success=True, status="success", provider="test")
 
     monkeypatch.setattr(email_service, "send", send)
     return sent
