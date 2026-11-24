@@ -67,6 +67,7 @@ dependencies = [
     # client is boto3; its sync calls run via asyncio.to_thread, so no
     # aioboto3 dependency chain is needed.
     "boto3>=1.34",
+    "altcha==2.4.0",
 ]
 
 [project.optional-dependencies]

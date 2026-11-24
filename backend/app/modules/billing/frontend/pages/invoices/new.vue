@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { InvoiceItemCreate, Patient, VatType } from '~~/app/types'
 import { errorMessage } from '~~/app/utils/error'
+import { lineAmounts, sumLineAmounts, type LineAmounts } from '../../utils/lineAmounts'
 
 const { t } = useI18n()
 const route = useRoute()
@@ -74,36 +75,13 @@ function removeItem(index: number) {
   })
 }
 
-// Calculate item total
-function getItemTotal(item: InvoiceItemCreate): number {
-  const subtotal = item.unit_price * (item.quantity || 1)
-  const vatType = vatTypes.value.find(v => v.id === item.vat_type_id)
-  const vatRate = vatType?.rate || 0
-  const tax = subtotal * (vatRate / 100)
-  return subtotal + tax
+// Line amounts as the backend computes the draft (#1032): discount before VAT
+function getItemAmounts(item: InvoiceItemCreate): LineAmounts {
+  const vatRate = vatTypes.value.find(v => v.id === item.vat_type_id)?.rate || 0
+  return lineAmounts(item, vatRate)
 }
 
-// Calculate totals
-const totals = computed(() => {
-  let subtotal = 0
-  let totalTax = 0
-
-  items.value.forEach((item) => {
-    const itemSubtotal = item.unit_price * (item.quantity || 1)
-    const vatType = vatTypes.value.find(v => v.id === item.vat_type_id)
-    const vatRate = vatType?.rate || 0
-    const tax = itemSubtotal * (vatRate / 100)
-
-    subtotal += itemSubtotal
-    totalTax += tax
-  })
-
-  return {
-    subtotal,
-    totalTax,
-    total: subtotal + totalTax
-  }
-})
+const totals = computed(() => sumLineAmounts(items.value.map(getItemAmounts)))
 
 // Format currency — clinic-wide.
 const { format: formatCurrency } = useCurrency()
@@ -352,7 +330,7 @@ function goBack() {
               </div>
               <div class="text-end">
                 <p class="font-semibold text-default">
-                  {{ formatCurrency(getItemTotal(item)) }}
+                  {{ formatCurrency(getItemAmounts(item).total) }}
                 </p>
               </div>
               <UButton
@@ -409,9 +387,16 @@ function goBack() {
               <span class="text-subtle">{{ t('invoice.subtotal') }}</span>
               <span class="font-medium">{{ formatCurrency(totals.subtotal) }}</span>
             </div>
+            <div
+              v-if="totals.discount > 0"
+              class="flex justify-between"
+            >
+              <span class="text-subtle">{{ t('invoice.discount') }}</span>
+              <span class="font-medium text-success-accent">-{{ formatCurrency(totals.discount) }}</span>
+            </div>
             <div class="flex justify-between">
               <span class="text-subtle">{{ t('invoice.tax') }}</span>
-              <span class="font-medium">{{ formatCurrency(totals.totalTax) }}</span>
+              <span class="font-medium">{{ formatCurrency(totals.tax) }}</span>
             </div>
             <div class="flex justify-between pt-3 border-t border-default">
               <span class="font-semibold text-default">{{ t('invoice.total') }}</span>
