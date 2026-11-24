@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Recall reminders:** the reminder email names the recall reason in the patient's language instead of its internal code, and Brazilian Portuguese emails show the month in Portuguese (#1135).
 - **CI:** a new push to a pull request cancels that PR's older run, so superseded runs no longer hold the queue; push runs on `main` are never cancelled (#1072).
 - **Activity journal:** a clock punch an admin records for a team member is now logged as done by the admin, not by the member (#1102).
 
