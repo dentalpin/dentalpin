@@ -27,7 +27,18 @@ and switch to `prod` once submissions come back DONE.
 | Event | NAV operation | Notes |
 |---|---|---|
 | invoice issued | `CREATE` | full `InvoiceData`, `completenessIndicator=false` |
-| credit note issued | `STORNO` | references the original number, negative lines |
+| credit note cancelling what is left of the invoice | `STORNO` | references the original number, negative lines |
+| partial credit note | `MODIFY` | same document; the invoice keeps a balance on NAV's books |
+
+A credit note is a modification document of its invoice. Its
+`invoiceReference` carries `modificationIndex` = 1 for the first credit
+note of that invoice, 2 for the second, and so on; every line carries a
+`lineModificationReference` whose `lineNumberReference` continues the
+numbering after the invoice's own lines and those of earlier credit notes
+(`lineOperation` `CREATE`), as in NAV's *Módosítás és érvénytelenítés*
+samples. The chain is read from the module's own submission log: a credit
+note that brings the invoice's reported gross to zero is a `STORNO`, any
+other is a `MODIFY`.
 
 VAT mapping per line: `vat_rate > 0` → `vatPercentage` (e.g. `0.27`);
 `0` → `vatExemption` case `TAM` with the line's exemption reason (default
@@ -44,6 +55,6 @@ now** runs the worker immediately instead of waiting for the 60 s tick.
 
 ## 4. Out of scope (phase 2+)
 
-MODIFY chains after editing an issued invoice, batching up to 100
+MODIFY after editing an issued invoice in place, batching up to 100
 operations per request, EKÁER, online pénztárgép, non-HUF invoices with
 exchange rates, `queryInvoiceData` reconciliation.

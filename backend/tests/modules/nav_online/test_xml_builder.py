@@ -1,4 +1,4 @@
-"""InvoiceData XML: structure, VAT mapping (27 % vs TAM), STORNO negation."""
+"""InvoiceData XML: structure, VAT mapping (27 % vs TAM), modification documents."""
 
 from datetime import date
 from decimal import Decimal
@@ -10,6 +10,7 @@ from app.modules.nav_online.services.xml_builder import (
     NS_DATA,
     HungarianTaxNumber,
     build_invoice_data,
+    count_lines,
 )
 
 _NSMAP = {"d": NS_DATA, "base": "http://schemas.nav.gov.hu/OSA/3.0/base"}
@@ -117,3 +118,58 @@ def test_domestic_customer_and_storno_negation():
     assert _xp(root, "//d:unitPrice/text()") == ["15000.00", "10000.00"]
     assert _xp(root, "//d:lineNetAmount/text()") == ["-15000.00", "-20000.00"]
     assert _xp(root, "//d:invoiceVatAmount/text()") == ["-5400.00"]
+
+
+def _children(el):
+    return [c.tag.split("}")[1] for c in el]
+
+
+def test_modification_lines_reference_the_chain():
+    """NAV's ``Modositas es ervenytelenites 2.xml``: index 2, every line a
+    ``lineModificationReference`` continuing the numbering, CREATE (#1069)."""
+    res = build_invoice_data(
+        _credit_note(),
+        supplier_tax_number=HungarianTaxNumber("87654321", "2", "41"),
+        supplier_name="Mosoly Dental Kft.",
+        supplier_address=None,
+        original_invoice_number="HU-2026-0001",
+        modification_index=2,
+        line_number_offset=6,
+    )
+    root = etree.fromstring(res.xml.encode())
+    # XSD InvoiceReferenceType sequence.
+    assert _children(_xp(root, "//d:invoiceReference")[0]) == [
+        "originalInvoiceNumber",
+        "modifyWithoutMaster",
+        "modificationIndex",
+    ]
+    assert _xp(root, "//d:invoiceReference/d:modificationIndex/text()") == ["2"]
+    lines = _xp(root, "//d:invoiceLines/d:line")
+    assert len(lines) == 2
+    for n, line in enumerate(lines, start=1):
+        # XSD LineType: lineNumber, lineModificationReference, …, lineExpressionIndicator.
+        assert _children(line)[:3] == [
+            "lineNumber",
+            "lineModificationReference",
+            "lineExpressionIndicator",
+        ]
+        assert _xp(line, "d:lineNumber/text()") == [str(n)]
+        ref = _xp(line, "d:lineModificationReference")[0]
+        assert _children(ref) == ["lineNumberReference", "lineOperation"]
+        assert _xp(ref, "d:lineNumberReference/text()") == [str(6 + n)]
+        assert _xp(ref, "d:lineOperation/text()") == ["CREATE"]
+    # The #1046 sign handling is untouched.
+    assert _xp(root, "//d:quantity/text()") == ["-1", "-2"]
+    assert _xp(root, "//d:unitPrice/text()") == ["15000.00", "10000.00"]
+    assert count_lines(res.xml) == 2
+
+
+def test_create_has_no_line_modification_reference():
+    res = build_invoice_data(
+        _invoice(),
+        supplier_tax_number=HungarianTaxNumber("87654321"),
+        supplier_name="Mosoly Dental Kft.",
+        supplier_address=None,
+    )
+    assert "lineModificationReference" not in res.xml
+    assert "invoiceReference" not in res.xml

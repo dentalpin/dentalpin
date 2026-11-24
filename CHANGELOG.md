@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Fixed
+
+- **NAV Online Számla:** credit notes are reported with per-line modification references and the right modification index, and a partial credit note goes to NAV as MODIFY instead of STORNO (#1069).
+
 ## [2.12.0] - 2026-11-23
 
 New: staff two-factor authentication with a per-clinic policy, a patient

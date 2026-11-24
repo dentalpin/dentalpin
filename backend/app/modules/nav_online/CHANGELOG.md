@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1069): a credit note now carries `lineModificationReference` on every line and the chain's `modificationIndex`; a partial credit note is reported as MODIFY, a full one as STORNO.
+
 - fix(#1046): a STORNO reports negative amounts and quantities with a positive unit price. The builder negated lines billing had already negated, so cancellations read as second sales.
 
 - fix(#779): the fallback `issue_date` of a queued record is the clinic's day, not the server's UTC day.
