@@ -86,7 +86,9 @@ budget.
 > Some actions need extra permissions — see the permissions table.
 
 - **Download PDF** — for the current budget state.
-- **Duplicate** — creates a new draft with the same items.
+- **Duplicate** — creates a new draft with the same items. Its validity
+  starts today and runs for the clinic's default validity days (no expiry
+  if the original had none).
 - **Cancel / Delete** — admin only. Only a draft that no treatment plan
   uses can be deleted; cancel a sent or accepted quote instead, and
   reopen the plan to drop a plan's quote.

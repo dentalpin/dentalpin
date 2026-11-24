@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Budgets:** resending an expired quote no longer creates a draft that is already expired; resend and duplicate start the validity window today (#1113).
 - **Patients / expenses:** the CSV import accepts files with a trailing `,,,` line or a padded header name instead of failing (#1114).
 - **Backups:** new `python -m app.cli db restore` restores a `db backup` dump with the backend image's `pg_restore`; the documented restore used the `db` service's PostgreSQL 15 `pg_restore`, which cannot read the newer dumps (#1066).
 - **Modules:** a forced uninstall now includes the tables of still-installed dependent modules in its pg_dump backup; the branch downgrade drops them too (#1067).
