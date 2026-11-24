@@ -856,6 +856,8 @@ class BudgetService:
         created_by: UUID,
     ) -> Budget:
         """Create a new version of a budget."""
+        from .workflow import fresh_valid_until
+
         next_version = await BudgetService.next_version(
             db, source_budget.clinic_id, source_budget.budget_number
         )
@@ -869,7 +871,7 @@ class BudgetService:
             parent_budget_id=source_budget.id,
             status="draft",
             valid_from=await clinic_today_for(db, source_budget.clinic_id),
-            valid_until=source_budget.valid_until,
+            valid_until=await fresh_valid_until(db, source_budget),
             created_by=created_by,
             assigned_professional_id=source_budget.assigned_professional_id,
             global_discount_type=source_budget.global_discount_type,

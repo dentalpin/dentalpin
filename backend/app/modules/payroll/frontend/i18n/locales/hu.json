@@ -50,6 +50,7 @@
       "deductions": "Levonások",
       "net": "Nettó",
       "netMismatch": "A nettó = bruttó mínusz levonások",
+      "subCent": "Az összegek legfeljebb két tizedesjegyet tartalmazhatnak",
       "notes": "Megjegyzések",
       "add": "Tétel hozzáadása",
       "edit": "Tétel szerkesztése",

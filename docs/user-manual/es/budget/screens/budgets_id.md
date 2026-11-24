@@ -128,6 +128,9 @@ Desde aquí se mueve el presupuesto por todo su flujo
 
 1. Pulsa **Reenviar**. Se crea un borrador nuevo (versión +1) con las
    mismas líneas y un enlace público nuevo, y la pantalla navega a él.
+   Su validez empieza hoy y dura los días de validez por defecto de la
+   clínica, así que un presupuesto caducado reenviado no nace caducado.
+   Si el original no tenía fecha de caducidad, el nuevo tampoco.
 2. El plan de tratamiento vinculado pasa automáticamente a la nueva
    versión (evento `budget.superseded`); su estado no cambia.
 3. Edita el borrador si hace falta y envíalo al paciente. Si el plan

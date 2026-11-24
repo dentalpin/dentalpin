@@ -24,8 +24,9 @@ badge and one row per employee entry (`gross − deductions = net`).
 ## What you can do
 
 - **Add** an entry while the period is draft: staff member, gross,
-  deductions, net and an optional note. The form blocks saving unless
-  net equals gross minus deductions (the backend returns 422 otherwise).
+  deductions, net and an optional note. Amounts take at most two
+  decimals. The form blocks saving unless net equals gross minus
+  deductions to the cent (the backend returns 422 otherwise).
 - **Edit** amounts or notes of a draft entry. Outside draft the actions
   disappear — closed and paid entries are immutable.
 - **Delete** a draft entry with confirmation (wrong-user corrections).

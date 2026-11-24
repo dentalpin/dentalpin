@@ -58,7 +58,11 @@ Migration `payr_0001_initial` on own Alembic branch (`payroll`), no
 - `PeriodService` — strictly draft → closed → paid (409 on skips),
   publishes `payroll.period.status_changed`.
 - `EntryService` — draft-period gate (409), `net == gross -
-  deductions` validation (422), duplicate → 409.
+  deductions` validation (422), duplicate → 409. Amounts (and the
+  profile `base_amount`) take at most two decimals (`decimal_places=2`,
+  422 otherwise, #1138): the check runs on the values as sent and each
+  `Numeric(12, 2)` column rounds on its own, so sub-cent input could be
+  stored unbalanced.
 - `ReportService` — monthly/annual sums in the clinic currency.
 
 ## Plaintext boundary

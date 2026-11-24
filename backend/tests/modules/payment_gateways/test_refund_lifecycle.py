@@ -136,6 +136,41 @@ async def test_duplicate_completion_event_is_idempotent(
     assert count == 1
 
 
+async def test_completion_after_failed_raises_gateway_error_and_stays_failed(
+    db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
+):
+    """#1132: a provider confirming a refund we already marked ``failed``
+    raises ``GatewayError`` (which provider webhooks ack with 200), not
+    the bare ``RefundTransitionError`` that turned into a 500 — and the
+    request stays ``failed`` with no core ``Refund``."""
+    request, payment = await _confirmed_payment(
+        db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
+    )
+    refund_request = await GatewayRefundService.request_refund(
+        db_session,
+        clinic_id=gateway_clinic.id,
+        payment=payment,
+        payment_request=request,
+        amount=Decimal("200.00"),
+        reason_code="duplicate",
+        reason_note=None,
+        requested_by=gateway_user_id,
+    )
+    await GatewayRefundService.fail(db_session, refund_request=refund_request)
+
+    with pytest.raises(GatewayError, match="after it was marked failed"):
+        await GatewayRefundService.complete(db_session, refund_request=refund_request)
+
+    assert refund_request.state == GatewayRefundState.FAILED
+    assert refund_request.refund_id is None
+    count = (
+        await db_session.execute(
+            select(func.count()).select_from(Refund).where(Refund.payment_id == payment.id)
+        )
+    ).scalar()
+    assert count == 0
+
+
 async def test_synchronous_provider_completion_still_only_writes_refund_once(
     db_session, fake_adapter, gateway_clinic, gateway_patient, gateway_user_id
 ):

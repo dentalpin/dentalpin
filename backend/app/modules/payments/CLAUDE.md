@@ -30,6 +30,11 @@ Routes mounted at `/api/v1/payments/`.
 | `/reports/aging-receivables` | GET | `payments.reports.read` |
 | `/reports/refunds` | GET | `payments.reports.read` |
 
+`GET /` filters in SQL before pagination: `method` may repeat
+(`?method=cash&method=card`, OR'd; a single value still works),
+`search` matches patient "first last" or `reference` (ILIKE, LIKE
+wildcards escaped via `icontains(autoescape=True)`) (#1033).
+
 ## Dependencies
 
 `manifest.depends = ["patients", "budget"]`. **Never add billing** —

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1132): a `refund.processed` webhook for a refund already marked failed answers 200 and is recorded in the webhook error health fields, instead of a 500 that Razorpay retried forever. The refund stays failed.
+
 - fix(#608): the transaction modal and the payments-list badge showed the checkout rail the receptionist picked (always "Card" for Razorpay checkout) instead of the method the customer actually paid with. They now read the stored payment's method, so a NetBanking payment shows "Net banking".
 - feat(i18n): Hindi (`hi`) locale for the module's frontend layer.
 

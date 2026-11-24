@@ -21,6 +21,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, User
+from app.core.utils.dates import clinic_today_for
 from app.modules.billing.models import Invoice, InvoicePayment
 from app.modules.billing.service import compute_paid_summary
 from app.modules.patients.models import Patient
@@ -99,8 +100,11 @@ async def _invoice_paid_then_refunded(
 
 
 async def _four_surfaces(db: AsyncSession, clinic_id, patient_id, invoice_id):
+    # The summary cuts payments on the clinic's days, so its window ends on
+    # the clinic's today, not the server's.
+    today = await clinic_today_for(db, clinic_id)
     summary = await BillingReportService.get_summary(
-        db, clinic_id, date.today() - timedelta(days=365), date.today()
+        db, clinic_id, today - timedelta(days=365), today
     )
     patient_tab = await BillingReportService.get_patient_summary(db, clinic_id, patient_id)
     overdue = await BillingReportService.get_overdue_invoices(db, clinic_id)
@@ -184,6 +188,12 @@ async def test_total_paid_stays_gross_on_purpose(
     collected figure lives in the payments module). Pinned so a later reader
     does not "fix" it into a second, inconsistent balance.
     """
+    # The window misses today's payment when it ends on a day the clinic
+    # has already left behind, i.e. when the clinic is ahead of the server.
+    # UTC+14 is a day ahead of a UTC server from 10:00 to 24:00 UTC, so a
+    # server-day window fails here most of the day, not only in the hour
+    # around Madrid's midnight.
+    test_clinic.timezone = "Pacific/Kiritimati"
     user_id = await _staff_id(db_session)
     await _invoice_paid_then_refunded(
         db_session,
@@ -194,8 +204,9 @@ async def test_total_paid_stays_gross_on_purpose(
         paid="100",
         refunded="100",
     )
+    today = await clinic_today_for(db_session, test_clinic.id)
     summary = await BillingReportService.get_summary(
-        db_session, test_clinic.id, date.today() - timedelta(days=365), date.today()
+        db_session, test_clinic.id, today - timedelta(days=365), today
     )
     assert summary["total_paid"] == Decimal("100.00")
     assert summary["total_pending"] == Decimal("100.00")
