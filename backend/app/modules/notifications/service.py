@@ -122,36 +122,40 @@ class NotificationService:
         template_key: str,
         locale: str = "es",
         channel: str = "email",
+        *,
+        exact_locale: bool = False,
     ) -> NotificationTemplate | None:
         """Get a template by key, locale and channel.
 
-        Priority: clinic-specific > system template.
+        Priority: clinic-specific > system template. Within each tier a
+        regional locale falls back to its base language (``pt-BR`` -> ``pt``),
+        like the file template loader (#1136). WhatsApp provider templates are
+        approved per language and sent with the message locale, so that
+        channel, and ``exact_locale=True`` callers, match the locale exactly.
         """
-        # First try clinic-specific
-        result = await db.execute(
-            select(NotificationTemplate).where(
-                NotificationTemplate.clinic_id == clinic_id,
-                NotificationTemplate.template_key == template_key,
-                NotificationTemplate.locale == locale,
-                NotificationTemplate.channel == channel,
-                NotificationTemplate.is_active == True,  # noqa: E712
-            )
-        )
-        template = result.scalar_one_or_none()
-        if template:
-            return template
+        locales = [locale]
+        base = locale.split("-", 1)[0]
+        if not exact_locale and channel != "whatsapp" and base != locale:
+            locales.append(base)
 
-        # Fallback to system template
-        result = await db.execute(
-            select(NotificationTemplate).where(
-                NotificationTemplate.clinic_id.is_(None),
-                NotificationTemplate.template_key == template_key,
-                NotificationTemplate.locale == locale,
-                NotificationTemplate.channel == channel,
-                NotificationTemplate.is_active == True,  # noqa: E712
-            )
-        )
-        return result.scalar_one_or_none()
+        for owner in (
+            NotificationTemplate.clinic_id == clinic_id,
+            NotificationTemplate.clinic_id.is_(None),
+        ):
+            for candidate in locales:
+                result = await db.execute(
+                    select(NotificationTemplate).where(
+                        owner,
+                        NotificationTemplate.template_key == template_key,
+                        NotificationTemplate.locale == candidate,
+                        NotificationTemplate.channel == channel,
+                        NotificationTemplate.is_active == True,  # noqa: E712
+                    )
+                )
+                template = result.scalar_one_or_none()
+                if template:
+                    return template
+        return None
 
     @staticmethod
     async def get_template_by_id(

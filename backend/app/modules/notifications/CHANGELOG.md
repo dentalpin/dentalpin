@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1136): a DB template lookup for a regional locale falls back to its base language (`pt-BR` -> `pt`), clinic rows before system rows, so pt-BR clinics get the seeded pt templates instead of a FAILED "Template not found" send. WhatsApp provider templates and the create duplicate check stay exact.
 - fix(#1115): automatic `budget.reminder_sent` milestones are queued at most once per budget and milestone (`dedup_key`).
 
 - fix(#1036): a repeated skip is logged once per message and reason, without using up the send, and a patient's thread returns its newest messages instead of the oldest 200.
