@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Backups:** new `python -m app.cli db restore` restores a `db backup` dump with the backend image's `pg_restore`; the documented restore used the `db` service's PostgreSQL 15 `pg_restore`, which cannot read the newer dumps (#1066).
 - **Modules:** a forced uninstall now includes the tables of still-installed dependent modules in its pg_dump backup; the branch downgrade drops them too (#1067).
 - **Billing:** the New invoice page's row totals and summary now take line discounts into account, matching the draft that gets saved (#1032).
 - **Payments:** the payment list search and multi-method filter now cover every payment, and the pager counts only the matches (#1033).
