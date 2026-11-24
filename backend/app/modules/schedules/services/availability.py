@@ -86,6 +86,8 @@ class AvailabilityService:
                     professional_id=professional_id,
                 )
             )
+            if day == end:  # stepping past date.max would overflow (#1101)
+                break
             day += timedelta(days=1)
 
         return tz_name, _merge_adjacent(all_ranges)

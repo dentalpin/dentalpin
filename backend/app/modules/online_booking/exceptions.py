@@ -52,6 +52,16 @@ class BookingUnavailableError(BookingError):
     status_code = 503
 
 
+class CaptchaInvalidError(BookingError):
+    """The ALTCHA proof is malformed, expired or not bound to this clinic."""
+
+    status_code = 400
+
+
+class CaptchaReusedError(BookingConflictError):
+    """The ALTCHA proof was already consumed by an earlier request."""
+
+
 class BookingRoute(APIRoute):
     """Map domain errors to HTTP so route functions only parse and delegate."""
 

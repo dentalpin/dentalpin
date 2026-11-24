@@ -209,7 +209,11 @@ Dos salvaguardas:
   downgrade limpio; la desinstalación está bloqueada incluso con
   `--force`. Espera a la Fase B.
 - Dependencias inversas — otro módulo instalado lista este en su
-  `depends`. Desinstala primero los dependientes, o pasa `--force`.
+  `depends`. Desinstala primero los dependientes, o pasa `--force`. Con
+  `--force` los dependientes siguen `installed` pero dejan de cargarse, y
+  la desinstalación también borra las tablas de los dependientes cuyas
+  migraciones se apoyan en este módulo. Sus filas van al mismo volcado
+  `storage/backups/module_<nombre>_<timestamp>.sql`.
 
 ---
 

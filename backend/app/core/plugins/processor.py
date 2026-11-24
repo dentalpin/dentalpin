@@ -274,12 +274,26 @@ class PendingProcessor:
         module = module_registry.get(record.name)
         tables = _tables_for(module) if module else []
 
+        # A forced uninstall (#1067) leaves dependents in place, but the
+        # branch downgrade below drags their Alembic branches down too
+        # (``depends_on``, see #286) and drops their tables. Back those
+        # tables up in the same dump so the data stays recoverable.
+        dependents = await self._remaining_dependents(record.name)
+        for dep_name in dependents:
+            dep_module = module_registry.get(dep_name)
+            if dep_module is not None:
+                tables.extend(t for t in _tables_for(dep_module) if t not in tables)
+
         backup_log = await self._op_log.started(
             module_name=record.name, operation="uninstall", step="backup"
         )
         backup_path = await self._dump_tables(record.name, tables)
         await self._op_log.completed(
-            backup_log, {"backup_path": str(backup_path) if backup_path else None}
+            backup_log,
+            {
+                "backup_path": str(backup_path) if backup_path else None,
+                "dependents": dependents,
+            },
         )
 
         lifecycle_log = await self._op_log.started(
@@ -323,6 +337,23 @@ class PendingProcessor:
             db_record.error_at = None
             await session.commit()
         await self._op_log.completed(finalize_log)
+
+    async def _remaining_dependents(self, name: str) -> list[str]:
+        """Modules not yet uninstalled that depend on ``name``, transitively.
+
+        Only a forced uninstall reaches ``_remove`` with such modules
+        left; a normal batch removes them first (``_order_pending``).
+        """
+        async with self._session_factory() as session:
+            records = list((await session.execute(select(ModuleRecord))).scalars())
+        return _dependent_closure(
+            name,
+            {
+                r.name: (r.manifest_snapshot or {}).get("depends", []) or []
+                for r in records
+                if r.state != ModuleState.UNINSTALLED.value and r.name != name
+            },
+        )
 
     # --- External commands ---------------------------------------------
 
@@ -464,6 +495,19 @@ def _tables_for(module: BaseModule) -> list[str]:
         if name:
             tables.append(str(name))
     return tables
+
+
+def _dependent_closure(name: str, depends_by_module: dict[str, list[str]]) -> list[str]:
+    """Names in ``depends_by_module`` that reach ``name`` through ``depends``."""
+    found: list[str] = []
+    frontier = [name]
+    while frontier:
+        current = frontier.pop()
+        for other, deps in sorted(depends_by_module.items()):
+            if current in deps and other not in found:
+                found.append(other)
+                frontier.append(other)
+    return sorted(found)
 
 
 def _build_context(module_name: str, session: AsyncSession) -> ModuleContext:

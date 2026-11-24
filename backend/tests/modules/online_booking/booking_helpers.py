@@ -73,5 +73,22 @@ def appointment(clinic_id, professional_id, start, minutes=30, cabinet_id=None) 
     )
 
 
+def proof_for(clinic_id):
+    """A solved, signed ALTCHA proof for the clinic (cheap cost, synthetic secret)."""
+    from altcha import Payload, create_challenge, solve_challenge
+
+    from app.modules.online_booking.captcha import _secret
+
+    challenge = create_challenge(
+        "PBKDF2/SHA-256",
+        1000,
+        counter=0,
+        expires_at=datetime.now(UTC) + timedelta(minutes=9),
+        data={"clinic": str(clinic_id)},
+        hmac_secret=_secret(clinic_id),
+    )
+    return Payload(challenge, solve_challenge(challenge)).to_base64()
+
+
 def tomorrow_at(hour: int, minute: int = 0) -> datetime:
     return datetime.combine((datetime.now(UTC) + timedelta(days=1)).date(), time(hour, minute), UTC)

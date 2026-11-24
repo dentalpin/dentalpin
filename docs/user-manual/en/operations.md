@@ -201,7 +201,11 @@ Two guardrails:
 - No Alembic branch (Fase A legacy modules). These cannot downgrade
   cleanly; uninstall is blocked even with `--force`. Wait for Fase B.
 - Reverse dependencies — another installed module lists this one in
-  its `depends`. Uninstall them first, or pass `--force`.
+  its `depends`. Uninstall them first, or pass `--force`. With `--force`
+  the dependents stay `installed` but stop loading, and the uninstall
+  also drops the tables of dependents whose migrations build on this
+  module. Their rows go into the same
+  `storage/backups/module_<name>_<timestamp>.sql` dump.
 
 ---
 
