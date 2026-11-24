@@ -21,6 +21,8 @@ from babel.dates import format_skeleton
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from .reason_labels import reason_label
+
 logger = logging.getLogger(__name__)
 
 
@@ -28,7 +30,8 @@ def _humanize_due_month(due_month: str | None, locale: str = "en") -> str | None
     """``2026-09-01`` → "September 2026" / "septiembre de 2026" / … (#975).
 
     ``strftime("%B")`` only ever spoke English, so every non-English
-    template printed an English month.
+    template printed an English month. Babel wants ``pt_BR``, not the
+    ``pt-BR`` tag the app stores (#1135).
     """
     if not due_month:
         return None
@@ -37,7 +40,7 @@ def _humanize_due_month(due_month: str | None, locale: str = "en") -> str | None
     except ValueError:
         return due_month
     try:
-        return format_skeleton("yMMMM", day, locale=locale)
+        return format_skeleton("yMMMM", day, locale=locale.replace("-", "_"))
     except (UnknownLocaleError, ValueError):
         return day.strftime("%B %Y")
 
@@ -85,13 +88,13 @@ async def _on_recall_created(payload: dict, *, db: AsyncSession) -> None:
         result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
         clinic = result.scalar_one_or_none()
 
+        locale = await _message_locale(db, clinic_id, patient_id)
         context = {
             "patient_name": f"{patient.first_name} {patient.last_name}",
             "clinic_name": clinic.name if clinic else "DentalPin",
-            "reason": payload.get("reason"),
-            "due_month": _humanize_due_month(
-                payload.get("due_month"), await _message_locale(db, clinic_id, patient_id)
-            ),
+            # The payload keeps the code; the message gets its label (#1135).
+            "reason": reason_label(payload.get("reason"), locale),
+            "due_month": _humanize_due_month(payload.get("due_month"), locale),
         }
 
         await NotificationGateway.enqueue(

@@ -50,6 +50,7 @@
       "deductions": "Deducciones",
       "net": "Neto",
       "netMismatch": "El neto debe ser igual al bruto menos las deducciones",
+      "subCent": "Los importes admiten como máximo dos decimales",
       "notes": "Notas",
       "add": "Añadir movimiento",
       "edit": "Editar movimiento",

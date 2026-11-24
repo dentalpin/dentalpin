@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1033): `GET /payments` takes `search` (patient name / reference) and a repeated `method`, applied in SQL before pagination; the list page sends them instead of filtering the current page in the browser.
+
 - fix(#989): payment, allocation and refund amounts (REST and the `record_payment` tool) accept at most two decimals (422 otherwise). A sub-cent value passed the sum check and was rounded per column, so 50.005 + 50.005 stored 100.02 of allocations against a 100.01 payment. The client rounds the amounts it computes (budget collection split, pending-charges total) to cents, so float noise like `20.200000000000003` is never sent.
 
 - fix(#939): the patient ledger anchors a payment entry at the clinic's midnight on its `payment_date`. It used UTC midnight, which is the evening before in zones behind UTC, so the Pagos panel showed every payment a day early.

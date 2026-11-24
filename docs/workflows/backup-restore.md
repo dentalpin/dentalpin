@@ -45,6 +45,10 @@ docker compose exec -T backend python -m app.cli db backup
   (default 7, older ones pruned automatically).
 - Exit non-zero when `pg_dump` is missing or fails — wire your cron
   alert to the exit code, not to the log.
+- Restore with `python -m app.cli db restore` from the backend image
+  (§3), never with the `db` service's `pg_restore`: the two images
+  ship different PostgreSQL client versions, and an older
+  `pg_restore` cannot read a newer dump.
 
 Schedule it nightly (host cron hitting the container is enough):
 
@@ -76,11 +80,15 @@ ids, Verifactu certificates — are unrecoverable).
 ```bash
 # 1. Start only the database, with an empty volume.
 docker compose up -d db
-# 2. Restore the dump (custom format needs pg_restore). `--clean
-# --if-exists` avoids fatal "does not exist" noise on an empty DB;
-# `--no-owner` keeps the clinic role intact.
-docker compose exec -T db pg_restore -U dental -d dental_clinic \
-  --clean --if-exists --no-owner < full_20260907T230000Z.dump
+# 2. Restore the dump with the backend image's pg_restore: the same
+# version as the pg_dump that wrote it. Do not use the db service's
+# pg_restore: postgres:15 refuses dumps from a newer pg_dump with
+# "unsupported version (1.16) in file header". `db restore` runs
+# `pg_restore --clean --if-exists --no-owner` against DATABASE_URL
+# (`-` reads the dump from stdin). RUN_MIGRATIONS=0 stops the
+# entrypoint from creating an empty schema before the restore.
+docker compose run --rm -T -e RUN_MIGRATIONS=0 backend \
+  python -m app.cli db restore - < full_20260907T230000Z.dump
 # 3. Restore files over the fresh storage volume (`run`, not `exec`:
 # the backend container is not running yet at this point).
 docker compose run --rm -T backend tar -xz -C /app/storage < storage_20260907T230000Z.tar.gz

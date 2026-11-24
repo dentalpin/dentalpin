@@ -87,7 +87,9 @@ detalle para trabajar sobre cada uno.
 > permisos abajo.
 
 - **Descargar PDF** — del presupuesto en su estado actual.
-- **Duplicar** — crea un nuevo borrador con los mismos ítems.
+- **Duplicar** — crea un nuevo borrador con los mismos ítems. Su validez
+  empieza hoy y dura los días de validez por defecto de la clínica (sin
+  caducidad si el original no la tenía).
 - **Cancelar / Borrar** — admin only. Solo se puede borrar un borrador
   que no use ningún plan de tratamiento; un presupuesto enviado o
   aceptado se cancela, y el de un plan se descarta reabriendo el plan.

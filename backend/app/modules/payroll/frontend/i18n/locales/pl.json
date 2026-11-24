@@ -50,6 +50,7 @@
       "deductions": "Potrącenia",
       "net": "Netto",
       "netMismatch": "Netto musi być równe brutto minus potrącenia",
+      "subCent": "Kwoty mogą mieć najwyżej dwa miejsca po przecinku",
       "notes": "Notatki",
       "add": "Dodaj wpis",
       "edit": "Edytuj wpis",

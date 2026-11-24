@@ -122,6 +122,9 @@ signed, invoiced, or renegotiated.
 
 1. Click **Resend**. A new draft (version +1) is created with the
    same lines and a fresh public link, and the screen navigates to it.
+   Its validity starts today and runs for the clinic's default validity
+   days, so a resent expired quote is not born expired. A quote without
+   an expiry date stays without one.
 2. The linked treatment plan automatically follows the new version
    (`budget.superseded` event); its status is untouched.
 3. Edit the draft if needed and send it to the patient. If the plan
