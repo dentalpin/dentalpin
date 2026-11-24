@@ -31,7 +31,9 @@ export default defineNuxtRouteMiddleware(async (to) => {
   // T6), authorized server-side via the single-use token itself.
   // ``/p/check-in/<token>`` is the QR check-in landing (agenda layer,
   // signed 15-minute token, no account needed).
-  const publicRoutes = ['/login', SETUP_PATH, '/set-password', '/p/budget', '/p/consent', '/p/push', '/p/check-in']
+  // ``/p/booking/<clinicId>`` is the public online booking page
+  // (online_booking layer): no account, cookie-free public endpoints.
+  const publicRoutes = ['/login', SETUP_PATH, '/set-password', '/p/budget', '/p/consent', '/p/push', '/p/check-in', '/p/booking']
   const isPublicRoute = publicRoutes.some(route => to.path === route || to.path.startsWith(route + '/'))
 
   // Initialize auth state (fetch user if token exists) - works on server and client

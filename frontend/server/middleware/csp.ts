@@ -17,6 +17,10 @@
  * inline `style=""` attributes, no external origins, SSE + API on the
  * configured API origin. `'unsafe-inline'` on script-src is the known
  * gap — nonces need a render-hook module; tracked in the doc.
+ *
+ * `frame-ancestors` is `'self'` except on `/p/booking/<clinicId>`, where
+ * `booking-embed.ts` stores the clinic's embed origins in
+ * `event.context.frameAncestors` (documented in security-csp.md).
  */
 export default defineEventHandler((event) => {
   const config = useRuntimeConfig(event)
@@ -58,7 +62,7 @@ export default defineEventHandler((event) => {
     `connect-src ${connect}`,
     'worker-src \'self\' blob:',
     `frame-src ${frame}`,
-    'frame-ancestors \'self\'',
+    `frame-ancestors ${String(event.context.frameAncestors || '\'self\'')}`,
     'base-uri \'self\'',
     'form-action \'self\'',
     'object-src \'none\'',

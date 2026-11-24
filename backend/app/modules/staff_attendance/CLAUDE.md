@@ -19,8 +19,10 @@ never rewrite.
 ## Events published
 
 - `staff_attendance.clocked` on every punch — payload: `event_id`,
-  `clinic_id`, `user_id`, `kind`, `created_by`. Consumed by
-  `activity_journal`.
+  `clinic_id`, `member_id` (whose punch it is), `kind`, `created_by`
+  (who recorded it). Consumed by `activity_journal`, which attributes
+  the row to `created_by`. Do not name the member `user_id`: the journal
+  reads `user_id` as the actor before `created_by` (#1102).
 
 ## Dependencies
 
