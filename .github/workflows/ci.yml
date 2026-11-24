@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [main, develop]
 
+# A new push to a pull request cancels that PR's older, superseded run, so
+# stale runs stop holding the runner queue (#1072). Push runs on main and
+# develop are keyed by commit sha and never cancelled: every merge commit
+# keeps its own run.
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   backend-lint:
     runs-on: ubuntu-latest

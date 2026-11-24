@@ -71,6 +71,12 @@ verified to hold a **user** id at its publish site (a `users.id` FK or
 new event, check what its payload calls the acting user and extend
 `_ACTOR_KEYS` if needed.
 
+The first key that matches wins, so a payload must not use `user_id`
+for the user an event is *about* when someone else acts. For example,
+`staff_attendance.clocked` names the punched member `member_id` and the
+recorder `created_by`, so a punch an admin records for a member is
+attributed to the admin (#1102).
+
 Some payloads carry no user at all (`patient.created/archived`,
 `appointment.scheduled`, `invoice.sent`, `budget.sent`,
 `lab_order.status_changed`, `treatment_plan.treatment_added/removed/
