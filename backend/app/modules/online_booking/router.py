@@ -4,11 +4,13 @@ Routes only parse input, apply the per-IP and per-contact abuse limits and
 delegate to ``BookingService``; domain errors map to HTTP in ``BookingRoute``.
 """
 
+import hashlib
 from datetime import date
 from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from fastapi.responses import JSONResponse, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -16,6 +18,7 @@ from app.core.auth.router import limiter
 from app.core.schemas import ApiResponse, PaginatedApiResponse
 from app.database import get_db
 
+from .captcha import challenge, consume
 from .exceptions import BookingRoute
 from .rate_limit import consume_rate
 from .schemas import (
@@ -24,6 +27,9 @@ from .schemas import (
     Availability,
     BookingRequestOut,
     ConfirmInput,
+    ConfirmOut,
+    LogoInput,
+    LogoState,
     MessageOut,
     PatientSuggestion,
     PublicConfig,
@@ -60,6 +66,59 @@ async def update_settings(
     return ApiResponse(data=await BookingService.update_settings(db, ctx.clinic_id, data))
 
 
+@router.get("/settings/logo")
+async def settings_logo(
+    ctx: CTX, db: DB, _: Annotated[None, Depends(require_permission("online_booking.settings"))]
+) -> Response:
+    return Response(
+        await BookingService.settings_logo(db, ctx.clinic_id),
+        media_type="image/png",
+        headers={
+            "Content-Security-Policy": "default-src 'none'; sandbox",
+            "X-Content-Type-Options": "nosniff",
+            "Cache-Control": "private, no-store",
+        },
+    )
+
+
+@router.put("/settings/logo", response_model=ApiResponse[LogoState])
+async def upload_logo(
+    data: LogoInput,
+    ctx: CTX,
+    db: DB,
+    _: Annotated[None, Depends(require_permission("online_booking.settings"))],
+) -> ApiResponse[LogoState]:
+    await BookingService.upload_logo(db, ctx.clinic_id, data)
+    return ApiResponse(data=LogoState(uploaded=True))
+
+
+@router.delete("/settings/logo", response_model=ApiResponse[LogoState])
+async def delete_logo(
+    ctx: CTX,
+    db: DB,
+    _: Annotated[None, Depends(require_permission("online_booking.settings"))],
+) -> ApiResponse[LogoState]:
+    await BookingService.delete_logo(db, ctx.clinic_id)
+    return ApiResponse(data=LogoState(uploaded=False))
+
+
+@router.get("/public/{clinic_id}/logo")
+@limiter.limit("60/minute")
+async def public_logo(request: Request, clinic_id: UUID, db: DB) -> Response:
+    content = await BookingService.public_logo(db, clinic_id)
+    etag = f'"{hashlib.sha256(content).hexdigest()}"'
+    headers = {
+        "Content-Security-Policy": "default-src 'none'; sandbox",
+        "X-Content-Type-Options": "nosniff",
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "ETag": etag,
+    }
+    validators = [value.strip() for value in request.headers.get("if-none-match", "").split(",")]
+    if "*" in validators or etag in validators or f"W/{etag}" in validators:
+        return Response(status_code=304, headers=headers)
+    return Response(content, media_type="image/png", headers=headers)
+
+
 @router.get("/public/{clinic_id}/config", response_model=ApiResponse[PublicConfig])
 @limiter.limit("60/minute")
 async def public_config(request: Request, clinic_id: UUID, db: DB) -> ApiResponse[PublicConfig]:
@@ -67,13 +126,32 @@ async def public_config(request: Request, clinic_id: UUID, db: DB) -> ApiRespons
     return ApiResponse(data=PublicConfig(**await BookingService.public_config(db, clinic_id)))
 
 
-@router.get("/public/{clinic_id}/availability", response_model=ApiResponse[Availability])
+@router.get(
+    "/public/{clinic_id}/availability",
+    response_model=ApiResponse[Availability],
+    response_model_exclude_none=True,
+)
 @limiter.limit("60/minute")
 async def availability(
-    request: Request, clinic_id: UUID, day: date, db: DB
+    request: Request,
+    clinic_id: UUID,
+    db: DB,
+    day: date | None = None,
+    from_day: date | None = None,
+    days: int = Query(default=7, ge=1, le=31),
+    reason: str | None = Query(default=None, max_length=30),
 ) -> ApiResponse[Availability]:
     await consume_rate("availability-ip", _client(request), 240)
-    return ApiResponse(data=Availability(**await BookingService.availability(db, clinic_id, day)))
+    result = await BookingService.availability(db, clinic_id, day, from_day, days, reason)
+    return ApiResponse(data=Availability(**result))
+
+
+@router.get("/public/{clinic_id}/challenge")
+@limiter.limit("30/minute")
+async def public_challenge(request: Request, clinic_id: UUID, db: DB):
+    await consume_rate("challenge-ip", _client(request), 240)
+    await BookingService.public_settings(db, clinic_id)
+    return JSONResponse(challenge(clinic_id), headers={"Cache-Control": "no-store"})
 
 
 @router.post(
@@ -88,19 +166,19 @@ async def create_request(
         # Honeypot: answer like any other malformed request.
         raise HTTPException(400, "Unable to process request")
     await consume_rate("request-contact", f"{clinic_id}:{str(data.contact_email).lower()}", 3)
+    await BookingService.public_settings(db, clinic_id)
+    await consume(db, clinic_id, data.altcha)
     message = await BookingService.create_request(db, clinic_id, data)
     return ApiResponse(data=MessageOut(message=message))
 
 
-@router.post("/public/{clinic_id}/confirm", response_model=ApiResponse[StatusOut])
+@router.post("/public/{clinic_id}/confirm", response_model=ApiResponse[ConfirmOut])
 @limiter.limit("10/minute")
 async def confirm(
     request: Request, clinic_id: UUID, data: ConfirmInput, db: DB
-) -> ApiResponse[StatusOut]:
+) -> ApiResponse[ConfirmOut]:
     await consume_rate("confirm-ip", _client(request), 120)
-    return ApiResponse(
-        data=StatusOut(status=await BookingService.confirm(db, clinic_id, data.token))
-    )
+    return ApiResponse(data=ConfirmOut(**await BookingService.confirm(db, clinic_id, data.token)))
 
 
 @router.get("/requests/count", response_model=ApiResponse[int])

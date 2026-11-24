@@ -63,7 +63,10 @@ se emite un abono.
   emitir una factura desde un presupuesto ya cobrado (anticipo) la
   factura nace `paid`.
 - **PDF.** Dos formatos: borrador (vista previa con marca de agua)
-  y definitivo (solo desde `issued`). El PDF se genera con
+  y definitivo (solo desde `issued`). El PDF borrador muestra los datos de
+  facturación actuales del paciente (nombre de facturación, o si no el
+  nombre del paciente; NIF; dirección de facturación), los mismos que
+  la emisión congela en la factura. El PDF se genera con
   WeasyPrint. Si una línea usa un tipo de IVA con nota legal (p. ej.
   la exención española, art. 20.Uno.5º LIVA, sembrada por el preset
   `es`), la nota se imprime en el bloque de avisos legales. El pie
