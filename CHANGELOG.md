@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Billing / GDPR / Inventory / Leads / Patients / Patient clinical / Payroll / Staff tasks:** an explicit null on a required update field (33 fields, e.g. patient first name, lead status, payroll entry gross) is now refused with a 422 instead of a 500 or a wrong 409 (#1151).
 - **Copilot:** the Pendientes tab now says when a group has more items than it shows ("Showing 20 of 35 · See all") and links to the full list, instead of silently stopping at 30 recalls and 20 budgets (#1137).
 - **Notifications:** quote and invoice emails show amounts in the clinic's currency with the language's separators (e.g. `1.300,00 €`, `€1,300.00`, `₹1,300.00`), and invoice emails are queued again (#1133).
 - **Notifications:** a pt-BR clinic or patient gets the Portuguese (pt) template instead of a failed send, for example the online booking rejection email (#1136).

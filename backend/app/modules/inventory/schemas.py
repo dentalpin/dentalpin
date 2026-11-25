@@ -9,6 +9,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.core.schemas import NotNull
+
 ItemCategory = Literal["consumables", "equipment", "office", "other"]
 
 MovementReason = Literal["initial", "restock", "consumption", "adjustment", "correction"]
@@ -38,16 +40,17 @@ class InventoryItemCreate(BaseModel):
 
 
 class InventoryItemUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=200)
-    category: ItemCategory | None = None
-    unit: str | None = Field(default=None, max_length=20)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=200)
+    category: NotNull[ItemCategory] = None
+    unit: NotNull[str] = Field(default=None, max_length=20)
     # Absolute set — the CHECK constraint still blocks negatives at the DB
     # level. Incremental changes must go through the atomic adjust endpoint.
     stock_quantity: Decimal | None = Field(default=None, ge=0)
-    min_quantity: Decimal | None = Field(default=None, ge=0)
+    min_quantity: NotNull[Decimal] = Field(default=None, ge=0)
     unit_cost: Decimal | None = Field(default=None, ge=0)
     # Items with ledger history cannot be deleted — deactivate instead.
-    is_active: bool | None = None
+    is_active: NotNull[bool] = None
     notes: str | None = Field(default=None, max_length=2000)
 
     _clear_blank = field_validator("unit_cost", mode="before")(_blank_is_none)

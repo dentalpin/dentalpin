@@ -7,6 +7,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
+from app.core.schemas import NotNull
+
 # ============================================================================
 # Invoice Status and Payment Types
 # ============================================================================
@@ -122,9 +124,10 @@ class InvoiceSeriesUpdate(BaseModel):
 
     prefix: str | None = Field(default=None, min_length=1, max_length=20)
     description: str | None = Field(default=None, max_length=200)
-    reset_yearly: bool | None = None
-    is_default: bool | None = None
-    is_active: bool | None = None
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    reset_yearly: NotNull[bool] = None
+    is_default: NotNull[bool] = None
+    is_active: NotNull[bool] = None
 
 
 class SeriesResetRequest(BaseModel):
