@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Payments:** revenue from completed treatment-plan sessions is now credited to the professional who completed the session in the "By professional" report; sessions completed before this fix stay under no professional (#1152).
 - **Copilot:** the Pendientes tab now says when a group has more items than it shows ("Showing 20 of 35 · See all") and links to the full list, instead of silently stopping at 30 recalls and 20 budgets (#1137).
 - **Notifications:** quote and invoice emails show amounts in the clinic's currency with the language's separators (e.g. `1.300,00 €`, `€1,300.00`, `₹1,300.00`), and invoice emails are queued again (#1133).
 - **Notifications:** a pt-BR clinic or patient gets the Portuguese (pt) template instead of a failed send, for example the online booking rejection email (#1136).
