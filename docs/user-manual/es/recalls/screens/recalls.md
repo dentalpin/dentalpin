@@ -27,7 +27,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/recalls/frontend/pages/recalls/index.vue
   - backend/app/modules/recalls/router.py
-last_verified_commit: b40a1d2
+last_verified_commit: dd87ef44
 ---
 
 # Lista de llamadas
@@ -80,7 +80,8 @@ registrar el intento, mover el recall al siguiente estado.
 
 1. Usa el menú **⋮** de la fila para acciones puntuales:
    - **Snooze N meses** — empuja `due_month` y deja el recall en
-     pendiente. Se publica `recall.snoozed`.
+     pendiente. Se publica `recall.snoozed`. La nota del aplazamiento se
+     añade bajo la fila como `<fecha de la clínica> (<tu nombre>): snoozed +Nmo · <nota>`.
    - **Hecho** — marca como completado. Publica `recall.completed`.
    - **Cancelar** — saca el recall de la cola activa. Publica
      `recall.cancelled`.
