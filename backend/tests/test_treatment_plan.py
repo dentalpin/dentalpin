@@ -2217,3 +2217,30 @@ async def test_plan_search_matches_number_title_and_full_name(
             f"{base}/pipeline", headers=auth_headers, params={"tab": "cerrados", "q": term}
         )
         assert tab.json()["total"] == 1, term
+
+
+@pytest.mark.asyncio
+async def test_pipeline_row_carries_patient_phone(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """The pipeline's Call / WhatsApp buttons render only with a phone (#1161)."""
+    base = "/api/v1/treatment_plan/treatment-plans"
+    patient = await client.put(
+        f"/api/v1/patients/{setup['patient_id']}",
+        headers=auth_headers,
+        json={"phone": "+34666333444"},
+    )
+    assert patient.status_code == 200, patient.text
+    plan = await client.post(base, headers=auth_headers, json={"patient_id": setup["patient_id"]})
+    assert plan.status_code == 201, plan.text
+    closed = await client.post(
+        f"{base}/{plan.json()['data']['id']}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert closed.status_code == 200, closed.text
+
+    tab = await client.get(f"{base}/pipeline", headers=auth_headers, params={"tab": "cerrados"})
+    assert tab.status_code == 200, tab.text
+    row = next(r for r in tab.json()["data"] if r["plan_id"] == plan.json()["data"]["id"])
+    assert row["patient"]["phone"] == "+34666333444"
