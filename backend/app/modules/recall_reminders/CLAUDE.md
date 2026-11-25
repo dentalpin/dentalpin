@@ -36,7 +36,9 @@ resolved automatically by `EmailService._render_template`'s
 file-fallback when no DB row exists.
 
 Available template variables (from the event payload, resolved inside
-the handler): `patient_name`, `clinic_name`, `reason`,
+the handler): `patient_name`, `clinic_name`, `clinic_phone`,
+`clinic_address` (the clinic row's JSONB dict; the email send path flattens
+it to one line; both feed the `tel:` button and the footer, #1154), `reason`,
 `due_month` (humanized in the message's locale, e.g. `"September 2026"`
 / `"septiembre de 2026"`, not the raw `"2026-09-01"` from the payload;
 the locale is the patient's `preferred_locale`, else the clinic's
