@@ -113,9 +113,7 @@ async function openSettings() {
     professionals.value = (await api.get<{ data: Resource[] }>('/api/v1/auth/professionals')).data
     settingsReady.value = true
     void loadSavedLogo().catch(() => {})
-    // A professional who left the clinic is not listed: drop the stale id so
-    // the empty select matches what is saved (null) (#1149).
-    settingsData.value = { ...received, redirect_url: received.redirect_url || '', privacy_url: received.privacy_url || '', embed_origins: received.embed_origins || [], public_url: received.public_url || '', professional_id: professionals.value.some(p => p.id === received.professional_id) ? received.professional_id! : '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
+    settingsData.value = { ...received, redirect_url: received.redirect_url || '', privacy_url: received.privacy_url || '', embed_origins: received.embed_origins || [], public_url: received.public_url || '', professional_id: received.professional_id || '', accent_color: received.accent_color || '', title_es: received.title_es || '', intro_es: received.intro_es || '', title_en: received.title_en || '', intro_en: received.intro_en || '' }
   } catch {
     settingsError.value = t('onlineBooking.settingsError')
   }
