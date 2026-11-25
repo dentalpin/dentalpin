@@ -162,6 +162,29 @@ describe('online booking reception', () => {
     await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, slot_minutes: 30, title_es: 'Reserva dental' })))
   })
 
+  async function saveSettingsWith(professionalId: string) {
+    const base = get.getMockImplementation()!
+    get.mockImplementation(async (url: string) => {
+      const response = await base(url)
+      return url === '/api/v1/online_booking/settings' ? { data: { ...response.data, professional_id: professionalId } } : response
+    })
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    const save = () => wrapper!.findAll('button').find(button => button.text().includes('onlineBooking.saveSettings'))
+    await vi.waitFor(() => expect(save()?.attributes('disabled')).toBeUndefined())
+    await save()!.trigger('click')
+  }
+
+  it('drops a configured professional who is no longer listed so booking can be switched off (#1149)', async () => {
+    await saveSettingsWith('professional-gone')
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, professional_id: null })))
+  })
+
+  it('keeps a configured professional who is still listed', async () => {
+    await saveSettingsWith('professional-1')
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ professional_id: 'professional-1' })))
+  })
+
   it('allows adding a visit reason and saving its duration', async () => {
     wrapper = await mountSuspended(RequestsPage)
     await clickByText(wrapper, 'onlineBooking.settingsTitle')
