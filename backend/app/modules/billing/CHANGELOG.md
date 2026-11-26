@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1184): switching `reset_yearly` on for a continuous series (`PUT /series/{id}`) restarted its numbering mid-year, because the series still carried its creation year in `last_reset_year`; the next invoice reused an already-issued number's sequential (FAC-2027-0001 after FAC-2027-0003) and the one after hit `ix_invoices_clinic_number_unique`. `update_series` now sets `last_reset_year` to the clinic's current year on the off→on switch, so the count carries on and resets next January.
 - fix(#1032): the New invoice page's row totals and summary apply line discounts (percentage and absolute) before VAT, rounded per line like the saved draft; the item modals' previews share the same helper (`utils/lineAmounts.ts`).
 
 - fix(#1103): the draft invoice PDF printed "None" as the billing name and an empty address; it now shows the patient billing data that issuing snapshots (shared `patient_billing_snapshot` helper).
