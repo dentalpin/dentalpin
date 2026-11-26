@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1118): mark items cancelled when all sessions are cancelled; treat cancelled items as terminal for plan completion and prevent deleting the last pending session.
+
 - fix(#1038): the plan list takes `search`, and both it and the pipeline search match number, title and patient name term by term.
 - fix(#1034): reactivating a closed plan (by hand, or by accepting a re-sent quote) restores the planned treatments that closing took off the chart; closing through a status change stamps `closed_at` too.
 
