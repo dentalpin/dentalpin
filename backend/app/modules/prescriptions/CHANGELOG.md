@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1187): `create_prescription_draft` takes the clinic's communication language as the draft locale instead of a hard-coded `es`, and rejects an empty `medication_name` like the REST schema.
 - fix(#1134): `PATCH /templates/{id}` with `items: null` or `name: null` is a 422; a null `items` used to be stored as JSON null and break the clinic's template list (500), a null `name` answered the duplicate-name 409.
 
 - fix(#966): prescription lines keep the order they were entered in. `sort_order` defaulted to 0 on the request, so a line added after applying a template, or while editing a draft, sorted before the numbered lines and printed in the wrong position. The submitted list order is now the line order.
