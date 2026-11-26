@@ -1490,6 +1490,28 @@ async def test_cancel_session_blocks_earned(
 
 
 @pytest.mark.asyncio
+async def test_cancelling_all_sessions_cancels_item(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup_multi_session: dict
+):
+    """Cancelling every session cancels the item without earning treatment."""
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+
+    for session in sessions:
+        response = await client.patch(
+            f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}/sessions/{session['id']}/cancel",
+            headers=auth_headers,
+            json={},
+        )
+        assert response.status_code == 200, response.text
+
+    item = response.json()["data"]
+    assert item["status"] == "cancelled"
+    assert all(session["status"] == "cancelled" for session in item["sessions"])
+
+
+@pytest.mark.asyncio
 async def test_legacy_complete_endpoint_advances_next_session(
     db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup_multi_session: dict
 ):

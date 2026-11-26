@@ -1062,7 +1062,6 @@ class TreatmentPlanService:
             raise ValueError("Session not found")
         if session.status != "pending":
             raise ValueError("Session is not pending")
-
         session.status = "completed"
         session.completed_at = datetime.now(UTC)
         session.completed_by = user_id
@@ -1261,12 +1260,13 @@ class TreatmentPlanService:
         if notes:
             session.notes = notes
         await db.flush()
-
-        # Finalize if cancellation leaves the item with no pending work and
-        # at least one completed session.
+        # Handle the item when all sessions reach a terminal state.
         terminal_states = {"completed", "cancelled"}
-        all_terminal = all(s.status in terminal_states for s in item.sessions)
+        all_terminal = bool(item.sessions) and all(
+            s.status in terminal_states for s in item.sessions
+        )
         any_completed = any(s.status == "completed" for s in item.sessions)
+
         if all_terminal and any_completed and item.status != "completed":
             await TreatmentPlanService._finalize_item(
                 db,
@@ -1277,6 +1277,11 @@ class TreatmentPlanService:
                 completed_without_appointment=False,
                 notes=None,
             )
+        elif all_terminal and not any_completed:
+            # All sessions were cancelled; do not record treatment as performed.
+            item.status = "cancelled"
+            await db.flush()
+            await TreatmentPlanService._check_and_complete_plan(db, clinic_id, plan_id)
         return item
 
     @staticmethod
@@ -1297,6 +1302,7 @@ class TreatmentPlanService:
             raise ValueError("Session not found")
         if session.status != "pending":
             raise ValueError("Cannot edit a non-pending session")
+        await TreatmentPlanService._ensure_unlocked(db, clinic_id, plan_id)
         await TreatmentPlanService._ensure_unlocked(db, clinic_id, plan_id)
 
         if "label" in data:
@@ -1345,21 +1351,23 @@ class TreatmentPlanService:
         item_id: UUID,
         session_id: UUID,
     ) -> PlannedTreatmentItem | None:
-        """Remove a pending session. Refuses on completed/cancelled sessions."""
+        """Remove a pending session without deleting the last pending one."""
         item = await TreatmentPlanService._load_item_with_sessions(db, clinic_id, plan_id, item_id)
         if not item:
             return None
+
         session = next((s for s in item.sessions if s.id == session_id), None)
         if not session:
             raise ValueError("Session not found")
         if session.status != "pending":
             raise ValueError("Cannot delete a non-pending session")
+
         await TreatmentPlanService._ensure_unlocked(db, clinic_id, plan_id)
-        if (
-            len([s for s in item.sessions if s.status == "pending"]) <= 1
-            and len(item.sessions) == 1
-        ):
-            raise ValueError("Cannot delete the only session of an item")
+
+        pending_count = sum(1 for s in item.sessions if s.status == "pending")
+        if pending_count <= 1:
+            raise ValueError("Cannot delete the only remaining pending session")
+
         item.sessions.remove(session)
         await db.flush()
         return item
@@ -1370,17 +1378,16 @@ class TreatmentPlanService:
         clinic_id: UUID,
         plan_id: UUID,
     ) -> None:
-        """Check if all items completed and auto-complete the plan if so."""
+        """Complete the plan when all items are completed or cancelled."""
         plan = await TreatmentPlanService.get(db, clinic_id, plan_id)
         if not plan or plan.status != "active":
             return
 
-        # Check if any non-completed items remain
-        has_pending = any(item.status != "completed" for item in plan.items)
+        terminal_states = {"completed", "cancelled"}
+        has_pending = any(item.status not in terminal_states for item in plan.items)
         if has_pending:
             return
 
-        # All items completed - auto-complete the plan
         old_status = plan.status
         plan.status = "completed"
 
@@ -1395,7 +1402,7 @@ class TreatmentPlanService:
         )
 
         logger.info(
-            "Auto-completed treatment plan %s (all items completed)",
+            "Auto-completed treatment plan %s (all items terminal)",
             plan.id,
         )
 
