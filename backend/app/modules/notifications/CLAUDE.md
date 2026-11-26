@@ -129,6 +129,10 @@ is the `NotificationType` Literal, so the model is shown the nine values.
   claims delivery.
 - **Templates are i18n-aware** (Spanish UI strings). Never hardcode
   copy in handlers — use a template.
+- **A context key one locale renders, every locale renders.** `budget_sent`
+  dropped `custom_message` in 8 locales and `public_url` in all 13
+  (#1205, #1206); `tests/test_budget_sent_email_template.py` renders it in
+  every locale dir. Guard optional keys with `{% if key %}`.
 - **Template context that needs a query lives in `service.py`, once.**
   `budget_treatments_context(db, budget_id, money)` builds the `treatments`
   table `budget_sent.html` renders. It used to exist twice — in

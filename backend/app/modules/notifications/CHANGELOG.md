@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1205, #1206): every locale's `budget_sent` email shows the Send dialog's custom message (8 locales, Spanish included, dropped it) and a button to the public quote page (`public_url`), so the patient can open, accept and sign the quote from the email.
 - fix(#1133): quote and invoice emails format amounts with `format_currency` in the clinic's currency and the message's locale (no more raw floats or hard-coded `€`); the `invoice.sent` handler no longer crashes on the removed `Invoice.balance_due` column, so invoice emails queue again
 - fix(#1136): a DB template lookup for a regional locale falls back to its base language (`pt-BR` -> `pt`), clinic rows before system rows, so pt-BR clinics get the seeded pt templates instead of a FAILED "Template not found" send. WhatsApp provider templates and the create duplicate check stay exact.
 - fix(#1115): automatic `budget.reminder_sent` milestones are queued at most once per budget and milestone (`dedup_key`).

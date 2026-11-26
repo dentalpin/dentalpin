@@ -122,7 +122,7 @@ The encryption key is derived from `SECRET_KEY` using PBKDF2.
 | `appointment_confirmation` | Appointment created | Confirms scheduled appointment |
 | `appointment_cancelled` | Appointment cancelled | Notifies cancellation |
 | `appointment_reminder` | Scheduled (cron) | Reminder X hours before |
-| `budget_sent` | Budget sent to patient | Quote details |
+| `budget_sent` | Budget sent to patient | Quote details, the staff custom message and a button to the public quote page (`public_url`, `/p/budget/{token}`) |
 | `budget_accepted` | Budget accepted | Acceptance confirmation |
 | `welcome` | Patient created | Welcome new patient |
 

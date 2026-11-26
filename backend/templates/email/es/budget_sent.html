@@ -72,6 +72,18 @@
 <p><strong>Observaciones:</strong> {{ notes }}</p>
 {% endif %}
 
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Revisar mi presupuesto</a>
+</div>
+{% endif %}
+
 <p>Si tienes alguna pregunta sobre el presupuesto o deseas agendar tu tratamiento, no dudes en contactarnos.</p>
 
 {% if clinic_phone %}
