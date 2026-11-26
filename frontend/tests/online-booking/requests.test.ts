@@ -153,6 +153,17 @@ describe('online booking reception', () => {
     expect(save?.classes()).toContain('bg-primary')
   })
 
+  it('labels the logo field differently from its upload button (#1226)', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.text()).toContain('onlineBooking.rules'))
+    const label = wrapper.findAll('label').find(element => element.text() === 'onlineBooking.logo')
+    expect(label, 'missing logo field label').toBeDefined()
+    const button = wrapper.findAll('button').find(element => element.text() === 'onlineBooking.logoUpload')
+    expect(button, 'missing logo upload button').toBeDefined()
+    expect(label!.text()).not.toBe(button!.text())
+  })
+
   it('saves public branding without losing other settings', async () => {
     wrapper = await mountSuspended(RequestsPage)
     await clickByText(wrapper, 'onlineBooking.settingsTitle')
