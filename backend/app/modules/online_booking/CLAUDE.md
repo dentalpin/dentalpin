@@ -16,6 +16,7 @@
 - Booking rechecks under the lock on request, confirmation and acceptance. Request and confirmation check the request's professional; acceptance checks the professional and cabinet reception chooses (same professional or same cabinet). Agenda itself does not reject overlaps (#905); a later agenda write can still create one.
 - Confirm tokens are random, hashed at rest, one-use, and transmitted in URL fragments.
 - Emails go through `NotificationGateway.enqueue` in the caller's transaction (types `booking_confirmation`, `booking_rejection`, `force_send`, email channel only); the core outbox delivers after commit. The module has no SMTP, outbox or worker of its own.
+- Each request stores the `language` the visitor sent (`ob_0005`); the confirmation and the rejection both render in it. NULL (no language sent, or older rows) falls back to the clinic's language (#1208).
 - System email templates are seeded by `ob_0003` (es, en; English copy for the other ten locales pending translation). Clinics may override them per locale.
 - The confirmation link is in the queued message context until delivery; cleanup cancels unsent confirmations of closed requests.
 - The installed module schedules expiry, 30-day deletion and 90-day contact erasure.
