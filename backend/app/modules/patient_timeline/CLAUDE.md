@@ -61,6 +61,12 @@ updates. See `docs/events-catalog.md` for the full list.
   than deleting the original.
 - **Event handlers must be cheap and idempotent.** The same event can
   arrive twice; deduplicate by `(event_type, source_id)`.
+- **Titles are stored in Spanish, shown in the viewer's language (#1174).**
+  The UI rebuilds each heading from `event_type` + `event_data`
+  (`frontend/utils/timelineTitle.ts`, keys `patients.timeline.titles.*` in
+  every host locale) and falls back to the stored `title`. When a handler
+  puts a dynamic value in its title (a name, number or subject), put the same
+  value in `event_data` too, and add a case plus keys for any new event type.
 - **No upstream coupling.** Don't import any of the producing modules'
   services. The whole point of this module is that it's loosely
   coupled to everyone.

@@ -2,6 +2,7 @@
 import type { TimelineEntry } from '~~/app/types'
 import { resolveSlot } from '~~/app/composables/useModuleSlots'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { timelineEntryTitle } from '../../utils/timelineTitle'
 
 interface Props {
   patientId: string
@@ -9,7 +10,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { t, locale } = useI18n()
+const { t, te, locale } = useI18n()
 const { can } = usePermissions()
 
 const patientIdRef = computed(() => props.patientId)
@@ -214,6 +215,13 @@ function getEventMeta(entry: TimelineEntry): MetaChip[] {
   return chips
 }
 
+// ---- Title ---------------------------------------------------------------
+
+// The stored title is Spanish; rebuild it in the viewer's language (#1174).
+function getEntryTitle(entry: TimelineEntry): string {
+  return timelineEntryTitle(entry, { t, te })
+}
+
 // ---- Navigation to source ---------------------------------------------
 
 // Only sources that have their own standalone page are clickable. Everything
@@ -380,7 +388,7 @@ onMounted(() => {
                         isLowImpact(entry.event_type) ? 'text-sm' : ''
                       ]"
                     >
-                      {{ entry.title }}
+                      {{ getEntryTitle(entry) }}
                     </h4>
                     <p
                       v-if="entry.description"

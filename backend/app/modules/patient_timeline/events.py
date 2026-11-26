@@ -30,6 +30,12 @@ patient and the appointment in one transaction; a second connection cannot see
 the uncommitted patient, so the FK on ``patient_timeline.patient_id`` fails,
 the insert is rolled back and the visit silently vanishes from the ficha — a
 log that drops entries without a trace is worse than no log.
+
+The stored ``title`` is Spanish: it is the record, and the agent tool reads
+it. The UI does not print it; it rebuilds the heading in the viewer's language
+from ``event_type`` + ``event_data`` (``frontend/utils/timelineTitle.ts``,
+#1174). So every dynamic part of a title (treatment, item or plan name,
+message subject, document title) must also land in ``event_data``.
 """
 
 from __future__ import annotations
@@ -169,6 +175,7 @@ async def on_appointment_scheduled(data: dict, *, db: AsyncSession) -> None:
         source_id_key="appointment_id",
         title=f"Cita programada: {treatment}",
         event_data={
+            "treatment_type": data.get("treatment_type"),
             "cabinet": data.get("cabinet"),
             "professional_id": data.get("professional_id"),
             "start_time": data.get("start_time"),
@@ -189,6 +196,7 @@ async def on_appointment_completed(data: dict, *, db: AsyncSession) -> None:
         title=f"Cita completada: {treatment}",
         description=data.get("notes"),
         event_data={
+            "treatment_type": data.get("treatment_type"),
             "cabinet": data.get("cabinet"),
             "professional_id": data.get("professional_id"),
         },
@@ -206,7 +214,10 @@ async def on_appointment_cancelled(data: dict, *, db: AsyncSession) -> None:
         data=data,
         source_id_key="appointment_id",
         title=f"Cita cancelada: {treatment}",
-        event_data={"professional_id": data.get("professional_id")},
+        event_data={
+            "treatment_type": data.get("treatment_type"),
+            "professional_id": data.get("professional_id"),
+        },
         db=db,
     )
 
@@ -221,6 +232,7 @@ async def on_appointment_no_show(data: dict, *, db: AsyncSession) -> None:
         source_id_key="appointment_id",
         title=f"Paciente no asistió: {treatment}",
         event_data={
+            "treatment_type": data.get("treatment_type"),
             "cabinet": data.get("cabinet"),
             "professional_id": data.get("professional_id"),
         },
@@ -238,7 +250,10 @@ async def on_appointment_confirmed(data: dict, *, db: AsyncSession) -> None:
         data=data,
         source_id_key="appointment_id",
         title=f"Cita confirmada: {treatment}",
-        event_data={"professional_id": data.get("professional_id")},
+        event_data={
+            "treatment_type": data.get("treatment_type"),
+            "professional_id": data.get("professional_id"),
+        },
         occurred_at_key="changed_at",
         created_by_key="changed_by",
         db=db,
@@ -255,6 +270,7 @@ async def on_appointment_checked_in(data: dict, *, db: AsyncSession) -> None:
         source_id_key="appointment_id",
         title=f"Paciente llegó a la clínica ({treatment})",
         event_data={
+            "treatment_type": data.get("treatment_type"),
             "cabinet": data.get("cabinet"),
             "professional_id": data.get("professional_id"),
         },
@@ -274,6 +290,7 @@ async def on_appointment_in_treatment(data: dict, *, db: AsyncSession) -> None:
         source_id_key="appointment_id",
         title=f"Paciente en gabinete ({treatment})",
         event_data={
+            "treatment_type": data.get("treatment_type"),
             "cabinet": data.get("cabinet"),
             "professional_id": data.get("professional_id"),
         },
@@ -301,6 +318,7 @@ async def on_tooth_treatment_performed(data: dict) -> None:
         title=f"Tratamiento realizado: {name}",
         description=f"Dientes: {teeth_label}" if teeth_label else None,
         event_data={
+            "treatment_name": data.get("treatment_name"),
             "clinical_type": data.get("clinical_type"),
             "tooth_numbers": teeth,
         },
@@ -320,7 +338,7 @@ async def on_plan_created(data: dict) -> None:
         title=f"Plan de tratamiento creado: {plan_name}"
         if plan_name
         else "Plan de tratamiento creado",
-        event_data={"plan_number": data.get("plan_number")},
+        event_data={"plan_number": data.get("plan_number"), "plan_name": data.get("plan_name")},
         created_by_key="created_by",
     )
 
@@ -339,7 +357,7 @@ async def on_plan_item_completed(data: dict) -> None:
         data=data,
         source_id_key="item_id",
         title=title,
-        event_data={"plan_id": data.get("plan_id")},
+        event_data={"plan_id": data.get("plan_id"), "item_name": item_name},
         created_by_key="completed_by",
     )
 
@@ -566,6 +584,7 @@ async def on_notification_sent(data: dict) -> None:
         title=f"{_channel_label(data)} enviado: {subject}",
         event_data={
             "channel": data.get("channel"),
+            "subject": data.get("subject"),
             "template_key": data.get("template_key"),
         },
     )
@@ -600,6 +619,7 @@ async def on_notification_failed(data: dict) -> None:
         description=data.get("error_message"),
         event_data={
             "channel": data.get("channel"),
+            "subject": data.get("subject"),
             "template_key": data.get("template_key"),
             "error_message": data.get("error_message"),
         },
@@ -652,7 +672,10 @@ async def on_document_uploaded(data: dict) -> None:
         data=data,
         source_id_key="document_id",
         title=f"Documento: {title}",
-        event_data={"document_type": data.get("document_type")},
+        event_data={
+            "document_type": data.get("document_type"),
+            "document_title": data.get("title"),
+        },
     )
 
 
@@ -676,6 +699,7 @@ async def on_photo_uploaded(data: dict) -> None:
         source_id_key="document_id",
         title=f"{label_kind}: {title}",
         event_data={
+            "document_title": data.get("title"),
             "media_kind": media_kind,
             "media_category": category,
             "media_subtype": subtype,
@@ -779,7 +803,7 @@ async def on_item_completed_without_note(data: dict) -> None:
         data=data,
         source_id_key="source_id",
         title=f"{item_name} completado sin nota",
-        event_data={"plan_id": data.get("plan_id")},
+        event_data={"plan_id": data.get("plan_id"), "item_name": data.get("item_name")},
         created_by_key="user_id",
     )
 

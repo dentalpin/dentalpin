@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1174): timeline headings are rebuilt from event_type + event_data in the viewer's language instead of printing the stored Spanish title; handlers now also store the treatment/plan/item name, message subject and document title in event_data (stored title unchanged).
+
 - fix(#948): the appointment-lifecycle and orthodontic handlers take `db` and record inside a savepoint of the publisher's transaction. A booking that created the patient and the appointment together lost its timeline entry to the `patient_timeline_patient_id_fkey` violation; a failed timeline insert still cannot roll back the booking.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

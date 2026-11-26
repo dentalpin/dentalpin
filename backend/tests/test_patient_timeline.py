@@ -362,6 +362,119 @@ async def test_on_document_uploaded_inserts_document(
 
 
 # ---------------------------------------------------------------------------
+# Localized titles (#1174): the stored title is Spanish, so the UI rebuilds
+# the heading from event_type + event_data. Every dynamic part of a title
+# must therefore also be in event_data, or the UI can only print Spanish.
+# ---------------------------------------------------------------------------
+
+
+_APPOINTMENT_HANDLERS = [
+    ("on_appointment_scheduled", {"start_time": datetime.now(UTC).isoformat()}),
+    ("on_appointment_completed", {"end_time": datetime.now(UTC).isoformat()}),
+    ("on_appointment_cancelled", {}),
+    ("on_appointment_no_show", {"start_time": datetime.now(UTC).isoformat()}),
+    ("on_appointment_confirmed", {"changed_at": datetime.now(UTC).isoformat()}),
+    ("on_appointment_checked_in", {"changed_at": datetime.now(UTC).isoformat()}),
+    ("on_appointment_in_treatment", {"changed_at": datetime.now(UTC).isoformat()}),
+]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(("handler", "extra"), _APPOINTMENT_HANDLERS)
+async def test_appointment_entries_carry_treatment_type_in_event_data(
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    handler: str,
+    extra: dict,
+):
+    payload = {
+        **_base_payload(test_clinic, test_patient),
+        "appointment_id": str(uuid4()),
+        "treatment_type": "Limpieza",
+        **extra,
+    }
+    await getattr(timeline_events, handler)(payload, db=db_session)
+    await db_session.commit()
+
+    entries = await _entries_for(db_session, test_patient.id)
+    assert len(entries) == 1
+    assert entries[0].event_data["treatment_type"] == "Limpieza"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("handler", "payload_extra", "key", "expected"),
+    [
+        (
+            "on_tooth_treatment_performed",
+            {"treatment_id": str(uuid4()), "treatment_name": "Obturación"},
+            "treatment_name",
+            "Obturación",
+        ),
+        (
+            "on_plan_created",
+            {"plan_id": str(uuid4()), "plan_name": "Ortodoncia completa"},
+            "plan_name",
+            "Ortodoncia completa",
+        ),
+        (
+            "on_plan_item_completed",
+            {"item_id": str(uuid4()), "item_name": "Empaste 16"},
+            "item_name",
+            "Empaste 16",
+        ),
+        (
+            "on_item_completed_without_note",
+            {"plan_item_id": str(uuid4()), "item_name": "Empaste 16"},
+            "item_name",
+            "Empaste 16",
+        ),
+        (
+            "on_notification_sent",
+            {"message_id": str(uuid4()), "channel": "email", "subject": "Recordatorio"},
+            "subject",
+            "Recordatorio",
+        ),
+        (
+            "on_notification_failed",
+            {"message_id": str(uuid4()), "channel": "email", "subject": "Recordatorio"},
+            "subject",
+            "Recordatorio",
+        ),
+        (
+            "on_document_uploaded",
+            {"document_id": str(uuid4()), "title": "Consentimiento"},
+            "document_title",
+            "Consentimiento",
+        ),
+        (
+            "on_photo_uploaded",
+            {"document_id": str(uuid4()), "title": "Frontal", "media_kind": "photo"},
+            "document_title",
+            "Frontal",
+        ),
+    ],
+)
+async def test_title_dynamic_part_is_in_event_data(
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    handler: str,
+    payload_extra: dict,
+    key: str,
+    expected: str,
+):
+    payload = {**_base_payload(test_clinic, test_patient), **payload_extra}
+    await getattr(timeline_events, handler)(payload)
+
+    entries = await _entries_for(db_session, test_patient.id)
+    assert len(entries) == 1
+    assert expected in entries[0].title  # stored title kept for back-compat
+    assert entries[0].event_data[key] == expected
+
+
+# ---------------------------------------------------------------------------
 # Guardrails
 # ---------------------------------------------------------------------------
 
