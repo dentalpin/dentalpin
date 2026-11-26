@@ -153,12 +153,12 @@ function isOverdue(inv: InvoiceListItem): boolean {
   // A credit note is never overdue (#1090).
   if (inv.is_historical || inv.credit_note_for_id || !inv.due_date) return false
   if (!['issued', 'partial'].includes(inv.status)) return false
-  return new Date(inv.due_date) < new Date()
+  return parseDateOnly(inv.due_date) < new Date()
 }
 
 function daysOverdue(inv: InvoiceListItem): number {
   if (!inv.due_date) return 0
-  const ms = Date.now() - new Date(inv.due_date).getTime()
+  const ms = Date.now() - parseDateOnly(inv.due_date).getTime()
   return Math.max(0, Math.floor(ms / (24 * 3600 * 1000)))
 }
 

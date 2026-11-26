@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1176): the invoice list's overdue flag and days-overdue count read `due_date` as local midnight (`parseDateOnly`), so west of UTC an invoice no longer turns overdue the evening before its due date.
+
 - fix(#1032): the New invoice page's row totals and summary apply line discounts (percentage and absolute) before VAT, rounded per line like the saved draft; the item modals' previews share the same helper (`utils/lineAmounts.ts`).
 
 - fix(#1103): the draft invoice PDF printed "None" as the billing name and an empty address; it now shows the patient billing data that issuing snapshots (shared `patient_billing_snapshot` helper).
