@@ -28,6 +28,7 @@ from app.core.pdf_locales import PDF_LOCALES
 from app.core.utils.dates import clinic_zone
 from app.modules.patients.service import PatientService
 
+from .consent_markdown import render_consent_body
 from .exceptions import (
     ConsentConflictError,
     ConsentNotFoundError,
@@ -321,6 +322,8 @@ class ConsentService:
             "data": {
                 "title": doc.title,
                 "text": doc.content["text"],
+                # The page renders this, never ``text`` (#1171). Same renderer as the PDF.
+                "body_html": render_consent_body(doc.content["text"]),
                 "patient": f"{patient.first_name} {patient.last_name}",
                 "clinic": clinic.name,
                 "purpose": link.purpose,

@@ -15,6 +15,8 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
+from .consent_markdown import render_consent_body
+
 if TYPE_CHECKING:
     from app.core.auth.models import Clinic
     from app.modules.patients.models import Patient
@@ -696,6 +698,19 @@ class DocumentPDFService:
                 .doc-title {{ font-size: 16pt; font-weight: bold; color: #1e40af; text-align: right; }}
                 .consent-title {{ font-size: 13pt; margin-bottom: 12px; overflow-wrap: anywhere; }}
                 .section {{ margin-bottom: 25px; }}
+                /* Consent body: the Markdown subset of consent_markdown.py (#1171). */
+                .consent-body p, .consent-body ul, .consent-body ol {{ margin-bottom: 8px; }}
+                .consent-body h2, .consent-body h3, .consent-body h4 {{
+                    font-weight: bold; color: #1e40af; margin: 12px 0 6px;
+                    break-after: avoid; overflow-wrap: anywhere;
+                }}
+                .consent-body h2 {{ font-size: 12pt; }}
+                .consent-body h3 {{ font-size: 11pt; }}
+                .consent-body h4 {{ font-size: 10pt; }}
+                .consent-body ul, .consent-body ol {{ padding-inline-start: 20px; }}
+                .consent-body li {{ margin-bottom: 3px; }}
+                .consent-body > :first-child {{ margin-top: 0; }}
+                .consent-body > :last-child {{ margin-bottom: 0; }}
                 .section-title {{
                     font-size: 11pt; font-weight: bold; color: #1e40af;
                     margin-bottom: 10px; padding-bottom: 5px;
@@ -795,7 +810,7 @@ class DocumentPDFService:
                     if not signature
                     else ""
                 )
-                + f'<div class="notes-content" style="white-space:pre-wrap">{esc(content.get("text"))}</div></div>'
+                + f'<div class="notes-content consent-body">{render_consent_body(content.get("text"))}</div></div>'
                 + (
                     f"<p>{esc(labels['consent_revocation_text'])}</p>"
                     if content.get("purpose") == "revoke"
