@@ -3,6 +3,7 @@
 import hashlib
 import logging
 from collections.abc import Callable
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from decimal import Decimal
 from uuid import UUID
@@ -992,3 +993,157 @@ async def budget_treatments_context(db: AsyncSession, budget_id: UUID, money: Mo
         }
         for item in items
     ]
+
+
+APPOINTMENT_NOTIFICATION_TYPES = (
+    "appointment_confirmation",
+    "appointment_reminder",
+    "appointment_cancelled",
+)
+BUDGET_NOTIFICATION_TYPES = ("budget_sent", "budget_accepted")
+
+
+class SendContextError(Exception):
+    """A manual send cannot build its context: a missing or foreign id.
+
+    ``code`` is the machine name the agent tool returns; ``status_code`` and
+    ``detail`` are what the REST route raises.
+    """
+
+    def __init__(self, code: str, status_code: int, detail: str):
+        super().__init__(detail)
+        self.code = code
+        self.status_code = status_code
+        self.detail = detail
+
+
+@dataclass
+class ManualSendContext:
+    context: dict
+    # The recipient: the one passed in, else the appointment's or budget's.
+    patient: object | None
+    # The appointment's or budget's own patient, when the type links one.
+    linked_patient_id: UUID | None = None
+
+
+async def build_manual_send_context(
+    db: AsyncSession,
+    clinic_id: UUID,
+    notification_type: str,
+    *,
+    patient=None,
+    appointment_id: UUID | None = None,
+    budget_id: UUID | None = None,
+    custom_context: dict | None = None,
+) -> ManualSendContext:
+    """Template context for a manual send, from the REST route or the copilot.
+
+    Clinic name/phone/address always; an ``appointment_*`` type requires its
+    appointment (date, time, professional), a ``budget_sent`` /
+    ``budget_accepted`` its budget (number, totals, treatments). Both must
+    belong to ``clinic_id``. The copilot tool used to fill only
+    ``patient_name``, so its emails went out with no clinic, date or amount
+    (#1181). Raises :class:`SendContextError`.
+    """
+    from app.core.auth.models import Clinic, User
+    from app.modules.agenda.models import Appointment
+    from app.modules.budget.models import Budget
+    from app.modules.patients.models import Patient
+
+    context = custom_context or {}
+    linked_patient_id = None
+
+    if patient:
+        context["patient_name"] = f"{patient.first_name} {patient.last_name}"
+
+    clinic = (await db.execute(select(Clinic).where(Clinic.id == clinic_id))).scalar_one_or_none()
+    if clinic:
+        context["clinic_name"] = clinic.name
+        context["clinic_phone"] = clinic.phone
+        context["clinic_address"] = clinic.address
+
+    if notification_type in APPOINTMENT_NOTIFICATION_TYPES:
+        if not appointment_id:
+            raise SendContextError(
+                "appointment_id_required",
+                400,
+                "appointment_id is required for appointment notifications",
+            )
+        appointment = (
+            await db.execute(
+                select(Appointment).where(
+                    Appointment.id == appointment_id, Appointment.clinic_id == clinic_id
+                )
+            )
+        ).scalar_one_or_none()
+        if not appointment:
+            raise SendContextError("appointment_not_found", 404, "Appointment not found")
+        linked_patient_id = appointment.patient_id
+
+        context["appointment_id"] = str(appointment.id)
+        context["appointment_start_at"] = appointment.start_time.isoformat()
+        context.update(appointment_when_context(appointment.start_time, clinic))
+
+        if appointment.professional_id:
+            professional = (
+                await db.execute(select(User).where(User.id == appointment.professional_id))
+            ).scalar_one_or_none()
+            if professional:
+                context["professional_name"] = f"{professional.first_name} {professional.last_name}"
+
+        # Use patient from appointment if not provided
+        if not patient:
+            patient = (
+                await db.execute(select(Patient).where(Patient.id == appointment.patient_id))
+            ).scalar_one_or_none()
+            if patient:
+                context["patient_name"] = f"{patient.first_name} {patient.last_name}"
+
+    if notification_type in BUDGET_NOTIFICATION_TYPES:
+        if not budget_id:
+            raise SendContextError(
+                "budget_id_required", 400, "budget_id is required for budget notifications"
+            )
+        budget = (
+            await db.execute(
+                select(Budget).where(Budget.id == budget_id, Budget.clinic_id == clinic_id)
+            )
+        ).scalar_one_or_none()
+        if not budget:
+            raise SendContextError("budget_not_found", 404, "Budget not found")
+        linked_patient_id = budget.patient_id
+
+        # Use patient from budget if not provided
+        if not patient:
+            patient = (
+                await db.execute(select(Patient).where(Patient.id == budget.patient_id))
+            ).scalar_one_or_none()
+            if patient:
+                context["patient_name"] = f"{patient.first_name} {patient.last_name}"
+
+        # Amounts in the clinic's currency, for the locale the gateway will
+        # render in (#1133).
+        locale = (
+            await resolve_patient_communication_locale(db, clinic_id, patient.id)
+            if patient
+            else await resolve_clinic_communication_locale(db, clinic_id)
+        )
+        money = money_formatter(clinic, locale)
+
+        context["budget_number"] = budget.budget_number
+        context["budget_date"] = budget.valid_from.strftime("%d/%m/%Y")
+        context["total"] = money(budget.total)
+        context["subtotal"] = money(budget.subtotal)
+        context["discount_amount"] = money(budget.total_discount) if budget.total_discount else None
+        context["notes"] = budget.patient_notes
+
+        if budget.valid_until:
+            context["validity_days"] = (budget.valid_until - budget.valid_from).days
+
+        if notification_type == "budget_accepted":
+            context["accepted_date"] = clinic_date_label(budget.updated_at, clinic)
+
+        if notification_type == "budget_sent":
+            context["treatments"] = await budget_treatments_context(db, budget.id, money)
+
+    return ManualSendContext(context=context, patient=patient, linked_patient_id=linked_patient_id)
