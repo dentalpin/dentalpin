@@ -30,7 +30,7 @@ related_paths:
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: fdbdaf8d
+last_verified_commit: dd87ef44
 ---
 
 # Ficha del paciente
@@ -65,8 +65,9 @@ exportar el resultado a CSV. Consulta la [guía de accesos](../../gdpr/screens/a
     si no hay ninguna).
   - **Saldo** *(payments)* — debe / a cuenta / cobrado. Click →
     Administración → Cobros.
-  - **Diagnósticos** *(odontogram)* — hallazgos sin tratar. Click →
-    odontograma en modo diagnóstico.
+  - **Diagnósticos** *(odontogram)* — hallazgos sin tratar y hasta
+    tres de ellos con sus dientes y caras (p. ej. «Corona #16»).
+    Click → odontograma en modo diagnóstico.
   - **Historial médico** *(patients_clinical)* — alergias,
     enfermedades sistémicas, medicación. Click → editar historial.
   - **Acciones rápidas** *(patients)* — Cita, Presupuesto, Documento

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1162): the Diagnoses card on the patient summary shows each pending treatment's tooth numbers and surfaces. It read `tooth_number` / `surfaces` off the treatment, but the list endpoint returns them on each `teeth[]` member, so every row showed only the treatment name.
 - fix(#1065): the History tab maps `performed` to `existing`, as the Diagnosis chart does.
 - fix(#1034): `TreatmentService.restore_planned`, for treatment_plan's reactivation.
 - fix(#1014): `treatment.performed` carries `price_snapshot` as `unit_price`. It was multiplied by the tooth count although the snapshot already covers every tooth, so a 3-crown treatment booked three times its price as earned.
