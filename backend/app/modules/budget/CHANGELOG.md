@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1180): quote PDF dates (created, valid from/until, signed at, footer) follow the PDF locale through the shared `app.core.pdf_locales` helpers; es/en keep dd/mm/yyyy.
+
 - fix(#1115): automatic reminders fire once 7 and once 14 clinic days after the budget was sent (latest `sent` history entry), instead of every 5-6 days counted from `valid_from`; `budget.reminder_sent` carries `automatic`.
 - fix(#1113): resend and duplicate give the new draft a validity window from today (clinic default days) instead of copying the source's `valid_until`.
 

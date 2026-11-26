@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1180): invoice PDF dates follow the PDF locale (`2026. 11. 26.` in Hungarian, `26.11.2026` in German/Polish) through the shared `app.core.pdf_locales.format_pdf_date`; es/en keep dd/mm/yyyy.
+
 - fix(#1032): the New invoice page's row totals and summary apply line discounts (percentage and absolute) before VAT, rounded per line like the saved draft; the item modals' previews share the same helper (`utils/lineAmounts.ts`).
 
 - fix(#1103): the draft invoice PDF printed "None" as the billing name and an empty address; it now shows the patient billing data that issuing snapshots (shared `patient_billing_snapshot` helper).
