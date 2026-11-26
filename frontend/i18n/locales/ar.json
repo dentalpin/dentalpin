@@ -921,10 +921,10 @@
       "openTitle": "تسجيل الحضور في العيادة",
       "success": "تم تسجيل حضورك. تفضل بالجلوس.",
       "invalid": "رمز الحضور هذا غير صالح أو منتهي الصلاحية. اطلب رمزاً جديداً من الاستقبال.",
-      "confirm": "I'm here",
-      "confirmHint": "Press the button to confirm your arrival.",
-      "tooEarly": "It's too early to check in. Your appointment is at {time}.",
-      "tooLate": "Check-in for this appointment is closed. Please ask at reception."
+      "confirm": "أنا هنا",
+      "confirmHint": "اضغط على الزر لتأكيد حضورك.",
+      "tooEarly": "لا يزال الوقت مبكراً لتسجيل الحضور. موعدك الساعة {time}.",
+      "tooLate": "تم إغلاق تسجيل الحضور لهذا الموعد. يرجى مراجعة الاستقبال."
     },
     "create": "موعد جديد",
     "edit": "تعديل الموعد",
