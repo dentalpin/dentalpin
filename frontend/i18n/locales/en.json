@@ -1680,8 +1680,7 @@
       "label": "Label",
       "labelPlaceholder": "e.g. Impressions",
       "price": "Amount",
-      "add": "Add session",
-      "sumStatus": "Sum {sum} € · Total {total} €"
+      "add": "Add session"
     },
     "categoryCreated": "Category created",
     "categoryUpdated": "Category updated",

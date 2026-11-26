@@ -1680,8 +1680,7 @@
       "label": "Designação",
       "labelPlaceholder": "Ex.: Impressões",
       "price": "Montante",
-      "add": "Adicionar sessão",
-      "sumStatus": "Soma {sum} € · Total {total} €"
+      "add": "Adicionar sessão"
     },
     "categoryCreated": "Categoria criada",
     "categoryUpdated": "Categoria atualizada",
