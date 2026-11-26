@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- feat(#1171): the signer's ID document. `POST /public/consents/current/sign` takes an optional `signer_id_document`; it is required (422 otherwise) when `relationship_to_patient` is `guardian` or `representative`, stripped and uppercased, at most 32 characters of letters, digits, `-`, `.` and `/`, with no country-specific checksum. It applies to signatures and revocations alike. Stored in the new nullable `consent_evidence.signer_id_document` column (migration `doc_0004`, reversible), printed next to the signer name in the signed PDF (new `consent_id_document` label in every PDF locale), returned by `GET /consents/{id}/evidence`, and retained on GDPR erasure like the signer name. The signing page gets the input and `documents.consent.idDocument` / `idDocumentHint` strings in every locale. Evidence and PDFs signed before the migration are unchanged.
 - fix(#1042): a failed signature submit keeps the form and offers a retry; only 404 / 409 mean the link is spent.
 - fix(#1040): the consent and revocation PDFs print the consent's title.
 - fix(#1039): the PDF footer sits in the page's bottom margin; it printed over the text of every full page.

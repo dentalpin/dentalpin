@@ -161,7 +161,9 @@ Nuxt layer at `frontend/` with:
   scope (ADR 0038, #657) and writes nothing: a prescription or
   certificate must match the copy handed to the patient or the pharmacy
   (Art. 17(3)(c)/(h)). `content` is a free-form JSONB snapshot, so all
-  three erasure categories are declared. Because the module is
+  three erasure categories are declared. Consent evidence, including the
+  signer's name and ID document, is retained because the signed PDF prints
+  both and its SHA-256 is the legal proof. Because the module is
   `auto_install: False`, a clinic that never installed it gets no
   `documents` coverage row at all — the registry only collects from active
   modules.
