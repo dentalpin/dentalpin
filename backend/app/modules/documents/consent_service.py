@@ -45,8 +45,12 @@ ID_DOCUMENT_MAX_LENGTH = 32
 
 
 def _normalize_id_document(value: str | None, relationship: str) -> str | None:
-    """Strip + uppercase the signer's ID document; required unless the signer is the patient."""
-    normalized = (value or "").strip().upper()
+    """Remove whitespace + uppercase the signer's ID document; required unless the signer is the patient.
+
+    Whitespace is dropped (``"1234 5678 z"`` -> ``"12345678Z"``) because IDs are often
+    written in groups; no country-specific checksum is applied.
+    """
+    normalized = "".join((value or "").split()).upper()
     if not normalized:
         if relationship != "patient":
             raise ConsentValidationError(

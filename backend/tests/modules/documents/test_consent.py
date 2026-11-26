@@ -1082,7 +1082,12 @@ async def test_patient_can_sign_without_id_document(client, auth_headers, test_p
 @pytest.mark.asyncio
 @pytest.mark.parametrize(
     ("sent", "stored"),
-    [("  12345678z ", "12345678Z"), ("x-1234.567/a", "X-1234.567/A"), ("   ", None)],
+    [
+        ("  12345678z ", "12345678Z"),
+        ("1234 5678 z", "12345678Z"),
+        ("x-1234.567/a", "X-1234.567/A"),
+        ("   ", None),
+    ],
 )
 async def test_patient_id_document_is_normalised_and_optional(
     client, auth_headers, test_patient, db_session, sent, stored
@@ -1114,7 +1119,7 @@ async def test_guardian_or_representative_requires_id_document(
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("value", ["1234 5678", "12345678Z!", "A" * 33, "<b>1</b>", "12_34"])
+@pytest.mark.parametrize("value", ["12345678Z!", "A" * 33, "<b>1</b>", "12_34"])
 async def test_id_document_rejects_bad_characters_or_length(
     client, auth_headers, test_patient, db_session, value
 ):
