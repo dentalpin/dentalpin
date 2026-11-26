@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1186): editing the latest control's next_control_weeks or performed_at now moves the ortho_review recall (same latest-control and paused rules as registration).
 - fix(#1134): `PATCH /controls/{id}` with `procedures: null` and `PATCH /cases/{id}` with `appliance_type: null` are a 422; a null `procedures` used to be stored as JSON null and break the case's control list (500).
 
 - fix(#1007): a back-dated control doesn't overwrite the wires set by a later one or move the next-control recall.
