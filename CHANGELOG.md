@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Added
+
+- **Documents:** consent templates and consents accept basic formatting (headings, bold, italic, bullet and numbered lists). The tablet signing page and the signed PDF show the same server-rendered result; HTML, links and images stay plain text (#1171).
+
 ### Fixed
 
 - **Odontogram:** the Diagnoses card on the patient summary shows the tooth number and surfaces of each pending treatment (e.g. "Corona #16") instead of only the treatment name (#1162).

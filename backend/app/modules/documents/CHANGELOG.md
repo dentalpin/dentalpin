@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- feat(#1171): consent texts accept a small Markdown subset (headings, **bold**, *italic*, bullet and numbered lists; single newlines stay line breaks). One backend renderer, `render_consent_body`, with an allowlist of tags feeds both the public signing page (`body_html` in `GET /public/consents/current`, rendered instead of the raw text) and the consent PDF. Stored snapshots and signed PDFs are unchanged. New dependency: `markdown-it-py`. Syntax help in the template editor, translated in all locales.
 - fix(#1042): a failed signature submit keeps the form and offers a retry; only 404 / 409 mean the link is spent.
 - fix(#1040): the consent and revocation PDFs print the consent's title.
 - fix(#1039): the PDF footer sits in the page's bottom margin; it printed over the text of every full page.
