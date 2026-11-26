@@ -128,7 +128,13 @@ Supported subset: paragraphs, single newlines as `<br>`, `#`/`##`/`###` as
 `h2`/`h3`/`h4` (deeper levels clamp to `h4`), `**bold**`, `*italic*`,
 bullet (`-`, `*`) and numbered lists, backslash escapes. The renderer
 enables only those markdown-it-py rules and emits a fixed tag allowlist
-(`p br strong em h2 h3 h4 ul ol li`) with no attributes; HTML, links,
+(`p br strong em h2 h3 h4 ul ol li`); the only attribute is
+`value="<digits>"` on `li` inside `ol`, carrying the number the author typed
+(browsers honour it; WeasyPrint does not, so `pdf.py` injects
+`list_value_css()` `counter-set` rules). Runs of spaces and indentation
+collapse (the old `white-space: pre-wrap` is gone). If the parser would drop
+text (lists nested about 10 levels deep), the whole body is rendered as
+escaped plain text with `<br>` instead; HTML, links,
 images, code, quotes, rules, tables and entities are not parsed and remain
 literal, escaped text.
 

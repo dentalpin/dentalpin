@@ -97,7 +97,7 @@ async def test_public_payload_has_sanitised_body_html(client, auth_headers, test
     assert "<h2>Procedure</h2>" in html and "<h3>Risks</h3>" in html
     assert "<strong>local anaesthetic</strong>" in html and "<em>mild</em>" in html
     assert "<ul><li>Swelling</li><li>Bleeding</li></ul>" in html
-    assert "<ol><li>Rest</li><li>Ice</li></ol>" in html
+    assert '<ol><li value="1">Rest</li><li value="2">Ice</li></ol>' in html
     assert "<script" not in html and "<a " not in html and "href" not in html
     assert "&lt;script&gt;" in html
     # The source text is unchanged; the page must render ``body_html`` only.
@@ -173,3 +173,49 @@ async def test_legacy_plain_text_body_renders_line_for_line(client, auth_headers
     lines = [line.strip() for line in pdf_text(pdf.content).splitlines() if line.strip()]
     start = lines.index("Line one of a legacy body")
     assert lines[start : start + 4] == LEGACY_BODY.split("\n")
+
+
+@pytest.mark.asyncio
+async def test_signed_pdf_keeps_typed_list_numbers(client, auth_headers, test_patient):
+    if not shutil.which("pdftotext"):
+        pytest.skip("pdftotext is required to verify rendered PDF text")
+    body = (
+        "1. Procedure\n\nWe will extract the tooth.\n\n2. Risks\n\n"
+        "Some swelling.\n\n3. Alternatives\n\nNothing.\n\nClosing words\n\n"
+        "- x\n  7. Seventh\n  8. Eighth"
+    )
+    doc = await consent_with_body(client, auth_headers, test_patient, body)
+    token = await make_link(client, auth_headers, doc)
+    page = await client.get(
+        "/api/v1/documents/public/consents/current", headers={"Authorization": f"Bearer {token}"}
+    )
+    assert 'value="2"' in page.json()["data"]["body_html"]
+    await sign(client, token)
+    pdf = await client.get(
+        f"/api/v1/documents/consents/{doc}/evidence/sign/download", headers=auth_headers
+    )
+    assert pdf.status_code == 200
+    flat = " ".join(pdf_text(pdf.content).split())
+    assert "1. Procedure" in flat and "2. Risks" in flat and "3. Alternatives" in flat
+    assert "7. Seventh" in flat and "8. Eighth" in flat
+
+
+@pytest.mark.asyncio
+async def test_deeply_nested_body_is_not_truncated_on_page_or_pdf(
+    client, auth_headers, test_patient
+):
+    if not shutil.which("pdftotext"):
+        pytest.skip("pdftotext is required to verify rendered PDF text")
+    doc = await consent_with_body(
+        client, auth_headers, test_patient, "- " * 10 + "deepest\n\nAFTERDEEP"
+    )
+    token = await make_link(client, auth_headers, doc)
+    page = await client.get(
+        "/api/v1/documents/public/consents/current", headers={"Authorization": f"Bearer {token}"}
+    )
+    assert "AFTERDEEP" in page.json()["data"]["body_html"]
+    await sign(client, token)
+    pdf = await client.get(
+        f"/api/v1/documents/consents/{doc}/evidence/sign/download", headers=auth_headers
+    )
+    assert "AFTERDEEP" in pdf_text(pdf.content)

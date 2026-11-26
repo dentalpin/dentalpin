@@ -6,13 +6,26 @@ import pytest
 
 from app.modules.documents.consent_markdown import ALLOWED_TAGS, render_consent_body
 
-TAG = re.compile(r"</?([a-zA-Z][a-zA-Z0-9]*)([^>]*)>")
+TAG = re.compile(r"<(/?)([a-zA-Z][a-zA-Z0-9]*)([^>]*)>")
 
 
 def assert_only_allowed_markup(html: str) -> None:
-    for name, attrs in TAG.findall(html):
+    """Allowlisted tags only; the single attribute is ``value="<digits>"`` on ``li`` in ``ol``."""
+    open_lists: list[str] = []
+    for closing, name, attrs in TAG.findall(html):
         assert name in ALLOWED_TAGS, f"unexpected tag <{name}> in {html!r}"
-        assert attrs == "", f"unexpected attributes on <{name}> in {html!r}"
+        if closing:
+            if name in ("ul", "ol"):
+                open_lists.pop()
+            assert attrs == "", f"unexpected attributes on </{name}> in {html!r}"
+            continue
+        if name in ("ul", "ol"):
+            open_lists.append(name)
+        if name == "li" and attrs:
+            assert open_lists and open_lists[-1] == "ol", f"value outside <ol> in {html!r}"
+            assert re.fullmatch(r' value="\d+"', attrs), f"bad attributes {attrs!r} in {html!r}"
+        else:
+            assert attrs == "", f"unexpected attributes on <{name}> in {html!r}"
 
 
 def test_empty_body_renders_nothing():
@@ -63,9 +76,64 @@ def test_bullet_lists(marker):
     assert html == "<p>Risks:</p><ul><li>Pain</li><li>Swelling</li></ul>"
 
 
-def test_numbered_list_drops_start_attribute():
+def test_numbered_list_keeps_typed_numbers():
     html = render_consent_body("3. Third\n4. Fourth")
-    assert html == "<ol><li>Third</li><li>Fourth</li></ol>"
+    assert html == '<ol><li value="3">Third</li><li value="4">Fourth</li></ol>'
+    assert_only_allowed_markup(html)
+
+
+def test_numbering_survives_a_paragraph_between_items():
+    html = render_consent_body("1. Procedure\n\nWe will extract the tooth.\n\n2. Risks")
+    assert 'value="1"' in html and 'value="2"' in html
+    assert html == (
+        '<ol><li value="1">Procedure</li></ol><p>We will extract the tooth.</p>'
+        '<ol><li value="2">Risks</li></ol>'
+    )
+    assert_only_allowed_markup(html)
+
+
+def test_lone_numbered_item_keeps_its_number():
+    html = render_consent_body("3. Alternatives")
+    assert html == '<ol><li value="3">Alternatives</li></ol>'
+
+
+def test_non_sequential_numbers_are_kept():
+    html = render_consent_body("1. a\n2. b\n7. c")
+    assert re.findall(r'value="(\d+)"', html) == ["1", "2", "7"]
+
+
+def test_nested_ordered_list_inside_bullets_and_back():
+    html = render_consent_body("- a\n\n  4. x\n  5. y\n- b")
+    assert html == (
+        '<ul><li><p>a</p><ol><li value="4">x</li><li value="5">y</li></ol></li><li><p>b</p></li></ul>'
+    )
+    assert_only_allowed_markup(html)
+
+
+def test_bullet_items_never_get_a_value():
+    assert "value" not in render_consent_body("- a\n- b")
+
+
+def test_deeply_nested_lists_never_lose_text():
+    html = render_consent_body("- " * 10 + "x\n\nAFTER")
+    assert "AFTER" in html and "x" in html
+    assert html == "<p>" + "- " * 10 + "x<br><br>AFTER</p>"
+    assert_only_allowed_markup(html)
+
+
+def test_deep_fallback_escapes_markup():
+    html = render_consent_body("- " * 12 + "<b>x</b>\n\nAFTER <i>")
+    assert "&lt;b&gt;x&lt;/b&gt;" in html and "AFTER &lt;i&gt;" in html
+    assert_only_allowed_markup(html)
+
+
+def test_moderately_nested_lists_still_render_as_lists():
+    html = render_consent_body("- " * 9 + "x\n\nAFTER")
+    assert html.count("<ul>") == 9 and "<p>AFTER</p>" in html
+
+
+def test_empty_list_items_do_not_trigger_the_fallback():
+    assert render_consent_body("-\n- a") == "<ul><li></li><li>a</li></ul>"
 
 
 def test_nested_list_and_inline_markup_inside_items():
@@ -150,3 +218,14 @@ def test_output_only_uses_allowlisted_tags_for_a_mixed_document():
         "# T\n\n<script>x</script> **b** *i*\nbreak\n\n- a\n- b\n\n1. c\n2. d\n\n[l](http://x)"
     )
     assert_only_allowed_markup(html)
+
+
+def test_list_value_css_only_contains_digits_from_rendered_values():
+    from app.modules.documents.consent_markdown import list_value_css
+
+    css = list_value_css(render_consent_body("1. a\n\nx\n\n2. b\n\n3. c"))
+    assert css == (
+        'li[value="1"]{counter-set:list-item 0;}li[value="2"]{counter-set:list-item 1;}'
+        'li[value="3"]{counter-set:list-item 2;}'
+    )
+    assert list_value_css(render_consent_body('- a\n\n<li value="9">')) == ""

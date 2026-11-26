@@ -62,8 +62,11 @@ way in the signed PDF.
 
 A line break inside a paragraph is kept as written. Anything else is shown
 exactly as typed: HTML, links, images and tables are not supported and
-appear as plain text. Existing templates without formatting look the same
-as before. A short reminder of this syntax appears under the text box.
+appear as plain text. Existing templates look the same as before when
+they are plain paragraphs and line breaks. Two things change: several spaces
+in a row and indentation at the start of a line collapse into a single space,
+and lines that start with `- ` or `1. ` become lists (numbered lists keep the
+numbers you typed). A short reminder of this syntax appears under the text box.
 
 Example:
 

@@ -13,7 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Added
 
-- **Documents:** consent templates and consents accept basic formatting (headings, bold, italic, bullet and numbered lists). The tablet signing page and the signed PDF show the same server-rendered result; HTML, links and images stay plain text (#1171).
+- **Documents:** consent templates and consents accept basic formatting (headings, bold, italic, bullet and numbered lists). The tablet signing page and the signed PDF show the same server-rendered result; HTML, links and images stay plain text; numbered lists keep the numbers typed (#1171).
 
 ### Fixed
 

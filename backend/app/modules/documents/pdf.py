@@ -15,7 +15,7 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
-from .consent_markdown import render_consent_body
+from .consent_markdown import list_value_css, render_consent_body
 
 if TYPE_CHECKING:
     from app.core.auth.models import Clinic
@@ -803,6 +803,9 @@ class DocumentPDFService:
                 else labels["informed_consent"]
             )
             relationship = labels.get(f"consent_{content.get('relationship_to_patient', '')}", "")
+            body_html = render_consent_body(content.get("text"))
+            # WeasyPrint ignores <li value>; restore the numbers the author typed.
+            value_css = list_value_css(body_html)
             return (
                 f'<div class="section"><div class="section-title">{esc(title)}</div>'
                 + (
@@ -810,7 +813,8 @@ class DocumentPDFService:
                     if not signature
                     else ""
                 )
-                + f'<div class="notes-content consent-body">{render_consent_body(content.get("text"))}</div></div>'
+                + (f"<style>{value_css}</style>" if value_css else "")
+                + f'<div class="notes-content consent-body">{body_html}</div></div>'
                 + (
                     f"<p>{esc(labels['consent_revocation_text'])}</p>"
                     if content.get("purpose") == "revoke"

@@ -63,8 +63,11 @@ en el PDF firmado.
 
 Un salto de línea dentro de un párrafo se conserva tal como se escribe.
 Todo lo demás se muestra tal cual: no se admiten HTML, enlaces, imágenes
-ni tablas, y aparecen como texto. Las plantillas existentes sin formato se
-ven igual que antes. Bajo el cuadro de texto aparece un breve recordatorio
+ni tablas, y aparecen como texto. Las plantillas existentes se ven igual que antes
+si son párrafos y saltos de línea normales. Cambian dos cosas: varios espacios
+seguidos y la sangría al inicio de una línea se reducen a un solo espacio, y
+las líneas que empiezan por `- ` o `1. ` pasan a ser listas (las listas
+numeradas conservan los números que escribas). Bajo el cuadro de texto aparece un breve recordatorio
 de esta sintaxis.
 
 Ejemplo:
