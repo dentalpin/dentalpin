@@ -68,6 +68,21 @@ async def test_clinic_override_subject_wins(monkeypatch) -> None:
     assert subject == "Custom for O'Brien & Sons"
 
 
+@pytest.mark.asyncio
+async def test_default_subject_keeps_a_braced_clinic_name_literal(monkeypatch) -> None:
+    """The default subject is rendered once; braces in the clinic name stay text."""
+    sent: list[EmailMessage] = []
+    monkeypatch.setattr(email_service, "send", _capture(sent))
+    await email_service.send_templated(
+        to_email="ana@example.com",
+        template_key="appointment_reminder",
+        subject=None,
+        context={**CONTEXT, "clinic_name": "Dr {{ 7 * 7 }} {% if true %}x{% endif %}"},
+        locale="en",
+    )
+    assert sent[0].subject == "Appointment reminder - Dr {{ 7 * 7 }} {% if true %}x{% endif %}"
+
+
 def test_every_locale_dir_is_covered() -> None:
     assert len({locale for locale, _ in TEMPLATE_FILES}) == 13
 

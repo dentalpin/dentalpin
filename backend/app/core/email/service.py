@@ -333,19 +333,23 @@ class EmailService:
 
         # No subject from the caller (no clinic override row): the file
         # template's localized title is the subject, never the raw key (#1204).
+        # The default subject is already rendered: it is never rendered a
+        # second time, so a clinic name containing ``{{`` stays literal text.
         if not subject:
-            subject = self.render_default_subject(template_key, locale, context)
-
-        # Render subject if it contains template syntax. A subject is plain
-        # text, so it renders without HTML autoescaping (#1043).
-        rendered_subject = subject
-        if "{{" in subject or "{%" in subject:
+            rendered_subject = self.render_default_subject(template_key, locale, context)
+        # A caller-supplied subject (the clinic's override row) may contain
+        # template syntax. A subject is plain text, so it renders without
+        # HTML autoescaping (#1043).
+        elif "{{" in subject or "{%" in subject:
+            rendered_subject = subject
             try:
                 rendered_subject = (
                     self._jinja_env.overlay(autoescape=False).from_string(subject).render(context)
                 )
             except Exception as e:
                 logger.warning(f"Failed to render subject template: {e}")
+        else:
+            rendered_subject = subject
 
         message = EmailMessage(
             to_email=to_email,
