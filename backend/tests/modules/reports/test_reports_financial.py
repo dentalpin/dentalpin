@@ -39,6 +39,7 @@ async def _invoice(
     due_in_days: int | None = -10,
     issue: date | None = None,
     deleted: bool = False,
+    credit_note_for_id=None,
 ) -> Invoice:
     from datetime import UTC, datetime
 
@@ -51,6 +52,7 @@ async def _invoice(
         issue_date=issue or date.today(),
         due_date=(date.today() + timedelta(days=due_in_days)) if due_in_days is not None else None,
         deleted_at=datetime.now(UTC) if deleted else None,
+        credit_note_for_id=credit_note_for_id,
     )
     db.add(row)
     await db.commit()
@@ -116,6 +118,37 @@ async def test_aging_buckets(db_session: AsyncSession, test_clinic: Clinic, test
     assert buckets["90+"]["total"] == Decimal("400")
     assert buckets["90+"]["count"] == 1
     assert buckets["90+"]["patient_count"] == 1
+
+
+@pytest.mark.asyncio
+async def test_aging_buckets_exclude_credit_notes(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """An issued credit note is a credit, never a receivable (#1201).
+
+    It stays ``issued`` with a negative total; the aging buckets must
+    drop it through billing's shared predicate, like the overdue list.
+    """
+    clinic_id = test_clinic.id
+    patient_id = test_patient.id
+    user_id = await _staff_id(db_session)
+    paid = await _invoice(
+        db_session, clinic_id, patient_id, user_id, total="100", status="paid", due_in_days=-40
+    )
+    await _invoice(
+        db_session,
+        clinic_id,
+        patient_id,
+        user_id,
+        total="-100",
+        due_in_days=-40,
+        credit_note_for_id=paid.id,
+    )
+
+    buckets = await FinancialReportService.aging_buckets(db_session, clinic_id)
+    assert sum(b["count"] for b in buckets) == 0
+    assert sum(b["total"] for b in buckets) == Decimal("0")
+    assert all(b["patient_count"] == 0 for b in buckets)
 
 
 @pytest.mark.asyncio

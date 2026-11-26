@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1201): the aging buckets (`/reports/billing/aging`, its CSV and the copilot `financial_report` tool) use billing's `open_receivable_conditions`, so an issued credit note no longer shows as a negative outstanding document stuck in 90+.
 - fix(#1090): the billing summary's `overdue_count` and the overdue invoice list use billing's `overdue_invoice_conditions`, so an issued credit note no longer counts as overdue.
 
 - fix(#942): the productivity and visit-frequency reports cut `Appointment.start_time` on the clinic's days, including the "seen before" bound. They compared the instant with bare dates, i.e. UTC midnights.

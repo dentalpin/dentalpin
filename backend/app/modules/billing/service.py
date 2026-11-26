@@ -38,21 +38,35 @@ _INVOICE_SORT_ALLOW = {
 _INVOICE_SORT_DEFAULT = "created_at:desc"
 
 
-def overdue_invoice_conditions(today: date) -> tuple:
-    """SQL conditions for an overdue invoice, shared by every overdue surface.
+def open_receivable_conditions() -> tuple:
+    """SQL conditions for an open receivable, the base of every overdue surface.
 
-    Overdue = still chasing payment (``issued``/``partial``), past its due
-    date, not imported history, and not a credit note. A credit note is
-    issued with a 0-day term and stays ``issued`` with a negative total
-    (it is a credit in the patient's favour, never a debt), so without the
-    last condition it read as overdue from the day after issue (#1090).
-    Callers add ``clinic_id`` / ``deleted_at`` themselves.
+    Open receivable = still chasing payment (``issued``/``partial``), not
+    imported history, and not a credit note. A credit note is issued with a
+    0-day term and stays ``issued`` with a negative total (it is a credit in
+    the patient's favour, never a debt), so without the last condition it
+    reads as money owed forever (#1090, #1201). The reports' aging buckets
+    use this directly (they include not-yet-due invoices);
+    ``overdue_invoice_conditions`` adds the due-date cut. Callers add
+    ``clinic_id`` / ``deleted_at`` themselves.
     """
     return (
         Invoice.status.in_(["issued", "partial"]),
-        Invoice.due_date < today,
         Invoice.is_historical.is_(False),
         Invoice.credit_note_for_id.is_(None),
+    )
+
+
+def overdue_invoice_conditions(today: date) -> tuple:
+    """SQL conditions for an overdue invoice, shared by every overdue surface.
+
+    Overdue = an open receivable (``open_receivable_conditions``: chasing
+    payment, not history, not a credit note, #1090) past its due date.
+    Callers add ``clinic_id`` / ``deleted_at`` themselves.
+    """
+    return (
+        *open_receivable_conditions(),
+        Invoice.due_date < today,
     )
 
 

@@ -123,7 +123,10 @@ that event was never published.
   0-day term, so a bare `issued/partial` + `due_date < today` filter
   lists it as overdue forever (#1090). The list filter and the reports'
   overdue count and list all use the helper; any new overdue surface
-  must too.
+  must too. It builds on `service.open_receivable_conditions` (issued or
+  partial, not history, not a credit note, no due-date cut), which the
+  reports' aging buckets use because they include not-yet-due invoices
+  (#1201); any new outstanding/receivable surface uses that one.
 - **Budget ↔ invoice bridge (`payment_bridge.py`, issue #178).** One
   rule: money allocated to a budget is money for that budget's
   invoices. Three entry points, all in-tx: the `payment.allocated`

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1201): new `open_receivable_conditions` (issued/partial, not history, not a credit note); `overdue_invoice_conditions` builds on it, and the reports' aging buckets use it.
 - fix(#1032): the New invoice page's row totals and summary apply line discounts (percentage and absolute) before VAT, rounded per line like the saved draft; the item modals' previews share the same helper (`utils/lineAmounts.ts`).
 
 - fix(#1103): the draft invoice PDF printed "None" as the billing name and an empty address; it now shows the patient billing data that issuing snapshots (shared `patient_billing_snapshot` helper).

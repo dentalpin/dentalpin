@@ -17,10 +17,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.core.utils.dates import clinic_today_for
 from app.modules.billing.models import Invoice
 
-# Outstanding = issued or partially processed, never drafts, cancelled,
-# voided or fully paid. Soft-deleted rows never count.
-OPEN_STATUSES = ("issued", "partial")
-
 BUCKETS: tuple[tuple[str, int | None, int | None], ...] = (
     ("not_due", None, -1),
     ("0-30", 0, 30),
@@ -42,7 +38,13 @@ class FinancialReportService:
         count as current (0-30). Buckets carry the issued total (never
         netted against anything else) plus invoice and distinct-patient
         counts.
+
+        Outstanding = billing's ``open_receivable_conditions`` (issued or
+        partial, not imported history, never a credit note, #1201), the
+        same base as the overdue list. Soft-deleted rows never count.
         """
+        from app.modules.billing.service import open_receivable_conditions
+
         today = await clinic_today_for(db, clinic_id)
         rows = (
             await db.execute(
@@ -54,8 +56,7 @@ class FinancialReportService:
                 )
                 .where(
                     Invoice.clinic_id == clinic_id,
-                    Invoice.status.in_(OPEN_STATUSES),
-                    Invoice.is_historical.is_(False),
+                    *open_receivable_conditions(),
                     Invoice.deleted_at.is_(None),
                 )
                 .group_by(Invoice.due_date, Invoice.patient_id)
