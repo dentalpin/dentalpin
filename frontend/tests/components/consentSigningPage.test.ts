@@ -39,6 +39,31 @@ describe('public consent signing', () => {
     } finally { wrapper.unmount() }
   })
 
+  it('renders the server-sanitised body_html and never the raw text (#1171)', async () => {
+    vi.stubGlobal('$fetch', vi.fn(async () => ({
+      data: {
+        title: 'Synthetic consent',
+        text: '# Raw heading <b>RAW-SOURCE-MARKER</b>',
+        body_html: '<h2>Rendered heading</h2><p>Some <strong>bold</strong> text<br>next line</p><ul><li>one</li></ul>',
+        patient: 'Patient Example',
+        clinic: 'Example clinic',
+        purpose: 'sign'
+      }
+    })))
+    window.history.replaceState(null, '', '/#synthetic-token')
+    const wrapper = await mountSuspended(ConsentPage)
+    await new Promise(resolve => setTimeout(resolve, 0))
+    await flushPromises()
+    try {
+      const body = wrapper.get('[data-testid="consent-body"]')
+      expect(body.find('h2').text()).toBe('Rendered heading')
+      expect(body.find('strong').text()).toBe('bold')
+      expect(body.find('br').exists()).toBe(true)
+      expect(body.find('li').text()).toBe('one')
+      expect(wrapper.html()).not.toContain('RAW-SOURCE-MARKER')
+    } finally { wrapper.unmount() }
+  })
+
   it('requires a drawn signature and a representative name', async () => {
     const fetch = vi.fn(async (_url: string, options: { method?: string }) => {
       if (options?.method === 'POST') return { data: { signed: true } }

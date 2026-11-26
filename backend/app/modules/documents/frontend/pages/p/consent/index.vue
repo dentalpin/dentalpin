@@ -7,7 +7,9 @@ const { t, locale, loadLocaleMessages } = useI18n()
 const config = useRuntimeConfig()
 const token = ref('')
 const endpoint = `${config.public.apiBaseUrl}/api/v1/documents/public/consents/current`
-interface PublicConsent { title: string, text: string, patient: string, clinic: string, purpose: string, locale?: string }
+// ``body_html`` is the server-rendered, allowlisted HTML of the consent body (#1171).
+// ``text`` is the raw source and is never rendered on this page.
+interface PublicConsent { title: string, text: string, body_html: string, patient: string, clinic: string, purpose: string, locale?: string }
 const item = ref<PublicConsent | null>(null)
 const signer = ref('')
 const relation = ref('patient')
@@ -125,9 +127,13 @@ async function submit() {
       >
         {{ t('documents.consent.revocationNotice') }}
       </p>
-      <div class="whitespace-pre-wrap rounded border p-5">
-        {{ item.text }}
-      </div>
+      <!-- eslint-disable vue/no-v-html -- sanitised server-side by render_consent_body, never the raw text -->
+      <div
+        class="consent-body rounded border p-5"
+        data-testid="consent-body"
+        v-html="item.body_html"
+      />
+      <!-- eslint-enable vue/no-v-html -->
       <UFormField
         :label="t('documents.consent.signer')"
         name="signer"
@@ -180,3 +186,36 @@ async function submit() {
     </p>
   </main>
 </template>
+
+<style scoped>
+/* Text stays comfortable to read on a tablet held at arm's length. */
+.consent-body {
+  font-size: 1.125rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.consent-body :deep(p),
+.consent-body :deep(ul),
+.consent-body :deep(ol) {
+  margin-bottom: 0.75rem;
+}
+.consent-body :deep(h2),
+.consent-body :deep(h3),
+.consent-body :deep(h4) {
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 1.25rem 0 0.5rem;
+}
+.consent-body :deep(h2) { font-size: 1.5rem; }
+.consent-body :deep(h3) { font-size: 1.25rem; }
+.consent-body :deep(h4) { font-size: 1.125rem; }
+.consent-body :deep(ul) { list-style: disc; }
+.consent-body :deep(ol) { list-style: decimal; }
+.consent-body :deep(ul),
+.consent-body :deep(ol) { padding-inline-start: 1.5rem; }
+.consent-body :deep(li) { margin-bottom: 0.25rem; }
+.consent-body :deep(strong) { font-weight: 700; }
+.consent-body :deep(em) { font-style: italic; }
+.consent-body :deep(> :first-child) { margin-top: 0; }
+.consent-body :deep(> :last-child) { margin-bottom: 0; }
+</style>
