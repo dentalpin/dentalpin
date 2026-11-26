@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1175): timeline dates and times use the UI language instead of English for every non-Spanish locale.
+
 - fix(#948): the appointment-lifecycle and orthodontic handlers take `db` and record inside a savepoint of the publisher's transaction. A booking that created the patient and the appointment together lost its timeline entry to the `patient_timeline_patient_id_fkey` violation; a failed timeline insert still cannot roll back the booking.
 
 - fix(#723): the paginated list query now ends its `order_by` on the primary key. Rows that tied on the sort column (same date, name or timestamp) were cut from different orderings on each page, so some appeared twice and others on no page.

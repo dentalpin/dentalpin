@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1175): the personal info card formats the date of birth in the UI language instead of Spanish for every non-English locale.
+
 - fix(#1114): CSV import no longer answers 500 on a row with more cells than the header (extra cells are ignored), and reads a column whose header has surrounding spaces.
 
 - fix(#1064): the edit modal never sends a DELETE for a contact or guardian it didn't load.
