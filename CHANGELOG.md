@@ -14,6 +14,7 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Dates west of UTC:** the patient Info card's date of birth and age, recall months, orthodontic overdue flags and invoice overdue flags no longer show or switch a day (or a month) early in browsers behind UTC (#1176).
+- **Odontogram:** the Diagnoses card on the patient summary shows the tooth number and surfaces of each pending treatment (e.g. "Corona #16") instead of only the treatment name (#1162).
 - **Copilot:** the Pendientes tab now says when a group has more items than it shows ("Showing 20 of 35 · See all") and links to the full list, instead of silently stopping at 30 recalls and 20 budgets (#1137).
 - **Notifications:** quote and invoice emails show amounts in the clinic's currency with the language's separators (e.g. `1.300,00 €`, `€1,300.00`, `₹1,300.00`), and invoice emails are queued again (#1133).
 - **Notifications:** a pt-BR clinic or patient gets the Portuguese (pt) template instead of a failed send, for example the online booking rejection email (#1136).
