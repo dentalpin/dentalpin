@@ -7,15 +7,12 @@
  * of up to three so the clinician can spot what needs treatment at a
  * glance. Deep links into the patient detail clinical → diagnosis mode.
  */
-import type { PatientExtended, PaginatedResponse } from '~~/app/types'
+import type { PatientExtended, PaginatedResponse, Treatment } from '~~/app/types'
 
-interface TreatmentSummary {
-  id: string
-  tooth_number: number | null
-  clinical_type: string
-  status: 'planned' | 'performed' | 'existing'
-  surfaces?: string[] | null
-}
+// The list endpoint returns `TreatmentResponse`: tooth numbers and
+// surfaces live on each `teeth[]` member, not on the treatment itself.
+// Global (whole-mouth / arch) treatments have no teeth.
+type TreatmentSummary = Pick<Treatment, 'id' | 'clinical_type' | 'teeth'>
 
 interface Ctx {
   patient: PatientExtended
@@ -90,14 +87,15 @@ function formatClinicalType(key: string): string {
         >
           · {{ formatClinicalType(item.clinical_type) }}
           <span
-            v-if="item.tooth_number"
+            v-for="tooth in item.teeth ?? []"
+            :key="tooth.id"
             class="tnum"
-          >#{{ item.tooth_number }}</span>
-          <span
-            v-if="item.surfaces && item.surfaces.length > 0"
-            class="text-subtle"
           >
-            ({{ item.surfaces.join(',') }})
+            #{{ tooth.tooth_number }}
+            <span
+              v-if="tooth.surfaces && tooth.surfaces.length > 0"
+              class="text-subtle"
+            >({{ tooth.surfaces.join(',') }})</span>
           </span>
         </li>
       </ul>
