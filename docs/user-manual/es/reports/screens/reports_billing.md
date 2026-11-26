@@ -46,8 +46,9 @@ preparación de IVA.
   (gaps), si los hay.
 - **Antigüedad** — totales emitidos pendientes por tramo
   (no vencidas aparte, luego 0–30/31–60/61–90/90+ días, solo importes
-  emitidos; las rectificativas nunca cuentan). Etiquetado
-  como antigüedad de facturas — definición
+  emitidos). Cada factura cuenta neta de sus rectificativas y sale
+  cuando queda rectificada del todo; las rectificativas nunca aparecen
+  por sí solas. Etiquetado como antigüedad de facturas — definición
   distinta de la tarjeta de cobros del panel (ganado-menos-cobrado
   por paciente).
 - **Tendencia emitida** — totales emitidos por mes del rango

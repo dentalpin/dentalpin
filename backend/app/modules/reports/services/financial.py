@@ -13,6 +13,7 @@ from uuid import UUID
 
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import aliased
 
 from app.core.utils.dates import clinic_today_for
 from app.modules.billing.models import Invoice
@@ -35,29 +36,55 @@ class FinancialReportService:
 
         Not-yet-due invoices get their own ``not_due`` ("no vencidas")
         bucket instead of folding into 0-30; invoices with no due date
-        count as current (0-30). Buckets carry the issued total (never
-        netted against anything else) plus invoice and distinct-patient
-        counts.
+        count as current (0-30). Buckets carry the outstanding invoice
+        total plus invoice and distinct-patient counts.
 
         Outstanding = billing's ``open_receivable_conditions`` (issued or
         partial, not imported history, never a credit note, #1201), the
         same base as the overdue list. Soft-deleted rows never count.
+
+        Credit notes never appear as rows of their own, but the invoice
+        they rectify stays ``issued`` next to them (billing keeps both
+        documents), so each invoice's total is netted with its live
+        credit notes (issued/partial/paid, not deleted): a partly credited
+        invoice carries the rest in its own due-date bucket, a fully
+        credited one drops out. Netting stays on the invoice axis (no
+        payment data).
         """
         from app.modules.billing.service import open_receivable_conditions
 
         today = await clinic_today_for(db, clinic_id)
+        credit_note = aliased(Invoice)
+        credited = (
+            select(
+                credit_note.credit_note_for_id.label("invoice_id"),
+                func.sum(credit_note.total).label("credited"),
+            )
+            .where(
+                credit_note.clinic_id == clinic_id,
+                credit_note.credit_note_for_id.is_not(None),
+                credit_note.status.notin_(("draft", "cancelled", "voided")),
+                credit_note.deleted_at.is_(None),
+            )
+            .group_by(credit_note.credit_note_for_id)
+            .subquery()
+        )
+        # Credit note totals are negative, so adding them nets the invoice.
+        net = Invoice.total + func.coalesce(credited.c.credited, 0)
         rows = (
             await db.execute(
                 select(
                     Invoice.due_date,
                     Invoice.patient_id,
-                    func.sum(Invoice.total).label("total"),
+                    func.sum(net).label("total"),
                     func.count(Invoice.id).label("count"),
                 )
+                .outerjoin(credited, credited.c.invoice_id == Invoice.id)
                 .where(
                     Invoice.clinic_id == clinic_id,
                     *open_receivable_conditions(),
                     Invoice.deleted_at.is_(None),
+                    net > 0,
                 )
                 .group_by(Invoice.due_date, Invoice.patient_id)
             )

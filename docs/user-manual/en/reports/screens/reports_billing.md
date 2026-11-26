@@ -45,8 +45,9 @@ reconciliation, and VAT filing.
   as overdue) and numbering gaps in series, if any.
 - **Aging** — outstanding issued invoice totals per age bucket
   (not-yet-due/"no vencidas" apart, then 0–30/31–60/61–90/90+ days
-  past due, issued amounts only; credit notes never count). Labelled
-  as invoice aging — a
+  past due, issued amounts only). An invoice counts net of its credit
+  notes and drops out once fully credited; credit notes never appear
+  on their own. Labelled as invoice aging — a
   different definition from the dashboard receivables card
   (earned-minus-paid per patient). Append `?format=csv` to the
   endpoint for the spreadsheet.
