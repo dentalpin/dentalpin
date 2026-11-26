@@ -126,6 +126,8 @@
       "revocationNotice": "Mit Ihrer Unterschrift widerrufen Sie die angezeigte Einwilligung.",
       "signer": "Name der unterzeichnenden Person",
       "relationship": "Beziehung zum Patienten",
+      "idDocument": "Ausweisdokument",
+      "idDocumentHint": "Erforderlich, wenn Sie als Vormund oder Vertreter unterschreiben; optional, wenn Sie der Patient sind.",
       "patient": "Patient",
       "guardian": "Gesetzlicher Vormund",
       "representative": "Vertretung",

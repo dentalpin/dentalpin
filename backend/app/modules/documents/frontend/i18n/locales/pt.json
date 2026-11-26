@@ -126,6 +126,8 @@
       "revocationNotice": "Ao assinar, revoga o consentimento apresentado.",
       "signer": "Nome do signatário",
       "relationship": "Relação com o paciente",
+      "idDocument": "Documento de identificação",
+      "idDocumentHint": "Obrigatório se assinar como tutor ou representante; opcional se for o paciente.",
       "patient": "Paciente",
       "guardian": "Tutor legal",
       "representative": "Representante",

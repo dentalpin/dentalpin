@@ -126,6 +126,8 @@
       "revocationNotice": "Firmando, si revoca il consenso mostrato.",
       "signer": "Nome del firmatario",
       "relationship": "Rapporto con il paziente",
+      "idDocument": "Documento d'identità",
+      "idDocumentHint": "Obbligatorio se firmi come tutore o rappresentante; facoltativo se sei il paziente.",
       "patient": "Paziente",
       "guardian": "Tutore legale",
       "representative": "Rappresentante",
