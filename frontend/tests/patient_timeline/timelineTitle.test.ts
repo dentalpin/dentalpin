@@ -2,7 +2,7 @@
 import { describe, expect, it } from 'vitest'
 import { readFileSync } from 'node:fs'
 import { resolve } from 'node:path'
-import { timelineEntryTitle } from '#module-layers/patient_timeline/frontend/utils/timelineTitle'
+import { teWithFallback, timelineEntryTitle } from '#module-layers/patient_timeline/frontend/utils/timelineTitle'
 
 /**
  * #1174: timeline headings were printed from the stored (Spanish) `title`.
@@ -126,5 +126,18 @@ describe('timelineEntryTitle', () => {
     for (const [type, stored, data] of cases) {
       expect(timelineEntryTitle(entry(type, 'STORED', data), ES)).toBe(stored)
     }
+  })
+})
+
+describe('teWithFallback', () => {
+  it('finds a closure reason for pt-BR through its pt fallback', () => {
+    const PT = load('pt')
+    const known: Record<string, Tree> = { 'pt': PT, 'pt-BR': {} }
+    // vue-i18n's te(key) looks at the current locale only.
+    const te = (key: string, l = 'pt-BR') => lookup(known[l] ?? {}, key) !== undefined
+    const fallback = { 'pt-BR': ['pt', 'en'] }
+    expect(te('treatmentPlans.closureReason.expired')).toBe(false)
+    expect(teWithFallback(te, 'pt-BR', fallback)('treatmentPlans.closureReason.expired')).toBe(true)
+    expect(teWithFallback(te, 'pt-BR', fallback)('treatmentPlans.closureReason.nope')).toBe(false)
   })
 })

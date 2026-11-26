@@ -31,6 +31,26 @@ function str(value: unknown): string | null {
   return null
 }
 
+type FallbackLocale = string | string[] | Record<string, string[]> | false | undefined
+
+/**
+ * vue-i18n's `te(key)` checks the current locale only, ignoring the
+ * fallback chain, so an overlay locale such as pt-BR (which falls back
+ * to pt) reports a key it can translate as missing. This `te` also
+ * checks the fallback locales.
+ */
+export function teWithFallback(
+  te: (key: string, locale?: string) => boolean,
+  locale: string,
+  fallbackLocale: FallbackLocale
+): (key: string) => boolean {
+  let chain: string[] = []
+  if (typeof fallbackLocale === 'string') chain = [fallbackLocale]
+  else if (Array.isArray(fallbackLocale)) chain = fallbackLocale
+  else if (fallbackLocale) chain = fallbackLocale[locale] ?? fallbackLocale.default ?? []
+  return (key: string) => te(key) || chain.some(l => te(key, l))
+}
+
 export function timelineEntryTitle(entry: Entry, { t, te }: TimelineTitleI18n): string {
   const data = (entry.event_data ?? {}) as Record<string, unknown>
   const has = (key: string) => Object.prototype.hasOwnProperty.call(data, key)
