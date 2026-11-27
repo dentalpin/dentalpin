@@ -134,6 +134,14 @@ Subscription only — copilot never imports the publisher (ADR 0003), so
   the tool's real `total` plus a link to the full filtered list, so the
   drawer shows "Showing N of M · See all" instead of a silent cap (#1137).
   A new source must report its `total` the same way.
+- **Card amounts use the clinic currency** (#1177). `useCopilotFormat().money()`
+  falls back to `useCurrency().currency` when a result has no `currency`
+  (only payments tools return one). The generic result card formats a
+  numeric key matching `MONEY_HINT` as money except counts: `COUNT_KEYS`
+  (`total_patients`, `total_appointments`, `completed_total`) and a list
+  envelope's `total` (`{total, <list>: [...]}` with no `id`; a single
+  record such as `get_invoice` keeps its money `total`). A new tool
+  returning a count whose key matches `MONEY_HINT` needs a `COUNT_KEYS` entry.
 
 ## Related ADRs / docs
 

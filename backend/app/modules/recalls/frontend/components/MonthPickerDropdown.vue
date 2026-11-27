@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { parseDateOnly } from '~~/app/utils/wallClock'
 
 interface Props {
   /** ISO date string anchored to day 1 of the target month (YYYY-MM-01). */
@@ -17,7 +18,7 @@ const currentDate = computed(() => {
   const value = props.modelValue
   // Tolerate YYYY-MM input from upstream pickers.
   const iso = value.length === 7 ? `${value}-01` : value
-  const d = new Date(iso)
+  const d = parseDateOnly(iso)
   return isNaN(d.getTime()) ? new Date() : d
 })
 

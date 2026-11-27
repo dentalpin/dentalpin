@@ -495,6 +495,50 @@ async def _refresh_current_wires(db: AsyncSession, case: OrthoCase) -> None:
     await db.flush()
 
 
+async def _upsert_next_control_recall(
+    db: AsyncSession,
+    case: OrthoCase,
+    control: OrthoControl,
+    recommended_by: UUID | None,
+) -> None:
+    """Next-control recall (duplicate-guarded upsert) from ``control``.
+
+    Only the case's latest control by ``performed_at`` drives it (#1007);
+    paused cases freeze generation (Q3) and terminal cases never get here.
+    Used by both register() and update() (#1186)."""
+    if control.next_control_weeks is None:
+        return
+    if case.status == "paused" or case.status in TERMINAL_STATUSES:
+        return
+    superseded = await db.scalar(
+        select(OrthoControl.id)
+        .where(
+            OrthoControl.case_id == case.id,
+            OrthoControl.clinic_id == case.clinic_id,
+            OrthoControl.performed_at > control.performed_at,
+        )
+        .limit(1)
+    )
+    if superseded is not None:
+        return
+    due = _control_next_due(control)
+    if due is None:
+        raise ValueError("Cannot compute the next control date")
+    await RecallService.create(
+        db,
+        case.clinic_id,
+        {
+            "patient_id": case.patient_id,
+            "reason": "ortho_review",
+            "due_month": date(due.year, due.month, 1),
+            "due_date": due,
+            "reason_note": f"Control de ortodoncia ({case.id})",
+            "assigned_professional_id": case.professional_id,
+        },
+        recommended_by=recommended_by,
+    )
+
+
 class OrthoControlService:
     @staticmethod
     async def register(
@@ -536,38 +580,7 @@ class OrthoControlService:
         # A control can be back-dated: the latest one by performed_at decides
         # what is in the mouth and when the next control is due (#1007).
         await _refresh_current_wires(db, case)
-        superseded = await db.scalar(
-            select(OrthoControl.id)
-            .where(
-                OrthoControl.case_id == case.id,
-                OrthoControl.clinic_id == clinic_id,
-                OrthoControl.performed_at > control.performed_at,
-            )
-            .limit(1)
-        )
-        # Next-control recall (duplicate-guarded upsert). Paused cases
-        # freeze generation (Q3); terminal cases can't register at all.
-        if (
-            superseded is None
-            and control.next_control_weeks is not None
-            and case.status != "paused"
-        ):
-            due = _control_next_due(control)
-            if due is None:
-                raise ValueError("Cannot compute the next control date")
-            await RecallService.create(
-                db,
-                clinic_id,
-                {
-                    "patient_id": case.patient_id,
-                    "reason": "ortho_review",
-                    "due_month": date(due.year, due.month, 1),
-                    "due_date": due,
-                    "reason_note": f"Control de ortodoncia ({case.id})",
-                    "assigned_professional_id": case.professional_id,
-                },
-                recommended_by=performed_by,
-            )
+        await _upsert_next_control_recall(db, case, control, recommended_by=performed_by)
         await event_bus.publish(
             EventType.ORTHODONTICS_CONTROL_REGISTERED,
             {
@@ -611,10 +624,17 @@ class OrthoControlService:
             await _require_appointment(db, clinic_id, case.patient_id, changes["appointment_id"])
         if changes.get("session_id") is not None:
             await _require_linked_session(db, clinic_id, case, changes["session_id"])
+        recall_inputs = (control.next_control_weeks, control.performed_at)
         for key, value in changes.items():
             setattr(control, key, value)
         await db.flush()
         await _refresh_current_wires(db, case)
+        # An edited interval / date moves the next-control recall like a
+        # fresh save would (#1186) — same latest-control and paused rules.
+        if (control.next_control_weeks, control.performed_at) != recall_inputs:
+            await _upsert_next_control_recall(
+                db, case, control, recommended_by=control.performed_by
+            )
         return control
 
     @staticmethod

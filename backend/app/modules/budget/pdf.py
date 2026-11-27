@@ -9,6 +9,7 @@ from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
 from app.core.pdf_locales import LOCALE_BY_LANG as _LOCALE_BY_LANG
+from app.core.pdf_locales import format_pdf_date, format_pdf_datetime
 from app.core.utils.currency import format_currency as _fmt_currency
 
 if TYPE_CHECKING:
@@ -120,7 +121,7 @@ class BudgetPDFService:
         # clinic's own zone or the audit line is an hour or two off the
         # moment the patient actually signed.
         signed_at_str = (
-            signature.signed_at.astimezone(clinic_tz or UTC).strftime("%d/%m/%Y %H:%M")
+            format_pdf_datetime(signature.signed_at.astimezone(clinic_tz or UTC), locale)
             if signature.signed_at
             else "—"
         )
@@ -180,8 +181,8 @@ class BudgetPDFService:
             clinic_tz = ZoneInfo(clinic.timezone or "UTC")
         except (KeyError, ValueError):
             clinic_tz = UTC
-        created_at_str = budget.created_at.astimezone(clinic_tz).strftime("%d/%m/%Y")
-        generated_at = datetime.now(clinic_tz).strftime("%d/%m/%Y %H:%M")
+        created_at_str = format_pdf_date(budget.created_at.astimezone(clinic_tz), locale)
+        generated_at = format_pdf_datetime(datetime.now(clinic_tz), locale)
 
         # Format currency from clinic.currency, locale derived from language.
         money_locale = _LOCALE_BY_LANG.get(locale, "es_ES")
@@ -259,9 +260,11 @@ class BudgetPDFService:
             professional_name = f"{budget.assigned_professional.first_name} {budget.assigned_professional.last_name}"
 
         # Validity period
-        valid_from = budget.valid_from.strftime("%d/%m/%Y") if budget.valid_from else "-"
+        valid_from = format_pdf_date(budget.valid_from, locale) if budget.valid_from else "-"
         valid_until = (
-            budget.valid_until.strftime("%d/%m/%Y") if budget.valid_until else labels["no_expiry"]
+            format_pdf_date(budget.valid_until, locale)
+            if budget.valid_until
+            else labels["no_expiry"]
         )
 
         # Arabic mirrors the whole document; every other host locale is

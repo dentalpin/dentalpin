@@ -77,6 +77,19 @@ def test_pdf_renderers_stamp_the_clinic_timezone() -> None:
                 )
                 continue
 
+            # 2b. the shared helper prints ``HH:MM`` too (#1180): its first
+            #     argument must already be in the clinic's zone.
+            if name == "format_pdf_datetime" and node.args:
+                checked += 1
+                value = ast.get_source_segment(src, node.args[0]) or ""
+                if "astimezone(" in value or re.search(r"\bnow\(\s*[^)\s]", value):
+                    continue
+                offenders.append(
+                    f"  {rel}:{node.lineno}: format_pdf_datetime({' '.join(value.split())!r}) "
+                    "prints a time without converting to the clinic's zone"
+                )
+                continue
+
             # 2. a time-of-day format applied to a value nobody converted
             if name.endswith("strftime") and node.args:
                 fmt = node.args[0]

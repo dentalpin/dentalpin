@@ -47,15 +47,28 @@ const mode = computed<'error' | 'patients' | 'appointments' | 'slots' | 'generic
 })
 
 const MONEY_HINT = /total|collected|invoiced|net|refunded|amount|balance/i
+// Report counts whose key matches MONEY_HINT (#1177).
+const COUNT_KEYS = new Set(['total_patients', 'total_appointments', 'completed_total'])
+
+// A top-level `total` is the row count of a list envelope
+// (`{ total, invoices: [...] }`); a single record (`get_invoice`,
+// `get_budget`) carries an `id` and its `total` is money.
+function isCount(key: string): boolean {
+  if (COUNT_KEYS.has(key)) return true
+  return key === 'total'
+    && !('id' in obj.value)
+    && Object.values(obj.value).some(v => Array.isArray(v))
+}
 
 // Shallow flatten of the result for the generic fallback.
 const genericRows = computed(() => {
-  const currency = typeof obj.value.currency === 'string' ? obj.value.currency : 'EUR'
+  // Only payments tools return a currency; otherwise money() uses the clinic's.
+  const currency = typeof obj.value.currency === 'string' ? obj.value.currency : undefined
   const rows: { label: string, value: string }[] = []
   for (const [key, value] of Object.entries(obj.value)) {
     if (value === null || value === undefined || Array.isArray(value) || typeof value === 'object') continue
     let display = String(value)
-    if (typeof value === 'number' && MONEY_HINT.test(key)) display = money(value, currency)
+    if (typeof value === 'number' && MONEY_HINT.test(key) && !isCount(key)) display = money(value, currency)
     rows.push({ label: key.replace(/_/g, ' '), value: display })
   }
   return rows

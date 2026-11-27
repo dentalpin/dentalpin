@@ -19,6 +19,7 @@ from app.core.agents import AgentContext, Tool, ToolCategory
 from .channels import Channel
 from .gateway import NotificationGateway
 from .models import NotificationType
+from .service import SendContextError, build_manual_send_context
 
 
 class SendNotificationArgs(BaseModel):
@@ -28,9 +29,19 @@ class SendNotificationArgs(BaseModel):
         default=None,
         description="Canal forzado (email / whatsapp). None = automático con fallback.",
     )
+    appointment_id: UUID | None = Field(
+        default=None,
+        description="Cita del paciente. Obligatoria para appointment_confirmation / "
+        "appointment_reminder / appointment_cancelled.",
+    )
+    budget_id: UUID | None = Field(
+        default=None,
+        description="Presupuesto del paciente. Obligatorio para budget_sent / budget_accepted.",
+    )
     context: dict[str, str] = Field(
         default_factory=dict,
-        description="Variables adicionales de plantilla (p. ej. fecha de la cita).",
+        description="Variables adicionales de plantilla. Fecha, clínica e importes "
+        "los rellena el servidor desde la cita o el presupuesto.",
     )
 
 
@@ -47,8 +58,23 @@ async def _send_notification(ctx: AgentContext, params: SendNotificationArgs) ->
     if patient is None:
         return {"error": "patient_not_found"}
 
-    context = dict(params.context)
-    context.setdefault("patient_name", f"{patient.first_name} {patient.last_name}")
+    # Same context as the REST manual send: clinic details, and the
+    # appointment's or budget's fields from the clinic's own rows (#1181).
+    try:
+        built = await build_manual_send_context(
+            ctx.db,
+            ctx.clinic_id,
+            params.notification_type,
+            patient=patient,
+            appointment_id=params.appointment_id,
+            budget_id=params.budget_id,
+            custom_context=dict(params.context),
+        )
+    except SendContextError as exc:
+        return {"error": exc.code}
+    if built.linked_patient_id is not None and built.linked_patient_id != patient.id:
+        return {"error": "patient_mismatch"}
+    context = built.context
 
     msg = await NotificationGateway.enqueue(
         ctx.db,

@@ -84,6 +84,12 @@ Agent tool in `tools.py` (wraps `NotificationGateway`, no logic duplicated).
 Structured params only (cloud-eligible under redaction). Enqueues through
 the full consent path — never bypasses `do_not_contact`. `notification_type`
 is the `NotificationType` Literal, so the model is shown the nine values.
+The template context comes from `service.build_manual_send_context`, the
+same builder `POST /send` uses (#1181): clinic name/phone/address always,
+and `appointment_*` / `budget_sent` / `budget_accepted` require
+`appointment_id` / `budget_id` of this clinic and of the given patient
+(otherwise an `{"error": ...}` result, nothing queued). The model's free
+`context` cannot override the server-built keys.
 
 ## Events emitted
 
@@ -119,6 +125,9 @@ is the `NotificationType` Literal, so the model is shown the nine values.
   once under `skip:<reason>:<key>`, so the send still happens once unblocked.
 - **A reminder is per appointment and start time** (#1035): take the
   `dedup_key` from `tasks._reminder_key`, never from the appointment id alone.
+- **Every reminder carries the check-in link** (ADR 0037, #1156): the sweep
+  and the manual `POST /send` both set `checkin_url` from
+  `tasks._reminder_checkin_url`. A manual send is not deduplicated.
 
 - **No outbound network calls during a request.** Sending is queued via
   `tasks.py` (APScheduler) so the request transaction can commit
@@ -129,6 +138,14 @@ is the `NotificationType` Literal, so the model is shown the nine values.
   claims delivery.
 - **Templates are i18n-aware** (Spanish UI strings). Never hardcode
   copy in handlers — use a template.
+- **A context key one locale renders, every locale renders.** `budget_sent`
+  dropped `custom_message` in 8 locales and `public_url` in all 13
+  (#1205, #1206); `tests/test_budget_sent_email_template.py` renders it in
+  every locale dir. Guard optional keys with `{% if key %}`.
+- **An email subject comes from a template, never from the key** (#1204).
+  A `notification_templates` row's `subject` wins; without one the email
+  adapter passes `None` and `EmailService` uses the file template's
+  localized `{% block title %}`. A new email template needs that block.
 - **Template context that needs a query lives in `service.py`, once.**
   `budget_treatments_context(db, budget_id, money)` builds the `treatments`
   table `budget_sent.html` renders. It used to exist twice — in

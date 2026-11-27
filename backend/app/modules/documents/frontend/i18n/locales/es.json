@@ -126,6 +126,8 @@
       "revocationNotice": "Al firmar, revocas el consentimiento mostrado.",
       "signer": "Nombre de quien firma",
       "relationship": "Relación con el paciente",
+      "idDocument": "DNI/NIE / documento de identidad",
+      "idDocumentHint": "Obligatorio si firmas como tutor o representante; opcional si eres el paciente.",
       "patient": "Paciente",
       "guardian": "Tutor o tutora",
       "representative": "Representante",
@@ -149,7 +151,8 @@
         "archived": "Archivado"
       },
       "qrTitle": "Escanear para firmar",
-      "signedToast": "Consentimiento firmado"
+      "signedToast": "Consentimiento firmado",
+      "formatHelp": "Formato: empiece una línea con # (título) o ## / ### (subtítulos), ponga el texto entre **dos asteriscos** para negrita o *un asterisco* para cursiva, y empiece las líneas con - o 1. para listas. Una línea en blanco inicia un párrafo nuevo. Todo lo demás, incluidos HTML y enlaces, se muestra tal como se escribe."
     }
   }
 }
