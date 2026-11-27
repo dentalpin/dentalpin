@@ -483,6 +483,8 @@
           "diagnosis": "निदान टिप्पणी",
           "treatment": "उपचार पर नैदानिक टिप्पणी",
           "treatment_plan": "उपचार योजना पर नैदानिक टिप्पणी",
+          "appointment_clinical": "अपॉइंटमेंट पर नैदानिक टिप्पणी",
+          "appointment_administrative": "अपॉइंटमेंट पर प्रशासनिक टिप्पणी",
           "generic": "नैदानिक टिप्पणी",
           "withTooth": "{note} (दाँत {tooth})"
         },
@@ -1758,8 +1760,7 @@
       "label": "लेबल",
       "labelPlaceholder": "उदा. इंप्रेशन",
       "price": "राशि",
-      "add": "सत्र जोड़ें",
-      "sumStatus": "योग {sum} € · कुल {total} €"
+      "add": "सत्र जोड़ें"
     },
     "categoryCreated": "श्रेणी बनाई गई",
     "categoryUpdated": "श्रेणी अपडेट की गई",

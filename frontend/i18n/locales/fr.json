@@ -483,6 +483,8 @@
           "diagnosis": "Note de diagnostic",
           "treatment": "Note clinique sur un traitement",
           "treatment_plan": "Note clinique sur un plan de traitement",
+          "appointment_clinical": "Note clinique sur un rendez-vous",
+          "appointment_administrative": "Note administrative sur un rendez-vous",
           "generic": "Note clinique",
           "withTooth": "{note} (dent {tooth})"
         },
@@ -1748,8 +1750,7 @@
       "label": "Libellé",
       "labelPlaceholder": "ex. Empreintes",
       "price": "Montant",
-      "add": "Ajouter une séance",
-      "sumStatus": "Somme {sum} € · Total {total} €"
+      "add": "Ajouter une séance"
     },
     "categoryCreated": "Catégorie créée",
     "categoryUpdated": "Catégorie mise à jour",

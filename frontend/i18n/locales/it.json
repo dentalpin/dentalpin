@@ -483,6 +483,8 @@
           "diagnosis": "Nota di diagnosi",
           "treatment": "Nota clinica su un trattamento",
           "treatment_plan": "Nota clinica su un piano di trattamento",
+          "appointment_clinical": "Nota clinica su un appuntamento",
+          "appointment_administrative": "Nota amministrativa su un appuntamento",
           "generic": "Nota clinica",
           "withTooth": "{note} (dente {tooth})"
         },
@@ -1748,8 +1750,7 @@
       "label": "Etichetta",
       "labelPlaceholder": "es. Impronte",
       "price": "Importo",
-      "add": "Aggiungi seduta",
-      "sumStatus": "Somma {sum} € · Totale {total} €"
+      "add": "Aggiungi seduta"
     },
     "categoryCreated": "Categoria creata",
     "categoryUpdated": "Categoria aggiornata",

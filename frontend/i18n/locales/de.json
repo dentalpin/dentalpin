@@ -483,6 +483,8 @@
           "diagnosis": "Diagnosenotiz",
           "treatment": "Klinische Notiz zu einer Behandlung",
           "treatment_plan": "Klinische Notiz zu einem Behandlungsplan",
+          "appointment_clinical": "Klinische Notiz zu einem Termin",
+          "appointment_administrative": "Verwaltungsnotiz zu einem Termin",
           "generic": "Klinische Notiz",
           "withTooth": "{note} (Zahn {tooth})"
         },
@@ -1748,8 +1750,7 @@
       "label": "Bezeichnung",
       "labelPlaceholder": "z. B. Abformung",
       "price": "Betrag",
-      "add": "Sitzung hinzufügen",
-      "sumStatus": "Summe {sum} € · Gesamt {total} €"
+      "add": "Sitzung hinzufügen"
     },
     "categoryCreated": "Kategorie angelegt",
     "categoryUpdated": "Kategorie aktualisiert",

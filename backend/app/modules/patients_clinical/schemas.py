@@ -6,6 +6,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
+from app.core.schemas import NotNull
+
 
 def _blank_is_none(value: object) -> object:
     """A cleared input sends "" -- for a typed optional field that means "no value".
@@ -75,9 +77,10 @@ class AllergyCreate(BaseModel):
 
 
 class AllergyUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=100)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=100)
     type: str | None = Field(default=None, max_length=50)
-    severity: AllergySeverity | None = None
+    severity: NotNull[AllergySeverity] = None
     reaction: str | None = Field(default=None, max_length=500)
     notes: str | None = None
     reference_id: UUID | None = None
@@ -106,7 +109,8 @@ class MedicationCreate(BaseModel):
 
 
 class MedicationUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=100)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=100)
     dosage: str | None = Field(default=None, max_length=100)
     frequency: str | None = Field(default=None, max_length=100)
     start_date: date | None = None
@@ -137,11 +141,12 @@ class SystemicDiseaseCreate(BaseModel):
 
 
 class SystemicDiseaseUpdate(BaseModel):
-    name: str | None = Field(default=None, min_length=1, max_length=100)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    name: NotNull[str] = Field(default=None, min_length=1, max_length=100)
     type: str | None = Field(default=None, max_length=50)
     diagnosis_date: date | None = None
-    is_controlled: bool | None = None
-    is_critical: bool | None = None
+    is_controlled: NotNull[bool] = None
+    is_critical: NotNull[bool] = None
     medications: str | None = None
     notes: str | None = None
     reference_id: UUID | None = None
@@ -169,7 +174,8 @@ class SurgicalHistoryCreate(BaseModel):
 
 
 class SurgicalHistoryUpdate(BaseModel):
-    procedure: str | None = Field(default=None, min_length=1, max_length=200)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    procedure: NotNull[str] = Field(default=None, min_length=1, max_length=200)
     surgery_date: date | None = None
     complications: str | None = None
     notes: str | None = None

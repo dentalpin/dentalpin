@@ -751,3 +751,105 @@ async def test_a_timeline_failure_does_not_abort_the_publisher(
 
     assert await _entries_for(db_session, patient.id) == []
     assert await db_session.get(Patient, patient.id) is not None
+
+
+# ---------------------------------------------------------------------------
+# Clinical notes (#1155) — every note event clinical_notes publishes reaches
+# the timeline, and the stored event_type is the real event name.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("note_type", "event_name"),
+    [
+        ("administrative", EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED),
+        ("diagnosis", EventType.CLINICAL_NOTE_DIAGNOSIS_CREATED),
+        ("treatment", EventType.CLINICAL_NOTE_TREATMENT_CREATED),
+        ("treatment_plan", EventType.CLINICAL_NOTE_PLAN_CREATED),
+        ("appointment_clinical", EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED),
+        (
+            "appointment_administrative",
+            EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED,
+        ),
+    ],
+)
+async def test_every_clinical_note_event_lands_with_its_own_event_type(
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    note_type: str,
+    event_name: str,
+):
+    payload = {
+        **_base_payload(test_clinic, test_patient),
+        "note_id": str(uuid4()),
+        "note_type": note_type,
+        "owner_type": "patient",
+        "owner_id": str(test_patient.id),
+        "body_excerpt": "nota",
+    }
+    await event_bus.publish(event_name, payload)
+
+    entries = await _entries_for(db_session, test_patient.id)
+    assert [(e.event_type, e.event_category) for e in entries] == [(str(event_name), "note")]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("note_type", "title"),
+    [
+        ("appointment_clinical", "Nota clínica de cita"),
+        ("appointment_administrative", "Nota administrativa de cita"),
+    ],
+)
+async def test_note_written_on_an_appointment_reaches_the_timeline(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    note_type: str,
+    title: str,
+):
+    """Through the real route: the note's owner is the appointment, the
+    timeline row lands on the appointment's patient."""
+    from app.modules.agenda.service import AppointmentService
+
+    me = await client.get("/api/v1/auth/me", headers=auth_headers)
+    user_id = me.json()["data"]["user"]["id"]
+    start = datetime(2026, 7, 1, 10, 0, tzinfo=UTC)
+    apt = await AppointmentService.create_appointment(
+        db_session,
+        test_clinic.id,
+        {
+            "patient_id": test_patient.id,
+            "professional_id": user_id,
+            "start_time": start,
+            "end_time": start.replace(minute=30),
+        },
+        created_by=user_id,
+    )
+    await db_session.commit()
+
+    resp = await client.post(
+        "/api/v1/clinical_notes/notes",
+        headers=auth_headers,
+        json={
+            "note_type": note_type,
+            "owner_type": "appointment",
+            "owner_id": str(apt.id),
+            "body": "<p>Dolor en el 46</p>",
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    note_id = resp.json()["data"]["id"]
+    await db_session.commit()
+
+    entries = await _entries_for(db_session, test_patient.id)
+    notes = [e for e in entries if e.source_table == "clinical_notes"]
+    assert len(notes) == 1, [e.event_type for e in entries]
+    assert str(notes[0].source_id) == note_id
+    assert notes[0].event_type == f"clinical_notes.{note_type}_created"
+    assert notes[0].title == title
+    assert notes[0].description == "Dolor en el 46"

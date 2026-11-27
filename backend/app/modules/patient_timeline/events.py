@@ -735,18 +735,34 @@ _NOTE_TYPE_TITLES = {
     "diagnosis": "Nota de diagnóstico",
     "treatment": "Nota clínica en tratamiento",
     "treatment_plan": "Nota clínica en plan de tratamiento",
+    "appointment_clinical": "Nota clínica de cita",
+    "appointment_administrative": "Nota administrativa de cita",
+}
+
+# note_type -> the event clinical_notes publishes for it. The stored
+# event_type is the real event name; deriving it from the note_type gave
+# ``clinical_notes.treatment_plan_created`` for plan notes, an event that
+# does not exist (the real one is ``clinical_notes.plan_created``).
+_NOTE_TYPE_EVENTS = {
+    "administrative": EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED,
+    "diagnosis": EventType.CLINICAL_NOTE_DIAGNOSIS_CREATED,
+    "treatment": EventType.CLINICAL_NOTE_TREATMENT_CREATED,
+    "treatment_plan": EventType.CLINICAL_NOTE_PLAN_CREATED,
+    "appointment_clinical": EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED,
+    "appointment_administrative": EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED,
 }
 
 
 async def on_clinical_note_created(data: dict) -> None:
     """Record any clinical_notes-module note on the patient timeline.
 
-    A single handler covers all four note_types (administrative, diagnosis,
-    treatment, treatment_plan). The event_type field stays specific so the
+    A single handler covers all six note_types (administrative, diagnosis,
+    treatment, treatment_plan, appointment_clinical,
+    appointment_administrative). The event_type field stays specific so the
     timeline UI can filter by note category.
     """
-    event_type_str = f"clinical_notes.{data.get('note_type', 'note')}_created"
     note_type = data.get("note_type") or "note"
+    event_type_str = _NOTE_TYPE_EVENTS.get(note_type, f"clinical_notes.{note_type}_created")
     title = _NOTE_TYPE_TITLES.get(note_type, "Nota clínica")
     tooth = data.get("tooth_number")
     if note_type == "diagnosis" and tooth:

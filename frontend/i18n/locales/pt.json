@@ -483,6 +483,8 @@
           "diagnosis": "Nota de diagnóstico",
           "treatment": "Nota clínica num tratamento",
           "treatment_plan": "Nota clínica num plano de tratamento",
+          "appointment_clinical": "Nota clínica numa consulta",
+          "appointment_administrative": "Nota administrativa numa consulta",
           "generic": "Nota clínica",
           "withTooth": "{note} (dente {tooth})"
         },
@@ -1748,8 +1750,7 @@
       "label": "Designação",
       "labelPlaceholder": "Ex.: Impressões",
       "price": "Montante",
-      "add": "Adicionar sessão",
-      "sumStatus": "Soma {sum} € · Total {total} €"
+      "add": "Adicionar sessão"
     },
     "categoryCreated": "Categoria criada",
     "categoryUpdated": "Categoria atualizada",

@@ -483,6 +483,8 @@
           "diagnosis": "Diagnosis note",
           "treatment": "Clinical note on a treatment",
           "treatment_plan": "Clinical note on a treatment plan",
+          "appointment_clinical": "Clinical note on an appointment",
+          "appointment_administrative": "Administrative note on an appointment",
           "generic": "Clinical note",
           "withTooth": "{note} (tooth {tooth})"
         },
@@ -1748,8 +1750,7 @@
       "label": "Label",
       "labelPlaceholder": "e.g. Impressions",
       "price": "Amount",
-      "add": "Add session",
-      "sumStatus": "Sum {sum} € · Total {total} €"
+      "add": "Add session"
     },
     "categoryCreated": "Category created",
     "categoryUpdated": "Category updated",

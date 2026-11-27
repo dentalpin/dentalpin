@@ -509,6 +509,8 @@
           "diagnosis": "Nota de diagnóstico",
           "treatment": "Nota clínica en tratamiento",
           "treatment_plan": "Nota clínica en plan de tratamiento",
+          "appointment_clinical": "Nota clínica de cita",
+          "appointment_administrative": "Nota administrativa de cita",
           "generic": "Nota clínica",
           "withTooth": "{note} (diente {tooth})"
         },
@@ -1748,8 +1750,7 @@
       "label": "Nombre",
       "labelPlaceholder": "Ej. Toma de medidas",
       "price": "Importe",
-      "add": "Añadir sesión",
-      "sumStatus": "Suma {sum} € · Total {total} €"
+      "add": "Añadir sesión"
     },
     "categoryCreated": "Categoría creada",
     "categoryUpdated": "Categoría actualizada",

@@ -483,6 +483,8 @@
           "diagnosis": "Notatka diagnostyczna",
           "treatment": "Notatka kliniczna do zabiegu",
           "treatment_plan": "Notatka kliniczna do planu leczenia",
+          "appointment_clinical": "Notatka kliniczna do wizyty",
+          "appointment_administrative": "Notatka administracyjna do wizyty",
           "generic": "Notatka kliniczna",
           "withTooth": "{note} (ząb {tooth})"
         },
@@ -1748,8 +1750,7 @@
       "label": "Nazwa",
       "labelPlaceholder": "np. Wyciski",
       "price": "Kwota",
-      "add": "Dodaj sesję",
-      "sumStatus": "Suma {sum} € · Razem {total} €"
+      "add": "Dodaj sesję"
     },
     "categoryCreated": "Kategoria utworzona",
     "categoryUpdated": "Kategoria zaktualizowana",

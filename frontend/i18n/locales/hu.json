@@ -483,6 +483,8 @@
           "diagnosis": "Diagnózis jegyzet",
           "treatment": "Klinikai jegyzet kezeléshez",
           "treatment_plan": "Klinikai jegyzet kezelési tervhez",
+          "appointment_clinical": "Klinikai jegyzet időponthoz",
+          "appointment_administrative": "Adminisztratív jegyzet időponthoz",
           "generic": "Klinikai jegyzet",
           "withTooth": "{note} ({tooth}. fog)"
         },
@@ -1748,8 +1750,7 @@
       "label": "Megnevezés",
       "labelPlaceholder": "pl. Lenyomat",
       "price": "Összeg",
-      "add": "Ülés hozzáadása",
-      "sumStatus": "Összeg {sum} € · Teljes {total} €"
+      "add": "Ülés hozzáadása"
     },
     "categoryCreated": "Kategória létrehozva",
     "categoryUpdated": "Kategória frissítve",

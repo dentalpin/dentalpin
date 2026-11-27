@@ -483,6 +483,8 @@
           "diagnosis": "ملاحظة تشخيص",
           "treatment": "ملاحظة سريرية على علاج",
           "treatment_plan": "ملاحظة سريرية على خطة علاج",
+          "appointment_clinical": "ملاحظة سريرية على موعد",
+          "appointment_administrative": "ملاحظة إدارية على موعد",
           "generic": "ملاحظة سريرية",
           "withTooth": "{note} (السن {tooth})"
         },
@@ -1748,8 +1750,7 @@
       "label": "التسمية",
       "labelPlaceholder": "مثال: الطبعات",
       "price": "المبلغ",
-      "add": "إضافة جلسة",
-      "sumStatus": "المجموع {sum} € · الإجمالي {total} €"
+      "add": "إضافة جلسة"
     },
     "categoryCreated": "أُنشئت الفئة",
     "categoryUpdated": "حُدثت الفئة",

@@ -39,6 +39,16 @@ type FallbackLocale = string | string[] | Record<string, string[]> | false | und
  * to pt) reports a key it can translate as missing. This `te` also
  * checks the fallback locales.
  */
+// clinical_notes note types with their own heading; anything else is generic.
+const NOTE_TYPES = new Set([
+  'administrative',
+  'diagnosis',
+  'treatment',
+  'treatment_plan',
+  'appointment_clinical',
+  'appointment_administrative'
+])
+
 export function teWithFallback(
   te: (key: string, locale?: string) => boolean,
   locale: string,
@@ -230,15 +240,9 @@ export function timelineEntryTitle(entry: Entry, { t, te }: TimelineTitleI18n): 
     default:
       if (entry.event_type.startsWith('clinical_notes.') && has('note_type')) {
         const noteType = str(data.note_type)
-        const note = noteType === 'administrative'
-          ? t('patients.timeline.titles.notes.administrative')
-          : noteType === 'diagnosis'
-            ? t('patients.timeline.titles.notes.diagnosis')
-            : noteType === 'treatment'
-              ? t('patients.timeline.titles.notes.treatment')
-              : noteType === 'treatment_plan'
-                ? t('patients.timeline.titles.notes.treatment_plan')
-                : t('patients.timeline.titles.notes.generic')
+        const note = NOTE_TYPES.has(noteType)
+          ? t(`patients.timeline.titles.notes.${noteType}`)
+          : t('patients.timeline.titles.notes.generic')
         const tooth = str(data.tooth_number)
         title = noteType === 'diagnosis' && tooth
           ? t('patients.timeline.titles.notes.withTooth', { note, tooth })

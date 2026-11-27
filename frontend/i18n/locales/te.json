@@ -483,6 +483,8 @@
           "diagnosis": "నిర్ధారణ గమనిక",
           "treatment": "చికిత్సపై క్లినికల్ గమనిక",
           "treatment_plan": "చికిత్స ప్రణాళికపై క్లినికల్ గమనిక",
+          "appointment_clinical": "అపాయింట్‌మెంట్‌పై క్లినికల్ గమనిక",
+          "appointment_administrative": "అపాయింట్‌మెంట్‌పై పరిపాలనా గమనిక",
           "generic": "క్లినికల్ గమనిక",
           "withTooth": "{note} (దంతం {tooth})"
         },
@@ -1758,8 +1760,7 @@
       "label": "లేబుల్",
       "labelPlaceholder": "ఉదా. ఇంప్రెషన్లు",
       "price": "మొత్తం",
-      "add": "సెషన్ జోడించండి",
-      "sumStatus": "మొత్తం {sum} € · పూర్తి {total} €"
+      "add": "సెషన్ జోడించండి"
     },
     "categoryCreated": "వర్గం సృష్టించబడింది",
     "categoryUpdated": "వర్గం నవీకరించబడింది",
