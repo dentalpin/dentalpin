@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1187): `index_imaging_study` caps `study_uid`/`modality` at 128/16 like `StudyIndexRequest`, so an over-long value is rejected by the tool instead of failing at flush.
 - feat: ROI statistics. New read-only endpoint
   `GET /studies/{id}/roi-stats?x0&y0&x1&y1` (normalized 0-1 rectangle,
   `imaging_viewer.studies.read`) reporting mean, population standard

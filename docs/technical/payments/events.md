@@ -50,6 +50,12 @@ Idempotency is DB-level: the composite unique constraint
 unique index `uq_earned_treatment_null_session` dedupes NULL-session
 rows (plain unique constraints treat NULLs as distinct — `pay_0004`).
 
+**Professional attribution.** The earned row's `professional_id` (what
+the "By professional" report groups on) is taken from `performed_by`
+(odontogram), else `professional_id`, else `completed_by` (treatment_plan
+session, #1152). Session rows booked before #1152 keep
+`professional_id = NULL`; they are not backfilled.
+
 ## Adding a new event
 
 1. Add the constant to `backend/app/core/events/types.py` (`EventType`).

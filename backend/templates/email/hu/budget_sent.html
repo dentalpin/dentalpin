@@ -72,6 +72,18 @@
 <p><strong>Megjegyzések:</strong> {{ notes }}</p>
 {% endif %}
 
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Árajánlatom megtekintése</a>
+</div>
+{% endif %}
+
 <p>Ha kérdése van az árajánlattal kapcsolatban, vagy szeretne időpontot foglalni a kezelésre, forduljon hozzánk bizalommal.</p>
 
 {% if clinic_phone %}

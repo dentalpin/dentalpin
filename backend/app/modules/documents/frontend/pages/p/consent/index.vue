@@ -7,7 +7,9 @@ const { t, locale, loadLocaleMessages } = useI18n()
 const config = useRuntimeConfig()
 const token = ref('')
 const endpoint = `${config.public.apiBaseUrl}/api/v1/documents/public/consents/current`
-interface PublicConsent { title: string, text: string, patient: string, clinic: string, purpose: string, locale?: string }
+// ``body_html`` is the server-rendered, allowlisted HTML of the consent body (#1171).
+// ``text`` is the raw source and is never rendered on this page.
+interface PublicConsent { title: string, text: string, body_html: string, patient: string, clinic: string, purpose: string, locale?: string }
 const item = ref<PublicConsent | null>(null)
 const signer = ref('')
 const relation = ref('patient')
@@ -16,6 +18,10 @@ const relationOptions = computed(() => [
   { label: t('documents.consent.guardian'), value: 'guardian' },
   { label: t('documents.consent.representative'), value: 'representative' }
 ])
+const idDocument = ref('')
+// Guardians and representatives must give an ID document; the server enforces it too.
+const idRequired = computed(() => relation.value !== 'patient')
+const idMissing = computed(() => idRequired.value && !idDocument.value.trim())
 const signature = ref<string | null>(null)
 const canvas = ref<InstanceType<typeof SignatureCanvas> | null>(null)
 watch(relation, (value) => {
@@ -42,6 +48,7 @@ async function loadConsent() {
   token.value = window.location.hash.slice(1)
   item.value = null
   signer.value = ''
+  idDocument.value = ''
   relation.value = 'patient'
   signature.value = null
   error.value = false
@@ -75,13 +82,13 @@ onUnmounted(() => {
 })
 
 async function submit() {
-  if (!signature.value || !signer.value.trim()) return
+  if (!signature.value || !signer.value.trim() || idMissing.value) return
   const generation = loadGeneration
   busy.value = true
   submitFailed.value = false
   try {
     await $fetch(`${endpoint}/sign`, { method: 'POST', credentials: 'omit', headers: { Authorization: `Bearer ${token.value}` }, body: {
-      signer_name: signer.value, relationship_to_patient: relation.value, signature: signature.value
+      signer_name: signer.value, relationship_to_patient: relation.value, signer_id_document: idDocument.value.trim() || null, signature: signature.value
     } })
     if (generation === loadGeneration) {
       done.value = true
@@ -125,9 +132,13 @@ async function submit() {
       >
         {{ t('documents.consent.revocationNotice') }}
       </p>
-      <div class="whitespace-pre-wrap rounded border p-5">
-        {{ item.text }}
-      </div>
+      <!-- eslint-disable vue/no-v-html -- sanitised server-side by render_consent_body, never the raw text -->
+      <div
+        class="consent-body rounded border p-5"
+        data-testid="consent-body"
+        v-html="item.body_html"
+      />
+      <!-- eslint-enable vue/no-v-html -->
       <UFormField
         :label="t('documents.consent.signer')"
         name="signer"
@@ -149,6 +160,23 @@ async function submit() {
           size="lg"
         />
       </UFormField>
+      <UFormField
+        :label="t('documents.consent.idDocument')"
+        :hint="t('documents.consent.idDocumentHint')"
+        :required="idRequired"
+        name="signerIdDocument"
+      >
+        <UInput
+          v-model="idDocument"
+          class="w-full"
+          size="lg"
+          maxlength="32"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          :required="idRequired"
+        />
+      </UFormField>
       <div>
         <p>{{ t('documents.consent.drawSignature') }}</p><SignatureCanvas
           ref="canvas"
@@ -168,7 +196,7 @@ async function submit() {
         {{ t('documents.consent.submitFailed') }}
       </p>
       <UButton
-        :disabled="busy || !signature || !signer.trim()"
+        :disabled="busy || !signature || !signer.trim() || idMissing"
         size="lg"
         @click="submit"
       >
@@ -180,3 +208,36 @@ async function submit() {
     </p>
   </main>
 </template>
+
+<style scoped>
+/* Text stays comfortable to read on a tablet held at arm's length. */
+.consent-body {
+  font-size: 1.125rem;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+.consent-body :deep(p),
+.consent-body :deep(ul),
+.consent-body :deep(ol) {
+  margin-bottom: 0.75rem;
+}
+.consent-body :deep(h2),
+.consent-body :deep(h3),
+.consent-body :deep(h4) {
+  font-weight: 600;
+  line-height: 1.3;
+  margin: 1.25rem 0 0.5rem;
+}
+.consent-body :deep(h2) { font-size: 1.5rem; }
+.consent-body :deep(h3) { font-size: 1.25rem; }
+.consent-body :deep(h4) { font-size: 1.125rem; }
+.consent-body :deep(ul) { list-style: disc; }
+.consent-body :deep(ol) { list-style: decimal; }
+.consent-body :deep(ul),
+.consent-body :deep(ol) { padding-inline-start: 1.5rem; }
+.consent-body :deep(li) { margin-bottom: 0.25rem; }
+.consent-body :deep(strong) { font-weight: 700; }
+.consent-body :deep(em) { font-style: italic; }
+.consent-body :deep(> :first-child) { margin-top: 0; }
+.consent-body :deep(> :last-child) { margin-bottom: 0; }
+</style>

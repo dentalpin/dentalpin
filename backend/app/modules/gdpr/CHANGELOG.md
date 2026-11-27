@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#1187): `execute_partial_erasure` records the confirming user (`ctx.supervisor_id`) as `executed_by` instead of the agent id, and refuses when the context has no supervisor.
+- fix(#1151): `PATCH /requests/{id}` with `status: null` and `PATCH /retention/{id}` with `retention_years` or `is_active` set to `null` are a 422 instead of a 500.
+
 - fix(#993): a data-subject request moved back to `in_progress` clears `resolved_at` (only `received` did), and re-sending the same terminal status keeps the original resolution time instead of restamping it.
 
 - Use the separate admin permission `gdpr.access_log.read` for staff access review and export (#903).

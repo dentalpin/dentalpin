@@ -24,8 +24,10 @@ class GetStudyArgs(BaseModel):
 class IndexStudyArgs(BaseModel):
     patient_id: UUID = Field(description="Id of the patient")
     document_id: UUID = Field(description="Id of the media document holding the DICOM bytes")
-    study_uid: str | None = None
-    modality: str | None = None
+    # Same caps as the REST StudyIndexRequest (the column widths), so an
+    # over-long value is rejected at the chokepoint, not at flush (#1187).
+    study_uid: str | None = Field(default=None, max_length=128)
+    modality: str | None = Field(default=None, max_length=16)
 
 
 class ListRvgImportsArgs(BaseModel):

@@ -12,6 +12,7 @@ from zoneinfo import ZoneInfo
 from babel.numbers import format_decimal as _babel_format_decimal
 
 from app.core.pdf_locales import LOCALE_BY_LANG as _LOCALE_BY_LANG
+from app.core.pdf_locales import format_pdf_date, format_pdf_datetime
 from app.core.utils.currency import format_currency as _fmt_currency
 
 if TYPE_CHECKING:
@@ -181,7 +182,7 @@ class InvoicePDFService:
             clinic_tz = ZoneInfo(clinic.timezone or "UTC")
         except (KeyError, ValueError):
             clinic_tz = UTC
-        generated_at = datetime.now(clinic_tz).strftime("%d/%m/%Y %H:%M")
+        generated_at = format_pdf_datetime(datetime.now(clinic_tz), locale)
 
         # Status badge
         status_label = labels["status"].get(invoice.status, invoice.status)
@@ -222,9 +223,9 @@ class InvoicePDFService:
             billing_address = snapshot["billing_address"]
         billing_name = billing_name or ""
 
-        # Format dates
-        issue_date = invoice.issue_date.strftime("%d/%m/%Y") if invoice.issue_date else "-"
-        due_date = invoice.due_date.strftime("%d/%m/%Y") if invoice.due_date else "-"
+        # Dates in the locale's own order and separators (#1180).
+        issue_date = format_pdf_date(invoice.issue_date, locale) if invoice.issue_date else "-"
+        due_date = format_pdf_date(invoice.due_date, locale) if invoice.due_date else "-"
         # Payment terms only make sense while something is still owed (#204).
         payment_terms_html = (
             f'<div class="payment-info"><strong>{labels["payment_terms"]}:</strong> '
