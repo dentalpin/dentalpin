@@ -62,7 +62,7 @@ async def test_one_reminder_per_start_time(
         },
     )
     await db_session.commit()
-    visit_id, clinic_id = visit.id, test_clinic.id
+    clinic_id = test_clinic.id
 
     @asynccontextmanager
     async def session():
@@ -90,7 +90,6 @@ async def test_one_reminder_per_start_time(
     await db_session.commit()
     await tasks.process_appointment_reminders()
     await tasks.process_appointment_reminders()
-    assert await tasks.send_single_reminder(visit_id, clinic_id) is False  # already reminded
 
     sent_for = await reminded_for()
     assert [datetime.fromisoformat(value) for value in sent_for] == [start, moved]

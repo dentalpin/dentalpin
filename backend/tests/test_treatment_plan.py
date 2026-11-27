@@ -1695,6 +1695,61 @@ async def test_odontogram_perform_after_a_session_books_only_the_rest(
 
 
 @pytest.mark.asyncio
+async def test_session_earned_row_credits_the_completing_professional(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """#1152: a completed session's earned row carries the user who completed it.
+
+    The session event names the user ``completed_by``; payments only read
+    ``performed_by`` / ``professional_id``, so every plan session landed on
+    the "no professional" row of Payments → By professional.
+    """
+    from datetime import date, timedelta
+    from uuid import UUID
+
+    from app.modules.payments.models import PatientEarnedEntry
+    from app.modules.payments.service import PaymentReportsService
+
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    r = await client.patch(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}"
+        f"/sessions/{sessions[0]['id']}/complete",
+        headers=auth_headers,
+        json={},
+    )
+    assert r.status_code == 200, r.text
+    treatment_id = await _item_treatment_id(client, auth_headers, plan_id, item_id)
+    await db_session.commit()
+
+    user_id = UUID(setup_multi_session["user_id"])
+    row = (
+        await db_session.execute(
+            select(PatientEarnedEntry).where(
+                PatientEarnedEntry.treatment_id == treatment_id,
+                PatientEarnedEntry.source_session_id == sessions[0]["id"],
+            )
+        )
+    ).scalar_one()
+    assert row.professional_id == user_id
+
+    today = date.today()
+    breakdown = await PaymentReportsService.by_professional(
+        db_session,
+        UUID(setup_multi_session["clinic_id"]),
+        today - timedelta(days=1),
+        today + timedelta(days=1),
+    )
+    by_prof = {b.professional_id: b.total_earned for b in breakdown}
+    assert by_prof.get(user_id) == Decimal("200.00")
+    assert None not in by_prof
+
+
+@pytest.mark.asyncio
 async def test_odontogram_perform_refused_after_the_sessions_finalized_the_item(
     client: AsyncClient,
     auth_headers: dict,

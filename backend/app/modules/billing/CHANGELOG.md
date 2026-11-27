@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#1151): `PUT /series/{id}` with `reset_yearly`, `is_default` or `is_active` set to `null` is a 422; it used to hit the NOT NULL column and come back as the duplicate-prefix 409.
+- fix(#1160): the invoice's patient brief includes `phone`, so the Send dialog offers WhatsApp when the patient has a phone.
+
 - fix(#1032): the New invoice page's row totals and summary apply line discounts (percentage and absolute) before VAT, rounded per line like the saved draft; the item modals' previews share the same helper (`utils/lineAmounts.ts`).
 
 - fix(#1103): the draft invoice PDF printed "None" as the billing name and an empty address; it now shows the patient billing data that issuing snapshots (shared `patient_billing_snapshot` helper).
