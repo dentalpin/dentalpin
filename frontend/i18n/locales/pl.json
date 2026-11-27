@@ -1346,6 +1346,9 @@
     "deleteCabinet": "Usuń gabinet",
     "deleteCabinetConfirm": "Czy na pewno chcesz usunąć gabinet",
     "deleteCabinetNote": "Istniejące wizyty w tym gabinecie nie zostaną naruszone.",
+    "cabinetActive": "Aktywny",
+    "cabinetInactive": "Nieaktywny",
+    "cabinetActiveHint": "Nieaktywny gabinet nie przyjmuje nowych wizyt i jest ukryty w terminarzu. Jego wcześniejsze wizyty są zachowane.",
     "createCabinet": "Utwórz gabinet",
     "roles": {
       "admin": "Administrator",
@@ -1600,7 +1603,8 @@
       "notFound": "Nie znaleziono gabinetu",
       "createFailed": "Nie udało się utworzyć gabinetu",
       "updateFailed": "Nie udało się zaktualizować gabinetu",
-      "deleteFailed": "Nie udało się usunąć gabinetu"
+      "deleteFailed": "Nie udało się usunąć gabinetu",
+      "deleteHasHistory": "Ten gabinet ma wizyty, więc nie można go usunąć. Zamiast tego go dezaktywuj."
     }
   },
   "professionals": {

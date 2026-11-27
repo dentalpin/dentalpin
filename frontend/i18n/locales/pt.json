@@ -1346,6 +1346,9 @@
     "deleteCabinet": "Eliminar gabinete",
     "deleteCabinetConfirm": "Tem a certeza de que pretende eliminar o gabinete",
     "deleteCabinetNote": "As consultas existentes neste gabinete não serão afetadas.",
+    "cabinetActive": "Ativo",
+    "cabinetInactive": "Inativo",
+    "cabinetActiveHint": "Um gabinete inativo não aceita novas consultas e fica oculto na agenda. As consultas anteriores são mantidas.",
     "createCabinet": "Criar gabinete",
     "roles": {
       "admin": "Administrador",
@@ -1600,7 +1603,8 @@
       "notFound": "Gabinete não encontrado",
       "createFailed": "Falha ao criar o gabinete",
       "updateFailed": "Falha ao atualizar o gabinete",
-      "deleteFailed": "Falha ao eliminar o gabinete"
+      "deleteFailed": "Falha ao eliminar o gabinete",
+      "deleteHasHistory": "Este gabinete tem consultas, por isso não pode ser eliminado. Desative-o em vez disso."
     }
   },
   "professionals": {

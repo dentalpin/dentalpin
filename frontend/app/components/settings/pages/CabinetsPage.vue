@@ -92,7 +92,18 @@ async function handleDelete() {
               class="w-3 h-3 rounded-full shrink-0"
               :style="{ backgroundColor: cabinet.color }"
             />
-            <span class="text-default truncate">{{ cabinet.name }}</span>
+            <span
+              class="truncate"
+              :class="cabinet.is_active === false ? 'text-muted' : 'text-default'"
+            >{{ cabinet.name }}</span>
+            <UBadge
+              v-if="cabinet.is_active === false"
+              color="neutral"
+              variant="subtle"
+              size="sm"
+            >
+              {{ t('settings.cabinetInactive') }}
+            </UBadge>
           </div>
           <div
             v-if="isAdmin"

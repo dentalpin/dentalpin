@@ -1346,6 +1346,9 @@
     "deleteCabinet": "Supprimer le cabinet",
     "deleteCabinetConfirm": "Êtes-vous sûr de vouloir supprimer le cabinet",
     "deleteCabinetNote": "Les rendez-vous existants dans ce cabinet ne seront pas affectés.",
+    "cabinetActive": "Actif",
+    "cabinetInactive": "Inactif",
+    "cabinetActiveHint": "Un cabinet inactif n'accepte plus de nouveaux rendez-vous et n'apparaît plus dans l'agenda. Ses rendez-vous passés sont conservés.",
     "createCabinet": "Créer le cabinet",
     "roles": {
       "admin": "Administrateur",
@@ -1600,7 +1603,8 @@
       "notFound": "Cabinet introuvable",
       "createFailed": "Échec de la création du cabinet",
       "updateFailed": "Échec de la mise à jour du cabinet",
-      "deleteFailed": "Échec de la suppression du cabinet"
+      "deleteFailed": "Échec de la suppression du cabinet",
+      "deleteHasHistory": "Ce cabinet a des rendez-vous, il ne peut donc pas être supprimé. Désactivez-le plutôt."
     }
   },
   "professionals": {

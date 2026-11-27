@@ -144,6 +144,10 @@ None.
   `appointment.status_changed`.
 - **Cabinet assignment uses `assign_cabinet`** — it publishes
   `appointment.cabinet_changed` with both old and new ids.
+- **Inactive cabinets take no new appointments** (#1237). Create, update
+  and `assign_cabinet` answer 400 for an inactive target; an appointment
+  already in one keeps it on unrelated edits (the modal resends the
+  cabinet). Frontend pickers go through `frontend/utils/activeCabinets.ts`.
 - **Mobile free-slot computation is client-side** (#61). The composable
   `frontend/composables/useFreeSlots.ts` derives gaps from already-loaded
   appointments + the optional `schedules` availability payload. Do not

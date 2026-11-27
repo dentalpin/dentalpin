@@ -9,6 +9,7 @@ import type {
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { appointmentTimes, editedAppointmentTimes, readAppointmentTiming } from '../../utils/appointmentTiming'
 import { formatLocalDate, isoPartsToDateKey, parseIsoParts } from '../../utils/date'
+import { pickableCabinets } from '../../utils/activeCabinets'
 import { errorMessage } from '~~/app/utils/error'
 
 const props = defineProps<{
@@ -108,7 +109,9 @@ watch(selectedTreatments, (treatments) => {
 })
 
 // Cabinet options from clinic. Leading "assign later" entry (#51) —
-// cabinets are optional at booking and decided at check-in.
+// cabinets are optional at booking and decided at check-in. Inactive
+// cabinets are left out, except the one an edited appointment already
+// sits in (#1237).
 const cabinetOptions = computed(() => {
   const assignLater = {
     value: UNASSIGNED_CABINET,
@@ -116,7 +119,7 @@ const cabinetOptions = computed(() => {
   }
   return [
     assignLater,
-    ...clinic.cabinets.value.map(cab => ({
+    ...pickableCabinets(clinic.cabinets.value, props.appointment?.cabinet).map(cab => ({
       value: cab.name,
       label: cab.name
     }))
@@ -486,7 +489,7 @@ watch(() => props.open, async (isOpen) => {
     // Free-slot tap (#61) may pre-fill a cabinet when the user was
     // viewing a cabinet-track on mobile.
     if (props.initialCabinet) {
-      const matchesClinicCabinet = clinic.cabinets.value.some(c => c.name === props.initialCabinet)
+      const matchesClinicCabinet = pickableCabinets(clinic.cabinets.value).some(c => c.name === props.initialCabinet)
       formData.cabinet = matchesClinicCabinet ? props.initialCabinet : UNASSIGNED_CABINET
     } else {
       formData.cabinet = UNASSIGNED_CABINET

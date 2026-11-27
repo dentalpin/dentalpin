@@ -48,6 +48,11 @@ professionals and rooms, and walk them through their workflow
 - **Cabinet and professional filters** — chips above the calendar.
   Appointments with no room assigned are **always** visible so the
   front desk can drag them onto the right room.
+- **Inactive rooms** — a room deactivated in Settings → Cabinets is
+  not offered in the appointment form and gets no filter chip, unless
+  an appointment in the loaded range still sits in it. Booking into,
+  or moving an appointment into, an inactive room is refused; an
+  appointment already in it can still be opened, edited and moved out.
 - **Drag, resize, and across-day moves** — drag a card to a different
   hour or professional to move it; drag the lower edge to change its
   duration. If it overlaps with another appointment for the same
