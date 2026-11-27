@@ -1690,8 +1690,7 @@
       "label": "लेबल",
       "labelPlaceholder": "उदा. इंप्रेशन",
       "price": "राशि",
-      "add": "सत्र जोड़ें",
-      "sumStatus": "योग {sum} € · कुल {total} €"
+      "add": "सत्र जोड़ें"
     },
     "categoryCreated": "श्रेणी बनाई गई",
     "categoryUpdated": "श्रेणी अपडेट की गई",

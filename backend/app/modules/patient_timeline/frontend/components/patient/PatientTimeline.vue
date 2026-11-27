@@ -53,10 +53,10 @@ const showTreatmentSlot = computed(
 
 // ---- Date formatting ---------------------------------------------------
 
-const localeCode = computed(() => (locale.value === 'es' ? 'es-ES' : 'en-US'))
-
+// Format with the UI locale (its codes are BCP 47 tags), so every shipped
+// language gets its own weekday/month names and 24 h vs AM/PM (#1175).
 function formatTime(date: Date): string {
-  return date.toLocaleTimeString(localeCode.value, { hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleTimeString(locale.value, { hour: '2-digit', minute: '2-digit' })
 }
 
 function formatEntryDate(dateStr: string): string {
@@ -65,11 +65,11 @@ function formatEntryDate(dateStr: string): string {
   if (bucket === 'today') return `${t('patients.timeline.groups.today')} · ${formatTime(date)}`
   if (bucket === 'yesterday') return `${t('patients.timeline.groups.yesterday')} · ${formatTime(date)}`
   if (bucket === 'thisWeek') {
-    return date.toLocaleDateString(localeCode.value, {
+    return date.toLocaleDateString(locale.value, {
       weekday: 'long', hour: '2-digit', minute: '2-digit'
     })
   }
-  return date.toLocaleDateString(localeCode.value, {
+  return date.toLocaleDateString(locale.value, {
     day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
   })
 }
