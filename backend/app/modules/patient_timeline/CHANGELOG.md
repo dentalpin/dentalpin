@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix(#1175): timeline dates and times use the UI language instead of English for every non-Spanish locale.
+- fix(#1155): notes written on an appointment (`clinical_notes.appointment_clinical_created` / `appointment_administrative_created`) now land on the patient timeline; they had no subscriber. The stored `event_type` for clinical notes is now the real event name (plan notes were stored as the non-existent `clinical_notes.treatment_plan_created` instead of `clinical_notes.plan_created`; older rows keep the old value).
 
 - fix(#948): the appointment-lifecycle and orthodontic handlers take `db` and record inside a savepoint of the publisher's transaction. A booking that created the patient and the appointment together lost its timeline entry to the `patient_timeline_patient_id_fkey` violation; a failed timeline insert still cannot roll back the booking.
 

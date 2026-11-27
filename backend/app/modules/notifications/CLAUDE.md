@@ -119,6 +119,9 @@ is the `NotificationType` Literal, so the model is shown the nine values.
   once under `skip:<reason>:<key>`, so the send still happens once unblocked.
 - **A reminder is per appointment and start time** (#1035): take the
   `dedup_key` from `tasks._reminder_key`, never from the appointment id alone.
+- **Every reminder carries the check-in link** (ADR 0037, #1156): the sweep
+  and the manual `POST /send` both set `checkin_url` from
+  `tasks._reminder_checkin_url`. A manual send is not deduplicated.
 
 - **No outbound network calls during a request.** Sending is queued via
   `tasks.py` (APScheduler) so the request transaction can commit

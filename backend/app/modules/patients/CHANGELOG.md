@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix(#1175): the personal info card formats the date of birth in the UI language instead of Spanish for every non-English locale.
+- fix(#1151): `PUT /{id}` with `first_name`, `last_name` or `do_not_contact` set to `null` is a 422 instead of a 500.
 
 - fix(#1114): CSV import no longer answers 500 on a row with more cells than the header (extra cells are ignored), and reads a column whose header has surrounding spaces.
 

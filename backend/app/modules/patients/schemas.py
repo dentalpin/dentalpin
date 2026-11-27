@@ -11,6 +11,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field
 
+from app.core.schemas import NotNull
+
 # --- Billing -------------------------------------------------------------
 
 
@@ -42,14 +44,15 @@ class PatientCreate(BaseModel):
 
 
 class PatientUpdate(BaseModel):
-    first_name: str | None = Field(default=None, min_length=1, max_length=100)
-    last_name: str | None = Field(default=None, min_length=1, max_length=100)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    first_name: NotNull[str] = Field(default=None, min_length=1, max_length=100)
+    last_name: NotNull[str] = Field(default=None, min_length=1, max_length=100)
     phone: str | None = Field(default=None, max_length=20)
     email: EmailStr | None = None
     date_of_birth: date | None = None
     notes: str | None = None
     status: Literal["active", "archived"] | None = None
-    do_not_contact: bool | None = None
+    do_not_contact: NotNull[bool] = None
     billing_name: str | None = Field(default=None, max_length=200)
     billing_tax_id: str | None = Field(default=None, max_length=50)
     billing_address: BillingAddress | None = None
