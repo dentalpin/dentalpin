@@ -30,7 +30,7 @@ related_paths:
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: fdbdaf8d
+last_verified_commit: dd87ef44
 ---
 
 # Patient detail
@@ -66,7 +66,8 @@ to review the recorded activity. See the [access log guide](../../gdpr/screens/a
     with the patient pre-selected when there is none).
   - **Balance** *(payments)* — debt / on-account / paid. Click →
     Administration → Payments.
-  - **Diagnoses** *(odontogram)* — untreated findings count.
+  - **Diagnoses** *(odontogram)* — untreated findings count and up
+    to three of them with their teeth and surfaces (e.g. «Corona #16»).
     Click → dental chart in diagnosis mode.
   - **Medical history** *(patients_clinical)* — allergies, systemic
     diseases, medication. Click → edit history.
