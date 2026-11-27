@@ -19,6 +19,13 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Documents:** a cancelled edit of a prescription's medications no longer comes back when the document is reopened (#1232).
+- **Agenda:** Settings → Cabinets can deactivate and reactivate a cabinet, deleting one with appointments now says to deactivate it, and an inactive cabinet is no longer offered or bookable (#1237).
+- **Agenda:** an appointment can no longer be saved ending at or before its start time; reports no longer count negative hours from new bookings (#1242).
+- **Budget, Billing:** a percentage discount above 100 % is refused instead of turning a budget or invoice negative (#1241).
+- **Budget:** the "Line total" shown when adding a treatment to a quote now includes the treatment's VAT and never goes negative, matching the line that gets added (#1235).
+- **Agenda:** changing the patient in the appointment modal clears the previous patient's treatments instead of failing on save (#1234).
+- **Catalog:** "New treatment" opens empty instead of prefilled with the last created item, and cancelled edits in the catalog and odontogram treatment modals no longer come back (#1233).
+- **Catalog:** creating or editing a per-surface treatment (e.g. the seeded composite filling) saves instead of failing with a server error; a negative tier price is rejected (#1240).
 - **Medical reference:** a deactivated interaction or contraindication can be added again; it comes back with the new risk note and its patient warnings return (#1236).
 - **Payments:** pressing Enter twice in the record-payment modal no longer records the payment twice (#1230).
 - **Documents:** "New document" opens empty instead of prefilled with the previous patient's document, and cancelled edits no longer come back (#1232).

@@ -1346,6 +1346,9 @@
     "deleteCabinet": "Delete Cabinet",
     "deleteCabinetConfirm": "Are you sure you want to delete the cabinet",
     "deleteCabinetNote": "Existing appointments in this cabinet will not be affected.",
+    "cabinetActive": "Active",
+    "cabinetInactive": "Inactive",
+    "cabinetActiveHint": "An inactive cabinet can't take new appointments and is hidden from the agenda. Its past appointments are kept.",
     "createCabinet": "Create Cabinet",
     "roles": {
       "admin": "Administrator",
@@ -1600,7 +1603,8 @@
       "notFound": "Cabinet not found",
       "createFailed": "Failed to create cabinet",
       "updateFailed": "Failed to update cabinet",
-      "deleteFailed": "Failed to delete cabinet"
+      "deleteFailed": "Failed to delete cabinet",
+      "deleteHasHistory": "This cabinet has appointments, so it can't be deleted. Deactivate it instead."
     }
   },
   "professionals": {

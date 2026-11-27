@@ -9,6 +9,7 @@ import type {
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { appointmentTimes, editedAppointmentTimes, readAppointmentTiming } from '../../utils/appointmentTiming'
 import { formatLocalDate, isoPartsToDateKey, parseIsoParts } from '../../utils/date'
+import { pickableCabinets } from '../../utils/activeCabinets'
 import { errorMessage } from '~~/app/utils/error'
 
 const props = defineProps<{
@@ -108,7 +109,9 @@ watch(selectedTreatments, (treatments) => {
 })
 
 // Cabinet options from clinic. Leading "assign later" entry (#51) —
-// cabinets are optional at booking and decided at check-in.
+// cabinets are optional at booking and decided at check-in. Inactive
+// cabinets are left out, except the one an edited appointment already
+// sits in (#1237).
 const cabinetOptions = computed(() => {
   const assignLater = {
     value: UNASSIGNED_CABINET,
@@ -116,7 +119,7 @@ const cabinetOptions = computed(() => {
   }
   return [
     assignLater,
-    ...clinic.cabinets.value.map(cab => ({
+    ...pickableCabinets(clinic.cabinets.value, props.appointment?.cabinet).map(cab => ({
       value: cab.name,
       label: cab.name
     }))
@@ -209,6 +212,24 @@ function resetConfirmationDefault() {
 
 watch(selectedPatient, () => {
   if (!isEditMode.value) resetConfirmationDefault()
+})
+
+// Planned items belong to one patient: picking a different patient drops
+// the ones chosen for the previous one, otherwise the save sends them
+// with the new patient_id and the backend rejects it (#1234). Clearing
+// the patient card (null) keeps them, so re-picking the same patient
+// loses nothing. The open-time population (edit mode, or a preselected
+// patient + plan) runs before the watch is armed, so it is never cleared.
+// Own flag, not initialDataLoaded: handleSave drops that one and a failed
+// save never restores it.
+let lastPatientId: string | null = null
+let patientSwitchArmed = false
+watch(() => selectedPatient.value?.id, (id) => {
+  if (!id) return
+  if (patientSwitchArmed && lastPatientId && id !== lastPatientId) {
+    selectedTreatments.value = []
+  }
+  lastPatientId = id
 })
 
 // Check for overlapping appointments
@@ -335,6 +356,8 @@ watch(() => props.open, async (isOpen) => {
   }
   // Reset flags when modal opens
   initialDataLoaded.value = false
+  lastPatientId = null
+  patientSwitchArmed = false
   originalTiming.value = null
   lastOverlapWarningKey.value = ''
   initialOverlapIds.value = { professional: new Set(), cabinet: new Set() }
@@ -466,7 +489,7 @@ watch(() => props.open, async (isOpen) => {
     // Free-slot tap (#61) may pre-fill a cabinet when the user was
     // viewing a cabinet-track on mobile.
     if (props.initialCabinet) {
-      const matchesClinicCabinet = clinic.cabinets.value.some(c => c.name === props.initialCabinet)
+      const matchesClinicCabinet = pickableCabinets(clinic.cabinets.value).some(c => c.name === props.initialCabinet)
       formData.cabinet = matchesClinicCabinet ? props.initialCabinet : UNASSIGNED_CABINET
     } else {
       formData.cabinet = UNASSIGNED_CABINET
@@ -489,6 +512,7 @@ watch(() => props.open, async (isOpen) => {
 
   // Now enable overlap warnings for new overlaps only
   initialDataLoaded.value = true
+  patientSwitchArmed = true
 })
 
 async function handleSave() {

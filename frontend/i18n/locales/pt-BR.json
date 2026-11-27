@@ -284,6 +284,9 @@
     "deleteCabinet": "Eliminar consultório",
     "deleteCabinetConfirm": "Tem a certeza de que pretende eliminar o consultório",
     "deleteCabinetNote": "As consultas existentes neste consultório não serão afetadas.",
+    "cabinetActive": "Ativo",
+    "cabinetInactive": "Inativo",
+    "cabinetActiveHint": "Um consultório inativo não aceita novas consultas e fica oculto na agenda. As consultas anteriores são mantidas.",
     "createCabinet": "Criar consultório",
     "taxId": "CPF/CNPJ",
     "postalCode": "CEP"
@@ -809,7 +812,8 @@
       "notFound": "Consultório não encontrado",
       "createFailed": "Falha ao criar o consultório",
       "updateFailed": "Falha ao atualizar o consultório",
-      "deleteFailed": "Falha ao eliminar o consultório"
+      "deleteFailed": "Falha ao eliminar o consultório",
+      "deleteHasHistory": "Este consultório tem consultas, por isso não pode ser excluído. Desative-o em vez disso."
     }
   },
   "schedules": {

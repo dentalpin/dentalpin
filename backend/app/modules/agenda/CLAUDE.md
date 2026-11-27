@@ -110,6 +110,14 @@ None.
 
 ## Gotchas
 
+- **An appointment ends strictly after it starts** (#1242).
+  `create_appointment` / `update_appointment` raise `InvalidTimeRangeError`
+  (a `ValueError`, so the router answers 400) when `end_time <= start_time`.
+  An update that sends one time is checked against the stored other one;
+  an update that sends neither skips the check, so rows stored before it
+  can still be edited. `book_appointment` / `reschedule_appointment` return
+  `{"error": "invalid_time_range"}`. There is no DB CHECK constraint.
+
 - **Saving syncs the treatment links, never re-creates them** (#1017): a
   link row holds the visit note and completed flag. Only newly added items
   go through booking validation, unless the patient changed.
@@ -136,6 +144,10 @@ None.
   `appointment.status_changed`.
 - **Cabinet assignment uses `assign_cabinet`** — it publishes
   `appointment.cabinet_changed` with both old and new ids.
+- **Inactive cabinets take no new appointments** (#1237). Create, update
+  and `assign_cabinet` answer 400 for an inactive target; an appointment
+  already in one keeps it on unrelated edits (the modal resends the
+  cabinet). Frontend pickers go through `frontend/utils/activeCabinets.ts`.
 - **Mobile free-slot computation is client-side** (#61). The composable
   `frontend/composables/useFreeSlots.ts` derives gaps from already-loaded
   appointments + the optional `schedules` availability payload. Do not

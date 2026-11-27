@@ -73,6 +73,16 @@ class AlreadyInStateError(ValueError):
     """Raised when a transition targets the appointment's current state."""
 
 
+class InvalidTimeRangeError(ValueError):
+    """Raised when an appointment would not end strictly after it starts (#1242)."""
+
+
+def _check_time_range(start: datetime, end: datetime) -> None:
+    """Reject a zero-length or inverted appointment (#1242)."""
+    if end <= start:
+        raise InvalidTimeRangeError("end_time must be after start_time")
+
+
 class CabinetRequiredError(ValueError):
     """Raised when moving to ``in_treatment`` without a cabinet assigned."""
 
@@ -388,13 +398,20 @@ class AppointmentService:
             raise ValueError("; ".join(errors))
 
     @staticmethod
-    async def _resolve_cabinet(db: AsyncSession, clinic_id: UUID, data: dict) -> None:
+    async def _resolve_cabinet(
+        db: AsyncSession,
+        clinic_id: UUID,
+        data: dict,
+        current_cabinet_id: UUID | None = None,
+    ) -> None:
         """Ensure ``data`` ends up with matching ``cabinet_id`` + ``cabinet``.
 
         Accepts either ``cabinet_id`` or the ``cabinet`` name; if neither
         is provided, leaves both as ``None`` — cabinet assignment is now
-        deferred-by-design (issue #51). Raises ``ValueError`` only when a
-        non-null reference can't be resolved.
+        deferred-by-design (issue #51). Raises ``ValueError`` when a
+        non-null reference can't be resolved, or when it names an inactive
+        cabinet other than ``current_cabinet_id`` (the one an edited
+        appointment already sits in, which may stay there).
         """
         cabinet_id = data.get("cabinet_id")
         cabinet_name = data.get("cabinet")
@@ -408,6 +425,9 @@ class AppointmentService:
             cab = await CabinetService.get_by_name(db, clinic_id, cabinet_name)
             if cab is None:
                 raise ValueError(f"Cabinet not found: {cabinet_name}")
+
+        if cab is not None and not cab.is_active and cab.id != current_cabinet_id:
+            raise ValueError(f"Cabinet is inactive: {cab.name}")
 
         if cab is not None:
             data["cabinet_id"] = cab.id
@@ -449,6 +469,8 @@ class AppointmentService:
         planned_item_ids = data.pop("planned_item_ids", None)
 
         await AppointmentService._normalize_times(db, clinic_id, data)
+        if data.get("start_time") is not None and data.get("end_time") is not None:
+            _check_time_range(data["start_time"], data["end_time"])
 
         await AppointmentService._resolve_cabinet(db, clinic_id, data)
 
@@ -554,6 +576,12 @@ class AppointmentService:
         planned_item_ids = data.pop("planned_item_ids", None)
 
         await AppointmentService._normalize_times(db, appointment.clinic_id, data)
+        # Check the merged range: a payload may carry only one of the two
+        # times (#1242). Untouched times skip the check, so a legacy bad row
+        # can still be edited.
+        new_start, new_end = data.get("start_time"), data.get("end_time")
+        if new_start is not None or new_end is not None:
+            _check_time_range(new_start or appointment.start_time, new_end or appointment.end_time)
 
         # Cabinet changes go through assign_cabinet() so the audit trail
         # + bus event fire. Pop the fields here and apply after the core
@@ -576,7 +604,9 @@ class AppointmentService:
                     None if requested_cabinet_name is _cabinet_unset else requested_cabinet_name
                 ),
             }
-            await AppointmentService._resolve_cabinet(db, appointment.clinic_id, tmp)
+            await AppointmentService._resolve_cabinet(
+                db, appointment.clinic_id, tmp, current_cabinet_id=appointment.cabinet_id
+            )
             resolved_cabinet_id = tmp["cabinet_id"]
 
         if planned_item_ids:
@@ -843,6 +873,8 @@ class AppointmentService:
             target_cabinet = await CabinetService.get_cabinet(db, appointment.clinic_id, cabinet_id)
             if target_cabinet is None:
                 raise ValueError(f"Cabinet not found: {cabinet_id}")
+            if not target_cabinet.is_active:
+                raise ValueError(f"Cabinet is inactive: {target_cabinet.name}")
 
         now = datetime.now(UTC)
         db.add(

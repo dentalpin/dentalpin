@@ -1346,6 +1346,9 @@
     "deleteCabinet": "Elimina riunito",
     "deleteCabinetConfirm": "Vuoi davvero eliminare il riunito",
     "deleteCabinetNote": "Gli appuntamenti esistenti in questo riunito non saranno toccati.",
+    "cabinetActive": "Attivo",
+    "cabinetInactive": "Inattivo",
+    "cabinetActiveHint": "Un riunito inattivo non accetta nuovi appuntamenti ed è nascosto dall'agenda. I suoi appuntamenti passati vengono conservati.",
     "createCabinet": "Crea riunito",
     "roles": {
       "admin": "Amministratore",
@@ -1600,7 +1603,8 @@
       "notFound": "Riunito non trovato",
       "createFailed": "Impossibile creare il riunito",
       "updateFailed": "Impossibile aggiornare il riunito",
-      "deleteFailed": "Impossibile eliminare il riunito"
+      "deleteFailed": "Impossibile eliminare il riunito",
+      "deleteHasHistory": "Questo riunito ha appuntamenti, quindi non può essere eliminato. Disattivalo invece."
     }
   },
   "professionals": {

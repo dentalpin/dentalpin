@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1241): a percentage line or global discount above 100 is refused (422, or 400 for a partial update against the stored type/value) instead of giving a negative total; the global discount input caps at 100 for percentages.
+- fix(#1235): the add-item modal's "Line total" preview now uses the backend line arithmetic: the catalog item's VAT is included and an absolute discount is capped at the line subtotal, so it no longer shows the net amount or a negative total.
 - fix(#1221): "New budget" opened from the patient card preselects that patient (`?patient_id=`) instead of starting with an empty selector. If the patient can't be loaded the selector stays empty, and a patient picked meanwhile is kept.
 - fix(#1180): quote PDF dates (created, valid from/until, signed at, footer) follow the PDF locale through the shared `app.core.pdf_locales` helpers; es/en keep dd/mm/yyyy.
 - fix(#1175): the signature card's signed-at time uses the UI language instead of English for every non-Spanish locale.
