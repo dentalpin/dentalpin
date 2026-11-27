@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1174): timeline headings are rebuilt from event_type + event_data in the viewer's language instead of printing the stored Spanish title; handlers now also store the treatment/plan/item name, message subject and document title in event_data (stored title unchanged).
 - fix(#1175): timeline dates and times use the UI language instead of English for every non-Spanish locale.
 - fix(#1155): notes written on an appointment (`clinical_notes.appointment_clinical_created` / `appointment_administrative_created`) now land on the patient timeline; they had no subscriber. The stored `event_type` for clinical notes is now the real event name (plan notes were stored as the non-existent `clinical_notes.treatment_plan_created` instead of `clinical_notes.plan_created`; older rows keep the old value).
 

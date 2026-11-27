@@ -17,7 +17,21 @@ the scaffold could not infer.
 
 ## Frontend
 
-_This module ships no Nuxt pages._
+_This module ships no Nuxt pages._ It ships the `PatientTimeline` component
+(the patient record's Activity tab).
+
+### Entry titles (#1174)
+
+Every row stores a Spanish `title`: it is the record, and the
+`get_patient_timeline` agent tool reads it. The component does not print it.
+`frontend/utils/timelineTitle.ts` rebuilds the heading from `event_type` +
+`event_data` with the host keys under `patients.timeline.titles.*`, so each
+viewer reads it in their own UI language. It falls back to the stored title
+when the event type is unknown, or when the row predates the `event_data`
+field that carries the dynamic part (rows written before #1174 lack
+`treatment_type`, `treatment_name`, `plan_name`, `item_name`, `subject` and
+`document_title`). Medical-history updates always show the stored title: it is
+the producer's free-text `summary`.
 
 ## Permissions
 
