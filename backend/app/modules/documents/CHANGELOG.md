@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- fix(#1232): cancelling an edit of a prescription's medications no longer changes the list; the modal edits a copy of the document content.
 - fix(#1232): the create/edit document modal resets its form on every opening, so "New document" no longer comes back with the previous patient, title and content after a create or a cancelled draft, and a cancelled edit no longer reappears.
 - fix(#1180): document PDF birth date and issue timestamp follow the PDF locale through the shared `app.core.pdf_locales` helpers; es/en keep dd/mm/yyyy.
 - feat(#1171): consent texts accept a small Markdown subset (headings, **bold**, *italic*, bullet and numbered lists; single newlines stay line breaks). One backend renderer, `render_consent_body`, with an allowlist of tags feeds both the public signing page (`body_html` in `GET /public/consents/current`, rendered instead of the raw text) and the consent PDF. Stored snapshots and signed PDFs are unchanged. New dependency: `markdown-it-py`. Syntax help in the template editor, translated in all locales.

@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Documents:** a cancelled edit of a prescription's medications no longer comes back when the document is reopened (#1232).
 - **Medical reference:** a deactivated interaction or contraindication can be added again; it comes back with the new risk note and its patient warnings return (#1236).
 - **Payments:** pressing Enter twice in the record-payment modal no longer records the payment twice (#1230).
 - **Documents:** "New document" opens empty instead of prefilled with the previous patient's document, and cancelled edits no longer come back (#1232).

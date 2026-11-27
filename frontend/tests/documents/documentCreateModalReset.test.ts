@@ -98,4 +98,27 @@ describe('DocumentCreateModal (#1232)', () => {
     expect(vm.form.title).toBe('Certificado')
     expect(vm.form.content.diagnosis).toBe('Original')
   })
+
+  it('reopening a prescription drops discarded medication edits', async () => {
+    const doc = {
+      id: 'doc-2',
+      patient_id: 'patient-A',
+      document_type: 'prescription',
+      title: 'Receta',
+      content: {
+        diagnosis: 'Pulpitis 36',
+        medications: [{ name: 'Amoxicilina 750', dose: '1', frequency: '8h', duration: '7d', notes: '' }]
+      }
+    }
+    const original = structuredClone(doc.content.medications)
+    const wrapper = await mountSuspended(DocumentCreateModal, { props: { open: true, document: doc } })
+    const vm = wrapper.vm as unknown as ModalVm & { addMedication: () => void }
+    await flushPromises()
+    const meds = vm.form.content.medications as Array<{ dose: string }>
+    meds[0]!.dose = '2'
+    vm.addMedication()
+
+    await reopen(wrapper)
+    expect(vm.form.content.medications).toEqual(original)
+  })
 })
