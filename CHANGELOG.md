@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications:** patient emails end with the footer in their own language instead of Spanish, and the welcome email no longer shows made-up opening hours (#1153).
 - **Billing:** the invoice Send dialog no longer says the patient has no phone; WhatsApp is offered when they have one (#1160).
 - **Online booking:** booking can be switched off again after its assigned professional left the clinic (#1149).
 - **Recalls:** a snooze note now shows the clinic's date and who wrote it, not the UTC date and a user ID (#1148).
