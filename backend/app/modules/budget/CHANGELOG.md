@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1180): quote PDF dates (created, valid from/until, signed at, footer) follow the PDF locale through the shared `app.core.pdf_locales` helpers; es/en keep dd/mm/yyyy.
 - fix(#1175): the signature card's signed-at time uses the UI language instead of English for every non-Spanish locale.
 
 - fix(#1115): automatic reminders fire once 7 and once 14 clinic days after the budget was sent (latest `sent` history entry), instead of every 5-6 days counted from `valid_from`; `budget.reminder_sent` carries `automatic`.

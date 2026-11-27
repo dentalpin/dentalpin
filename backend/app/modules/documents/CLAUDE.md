@@ -101,6 +101,9 @@ reference an out-of-clinic patient.
   label set here fails `tests/test_pdf_label_coverage.py`, which
   discovers every module shipping a `pdf.py`. Clinical text the user
   typed is reproduced verbatim — only the captions are localized.
+  Printed dates go through `app.core.pdf_locales.format_pdf_date` /
+  `format_pdf_datetime` (#1180), shared with every other PDF, so a
+  Hungarian page reads `2026. 11. 26.`; never hard-code `%d/%m/%Y`.
 
 ## Events
 

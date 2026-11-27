@@ -15,6 +15,8 @@ from io import BytesIO
 from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
+from app.core.pdf_locales import format_pdf_date, format_pdf_datetime
+
 from .consent_markdown import list_value_css, render_consent_body
 
 if TYPE_CHECKING:
@@ -617,9 +619,9 @@ class DocumentPDFService:
         }
 
     @staticmethod
-    def _patient_birth(patient: Patient) -> str:
+    def _patient_birth(patient: Patient, locale: str) -> str:
         return (
-            patient.date_of_birth.strftime("%d/%m/%Y")
+            format_pdf_date(patient.date_of_birth, locale)
             if getattr(patient, "date_of_birth", None)
             else "-"
         )
@@ -640,7 +642,7 @@ class DocumentPDFService:
             clinic_tz = ZoneInfo(clinic.timezone or "UTC")
         except (KeyError, ValueError):
             clinic_tz = UTC
-        issued_at = datetime.now(clinic_tz).strftime("%d/%m/%Y %H:%M")
+        issued_at = format_pdf_datetime(datetime.now(clinic_tz), locale)
 
         patient_name = ""
         patient_id = ""
@@ -773,7 +775,7 @@ class DocumentPDFService:
                     </div>
                     <div class="info-group">
                         <div class="info-label">{labels["dob"]}</div>
-                        <div class="info-value">{DocumentPDFService._patient_birth(patient)}</div>
+                        <div class="info-value">{DocumentPDFService._patient_birth(patient, locale)}</div>
                     </div>
                     <div class="info-group">
                         <div class="info-label">{labels["issued"]}</div>
