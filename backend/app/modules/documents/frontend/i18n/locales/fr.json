@@ -126,6 +126,8 @@
       "revocationNotice": "En signant, vous révoquez le consentement présenté.",
       "signer": "Nom du signataire",
       "relationship": "Lien avec le patient",
+      "idDocument": "Pièce d'identité",
+      "idDocumentHint": "Obligatoire si vous signez en tant que tuteur ou représentant ; facultatif si vous êtes le patient.",
       "patient": "Patient",
       "guardian": "Tuteur légal",
       "representative": "Représentant",

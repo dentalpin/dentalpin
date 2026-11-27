@@ -16,6 +16,10 @@ const relationOptions = computed(() => [
   { label: t('documents.consent.guardian'), value: 'guardian' },
   { label: t('documents.consent.representative'), value: 'representative' }
 ])
+const idDocument = ref('')
+// Guardians and representatives must give an ID document; the server enforces it too.
+const idRequired = computed(() => relation.value !== 'patient')
+const idMissing = computed(() => idRequired.value && !idDocument.value.trim())
 const signature = ref<string | null>(null)
 const canvas = ref<InstanceType<typeof SignatureCanvas> | null>(null)
 watch(relation, (value) => {
@@ -42,6 +46,7 @@ async function loadConsent() {
   token.value = window.location.hash.slice(1)
   item.value = null
   signer.value = ''
+  idDocument.value = ''
   relation.value = 'patient'
   signature.value = null
   error.value = false
@@ -75,13 +80,13 @@ onUnmounted(() => {
 })
 
 async function submit() {
-  if (!signature.value || !signer.value.trim()) return
+  if (!signature.value || !signer.value.trim() || idMissing.value) return
   const generation = loadGeneration
   busy.value = true
   submitFailed.value = false
   try {
     await $fetch(`${endpoint}/sign`, { method: 'POST', credentials: 'omit', headers: { Authorization: `Bearer ${token.value}` }, body: {
-      signer_name: signer.value, relationship_to_patient: relation.value, signature: signature.value
+      signer_name: signer.value, relationship_to_patient: relation.value, signer_id_document: idDocument.value.trim() || null, signature: signature.value
     } })
     if (generation === loadGeneration) {
       done.value = true
@@ -149,6 +154,23 @@ async function submit() {
           size="lg"
         />
       </UFormField>
+      <UFormField
+        :label="t('documents.consent.idDocument')"
+        :hint="t('documents.consent.idDocumentHint')"
+        :required="idRequired"
+        name="signerIdDocument"
+      >
+        <UInput
+          v-model="idDocument"
+          class="w-full"
+          size="lg"
+          maxlength="32"
+          autocomplete="off"
+          autocapitalize="characters"
+          spellcheck="false"
+          :required="idRequired"
+        />
+      </UFormField>
       <div>
         <p>{{ t('documents.consent.drawSignature') }}</p><SignatureCanvas
           ref="canvas"
@@ -168,7 +190,7 @@ async function submit() {
         {{ t('documents.consent.submitFailed') }}
       </p>
       <UButton
-        :disabled="busy || !signature || !signer.trim()"
+        :disabled="busy || !signature || !signer.trim() || idMissing"
         size="lg"
         @click="submit"
       >

@@ -11,6 +11,10 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Added
+
+- **Documents:** the public consent signing page asks for the signer's ID document (DNI/NIE or passport). It is required when signing as a guardian or representative (a missing one is refused with a 422), optional for the patient, and is stored on the consent evidence, printed next to the signer name in the signed PDF and returned by the staff evidence endpoint. Migration `doc_0004` adds the nullable `consent_evidence.signer_id_document` column; consents signed before it are unaffected. GDPR erasure retains it with the rest of the signature evidence (#1171).
+
 ### Fixed
 
 - **Patient timeline:** entry headings on the Activity tab now show in the user's language instead of always in Spanish; entries recorded before this change keep their Spanish heading where it embeds a name (#1174).
