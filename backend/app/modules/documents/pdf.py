@@ -395,6 +395,7 @@ _CONSENT_LABELS = {
         "Tutor legal",
         "Representante",
         "BORRADOR",
+        "Documento de identidad",
     ),
     "en": (
         "Revocation",
@@ -403,6 +404,7 @@ _CONSENT_LABELS = {
         "Legal guardian",
         "Representative",
         "DRAFT",
+        "ID document",
     ),
     "ta": (
         "திரும்பப் பெறுதல்",
@@ -411,6 +413,7 @@ _CONSENT_LABELS = {
         "சட்டப்பூர்வ பாதுகாவலர்",
         "பிரதிநிதி",
         "வரைவு",
+        "அடையாள ஆவணம்",
     ),
     "te": (
         "ఉపసంహరణ",
@@ -419,6 +422,7 @@ _CONSENT_LABELS = {
         "చట్టపరమైన సంరక్షకుడు",
         "ప్రతినిధి",
         "ముసాయిదా",
+        "గుర్తింపు పత్రం",
     ),
     "hi": (
         "निरस्तीकरण",
@@ -427,6 +431,7 @@ _CONSENT_LABELS = {
         "कानूनी अभिभावक",
         "प्रतिनिधि",
         "मसौदा",
+        "पहचान दस्तावेज़",
     ),
     "fr": (
         "Révocation",
@@ -435,6 +440,7 @@ _CONSENT_LABELS = {
         "Tuteur légal",
         "Représentant",
         "BROUILLON",
+        "Pièce d'identité",
     ),
     "pt": (
         "Revogação",
@@ -443,6 +449,7 @@ _CONSENT_LABELS = {
         "Tutor legal",
         "Representante",
         "RASCUNHO",
+        "Documento de identificação",
     ),
     "de": (
         "Widerruf",
@@ -451,6 +458,7 @@ _CONSENT_LABELS = {
         "Gesetzlicher Vormund",
         "Vertretung",
         "ENTWURF",
+        "Ausweisdokument",
     ),
     "hu": (
         "Visszavonás",
@@ -459,6 +467,7 @@ _CONSENT_LABELS = {
         "Törvényes gyám",
         "Képviselő",
         "TERVEZET",
+        "Személyazonosító okmány",
     ),
     "pl": (
         "Wycofanie",
@@ -467,6 +476,7 @@ _CONSENT_LABELS = {
         "Opiekun prawny",
         "Przedstawiciel",
         "PROJEKT",
+        "Dokument tożsamości",
     ),
     "it": (
         "Revoca",
@@ -475,6 +485,7 @@ _CONSENT_LABELS = {
         "Tutore legale",
         "Rappresentante",
         "BOZZA",
+        "Documento d'identità",
     ),
     "ar": (
         "سحب الموافقة",
@@ -483,6 +494,7 @@ _CONSENT_LABELS = {
         "الوصي القانوني",
         "الممثل",
         "مسودة",
+        "وثيقة الهوية",
     ),
 }
 for _locale, _values in _CONSENT_LABELS.items():
@@ -496,6 +508,7 @@ for _locale, _values in _CONSENT_LABELS.items():
                     "consent_guardian",
                     "consent_representative",
                     "consent_draft",
+                    "consent_id_document",
                 ),
                 _values,
                 strict=True,
@@ -806,6 +819,12 @@ class DocumentPDFService:
             body_html = render_consent_body(content.get("text"))
             # WeasyPrint ignores <li value>; restore the numbers the author typed.
             value_css = list_value_css(body_html)
+            id_document = content.get("signer_id_document")
+            signer_id = (
+                f" · {esc(labels['consent_id_document'])}: {esc(id_document)}"
+                if id_document
+                else ""
+            )
             return (
                 f'<div class="section"><div class="section-title">{esc(title)}</div>'
                 + (
@@ -821,7 +840,7 @@ class DocumentPDFService:
                     else ""
                 )
                 + (
-                    f"<p>{esc(content.get('signer_name'))} · {esc(relationship)} · {esc(content.get('signed_at'))}</p>"
+                    f"<p>{esc(content.get('signer_name'))} · {esc(relationship)}{signer_id} · {esc(content.get('signed_at'))}</p>"
                     + f'<img src="{signature}" alt="Signature" style="max-width:250px;max-height:100px" />'
                     if signature
                     else ""

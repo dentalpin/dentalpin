@@ -8,6 +8,7 @@ from __future__ import annotations
 
 from collections.abc import AsyncIterator
 from dataclasses import replace
+from datetime import UTC, datetime
 
 import pytest
 from sqlalchemy import func, select
@@ -20,7 +21,14 @@ from app.core.auth.models import User
 from app.core.llm.base import Done, ProviderEvent, TextDelta, ToolUse, Usage
 from app.core.llm.factory import ANTHROPIC_SPEC
 from app.core.llm.registry import llm_provider_registry
-from app.modules.copilot.bridge import _dialect_for, _tool_names_for, drive_turn, resume_turn
+from app.modules.copilot.bridge import (
+    SYSTEM_PROMPT,
+    _dialect_for,
+    _system_prompt,
+    _tool_names_for,
+    drive_turn,
+    resume_turn,
+)
 from app.modules.copilot.models import CopilotMessage
 from app.modules.copilot.service import ConversationService, CopilotSettingsService
 from app.modules.patients.models import Patient
@@ -30,9 +38,11 @@ class _FakeProvider:
     def __init__(self, scripts: list[list[ProviderEvent]]) -> None:
         self._scripts = list(scripts)
         self.seen_max_tokens: list[int] = []
+        self.seen_system: list[str] = []
 
     async def complete(self, *, system, messages, tools, model, max_tokens) -> AsyncIterator:
         self.seen_max_tokens.append(max_tokens)
+        self.seen_system.append(system)
         for ev in self._scripts.pop(0):
             yield ev
 
@@ -109,6 +119,83 @@ def test_system_prompt_keeps_offbooks_rule_and_playbooks() -> None:
     # Playbooks present.
     assert "Briefing del día" in SYSTEM_PROMPT
     assert "Cubrir un hueco" in SYSTEM_PROMPT
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("zone", "server_now", "clinic_day", "clinic_clock"),
+    [
+        # East of UTC, just before server midnight: the clinic is already tomorrow.
+        (
+            "Europe/Madrid",
+            datetime(2031, 3, 4, 23, 30, tzinfo=UTC),
+            "miércoles 2031-03-05",
+            "00:30 (zona horaria Europe/Madrid, UTC+01:00)",
+        ),
+        # West of UTC, just after server midnight: the clinic is still yesterday.
+        (
+            "America/Mexico_City",
+            datetime(2031, 3, 5, 1, 0, tzinfo=UTC),
+            "martes 2031-03-04",
+            "19:00 (zona horaria America/Mexico_City, UTC-06:00)",
+        ),
+    ],
+)
+async def test_system_prompt_states_the_clinic_day_not_the_server_day(
+    db_session, test_clinic, zone, server_now, clinic_day, clinic_clock
+) -> None:
+    """#1104: the model resolves "hoy"/"mañana" from the prompt's date, so it
+    must be the clinic's calendar day; the server's UTC day is one off here."""
+    test_clinic.timezone = zone
+    await db_session.flush()
+
+    prompt = await _system_prompt(db_session, test_clinic.id, now=server_now)
+
+    assert prompt.startswith(SYSTEM_PROMPT)
+    assert f"{clinic_day}, {clinic_clock}" in prompt
+    assert server_now.date().isoformat() not in prompt
+
+
+@pytest.mark.asyncio
+async def test_both_turn_paths_send_the_clinic_clock(db_session, test_clinic) -> None:
+    """drive_turn and resume_turn are two provider calls; both get the
+    per-turn prompt, not the bare constant."""
+    test_clinic.timezone = "America/Mexico_City"
+    await db_session.flush()
+    conv, settings_row, user_id, agent_id, session_id = await _setup(db_session, test_clinic.id)
+
+    p1 = _FakeProvider(
+        [
+            [
+                ToolUse(
+                    "c1", "patients.create_patient", {"first_name": "Ana", "last_name": "Ruiz"}
+                ),
+                Done("tool_calls"),
+            ]
+        ]
+    )
+    events = await _drive(
+        db_session, conv, settings_row, user_id, agent_id, session_id, p1, "crea a Ana"
+    )
+    p2 = _FakeProvider([[TextDelta("Hecho."), Done("stop")]])
+    async for _ in resume_turn(
+        db=db_session,
+        conv=conv,
+        settings_row=settings_row,
+        permissions=["*"],
+        user_id=user_id,
+        agent_id=agent_id,
+        session_id=session_id,
+        call_id=events[-1].call_id,
+        approve=True,
+        provider=p2,
+    ):
+        pass
+
+    for system in p1.seen_system + p2.seen_system:
+        assert system.startswith(SYSTEM_PROMPT)
+        assert "zona horaria America/Mexico_City, UTC-06:00" in system
+    assert len(p1.seen_system) == len(p2.seen_system) == 1
 
 
 @pytest.mark.asyncio

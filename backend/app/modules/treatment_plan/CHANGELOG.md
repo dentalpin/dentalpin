@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#1178): pipeline quote total and confirm-plan estimated total use the clinic currency instead of a literal €; the pipeline quote status is translated.
+- fix(#1161): pipeline rows return the patient's `phone` (`PipelinePatientBrief`), so the Call / WhatsApp quick actions render.
+
 - fix(#1038): the plan list takes `search`, and both it and the pipeline search match number, title and patient name term by term.
 - fix(#1034): reactivating a closed plan (by hand, or by accepting a re-sent quote) restores the planned treatments that closing took off the chart; closing through a status change stamps `closed_at` too.
 

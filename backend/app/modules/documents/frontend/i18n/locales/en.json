@@ -126,6 +126,8 @@
       "revocationNotice": "By signing, you revoke the consent shown.",
       "signer": "Signer name",
       "relationship": "Relationship to patient",
+      "idDocument": "ID document",
+      "idDocumentHint": "Required if you sign as a guardian or representative; optional if you are the patient.",
       "patient": "Patient",
       "guardian": "Guardian",
       "representative": "Representative",

@@ -126,6 +126,8 @@
       "revocationNotice": "Składając podpis, wycofują Państwo przedstawioną zgodę.",
       "signer": "Imię i nazwisko osoby podpisującej",
       "relationship": "Relacja z pacjentem",
+      "idDocument": "Dokument tożsamości",
+      "idDocumentHint": "Wymagane, jeśli podpisujesz jako opiekun prawny lub przedstawiciel; opcjonalne, jeśli jesteś pacjentem.",
       "patient": "Pacjent",
       "guardian": "Opiekun prawny",
       "representative": "Przedstawiciel",
