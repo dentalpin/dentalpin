@@ -48,6 +48,23 @@ rendered signature times use the clinic timezone and localized relationship.
 translate those errors. The backend renders the handoff QR using the first configured `ALLOWED_ORIGINS`
 entry; it returns the matching fragment URL and PNG data URL to staff.
 
+### Consent body formatting (#1171)
+
+`consent_markdown.render_consent_body(text)` is the **only** place a consent
+body becomes HTML (markdown-it-py with a rule allowlist plus our own token
+walker emitting `p br strong em h2 h3 h4 ul ol li`; the only attribute is `value="<digits>"` on `li` inside `ol`, so typed numbers survive). The
+snapshot `content["text"]` stays source text; `public_consent` returns
+`body_html` and `pdf.py` embeds the same output, so the page and the signed
+PDF cannot drift. The page renders `body_html` only, never `text`. Signed
+PDFs are stored verbatim with their SHA-256, so changing the renderer cannot
+alter signed evidence. Never hand-render a consent body elsewhere and never
+add tags, attributes, links or images to the allowlist without a security
+review. Single newlines render as `<br>` so pre-Markdown bodies look as before.
+`white-space: pre-wrap` is gone: runs of spaces and indentation collapse.
+WeasyPrint ignores `<li value>`, so `pdf.py` adds `list_value_css()` rules
+(`counter-set`). If lists nest so deep that markdown-it drops text
+(maxNesting), the renderer falls back to escaped plain text with `<br>`.
+
 ## Dependencies
 
 `manifest.depends = ["patients"]` — reads patient demographics for the

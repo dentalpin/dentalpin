@@ -151,7 +151,8 @@
         "archived": "Archiviato"
       },
       "qrTitle": "Scansiona per firmare",
-      "signedToast": "Consenso firmato"
+      "signedToast": "Consenso firmato",
+      "formatHelp": "Formattazione: inizi una riga con # (titolo) o ## / ### (sottotitoli), racchiuda il testo tra **doppi asterischi** per il grassetto o *asterisco singolo* per il corsivo, e inizi le righe con - o 1. per gli elenchi. Una riga vuota inizia un nuovo paragrafo. Tutto il resto, inclusi HTML e link, viene mostrato esattamente come scritto."
     }
   }
 }
