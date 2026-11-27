@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Billing:** the invoice Send dialog no longer says the patient has no phone; WhatsApp is offered when they have one (#1160).
 - **Online booking:** booking can be switched off again after its assigned professional left the clinic (#1149).
 - **Recalls:** a snooze note now shows the clinic's date and who wrote it, not the UTC date and a user ID (#1148).
 - **Odontogram:** the Diagnoses card on the patient summary shows the tooth number and surfaces of each pending treatment (e.g. "Corona #16") instead of only the treatment name (#1162).
