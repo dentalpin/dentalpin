@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications:** the recall reminder email shows the clinic phone (with its call-to-book button) and address; cancellation and budget emails show the clinic address in the footer (#1154).
 - **Notifications:** patient emails end with the footer in their own language instead of Spanish, and the welcome email no longer shows made-up opening hours (#1153).
 - **Billing:** the invoice Send dialog no longer says the patient has no phone; WhatsApp is offered when they have one (#1160).
 - **Online booking:** booking can be switched off again after its assigned professional left the clinic (#1149).
