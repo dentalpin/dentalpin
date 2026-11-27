@@ -138,6 +138,10 @@ and `appointment_*` / `budget_sent` / `budget_accepted` require
   claims delivery.
 - **Templates are i18n-aware** (Spanish UI strings). Never hardcode
   copy in handlers — use a template.
+- **A context key one locale renders, every locale renders.** `budget_sent`
+  dropped `custom_message` in 8 locales and `public_url` in all 13
+  (#1205, #1206); `tests/test_budget_sent_email_template.py` renders it in
+  every locale dir. Guard optional keys with `{% if key %}`.
 - **An email subject comes from a template, never from the key** (#1204).
   A `notification_templates` row's `subject` wins; without one the email
   adapter passes `None` and `EmailService` uses the file template's

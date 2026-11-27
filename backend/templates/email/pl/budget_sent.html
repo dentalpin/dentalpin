@@ -72,6 +72,18 @@
 <p><strong>Uwagi:</strong> {{ notes }}</p>
 {% endif %}
 
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Zobacz mój kosztorys</a>
+</div>
+{% endif %}
+
 <p>Jeśli masz pytania dotyczące kosztorysu lub chcesz umówić się na leczenie, skontaktuj się z nami.</p>
 
 {% if clinic_phone %}
