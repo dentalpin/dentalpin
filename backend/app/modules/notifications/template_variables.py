@@ -120,7 +120,7 @@ def example_context(key: NotificationType, locale: str, clinic, *, minimal: bool
         "clinic_phone": "+34 900 000 000",
         "clinic_address": "42 Example Street",
         "professional_name": "Sam Example",
-        **appointment_when_context(datetime(2027, 3, 8, 9, 30, tzinfo=UTC), clinic),
+        **appointment_when_context(datetime(2027, 3, 8, 9, 30, tzinfo=UTC), clinic, locale),
         "cancellation_reason": "Schedule change",
         "checkin_url": "https://example.invalid/check-in",
         "public_url": "https://example.invalid/estimate",
