@@ -598,6 +598,7 @@ class BookingService:
             existing_patient=data.existing_patient if config.ask_existing_patient else None,
             comment=data.comment if config.allow_comment else None,
             reason=data.reason,
+            language=data.language if "language" in data.model_fields_set else None,
             confirmation_deadline=now + timedelta(minutes=CONFIRMATION_MINUTES),
             token_hash=digest(token),
         )
@@ -829,7 +830,12 @@ class BookingService:
             raise BookingConflictError("Request expired or already decided")
         if row.contact_email:
             await _queue_email(
-                db, ctx.clinic_id, row, "booking_rejection", rejection_message=data.message
+                db,
+                ctx.clinic_id,
+                row,
+                "booking_rejection",
+                locale=row.language,
+                rejection_message=data.message,
             )
         row.status = "rejected"
         row.decided_at = now

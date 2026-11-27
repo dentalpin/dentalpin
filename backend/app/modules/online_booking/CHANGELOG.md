@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1208): the rejection email uses the language the visitor booked in, stored on the request (new nullable `language` column, migration `ob_0005`); older requests fall back to the clinic's language.
 - fix(#1149): booking settings can be saved with booking disabled after the assigned professional left the clinic; a non-member professional id is stored as NULL.
 
 - fix(#1100): the public page answers 404 and `reserve` refuses when the configured professional is inactive or no longer a professional member of the clinic; enabling settings for an inactive user is rejected.
