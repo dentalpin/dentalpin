@@ -29,6 +29,19 @@ the scaffold could not infer.
 - `PUT /api/v1/agenda/appointments/{appointment_id}`
 - `PUT /api/v1/agenda/cabinets/{cabinet_id}`
 
+## Inactive cabinets
+
+`Cabinet.is_active = false` keeps the row (and its appointment history)
+but closes it to new work (#1237): creating an appointment into it,
+moving one into it through `PUT /appointments/{id}` or assigning it via
+`PATCH /appointments/{id}/cabinet` answers 400. An appointment already in
+the cabinet keeps it on unrelated edits (`_resolve_cabinet` lets the
+current cabinet through). The frontend hides inactive cabinets from the
+appointment picker and the agenda resources, except while a loaded
+appointment still sits in one (`frontend/utils/activeCabinets.ts`).
+Deleting a cabinet with appointments answers 409; Settings → Cabinets
+then tells the user to deactivate it instead.
+
 ## Concurrent writes
 
 Appointment creation, updates and cabinet assignment take a PostgreSQL

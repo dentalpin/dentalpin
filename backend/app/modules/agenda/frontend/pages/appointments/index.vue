@@ -4,6 +4,7 @@ import { defineAsyncComponent } from 'vue'
 import { formatLocalDate } from '../../utils/date'
 import { countAppointmentOverlaps } from '../../composables/countAppointmentOverlaps'
 import { createAppointmentDate } from '../../utils/createDate'
+import { agendaCabinets } from '../../utils/activeCabinets'
 
 // Mode-specific scheduler views are heavy (drag grids, overlap math, mobile
 // timeline). Lazy-load each so the initial /agenda payload only ships the
@@ -66,7 +67,9 @@ function clearHighlight() {
   router.replace({ query: { ...route.query, highlight: undefined, date: undefined } })
 }
 
-// Initialize selected cabinets when clinic loads
+// Initialize selected cabinets when clinic loads. Every cabinet starts
+// selected, inactive ones included, so an appointment still sitting in a
+// deactivated cabinet passes the filter (#1237).
 watch(() => clinic.cabinets.value, (cabinets) => {
   if (cabinets.length > 0 && selectedCabinets.value.length === 0) {
     selectedCabinets.value = cabinets.map(c => c.name)
@@ -100,9 +103,13 @@ const filteredAppointments = computed(() => {
   return result
 })
 
+// Cabinets shown on the agenda: the active ones, plus an inactive one
+// only while it holds a loaded appointment (#1237).
+const visibleCabinets = computed(() => agendaCabinets(clinic.cabinets.value, appointments.value))
+
 // Cabinet filter options
 const cabinetFilterOptions = computed(() => {
-  return clinic.cabinets.value.map(cab => ({
+  return visibleCabinets.value.map(cab => ({
     label: cab.name,
     value: cab.name,
     color: cab.color
@@ -625,7 +632,7 @@ watch(isMobile, async (mobile) => {
           @toggle="toggleCabinet(cabinet.value)"
         />
         <UButton
-          v-if="selectedCabinets.length < cabinetFilterOptions.length"
+          v-if="cabinetFilterOptions.some(c => !selectedCabinets.includes(c.value))"
           variant="ghost"
           color="neutral"
           size="xs"
@@ -690,7 +697,7 @@ watch(isMobile, async (mobile) => {
         v-else-if="isMobile"
         :appointments="filteredAppointments"
         :professionals="professionalsWithColors"
-        :cabinets="clinic.cabinets.value"
+        :cabinets="visibleCabinets"
         :current-date="currentDate"
         :is-loading="isLoading"
         :highlighted-appointment-id="highlightedAppointmentId"
@@ -740,7 +747,7 @@ watch(isMobile, async (mobile) => {
       <AppointmentKanbanView
         v-else
         :appointments="filteredAppointments"
-        :cabinets="clinic.cabinets.value"
+        :cabinets="visibleCabinets"
         :professionals="professionalsWithColors"
         :current-date="currentDate"
         :is-loading="isLoading"

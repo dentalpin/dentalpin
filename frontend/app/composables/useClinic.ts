@@ -155,9 +155,13 @@ export function useClinic() {
     } catch (e: unknown) {
       if (rollback) patchCabinets(() => rollback)
       const fetchError = e as { statusCode?: number }
+      // 409: the cabinet still has appointments (#750); the clinic can
+      // deactivate it instead (#1237).
       const key = fetchError.statusCode === 404
         ? 'cabinet.toast.notFound'
-        : 'cabinet.toast.deleteFailed'
+        : fetchError.statusCode === 409
+          ? 'cabinet.toast.deleteHasHistory'
+          : 'cabinet.toast.deleteFailed'
       toast.add({ title: t('common.error'), description: t(key), color: 'error' })
       console.error('Failed to delete cabinet:', e)
       return false

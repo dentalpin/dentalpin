@@ -1346,6 +1346,9 @@
     "deleteCabinet": "Zimmer löschen",
     "deleteCabinetConfirm": "Möchten Sie dieses Zimmer wirklich löschen:",
     "deleteCabinetNote": "Bestehende Termine in diesem Zimmer sind nicht betroffen.",
+    "cabinetActive": "Aktiv",
+    "cabinetInactive": "Inaktiv",
+    "cabinetActiveHint": "Ein inaktives Zimmer nimmt keine neuen Termine an und wird im Kalender ausgeblendet. Frühere Termine bleiben erhalten.",
     "createCabinet": "Zimmer anlegen",
     "roles": {
       "admin": "Administrator",
@@ -1600,7 +1603,8 @@
       "notFound": "Zimmer nicht gefunden",
       "createFailed": "Zimmer konnte nicht angelegt werden",
       "updateFailed": "Zimmer konnte nicht aktualisiert werden",
-      "deleteFailed": "Zimmer konnte nicht gelöscht werden"
+      "deleteFailed": "Zimmer konnte nicht gelöscht werden",
+      "deleteHasHistory": "Dieses Zimmer hat Termine und kann nicht gelöscht werden. Deaktivieren Sie es stattdessen."
     }
   },
   "professionals": {

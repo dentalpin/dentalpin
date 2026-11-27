@@ -1344,6 +1344,9 @@
     "deleteCabinet": "Eliminar Gabinete",
     "deleteCabinetConfirm": "¿Estás seguro de que deseas eliminar el gabinete",
     "deleteCabinetNote": "Las citas existentes en este gabinete no serán afectadas.",
+    "cabinetActive": "Activo",
+    "cabinetInactive": "Inactivo",
+    "cabinetActiveHint": "Un gabinete inactivo no admite citas nuevas y no aparece en la agenda. Sus citas anteriores se conservan.",
     "createCabinet": "Crear Gabinete",
     "roles": {
       "admin": "Administrador",
@@ -1600,7 +1603,8 @@
       "notFound": "Gabinete no encontrado",
       "createFailed": "Error al crear gabinete",
       "updateFailed": "Error al actualizar gabinete",
-      "deleteFailed": "Error al eliminar gabinete"
+      "deleteFailed": "Error al eliminar gabinete",
+      "deleteHasHistory": "Este gabinete tiene citas, así que no se puede eliminar. Desactívalo en su lugar."
     }
   },
   "professionals": {
