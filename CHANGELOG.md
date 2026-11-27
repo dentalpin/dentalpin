@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Dates west of UTC:** the patient Info card's date of birth and age, recall months, orthodontic overdue flags and invoice overdue flags no longer show or switch a day (or a month) early in browsers behind UTC (#1176).
 - **Dates:** the patient timeline, quote signature card, date of birth and Verifactu signing time are formatted in the UI language, not English or Spanish (#1175).
 - **Treatment plans:** the pipeline rows show the Call and WhatsApp buttons again (#1161).
 - **Billing / GDPR / Inventory / Leads / Patients / Patient clinical / Payroll / Staff tasks:** an explicit null on a required update field (33 fields, e.g. patient first name, lead status, payroll entry gross) is now refused with a 422 instead of a 500 or a wrong 409 (#1151).

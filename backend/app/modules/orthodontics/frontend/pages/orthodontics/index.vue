@@ -33,7 +33,7 @@ function formatDate(iso: string | null): string {
 
 function isOverdue(c: OrthoCase): boolean {
   if (!c.next_due || c.status === 'finished' || c.status === 'transferred_out') return false
-  return new Date(c.next_due) < new Date(new Date().toDateString())
+  return parseDateOnly(c.next_due) < new Date(new Date().toDateString())
 }
 
 const filtered = computed(() => {
