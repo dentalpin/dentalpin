@@ -3,13 +3,12 @@ import { flushPromises } from '@vue/test-utils'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { ref } from 'vue'
 import AppointmentModal from '../../module_layers/agenda/frontend/components/clinical/AppointmentModal.vue'
-import PlannedTreatmentSelector from '~/components/shared/PlannedTreatmentSelector.vue'
 
 // #1234: planned items belong to one patient. Switching the patient in the
 // appointment modal kept the previous patient's items, and the save sent
 // them with the new patient_id (backend 400 "does not belong to patient").
 
-const { get } = vi.hoisted(() => ({ get: vi.fn() }))
+const { get, put } = vi.hoisted(() => ({ get: vi.fn(), put: vi.fn() }))
 
 const catalogA = { id: 'cat-A', names: { es: 'Endodoncia Ana', en: 'Root canal Ana' }, default_duration_minutes: 60 }
 const itemA = {
@@ -26,10 +25,12 @@ function pendingFor(path: string) {
   return path.includes('patient-A') ? [itemA] : []
 }
 
-mockNuxtImport('useApi', () => () => ({ get, post: vi.fn(), patch: vi.fn(), put: vi.fn(), del: vi.fn(), raw: vi.fn() }))
+mockNuxtImport('useApi', () => () => ({ get, post: vi.fn(), patch: vi.fn(), put, del: vi.fn(), raw: vi.fn() }))
 
 beforeEach(() => {
   get.mockReset()
+  put.mockReset()
+  put.mockImplementation(async (_path: string, body: Record<string, unknown>) => ({ data: { id: 'apt', ...body } }))
   get.mockImplementation(async (path: string) => {
     if (path.startsWith('/api/v1/patients/patient-A')) return { data: patientA }
     // useTreatmentPlans.fetchPatientPendingItems: plan list, then plan detail.
@@ -47,7 +48,12 @@ beforeEach(() => {
     fetchPatientPendingItems: async (id: string) => pendingFor(`patient_id=${id}`)
   }))
   vi.stubGlobal('useCatalog', () => ({ formatPrice: (v: number) => String(v) }))
-  vi.stubGlobal('useAppointments', () => ({ createAppointment: vi.fn(), updateAppointment: vi.fn(), cancelAppointment: vi.fn() }))
+  vi.stubGlobal('useAppointments', () => ({
+    createAppointment: vi.fn(),
+    // Same wire call as the real composable, so one assertion covers both.
+    updateAppointment: async (id: string, data: Record<string, unknown>) => (await put(`/api/v1/agenda/appointments/${id}`, data)).data,
+    cancelAppointment: vi.fn()
+  }))
   vi.stubGlobal('useNotificationSettings', () => ({ fetchSettings: vi.fn(async () => {}), getAutoSendStatus: () => true }))
   vi.stubGlobal('useClinicNotificationChannels', () => ({ buttonsForPatient: () => [], preferredChannel: ref(null) }))
   vi.stubGlobal('useNotificationSend', () => ({ sendConfirmation: vi.fn(), sendReminder: vi.fn(), sendCancellation: vi.fn(), isSending: ref(false) }))
@@ -72,6 +78,28 @@ async function openModal(props: Record<string, unknown>) {
 async function set(vm: Record<string, unknown>, key: string, value: unknown) {
   vm[key] = value
   await flushPromises()
+}
+
+function editOf(patient: { id: string }, itemId: string) {
+  return {
+    id: `apt-${patient.id}`,
+    clinic_id: 'clinic-1',
+    patient_id: patient.id,
+    patient,
+    professional_id: 'prof-1',
+    start_time: '2026-12-01T10:00:00',
+    end_time: '2026-12-01T11:00:00',
+    cabinet: null,
+    status: 'scheduled',
+    treatments: [{
+      planned_item_id: itemId,
+      planned_item_status: 'pending',
+      plan_id: `plan-${patient.id}`,
+      catalog_item_id: 'cat-A',
+      names: catalogA.names,
+      tooth_number: 36
+    }]
+  }
 }
 
 const ids = (vm: Record<string, unknown>) => (vm.selectedTreatments as Array<{ id: string }>).map(t => t.id)
@@ -134,17 +162,25 @@ describe('AppointmentModal patient switch (#1234)', () => {
     expect((vm.selectedPatient as { id: string } | null)?.id).toBe('patient-A')
     expect(ids(vm)).toEqual(['item-A1'])
   })
-})
 
-describe('PlannedTreatmentSelector patient switch (#1234)', () => {
-  it('clears its own selection when patientId changes to another patient', async () => {
-    const wrapper = await mountSuspended(PlannedTreatmentSelector, {
-      props: { patientId: 'patient-A', modelValue: [itemA] as never }
-    })
+  it('keeps the next appointment\'s linked items when the same modal is reopened for another patient', async () => {
+    // The agenda page keeps one modal instance; selectedPatient and
+    // selectedTreatments survive a close, so the reopen goes A -> B with
+    // B's items already assigned. That is not a user switch.
+    const wrapper = await openModal({ appointment: editOf(patientA, 'item-A1') })
+    const vm = wrapper.vm as unknown as Record<string, unknown>
+    expect(ids(vm)).toEqual(['item-A1'])
+    await wrapper.setProps({ open: false })
     await flushPromises()
-    expect(wrapper.emitted('update:modelValue')).toBeUndefined()
-    await wrapper.setProps({ patientId: 'patient-B' })
+    await wrapper.setProps({ appointment: editOf(patientB, 'item-B1') })
+    await wrapper.setProps({ open: true })
     await flushPromises()
-    expect(wrapper.emitted('update:modelValue')?.at(-1)).toEqual([[]])
+    expect((vm.selectedPatient as { id: string }).id).toBe('patient-B')
+    expect(ids(vm)).toEqual(['item-B1'])
+    await (vm.handleSave as () => Promise<void>)()
+    await flushPromises()
+    const body = put.mock.calls.at(-1)?.[1] as { patient_id: string, planned_item_ids: string[] }
+    expect(body.patient_id).toBe('patient-B')
+    expect(body.planned_item_ids).toEqual(['item-B1'])
   })
 })

@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- fix(#1234): picking a different patient in the appointment modal clears the planned treatments chosen for the previous one; they used to stay and the save failed with "does not belong to patient". The shared `PlannedTreatmentSelector` drops its selection on a patient switch too.
+- fix(#1234): picking a different patient in the appointment modal clears the planned treatments chosen for the previous one; they used to stay and the save failed with "does not belong to patient". Reopening the same modal for another appointment keeps that appointment's linked treatments.
 - fix(#1217): the public check-in page's `appointments.checkin.confirm`, `confirmHint`, `tooEarly` and `tooLate` strings are translated in ar/hi/ta/te instead of English.
 - fix(#1104): the agent tools (`get_appointment`, `get_day_overview`, `book_appointment`, `reschedule_appointment`) return `start_time`/`end_time` in the clinic timezone, like the REST API, so the copilot no longer reports a 10:00 Madrid booking as 09:00.
 - fix(#1037): creating from the mobile day view and the kanban header starts on the viewed day, not today.
