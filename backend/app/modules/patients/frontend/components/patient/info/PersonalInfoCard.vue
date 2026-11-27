@@ -27,7 +27,7 @@ const statusColor = computed<'success' | 'neutral'>(() =>
 )
 
 const birthDisplay = computed(() => {
-  const formatted = formatPatientDate(props.patient.date_of_birth, locale.value === 'en' ? 'en-US' : 'es-ES')
+  const formatted = formatPatientDate(props.patient.date_of_birth, locale.value)
   if (!formatted) return null
   if (age.value === null) return formatted
   return t('patients.personalInfo.birthWithAge', { date: formatted, age: age.value })

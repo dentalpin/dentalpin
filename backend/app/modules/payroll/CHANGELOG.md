@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- fix(#1151): `PATCH /profiles/{id}` with `payment_type`, `currency` or `is_active` set to `null`, and `PATCH /entries/{id}` with `gross` or `deductions` set to `null`, are a 422 instead of a 500 (the entry case was a `TypeError` in the balance check).
 - fix(#1138): entry amounts and the profile base amount accept at most two decimals (422 otherwise), so a stored entry always balances; the entry form checks the balance in whole cents like the API.
 - fix(#774): a period status change locks the row and re-reads its status before checking the transition. Two requests at once both passed the check on their unlocked copy and published `payroll.period.status_changed` twice; the second now answers 409.
 

@@ -246,8 +246,14 @@ class InvoiceSeriesService:
         series: InvoiceSeries,
         data: dict,
         changed_by: UUID | None = None,
+        today: date | None = None,
     ) -> InvoiceSeries:
-        """Update an invoice series."""
+        """Update an invoice series.
+
+        Args:
+            today: The clinic's calendar date (``clinic_today``). Defaults to
+                ``clinic_today_for`` the series' clinic.
+        """
         previous_state = {
             "prefix": series.prefix,
             "description": series.description,
@@ -274,6 +280,14 @@ class InvoiceSeriesService:
         if "description" in data:
             series.description = data["description"]
         if "reset_yearly" in data:
+            if data["reset_yearly"] and not series.reset_yearly:
+                # A continuous series' last_reset_year is stale (its creation
+                # year), so generate_number would restart this year's count
+                # mid-year and collide with numbers already issued (#1184).
+                # The count carries on this year; the reset starts next January.
+                if today is None:
+                    today = await clinic_today_for(db, series.clinic_id)
+                series.last_reset_year = today.year
             series.reset_yearly = data["reset_yearly"]
         if "is_default" in data:
             series.is_default = data["is_default"]

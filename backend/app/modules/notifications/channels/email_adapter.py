@@ -43,7 +43,8 @@ class EmailAdapter:
             to_email=msg.to_address,
             template_key=msg.template_key,
             context=msg.context,
-            subject=msg.subject or f"Notificación: {msg.template_key}",
+            # None: the service uses the file template's localized title (#1204).
+            subject=msg.subject,
             locale=msg.locale,
             to_name=msg.to_name,
             template_html=msg.body_html,

@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 from zoneinfo import ZoneInfo
 
 from app.core.pdf_locales import LOCALE_BY_LANG as _LOCALE_BY_LANG
+from app.core.pdf_locales import format_pdf_date, format_pdf_datetime
 from app.core.utils.currency import format_currency as _fmt_currency
 
 if TYPE_CHECKING:
@@ -354,10 +355,12 @@ class PurchaseOrderPDFService:
                 </tr>
             """
 
+        # Dates in the locale's own order and separators (#1180).
         expected = (
-            response["expected_date"].strftime("%d/%m/%Y") if response["expected_date"] else "—"
+            format_pdf_date(response["expected_date"], locale) if response["expected_date"] else "—"
         )
-        created = response["created_at"].strftime("%d/%m/%Y")
+        created = format_pdf_date(response["created_at"], locale)
+        generated_at = format_pdf_datetime(datetime.now(clinic_tz), locale)
 
         watermark = ""
         if response["status"] == "draft":
@@ -488,7 +491,7 @@ class PurchaseOrderPDFService:
 
             <div style="clear: both; padding-top: 30px;"></div>
             <div style="font-size: 8pt; color: #9ca3af; text-align: center; border-top: 1px solid #e5e7eb; padding-top: 10px;">
-                {labels["generated_by"]} DentalPin | {datetime.now(clinic_tz).strftime("%d/%m/%Y %H:%M")}
+                {labels["generated_by"]} DentalPin | {generated_at}
             </div>
         </body>
         </html>"""

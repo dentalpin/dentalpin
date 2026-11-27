@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1155): correction to the appointment-owner entry below: `patient_timeline` has no string-derived dispatch, so the two appointment note events reached no subscriber until `patient_timeline` subscribed them explicitly.
+
 - Audit authenticated reads of patient and plan clinical notes. (#903).
 
 - fix(#699): `linkAttachment` / `unlinkAttachment` posted to

@@ -261,6 +261,13 @@ turns it into one line (`street, postal_code city, country`) before rendering, s
 templates print `{{ clinic_address }}` directly. HTML bodies are autoescaped; the
 subject is plain text and renders without escaping.
 
+### Default subject
+
+With no subject from a clinic or system template row, the subject is the
+file template's `{% block title %}`, rendered as plain text in the same
+locale (`Appointment reminder - Clínica Demo`). Every file template ships one.
+If none renders, the subject is the clinic name, never the template key (#1204).
+
 ### Database Template Override
 
 Clinics can customize templates via the database:

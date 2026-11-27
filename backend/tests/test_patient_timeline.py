@@ -362,6 +362,119 @@ async def test_on_document_uploaded_inserts_document(
 
 
 # ---------------------------------------------------------------------------
+# Localized titles (#1174): the stored title is Spanish, so the UI rebuilds
+# the heading from event_type + event_data. Every dynamic part of a title
+# must therefore also be in event_data, or the UI can only print Spanish.
+# ---------------------------------------------------------------------------
+
+
+_APPOINTMENT_HANDLERS = [
+    ("on_appointment_scheduled", {"start_time": datetime.now(UTC).isoformat()}),
+    ("on_appointment_completed", {"end_time": datetime.now(UTC).isoformat()}),
+    ("on_appointment_cancelled", {}),
+    ("on_appointment_no_show", {"start_time": datetime.now(UTC).isoformat()}),
+    ("on_appointment_confirmed", {"changed_at": datetime.now(UTC).isoformat()}),
+    ("on_appointment_checked_in", {"changed_at": datetime.now(UTC).isoformat()}),
+    ("on_appointment_in_treatment", {"changed_at": datetime.now(UTC).isoformat()}),
+]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(("handler", "extra"), _APPOINTMENT_HANDLERS)
+async def test_appointment_entries_carry_treatment_type_in_event_data(
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    handler: str,
+    extra: dict,
+):
+    payload = {
+        **_base_payload(test_clinic, test_patient),
+        "appointment_id": str(uuid4()),
+        "treatment_type": "Limpieza",
+        **extra,
+    }
+    await getattr(timeline_events, handler)(payload, db=db_session)
+    await db_session.commit()
+
+    entries = await _entries_for(db_session, test_patient.id)
+    assert len(entries) == 1
+    assert entries[0].event_data["treatment_type"] == "Limpieza"
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("handler", "payload_extra", "key", "expected"),
+    [
+        (
+            "on_tooth_treatment_performed",
+            {"treatment_id": str(uuid4()), "treatment_name": "Obturación"},
+            "treatment_name",
+            "Obturación",
+        ),
+        (
+            "on_plan_created",
+            {"plan_id": str(uuid4()), "plan_name": "Ortodoncia completa"},
+            "plan_name",
+            "Ortodoncia completa",
+        ),
+        (
+            "on_plan_item_completed",
+            {"item_id": str(uuid4()), "item_name": "Empaste 16"},
+            "item_name",
+            "Empaste 16",
+        ),
+        (
+            "on_item_completed_without_note",
+            {"plan_item_id": str(uuid4()), "item_name": "Empaste 16"},
+            "item_name",
+            "Empaste 16",
+        ),
+        (
+            "on_notification_sent",
+            {"message_id": str(uuid4()), "channel": "email", "subject": "Recordatorio"},
+            "subject",
+            "Recordatorio",
+        ),
+        (
+            "on_notification_failed",
+            {"message_id": str(uuid4()), "channel": "email", "subject": "Recordatorio"},
+            "subject",
+            "Recordatorio",
+        ),
+        (
+            "on_document_uploaded",
+            {"document_id": str(uuid4()), "title": "Consentimiento"},
+            "document_title",
+            "Consentimiento",
+        ),
+        (
+            "on_photo_uploaded",
+            {"document_id": str(uuid4()), "title": "Frontal", "media_kind": "photo"},
+            "document_title",
+            "Frontal",
+        ),
+    ],
+)
+async def test_title_dynamic_part_is_in_event_data(
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    handler: str,
+    payload_extra: dict,
+    key: str,
+    expected: str,
+):
+    payload = {**_base_payload(test_clinic, test_patient), **payload_extra}
+    await getattr(timeline_events, handler)(payload)
+
+    entries = await _entries_for(db_session, test_patient.id)
+    assert len(entries) == 1
+    assert expected in entries[0].title  # stored title kept for back-compat
+    assert entries[0].event_data[key] == expected
+
+
+# ---------------------------------------------------------------------------
 # Guardrails
 # ---------------------------------------------------------------------------
 
@@ -638,3 +751,105 @@ async def test_a_timeline_failure_does_not_abort_the_publisher(
 
     assert await _entries_for(db_session, patient.id) == []
     assert await db_session.get(Patient, patient.id) is not None
+
+
+# ---------------------------------------------------------------------------
+# Clinical notes (#1155) — every note event clinical_notes publishes reaches
+# the timeline, and the stored event_type is the real event name.
+# ---------------------------------------------------------------------------
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("note_type", "event_name"),
+    [
+        ("administrative", EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED),
+        ("diagnosis", EventType.CLINICAL_NOTE_DIAGNOSIS_CREATED),
+        ("treatment", EventType.CLINICAL_NOTE_TREATMENT_CREATED),
+        ("treatment_plan", EventType.CLINICAL_NOTE_PLAN_CREATED),
+        ("appointment_clinical", EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED),
+        (
+            "appointment_administrative",
+            EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED,
+        ),
+    ],
+)
+async def test_every_clinical_note_event_lands_with_its_own_event_type(
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    note_type: str,
+    event_name: str,
+):
+    payload = {
+        **_base_payload(test_clinic, test_patient),
+        "note_id": str(uuid4()),
+        "note_type": note_type,
+        "owner_type": "patient",
+        "owner_id": str(test_patient.id),
+        "body_excerpt": "nota",
+    }
+    await event_bus.publish(event_name, payload)
+
+    entries = await _entries_for(db_session, test_patient.id)
+    assert [(e.event_type, e.event_category) for e in entries] == [(str(event_name), "note")]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("note_type", "title"),
+    [
+        ("appointment_clinical", "Nota clínica de cita"),
+        ("appointment_administrative", "Nota administrativa de cita"),
+    ],
+)
+async def test_note_written_on_an_appointment_reaches_the_timeline(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    test_clinic: Clinic,
+    test_patient: Patient,
+    note_type: str,
+    title: str,
+):
+    """Through the real route: the note's owner is the appointment, the
+    timeline row lands on the appointment's patient."""
+    from app.modules.agenda.service import AppointmentService
+
+    me = await client.get("/api/v1/auth/me", headers=auth_headers)
+    user_id = me.json()["data"]["user"]["id"]
+    start = datetime(2026, 7, 1, 10, 0, tzinfo=UTC)
+    apt = await AppointmentService.create_appointment(
+        db_session,
+        test_clinic.id,
+        {
+            "patient_id": test_patient.id,
+            "professional_id": user_id,
+            "start_time": start,
+            "end_time": start.replace(minute=30),
+        },
+        created_by=user_id,
+    )
+    await db_session.commit()
+
+    resp = await client.post(
+        "/api/v1/clinical_notes/notes",
+        headers=auth_headers,
+        json={
+            "note_type": note_type,
+            "owner_type": "appointment",
+            "owner_id": str(apt.id),
+            "body": "<p>Dolor en el 46</p>",
+        },
+    )
+    assert resp.status_code == 201, resp.text
+    note_id = resp.json()["data"]["id"]
+    await db_session.commit()
+
+    entries = await _entries_for(db_session, test_patient.id)
+    notes = [e for e in entries if e.source_table == "clinical_notes"]
+    assert len(notes) == 1, [e.event_type for e in entries]
+    assert str(notes[0].source_id) == note_id
+    assert notes[0].event_type == f"clinical_notes.{note_type}_created"
+    assert notes[0].title == title
+    assert notes[0].description == "Dolor en el 46"

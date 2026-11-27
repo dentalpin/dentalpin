@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1180): the per-locale date pattern moved to `app.core.pdf_locales.pdf_date_format`, shared with every PDF; output unchanged.
+
 - fix(#1134): `PATCH /templates/{id}` with `items: null` or `name: null` is a 422; a null `items` used to be stored as JSON null and break the clinic's template list (500), a null `name` answered the duplicate-name 409.
 
 - fix(#966): prescription lines keep the order they were entered in. `sort_order` defaulted to 0 on the request, so a line added after applying a template, or while editing a draft, sorted before the numbered lines and printed in the wrong position. The submitted list order is now the line order.
