@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Budget:** the "Line total" shown when adding a treatment to a quote now includes the treatment's VAT and never goes negative, matching the line that gets added (#1235).
 - **Agenda:** changing the patient in the appointment modal clears the previous patient's treatments instead of failing on save (#1234).
 - **Catalog:** "New treatment" opens empty instead of prefilled with the last created item, and cancelled edits in the catalog and odontogram treatment modals no longer come back (#1233).
 - **Catalog:** creating or editing a per-surface treatment (e.g. the seeded composite filling) saves instead of failing with a server error; a negative tier price is rejected (#1240).

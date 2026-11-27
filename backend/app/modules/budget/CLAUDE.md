@@ -190,6 +190,13 @@ contract.
   must land on the same cents. `net_line_total` (VAT-inclusive, after
   both discounts) is the figure every price surface shows; `line_total`
   is the pre-global gross, shown struck through.
+- **The add-item modal previews with `utils/budgetLineAmounts.ts`**, a
+  copy of `BudgetItemService._calculate_line_totals` (VAT of the item's
+  VAT type, absolute discount capped at the line, cents half away from
+  zero). Billing's `lineAmounts` does the same for invoices, but budget
+  does not depend on billing, so change both with their services (#1235).
+  The catalog search returns only `vat_type_id`; the modal resolves the
+  rate from `/catalog/vat-types?include_inactive=true`.
 - **Budget versioning** keeps every prior version — never overwrite.
 - **Public-link sessions are per-token** (cookie path scoped to
   `/api/v1/budget/public/budgets/{token}`) so a stolen cookie from one
