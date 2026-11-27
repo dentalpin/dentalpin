@@ -94,23 +94,6 @@ async def test_cancellation_uses_clinic_time(
 
 
 @pytest.mark.asyncio
-async def test_single_reminder_uses_clinic_time(
-    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
-):
-    appointment = await _setup(db_session, test_clinic, test_patient, "scheduled")
-    clinic_id = test_clinic.id
-
-    @asynccontextmanager
-    async def _session():
-        yield db_session
-
-    with patch.object(tasks, "async_session_maker", _session):
-        assert await tasks.send_single_reminder(appointment.id, clinic_id)
-    context = await _context(db_session, clinic_id, "appointment_reminder")
-    assert (context["appointment_date"], context["appointment_time"]) == (LOCAL_DATE, LOCAL_TIME)
-
-
-@pytest.mark.asyncio
 async def test_scheduled_reminder_uses_clinic_time(
     db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
 ):

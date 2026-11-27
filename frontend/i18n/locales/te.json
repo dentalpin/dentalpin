@@ -1690,8 +1690,7 @@
       "label": "లేబుల్",
       "labelPlaceholder": "ఉదా. ఇంప్రెషన్లు",
       "price": "మొత్తం",
-      "add": "సెషన్ జోడించండి",
-      "sumStatus": "మొత్తం {sum} € · పూర్తి {total} €"
+      "add": "సెషన్ జోడించండి"
     },
     "categoryCreated": "వర్గం సృష్టించబడింది",
     "categoryUpdated": "వర్గం నవీకరించబడింది",

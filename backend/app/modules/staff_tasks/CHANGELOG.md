@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1151): `PATCH /{id}` with `title`, `priority` or `status` set to `null` is a 422 instead of a 500.
+
 - fix(#956): `update_task` locks the task and re-reads it before checking the transition. Two simultaneous claims both passed `open -> claimed`, each assigned its own caller and published `staff_task.status_changed` twice.
 
 - fix(#863): `assignee_id` must be a member of the task's clinic, on create and on update. An unknown id was a 500, and another clinic's user was stored with their name shown in `assignee_name`. Both now return 400.

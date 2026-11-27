@@ -20,15 +20,12 @@ attributes these from the `EventType` constants referenced in that file.
 | `clinical_notes.treatment_created` | A treatment note is created | patient_timeline |
 | `clinical_notes.plan_created` | A treatment-plan note is created | patient_timeline |
 | `clinical_notes.administrative_created` | An administrative note is created | patient_timeline |
-| `clinical_notes.appointment_clinical_created` | A clinical note captured on an appointment | — |
-| `clinical_notes.appointment_administrative_created` | An administrative note captured on an appointment | — |
+| `clinical_notes.appointment_clinical_created` | A clinical note captured on an appointment | patient_timeline |
+| `clinical_notes.appointment_administrative_created` | An administrative note captured on an appointment | patient_timeline |
 
-> **Known gap (audit event-bus #7):** the two `appointment_*` note
-> events have no subscriber, so notes captured on an appointment do not
-> currently reach the patient timeline. Tracked separately from this
-> docs backfill.
-
-Payloads carry `clinic_id`, `patient_id`, and a `body_excerpt`.
+Payloads carry `clinic_id`, `patient_id`, and a `body_excerpt`. For
+appointment notes `patient_id` is the appointment's patient, so the
+timeline row lands on that patient's ficha (#1155).
 
 ## Subscribed
 
