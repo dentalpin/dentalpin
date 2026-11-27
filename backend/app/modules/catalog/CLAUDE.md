@@ -77,6 +77,11 @@ None.
   `default_price`, `cost_price` and `default_duration_minutes`
   (`_CLEARABLE_ITEM_FIELDS`), where an explicit `null` (or a cleared
   input's `""`, read as `None` by the schema) clears the value (#740).
+- **`surface_prices` is plain JSONB** — tier prices are stored as
+  strings (`{"1": "60.00", ...}`, the seeder's format); the `SurfacePrice`
+  schema type dumps the request's Decimals that way, since `json.dumps`
+  cannot encode a Decimal (#1240). `pricing.py` reads them with
+  `Decimal(str(v))`, so numbers stay readable too.
 - **Categories are mandatory on items** (`category_id` NOT NULL). Anything
   that can leave a clinic with zero categories blocks treatment creation —
   keep the seed endpoint and the categories UI working.

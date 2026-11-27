@@ -280,10 +280,13 @@ watch(selectedPatient, (sel) => {
   form.patient_id = sel?.id ?? ''
 })
 
-// Watch for document prop changes
+// (Re)initialise the form on every opening, not only when `document`
+// changes: "New document" passes null each time, so a create or a
+// cancelled draft would otherwise come back on the next opening (#1232).
 watch(
-  () => props.document,
-  (doc) => {
+  [() => props.open, () => props.document],
+  ([open, doc]) => {
+    if (!open) return
     if (doc) {
       form.patient_id = doc.patient_id
       form.document_type = doc.document_type

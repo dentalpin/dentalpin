@@ -139,12 +139,22 @@ class MedicalReferenceService:
         # Canonical order so (A,B) and (B,A) are always the same stored row.
         a, b = sorted([str(a), str(b)])
 
-        existing_stmt = select(ReferenceInteraction.id).where(
+        existing_stmt = select(ReferenceInteraction).where(
             ReferenceInteraction.clinic_id == clinic_id,
             ReferenceInteraction.medication_a_id == a,
             ReferenceInteraction.medication_b_id == b,
         )
-        if (await db.execute(existing_stmt)).scalar_one_or_none() is not None:
+        existing = (await db.execute(existing_stmt)).scalar_one_or_none()
+        # A deactivated pair is hidden from the settings list and the
+        # patient flags, and the UI has no reactivate action: adding it
+        # again brings the same row back with the new risk note (#1236),
+        # like the name lists do (#963).
+        if existing is not None and not existing.is_active:
+            existing.is_active = True
+            existing.risk_note = data["risk_note"]
+            await db.flush()
+            return existing
+        if existing is not None:
             raise HTTPException(
                 status_code=http_status.HTTP_409_CONFLICT,
                 detail="This medication pair is already recorded",
@@ -216,12 +226,19 @@ class MedicalReferenceService:
             db, clinic_id, data["medication_id"]
         )
 
-        existing_stmt = select(ReferenceContraindication.id).where(
+        existing_stmt = select(ReferenceContraindication).where(
             ReferenceContraindication.clinic_id == clinic_id,
             ReferenceContraindication.disease_id == data["disease_id"],
             ReferenceContraindication.medication_id == data["medication_id"],
         )
-        if (await db.execute(existing_stmt)).scalar_one_or_none() is not None:
+        existing = (await db.execute(existing_stmt)).scalar_one_or_none()
+        # Same reactivation as create_interaction (#1236).
+        if existing is not None and not existing.is_active:
+            existing.is_active = True
+            existing.risk_note = data["risk_note"]
+            await db.flush()
+            return existing
+        if existing is not None:
             raise HTTPException(
                 status_code=http_status.HTTP_409_CONFLICT,
                 detail="This disease/medication pair is already recorded",

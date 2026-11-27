@@ -4,7 +4,7 @@ import hashlib
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from uuid import UUID
 
@@ -14,7 +14,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.email import EmailResult, email_service
 from app.core.i18n_names import catalog_name
-from app.core.pdf_locales import LOCALE_BY_LANG
+from app.core.pdf_locales import LOCALE_BY_LANG, format_pdf_date
 from app.core.utils.currency import format_currency
 from app.core.utils.dates import clinic_zone
 
@@ -918,23 +918,35 @@ class NotificationService:
         return await email_service.send(message)
 
 
-def appointment_when_context(start_time: datetime, clinic) -> dict[str, str]:
+def message_date(value: date, locale: str) -> str:
+    """A date in a message, in the order of the locale it renders in (#1211).
+
+    The same table as the PDFs (``core/pdf_locales``): ``26/11/2026`` in
+    Spanish, ``26.11.2026`` in German, ``2026. 11. 26.`` in Hungarian.
+    """
+    return format_pdf_date(value, locale)
+
+
+def appointment_when_context(start_time: datetime, clinic, locale: str) -> dict[str, str]:
     """``appointment_date`` / ``appointment_time`` on the clinic's wall clock.
 
     ``Appointment.start_time`` is stored in UTC; formatting it as stored told a
     Madrid patient booked for 10:00 to come at 09:00. ``clinic`` may be None
-    (UTC then, the same fallback as ``clinic_zone``).
+    (UTC then, the same fallback as ``clinic_zone``). ``locale`` is the one
+    the message renders in, so the date follows its order (#1211).
     """
     local = start_time.astimezone(clinic_zone(clinic.timezone if clinic else None))
     return {
-        "appointment_date": local.strftime("%d/%m/%Y"),
+        "appointment_date": message_date(local, locale),
         "appointment_time": local.strftime("%H:%M"),
     }
 
 
-def clinic_date_label(instant: datetime, clinic) -> str:
-    """``dd/mm/YYYY`` of a stored UTC instant, on the clinic's calendar (#922)."""
-    return instant.astimezone(clinic_zone(clinic.timezone if clinic else None)).strftime("%d/%m/%Y")
+def clinic_date_label(instant: datetime, clinic, locale: str) -> str:
+    """The date of a stored UTC instant on the clinic's calendar (#922), in ``locale`` (#1211)."""
+    return message_date(
+        instant.astimezone(clinic_zone(clinic.timezone if clinic else None)), locale
+    )
 
 
 async def budget_treatments_context(db: AsyncSession, budget_id: UUID, money: Money) -> list[dict]:
@@ -1026,6 +1038,13 @@ class ManualSendContext:
     linked_patient_id: UUID | None = None
 
 
+async def _message_locale(db: AsyncSession, clinic_id: UUID, patient) -> str:
+    """The gateway's answer for this recipient: patient preference, else clinic."""
+    if patient:
+        return await resolve_patient_communication_locale(db, clinic_id, patient.id)
+    return await resolve_clinic_communication_locale(db, clinic_id)
+
+
 async def build_manual_send_context(
     db: AsyncSession,
     clinic_id: UUID,
@@ -1082,7 +1101,6 @@ async def build_manual_send_context(
 
         context["appointment_id"] = str(appointment.id)
         context["appointment_start_at"] = appointment.start_time.isoformat()
-        context.update(appointment_when_context(appointment.start_time, clinic))
         if notification_type == "appointment_reminder":
             # Same day-valid check-in link the sweep puts in (ADR 0037, #1156).
             from app.modules.notifications.tasks import _reminder_checkin_url
@@ -1103,6 +1121,13 @@ async def build_manual_send_context(
             ).scalar_one_or_none()
             if patient:
                 context["patient_name"] = f"{patient.first_name} {patient.last_name}"
+
+        # Dated in the locale the gateway will render in (#1211).
+        context.update(
+            appointment_when_context(
+                appointment.start_time, clinic, await _message_locale(db, clinic_id, patient)
+            )
+        )
 
     if notification_type in BUDGET_NOTIFICATION_TYPES:
         if not budget_id:
@@ -1126,17 +1151,13 @@ async def build_manual_send_context(
             if patient:
                 context["patient_name"] = f"{patient.first_name} {patient.last_name}"
 
-        # Amounts in the clinic's currency, for the locale the gateway will
-        # render in (#1133).
-        locale = (
-            await resolve_patient_communication_locale(db, clinic_id, patient.id)
-            if patient
-            else await resolve_clinic_communication_locale(db, clinic_id)
-        )
+        # Amounts in the clinic's currency and dates in the order of the
+        # locale the gateway will render in (#1133, #1211).
+        locale = await _message_locale(db, clinic_id, patient)
         money = money_formatter(clinic, locale)
 
         context["budget_number"] = budget.budget_number
-        context["budget_date"] = budget.valid_from.strftime("%d/%m/%Y")
+        context["budget_date"] = message_date(budget.valid_from, locale)
         context["total"] = money(budget.total)
         context["subtotal"] = money(budget.subtotal)
         context["discount_amount"] = money(budget.total_discount) if budget.total_discount else None
@@ -1146,7 +1167,7 @@ async def build_manual_send_context(
             context["validity_days"] = (budget.valid_until - budget.valid_from).days
 
         if notification_type == "budget_accepted":
-            context["accepted_date"] = clinic_date_label(budget.updated_at, clinic)
+            context["accepted_date"] = clinic_date_label(budget.updated_at, clinic, locale)
 
         if notification_type == "budget_sent":
             context["treatments"] = await budget_treatments_context(db, budget.id, money)
