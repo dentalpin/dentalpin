@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1211): booking emails date the slot in the requester's language (or the clinic's) instead of a fixed `dd/mm/yyyy`.
 - fix(#1226): the logo field in the public page settings is labelled "Logo" and its button reads "Upload PNG, JPG or WebP" (new `onlineBooking.logo` key in all twelve locales) instead of repeating one text as label and button.
 - fix(#1208): the rejection email uses the language the visitor booked in, stored on the request (new nullable `language` column, migration `ob_0005`); older requests fall back to the clinic's language.
 - fix(#1149): booking settings can be saved with booking disabled after the assigned professional left the clinic; a non-member professional id is stored as NULL.

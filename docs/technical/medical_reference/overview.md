@@ -21,7 +21,10 @@ power active per-patient warnings.
   (disease × medication), each with a `risk_note`. Pairs are stored in a
   canonical order (`medication_a_id < medication_b_id`, string-sorted)
   so the unique constraint reliably blocks duplicates regardless of the
-  order they were entered in.
+  order they were entered in. Adding a pair (or a list name) that
+  matches a deactivated row reactivates that row — for pairs with the
+  new `risk_note` — instead of answering 409; an active duplicate still
+  answers 409 (#963, #1236).
 - `GET /patients/{patient_id}/flags` cross-references a patient's
   *currently recorded* medications and diseases against those pairs.
 

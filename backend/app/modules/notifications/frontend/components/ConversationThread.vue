@@ -31,10 +31,9 @@ onMounted(async () => {
 })
 
 async function onSend() {
-  if (!conv || !draft.value.trim()) return
+  if (!conv || conv.sending.value || !draft.value.trim()) return
   try {
-    await conv.reply(draft.value.trim())
-    draft.value = ''
+    if (await conv.reply(draft.value.trim())) draft.value = ''
   } catch (e: unknown) {
     toast.add({
       title: t('notifications.conversation.replyError'),

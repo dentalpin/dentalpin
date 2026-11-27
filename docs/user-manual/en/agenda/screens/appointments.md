@@ -92,6 +92,9 @@ planned work instead of a free-text reason.
   accepted and the plan is active; that is where the money is booked.
 - If the patient has no plan with pending treatments, the selector
   explains so instead of showing an empty picker.
+- Picking a different patient clears the treatments chosen for the
+  previous one, since they belong to that patient. Removing the
+  patient and picking the same one again keeps them.
 
 ## Edit an appointment
 

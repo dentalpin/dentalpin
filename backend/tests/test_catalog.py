@@ -1,5 +1,6 @@
 """Tests for the catalog module."""
 
+from decimal import Decimal
 from uuid import uuid4
 
 import pytest
@@ -1555,3 +1556,94 @@ async def test_price_past_the_column_answers_422(
     )
     assert response.status_code == 422, response.text
     assert response.json()["message"] == "A numeric value is out of range"
+
+
+# ============================================================================
+# Per-surface tier prices (surface_prices JSONB)
+# ============================================================================
+
+
+@pytest.mark.asyncio
+async def test_per_surface_item_saves_and_prices_by_tier(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    catalog_clinic_setup: dict,
+):
+    """#1240: a per-surface item is created and edited, not a 500.
+
+    ``surface_prices`` lives in a plain JSONB column, so the Decimal tier
+    prices are stored as strings (the seeder's format) and the tier pricing
+    still resolves from the stored row.
+    """
+    from app.modules.catalog.models import TreatmentCatalogItem
+    from app.modules.catalog.pricing import PricingTooth, compute_price_snapshot
+
+    category_id = await _create_catalog_category(client, auth_headers, "per_surface")
+    created = await client.post(
+        "/api/v1/catalog/items",
+        json={
+            "category_id": category_id,
+            "internal_code": "OBT-1",
+            "names": {"es": "Obturación", "en": "Filling"},
+            "default_price": 60,
+            "vat_type_id": catalog_clinic_setup["vat_exempt_id"],
+            "pricing_strategy": "per_surface",
+            "surface_prices": {"1": 50, "2": 70.5},
+        },
+        headers=auth_headers,
+    )
+    assert created.status_code == 201, created.text
+    item = created.json()["data"]
+    assert item["surface_prices"] == {"1": "50", "2": "70.5"}
+
+    # The modal resubmits the whole form as GET returned it, tier map included.
+    payload = {
+        k: item[k]
+        for k in (
+            "category_id",
+            "internal_code",
+            "names",
+            "pricing_strategy",
+            "surface_prices",
+            "treatment_scope",
+            "requires_surfaces",
+            "is_diagnostic",
+        )
+    }
+    payload["default_price"] = "65.00"
+    payload["surface_prices"] = {**item["surface_prices"], "3": 95}
+    updated = await client.put(
+        f"/api/v1/catalog/items/{item['id']}", json=payload, headers=auth_headers
+    )
+    assert updated.status_code == 200, updated.text
+    assert updated.json()["data"]["surface_prices"] == {"1": "50", "2": "70.5", "3": "95"}
+
+    row = await db_session.get(TreatmentCatalogItem, item["id"])
+    await db_session.refresh(row)
+    assert row.surface_prices == {"1": "50", "2": "70.5", "3": "95"}
+    two = [PricingTooth(surfaces=["O", "M"])]
+    assert compute_price_snapshot(row, two) == Decimal("70.5")
+    four = [PricingTooth(surfaces=["O", "M", "D", "V"])]
+    assert compute_price_snapshot(row, four) == Decimal("95")
+
+
+@pytest.mark.asyncio
+async def test_negative_surface_price_answers_422(
+    client: AsyncClient, auth_headers: dict, catalog_clinic_setup: dict
+):
+    """A tier price obeys the same ``ge=0`` as ``default_price`` (#1240)."""
+    category_id = await _create_catalog_category(client, auth_headers, "per_surface_neg")
+    response = await client.post(
+        "/api/v1/catalog/items",
+        json={
+            "category_id": category_id,
+            "internal_code": "OBT-NEG",
+            "names": {"es": "Obturación"},
+            "default_price": 60,
+            "pricing_strategy": "per_surface",
+            "surface_prices": {"1": 50, "2": -1},
+        },
+        headers=auth_headers,
+    )
+    assert response.status_code == 422, response.text
