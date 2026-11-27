@@ -110,6 +110,14 @@ None.
 
 ## Gotchas
 
+- **An appointment ends strictly after it starts** (#1242).
+  `create_appointment` / `update_appointment` raise `InvalidTimeRangeError`
+  (a `ValueError`, so the router answers 400) when `end_time <= start_time`.
+  An update that sends one time is checked against the stored other one;
+  an update that sends neither skips the check, so rows stored before it
+  can still be edited. `book_appointment` / `reschedule_appointment` return
+  `{"error": "invalid_time_range"}`. There is no DB CHECK constraint.
+
 - **Saving syncs the treatment links, never re-creates them** (#1017): a
   link row holds the visit note and completed flag. Only newly added items
   go through booking validation, unless the patient changed.

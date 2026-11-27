@@ -12,6 +12,22 @@ from decimal import Decimal
 from typing import Protocol
 
 CENT = Decimal("0.01")
+MAX_PERCENTAGE = Decimal("100")
+
+
+def check_percentage_cap(discount_type: str | None, discount_value: Decimal | None) -> None:
+    """Raise ``ValueError`` for a percentage discount above 100 (#1241).
+
+    Above 100 % the discount exceeds the price and the total goes negative.
+    Absolute discounts are not checked here: the line and global
+    calculations already clamp them to the amount they apply to.
+    """
+    if (
+        discount_type == "percentage"
+        and discount_value is not None
+        and Decimal(str(discount_value)) > MAX_PERCENTAGE
+    ):
+        raise ValueError("A percentage discount cannot exceed 100")
 
 
 class _LineTotals(Protocol):

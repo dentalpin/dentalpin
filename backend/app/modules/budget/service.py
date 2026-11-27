@@ -14,7 +14,7 @@ from app.core.utils.dates import clinic_day_range, clinic_today_for, clinic_zone
 from app.modules.catalog.models import TreatmentCatalogItem, VatType
 
 from .models import Budget, BudgetHistory, BudgetItem
-from .pricing import allocate_global_discount, net_line_total
+from .pricing import allocate_global_discount, check_percentage_cap, net_line_total
 from .schemas import TreatmentPlanBrief
 
 
@@ -208,7 +208,15 @@ class BudgetItemService:
         with ``None`` is an explicit clear. Honoured only for nullable
         columns — ``None`` on a NOT NULL field (quantity, unit_price,
         display_order) is ignored rather than turned into a DB error.
+
+        The schema caps a percentage sent together with its type; a partial
+        update that sends only one of the two is checked here against the
+        stored other half, before anything is written (#1241).
         """
+        check_percentage_cap(
+            data.get("discount_type", item.discount_type),
+            data.get("discount_value", item.discount_value),
+        )
         for key, value in data.items():
             if not hasattr(item, key):
                 continue
@@ -669,6 +677,12 @@ class BudgetService:
         """Update a budget (only allowed in draft status)."""
         if budget.status != "draft":
             raise ValueError("Only draft budgets can be edited")
+
+        # Same partial-update gap as ``BudgetItemService.update_item`` (#1241).
+        check_percentage_cap(
+            data.get("global_discount_type", budget.global_discount_type),
+            data.get("global_discount_value", budget.global_discount_value),
+        )
 
         # Store previous state for history
         previous_state = {

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1233): the treatment edit modal resyncs status, surfaces and notes on every opening, so a cancelled edit no longer reappears when the same treatment is opened again.
 - fix(#1162): the Diagnoses card on the patient summary shows each pending treatment's tooth numbers and surfaces. It read `tooth_number` / `surfaces` off the treatment, but the list endpoint returns them on each `teeth[]` member, so every row showed only the treatment name.
 - fix(#1065): the History tab maps `performed` to `existing`, as the Diagnosis chart does.
 - fix(#1034): `TreatmentService.restore_planned`, for treatment_plan's reactivation.

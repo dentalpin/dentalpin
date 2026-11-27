@@ -750,6 +750,7 @@ function getItemName(item: DeepReadonly<BudgetItem>): string {
                     type="number"
                     step="0.01"
                     min="0"
+                    :max="editForm.global_discount_type === 'percentage' ? 100 : undefined"
                   />
                 </UFormField>
               </div>

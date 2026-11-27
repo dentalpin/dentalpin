@@ -214,6 +214,24 @@ watch(selectedPatient, () => {
   if (!isEditMode.value) resetConfirmationDefault()
 })
 
+// Planned items belong to one patient: picking a different patient drops
+// the ones chosen for the previous one, otherwise the save sends them
+// with the new patient_id and the backend rejects it (#1234). Clearing
+// the patient card (null) keeps them, so re-picking the same patient
+// loses nothing. The open-time population (edit mode, or a preselected
+// patient + plan) runs before the watch is armed, so it is never cleared.
+// Own flag, not initialDataLoaded: handleSave drops that one and a failed
+// save never restores it.
+let lastPatientId: string | null = null
+let patientSwitchArmed = false
+watch(() => selectedPatient.value?.id, (id) => {
+  if (!id) return
+  if (patientSwitchArmed && lastPatientId && id !== lastPatientId) {
+    selectedTreatments.value = []
+  }
+  lastPatientId = id
+})
+
 // Check for overlapping appointments
 const overlappingAppointments = computed(() => {
   if (!formData.date || !formData.startTime || !props.existingAppointments || props.existingAppointments.length === 0) {
@@ -338,6 +356,8 @@ watch(() => props.open, async (isOpen) => {
   }
   // Reset flags when modal opens
   initialDataLoaded.value = false
+  lastPatientId = null
+  patientSwitchArmed = false
   originalTiming.value = null
   lastOverlapWarningKey.value = ''
   initialOverlapIds.value = { professional: new Set(), cabinet: new Set() }
@@ -492,6 +512,7 @@ watch(() => props.open, async (isOpen) => {
 
   // Now enable overlap warnings for new overlaps only
   initialDataLoaded.value = true
+  patientSwitchArmed = true
 })
 
 async function handleSave() {

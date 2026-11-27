@@ -102,6 +102,9 @@ escrito a mano.
   el dinero.
 - Si el paciente no tiene ningún plan con tratamientos pendientes, el
   selector lo explica en lugar de mostrar un selector vacío.
+- Al elegir otro paciente se quitan los tratamientos seleccionados
+  para el anterior, porque son suyos. Si quitas el paciente y vuelves
+  a elegir el mismo, se conservan.
 
 ## Editar una cita
 

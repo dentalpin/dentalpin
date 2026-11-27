@@ -115,10 +115,14 @@ const sessionsProgress = computed(() => {
   return Math.min(100, Math.max(0, (sessionsSum.value / total) * 100))
 })
 
-// Populate form
+// (Re)populate the form on every opening, not only when `item` changes:
+// the settings page passes the same value again for "New treatment" (null)
+// and for Edit on the same row after Cancel, so a created item or a
+// discarded edit would otherwise come back (#1233).
 watch(
-  () => props.item,
-  (newItem) => {
+  [open, () => props.item],
+  ([isOpen, newItem]) => {
+    if (!isOpen) return
     if (newItem) {
       formData.value = {
         internal_code: newItem.internal_code,
