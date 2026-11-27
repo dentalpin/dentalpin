@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: a13bd29
+last_verified_commit: da6d2444
 ---
 
 # Budget detail
@@ -82,6 +82,9 @@ signed, invoiced, or renegotiated.
 1. Click **Edit** on a line or **Add item** below the table.
 2. Change catalog item, tooth, surfaces, quantity, discount, or
    VAT. Totals recompute on save.
+   When adding an item, the **Line total** in the dialog is the amount
+   the line will show: the catalog item's VAT included, and an absolute
+   discount never takes it below zero (the global discount comes later).
 3. The backend rewrites the totals invariant on save (no `update`
    event yet).
 

@@ -38,6 +38,9 @@ export function useConversation(patientId: string) {
   }
 
   async function reply(body: string, channel = 'whatsapp') {
+    // One reply at a time: a second Enter while the POST is in flight
+    // would send the same WhatsApp message twice (#1231).
+    if (sending.value) return false
     sending.value = true
     try {
       // 409 outside the 24h WhatsApp window is an expected branch — the
