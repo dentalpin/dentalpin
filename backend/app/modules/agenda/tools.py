@@ -32,6 +32,7 @@ from .service import (
     AppointmentService,
     CabinetRequiredError,
     CabinetService,
+    InvalidTimeRangeError,
     InvalidTransitionError,
 )
 from .tz import get_clinic_tz
@@ -43,6 +44,12 @@ class DayOverviewArgs(BaseModel):
 
 class GetAppointmentArgs(BaseModel):
     appointment_id: UUID
+
+
+_INVALID_TIME_RANGE = {
+    "error": "invalid_time_range",
+    "detail": "La hora de fin debe ser posterior a la de inicio.",
+}
 
 
 class NoArgs(BaseModel):
@@ -140,6 +147,8 @@ async def _book_appointment(ctx: AgentContext, params: BookAppointmentArgs) -> d
             params.model_dump(exclude_none=True),
             created_by=ctx.supervisor_id,
         )
+    except InvalidTimeRangeError:
+        return dict(_INVALID_TIME_RANGE)
     except IntegrityError:
         # Slot conflict. Roll back the failed insert so the session stays
         # usable for the rest of the turn; surface a structured error the
@@ -160,6 +169,8 @@ async def _reschedule_appointment(ctx: AgentContext, params: RescheduleAppointme
         appt = await AppointmentService.update_appointment(
             ctx.db, appt, data, changed_by=ctx.supervisor_id
         )
+    except InvalidTimeRangeError:
+        return dict(_INVALID_TIME_RANGE)
     except IntegrityError:
         # update_appointment already rolled the session back.
         return {"error": "slot_conflict", "detail": "El hueco solicitado no está disponible."}

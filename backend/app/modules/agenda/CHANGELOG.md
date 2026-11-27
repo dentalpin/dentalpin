@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1242): reject an appointment whose end is not after its start on create, update (checked against the stored time when only one is sent) and the copilot book/reschedule tools.
 - fix(#1217): the public check-in page's `appointments.checkin.confirm`, `confirmHint`, `tooEarly` and `tooLate` strings are translated in ar/hi/ta/te instead of English.
 - fix(#1104): the agent tools (`get_appointment`, `get_day_overview`, `book_appointment`, `reschedule_appointment`) return `start_time`/`end_time` in the clinic timezone, like the REST API, so the copilot no longer reports a 10:00 Madrid booking as 09:00.
 - fix(#1037): creating from the mobile day view and the kanban header starts on the viewed day, not today.

@@ -73,6 +73,16 @@ class AlreadyInStateError(ValueError):
     """Raised when a transition targets the appointment's current state."""
 
 
+class InvalidTimeRangeError(ValueError):
+    """Raised when an appointment would not end strictly after it starts (#1242)."""
+
+
+def _check_time_range(start: datetime, end: datetime) -> None:
+    """Reject a zero-length or inverted appointment (#1242)."""
+    if end <= start:
+        raise InvalidTimeRangeError("end_time must be after start_time")
+
+
 class CabinetRequiredError(ValueError):
     """Raised when moving to ``in_treatment`` without a cabinet assigned."""
 
@@ -449,6 +459,8 @@ class AppointmentService:
         planned_item_ids = data.pop("planned_item_ids", None)
 
         await AppointmentService._normalize_times(db, clinic_id, data)
+        if data.get("start_time") is not None and data.get("end_time") is not None:
+            _check_time_range(data["start_time"], data["end_time"])
 
         await AppointmentService._resolve_cabinet(db, clinic_id, data)
 
@@ -554,6 +566,12 @@ class AppointmentService:
         planned_item_ids = data.pop("planned_item_ids", None)
 
         await AppointmentService._normalize_times(db, appointment.clinic_id, data)
+        # Check the merged range: a payload may carry only one of the two
+        # times (#1242). Untouched times skip the check, so a legacy bad row
+        # can still be edited.
+        new_start, new_end = data.get("start_time"), data.get("end_time")
+        if new_start is not None or new_end is not None:
+            _check_time_range(new_start or appointment.start_time, new_end or appointment.end_time)
 
         # Cabinet changes go through assign_cabinet() so the audit trail
         # + bus event fire. Pop the fields here and apply after the core
