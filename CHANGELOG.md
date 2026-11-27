@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications:** the appointment reminder's check-in button now appears for Brazilian Portuguese and is translated in Arabic, Hindi, Tamil and Telugu (#1207).
 - **Notifications:** patient emails get a subject in the patient's language (e.g. "Appointment reminder - <clinic>") instead of "Notificación: appointment_reminder" (#1204).
 - **Billing:** turning on yearly reset for an invoice series mid-year no longer restarts its numbering at 1 and blocks issuing on duplicate numbers (#1184).
 - **Orthodontics:** editing the next-control interval of the latest control now moves the review recall (#1186).

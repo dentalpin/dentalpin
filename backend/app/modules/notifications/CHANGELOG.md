@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1207): appointment reminder email now shows the check-in button in pt-BR, and labels it in Arabic, Hindi, Tamil and Telugu instead of English.
 - fix(#1204): emails with no template subject use the file template's localized title instead of "Notificación: <template_key>".
 - fix(#1181): the copilot's `send_notification` builds the same template context as `POST /send` (shared `build_manual_send_context`): clinic details always, and appointment/quote types require an `appointment_id` / `budget_id` of the clinic and patient instead of going out with blank dates and amounts.
 - fix(#1156): a reminder sent by hand (`POST /notifications/send`) now carries the day-valid `checkin_url`, like the sweep; removed the unused `tasks.send_single_reminder`.
