@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- fix(#1171): the signer ID document is ASCII-only. The value is NFKC-normalised first (full-width `１２３` becomes `123`), whitespace is removed, and only `A-Z`, `a-z`, `0-9`, `-`, `.` and `/` are accepted (previously any Unicode letter or digit, e.g. `Ñ`, Cyrillic look-alikes or Arabic-Indic digits); the 32-character limit and the 422 error are unchanged. The signing page's ID input now carries `maxlength="64"`, matching the `signer_id_document` schema limit (spaces are stripped server-side, so the normalised maximum stays 32).
 - fix(#1232): cancelling an edit of a prescription's medications no longer changes the list; the modal edits a copy of the document content.
 - fix(#1232): the create/edit document modal resets its form on every opening, so "New document" no longer comes back with the previous patient, title and content after a create or a cancelled draft, and a cancelled edit no longer reappears.
 - fix(#1180): document PDF birth date and issue timestamp follow the PDF locale through the shared `app.core.pdf_locales` helpers; es/en keep dd/mm/yyyy.

@@ -6,7 +6,9 @@ import asyncio
 import base64
 import hashlib
 import io
+import re
 import secrets
+import unicodedata
 import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -42,26 +44,29 @@ from .service import _documents_root, _write_pdf_bytes
 Purpose = Literal["sign", "revoke"]
 
 ID_DOCUMENT_MAX_LENGTH = 32
-# Deliberately loose charset (letters, digits, "-", ".", "/"); no country-specific checksum.
+# Deliberately loose, ASCII-only charset (A-Z, 0-9, "-", ".", "/"); no country-specific checksum.
+_ID_DOCUMENT_RE = re.compile(r"[A-Za-z0-9./-]+")
 
 
 def _normalize_id_document(value: str | None, relationship: str) -> str | None:
-    """Remove whitespace + uppercase the signer's ID document; required unless the signer is the patient.
+    """NFKC-normalise, remove whitespace and uppercase the signer's ID document.
 
-    Whitespace is dropped (``"1234 5678 z"`` -> ``"12345678Z"``) because IDs are often
-    written in groups; no country-specific checksum is applied.
+    Required unless the signer is the patient. Whitespace is dropped
+    (``"1234 5678 z"`` -> ``"12345678Z"``) because IDs are often written in groups, and
+    NFKC folds full-width forms (``"１２３"`` -> ``"123"``). Only ASCII letters, digits and
+    ``-./`` are accepted; the charset is checked before uppercasing so that characters
+    such as ``ß`` cannot become ASCII (``SS``). No country-specific checksum is applied.
     """
-    normalized = "".join((value or "").split()).upper()
-    if not normalized:
+    compact = "".join(unicodedata.normalize("NFKC", value or "").split())
+    if not compact:
         if relationship != "patient":
             raise ConsentValidationError(
                 "Signer ID document required for guardian or representative"
             )
         return None
-    if len(normalized) > ID_DOCUMENT_MAX_LENGTH or not all(
-        ch.isalnum() or ch in "-./" for ch in normalized
-    ):
+    if len(compact) > ID_DOCUMENT_MAX_LENGTH or not _ID_DOCUMENT_RE.fullmatch(compact):
         raise ConsentValidationError("Signer ID document is invalid")
+    normalized = compact.upper()
     return normalized
 
 
