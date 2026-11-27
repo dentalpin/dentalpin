@@ -120,7 +120,10 @@ that event was never published.
 - **A percentage line discount is capped at 100 (#1241)** with
   `budget.pricing.check_percentage_cap`: in the item schemas (422) and, for
   a partial update, on the merged pair in `InvoiceItemService.update_item`
-  (400).
+  (400) — only when the request sends the type or value, so lines stored
+  above 100 before the cap stay editable. `create_from_budget` copies a
+  budget line's stored percentage without checking it, so old budgets
+  still invoice.
 - **Frontend line math is one helper: `frontend/utils/lineAmounts.ts`**
   (#1032). It mirrors `InvoiceService.calculate_item_totals`: discount
   (absolute capped at the line) before VAT, each line amount rounded to
