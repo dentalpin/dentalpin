@@ -25,10 +25,12 @@
 </div>
 {% endif %}
 
+{% if clinic_hours %}
 <div class="info-box">
     <div class="label">Horário de funcionamento</div>
-    <div class="value">{{ clinic_hours | default('Segunda a sexta-feira: 9h00 - 20h00') }}</div>
+    <div class="value">{{ clinic_hours }}</div>
 </div>
+{% endif %}
 
 <p>Não hesite em contactar-nos se tiver alguma dúvida. Estamos aqui para ajudar.</p>
 

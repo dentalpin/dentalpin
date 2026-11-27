@@ -13,7 +13,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field
 
 from app.core.agents import AgentContext, Tool, ToolCategory
 
@@ -41,13 +41,15 @@ class CreatePatientArgs(BaseModel):
     first_name: str = Field(min_length=1, max_length=100)
     last_name: str = Field(min_length=1, max_length=100)
     phone: str | None = Field(default=None, max_length=20)
-    email: str | None = Field(default=None, max_length=255)
+    # EmailStr like PatientCreate/PatientUpdate (#1187).
+    email: EmailStr | None = Field(default=None, max_length=255)
 
 
 class UpdatePatientArgs(BaseModel):
     patient_id: UUID
     phone: str | None = Field(default=None, max_length=20)
-    email: str | None = Field(default=None, max_length=255)
+    # EmailStr like PatientCreate/PatientUpdate (#1187).
+    email: EmailStr | None = Field(default=None, max_length=255)
 
 
 def _summary(patient) -> dict:

@@ -13,6 +13,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.schemas import NotNull
+
 
 class PayrollProfileCreate(BaseModel):
     user_id: UUID
@@ -25,14 +27,15 @@ class PayrollProfileCreate(BaseModel):
 
 
 class PayrollProfileUpdate(BaseModel):
-    payment_type: str | None = Field(default=None, pattern="^(monthly|hourly)$")
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    payment_type: NotNull[str] = Field(default=None, pattern="^(monthly|hourly)$")
     base_amount: Decimal | None = Field(default=None, ge=0, decimal_places=2)
-    currency: str | None = Field(default=None, min_length=3, max_length=3)
+    currency: NotNull[str] = Field(default=None, min_length=3, max_length=3)
     # Replace-to-edit: send the full new value to change it; omitted means
     # keep the stored ciphertext. Plaintext is never returned.
     bank_account: str | None = Field(default=None, max_length=100)
     tax_id: str | None = Field(default=None, max_length=50)
-    is_active: bool | None = None
+    is_active: NotNull[bool] = None
     country_code: str | None = Field(default=None, min_length=2, max_length=2)
 
 
@@ -89,8 +92,9 @@ class PayrollEntryCreate(BaseModel):
 
 
 class PayrollEntryUpdate(BaseModel):
-    gross: Decimal | None = Field(default=None, ge=0, decimal_places=2)
-    deductions: Decimal | None = Field(default=None, ge=0, decimal_places=2)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    gross: NotNull[Decimal] = Field(default=None, ge=0, decimal_places=2)
+    deductions: NotNull[Decimal] = Field(default=None, ge=0, decimal_places=2)
     net: Decimal | None = Field(default=None, ge=0, decimal_places=2)
     notes: str | None = Field(default=None, max_length=2000)
 

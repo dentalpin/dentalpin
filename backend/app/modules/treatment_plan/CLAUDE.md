@@ -89,7 +89,7 @@ Clinical-note created events (`clinical_notes.{administrative,diagnosis,treatmen
 
 | Event | Handler | Effect |
 |---|---|---|
-| `appointment.completed`         | `on_appointment_completed`  | mark planned items as performed if linked |
+| `appointment.completed`         | `on_appointment_completed`  | for each linked item ticked `completed_in_appointment`: active plan → `complete_item` (next pending session → `item_session_completed`, finalizes on the last one, #1185); otherwise marks the item completed directly (ungated) |
 | `budget.accepted`               | `on_budget_accepted`        | pending → active; also closed(rejected_by_patient) → active on a resent version (idempotent). Reprices pending sessions from the payload's `items[].net_amount` (issue #167) |
 | `budget.rejected`               | `on_budget_rejected`        | pending → closed (closure_reason=rejected_by_patient) |
 | `budget.renegotiated`           | `on_budget_renegotiated`    | pending → draft via `reopen_from_budget` (never writes the budget row) |
@@ -191,6 +191,10 @@ migration — future ALTERs live on the ``tp`` Alembic branch.
   catalog prices (issue #167). The odontogram-first
   (`on_treatment_performed`) and appointment paths are deliberately
   **not** gated — they record a clinical fact that already happened.
+  Since #1185 the appointment path sends items of an **active** plan
+  through `complete_item` (one session per visit), so revenue and the
+  chart follow; items of a non-active plan keep the old ungated
+  fact-recording (status flip only — no session, revenue or chart).
 - **Sessions are repriced at acceptance, pending ones only.**
   `_reprice_sessions` scales an item's pending sessions so that
   Σ(all sessions) == the accepted line's `net_amount` (ex-tax, line +

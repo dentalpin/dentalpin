@@ -32,6 +32,8 @@ UI of its own.
   babel month name ("dezembro de 2026" for `pt-BR`), and `reason` is the
   label the recalls UI shows for the code ("Revisão de ortodontia", not
   `ortho_review`), from `reason_labels.py`. An unknown code is left out.
+- The context also carries the clinic's `clinic_phone` and `clinic_address`,
+  which the template's `tel:` "book" button and footer need (#1154).
 
 ## Data model
 

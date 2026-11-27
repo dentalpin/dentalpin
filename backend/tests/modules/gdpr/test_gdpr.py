@@ -1074,7 +1074,9 @@ async def test_execute_erasure_tool_reports_missing_patient(
 
     from app.modules.gdpr.tools import _execute_erasure
 
-    ctx = SimpleNamespace(db=db_session, clinic_id=test_clinic.id, agent_id=uuid4())
+    ctx = SimpleNamespace(
+        db=db_session, clinic_id=test_clinic.id, agent_id=uuid4(), supervisor_id=uuid4()
+    )
     from app.modules.gdpr.tools import ExecuteErasureArgs
 
     out = await _execute_erasure(
