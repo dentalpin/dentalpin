@@ -449,9 +449,8 @@ class EmailService:
                 template = self._jinja_env.get_template(template_path)
                 # base.html reads ``locale`` for ``lang``/``dir``.
                 return template.render({"locale": locale, **context})
-        except Exception as e:
-            logger.error(f"Failed to render email template: {e}")
-            return None
+            except Exception:
+                continue
         logger.warning(f"Template not found: {template_key}.{extension} for locale {locale}")
         return None
 
