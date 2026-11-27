@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Online booking:** the logo field in the public page settings is labelled "Logo" and its button says "Upload PNG, JPG or WebP" instead of repeating the same text twice (#1226).
 - **Budget:** "New budget" opened from the patient card now preselects that patient instead of asking for it again (#1221).
 - **Agenda:** the patient check-in page shows its confirm button, hint and too-early/too-late messages in Arabic, Hindi, Tamil and Telugu instead of English (#1217).
 - **Treatment plans:** completing an appointment with a planned item of an active plan ticked as done now completes its next session, books its revenue and, on the last session, marks the treatment performed on the chart (#1185).

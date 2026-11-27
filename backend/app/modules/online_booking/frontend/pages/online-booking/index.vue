@@ -571,7 +571,7 @@ onMounted(load)
         <h3 class="font-semibold sm:col-span-2">
           {{ t('onlineBooking.appearance') }}
         </h3>
-        <UFormField :label="t('onlineBooking.logoUpload')">
+        <UFormField :label="t('onlineBooking.logo')">
           <input
             ref="logoInput"
             type="file"
@@ -594,13 +594,13 @@ onMounted(load)
           <img
             v-if="logoPreview"
             :src="logoPreview"
-            :alt="t('onlineBooking.logoUpload')"
+            :alt="t('onlineBooking.logo')"
             class="mt-3 max-h-24 max-w-48 rounded border p-2 object-contain"
           >
           <img
             v-else-if="savedLogoUrl"
             :src="savedLogoUrl"
-            :alt="t('onlineBooking.logoUpload')"
+            :alt="t('onlineBooking.logo')"
             class="mt-3 max-h-24 max-w-48 rounded border p-2 object-contain"
           >
           <p class="text-xs text-muted">
