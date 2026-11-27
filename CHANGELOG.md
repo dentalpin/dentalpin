@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Documents:** a cancelled edit of a prescription's medications no longer comes back when the document is reopened (#1232).
 - **Agenda:** Settings → Cabinets can deactivate and reactivate a cabinet, deleting one with appointments now says to deactivate it, and an inactive cabinet is no longer offered or bookable (#1237).
 - **Agenda:** an appointment can no longer be saved ending at or before its start time; reports no longer count negative hours from new bookings (#1242).
 - **Budget, Billing:** a percentage discount above 100 % is refused instead of turning a budget or invoice negative (#1241).

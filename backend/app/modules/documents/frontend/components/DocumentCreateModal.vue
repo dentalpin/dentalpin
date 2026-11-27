@@ -291,7 +291,9 @@ watch(
       form.patient_id = doc.patient_id
       form.document_type = doc.document_type
       form.title = doc.title
-      form.content = { ...emptyContent(), ...(doc.content as Partial<DocumentFormContent>) }
+      // Deep copy: medications are nested objects, and editing them must not
+      // mutate the page's document (a cancelled edit would come back).
+      form.content = { ...emptyContent(), ...(JSON.parse(JSON.stringify(doc.content ?? {})) as Partial<DocumentFormContent>) }
       selectedPatient.value = { id: doc.patient_id, label: '' }
       // Resolve the patient name so the UInputMenu shows a label in edit mode.
       api.get<ApiResponse<Patient>>(`/api/v1/patients/${doc.patient_id}`).then((res) => {
