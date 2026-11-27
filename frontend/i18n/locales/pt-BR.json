@@ -185,6 +185,16 @@
     "timeline": {
       "meta": {
         "cabinet": "Consultório {name}"
+      },
+      "titles": {
+        "appointmentInTreatment": "Paciente no consultório ({treatment})",
+        "budgetAccepted": "Orçamento aceito",
+        "budgetAcceptedNumbered": "Orçamento aceito: {value}",
+        "notes": {
+          "treatment": "Nota clínica em um tratamento",
+          "treatment_plan": "Nota clínica em um plano de tratamento"
+        },
+        "orthoControl": "Controle de ortodontia"
       }
     },
     "billingTaxId": "CPF/CNPJ",

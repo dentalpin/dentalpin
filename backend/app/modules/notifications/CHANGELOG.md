@@ -3,6 +3,12 @@
 ## Unreleased
 
 - fix(#1207): appointment reminder email now shows the check-in button in pt-BR, and labels it in Arabic, Hindi, Tamil and Telugu instead of English.
+- fix(#1204): emails with no template subject use the file template's localized title instead of "Notificación: <template_key>".
+- fix(#1181): the copilot's `send_notification` builds the same template context as `POST /send` (shared `build_manual_send_context`): clinic details always, and appointment/quote types require an `appointment_id` / `budget_id` of the clinic and patient instead of going out with blank dates and amounts.
+- fix(#1156): a reminder sent by hand (`POST /notifications/send`) now carries the day-valid `checkin_url`, like the sweep; removed the unused `tasks.send_single_reminder`.
+- fix(#1154): the appointment_cancelled, budget_sent, budget_accepted and budget_reminder contexts carry `clinic_address` for the email footer.
+- fix(#1153): the email footer ("This email was sent by <clinic>") is written in the email's language for every locale instead of always in Spanish (`base.html` keys it on `locale`; `footer_sent_by` still overrides it, and custom DB templates now receive `locale` too). The welcome email shows the opening-hours box only when `clinic_hours` is given, instead of an invented "Monday to Friday, 9:00 - 20:00".
+
 - fix(#1133): quote and invoice emails format amounts with `format_currency` in the clinic's currency and the message's locale (no more raw floats or hard-coded `€`); the `invoice.sent` handler no longer crashes on the removed `Invoice.balance_due` column, so invoice emails queue again
 - fix(#1136): a DB template lookup for a regional locale falls back to its base language (`pt-BR` -> `pt`), clinic rows before system rows, so pt-BR clinics get the seeded pt templates instead of a FAILED "Template not found" send. WhatsApp provider templates and the create duplicate check stay exact.
 - fix(#1115): automatic `budget.reminder_sent` milestones are queued at most once per budget and milestone (`dedup_key`).

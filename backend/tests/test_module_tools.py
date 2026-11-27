@@ -881,7 +881,7 @@ async def test_record_payment_and_history(db_session, test_clinic) -> None:
     assert res.data["amount"] == 50.1
     assert res.data["currency"] == "EUR"
 
-    # Allocation sum mismatch → structured workflow error.
+    # Allocation sum mismatch → refused at validation, as REST does (#1183).
     res = await tool_registry.call(
         ctx,
         "payments.record_payment",
@@ -893,8 +893,8 @@ async def test_record_payment_and_history(db_session, test_clinic) -> None:
             "allocations": [{"target_type": "on_account", "amount": 60}],
         },
     )
-    assert res.ok
-    assert res.data["error"] == "workflow_error"
+    assert res.ok is False
+    assert "Allocations must sum to amount" in (res.error or "")
 
     history = await tool_registry.call(
         ctx, "payments.patient_payment_history", {"patient_id": patient_id}
@@ -906,6 +906,64 @@ async def test_record_payment_and_history(db_session, test_clinic) -> None:
     # off-books: collection axis only — never the paid-vs-earned diff.
     for forbidden in ("total_earned", "patient_credit", "clinic_receivable"):
         assert forbidden not in history.data
+
+
+@pytest.mark.asyncio
+async def test_record_payment_rejects_inconsistent_allocation_target(
+    db_session, test_clinic
+) -> None:
+    """#1183: the tool args carry the REST ``target_id`` rule.
+
+    A budget allocation with no ``target_id`` used to pass validation and
+    hit ``ck_alloc_target_consistency``; the PendingRollbackError escaped
+    ``tool_registry.call``. It must be refused before the DB, and the
+    session must stay usable.
+    """
+    world = await _money_world(db_session, test_clinic.id)
+    ctx = await _ctx(
+        db_session,
+        test_clinic.id,
+        ["payments.record.read", "payments.record.write"],
+        supervisor_id=world["user"].id,
+    )
+    base = {
+        "patient_id": str(world["patient"].id),
+        "amount": "50.00",
+        "method": "cash",
+        "payment_date": "2032-01-10",
+    }
+
+    res = await tool_registry.call(
+        ctx,
+        "payments.record_payment",
+        {**base, "allocations": [{"target_type": "budget", "amount": "50.00"}]},
+    )
+    assert res.ok is False
+    assert "target_id is required when target_type='budget'" in (res.error or "")
+
+    res = await tool_registry.call(
+        ctx,
+        "payments.record_payment",
+        {
+            **base,
+            "allocations": [
+                {
+                    "target_type": "on_account",
+                    "target_id": str(world["budget"].id),
+                    "amount": "50.00",
+                }
+            ],
+        },
+    )
+    assert res.ok is False
+    assert "target_id must be null when target_type='on_account'" in (res.error or "")
+
+    # Nothing was written and the session still works.
+    history = await tool_registry.call(
+        ctx, "payments.patient_payment_history", {"patient_id": base["patient_id"]}
+    )
+    assert history.ok
+    assert history.data["movements"] == []
 
 
 @pytest.mark.asyncio

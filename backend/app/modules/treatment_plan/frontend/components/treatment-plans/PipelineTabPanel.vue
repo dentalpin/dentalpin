@@ -9,6 +9,7 @@ const props = defineProps<{
 }>()
 
 const { t, locale } = useI18n()
+const { format: formatMoney } = useCurrency()
 const router = useRouter()
 const toast = useToast()
 const {
@@ -180,13 +181,13 @@ function whatsappPatient(row: PipelineRow) {
                 variant="soft"
                 size="xs"
               >
-                {{ row.budget.status }}
+                {{ t(`budget.status.${row.budget.status}`) }}
               </UBadge>
               <span
                 v-if="row.budget.total !== null"
                 class="ms-2"
               >
-                {{ row.budget.total.toFixed(2) }} €
+                {{ formatMoney(row.budget.total) }}
               </span>
             </div>
             <div

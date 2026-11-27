@@ -250,7 +250,24 @@
             <!-- Footer -->
             <div class="email-footer">
                 {% block footer %}
-                <p>{{ footer_sent_by | default('Este email fue enviado por ' ~ (clinic_name | default('DentalPin'))) }}</p>
+                {# One sentence per locale; %s is the clinic name. A template
+                   (or context) can still override it with ``footer_sent_by``. #}
+                {% set sent_by = {
+                    'es': 'Este email fue enviado por %s',
+                    'en': 'This email was sent by %s',
+                    'de': 'Diese E-Mail wurde von %s gesendet',
+                    'fr': 'Cet e-mail a été envoyé par %s',
+                    'it': 'Questa email è stata inviata da %s',
+                    'pt': 'Este e-mail foi enviado por %s',
+                    'pt-BR': 'Este e-mail foi enviado por %s',
+                    'pl': 'Ta wiadomość została wysłana przez %s',
+                    'hu': 'Ezt az e-mailt a(z) %s küldte',
+                    'ar': 'تم إرسال هذا البريد الإلكتروني من %s',
+                    'hi': 'यह ईमेल %s द्वारा भेजा गया था',
+                    'ta': 'இந்த மின்னஞ்சலை %s அனுப்பியது',
+                    'te': 'ఈ ఇమెయిల్‌ను %s పంపింది',
+                } %}
+                <p>{{ footer_sent_by | default(sent_by.get(locale, sent_by['en']) | format(clinic_name | default('DentalPin'))) }}</p>
                 {% if clinic_phone %}
                 <p>Tel: <span dir="ltr">{{ clinic_phone }}</span></p>
                 {% endif %}

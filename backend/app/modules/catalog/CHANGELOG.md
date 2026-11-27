@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1178): item price, cost and session price inputs show the clinic currency symbol and the sessions sum uses the clinic currency instead of a literal €.
+
 - fix(#1028): `CatalogItemBrief` (search, popular) carries `vat_type_id`.
 
 - fix(#861): an item's `vat_type_id` and a category's `parent_id` must be the clinic's. An unknown id was a 500. Another clinic's VAT type was stored, and budget lines made from the item snapshotted its rate. A category could be its own parent or descendant. Now each case is a 400, the same as the existing `category_id` check.

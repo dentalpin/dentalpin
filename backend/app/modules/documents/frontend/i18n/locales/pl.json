@@ -126,6 +126,8 @@
       "revocationNotice": "Składając podpis, wycofują Państwo przedstawioną zgodę.",
       "signer": "Imię i nazwisko osoby podpisującej",
       "relationship": "Relacja z pacjentem",
+      "idDocument": "Dokument tożsamości",
+      "idDocumentHint": "Wymagane, jeśli podpisujesz jako opiekun prawny lub przedstawiciel; opcjonalne, jeśli jesteś pacjentem.",
       "patient": "Pacjent",
       "guardian": "Opiekun prawny",
       "representative": "Przedstawiciel",
@@ -149,7 +151,8 @@
         "archived": "Zarchiwizowano"
       },
       "qrTitle": "Zeskanuj, aby podpisać",
-      "signedToast": "Zgoda podpisana"
+      "signedToast": "Zgoda podpisana",
+      "formatHelp": "Formatowanie: zacznij wiersz od # (nagłówek) lub ## / ### (podnagłówki), ujmij tekst w **podwójne gwiazdki**, aby uzyskać pogrubienie, lub w *pojedyncze gwiazdki*, aby uzyskać kursywę, i zaczynaj wiersze od - lub 1., aby utworzyć listy. Pusty wiersz rozpoczyna nowy akapit. Wszystko inne, w tym HTML i linki, jest wyświetlane dokładnie tak, jak zostało wpisane."
     }
   }
 }
