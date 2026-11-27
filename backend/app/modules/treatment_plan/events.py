@@ -19,6 +19,7 @@ from uuid import UUID
 
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
 
 from app.core.events import event_bus
 from app.core.events.types import EventType
@@ -55,10 +56,25 @@ async def _resolve_treatment_category_key(db: AsyncSession, treatment_id: UUID) 
 async def on_appointment_completed(data: dict[str, Any], *, db: AsyncSession) -> None:
     """Handle appointment completed event.
 
-    When an appointment is completed, mark associated planned treatments as
-    completed. Transactional: it reads ``completed_in_appointment`` flags the
-    publisher has only flushed — a second session saw the pre-visit values and
-    closed nothing (issue #183).
+    For every planned item ticked ``completed_in_appointment`` on this visit:
+
+    - **Active plan:** the normal completion path.
+      ``TreatmentPlanService.complete_item`` completes the item's next
+      pending session (one visit, one session), which publishes
+      ``item_session_completed`` (payments books the earned revenue) and, on
+      the last session, finalizes the item (odontogram ``perform``,
+      ``treatment_completed``, plan auto-complete). Writing ``item.status``
+      directly skipped all of that (issue #1185).
+    - **Any other plan status** (or no pending session left): the item is
+      marked completed directly, as before — the path is deliberately not
+      gated; it records a clinical fact that already happened. No revenue is
+      booked and the chart is not touched there.
+
+    Appointments are terminal once completed, so this runs once per visit.
+
+    Transactional: it reads ``completed_in_appointment`` flags the publisher
+    has only flushed — a second session saw the pre-visit values and closed
+    nothing (issue #183).
     """
     appointment_id = data.get("appointment_id")
     clinic_id = data.get("clinic_id")
@@ -68,8 +84,14 @@ async def on_appointment_completed(data: dict[str, Any], *, db: AsyncSession) ->
         return
 
     # Import here to avoid circular imports
-    from .models import AppointmentTreatment
+    from .models import AppointmentTreatment, TreatmentPlan
     from .service import TreatmentPlanService
+
+    clinic_uuid = UUID(clinic_id)
+    # ``completed_by`` on the session: whoever completed the visit, else the
+    # appointment's professional.
+    actor = data.get("changed_by") or data.get("professional_id")
+    user_id = UUID(actor) if actor else None
 
     result = await db.execute(
         select(AppointmentTreatment).where(
@@ -80,19 +102,38 @@ async def on_appointment_completed(data: dict[str, Any], *, db: AsyncSession) ->
     completed_treatments = result.scalars().all()
 
     for apt_treatment in completed_treatments:
-        # Find planned item that references this treatment
         if not apt_treatment.planned_treatment_item_id:
             continue
         item_result = await db.execute(
-            select(PlannedTreatmentItem).where(
+            select(PlannedTreatmentItem)
+            .where(
                 PlannedTreatmentItem.id == apt_treatment.planned_treatment_item_id,
-                PlannedTreatmentItem.clinic_id == UUID(clinic_id),
+                PlannedTreatmentItem.clinic_id == clinic_uuid,
             )
+            .options(selectinload(PlannedTreatmentItem.sessions))
         )
         item = item_result.scalar_one_or_none()
         if not item or item.status == "completed":
             continue
 
+        plan = await db.get(TreatmentPlan, item.treatment_plan_id)
+        if (
+            plan is not None
+            and plan.status == "active"
+            and any(s.status == "pending" for s in item.sessions)
+        ):
+            await TreatmentPlanService.complete_item(
+                db,
+                clinic_id=clinic_uuid,
+                plan_id=item.treatment_plan_id,
+                item_id=item.id,
+                user_id=user_id,
+                completed_without_appointment=False,
+            )
+            continue
+
+        # Plan not active (or no pending session): record the clinical fact
+        # directly, ungated, as before #1185.
         item.status = "completed"
         item.completed_without_appointment = False
 
@@ -112,9 +153,7 @@ async def on_appointment_completed(data: dict[str, Any], *, db: AsyncSession) ->
         )
 
         # Check if plan should auto-complete
-        await TreatmentPlanService._check_and_complete_plan(
-            db, UUID(clinic_id), item.treatment_plan_id
-        )
+        await TreatmentPlanService._check_and_complete_plan(db, clinic_uuid, item.treatment_plan_id)
 
     logger.info("Processed appointment completion for %d treatments", len(completed_treatments))
 

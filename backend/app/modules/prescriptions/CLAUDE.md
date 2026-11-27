@@ -39,7 +39,9 @@ Admin/dentist `*`; others read-only (issuing stays prescriber-only).
 | `list_prescriptions` | READ | `list_for_patient` | `prescriptions.read` |
 | `create_prescription_draft` | WRITE | `create_draft` (items) | `prescriptions.write` |
 
-Draft-only for the agent; issuing stays human.
+Draft-only for the agent; issuing stays human. A tool call has no UI
+locale, so the draft's `locale` is the clinic's
+`settings.communication_language` (fallback `es`) (#1187).
 
 ## Events emitted / consumed
 

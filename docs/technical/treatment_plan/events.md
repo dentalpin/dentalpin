@@ -38,7 +38,7 @@ the publisher's session, so plan and budget move together or not at all
 
 | Event | Handler | Effect |
 |-------|---------|--------|
-| `appointment.completed` | `events.py::on_appointment_completed` | Mark planned items as performed if linked. |
+| `appointment.completed` | `events.py::on_appointment_completed` | For each linked item ticked `completed_in_appointment`: on an `active` plan, complete its next pending session through `complete_item` (publishes `item_session_completed`, so payments books the revenue; the last session finalizes the item and performs the odontogram treatment — issue #1185). On any other plan status the item is marked completed directly, ungated, without sessions, revenue or chart. |
 | `budget.accepted` | `events.py::on_budget_accepted` | pending → active; also closed(`rejected_by_patient`) → active when the patient accepts a resent version (issue #162). On either transition the item's **pending** sessions are rescaled to the payload's `items[].net_amount` (matched by `treatment_id`) so the earned ledger books the discounted price the patient signed (issue #167). Idempotent (already-active plans are left untouched). |
 | `budget.rejected` | `events.py::on_budget_rejected` | pending → closed (`closure_reason=rejected_by_patient`). |
 | `budget.renegotiated` | `events.py::on_budget_renegotiated` | pending → draft via `reopen_from_budget` (never writes the budget row — the publisher is already cancelling it, and an echoed `budget.cancelled` would loop back here). |

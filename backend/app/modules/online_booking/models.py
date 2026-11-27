@@ -122,6 +122,9 @@ class BookingRequest(Base, TimestampMixin):
         PGUUID(as_uuid=True), ForeignKey("patients.id", ondelete="SET NULL")
     )
     rejection_message: Mapped[str | None] = mapped_column(String(500))
+    # Language the requester picked in the public widget, so later emails
+    # about this request use it too. NULL (older rows): the clinic's language.
+    language: Mapped[str | None] = mapped_column(String(10))
     __table_args__ = (
         CheckConstraint("end_time > start_time", name="ck_ob_request_interval"),
         CheckConstraint(

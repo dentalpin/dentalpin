@@ -28,6 +28,7 @@ from app.core.pdf_locales import PDF_LOCALES
 from app.core.utils.dates import clinic_zone
 from app.modules.patients.service import PatientService
 
+from .consent_markdown import render_consent_body
 from .exceptions import (
     ConsentConflictError,
     ConsentNotFoundError,
@@ -39,6 +40,29 @@ from .pdf import DocumentPDFService
 from .service import _documents_root, _write_pdf_bytes
 
 Purpose = Literal["sign", "revoke"]
+
+ID_DOCUMENT_MAX_LENGTH = 32
+# Deliberately loose charset (letters, digits, "-", ".", "/"); no country-specific checksum.
+
+
+def _normalize_id_document(value: str | None, relationship: str) -> str | None:
+    """Remove whitespace + uppercase the signer's ID document; required unless the signer is the patient.
+
+    Whitespace is dropped (``"1234 5678 z"`` -> ``"12345678Z"``) because IDs are often
+    written in groups; no country-specific checksum is applied.
+    """
+    normalized = "".join((value or "").split()).upper()
+    if not normalized:
+        if relationship != "patient":
+            raise ConsentValidationError(
+                "Signer ID document required for guardian or representative"
+            )
+        return None
+    if len(normalized) > ID_DOCUMENT_MAX_LENGTH or not all(
+        ch.isalnum() or ch in "-./" for ch in normalized
+    ):
+        raise ConsentValidationError("Signer ID document is invalid")
+    return normalized
 
 
 def _signing_url(token: str) -> str:
@@ -321,6 +345,8 @@ class ConsentService:
             "data": {
                 "title": doc.title,
                 "text": doc.content["text"],
+                # The page renders this, never ``text`` (#1171). Same renderer as the PDF.
+                "body_html": render_consent_body(doc.content["text"]),
                 "patient": f"{patient.first_name} {patient.last_name}",
                 "clinic": clinic.name,
                 "purpose": link.purpose,
@@ -334,6 +360,7 @@ class ConsentService:
         name = data.signer_name.strip()
         if not name:
             raise ConsentValidationError("Signer name required")
+        id_document = _normalize_id_document(data.signer_id_document, data.relationship_to_patient)
         initial = await _link(db, token)
         doc = await _document(db, initial.clinic_id, initial.document_id, lock=True)
         link = (
@@ -363,6 +390,7 @@ class ConsentService:
             "signature": signature,
             "signer_name": name,
             "relationship_to_patient": data.relationship_to_patient,
+            "signer_id_document": id_document,
             "signed_at": now.astimezone(clinic_zone(clinic.timezone)).strftime("%d/%m/%Y %H:%M %Z"),
             "purpose": link.purpose,
         }
@@ -386,6 +414,7 @@ class ConsentService:
                 purpose=link.purpose,
                 signer_name=name,
                 relationship_to_patient=data.relationship_to_patient,
+                signer_id_document=id_document,
                 signed_at=now,
                 ip_address=client_ip[:45] if client_ip else None,
                 user_agent=user_agent[:1000],
@@ -430,6 +459,7 @@ class ConsentService:
                     "signed_at": e.signed_at.isoformat(),
                     "signer_name": e.signer_name,
                     "relationship_to_patient": e.relationship_to_patient,
+                    "signer_id_document": e.signer_id_document,
                     "ip_address": e.ip_address,
                     "user_agent": e.user_agent,
                     "sha256": e.sha256,

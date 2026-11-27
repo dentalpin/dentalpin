@@ -2,7 +2,7 @@
 module: documents
 screen: settings_consent-templates
 route: /settings/clinical/consent-templates
-last_verified_commit: cf47bbfb
+last_verified_commit: f8114943
 related_endpoints:
   - GET /api/v1/documents/consent-templates
   - POST /api/v1/documents/consent-templates
@@ -43,6 +43,46 @@ Editing or archiving a template does not change consents already created
 from it: the text is copied into each consent when it is created, and
 those consents stay visible and can still be signed or revoked. Templates
 cannot be deleted.
+
+## Formatting the text
+
+The consent text is plain text with a small set of Markdown-style
+formatting. The patient sees it on the tablet and it is printed the same
+way in the signed PDF.
+
+| Type this | You get |
+|-----------|---------|
+| `# Title` | Large heading |
+| `## Subtitle` or `### Smaller subtitle` | Smaller headings |
+| `**text**` | **Bold** |
+| `*text*` | *Italic* |
+| `- item` or `* item` at the start of a line | Bulleted list |
+| `1. item` at the start of a line | Numbered list |
+| A blank line | New paragraph |
+
+A line break inside a paragraph is kept as written. Anything else is shown
+exactly as typed: HTML, links, images and tables are not supported and
+appear as plain text. Existing templates look the same as before when
+they are plain paragraphs and line breaks. Two things change: several spaces
+in a row and indentation at the start of a line collapse into a single space,
+and lines that start with `- ` or `1. ` become lists (numbered lists keep the
+numbers you typed). A short reminder of this syntax appears under the text box.
+
+Example:
+
+```
+# Tooth extraction
+
+You are going to have **one tooth removed** under local anaesthesia.
+
+## Possible risks
+- Bleeding
+- Swelling for 2-3 days
+
+## After the procedure
+1. Bite on the gauze for 30 minutes
+2. Avoid hot drinks today
+```
 
 ## Who can use it
 

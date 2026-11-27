@@ -39,6 +39,8 @@ must never be able to fail the event it is logging.
 | `budget.sent` | _Handler module path._ | _What it does in response._ |
 | `budget.viewed` | _Handler module path._ | _What it does in response._ |
 | `clinical_notes.administrative_created` | _Handler module path._ | _What it does in response._ |
+| `clinical_notes.appointment_administrative_created` | `events.on_clinical_note_created` | Timeline row (`note`) on the appointment's patient for an administrative note written on an appointment (#1155). |
+| `clinical_notes.appointment_clinical_created` | `events.on_clinical_note_created` | Timeline row (`note`) on the appointment's patient for a clinical note written on an appointment (#1155). |
 | `clinical_notes.diagnosis_created` | _Handler module path._ | _What it does in response._ |
 | `clinical_notes.plan_created` | _Handler module path._ | _What it does in response._ |
 | `clinical_notes.treatment_created` | _Handler module path._ | _What it does in response._ |
