@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Treatment plans, catalog:** plan totals, the catalog sessions sum and price input suffixes follow the clinic currency instead of a hardcoded € (#1178).
 - **Copilot:** amounts show in the clinic's currency instead of euros, and counts like the number of patients no longer show as money (#1177).
 - **Dates west of UTC:** the patient Info card's date of birth and age, recall months, orthodontic overdue flags and invoice overdue flags no longer show or switch a day (or a month) early in browsers behind UTC (#1176).
 - **Dates:** the patient timeline, quote signature card, date of birth and Verifactu signing time are formatted in the UI language, not English or Spanish (#1175).
