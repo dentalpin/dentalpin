@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Budget:** "New budget" opened from the patient card now preselects that patient instead of asking for it again (#1221).
 - **Agenda:** the patient check-in page shows its confirm button, hint and too-early/too-late messages in Arabic, Hindi, Tamil and Telugu instead of English (#1217).
 - **Treatment plans:** completing an appointment with a planned item of an active plan ticked as done now completes its next session, books its revenue and, on the last session, marks the treatment performed on the chart (#1185).
 - **Online booking:** the rejection email is sent in the language the visitor booked in, like the confirmation (#1208).
