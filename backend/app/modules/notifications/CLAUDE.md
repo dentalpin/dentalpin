@@ -84,6 +84,12 @@ Agent tool in `tools.py` (wraps `NotificationGateway`, no logic duplicated).
 Structured params only (cloud-eligible under redaction). Enqueues through
 the full consent path — never bypasses `do_not_contact`. `notification_type`
 is the `NotificationType` Literal, so the model is shown the nine values.
+The template context comes from `service.build_manual_send_context`, the
+same builder `POST /send` uses (#1181): clinic name/phone/address always,
+and `appointment_*` / `budget_sent` / `budget_accepted` require
+`appointment_id` / `budget_id` of this clinic and of the given patient
+(otherwise an `{"error": ...}` result, nothing queued). The model's free
+`context` cannot override the server-built keys.
 
 ## Events emitted
 
