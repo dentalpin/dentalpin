@@ -12,6 +12,7 @@ from sqlalchemy.orm import joinedload, selectinload
 from app.core.i18n_names import catalog_name
 from app.core.list_query import parse_sort
 from app.core.utils.dates import clinic_today_for
+from app.modules.budget.pricing import check_percentage_cap
 from app.modules.payments.models import Payment as PaymentModel
 from app.modules.payments.models import Refund as RefundModel
 
@@ -560,6 +561,12 @@ class InvoiceItemService:
         data: dict,
     ) -> InvoiceItem:
         """Update an invoice item."""
+        # The schema caps a percentage sent with its type; a partial update
+        # sending one half is checked against the stored other half (#1241).
+        check_percentage_cap(
+            data.get("discount_type", item.discount_type),
+            data.get("discount_value", item.discount_value),
+        )
         if "description" in data and data["description"] is not None:
             item.description = data["description"]
         if "unit_price" in data and data["unit_price"] is not None:

@@ -191,6 +191,14 @@ contract.
   both discounts) is the figure every price surface shows; `line_total`
   is the pre-global gross, shown struck through.
 - **Budget versioning** keeps every prior version — never overwrite.
+- **A percentage discount is capped at 100 (#1241).**
+  `pricing.check_percentage_cap` is the one rule, used by billing too. The
+  write schemas run it when type and value arrive together (422); the
+  update services (`BudgetItemService.update_item`,
+  `BudgetService.update_budget`) run it on the merged stored + sent pair,
+  so a partial update can't switch an absolute 150 to a percentage (400).
+  The line/global calculations themselves don't clamp a percentage, and
+  rows stored above 100 before the fix are not rewritten.
 - **Public-link sessions are per-token** (cookie path scoped to
   `/api/v1/budget/public/budgets/{token}`) so a stolen cookie from one
   budget cannot unlock another.
