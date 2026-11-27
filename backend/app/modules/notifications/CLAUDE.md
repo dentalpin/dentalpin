@@ -163,9 +163,14 @@ and `appointment_*` / `budget_sent` / `budget_accepted` require
   `total_tax`, `balance_due`, the reminder's `total`) is `None` when the
   amount is zero: `"0,00 €"` is truthy.
 - **Appointment times are stored in UTC.** Build `appointment_date` /
-  `appointment_time` with `appointment_when_context(start_time, clinic)`
+  `appointment_time` with `appointment_when_context(start_time, clinic, locale)`
   (`service.py`), never `start_time.strftime(...)`: that printed UTC, an
   hour early in Madrid and a day late for evening slots in the Americas (#907).
+- **Dates follow the message's locale** (#1211). Format a context date with
+  `message_date(value, locale)` (a stored UTC instant: `clinic_date_label(instant,
+  clinic, locale)`), with the same locale as `money_formatter`. It uses the
+  PDFs' table in `core/pdf_locales.py`: `14/01/2026` in Spanish, `14.01.2026`
+  in German, `2026. 01. 14.` in Hungarian. Never hard-code `%d/%m/%Y`.
 - **Locale resolution order**:
   1. Patient preference (``NotificationPreference.preferred_locale``).
   2. Clinic-wide default (``clinic.settings.communication_language``).

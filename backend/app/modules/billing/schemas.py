@@ -2,12 +2,13 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Literal
+from typing import Literal, Self
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 from app.core.schemas import NotNull
+from app.modules.budget.pricing import check_percentage_cap
 
 # ============================================================================
 # Invoice Status and Payment Types
@@ -189,6 +190,11 @@ class InvoiceItemCreate(BaseModel):
     # Display
     display_order: int = 0
 
+    @model_validator(mode="after")
+    def _percentage_at_most_100(self) -> Self:
+        check_percentage_cap(self.discount_type, self.discount_value)
+        return self
+
 
 class InvoiceItemFromBudget(BaseModel):
     """Schema for creating invoice item from budget item."""
@@ -214,6 +220,11 @@ class InvoiceItemUpdate(BaseModel):
 
     # Display
     display_order: int | None = None
+
+    @model_validator(mode="after")
+    def _percentage_at_most_100(self) -> Self:
+        check_percentage_cap(self.discount_type, self.discount_value)
+        return self
 
 
 class InvoiceItemResponse(BaseModel):

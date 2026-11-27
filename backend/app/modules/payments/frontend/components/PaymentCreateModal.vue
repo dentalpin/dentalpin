@@ -304,6 +304,10 @@ function onAllocationAmountInput() {
 }
 
 async function submit() {
+  // In-flight guard (#1230): the footer button is disabled while the POST
+  // runs, but Enter (and key-repeat) reaches submit() through
+  // handleKeydown — a second call would book the payment twice.
+  if (isSubmitting.value) return
   formError.value = null
   if (!form.value.patient_id) {
     formError.value = t('payments.new.errPatient')

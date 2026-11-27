@@ -19,6 +19,16 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Agenda:** an appointment can no longer be saved ending at or before its start time; reports no longer count negative hours from new bookings (#1242).
+- **Budget, Billing:** a percentage discount above 100 % is refused instead of turning a budget or invoice negative (#1241).
+- **Budget:** the "Line total" shown when adding a treatment to a quote now includes the treatment's VAT and never goes negative, matching the line that gets added (#1235).
+- **Agenda:** changing the patient in the appointment modal clears the previous patient's treatments instead of failing on save (#1234).
+- **Catalog:** "New treatment" opens empty instead of prefilled with the last created item, and cancelled edits in the catalog and odontogram treatment modals no longer come back (#1233).
+- **Catalog:** creating or editing a per-surface treatment (e.g. the seeded composite filling) saves instead of failing with a server error; a negative tier price is rejected (#1240).
+- **Medical reference:** a deactivated interaction or contraindication can be added again; it comes back with the new risk note and its patient warnings return (#1236).
+- **Payments:** pressing Enter twice in the record-payment modal no longer records the payment twice (#1230).
+- **Documents:** "New document" opens empty instead of prefilled with the previous patient's document, and cancelled edits no longer come back (#1232).
+- **Notifications:** pressing Enter twice in the patient WhatsApp reply box no longer sends the message twice (#1231).
+- **Notifications:** dates in patient emails and WhatsApp texts use the patient's language format (for example `14.01.2026` in German, `2026. 01. 14.` in Hungarian) instead of always `dd/mm/yyyy` (#1211).
 - **Online booking:** the logo field in the public page settings is labelled "Logo" and its button says "Upload PNG, JPG or WebP" instead of repeating the same text twice (#1226).
 - **Budget:** "New budget" opened from the patient card now preselects that patient instead of asking for it again (#1221).
 - **Agenda:** the patient check-in page shows its confirm button, hint and too-early/too-late messages in Arabic, Hindi, Tamil and Telugu instead of English (#1217).

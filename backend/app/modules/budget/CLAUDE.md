@@ -190,7 +190,22 @@ contract.
   must land on the same cents. `net_line_total` (VAT-inclusive, after
   both discounts) is the figure every price surface shows; `line_total`
   is the pre-global gross, shown struck through.
+- **The add-item modal previews with `utils/budgetLineAmounts.ts`**, a
+  copy of `BudgetItemService._calculate_line_totals` (VAT of the item's
+  VAT type, absolute discount capped at the line, cents half away from
+  zero). Billing's `lineAmounts` does the same for invoices, but budget
+  does not depend on billing, so change both with their services (#1235).
+  The catalog search returns only `vat_type_id`; the modal resolves the
+  rate from `/catalog/vat-types?include_inactive=true`.
 - **Budget versioning** keeps every prior version — never overwrite.
+- **A percentage discount is capped at 100 (#1241).**
+  `pricing.check_percentage_cap` is the one rule, used by billing too. The
+  write schemas run it when type and value arrive together (422); the
+  update services (`BudgetItemService.update_item`,
+  `BudgetService.update_budget`) run it on the merged stored + sent pair,
+  so a partial update can't switch an absolute 150 to a percentage (400).
+  The line/global calculations themselves don't clamp a percentage, and
+  rows stored above 100 before the fix are not rewritten.
 - **Public-link sessions are per-token** (cookie path scoped to
   `/api/v1/budget/public/budgets/{token}`) so a stolen cookie from one
   budget cannot unlock another.

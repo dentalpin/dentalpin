@@ -18,7 +18,11 @@ the patient form's picker only searches active rows and offers "create"
 for anything it can't find (#963). Two relationship
 tables on top: `ReferenceInteraction` (medication × medication) and
 `ReferenceContraindication` (disease × medication), each carrying a
-`risk_note`.
+`risk_note`. Adding a pair that matches a deactivated row reactivates
+it with the new `risk_note` (same id) instead of answering 409 — the
+settings page has no reactivate action, so otherwise the warning was
+gone for good (#1236). An active duplicate still answers 409; the
+interaction match is order-insensitive (pairs are stored sorted).
 
 `get_patient_flags` cross-references a patient's recorded
 `patients_clinical.Medication`/`SystemicDisease` rows (matched by

@@ -23,7 +23,8 @@ Notifications settings to pick WhatsApp as the preferred automatic channel.
 Templates are managed through the Notifications template API. For each event
 and patient language, supply `channel=whatsapp` and a plain-text `body_text`
 with the event's Jinja variables, for example `{{ patient_name }}` and
-`{{ appointment_date }}` for reminders. The adapter uses the clinic template
+`{{ appointment_date }}` for reminders (printed on the clinic's clock in the
+message locale's date order). The adapter uses the clinic template
 then the gateway's system-template fallback for that locale. Staff drafts
 carry literal text. The patient button uses `patient.summary.actions`.
 Appointment notifications use the existing agenda menu.
