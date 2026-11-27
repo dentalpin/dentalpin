@@ -103,6 +103,12 @@ Idempotency is DB-level: `uq_earned_treatment_session` (session rows) +
 partial index `uq_earned_treatment_null_session` (NULL rows, `pay_0004`
 — plain unique constraints treat NULLs as distinct).
 
+**Professional attribution.** `PatientEarnedEntry.professional_id` (what
+`/reports/by-professional` groups on) is the first of `performed_by`
+(odontogram), `professional_id`, `completed_by` (treatment_plan session)
+in the payload. Session rows booked before #1152 read only the first two
+and keep `professional_id = NULL`; they are not backfilled.
+
 ## Frontend slots rendered
 
 Entry points for payment-*gateway* modules (#365 / #263, ADR 0010).
@@ -168,6 +174,10 @@ the public endpoints.
   the snapshot pattern is the contract.
 - **Allocations sum invariant** is enforced in the service, not the DB.
   Schemas validate at the boundary so 4xx never reach the workflow.
+  The agent tool args (`tools.py`) call the same `check_allocation_target`
+  / `check_allocation_sum` helpers from `schemas.py` — a tool that skips
+  them lets a budget allocation without `target_id` hit
+  `ck_alloc_target_consistency` (#1183).
 - **Cross-clinic budgets** are rejected by the workflow. UI must filter
   budget pickers to current clinic — `AllocationTargetSelect` lists the
   patient's accepted/completed budgets from `/api/v1/budget/budgets`

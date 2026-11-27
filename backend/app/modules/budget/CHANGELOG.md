@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1175): the signature card's signed-at time uses the UI language instead of English for every non-Spanish locale.
+
 - fix(#1115): automatic reminders fire once 7 and once 14 clinic days after the budget was sent (latest `sent` history entry), instead of every 5-6 days counted from `valid_from`; `budget.reminder_sent` carries `automatic`.
 - fix(#1113): resend and duplicate give the new draft a validity window from today (clinic default days) instead of copying the source's `valid_until`.
 

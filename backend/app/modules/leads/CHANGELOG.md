@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1151): `PATCH /{id}` with `full_name`, `phone`, `motive` or `status` set to `null` is a 422 instead of a 500.
+
 - fix(#987): a lead that `/convert` linked to a patient keeps `converted` — PATCH to another status is a 409 and the edit modal locks the selector and hides *Mark as contacted* / *Discard*; `/convert` (and the `convert_lead_to_patient` tool) refuses on `patient_id`, not on the status label. Discarding a converted lead used to reopen `/convert`, which created a second patient. A card only labelled converted by hand can still be converted.
 
 - fix(#954): `convert` locks the lead and re-reads its status first. Two simultaneous conversions (a double click) both passed the "already converted" check and each created a patient.

@@ -10,7 +10,7 @@ import type { ProducerInfoUpdate, VerifactuSettings, ProducerDefaults } from '..
 import { PERMISSIONS } from '~~/app/config/permissions'
 import { errorMessage } from '~~/app/utils/error'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const { getSettings, getProducerDefaults, updateProducer, revokeDeclaration } = useVerifactu()
 const { can } = usePermissions()
 const toast = useToast?.()
@@ -56,7 +56,9 @@ const alreadySigned = computed(() => !!settings.value?.declaracion_responsable_s
 const signedAtFormatted = computed(() => {
   const at = settings.value?.declaracion_responsable_signed_at
   if (!at) return null
-  return new Date(at).toLocaleString('es-ES', { dateStyle: 'long', timeStyle: 'short' })
+  // The on-screen status follows the UI language; the printed declaration
+  // below stays Spanish because it is the AEAT legal text.
+  return new Date(at).toLocaleString(locale.value, { dateStyle: 'long', timeStyle: 'short' })
 })
 
 const formFilled = computed(() =>
