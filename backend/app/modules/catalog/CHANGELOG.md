@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1233): the treatment create/edit modal repopulates its form on every opening, so "New treatment" no longer comes back prefilled with the item just created and a cancelled edit no longer reappears when the same row is edited again.
 - fix(#1178): item price, cost and session price inputs show the clinic currency symbol and the sessions sum uses the clinic currency instead of a literal €.
 
 - fix(#1028): `CatalogItemBrief` (search, popular) carries `vat_type_id`.
