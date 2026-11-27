@@ -174,6 +174,10 @@ the public endpoints.
   the snapshot pattern is the contract.
 - **Allocations sum invariant** is enforced in the service, not the DB.
   Schemas validate at the boundary so 4xx never reach the workflow.
+  The agent tool args (`tools.py`) call the same `check_allocation_target`
+  / `check_allocation_sum` helpers from `schemas.py` — a tool that skips
+  them lets a budget allocation without `target_id` hit
+  `ck_alloc_target_consistency` (#1183).
 - **Cross-clinic budgets** are rejected by the workflow. UI must filter
   budget pickers to current clinic — `AllocationTargetSelect` lists the
   patient's accepted/completed budgets from `/api/v1/budget/budgets`

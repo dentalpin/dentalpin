@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1183): the copilot `record_payment` tool now applies the REST allocation checks (budget needs `target_id`, on-account forbids it, allocations must sum to the amount) and refuses a bad call before touching the database.
 - fix(#1152): earned rows from completed treatment-plan sessions now carry the completing user as `professional_id` (payload key `completed_by`), so Payments → By professional credits them. Rows booked earlier keep `professional_id = NULL`; no backfill.
 
 - fix(#1033): `GET /payments` takes `search` (patient name / reference) and a repeated `method`, applied in SQL before pagination; the list page sends them instead of filtering the current page in the browser.
