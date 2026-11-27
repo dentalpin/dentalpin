@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Agenda:** an appointment can no longer be saved ending at or before its start time; reports no longer count negative hours from new bookings (#1242).
 - **Budget, Billing:** a percentage discount above 100 % is refused instead of turning a budget or invoice negative (#1241).
 - **Budget:** the "Line total" shown when adding a treatment to a quote now includes the treatment's VAT and never goes negative, matching the line that gets added (#1235).
 - **Agenda:** changing the patient in the appointment modal clears the previous patient's treatments instead of failing on save (#1234).
