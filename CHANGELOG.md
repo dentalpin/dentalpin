@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Copilot:** write tools for imaging studies, patients, leads, prescriptions and partial erasure now validate like their REST forms; prescription drafts use the clinic's language and the erasure audit names the confirming user (#1187).
 - **Reports:** the invoice aging section no longer lists issued credit notes as receivables of their own; each invoice counts net of its credit notes (#1201).
 - **Notifications:** the quote email shows the custom message in every language and links to the public page where the patient accepts and signs (#1205, #1206).
 - **Notifications:** the appointment reminder's check-in button now appears for Brazilian Portuguese and is translated in Arabic, Hindi, Tamil and Telugu (#1207).
