@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications:** patient emails get a subject in the patient's language (e.g. "Appointment reminder - <clinic>") instead of "Notificación: appointment_reminder" (#1204).
 - **Billing:** turning on yearly reset for an invoice series mid-year no longer restarts its numbering at 1 and blocks issuing on duplicate numbers (#1184).
 - **Orthodontics:** editing the next-control interval of the latest control now moves the review recall (#1186).
 - **PDFs:** invoice, quote, document and purchase-order PDFs print dates in the PDF language's own format (e.g. `2026. 11. 26.` in Hungarian, `26.11.2026` in German and Polish) instead of always dd/mm/yyyy (#1180).

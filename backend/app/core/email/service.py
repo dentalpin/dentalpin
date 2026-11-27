@@ -57,6 +57,8 @@ class EmailService:
         """Initialize the email service."""
         self._provider: EmailProvider | None = None
         self._jinja_env: Environment | None = None
+        # Same loader, no autoescaping: renders the plain-text subject (#1204).
+        self._text_env: Environment | None = None
         self._initialized = False
 
     def _initialize(self) -> None:
@@ -118,6 +120,7 @@ class EmailService:
                 trim_blocks=True,
                 lstrip_blocks=True,
             )
+            self._text_env = self._jinja_env.overlay(autoescape=False)
             logger.info(f"Email templates loaded from {TEMPLATES_DIR}")
         else:
             logger.warning(f"Email templates directory not found: {TEMPLATES_DIR}")
@@ -251,7 +254,7 @@ class EmailService:
         to_email: str,
         template_key: str,
         context: dict,
-        subject: str,
+        subject: str | None,
         locale: str = "es",
         to_name: str | None = None,
         from_email: str | None = None,
@@ -273,7 +276,8 @@ class EmailService:
             to_email: Recipient email address.
             template_key: Template identifier (e.g., 'appointment_confirmation').
             context: Template context variables.
-            subject: Email subject (can include template variables).
+            subject: Email subject (can include template variables). Empty
+                means the file template's localized ``title`` block (#1204).
             locale: Language code for template selection (default 'es').
             to_name: Recipient name (optional).
             from_email: Sender email (optional, uses default).
@@ -327,16 +331,25 @@ class EmailService:
             custom_template=template_text,
         )
 
-        # Render subject if it contains template syntax. A subject is plain
-        # text, so it renders without HTML autoescaping (#1043).
-        rendered_subject = subject
-        if "{{" in subject or "{%" in subject:
+        # No subject from the caller (no clinic override row): the file
+        # template's localized title is the subject, never the raw key (#1204).
+        # The default subject is already rendered: it is never rendered a
+        # second time, so a clinic name containing ``{{`` stays literal text.
+        if not subject:
+            rendered_subject = self.render_default_subject(template_key, locale, context)
+        # A caller-supplied subject (the clinic's override row) may contain
+        # template syntax. A subject is plain text, so it renders without
+        # HTML autoescaping (#1043).
+        elif "{{" in subject or "{%" in subject:
+            rendered_subject = subject
             try:
                 rendered_subject = (
                     self._jinja_env.overlay(autoescape=False).from_string(subject).render(context)
                 )
             except Exception as e:
                 logger.warning(f"Failed to render subject template: {e}")
+        else:
+            rendered_subject = subject
 
         message = EmailMessage(
             to_email=to_email,
@@ -389,22 +402,7 @@ class EmailService:
             logger.warning("Jinja2 environment not initialized")
             return None
 
-        # Try locale-specific template first, then base locale(if overlay locale),
-        # then fallback to default
-        template_paths = [
-            f"{locale}/{template_key}.{extension}",
-        ]
-        if locale == "pt-BR":
-            template_paths.append(f"pt/{template_key}.{extension}")
-        template_paths.extend(
-            [
-                f"en/{template_key}.{extension}",
-                f"default/{template_key}.{extension}",
-                f"{template_key}.{extension}",
-            ]
-        )
-
-        for template_path in template_paths:
+        for template_path in self._template_paths(template_key, locale, extension):
             try:
                 template = self._jinja_env.get_template(template_path)
                 # base.html reads ``locale`` for ``lang``/``dir``.
@@ -414,6 +412,50 @@ class EmailService:
 
         logger.warning(f"Template not found: {template_key}.{extension} for locale {locale}")
         return None
+
+    @staticmethod
+    def _template_paths(template_key: str, locale: str, extension: str) -> list[str]:
+        """Locale-specific template first, then the base locale (overlay
+        locales), then the fallbacks."""
+        template_paths = [f"{locale}/{template_key}.{extension}"]
+        if locale == "pt-BR":
+            template_paths.append(f"pt/{template_key}.{extension}")
+        template_paths.extend(
+            [
+                f"en/{template_key}.{extension}",
+                f"default/{template_key}.{extension}",
+                f"{template_key}.{extension}",
+            ]
+        )
+        return template_paths
+
+    def render_default_subject(self, template_key: str, locale: str, context: dict) -> str:
+        """Subject for an email with no clinic override: the ``title`` block of
+        the same file template the body renders from (#1204).
+
+        Plain text (no autoescaping), whitespace collapsed. Falls back to the
+        clinic name, never to the raw template key.
+        """
+        self._initialize()
+        fallback = context.get("clinic_name") or "DentalPin"
+        if not self._text_env:
+            return fallback
+        for template_path in self._template_paths(template_key, locale, "html"):
+            try:
+                template = self._text_env.get_template(template_path)
+            except Exception:
+                continue
+            block = template.blocks.get("title")
+            if block is None:
+                break
+            try:
+                ctx = template.new_context({"locale": locale, **context})
+                title = " ".join("".join(block(ctx)).split()).strip(" -\u2013\u2014")
+            except Exception as e:
+                logger.warning(f"Failed to render subject for {template_key}: {e}")
+                break
+            return title or fallback
+        return fallback
 
     async def health_check(self) -> bool:
         """Check if the email service is healthy.

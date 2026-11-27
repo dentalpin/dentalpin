@@ -138,6 +138,10 @@ and `appointment_*` / `budget_sent` / `budget_accepted` require
   claims delivery.
 - **Templates are i18n-aware** (Spanish UI strings). Never hardcode
   copy in handlers — use a template.
+- **An email subject comes from a template, never from the key** (#1204).
+  A `notification_templates` row's `subject` wins; without one the email
+  adapter passes `None` and `EmailService` uses the file template's
+  localized `{% block title %}`. A new email template needs that block.
 - **Template context that needs a query lives in `service.py`, once.**
   `budget_treatments_context(db, budget_id, money)` builds the `treatments`
   table `budget_sent.html` renders. It used to exist twice — in
