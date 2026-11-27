@@ -25,10 +25,11 @@ from app.core.auth.models import Clinic
 from app.core.events import event_bus
 from app.core.events.types import EventType
 from app.core.pdf_locales import PDF_LOCALES
-from app.core.utils.dates import clinic_zone
+from app.core.utils.dates import clinic_today, clinic_zone
 from app.modules.patients.service import PatientService
 
 from .consent_markdown import render_consent_body
+from .consent_variables import build_values, fill_template_variables
 from .exceptions import (
     ConsentConflictError,
     ConsentNotFoundError,
@@ -263,6 +264,19 @@ class ConsentService:
             raise ConsentNotFoundError("Patient or template not found")
         if not template.is_active:
             raise ConsentConflictError("Archived templates cannot be used for new consents")
+        clinic = ctx.clinic
+        communication_language = (clinic.settings or {}).get("communication_language", "es")
+        locale = communication_language if communication_language in PDF_LOCALES else "en"
+        text, unknown = fill_template_variables(
+            template.body,
+            build_values(
+                patient=patient,
+                clinic_name=DocumentPDFService._letterhead(clinic)["name"],
+                user=ctx.user,
+                today=clinic_today(clinic.timezone),
+                locale=locale,
+            ),
+        )
         doc = GeneratedDocument(
             id=uuid.uuid4(),
             clinic_id=ctx.clinic_id,
@@ -270,12 +284,15 @@ class ConsentService:
             document_type="informed_consent",
             title=template.title,
             status="draft",
-            content={"text": template.body},
+            content={"text": text},
             created_by=ctx.user_id,
         )
         db.add(doc)
         await db.flush()
-        return {"data": {"id": str(doc.id)}}
+        data = {"id": str(doc.id)}
+        if unknown:
+            data["unknown_variables"] = unknown
+        return {"data": data}
 
     @staticmethod
     async def create_link(document_id, purpose, ctx, db, locale):

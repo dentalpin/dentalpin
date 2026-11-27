@@ -152,7 +152,9 @@
       },
       "qrTitle": "Zeskanuj, aby podpisać",
       "signedToast": "Zgoda podpisana",
-      "formatHelp": "Formatowanie: zacznij wiersz od # (nagłówek) lub ## / ### (podnagłówki), ujmij tekst w **podwójne gwiazdki**, aby uzyskać pogrubienie, lub w *pojedyncze gwiazdki*, aby uzyskać kursywę, i zaczynaj wiersze od - lub 1., aby utworzyć listy. Pusty wiersz rozpoczyna nowy akapit. Wszystko inne, w tym HTML i linki, jest wyświetlane dokładnie tak, jak zostało wpisane."
+      "formatHelp": "Formatowanie: zacznij wiersz od # (nagłówek) lub ## / ### (podnagłówki), ujmij tekst w **podwójne gwiazdki**, aby uzyskać pogrubienie, lub w *pojedyncze gwiazdki*, aby uzyskać kursywę, i zaczynaj wiersze od - lub 1., aby utworzyć listy. Pusty wiersz rozpoczyna nowy akapit. Wszystko inne, w tym HTML i linki, jest wyświetlane dokładnie tak, jak zostało wpisane.",
+      "variablesHelp": "Zmienne: wpisz {variables} w tekście; zostaną wypełnione przy tworzeniu zgody z tego szablonu (pacjent, gabinet, lekarz i data). Brakująca wartość pojawi się jako ____, aby można ją było wpisać przed podpisaniem. Nieznane nazwy pozostają bez zmian.",
+      "unknownVariables": "Niektóre zmienne szablonu nie zostały rozpoznane i pozostawiono je bez zmian: {names}"
     }
   }
 }

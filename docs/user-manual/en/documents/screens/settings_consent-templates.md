@@ -84,6 +84,32 @@ You are going to have **one tooth removed** under local anaesthesia.
 2. Avoid hot drinks today
 ```
 
+## Variables (blanks filled in for you)
+
+Instead of leaving blanks such as `Patient: ____` for staff to fill in by
+hand, write a variable in the text. It is replaced when a consent is created
+from the template, so the professional sees the filled text, can still edit
+it before the patient signs, and the signed PDF shows exactly what was on
+screen. The template itself keeps the variable.
+
+| Write this | It becomes |
+|------------|-----------|
+| `{{ patient_name }}` | The patient's full name |
+| `{{ patient_id_document }}` | The patient's ID document number (DNI/NIE/passport) |
+| `{{ patient_birth_date }}` | The patient's date of birth |
+| `{{ clinic_name }}` | The clinic name, as printed in the PDF header |
+| `{{ professional_name }}` | The name of the user creating the consent |
+| `{{ professional_license }}` | That user's professional licence number |
+| `{{ date }}` | Today's date, in the clinic's language format |
+
+If the value is not on file (for example the patient has no ID document
+recorded), a visible `____` is inserted so you notice it and can type it in
+while editing the consent. A name that is not in the list is left exactly as
+written and the patient card shows a warning. Values are inserted as plain
+text: a patient called `*Ana*` is printed as `*Ana*`, not in italics.
+Existing consents are never changed. A short list of the variables appears
+under the text box.
+
 ## Who can use it
 
 Users with `documents.write` (admins and dentists by default). Assistants

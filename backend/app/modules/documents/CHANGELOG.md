@@ -4,6 +4,7 @@
 
 ## Unreleased
 
+- feat(#1171): template variables for consents. `{{ patient_name }}`, `{{ patient_id_document }}`, `{{ patient_birth_date }}`, `{{ clinic_name }}`, `{{ professional_name }}`, `{{ professional_license }}` and `{{ date }}` in a consent template are filled once when a consent is created from it (plain regex over an allowlist, no template engine), so the professional sees the filled text, can edit it while unsigned, and the signed PDF matches. A missing value becomes a visible `____`; unknown names stay verbatim and are listed in `unknown_variables` of the `POST /consents` response (the card shows a warning). Values are inserted as plain text with Markdown characters escaped. Templates, existing consents and signed evidence are unchanged; no migration. Help line in the template editor, translated in all locales.
 - fix(#1232): cancelling an edit of a prescription's medications no longer changes the list; the modal edits a copy of the document content.
 - fix(#1232): the create/edit document modal resets its form on every opening, so "New document" no longer comes back with the previous patient, title and content after a create or a cancelled draft, and a cancelled edit no longer reappears.
 - fix(#1180): document PDF birth date and issue timestamp follow the PDF locale through the shared `app.core.pdf_locales` helpers; es/en keep dd/mm/yyyy.

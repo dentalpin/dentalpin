@@ -152,7 +152,9 @@
       },
       "qrTitle": "Scan to sign",
       "signedToast": "Consent signed",
-      "formatHelp": "Formatting: start a line with # (heading) or ## / ### (subheadings), wrap text in **double asterisks** for bold or *single asterisks* for italic, and start lines with - or 1. for lists. A blank line starts a new paragraph. Anything else, including HTML and links, is shown exactly as typed."
+      "formatHelp": "Formatting: start a line with # (heading) or ## / ### (subheadings), wrap text in **double asterisks** for bold or *single asterisks* for italic, and start lines with - or 1. for lists. A blank line starts a new paragraph. Anything else, including HTML and links, is shown exactly as typed.",
+      "variablesHelp": "Variables: write {variables} in the text and they are filled in when a consent is created from this template (patient, clinic, professional and date). A value that is not on file appears as ____ so it can be typed before signing. Unknown names are left as written.",
+      "unknownVariables": "Some variables in the template were not recognised and were left as written: {names}"
     }
   }
 }
