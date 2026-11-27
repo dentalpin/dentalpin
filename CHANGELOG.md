@@ -14,6 +14,9 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Billing:** the invoice Send dialog no longer says the patient has no phone; WhatsApp is offered when they have one (#1160).
+- **Online booking:** booking can be switched off again after its assigned professional left the clinic (#1149).
+- **Recalls:** a snooze note now shows the clinic's date and who wrote it, not the UTC date and a user ID (#1148).
+- **Odontogram:** the Diagnoses card on the patient summary shows the tooth number and surfaces of each pending treatment (e.g. "Corona #16") instead of only the treatment name (#1162).
 - **Copilot:** the Pendientes tab now says when a group has more items than it shows ("Showing 20 of 35 · See all") and links to the full list, instead of silently stopping at 30 recalls and 20 budgets (#1137).
 - **Notifications:** quote and invoice emails show amounts in the clinic's currency with the language's separators (e.g. `1.300,00 €`, `€1,300.00`, `₹1,300.00`), and invoice emails are queued again (#1133).
 - **Notifications:** a pt-BR clinic or patient gets the Portuguese (pt) template instead of a failed send, for example the online booking rejection email (#1136).
