@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Treatment plans:** the pipeline rows show the Call and WhatsApp buttons again (#1161).
 - **Billing / GDPR / Inventory / Leads / Patients / Patient clinical / Payroll / Staff tasks:** an explicit null on a required update field (33 fields, e.g. patient first name, lead status, payroll entry gross) is now refused with a 422 instead of a 500 or a wrong 409 (#1151).
 - **Notifications:** a reminder sent by hand from the appointment now includes the check-in link (#1156).
 - **Patient timeline:** clinical and administrative notes written on an appointment now appear on the patient's timeline (#1155).
