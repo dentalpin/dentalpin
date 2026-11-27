@@ -130,6 +130,12 @@ export default defineNuxtConfig({
 
   compatibilityDate: '2025-01-15',
 
+  // No production sourcemaps (client or server). Nothing consumes them
+  // (no Sentry on the frontend), and the server ones made the Nitro
+  // bundling step peak ~600 MB higher: with 55 module layers it hit the
+  // 6 GB heap and OOM'd the Coolify deploy and the CI e2e build.
+  sourcemap: { server: false, client: false },
+
   vite: {
     optimizeDeps: {
       // Pre-bundle deps that Vite otherwise discovers at runtime. Runtime

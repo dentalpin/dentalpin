@@ -546,7 +546,7 @@ jobs:
           # surface (#304 tipped it over); runners have 16 GB. The RSS
           # budget below (#322) makes the next regression fail here with
           # a number instead of as a production-image OOM.
-          NODE_OPTIONS: --max-old-space-size=6144
+          NODE_OPTIONS: --max-old-space-size=7168
         run: |
           /usr/bin/time -v npm run build 2> /tmp/build-time.log || { cat /tmp/build-time.log; exit 1; }
           grep -v "Maximum resident" /tmp/build-time.log | tail -20
