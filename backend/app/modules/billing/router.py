@@ -145,7 +145,11 @@ async def update_series(
 
     try:
         series = await InvoiceSeriesService.update_series(
-            db, series, data.model_dump(exclude_unset=True), changed_by=ctx.user_id
+            db,
+            series,
+            data.model_dump(exclude_unset=True),
+            changed_by=ctx.user_id,
+            today=clinic_today(ctx.clinic.timezone),
         )
         await db.commit()
         return ApiResponse(data=InvoiceSeriesResponse.model_validate(series))

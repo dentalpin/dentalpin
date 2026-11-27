@@ -10,6 +10,7 @@ const { t } = useI18n()
 const toast = useToast()
 const { can } = usePermissions()
 const { createBudget } = useBudgets()
+const api = useApi()
 
 // Track if coming from patient page
 const comesFromPatient = computed(() => route.query.from === 'patient' && route.query.patient_id)
@@ -30,6 +31,18 @@ if (!can(PERMISSIONS.budget.write)) {
 
 // Form state
 const selectedPatient = ref<Patient | null>(null)
+
+// Preselect the patient the page was opened for (`?patient_id=`, e.g. from the
+// patient card). Best effort: on failure the selector stays empty, and a
+// patient the user picked meanwhile is never overwritten.
+const initialPatientId = typeof route.query.patient_id === 'string' ? route.query.patient_id : ''
+if (initialPatientId) {
+  api.get<{ data: Patient }>(`/api/v1/patients/${initialPatientId}`)
+    .then((response) => {
+      if (!selectedPatient.value) selectedPatient.value = response.data
+    })
+    .catch(() => {})
+}
 const isCreating = ref(false)
 
 const form = reactive({

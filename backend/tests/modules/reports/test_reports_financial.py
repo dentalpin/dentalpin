@@ -39,6 +39,7 @@ async def _invoice(
     due_in_days: int | None = -10,
     issue: date | None = None,
     deleted: bool = False,
+    credit_note_for_id=None,
 ) -> Invoice:
     from datetime import UTC, datetime
 
@@ -51,6 +52,7 @@ async def _invoice(
         issue_date=issue or date.today(),
         due_date=(date.today() + timedelta(days=due_in_days)) if due_in_days is not None else None,
         deleted_at=datetime.now(UTC) if deleted else None,
+        credit_note_for_id=credit_note_for_id,
     )
     db.add(row)
     await db.commit()
@@ -116,6 +118,95 @@ async def test_aging_buckets(db_session: AsyncSession, test_clinic: Clinic, test
     assert buckets["90+"]["total"] == Decimal("400")
     assert buckets["90+"]["count"] == 1
     assert buckets["90+"]["patient_count"] == 1
+
+
+@pytest.mark.asyncio
+async def test_aging_buckets_exclude_credit_notes(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """An issued credit note is a credit, never a receivable (#1201).
+
+    It stays ``issued`` with a negative total; the aging buckets must
+    drop it through billing's shared predicate, like the overdue list.
+    """
+    clinic_id = test_clinic.id
+    patient_id = test_patient.id
+    user_id = await _staff_id(db_session)
+    paid = await _invoice(
+        db_session, clinic_id, patient_id, user_id, total="100", status="paid", due_in_days=-40
+    )
+    await _invoice(
+        db_session,
+        clinic_id,
+        patient_id,
+        user_id,
+        total="-100",
+        due_in_days=-40,
+        credit_note_for_id=paid.id,
+    )
+
+    buckets = await FinancialReportService.aging_buckets(db_session, clinic_id)
+    assert sum(b["count"] for b in buckets) == 0
+    assert sum(b["total"] for b in buckets) == Decimal("0")
+    assert all(b["patient_count"] == 0 for b in buckets)
+
+
+async def _credit_note(db, clinic_id, patient_id, user_id, invoice, total, **kw) -> Invoice:
+    return await _invoice(
+        db,
+        clinic_id,
+        patient_id,
+        user_id,
+        total=total,
+        due_in_days=-1,
+        credit_note_for_id=invoice.id,
+        **kw,
+    )
+
+
+@pytest.mark.asyncio
+async def test_aging_drops_a_fully_credited_unpaid_invoice(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """The original invoice stays ``issued`` next to its credit note (#1201).
+
+    100 issued and still unpaid, then a -100 credit note: nothing is owed,
+    so it leaves the aging buckets.
+    """
+    clinic_id = test_clinic.id
+    patient_id = test_patient.id
+    user_id = await _staff_id(db_session)
+    full = await _invoice(db_session, clinic_id, patient_id, user_id, total="100", due_in_days=-40)
+    await _credit_note(db_session, clinic_id, patient_id, user_id, full, "-100")
+
+    buckets = await FinancialReportService.aging_buckets(db_session, clinic_id)
+    assert sum(b["total"] for b in buckets) == Decimal("0")
+    assert sum(b["count"] for b in buckets) == 0
+    assert all(b["patient_count"] == 0 for b in buckets)
+
+
+@pytest.mark.asyncio
+async def test_aging_nets_a_partly_credited_invoice_in_its_own_bucket(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+):
+    """100 issued, -40 credited: 60 still owed, bucketed by the invoice's due date.
+
+    Draft, voided and soft-deleted credit notes don't reduce anything.
+    """
+    clinic_id = test_clinic.id
+    patient_id = test_patient.id
+    user_id = await _staff_id(db_session)
+    part = await _invoice(db_session, clinic_id, patient_id, user_id, total="100", due_in_days=-40)
+    await _credit_note(db_session, clinic_id, patient_id, user_id, part, "-40")
+    await _credit_note(db_session, clinic_id, patient_id, user_id, part, "-30", status="draft")
+    await _credit_note(db_session, clinic_id, patient_id, user_id, part, "-30", status="voided")
+    await _credit_note(db_session, clinic_id, patient_id, user_id, part, "-30", deleted=True)
+
+    buckets = _by_label(await FinancialReportService.aging_buckets(db_session, clinic_id))
+    assert buckets["31-60"]["total"] == Decimal("60")
+    assert buckets["31-60"]["count"] == 1
+    assert buckets["31-60"]["patient_count"] == 1
+    assert sum(b["count"] for b in buckets.values()) == 1
 
 
 @pytest.mark.asyncio

@@ -1,7 +1,7 @@
 """Smoke tests for the treatment plan module after the Treatment refactor."""
 
 from decimal import Decimal
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import pytest
 from httpx import AsyncClient
@@ -1695,6 +1695,61 @@ async def test_odontogram_perform_after_a_session_books_only_the_rest(
 
 
 @pytest.mark.asyncio
+async def test_session_earned_row_credits_the_completing_professional(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """#1152: a completed session's earned row carries the user who completed it.
+
+    The session event names the user ``completed_by``; payments only read
+    ``performed_by`` / ``professional_id``, so every plan session landed on
+    the "no professional" row of Payments → By professional.
+    """
+    from datetime import date, timedelta
+    from uuid import UUID
+
+    from app.modules.payments.models import PatientEarnedEntry
+    from app.modules.payments.service import PaymentReportsService
+
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    r = await client.patch(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}"
+        f"/sessions/{sessions[0]['id']}/complete",
+        headers=auth_headers,
+        json={},
+    )
+    assert r.status_code == 200, r.text
+    treatment_id = await _item_treatment_id(client, auth_headers, plan_id, item_id)
+    await db_session.commit()
+
+    user_id = UUID(setup_multi_session["user_id"])
+    row = (
+        await db_session.execute(
+            select(PatientEarnedEntry).where(
+                PatientEarnedEntry.treatment_id == treatment_id,
+                PatientEarnedEntry.source_session_id == sessions[0]["id"],
+            )
+        )
+    ).scalar_one()
+    assert row.professional_id == user_id
+
+    today = date.today()
+    breakdown = await PaymentReportsService.by_professional(
+        db_session,
+        UUID(setup_multi_session["clinic_id"]),
+        today - timedelta(days=1),
+        today + timedelta(days=1),
+    )
+    by_prof = {b.professional_id: b.total_earned for b in breakdown}
+    assert by_prof.get(user_id) == Decimal("200.00")
+    assert None not in by_prof
+
+
+@pytest.mark.asyncio
 async def test_odontogram_perform_refused_after_the_sessions_finalized_the_item(
     client: AsyncClient,
     auth_headers: dict,
@@ -2217,3 +2272,166 @@ async def test_plan_search_matches_number_title_and_full_name(
             f"{base}/pipeline", headers=auth_headers, params={"tab": "cerrados", "q": term}
         )
         assert tab.json()["total"] == 1, term
+
+
+async def _complete_visit_with_item_flagged(
+    client: AsyncClient,
+    auth_headers: dict,
+    db_session: AsyncSession,
+    ctx: dict,
+    item_id: str,
+) -> None:
+    """Book the item on a visit, tick ``completed_in_appointment``, complete the visit."""
+    from app.modules.agenda.models import Cabinet
+
+    db_session.add(
+        Cabinet(
+            id=uuid4(),
+            clinic_id=ctx["clinic_id"],
+            name="Gabinete 1",
+            color="#3B82F6",
+            display_order=0,
+            is_active=True,
+        )
+    )
+    await db_session.commit()
+    created = await client.post(
+        "/api/v1/agenda/appointments",
+        headers=auth_headers,
+        json={
+            "patient_id": ctx["patient_id"],
+            "professional_id": ctx["user_id"],
+            "cabinet": "Gabinete 1",
+            "start_time": "2026-05-04T09:00:00Z",
+            "end_time": "2026-05-04T09:30:00Z",
+            "planned_item_ids": [item_id],
+        },
+    )
+    assert created.status_code == 201, created.text
+    apt = created.json()["data"]
+    link_id = apt["treatments"][0]["id"]
+    r = await client.patch(
+        f"/api/v1/agenda/appointment-treatments/{link_id}",
+        headers=auth_headers,
+        json={"completed_in_appointment": True},
+    )
+    assert r.status_code == 200, r.text
+    for to in ("checked_in", "in_treatment", "completed"):
+        r = await client.post(
+            f"/api/v1/agenda/appointments/{apt['id']}/transitions",
+            headers=auth_headers,
+            json={"to_status": to},
+        )
+        assert r.status_code == 200, r.text
+    await _sync(db_session)
+
+
+@pytest.mark.asyncio
+async def test_visit_completion_goes_through_the_session_path(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """#1185: a ticked visit completes the next session and books its revenue.
+
+    The handler used to flip the item (and the plan) to completed directly:
+    both sessions stayed pending, the odontogram treatment stayed planned and
+    payments booked nothing — with no way back, since the plan was closed.
+    """
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    treatment_id = await _item_treatment_id(client, auth_headers, plan_id, item_id)
+
+    await _complete_visit_with_item_flagged(
+        client, auth_headers, db_session, setup_multi_session, item_id
+    )
+
+    plan = (
+        await client.get(f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers)
+    ).json()["data"]
+    item = next(i for i in plan["items"] if i["id"] == item_id)
+    # One visit, one session: session 1 completed, the item and plan stay open.
+    assert [s["status"] for s in item["sessions"]] == ["completed", "pending"]
+    assert item["status"] == "pending"
+    assert plan["status"] == "active"
+    earned = await _earned_by_session(db_session, treatment_id)
+    assert earned == {UUID(sessions[0]["id"]): Decimal("200.00")}
+
+    # The second session is still completable the normal way and finalizes.
+    r = await client.patch(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}"
+        f"/sessions/{sessions[1]['id']}/complete",
+        headers=auth_headers,
+        json={},
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["data"]["status"] == "completed"
+    await _sync(db_session)
+    earned = await _earned_by_session(db_session, treatment_id)
+    assert sum(earned.values()) == Decimal("800.00")
+    from app.modules.odontogram.models import Treatment
+
+    treatment = await db_session.get(Treatment, UUID(treatment_id))
+    assert treatment.status == "performed"
+
+
+@pytest.mark.asyncio
+async def test_visit_completion_on_a_draft_plan_keeps_the_ungated_status_flip(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """#1185 pins the unchanged non-active path: status flip only.
+
+    On a plan that is not ``active`` the appointment path still records the
+    clinical fact without the session path — the item completes, its
+    sessions stay pending and nothing is earned. Whether this path should be
+    gated like the manual one (#167) is left to the maintainers.
+    """
+    plan_id, item_id, _ = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session, activate=False
+    )
+    treatment_id = await _item_treatment_id(client, auth_headers, plan_id, item_id)
+
+    await _complete_visit_with_item_flagged(
+        client, auth_headers, db_session, setup_multi_session, item_id
+    )
+
+    plan = (
+        await client.get(f"/api/v1/treatment_plan/treatment-plans/{plan_id}", headers=auth_headers)
+    ).json()["data"]
+    item = next(i for i in plan["items"] if i["id"] == item_id)
+    assert plan["status"] == "draft"
+    assert item["status"] == "completed"
+    assert all(s["status"] == "pending" for s in item["sessions"])
+    assert await _earned_by_session(db_session, treatment_id) == {}
+
+
+@pytest.mark.asyncio
+async def test_pipeline_row_carries_patient_phone(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """The pipeline's Call / WhatsApp buttons render only with a phone (#1161)."""
+    base = "/api/v1/treatment_plan/treatment-plans"
+    patient = await client.put(
+        f"/api/v1/patients/{setup['patient_id']}",
+        headers=auth_headers,
+        json={"phone": "+34666333444"},
+    )
+    assert patient.status_code == 200, patient.text
+    plan = await client.post(base, headers=auth_headers, json={"patient_id": setup["patient_id"]})
+    assert plan.status_code == 201, plan.text
+    closed = await client.post(
+        f"{base}/{plan.json()['data']['id']}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert closed.status_code == 200, closed.text
+
+    tab = await client.get(f"{base}/pipeline", headers=auth_headers, params={"tab": "cerrados"})
+    assert tab.status_code == 200, tab.text
+    row = next(r for r in tab.json()["data"] if r["plan_id"] == plan.json()["data"]["id"])
+    assert row["patient"]["phone"] == "+34666333444"

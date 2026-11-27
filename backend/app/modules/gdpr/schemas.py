@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator, mo
 # without depending on the optional gdpr module (ADR 0038); gdpr itself
 # uses it for the ErasureResult response below.
 from app.core.erasure.types import ErasureCoverage
+from app.core.schemas import NotNull
 
 RequestType = Literal["access", "rectification", "erasure", "portability", "restrict"]
 RequestStatus = Literal["received", "in_progress", "completed", "rejected"]
@@ -32,7 +33,8 @@ class GdprRequestCreate(BaseModel):
 
 
 class GdprRequestUpdate(BaseModel):
-    status: RequestStatus | None = None
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    status: NotNull[RequestStatus] = None
     notes: str | None = Field(default=None, max_length=2000)
 
 
@@ -102,9 +104,10 @@ class RetentionPolicyCreate(BaseModel):
 
 
 class RetentionPolicyUpdate(BaseModel):
-    retention_years: int | None = Field(default=None, ge=0)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    retention_years: NotNull[int] = Field(default=None, ge=0)
     legal_hold_until: date | None = None
-    is_active: bool | None = None
+    is_active: NotNull[bool] = None
 
 
 class RetentionPolicyResponse(BaseModel):

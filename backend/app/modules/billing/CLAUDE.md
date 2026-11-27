@@ -91,6 +91,12 @@ that event was never published.
   (`bil_0006`, #689). Anything that writes `sequential_number` must write
   `fiscal_year` with it; anything that groups sequentials by year
   (the gap report) reads `fiscal_year`.
+- **Switching `reset_yearly` on sets `last_reset_year` to the clinic's
+  current year** (`update_series(today=…)`, #1184). A continuous series
+  keeps its creation year there, so without it `generate_number` would
+  restart the count mid-year and collide with numbers already issued.
+  Only the off→on switch touches it: re-saving a yearly series must not
+  cancel a pending January reset.
 - **Compliance hooks live in compliance modules**, not here. The
   `verifactu` module attaches via `BillingComplianceHook` on
   `invoice.issued` to chain into AEAT. Don't import verifactu from
@@ -123,7 +129,14 @@ that event was never published.
   0-day term, so a bare `issued/partial` + `due_date < today` filter
   lists it as overdue forever (#1090). The list filter and the reports'
   overdue count and list all use the helper; any new overdue surface
-  must too.
+  must too. It builds on `service.open_receivable_conditions` (issued or
+  partial, not history, not a credit note, no due-date cut), which the
+  reports' aging buckets use because they include not-yet-due invoices
+  (#1201); any new outstanding/receivable surface uses that one. The
+  rectified invoice stays `issued` next to its credit note, so a surface
+  that sums amounts must also net each invoice with its live credit
+  notes (the aging buckets do); the overdue list does not yet, so a
+  fully credited unpaid invoice still lists as overdue.
 - **Budget ↔ invoice bridge (`payment_bridge.py`, issue #178).** One
   rule: money allocated to a budget is money for that budget's
   invoices. Three entry points, all in-tx: the `payment.allocated`

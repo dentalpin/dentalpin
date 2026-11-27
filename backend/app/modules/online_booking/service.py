@@ -435,13 +435,20 @@ class BookingService:
     async def update_settings(db: AsyncSession, clinic_id: UUID, data: SettingsInput):
         if data.enabled and (not data.public_url or not data.professional_id):
             raise BookingValidationError("A public URL and professional are required")
-        if data.professional_id and not await AppointmentService.validate_professional_access(
-            db, clinic_id, data.professional_id
-        ):
-            raise BookingValidationError("Invalid professional")
-        # Enabling for an inactive user would leave the public page unavailable.
-        if data.enabled and not await bookable_professional(db, clinic_id, data.professional_id):
-            raise BookingValidationError("Invalid professional")
+        member = False
+        if data.professional_id:
+            member = await AppointmentService.validate_professional_access(
+                db, clinic_id, data.professional_id
+            )
+        if data.enabled:
+            # Enabling for an inactive user would leave the public page unavailable.
+            if not member or not await bookable_professional(db, clinic_id, data.professional_id):
+                raise BookingValidationError("Invalid professional")
+        elif data.professional_id and not member:
+            # Switching off must stay possible once the professional left the
+            # clinic (#1149), but an id that is not a professional of this
+            # clinic is never stored.
+            data = data.model_copy(update={"professional_id": None})
         await lock_clinic(db, clinic_id)
         config = await db.get(BookingSettings, clinic_id)
         if config is None:
@@ -591,6 +598,7 @@ class BookingService:
             existing_patient=data.existing_patient if config.ask_existing_patient else None,
             comment=data.comment if config.allow_comment else None,
             reason=data.reason,
+            language=data.language if "language" in data.model_fields_set else None,
             confirmation_deadline=now + timedelta(minutes=CONFIRMATION_MINUTES),
             token_hash=digest(token),
         )
@@ -822,7 +830,12 @@ class BookingService:
             raise BookingConflictError("Request expired or already decided")
         if row.contact_email:
             await _queue_email(
-                db, ctx.clinic_id, row, "booking_rejection", rejection_message=data.message
+                db,
+                ctx.clinic_id,
+                row,
+                "booking_rejection",
+                locale=row.language,
+                rejection_message=data.message,
             )
         row.status = "rejected"
         row.decided_at = now

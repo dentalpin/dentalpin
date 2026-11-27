@@ -884,3 +884,133 @@ async def test_a_backdated_control_leaves_the_latest_in_charge(
         )
     )
     assert due == date(2027, 1, 1)
+
+
+async def _review_due(db_session, clinic_id, patient_id):
+    from app.modules.recalls.models import Recall
+
+    return await db_session.scalar(
+        select(Recall.due_date).where(
+            Recall.clinic_id == clinic_id,
+            Recall.patient_id == patient_id,
+            Recall.reason == "ortho_review",
+            Recall.status == "pending",
+        )
+    )
+
+
+@pytest.mark.asyncio
+async def test_editing_the_latest_control_interval_moves_the_recall(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    """PATCHing next_control_weeks re-runs the recall upsert (#1186)."""
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    today = datetime(2026, 11, 20, 10, tzinfo=UTC)
+    control = await OrthoControlService.register(
+        db_session,
+        test_clinic.id,
+        case.id,
+        OrthoControlCreate(performed_at=today, next_control_weeks=4),
+    )
+    assert await _review_due(db_session, test_clinic.id, test_patient.id) == date(2026, 12, 18)
+
+    await OrthoControlService.update(
+        db_session, test_clinic.id, control.id, OrthoControlUpdate(next_control_weeks=8)
+    )
+    assert await _review_due(db_session, test_clinic.id, test_patient.id) == date(2027, 1, 15)
+    assert await _recall_count(db_session, test_clinic.id, test_patient.id) == 1
+
+
+@pytest.mark.asyncio
+async def test_setting_an_interval_on_an_edit_creates_the_recall(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    today = datetime(2026, 11, 20, 10, tzinfo=UTC)
+    control = await OrthoControlService.register(
+        db_session, test_clinic.id, case.id, OrthoControlCreate(performed_at=today)
+    )
+    assert await _recall_count(db_session, test_clinic.id, test_patient.id) == 0
+
+    await OrthoControlService.update(
+        db_session, test_clinic.id, control.id, OrthoControlUpdate(next_control_weeks=6)
+    )
+    assert await _review_due(db_session, test_clinic.id, test_patient.id) == date(2027, 1, 1)
+
+
+@pytest.mark.asyncio
+async def test_editing_an_older_control_leaves_the_recall(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    today = datetime(2026, 11, 20, 10, tzinfo=UTC)
+    older = await OrthoControlService.register(
+        db_session,
+        test_clinic.id,
+        case.id,
+        OrthoControlCreate(performed_at=today - timedelta(days=60), next_control_weeks=4),
+    )
+    await OrthoControlService.register(
+        db_session,
+        test_clinic.id,
+        case.id,
+        OrthoControlCreate(performed_at=today, next_control_weeks=4),
+    )
+    assert await _review_due(db_session, test_clinic.id, test_patient.id) == date(2026, 12, 18)
+
+    await OrthoControlService.update(
+        db_session, test_clinic.id, older.id, OrthoControlUpdate(next_control_weeks=12)
+    )
+    assert await _review_due(db_session, test_clinic.id, test_patient.id) == date(2026, 12, 18)
+
+
+@pytest.mark.asyncio
+async def test_editing_a_control_on_a_paused_case_leaves_the_recall(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    today = datetime(2026, 11, 20, 10, tzinfo=UTC)
+    control = await OrthoControlService.register(
+        db_session,
+        test_clinic.id,
+        case.id,
+        OrthoControlCreate(performed_at=today, next_control_weeks=4),
+    )
+    await OrthoCaseService.change_status(db_session, test_clinic.id, case.id, "paused", None)
+
+    await OrthoControlService.update(
+        db_session, test_clinic.id, control.id, OrthoControlUpdate(next_control_weeks=8)
+    )
+    assert await _review_due(db_session, test_clinic.id, test_patient.id) == date(2026, 12, 18)
+
+
+@pytest.mark.asyncio
+async def test_http_patch_control_interval_moves_the_recall(client, auth_headers, test_patient):
+    created = await client.post(
+        "/api/v1/orthodontics/cases",
+        json={
+            "patient_id": str(test_patient.id),
+            "appliance_type": "brackets_metal",
+            "start_date": "2026-01-15",
+            "estimated_months": 18,
+        },
+        headers=auth_headers,
+    )
+    assert created.status_code in (200, 201), created.text
+    case_id = created.json()["data"]["id"]
+    control = await client.post(
+        f"/api/v1/orthodontics/cases/{case_id}/controls",
+        json={"performed_at": "2026-11-20T10:00:00Z", "next_control_weeks": 4},
+        headers=auth_headers,
+    )
+    assert control.status_code in (200, 201), control.text
+    patched = await client.patch(
+        f"/api/v1/orthodontics/controls/{control.json()['data']['id']}",
+        json={"next_control_weeks": 8},
+        headers=auth_headers,
+    )
+    assert patched.status_code == 200, patched.text
+    recalls = await client.get(f"/api/v1/recalls/patients/{test_patient.id}", headers=auth_headers)
+    assert recalls.status_code == 200, recalls.text
+    dues = [r["due_date"] for r in recalls.json()["data"] if r["reason"] == "ortho_review"]
+    assert dues == ["2027-01-15"]

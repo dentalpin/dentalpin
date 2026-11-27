@@ -194,13 +194,19 @@ async def _create_policy(ctx: AgentContext, params: CreatePolicyArgs) -> dict:
 
 
 async def _execute_erasure(ctx: AgentContext, params: ExecuteErasureArgs) -> dict:
+    # The audit row names the person who confirmed, as the route does with
+    # the user (#1187). Copilot's inline confirmation and the approval queue
+    # both set supervisor_id; a run without a human refuses rather than
+    # writing an irreversible erasure with no accountable person.
+    if ctx.supervisor_id is None:
+        return {"error": "Erasure needs a supervised session (no confirming user)"}
     result = await ErasureService.execute(
         ctx.db,
         ctx.clinic_id,
         patient_id=params.patient_id,
         categories=list(params.categories),
         rationale=params.rationale,
-        executed_by=ctx.agent_id,
+        executed_by=ctx.supervisor_id,
     )
     if result is None:
         return {"error": "patient not found"}

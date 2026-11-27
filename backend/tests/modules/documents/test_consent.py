@@ -128,6 +128,7 @@ async def test_signed_pdf_immutable_representative_and_revocation(
     payload = {
         "signer_name": "Synthetic guardian",
         "relationship_to_patient": "guardian",
+        "signer_id_document": "12345678z",
         "signature": signature(),
     }
     response = await client.post(
@@ -180,6 +181,7 @@ async def test_signed_pdf_immutable_representative_and_revocation(
     evidence = await client.get(f"/api/v1/documents/consents/{doc}/evidence", headers=auth_headers)
     original = evidence.json()["data"][0]
     assert original["relationship_to_patient"] == "guardian"
+    assert original["signer_id_document"] == "12345678Z"
     assert original["sha256"] == hashlib.sha256(pdf.content).hexdigest()
     signed_download = await client.get(
         f"/api/v1/documents/consents/{doc}/evidence/sign/download", headers=auth_headers
@@ -191,6 +193,7 @@ async def test_signed_pdf_immutable_representative_and_revocation(
         ).stdout.decode()
         assert "Synthetic treatment text" in text
         assert "Synthetic guardian" in text
+        assert "12345678Z" in text
     if shutil.which("pdfimages"):
         images = (
             subprocess.run(
@@ -799,6 +802,7 @@ async def test_signed_pdf_uses_link_locale_and_clinic_time(
         json={
             "signer_name": "Synthetic guardian",
             "relationship_to_patient": "guardian",
+            "signer_id_document": "12345678z",
             "signature": signature(),
         },
     )
@@ -826,6 +830,7 @@ async def test_signed_pdf_uses_link_locale_and_clinic_time(
         json={
             "signer_name": "Synthetic guardian",
             "relationship_to_patient": "guardian",
+            "signer_id_document": "12345678z",
             "signature": signature(),
         },
     )
@@ -1049,3 +1054,150 @@ async def test_template_archive_requires_write_permission(
     assert (
         await client.get("/api/v1/documents/consent-templates", headers=auth_headers)
     ).status_code == 200
+
+
+async def sign(client, token, **fields):
+    return await client.post(
+        "/api/v1/documents/public/consents/current/sign",
+        headers={"Authorization": f"Bearer {token}"},
+        json={"signer_name": "Synthetic signer", "signature": signature(), **fields},
+    )
+
+
+async def evidence_rows(db_session):
+    return (await db_session.execute(select(ConsentEvidence))).scalars().all()
+
+
+@pytest.mark.asyncio
+async def test_patient_can_sign_without_id_document(client, auth_headers, test_patient, db_session):
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    response = await sign(client, token, relationship_to_patient="patient")
+    assert response.status_code == 200, response.text
+    assert [e.signer_id_document for e in await evidence_rows(db_session)] == [None]
+    listed = await client.get(f"/api/v1/documents/consents/{doc}/evidence", headers=auth_headers)
+    assert listed.json()["data"][0]["signer_id_document"] is None
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("sent", "stored"),
+    [
+        ("  12345678z ", "12345678Z"),
+        ("1234 5678 z", "12345678Z"),
+        ("x-1234.567/a", "X-1234.567/A"),
+        ("   ", None),
+    ],
+)
+async def test_patient_id_document_is_normalised_and_optional(
+    client, auth_headers, test_patient, db_session, sent, stored
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    response = await sign(client, token, relationship_to_patient="patient", signer_id_document=sent)
+    assert response.status_code == 200, response.text
+    assert [e.signer_id_document for e in await evidence_rows(db_session)] == [stored]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("relationship", ["guardian", "representative"])
+@pytest.mark.parametrize("fields", [{}, {"signer_id_document": None}, {"signer_id_document": "  "}])
+async def test_guardian_or_representative_requires_id_document(
+    client, auth_headers, test_patient, db_session, relationship, fields
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    response = await sign(client, token, relationship_to_patient=relationship, **fields)
+    assert response.status_code == 422, response.text
+    assert await evidence_rows(db_session) == []
+    # The link was not consumed by the rejected attempt.
+    retry = await sign(
+        client, token, relationship_to_patient=relationship, signer_id_document="y1234567x"
+    )
+    assert retry.status_code == 200, retry.text
+    assert [e.signer_id_document for e in await evidence_rows(db_session)] == ["Y1234567X"]
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("value", ["12345678Z!", "A" * 33, "<b>1</b>", "12_34"])
+async def test_id_document_rejects_bad_characters_or_length(
+    client, auth_headers, test_patient, db_session, value
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    response = await sign(
+        client, token, relationship_to_patient="patient", signer_id_document=value
+    )
+    assert response.status_code == 422, response.text
+    assert await evidence_rows(db_session) == []
+
+
+@pytest.mark.asyncio
+async def test_revocation_applies_the_same_id_document_rule(
+    client, auth_headers, test_patient, db_session
+):
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    assert (await sign(client, token, relationship_to_patient="patient")).status_code == 200
+    revoke = await make_link(client, auth_headers, doc, "revoke")
+    missing = await sign(client, revoke, relationship_to_patient="representative")
+    assert missing.status_code == 422, missing.text
+    ok = await sign(
+        client, revoke, relationship_to_patient="representative", signer_id_document="b-123"
+    )
+    assert ok.status_code == 200, ok.text
+    by_purpose = {e.purpose: e.signer_id_document for e in await evidence_rows(db_session)}
+    assert by_purpose == {"sign": None, "revoke": "B-123"}
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize(
+    ("locale", "label"), [("es", "Documento de identidad"), ("en", "ID document")]
+)
+async def test_signed_pdf_prints_id_document(
+    client, auth_headers, test_patient, db_session, locale, label
+):
+    if not shutil.which("pdftotext"):
+        pytest.skip("pdftotext is required to verify rendered PDF text")
+    clinic = await db_session.get(Clinic, test_patient.clinic_id)
+    clinic.settings = {**(clinic.settings or {}), "communication_language": locale}
+    await db_session.commit()
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    response = await sign(
+        client,
+        token,
+        signer_name="Synthetic guardian",
+        relationship_to_patient="guardian",
+        signer_id_document="x1234567l",
+    )
+    assert response.status_code == 200, response.text
+    pdf = await client.get(
+        f"/api/v1/documents/consents/{doc}/evidence/sign/download", headers=auth_headers
+    )
+    text = " ".join(
+        subprocess.run(["pdftotext", "-", "-"], input=pdf.content, capture_output=True, check=True)
+        .stdout.decode()
+        .split()
+    )
+    assert "Synthetic guardian · " in text and f"{label}: X1234567L" in text
+    evidence = (await db_session.execute(select(ConsentEvidence))).scalar_one()
+    assert evidence.sha256 == hashlib.sha256(pdf.content).hexdigest()
+
+
+@pytest.mark.asyncio
+async def test_pdf_without_id_document_omits_the_label(
+    client, auth_headers, test_patient, db_session
+):
+    if not shutil.which("pdftotext"):
+        pytest.skip("pdftotext is required to verify rendered PDF text")
+    doc = await new_consent(client, auth_headers, test_patient)
+    token = await make_link(client, auth_headers, doc)
+    assert (await sign(client, token, relationship_to_patient="patient")).status_code == 200
+    pdf = await client.get(
+        f"/api/v1/documents/consents/{doc}/evidence/sign/download", headers=auth_headers
+    )
+    text = subprocess.run(
+        ["pdftotext", "-", "-"], input=pdf.content, capture_output=True, check=True
+    ).stdout.decode()
+    assert "ID document" not in text and "Documento de identidad" not in text

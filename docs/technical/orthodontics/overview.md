@@ -12,7 +12,8 @@ plan link (nullable for transfer patients), installment schedule
 generation through the plan session API, read-only installments widget
 (counts only, ADR 0010), deep-link-only "Collect installment" to
 `/payments?patient_id=`, recall upsert (`ortho_review`, paused freezes
-generation), appointment link + session audit pointer on controls,
+generation; re-run when the latest control's interval or date is
+edited, #1186), appointment link + session audit pointer on controls,
 `transferred_out` plan-close suggestion.
 
 ## Later (v2, separate issues)

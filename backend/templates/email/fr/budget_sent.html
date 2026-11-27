@@ -72,6 +72,18 @@
 <p><strong>Observations :</strong> {{ notes }}</p>
 {% endif %}
 
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Consulter mon devis</a>
+</div>
+{% endif %}
+
 <p>Si vous avez des questions sur le devis ou souhaitez programmer votre traitement, n'hésitez pas à nous contacter.</p>
 
 {% if clinic_phone %}

@@ -126,6 +126,8 @@
       "revocationNotice": "Mit Ihrer Unterschrift widerrufen Sie die angezeigte Einwilligung.",
       "signer": "Name der unterzeichnenden Person",
       "relationship": "Beziehung zum Patienten",
+      "idDocument": "Ausweisdokument",
+      "idDocumentHint": "Erforderlich, wenn Sie als Vormund oder Vertreter unterschreiben; optional, wenn Sie der Patient sind.",
       "patient": "Patient",
       "guardian": "Gesetzlicher Vormund",
       "representative": "Vertretung",
@@ -149,7 +151,8 @@
         "archived": "Archiviert"
       },
       "qrTitle": "Zum Unterschreiben scannen",
-      "signedToast": "Einwilligung unterschrieben"
+      "signedToast": "Einwilligung unterschrieben",
+      "formatHelp": "Formatierung: Beginnen Sie eine Zeile mit # (Überschrift) oder ## / ### (Unterüberschriften), setzen Sie Text in **doppelte Sternchen** für Fett oder *einfache Sternchen* für Kursiv und beginnen Sie Zeilen mit - oder 1. für Listen. Eine Leerzeile beginnt einen neuen Absatz. Alles andere, auch HTML und Links, wird genau so angezeigt, wie es eingegeben wurde."
     }
   }
 }

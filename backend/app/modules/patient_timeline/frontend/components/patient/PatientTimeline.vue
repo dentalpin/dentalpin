@@ -2,6 +2,7 @@
 import type { TimelineEntry } from '~~/app/types'
 import { resolveSlot } from '~~/app/composables/useModuleSlots'
 import { PERMISSIONS } from '~~/app/config/permissions'
+import { teWithFallback, timelineEntryTitle } from '../../utils/timelineTitle'
 
 interface Props {
   patientId: string
@@ -9,7 +10,7 @@ interface Props {
 
 const props = defineProps<Props>()
 
-const { t, locale } = useI18n()
+const { t, te, locale, fallbackLocale } = useI18n()
 const { can } = usePermissions()
 
 const patientIdRef = computed(() => props.patientId)
@@ -53,10 +54,10 @@ const showTreatmentSlot = computed(
 
 // ---- Date formatting ---------------------------------------------------
 
-const localeCode = computed(() => (locale.value === 'es' ? 'es-ES' : 'en-US'))
-
+// Format with the UI locale (its codes are BCP 47 tags), so every shipped
+// language gets its own weekday/month names and 24 h vs AM/PM (#1175).
 function formatTime(date: Date): string {
-  return date.toLocaleTimeString(localeCode.value, { hour: '2-digit', minute: '2-digit' })
+  return date.toLocaleTimeString(locale.value, { hour: '2-digit', minute: '2-digit' })
 }
 
 function formatEntryDate(dateStr: string): string {
@@ -65,11 +66,11 @@ function formatEntryDate(dateStr: string): string {
   if (bucket === 'today') return `${t('patients.timeline.groups.today')} · ${formatTime(date)}`
   if (bucket === 'yesterday') return `${t('patients.timeline.groups.yesterday')} · ${formatTime(date)}`
   if (bucket === 'thisWeek') {
-    return date.toLocaleDateString(localeCode.value, {
+    return date.toLocaleDateString(locale.value, {
       weekday: 'long', hour: '2-digit', minute: '2-digit'
     })
   }
-  return date.toLocaleDateString(localeCode.value, {
+  return date.toLocaleDateString(locale.value, {
     day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
   })
 }
@@ -212,6 +213,20 @@ function getEventMeta(entry: TimelineEntry): MetaChip[] {
   }
 
   return chips
+}
+
+// ---- Title ---------------------------------------------------------------
+
+// The stored title is Spanish; rebuild it in the viewer's language (#1174).
+function getEntryTitle(entry: TimelineEntry): string {
+  return timelineEntryTitle(entry, {
+    t,
+    te: teWithFallback(
+      (key, l) => (l ? te(key, l as typeof locale.value) : te(key)),
+      locale.value,
+      fallbackLocale?.value as Parameters<typeof teWithFallback>[2]
+    )
+  })
 }
 
 // ---- Navigation to source ---------------------------------------------
@@ -380,7 +395,7 @@ onMounted(() => {
                         isLowImpact(entry.event_type) ? 'text-sm' : ''
                       ]"
                     >
-                      {{ entry.title }}
+                      {{ getEntryTitle(entry) }}
                     </h4>
                     <p
                       v-if="entry.description"

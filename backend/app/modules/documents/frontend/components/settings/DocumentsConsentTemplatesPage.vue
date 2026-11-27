@@ -164,6 +164,9 @@ onMounted(fetchTemplates)
             class="w-full"
             :rows="10"
           />
+          <template #help>
+            {{ t('documents.consent.formatHelp') }}
+          </template>
         </UFormField>
       </div>
       <template #footer>
