@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Billing:** credit note PDFs no longer print a Spanish "Rectificación de factura" note in every language (#1179).
 - **Payments:** the copilot refuses a payment allocated to a budget without saying which budget, instead of failing the confirmation with a database error (#1183).
 - **Documents:** the copilot no longer creates a document from content that the documents screen would reject, such as a prescription whose medications are plain text (#1182).
 - **Treatment plans, catalog:** plan totals, the catalog sessions sum and price input suffixes follow the clinic currency instead of a hardcoded € (#1178).
