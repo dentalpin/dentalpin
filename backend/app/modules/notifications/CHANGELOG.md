@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1156): a reminder sent by hand (`POST /notifications/send`) now carries the day-valid `checkin_url`, like the sweep; removed the unused `tasks.send_single_reminder`.
 - fix(#1154): the appointment_cancelled, budget_sent, budget_accepted and budget_reminder contexts carry `clinic_address` for the email footer.
 - fix(#1153): the email footer ("This email was sent by <clinic>") is written in the email's language for every locale instead of always in Spanish (`base.html` keys it on `locale`; `footer_sent_by` still overrides it, and custom DB templates now receive `locale` too). The welcome email shows the opening-hours box only when `clinic_hours` is given, instead of an invented "Monday to Friday, 9:00 - 20:00".
 
