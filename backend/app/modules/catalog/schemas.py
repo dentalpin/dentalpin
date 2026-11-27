@@ -2,10 +2,10 @@
 
 from datetime import datetime
 from decimal import Decimal
-from typing import Literal
+from typing import Annotated, Literal
 from uuid import UUID
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, PlainSerializer, field_validator
 
 
 def _blank_is_none(value: object) -> object:
@@ -17,6 +17,13 @@ def _blank_is_none(value: object) -> object:
     if isinstance(value, str) and not value.strip():
         return None
     return value
+
+
+# Tier prices for ``pricing_strategy == "per_surface"``, keyed "1".."5". The
+# column is plain JSONB, which ``json.dumps`` cannot fill with a Decimal, so
+# ``model_dump()`` emits each price as a string -- the format the seeder
+# stores and ``pricing._resolve_surface_tier_price`` reads (#1240).
+SurfacePrice = Annotated[Decimal, Field(ge=0), PlainSerializer(str, return_type=str)]
 
 
 # ============================================================================
@@ -209,7 +216,7 @@ class CatalogItemCreate(BaseModel):
     pricing_config: dict | None = None
     # Tiered prices by surface count. Keys "1".."5" map to prices. Used when
     # pricing_strategy == "per_surface". See pricing.py for tier resolution.
-    surface_prices: dict[str, Decimal] | None = None
+    surface_prices: dict[str, SurfacePrice] | None = None
 
     # Treatment characteristics (aligns with Treatment.scope).
     treatment_scope: Literal["tooth", "multi_tooth", "global_mouth", "global_arch"] = "tooth"
@@ -252,7 +259,7 @@ class CatalogItemUpdate(BaseModel):
     # Pricing strategy
     pricing_strategy: Literal["flat", "per_tooth", "per_surface", "per_role"] | None = None
     pricing_config: dict | None = None
-    surface_prices: dict[str, Decimal] | None = None
+    surface_prices: dict[str, SurfacePrice] | None = None
 
     # Treatment characteristics
     treatment_scope: Literal["tooth", "multi_tooth", "global_mouth", "global_arch"] | None = None
