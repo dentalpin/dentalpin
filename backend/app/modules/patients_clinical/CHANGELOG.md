@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1151): updating an allergy (`name`, `severity`), medication (`name`), systemic disease (`name`, `is_controlled`, `is_critical`) or surgical history entry (`procedure`) with that field set to `null` is a 422 instead of a 500.
+
 - fix(#1064): the emergency contact and guardian forms hand over incomplete edits for the API to refuse; they held them back, so the previous value (or a delete) was saved with a success toast.
 - fix(#1045): `useMedicalHistory` saves only a history it loaded and gives every patient a fresh default. A failed or unfinished load let Save wipe the history, and shared default arrays carried entries into the next patient.
 
