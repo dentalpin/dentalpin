@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Payments:** pressing Enter twice in the record-payment modal no longer records the payment twice (#1230).
 - **Documents:** "New document" opens empty instead of prefilled with the previous patient's document, and cancelled edits no longer come back (#1232).
 - **Notifications:** pressing Enter twice in the patient WhatsApp reply box no longer sends the message twice (#1231).
 - **Notifications:** dates in patient emails and WhatsApp texts use the patient's language format (for example `14.01.2026` in German, `2026. 01. 14.` in Hungarian) instead of always `dd/mm/yyyy` (#1211).
