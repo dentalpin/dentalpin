@@ -81,7 +81,9 @@ None.
   strings (`{"1": "60.00", ...}`, the seeder's format); the `SurfacePrice`
   schema type dumps the request's Decimals that way, since `json.dumps`
   cannot encode a Decimal (#1240). `pricing.py` reads them with
-  `Decimal(str(v))`, so numbers stay readable too.
+  `Decimal(str(v))`, so numbers stay readable too. Keys must be
+  exactly "1".."5" (`_check_surface_tiers`): pricing reads back
+  `surface_prices[str(int(k))]`, so "02" would be a KeyError.
 - **Categories are mandatory on items** (`category_id` NOT NULL). Anything
   that can leave a clinic with zero categories blocks treatment creation —
   keep the seed endpoint and the categories UI working.
