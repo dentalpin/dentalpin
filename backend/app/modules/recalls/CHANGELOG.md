@@ -3,6 +3,7 @@
 ## Unreleased
 
 - fix(#1176): the month picker, the "next recall" button, the patient summary feed and the set-recall modal read `due_month` as local midnight (`parseDateOnly`), so west of UTC a recall due in March no longer shows as February.
+- fix(#1148): a snooze note is stamped with the clinic's day and the author's name instead of the server's UTC day and the user's UUID.
 
 - fix(#1010): snoozing unlinks the appointment, whose completion used to close the snoozed recall, and `PATCH` on a closed recall is a 409.
 - fix(#1004): "Due this week" counts recalls whose `due_date` falls in the clinic's Monday-to-Sunday week; it used to count the whole current month, plus next month near month end. Month-only recalls count under the month only.
