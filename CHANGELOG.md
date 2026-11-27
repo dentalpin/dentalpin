@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Treatment plans:** completing an appointment with a planned item of an active plan ticked as done now completes its next session, books its revenue and, on the last session, marks the treatment performed on the chart (#1185).
 - **Online booking:** the rejection email is sent in the language the visitor booked in, like the confirmation (#1208).
 - **Copilot:** write tools for imaging studies, patients, leads, prescriptions and partial erasure now validate like their REST forms; prescription drafts use the clinic's language and the erasure audit names the confirming user (#1187).
 - **Reports:** the invoice aging section no longer lists issued credit notes as receivables of their own; each invoice counts net of its credit notes (#1201).

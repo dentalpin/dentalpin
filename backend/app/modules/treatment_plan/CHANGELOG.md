@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1185): `on_appointment_completed` completes items of an active plan ticked `completed_in_appointment` through `complete_item` (next pending session, `item_session_completed`, finalize/perform on the last one) instead of writing `item.status`; items of a non-active plan keep the direct status flip.
 - fix(#1178): pipeline quote total and confirm-plan estimated total use the clinic currency instead of a literal €; the pipeline quote status is translated.
 - fix(#1161): pipeline rows return the patient's `phone` (`PipelinePatientBrief`), so the Call / WhatsApp quick actions render.
 
