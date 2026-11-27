@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications:** appointment and quote messages queued by the copilot now include the clinic details, date, time and amounts, and are refused without the appointment or quote (#1181).
 - **Billing:** credit note PDFs no longer print a Spanish "Rectificación de factura" note in every language (#1179).
 - **Payments:** the copilot refuses a payment allocated to a budget without saying which budget, instead of failing the confirmation with a database error (#1183).
 - **Documents:** the copilot no longer creates a document from content that the documents screen would reject, such as a prescription whose medications are plain text (#1182).

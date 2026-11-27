@@ -40,12 +40,8 @@ from .schemas import (
 from .service import (
     ManagedConsentError,
     NotificationService,
-    appointment_when_context,
-    budget_treatments_context,
-    clinic_date_label,
-    money_formatter,
-    resolve_clinic_communication_locale,
-    resolve_patient_communication_locale,
+    SendContextError,
+    build_manual_send_context,
 )
 
 router = APIRouter()
@@ -424,7 +420,6 @@ async def send_notification(
     """
     from sqlalchemy import select
 
-    from app.modules.agenda.models import Appointment
     from app.modules.patients.models import Patient
 
     # Get patient if provided
@@ -452,123 +447,23 @@ async def send_notification(
             )
         patient_email = patient.email
 
-    # Build context based on notification type
-    context = data.custom_context or {}
-
-    if patient:
-        context["patient_name"] = f"{patient.first_name} {patient.last_name}"
-
-    # Get clinic info
-    from app.core.auth.models import Clinic
-
-    result = await db.execute(select(Clinic).where(Clinic.id == ctx.clinic_id))
-    clinic = result.scalar_one_or_none()
-    if clinic:
-        context["clinic_name"] = clinic.name
-        context["clinic_phone"] = clinic.phone
-        context["clinic_address"] = clinic.address
-
-    # Handle appointment-related notifications
-    if data.notification_type in [
-        "appointment_confirmation",
-        "appointment_reminder",
-        "appointment_cancelled",
-    ]:
-        if not data.appointment_id:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="appointment_id is required for appointment notifications",
-            )
-
-        result = await db.execute(
-            select(Appointment).where(
-                Appointment.id == data.appointment_id,
-                Appointment.clinic_id == ctx.clinic_id,
-            )
+    try:
+        built = await build_manual_send_context(
+            db,
+            ctx.clinic_id,
+            data.notification_type,
+            patient=patient,
+            appointment_id=data.appointment_id,
+            budget_id=data.budget_id,
+            custom_context=data.custom_context,
         )
-        appointment = result.scalar_one_or_none()
-        if not appointment:
-            raise HTTPException(status_code=404, detail="Appointment not found")
-
-        context["appointment_id"] = str(appointment.id)
-        context["appointment_start_at"] = appointment.start_time.isoformat()
-        context.update(appointment_when_context(appointment.start_time, clinic))
-        if data.notification_type == "appointment_reminder":
-            # Same day-valid check-in link the sweep puts in (ADR 0037, #1156).
-            from app.modules.notifications.tasks import _reminder_checkin_url
-
-            context["checkin_url"] = _reminder_checkin_url(appointment, clinic)
-
-        # Get professional
-        if appointment.professional_id:
-            from app.core.auth.models import User
-
-            result = await db.execute(select(User).where(User.id == appointment.professional_id))
-            professional = result.scalar_one_or_none()
-            if professional:
-                context["professional_name"] = f"{professional.first_name} {professional.last_name}"
-
-        # Use patient from appointment if not provided
-        if not patient:
-            result = await db.execute(select(Patient).where(Patient.id == appointment.patient_id))
-            patient = result.scalar_one_or_none()
-            if patient:
-                context["patient_name"] = f"{patient.first_name} {patient.last_name}"
-                patient_email = patient.email
-
-    # Handle budget notifications
-    if data.notification_type in ["budget_sent", "budget_accepted"]:
-        if not data.budget_id:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="budget_id is required for budget notifications",
-            )
-
-        from app.modules.budget.models import Budget
-
-        result = await db.execute(
-            select(Budget).where(
-                Budget.id == data.budget_id,
-                Budget.clinic_id == ctx.clinic_id,
-            )
-        )
-        budget = result.scalar_one_or_none()
-        if not budget:
-            raise HTTPException(status_code=404, detail="Budget not found")
-
-        # Use patient from budget if not provided
-        if not patient:
-            result = await db.execute(select(Patient).where(Patient.id == budget.patient_id))
-            patient = result.scalar_one_or_none()
-            if patient:
-                context["patient_name"] = f"{patient.first_name} {patient.last_name}"
-                patient_email = patient.email
-
-        # Amounts in the clinic's currency, for the locale the gateway will
-        # render in (#1133).
-        locale = (
-            await resolve_patient_communication_locale(db, ctx.clinic_id, patient.id)
-            if patient
-            else await resolve_clinic_communication_locale(db, ctx.clinic_id)
-        )
-        money = money_formatter(clinic, locale)
-
-        context["budget_number"] = budget.budget_number
-        context["budget_date"] = budget.valid_from.strftime("%d/%m/%Y")
-        context["total"] = money(budget.total)
-        context["subtotal"] = money(budget.subtotal)
-        context["discount_amount"] = money(budget.total_discount) if budget.total_discount else None
-        context["notes"] = budget.patient_notes
-
-        if budget.valid_until:
-            context["validity_days"] = (budget.valid_until - budget.valid_from).days
-
-        if data.notification_type == "budget_accepted":
-            context["accepted_date"] = clinic_date_label(budget.updated_at, clinic)
-
-        # Get budget items for budget_sent
-        if data.notification_type == "budget_sent":
-            context["treatments"] = await budget_treatments_context(db, budget.id, money)
+    except SendContextError as exc:
+        raise HTTPException(status_code=exc.status_code, detail=exc.detail) from exc
+    context = built.context
+    if built.patient is not patient:
+        # Patient taken from the appointment or budget.
+        patient = built.patient
+        patient_email = patient.email if patient else None
 
     if data.channels:
         # Recipient per requested channel: phone for WhatsApp/SMS, email
