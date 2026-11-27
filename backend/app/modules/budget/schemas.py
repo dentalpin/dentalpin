@@ -2,12 +2,12 @@
 
 from datetime import date, datetime
 from decimal import Decimal
-from typing import Literal
+from typing import Literal, Self
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
-from .pricing import allocate_global_discount, net_line_total
+from .pricing import allocate_global_discount, check_percentage_cap, net_line_total
 
 # ============================================================================
 # Budget Status Types (Simplified)
@@ -120,6 +120,11 @@ class BudgetItemCreate(BaseModel):
     display_order: int = 0
     notes: str | None = None
 
+    @model_validator(mode="after")
+    def _percentage_at_most_100(self) -> Self:
+        check_percentage_cap(self.discount_type, self.discount_value)
+        return self
+
 
 class BudgetItemUpdate(BaseModel):
     """Schema for updating a budget item."""
@@ -138,6 +143,11 @@ class BudgetItemUpdate(BaseModel):
     # Display
     display_order: int | None = None
     notes: str | None = None
+
+    @model_validator(mode="after")
+    def _percentage_at_most_100(self) -> Self:
+        check_percentage_cap(self.discount_type, self.discount_value)
+        return self
 
 
 class BudgetItemResponse(BaseModel):
@@ -320,6 +330,11 @@ class BudgetCreate(BaseModel):
     # Items (optional, can be added later)
     items: list[BudgetItemCreate] = Field(default_factory=list)
 
+    @model_validator(mode="after")
+    def _percentage_at_most_100(self) -> Self:
+        check_percentage_cap(self.global_discount_type, self.global_discount_value)
+        return self
+
 
 class BudgetUpdate(BaseModel):
     """Schema for updating a budget (only allowed in draft status)."""
@@ -338,6 +353,11 @@ class BudgetUpdate(BaseModel):
     # Notes
     internal_notes: str | None = None
     patient_notes: str | None = None
+
+    @model_validator(mode="after")
+    def _percentage_at_most_100(self) -> Self:
+        check_percentage_cap(self.global_discount_type, self.global_discount_value)
+        return self
 
 
 class BudgetResponse(BaseModel):

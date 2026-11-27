@@ -51,6 +51,7 @@ signed, invoiced, or renegotiated.
 ## At a glance
 
 - **Net price per line.** Each line shows what the patient pays after the line discount **and** its share of the global discount, with the pre-discount price struck through. The footer discount and VAT follow the same rule (VAT on the discounted base), matching the invoice.
+- **A percentage discount is at most 100 %.** On a line or as the global discount, a higher percentage is refused when you save (#1241). An amount discount larger than the line is simply capped at the line.
 - **Two-column layout.** Left: budget line items with catalog item,
   tooth, surfaces, quantity, discount, and VAT. Right (top to
   bottom): **payments** card (slot `budget.detail.sidebar`, filled
