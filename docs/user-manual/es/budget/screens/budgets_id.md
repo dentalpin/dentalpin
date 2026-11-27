@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: a13bd29
+last_verified_commit: da6d2444
 ---
 
 # Detalle del presupuesto
@@ -85,6 +85,10 @@ Desde aquí se mueve el presupuesto por todo su flujo
    tabla.
 2. Cambia ítem del catálogo, diente, superficies, cantidad,
    descuento o IVA. Los totales se recalculan al guardar.
+   Al añadir un ítem, el **Total línea** del diálogo es el importe
+   que mostrará la línea: con el IVA del ítem del catálogo incluido, y un
+   descuento absoluto nunca lo deja por debajo de cero (el descuento
+   global se aplica después).
 3. Al guardar se publica un `budget.updated` lógico interno (no
    evento aún), pero el invariante de totales se reescribe en el
    backend.

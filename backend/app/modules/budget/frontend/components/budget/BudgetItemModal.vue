@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import type { BudgetItemCreate, TreatmentCatalogItem } from '~~/app/types'
+import type { BudgetItemCreate, TreatmentCatalogItem, VatType } from '~~/app/types'
 import { errorMessage } from '~~/app/utils/error'
+import { budgetLineAmounts } from '../../utils/budgetLineAmounts'
 
 const props = defineProps<{
   open: boolean
@@ -14,6 +15,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n()
 const toast = useToast()
+const api = useApi()
 const { formatPrice } = useCatalog()
 const { addItem } = useBudgets()
 
@@ -33,6 +35,24 @@ const form = reactive<BudgetItemCreate>({
 
 const isSubmitting = ref(false)
 
+// VAT types, to resolve the selected item's rate for the preview. The
+// catalog search returns only `vat_type_id`, and the backend applies the
+// item's VAT type even when it is inactive, so inactive ones are loaded too.
+const vatTypes = ref<VatType[]>([])
+
+async function loadVatTypes() {
+  if (vatTypes.value.length > 0) return
+  try {
+    const response = await api.get<{ data: VatType[] }>('/api/v1/catalog/vat-types', {
+      query: { include_inactive: true },
+      errorToast: false
+    })
+    vatTypes.value = response.data
+  } catch {
+    vatTypes.value = []
+  }
+}
+
 function handleItemSelect(item: TreatmentCatalogItem | null) {
   selectedItem.value = item
   form.catalog_item_id = item?.id || ''
@@ -51,22 +71,18 @@ function toggleSurface(surface: string) {
   }
 }
 
-// Calculate preview total
+// Preview total: the arithmetic of BudgetItemService._calculate_line_totals
+// (#1235) — VAT of the item's VAT type, absolute discount capped at the line.
 const previewTotal = computed(() => {
   if (!selectedItem.value) return 0
-
-  const price = selectedItem.value.default_price || 0
-  const subtotal = price * (form.quantity || 1)
-
-  if (!form.discount_type || !form.discount_value) {
-    return subtotal
-  }
-
-  if (form.discount_type === 'percentage') {
-    return subtotal * (1 - form.discount_value / 100)
-  }
-
-  return subtotal - form.discount_value
+  const vatTypeId = selectedItem.value.vat_type_id
+  const vatRate = vatTypes.value.find(v => v.id === vatTypeId)?.rate || 0
+  return budgetLineAmounts({
+    unit_price: selectedItem.value.default_price || 0,
+    quantity: form.quantity,
+    discount_type: form.discount_type,
+    discount_value: form.discount_value
+  }, vatRate).total
 })
 
 // Submit
@@ -127,6 +143,10 @@ watch(() => props.open, (isOpen) => {
     resetForm()
   }
 })
+
+watch(() => props.open, (isOpen) => {
+  if (isOpen) loadVatTypes()
+}, { immediate: true })
 </script>
 
 <template>
