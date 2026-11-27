@@ -26,9 +26,17 @@ const selectedItems = ref<PlannedTreatmentItem[]>(props.modelValue || [])
 const showSelector = ref(false)
 const searchQuery = ref('')
 
-// Load pending items when patient changes
+// Load pending items when patient changes. Items belong to one patient,
+// so a switch to a different patient drops the previous selection (#1234);
+// the first patient (mount) and a cleared patient keep it.
+let lastPatientId: string | undefined
 watch(() => props.patientId, async (newPatientId) => {
   if (newPatientId) {
+    if (lastPatientId && newPatientId !== lastPatientId && selectedItems.value.length > 0) {
+      selectedItems.value = []
+      emit('update:modelValue', selectedItems.value)
+    }
+    lastPatientId = newPatientId
     await loadPendingItems(newPatientId)
   } else {
     pendingItems.value = []
