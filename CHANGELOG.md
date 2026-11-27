@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Orthodontics:** editing the next-control interval of the latest control now moves the review recall (#1186).
 - **PDFs:** invoice, quote, document and purchase-order PDFs print dates in the PDF language's own format (e.g. `2026. 11. 26.` in Hungarian, `26.11.2026` in German and Polish) instead of always dd/mm/yyyy (#1180).
 - **Patient timeline:** entry headings on the Activity tab now show in the user's language instead of always in Spanish; entries recorded before this change keep their Spanish heading where it embeds a name (#1174).
 - **Notifications:** appointment and quote messages queued by the copilot now include the clinic details, date, time and amounts, and are refused without the appointment or quote (#1181).

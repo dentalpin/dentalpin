@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1186): editing the latest control's next_control_weeks or performed_at now moves the ortho_review recall (same latest-control and paused rules as registration).
 - fix(#1176): the cases list's overdue check reads `next_due` as local midnight (`parseDateOnly`), so west of UTC a case is no longer flagged overdue on its due day.
 
 - fix(#1134): `PATCH /controls/{id}` with `procedures: null` and `PATCH /cases/{id}` with `appliance_type: null` are a 422; a null `procedures` used to be stored as JSON null and break the case's control list (500).
