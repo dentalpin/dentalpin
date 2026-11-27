@@ -19,6 +19,7 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Notifications:** pressing Enter twice in the patient WhatsApp reply box no longer sends the message twice (#1231).
+- **Notifications:** dates in patient emails and WhatsApp texts use the patient's language format (for example `14.01.2026` in German, `2026. 01. 14.` in Hungarian) instead of always `dd/mm/yyyy` (#1211).
 - **Online booking:** the logo field in the public page settings is labelled "Logo" and its button says "Upload PNG, JPG or WebP" instead of repeating the same text twice (#1226).
 - **Budget:** "New budget" opened from the patient card now preselects that patient instead of asking for it again (#1221).
 - **Agenda:** the patient check-in page shows its confirm button, hint and too-early/too-late messages in Arabic, Hindi, Tamil and Telugu instead of English (#1217).

@@ -240,7 +240,7 @@ export function timelineEntryTitle(entry: Entry, { t, te }: TimelineTitleI18n): 
     default:
       if (entry.event_type.startsWith('clinical_notes.') && has('note_type')) {
         const noteType = str(data.note_type)
-        const note = NOTE_TYPES.has(noteType)
+        const note = noteType && NOTE_TYPES.has(noteType)
           ? t(`patients.timeline.titles.notes.${noteType}`)
           : t('patients.timeline.titles.notes.generic')
         const tooth = str(data.tooth_number)
