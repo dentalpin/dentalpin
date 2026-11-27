@@ -126,6 +126,8 @@
       "revocationNotice": "By signing, you revoke the consent shown.",
       "signer": "Signer name",
       "relationship": "Relationship to patient",
+      "idDocument": "ID document",
+      "idDocumentHint": "Required if you sign as a guardian or representative; optional if you are the patient.",
       "patient": "Patient",
       "guardian": "Guardian",
       "representative": "Representative",
@@ -149,7 +151,8 @@
         "archived": "Archived"
       },
       "qrTitle": "Scan to sign",
-      "signedToast": "Consent signed"
+      "signedToast": "Consent signed",
+      "formatHelp": "Formatting: start a line with # (heading) or ## / ### (subheadings), wrap text in **double asterisks** for bold or *single asterisks* for italic, and start lines with - or 1. for lists. A blank line starts a new paragraph. Anything else, including HTML and links, is shown exactly as typed."
     }
   }
 }

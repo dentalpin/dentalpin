@@ -10,12 +10,13 @@
 - Acceptance additionally checks patient and agenda write permissions.
 - Accepting for a new patient requires a non-blank first name and surname, the same rule as `PatientCreate`/`PatientUpdate`; a patient without a surname could not be edited afterwards (#1044).
 - Availability is that of the professional configured in the settings: their `schedules` hours, their active appointments and their live holds. Other professionals' appointments never block. Each request stores that professional (`professional_id`).
-- The configured professional must stay bookable: an active user with a professional membership in the clinic (`bookable_professional`, the same check acceptance uses). Otherwise the public routes answer 404 like a disabled configuration, `reserve` refuses under the lock, and enabling the settings for them is rejected (#1100).
+- The configured professional must stay bookable: an active user with a professional membership in the clinic (`bookable_professional`, the same check acceptance uses). Otherwise the public routes answer 404 like a disabled configuration, `reserve` refuses under the lock, and enabling the settings for them is rejected (#1100). Saving with booking disabled always works: an id that is not a professional of the clinic is then stored as NULL, never kept (#1149).
 - Unconfirmed holds expire after ten minutes; confirmed holds end at decision or start.
 - Booking and agenda writers use the shared transaction-scoped clinic lock from `agenda.locks`.
 - Booking rechecks under the lock on request, confirmation and acceptance. Request and confirmation check the request's professional; acceptance checks the professional and cabinet reception chooses (same professional or same cabinet). Agenda itself does not reject overlaps (#905); a later agenda write can still create one.
 - Confirm tokens are random, hashed at rest, one-use, and transmitted in URL fragments.
 - Emails go through `NotificationGateway.enqueue` in the caller's transaction (types `booking_confirmation`, `booking_rejection`, `force_send`, email channel only); the core outbox delivers after commit. The module has no SMTP, outbox or worker of its own.
+- Each request stores the `language` the visitor sent (`ob_0005`); the confirmation and the rejection both render in it. NULL (no language sent, or older rows) falls back to the clinic's language (#1208).
 - System email templates are seeded by `ob_0003` (es, en; English copy for the other ten locales pending translation). Clinics may override them per locale.
 - The confirmation link is in the queued message context until delivery; cleanup cancels unsent confirmations of closed requests.
 - The installed module schedules expiry, 30-day deletion and 90-day contact erasure.

@@ -4,6 +4,7 @@ import type {
   PatientAlert,
   SystemicDiseaseEntry
 } from '~~/app/types'
+import { parseDateOnly } from '~~/app/utils/wallClock'
 
 export type Severity = AllergyEntry['severity']
 export type BadgeColor = 'error' | 'warning' | 'success' | 'info' | 'neutral'
@@ -149,7 +150,8 @@ export function hasAnyMedicalData(mh: MedicalHistory | null | undefined): boolea
 export function computeAge(dateOfBirth: string | null | undefined): number | null {
   if (!dateOfBirth) return null
   const today = new Date()
-  const birth = new Date(dateOfBirth)
+  // Date-only: local midnight, not UTC (#1176).
+  const birth = parseDateOnly(dateOfBirth)
   let years = today.getFullYear() - birth.getFullYear()
   const m = today.getMonth() - birth.getMonth()
   if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) years--
@@ -163,7 +165,7 @@ export function isMinorPatient(dateOfBirth: string | null | undefined): boolean 
 
 export function formatPatientDate(dateStr: string | null | undefined, locale = 'es-ES'): string | null {
   if (!dateStr) return null
-  const d = new Date(dateStr)
+  const d = parseDateOnly(dateStr)
   if (Number.isNaN(d.getTime())) return null
   return d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' })
 }

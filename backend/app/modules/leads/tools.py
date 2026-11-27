@@ -17,11 +17,17 @@ from __future__ import annotations
 from datetime import date
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, EmailStr, Field, field_validator
 
 from app.core.agents import AgentContext, Tool, ToolCategory
 
-from .schemas import AvailabilitySlot, DayOfWeek, LeadStatus
+from .schemas import (
+    AvailabilitySlot,
+    DayOfWeek,
+    LeadStatus,
+    _strip_optional,
+    _strip_required,
+)
 from .service import LeadIntakeService, LeadService, LeadSettingsService
 
 
@@ -46,7 +52,7 @@ class GetLeadArgs(BaseModel):
 class CreateLeadArgs(BaseModel):
     full_name: str = Field(min_length=1, max_length=200)
     phone: str = Field(min_length=1, max_length=32)
-    email: str | None = Field(default=None, max_length=255)
+    email: EmailStr | None = Field(default=None, max_length=255)
     motive: str = Field(min_length=1, max_length=200)
     description: str | None = Field(default=None, max_length=4000)
     availability_days: list[DayOfWeek] | None = Field(
@@ -56,17 +62,25 @@ class CreateLeadArgs(BaseModel):
         default=None, description="Franja preferida: morning | afternoon | evening."
     )
 
+    # The REST LeadCreate validators, so "   " is not a name (#1187).
+    _strip_name = field_validator("full_name", "phone", "motive")(_strip_required)
+    _strip_free = field_validator("description")(_strip_optional)
+
 
 class UpdateLeadArgs(BaseModel):
     lead_id: UUID
     full_name: str | None = Field(default=None, min_length=1, max_length=200)
     phone: str | None = Field(default=None, min_length=1, max_length=32)
-    email: str | None = Field(default=None, max_length=255)
+    email: EmailStr | None = Field(default=None, max_length=255)
     motive: str | None = Field(default=None, min_length=1, max_length=200)
     description: str | None = Field(default=None, max_length=4000)
     availability_days: list[DayOfWeek] | None = Field(default=None, max_length=7)
     availability_slot: AvailabilitySlot | None = None
     status: LeadStatus | None = None
+
+    # The REST LeadUpdate validators (#1187).
+    _strip_name = field_validator("full_name", "phone", "motive")(_strip_required)
+    _strip_free = field_validator("description")(_strip_optional)
 
 
 class ConvertLeadArgs(BaseModel):
@@ -74,10 +88,14 @@ class ConvertLeadArgs(BaseModel):
     first_name: str = Field(min_length=1, max_length=100)
     last_name: str = Field(min_length=1, max_length=100)
     phone: str | None = Field(default=None, max_length=32)
-    email: str | None = Field(default=None, max_length=255)
+    email: EmailStr | None = Field(default=None, max_length=255)
     national_id: str | None = Field(default=None, max_length=50)
     date_of_birth: date | None = None
     notes: str | None = Field(default=None, max_length=4000)
+
+    # The REST LeadConvertRequest validators (#1187).
+    _strip_names = field_validator("first_name", "last_name")(_strip_required)
+    _strip_rest = field_validator("phone", "national_id")(_strip_optional)
 
 
 class UpdateIntakeSettingsArgs(BaseModel):

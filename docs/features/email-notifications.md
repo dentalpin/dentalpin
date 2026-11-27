@@ -122,7 +122,7 @@ The encryption key is derived from `SECRET_KEY` using PBKDF2.
 | `appointment_confirmation` | Appointment created | Confirms scheduled appointment |
 | `appointment_cancelled` | Appointment cancelled | Notifies cancellation |
 | `appointment_reminder` | Scheduled (cron) | Reminder X hours before |
-| `budget_sent` | Budget sent to patient | Quote details |
+| `budget_sent` | Budget sent to patient | Quote details, the staff custom message and a button to the public quote page (`public_url`, `/p/budget/{token}`) |
 | `budget_accepted` | Budget accepted | Acceptance confirmation |
 | `welcome` | Patient created | Welcome new patient |
 
@@ -260,6 +260,13 @@ Templates use Jinja2 syntax:
 turns it into one line (`street, postal_code city, country`) before rendering, so
 templates print `{{ clinic_address }}` directly. HTML bodies are autoescaped; the
 subject is plain text and renders without escaping.
+
+### Default subject
+
+With no subject from a clinic or system template row, the subject is the
+file template's `{% block title %}`, rendered as plain text in the same
+locale (`Appointment reminder - Clínica Demo`). Every file template ships one.
+If none renders, the subject is the clinic name, never the template key (#1204).
 
 ### Database Template Override
 

@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#1183): the copilot `record_payment` tool now applies the REST allocation checks (budget needs `target_id`, on-account forbids it, allocations must sum to the amount) and refuses a bad call before touching the database.
+- fix(#1152): earned rows from completed treatment-plan sessions now carry the completing user as `professional_id` (payload key `completed_by`), so Payments → By professional credits them. Rows booked earlier keep `professional_id = NULL`; no backfill.
+
 - fix(#1033): `GET /payments` takes `search` (patient name / reference) and a repeated `method`, applied in SQL before pagination; the list page sends them instead of filtering the current page in the browser.
 
 - fix(#989): payment, allocation and refund amounts (REST and the `record_payment` tool) accept at most two decimals (422 otherwise). A sub-cent value passed the sum check and was rounded per column, so 50.005 + 50.005 stored 100.02 of allocations against a 100.01 payment. The client rounds the amounts it computes (budget collection split, pending-charges total) to cents, so float noise like `20.200000000000003` is never sent.

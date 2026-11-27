@@ -122,6 +122,46 @@ async def test_pt_br_clinic_rejection_uses_the_pt_template(
 
 
 @pytest.mark.asyncio
+async def test_rejection_uses_the_language_the_visitor_booked_in(
+    client, db_session, auth_headers, test_clinic, open_hours, delivery
+):
+    """An English request at a Spanish clinic is rejected in English too (#1208)."""
+    from app.core.auth.models import Clinic
+
+    clinic = await db_session.get(Clinic, test_clinic.id)
+    clinic.settings = {**(clinic.settings or {}), "communication_language": "es"}
+    configured = await professional(db_session, test_clinic.id)
+    await configure(db_session, test_clinic.id, configured.id)
+    response = await client.post(
+        f"/api/v1/online_booking/public/{test_clinic.id}/requests",
+        json={
+            "start_time": tomorrow_at(16).isoformat(),
+            "contact_name": "Synthetic",
+            "contact_email": "visitor-en@example.com",
+            "language": "en",
+            "contact_phone": "+34600123456",
+            "reason": "checkup",
+            "altcha": proof_for(test_clinic.id),
+        },
+    )
+    assert response.status_code == 201, response.text
+    row = await db_session.scalar(select(BookingRequest))
+    response = await client.post(
+        f"/api/v1/online_booking/requests/{row.id}/reject",
+        json={"message": "Please call us"},
+        headers={**auth_headers, "X-Clinic-ID": str(test_clinic.id)},
+    )
+    assert response.status_code == 200, response.text
+    assert await dispatch(db_session) == 2
+    db_session.expire_all()
+    rejection = await db_session.scalar(
+        select(CommunicationMessage).where(CommunicationMessage.template_key == "booking_rejection")
+    )
+    assert rejection.context_data["locale"] == "en"
+    assert delivery[-1].subject.startswith("Update on your appointment request at ")
+
+
+@pytest.mark.asyncio
 async def test_cleanup_cancels_a_queued_confirmation_for_a_closed_request(
     client, db_session, test_clinic, open_hours, delivery
 ):

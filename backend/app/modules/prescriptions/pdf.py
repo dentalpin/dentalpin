@@ -14,6 +14,8 @@ from datetime import UTC, datetime
 from typing import Any
 from zoneinfo import ZoneInfo
 
+from app.core.pdf_locales import pdf_date_format
+
 
 def _e(value: Any) -> str:
     return html.escape("" if value is None else str(value))
@@ -44,7 +46,6 @@ def _get_labels(locale: str) -> dict[str, str]:
         "prescriber": "Prescriptor",
         "license": "N.º de colegiado",
         "signature": "Firma",
-        "date_format": "%d/%m/%Y",
         "medication": "Medicamento",
         "dose": "Dosis",
         "route": "Vía",
@@ -62,7 +63,6 @@ def _get_labels(locale: str) -> dict[str, str]:
         "prescriber": "Prescriber",
         "license": "License no.",
         "signature": "Signature",
-        "date_format": "%d/%m/%Y",
         "medication": "Medication",
         "dose": "Dose",
         "route": "Route",
@@ -76,7 +76,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_fr = {
         "title": "Ordonnance",
         "signature": "Signature",
-        "date_format": "%d/%m/%Y",
         "date": "Date",
         "patient": "Patient",
         "prescriber": "Prescripteur",
@@ -94,7 +93,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_pt = {
         "title": "Receita médica",
         "signature": "Assinatura",
-        "date_format": "%d/%m/%Y",
         "date": "Data",
         "patient": "Paciente",
         "prescriber": "Prescritor",
@@ -112,7 +110,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_de = {
         "title": "Rezept",
         "signature": "Unterschrift",
-        "date_format": "%d.%m.%Y",
         "date": "Datum",
         "patient": "Patient",
         "prescriber": "Verordnende Person",
@@ -130,7 +127,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_hu = {
         "title": "Recept",
         "signature": "Aláírás",
-        "date_format": "%Y. %m. %d.",
         "date": "Dátum",
         "patient": "Páciens",
         "prescriber": "Felíró orvos",
@@ -148,7 +144,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_pl = {
         "title": "Recepta",
         "signature": "Podpis",
-        "date_format": "%d.%m.%Y",
         "date": "Data",
         "patient": "Pacjent",
         "prescriber": "Wystawiający",
@@ -166,7 +161,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_it = {
         "title": "Ricetta medica",
         "signature": "Firma",
-        "date_format": "%d/%m/%Y",
         "date": "Data",
         "patient": "Paziente",
         "prescriber": "Prescrittore",
@@ -184,7 +178,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_ar = {
         "title": "وصفة طبية",
         "signature": "التوقيع",
-        "date_format": "%d/%m/%Y",
         "date": "التاريخ",
         "patient": "المريض",
         "prescriber": "الطبيب الواصف",
@@ -202,7 +195,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_ta = {
         "title": "மருந்துச்சீட்டு",
         "signature": "கையொப்பம்",
-        "date_format": "%d/%m/%Y",
         "date": "தேதி",
         "patient": "நோயாளி",
         "prescriber": "பரிந்துரைத்த மருத்துவர்",
@@ -220,7 +212,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_te = {
         "title": "ప్రిస్క్రిప్షన్",
         "signature": "సంతకం",
-        "date_format": "%d/%m/%Y",
         "date": "తేదీ",
         "patient": "రోగి",
         "prescriber": "సూచించిన వైద్యుడు",
@@ -238,7 +229,6 @@ def _get_labels(locale: str) -> dict[str, str]:
     labels_hi = {
         "title": "पर्चा",
         "signature": "हस्ताक्षर",
-        "date_format": "%d/%m/%Y",
         "date": "तिथि",
         "patient": "मरीज़",
         "prescriber": "पर्चा लिखने वाले चिकित्सक",
@@ -290,7 +280,9 @@ def build_pdf_data(
     status mark instead of being refused — a cancelled copy stays
     printable for the record.
     """
-    labels = _get_labels(locale)
+    # The date pattern is the one every PDF shares (#1180); a hook may
+    # still override it like any caption.
+    labels = {**_get_labels(locale), "date_format": pdf_date_format(locale)}
     labels = {**labels, **(label_overrides or {})}
     status = getattr(prescription, "status", "issued")
     # ``issued_at`` is timestamptz, i.e. UTC: printed in UTC, a prescription

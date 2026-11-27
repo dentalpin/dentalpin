@@ -629,7 +629,8 @@ class InvoiceWorkflowService:
             billing_address=original_invoice.billing_address,
             billing_email=original_invoice.billing_email,
             internal_notes=f"Nota de crédito por: {reason}",
-            public_notes=f"Rectificación de factura {original_invoice.invoice_number}",
+            # No public note: the PDF already prints the localized
+            # "corrects invoice X" reference line (#1179).
             created_by=created_by,
         )
         db.add(credit_note)

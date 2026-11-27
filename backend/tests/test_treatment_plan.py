@@ -1695,6 +1695,61 @@ async def test_odontogram_perform_after_a_session_books_only_the_rest(
 
 
 @pytest.mark.asyncio
+async def test_session_earned_row_credits_the_completing_professional(
+    client: AsyncClient,
+    auth_headers: dict,
+    setup_multi_session: dict,
+    db_session: AsyncSession,
+):
+    """#1152: a completed session's earned row carries the user who completed it.
+
+    The session event names the user ``completed_by``; payments only read
+    ``performed_by`` / ``professional_id``, so every plan session landed on
+    the "no professional" row of Payments → By professional.
+    """
+    from datetime import date, timedelta
+    from uuid import UUID
+
+    from app.modules.payments.models import PatientEarnedEntry
+    from app.modules.payments.service import PaymentReportsService
+
+    plan_id, item_id, sessions = await _add_multi_session_item(
+        client, auth_headers, db_session, setup_multi_session
+    )
+    r = await client.patch(
+        f"/api/v1/treatment_plan/treatment-plans/{plan_id}/items/{item_id}"
+        f"/sessions/{sessions[0]['id']}/complete",
+        headers=auth_headers,
+        json={},
+    )
+    assert r.status_code == 200, r.text
+    treatment_id = await _item_treatment_id(client, auth_headers, plan_id, item_id)
+    await db_session.commit()
+
+    user_id = UUID(setup_multi_session["user_id"])
+    row = (
+        await db_session.execute(
+            select(PatientEarnedEntry).where(
+                PatientEarnedEntry.treatment_id == treatment_id,
+                PatientEarnedEntry.source_session_id == sessions[0]["id"],
+            )
+        )
+    ).scalar_one()
+    assert row.professional_id == user_id
+
+    today = date.today()
+    breakdown = await PaymentReportsService.by_professional(
+        db_session,
+        UUID(setup_multi_session["clinic_id"]),
+        today - timedelta(days=1),
+        today + timedelta(days=1),
+    )
+    by_prof = {b.professional_id: b.total_earned for b in breakdown}
+    assert by_prof.get(user_id) == Decimal("200.00")
+    assert None not in by_prof
+
+
+@pytest.mark.asyncio
 async def test_odontogram_perform_refused_after_the_sessions_finalized_the_item(
     client: AsyncClient,
     auth_headers: dict,
@@ -2353,3 +2408,30 @@ async def test_visit_completion_on_a_draft_plan_keeps_the_ungated_status_flip(
     assert item["status"] == "completed"
     assert all(s["status"] == "pending" for s in item["sessions"])
     assert await _earned_by_session(db_session, treatment_id) == {}
+
+
+@pytest.mark.asyncio
+async def test_pipeline_row_carries_patient_phone(
+    client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """The pipeline's Call / WhatsApp buttons render only with a phone (#1161)."""
+    base = "/api/v1/treatment_plan/treatment-plans"
+    patient = await client.put(
+        f"/api/v1/patients/{setup['patient_id']}",
+        headers=auth_headers,
+        json={"phone": "+34666333444"},
+    )
+    assert patient.status_code == 200, patient.text
+    plan = await client.post(base, headers=auth_headers, json={"patient_id": setup["patient_id"]})
+    assert plan.status_code == 201, plan.text
+    closed = await client.post(
+        f"{base}/{plan.json()['data']['id']}/close",
+        headers=auth_headers,
+        json={"closure_reason": "cancelled_by_clinic"},
+    )
+    assert closed.status_code == 200, closed.text
+
+    tab = await client.get(f"{base}/pipeline", headers=auth_headers, params={"tab": "cerrados"})
+    assert tab.status_code == 200, tab.text
+    row = next(r for r in tab.json()["data"] if r["plan_id"] == plan.json()["data"]["id"])
+    assert row["patient"]["phone"] == "+34666333444"

@@ -115,6 +115,9 @@ DSRs).
 | `list_breaches` | READ | `DataBreachService.list` | `gdpr.breaches.read` |
 
 All tools filter by `ctx.clinic_id` and return native values (UUID/datetime).
+`execute_partial_erasure` records `executed_by=ctx.supervisor_id` (the person
+who confirmed, as the route records the user) and refuses when the context has
+no supervisor (#1187).
 
 ## Events published
 

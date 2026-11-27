@@ -72,6 +72,18 @@
 <p><strong>Osservazioni:</strong> {{ notes }}</p>
 {% endif %}
 
+{% if custom_message %}
+<div class="alert alert-info">
+    {{ custom_message }}
+</div>
+{% endif %}
+
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Consultare il mio preventivo</a>
+</div>
+{% endif %}
+
 <p>Se ha domande sul preventivo o desidera programmare il trattamento, non esiti a contattarci.</p>
 
 {% if clinic_phone %}
