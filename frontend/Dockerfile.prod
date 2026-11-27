@@ -18,8 +18,10 @@ COPY frontend/ ./
 # `/modules/-/active` decide what is visible at runtime.
 RUN node scripts/modules-json.mjs /module_layers
 
-# ponytail: 34 module layers × growing locale set pushed the Nitro build past 4GB
-ENV NODE_OPTIONS="--max-old-space-size=6144"
+# ponytail: 55 module layers x 13 locales need ~5.5GB of heap in the Nitro
+# step even without sourcemaps (nuxt.config); 7GB leaves headroom on the
+# 7.6GB Coolify host. Next ceiling: split the build or trim what Nitro bundles.
+ENV NODE_OPTIONS="--max-old-space-size=7168"
 RUN npm run build
 
 
