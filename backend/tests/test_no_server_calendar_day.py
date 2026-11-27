@@ -1,7 +1,7 @@
 """Calendar dates come from the clinic's day, never the server's.
 
 The server runs on UTC. ``date.today()`` and ``datetime.now(UTC).date()``
-(or ``.year`` / ``.month``) are the UTC day, which differs from the
+(or ``.year`` / ``.month`` / ``.strftime(...)``) are the UTC day, which differs from the
 clinic's for hours every day: from 18:00 in a UTC-6 clinic it is already
 tomorrow, so a quote valid until today read as expired. Use
 ``clinic_today`` / ``clinic_today_for`` from ``app.core.utils.dates``.
@@ -41,10 +41,19 @@ def _is_server_day(node: ast.AST) -> bool:
         and node.func.value.id == "date"
     ):
         return True
-    # datetime.now() / datetime.now(UTC) followed by .date() / .year / .month.
+    # datetime.now() / datetime.now(UTC) followed by .date() / .year / .month,
+    # or formatted with .strftime(...) (#1148). A format ending in "Z" says
+    # it is UTC (a file-name timestamp), so it is not a calendar day.
     # datetime.now(<clinic zone>) is the clinic's day and is fine.
     target = node.func if isinstance(node, ast.Call) else node
-    if isinstance(target, ast.Attribute) and target.attr in ("date", "year", "month"):
+    if isinstance(target, ast.Attribute) and target.attr == "strftime":
+        # Judged on the call, where the format is visible.
+        if not isinstance(node, ast.Call):
+            return False
+        fmt = node.args[0] if node.args else None
+        if isinstance(fmt, ast.Constant) and isinstance(fmt.value, str) and fmt.value.endswith("Z"):
+            return False
+    if isinstance(target, ast.Attribute) and target.attr in ("date", "year", "month", "strftime"):
         inner = target.value
         if not (
             isinstance(inner, ast.Call)

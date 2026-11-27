@@ -27,7 +27,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/recalls/frontend/pages/recalls/index.vue
   - backend/app/modules/recalls/router.py
-last_verified_commit: b40a1d2
+last_verified_commit: dd87ef44
 ---
 
 # Call list
@@ -76,7 +76,8 @@ move the recall to its next state.
 
 1. Use the **⋮** row menu for ad-hoc actions:
    - **Snooze N months** — pushes `due_month` and keeps the recall
-     pending. Publishes `recall.snoozed`.
+     pending. Publishes `recall.snoozed`. A snooze note is added under
+     the row as `<clinic's date> (<your name>): snoozed +Nmo · <note>`.
    - **Done** — marks the recall as completed. Publishes
      `recall.completed`.
    - **Cancel** — drops the recall from the active queue. Publishes
