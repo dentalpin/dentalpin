@@ -991,10 +991,10 @@
       "openTitle": "क्लिनिक चेक-इन",
       "success": "आपका चेक-इन हो गया है। कृपया बैठ जाएँ।",
       "invalid": "यह चेक-इन कोड अमान्य है या समाप्त हो चुका है। कृपया रिसेप्शन से नया कोड लें।",
-      "confirm": "I'm here",
-      "confirmHint": "Press the button to confirm your arrival.",
-      "tooEarly": "It's too early to check in. Your appointment is at {time}.",
-      "tooLate": "Check-in for this appointment is closed. Please ask at reception."
+      "confirm": "मैं यहाँ हूँ",
+      "confirmHint": "अपने आगमन की पुष्टि के लिए बटन दबाएँ।",
+      "tooEarly": "चेक-इन के लिए अभी बहुत जल्दी है। आपका अपॉइंटमेंट {time} पर है।",
+      "tooLate": "इस अपॉइंटमेंट के लिए चेक-इन बंद हो चुका है। कृपया रिसेप्शन पर पूछें।"
     },
     "create": "नया अपॉइंटमेंट",
     "edit": "अपॉइंटमेंट संपादित करें",
