@@ -14,6 +14,15 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Billing / GDPR / Inventory / Leads / Patients / Patient clinical / Payroll / Staff tasks:** an explicit null on a required update field (33 fields, e.g. patient first name, lead status, payroll entry gross) is now refused with a 422 instead of a 500 or a wrong 409 (#1151).
+- **Notifications:** a reminder sent by hand from the appointment now includes the check-in link (#1156).
+- **Patient timeline:** clinical and administrative notes written on an appointment now appear on the patient's timeline (#1155).
+- **Payments:** revenue from completed treatment-plan sessions is now credited to the professional who completed the session in the "By professional" report; sessions completed before this fix stay under no professional (#1152).
+- **Notifications:** the recall reminder email shows the clinic phone (with its call-to-book button) and address; cancellation and budget emails show the clinic address in the footer (#1154).
+- **Notifications:** patient emails end with the footer in their own language instead of Spanish, and the welcome email no longer shows made-up opening hours (#1153).
+- **Billing:** the invoice Send dialog no longer says the patient has no phone; WhatsApp is offered when they have one (#1160).
+- **Online booking:** booking can be switched off again after its assigned professional left the clinic (#1149).
+- **Recalls:** a snooze note now shows the clinic's date and who wrote it, not the UTC date and a user ID (#1148).
+- **Odontogram:** the Diagnoses card on the patient summary shows the tooth number and surfaces of each pending treatment (e.g. "Corona #16") instead of only the treatment name (#1162).
 - **Copilot:** the Pendientes tab now says when a group has more items than it shows ("Showing 20 of 35 · See all") and links to the full list, instead of silently stopping at 30 recalls and 20 budgets (#1137).
 - **Notifications:** quote and invoice emails show amounts in the clinic's currency with the language's separators (e.g. `1.300,00 €`, `€1,300.00`, `₹1,300.00`), and invoice emails are queued again (#1133).
 - **Notifications:** a pt-BR clinic or patient gets the Portuguese (pt) template instead of a failed send, for example the online booking rejection email (#1136).

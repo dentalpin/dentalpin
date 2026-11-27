@@ -40,6 +40,8 @@ class PatientBrief(BaseModel):
     first_name: str
     last_name: str
     email: str | None = None
+    # The Send dialog offers WhatsApp only when the phone is present (#1160).
+    phone: str | None = None
     # Billing fields for draft invoices (dynamic billing data)
     billing_name: str | None = None
     billing_tax_id: str | None = None
