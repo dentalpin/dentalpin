@@ -8,6 +8,8 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
 
+from app.core.schemas import NotNull
+
 TaskStatus = Literal["open", "claimed", "done", "cancelled"]
 TaskPriority = Literal["low", "normal", "high"]
 
@@ -21,10 +23,11 @@ class StaffTaskCreate(BaseModel):
 
 
 class StaffTaskUpdate(BaseModel):
-    title: str | None = Field(default=None, min_length=1, max_length=200)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    title: NotNull[str] = Field(default=None, min_length=1, max_length=200)
     details: str | None = Field(default=None, max_length=5000)
-    priority: TaskPriority | None = None
-    status: TaskStatus | None = None
+    priority: NotNull[TaskPriority] = None
+    status: NotNull[TaskStatus] = None
     assignee_id: UUID | None = None
     due_date: date | None = None
 

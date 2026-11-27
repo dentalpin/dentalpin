@@ -1680,8 +1680,7 @@
       "label": "Etichetta",
       "labelPlaceholder": "es. Impronte",
       "price": "Importo",
-      "add": "Aggiungi seduta",
-      "sumStatus": "Somma {sum} € · Totale {total} €"
+      "add": "Aggiungi seduta"
     },
     "categoryCreated": "Categoria creata",
     "categoryUpdated": "Categoria aggiornata",

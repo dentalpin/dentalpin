@@ -119,7 +119,12 @@ permissions (clinic-profile concern), not a module permission.
 
 `document_type` is a `Literal` constrained to the four supported
 types; `created_by` is attributed via `ctx.supervisor_id` (the human
-in the loop, same convention as `agenda`/`payments`). Returns
+in the loop, same convention as `agenda`/`payments`). The handler
+builds `DocumentCreate`, so `content` is validated against
+`CONTENT_SCHEMAS` and dates are normalised exactly as on
+`POST /documents`; a payload that does not fit returns
+`{"error": "invalid", "detail": ...}` and nothing is stored (#1182).
+`title` is capped at 200 in the arg schema. Returns
 structured metadata only — no free prose — so it stays cloud-eligible
 (no `exposes_free_text`).
 

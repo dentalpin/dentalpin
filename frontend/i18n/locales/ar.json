@@ -1680,8 +1680,7 @@
       "label": "التسمية",
       "labelPlaceholder": "مثال: الطبعات",
       "price": "المبلغ",
-      "add": "إضافة جلسة",
-      "sumStatus": "المجموع {sum} € · الإجمالي {total} €"
+      "add": "إضافة جلسة"
     },
     "categoryCreated": "أُنشئت الفئة",
     "categoryUpdated": "حُدثت الفئة",

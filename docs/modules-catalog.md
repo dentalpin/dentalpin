@@ -42,7 +42,7 @@ Maintained by `backend/scripts/generate_catalogs.py`. CI fails if a manifest cha
 | `patient_intake` | 0.1.0 | community | patients, patients_clinical, gdpr, notifications | manual | no | 5 | 1 | 0 | no |
 | `patient_relationships` | 0.2.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
 | `patient_segments` | 0.1.0 | community | patients | manual | yes | 2 | 0 | 0 | yes |
-| `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 41 | yes |
+| `patient_timeline` | 0.1.0 | official | patients | auto | no | 1 | 0 | 43 | yes |
 | `patients` | 0.1.0 | official | — | auto | no | 2 | 4 | 0 | yes |
 | `patients_clinical` | 0.1.0 | official | patients | auto | no | 4 | 1 | 0 | yes |
 | `payment_gateways` | 0.1.0 | official | patients, budget, payments | manual | yes | 0 | 0 | 0 | no |
@@ -831,6 +831,8 @@ Patient timeline — unified activity log.
   - `budget.sent`
   - `budget.viewed`
   - `clinical_notes.administrative_created`
+  - `clinical_notes.appointment_administrative_created`
+  - `clinical_notes.appointment_clinical_created`
   - `clinical_notes.diagnosis_created`
   - `clinical_notes.plan_created`
   - `clinical_notes.treatment_created`

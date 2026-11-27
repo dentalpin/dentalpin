@@ -16,7 +16,7 @@ from uuid import UUID
 from sqlalchemy import and_, case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.core.auth.models import ClinicMembership
+from app.core.auth.models import ClinicMembership, User
 from app.core.events import event_bus
 from app.core.events.types import EventType
 from app.core.utils.dates import clinic_today_for, clinic_zone_for
@@ -48,6 +48,16 @@ class RecallReferenceError(ValueError):
     """An appointment or professional id that isn't this clinic's (or, for an
     appointment, this patient's). Both columns are plain FKs, so an unknown id
     was a 500 and another clinic's id was stored."""
+
+
+async def _author_name(db: AsyncSession, user_id: UUID) -> str:
+    """The user's display name for a note stamp (the id if the user is gone)."""
+    row = (
+        await db.execute(select(User.first_name, User.last_name).where(User.id == user_id))
+    ).one_or_none()
+    if row is None:
+        return str(user_id)
+    return f"{row.first_name} {row.last_name}".strip() or str(user_id)
 
 
 async def _check_professional(db: AsyncSession, clinic_id: UUID, user_id: UUID | None) -> None:
@@ -399,12 +409,12 @@ class RecallService:
             return None
         recall.due_month = _add_months(recall.due_month, months)
         if reason_note:
-            stamp = (
-                datetime.now(UTC).strftime("%Y-%m-%d")
-                + " ("
-                + (str(by_user) if by_user else "system")
-                + "): "
-            )
+            # The clinic's day and the author's name: the server's UTC day
+            # is off by one for hours daily, and a raw UUID tells staff
+            # nothing while eating the clamped note (#1148).
+            day = datetime.now(await clinic_zone_for(db, clinic_id)).strftime("%Y-%m-%d")
+            author = await _author_name(db, by_user) if by_user else "system"
+            stamp = f"{day} ({author}): "
             recall.reason_note = (
                 (recall.reason_note + "\n" if recall.reason_note else "")
                 + stamp

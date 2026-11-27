@@ -493,6 +493,11 @@ async def send_notification(
         context["appointment_id"] = str(appointment.id)
         context["appointment_start_at"] = appointment.start_time.isoformat()
         context.update(appointment_when_context(appointment.start_time, clinic))
+        if data.notification_type == "appointment_reminder":
+            # Same day-valid check-in link the sweep puts in (ADR 0037, #1156).
+            from app.modules.notifications.tasks import _reminder_checkin_url
+
+            context["checkin_url"] = _reminder_checkin_url(appointment, clinic)
 
         # Get professional
         if appointment.professional_id:

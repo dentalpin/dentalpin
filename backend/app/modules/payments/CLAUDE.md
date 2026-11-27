@@ -103,6 +103,12 @@ Idempotency is DB-level: `uq_earned_treatment_session` (session rows) +
 partial index `uq_earned_treatment_null_session` (NULL rows, `pay_0004`
 — plain unique constraints treat NULLs as distinct).
 
+**Professional attribution.** `PatientEarnedEntry.professional_id` (what
+`/reports/by-professional` groups on) is the first of `performed_by`
+(odontogram), `professional_id`, `completed_by` (treatment_plan session)
+in the payload. Session rows booked before #1152 read only the first two
+and keep `professional_id = NULL`; they are not backfilled.
+
 ## Frontend slots rendered
 
 Entry points for payment-*gateway* modules (#365 / #263, ADR 0010).
