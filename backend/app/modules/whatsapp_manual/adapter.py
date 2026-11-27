@@ -11,6 +11,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic
+from app.core.pdf_locales import format_pdf_date
 from app.modules.notifications.channels import AdapterResult, Channel, OutboundMessage, SendStatus
 from app.modules.notifications.models import ClinicChannelSettings
 
@@ -76,7 +77,8 @@ class ManualWhatsAppAdapter:
                     clinic = await db.get(Clinic, msg.clinic_id)
                     if clinic and start.utcoffset() is not None:
                         local_start = start.astimezone(ZoneInfo(clinic.timezone))
-                        context["appointment_date"] = local_start.strftime("%d/%m/%Y")
+                        # In the order of the locale the draft renders in (#1211).
+                        context["appointment_date"] = format_pdf_date(local_start, msg.locale)
                         context["appointment_time"] = local_start.strftime("%H:%M")
                 plain = _templates.from_string(plain).render(**context)
         except (TemplateError, ValueError):
