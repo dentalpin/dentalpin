@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { parseDateOnly } from '~~/app/utils/wallClock'
 
 // Slot entry into `patient.summary.actions`. `<ModuleSlot>` passes
 // the slot ctx as a single `ctx` prop. Reads `do_not_contact` to
@@ -46,7 +47,7 @@ function formatMonth(iso: string): string {
   return new Intl.DateTimeFormat(locale.value, {
     year: 'numeric',
     month: 'long'
-  }).format(new Date(iso))
+  }).format(parseDateOnly(iso))
 }
 
 function statusColour(status: string): 'success' | 'info' | 'warning' | 'neutral' {

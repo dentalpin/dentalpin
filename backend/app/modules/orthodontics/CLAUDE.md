@@ -85,8 +85,10 @@ drives the recall upsert.
   membership validated (L32); only the case's named orthodontist
   needs the professional flag.
 - **Next-due is computed, not stored** — inbox overdue tab derives from
-  the latest control; the `ortho_review` recall upsert (duplicate-guarded)
-  fires on control save except while paused.
+  the latest control; the `ortho_review` recall upsert (duplicate-guarded,
+  `_upsert_next_control_recall`) fires on control save except while paused.
+  Editing the latest control's `next_control_weeks` / `performed_at`
+  re-runs it (#1186); editing an older control does not.
 - **Collection never happens here** — the widget deep-links to
   `/payments?patient_id=`; session completion books the money (ADR 0010).
 

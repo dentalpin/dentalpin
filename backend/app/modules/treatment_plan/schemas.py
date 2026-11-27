@@ -149,6 +149,13 @@ class PipelineNextAppointment(BaseModel):
     professional_id: UUID | None = None
 
 
+class PipelinePatientBrief(PatientBrief):
+    """The pipeline row's patient: its Call / WhatsApp actions need the
+    phone (#1161). The plan detail keeps the lean ``PatientBrief``."""
+
+    phone: str | None = None
+
+
 class PipelineRow(BaseModel):
     """One row in the bandeja de planes (``GET /pipeline``)."""
 
@@ -160,7 +167,7 @@ class PipelineRow(BaseModel):
     closure_reason: str | None = None
     items_total: int
     items_completed: int
-    patient: PatientBrief
+    patient: PipelinePatientBrief
     budget: PipelineBudgetBrief | None = None
     next_appointment: PipelineNextAppointment | None = None
 
