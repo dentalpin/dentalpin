@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import type { RecallReason, RecallPriority, Recall } from '../composables/useRecalls'
 import { errorDetail } from '~~/app/utils/error'
+import { parseDateOnly } from '~~/app/utils/wallClock'
 
 interface Props {
   open: boolean
@@ -89,7 +90,7 @@ const priorities = computed(() => [
 
 const dueMonthLabel = computed(() => {
   const iso = dueMonth.value.length === 7 ? `${dueMonth.value}-01` : dueMonth.value
-  const d = new Date(iso)
+  const d = parseDateOnly(iso)
   return new Intl.DateTimeFormat(locale.value, {
     year: 'numeric',
     month: 'long'

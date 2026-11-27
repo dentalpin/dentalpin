@@ -106,11 +106,16 @@ class PatientTimelineModule(BaseModule):
             EventType.PHOTO_UPLOADED: events.on_photo_uploaded,
             EventType.PAIR_CREATED: events.on_pair_created,
             # Clinical notes (clinical_notes module — single handler covers
-            # administrative / diagnosis / treatment / treatment_plan).
+            # administrative / diagnosis / treatment / treatment_plan and the
+            # two appointment-owned note types).
             EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED: events.on_clinical_note_created,
             EventType.CLINICAL_NOTE_DIAGNOSIS_CREATED: events.on_clinical_note_created,
             EventType.CLINICAL_NOTE_TREATMENT_CREATED: events.on_clinical_note_created,
             EventType.CLINICAL_NOTE_PLAN_CREATED: events.on_clinical_note_created,
+            EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED: events.on_clinical_note_created,
+            EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED: (
+                events.on_clinical_note_created
+            ),
             EventType.AGENDA_VISIT_NOTE_UPDATED: events.on_visit_note_updated,
             EventType.TREATMENT_PLAN_ITEM_COMPLETED_WITHOUT_NOTE: (
                 events.on_item_completed_without_note

@@ -25,10 +25,12 @@
 </div>
 {% endif %}
 
+{% if clinic_hours %}
 <div class="info-box">
     <div class="label">Rendelési időnk</div>
-    <div class="value">{{ clinic_hours | default('Hétfőtől péntekig: 9:00 – 20:00') }}</div>
+    <div class="value">{{ clinic_hours }}</div>
 </div>
+{% endif %}
 
 <p>Ha bármilyen kérdése van, forduljon hozzánk bizalommal. Örömmel segítünk.</p>
 

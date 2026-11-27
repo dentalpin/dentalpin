@@ -92,6 +92,9 @@ async def _on_recall_created(payload: dict, *, db: AsyncSession) -> None:
         context = {
             "patient_name": f"{patient.first_name} {patient.last_name}",
             "clinic_name": clinic.name if clinic else "DentalPin",
+            # The template's "book" button and footer need these (#1154).
+            "clinic_phone": clinic.phone if clinic else None,
+            "clinic_address": clinic.address if clinic else None,
             # The payload keeps the code; the message gets its label (#1135).
             "reason": reason_label(payload.get("reason"), locale),
             "due_month": _humanize_due_month(payload.get("due_month"), locale),

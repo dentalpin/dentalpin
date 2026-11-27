@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- fix(#1182): the copilot's `generate_document` tool validates `content` per document type and caps `title` at 200 through `DocumentCreate`, like `POST /documents`; a bad payload returns an `invalid` tool error instead of creating a document.
+
 - fix(#1042): a failed signature submit keeps the form and offers a retry; only 404 / 409 mean the link is spent.
 - fix(#1040): the consent and revocation PDFs print the consent's title.
 - fix(#1039): the PDF footer sits in the page's bottom margin; it printed over the text of every full page.

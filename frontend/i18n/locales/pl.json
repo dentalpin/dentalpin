@@ -1680,8 +1680,7 @@
       "label": "Nazwa",
       "labelPlaceholder": "np. Wyciski",
       "price": "Kwota",
-      "add": "Dodaj sesję",
-      "sumStatus": "Suma {sum} € · Razem {total} €"
+      "add": "Dodaj sesję"
     },
     "categoryCreated": "Kategoria utworzona",
     "categoryUpdated": "Kategoria zaktualizowana",

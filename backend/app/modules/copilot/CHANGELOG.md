@@ -2,6 +2,9 @@
 
 ## Unreleased
 
+- fix(#1177): copilot amounts without an explicit currency (Pendientes budgets, billing report, invoices, expenses) now use the clinic currency instead of always euros, and counts such as `total_patients`, `total_appointments`, `completed_total` or a list's `total` render as numbers, not money.
+
+- fix(#1104): the system prompt now ends with the clinic's current date, time and time zone, built on every turn (`drive_turn` and `resume_turn`) from the clinic's clock, not the server's. "Hoy" and "mañana" used to resolve with no date at all, and appointment times came back in a zone the model was never told.
 - fix(#1137): Pendientes no longer stops silently at 30 overdue recalls / 20 sent budgets. `GET /pending` now returns `{items, sections}`: each source is fetched with an explicit limit (20) and its section carries the real `total` and a link to the full filtered list; the drawer shows "Showing N of M · See all".
 
 - fix(#1093): a confirmed write, its audit row and its tool result are committed before the follow-up model call, so a provider failure no longer rolls back a write shown as done, and a retry replays it instead of running it again.
