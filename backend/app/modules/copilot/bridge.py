@@ -77,6 +77,10 @@ async def _system_prompt(db: AsyncSession, clinic_id: UUID, *, now: datetime | N
     "Today" is the clinic's day, not the server's (UTC), so "hoy" and
     "mañana" resolve on the clinic's calendar, and naive times the model
     sends are clinic-local, the same contract as the agenda tools.
+
+    The clock line changes every minute, so it goes last. If providers get
+    a ``cache_control`` breakpoint later, put it on ``SYSTEM_PROMPT`` and
+    keep this line after it, or the cached prefix misses every minute.
     """
     zone = await clinic_zone_for(db, clinic_id)
     local = (now or datetime.now(UTC)).astimezone(zone)
