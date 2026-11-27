@@ -223,3 +223,79 @@ async def test_numbering_gaps_are_grouped_by_fiscal_year(
     assert set(by_year) == {2026, 2027}
     assert by_year[2026]["missing_numbers"] == [2]
     assert by_year[2027]["missing_numbers"] == [1]
+
+
+@pytest.mark.asyncio
+async def test_turning_yearly_reset_on_mid_year_carries_the_counter_on(
+    db_session: AsyncSession, test_clinic: Clinic
+) -> None:
+    """#1184: a continuous series' ``last_reset_year`` is its creation year,
+    so switching ``reset_yearly`` on in a later year made the next
+    ``generate_number`` restart at 1 mid-year (FAC-2027-0001 after
+    FAC-2027-0003), and the one after collided with FAC-2027-0002."""
+    patient = await _patient(db_session, test_clinic)
+    series = await _series(db_session, test_clinic, reset_yearly=False, last_reset_year=2026)
+    await _issue(db_session, test_clinic, patient, date(2026, 12, 31))
+    await _issue(db_session, test_clinic, patient, date(2027, 1, 2))
+    await _issue(db_session, test_clinic, patient, date(2027, 1, 3))
+    await db_session.refresh(series)
+
+    await InvoiceSeriesService.update_series(
+        db_session, series, {"reset_yearly": True}, today=date(2027, 3, 1)
+    )
+    await db_session.commit()
+
+    nxt = await _issue(db_session, test_clinic, patient, date(2027, 3, 1))
+    assert (nxt.invoice_number, nxt.fiscal_year) == ("FAC-2027-0004", 2027)
+    after = await _issue(db_session, test_clinic, patient, date(2027, 3, 2))
+    assert after.invoice_number == "FAC-2027-0005"
+
+    # From next January the series resets like any yearly one.
+    jan = await _issue(db_session, test_clinic, patient, date(2028, 1, 1))
+    assert (jan.invoice_number, jan.sequential_number, jan.fiscal_year) == (
+        "FAC-2028-0001",
+        1,
+        2028,
+    )
+
+
+@pytest.mark.asyncio
+async def test_saving_an_already_yearly_series_keeps_its_pending_reset(
+    db_session: AsyncSession, test_clinic: Clinic
+) -> None:
+    """Only the off→on switch moves ``last_reset_year``: re-saving a yearly
+    series before its first invoice of the year must not cancel the reset."""
+    patient = await _patient(db_session, test_clinic)
+    series = await _series(db_session, test_clinic, last_reset_year=2026)
+    await _issue(db_session, test_clinic, patient, date(2026, 12, 30))
+    await _issue(db_session, test_clinic, patient, date(2026, 12, 31))
+    await db_session.refresh(series)
+
+    await InvoiceSeriesService.update_series(
+        db_session, series, {"reset_yearly": True}, today=date(2027, 1, 1)
+    )
+    await db_session.commit()
+
+    jan = await _issue(db_session, test_clinic, patient, date(2027, 1, 1))
+    assert jan.invoice_number == "FAC-2027-0001"
+
+
+@pytest.mark.asyncio
+async def test_turning_yearly_reset_off_keeps_counting(
+    db_session: AsyncSession, test_clinic: Clinic
+) -> None:
+    patient = await _patient(db_session, test_clinic)
+    series = await _series(db_session, test_clinic, last_reset_year=2026)
+    await _issue(db_session, test_clinic, patient, date(2026, 12, 31))
+    await _issue(db_session, test_clinic, patient, date(2027, 1, 2))
+    await db_session.refresh(series)
+
+    await InvoiceSeriesService.update_series(
+        db_session, series, {"reset_yearly": False}, today=date(2027, 1, 3)
+    )
+    await db_session.commit()
+
+    jan = await _issue(db_session, test_clinic, patient, date(2027, 1, 3))
+    nxt_year = await _issue(db_session, test_clinic, patient, date(2028, 1, 1))
+    assert jan.invoice_number == "FAC-2027-0002"
+    assert (nxt_year.invoice_number, nxt_year.fiscal_year) == ("FAC-2028-0003", 2028)

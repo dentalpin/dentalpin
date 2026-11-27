@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1180): purchase-order PDF dates follow the PDF locale through the shared `app.core.pdf_locales` helpers; es/en keep dd/mm/yyyy.
+
 - fix(#952): receiving, transitioning and editing an order lock its row first. Two simultaneous receipts of the full quantity both passed the over-receipt check, booked the stock twice and stored two receipts; a cancel racing a receive was silently overwritten.
 
 - fix(#892): `GET /{order_id}/receipts/{receipt_id}` returns 404 for a receipt of another order. It checked only that the order existed and then loaded the receipt by id.

@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1175): the producer settings page shows the declaration signing time in the UI language; the printed declaration stays Spanish.
+
 - fix(#1049): a credit note without NIF is R5 (R1 without Destinatarios is rejected and blocked issuing), and regenerating a credit note keeps `FacturasRectificadas`.
 
 - fix(#877): leave historical invoices outside the live chain and omit the VeriFactu QR from their PDFs.

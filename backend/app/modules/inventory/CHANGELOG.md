@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1151): `PATCH /{id}` with `name`, `category`, `unit`, `min_quantity` or `is_active` set to `null` is a 422 instead of a 500.
+
 - fix(#1050): the edit form sends `stock_quantity` only when it was changed; resending the loaded value undid receipts and adjustments made meanwhile.
 
 - fix(#768): the row locks in `apply_movement` / `update_item` now re-read the locked row (`populate_existing`). A `SELECT … FOR UPDATE` on a row already in the session returned the cached instance with its pre-lock values: `adjust_stock` loads the item first, so a concurrent adjustment was lost (+5 and +5 on 10 ended at 15). This undid the #153 fix.
