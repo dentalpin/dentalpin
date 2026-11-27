@@ -36,6 +36,25 @@ class PatientBrief(BaseModel):
 # --- Allocation ----------------------------------------------------------
 
 
+def check_allocation_target(target_type: str, target_id: UUID | None) -> None:
+    """``target_id`` is required for a budget and forbidden for on-account.
+
+    Mirrors ``ck_alloc_target_consistency``. Shared by the REST schemas and
+    the agent tool args (#1183) so neither reaches the DB with a bad pair.
+    """
+    if target_type == "budget" and target_id is None:
+        raise ValueError("target_id is required when target_type='budget'")
+    if target_type == "on_account" and target_id is not None:
+        raise ValueError("target_id must be null when target_type='on_account'")
+
+
+def check_allocation_sum(amount: Decimal, allocations: list) -> None:
+    """The allocation amounts must add up to the payment amount."""
+    allocated = sum(a.amount for a in allocations)
+    if allocated != amount:
+        raise ValueError(f"Allocations must sum to amount ({amount}); got {allocated}")
+
+
 class AllocationCreate(BaseModel):
     target_type: AllocationTarget
     target_id: UUID | None = None  # required iff target_type == 'budget'
@@ -45,10 +64,7 @@ class AllocationCreate(BaseModel):
 
     @model_validator(mode="after")
     def _check_target_id(self) -> "AllocationCreate":
-        if self.target_type == "budget" and self.target_id is None:
-            raise ValueError("target_id is required when target_type='budget'")
-        if self.target_type == "on_account" and self.target_id is not None:
-            raise ValueError("target_id must be null when target_type='on_account'")
+        check_allocation_target(self.target_type, self.target_id)
         return self
 
 
@@ -100,9 +116,7 @@ class PaymentCreate(BaseModel):
 
     @model_validator(mode="after")
     def _check_allocation_sum(self) -> "PaymentCreate":
-        allocated = sum(a.amount for a in self.allocations)
-        if allocated != self.amount:
-            raise ValueError(f"Allocations must sum to amount ({self.amount}); got {allocated}")
+        check_allocation_sum(self.amount, self.allocations)
         return self
 
 

@@ -32,6 +32,10 @@ está activa por ejercicio.
 - **Reset del contador.** Solo si la serie aún no se ha usado en el
   ejercicio actual. Una vez emitida la primera factura, el reset
   queda bloqueado para preservar la auditoría fiscal.
+- **Reinicio anual.** Activar *Reiniciar numeración cada año* a mitad de
+  ejercicio no reinicia la numeración: las facturas de este año
+  siguen desde el último número y la serie vuelve a 1 el próximo
+  enero.
 - **Permisos.** Toda gestión de series requiere `billing.admin`.
   Otros roles pueden ver el listado pero no editar.
 

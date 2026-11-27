@@ -32,6 +32,10 @@ active per fiscal year.
 - **Counter reset.** Only when the series has not yet been used
   this fiscal year. Once the first invoice is issued, reset is
   blocked to preserve fiscal audit.
+- **Yearly reset switch.** Turning *Reset numbering every year* on in the middle
+  of a year does not restart the numbering: this year's invoices
+  keep counting from the last number, and the series starts again
+  at 1 next January.
 - **Permissions.** All series management requires `billing.admin`.
   Other roles can browse the list but not edit.
 

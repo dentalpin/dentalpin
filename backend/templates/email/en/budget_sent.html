@@ -57,5 +57,11 @@
 </div>
 {% endif %}
 
+{% if public_url %}
+<div class="button-container">
+    <a href="{{ public_url }}" class="button">Review your estimate</a>
+</div>
+{% endif %}
+
 <p>Please contact us if you have any questions about this estimate.</p>
 {% endblock %}

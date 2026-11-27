@@ -305,3 +305,26 @@ def test_reason_labels_match_the_recalls_ui_in_every_email_locale():
         locale = template.parent.name
         for code in REASONS:
             assert reason_label(code, locale), (locale, code)
+
+
+@pytest.mark.asyncio
+async def test_reminder_carries_the_clinic_phone_and_address(
+    db_session: AsyncSession, test_clinic: Clinic
+):
+    """The email asks the patient to call; its "book" button and footer
+    need the clinic's phone and address, which the handler never sent (#1154)."""
+    from app.core.email.service import format_address_line
+
+    test_clinic.phone = "+34910000000"
+    context = await _reminder_context(db_session, test_clinic, "es", "hygiene")
+
+    assert context["clinic_phone"] == "+34910000000"
+    assert context["clinic_address"] == {"street": "Test St", "city": "Madrid"}
+
+    # The send path flattens the address dict before rendering.
+    html = _render_reminder(
+        "es", {**context, "clinic_address": format_address_line(context["clinic_address"])}
+    )
+    assert 'href="tel:+34910000000"' in html
+    assert "Reservar mi cita" in html
+    assert "Test St, Madrid" in html

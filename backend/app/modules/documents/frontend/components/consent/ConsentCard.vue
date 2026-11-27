@@ -252,6 +252,7 @@ onMounted(() => refresh())
               class="w-full"
               :rows="6"
             />
+            <span class="block text-xs text-muted-foreground">{{ t('documents.consent.formatHelp') }}</span>
           </label>
           <p class="text-sm">
             {{ t('documents.consent.editInvalidates') }}

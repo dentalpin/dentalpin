@@ -11,6 +11,7 @@ from uuid import UUID
 from pydantic import BaseModel, Field
 
 from app.core.agents import AgentContext, Tool, ToolCategory
+from app.core.auth.models import Clinic
 
 from .service import PrescriptionService
 
@@ -20,7 +21,8 @@ class ListPrescriptionsArgs(BaseModel):
 
 
 class PrescriptionItemArgs(BaseModel):
-    medication_name: str = Field(max_length=150)
+    # min_length like the REST PrescriptionItemCreate: no blank lines (#1187).
+    medication_name: str = Field(min_length=1, max_length=150)
     dosage: str | None = Field(default=None, max_length=50)
     unit: str | None = Field(default=None, max_length=20)
     route: str | None = Field(default=None, max_length=50)
@@ -68,6 +70,11 @@ async def _create_prescription_draft(
 ) -> dict:
     from fastapi import HTTPException
 
+    # A tool call carries no UI locale (the REST route gets the user's), so
+    # the draft takes the clinic's communication language — the one its
+    # patient-facing documents use — instead of a hard-coded "es" (#1187).
+    clinic = await ctx.db.get(Clinic, ctx.clinic_id)
+    locale = (clinic.settings or {}).get("communication_language") if clinic else None
     try:
         row = await PrescriptionService.create_draft(
             ctx.db,
@@ -75,7 +82,7 @@ async def _create_prescription_draft(
             ctx.supervisor_id,
             params.patient_id,
             notes=params.notes,
-            locale="es",
+            locale=locale or "es",
             items=[item.model_dump() for item in params.items],
         )
     except HTTPException as exc:

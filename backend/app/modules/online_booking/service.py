@@ -435,13 +435,20 @@ class BookingService:
     async def update_settings(db: AsyncSession, clinic_id: UUID, data: SettingsInput):
         if data.enabled and (not data.public_url or not data.professional_id):
             raise BookingValidationError("A public URL and professional are required")
-        if data.professional_id and not await AppointmentService.validate_professional_access(
-            db, clinic_id, data.professional_id
-        ):
-            raise BookingValidationError("Invalid professional")
-        # Enabling for an inactive user would leave the public page unavailable.
-        if data.enabled and not await bookable_professional(db, clinic_id, data.professional_id):
-            raise BookingValidationError("Invalid professional")
+        member = False
+        if data.professional_id:
+            member = await AppointmentService.validate_professional_access(
+                db, clinic_id, data.professional_id
+            )
+        if data.enabled:
+            # Enabling for an inactive user would leave the public page unavailable.
+            if not member or not await bookable_professional(db, clinic_id, data.professional_id):
+                raise BookingValidationError("Invalid professional")
+        elif data.professional_id and not member:
+            # Switching off must stay possible once the professional left the
+            # clinic (#1149), but an id that is not a professional of this
+            # clinic is never stored.
+            data = data.model_copy(update={"professional_id": None})
         await lock_clinic(db, clinic_id)
         config = await db.get(BookingSettings, clinic_id)
         if config is None:

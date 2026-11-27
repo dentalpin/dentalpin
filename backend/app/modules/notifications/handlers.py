@@ -242,6 +242,7 @@ class NotificationHandlers:
                     "cancellation_reason": cancellation_reason,
                     "clinic_name": clinic.name if clinic else "DentalPin",
                     "clinic_phone": clinic.phone if clinic else None,
+                    "clinic_address": clinic.address if clinic else None,
                 }
 
                 await NotificationGateway.enqueue(
@@ -390,6 +391,7 @@ class NotificationHandlers:
                     "custom_message": data.get("custom_message"),
                     "clinic_name": clinic.name if clinic else "DentalPin",
                     "clinic_phone": clinic.phone if clinic else None,
+                    "clinic_address": clinic.address if clinic else None,
                     # Public quote link — the WhatsApp HSM carries this
                     # instead of the HTML treatments table.
                     "public_url": _public_budget_url(budget.public_token),
@@ -595,6 +597,7 @@ class NotificationHandlers:
                     "notes": budget.patient_notes,
                     "clinic_name": clinic.name if clinic else "DentalPin",
                     "clinic_phone": clinic.phone if clinic else None,
+                    "clinic_address": clinic.address if clinic else None,
                 }
 
                 await NotificationGateway.enqueue(
@@ -678,6 +681,7 @@ class NotificationHandlers:
                     "public_url": _public_budget_url(budget.public_token),
                     "clinic_name": clinic.name if clinic else "DentalPin",
                     "clinic_phone": clinic.phone if clinic else None,
+                    "clinic_address": clinic.address if clinic else None,
                 }
 
                 # No force_send: the clinic-level budget_reminder toggle and

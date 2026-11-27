@@ -2,7 +2,7 @@
 module: documents
 screen: settings_consent-templates
 route: /settings/clinical/consent-templates
-last_verified_commit: cf47bbfb
+last_verified_commit: f8114943
 related_endpoints:
   - GET /api/v1/documents/consent-templates
   - POST /api/v1/documents/consent-templates
@@ -44,6 +44,47 @@ Editar o archivar una plantilla no modifica los consentimientos ya
 creados a partir de ella: el texto se copia a cada consentimiento al
 crearlo, y esos consentimientos siguen visibles y se pueden firmar o
 revocar. Las plantillas no se pueden eliminar.
+
+## Dar formato al texto
+
+El texto del consentimiento es texto plano con un pequeño conjunto de
+formato tipo Markdown. El paciente lo ve en la tablet y se imprime igual
+en el PDF firmado.
+
+| Escribe | Obtienes |
+|---------|----------|
+| `# Título` | Título grande |
+| `## Subtítulo` o `### Subtítulo menor` | Títulos más pequeños |
+| `**texto**` | **Negrita** |
+| `*texto*` | *Cursiva* |
+| `- elemento` o `* elemento` al inicio de línea | Lista con viñetas |
+| `1. elemento` al inicio de línea | Lista numerada |
+| Una línea en blanco | Párrafo nuevo |
+
+Un salto de línea dentro de un párrafo se conserva tal como se escribe.
+Todo lo demás se muestra tal cual: no se admiten HTML, enlaces, imágenes
+ni tablas, y aparecen como texto. Las plantillas existentes se ven igual que antes
+si son párrafos y saltos de línea normales. Cambian dos cosas: varios espacios
+seguidos y la sangría al inicio de una línea se reducen a un solo espacio, y
+las líneas que empiezan por `- ` o `1. ` pasan a ser listas (las listas
+numeradas conservan los números que escribas). Bajo el cuadro de texto aparece un breve recordatorio
+de esta sintaxis.
+
+Ejemplo:
+
+```
+# Extracción dental
+
+Se le va a extraer **una pieza dental** con anestesia local.
+
+## Riesgos posibles
+- Sangrado
+- Inflamación durante 2-3 días
+
+## Después de la intervención
+1. Muerda la gasa durante 30 minutos
+2. Evite bebidas calientes hoy
+```
 
 ## Quién puede usarlo
 
