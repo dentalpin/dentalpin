@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue'
 import type { Recall } from '../composables/useRecalls'
+import { parseDateOnly } from '~~/app/utils/wallClock'
 
 // Slot entry into `patient.summary.feed`. `<ModuleSlot>` passes the
 // slot ctx as a single `ctx` prop. Reads from the shared
@@ -31,7 +32,7 @@ const nextRecall = computed(() => patientRecalls?.nextActiveRecall.value ?? null
 const recentHistory = computed(() => recalls.value.slice(0, 5))
 
 function formatMonth(iso: string): string {
-  const date = new Date(iso)
+  const date = parseDateOnly(iso)
   return new Intl.DateTimeFormat(locale.value, { year: 'numeric', month: 'long' }).format(date)
 }
 

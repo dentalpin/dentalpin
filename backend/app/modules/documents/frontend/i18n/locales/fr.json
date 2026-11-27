@@ -126,6 +126,8 @@
       "revocationNotice": "En signant, vous révoquez le consentement présenté.",
       "signer": "Nom du signataire",
       "relationship": "Lien avec le patient",
+      "idDocument": "Pièce d'identité",
+      "idDocumentHint": "Obligatoire si vous signez en tant que tuteur ou représentant ; facultatif si vous êtes le patient.",
       "patient": "Patient",
       "guardian": "Tuteur légal",
       "representative": "Représentant",
@@ -149,7 +151,8 @@
         "archived": "Archivé"
       },
       "qrTitle": "Scanner pour signer",
-      "signedToast": "Consentement signé"
+      "signedToast": "Consentement signé",
+      "formatHelp": "Mise en forme : commencez une ligne par # (titre) ou ## / ### (sous-titres), entourez le texte de **deux astérisques** pour le gras ou d'*un astérisque* pour l'italique, et commencez les lignes par - ou 1. pour les listes. Une ligne vide commence un nouveau paragraphe. Tout le reste, y compris le HTML et les liens, s'affiche tel quel."
     }
   }
 }

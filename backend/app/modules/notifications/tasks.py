@@ -6,7 +6,6 @@ appointment reminders.
 
 import logging
 from datetime import UTC, datetime, timedelta
-from uuid import UUID
 
 from fastapi import HTTPException
 from sqlalchemy import and_, select
@@ -18,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 def _reminder_checkin_url(appointment, clinic) -> str | None:
-    """Day-valid reminder check-in link for the sweep (ADR 0037).
+    """Day-valid reminder check-in link, sweep and manual send (ADR 0037).
 
     Mints a ``source=reminder`` token living until the end of the
     appointment's clinic-local day and returns its patient-facing URL.
@@ -228,92 +227,3 @@ async def process_appointment_reminders() -> None:
 
     except Exception as e:
         logger.error(f"Error processing appointment reminders: {e}", exc_info=True)
-
-
-async def send_single_reminder(appointment_id: UUID, clinic_id: UUID) -> bool:
-    """Send a single appointment reminder manually.
-
-    This can be called directly from the API for manual reminder sending.
-
-    Args:
-        appointment_id: The appointment to send reminder for.
-        clinic_id: The clinic ID.
-
-    Returns:
-        True if sent successfully, False otherwise.
-    """
-    from app.core.auth.models import Clinic, User
-    from app.modules.agenda.models import Appointment
-    from app.modules.notifications.gateway import NotificationGateway
-    from app.modules.patients.models import Patient
-
-    try:
-        async with async_session_maker() as db:
-            # Get appointment
-            result = await db.execute(
-                select(Appointment).where(
-                    and_(
-                        Appointment.id == appointment_id,
-                        Appointment.clinic_id == clinic_id,
-                    )
-                )
-            )
-            appointment = result.scalar_one_or_none()
-            if not appointment:
-                logger.error(f"Appointment not found: {appointment_id}")
-                return False
-
-            # Get patient
-            result = await db.execute(select(Patient).where(Patient.id == appointment.patient_id))
-            patient = result.scalar_one_or_none()
-            if not patient or not (patient.email or patient.phone):
-                logger.warning(f"Patient has no email or phone for appointment: {appointment_id}")
-                return False
-
-            # Get clinic
-            result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
-            clinic = result.scalar_one_or_none()
-
-            # Get professional
-            professional_name = None
-            if appointment.professional_id:
-                result = await db.execute(
-                    select(User).where(User.id == appointment.professional_id)
-                )
-                professional = result.scalar_one_or_none()
-                if professional:
-                    professional_name = f"{professional.first_name} {professional.last_name}"
-
-            # Build context
-            context = {
-                "patient_name": f"{patient.first_name} {patient.last_name}",
-                "appointment_start_at": appointment.start_time.isoformat(),
-                **appointment_when_context(appointment.start_time, clinic),
-                "professional_name": professional_name,
-                "clinic_name": clinic.name if clinic else "DentalPin",
-                "clinic_phone": clinic.phone if clinic else None,
-                "clinic_address": clinic.address if clinic else None,
-                "appointment_id": str(appointment.id),
-                "checkin_url": _reminder_checkin_url(appointment, clinic),
-            }
-
-            # Enqueue reminder (force_send to bypass auto_send check). The
-            # gateway resolves the address from the clinic's preferred
-            # channel + patient.email / patient.phone.
-            msg = await NotificationGateway.enqueue(
-                db=db,
-                clinic_id=clinic_id,
-                notification_type="appointment_reminder",
-                context=context,
-                patient_id=patient.id,
-                triggered_by_event="manual.appointment_reminder",
-                force_send=True,
-                dedup_key=await _reminder_key(db, appointment),
-            )
-            await db.commit()  # own session → own commit (``enqueue`` only flushes)
-
-            return msg is not None and msg.status != "skipped"
-
-    except Exception as e:
-        logger.error(f"Error sending single reminder: {e}", exc_info=True)
-        return False

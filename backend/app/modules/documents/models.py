@@ -136,6 +136,9 @@ class ConsentEvidence(Base):
     purpose: Mapped[str] = mapped_column(String(12), nullable=False)
     signer_name: Mapped[str] = mapped_column(String(200), nullable=False)
     relationship_to_patient: Mapped[str] = mapped_column(String(30), nullable=False)
+    # Identity document number of the signer (DNI/NIE/passport). Required for
+    # guardians and representatives; NULL on rows signed before #1171.
+    signer_id_document: Mapped[str | None] = mapped_column(String(32))
     signed_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     ip_address: Mapped[str | None] = mapped_column(String(45))
     user_agent: Mapped[str | None] = mapped_column(Text)
