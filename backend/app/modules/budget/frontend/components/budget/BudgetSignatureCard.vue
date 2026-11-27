@@ -69,7 +69,7 @@ async function onDownload() {
 }
 
 function formatDateTime(iso: string): string {
-  return new Date(iso).toLocaleString(i18nLocale.value === 'es' ? 'es-ES' : 'en-US', {
+  return new Date(iso).toLocaleString(i18nLocale.value, {
     dateStyle: 'medium',
     timeStyle: 'short'
   })

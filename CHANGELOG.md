@@ -11,9 +11,34 @@ frontend as a Nuxt layer under its own Python package.
 
 ## [Unreleased]
 
+### Added
+
+- **Documents:** consent templates and consents accept basic formatting (headings, bold, italic, bullet and numbered lists). The tablet signing page and the signed PDF show the same server-rendered result; HTML, links and images stay plain text; numbered lists keep the numbers typed (#1171).
+- **Documents:** the public consent signing page asks for the signer's ID document (DNI/NIE or passport). It is required when signing as a guardian or representative (a missing one is refused with a 422), optional for the patient, and is stored on the consent evidence, printed next to the signer name in the signed PDF and returned by the staff evidence endpoint. Migration `doc_0004` adds the nullable `consent_evidence.signer_id_document` column; consents signed before it are unaffected. GDPR erasure retains it with the rest of the signature evidence (#1171).
+
 ### Fixed
 
 - **Orthodontics:** editing the next-control interval of the latest control now moves the review recall (#1186).
+- **PDFs:** invoice, quote, document and purchase-order PDFs print dates in the PDF language's own format (e.g. `2026. 11. 26.` in Hungarian, `26.11.2026` in German and Polish) instead of always dd/mm/yyyy (#1180).
+- **Patient timeline:** entry headings on the Activity tab now show in the user's language instead of always in Spanish; entries recorded before this change keep their Spanish heading where it embeds a name (#1174).
+- **Notifications:** appointment and quote messages queued by the copilot now include the clinic details, date, time and amounts, and are refused without the appointment or quote (#1181).
+- **Billing:** credit note PDFs no longer print a Spanish "Rectificación de factura" note in every language (#1179).
+- **Payments:** the copilot refuses a payment allocated to a budget without saying which budget, instead of failing the confirmation with a database error (#1183).
+- **Documents:** the copilot no longer creates a document from content that the documents screen would reject, such as a prescription whose medications are plain text (#1182).
+- **Treatment plans, catalog:** plan totals, the catalog sessions sum and price input suffixes follow the clinic currency instead of a hardcoded € (#1178).
+- **Copilot:** amounts show in the clinic's currency instead of euros, and counts like the number of patients no longer show as money (#1177).
+- **Dates west of UTC:** the patient Info card's date of birth and age, recall months, orthodontic overdue flags and invoice overdue flags no longer show or switch a day (or a month) early in browsers behind UTC (#1176).
+- **Dates:** the patient timeline, quote signature card, date of birth and Verifactu signing time are formatted in the UI language, not English or Spanish (#1175).
+- **Treatment plans:** the pipeline rows show the Call and WhatsApp buttons again (#1161).
+- **Billing / GDPR / Inventory / Leads / Patients / Patient clinical / Payroll / Staff tasks:** an explicit null on a required update field (33 fields, e.g. patient first name, lead status, payroll entry gross) is now refused with a 422 instead of a 500 or a wrong 409 (#1151).
+- **Notifications:** a reminder sent by hand from the appointment now includes the check-in link (#1156).
+- **Patient timeline:** clinical and administrative notes written on an appointment now appear on the patient's timeline (#1155).
+- **Payments:** revenue from completed treatment-plan sessions is now credited to the professional who completed the session in the "By professional" report; sessions completed before this fix stay under no professional (#1152).
+- **Notifications:** the recall reminder email shows the clinic phone (with its call-to-book button) and address; cancellation and budget emails show the clinic address in the footer (#1154).
+- **Notifications:** patient emails end with the footer in their own language instead of Spanish, and the welcome email no longer shows made-up opening hours (#1153).
+- **Billing:** the invoice Send dialog no longer says the patient has no phone; WhatsApp is offered when they have one (#1160).
+- **Online booking:** booking can be switched off again after its assigned professional left the clinic (#1149).
+- **Recalls:** a snooze note now shows the clinic's date and who wrote it, not the UTC date and a user ID (#1148).
 - **Odontogram:** the Diagnoses card on the patient summary shows the tooth number and surfaces of each pending treatment (e.g. "Corona #16") instead of only the treatment name (#1162).
 - **Copilot:** the Pendientes tab now says when a group has more items than it shows ("Showing 20 of 35 · See all") and links to the full list, instead of silently stopping at 30 recalls and 20 budgets (#1137).
 - **Notifications:** quote and invoice emails show amounts in the clinic's currency with the language's separators (e.g. `1.300,00 €`, `€1,300.00`, `₹1,300.00`), and invoice emails are queued again (#1133).

@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import secrets
 from collections.abc import AsyncIterator
+from datetime import UTC, datetime
 from uuid import UUID
 
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -24,6 +25,7 @@ from app.core.agents.tools.registry import tool_registry
 from app.core.auth.permissions import permission_matches
 from app.core.llm.base import ProviderMessage, Role, TextBlock, ToolResultBlock, ToolUseBlock
 from app.core.llm.factory import get_provider, get_provider_spec
+from app.core.utils.dates import clinic_zone_for
 
 from .models import CopilotConversation, CopilotSettings
 from .serde import message_from_row
@@ -64,6 +66,27 @@ _PLAYBOOKS = (
 )
 
 SYSTEM_PROMPT = _BASE_PROMPT + _PLAYBOOKS
+
+_WEEKDAYS = ("lunes", "martes", "miércoles", "jueves", "viernes", "sábado", "domingo")
+
+
+async def _system_prompt(db: AsyncSession, clinic_id: UUID, *, now: datetime | None = None) -> str:
+    """``SYSTEM_PROMPT`` plus the clinic's current date and zone (#1104).
+
+    Built per turn: in the constant the date would freeze at import time.
+    "Today" is the clinic's day, not the server's (UTC), so "hoy" and
+    "mañana" resolve on the clinic's calendar, and naive times the model
+    sends are clinic-local, the same contract as the agenda tools.
+    """
+    zone = await clinic_zone_for(db, clinic_id)
+    local = (now or datetime.now(UTC)).astimezone(zone)
+    offset = local.strftime("%z")
+    return SYSTEM_PROMPT + (
+        f"\n\nAhora en la clínica: {_WEEKDAYS[local.weekday()]} {local:%Y-%m-%d}, "
+        f"{local:%H:%M} (zona horaria {zone.key}, UTC{offset[:3]}:{offset[3:]}). "
+        "Interpreta «hoy», «mañana» y las horas sin zona en esta hora local."
+    )
+
 
 # Copilot gates writes via inline confirmation (a turn-level pause), so
 # the approval-queue triggers are disabled. Rate limits + denylist stay.
@@ -192,7 +215,7 @@ async def drive_turn(
     async for ev in run_turn(
         ctx=ctx,
         provider=provider,
-        system=SYSTEM_PROMPT,
+        system=await _system_prompt(db, conv.clinic_id),
         history=history,
         tool_names=_tool_names_for(permissions, include_free_text=not redactor.enabled),
         redactor=redactor,
@@ -272,7 +295,7 @@ async def resume_turn(
     async for ev in run_turn(
         ctx=ctx,
         provider=provider,
-        system=SYSTEM_PROMPT,
+        system=await _system_prompt(db, conv.clinic_id),
         history=history,
         tool_names=_tool_names_for(permissions, include_free_text=not redactor.enabled),
         redactor=redactor,

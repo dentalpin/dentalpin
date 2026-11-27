@@ -48,6 +48,23 @@ rendered signature times use the clinic timezone and localized relationship.
 translate those errors. The backend renders the handoff QR using the first configured `ALLOWED_ORIGINS`
 entry; it returns the matching fragment URL and PNG data URL to staff.
 
+### Consent body formatting (#1171)
+
+`consent_markdown.render_consent_body(text)` is the **only** place a consent
+body becomes HTML (markdown-it-py with a rule allowlist plus our own token
+walker emitting `p br strong em h2 h3 h4 ul ol li`; the only attribute is `value="<digits>"` on `li` inside `ol`, so typed numbers survive). The
+snapshot `content["text"]` stays source text; `public_consent` returns
+`body_html` and `pdf.py` embeds the same output, so the page and the signed
+PDF cannot drift. The page renders `body_html` only, never `text`. Signed
+PDFs are stored verbatim with their SHA-256, so changing the renderer cannot
+alter signed evidence. Never hand-render a consent body elsewhere and never
+add tags, attributes, links or images to the allowlist without a security
+review. Single newlines render as `<br>` so pre-Markdown bodies look as before.
+`white-space: pre-wrap` is gone: runs of spaces and indentation collapse.
+WeasyPrint ignores `<li value>`, so `pdf.py` adds `list_value_css()` rules
+(`counter-set`). If lists nest so deep that markdown-it drops text
+(maxNesting), the renderer falls back to escaped plain text with `<br>`.
+
 ## Dependencies
 
 `manifest.depends = ["patients"]` — reads patient demographics for the
@@ -84,6 +101,9 @@ reference an out-of-clinic patient.
   label set here fails `tests/test_pdf_label_coverage.py`, which
   discovers every module shipping a `pdf.py`. Clinical text the user
   typed is reproduced verbatim — only the captions are localized.
+  Printed dates go through `app.core.pdf_locales.format_pdf_date` /
+  `format_pdf_datetime` (#1180), shared with every other PDF, so a
+  Hungarian page reads `2026. 11. 26.`; never hard-code `%d/%m/%Y`.
 
 ## Events
 
@@ -119,7 +139,12 @@ permissions (clinic-profile concern), not a module permission.
 
 `document_type` is a `Literal` constrained to the four supported
 types; `created_by` is attributed via `ctx.supervisor_id` (the human
-in the loop, same convention as `agenda`/`payments`). Returns
+in the loop, same convention as `agenda`/`payments`). The handler
+builds `DocumentCreate`, so `content` is validated against
+`CONTENT_SCHEMAS` and dates are normalised exactly as on
+`POST /documents`; a payload that does not fit returns
+`{"error": "invalid", "detail": ...}` and nothing is stored (#1182).
+`title` is capped at 200 in the arg schema. Returns
 structured metadata only — no free prose — so it stays cloud-eligible
 (no `exposes_free_text`).
 
@@ -161,7 +186,9 @@ Nuxt layer at `frontend/` with:
   scope (ADR 0038, #657) and writes nothing: a prescription or
   certificate must match the copy handed to the patient or the pharmacy
   (Art. 17(3)(c)/(h)). `content` is a free-form JSONB snapshot, so all
-  three erasure categories are declared. Because the module is
+  three erasure categories are declared. Consent evidence, including the
+  signer's name and ID document, is retained because the signed PDF prints
+  both and its SHA-256 is the legal proof. Because the module is
   `auto_install: False`, a clinic that never installed it gets no
   `documents` coverage row at all — the registry only collects from active
   modules.
