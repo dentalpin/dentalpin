@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Documents:** the copilot no longer creates a document from content that the documents screen would reject, such as a prescription whose medications are plain text (#1182).
 - **Treatment plans, catalog:** plan totals, the catalog sessions sum and price input suffixes follow the clinic currency instead of a hardcoded € (#1178).
 - **Copilot:** amounts show in the clinic's currency instead of euros, and counts like the number of patients no longer show as money (#1177).
 - **Dates west of UTC:** the patient Info card's date of birth and age, recall months, orthodontic overdue flags and invoice overdue flags no longer show or switch a day (or a month) early in browsers behind UTC (#1176).
