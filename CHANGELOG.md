@@ -13,6 +13,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Patient timeline:** clinical and administrative notes written on an appointment now appear on the patient's timeline (#1155).
 - **Payments:** revenue from completed treatment-plan sessions is now credited to the professional who completed the session in the "By professional" report; sessions completed before this fix stay under no professional (#1152).
 - **Notifications:** the recall reminder email shows the clinic phone (with its call-to-book button) and address; cancellation and budget emails show the clinic address in the footer (#1154).
 - **Notifications:** patient emails end with the footer in their own language instead of Spanish, and the welcome email no longer shows made-up opening hours (#1153).
