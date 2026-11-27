@@ -376,7 +376,11 @@ class EmailService:
         # If custom template provided, use it directly
         if custom_template:
             try:
-                return self._jinja_env.from_string(custom_template).render(context)
+                # A custom template extending base.html needs ``locale`` too
+                # (lang/dir and the footer sentence, #1153).
+                return self._jinja_env.from_string(custom_template).render(
+                    {"locale": locale, **context}
+                )
             except Exception as e:
                 logger.error(f"Failed to render custom template: {e}")
                 return None
