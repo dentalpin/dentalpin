@@ -114,7 +114,12 @@ async def _upsert_earned_entry(
         return
 
     catalog_item_id = _parse_uuid(data.get("catalog_item_id"))
-    professional_id = _parse_uuid(data.get("performed_by") or data.get("professional_id"))
+    # Each publisher names the user who did the work differently:
+    # odontogram sends ``performed_by``, treatment_plan sessions send
+    # ``completed_by`` (#1152).
+    professional_id = _parse_uuid(
+        data.get("performed_by") or data.get("professional_id") or data.get("completed_by")
+    )
 
     stmt = (
         pg_insert(PatientEarnedEntry)

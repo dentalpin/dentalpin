@@ -39,6 +39,8 @@ class CreateConsent(BaseModel):
 class SignConsent(BaseModel):
     signer_name: str = Field(min_length=1, max_length=200)
     relationship_to_patient: Literal["patient", "guardian", "representative"]
+    # Normalised and enforced by ConsentService (required unless the signer is the patient).
+    signer_id_document: str | None = Field(default=None, max_length=64)
     signature: str = Field(min_length=1, max_length=1500000)
 
 

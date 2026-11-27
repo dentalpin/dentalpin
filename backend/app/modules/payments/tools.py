@@ -18,13 +18,13 @@ from decimal import Decimal
 from typing import Literal
 from uuid import UUID
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 from sqlalchemy import select
 
 from app.core.agents import AgentContext, Tool, ToolCategory
 from app.core.auth.models import Clinic
 
-from .schemas import PaymentMethod
+from .schemas import PaymentMethod, check_allocation_sum, check_allocation_target
 from .service import LedgerService, PaymentReportsService
 from .workflow import PaymentWorkflowError, record_payment
 
@@ -40,6 +40,13 @@ class AllocationArg(BaseModel):
         default=None, description="Id del presupuesto (solo target_type=budget)."
     )
     amount: Decimal = Field(gt=0, decimal_places=2)
+
+    # Same rule as the REST ``AllocationCreate`` (#1183): a budget
+    # allocation with no target_id used to reach the DB check constraint.
+    @model_validator(mode="after")
+    def _check_target_id(self) -> AllocationArg:
+        check_allocation_target(self.target_type, self.target_id)
+        return self
 
 
 class RecordPaymentArgs(BaseModel):
@@ -58,6 +65,11 @@ class RecordPaymentArgs(BaseModel):
         max_length=100,
         description="Clave de idempotencia: repetir la llamada con la misma clave devuelve el cobro ya registrado.",
     )
+
+    @model_validator(mode="after")
+    def _check_allocation_sum(self) -> RecordPaymentArgs:
+        check_allocation_sum(self.amount, self.allocations)
+        return self
 
 
 class PatientPaymentHistoryArgs(BaseModel):

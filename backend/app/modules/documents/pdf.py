@@ -17,6 +17,8 @@ from zoneinfo import ZoneInfo
 
 from app.core.pdf_locales import format_pdf_date, format_pdf_datetime
 
+from .consent_markdown import list_value_css, render_consent_body
+
 if TYPE_CHECKING:
     from app.core.auth.models import Clinic
     from app.modules.patients.models import Patient
@@ -395,6 +397,7 @@ _CONSENT_LABELS = {
         "Tutor legal",
         "Representante",
         "BORRADOR",
+        "Documento de identidad",
     ),
     "en": (
         "Revocation",
@@ -403,6 +406,7 @@ _CONSENT_LABELS = {
         "Legal guardian",
         "Representative",
         "DRAFT",
+        "ID document",
     ),
     "ta": (
         "திரும்பப் பெறுதல்",
@@ -411,6 +415,7 @@ _CONSENT_LABELS = {
         "சட்டப்பூர்வ பாதுகாவலர்",
         "பிரதிநிதி",
         "வரைவு",
+        "அடையாள ஆவணம்",
     ),
     "te": (
         "ఉపసంహరణ",
@@ -419,6 +424,7 @@ _CONSENT_LABELS = {
         "చట్టపరమైన సంరక్షకుడు",
         "ప్రతినిధి",
         "ముసాయిదా",
+        "గుర్తింపు పత్రం",
     ),
     "hi": (
         "निरस्तीकरण",
@@ -427,6 +433,7 @@ _CONSENT_LABELS = {
         "कानूनी अभिभावक",
         "प्रतिनिधि",
         "मसौदा",
+        "पहचान दस्तावेज़",
     ),
     "fr": (
         "Révocation",
@@ -435,6 +442,7 @@ _CONSENT_LABELS = {
         "Tuteur légal",
         "Représentant",
         "BROUILLON",
+        "Pièce d'identité",
     ),
     "pt": (
         "Revogação",
@@ -443,6 +451,7 @@ _CONSENT_LABELS = {
         "Tutor legal",
         "Representante",
         "RASCUNHO",
+        "Documento de identificação",
     ),
     "de": (
         "Widerruf",
@@ -451,6 +460,7 @@ _CONSENT_LABELS = {
         "Gesetzlicher Vormund",
         "Vertretung",
         "ENTWURF",
+        "Ausweisdokument",
     ),
     "hu": (
         "Visszavonás",
@@ -459,6 +469,7 @@ _CONSENT_LABELS = {
         "Törvényes gyám",
         "Képviselő",
         "TERVEZET",
+        "Személyazonosító okmány",
     ),
     "pl": (
         "Wycofanie",
@@ -467,6 +478,7 @@ _CONSENT_LABELS = {
         "Opiekun prawny",
         "Przedstawiciel",
         "PROJEKT",
+        "Dokument tożsamości",
     ),
     "it": (
         "Revoca",
@@ -475,6 +487,7 @@ _CONSENT_LABELS = {
         "Tutore legale",
         "Rappresentante",
         "BOZZA",
+        "Documento d'identità",
     ),
     "ar": (
         "سحب الموافقة",
@@ -483,6 +496,7 @@ _CONSENT_LABELS = {
         "الوصي القانوني",
         "الممثل",
         "مسودة",
+        "وثيقة الهوية",
     ),
 }
 for _locale, _values in _CONSENT_LABELS.items():
@@ -496,6 +510,7 @@ for _locale, _values in _CONSENT_LABELS.items():
                     "consent_guardian",
                     "consent_representative",
                     "consent_draft",
+                    "consent_id_document",
                 ),
                 _values,
                 strict=True,
@@ -698,6 +713,19 @@ class DocumentPDFService:
                 .doc-title {{ font-size: 16pt; font-weight: bold; color: #1e40af; text-align: right; }}
                 .consent-title {{ font-size: 13pt; margin-bottom: 12px; overflow-wrap: anywhere; }}
                 .section {{ margin-bottom: 25px; }}
+                /* Consent body: the Markdown subset of consent_markdown.py (#1171). */
+                .consent-body p, .consent-body ul, .consent-body ol {{ margin-bottom: 8px; }}
+                .consent-body h2, .consent-body h3, .consent-body h4 {{
+                    font-weight: bold; color: #1e40af; margin: 12px 0 6px;
+                    break-after: avoid; overflow-wrap: anywhere;
+                }}
+                .consent-body h2 {{ font-size: 12pt; }}
+                .consent-body h3 {{ font-size: 11pt; }}
+                .consent-body h4 {{ font-size: 10pt; }}
+                .consent-body ul, .consent-body ol {{ padding-inline-start: 20px; }}
+                .consent-body li {{ margin-bottom: 3px; }}
+                .consent-body > :first-child {{ margin-top: 0; }}
+                .consent-body > :last-child {{ margin-bottom: 0; }}
                 .section-title {{
                     font-size: 11pt; font-weight: bold; color: #1e40af;
                     margin-bottom: 10px; padding-bottom: 5px;
@@ -790,6 +818,15 @@ class DocumentPDFService:
                 else labels["informed_consent"]
             )
             relationship = labels.get(f"consent_{content.get('relationship_to_patient', '')}", "")
+            body_html = render_consent_body(content.get("text"))
+            # WeasyPrint ignores <li value>; restore the numbers the author typed.
+            value_css = list_value_css(body_html)
+            id_document = content.get("signer_id_document")
+            signer_id = (
+                f" · {esc(labels['consent_id_document'])}: {esc(id_document)}"
+                if id_document
+                else ""
+            )
             return (
                 f'<div class="section"><div class="section-title">{esc(title)}</div>'
                 + (
@@ -797,14 +834,15 @@ class DocumentPDFService:
                     if not signature
                     else ""
                 )
-                + f'<div class="notes-content" style="white-space:pre-wrap">{esc(content.get("text"))}</div></div>'
+                + (f"<style>{value_css}</style>" if value_css else "")
+                + f'<div class="notes-content consent-body">{body_html}</div></div>'
                 + (
                     f"<p>{esc(labels['consent_revocation_text'])}</p>"
                     if content.get("purpose") == "revoke"
                     else ""
                 )
                 + (
-                    f"<p>{esc(content.get('signer_name'))} · {esc(relationship)} · {esc(content.get('signed_at'))}</p>"
+                    f"<p>{esc(content.get('signer_name'))} · {esc(relationship)}{signer_id} · {esc(content.get('signed_at'))}</p>"
                     + f'<img src="{signature}" alt="Signature" style="max-width:250px;max-height:100px" />'
                     if signature
                     else ""

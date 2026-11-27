@@ -3,6 +3,10 @@
 ## Unreleased
 
 - fix(#1180): invoice PDF dates follow the PDF locale (`2026. 11. 26.` in Hungarian, `26.11.2026` in German/Polish) through the shared `app.core.pdf_locales.format_pdf_date`; es/en keep dd/mm/yyyy.
+- fix(#1179): credit notes are no longer created with a hard-coded Spanish public note ("Rectificación de factura …"); the PDF's localized "corrects invoice" line already names the original.
+- fix(#1176): the invoice list's overdue flag and days-overdue count read `due_date` as local midnight (`parseDateOnly`), so west of UTC an invoice no longer turns overdue the evening before its due date.
+- fix(#1151): `PUT /series/{id}` with `reset_yearly`, `is_default` or `is_active` set to `null` is a 422; it used to hit the NOT NULL column and come back as the duplicate-prefix 409.
+- fix(#1160): the invoice's patient brief includes `phone`, so the Send dialog offers WhatsApp when the patient has a phone.
 
 - fix(#1032): the New invoice page's row totals and summary apply line discounts (percentage and absolute) before VAT, rounded per line like the saved draft; the item modals' previews share the same helper (`utils/lineAmounts.ts`).
 

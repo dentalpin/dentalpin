@@ -41,6 +41,14 @@ describe('consent templates settings page', () => {
     } finally { wrapper.unmount() }
   })
 
+  it('tells the editor which formatting is supported (#1171)', async () => {
+    const wrapper = await mountSuspended(DocumentsConsentTemplatesPage)
+    await flushPromises()
+    try {
+      expect(wrapper.text()).toMatch(/\*\*|documents\.consent\.formatHelp/)
+    } finally { wrapper.unmount() }
+  })
+
   it('creates a template with POST and trims the values', async () => {
     const wrapper = await mountSuspended(DocumentsConsentTemplatesPage)
     await flushPromises()

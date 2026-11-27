@@ -5,6 +5,9 @@
 ## Unreleased
 
 - fix(#1180): document PDF birth date and issue timestamp follow the PDF locale through the shared `app.core.pdf_locales` helpers; es/en keep dd/mm/yyyy.
+- feat(#1171): consent texts accept a small Markdown subset (headings, **bold**, *italic*, bullet and numbered lists; single newlines stay line breaks). One backend renderer, `render_consent_body`, with an allowlist of tags feeds both the public signing page (`body_html` in `GET /public/consents/current`, rendered instead of the raw text) and the consent PDF. Stored snapshots and signed PDFs are unchanged. New dependency: `markdown-it-py`. Syntax help in the template editor, translated in all locales.
+- feat(#1171): the signer's ID document. `POST /public/consents/current/sign` takes an optional `signer_id_document`; it is required (422 otherwise) when `relationship_to_patient` is `guardian` or `representative`, stripped and uppercased, at most 32 characters of letters, digits, `-`, `.` and `/`, with no country-specific checksum. It applies to signatures and revocations alike. Stored in the new nullable `consent_evidence.signer_id_document` column (migration `doc_0004`, reversible), printed next to the signer name in the signed PDF (new `consent_id_document` label in every PDF locale), returned by `GET /consents/{id}/evidence`, and retained on GDPR erasure like the signer name. The signing page gets the input and `documents.consent.idDocument` / `idDocumentHint` strings in every locale. Evidence and PDFs signed before the migration are unchanged.
+- fix(#1182): the copilot's `generate_document` tool validates `content` per document type and caps `title` at 200 through `DocumentCreate`, like `POST /documents`; a bad payload returns an `invalid` tool error instead of creating a document.
 
 - fix(#1042): a failed signature submit keeps the form and offers a retry; only 404 / 409 mean the link is spent.
 - fix(#1040): the consent and revocation PDFs print the consent's title.

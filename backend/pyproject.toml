@@ -68,6 +68,10 @@ dependencies = [
     # aioboto3 dependency chain is needed.
     "boto3>=1.34",
     "altcha==2.4.0",
+    # documents module: Markdown subset for consent bodies (#1171). Parsed with
+    # an allowlist of rules and rendered through our own tag allowlist; no HTML
+    # passthrough. Pure Python, no native build.
+    "markdown-it-py>=3.0,<5",
 ]
 
 [project.optional-dependencies]
