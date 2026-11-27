@@ -27,7 +27,10 @@ from app.modules.agenda.locks import lock_clinic
 from app.modules.agenda.models import Appointment
 from app.modules.agenda.service import AppointmentService, CabinetService
 from app.modules.notifications.gateway import NotificationGateway
-from app.modules.notifications.service import appointment_when_context
+from app.modules.notifications.service import (
+    appointment_when_context,
+    resolve_clinic_communication_locale,
+)
 from app.modules.patients.models import Patient
 from app.modules.patients.service import PatientService
 from app.modules.schedules.services.availability import AvailabilityService
@@ -385,7 +388,12 @@ async def _queue_email(
         "clinic_name": clinic.name if clinic else "DentalPin",
         "clinic_phone": clinic.phone if clinic else None,
         "clinic_address": clinic.address if clinic else None,
-        **appointment_when_context(item.start_time, clinic),
+        # Dated in the language the message renders in (#1211).
+        **appointment_when_context(
+            item.start_time,
+            clinic,
+            locale or await resolve_clinic_communication_locale(db, clinic_id),
+        ),
         **extra,
     }
     queued = await NotificationGateway.enqueue(

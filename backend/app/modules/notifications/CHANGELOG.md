@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1211): dates in patient emails and WhatsApp texts (appointment, budget, invoice, reminder) follow the message's locale through `message_date` / `core/pdf_locales` (`14.01.2026` in German, `2026. 01. 14.` in Hungarian) instead of a fixed `dd/mm/yyyy`. Spanish output is unchanged.
 - fix(#1205, #1206): every locale's `budget_sent` email shows the Send dialog's custom message (8 locales, Spanish included, dropped it) and a button to the public quote page (`public_url`), so the patient can open, accept and sign the quote from the email.
 - fix(#1207): appointment reminder email now shows the check-in button in pt-BR, and labels it in Arabic, Hindi, Tamil and Telugu instead of English.
 - fix(#1204): emails with no template subject use the file template's localized title instead of "Notificación: <template_key>".
