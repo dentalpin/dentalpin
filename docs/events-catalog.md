@@ -42,8 +42,8 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 | `call.unknown_caller` | `EventType.CALL_UNKNOWN_CALLER` | `telephony` | — |
 | `clinic.created` | `EventType.CLINIC_CREATED` | `core:core` | `agenda`, `billing`, `catalog`, `medication_catalog`, `schedules` |
 | `clinical_notes.administrative_created` | `EventType.CLINICAL_NOTE_ADMINISTRATIVE_CREATED` | `clinical_notes` | `patient_timeline` |
-| `clinical_notes.appointment_administrative_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED` | `clinical_notes` | — |
-| `clinical_notes.appointment_clinical_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED` | `clinical_notes` | — |
+| `clinical_notes.appointment_administrative_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED` | `clinical_notes` | `patient_timeline` |
+| `clinical_notes.appointment_clinical_created` | `EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED` | `clinical_notes` | `patient_timeline` |
 | `clinical_notes.diagnosis_created` | `EventType.CLINICAL_NOTE_DIAGNOSIS_CREATED` | `clinical_notes` | `patient_timeline` |
 | `clinical_notes.plan_created` | `EventType.CLINICAL_NOTE_PLAN_CREATED` | `clinical_notes` | `patient_timeline` |
 | `clinical_notes.treatment_created` | `EventType.CLINICAL_NOTE_TREATMENT_CREATED` | `clinical_notes` | `patient_timeline` |
@@ -434,14 +434,16 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 - **Constant:** `EventType.CLINICAL_NOTE_APPOINTMENT_ADMINISTRATIVE_CREATED`
 - **Publishers:**
   - `clinical_notes` — `backend/app/modules/clinical_notes/service.py`
-- **Subscribers:** —
+- **Subscribers:**
+  - `patient_timeline`
 
 ### `clinical_notes.appointment_clinical_created`
 
 - **Constant:** `EventType.CLINICAL_NOTE_APPOINTMENT_CLINICAL_CREATED`
 - **Publishers:**
   - `clinical_notes` — `backend/app/modules/clinical_notes/service.py`
-- **Subscribers:** —
+- **Subscribers:**
+  - `patient_timeline`
 
 ### `clinical_notes.diagnosis_created`
 

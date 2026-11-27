@@ -15,6 +15,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_validator
 
+from app.core.schemas import NotNull
 from app.modules.patients.schemas import PatientBrief
 
 LeadStatus = Literal["new", "contacted", "converted", "discarded"]
@@ -76,14 +77,15 @@ class LeadUpdate(BaseModel):
 
     model_config = ConfigDict(extra="forbid")
 
-    full_name: str | None = Field(default=None, min_length=1, max_length=200)
-    phone: str | None = Field(default=None, min_length=1, max_length=32)
+    # NotNull[...] fields map to NOT NULL columns: an explicit null is a 422 (#1151).
+    full_name: NotNull[str] = Field(default=None, min_length=1, max_length=200)
+    phone: NotNull[str] = Field(default=None, min_length=1, max_length=32)
     email: EmailStr | None = None
-    motive: str | None = Field(default=None, min_length=1, max_length=200)
+    motive: NotNull[str] = Field(default=None, min_length=1, max_length=200)
     description: str | None = Field(default=None, max_length=4000)
     availability_days: list[DayOfWeek] | None = Field(default=None, max_length=7)
     availability_slot: AvailabilitySlot | None = None
-    status: LeadStatus | None = None
+    status: NotNull[LeadStatus] = None
 
     _strip_name = field_validator("full_name", "phone", "motive")(_strip_required)
     _strip_free = field_validator("description")(_strip_optional)
