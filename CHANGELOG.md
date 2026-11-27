@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Agenda:** changing the patient in the appointment modal clears the previous patient's treatments instead of failing on save (#1234).
 - **Catalog:** "New treatment" opens empty instead of prefilled with the last created item, and cancelled edits in the catalog and odontogram treatment modals no longer come back (#1233).
 - **Catalog:** creating or editing a per-surface treatment (e.g. the seeded composite filling) saves instead of failing with a server error; a negative tier price is rejected (#1240).
 - **Medical reference:** a deactivated interaction or contraindication can be added again; it comes back with the new risk note and its patient warnings return (#1236).
