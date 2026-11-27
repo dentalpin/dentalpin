@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Medical reference:** a deactivated interaction or contraindication can be added again; it comes back with the new risk note and its patient warnings return (#1236).
 - **Payments:** pressing Enter twice in the record-payment modal no longer records the payment twice (#1230).
 - **Documents:** "New document" opens empty instead of prefilled with the previous patient's document, and cancelled edits no longer come back (#1232).
 - **Notifications:** pressing Enter twice in the patient WhatsApp reply box no longer sends the message twice (#1231).
