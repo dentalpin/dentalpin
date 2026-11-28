@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Recalls:** recall interval settings must be 0 to 60 months; a negative or huge value is rejected instead of producing an overdue suggestion or a server error (#1244).
 - **Deploy:** the production frontend build no longer runs out of memory. Production sourcemaps are off (nothing consumes them) and the build heap is 7 GB, in the Coolify image and the CI e2e job.
 - **Documents:** a cancelled edit of a prescription's medications no longer comes back when the document is reopened (#1232).
 - **Agenda:** Settings → Cabinets can deactivate and reactivate a cabinet, deleting one with appointments now says to deactivate it, and an inactive cabinet is no longer offered or bookable (#1237).
