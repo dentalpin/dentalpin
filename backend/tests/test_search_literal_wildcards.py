@@ -2,8 +2,9 @@
 
 Payments escaped LIKE wildcards in #1033; the other free-text searches
 still built ``f"%{term}%"``, so ``%`` listed every row and ``ana_lopez``
-also matched ``ana.lopez``. One ORM search (patients, through the API)
-and the raw-SQL one (treatment-plan pipeline) cover both forms of the fix.
+also matched ``ana.lopez``. One ORM search (patients, through the API),
+the medical-reference pickers (``.contains`` rather than ``ilike``) and
+the raw-SQL one (treatment-plan pipeline) cover each form of the fix.
 """
 
 from __future__ import annotations
@@ -17,6 +18,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic, ClinicMembership
+from app.modules.medical_reference.models import ReferenceAllergy
 from app.modules.patients.models import Patient
 from app.modules.treatment_plan.models import TreatmentPlan
 from app.modules.treatment_plan.service import TreatmentPlanService
@@ -99,3 +101,26 @@ async def test_pipeline_search_treats_percent_and_underscore_literally(
     assert await titles("%") == set()
     assert await titles("Fase_1") == {"Fase_1 implante"}
     assert await titles("fase") == {"Fase_1 implante", "Fase.1 ortodoncia"}
+
+
+@pytest.mark.asyncio
+async def test_medical_reference_search_treats_percent_and_underscore_literally(
+    client: AsyncClient, auth_headers: dict, db_session: AsyncSession, test_clinic: Clinic
+) -> None:
+    for name in ("Penicilina", "Latex_A", "Latex.B"):
+        db_session.add(ReferenceAllergy(id=uuid4(), clinic_id=test_clinic.id, name=name))
+    await db_session.commit()
+
+    async def names(q: str) -> set:
+        response = await client.get(
+            "/api/v1/medical_reference/allergies",
+            params={"q": q},
+            headers={**auth_headers, "X-Clinic-ID": str(test_clinic.id)},
+        )
+        assert response.status_code == 200, response.text
+        return {a["name"] for a in response.json()["data"]}
+
+    assert await names("%") == set()
+    assert await names("_") == {"Latex_A"}
+    # Case-insensitive substring search is unchanged.
+    assert await names("latex") == {"Latex_A", "Latex.B"}

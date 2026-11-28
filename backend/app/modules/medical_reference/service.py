@@ -43,7 +43,7 @@ class MedicalReferenceService:
         if active_only:
             stmt = stmt.where(model.is_active.is_(True))
         if query:
-            stmt = stmt.where(func.lower(model.name).contains(query.lower()))
+            stmt = stmt.where(model.name.icontains(query, autoescape=True))
         stmt = stmt.order_by(model.name).limit(limit)
         return list((await db.execute(stmt)).scalars())
 
