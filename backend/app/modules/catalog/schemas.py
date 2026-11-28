@@ -23,7 +23,28 @@ def _blank_is_none(value: object) -> object:
 # column is plain JSONB, which ``json.dumps`` cannot fill with a Decimal, so
 # ``model_dump()`` emits each price as a string -- the format the seeder
 # stores and ``pricing._resolve_surface_tier_price`` reads (#1240).
-SurfacePrice = Annotated[Decimal, Field(ge=0), PlainSerializer(str, return_type=str)]
+# Prices fit the NUMERIC(10, 2) columns they end up in (price_snapshot).
+SurfacePrice = Annotated[
+    Decimal,
+    Field(ge=0, max_digits=10, decimal_places=2),
+    PlainSerializer(str, return_type=str),
+]
+
+SURFACE_TIERS = frozenset({"1", "2", "3", "4", "5"})
+
+
+def _check_surface_tiers(value: dict | None) -> dict | None:
+    """Keys must be exactly the tiers "1".."5" (what the modal and seeder send).
+
+    ``pricing._resolve_surface_tier_price`` sorts ``int(k)`` and reads back
+    ``surface_prices[str(tier)]``, so a key such as "02" was a KeyError (500)
+    when a treatment was priced.
+    """
+    if value is not None:
+        bad = sorted(k for k in value if k not in SURFACE_TIERS)
+        if bad:
+            raise ValueError(f"surface tiers must be '1'..'5', got {bad}")
+    return value
 
 
 # ============================================================================
@@ -235,6 +256,7 @@ class CatalogItemCreate(BaseModel):
     _clear_blank = field_validator(
         "default_price", "cost_price", "default_duration_minutes", mode="before"
     )(_blank_is_none)
+    _surface_tiers = field_validator("surface_prices")(_check_surface_tiers)
 
 
 class CatalogItemUpdate(BaseModel):
@@ -282,6 +304,7 @@ class CatalogItemUpdate(BaseModel):
     _clear_blank = field_validator(
         "default_price", "cost_price", "default_duration_minutes", mode="before"
     )(_blank_is_none)
+    _surface_tiers = field_validator("surface_prices")(_check_surface_tiers)
 
 
 class CatalogItemResponse(BaseModel):
