@@ -31,7 +31,24 @@ ALLOWED = {
 }
 
 
+def _is_date_today(node: ast.AST) -> bool:
+    # ``date.today`` or an aliased import such as ``date_cls.today``.
+    return (
+        isinstance(node, ast.Attribute)
+        and node.attr == "today"
+        and isinstance(node.value, ast.Name)
+        and node.value.id in ("date", "date_cls")
+    )
+
+
 def _is_server_day(node: ast.AST) -> bool:
+    # Field(default_factory=date.today) / mapped_column(..., default=date.today):
+    # the uncalled form, run on the server, so an omitted date is the UTC day.
+    if isinstance(node, ast.Call) and any(
+        kw.arg in ("default_factory", "default") and _is_date_today(kw.value)
+        for kw in node.keywords
+    ):
+        return True
     # date.today()
     if (
         isinstance(node, ast.Call)

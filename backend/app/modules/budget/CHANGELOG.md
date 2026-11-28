@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix: a quote created without `valid_from` starts on the clinic's day, not the server's UTC day.
 - fix(#1276): a stored `null` (or invalid) `budget_expiry_days` falls back to the 30-day default instead of failing quote creation, resend and duplicate.
 - fix(#1241): a percentage line or global discount above 100 is refused (422, or 400 for a partial update against the stored type/value) instead of giving a negative total; the global discount input caps at 100 for percentages.
 - fix(#1235): the add-item modal's "Line total" preview now uses the backend line arithmetic: the catalog item's VAT is included and an absolute discount is capped at the line subtotal, so it no longer shows the net amount or a negative total.

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix: an invoice payment (`POST /invoices/{id}/payments`) without `payment_date` is dated on the clinic's day, not the server's UTC day (filled by `payments.record_payment`).
 - fix(#1273): the invoice series settings page and its create/edit/reset buttons follow `billing.admin` (the API gate) instead of admin-only permissions, so a dentist can manage series.
 - fix(#1241): a percentage invoice line discount above 100 is refused (422, or 400 for a partial update) instead of giving a negative line that could be issued.
 - fix(#1201): new `open_receivable_conditions` (issued/partial, not history, not a credit note); `overdue_invoice_conditions` builds on it, and the reports' aging buckets use it.
