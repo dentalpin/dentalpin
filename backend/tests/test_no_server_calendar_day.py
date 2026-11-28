@@ -31,7 +31,22 @@ ALLOWED = {
 }
 
 
+def _is_date_today(node: ast.AST) -> bool:
+    return (
+        isinstance(node, ast.Attribute)
+        and node.attr == "today"
+        and isinstance(node.value, ast.Name)
+        and node.value.id == "date"
+    )
+
+
 def _is_server_day(node: ast.AST) -> bool:
+    # Field(default_factory=date.today): the uncalled form, run by pydantic
+    # on the server, so an omitted date was the UTC day too.
+    if isinstance(node, ast.Call) and any(
+        kw.arg == "default_factory" and _is_date_today(kw.value) for kw in node.keywords
+    ):
+        return True
     # date.today()
     if (
         isinstance(node, ast.Call)

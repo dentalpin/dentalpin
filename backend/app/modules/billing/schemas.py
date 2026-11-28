@@ -292,7 +292,8 @@ class InvoicePaymentApply(BaseModel):
 
     amount: Decimal = Field(gt=0, decimal_places=2)
     method: PaymentMethod
-    payment_date: date = Field(default_factory=date.today)
+    # Omitted: the clinic's today, filled in by record_payment.
+    payment_date: date | None = None
     reference: str | None = Field(default=None, max_length=100)
     notes: str | None = None
 

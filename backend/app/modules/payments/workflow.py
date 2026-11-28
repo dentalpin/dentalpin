@@ -9,7 +9,7 @@ Service-level invariants:
 
 from __future__ import annotations
 
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from decimal import Decimal
 from uuid import UUID
 
@@ -18,6 +18,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import EventType, event_bus
+from app.core.utils.dates import clinic_today_for
 from app.modules.budget.models import Budget
 
 from .models import Payment, PaymentAllocation, PaymentHistory, Refund
@@ -106,7 +107,7 @@ async def record_payment(
     patient_id: UUID,
     amount: Decimal,
     method: str,
-    payment_date,
+    payment_date: date | None,
     recorded_by: UUID,
     allocations: list[dict],
     reference: str | None = None,
@@ -125,7 +126,11 @@ async def record_payment(
     ``context`` is an opaque dict echoed into every ``payment.allocated``
     payload for transactional subscribers (e.g. billing passes the
     invoice the user is collecting on); payments never interprets it.
+
+    ``payment_date`` ``None`` is the clinic's today (not the server's).
     """
+    if payment_date is None:
+        payment_date = await clinic_today_for(db, clinic_id)
     if idempotency_key:
         existing = (
             await db.execute(

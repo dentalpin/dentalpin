@@ -217,7 +217,7 @@ class OrthoCaseService:
             patient_id=data.patient_id,
             appliance_type=data.appliance_type,
             status="active",
-            start_date=data.start_date,
+            start_date=data.start_date or await clinic_today_for(db, clinic_id),
             estimated_months=data.estimated_months,
             professional_id=data.professional_id,
             diagnosis_notes=data.diagnosis_notes,

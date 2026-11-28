@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix: a case created without `start_date` starts on the clinic's day, not the server's UTC day.
 - fix(#1186): editing the latest control's next_control_weeks or performed_at now moves the ortho_review recall (same latest-control and paused rules as registration).
 - fix(#1176): the cases list's overdue check reads `next_due` as local midnight (`parseDateOnly`), so west of UTC a case is no longer flagged overdue on its due day.
 

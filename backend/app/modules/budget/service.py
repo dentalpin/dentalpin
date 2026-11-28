@@ -501,6 +501,10 @@ class BudgetService:
         # Extract items data
         items_data = data.pop("items", [])
 
+        # An omitted start of validity is the clinic's today, not the server's.
+        if data.get("valid_from") is None:
+            data["valid_from"] = await clinic_today_for(db, clinic_id)
+
         # Reject a professional who is not a member of this clinic before
         # the FK gets a chance to decide (#tenancy).
         if data.get("assigned_professional_id"):

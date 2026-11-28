@@ -313,7 +313,8 @@ class BudgetCreate(BaseModel):
     patient_id: UUID
 
     # Validity
-    valid_from: date = Field(default_factory=date.today)
+    # Omitted: the clinic's today, filled in by create_budget.
+    valid_from: date | None = None
     valid_until: date | None = None
 
     # Assignment

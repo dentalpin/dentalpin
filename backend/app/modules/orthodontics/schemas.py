@@ -39,7 +39,8 @@ def _blank_is_none(value: object) -> object:
 class OrthoCaseCreate(BaseModel):
     patient_id: UUID
     appliance_type: ApplianceType
-    start_date: date = Field(default_factory=date.today)
+    # Omitted: the clinic's today, filled in by OrthoCaseService.create.
+    start_date: date | None = None
     estimated_months: int | None = Field(default=None, ge=1, le=120)
     professional_id: UUID | None = None
     diagnosis_notes: str | None = Field(default=None, max_length=5000)
