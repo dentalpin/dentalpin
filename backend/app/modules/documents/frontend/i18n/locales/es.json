@@ -153,7 +153,7 @@
       "qrTitle": "Escanear para firmar",
       "signedToast": "Consentimiento firmado",
       "formatHelp": "Formato: empiece una línea con # (título) o ## / ### (subtítulos), ponga el texto entre **dos asteriscos** para negrita o *un asterisco* para cursiva, y empiece las líneas con - o 1. para listas. Una línea en blanco inicia un párrafo nuevo. Todo lo demás, incluidos HTML y enlaces, se muestra tal como se escribe.",
-      "variablesHelp": "Variables: escriba {variables} en el texto y se rellenan al crear un consentimiento desde esta plantilla (paciente, clínica, profesional y fecha). Si falta un dato, aparece ____ para escribirlo antes de firmar. Los nombres desconocidos se dejan tal cual.",
+      "variablesHelp": "Variables: escriba {variables} en el texto y se rellenan al crear un consentimiento desde esta plantilla (paciente, clínica, profesional y fecha en que se prepara). Si falta un dato, aparece ____ para escribirlo antes de firmar. Los nombres desconocidos se dejan tal cual.",
       "unknownVariables": "Algunas variables de la plantilla no se reconocieron y se dejaron tal cual: {names}"
     }
   }

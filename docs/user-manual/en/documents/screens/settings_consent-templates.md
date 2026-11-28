@@ -100,7 +100,7 @@ screen. The template itself keeps the variable.
 | `{{ clinic_name }}` | The clinic name, as printed in the PDF header |
 | `{{ professional_name }}` | The name of the user creating the consent |
 | `{{ professional_license }}` | That user's professional licence number |
-| `{{ date }}` | Today's date, in the clinic's language format |
+| `{{ date }}` | The date the consent is prepared, in the clinic's language format (the signing date and time are printed separately in the signed PDF) |
 
 If the value is not on file (for example the patient has no ID document
 recorded), a visible `____` is inserted so you notice it and can type it in

@@ -9,8 +9,9 @@ keep the raw ``{{ ... }}`` text.
 Values are inserted as plain text: whitespace is collapsed to one line and
 Markdown-significant characters are backslash-escaped, so a patient named
 ``*Ana*`` or ``1. Foo`` cannot inject formatting into ``render_consent_body``
-(which already escapes HTML). A missing value becomes a visible ``____`` so
-the professional notices and types it while editing.
+(which already escapes HTML). A missing value becomes a visible ``____``
+(inserted escaped, so two blanks can never pair up as emphasis) so the
+professional notices and types it while editing.
 """
 
 from __future__ import annotations
@@ -22,6 +23,9 @@ from datetime import date
 from app.core.pdf_locales import format_pdf_date
 
 BLANK = "____"
+# What is inserted for a missing value: renders as ``____`` and, unlike a bare
+# underscore run, cannot pair with another blank into emphasis.
+BLANK_MARKDOWN = "\\_\\_\\_\\_"
 
 VARIABLE_PATTERN = re.compile(r"\{\{\s*([a-z_]+)\s*\}\}")
 
@@ -40,18 +44,28 @@ VARIABLE_NAMES: tuple[str, ...] = (
 _INLINE_SPECIAL = re.compile(r"([\\*_`])")
 # A value that starts like a block marker would turn into a heading or list.
 _BLOCK_START = re.compile(r"^(#|[-+]|\d{1,9}(?=[.)]))")
+# Template text before a placeholder that still leaves it at a block start:
+# nothing, or only list / heading markers ("- ", "1. ", "## ", "- 1. ").
+_BLOCK_PREFIX = re.compile(r"\s*(?:(?:[-+*]|\d{1,9}[.)]|#{1,6})\s+)*")
+_ALL_DIGITS = re.compile(r"\d{1,9}")
 
 
-def escape_markdown_value(value: str, *, line_start: bool = True) -> str:
+def escape_markdown_value(value: str, *, line_start: bool = True, next_char: str = "") -> str:
     """One line of plain text that renders literally through Markdown.
 
-    ``line_start`` is whether the value lands at the start of a line, where a
-    leading ``#``, ``-``, ``+`` or ``1.`` would otherwise open a heading or list.
+    ``line_start`` is whether the value lands at a block start (start of a line,
+    possibly after list or heading markers), where a leading ``#``, ``-``, ``+``
+    or ``1.`` would otherwise open a heading or list. ``next_char`` is the
+    template character right after the placeholder: an all-digit value followed
+    by ``.`` or ``)`` would also open an ordered list, so that character is
+    escaped by ending the value with a backslash.
     """
     text = " ".join(str(value).split())
     text = _INLINE_SPECIAL.sub(r"\\\1", text)
     if not line_start:
         return text
+    if next_char in ".)" and next_char and _ALL_DIGITS.fullmatch(text):
+        return text + "\\"
     match = _BLOCK_START.match(text)
     if match is None:
         return text
@@ -98,9 +112,11 @@ def fill_template_variables(text: str, values: Mapping[str, str | None]) -> tupl
             return match.group(0)
         value = values.get(name)
         if value is None or not str(value).strip():
-            return BLANK
-        line_start = not text[text.rfind("\n", 0, match.start()) + 1 : match.start()].strip()
-        return escape_markdown_value(value, line_start=line_start)
+            return BLANK_MARKDOWN
+        before = text[text.rfind("\n", 0, match.start()) + 1 : match.start()]
+        line_start = _BLOCK_PREFIX.fullmatch(before) is not None
+        next_char = text[match.end() : match.end() + 1]
+        return escape_markdown_value(value, line_start=line_start, next_char=next_char)
 
     replacer: Callable[[re.Match[str]], str] = replace
     return VARIABLE_PATTERN.sub(replacer, text), unknown

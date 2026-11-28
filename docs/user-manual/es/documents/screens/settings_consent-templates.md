@@ -102,7 +102,7 @@ exactamente lo que había en pantalla. La plantilla conserva la variable.
 | `{{ clinic_name }}` | El nombre de la clínica, como en la cabecera del PDF |
 | `{{ professional_name }}` | El nombre del usuario que crea el consentimiento |
 | `{{ professional_license }}` | El número de colegiado de ese usuario |
-| `{{ date }}` | La fecha de hoy, con el formato del idioma de la clínica |
+| `{{ date }}` | La fecha en que se prepara el consentimiento, con el formato del idioma de la clínica (la fecha y hora de la firma se imprimen aparte en el PDF firmado) |
 
 Si el dato no está registrado (por ejemplo, el paciente no tiene documento
 de identidad), se inserta un `____` visible para que lo notes y lo escribas

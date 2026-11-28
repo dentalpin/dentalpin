@@ -20,6 +20,7 @@ from app.core.utils.dates import clinic_today
 from app.modules.documents.consent_markdown import render_consent_body
 from app.modules.documents.consent_variables import (
     BLANK,
+    BLANK_MARKDOWN,
     VARIABLE_NAMES,
     build_values,
     escape_markdown_value,
@@ -84,8 +85,8 @@ def test_missing_values_become_a_visible_blank():
     text, _ = fill_template_variables(
         "ID {{ patient_id_document }} / {{ professional_license }}", values
     )
-    assert text == f"ID {BLANK} / {BLANK}"
-    assert fill_template_variables("{{ date }}", {})[0] == BLANK
+    assert text == f"ID {BLANK_MARKDOWN} / {BLANK_MARKDOWN}"
+    assert fill_template_variables("{{ date }}", {})[0] == BLANK_MARKDOWN
 
 
 def test_substituted_values_are_not_rescanned():
@@ -168,6 +169,47 @@ def test_block_markers_are_only_escaped_at_the_start_of_a_line():
     assert "<ol>" not in render_consent_body(indented)
 
 
+def test_two_blanks_in_punctuation_stay_visible():
+    # A bare "____" is an underscore delimiter run: two of them between
+    # punctuation would pair up as strong emphasis and both blanks would vanish.
+    text, _ = fill_template_variables(
+        "DNI ({{ patient_id_document }}), fecha ({{ patient_birth_date }})", {}
+    )
+    html = render_consent_body(text)
+    assert "<strong>" not in html and "<em>" not in html
+    assert html.count(BLANK) == 2
+    assert "DNI (____), fecha (____)" in html
+
+
+@pytest.mark.parametrize(
+    ("template", "value"),
+    [
+        # A value after a list or heading marker is still at a block start.
+        ("- {{ patient_name }}", "1. Foo"),
+        ("- {{ patient_name }}", "# Foo"),
+        ("1. {{ patient_name }}", "- Foo"),
+        ("## {{ patient_name }}", "# Foo"),
+        # An all-digit value followed by "." or ")" from the template.
+        ("{{ patient_name }}. Firma", "123"),
+        ("{{ patient_name }}) Firma", "123"),
+        ("- {{ patient_name }}. Firma", "123"),
+    ],
+)
+def test_values_cannot_open_a_block_after_markers_or_before_template_punctuation(template, value):
+    # The value must render exactly where a neutral word would, with the
+    # template's own structure (its list or heading) and nothing more.
+    text, _ = fill_template_variables(template, {"patient_name": value})
+    neutral = render_consent_body(template.replace("{{ patient_name }}", "NEUTRALWORD"))
+    assert render_consent_body(text) == neutral.replace("NEUTRALWORD", value)
+
+
+def test_digit_value_mid_line_is_left_alone():
+    text, _ = fill_template_variables(
+        "Ref {{ patient_id_document }}. Firma", {"patient_id_document": "123"}
+    )
+    assert text == "Ref 123. Firma"
+
+
 def test_literal_text_survives_exactly():
     source, _ = fill_template_variables(
         "{{ patient_name }}", {**FULL, "patient_name": "*Ana* _B_ \\C"}
@@ -237,7 +279,7 @@ async def test_missing_values_leave_blanks_and_unknown_names_are_reported(
     detail = await client.get(f"/api/v1/documents/{data['id']}", headers=auth_headers)
     assert (
         detail.json()["data"]["content"]["text"]
-        == f"ID {BLANK} born {BLANK} lic {BLANK} {{{{ mystery }}}}"
+        == f"ID {BLANK_MARKDOWN} born {BLANK_MARKDOWN} lic {BLANK_MARKDOWN} {{{{ mystery }}}}"
     )
 
 
