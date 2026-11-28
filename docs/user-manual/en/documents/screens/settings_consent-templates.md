@@ -103,7 +103,7 @@ screen. The template itself keeps the variable.
 | `{{ date }}` | The date the consent is prepared, in the clinic's language format (the signing date and time are printed separately in the signed PDF) |
 
 If the value is not on file (for example the patient has no ID document
-recorded), a visible `____` is inserted so you notice it and can type it in
+recorded), a visible blank line (`————`) is inserted so you notice it and can type it in
 while editing the consent. A name that is not in the list is left exactly as
 written and the patient card shows a warning. Values are inserted as plain
 text: a patient called `*Ana*` is printed as `*Ana*`, not in italics.

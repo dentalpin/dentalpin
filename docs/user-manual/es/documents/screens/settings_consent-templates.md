@@ -105,7 +105,7 @@ exactamente lo que había en pantalla. La plantilla conserva la variable.
 | `{{ date }}` | La fecha en que se prepara el consentimiento, con el formato del idioma de la clínica (la fecha y hora de la firma se imprimen aparte en el PDF firmado) |
 
 Si el dato no está registrado (por ejemplo, el paciente no tiene documento
-de identidad), se inserta un `____` visible para que lo notes y lo escribas
+de identidad), se inserta una línea en blanco visible (`————`) para que lo notes y lo escribas
 al editar el consentimiento. Un nombre que no esté en la lista se deja tal
 como está y la ficha del paciente muestra un aviso. Los valores se insertan
 como texto plano: un paciente llamado `*Ana*` se imprime como `*Ana*`, no
