@@ -129,6 +129,8 @@ A settings section `Recordatorios` registered into the existing
 - Default intervals per reason (hygiene 6mo, checkup 12mo,
   ortho_review 1mo, implant_review 6mo, post_op 1wk,
   treatment_followup 3mo, other 3mo).
+  Each interval is 0..60 months; 0 turns the suggestion off for that
+  reason, and the API rejects anything outside the range (#1244).
 - Treatment-category → recall-reason map (preventivo→hygiene,
   ortodoncia→ortho_review, cirugia→post_op, …).
 - Toggle: auto-suggest on treatment completion (default on).
