@@ -7,15 +7,19 @@ import { useMedicalHistory } from '../../../backend/app/modules/patients_clinica
 /** #1045: the PUT replaces the whole history, so it must only follow a successful load. */
 const get = vi.fn()
 const put = vi.fn()
+const granted = new Set<string>()
 
 mockNuxtImport('useApi', () => () => ({ get, put }))
 mockNuxtImport('useToast', () => () => ({ add: vi.fn() }))
 mockNuxtImport('useI18n', () => () => ({ t: (key: string) => key }))
+mockNuxtImport('usePermissions', () => () => ({ can: (p: string) => granted.has(p) }))
 
 describe('useMedicalHistory', () => {
   beforeEach(() => {
     get.mockReset()
     put.mockReset()
+    granted.clear()
+    granted.add('patients_clinical.medical.read')
     vi.spyOn(console, 'error').mockImplementation(() => {})
   })
 
@@ -55,5 +59,14 @@ describe('useMedicalHistory', () => {
     const edited = { ...history.medicalHistory.value, allergies: [] }
     expect(await history.saveMedicalHistory(edited)).toBe(true)
     expect(put.mock.calls[0]![1]).toEqual(edited)
+  })
+
+  it('does not request the history without medical.read (#1268)', async () => {
+    granted.clear()
+    const history = useMedicalHistory(ref('patient-a'))
+    await flushPromises()
+
+    expect(get).not.toHaveBeenCalled()
+    expect(history.isLoaded.value).toBe(false)
   })
 })

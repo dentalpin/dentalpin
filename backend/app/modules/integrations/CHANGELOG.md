@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1280): a webhook delivery left in `sending` by a restart mid-POST is put back to `failed` after 30 min by the new `integrations_stuck_reaper` job and retried. A delivery stuck over 24 h is failed for good instead of replayed.
 - fix(#1009): a delivery of a paused, auto-disabled or undecryptable subscription spends its attempts and ends `failed`; it was retried forever.
 
 - fix(#65): a webhook subscription now auto-disables after 25 consecutive delivery failures instead of 10. With the 1h backoff cap that is roughly a day of receiver downtime before a subscription is cut off. Dropped the empty `get_tools()` override; `BaseModule` already returns `[]`.

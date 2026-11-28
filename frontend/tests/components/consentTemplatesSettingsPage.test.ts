@@ -49,6 +49,17 @@ describe('consent templates settings page', () => {
     } finally { wrapper.unmount() }
   })
 
+  it('lists the template variables available to authors (#1171)', async () => {
+    const wrapper = await mountSuspended(DocumentsConsentTemplatesPage)
+    await flushPromises()
+    try {
+      const help = wrapper.get('[data-testid="consent-variables-help"]').text()
+      for (const name of ['patient_name', 'patient_id_document', 'patient_birth_date', 'clinic_name', 'professional_name', 'professional_license', 'date']) {
+        expect(help).toMatch(new RegExp(`\\{\\{ ${name} \\}\\}|documents\\.consent\\.variablesHelp`))
+      }
+    } finally { wrapper.unmount() }
+  })
+
   it('creates a template with POST and trims the values', async () => {
     const wrapper = await mountSuspended(DocumentsConsentTemplatesPage)
     await flushPromises()

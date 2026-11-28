@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Literal
+from typing import Annotated, Literal
 from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict, Field
+
+from .models import MAX_REASON_INTERVAL_MONTHS
 
 # --- Enum literals (mirrors ``models.REASONS`` etc.) ----------------------
 
@@ -180,8 +182,13 @@ class RecallSettingsResponse(BaseModel):
     model_config = ConfigDict(from_attributes=True)
 
 
+# Months between a treatment and its suggested recall. 0 switches the
+# suggestion off for that reason; the panel offers 0..60 (#1244).
+ReasonInterval = Annotated[int, Field(strict=True, ge=0, le=MAX_REASON_INTERVAL_MONTHS)]
+
+
 class RecallSettingsUpdate(BaseModel):
-    reason_intervals: dict[str, int] | None = None
+    reason_intervals: dict[str, ReasonInterval] | None = None
     category_to_reason: dict[str, str] | None = None
     auto_suggest_on_treatment_completed: bool | None = None
     auto_link_on_appointment_scheduled: bool | None = None

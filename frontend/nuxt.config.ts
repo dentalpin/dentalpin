@@ -122,6 +122,12 @@ export default defineNuxtConfig({
   },
   srcDir: 'app',
 
+  // No production sourcemaps (client or server). Nothing consumes them
+  // (no Sentry on the frontend), and the server ones made the Nitro
+  // bundling step peak ~600 MB higher: with 55 module layers it hit the
+  // 6 GB heap and OOM'd the Coolify deploy and the CI e2e build.
+  sourcemap: { server: false, client: false },
+
   // Restart dev server when the backend rewrites `modules.json` on
   // module install/uninstall. `extends` is evaluated once at config
   // boot, so a layer added after Nuxt started is invisible until
@@ -129,12 +135,6 @@ export default defineNuxtConfig({
   watch: [modulesJsonPath],
 
   compatibilityDate: '2025-01-15',
-
-  // No production sourcemaps (client or server). Nothing consumes them
-  // (no Sentry on the frontend), and the server ones made the Nitro
-  // bundling step peak ~600 MB higher: with 55 module layers it hit the
-  // 6 GB heap and OOM'd the Coolify deploy and the CI e2e build.
-  sourcemap: { server: false, client: false },
 
   vite: {
     optimizeDeps: {

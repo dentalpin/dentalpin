@@ -53,6 +53,9 @@ _Pantalla `/settings/notifications` del módulo `notifications`._
 
 Configuración de notificaciones de la clínica.
 
+Abre [Plantillas](notification_templates.md) para editar el texto de
+correo o WhatsApp manual por tipo de mensaje e idioma.
+
 ### Canales (#287)
 
 La tarjeta **Canales** decide por qué vía habla la clínica con los

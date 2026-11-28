@@ -12,6 +12,7 @@ Landing page for the `notifications` module in the end-user manual.
 ## Screens
 
 - `/settings/notifications` — _Documentation pending._
+- [Notification templates](screens/notification_templates.md)
 
 ## Permissions
 

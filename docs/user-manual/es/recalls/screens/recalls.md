@@ -27,7 +27,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/recalls/frontend/pages/recalls/index.vue
   - backend/app/modules/recalls/router.py
-last_verified_commit: dd87ef44
+last_verified_commit: 0b0731be
 ---
 
 # Lista de llamadas
@@ -97,6 +97,9 @@ registrar el intento, mover el recall al siguiente estado.
 
 ## Resolución de problemas
 
+- **Guardar los ajustes de recalls da un error de intervalo.** Cada
+  intervalo debe ser un número entero de meses entre 0 y 60; 0 significa
+  que no se sugiere recall para ese motivo.
 - **Un paciente con cita ya creada sigue en pendiente.** El auto-enlace
   solo dispara cuando hay **un único** recall activo que coincida. Si
   hay dos o más, enlázalo a mano desde la fila con **Agendar cita**.

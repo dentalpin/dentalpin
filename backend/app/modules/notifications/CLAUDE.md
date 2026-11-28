@@ -21,6 +21,22 @@ Heavy subscriber + now a publisher. See ADR 0016.
 - `gateway.py` — `NotificationGateway.enqueue` (consent gate → channel
   resolution → persist `queued` row → publish) and `dispatch_outbox`
   (the scheduled sender, retry + backoff). **No network in a request.**
+  `reap_stuck_sending` (job `notifications_stuck_reaper`, every 5 min)
+  rescues rows left in `sending` by a restart or crash mid-send: after
+  `STALE_SENDING_AFTER` (30 min since the row's `updated_at`) the row goes
+  back to `failed`, due at once. The interrupted attempt stays counted, so
+  a row that has used `max_attempts` stays `failed` without a retry (#1280).
+  Trade-off: this is at-least-once. If the provider accepted the message
+  but the process died before the `sent` commit, the retry sends it a
+  second time. The 30 min horizon is far above every adapter timeout
+  (SMTP 30 s per step, Kapso 30 s, push and webhook-WhatsApp 10 s), so a send
+  still in flight is never reaped; only a dead worker leaves a row that
+  long. A missing reminder is worse than a rare duplicate.
+  Age cap: a row stuck longer than `RETRY_STUCK_SENDING_WITHIN` (24 h,
+  e.g. from before the reaper existed) is not retried. It ends `failed`
+  with "interrupted while sending; too old to retry", no `next_attempt_at`
+  and `max_attempts` lowered to its `attempts`, so the outbox never picks
+  it up. A reminder stuck since before its appointment never goes out after it.
   SMS resolves like WhatsApp minus the Meta template gate (text-only,
   either message kind), gated by per-patient `sms_enabled` and a
   per-clinic `sms_daily_limit` (default 100/day, skips log
@@ -59,6 +75,17 @@ Heavy subscriber + now a publisher. See ADR 0016.
 
 Routes mounted at `/api/v1/notifications/` (templates, preferences,
 settings, logs).
+
+The template editor lives at `/settings/communications/templates`. Bundled email title and content blocks prefill unsaved selections; manual WhatsApp uses the system row when present. Email fragments render inside `base.html` in both preview and delivery; pre-existing complete HTML documents or templates extending a base keep their own layout. An empty subject uses the localized bundled title from #1204.
+ The
+`/templates/editor/{template_key}` API selects a clinic, message type, channel,
+and locale. Read holders can preview with a synthetic context. Write holders
+can save or restore email and manual WhatsApp copy. SMS and Push are
+read-only. The editor validates the supported Jinja subset and optional
+variables. Keep `template_variables.py` aligned with the event producers.
+Manual WhatsApp restoration clears only `body_text`, so provider mappings
+survive. The gateway uses existing system WhatsApp text where available
+and retains the skip behavior when it is missing.
 
 ## Dependencies
 

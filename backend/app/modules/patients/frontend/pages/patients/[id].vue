@@ -34,6 +34,10 @@ const patientIdRef = computed(() => patientId)
 // Handle returnTo query param (from invoice edit page)
 const returnTo = computed(() => route.query.returnTo as string | undefined)
 
+// The alerts endpoint and the medical-history card need medical.read,
+// which the receptionist role does not have.
+const canReadMedicalHistory = computed(() => can(PERMISSIONS.medicalHistory.read))
+
 // Fetch patient identity from the patients module. The Resumen smart-
 // cards each fetch their own module's data via slot registration; the
 // page no longer mediates that traffic. The Datos tab still consumes
@@ -55,9 +59,13 @@ const { data: patient, status, refresh } = await useAsyncData(
         api.get<ApiResponse<PatientExtended['legal_guardian']>>(
           `/api/v1/patients_clinical/patients/${patientId}/legal-guardian`
         ).catch(() => ({ data: null })),
-        api.get<ApiResponse<{ alerts: PatientExtended['active_alerts'] }>>(
-          `/api/v1/patients_clinical/patients/${patientId}/alerts`
-        ).catch(() => ({ data: { alerts: [] } }))
+        // Gate on the route's own permission: useApi toasts every 403
+        // even when the caller catches it (#1268).
+        canReadMedicalHistory.value
+          ? api.get<ApiResponse<{ alerts: PatientExtended['active_alerts'] }>>(
+              `/api/v1/patients_clinical/patients/${patientId}/alerts`
+            ).catch(() => ({ data: { alerts: [] } }))
+          : Promise.resolve({ data: { alerts: [] } })
       ])
 
       return {
@@ -408,6 +416,7 @@ function collect() {
           <template #info>
             <div class="mt-4 space-y-3 lg:space-y-4 overflow-visible">
               <MedicalSnapshotCard
+                v-if="canReadMedicalHistory"
                 :medical-history="medicalHistory"
                 :active-alerts="patient.active_alerts"
                 :can-edit="canEditMedicalHistory"
