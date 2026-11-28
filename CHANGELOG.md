@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Verifactu:** non-admin staff no longer see an "Access denied" toast on every page load, every minute, or on every invoice they open (#1269).
 - **Verifactu:** the certificate-expiry reminder email now arrives every day instead of skipping days at random (#1278).
 - **Settings:** a dentist, who holds `agenda.cabinets.write`, can now add, edit and delete cabinets under Settings → Workspace → Cabinets; the actions were shown to admin only (#1274).
 - **Billing:** dentists, who hold `billing.admin`, now see the Invoice series settings page and can create, edit and reset series (#1273).
