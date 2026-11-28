@@ -65,6 +65,42 @@ WeasyPrint ignores `<li value>`, so `pdf.py` adds `list_value_css()` rules
 (`counter-set`). If lists nest so deep that markdown-it drops text
 (maxNesting), the renderer falls back to escaped plain text with `<br>`.
 
+### Template variables (#1171)
+
+`consent_variables.fill_template_variables` fills `{{ name }}` placeholders
+**once, at snapshot time** in `ConsentService.create_consent`; the template
+keeps the raw text and existing or signed consents are never rewritten. It
+is a regex (`\{\{\s*([a-z_]+)\s*\}\}`) over the `VARIABLE_NAMES`
+allowlist, not Jinja: no filters, expressions or attribute access, and
+inserted values are not re-scanned. Names, from existing model fields only:
+
+| Variable | Source |
+|---|---|
+| `patient_name` | `patient.first_name last_name` |
+| `patient_id_document` | `patient.national_id` |
+| `patient_birth_date` | `patient.date_of_birth`, `format_pdf_date` |
+| `clinic_name` | `DocumentPDFService._letterhead(clinic)["name"]` (same as the PDF header) |
+| `professional_name` | current user's first and last name |
+| `professional_license` | `user.professional_id` |
+| `date` | The day the consent is prepared (created): `clinic_today(clinic.timezone)`, `format_pdf_date`; the signing time is printed separately in the signed PDF |
+
+The date locale is the clinic `communication_language` (as for signing
+links; `en` if it is not a PDF locale). A missing or blank value becomes a
+visible `____` so staff notice it and type it while the consent is still
+editable; it is inserted escaped (`\_\_\_\_`, `BLANK_MARKDOWN`) because a
+bare underscore run between punctuation could pair with another blank into
+emphasis and vanish. An unknown (or upper-case) name stays verbatim and is returned once
+in `data.unknown_variables` of `POST /consents` (omitted when empty); the
+create never fails because of it. Values are one line of plain text:
+whitespace is collapsed and the characters backslash, `*`, `_` and backtick are backslash-escaped, plus a leading
+`#`, `-`, `+` or `1.`/`1)` when the placeholder sits at a block start (start of
+the line, or after only list/heading markers such as `- `, `1. `, `## `), and an
+all-digit value followed by `.` or `)` in the template ends with a backslash so
+that character is escaped, so `*Ana*` or `1. Foo` cannot become formatting in
+`render_consent_body`. Adding a variable: extend `VARIABLE_NAMES` and
+`build_values`, the frontend list in `DocumentsConsentTemplatesPage.vue`, the
+`variablesHelp` strings and the user manual.
+
 ## Dependencies
 
 `manifest.depends = ["patients"]` — reads patient demographics for the

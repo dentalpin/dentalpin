@@ -129,11 +129,12 @@ watch(currentMode, (newMode) => {
       @continue-plan="handleContinuePlan"
     />
 
+    <!-- No readonly here: `readonly` is the odontogram gate. The plan
+         view gates each action on its own treatment_plan permission (#1270). -->
     <PlansMode
       v-else-if="currentMode === 'plans'"
       :patient-id="patientId"
       :initial-plan-id="targetPlanId"
-      :readonly="readonly"
       @plan-activated="handlePlanActivated"
       @budget-generated="handleBudgetGenerated"
       @view-change="emit('plan-view-change', $event)"

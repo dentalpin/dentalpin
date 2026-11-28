@@ -16,6 +16,10 @@ const editing = ref('')
 const title = ref('')
 const body = ref('')
 
+// Keep in sync with VARIABLE_NAMES in backend consent_variables.py.
+const TEMPLATE_VARIABLES = ['patient_name', 'patient_id_document', 'patient_birth_date', 'clinic_name', 'professional_name', 'professional_license', 'date']
+const variableList = TEMPLATE_VARIABLES.map(name => `{{ ${name} }}`).join(', ')
+
 const canSave = computed(() => !!title.value.trim() && !!body.value.trim() && !saving.value)
 
 async function fetchTemplates(): Promise<void> {
@@ -166,6 +170,7 @@ onMounted(fetchTemplates)
           />
           <template #help>
             {{ t('documents.consent.formatHelp') }}
+            <span data-testid="consent-variables-help">{{ t('documents.consent.variablesHelp', { variables: variableList }) }}</span>
           </template>
         </UFormField>
       </div>

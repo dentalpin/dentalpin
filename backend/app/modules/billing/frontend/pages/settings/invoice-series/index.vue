@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { InvoiceSeries, InvoiceSeriesCreate, InvoiceSeriesUpdate, SeriesResetRequest } from '~~/app/types'
 import { errorMessage } from '~~/app/utils/error'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 const { t } = useI18n()
-const { isAdmin } = usePermissions()
+const { can } = usePermissions()
+// Series management is `billing.admin` on the API, which `dentist` holds too (#542).
+const canManage = computed(() => can(PERMISSIONS.billing.admin))
 const toast = useToast()
 const {
   fetchSeries,
@@ -232,7 +235,7 @@ function getSeriesTypeLabel(type: string): string {
               {{ t('invoiceSeries.regularInvoices') }}
             </h2>
             <UButton
-              v-if="isAdmin"
+              v-if="canManage"
               icon="i-lucide-plus"
               size="sm"
               @click="openCreateModal('invoice')"
@@ -302,7 +305,7 @@ function getSeriesTypeLabel(type: string): string {
 
               <!-- Actions -->
               <div
-                v-if="isAdmin"
+                v-if="canManage"
                 class="flex items-center gap-1"
               >
                 <UButton
@@ -337,7 +340,7 @@ function getSeriesTypeLabel(type: string): string {
               {{ t('invoiceSeries.creditNotes') }}
             </h2>
             <UButton
-              v-if="isAdmin"
+              v-if="canManage"
               icon="i-lucide-plus"
               size="sm"
               @click="openCreateModal('credit_note')"
@@ -407,7 +410,7 @@ function getSeriesTypeLabel(type: string): string {
 
               <!-- Actions -->
               <div
-                v-if="isAdmin"
+                v-if="canManage"
                 class="flex items-center gap-1"
               >
                 <UButton

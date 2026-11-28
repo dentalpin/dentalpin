@@ -2517,6 +2517,7 @@
     "autoSend": "إرسال تلقائي",
     "options": "خيارات",
     "hoursBefore": "ساعة قبل",
+    "hoursBeforeRange": "أدخل عددًا صحيحًا من الساعات من 1 إلى 168.",
     "testConnection": "اختبار الاتصال",
     "testEmailTitle": "إرسال بريد تجريبي",
     "testEmailDescription": "سنرسل بريدًا تجريبيًا للتأكد من عمل الإعدادات بشكل صحيح.",

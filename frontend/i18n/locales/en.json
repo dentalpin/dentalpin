@@ -2517,6 +2517,7 @@
     "autoSend": "Auto send",
     "options": "Options",
     "hoursBefore": "h before",
+    "hoursBeforeRange": "Enter a whole number of hours from 1 to 168.",
     "testConnection": "Test connection",
     "testEmailTitle": "Send test email",
     "testEmailDescription": "We will send a test email to verify the configuration works correctly.",

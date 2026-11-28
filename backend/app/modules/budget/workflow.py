@@ -12,6 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.models import Clinic
 from app.core.events import EventType, event_bus
+from app.core.utils.clinic_settings import read_budget_days_setting
 from app.core.utils.dates import clinic_today_for
 
 from .models import Budget, BudgetAccessLog, BudgetSignature
@@ -102,7 +103,9 @@ async def fresh_valid_until(db: AsyncSession, source: Budget) -> date | None:
     if source.valid_until is None:
         return None
     clinic_settings = await _resolve_clinic_settings(db, source.clinic_id)
-    validity_days = int(clinic_settings.get("budget_expiry_days", DEFAULT_BUDGET_VALIDITY_DAYS))
+    validity_days = read_budget_days_setting(
+        clinic_settings, "budget_expiry_days", DEFAULT_BUDGET_VALIDITY_DAYS
+    )
     return await clinic_today_for(db, source.clinic_id) + timedelta(days=validity_days)
 
 

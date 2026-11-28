@@ -133,6 +133,13 @@ contract.
   source's date made a resent expired quote expire again overnight
   (#1113).
 
+- **Read `budget_expiry_days` through `read_budget_days_setting`.**
+  `clinic.settings` is free JSON; `core.utils.clinic_settings` falls back
+  to the default (with a warning) for a stored `null`, string or
+  out-of-range value. A bare `int(...)` 500'd quote creation and resend
+  on a stored `null` (#1276). The settings PATCH (core) rejects `null` and
+  values outside 7-180 with 422.
+
 - **GDPR erasure retains the signer's email.**
   `erasure.BudgetErasureContributor` owns the `budget` coverage scope
   (ADR 0038, #657) and writes nothing: blanking
@@ -204,8 +211,10 @@ contract.
   update services (`BudgetItemService.update_item`,
   `BudgetService.update_budget`) run it on the merged stored + sent pair,
   so a partial update can't switch an absolute 150 to a percentage (400).
-  The line/global calculations themselves don't clamp a percentage, and
-  rows stored above 100 before the fix are not rewritten.
+  They check only when the request sends the discount type or value, so a
+  row stored above 100 before the fix still takes other edits. The
+  line/global calculations don't clamp a percentage, and such rows are not
+  rewritten; `billing.create_from_budget` copies them as they are.
 - **Public-link sessions are per-token** (cookie path scoped to
   `/api/v1/budget/public/budgets/{token}`) so a stolen cookie from one
   budget cannot unlock another.

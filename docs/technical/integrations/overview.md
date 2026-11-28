@@ -78,7 +78,10 @@ Migrations: `int_0001` (initial schema), `int_0002` (api_tokens),
 `gateway.py`'s `WebhookGateway` mirrors `NotificationGateway`'s
 outbox shape 1:1: DB-only enqueue, a scheduled 45s dispatch tick with
 `FOR UPDATE SKIP LOCKED` batching, same exponential backoff. A
-subscription auto-disables after 25 consecutive failures. Every dispatched
+subscription auto-disables after 25 consecutive failures. A delivery left
+in `sending` for 30 min by a restart mid-POST is put back to `failed` and
+retried by the `integrations_stuck_reaper` job (#1280); one stuck over 24 h is
+failed for good instead of replayed. Every dispatched
 envelope carries `event`, `event_id`, `delivery_id`, and `data`.
 
 ## Signing

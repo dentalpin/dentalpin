@@ -5,6 +5,7 @@
 // dependency on verifactu; this file lives in the verifactu module and
 // is loaded only when the clinic country is ES.
 import InvoiceVerifactuPanel from './InvoiceVerifactuPanel.vue'
+import { PERMISSIONS } from '~~/app/config/permissions'
 import { errorMessage, errorStatus } from '~~/app/utils/error'
 
 interface InvoiceCtx {
@@ -26,6 +27,10 @@ const router = useRouter()
 const toast = useToast?.()
 const { retryRecord, checkNif, getLatestRecordForInvoice } = useVerifactu()
 const { updateBillingParty, fetchInvoice } = useInvoices()
+const { can } = usePermissions()
+// /queue/{id}/retry needs queue.manage, /nif-check needs settings.read (#1269).
+const canRegenerate = computed(() => can(PERMISSIONS.verifactu.queueManage))
+const canCheckNif = computed(() => can(PERMISSIONS.verifactu.settingsRead))
 
 const invoice = computed(() => props.ctx?.invoice ?? null)
 const complianceData = computed(() => invoice.value?.compliance_data ?? null)
@@ -50,6 +55,9 @@ const liveRecord = ref<{
 
 async function fetchLiveRecord() {
   if (!invoice.value?.id) return
+  // /verifactu/records needs verifactu.records.read. Roles that can open
+  // invoices without it fall back to compliance_data (#1269).
+  if (!can(PERMISSIONS.verifactu.recordsRead)) return
   try {
     const r = await getLatestRecordForInvoice(invoice.value.id)
     if (r) {
@@ -111,7 +119,7 @@ function openEdit() {
 }
 
 async function onNifBlur() {
-  if (!editTaxId.value) {
+  if (!editTaxId.value || !canCheckNif.value) {
     nifWarning.value = null
     return
   }
@@ -200,6 +208,7 @@ function goToClinic() {
             {{ t('verifactu.queue.ctas.edit_clinic') }}
           </UButton>
           <UButton
+            v-if="canRegenerate"
             variant="ghost"
             size="sm"
             icon="i-lucide-refresh-cw"

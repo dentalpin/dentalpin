@@ -12,7 +12,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/settings/invoice-series/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 0b0731be
 ---
 
 # Invoice series
@@ -36,8 +36,9 @@ active per fiscal year.
   of a year does not restart the numbering: this year's invoices
   keep counting from the last number, and the series starts again
   at 1 next January.
-- **Permissions.** All series management requires `billing.admin`.
-  Other roles can browse the list but not edit.
+- **Permissions.** The screen and all series management require
+  `billing.admin` (admin and dentist by default). The entry is
+  hidden from Settings for roles without it.
 
 ## Create a series
 
@@ -63,7 +64,7 @@ active per fiscal year.
 
 | What you see / can do | Permission |
 |-----------------------|------------|
-| View the series list | `billing.read` |
+| See the screen and the series list | `billing.admin` |
 | Create, edit, activate/deactivate, reset | `billing.admin` |
 
 ## Troubleshooting

@@ -354,3 +354,86 @@ async def test_undeliverable_delivery_stops_after_max_attempts(
     assert picked == delivery.max_attempts
     assert delivery.attempts == delivery.max_attempts
     assert delivery.status == "failed"
+
+
+@pytest.mark.asyncio
+async def test_delivery_stuck_in_sending_is_retried(
+    db_session: AsyncSession, test_clinic, monkeypatch
+):
+    """A restart mid-POST left the delivery ``sending`` for good (#1280)."""
+    from app.modules.integrations.gateway import STALE_SENDING_AFTER
+
+    sub = await _subscription(db_session, test_clinic.id)
+    now = datetime.now(UTC)
+    stale = now - STALE_SENDING_AFTER - timedelta(minutes=1)
+
+    def _sending(since, attempts=1):
+        return WebhookDelivery(
+            subscription_id=sub.id,
+            clinic_id=test_clinic.id,
+            event_type=EVENT,
+            payload={"patient_id": "p1"},
+            status="sending",
+            attempts=attempts,
+            next_attempt_at=since,
+            updated_at=since,
+        )
+
+    stuck, in_flight, spent = _sending(stale), _sending(now), _sending(stale, attempts=5)
+    db_session.add_all([stuck, in_flight, spent])
+    await db_session.commit()
+
+    posted = []
+
+    async def fake_post(url, body, headers):
+        posted.append(body)
+        return httpx.Response(200, request=httpx.Request("POST", url))
+
+    monkeypatch.setattr(webhook_client, "post_webhook", fake_post)
+
+    assert await WebhookGateway.reap_stuck_sending(db_session) == 2
+    await WebhookGateway.dispatch_outbox(db_session)
+
+    for row in (stuck, in_flight, spent):
+        await db_session.refresh(row)
+    assert len(posted) == 1
+    assert (stuck.status, stuck.attempts) == ("sent", 2)
+    assert (in_flight.status, in_flight.attempts) == ("sending", 1)
+    assert (spent.status, spent.attempts, spent.next_attempt_at) == ("failed", 5, None)
+
+
+@pytest.mark.asyncio
+async def test_delivery_stuck_beyond_the_retry_cap_is_not_replayed(
+    db_session: AsyncSession, test_clinic, monkeypatch
+):
+    """A delivery stuck for days is failed for good, not replayed (#1280)."""
+    sub = await _subscription(db_session, test_clinic.id)
+    since = datetime.now(UTC) - timedelta(days=2)
+    stuck = WebhookDelivery(
+        subscription_id=sub.id,
+        clinic_id=test_clinic.id,
+        event_type=EVENT,
+        payload={"patient_id": "p1"},
+        status="sending",
+        attempts=1,
+        next_attempt_at=since,
+        updated_at=since,
+    )
+    db_session.add(stuck)
+    await db_session.commit()
+
+    posted = []
+
+    async def fake_post(url, body, headers):
+        posted.append(body)
+        return httpx.Response(200, request=httpx.Request("POST", url))
+
+    monkeypatch.setattr(webhook_client, "post_webhook", fake_post)
+
+    assert await WebhookGateway.reap_stuck_sending(db_session) == 1
+    await WebhookGateway.dispatch_outbox(db_session)
+
+    await db_session.refresh(stuck)
+    assert posted == []
+    assert (stuck.status, stuck.attempts, stuck.next_attempt_at) == ("failed", 1, None)
+    assert stuck.error_message == "interrupted while sending; too old to retry"
