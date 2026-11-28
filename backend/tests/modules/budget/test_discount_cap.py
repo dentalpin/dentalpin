@@ -121,3 +121,48 @@ async def test_global_percentage_above_100_is_refused(
     detail = (await client.get(f"{B}/{budget_id}", headers=h)).json()["data"]
     assert Decimal(detail["global_discount_value"]) == 10
     assert Decimal(detail["total"]) >= 0
+
+
+@pytest.mark.asyncio
+async def test_row_stored_above_100_stays_editable(
+    client: AsyncClient, auth_headers: dict, budget_clinic_setup: dict, db_session
+) -> None:
+    """A row saved above 100 % before the cap can still take updates that
+    leave the discount alone; touching the discount is still checked."""
+    from uuid import UUID
+
+    from sqlalchemy import update
+
+    from app.modules.budget.models import Budget, BudgetItem
+
+    s, h = budget_clinic_setup, auth_headers
+    budget_id = await _draft(client, h, s)
+    r = await _item(client, h, s, budget_id, discount_type="percentage", discount_value=10)
+    item_id = r.json()["data"]["id"]
+    # The API refuses these values now, so write them the way old rows look.
+    await db_session.execute(
+        update(BudgetItem)
+        .where(BudgetItem.id == UUID(item_id))
+        .values(discount_value=Decimal("150"))
+    )
+    await db_session.execute(
+        update(Budget)
+        .where(Budget.id == UUID(budget_id))
+        .values(global_discount_type="percentage", global_discount_value=Decimal("250"))
+    )
+    await db_session.flush()
+    db_session.expire_all()
+
+    item_url = f"{B}/{budget_id}/items/{item_id}"
+    r = await client.put(item_url, json={"notes": "only notes"}, headers=h)
+    assert r.status_code == 200, r.text
+    r = await client.put(f"{B}/{budget_id}", json={"internal_notes": "x"}, headers=h)
+    assert r.status_code == 200, r.text
+
+    r = await client.put(item_url, json={"discount_value": 120}, headers=h)
+    assert r.status_code == 400, r.text
+    r = await client.put(f"{B}/{budget_id}", json={"global_discount_value": 120}, headers=h)
+    assert r.status_code == 400, r.text
+    # Bringing it back under the cap is allowed.
+    r = await client.put(item_url, json={"discount_value": 50}, headers=h)
+    assert r.status_code == 200, r.text

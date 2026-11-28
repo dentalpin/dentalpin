@@ -4,6 +4,7 @@ from typing import Annotated
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.auth.dependencies import ClinicContext, get_clinic_context, require_permission
@@ -43,8 +44,10 @@ from .service import (
     SendContextError,
     build_manual_send_context,
 )
+from .template_editor_router import editor_router
 
 router = APIRouter()
+router.include_router(editor_router)
 
 
 # ============================================================================
@@ -111,17 +114,28 @@ async def create_template(
 
     Custom templates override system templates with the same key and locale.
     """
-    # Check if template already exists for this clinic
-    existing = await NotificationService.get_template(
-        db, ctx.clinic_id, data.template_key, data.locale, exact_locale=True
-    )
-    if existing and existing.clinic_id == ctx.clinic_id:
-        raise HTTPException(
+
+    def conflict() -> HTTPException:
+        return HTTPException(
             status_code=status.HTTP_409_CONFLICT,
-            detail=f"Template '{data.template_key}' for locale '{data.locale}' already exists",
+            detail=(
+                f"Template '{data.template_key}' for locale '{data.locale}' "
+                f"and channel '{data.channel}' already exists"
+            ),
         )
 
-    template = await NotificationService.create_template(db, ctx.clinic_id, data.model_dump())
+    existing = await NotificationService.get_clinic_template(
+        db, ctx.clinic_id, data.template_key, data.locale, data.channel
+    )
+    if existing:
+        raise conflict()
+    try:
+        template = await NotificationService.create_template(db, ctx.clinic_id, data.model_dump())
+    except IntegrityError as exc:
+        await db.rollback()
+        if exc.orig is not None and exc.orig.sqlstate == "23505":
+            raise conflict() from exc
+        raise
     return ApiResponse(data=EmailTemplateResponse.model_validate(template))
 
 

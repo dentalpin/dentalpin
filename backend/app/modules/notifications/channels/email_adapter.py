@@ -48,6 +48,7 @@ class EmailAdapter:
             locale=msg.locale,
             to_name=msg.to_name,
             template_html=msg.body_html,
+            wrap_custom_html=True,
             template_text=msg.body_text,
             db=db,
             clinic_id=msg.clinic_id,

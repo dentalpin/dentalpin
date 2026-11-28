@@ -12,7 +12,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/billing/frontend/pages/settings/invoice-series/index.vue
   - backend/app/modules/billing/router.py
-last_verified_commit: b1b82f5
+last_verified_commit: 0b0731be
 ---
 
 # Series de facturación
@@ -36,8 +36,9 @@ está activa por ejercicio.
   ejercicio no reinicia la numeración: las facturas de este año
   siguen desde el último número y la serie vuelve a 1 el próximo
   enero.
-- **Permisos.** Toda gestión de series requiere `billing.admin`.
-  Otros roles pueden ver el listado pero no editar.
+- **Permisos.** La pantalla y toda gestión de series requieren
+  `billing.admin` (admin y dentista por defecto). Los roles sin él
+  no ven la entrada en Configuración.
 
 ## Crear una serie
 
@@ -61,7 +62,7 @@ está activa por ejercicio.
 
 | Lo que ves / puedes hacer | Permiso |
 |---------------------------|---------|
-| Ver listado de series | `billing.read` |
+| Ver la pantalla y el listado de series | `billing.admin` |
 | Crear, editar, activar/desactivar, reiniciar | `billing.admin` |
 
 ## Resolución de problemas

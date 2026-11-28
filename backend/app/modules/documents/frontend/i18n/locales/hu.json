@@ -127,7 +127,7 @@
       "signer": "Az aláíró neve",
       "relationship": "Kapcsolat a pácienssel",
       "idDocument": "Személyazonosító okmány",
-      "idDocumentHint": "Gyámként vagy képviselőként történő aláírás esetén kötelező; betegként nem kötelező.",
+      "idDocumentHint": "Gyámként vagy képviselőként történő aláírás esetén kötelező; betegként nem kötelező. Csak A–Z betűk, számjegyek és - . /.",
       "patient": "Páciens",
       "guardian": "Törvényes gyám",
       "representative": "Képviselő",
@@ -152,7 +152,9 @@
       },
       "qrTitle": "Aláíráshoz olvassa be",
       "signedToast": "Beleegyezés aláírva",
-      "formatHelp": "Formázás: kezdjen egy sort #-tel (cím) vagy ## / ###-mal (alcímek), tegye a szöveget **dupla csillagok** közé a félkövérhez vagy *egyetlen csillagok* közé a dőlthöz, és kezdje a sorokat - vagy 1. jellel a listákhoz. Egy üres sor új bekezdést kezd. Minden más, beleértve a HTML-t és a hivatkozásokat is, pontosan úgy jelenik meg, ahogy be lett írva."
+      "formatHelp": "Formázás: kezdjen egy sort #-tel (cím) vagy ## / ###-mal (alcímek), tegye a szöveget **dupla csillagok** közé a félkövérhez vagy *egyetlen csillagok* közé a dőlthöz, és kezdje a sorokat - vagy 1. jellel a listákhoz. Egy üres sor új bekezdést kezd. Minden más, beleértve a HTML-t és a hivatkozásokat is, pontosan úgy jelenik meg, ahogy be lett írva.",
+      "variablesHelp": "Változók: írja a szövegbe a következőket: {variables}; ezeket a rendszer kitölti, amikor ebből a sablonból beleegyező nyilatkozat készül (beteg, rendelő, kezelő és dátum). A hiányzó adat helyén ____ jelenik meg, hogy az aláírás előtt beírható legyen. Az ismeretlen nevek változatlanok maradnak.",
+      "unknownVariables": "A sablon néhány változóját nem ismerte fel a rendszer, ezek változatlanok maradtak: {names}"
     }
   }
 }

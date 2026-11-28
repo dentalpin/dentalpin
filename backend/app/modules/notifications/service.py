@@ -172,14 +172,15 @@ class NotificationService:
     @staticmethod
     async def get_template(
         db: AsyncSession,
-        clinic_id: UUID,
+        clinic_id: UUID | None,
         template_key: str,
         locale: str = "es",
         channel: str = "email",
         *,
         exact_locale: bool = False,
+        require_text: bool = False,
     ) -> NotificationTemplate | None:
-        """Get a template by key, locale and channel.
+        """Resolve the active clinic row, then the matching system row.
 
         Priority: clinic-specific > system template. Within each tier a
         regional locale falls back to its base language (``pt-BR`` -> ``pt``),
@@ -192,10 +193,9 @@ class NotificationService:
         if not exact_locale and channel != "whatsapp" and base != locale:
             locales.append(base)
 
-        for owner in (
-            NotificationTemplate.clinic_id == clinic_id,
-            NotificationTemplate.clinic_id.is_(None),
-        ):
+        owners = [NotificationTemplate.clinic_id == clinic_id] if clinic_id is not None else []
+        owners.append(NotificationTemplate.clinic_id.is_(None))
+        for owner in owners:
             for candidate in locales:
                 result = await db.execute(
                     select(NotificationTemplate).where(
@@ -207,9 +207,23 @@ class NotificationService:
                     )
                 )
                 template = result.scalar_one_or_none()
-                if template:
+                if template and (not require_text or template.body_text):
                     return template
         return None
+
+    @staticmethod
+    async def get_clinic_template(
+        db: AsyncSession, clinic_id: UUID, template_key: str, locale: str, channel: str
+    ) -> NotificationTemplate | None:
+        """Look up an exact clinic key, including inactive rows."""
+        return await db.scalar(
+            select(NotificationTemplate).where(
+                NotificationTemplate.clinic_id == clinic_id,
+                NotificationTemplate.template_key == template_key,
+                NotificationTemplate.locale == locale,
+                NotificationTemplate.channel == channel,
+            )
+        )
 
     @staticmethod
     async def get_template_by_id(

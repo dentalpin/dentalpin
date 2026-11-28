@@ -16,7 +16,7 @@ import PlanItemDoctorChip from './PlanItemDoctorChip.vue'
 import PlanItemSessionRow from '../treatment-plans/PlanItemSessionRow.vue'
 import { itemCatalogPrice, itemEffectivePrice } from '../../composables/useTreatmentPlans'
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
   items: PlannedTreatmentItem[]
   highlightedItems?: string[]
   readonly?: boolean
@@ -30,7 +30,14 @@ const props = defineProps<{
   planStatus?: string
   /** Doctor of the parent plan. Drives "override" detection on each item chip. */
   planProfessionalId?: string | null
-}>()
+  /**
+   * Whether the doctor chip may be changed (the user has plans.write). Kept
+   * apart from `readonly` because a plan lock does not freeze reassignment.
+   */
+  doctorEditable?: boolean
+}>(), {
+  doctorEditable: true
+})
 
 // Completion books money (earned ledger), so it is only offered once the
 // quote is accepted (plan `active`) — mirrors the backend gate.
@@ -315,7 +322,7 @@ const { format: formatCurrency } = useCurrency()
               <PlanItemDoctorChip
                 :professional-id="item.assigned_professional_id ?? null"
                 :plan-professional-id="planProfessionalId"
-                :readonly="item.status !== 'pending'"
+                :readonly="!doctorEditable || item.status !== 'pending'"
                 @change="(professionalId) => emit('item-doctor-change', item.id, professionalId)"
               />
               <span

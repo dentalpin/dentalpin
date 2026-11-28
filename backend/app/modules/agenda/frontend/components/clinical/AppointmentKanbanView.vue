@@ -7,6 +7,7 @@ interface Cabinet {
   id?: string
   name: string
   color: string
+  is_active?: boolean
 }
 
 interface ProfessionalWithColor {
@@ -232,6 +233,7 @@ function onDragOverColumn(col: ColumnDef, e: DragEvent, cabinetName?: string) {
   const apt = props.appointments.find(a => a.id === drag.value!.appointmentId)
   if (!apt) return
   if (!canDropOn(apt, col)) return
+  if (isClosedCabinet(apt, cabinetName)) return
   e.preventDefault()
   if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
   drag.value = {
@@ -257,6 +259,13 @@ function canDropOn(apt: Appointment, col: ColumnDef): boolean {
   return targets.some(t => canTransition(apt.status, t))
 }
 
+// An inactive cabinet stays on the board while it holds an appointment,
+// but it takes no other one: the backend answers 400 (#1237).
+function isClosedCabinet(apt: Appointment, cabinetName?: string): boolean {
+  if (!cabinetName || cabinetName === apt.cabinet) return false
+  return props.cabinets.find(c => c.name === cabinetName)?.is_active === false
+}
+
 function cabinetIdByName(name: string): string | null {
   return props.cabinets.find(c => c.name === name)?.id ?? null
 }
@@ -267,7 +276,7 @@ async function onDrop(col: ColumnDef, e: DragEvent, cabinetName?: string) {
   const aptId = drag.value.appointmentId
   const apt = props.appointments.find(a => a.id === aptId)
   drag.value = null
-  if (!apt) return
+  if (!apt || isClosedCabinet(apt, cabinetName)) return
 
   // Case A: moving within "in chair" — the patient is already being
   // treated, we're just physically moving them to another cabinet.
