@@ -41,7 +41,7 @@ class MedicationCatalogService:
     ) -> tuple[list[MedicationCatalogItem], int]:
         stmt = select(MedicationCatalogItem).where(MedicationCatalogItem.clinic_id == clinic_id)
         if q:
-            stmt = stmt.where(MedicationCatalogItem.name.ilike(f"%{q}%"))
+            stmt = stmt.where(MedicationCatalogItem.name.icontains(q, autoescape=True))
         if form:
             stmt = stmt.where(MedicationCatalogItem.form == form)
         if is_active is not None:

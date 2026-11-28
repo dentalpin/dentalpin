@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the patient search and the city filter: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every row, and `ana_lopez` also matched `ana.lopez`.
 - fix(#1270): the clinical tab no longer passes its odontogram read-only flag to the treatment plans mode; the plan view gates itself on `treatment_plan.plans.*`.
 - fix(#1268): the patient page requests alerts only with `patients_clinical.medical.read` and hides the medical snapshot card without it.
 - fix(#1187): `create_patient`/`update_patient` type `email` as `EmailStr`, like `PatientCreate`/`PatientUpdate`.

@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the allergy, medication, surgery and disease pickers' search: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every item, and `Latex_A` also matched `Latex.B`.
 - fix(#1236): adding an interaction or contraindication that matches a deactivated pair reactivates it with the new risk note instead of answering 409.
 - fix(#963): adding a name that matches a deactivated item reactivates that item (same id, so its interactions and contraindications apply again) instead of answering 409 for an item no list shows. The patient form's picker offered "create" for it and failed, leaving the medication as free text with no warnings.
 

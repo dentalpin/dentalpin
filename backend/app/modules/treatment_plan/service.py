@@ -304,15 +304,17 @@ class TreatmentPlanService:
 
         # Every term must match one field, as in the patient search (#1038).
         for term in (search or "").split():
-            like = f"%{term}%"
             base_where.append(
                 or_(
-                    TreatmentPlan.plan_number.ilike(like),
-                    TreatmentPlan.title.ilike(like),
+                    TreatmentPlan.plan_number.icontains(term, autoescape=True),
+                    TreatmentPlan.title.icontains(term, autoescape=True),
                     TreatmentPlan.patient_id.in_(
                         select(Patient.id).where(
                             Patient.clinic_id == clinic_id,
-                            or_(Patient.first_name.ilike(like), Patient.last_name.ilike(like)),
+                            or_(
+                                Patient.first_name.icontains(term, autoescape=True),
+                                Patient.last_name.icontains(term, autoescape=True),
+                            ),
                         )
                     ),
                 )
@@ -1568,11 +1570,15 @@ class TreatmentPlanService:
             params["doctor_id"] = doctor_id
         for i, term in enumerate((search or "").split()):
             # Only the index is interpolated; the term is a bound parameter.
+            # ESCAPE keeps a typed ``%`` / ``_`` literal (#1245), the raw-SQL
+            # form of ``autoescape=True``.
             extra_where += (
-                f" AND (p.plan_number ILIKE :q{i} OR p.title ILIKE :q{i}"
-                f" OR pat.first_name ILIKE :q{i} OR pat.last_name ILIKE :q{i})"
+                f" AND (p.plan_number ILIKE :q{i} ESCAPE '/' OR p.title ILIKE :q{i} ESCAPE '/'"
+                f" OR pat.first_name ILIKE :q{i} ESCAPE '/'"
+                f" OR pat.last_name ILIKE :q{i} ESCAPE '/')"
             )
-            params[f"q{i}"] = f"%{term}%"
+            escaped = term.replace("/", "//").replace("%", "/%").replace("_", "/_")
+            params[f"q{i}"] = f"%{escaped}%"
 
         # ----- shared SELECT --------------------------------------------
         base_sql = f"""

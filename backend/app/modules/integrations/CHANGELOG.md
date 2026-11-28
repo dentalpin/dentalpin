@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the public API patient search: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every row, and `ana_lopez` also matched `ana.lopez`.
 - fix(#1280): a webhook delivery left in `sending` by a restart mid-POST is put back to `failed` after 30 min by the new `integrations_stuck_reaper` job and retried. A delivery stuck over 24 h is failed for good instead of replayed.
 - fix(#1009): a delivery of a paused, auto-disabled or undecryptable subscription spends its attempts and ends `failed`; it was retried forever.
 

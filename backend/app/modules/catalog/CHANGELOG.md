@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the treatment catalog list and search: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every row, and `ana_lopez` also matched `ana.lopez`.
 - fix(#1233): the treatment create/edit modal repopulates its form on every opening, so "New treatment" no longer comes back prefilled with the item just created and a cancelled edit no longer reappears when the same row is edited again.
 - fix(#1240): saving a per-surface item answered 500 (`TypeError: Object of type Decimal is not JSON serializable`). `surface_prices` tier prices are now dumped as strings for the JSONB column, the seeder's format, and a negative tier price is a 422 like `default_price`. Tier keys must be exactly "1".."5" and prices fit NUMERIC(10,2) (422 otherwise): a key such as "02" made pricing raise `KeyError`.
 

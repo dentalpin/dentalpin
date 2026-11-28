@@ -237,8 +237,13 @@ async def _find_patients(
     if national_id:
         stmt = stmt.where(func.upper(Patient.national_id) == national_id.strip().upper())
     if search:
-        like = f"%{search.strip()}%"
-        stmt = stmt.where(or_(Patient.first_name.ilike(like), Patient.last_name.ilike(like)))
+        term = search.strip()
+        stmt = stmt.where(
+            or_(
+                Patient.first_name.icontains(term, autoescape=True),
+                Patient.last_name.icontains(term, autoescape=True),
+            )
+        )
     total = (await db.execute(select(func.count()).select_from(stmt.subquery()))).scalar_one()
     rows = (
         (

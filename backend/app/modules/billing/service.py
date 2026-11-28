@@ -761,12 +761,11 @@ class InvoiceService:
         if search:
             from app.modules.patients.models import Patient
 
-            search_term = f"%{search}%"
             conditions.append(
                 or_(
-                    Invoice.invoice_number.ilike(search_term),
-                    Patient.first_name.ilike(search_term),
-                    Patient.last_name.ilike(search_term),
+                    Invoice.invoice_number.icontains(search, autoescape=True),
+                    Patient.first_name.icontains(search, autoescape=True),
+                    Patient.last_name.icontains(search, autoescape=True),
                 )
             )
             search_join_needed = True

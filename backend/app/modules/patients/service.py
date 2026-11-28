@@ -71,11 +71,11 @@ def _search_condition(search: str | None):
     terms = search.split()
     per_term = []
     for term in terms:
-        like = f"%{term}%"
+        # ``autoescape`` keeps a typed ``%`` / ``_`` literal (#1245).
         per_term.append(
             or_(
-                *(field.ilike(like) for field in _SEARCH_FIELDS),
-                _FULL_NAME.ilike(like),
+                *(field.icontains(term, autoescape=True) for field in _SEARCH_FIELDS),
+                _FULL_NAME.icontains(term, autoescape=True),
             )
         )
     return and_(*per_term)
@@ -193,7 +193,7 @@ class PatientService:
 
         if city:
             # JSONB ->> 'city' ilike. address may be null.
-            conditions.append(Patient.address["city"].astext.ilike(f"%{city}%"))
+            conditions.append(Patient.address["city"].astext.icontains(city, autoescape=True))
 
         if do_not_contact is not None:
             conditions.append(Patient.do_not_contact.is_(do_not_contact))

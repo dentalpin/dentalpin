@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the lead search: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every row, and `ana_lopez` also matched `ana.lopez`.
 - fix(#1187): `create_lead`/`update_lead`/`convert_lead_to_patient` type `email` as `EmailStr` and run the REST strip validators, so a blank name, phone or motive is rejected.
 - fix(#1151): `PATCH /{id}` with `full_name`, `phone`, `motive` or `status` set to `null` is a 422 instead of a 500.
 

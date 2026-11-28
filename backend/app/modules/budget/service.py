@@ -401,7 +401,6 @@ class BudgetService:
                 )
 
         if search:
-            search_pattern = f"%{search}%"
             # Import Patient model for search
             from app.modules.patients.models import Patient
 
@@ -410,10 +409,10 @@ class BudgetService:
                 select(Patient.id)
                 .where(
                     or_(
-                        Patient.first_name.ilike(search_pattern),
-                        Patient.last_name.ilike(search_pattern),
-                        func.concat(Patient.first_name, " ", Patient.last_name).ilike(
-                            search_pattern
+                        Patient.first_name.icontains(search, autoescape=True),
+                        Patient.last_name.icontains(search, autoescape=True),
+                        func.concat(Patient.first_name, " ", Patient.last_name).icontains(
+                            search, autoescape=True
                         ),
                     )
                 )
@@ -422,7 +421,7 @@ class BudgetService:
 
             conditions.append(
                 or_(
-                    Budget.budget_number.ilike(search_pattern),
+                    Budget.budget_number.icontains(search, autoescape=True),
                     Budget.patient_id.in_(patient_subq),
                 )
             )

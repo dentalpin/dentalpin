@@ -107,11 +107,10 @@ class SupplierService:
             stmt = stmt.where(Supplier.is_preferred.is_(is_preferred))
 
         if search:
-            search_str = f"%{search}%"
             stmt = stmt.where(
-                Contact.name.ilike(search_str)
-                | Contact.phone.ilike(search_str)
-                | Contact.email.ilike(search_str)
+                Contact.name.icontains(search, autoescape=True)
+                | Contact.phone.icontains(search, autoescape=True)
+                | Contact.email.icontains(search, autoescape=True)
             )
 
         stmt = stmt.order_by(Contact.name.asc(), Contact.id)

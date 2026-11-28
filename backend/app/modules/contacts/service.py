@@ -45,8 +45,12 @@ class ContactService:
         if contact_type:
             stmt = stmt.where(Contact.contact_type == contact_type)
         if search:
-            like = f"%{search}%"
-            stmt = stmt.where(or_(Contact.name.ilike(like), Contact.notes.ilike(like)))
+            stmt = stmt.where(
+                or_(
+                    Contact.name.icontains(search, autoescape=True),
+                    Contact.notes.icontains(search, autoescape=True),
+                )
+            )
 
         count_stmt = select(func.count()).select_from(stmt.subquery())
         total = (await db.execute(count_stmt)).scalar_one()

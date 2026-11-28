@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the supplier search: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every row, and `ana_lopez` also matched `ana.lopez`.
 - fix(#976): `PATCH` with `null` for `name`, `is_active` or `is_preferred` is a 422 (was a 500 from the NOT NULL column).
 
 - fix(#740): clearing a supplier's lead time saves it as empty. The cleared input sent `""`, which the `int` field answered with 422.
