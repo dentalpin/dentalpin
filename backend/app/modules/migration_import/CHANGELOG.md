@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix: an imported chair reuses an existing cabinet only when the name is the same apart from case. The lookup used `ilike`, so a `_` or `%` in a source label acted as a wildcard: `Box_1` reused the clinic's `Box 1` (or `Box%` any `Box…` cabinet), and two chairs ended up in one cabinet.
 - fix(#1237): an imported appointment whose chair maps to a now-inactive cabinet is kept in that cabinet instead of being rolled back.
 
 - feat(#877): mark invoices created by the fiscal document mapper as historical while keeping their original dates and totals.

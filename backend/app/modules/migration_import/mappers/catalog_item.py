@@ -24,7 +24,7 @@ import logging
 from typing import Any
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import func, select
 
 from app.modules.agenda.models import Cabinet
 
@@ -139,11 +139,12 @@ class CatalogItemMapper:
 
         # Match by case-insensitive name within the clinic so a
         # re-import doesn't duplicate a cabinet the operator already
-        # has under the same label.
+        # has under the same label. An equality, not ``ilike``: a ``_``
+        # or ``%`` in a source label is a character, not a wildcard.
         result = await ctx.db.execute(
             select(Cabinet).where(
                 Cabinet.clinic_id == ctx.clinic_id,
-                Cabinet.name.ilike(name),
+                func.lower(Cabinet.name) == func.lower(name),
             )
         )
         cabinet = result.scalars().first()
