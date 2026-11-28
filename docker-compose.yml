@@ -35,6 +35,15 @@ services:
       # Swarm/k8s (10.0.0.0/8) or a PaaS edge must set their own value.
       FORWARDED_ALLOW_IPS: ${FORWARDED_ALLOW_IPS:-127.0.0.1,::1,172.16.0.0/12,192.168.0.0/16}
       ENVIRONMENT: ${ENVIRONMENT:-development}
+      EMAIL_ENABLED: ${EMAIL_ENABLED:-true}
+      EMAIL_PROVIDER: ${EMAIL_PROVIDER:-console}
+      EMAIL_SMTP_HOST: ${EMAIL_SMTP_HOST:-smtp.gmail.com}
+      EMAIL_SMTP_PORT: ${EMAIL_SMTP_PORT:-587}
+      EMAIL_SMTP_TLS: ${EMAIL_SMTP_TLS:-true}
+      EMAIL_SMTP_USER: ${EMAIL_SMTP_USER:-}
+      EMAIL_SMTP_PASSWORD: ${EMAIL_SMTP_PASSWORD:-}
+      EMAIL_FROM_ADDRESS: ${EMAIL_FROM_ADDRESS:-noreply@dentalpin.com}
+      EMAIL_FROM_NAME: ${EMAIL_FROM_NAME:-DentalPin}
       # Explicit test opt-out for rate limiting and friends (#530).
       # Must default to "false": pydantic rejects an empty string as a
       # bool, so `${TESTING:-}` would crash the backend at boot.
@@ -88,6 +97,12 @@ services:
       - ./docker-compose.coolify.yml:/docker-compose.coolify.yml:ro
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload --proxy-headers
 
+  mailpit:
+    image: axllent/mailpit:v1.27
+    profiles: ["mailpit"]
+    ports:
+      - "127.0.0.1:8025:8025"
+
   frontend:
     build:
       context: ./frontend
@@ -97,6 +112,7 @@ services:
       # server over the ./frontend bind mount).
       target: dev
     environment:
+      ENVIRONMENT: ${ENVIRONMENT:-development}
       NITRO_HOST: 0.0.0.0
       NITRO_PORT: 3000
       # The browser resolves this URL, so it must be reachable from the

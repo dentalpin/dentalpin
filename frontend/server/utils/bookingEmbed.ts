@@ -13,6 +13,7 @@ import type { H3Event } from 'h3'
 
 const BOOKING_PATH = /^\/p\/booking\/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\/?$/i
 const HTTPS_ORIGIN = /^https:\/\/[a-z0-9.-]+(:\d{1,5})?$/
+const LOCAL_ORIGIN = /^http:\/\/(localhost|127\.0\.0\.1)(:\d{1,5})?$/
 const TTL_MS = 60_000
 const FAILURE_TTL_MS = 10_000
 const MAX_ENTRIES = 500
@@ -36,7 +37,7 @@ async function lookup(event: H3Event, clinicId: string): Promise<string[]> {
     )
     const listed = response.data?.embed_origins
     if (Array.isArray(listed)) {
-      origins = listed.filter((item): item is string => typeof item === 'string' && HTTPS_ORIGIN.test(item))
+      origins = listed.filter((item): item is string => typeof item === 'string' && (HTTPS_ORIGIN.test(item) || (process.env.ENVIRONMENT === 'development' && LOCAL_ORIGIN.test(item))))
       ttl = TTL_MS
     }
   } catch {

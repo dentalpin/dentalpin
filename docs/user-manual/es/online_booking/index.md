@@ -10,3 +10,21 @@ Una solicitud confirmada retiene el hueco hasta que recepción decide o empieza 
 La página pública ([página de reserva](screens/booking-page.md)) forma parte de DentalPin en `/p/booking/<id de la clínica>`; enlázala o incrústala en tu web con un iframe. Permite elegir motivo y hueco, introducir datos de contacto y superar ALTCHA. El enlace recibido exige pulsar «Confirmar solicitud»; abrirlo no crea ni confirma una cita.
 
 El calendario destaca solo los días con huecos y permite avanzar por semanas. El teléfono y el correo son obligatorios. El personal autorizado puede cambiar el logotipo, color, textos, URL de la política de privacidad y las webs autorizadas a incrustar la página desde «Ajustes de la página pública».
+
+### Iframe adaptable
+
+Autoriza el origen anfitrión en los ajustes de reserva. La página anfitriona puede ajustar el iframe verificando el origen y el emisor:
+
+```html
+<iframe id="booking" src="https://booking.example/p/booking/CLINIC_UUID" title="Reservar una cita"></iframe>
+<script>
+const frame = document.querySelector('#booking');
+window.addEventListener('message', (event) => {
+  if (event.origin !== 'https://booking.example' || event.source !== frame.contentWindow) return;
+  if (event.data?.type === 'dentalpin:booking:height' && Number.isFinite(event.data.height))
+    frame.style.height = `${event.data.height}px`;
+});
+</script>
+```
+
+La página anfitriona debe enviar un referrer que incluya su origen; sin él o si no está autorizado, no se envía la altura. HTTP local solo se admite en desarrollo.

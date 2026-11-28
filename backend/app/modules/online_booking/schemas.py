@@ -10,7 +10,7 @@ from .logo import MAX_LOGO_BASE64
 from .models import default_reasons
 
 
-def https_origin(value: str) -> str | None:
+def https_origin(value: str, *, allow_local: bool = False) -> str | None:
     """Return the normalised ``https://host[:port]`` origin, or ``None`` if ``value`` is not one."""
     from urllib.parse import urlsplit
 
@@ -21,7 +21,12 @@ def https_origin(value: str) -> str | None:
     except ValueError:
         return None
     if (
-        parsed.scheme != "https"
+        (
+            parsed.scheme != "https"
+            and not (
+                allow_local and parsed.scheme == "http" and hostname in {"localhost", "127.0.0.1"}
+            )
+        )
         or not hostname
         or not all(c.isascii() and (c.isalnum() or c in ".-") for c in hostname)
         or parsed.username
@@ -32,7 +37,7 @@ def https_origin(value: str) -> str | None:
         or "@" in parsed.netloc
     ):
         return None
-    return f"https://{hostname.lower()}" + (f":{port}" if port else "")
+    return f"{parsed.scheme}://{hostname.lower()}" + (f":{port}" if port else "")
 
 
 class ReasonInput(BaseModel):
@@ -79,9 +84,11 @@ class SettingsInput(BaseModel):
     @classmethod
     def valid_origins(cls, value: list[str]) -> list[str]:
         """HTTPS origins only (no path, query, fragment or credentials), deduplicated."""
+        from app.config import settings
+
         origins: list[str] = []
         for item in value:
-            origin = https_origin(item)
+            origin = https_origin(item, allow_local=settings.ENVIRONMENT == "development")
             if origin is None:
                 raise ValueError("Expected an HTTPS origin such as https://www.example.com")
             if origin not in origins:
@@ -99,13 +106,23 @@ class SettingsInput(BaseModel):
 
     @field_validator("public_url", "redirect_url", "privacy_url")
     @classmethod
-    def valid_url(cls, value: str | None) -> str | None:
+    def valid_url(cls, value: str | None, info) -> str | None:
         from urllib.parse import urlsplit
+
+        from app.config import settings
 
         if value is not None:
             parsed = urlsplit(value)
             if (
-                parsed.scheme != "https"
+                (
+                    parsed.scheme != "https"
+                    and not (
+                        settings.ENVIRONMENT == "development"
+                        and info.field_name in {"public_url", "privacy_url"}
+                        and parsed.scheme == "http"
+                        and parsed.hostname in {"localhost", "127.0.0.1"}
+                    )
+                )
                 or not parsed.hostname
                 or parsed.username
                 or parsed.password

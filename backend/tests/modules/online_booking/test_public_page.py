@@ -77,3 +77,27 @@ async def test_captcha_domain_errors_map_to_http_statuses(
         "start_time": tomorrow_at(11).isoformat(),
     }
     assert (await client.post(url, json={**other, "altcha": proof})).status_code == 409
+
+
+@pytest.mark.parametrize(
+    "environment,allowed", [("development", True), ("test", False), ("production", False)]
+)
+@pytest.mark.parametrize("host", ["localhost:3000", "127.0.0.1:3000"])
+def test_http_local_urls_are_development_only(monkeypatch, environment, allowed, host):
+    from app.config import settings
+
+    monkeypatch.setattr(settings, "ENVIRONMENT", environment)
+    values = {
+        "public_url": f"http://{host}/book",
+        "privacy_url": f"http://{host}/privacy",
+        "embed_origins": [f"http://{host}"],
+    }
+    if allowed:
+        assert SettingsInput(**values).embed_origins == [f"http://{host}"]
+    else:
+        with pytest.raises(ValidationError):
+            SettingsInput(**values)
+    with pytest.raises(ValidationError):
+        SettingsInput(embed_origins=["http://example.invalid:3000"])
+    with pytest.raises(ValidationError):
+        SettingsInput(redirect_url=f"http://{host}/thanks")

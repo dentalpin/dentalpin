@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { bookingClinicId, bookingFrameAncestors } from '../../server/utils/bookingEmbed'
-import { apiLanguage, offsetDay, safeUrl, takeFragmentToken, todayIn, validClinicId } from '#module-layers/online_booking/frontend/utils/publicBooking'
+import { allowedParentOrigin, postBookingHeight, apiLanguage, offsetDay, safeUrl, takeFragmentToken, todayIn, validClinicId } from '#module-layers/online_booking/frontend/utils/publicBooking'
 
 const ID = '0b1c2d3e-4f50-4a6b-8c7d-9e0f1a2b3c4d'
 const fetchMock = vi.fn()
@@ -15,7 +15,10 @@ beforeEach(() => {
   vi.stubGlobal('useRuntimeConfig', () => ({ apiBaseUrlServer: 'http://backend:8000' }))
   vi.stubGlobal('getRequestHeader', (e: { dest?: string }) => e.dest)
 })
-afterEach(() => vi.unstubAllGlobals())
+afterEach(() => {
+  vi.unstubAllGlobals()
+  vi.unstubAllEnvs()
+})
 
 describe('booking page frame-ancestors', () => {
   it('only recognises the booking page route', () => {
@@ -24,6 +27,16 @@ describe('booking page frame-ancestors', () => {
     expect(bookingClinicId('/p/booking/not-a-uuid')).toBeNull()
     expect(bookingClinicId(`/p/budget/${ID}`)).toBeNull()
     expect(bookingClinicId(`/p/booking/${ID}/extra`)).toBeNull()
+  })
+
+  it.each([['development', true], ['test', false], ['production', false]])('permits loopback framing only in development (%s)', async (environment, permitted) => {
+    vi.stubEnv('ENVIRONMENT', environment)
+    const id = environment === 'development' ? '11111111-2222-4333-8444-000000000001' : environment === 'test' ? '11111111-2222-4333-8444-000000000002' : '11111111-2222-4333-8444-000000000003'
+    fetchMock.mockResolvedValue({ data: { embed_origins: ['http://localhost:3000', 'http://127.0.0.1:3000', 'http://evil.example'] } })
+    const value = await bookingFrameAncestors(event(`/p/booking/${id}`, 'iframe'))
+    expect(value?.includes('http://localhost:3000')).toBe(permitted)
+    expect(value?.includes('http://127.0.0.1:3000')).toBe(permitted)
+    expect(value).not.toContain('http://evil.example')
   })
 
   it('returns null for other routes', async () => {
@@ -75,5 +88,19 @@ describe('public booking helpers', () => {
     expect(takeFragmentToken()).toBe('abc')
     expect(window.location.hash).toBe('')
     expect(takeFragmentToken()).toBeNull()
+  })
+})
+
+describe('iframe parent origin validation', () => {
+  it('only accepts exact allowlisted origins', () => {
+    expect(allowedParentOrigin('https://host.example/page', ['https://host.example'])).toBe('https://host.example')
+    expect(allowedParentOrigin('https://evil.example/page', ['https://host.example'])).toBeNull()
+    expect(allowedParentOrigin('https://host.example.evil/page', ['https://host.example'])).toBeNull()
+    expect(allowedParentOrigin('', ['https://host.example'])).toBeNull()
+    const parent = { postMessage: vi.fn() }
+    postBookingHeight(parent, 'https://host.example/page', ['https://host.example'], 120.2)
+    expect(parent.postMessage).toHaveBeenCalledWith({ type: 'dentalpin:booking:height', height: 121 }, 'https://host.example')
+    postBookingHeight(parent, 'https://evil.example/', ['https://host.example'], 121)
+    expect(parent.postMessage).toHaveBeenCalledTimes(1)
   })
 })

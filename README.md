@@ -145,6 +145,10 @@ docker-compose up -d
 
 Open http://localhost:3000
 
+To capture synthetic development email locally, start the optional Mailpit profile with
+`EMAIL_PROVIDER=smtp EMAIL_SMTP_HOST=mailpit EMAIL_SMTP_PORT=1025 EMAIL_SMTP_TLS=false docker compose --profile mailpit up -d`.
+Open `http://localhost:8025` on the same machine. Mailpit does not deliver the messages externally.
+
 ### Demo Credentials
 
 All users have password: `demo1234`

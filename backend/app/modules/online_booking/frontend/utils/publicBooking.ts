@@ -69,3 +69,20 @@ export function takeFragmentToken(): string | null {
   window.history.replaceState(null, '', window.location.pathname + window.location.search)
   return token
 }
+
+/** Resolve a framed parent's origin only when it is explicitly allowlisted. */
+export function allowedParentOrigin(referrer: string, origins: string[]): string | null {
+  try {
+    const origin = new URL(referrer).origin
+    return origins.includes(origin) ? origin : null
+  } catch {
+    return null
+  }
+}
+
+export function postBookingHeight(parent: Pick<Window, 'postMessage'>, referrer: string, origins: string[], height: number): void {
+  const origin = allowedParentOrigin(referrer, origins)
+  if (origin && Number.isFinite(height) && height > 0) {
+    parent.postMessage({ type: 'dentalpin:booking:height', height: Math.ceil(height) }, origin)
+  }
+}
