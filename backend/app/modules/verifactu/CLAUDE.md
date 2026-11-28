@@ -47,6 +47,14 @@ See `hook.py` and `README.md` for the architecture.
 
 ## Gotchas
 
+- **Frontend gates match the endpoint they call** (#1269): `useApi` toasts
+  every 403 before the caller's `catch`, so a silent fallback is not enough.
+  The global rejected banner polls `/health` only with
+  `verifactu.settings.read` (admin by default); the invoice slot fetches
+  `/records` only with `verifactu.records.read` and otherwise renders from
+  `compliance_data`. In the slot's rejected alert, Regenerate (`/queue/{id}/retry`)
+  shows only with `verifactu.queue.manage` and the NIF blur check
+  (`/nif-check`) runs only with `verifactu.settings.read`.
 - **Rectifying an invoice without NIF means R5, not R1** (#1049): decide
   from the rectified invoice, not the note. AEAT only accepts
   a record without Destinatarios for F2 and R5. A rejected R1 blocked the
