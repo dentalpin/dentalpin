@@ -42,4 +42,26 @@ async def test_chair_reuses_a_cabinet_only_on_a_same_name_match(
         source_system="gesden",
     )
 
+    assert cabinet_id is not None
     assert (cabinet_id == existing.id) is reuses
+
+
+@pytest.mark.asyncio
+async def test_chair_reuses_a_cabinet_whose_name_has_a_real_underscore(db_session) -> None:
+    clinic, admin, _, _ = await _bootstrap(db_session)
+    existing = Cabinet(id=uuid4(), clinic_id=clinic.id, name="Box_1", color="#000", display_order=0)
+    db_session.add(existing)
+    await db_session.flush()
+    ctx = await _ctx(db_session, clinic.id, admin.id)
+
+    cabinet_id = await CatalogItemMapper().apply(
+        ctx,
+        entity_type="catalog_item",
+        payload={"kind": "chair", "name": "box_1"},
+        raw={},
+        canonical_uuid=str(uuid4()),
+        source_id="1",
+        source_system="gesden",
+    )
+
+    assert cabinet_id == existing.id

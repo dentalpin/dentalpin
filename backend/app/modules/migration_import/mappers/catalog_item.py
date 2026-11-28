@@ -144,7 +144,7 @@ class CatalogItemMapper:
         result = await ctx.db.execute(
             select(Cabinet).where(
                 Cabinet.clinic_id == ctx.clinic_id,
-                func.lower(Cabinet.name) == name.lower(),
+                func.lower(Cabinet.name) == func.lower(name),
             )
         )
         cabinet = result.scalars().first()
