@@ -403,6 +403,7 @@ class AppointmentService:
         clinic_id: UUID,
         data: dict,
         current_cabinet_id: UUID | None = None,
+        allow_inactive: bool = False,
     ) -> None:
         """Ensure ``data`` ends up with matching ``cabinet_id`` + ``cabinet``.
 
@@ -411,7 +412,8 @@ class AppointmentService:
         deferred-by-design (issue #51). Raises ``ValueError`` when a
         non-null reference can't be resolved, or when it names an inactive
         cabinet other than ``current_cabinet_id`` (the one an edited
-        appointment already sits in, which may stay there).
+        appointment already sits in, which may stay there). ``allow_inactive``
+        skips the inactive check entirely (historical imports only).
         """
         cabinet_id = data.get("cabinet_id")
         cabinet_name = data.get("cabinet")
@@ -426,7 +428,12 @@ class AppointmentService:
             if cab is None:
                 raise ValueError(f"Cabinet not found: {cabinet_name}")
 
-        if cab is not None and not cab.is_active and cab.id != current_cabinet_id:
+        if (
+            cab is not None
+            and not cab.is_active
+            and not allow_inactive
+            and cab.id != current_cabinet_id
+        ):
             raise ValueError(f"Cabinet is inactive: {cab.name}")
 
         if cab is not None:
@@ -458,8 +465,13 @@ class AppointmentService:
         clinic_id: UUID,
         data: dict,
         created_by: UUID | None = None,
+        allow_inactive_cabinet: bool = False,
     ) -> Appointment:
         """Create an appointment. Raises IntegrityError on slot conflict.
+
+        ``allow_inactive_cabinet`` lets a historical import keep an
+        appointment in a cabinet that is now inactive (#1237); every live
+        booking path leaves it ``False``.
 
         Records the synthetic initial status event (``from_status=None``,
         ``to_status=<status>``) so downstream analytics can always count on
@@ -472,7 +484,9 @@ class AppointmentService:
         if data.get("start_time") is not None and data.get("end_time") is not None:
             _check_time_range(data["start_time"], data["end_time"])
 
-        await AppointmentService._resolve_cabinet(db, clinic_id, data)
+        await AppointmentService._resolve_cabinet(
+            db, clinic_id, data, allow_inactive=allow_inactive_cabinet
+        )
 
         if planned_item_ids and data.get("patient_id"):
             await AppointmentService.validate_planned_items(

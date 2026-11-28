@@ -19,6 +19,7 @@ frontend as a Nuxt layer under its own Python package.
 ### Fixed
 
 - **Patients:** a receptionist no longer gets an "Access denied" toast when opening a patient (#1268).
+- **Recalls:** recall interval settings must be 0 to 60 months; a negative or huge value is rejected instead of producing an overdue suggestion or a server error (#1244).
 - **Deploy:** the production frontend build no longer runs out of memory. Production sourcemaps are off (nothing consumes them) and the build heap is 7 GB, in the Coolify image and the CI e2e job.
 - **Documents:** a cancelled edit of a prescription's medications no longer comes back when the document is reopened (#1232).
 - **Agenda:** Settings → Cabinets can deactivate and reactivate a cabinet, deleting one with appointments now says to deactivate it, and an inactive cabinet is no longer offered or bookable (#1237).
@@ -27,7 +28,7 @@ frontend as a Nuxt layer under its own Python package.
 - **Budget:** the "Line total" shown when adding a treatment to a quote now includes the treatment's VAT and never goes negative, matching the line that gets added (#1235).
 - **Agenda:** changing the patient in the appointment modal clears the previous patient's treatments instead of failing on save (#1234).
 - **Catalog:** "New treatment" opens empty instead of prefilled with the last created item, and cancelled edits in the catalog and odontogram treatment modals no longer come back (#1233).
-- **Catalog:** creating or editing a per-surface treatment (e.g. the seeded composite filling) saves instead of failing with a server error; a negative tier price is rejected (#1240).
+- **Catalog:** creating or editing a per-surface treatment (e.g. the seeded composite filling) saves instead of failing with a server error; a negative tier price, a tier outside 1–5 or a price with more than two decimals is rejected (#1240).
 - **Medical reference:** a deactivated interaction or contraindication can be added again; it comes back with the new risk note and its patient warnings return (#1236).
 - **Payments:** pressing Enter twice in the record-payment modal no longer records the payment twice (#1230).
 - **Documents:** "New document" opens empty instead of prefilled with the previous patient's document, and cancelled edits no longer come back (#1232).
