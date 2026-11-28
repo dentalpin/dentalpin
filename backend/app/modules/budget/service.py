@@ -10,6 +10,7 @@ from sqlalchemy.orm import joinedload
 
 from app.core.auth.models import ClinicMembership
 from app.core.list_query import parse_sort
+from app.core.utils.clinic_settings import read_budget_days_setting
 from app.core.utils.dates import clinic_day_range, clinic_today_for, clinic_zone_for
 from app.modules.catalog.models import TreatmentCatalogItem, VatType
 
@@ -211,12 +212,15 @@ class BudgetItemService:
 
         The schema caps a percentage sent together with its type; a partial
         update that sends only one of the two is checked here against the
-        stored other half, before anything is written (#1241).
+        stored other half, before anything is written (#1241). An update
+        that leaves the discount alone is not checked, so a row stored
+        above 100 before the cap stays editable.
         """
-        check_percentage_cap(
-            data.get("discount_type", item.discount_type),
-            data.get("discount_value", item.discount_value),
-        )
+        if "discount_type" in data or "discount_value" in data:
+            check_percentage_cap(
+                data.get("discount_type", item.discount_type),
+                data.get("discount_value", item.discount_value),
+            )
         for key, value in data.items():
             if not hasattr(item, key):
                 continue
@@ -602,7 +606,9 @@ class BudgetService:
             return existing
 
         clinic_settings = await _resolve_clinic_settings(db, clinic_id)
-        validity_days = int(clinic_settings.get("budget_expiry_days", DEFAULT_BUDGET_VALIDITY_DAYS))
+        validity_days = read_budget_days_setting(
+            clinic_settings, "budget_expiry_days", DEFAULT_BUDGET_VALIDITY_DAYS
+        )
         today = await clinic_today_for(db, clinic_id)
 
         budget_number = await BudgetNumberService.generate_number(db, clinic_id)
@@ -678,11 +684,13 @@ class BudgetService:
         if budget.status != "draft":
             raise ValueError("Only draft budgets can be edited")
 
-        # Same partial-update gap as ``BudgetItemService.update_item`` (#1241).
-        check_percentage_cap(
-            data.get("global_discount_type", budget.global_discount_type),
-            data.get("global_discount_value", budget.global_discount_value),
-        )
+        # Same partial-update gap as ``BudgetItemService.update_item`` (#1241);
+        # only when the request touches the global discount.
+        if "global_discount_type" in data or "global_discount_value" in data:
+            check_percentage_cap(
+                data.get("global_discount_type", budget.global_discount_type),
+                data.get("global_discount_value", budget.global_discount_value),
+            )
 
         # Store previous state for history
         previous_state = {

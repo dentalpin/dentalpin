@@ -60,8 +60,17 @@ no FKs.
 
 ## Permissions
 
-`treatment_plan.plans.{read,write}`. Clinical-note permissions live in
-the `clinical_notes` module since issue #60.
+`treatment_plan.plans.{read,write,confirm,close,reactivate}`.
+Clinical-note permissions live in the `clinical_notes` module since
+issue #60.
+
+`PlanDetailView.vue` gates each action on the permission of the route
+it calls (#1270): `plans.write` for item edits, reorder, doctor chip,
+reopen and budget generation; `plans.confirm`, `plans.close` and
+`plans.reactivate` for those transitions; chart planning also needs
+`odontogram.treatments.write`. Its `readonly` prop only forces a fully
+read-only view — callers must not derive it from another module's
+permission (the patient file used to pass `!odontogram.write`).
 
 ## Events emitted
 
@@ -221,6 +230,12 @@ migration — future ALTERs live on the ``tp`` Alembic branch.
   not in budget — closing a plan is a treatment_plan write and budget
   is in this module's depends, so the read of `budgets` from the
   cron query is allowed.
+- **The cron reads each clinic's config inside that clinic's `try`.**
+  `plan_auto_close_days_after_expiry` and the timezone are read in
+  `_close_for_clinic`, through `core.utils.clinic_settings.read_budget_days_setting`
+  (bad value -> 30-day default + warning). Reading them with `int(...)` in
+  the loop that builds the tasks let one stored `null` stop the job for
+  every clinic (#1276).
 
 ## Related ADRs
 

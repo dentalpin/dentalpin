@@ -201,6 +201,10 @@ class RecallSettings(Base):
 
 
 # Default mapping seeded into ``RecallSettings`` rows on first read.
+# Upper bound of a per-reason interval, matching the settings panel's
+# ``max="60"``. ``0`` means "no suggestion for this reason" (#1244).
+MAX_REASON_INTERVAL_MONTHS = 60
+
 DEFAULT_REASON_INTERVALS: dict[str, int] = {
     "hygiene": 6,
     "checkup": 12,

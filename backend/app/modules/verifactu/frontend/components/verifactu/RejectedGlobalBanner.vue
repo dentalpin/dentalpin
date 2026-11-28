@@ -2,7 +2,9 @@
 // Global banner shown across the admin layout when at least one
 // Verifactu record is rejected. Polls /verifactu/health every 60 s
 // (cheap query) so the user sees the warning even on screens that
-// don't otherwise touch verifactu data.
+// don't otherwise touch verifactu data. /health needs
+// verifactu.settings.read, so only roles holding it poll; anyone else
+// would get an "Access denied" toast every minute (#1269).
 import { PERMISSIONS } from '~~/app/config/permissions'
 
 const { t } = useI18n()
@@ -14,7 +16,7 @@ const showing = computed(() => rejectedCount.value > 0)
 let timer: ReturnType<typeof setInterval> | null = null
 
 async function refresh() {
-  if (!can(PERMISSIONS.verifactu.queueManage) && !can(PERMISSIONS.verifactu.recordsRead)) return
+  if (!can(PERMISSIONS.verifactu.settingsRead)) return
   try {
     const h = await health()
     rejectedCount.value = h.rejected_count ?? 0

@@ -28,7 +28,11 @@ const get = vi.fn(async (path: string) => {
 })
 const patch = vi.fn(async () => ({}))
 const del = vi.fn(async () => ({}))
-const post = vi.fn(async () => ({ data: { url: 'https://clinic.example/p/consent#synthetic-token', qr_data_url: 'data:image/png;base64,c3ludGhldGlj' } }))
+const post = vi.fn(async (path: string) => path === '/api/v1/documents/consents'
+  ? { data: { id: 'created', unknown_variables: ['mystery_field'] } }
+  : { data: { url: 'https://clinic.example/p/consent#synthetic-token', qr_data_url: 'data:image/png;base64,c3ludGhldGlj' } })
+const toastAdd = vi.hoisted(() => vi.fn())
+mockNuxtImport('useToast', () => () => ({ add: toastAdd }))
 mockNuxtImport('useApi', () => () => ({ get, patch, del, post, raw: vi.fn() }))
 const canWrite = vi.hoisted(() => ({ value: true }))
 mockNuxtImport('usePermissions', () => () => ({ can: () => canWrite.value }))
@@ -39,6 +43,7 @@ afterEach(() => {
   patch.mockClear()
   del.mockClear()
   post.mockClear()
+  toastAdd.mockClear()
 })
 
 describe('consent patient card', () => {
@@ -107,6 +112,20 @@ describe('consent patient card', () => {
       expect(link.exists()).toBe(true)
       // The card no longer writes templates.
       expect(post).not.toHaveBeenCalledWith('/api/v1/documents/consent-templates', expect.anything())
+    } finally { wrapper.unmount() }
+  })
+
+  it('warns about unknown template variables returned when a consent is created', async () => {
+    const wrapper = await mountSuspended(ConsentCard, { props: { ctx: { patient: { id: 'patient' } } } })
+    await flushPromises()
+    try {
+      wrapper.findComponent({ name: 'USelect' }).vm.$emit('update:modelValue', 'tpl-active')
+      await flushPromises()
+      const create = wrapper.findAll('button').find(button => /^(Create and get link|Crear y obtener enlace|documents\.consent\.create)$/.test(button.text()))!
+      await create.trigger('click')
+      await flushPromises()
+      expect(post).toHaveBeenCalledWith('/api/v1/documents/consents', { patient_id: 'patient', template_id: 'tpl-active' })
+      expect(toastAdd).toHaveBeenCalledWith(expect.objectContaining({ color: 'warning', title: expect.stringContaining('mystery_field') }))
     } finally { wrapper.unmount() }
   })
 
