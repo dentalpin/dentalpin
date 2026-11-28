@@ -127,7 +127,7 @@
       "signer": "Imię i nazwisko osoby podpisującej",
       "relationship": "Relacja z pacjentem",
       "idDocument": "Dokument tożsamości",
-      "idDocumentHint": "Wymagane, jeśli podpisujesz jako opiekun prawny lub przedstawiciel; opcjonalne, jeśli jesteś pacjentem.",
+      "idDocumentHint": "Wymagane, jeśli podpisujesz jako opiekun prawny lub przedstawiciel; opcjonalne, jeśli jesteś pacjentem. Tylko litery A–Z, cyfry oraz - . /.",
       "patient": "Pacjent",
       "guardian": "Opiekun prawny",
       "representative": "Przedstawiciel",

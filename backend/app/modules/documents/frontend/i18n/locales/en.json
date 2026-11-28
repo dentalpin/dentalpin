@@ -127,7 +127,7 @@
       "signer": "Signer name",
       "relationship": "Relationship to patient",
       "idDocument": "ID document",
-      "idDocumentHint": "Required if you sign as a guardian or representative; optional if you are the patient.",
+      "idDocumentHint": "Required if you sign as a guardian or representative; optional if you are the patient. Letters A–Z, digits and - . / only.",
       "patient": "Patient",
       "guardian": "Guardian",
       "representative": "Representative",

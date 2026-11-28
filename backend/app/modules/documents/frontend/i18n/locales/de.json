@@ -127,7 +127,7 @@
       "signer": "Name der unterzeichnenden Person",
       "relationship": "Beziehung zum Patienten",
       "idDocument": "Ausweisdokument",
-      "idDocumentHint": "Erforderlich, wenn Sie als Vormund oder Vertreter unterschreiben; optional, wenn Sie der Patient sind.",
+      "idDocumentHint": "Erforderlich, wenn Sie als Vormund oder Vertreter unterschreiben; optional, wenn Sie der Patient sind. Nur Buchstaben A–Z, Ziffern und - . /.",
       "patient": "Patient",
       "guardian": "Gesetzlicher Vormund",
       "representative": "Vertretung",

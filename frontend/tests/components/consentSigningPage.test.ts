@@ -92,6 +92,8 @@ describe('public consent signing', () => {
       wrapper.getComponent(SignatureCanvas).vm.$emit('update:modelValue', 'data:image/png;base64,synthetic')
       await flushPromises()
       expect(wrapper.findAll('button').at(-1)!.attributes('disabled')).toBeDefined()
+      // Raw input may carry spaces that the server strips: the cap matches the API schema (64).
+      expect(wrapper.findAll('input')[1]!.attributes('maxlength')).toBe('64')
       await wrapper.findAll('input')[1]!.setValue('  12345678z ')
       wrapper.getComponent(SignatureCanvas).vm.$emit('update:modelValue', 'data:image/png;base64,synthetic')
       await flushPromises()

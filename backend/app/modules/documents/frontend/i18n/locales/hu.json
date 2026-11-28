@@ -127,7 +127,7 @@
       "signer": "Az aláíró neve",
       "relationship": "Kapcsolat a pácienssel",
       "idDocument": "Személyazonosító okmány",
-      "idDocumentHint": "Gyámként vagy képviselőként történő aláírás esetén kötelező; betegként nem kötelező.",
+      "idDocumentHint": "Gyámként vagy képviselőként történő aláírás esetén kötelező; betegként nem kötelező. Csak A–Z betűk, számjegyek és - . /.",
       "patient": "Páciens",
       "guardian": "Törvényes gyám",
       "representative": "Képviselő",
