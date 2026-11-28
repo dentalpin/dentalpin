@@ -80,4 +80,7 @@ pacientes:
 La tabla por tipo controla qué eventos notifican
 (activado / envío automático / horas antes). Incluye factura enviada,
 recordatorios de presupuesto (7/14 días) y recordatorios de revisión.
+Las horas antes del recordatorio deben ser un número entero entre 1 y
+168 (una semana); con otro valor el campo muestra un error y no se puede
+guardar.
 

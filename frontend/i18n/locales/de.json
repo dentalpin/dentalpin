@@ -2517,6 +2517,7 @@
     "autoSend": "Automatisch senden",
     "options": "Optionen",
     "hoursBefore": "Std. vorher",
+    "hoursBeforeRange": "Geben Sie eine ganze Stundenzahl von 1 bis 168 ein.",
     "testConnection": "Verbindung testen",
     "testEmailTitle": "Test-E-Mail senden",
     "testEmailDescription": "Wir senden eine Test-E-Mail, um zu prüfen, ob die Konfiguration korrekt funktioniert.",

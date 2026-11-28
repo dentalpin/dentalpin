@@ -3,7 +3,7 @@
 from datetime import datetime
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from .models import NotificationType, default_type_preferences
 
@@ -126,6 +126,28 @@ class NotificationTypeSettings(BaseModel):
     hours_before: int | None = None  # For reminders
 
 
+# Bounds of the appointment reminder lead time, in hours (one week max).
+REMINDER_HOURS_MIN = 1
+REMINDER_HOURS_MAX = 168
+
+
+class NotificationTypeSettingsUpdate(BaseModel):
+    """One notification type's entry in a settings PUT (#1243).
+
+    Partial: a key left out keeps its stored value (the service merges).
+    A key that is sent must be valid, so the reminder job never reads a
+    lead time it can't use. Keys this schema doesn't know pass through
+    unchanged, so a client that sends back the whole stored dict still saves.
+    """
+
+    model_config = ConfigDict(extra="allow")
+
+    enabled: bool = Field(default=True, strict=True)
+    auto_send: bool = Field(default=True, strict=True)
+    # Not ``Optional``: an explicit ``null`` is rejected, like a string or 0.
+    hours_before: int = Field(default=24, strict=True, ge=REMINDER_HOURS_MIN, le=REMINDER_HOURS_MAX)
+
+
 def _validate_manual_channels(value: list[str] | None) -> list[str] | None:
     if value is None:
         return value
@@ -161,7 +183,7 @@ class ClinicNotificationSettingsBase(BaseModel):
 class ClinicNotificationSettingsUpdate(BaseModel):
     """Schema for updating clinic notification settings."""
 
-    settings: dict | None = None
+    settings: dict[str, NotificationTypeSettingsUpdate] | None = None
     preferred_channel: str | None = Field(default=None, pattern="^(email|whatsapp|sms)$")
     fallback_enabled: bool | None = None
     sms_daily_limit: int | None = Field(default=None, ge=0)

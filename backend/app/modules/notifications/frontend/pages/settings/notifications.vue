@@ -31,6 +31,10 @@ const {
 // Local state for editing
 const localSettings = ref<Record<string, NotificationTypeSettings>>({})
 const hasChanges = ref(false)
+// What the user typed into an "hours before" field while it isn't a valid
+// value. It is kept out of localSettings, so a cleared field is never
+// saved as 0; the field shows an error and Save stays disabled instead.
+const hoursBeforeDraft = ref<Record<string, number | undefined>>({})
 
 // Clinic-wide channel configuration (issue #287): which channel
 // auto-sends use and which Send buttons the rest of the app renders.
@@ -103,6 +107,7 @@ const providerOptions = [
 watch(settings, (newSettings) => {
   if (newSettings?.settings) {
     localSettings.value = JSON.parse(JSON.stringify(newSettings.settings))
+    hoursBeforeDraft.value = {}
     hasChanges.value = false
   }
   if (newSettings) {
@@ -167,15 +172,60 @@ function updateLocalSetting<K extends ScalarSetting>(key: string, field: K, valu
   onSettingChange()
 }
 
+// Reminder lead time, in whole hours. The API rejects anything else (#1243).
+const HOURS_BEFORE_MIN = 1
+const HOURS_BEFORE_MAX = 168
+
+function isValidHoursBefore(value: unknown): value is number {
+  return typeof value === 'number' && Number.isInteger(value)
+    && value >= HOURS_BEFORE_MIN && value <= HOURS_BEFORE_MAX
+}
+
+function hoursBeforeInput(key: string): number | undefined {
+  return key in hoursBeforeDraft.value ? hoursBeforeDraft.value[key] : settingsFor(key).hours_before
+}
+
+function hoursBeforeInvalid(key: string): boolean {
+  return key in hoursBeforeDraft.value || !isValidHoursBefore(settingsFor(key).hours_before)
+}
+
+function onHoursBeforeInput(key: string, value: string | number) {
+  const hours = value === '' || value == null ? undefined : Number(value)
+  if (isValidHoursBefore(hours)) {
+    hoursBeforeDraft.value = Object.fromEntries(
+      Object.entries(hoursBeforeDraft.value).filter(([draftKey]) => draftKey !== key)
+    )
+    updateLocalSetting(key, 'hours_before', hours)
+  } else {
+    hoursBeforeDraft.value = { ...hoursBeforeDraft.value, [key]: hours }
+    onSettingChange()
+  }
+}
+
+const hoursBeforeValid = computed(() =>
+  notificationTypes.value
+    .filter(type => type.supportsHoursBefore)
+    .every(type => !hoursBeforeInvalid(type.key))
+)
+
 // Save all settings
 async function saveSettings() {
-  if (!manualChannelsValid.value) return
+  if (!manualChannelsValid.value || !hoursBeforeValid.value) return
+  const payload: Record<string, NotificationTypeSettings> = JSON.parse(JSON.stringify(localSettings.value))
+  // A row saved before the API validated it can hold hours_before: null.
+  // The field shows the default for it, so save what is shown.
+  for (const type of notificationTypes.value) {
+    const setting = payload[type.key]
+    if (type.supportsHoursBefore && setting && setting.hours_before == null) {
+      setting.hours_before = settingsFor(type.key).hours_before
+    }
+  }
   const success = await updateSettings({
     preferred_channel: channelForm.preferred_channel,
     fallback_enabled: channelForm.fallback_enabled,
     manual_channels: channelForm.manual_channels,
     sms_daily_limit: channelForm.sms_daily_limit,
-    settings: localSettings.value
+    settings: payload
   })
   if (success) {
     hasChanges.value = false
@@ -313,7 +363,7 @@ if (!isAdmin.value) {
           v-if="hasChanges"
           icon="i-lucide-save"
           :loading="isSaving"
-          :disabled="!manualChannelsValid"
+          :disabled="!manualChannelsValid || !hoursBeforeValid"
           @click="saveSettings"
         >
           {{ t('common.save') }}
@@ -542,18 +592,31 @@ if (!isAdmin.value) {
                 <td class="py-4 px-4 text-center">
                   <div
                     v-if="type.supportsHoursBefore"
-                    class="flex items-center justify-center gap-2"
+                    class="flex flex-col items-center gap-1"
                   >
-                    <UInput
-                      :model-value="settingsFor(type.key).hours_before"
-                      type="number"
-                      min="1"
-                      max="168"
-                      class="w-16"
-                      :disabled="!settingsFor(type.key).enabled"
-                      @update:model-value="(v: string | number) => updateLocalSetting(type.key, 'hours_before', Number(v))"
-                    />
-                    <span class="text-caption text-subtle">{{ t('notifications.hoursBefore') }}</span>
+                    <div class="flex items-center justify-center gap-2">
+                      <!-- Left editable while invalid even if the type is off: the API rejects the value either way. -->
+                      <UInput
+                        :model-value="hoursBeforeInput(type.key)"
+                        type="number"
+                        :min="HOURS_BEFORE_MIN"
+                        :max="HOURS_BEFORE_MAX"
+                        step="1"
+                        class="w-16"
+                        :color="hoursBeforeInvalid(type.key) ? 'error' : undefined"
+                        :highlight="hoursBeforeInvalid(type.key)"
+                        :aria-invalid="hoursBeforeInvalid(type.key)"
+                        :disabled="!settingsFor(type.key).enabled && !hoursBeforeInvalid(type.key)"
+                        @update:model-value="(v: string | number) => onHoursBeforeInput(type.key, v)"
+                      />
+                      <span class="text-caption text-subtle">{{ t('notifications.hoursBefore') }}</span>
+                    </div>
+                    <p
+                      v-if="hoursBeforeInvalid(type.key)"
+                      class="text-caption text-danger-accent"
+                    >
+                      {{ t('notifications.hoursBeforeRange') }}
+                    </p>
                   </div>
                   <span
                     v-else

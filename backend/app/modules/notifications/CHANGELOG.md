@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1243): validate the per-type settings on PUT (`hours_before` an int 1..168, strict bools, 422 otherwise); the reminder sweep skips a clinic with an unusable stored value and isolates each clinic in a savepoint, so one clinic can no longer stop reminders for the others; the settings page no longer saves a cleared hours-before field as 0.
 - fix(#1280): a message left in `sending` by a restart mid-send is put back to `failed` after 30 min by the new `notifications_stuck_reaper` job and retried (attempt kept, `max_attempts` respected). A row stuck over 24 h is failed for good instead of retried.
 - Prepopulate editable email defaults and compose custom email fragments inside the shared clinic layout in both preview and delivery (#951). Legacy full HTML documents keep their original layout.
 

@@ -155,6 +155,15 @@ and `appointment_*` / `budget_sent` / `budget_accepted` require
 - **Every reminder carries the check-in link** (ADR 0037, #1156): the sweep
   and the manual `POST /send` both set `checkin_url` from
   `tasks._reminder_checkin_url`. A manual send is not deduplicated.
+- **Per-type `settings` are validated on PUT** (#1243): each entry goes
+  through `NotificationTypeSettingsUpdate` (`enabled`/`auto_send` strict
+  bools, `hours_before` a strict int 1..168, no explicit `null`; unknown keys
+  pass through). The reminder sweep still guards rows stored before that:
+  `tasks._reminder_hours_before` keeps legacy values that worked (fractional
+  hours like 12.5, numeric strings like `"24"`), skips a clinic whose value is
+  `null`, a bool, non-numeric or below 1, and caps it at a year. Clinics run
+  in `clinic_id` order, each in its own savepoint, so one clinic's failure is
+  logged and the others still get their reminders.
 
 - **No outbound network calls during a request.** Sending is queued via
   `tasks.py` (APScheduler) so the request transaction can commit
