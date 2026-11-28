@@ -11,12 +11,13 @@ from __future__ import annotations
 from datetime import UTC, date, datetime, timedelta
 from decimal import Decimal
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.core.events import EventType, event_bus
-from app.core.utils.dates import clinic_today_for
+from app.core.utils.dates import clinic_today_for, clinic_zone_for
 from app.modules.agenda.models import Appointment
 from app.modules.patients.models import Patient
 from app.modules.recalls.service import RecallService
@@ -149,10 +150,17 @@ async def _get_case(db: AsyncSession, clinic_id: UUID, case_id: UUID) -> OrthoCa
     return result.scalar_one_or_none()
 
 
-def _control_next_due(control: OrthoControl) -> date | None:
+def _control_next_due(control: OrthoControl, zone: ZoneInfo) -> date | None:
+    """The day the next control is due, on the clinic's calendar.
+
+    ``performed_at`` is an instant; its calendar day is the clinic's, not
+    UTC's. A 20:30 New York control on 30 Nov is 1 Dec in UTC, so taking
+    ``.date()`` of the UTC value dated a 4-week recall a day late.
+    """
     if control.next_control_weeks is None:
         return None
-    return (control.performed_at + timedelta(weeks=control.next_control_weeks)).date()
+    local = control.performed_at.astimezone(zone)
+    return (local + timedelta(weeks=control.next_control_weeks)).date()
 
 
 def _installment_label(installment_labels: list[str] | None, month: int) -> str:
@@ -184,6 +192,7 @@ async def _annotate_cases(db: AsyncSession, cases: list[OrthoCase]) -> list[dict
         )
     )
     names = {pid: f"{first} {last}" for pid, first, last in patients.all()}
+    zone = await clinic_zone_for(db, clinic_id)
     out = []
     for case in cases:
         rows = by_case.get(case.id, [])
@@ -193,7 +202,7 @@ async def _annotate_cases(db: AsyncSession, cases: list[OrthoCase]) -> list[dict
                 "patient_name": names.get(case.patient_id),
                 "control_count": len(rows),
                 "last_control_at": last.performed_at if last else None,
-                "next_due": _control_next_due(last) if last else None,
+                "next_due": _control_next_due(last, zone) if last else None,
                 "plan_close_suggested": False,
             }
         )
@@ -521,7 +530,7 @@ async def _upsert_next_control_recall(
     )
     if superseded is not None:
         return
-    due = _control_next_due(control)
+    due = _control_next_due(control, await clinic_zone_for(db, case.clinic_id))
     if due is None:
         raise ValueError("Cannot compute the next control date")
     await RecallService.create(
@@ -581,6 +590,7 @@ class OrthoControlService:
         # what is in the mouth and when the next control is due (#1007).
         await _refresh_current_wires(db, case)
         await _upsert_next_control_recall(db, case, control, recommended_by=performed_by)
+        next_due = _control_next_due(control, await clinic_zone_for(db, clinic_id))
         await event_bus.publish(
             EventType.ORTHODONTICS_CONTROL_REGISTERED,
             {
@@ -591,9 +601,7 @@ class OrthoControlService:
                 "upper_wire": control.upper_wire,
                 "lower_wire": control.lower_wire,
                 "procedures": control.procedures,
-                "next_due": _control_next_due(control).isoformat()
-                if _control_next_due(control)
-                else None,
+                "next_due": next_due.isoformat() if next_due else None,
             },
             db=db,
         )
