@@ -75,5 +75,7 @@ patients on:
 
 The per-type table controls which events notify at all
 (enabled / auto-send / hours-before). It includes invoice sent, quote
-reminders (7/14 days) and recall reminders.
+reminders (7/14 days) and recall reminders. The reminder's hours-before
+must be a whole number from 1 to 168 (one week); with any other value the
+field shows an error and the settings can't be saved.
 

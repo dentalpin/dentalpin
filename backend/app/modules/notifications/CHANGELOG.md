@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1243): validate the per-type settings on PUT (`hours_before` an int 1..168, strict bools, 422 otherwise); the reminder sweep skips a clinic with an unusable stored value and isolates each clinic in a savepoint, so one clinic can no longer stop reminders for the others; the settings page no longer saves a cleared hours-before field as 0.
 - fix(#1231): the patient conversation reply box ignores Enter while a reply is still sending, so a double Enter no longer sends the WhatsApp message twice.
 - fix(#1211): dates in patient emails and WhatsApp texts (appointment, budget, invoice, reminder) follow the message's locale through `message_date` / `core/pdf_locales` (`14.01.2026` in German, `2026. 01. 14.` in Hungarian) instead of a fixed `dd/mm/yyyy`. Spanish output is unchanged.
 - fix(#1205, #1206): every locale's `budget_sent` email shows the Send dialog's custom message (8 locales, Spanish included, dropped it) and a button to the public quote page (`public_url`), so the patient can open, accept and sign the quote from the email.
