@@ -888,8 +888,6 @@ Maintained by `backend/scripts/generate_catalogs.py`.
 
 ### `patient.created`
 
-An optional `send_welcome: false` tells the notifications subscriber to skip the generic welcome; missing preserves its default behavior. Other subscribers ignore the field.
-
 - **Constant:** `EventType.PATIENT_CREATED`
 - **Publishers:**
   - `patients` — `backend/app/modules/patients/service.py`
