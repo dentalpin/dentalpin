@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix: a control's `next_due` (case list, control responses, the `ortho_review` recall, the `control_registered` event) counts weeks from the control's day on the clinic's calendar. It took the UTC date, so west of UTC an evening control (20:30 in New York is past midnight UTC) was due a day late.
 - fix(#1186): editing the latest control's next_control_weeks or performed_at now moves the ortho_review recall (same latest-control and paused rules as registration).
 - fix(#1176): the cases list's overdue check reads `next_due` as local midnight (`parseDateOnly`), so west of UTC a case is no longer flagged overdue on its due day.
 

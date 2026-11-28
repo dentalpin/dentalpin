@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Annotated
 from uuid import UUID
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.exc import IntegrityError
@@ -15,6 +16,7 @@ from app.core.auth.dependencies import (
     require_permission,
 )
 from app.core.schemas import ApiResponse
+from app.core.utils.dates import clinic_zone_for
 from app.database import get_db
 
 from .schemas import (
@@ -50,11 +52,11 @@ def _case_response(case, annotation: dict) -> OrthoCaseResponse:
     return response
 
 
-def _control_response(control) -> OrthoControlResponse:
+def _control_response(control, zone: ZoneInfo) -> OrthoControlResponse:
     from .service import _control_next_due
 
     response = OrthoControlResponse.model_validate(control)
-    response.next_due = _control_next_due(control)
+    response.next_due = _control_next_due(control, zone)
     return response
 
 
@@ -164,7 +166,7 @@ async def register_control(
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except ValueError as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
-    return ApiResponse(data=_control_response(control))
+    return ApiResponse(data=_control_response(control, await clinic_zone_for(db, ctx.clinic_id)))
 
 
 @router.get("/cases/{case_id}/controls", response_model=ApiResponse[list[OrthoControlResponse]])
@@ -177,7 +179,8 @@ async def list_controls(
     controls = await OrthoControlService.list_for_case(db, ctx.clinic_id, case_id)
     if controls is None:
         raise HTTPException(status_code=404, detail="Case not found")
-    return ApiResponse(data=[_control_response(c) for c in controls])
+    zone = await clinic_zone_for(db, ctx.clinic_id)
+    return ApiResponse(data=[_control_response(c, zone) for c in controls])
 
 
 @router.patch("/controls/{control_id}", response_model=ApiResponse[OrthoControlResponse])
@@ -196,7 +199,7 @@ async def update_control(
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     if control is None:
         raise HTTPException(status_code=404, detail="Control not found")
-    return ApiResponse(data=_control_response(control))
+    return ApiResponse(data=_control_response(control, await clinic_zone_for(db, ctx.clinic_id)))
 
 
 @router.get("/settings", response_model=ApiResponse[OrthoSettingsResponse])

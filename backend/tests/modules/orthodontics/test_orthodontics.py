@@ -1014,3 +1014,25 @@ async def test_http_patch_control_interval_moves_the_recall(client, auth_headers
     assert recalls.status_code == 200, recalls.text
     dues = [r["due_date"] for r in recalls.json()["data"] if r["reason"] == "ortho_review"]
     assert dues == ["2027-01-15"]
+
+
+@pytest.mark.asyncio
+async def test_next_due_counts_from_the_clinic_day_not_the_utc_day(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient
+):
+    """An evening control west of UTC is due 4 weeks from its local day."""
+    test_clinic.timezone = "America/New_York"
+    await db_session.commit()
+    case, _ = await OrthoCaseService.create(db_session, test_clinic.id, _case_data(test_patient.id))
+    # 20:30 on 30 Nov in New York is already 1 Dec in UTC.
+    evening = datetime(2026, 12, 1, 1, 30, tzinfo=UTC)
+    await OrthoControlService.register(
+        db_session,
+        test_clinic.id,
+        case.id,
+        OrthoControlCreate(performed_at=evening, next_control_weeks=4),
+    )
+
+    assert await _review_due(db_session, test_clinic.id, test_patient.id) == date(2026, 12, 28)
+    cases = await OrthoCaseService.list_for_patient(db_session, test_clinic.id, test_patient.id)
+    assert [a["next_due"] for _, a in cases] == [date(2026, 12, 28)]
