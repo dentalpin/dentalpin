@@ -139,10 +139,12 @@
       "conflict": "Questo orario non è più disponibile. Ne scelga un altro.",
       "expired": "Questo link è scaduto o è già stato utilizzato. Richieda un altro orario.",
       "selectSlot": "Selezioni un orario disponibile.",
-      "verify": "Completi la verifica prima di continuare."
+      "verify": "Completi la verifica prima di continuare.",
+      "consentHint": "Accetta la politica sulla privacy per continuare."
     },
     "privacyUrl": "URL dell'informativa sulla privacy (https)",
     "embedOrigins": "Siti autorizzati a incorporare la pagina (un'origine https per riga)",
-    "pageAddress": "Indirizzo della pagina pubblica"
+    "pageAddress": "Indirizzo della pagina pubblica",
+    "colorPicker": "Scegli colore"
   }
 }

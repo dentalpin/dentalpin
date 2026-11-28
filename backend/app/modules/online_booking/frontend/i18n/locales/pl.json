@@ -139,10 +139,12 @@
       "conflict": "Ten termin nie jest już dostępny. Proszę wybrać inny.",
       "expired": "Link wygasł lub został już wykorzystany. Proszę wybrać nowy termin.",
       "selectSlot": "Proszę wybrać dostępną godzinę.",
-      "verify": "Proszę ukończyć weryfikację, aby kontynuować."
+      "verify": "Proszę ukończyć weryfikację, aby kontynuować.",
+      "consentHint": "Zaakceptuj politykę prywatności, aby kontynuować."
     },
     "privacyUrl": "Adres URL polityki prywatności (https)",
     "embedOrigins": "Strony uprawnione do osadzania tej strony (jedno źródło https w wierszu)",
-    "pageAddress": "Adres strony publicznej"
+    "pageAddress": "Adres strony publicznej",
+    "colorPicker": "Wybierz kolor"
   }
 }

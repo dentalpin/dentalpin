@@ -153,6 +153,14 @@ describe('online booking reception', () => {
     expect(save?.classes()).toContain('bg-primary')
   })
 
+  it('labels the color selector separately from the hexadecimal input', async () => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.find('input[type="color"]').exists()).toBe(true))
+    expect(wrapper.find('input[type="color"]').attributes('aria-label')).toBe('onlineBooking.colorPicker')
+    expect(wrapper.find('input[placeholder="#127f83"]').attributes('aria-label')).toBe('onlineBooking.accentColor')
+  })
+
   it('labels the logo field differently from its upload button (#1226)', async () => {
     wrapper = await mountSuspended(RequestsPage)
     await clickByText(wrapper, 'onlineBooking.settingsTitle')

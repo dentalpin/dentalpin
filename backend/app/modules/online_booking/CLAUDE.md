@@ -35,3 +35,5 @@
 
 - Quotas are checked under the clinic lock in clinic-local day/week boundaries. Active contacts match normalized email or E.164 phone. Buffers are snapshotted on the request. Optional comments and names follow contact retention.
 - One migration per PR: `ob_0004` holds every column of the public page (no state that never shipped).
+
+- The public config includes the clinic name for the document title and logo accessible name. Filled controls choose black or white by WCAG contrast.

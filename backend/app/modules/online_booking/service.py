@@ -515,7 +515,9 @@ class BookingService:
     async def public_config(db: AsyncSession, clinic_id: UUID) -> dict:
         config = await BookingService.public_settings(db, clinic_id)
         logo = f"/api/v1/online_booking/public/{clinic_id}/logo" if config.logo_data else None
+        clinic = await db.get(Clinic, clinic_id)
         return {
+            "clinic_name": clinic.name if clinic else "",
             "slot_minutes": config.slot_minutes,
             "window_days": config.window_days,
             "ask_existing_patient": config.ask_existing_patient,

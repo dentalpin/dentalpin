@@ -24,6 +24,7 @@ import {
 } from '../../../composables/usePublicBooking'
 import { PublicBookingError } from '../../../utils/publicBookingError'
 import {
+  accentForeground,
   apiLanguage,
   dayDistance,
   offsetDay,
@@ -85,6 +86,8 @@ const heading = computed(() => localised(
 const intro = computed(() => localised(
   config.value?.branding.intro_es, config.value?.branding.intro_en, t('onlineBooking.public.intro')
 ))
+
+useHead({ title: () => localised(config.value?.branding.title_es, config.value?.branding.title_en, config.value?.clinic_name || t('onlineBooking.public.title')) })
 
 function reasonName(reason: PublicReason) {
   return locale.value === 'es' ? reason.name_es : reason.name_en
@@ -331,6 +334,7 @@ async function confirm() {
   } catch (error) {
     const status = error instanceof PublicBookingError ? error.status : 0
     errorKey.value = status === 410 ? 'expired' : status === 409 ? 'conflict' : 'error'
+    if (status === 410) confirmToken.value = null
     showRestart.value = true
   } finally {
     submitting.value = false
@@ -394,7 +398,7 @@ const resultBodyValues = computed(() => {
         <img
           v-if="logoSrc"
           :src="logoSrc"
-          alt=""
+          :alt="config?.clinic_name || heading"
           class="max-h-12 max-w-40 object-contain"
           data-testid="booking-logo"
         >
@@ -451,8 +455,9 @@ const resultBodyValues = computed(() => {
         </p>
         <div class="flex flex-wrap items-center gap-3">
           <UButton
+            v-if="confirmToken"
             :disabled="submitting"
-            :style="{ backgroundColor: accent }"
+            :style="{ backgroundColor: accent, color: accentForeground(accent) }"
             data-testid="booking-confirm"
             @click="confirm"
           >
@@ -562,7 +567,7 @@ const resultBodyValues = computed(() => {
               :aria-pressed="item.day === chosenDay"
               class="rounded-md border px-1 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed"
               :class="item.day === chosenDay ? 'text-white' : 'border-[var(--ui-border)]'"
-              :style="item.day === chosenDay ? { backgroundColor: accent, borderColor: accent } : {}"
+              :style="item.day === chosenDay ? { backgroundColor: accent, borderColor: accent, color: accentForeground(accent) } : {}"
               data-testid="booking-day"
               @click="chooseDay(item.day)"
             >
@@ -596,7 +601,7 @@ const resultBodyValues = computed(() => {
                 :aria-pressed="start === selected"
                 class="rounded-md border px-3 py-1.5 text-sm"
                 :class="start === selected ? 'text-white' : 'border-[var(--ui-border)]'"
-                :style="start === selected ? { backgroundColor: accent, borderColor: accent } : {}"
+                :style="start === selected ? { backgroundColor: accent, borderColor: accent, color: accentForeground(accent) } : {}"
                 data-testid="booking-slot"
                 @click="selected = start"
               >
@@ -768,6 +773,7 @@ const resultBodyValues = computed(() => {
 
             <p
               v-if="!privacyHref"
+              id="booking-privacy-unavailable"
               role="alert"
               class="text-sm text-[var(--ui-error)]"
             >
@@ -782,12 +788,16 @@ const resultBodyValues = computed(() => {
               {{ t(`onlineBooking.public.${errorKey}`) }}
             </p>
 
+            <p v-if="privacyHref && !form.consent" id="booking-consent-hint" class="text-sm" aria-live="polite">
+              {{ t('onlineBooking.public.consentHint') }}
+            </p>
             <div class="flex flex-wrap items-center justify-end gap-3">
               <UButton
                 type="submit"
                 :disabled="!canSubmit || !form.consent"
                 :loading="submitting"
-                :style="{ backgroundColor: accent }"
+                :style="{ backgroundColor: accent, color: accentForeground(accent) }"
+                :aria-describedby="!privacyHref ? 'booking-privacy-unavailable' : !form.consent ? 'booking-consent-hint' : undefined"
                 data-testid="booking-submit"
               >
                 {{ t('onlineBooking.public.submit') }}

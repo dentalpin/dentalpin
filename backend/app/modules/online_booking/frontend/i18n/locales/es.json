@@ -139,10 +139,12 @@
       "conflict": "El hueco ya no está disponible. Elige otro.",
       "expired": "El enlace ha caducado o ya se ha utilizado. Solicita otro hueco.",
       "selectSlot": "Selecciona un hueco.",
-      "verify": "Completa la verificación antes de continuar."
+      "verify": "Completa la verificación antes de continuar.",
+      "consentHint": "Acepta la política de privacidad para continuar."
     },
     "privacyUrl": "URL de la política de privacidad (https)",
     "embedOrigins": "Webs autorizadas a incrustar la página (un origen https por línea)",
-    "pageAddress": "Dirección de la página pública"
+    "pageAddress": "Dirección de la página pública",
+    "colorPicker": "Seleccionar color"
   }
 }

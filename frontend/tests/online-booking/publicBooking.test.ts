@@ -42,6 +42,7 @@ mockNuxtImport('useI18n', () => () => ({
 
 function config(overrides: Record<string, unknown> = {}) {
   return {
+    clinic_name: 'Synthetic Clinic',
     slot_minutes: 30,
     window_days: 14,
     ask_existing_patient: true,
@@ -123,6 +124,8 @@ describe('public booking page', () => {
     expect(wrapper.find('[data-testid="booking-title"]').text()).toBe('Book at Synthetic Clinic')
     expect(wrapper.text()).toContain('Pick a time.')
     expect(wrapper.find('[data-testid="booking-logo"]').attributes('src')).toBe(api.logoUrl)
+    expect(wrapper.find('[data-testid="booking-logo"]').attributes('alt')).toBe('Synthetic Clinic')
+    await vi.waitFor(() => expect(document.title).toBe('Book at Synthetic Clinic'))
     expect(wrapper.findAll('#booking-reason option').map(option => option.text())).toEqual(['First visit', 'Check-up'])
     expect(wrapper.find('#booking-existing').exists()).toBe(true)
     expect(wrapper.find('#booking-comment').exists()).toBe(true)
@@ -228,6 +231,23 @@ describe('public booking page', () => {
     await vi.waitFor(() => expect(wrapper!.find('[data-testid="booking-error"]').text()).toBe('We could not complete the request. Please try again.'))
   })
 
+  it.each(['#5BC0DE', '#123456'])('uses a contrasting foreground for selected controls with accent %s', async (accent) => {
+    api.config.mockResolvedValue(config({ branding: { ...config().branding, accent_color: accent } }))
+    wrapper = await mount()
+    await ready(wrapper)
+    const day = wrapper.find('[data-testid="booking-day"][aria-pressed="true"]')
+    expect(day.attributes('style')).toContain(accent === '#5BC0DE' ? 'color: #000000' : 'color: #ffffff')
+    await wrapper.findAll('[data-testid="booking-slot"]')[0]!.trigger('click')
+    expect(wrapper.find('[data-testid="booking-slot"][aria-pressed="true"]').attributes('style')).toContain(accent === '#5BC0DE' ? 'color: #000000' : 'color: #ffffff')
+  })
+
+  it('explains why the submit button is disabled', async () => {
+    wrapper = await mount()
+    await ready(wrapper)
+    expect(wrapper.find('[data-testid="booking-submit"]').attributes('aria-describedby')).toBe('booking-consent-hint')
+    expect(wrapper.find('#booking-consent-hint').text()).toContain('privacy')
+  })
+
   it('disables sending when the clinic has no privacy policy URL', async () => {
     api.config.mockResolvedValue(config({ privacy_url: null }))
     wrapper = await mount()
@@ -271,6 +291,7 @@ describe('public booking page', () => {
     await wrapper.find('[data-testid="booking-confirm"]').trigger('click')
     await vi.waitFor(() => expect(wrapper!.find('[data-testid="booking-error"]').text()).toBe(message))
     expect(wrapper.text()).toContain('Start again')
+    if (status === 410) expect(wrapper.find('[data-testid="booking-confirm"]').exists()).toBe(false)
   })
 
   it('switches language in memory without persisting a cookie', async () => {
