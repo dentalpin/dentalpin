@@ -10,6 +10,7 @@ from sqlalchemy.orm import joinedload
 
 from app.core.auth.models import ClinicMembership
 from app.core.list_query import parse_sort
+from app.core.utils.clinic_settings import read_budget_days_setting
 from app.core.utils.dates import clinic_day_range, clinic_today_for, clinic_zone_for
 from app.modules.catalog.models import TreatmentCatalogItem, VatType
 
@@ -605,7 +606,9 @@ class BudgetService:
             return existing
 
         clinic_settings = await _resolve_clinic_settings(db, clinic_id)
-        validity_days = int(clinic_settings.get("budget_expiry_days", DEFAULT_BUDGET_VALIDITY_DAYS))
+        validity_days = read_budget_days_setting(
+            clinic_settings, "budget_expiry_days", DEFAULT_BUDGET_VALIDITY_DAYS
+        )
         today = await clinic_today_for(db, clinic_id)
 
         budget_number = await BudgetNumberService.generate_number(db, clinic_id)

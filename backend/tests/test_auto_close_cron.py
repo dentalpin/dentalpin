@@ -77,3 +77,91 @@ async def test_cron_closes_a_plan_whose_budget_expired_long_ago(
 
     await db_session.refresh(plan)
     assert plan.status == "closed", f"plan still {plan.status!r} — the cron ran but closed nothing"
+
+
+async def _pending_plan_with_budget_expired_90_days_ago(
+    db_session: AsyncSession, clinic: Clinic, patient: Patient
+) -> TreatmentPlan:
+    created_by = (
+        await db_session.execute(
+            select(ClinicMembership.user_id).where(ClinicMembership.clinic_id == clinic.id)
+        )
+    ).scalar_one()
+    long_ago = date.today() - timedelta(days=90)
+    budget = Budget(
+        id=uuid4(),
+        clinic_id=clinic.id,
+        patient_id=patient.id,
+        budget_number=f"PRES-{uuid4().hex[:8]}",
+        valid_from=long_ago,
+        valid_until=long_ago,
+        status="expired",
+        created_by=created_by,
+    )
+    db_session.add(budget)
+    await db_session.flush()
+    plan = TreatmentPlan(
+        id=uuid4(),
+        clinic_id=clinic.id,
+        patient_id=patient.id,
+        plan_number=f"PLAN-{uuid4().hex[:8]}",
+        created_by=created_by,
+        status="pending",
+        budget_id=budget.id,
+        created_at=datetime.now(UTC),
+    )
+    db_session.add(plan)
+    await db_session.commit()
+    return plan
+
+
+@pytest.mark.asyncio
+async def test_a_null_threshold_in_another_clinic_does_not_stop_the_job(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient
+) -> None:
+    """#1276: the threshold was read with ``int(...)`` in the loop that
+    builds the per-clinic tasks, outside any ``try``. One clinic with a
+    stored ``null`` raised TypeError there and no clinic got its plans
+    closed, every night."""
+    plan = await _pending_plan_with_budget_expired_90_days_ago(
+        db_session, test_clinic, test_patient
+    )
+    db_session.add(
+        Clinic(
+            id=uuid4(),
+            name="Clinic With Null",
+            tax_id="B87654321",
+            address={},
+            settings={"plan_auto_close_days_after_expiry": None},
+        )
+    )
+    await db_session.commit()
+
+    await auto_close_expired_plans()
+
+    await db_session.refresh(plan)
+    assert plan.status == "closed", (
+        f"plan still {plan.status!r} — another clinic's null threshold stopped the job"
+    )
+
+
+@pytest.mark.asyncio
+@pytest.mark.parametrize("bad", [None, "abc", 0])
+async def test_a_bad_stored_threshold_falls_back_to_the_default(
+    db_session: AsyncSession, test_clinic: Clinic, test_patient: Patient, bad: object
+) -> None:
+    """The clinic with the bad value itself runs on the 30-day default:
+    a quote expired 90 days ago closes its plan."""
+    test_clinic.settings = {
+        **(test_clinic.settings or {}),
+        "plan_auto_close_days_after_expiry": bad,
+    }
+    await db_session.commit()
+    plan = await _pending_plan_with_budget_expired_90_days_ago(
+        db_session, test_clinic, test_patient
+    )
+
+    await auto_close_expired_plans()
+
+    await db_session.refresh(plan)
+    assert plan.status == "closed", f"plan still {plan.status!r}"

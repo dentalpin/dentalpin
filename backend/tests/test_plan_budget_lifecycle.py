@@ -480,6 +480,30 @@ async def test_duplicate_restarts_the_validity_window(
 
 
 @pytest.mark.asyncio
+async def test_null_stored_validity_days_falls_back_to_the_default(
+    db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup: dict
+) -> None:
+    """A stored ``budget_expiry_days: null`` (#1276) made the quote created
+    on plan confirm and the duplicate both 500 on ``int(None)``. They now
+    use the 30-day default."""
+    clinic_id = UUID(setup["clinic_id"])
+    clinic = await db_session.get(Clinic, clinic_id)
+    clinic.settings = {**(clinic.settings or {}), "budget_expiry_days": None}
+    await _sync(db_session)
+
+    plan_id, _ = await _create_plan_with_items(client, auth_headers, setup, [16])
+    budget_id = await _confirm_plan(client, auth_headers, plan_id)
+    await _sync(db_session)
+    today = await clinic_today_for(db_session, clinic_id)
+    r = await client.get(f"/api/v1/budget/budgets/{budget_id}", headers=auth_headers)
+    assert r.json()["data"]["valid_until"] == (today + timedelta(days=30)).isoformat()
+
+    r = await client.post(f"/api/v1/budget/budgets/{budget_id}/duplicate", headers=auth_headers)
+    assert r.status_code == 201, r.text
+    assert r.json()["data"]["valid_until"] == (today + timedelta(days=30)).isoformat()
+
+
+@pytest.mark.asyncio
 async def test_next_version_reads_the_whole_chain(
     db_session: AsyncSession, client: AsyncClient, auth_headers: dict, setup: dict
 ) -> None:

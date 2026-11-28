@@ -230,6 +230,12 @@ migration — future ALTERs live on the ``tp`` Alembic branch.
   not in budget — closing a plan is a treatment_plan write and budget
   is in this module's depends, so the read of `budgets` from the
   cron query is allowed.
+- **The cron reads each clinic's config inside that clinic's `try`.**
+  `plan_auto_close_days_after_expiry` and the timezone are read in
+  `_close_for_clinic`, through `core.utils.clinic_settings.read_budget_days_setting`
+  (bad value -> 30-day default + warning). Reading them with `int(...)` in
+  the loop that builds the tasks let one stored `null` stop the job for
+  every clinic (#1276).
 
 ## Related ADRs
 
