@@ -152,7 +152,9 @@
       },
       "qrTitle": "Digitalizar para assinar",
       "signedToast": "Consentimento assinado",
-      "formatHelp": "Formatação: comece uma linha com # (título) ou ## / ### (subtítulos), coloque o texto entre **dois asteriscos** para negrito ou *um asterisco* para itálico, e comece as linhas com - ou 1. para listas. Uma linha em branco inicia um novo parágrafo. Tudo o resto, incluindo HTML e links, é mostrado exatamente como foi escrito."
+      "formatHelp": "Formatação: comece uma linha com # (título) ou ## / ### (subtítulos), coloque o texto entre **dois asteriscos** para negrito ou *um asterisco* para itálico, e comece as linhas com - ou 1. para listas. Uma linha em branco inicia um novo parágrafo. Tudo o resto, incluindo HTML e links, é mostrado exatamente como foi escrito.",
+      "variablesHelp": "Variáveis: escreva {variables} no texto e serão preenchidas ao criar um consentimento a partir deste modelo (paciente, clínica, profissional e data). Um dado em falta aparece como ____ para ser escrito antes da assinatura. Os nomes desconhecidos ficam como estão.",
+      "unknownVariables": "Algumas variáveis do modelo não foram reconhecidas e ficaram como estão: {names}"
     }
   }
 }

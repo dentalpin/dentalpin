@@ -152,7 +152,9 @@
       },
       "qrTitle": "Zum Unterschreiben scannen",
       "signedToast": "Einwilligung unterschrieben",
-      "formatHelp": "Formatierung: Beginnen Sie eine Zeile mit # (Überschrift) oder ## / ### (Unterüberschriften), setzen Sie Text in **doppelte Sternchen** für Fett oder *einfache Sternchen* für Kursiv und beginnen Sie Zeilen mit - oder 1. für Listen. Eine Leerzeile beginnt einen neuen Absatz. Alles andere, auch HTML und Links, wird genau so angezeigt, wie es eingegeben wurde."
+      "formatHelp": "Formatierung: Beginnen Sie eine Zeile mit # (Überschrift) oder ## / ### (Unterüberschriften), setzen Sie Text in **doppelte Sternchen** für Fett oder *einfache Sternchen* für Kursiv und beginnen Sie Zeilen mit - oder 1. für Listen. Eine Leerzeile beginnt einen neuen Absatz. Alles andere, auch HTML und Links, wird genau so angezeigt, wie es eingegeben wurde.",
+      "variablesHelp": "Variablen: Schreiben Sie {variables} in den Text; sie werden beim Erstellen einer Einwilligung aus dieser Vorlage ausgefüllt (Patient, Praxis, Behandler und Datum). Fehlt ein Wert, erscheint ____, damit er vor der Unterschrift eingetragen werden kann. Unbekannte Namen bleiben unverändert.",
+      "unknownVariables": "Einige Variablen der Vorlage wurden nicht erkannt und blieben unverändert: {names}"
     }
   }
 }

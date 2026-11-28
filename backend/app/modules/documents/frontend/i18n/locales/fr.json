@@ -152,7 +152,9 @@
       },
       "qrTitle": "Scanner pour signer",
       "signedToast": "Consentement signé",
-      "formatHelp": "Mise en forme : commencez une ligne par # (titre) ou ## / ### (sous-titres), entourez le texte de **deux astérisques** pour le gras ou d'*un astérisque* pour l'italique, et commencez les lignes par - ou 1. pour les listes. Une ligne vide commence un nouveau paragraphe. Tout le reste, y compris le HTML et les liens, s'affiche tel quel."
+      "formatHelp": "Mise en forme : commencez une ligne par # (titre) ou ## / ### (sous-titres), entourez le texte de **deux astérisques** pour le gras ou d'*un astérisque* pour l'italique, et commencez les lignes par - ou 1. pour les listes. Une ligne vide commence un nouveau paragraphe. Tout le reste, y compris le HTML et les liens, s'affiche tel quel.",
+      "variablesHelp": "Variables : écrivez {variables} dans le texte ; elles sont remplies à la création d'un consentement à partir de ce modèle (patient, clinique, praticien et date). Une valeur absente apparaît sous la forme ____ pour être saisie avant la signature. Les noms inconnus restent tels quels.",
+      "unknownVariables": "Certaines variables du modèle n'ont pas été reconnues et ont été laissées telles quelles : {names}"
     }
   }
 }

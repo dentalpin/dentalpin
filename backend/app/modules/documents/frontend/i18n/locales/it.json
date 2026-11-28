@@ -152,7 +152,9 @@
       },
       "qrTitle": "Scansiona per firmare",
       "signedToast": "Consenso firmato",
-      "formatHelp": "Formattazione: inizi una riga con # (titolo) o ## / ### (sottotitoli), racchiuda il testo tra **doppi asterischi** per il grassetto o *asterisco singolo* per il corsivo, e inizi le righe con - o 1. per gli elenchi. Una riga vuota inizia un nuovo paragrafo. Tutto il resto, inclusi HTML e link, viene mostrato esattamente come scritto."
+      "formatHelp": "Formattazione: inizi una riga con # (titolo) o ## / ### (sottotitoli), racchiuda il testo tra **doppi asterischi** per il grassetto o *asterisco singolo* per il corsivo, e inizi le righe con - o 1. per gli elenchi. Una riga vuota inizia un nuovo paragrafo. Tutto il resto, inclusi HTML e link, viene mostrato esattamente come scritto.",
+      "variablesHelp": "Variabili: scriva {variables} nel testo; vengono compilate quando si crea un consenso da questo modello (paziente, clinica, professionista e data). Un dato mancante appare come ____ per essere inserito prima della firma. I nomi sconosciuti restano com'erano.",
+      "unknownVariables": "Alcune variabili del modello non sono state riconosciute e sono rimaste invariate: {names}"
     }
   }
 }

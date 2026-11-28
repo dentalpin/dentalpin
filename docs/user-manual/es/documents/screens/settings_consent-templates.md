@@ -86,6 +86,32 @@ Se le va a extraer **una pieza dental** con anestesia local.
 2. Evite bebidas calientes hoy
 ```
 
+## Variables (huecos que se rellenan solos)
+
+En lugar de dejar huecos como `Paciente: ____` para rellenarlos a mano,
+escribe una variable en el texto. Se sustituye al crear un consentimiento
+desde la plantilla, de modo que el profesional ve el texto ya relleno,
+puede editarlo antes de que el paciente firme, y el PDF firmado muestra
+exactamente lo que había en pantalla. La plantilla conserva la variable.
+
+| Escribe | Se convierte en |
+|---------|-----------------|
+| `{{ patient_name }}` | El nombre completo del paciente |
+| `{{ patient_id_document }}` | El documento de identidad del paciente (DNI/NIE/pasaporte) |
+| `{{ patient_birth_date }}` | La fecha de nacimiento del paciente |
+| `{{ clinic_name }}` | El nombre de la clínica, como en la cabecera del PDF |
+| `{{ professional_name }}` | El nombre del usuario que crea el consentimiento |
+| `{{ professional_license }}` | El número de colegiado de ese usuario |
+| `{{ date }}` | La fecha en que se prepara el consentimiento, con el formato del idioma de la clínica (la fecha y hora de la firma se imprimen aparte en el PDF firmado) |
+
+Si el dato no está registrado (por ejemplo, el paciente no tiene documento
+de identidad), se inserta un `____` visible para que lo notes y lo escribas
+al editar el consentimiento. Un nombre que no esté en la lista se deja tal
+como está y la ficha del paciente muestra un aviso. Los valores se insertan
+como texto plano: un paciente llamado `*Ana*` se imprime como `*Ana*`, no
+en cursiva. Los consentimientos existentes nunca cambian. Bajo el cuadro de
+texto aparece una lista breve de las variables.
+
 ## Quién puede usarlo
 
 Quien tenga `documents.write` (administradores y dentistas por defecto).
