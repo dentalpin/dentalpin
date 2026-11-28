@@ -412,7 +412,13 @@ class NotificationGateway:
         template = None
         if msg.message_kind == "template":
             template = await NotificationService.get_template(
-                db, msg.clinic_id, msg.template_key, _locale_of(msg), channel=msg.channel
+                db,
+                msg.clinic_id,
+                msg.template_key,
+                _locale_of(msg),
+                channel=msg.channel,
+                require_text=msg.channel == Channel.WHATSAPP
+                and getattr(adapter, "manual_delivery", False),
             )
         msg.status = "sending"
         msg.attempts += 1

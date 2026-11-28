@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Prepopulate editable email defaults and compose custom email fragments inside the shared clinic layout in both preview and delivery (#951). Legacy full HTML documents keep their original layout.
+
 - fix(#1231): the patient conversation reply box ignores Enter while a reply is still sending, so a double Enter no longer sends the WhatsApp message twice.
 - fix(#1211): dates in patient emails and WhatsApp texts (appointment, budget, invoice, reminder) follow the message's locale through `message_date` / `core/pdf_locales` (`14.01.2026` in German, `2026. 01. 14.` in Hungarian) instead of a fixed `dd/mm/yyyy`. Spanish output is unchanged.
 - fix(#1205, #1206): every locale's `budget_sent` email shows the Send dialog's custom message (8 locales, Spanish included, dropped it) and a button to the public quote page (`public_url`), so the patient can open, accept and sign the quote from the email.
@@ -21,6 +23,7 @@
 - fix: `dispatch_outbox` re-reads each row `FOR UPDATE SKIP LOCKED` in `_dispatch_one` and skips it when it is no longer due. The batch lock taken by the initial select is released by the first commit, so a concurrent tick could send the remaining rows of the batch a second time.
 
 - fix(#965): `resolve_patient_by_phone` links a patient only when exactly one matches. A number shared by several patients raised `MultipleResultsFound` (identical strings) or returned an arbitrary one (suffix match); it now resolves to `None`, as telephony's caller match does.
+- Add a clinic template editor for email and manual WhatsApp with a variable picker, synthetic preview, server-side validation and per-language restore (#950).
 
 - fix(#922): the "budget accepted" message dates the acceptance on the clinic's calendar (`clinic_date_label`). It printed the UTC day of `updated_at`, so an evening acceptance in a UTC-6 clinic said the next day.
 
