@@ -127,7 +127,7 @@
       "signer": "Nombre de quien firma",
       "relationship": "Relación con el paciente",
       "idDocument": "DNI/NIE / documento de identidad",
-      "idDocumentHint": "Obligatorio si firmas como tutor o representante; opcional si eres el paciente.",
+      "idDocumentHint": "Obligatorio si firmas como tutor o representante; opcional si eres el paciente. Solo letras A–Z, números y - . /.",
       "patient": "Paciente",
       "guardian": "Tutor o tutora",
       "representative": "Representante",

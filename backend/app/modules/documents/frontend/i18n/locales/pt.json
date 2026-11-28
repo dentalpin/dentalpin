@@ -127,7 +127,7 @@
       "signer": "Nome do signatário",
       "relationship": "Relação com o paciente",
       "idDocument": "Documento de identificação",
-      "idDocumentHint": "Obrigatório se assinar como tutor ou representante; opcional se for o paciente.",
+      "idDocumentHint": "Obrigatório se assinar como tutor ou representante; opcional se for o paciente. Apenas letras A–Z, algarismos e - . /.",
       "patient": "Paciente",
       "guardian": "Tutor legal",
       "representative": "Representante",
