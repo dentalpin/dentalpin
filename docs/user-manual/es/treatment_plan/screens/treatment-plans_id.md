@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: 68b0262
+last_verified_commit: 0b0731be
 ---
 
 # Detalle del plan de tratamiento
@@ -183,6 +183,11 @@ añadirlos al plan se crea automáticamente una sesión por cada paso.
 | Confirmar (draft → pending) | `treatment_plan.plans.confirm` |
 | Cerrar | `treatment_plan.plans.close` |
 | Reactivar | `treatment_plan.plans.reactivate` |
+
+Los botones que tu rol no puede usar no aparecen, ni en esta página
+ni en la ficha del paciente. Un rol sin `treatment_plan.plans.write`
+ve el plan en solo lectura. Añadir tratamientos desde el odontograma
+requiere además `odontogram.treatments.write`.
 
 ## Resolución de problemas
 

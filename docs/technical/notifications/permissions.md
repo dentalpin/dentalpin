@@ -12,8 +12,8 @@ Returned by `NotificationsModule.get_permissions()`
 
 | Permission | Allows | Required by |
 |------------|--------|-------------|
-| `notifications.templates.read` | _Describe what this allows._ | _List the endpoints._ |
-| `notifications.templates.write` | _Describe what this allows._ | _List the endpoints._ |
+| `notifications.templates.read` | View templates and preview with synthetic data. | `GET /api/v1/notifications/templates`, `GET /api/v1/notifications/templates/{template_id}`, `GET /api/v1/notifications/templates/editor/{template_key}`, `POST /api/v1/notifications/templates/editor/{template_key}/preview` |
+| `notifications.templates.write` | Change clinic copy. The editor supports email and selected manual WhatsApp. | `POST /api/v1/notifications/templates`, `PUT/DELETE /api/v1/notifications/templates/{template_id}`, `PUT/DELETE /api/v1/notifications/templates/editor/{template_key}` |
 | `notifications.preferences.read` | _Describe what this allows._ | _List the endpoints._ |
 | `notifications.preferences.write` | _Describe what this allows._ | _List the endpoints._ |
 | `notifications.logs.read` | Read message logs, a patient's conversation thread, and which channels are configured for the clinic. | `GET /notifications/conversations/{patient_id}`, `GET /notifications/channels` (#207), plus the log-listing endpoints. |
@@ -36,3 +36,5 @@ See `backend/app/core/auth/permissions.py` for the canonical role table.
 3. Add a row to the table above.
 4. Annotate the endpoint(s) with `Depends(require_permission(...))`.
 5. Update `frontend/app/config/permissions.ts` if it gates UI.
+
+The editor selection returns the bundled email subject and content blocks when no clinic override exists, without persisting them. Manual WhatsApp returns the system text when available. Email content fragments use the shared base layout in preview and delivery; legacy whole HTML documents and templates extending a base keep their original layout. The default email subject follows the localized file title (#1204).

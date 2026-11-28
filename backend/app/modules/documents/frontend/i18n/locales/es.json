@@ -127,7 +127,7 @@
       "signer": "Nombre de quien firma",
       "relationship": "Relación con el paciente",
       "idDocument": "DNI/NIE / documento de identidad",
-      "idDocumentHint": "Obligatorio si firmas como tutor o representante; opcional si eres el paciente.",
+      "idDocumentHint": "Obligatorio si firmas como tutor o representante; opcional si eres el paciente. Solo letras A–Z, números y - . /.",
       "patient": "Paciente",
       "guardian": "Tutor o tutora",
       "representative": "Representante",
@@ -152,7 +152,9 @@
       },
       "qrTitle": "Escanear para firmar",
       "signedToast": "Consentimiento firmado",
-      "formatHelp": "Formato: empiece una línea con # (título) o ## / ### (subtítulos), ponga el texto entre **dos asteriscos** para negrita o *un asterisco* para cursiva, y empiece las líneas con - o 1. para listas. Una línea en blanco inicia un párrafo nuevo. Todo lo demás, incluidos HTML y enlaces, se muestra tal como se escribe."
+      "formatHelp": "Formato: empiece una línea con # (título) o ## / ### (subtítulos), ponga el texto entre **dos asteriscos** para negrita o *un asterisco* para cursiva, y empiece las líneas con - o 1. para listas. Una línea en blanco inicia un párrafo nuevo. Todo lo demás, incluidos HTML y enlaces, se muestra tal como se escribe.",
+      "variablesHelp": "Variables: escriba {variables} en el texto y se rellenan al crear un consentimiento desde esta plantilla (paciente, clínica, profesional y fecha en que se prepara). Si falta un dato, aparece ____ para escribirlo antes de firmar. Los nombres desconocidos se dejan tal cual.",
+      "unknownVariables": "Algunas variables de la plantilla no se reconocieron y se dejaron tal cual: {names}"
     }
   }
 }

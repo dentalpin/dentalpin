@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1244): `PUT /settings` answers 422 for a reason interval that is not a whole number of months in 0..60 (the panel's range; 0 = no suggestion). `GET /suggestions/next` skips a stored out-of-range interval instead of suggesting an already-overdue month or failing with a 500 on `date` overflow.
 - fix(#1176): the month picker, the "next recall" button, the patient summary feed and the set-recall modal read `due_month` as local midnight (`parseDateOnly`), so west of UTC a recall due in March no longer shows as February.
 - fix(#1148): a snooze note is stamped with the clinic's day and the author's name instead of the server's UTC day and the user's UUID.
 
