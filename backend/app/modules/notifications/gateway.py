@@ -27,6 +27,14 @@ logger = logging.getLogger(__name__)
 _BACKOFF_CAP_SECONDS = 3600
 _DISPATCH_BATCH = 50
 _SESSION_WINDOW = timedelta(hours=24)
+# A row still ``sending`` after this long was interrupted mid-send (restart,
+# deploy, killed worker): the adapter calls time out after 10-30 s. Kept long
+# so a slow send that did go out is rarely sent again (see CLAUDE.md).
+STALE_SENDING_AFTER = timedelta(minutes=30)
+# Stuck longer than this (e.g. since before the reaper existed), a row is
+# failed for good instead of retried: a reminder must not go out after its
+# appointment, nor a webhook be replayed a day late.
+RETRY_STUCK_SENDING_WITHIN = timedelta(hours=24)
 
 
 def _backoff_seconds(attempts: int) -> int:
@@ -294,6 +302,57 @@ class NotificationGateway:
         return attempted
 
     @staticmethod
+    async def reap_stuck_sending(
+        db: AsyncSession, older_than: timedelta = STALE_SENDING_AFTER
+    ) -> int:
+        """Return messages stuck in ``sending`` to ``failed`` so they are retried.
+
+        ``_dispatch_one`` commits ``sending`` (and the spent attempt) before
+        the adapter call, and only the adapter's answer moves the row on. If
+        the process stops in between, nothing picks the row up again: the
+        outbox only reads ``queued`` and ``failed``. The interrupted attempt
+        stays counted, so a row that has used ``max_attempts`` ends ``failed``
+        without a retry. A row stuck longer than ``RETRY_STUCK_SENDING_WITHIN``
+        is failed for good. Returns the number of rows reaped.
+        """
+        cutoff = datetime.now(UTC) - older_than
+        rows = (
+            (
+                await db.execute(
+                    select(CommunicationMessage)
+                    .where(
+                        CommunicationMessage.status == "sending",
+                        CommunicationMessage.updated_at < cutoff,
+                    )
+                    .with_for_update(skip_locked=True)
+                    .execution_options(populate_existing=True)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        now = datetime.now(UTC)
+        too_old = now - RETRY_STUCK_SENDING_WITHIN
+        for msg in rows:
+            msg.status = "failed"
+            if msg.updated_at < too_old:
+                msg.error_message = "interrupted while sending; too old to retry"
+                # The outbox reads ``failed`` rows with attempts left, also
+                # with no ``next_attempt_at``: closing the budget ends it.
+                msg.max_attempts = msg.attempts
+                msg.next_attempt_at = None
+                continue
+            msg.error_message = "interrupted while sending (restart or crash)"
+            # The row has already waited ``older_than``; no extra backoff.
+            msg.next_attempt_at = now if msg.attempts < msg.max_attempts else None
+        await db.commit()
+        if rows:
+            logger.warning("notifications reaped %d message(s) stuck in 'sending'", len(rows))
+        for msg in rows:
+            await NotificationGateway._publish(msg, EventType.NOTIFICATION_FAILED)
+        return len(rows)
+
+    @staticmethod
     async def _sms_within_limit(db: AsyncSession, clinic_id: UUID) -> bool:
         """Per-clinic SMS daily cap (UTC day, skips don't consume)."""
         settings = await NotificationService.get_clinic_settings(db, clinic_id)
@@ -412,7 +471,13 @@ class NotificationGateway:
         template = None
         if msg.message_kind == "template":
             template = await NotificationService.get_template(
-                db, msg.clinic_id, msg.template_key, _locale_of(msg), channel=msg.channel
+                db,
+                msg.clinic_id,
+                msg.template_key,
+                _locale_of(msg),
+                channel=msg.channel,
+                require_text=msg.channel == Channel.WHATSAPP
+                and getattr(adapter, "manual_delivery", False),
             )
         msg.status = "sending"
         msg.attempts += 1

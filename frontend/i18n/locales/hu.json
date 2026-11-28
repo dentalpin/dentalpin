@@ -2517,6 +2517,7 @@
     "autoSend": "Automatikus küldés",
     "options": "Beállítások",
     "hoursBefore": "órával előtte",
+    "hoursBeforeRange": "Adjon meg egy egész óraszámot 1 és 168 között.",
     "testConnection": "Kapcsolat tesztelése",
     "testEmailTitle": "Teszt e-mail küldése",
     "testEmailDescription": "Teszt e-mailt küldünk, hogy ellenőrizzük a beállítások helyes működését.",

@@ -3034,6 +3034,7 @@
     "autoSend": "Envío automático",
     "options": "Opciones",
     "hoursBefore": "h antes",
+    "hoursBeforeRange": "Introduce un número entero de horas entre 1 y 168.",
     "testConnection": "Probar conexión",
     "testEmailTitle": "Enviar email de prueba",
     "testEmailDescription": "Enviaremos un email de prueba para verificar que la configuración funciona correctamente.",

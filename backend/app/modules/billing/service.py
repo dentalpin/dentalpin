@@ -563,10 +563,12 @@ class InvoiceItemService:
         """Update an invoice item."""
         # The schema caps a percentage sent with its type; a partial update
         # sending one half is checked against the stored other half (#1241).
-        check_percentage_cap(
-            data.get("discount_type", item.discount_type),
-            data.get("discount_value", item.discount_value),
-        )
+        # An update that leaves the discount alone is not checked.
+        if "discount_type" in data or "discount_value" in data:
+            check_percentage_cap(
+                data.get("discount_type", item.discount_type),
+                data.get("discount_value", item.discount_value),
+            )
         if "description" in data and data["description"] is not None:
             item.description = data["description"]
         if "unit_price" in data and data["unit_price"] is not None:

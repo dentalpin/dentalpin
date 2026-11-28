@@ -2,9 +2,9 @@
 
 NAV Online Számla (Hungary) real-time invoice reporting — issue #341.
 Third application of the `BillingComplianceHook` seam (`verifactu` ES,
-`india_gst` IN). Phase 1: CREATE for issued invoices, STORNO for credit
-notes, one operation per request, test/prod environments, no MODIFY
-chains, no EKÁER.
+`india_gst` IN). Phase 1: CREATE for issued invoices, STORNO (full) or
+MODIFY (partial) for credit notes, one operation per request, test/prod
+environments, no in-place edits of issued invoices, no EKÁER.
 
 ## Flow
 
@@ -47,6 +47,16 @@ Routes at `/api/v1/nav_online/`:
   `vatExemption` case **TAM** (humán-egészségügyi szolgáltatás, Áfa tv.
   85. § (1) b)) with the line's `vat_exempt_reason` or the default text.
   Currency HUF only in phase 1 (`validate_before_issue` blocks others).
+- Credit notes (#1069, `hook._modification_chain`): `modificationIndex` =
+  1 + the original's earlier STORNO/MODIFY rows (any state — a retry
+  resends the same snapshot, so its index stays taken), clinic-scoped via
+  `Invoice.credit_note_for_id`. Every line gets `lineModificationReference`
+  (`lineNumberReference` = original's lines + earlier modifications' lines
+  + n, `lineOperation` CREATE), counted from the stored payloads; an
+  original without a CREATE row (issued before reporting) falls back to
+  billing's item count and total. STORNO when original gross + earlier
+  modifications + this note = 0, otherwise MODIFY. Billing keeps no
+  full/partial flag; the sum is the test.
 - `nav_client.py` — envelopes for `tokenExchange`/`manageInvoice`/
   `queryTransactionStatus` (`OSA/3.0/api` + `NTCA/1.0/common`); `post_xml`
   is the only network call (tests monkeypatch it); lxml response parser.
@@ -78,7 +88,7 @@ to flip on without complete credentials.
   does not re-render it — billing's `regenerate_after_party_change` is a
   phase-2 item (NAV needs a MODIFY operation, not an overwrite).
 - **The sign comes from billing** (#1046): a credit note's lines are already
-  negative. A STORNO only flips the quantity (unit price stays positive).
+  negative. A STORNO/MODIFY only flips the quantity (unit price stays positive).
   Test with negative lines; positive ones hid a double negation.
 - **NAV rejects are terminal**; the worker never retries them — the admin
   corrects and retries explicitly. Retry also accepts `sending` rows (a

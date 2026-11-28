@@ -53,6 +53,9 @@ _Pantalla `/settings/notifications` del módulo `notifications`._
 
 Configuración de notificaciones de la clínica.
 
+Abre [Plantillas](notification_templates.md) para editar el texto de
+correo o WhatsApp manual por tipo de mensaje e idioma.
+
 ### Canales (#287)
 
 La tarjeta **Canales** decide por qué vía habla la clínica con los
@@ -77,4 +80,7 @@ pacientes:
 La tabla por tipo controla qué eventos notifican
 (activado / envío automático / horas antes). Incluye factura enviada,
 recordatorios de presupuesto (7/14 días) y recordatorios de revisión.
+Las horas antes del recordatorio deben ser un número entero entre 1 y
+168 (una semana); con otro valor el campo muestra un error y no se puede
+guardar.
 

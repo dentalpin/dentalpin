@@ -13,12 +13,14 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import date, timedelta
+from datetime import timedelta
+from typing import Any
 from uuid import UUID
 
 from sqlalchemy import select, text
 
 from app.core.auth.models import Clinic
+from app.core.utils.clinic_settings import read_budget_days_setting
 from app.core.utils.dates import clinic_today
 from app.database import async_session_maker
 
@@ -35,15 +37,25 @@ _CLINIC_CONCURRENCY = 5
 
 async def _close_for_clinic(
     clinic_id: UUID,
-    threshold_days: int,
-    today: date,
+    settings_json: dict[str, Any] | None,
+    timezone: str | None,
     sem: asyncio.Semaphore,
 ) -> None:
     from .service import TreatmentPlanService  # avoid circular at import-time
 
-    cutoff = today - timedelta(days=threshold_days)
     async with sem, async_session_maker() as db:
         try:
+            # Read the clinic's own config inside its ``try``: a bad row
+            # skips this clinic only. Reading it in the loop that builds
+            # the tasks let one stored ``null`` stop the job for every
+            # clinic (#1276).
+            threshold_days = read_budget_days_setting(
+                settings_json,
+                "plan_auto_close_days_after_expiry",
+                DEFAULT_PLAN_AUTO_CLOSE_DAYS,
+            )
+            # Each clinic's own calendar decides when the threshold has passed.
+            cutoff = clinic_today(timezone) - timedelta(days=threshold_days)
             rows = (
                 await db.execute(
                     text(
@@ -109,13 +121,8 @@ async def auto_close_expired_plans() -> None:
     sem = asyncio.Semaphore(_CLINIC_CONCURRENCY)
     tasks = []
     for clinic_row in clinic_rows:
-        settings_json = clinic_row.settings or {}
-        threshold_days = int(
-            settings_json.get("plan_auto_close_days_after_expiry", DEFAULT_PLAN_AUTO_CLOSE_DAYS)
+        tasks.append(
+            _close_for_clinic(clinic_row.id, clinic_row.settings, clinic_row.timezone, sem)
         )
-        clinic_id: UUID = clinic_row.id
-        # Each clinic's own calendar decides when the threshold has passed.
-        today = clinic_today(clinic_row.timezone)
-        tasks.append(_close_for_clinic(clinic_id, threshold_days, today, sem))
 
     await asyncio.gather(*tasks, return_exceptions=False)

@@ -80,7 +80,7 @@ class NavOnlineRecord(Base):
     clinic_id: Mapped[UUID] = mapped_column(ForeignKey("clinics.id"), index=True)
     invoice_id: Mapped[UUID] = mapped_column(ForeignKey("invoices.id"), index=True)
 
-    operation: Mapped[str] = mapped_column(String(10), nullable=False)  # CREATE | STORNO
+    operation: Mapped[str] = mapped_column(String(10), nullable=False)  # CREATE | MODIFY | STORNO
     invoice_number: Mapped[str] = mapped_column(String(60), nullable=False)
     issue_date: Mapped[date] = mapped_column(Date, nullable=False)
     gross_amount: Mapped[Decimal] = mapped_column(Numeric(14, 2), nullable=False)

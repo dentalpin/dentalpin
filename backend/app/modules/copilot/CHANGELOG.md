@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- docs(#1104): note at `_system_prompt` that a future `cache_control` breakpoint belongs on the constant prompt, before the per-minute clock line; the architecture doc now mentions that line.
 - fix(#1177): copilot amounts without an explicit currency (Pendientes budgets, billing report, invoices, expenses) now use the clinic currency instead of always euros, and counts such as `total_patients`, `total_appointments`, `completed_total` or a list's `total` render as numbers, not money.
 
 - fix(#1104): the system prompt now ends with the clinic's current date, time and time zone, built on every turn (`drive_turn` and `resume_turn`) from the clinic's clock, not the server's. "Hoy" and "mañana" used to resolve with no date at all, and appointment times came back in a zone the model was never told.

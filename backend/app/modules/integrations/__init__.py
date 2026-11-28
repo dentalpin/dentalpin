@@ -66,7 +66,7 @@ class IntegrationsModule(BaseModule):
         return router
 
     def get_scheduled_jobs(self) -> list[ScheduledJob]:
-        from .tasks import dispatch_outbox
+        from .tasks import dispatch_outbox, reap_stuck_sending
 
         return [
             ScheduledJob(
@@ -75,6 +75,13 @@ class IntegrationsModule(BaseModule):
                 trigger="interval",
                 trigger_args={"seconds": 45},
                 name="Dispatch the webhook outbox (every 45s)",
+            ),
+            ScheduledJob(
+                id="integrations_stuck_reaper",
+                func=reap_stuck_sending,
+                trigger="interval",
+                trigger_args={"minutes": 5},
+                name="Retry webhook deliveries stuck in 'sending' (every 5 minutes)",
             ),
         ]
 

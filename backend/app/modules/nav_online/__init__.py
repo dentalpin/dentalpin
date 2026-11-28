@@ -8,8 +8,8 @@ submits ``manageInvoice`` operations and polls ``queryTransactionStatus``
 until NAV reports DONE or ABORTED. Sandbox (``test``) / production
 environment switch, technical-user credentials encrypted at rest.
 
-Phase 1 = CREATE for invoices and STORNO for credit notes, one operation
-per request, no MODIFY chains, no EKÁER, no online pénztárgép. See
+Phase 1 = CREATE for invoices, STORNO (full) or MODIFY (partial) for
+credit notes, one operation per request, no in-place edits, no EKÁER, no online pénztárgép. See
 ``CLAUDE.md`` and ``docs/modules/nav_online.md``.
 """
 

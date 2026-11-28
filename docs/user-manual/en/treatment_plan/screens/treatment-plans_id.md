@@ -33,7 +33,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/treatment_plan/frontend/pages/treatment-plans/[id].vue
   - backend/app/modules/treatment_plan/router.py
-last_verified_commit: 68b0262
+last_verified_commit: 0b0731be
 ---
 
 # Treatment plan detail
@@ -183,6 +183,11 @@ added to a plan, one session is created per step.
 | Confirm (draft → pending) | `treatment_plan.plans.confirm` |
 | Close | `treatment_plan.plans.close` |
 | Reactivate | `treatment_plan.plans.reactivate` |
+
+A button your role cannot use is not shown, on this page and in the
+patient file alike. A role without `treatment_plan.plans.write` sees
+the plan read-only. Adding treatments from the odontogram also needs
+`odontogram.treatments.write`.
 
 ## Troubleshooting
 

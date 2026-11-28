@@ -136,6 +136,12 @@ monthly call list. Mobile-first layout via `useBreakpoint`.
   explicit link via the "Agendar cita" row action (which passes
   `recall_id`) or `POST /recalls/{id}/link-appointment`. Better one
   miss than one wrong link — recall history is patient-trust-critical.
+- **Reason intervals are 0..60 months.** `PUT /settings` answers 422
+  for anything else (the panel's `min`/`max`); `0` means "no
+  suggestion for this reason". `suggest_next_for_treatment` also skips
+  a stored value outside that range (rows saved before the bound) and
+  returns no suggestion instead of an overdue date or a `date`
+  overflow 500 (#1244).
 
 ## Related ADRs
 

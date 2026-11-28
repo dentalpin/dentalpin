@@ -11,8 +11,13 @@ the subset a dental clinic's invoices need:
   szolgáltatás is exempt under Áfa tv. 85. § (1) b)/c), which is the
   normal case for treatments; cosmetic work carries 27 %.
 * Summary: ``summaryNormal`` grouped by VAT rate + gross totals.
-* STORNO (credit note): same document, ``invoiceReference`` to the
-  original number with ``modifyWithoutMaster`` false and negative lines.
+* Modification document (credit note, queued as STORNO or MODIFY): same
+  document, ``invoiceReference`` to the original number with
+  ``modifyWithoutMaster`` false, the chain's ``modificationIndex`` and
+  negative lines. Every line carries ``lineModificationReference``
+  (``lineNumberReference`` continuing the numbering of the original and the
+  earlier modifications, ``lineOperation`` CREATE), as in NAV's
+  ``Modositas es ervenytelenites`` samples (#1069).
 
 Amounts are rendered with two decimals; ``*HUF`` mirrors (rate 1).
 """
@@ -23,6 +28,8 @@ from dataclasses import dataclass
 from decimal import ROUND_HALF_UP, Decimal
 from typing import TYPE_CHECKING, Any
 from xml.sax.saxutils import escape
+
+from lxml import etree
 
 if TYPE_CHECKING:
     from app.modules.billing.models import Invoice
@@ -91,6 +98,16 @@ def _address_xml(tag: str, address: dict[str, Any] | None, fallback_country: str
     )
 
 
+def count_lines(invoice_data_xml: str) -> int:
+    """Number of ``invoiceLines/line`` elements in a stored ``InvoiceData``."""
+    root = etree.fromstring(invoice_data_xml.encode("utf-8"))
+    return len(
+        root.findall(
+            f"{{{NS_DATA}}}invoiceMain/{{{NS_DATA}}}invoice/{{{NS_DATA}}}invoiceLines/{{{NS_DATA}}}line"
+        )
+    )
+
+
 def _payment_method(invoice: Invoice) -> str:
     # Billing has no payment-method snapshot on the invoice; TRANSFER is
     # NAV's catch-all for "not cash at issue time".
@@ -104,13 +121,19 @@ def build_invoice_data(
     supplier_name: str,
     supplier_address: dict[str, Any] | None,
     original_invoice_number: str | None = None,
+    modification_index: int = 1,
+    line_number_offset: int = 0,
 ) -> InvoiceDataResult:
     """Render ``InvoiceData`` for ``invoice``.
 
-    ``original_invoice_number`` set ⇒ the document is a STORNO of that
-    invoice (credit note): an ``invoiceReference`` is emitted and the
-    quantities are negative. Billing already stores the note's lines
-    negative, so the amounts are never negated again here (#1046).
+    ``original_invoice_number`` set ⇒ the document modifies that invoice
+    (credit note, STORNO or MODIFY — the operation lives in
+    ``manageInvoice``, not here): an ``invoiceReference`` with
+    ``modification_index`` is emitted and the quantities are negative.
+    Billing already stores the note's lines negative, so the amounts are
+    never negated again here (#1046). ``line_number_offset`` is the number
+    of lines NAV already holds for the original (its own plus those of
+    earlier modifications); line *n* references ``offset + n`` (#1069).
     """
     is_storno = original_invoice_number is not None
     issue_date = invoice.issue_date.isoformat() if invoice.issue_date else ""
@@ -136,7 +159,7 @@ def build_invoice_data(
             "<invoiceReference>"
             f"<originalInvoiceNumber>{escape(original_invoice_number)}</originalInvoiceNumber>"
             "<modifyWithoutMaster>false</modifyWithoutMaster>"
-            "<modificationIndex>1</modificationIndex>"
+            f"<modificationIndex>{int(modification_index)}</modificationIndex>"
             "</invoiceReference>"
         )
 
@@ -170,9 +193,19 @@ def build_invoice_data(
         if is_storno:
             qty = -qty  # negative quantity × positive unit price, as in NAV's sample
         unit_price = (net / qty).quantize(_Q, rounding=ROUND_HALF_UP) if qty else net
+        # XSD LineType: lineModificationReference sits right after lineNumber.
+        modification_ref_xml = (
+            "<lineModificationReference>"
+            f"<lineNumberReference>{line_number_offset + idx}</lineNumberReference>"
+            "<lineOperation>CREATE</lineOperation>"
+            "</lineModificationReference>"
+            if is_storno
+            else ""
+        )
         lines_xml.append(
             "<line>"
             f"<lineNumber>{idx}</lineNumber>"
+            f"{modification_ref_xml}"
             "<lineExpressionIndicator>true</lineExpressionIndicator>"
             "<lineNatureIndicator>SERVICE</lineNatureIndicator>"
             f"<lineDescription>{escape((item.description or '')[:512])}</lineDescription>"

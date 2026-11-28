@@ -23,3 +23,14 @@ async def dispatch_outbox() -> None:
                 logger.debug("Webhook outbox dispatch tick processed %d delivery(ies)", sent)
     except Exception as exc:  # noqa: BLE001
         logger.error("Webhook outbox dispatch tick failed: %s", exc, exc_info=True)
+
+
+async def reap_stuck_sending() -> None:
+    """Scheduled job: retry deliveries left in ``sending`` by an interrupted POST."""
+    from app.modules.integrations.gateway import WebhookGateway
+
+    try:
+        async with async_session_maker() as db:
+            await WebhookGateway.reap_stuck_sending(db)
+    except Exception as exc:  # noqa: BLE001
+        logger.error("Webhook stuck-sending reaper failed: %s", exc, exc_info=True)

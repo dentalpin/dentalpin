@@ -53,6 +53,9 @@ _Screen `/settings/notifications` of the `notifications` module._
 
 Clinic-wide notification configuration.
 
+Open [Templates](notification_templates.md) to edit email or manual
+WhatsApp text by message type and language.
+
 ### Channels (#287)
 
 The **Channels** card at the top decides which wire the clinic talks to
@@ -75,5 +78,7 @@ patients on:
 
 The per-type table controls which events notify at all
 (enabled / auto-send / hours-before). It includes invoice sent, quote
-reminders (7/14 days) and recall reminders.
+reminders (7/14 days) and recall reminders. The reminder's hours-before
+must be a whole number from 1 to 168 (one week); with any other value the
+field shows an error and the settings can't be saved.
 
