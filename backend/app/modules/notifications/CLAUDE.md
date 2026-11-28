@@ -197,3 +197,5 @@ and `appointment_*` / `budget_sent` / `budget_accepted` require
 ## CHANGELOG
 
 See `./CHANGELOG.md`.
+
+The patient.created handler suppresses welcome only when `send_welcome` is explicitly false; missing flags preserve existing behavior.

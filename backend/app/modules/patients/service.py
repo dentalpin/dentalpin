@@ -271,16 +271,20 @@ class PatientService:
         return result.scalar_one_or_none()
 
     @staticmethod
-    async def create_patient(db: AsyncSession, clinic_id: UUID, data: dict) -> Patient:
+    async def create_patient(
+        db: AsyncSession, clinic_id: UUID, data: dict, *, send_welcome: bool = True
+    ) -> Patient:
         patient = Patient(clinic_id=clinic_id, **data)
         db.add(patient)
         await db.flush()
 
-        await event_bus.publish(
-            EventType.PATIENT_CREATED,
-            {"patient_id": str(patient.id), "clinic_id": str(clinic_id)},
-            db=db,
-        )
+        event_data: dict[str, str | bool] = {
+            "patient_id": str(patient.id),
+            "clinic_id": str(clinic_id),
+        }
+        if not send_welcome:
+            event_data["send_welcome"] = False
+        await event_bus.publish(EventType.PATIENT_CREATED, event_data, db=db)
         return patient
 
     @staticmethod

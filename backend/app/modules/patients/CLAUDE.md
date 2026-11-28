@@ -48,10 +48,10 @@ must never emit 1,000 PII rows as an argument).
 
 | Event | When | Payload keys |
 |---|---|---|
-| `patient.created` | `PatientService.create` succeeds | `patient_id`, `clinic_id` |
+| `patient.created` | `PatientService.create` succeeds | `patient_id`, `clinic_id`, `send_welcome` (optional boolean) |
 | `patient.updated` | `PatientService.update_patient` flushes a change inside the update transaction | `patient_id`, `clinic_id`, `changes` |
-| `patient.archived` | `PatientService.archive` (soft-delete) | `patient_id`, `clinic_id` |
-| `patient.restored` | `PatientService.restore` (status → active) | `patient_id`, `clinic_id` |
+| `patient.archived` | `PatientService.archive` (soft-delete) | `patient_id`, `clinic_id`, `send_welcome` (optional boolean) |
+| `patient.restored` | `PatientService.restore` (status → active) | `patient_id`, `clinic_id`, `send_welcome` (optional boolean) |
 
 See `service.py:113`, `service.py:131`, `service.py:142`.
 
