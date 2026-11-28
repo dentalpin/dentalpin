@@ -5,8 +5,7 @@ from uuid import UUID
 from zoneinfo import ZoneInfo
 
 import phonenumbers
-from jinja2 import StrictUndefined, TemplateError
-from jinja2.sandbox import SandboxedEnvironment
+from jinja2 import TemplateError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -14,9 +13,9 @@ from app.core.auth.models import Clinic
 from app.core.pdf_locales import format_pdf_date
 from app.modules.notifications.channels import AdapterResult, Channel, OutboundMessage, SendStatus
 from app.modules.notifications.models import ClinicChannelSettings
+from app.modules.notifications.template_rendering import render_whatsapp_text, whatsapp_text_fits
 
 ADAPTER_NAME = "whatsapp_manual"
-_templates = SandboxedEnvironment(undefined=StrictUndefined, autoescape=False)
 
 
 class ManualWhatsAppAdapter:
@@ -80,13 +79,13 @@ class ManualWhatsAppAdapter:
                         # In the order of the locale the draft renders in (#1211).
                         context["appointment_date"] = format_pdf_date(local_start, msg.locale)
                         context["appointment_time"] = local_start.strftime("%H:%M")
-                plain = _templates.from_string(plain).render(**context)
+                plain = render_whatsapp_text(plain, context)
         except (TemplateError, ValueError):
             return AdapterResult(
                 SendStatus.SKIPPED, self.adapter_name, error_message="invalid_whatsapp_template"
             )
         plain = plain.strip()
-        if not plain or len(plain) > 4096:
+        if not whatsapp_text_fits(plain):
             return AdapterResult(
                 SendStatus.SKIPPED, self.adapter_name, error_message="invalid_whatsapp_draft"
             )

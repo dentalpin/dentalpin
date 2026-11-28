@@ -148,6 +148,8 @@ None.
   and `assign_cabinet` answer 400 for an inactive target; an appointment
   already in one keeps it on unrelated edits (the modal resends the
   cabinet). Frontend pickers go through `frontend/utils/activeCabinets.ts`.
+  The only bypass is `create_appointment(..., allow_inactive_cabinet=True)`,
+  used by `migration_import` to replay history; live paths never pass it.
 - **Mobile free-slot computation is client-side** (#61). The composable
   `frontend/composables/useFreeSlots.ts` derives gaps from already-loaded
   appointments + the optional `schedules` availability payload. Do not

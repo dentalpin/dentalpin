@@ -2,7 +2,7 @@
 
 ## Unreleased
 
-- fix(#1237): an inactive cabinet no longer takes new appointments (create, move and assign answer 400) and is left out of the appointment picker and agenda resources unless a loaded appointment still sits in it.
+- fix(#1237): an inactive cabinet no longer takes new appointments (create, move and assign answer 400) and is left out of the appointment picker and agenda resources unless a loaded appointment still sits in it; the kanban board does not accept a drop onto it, and a migration import can still replay history into it.
 - fix(#1242): reject an appointment whose end is not after its start on create, update (checked against the stored time when only one is sent) and the copilot book/reschedule tools.
 - fix(#1234): picking a different patient in the appointment modal clears the planned treatments chosen for the previous one; they used to stay and the save failed with "does not belong to patient". Reopening the same modal for another appointment keeps that appointment's linked treatments.
 - fix(#1217): the public check-in page's `appointments.checkin.confirm`, `confirmHint`, `tooEarly` and `tooLate` strings are translated in ar/hi/ta/te instead of English.

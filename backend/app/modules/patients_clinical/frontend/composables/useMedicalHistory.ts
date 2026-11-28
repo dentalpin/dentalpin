@@ -6,6 +6,7 @@ import type {
   SurgicalHistoryEntry,
   SystemicDiseaseEntry
 } from '~~/app/types'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 // A new object on every call: shared arrays carried one patient's entries
 // into the next patient's history (#1045).
@@ -35,6 +36,7 @@ export function useMedicalHistory(patientId: Ref<string | undefined>) {
   const api = useApi()
   const { t } = useI18n()
   const toast = useToast()
+  const { can } = usePermissions()
 
   const medicalHistory = ref<MedicalHistory>(emptyMedicalHistory())
   // The PUT replaces the whole history: saving is only safe on a loaded one.
@@ -44,7 +46,9 @@ export function useMedicalHistory(patientId: Ref<string | undefined>) {
   const error = ref<string | null>(null)
 
   async function fetchMedicalHistory() {
-    if (!patientId.value) return
+    // The endpoint needs medical.read; without it useApi would toast a
+    // 403 on every patient open (#1268).
+    if (!patientId.value || !can(PERMISSIONS.medicalHistory.read)) return
 
     isLoading.value = true
     error.value = null

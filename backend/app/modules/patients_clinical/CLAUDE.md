@@ -44,6 +44,10 @@ Routes mounted at `/api/v1/patients_clinical/`.
 - **Hygienists do NOT have write access** to medical history.
   Receptionists read only emergency contacts (in some clinic
   configurations not even that — check role policy).
+- **Gate every medical read on `medical.read` in the client** (#1268).
+  `useApi` toasts a 403 even when the caller catches it, so
+  `useMedicalHistory`, `usePatientAlerts` and the patient page's alerts
+  call skip the request without `PERMISSIONS.medicalHistory.read`.
 - **Allergies and medications drive UI alerts.** Schema changes here
   affect the patient header banner — coordinate frontend.
 - **Audit every write.** This is the most sensitive surface in the

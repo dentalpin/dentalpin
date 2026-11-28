@@ -6,7 +6,9 @@ import asyncio
 import base64
 import hashlib
 import io
+import re
 import secrets
+import unicodedata
 import uuid
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -25,10 +27,11 @@ from app.core.auth.models import Clinic
 from app.core.events import event_bus
 from app.core.events.types import EventType
 from app.core.pdf_locales import PDF_LOCALES
-from app.core.utils.dates import clinic_zone
+from app.core.utils.dates import clinic_today, clinic_zone
 from app.modules.patients.service import PatientService
 
 from .consent_markdown import render_consent_body
+from .consent_variables import build_values, fill_template_variables
 from .exceptions import (
     ConsentConflictError,
     ConsentNotFoundError,
@@ -42,26 +45,43 @@ from .service import _documents_root, _write_pdf_bytes
 Purpose = Literal["sign", "revoke"]
 
 ID_DOCUMENT_MAX_LENGTH = 32
-# Deliberately loose charset (letters, digits, "-", ".", "/"); no country-specific checksum.
+# Deliberately loose, ASCII-only charset (A-Z, 0-9, "-", ".", "/"); no country-specific checksum.
+_ID_DOCUMENT_RE = re.compile(r"[A-Za-z0-9./-]+")
+
+
+def _fold_id_char(ch: str) -> str:
+    """Map one NFKC-normalised character to what the ID check sees."""
+    if ch.isspace() or unicodedata.category(ch) == "Cf":
+        return ""  # spaces, zero-width characters and soft hyphens
+    if unicodedata.category(ch) == "Pd":
+        return "-"  # typographic dashes (U+2011, en dash, ...) typed or pasted on tablets
+    if ch.isdecimal():
+        return str(unicodedata.decimal(ch))  # Arabic-Indic, Persian, Devanagari... -> 0-9
+    return ch
 
 
 def _normalize_id_document(value: str | None, relationship: str) -> str | None:
-    """Remove whitespace + uppercase the signer's ID document; required unless the signer is the patient.
+    """Fold, compact and uppercase the signer's ID document.
 
-    Whitespace is dropped (``"1234 5678 z"`` -> ``"12345678Z"``) because IDs are often
-    written in groups; no country-specific checksum is applied.
+    Required unless the signer is the patient. After NFKC (full-width ``"１２３"`` ->
+    ``"123"``), whitespace and invisible format characters are dropped (IDs are often
+    written in groups: ``"1234 5678 z"`` -> ``"12345678Z"``), typographic dashes become
+    ``-`` and decimal digits of any script become ASCII (``"١٢٣"`` -> ``"123"``), so a
+    native number pad still works and the stored value is ASCII. Only ASCII letters,
+    digits and ``-./`` are then accepted; the charset is checked before uppercasing so
+    that characters such as ``ß`` cannot become ASCII (``SS``). No country-specific
+    checksum is applied.
     """
-    normalized = "".join((value or "").split()).upper()
-    if not normalized:
+    compact = "".join(_fold_id_char(ch) for ch in unicodedata.normalize("NFKC", value or ""))
+    if not compact:
         if relationship != "patient":
             raise ConsentValidationError(
                 "Signer ID document required for guardian or representative"
             )
         return None
-    if len(normalized) > ID_DOCUMENT_MAX_LENGTH or not all(
-        ch.isalnum() or ch in "-./" for ch in normalized
-    ):
+    if len(compact) > ID_DOCUMENT_MAX_LENGTH or not _ID_DOCUMENT_RE.fullmatch(compact):
         raise ConsentValidationError("Signer ID document is invalid")
+    normalized = compact.upper()
     return normalized
 
 
@@ -263,6 +283,19 @@ class ConsentService:
             raise ConsentNotFoundError("Patient or template not found")
         if not template.is_active:
             raise ConsentConflictError("Archived templates cannot be used for new consents")
+        clinic = ctx.clinic
+        communication_language = (clinic.settings or {}).get("communication_language", "es")
+        locale = communication_language if communication_language in PDF_LOCALES else "en"
+        text, unknown = fill_template_variables(
+            template.body,
+            build_values(
+                patient=patient,
+                clinic_name=DocumentPDFService._letterhead(clinic)["name"],
+                user=ctx.user,
+                today=clinic_today(clinic.timezone),
+                locale=locale,
+            ),
+        )
         doc = GeneratedDocument(
             id=uuid.uuid4(),
             clinic_id=ctx.clinic_id,
@@ -270,12 +303,15 @@ class ConsentService:
             document_type="informed_consent",
             title=template.title,
             status="draft",
-            content={"text": template.body},
+            content={"text": text},
             created_by=ctx.user_id,
         )
         db.add(doc)
         await db.flush()
-        return {"data": {"id": str(doc.id)}}
+        data = {"id": str(doc.id)}
+        if unknown:
+            data["unknown_variables"] = unknown
+        return {"data": data}
 
     @staticmethod
     async def create_link(document_id, purpose, ctx, db, locale):

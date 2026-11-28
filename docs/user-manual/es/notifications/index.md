@@ -12,6 +12,7 @@ Página de aterrizaje del módulo `notifications` en el manual de usuario.
 ## Pantallas
 
 - `/settings/notifications` — _Pendiente de documentar._
+- [Plantillas de notificaciones](screens/notification_templates.md)
 
 ## Permisos
 

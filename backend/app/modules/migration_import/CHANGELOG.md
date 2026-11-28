@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1237): an imported appointment whose chair maps to a now-inactive cabinet is kept in that cabinet instead of being rolled back.
+
 - feat(#877): mark invoices created by the fiscal document mapper as historical while keeping their original dates and totals.
 
 - fix(debt): preserve imported descriptions and tag explicitly marked opening balances in the patient ledger, including credits from negative amounts.

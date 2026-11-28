@@ -1,8 +1,10 @@
 import type { ApiResponse, PatientAlert } from '~~/app/types'
 import type { UiColor } from '~~/app/config/severity'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 export function usePatientAlerts(patientId: Ref<string | undefined>) {
   const api = useApi()
+  const { can } = usePermissions()
 
   const alerts = ref<PatientAlert[]>([])
   const isLoading = ref(false)
@@ -39,7 +41,9 @@ export function usePatientAlerts(patientId: Ref<string | undefined>) {
   )
 
   async function fetchAlerts() {
-    if (!patientId.value) return
+    // The endpoint needs medical.read; without it useApi would toast a
+    // 403 on every patient open (#1268).
+    if (!patientId.value || !can(PERMISSIONS.medicalHistory.read)) return
 
     isLoading.value = true
     error.value = null

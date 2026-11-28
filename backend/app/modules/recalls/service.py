@@ -26,6 +26,7 @@ from app.modules.patients.models import Patient
 from .models import (
     DEFAULT_CATEGORY_TO_REASON,
     DEFAULT_REASON_INTERVALS,
+    MAX_REASON_INTERVAL_MONTHS,
     Recall,
     RecallContactAttempt,
     RecallSettings,
@@ -606,14 +607,23 @@ class RecallService:
         if not reason:
             return None
         interval = settings.reason_intervals.get(reason)
-        if not interval:
+        # 0 / missing means "no suggestion". A value saved before the
+        # 0..60 bound existed (negative, huge, non-integer) is skipped
+        # the same way rather than guessed at: a negative one would
+        # suggest a recall already overdue, a huge one overflows
+        # ``date`` and turned this endpoint into a 500 (#1244).
+        if (
+            not isinstance(interval, int)
+            or isinstance(interval, bool)
+            or not 0 < interval <= MAX_REASON_INTERVAL_MONTHS
+        ):
             return None
-        due_month = _add_months(await clinic_today_for(db, clinic_id), int(interval))
+        due_month = _add_months(await clinic_today_for(db, clinic_id), interval)
         return {
             "patient_id": patient_id,
             "reason": reason,
             "due_month": due_month,
-            "interval_months": int(interval),
+            "interval_months": interval,
             "treatment_category_key": treatment_category_key,
             "treatment_id": treatment_id,
             "matched_setting": True,

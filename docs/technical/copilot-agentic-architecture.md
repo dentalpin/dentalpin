@@ -199,7 +199,8 @@ Today's notification dispatch interval is 45 seconds, and there is no route for 
 Multi-step workflows (daily briefing, prepare-visit, fill-gap-from-
 recalls) are **prompt-level playbooks**, not composite tools: a
 `_PLAYBOOKS` block appended to the static system prompt in
-`copilot/bridge.py` plus permission-gated suggestion chips in
+`copilot/bridge.py` (which also gets a per-turn clinic clock line,
+#1104) plus permission-gated suggestion chips in
 `CopilotSuggestions.vue`. Rationale: the model already chains
 registered tools; every step still passes the registry chokepoint
 (RBAC, guardrails, audit, redaction). A composite tool inside copilot
