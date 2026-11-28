@@ -137,7 +137,7 @@ class NotificationsModule(BaseModule):
         return tools.get_tools()
 
     def get_scheduled_jobs(self) -> list[ScheduledJob]:
-        from .tasks import dispatch_outbox, process_appointment_reminders
+        from .tasks import dispatch_outbox, process_appointment_reminders, reap_stuck_sending
 
         return [
             ScheduledJob(
@@ -153,6 +153,13 @@ class NotificationsModule(BaseModule):
                 trigger="interval",
                 trigger_args={"seconds": 45},
                 name="Dispatch the notifications outbox (every 45s)",
+            ),
+            ScheduledJob(
+                id="notifications_stuck_reaper",
+                func=reap_stuck_sending,
+                trigger="interval",
+                trigger_args={"minutes": 5},
+                name="Retry notifications stuck in 'sending' (every 5 minutes)",
             ),
         ]
 

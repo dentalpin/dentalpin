@@ -45,6 +45,17 @@ before each network call so no row lock is held across I/O. Backoff:
 subscription is paused or its secret can't be decrypted, so such a
 delivery ends `failed` after `max_attempts` instead of looping (#1009);
 re-enabling only resumes the ones that still had attempts left.
+A delivery left in `sending` by a restart mid-POST is put back to
+`failed` (due at once, attempt kept) by `reap_stuck_sending` (job
+`integrations_stuck_reaper`, every 5 min) once its `updated_at` is
+older than `STALE_SENDING_AFTER` (30 min; the client times out after
+10 s). At-least-once: a POST the receiver took just before the crash is
+sent again with the same `delivery_id`/`event_id`, which is what
+receivers dedupe on (#1280). A delivery stuck longer than
+`RETRY_STUCK_SENDING_WITHIN` (24 h) is not replayed: it ends `failed`
+("interrupted while sending; too old to retry") with `max_attempts`
+lowered to its `attempts`, so neither the outbox nor re-enabling the
+subscription resumes it.
 A subscription auto-disables after
 `MAX_CONSECUTIVE_FAILURES` (25) consecutive delivery failures —
 `CommunicationMessage` has no equivalent, since it tracks per-message
