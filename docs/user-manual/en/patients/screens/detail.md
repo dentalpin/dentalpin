@@ -24,13 +24,14 @@ related_permissions:
   - gdpr.access_log.read
   - periodontogram.read
   - periodontogram.write
+  - patients_clinical.medical.read
 related_paths:
   - backend/app/modules/patients/router.py
   - backend/app/modules/patients/frontend/pages/patients/[id].vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramView.vue
   - backend/app/modules/periodontogram/frontend/components/PeriodontogramChart.vue
   - backend/app/modules/periodontogram/router.py
-last_verified_commit: dd87ef44
+last_verified_commit: 0b0731be
 ---
 
 # Patient detail
@@ -281,6 +282,7 @@ expiry.
 | View the detail | `patients.read` |
 | Edit identity / extended | `patients.write` |
 | Archive | `patients.write` |
+| Allergy chips in the header, medical history card and Info tab medical snapshot | `patients_clinical.medical.read` |
 | Sibling-module actions (recalls, notifications, …) | The sibling module's permissions. |
 
 ## Troubleshooting

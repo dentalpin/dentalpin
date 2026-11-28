@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1268): `useMedicalHistory` and `usePatientAlerts` skip their request without `patients_clinical.medical.read`, so a role without it no longer gets a 403 toast.
 - fix(#1151): updating an allergy (`name`, `severity`), medication (`name`), systemic disease (`name`, `is_controlled`, `is_critical`) or surgical history entry (`procedure`) with that field set to `null` is a 422 instead of a 500.
 
 - fix(#1064): the emergency contact and guardian forms hand over incomplete edits for the API to refuse; they held them back, so the previous value (or a delete) was saved with a success toast.
