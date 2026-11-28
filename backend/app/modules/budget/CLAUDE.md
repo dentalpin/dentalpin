@@ -133,6 +133,13 @@ contract.
   source's date made a resent expired quote expire again overnight
   (#1113).
 
+- **Read `budget_expiry_days` through `read_budget_days_setting`.**
+  `clinic.settings` is free JSON; `core.utils.clinic_settings` falls back
+  to the default (with a warning) for a stored `null`, string or
+  out-of-range value. A bare `int(...)` 500'd quote creation and resend
+  on a stored `null` (#1276). The settings PATCH (core) rejects `null` and
+  values outside 7-180 with 422.
+
 - **GDPR erasure retains the signer's email.**
   `erasure.BudgetErasureContributor` owns the `budget` coverage scope
   (ADR 0038, #657) and writes nothing: blanking

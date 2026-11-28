@@ -1009,16 +1009,37 @@ async def update_clinic_metadata(
 # ---------------------------------------------------------------------------
 
 
-from pydantic import BaseModel, Field  # noqa: E402
+from pydantic import BaseModel, Field, field_validator  # noqa: E402
+
+from app.core.utils.clinic_settings import (  # noqa: E402
+    BUDGET_DAYS_MAX,
+    BUDGET_DAYS_MIN,
+    read_budget_days_setting,
+)
 
 
 class _BudgetSettingsPatch(BaseModel):
-    """Subset of clinic.settings keys owned by the budget module."""
+    """Subset of clinic.settings keys owned by the budget module.
 
-    budget_expiry_days: int | None = Field(default=None, ge=7, le=180)
-    plan_auto_close_days_after_expiry: int | None = Field(default=None, ge=7, le=180)
+    Every field is optional (omit it to leave the stored value alone) but
+    none accepts an explicit ``null``: null has no meaning for these keys,
+    and a stored null used to 500 the GET and stop the auto-close cron
+    (#1276).
+    """
+
+    budget_expiry_days: int | None = Field(default=None, ge=BUDGET_DAYS_MIN, le=BUDGET_DAYS_MAX)
+    plan_auto_close_days_after_expiry: int | None = Field(
+        default=None, ge=BUDGET_DAYS_MIN, le=BUDGET_DAYS_MAX
+    )
     budget_reminders_enabled: bool | None = None
     budget_public_auth_disabled: bool | None = None
+
+    @field_validator("*", mode="before")
+    @classmethod
+    def _reject_null(cls, value: object) -> object:
+        if value is None:
+            raise ValueError("must not be null; omit the field to keep the current value")
+        return value
 
 
 class _BudgetSettingsResponse(BaseModel):
@@ -1031,8 +1052,10 @@ class _BudgetSettingsResponse(BaseModel):
 def _read_budget_settings(raw: dict | None) -> _BudgetSettingsResponse:
     raw = raw or {}
     return _BudgetSettingsResponse(
-        budget_expiry_days=int(raw.get("budget_expiry_days", 30)),
-        plan_auto_close_days_after_expiry=int(raw.get("plan_auto_close_days_after_expiry", 30)),
+        budget_expiry_days=read_budget_days_setting(raw, "budget_expiry_days", 30),
+        plan_auto_close_days_after_expiry=read_budget_days_setting(
+            raw, "plan_auto_close_days_after_expiry", 30
+        ),
         budget_reminders_enabled=bool(raw.get("budget_reminders_enabled", False)),
         budget_public_auth_disabled=bool(raw.get("budget_public_auth_disabled", False)),
     )
