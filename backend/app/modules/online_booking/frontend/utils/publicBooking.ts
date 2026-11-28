@@ -69,3 +69,15 @@ export function takeFragmentToken(): string | null {
   window.history.replaceState(null, '', window.location.pathname + window.location.search)
   return token
 }
+
+/** Black or white text with the greater WCAG contrast against a six-digit accent. */
+export function accentForeground(hex: string): string {
+  const rgb = hex.match(/^#([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i)
+  if (!rgb) return '#ffffff'
+  const linear = rgb.slice(1).map((part) => {
+    const value = parseInt(part, 16) / 255
+    return value <= 0.04045 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4
+  })
+  const luminance = 0.2126 * linear[0]! + 0.7152 * linear[1]! + 0.0722 * linear[2]!
+  return (luminance + 0.05) / 0.05 >= 1.05 / (luminance + 0.05) ? '#000000' : '#ffffff'
+}

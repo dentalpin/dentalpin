@@ -139,10 +139,12 @@
       "conflict": "Dieser Termin ist leider nicht mehr verfügbar. Bitte wählen Sie einen anderen.",
       "expired": "Dieser Link ist abgelaufen oder wurde bereits verwendet. Bitte wählen Sie einen neuen Termin.",
       "selectSlot": "Bitte wählen Sie eine verfügbare Uhrzeit.",
-      "verify": "Bitte schließen Sie die Überprüfung ab, bevor Sie fortfahren."
+      "verify": "Bitte schließen Sie die Überprüfung ab, bevor Sie fortfahren.",
+      "consentHint": "Akzeptieren Sie die Datenschutzerklärung, um fortzufahren."
     },
     "privacyUrl": "URL der Datenschutzerklärung (https)",
     "embedOrigins": "Websites, die die Seite einbetten dürfen (ein https-Ursprung pro Zeile)",
-    "pageAddress": "Adresse der öffentlichen Seite"
+    "pageAddress": "Adresse der öffentlichen Seite",
+    "colorPicker": "Farbe auswählen"
   }
 }

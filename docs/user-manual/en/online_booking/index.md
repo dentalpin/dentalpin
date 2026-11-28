@@ -10,3 +10,5 @@ A confirmed request holds its slot until reception decides or its start time. Be
 The public page ([booking page](screens/booking-page.md)) is part of DentalPin at `/p/booking/<clinic id>`; link to it or embed it in your website with an iframe. It lets visitors choose a visit type and time, provide contact details and complete ALTCHA. The email link requires selecting “Confirm request”; opening it does not create or confirm an appointment.
 
 The calendar highlights dates with availability and lets visitors move between weeks. Phone and email are required. Authorized staff can edit the logo, color, page text, privacy-policy URL and the websites allowed to embed the page in “Public page settings”.
+
+The public page names the clinic in the document title and logo alternative text, and explains when privacy consent is required before submitting.

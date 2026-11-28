@@ -139,10 +139,12 @@
       "conflict": "Ez az időpont már nem szabad. Kérjük, válasszon másikat.",
       "expired": "A hivatkozás lejárt vagy már felhasználták. Kérjük, kérjen új időpontot.",
       "selectSlot": "Válasszon egy szabad időpontot.",
-      "verify": "A folytatás előtt fejezze be az ellenőrzést."
+      "verify": "A folytatás előtt fejezze be az ellenőrzést.",
+      "consentHint": "A folytatáshoz fogadja el az adatvédelmi szabályzatot."
     },
     "privacyUrl": "Az adatvédelmi tájékoztató URL-je (https)",
     "embedOrigins": "Az oldal beágyazására jogosult weboldalak (soronként egy https-eredet)",
-    "pageAddress": "A nyilvános oldal címe"
+    "pageAddress": "A nyilvános oldal címe",
+    "colorPicker": "Szín kiválasztása"
   }
 }

@@ -27,6 +27,7 @@ export interface PublicBranding {
 }
 
 export interface PublicBookingConfig {
+  clinic_name: string
   slot_minutes: number
   window_days: number
   ask_existing_patient: boolean

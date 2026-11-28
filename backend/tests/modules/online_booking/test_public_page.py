@@ -48,6 +48,7 @@ async def test_public_config_exposes_page_settings(client, db_session, test_clin
     await db_session.commit()
     response = await client.get(f"/api/v1/online_booking/public/{test_clinic.id}/config")
     data = response.json()["data"]
+    assert data["clinic_name"] == test_clinic.name
     assert data["privacy_url"] == "https://clinic.example.es/privacy"
     assert data["embed_origins"] == ["https://clinic.example.es"]
 

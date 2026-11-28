@@ -139,10 +139,12 @@
       "conflict": "Ce créneau n'est plus disponible. Veuillez en choisir un autre.",
       "expired": "Ce lien a expiré ou a déjà été utilisé. Veuillez demander un autre créneau.",
       "selectSlot": "Sélectionnez un horaire disponible.",
-      "verify": "Terminez la vérification avant de continuer."
+      "verify": "Terminez la vérification avant de continuer.",
+      "consentHint": "Acceptez la politique de confidentialité pour continuer."
     },
     "privacyUrl": "URL de la politique de confidentialité (https)",
     "embedOrigins": "Sites autorisés à intégrer la page (une origine https par ligne)",
-    "pageAddress": "Adresse de la page publique"
+    "pageAddress": "Adresse de la page publique",
+    "colorPicker": "Choisir une couleur"
   }
 }

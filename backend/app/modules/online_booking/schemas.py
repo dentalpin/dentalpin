@@ -193,6 +193,7 @@ class RejectInput(BaseModel):
 
 
 class PublicConfig(BaseModel):
+    clinic_name: str
     slot_minutes: int
     window_days: int
     ask_existing_patient: bool

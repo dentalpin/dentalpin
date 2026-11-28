@@ -139,10 +139,12 @@
       "conflict": "That time is no longer available. Choose another.",
       "expired": "This link has expired or has already been used. Please request another time.",
       "selectSlot": "Select an available time.",
-      "verify": "Complete the verification before continuing."
+      "verify": "Complete the verification before continuing.",
+      "consentHint": "Accept the privacy policy to continue."
     },
     "privacyUrl": "Privacy policy URL (https)",
     "embedOrigins": "Websites allowed to embed the page (one https origin per line)",
-    "pageAddress": "Address of the public page"
+    "pageAddress": "Address of the public page",
+    "colorPicker": "Choose a color"
   }
 }

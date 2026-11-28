@@ -616,11 +616,12 @@ onMounted(load)
           <input
             type="color"
             :value="settingsData.accent_color || '#127f83'"
-            :aria-label="t('onlineBooking.accentColor')"
+            :aria-label="t('onlineBooking.colorPicker')"
             @input="settingsData.accent_color = ($event.target as HTMLInputElement).value"
           >
           <UInput
             v-model="settingsData.accent_color"
+            :aria-label="t('onlineBooking.accentColor')"
             placeholder="#127f83"
             class="w-full"
           />
