@@ -1,6 +1,8 @@
 """Patient-facing template fields drawn from the standard notification producers."""
 
-from datetime import UTC, datetime
+from datetime import datetime
+
+from app.core.utils.dates import clinic_zone
 
 from .channels import Channel
 from .models import NotificationType
@@ -133,7 +135,12 @@ def example_context(key: NotificationType, locale: str, clinic, *, minimal: bool
         "cabinet_name": "Room 1",
         "treatment_type": "Check-up",
         "clinic_hours": "09:00–17:00",
-        **appointment_when_context(datetime(2027, 3, 8, 9, 30, tzinfo=UTC), clinic, locale),
+        **appointment_when_context(
+            # 10:30 on the clinic's own clock, not 10:30 UTC.
+            datetime(2027, 3, 8, 10, 30, tzinfo=clinic_zone(clinic.timezone if clinic else None)),
+            clinic,
+            locale,
+        ),
         "cancellation_reason": "Schedule change",
         "checkin_url": "https://example.invalid/check-in",
         "public_url": "https://example.invalid/estimate",
