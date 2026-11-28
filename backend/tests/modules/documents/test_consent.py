@@ -1089,6 +1089,12 @@ async def test_patient_can_sign_without_id_document(client, auth_headers, test_p
         ("   ", None),
         ("１２３４５６７８ｚ", "12345678Z"),
         ("１２３　４５", "12345"),
+        ("\u0661\u0662\u0663", "123"),  # Arabic-Indic digits (Arabic iOS number pad)
+        ("\u06f1\u06f2\u06f3", "123"),  # Extended Arabic-Indic (Persian) digits
+        ("\u0967\u0968\u0969\u096a", "1234"),  # Devanagari digits
+        ("12345678\u200bz", "12345678Z"),  # zero-width space from a paste
+        ("x\u00ad1234567l", "X1234567L"),  # soft hyphen
+        ("x\u20111234567\u2013l", "X-1234567-L"),  # non-breaking hyphen and en dash
     ],
 )
 async def test_patient_id_document_is_normalised_and_optional(
@@ -1130,7 +1136,6 @@ async def test_guardian_or_representative_requires_id_document(
         "12_34",
         "12345678Ñ",  # non-ASCII letter
         "12345678\u0410",  # Cyrillic A, a Latin look-alike
-        "\u0661\u0662\u0663",  # Arabic-Indic digits
         "STRA\u00dfE1",  # sharp s must not fold to "SS"
     ],
 )

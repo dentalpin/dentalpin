@@ -48,16 +48,30 @@ ID_DOCUMENT_MAX_LENGTH = 32
 _ID_DOCUMENT_RE = re.compile(r"[A-Za-z0-9./-]+")
 
 
-def _normalize_id_document(value: str | None, relationship: str) -> str | None:
-    """NFKC-normalise, remove whitespace and uppercase the signer's ID document.
+def _fold_id_char(ch: str) -> str:
+    """Map one NFKC-normalised character to what the ID check sees."""
+    if ch.isspace() or unicodedata.category(ch) == "Cf":
+        return ""  # spaces, zero-width characters and soft hyphens
+    if unicodedata.category(ch) == "Pd":
+        return "-"  # typographic dashes (U+2011, en dash, ...) typed or pasted on tablets
+    if ch.isdecimal():
+        return str(unicodedata.decimal(ch))  # Arabic-Indic, Persian, Devanagari... -> 0-9
+    return ch
 
-    Required unless the signer is the patient. Whitespace is dropped
-    (``"1234 5678 z"`` -> ``"12345678Z"``) because IDs are often written in groups, and
-    NFKC folds full-width forms (``"１２３"`` -> ``"123"``). Only ASCII letters, digits and
-    ``-./`` are accepted; the charset is checked before uppercasing so that characters
-    such as ``ß`` cannot become ASCII (``SS``). No country-specific checksum is applied.
+
+def _normalize_id_document(value: str | None, relationship: str) -> str | None:
+    """Fold, compact and uppercase the signer's ID document.
+
+    Required unless the signer is the patient. After NFKC (full-width ``"１２３"`` ->
+    ``"123"``), whitespace and invisible format characters are dropped (IDs are often
+    written in groups: ``"1234 5678 z"`` -> ``"12345678Z"``), typographic dashes become
+    ``-`` and decimal digits of any script become ASCII (``"١٢٣"`` -> ``"123"``), so a
+    native number pad still works and the stored value is ASCII. Only ASCII letters,
+    digits and ``-./`` are then accepted; the charset is checked before uppercasing so
+    that characters such as ``ß`` cannot become ASCII (``SS``). No country-specific
+    checksum is applied.
     """
-    compact = "".join(unicodedata.normalize("NFKC", value or "").split())
+    compact = "".join(_fold_id_char(ch) for ch in unicodedata.normalize("NFKC", value or ""))
     if not compact:
         if relationship != "patient":
             raise ConsentValidationError(
