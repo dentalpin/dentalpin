@@ -9,9 +9,10 @@ keep the raw ``{{ ... }}`` text.
 Values are inserted as plain text: whitespace is collapsed to one line and
 Markdown-significant characters are backslash-escaped, so a patient named
 ``*Ana*`` or ``1. Foo`` cannot inject formatting into ``render_consent_body``
-(which already escapes HTML). A missing value becomes a visible ``____``
-(inserted escaped, so two blanks can never pair up as emphasis) so the
-professional notices and types it while editing.
+(which already escapes HTML). A missing value becomes a visible blank
+line of four em dashes (``————``): not Markdown syntax, so it renders as
+written and reads naturally in the edit box, and the professional notices and
+types it while editing.
 """
 
 from __future__ import annotations
@@ -22,10 +23,10 @@ from datetime import date
 
 from app.core.pdf_locales import format_pdf_date
 
-BLANK = "____"
-# What is inserted for a missing value: renders as ``____`` and, unlike a bare
-# underscore run, cannot pair with another blank into emphasis.
-BLANK_MARKDOWN = "\\_\\_\\_\\_"
+# What is inserted for a missing value. Em dashes are not Markdown syntax (unlike
+# an underscore run, which can pair with another blank into emphasis), so the
+# blank needs no escaping and the edit box shows exactly what is printed.
+BLANK = "\u2014" * 4
 
 VARIABLE_PATTERN = re.compile(r"\{\{\s*([a-z_]+)\s*\}\}")
 
@@ -112,7 +113,7 @@ def fill_template_variables(text: str, values: Mapping[str, str | None]) -> tupl
             return match.group(0)
         value = values.get(name)
         if value is None or not str(value).strip():
-            return BLANK_MARKDOWN
+            return BLANK
         before = text[text.rfind("\n", 0, match.start()) + 1 : match.start()]
         line_start = _BLOCK_PREFIX.fullmatch(before) is not None
         next_char = text[match.end() : match.end() + 1]

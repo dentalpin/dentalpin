@@ -86,10 +86,10 @@ inserted values are not re-scanned. Names, from existing model fields only:
 
 The date locale is the clinic `communication_language` (as for signing
 links; `en` if it is not a PDF locale). A missing or blank value becomes a
-visible `____` so staff notice it and type it while the consent is still
-editable; it is inserted escaped (`\_\_\_\_`, `BLANK_MARKDOWN`) because a
-bare underscore run between punctuation could pair with another blank into
-emphasis and vanish. An unknown (or upper-case) name stays verbatim and is returned once
+visible blank of four em dashes (`————`, `BLANK`) so staff notice it and
+type it while the consent is still editable. Em dashes are not Markdown syntax:
+unlike `____` (an underscore run that can pair with another blank into emphasis
+and vanish) it needs no escaping, so the edit box shows exactly what is printed. An unknown (or upper-case) name stays verbatim and is returned once
 in `data.unknown_variables` of `POST /consents` (omitted when empty); the
 create never fails because of it. Values are one line of plain text:
 whitespace is collapsed and the characters backslash, `*`, `_` and backtick are backslash-escaped, plus a leading
