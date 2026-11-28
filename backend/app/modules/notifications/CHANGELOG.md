@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Honor the patient creation event’s optional welcome notification flag.
+
 - fix(#1231): the patient conversation reply box ignores Enter while a reply is still sending, so a double Enter no longer sends the WhatsApp message twice.
 - fix(#1211): dates in patient emails and WhatsApp texts (appointment, budget, invoice, reminder) follow the message's locale through `message_date` / `core/pdf_locales` (`14.01.2026` in German, `2026. 01. 14.` in Hungarian) instead of a fixed `dd/mm/yyyy`. Spanish output is unchanged.
 - fix(#1205, #1206): every locale's `budget_sent` email shows the Send dialog's custom message (8 locales, Spanish included, dropped it) and a button to the public quote page (`public_url`), so the patient can open, accept and sign the quote from the email.

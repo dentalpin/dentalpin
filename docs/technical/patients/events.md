@@ -12,7 +12,7 @@ Per-module slice of [`docs/events-catalog.md`](../../events-catalog.md)
 
 | Event | Source | When | Payload |
 |-------|--------|------|---------|
-| `patient.created` | `service.py:PatientService.create` | After insert + extended row commit. | `patient_id` (UUID), `clinic_id` (UUID) |
+| `patient.created` | `service.py:PatientService.create` | After insert + extended row commit. | `patient_id` (UUID), `clinic_id` (UUID), optional `send_welcome` (boolean, false to suppress generic welcome) |
 | `patient.updated` | `service.py:PatientService.update_patient` | After flushing a partial update, within the same transaction. | `patient_id`, `clinic_id`, `changes` (list of field names) |
 | `patient.archived` | `service.py:PatientService.archive` | After soft-delete (status → archived). | `patient_id` (UUID) |
 | `patient.restored` | `service.py:PatientService.restore` | After restore (status → active). Reverses the media archive cascade. | `patient_id` (UUID), `clinic_id` (UUID) |

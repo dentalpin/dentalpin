@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Allow callers to suppress the generic welcome notification while publishing patient creation.
+
 - fix(#1187): `create_patient`/`update_patient` type `email` as `EmailStr`, like `PatientCreate`/`PatientUpdate`.
 - fix(#1176): the Info card's date of birth (`formatPatientDate`) and the age (`computeAge`) parse the date-only value as local midnight (`parseDateOnly`) instead of UTC, so west of UTC the date no longer shows a day early and the age no longer flips the day before the birthday.
 - fix(#1175): the personal info card formats the date of birth in the UI language instead of Spanish for every non-English locale.

@@ -78,3 +78,32 @@ async def test_accept_requires_surname_so_the_patient_stays_editable(
         },
     )
     assert response.status_code == 200, response.text
+
+
+@pytest.mark.asyncio
+async def test_accept_new_patient_suppresses_only_generic_welcome(
+    client, db_session, auth_headers, test_clinic
+):
+    from unittest.mock import patch
+
+    from app.core.events import EventType, event_bus
+
+    staff = await professional(db_session, test_clinic.id)
+    item = await _confirmed_request(db_session, test_clinic.id, staff.id)
+    headers = {**auth_headers, "X-Clinic-ID": str(test_clinic.id)}
+    with patch.object(event_bus, "publish", wraps=event_bus.publish) as publish:
+        result = await client.post(
+            f"/api/v1/online_booking/requests/{item.id}/accept",
+            headers=headers,
+            json={
+                "first_name": "Synthetic",
+                "last_name": "Patient",
+                "professional_id": str(staff.id),
+                "duration_minutes": 30,
+            },
+        )
+    assert result.status_code == 200, result.text
+    events = [(call.args[0], call.args[1]) for call in publish.await_args_list]
+    created = [data for event, data in events if event == EventType.PATIENT_CREATED]
+    assert len(created) == 1 and created[0]["send_welcome"] is False
+    assert any(event == EventType.APPOINTMENT_SCHEDULED for event, _ in events)

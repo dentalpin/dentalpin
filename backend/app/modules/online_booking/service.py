@@ -796,6 +796,7 @@ class BookingService:
                     else row.contact_email,
                     "phone": data.phone if "phone" in data.model_fields_set else row.contact_phone,
                 },
+                send_welcome=False,
             )
             patient_id = patient.id
         try:

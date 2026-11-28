@@ -277,6 +277,9 @@ class NotificationHandlers:
         I/O — so a rolled-back request queues nothing, and the rows this
         reads are the publisher's own (issue #183).
         """
+        if data.get("send_welcome") is False:
+            return
+
         from app.modules.notifications.gateway import NotificationGateway
         from app.modules.patients.models import Patient
 
