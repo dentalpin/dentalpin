@@ -3,7 +3,14 @@
 Wired to APScheduler from :mod:`app.modules.verifactu.tasks`. Sends an
 email to every admin of a clinic whose active certificate will expire
 within :data:`THRESHOLD_DAYS`. Throttled per certificate to one batch
-of alerts per 24 h via ``VerifactuCertificate.last_expiry_alert_at``.
+of alerts per daily run via ``VerifactuCertificate.last_expiry_alert_at``.
+
+The throttle window is :data:`THROTTLE_HOURS` (20 h), deliberately
+below the 24 h cron period: each run stamps its own start time, and with
+a 24 h window a start a few ms earlier than yesterday's left the old
+stamp under 24 h old, so the "daily" alert skipped about half of all
+days (#1278). 20 h absorbs start jitter and the 23 h day of a DST
+change in the scheduler's zone, and still blocks a same-day rerun.
 
 The clinic's certificate matters for AEAT submissions (mTLS handshake);
 once it expires the worker stops being able to send and the queue
@@ -29,7 +36,7 @@ from ..models import VerifactuCertificate
 logger = logging.getLogger(__name__)
 
 THRESHOLD_DAYS = 30
-THROTTLE_HOURS = 24
+THROTTLE_HOURS = 20
 
 
 @dataclass

@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Verifactu:** the certificate-expiry reminder email now arrives every day instead of skipping days at random (#1278).
 - **Settings:** a dentist, who holds `agenda.cabinets.write`, can now add, edit and delete cabinets under Settings → Workspace → Cabinets; the actions were shown to admin only (#1274).
 - **Billing:** dentists, who hold `billing.admin`, now see the Invoice series settings page and can create, edit and reset series (#1273).
 - **Treatment plans:** the plan screen only offers the actions your role may perform (Confirm needs `plans.confirm`, Cancel plan `plans.close`, Reactivate `plans.reactivate`, edits `plans.write`), and assistants and receptionists can edit plans from the patient file again (#1270).
