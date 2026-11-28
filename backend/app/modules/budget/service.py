@@ -212,12 +212,15 @@ class BudgetItemService:
 
         The schema caps a percentage sent together with its type; a partial
         update that sends only one of the two is checked here against the
-        stored other half, before anything is written (#1241).
+        stored other half, before anything is written (#1241). An update
+        that leaves the discount alone is not checked, so a row stored
+        above 100 before the cap stays editable.
         """
-        check_percentage_cap(
-            data.get("discount_type", item.discount_type),
-            data.get("discount_value", item.discount_value),
-        )
+        if "discount_type" in data or "discount_value" in data:
+            check_percentage_cap(
+                data.get("discount_type", item.discount_type),
+                data.get("discount_value", item.discount_value),
+            )
         for key, value in data.items():
             if not hasattr(item, key):
                 continue
@@ -681,11 +684,13 @@ class BudgetService:
         if budget.status != "draft":
             raise ValueError("Only draft budgets can be edited")
 
-        # Same partial-update gap as ``BudgetItemService.update_item`` (#1241).
-        check_percentage_cap(
-            data.get("global_discount_type", budget.global_discount_type),
-            data.get("global_discount_value", budget.global_discount_value),
-        )
+        # Same partial-update gap as ``BudgetItemService.update_item`` (#1241);
+        # only when the request touches the global discount.
+        if "global_discount_type" in data or "global_discount_value" in data:
+            check_percentage_cap(
+                data.get("global_discount_type", budget.global_discount_type),
+                data.get("global_discount_value", budget.global_discount_value),
+            )
 
         # Store previous state for history
         previous_state = {

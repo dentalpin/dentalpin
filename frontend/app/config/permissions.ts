@@ -30,6 +30,10 @@ export const PERMISSIONS = {
     read: 'agenda.appointments.read',
     write: 'agenda.appointments.write'
   },
+  cabinets: {
+    read: 'agenda.cabinets.read',
+    write: 'agenda.cabinets.write'
+  },
   users: {
     read: 'admin.users.read',
     write: 'admin.users.write'

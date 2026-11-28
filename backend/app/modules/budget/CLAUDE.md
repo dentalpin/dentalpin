@@ -211,8 +211,10 @@ contract.
   update services (`BudgetItemService.update_item`,
   `BudgetService.update_budget`) run it on the merged stored + sent pair,
   so a partial update can't switch an absolute 150 to a percentage (400).
-  The line/global calculations themselves don't clamp a percentage, and
-  rows stored above 100 before the fix are not rewritten.
+  They check only when the request sends the discount type or value, so a
+  row stored above 100 before the fix still takes other edits. The
+  line/global calculations don't clamp a percentage, and such rows are not
+  rewritten; `billing.create_from_budget` copies them as they are.
 - **Public-link sessions are per-token** (cookie path scoped to
   `/api/v1/budget/public/budgets/{token}`) so a stolen cookie from one
   budget cannot unlock another.

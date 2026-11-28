@@ -11,6 +11,7 @@
 
 import type { DropdownMenuItem } from '@nuxt/ui'
 import type { PlannedTreatmentItem, TreatmentPlanDetail } from '~~/app/types'
+import { PERMISSIONS } from '~~/app/config/permissions'
 
 import ConfirmPlanModal from './modals/ConfirmPlanModal.vue'
 import ReopenPlanModal from './modals/ReopenPlanModal.vue'
@@ -22,6 +23,7 @@ import { itemEffectivePrice } from '../../composables/useTreatmentPlans'
 const props = withDefaults(defineProps<{
   plan: TreatmentPlanDetail
   patientId: string
+  /** Forces a fully read-only view, whatever the user's permissions. */
   readonly?: boolean
   /** Standalone mode: show patient link */
   standalone?: boolean
@@ -38,6 +40,23 @@ const emit = defineEmits<{
 
 const { t, locale } = useI18n()
 const toast = useToast()
+const { can } = usePermissions()
+
+// ============================================================================
+// Permissions — each action follows the permission of the route it calls
+// (#1270): plans.write for item edits, reorder, reopen and budget
+// generation; plans.confirm / close / reactivate for those transitions.
+// ``readonly`` still turns everything off for a caller that wants a
+// read-only view.
+// ============================================================================
+
+const mayWrite = computed(() => !props.readonly && can(PERMISSIONS.treatmentPlans.write))
+const mayConfirm = computed(() => !props.readonly && can(PERMISSIONS.treatmentPlans.confirm))
+const mayClose = computed(() => !props.readonly && can(PERMISSIONS.treatmentPlans.close))
+const mayReactivate = computed(() => !props.readonly && can(PERMISSIONS.treatmentPlans.reactivate))
+const maySchedule = computed(() => !props.readonly && can(PERMISSIONS.appointments.write))
+// Planning on the chart creates an odontogram Treatment, then adds it to the plan.
+const mayPlanOnChart = computed(() => mayWrite.value && can(PERMISSIONS.odontogram.treatmentsWrite))
 
 const {
   completeItem,
@@ -176,7 +195,7 @@ const isLocked = computed(() => {
   return status === 'sent' || status === 'accepted'
 })
 
-const effectiveReadonly = computed(() => props.readonly || isLocked.value)
+const effectiveReadonly = computed(() => !mayWrite.value || isLocked.value)
 
 // ============================================================================
 // Cancel plan — delegated to the parent's ClosePlanModal. The legacy in-line
@@ -185,7 +204,7 @@ const effectiveReadonly = computed(() => props.readonly || isLocked.value)
 // ============================================================================
 
 const canCancelPlan = computed(() =>
-  !props.readonly
+  mayClose.value
   && (
     props.plan.status === 'draft'
     || props.plan.status === 'active'
@@ -514,7 +533,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
         class="plan-header-actions"
       >
         <UButton
-          v-if="canGenerateBudget"
+          v-if="canGenerateBudget && mayWrite"
           variant="soft"
           size="sm"
           icon="i-lucide-file-plus"
@@ -524,7 +543,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
           {{ t('clinical.plans.generateBudget') }}
         </UButton>
         <UButton
-          v-else-if="isDraft"
+          v-else-if="isDraft && mayWrite"
           variant="soft"
           size="sm"
           icon="i-lucide-file-plus"
@@ -536,7 +555,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
         </UButton>
 
         <UButton
-          v-if="plan.status === 'active'"
+          v-if="plan.status === 'active' && maySchedule"
           variant="soft"
           size="sm"
           icon="i-lucide-calendar-plus"
@@ -545,7 +564,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
           {{ t('treatmentPlans.scheduleAppointment') }}
         </UButton>
         <UButton
-          v-else-if="isDraft"
+          v-else-if="isDraft && maySchedule"
           variant="soft"
           size="sm"
           icon="i-lucide-calendar-plus"
@@ -561,7 +580,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
              Administración → Presupuestos (#207). Once the quote is
              sent, isLocked's banner takes over the link. -->
         <UButton
-          v-if="plan.status === 'pending' && plan.budget_id && !isLocked"
+          v-if="plan.status === 'pending' && plan.budget_id && !isLocked && can(PERMISSIONS.budget.read)"
           variant="soft"
           size="sm"
           icon="i-lucide-file-text"
@@ -574,7 +593,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
              the body owns the draft → pending action so it's not
              duplicated up here. -->
         <UButton
-          v-if="plan.status === 'pending'"
+          v-if="plan.status === 'pending' && mayWrite"
           variant="soft"
           color="warning"
           size="sm"
@@ -584,7 +603,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
           {{ t('treatmentPlans.actions.reopen') }}
         </UButton>
         <UButton
-          v-if="plan.status === 'closed'"
+          v-if="plan.status === 'closed' && mayReactivate"
           variant="solid"
           color="primary"
           size="sm"
@@ -667,7 +686,7 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
         <OdontogramChart
           ref="odontogramRef"
           :patient-id="patientId"
-          :mode="effectiveReadonly ? 'view-only' : 'planning'"
+          :mode="effectiveReadonly || !mayPlanOnChart ? 'view-only' : 'planning'"
           :plan-id="plan.id"
           :plan-title="plan.title || plan.plan_number"
           :highlighted-teeth-prop="highlightedTeeth"
@@ -707,7 +726,8 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
             :items="plan.items"
             :highlighted-items="highlightedItems"
             :readonly="effectiveReadonly"
-            :allow-complete="isLocked && !readonly"
+            :allow-complete="isLocked && mayWrite"
+            :doctor-editable="mayWrite"
             :plan-status="plan.status"
             :plan-professional-id="plan.assigned_professional_id ?? null"
             @item-hover="hoveredItemId = $event"
@@ -719,9 +739,11 @@ const moreMenuItems = computed<DropdownMenuItem[]>(() => {
             @item-doctor-change="handleItemDoctorChange"
           />
 
-          <!-- Sticky confirm-plan CTA: only in draft, adapts to whether items exist. -->
+          <!-- Sticky confirm-plan CTA: only in draft, adapts to whether items
+               exist. The empty hint is for whoever can add items; the
+               button for whoever may confirm. -->
           <template
-            v-if="!readonly && isDraft"
+            v-if="isDraft && (canConfirm ? mayConfirm : mayWrite)"
             #footer
           >
             <div class="confirm-cta">

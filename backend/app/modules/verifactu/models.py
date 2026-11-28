@@ -165,7 +165,7 @@ class VerifactuCertificate(Base, TimestampMixin):
     valid_until: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), default=None)
 
     # Set by the daily cert-expiry job whenever it sends an alert email.
-    # Used to throttle to one alert per certificate per 24 h regardless
+    # Used to throttle to one alert per certificate per daily run (20 h window) regardless
     # of how many admins receive it.
     last_expiry_alert_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), default=None

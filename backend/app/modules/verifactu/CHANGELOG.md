@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- fix(#1269): the global rejected banner polls `/health` only with `verifactu.settings.read`, the invoice panel fetches `/records` only with `verifactu.records.read`, its Regenerate button needs `verifactu.queue.manage` and its NIF check runs only with `verifactu.settings.read`, so dentists, receptionists, hygienists and assistants no longer get an "Access denied" toast.
+- fix(#1278): the daily certificate-expiry email throttle window is 20 h instead of 24 h, so cron start jitter (and the 23 h day of a DST change) no longer skips about half of all days.
 - fix(#1175): the producer settings page shows the declaration signing time in the UI language; the printed declaration stays Spanish.
 
 - fix(#1049): a credit note without NIF is R5 (R1 without Destinatarios is rejected and blocked issuing), and regenerating a credit note keeps `FacturasRectificadas`.
