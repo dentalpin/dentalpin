@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1280): a message left in `sending` by a restart mid-send is put back to `failed` after 30 min by the new `notifications_stuck_reaper` job and retried (attempt kept, `max_attempts` respected). A row stuck over 24 h is failed for good instead of retried.
 - Prepopulate editable email defaults and compose custom email fragments inside the shared clinic layout in both preview and delivery (#951). Legacy full HTML documents keep their original layout.
 
 - fix(#1231): the patient conversation reply box ignores Enter while a reply is still sending, so a double Enter no longer sends the WhatsApp message twice.

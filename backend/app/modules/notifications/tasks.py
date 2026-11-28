@@ -71,6 +71,17 @@ async def dispatch_outbox() -> None:
         logger.error("Outbox dispatch tick failed: %s", exc, exc_info=True)
 
 
+async def reap_stuck_sending() -> None:
+    """Scheduled job: retry messages left in ``sending`` by an interrupted send."""
+    from app.modules.notifications.gateway import NotificationGateway
+
+    try:
+        async with async_session_maker() as db:
+            await NotificationGateway.reap_stuck_sending(db)
+    except Exception as exc:  # noqa: BLE001
+        logger.error("Outbox stuck-sending reaper failed: %s", exc, exc_info=True)
+
+
 async def _reminder_key(db, appointment) -> str:
     """One reminder per appointment and start time (#1035).
 

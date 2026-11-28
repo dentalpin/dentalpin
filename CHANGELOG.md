@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Notifications, webhooks:** a message or webhook interrupted by a restart while sending is now retried instead of staying "sending" forever (#1280).
 - **Budget settings:** saving an empty value for the quote validity or plan auto-close days is rejected with 422; a value already stored that way no longer breaks the settings page or stops plan auto-close for every clinic (#1276).
 - **Verifactu:** non-admin staff no longer see an "Access denied" toast on every page load, every minute, or on every invoice they open (#1269).
 - **Verifactu:** the certificate-expiry reminder email now arrives every day instead of skipping days at random (#1278).

@@ -33,6 +33,14 @@ _DISPATCH_BATCH = 50
 # delivery failures. CommunicationMessage has no equivalent — it tracks
 # per-message terminal state, not a per-subscriber circuit breaker.
 MAX_CONSECUTIVE_FAILURES = 25
+# A delivery still ``sending`` after this long was interrupted mid-POST
+# (restart, deploy, killed worker): the client times out after 10 s. Same
+# horizon as notifications.gateway.STALE_SENDING_AFTER (see CLAUDE.md).
+STALE_SENDING_AFTER = timedelta(minutes=30)
+# Stuck longer than this (e.g. since before the reaper existed), a row is
+# failed for good instead of retried: a reminder must not go out after its
+# appointment, nor a webhook be replayed a day late.
+RETRY_STUCK_SENDING_WITHIN = timedelta(hours=24)
 
 
 def _backoff_seconds(attempts: int) -> int:
@@ -135,6 +143,56 @@ class WebhookGateway:
                 await db.rollback()
                 await WebhookGateway._mark_failed(db, delivery, str(exc))
         return attempted
+
+    @staticmethod
+    async def reap_stuck_sending(
+        db: AsyncSession, older_than: timedelta = STALE_SENDING_AFTER
+    ) -> int:
+        """Return deliveries stuck in ``sending`` to ``failed`` so they are retried.
+
+        ``_dispatch_one`` commits ``sending`` (with the spent attempt) before
+        the POST; if the process stops before the response is recorded, the
+        outbox (``queued``/``failed`` only) never reads the row again. The
+        interrupted attempt stays counted, so a delivery that has used
+        ``max_attempts`` ends ``failed`` without a retry, and so does one stuck
+        longer than ``RETRY_STUCK_SENDING_WITHIN``. Returns the count.
+        """
+        cutoff = datetime.now(UTC) - older_than
+        rows = (
+            (
+                await db.execute(
+                    select(WebhookDelivery)
+                    .where(
+                        WebhookDelivery.status == "sending",
+                        WebhookDelivery.updated_at < cutoff,
+                    )
+                    .with_for_update(skip_locked=True)
+                    .execution_options(populate_existing=True)
+                )
+            )
+            .scalars()
+            .all()
+        )
+        now = datetime.now(UTC)
+        too_old = now - RETRY_STUCK_SENDING_WITHIN
+        for delivery in rows:
+            delivery.status = "failed"
+            if delivery.updated_at < too_old:
+                delivery.error_message = "interrupted while sending; too old to retry"
+                # The outbox reads ``failed`` rows with attempts left, also
+                # with no ``next_attempt_at``: closing the budget ends it.
+                delivery.max_attempts = delivery.attempts
+                delivery.next_attempt_at = None
+                continue
+            delivery.error_message = "interrupted while sending (restart or crash)"
+            # The row has already waited ``older_than``; no extra backoff.
+            delivery.next_attempt_at = now if delivery.attempts < delivery.max_attempts else None
+        await db.commit()
+        if rows:
+            logger.warning(
+                "integrations reaped %d webhook delivery(ies) stuck in 'sending'", len(rows)
+            )
+        return len(rows)
 
     @staticmethod
     async def _dispatch_one(db: AsyncSession, delivery: WebhookDelivery) -> None:
