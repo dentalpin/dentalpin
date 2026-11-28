@@ -1,6 +1,7 @@
 <script setup lang="ts">
 /**
- * Create / edit a cabinet (name + colour). Pass `cabinet` to edit;
+ * Create / edit a cabinet (name + colour, plus the active flag when
+ * editing, #1237). Pass `cabinet` to edit;
  * omit it to create. Emits `saved` after a successful write. Also used
  * as the onboarding "cabinets" mini-modal (create mode).
  */
@@ -23,20 +24,24 @@ const isOpen = computed({
 })
 const isEdit = computed(() => !!props.cabinet)
 
-const form = ref({ name: '', color: CABINET_COLORS[0]! })
+const form = ref({ name: '', color: CABINET_COLORS[0]!, is_active: true })
 const isSaving = ref(false)
 
 watch(() => props.open, (open) => {
   if (!open) return
   form.value = props.cabinet
-    ? { name: props.cabinet.name, color: props.cabinet.color }
-    : { name: '', color: CABINET_COLORS[0]! }
+    ? { name: props.cabinet.name, color: props.cabinet.color, is_active: props.cabinet.is_active !== false }
+    : { name: '', color: CABINET_COLORS[0]!, is_active: true }
 })
 
 async function submit() {
   isSaving.value = true
   const result = props.cabinet
-    ? await clinic.updateCabinet(props.cabinet.id, { name: form.value.name, color: form.value.color })
+    ? await clinic.updateCabinet(props.cabinet.id, {
+        name: form.value.name,
+        color: form.value.color,
+        is_active: form.value.is_active
+      })
     : await clinic.createCabinet({ name: form.value.name, color: form.value.color })
   isSaving.value = false
   if (result) {
@@ -89,6 +94,16 @@ async function submit() {
                 @click="form.color = color"
               />
             </div>
+          </UFormField>
+
+          <UFormField
+            v-if="isEdit"
+            :description="t('settings.cabinetActiveHint')"
+          >
+            <USwitch
+              v-model="form.is_active"
+              :label="t('settings.cabinetActive')"
+            />
           </UFormField>
 
           <div class="flex justify-end gap-2 pt-4">

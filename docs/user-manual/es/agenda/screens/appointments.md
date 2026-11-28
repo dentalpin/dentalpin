@@ -49,6 +49,11 @@ flujo (programada → confirmada → en sala → completada → cobrada).
 - **Filtros por gabinete y profesional** — chips encima del
   calendario. Las citas sin gabinete asignado **siempre** se ven,
   para que recepción pueda arrastrarlas al gabinete que toque.
+- **Gabinetes inactivos** — un gabinete desactivado en Ajustes →
+  Gabinetes no se ofrece en el formulario de cita ni tiene chip de
+  filtro, salvo que alguna cita del rango cargado siga en él. No se
+  puede crear ni mover una cita a un gabinete inactivo; una cita que
+  ya está en él se puede abrir, editar y sacar de allí.
 - **Drag, resize y arrastre entre días** — arrastra una cita a otra
   hora o profesional para moverla; arrastra su borde inferior para
   cambiarle la duración. Si solapa con otra del mismo profesional o
@@ -97,6 +102,9 @@ escrito a mano.
   el dinero.
 - Si el paciente no tiene ningún plan con tratamientos pendientes, el
   selector lo explica en lugar de mostrar un selector vacío.
+- Al elegir otro paciente se quitan los tratamientos seleccionados
+  para el anterior, porque son suyos. Si quitas el paciente y vuelves
+  a elegir el mismo, se conservan.
 
 ## Editar una cita
 

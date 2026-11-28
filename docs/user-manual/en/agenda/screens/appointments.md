@@ -48,6 +48,11 @@ professionals and rooms, and walk them through their workflow
 - **Cabinet and professional filters** — chips above the calendar.
   Appointments with no room assigned are **always** visible so the
   front desk can drag them onto the right room.
+- **Inactive rooms** — a room deactivated in Settings → Cabinets is
+  not offered in the appointment form and gets no filter chip, unless
+  an appointment in the loaded range still sits in it. Booking into,
+  or moving an appointment into, an inactive room is refused; an
+  appointment already in it can still be opened, edited and moved out.
 - **Drag, resize, and across-day moves** — drag a card to a different
   hour or professional to move it; drag the lower edge to change its
   duration. If it overlaps with another appointment for the same
@@ -92,6 +97,9 @@ planned work instead of a free-text reason.
   accepted and the plan is active; that is where the money is booked.
 - If the patient has no plan with pending treatments, the selector
   explains so instead of showing an empty picker.
+- Picking a different patient clears the treatments chosen for the
+  previous one, since they belong to that patient. Removing the
+  patient and picking the same one again keeps them.
 
 ## Edit an appointment
 

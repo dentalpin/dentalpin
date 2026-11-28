@@ -33,9 +33,11 @@ const isSurfaceType = computed(() => {
   return isSurfaceTreatment(props.treatment.treatment_type)
 })
 
-// Sync local state with treatment prop
-watch(() => props.treatment, (treatment) => {
-  if (treatment) {
+// Sync local state with the treatment on every opening, not only when the
+// prop changes: the chart keeps the same treatment after Cancel, so a
+// discarded edit would otherwise come back on the next opening (#1233).
+watch([() => props.open, () => props.treatment], ([open, treatment]) => {
+  if (open && treatment) {
     status.value = treatment.status
     selectedSurfaces.value = [...(treatment.surfaces || [])]
     notes.value = treatment.notes || ''

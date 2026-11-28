@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: a13bd29
+last_verified_commit: da6d2444
 ---
 
 # Budget detail
@@ -51,6 +51,7 @@ signed, invoiced, or renegotiated.
 ## At a glance
 
 - **Net price per line.** Each line shows what the patient pays after the line discount **and** its share of the global discount, with the pre-discount price struck through. The footer discount and VAT follow the same rule (VAT on the discounted base), matching the invoice.
+- **A percentage discount is at most 100 %.** On a line or as the global discount, a higher percentage is refused when you save (#1241). An amount discount larger than the line is simply capped at the line.
 - **Two-column layout.** Left: budget line items with catalog item,
   tooth, surfaces, quantity, discount, and VAT. Right (top to
   bottom): **payments** card (slot `budget.detail.sidebar`, filled
@@ -81,6 +82,9 @@ signed, invoiced, or renegotiated.
 1. Click **Edit** on a line or **Add item** below the table.
 2. Change catalog item, tooth, surfaces, quantity, discount, or
    VAT. Totals recompute on save.
+   When adding an item, the **Line total** in the dialog is the amount
+   the line will show: the catalog item's VAT included, and an absolute
+   discount never takes it below zero (the global discount comes later).
 3. The backend rewrites the totals invariant on save (no `update`
    event yet).
 

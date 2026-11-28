@@ -1346,6 +1346,9 @@
     "deleteCabinet": "Kezelő törlése",
     "deleteCabinetConfirm": "Biztosan törli ezt a kezelőt:",
     "deleteCabinetNote": "A kezelőben lévő meglévő időpontokat ez nem érinti.",
+    "cabinetActive": "Aktív",
+    "cabinetInactive": "Inaktív",
+    "cabinetActiveHint": "Az inaktív kezelőbe nem lehet új időpontot foglalni, és nem jelenik meg a naptárban. A korábbi időpontjai megmaradnak.",
     "createCabinet": "Kezelő létrehozása",
     "roles": {
       "admin": "Adminisztrátor",
@@ -1600,7 +1603,8 @@
       "notFound": "A kezelő nem található",
       "createFailed": "Nem sikerült létrehozni a kezelőt",
       "updateFailed": "Nem sikerült frissíteni a kezelőt",
-      "deleteFailed": "Nem sikerült törölni a kezelőt"
+      "deleteFailed": "Nem sikerült törölni a kezelőt",
+      "deleteHasHistory": "Ehhez a kezelőhöz időpontok tartoznak, ezért nem törölhető. Helyette inaktiváld."
     }
   },
   "professionals": {

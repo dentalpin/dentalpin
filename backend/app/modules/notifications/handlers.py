@@ -27,6 +27,7 @@ from .service import (
     appointment_when_context,
     budget_treatments_context,
     clinic_date_label,
+    message_date,
     money_formatter,
     resolve_patient_communication_locale,
 )
@@ -151,7 +152,11 @@ class NotificationHandlers:
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "appointment_id": str(appointment.id),
                     "appointment_start_at": appointment.start_time.isoformat(),
-                    **appointment_when_context(appointment.start_time, clinic),
+                    **appointment_when_context(
+                        appointment.start_time,
+                        clinic,
+                        await resolve_patient_communication_locale(db, clinic_id, patient.id),
+                    ),
                     "professional_name": professional_name,
                     "clinic_name": clinic.name if clinic else "DentalPin",
                     "clinic_phone": clinic.phone if clinic else None,
@@ -237,7 +242,11 @@ class NotificationHandlers:
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "appointment_id": str(appointment.id),
                     "appointment_start_at": appointment.start_time.isoformat(),
-                    **appointment_when_context(appointment.start_time, clinic),
+                    **appointment_when_context(
+                        appointment.start_time,
+                        clinic,
+                        await resolve_patient_communication_locale(db, clinic_id, patient.id),
+                    ),
                     "professional_name": professional_name,
                     "cancellation_reason": cancellation_reason,
                     "clinic_name": clinic.name if clinic else "DentalPin",
@@ -364,11 +373,10 @@ class NotificationHandlers:
                 result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
                 clinic = result.scalar_one_or_none()
 
-                # Amounts are formatted for the locale the gateway will
-                # render in, in the clinic's currency (#1133).
-                money = money_formatter(
-                    clinic, await resolve_patient_communication_locale(db, clinic_id, patient.id)
-                )
+                # Amounts in the clinic's currency and dates in the order of
+                # the locale the gateway will render in (#1133, #1211).
+                locale = await resolve_patient_communication_locale(db, clinic_id, patient.id)
+                money = money_formatter(clinic, locale)
 
                 # Get budget items
                 treatments = await budget_treatments_context(db, budget_id, money)
@@ -377,7 +385,7 @@ class NotificationHandlers:
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "budget_number": budget.budget_number,
-                    "budget_date": budget.valid_from.strftime("%d/%m/%Y"),
+                    "budget_date": message_date(budget.valid_from, locale),
                     "treatments": treatments,
                     "subtotal": money(budget.subtotal),
                     "discount_amount": money(budget.total_discount)
@@ -476,11 +484,10 @@ class NotificationHandlers:
                 )
                 items = result.scalars().all()
 
-                # Amounts are formatted for the locale the gateway will
-                # render in, in the clinic's currency (#1133).
-                money = money_formatter(
-                    clinic, await resolve_patient_communication_locale(db, clinic_id, patient.id)
-                )
+                # Amounts in the clinic's currency and dates in the order of
+                # the locale the gateway will render in (#1133, #1211).
+                locale = await resolve_patient_communication_locale(db, clinic_id, patient.id)
+                money = money_formatter(clinic, locale)
 
                 # ``balance_due`` is computed from payments, not a column:
                 # reading ``invoice.balance_due`` raised and the handler
@@ -503,10 +510,12 @@ class NotificationHandlers:
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "invoice_number": invoice.invoice_number,
-                    "invoice_date": invoice.issue_date.strftime("%d/%m/%Y")
+                    "invoice_date": message_date(invoice.issue_date, locale)
                     if invoice.issue_date
                     else None,
-                    "due_date": invoice.due_date.strftime("%d/%m/%Y") if invoice.due_date else None,
+                    "due_date": message_date(invoice.due_date, locale)
+                    if invoice.due_date
+                    else None,
                     "items": invoice_items,
                     "subtotal": money(invoice.subtotal),
                     "total_discount": money(invoice.total_discount)
@@ -584,15 +593,14 @@ class NotificationHandlers:
                 result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
                 clinic = result.scalar_one_or_none()
 
-                money = money_formatter(
-                    clinic, await resolve_patient_communication_locale(db, clinic_id, patient.id)
-                )
+                locale = await resolve_patient_communication_locale(db, clinic_id, patient.id)
+                money = money_formatter(clinic, locale)
 
                 # Build context
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
                     "budget_number": budget.budget_number,
-                    "accepted_date": clinic_date_label(budget.updated_at, clinic),
+                    "accepted_date": clinic_date_label(budget.updated_at, clinic, locale),
                     "total": money(budget.total),
                     "notes": budget.patient_notes,
                     "clinic_name": clinic.name if clinic else "DentalPin",
@@ -664,9 +672,8 @@ class NotificationHandlers:
                 result = await db.execute(select(Clinic).where(Clinic.id == clinic_id))
                 clinic = result.scalar_one_or_none()
 
-                money = money_formatter(
-                    clinic, await resolve_patient_communication_locale(db, clinic_id, patient.id)
-                )
+                locale = await resolve_patient_communication_locale(db, clinic_id, patient.id)
+                money = money_formatter(clinic, locale)
 
                 context = {
                     "patient_name": f"{patient.first_name} {patient.last_name}",
@@ -675,7 +682,7 @@ class NotificationHandlers:
                     # The template hides the row when falsy; keep a zero
                     # total hidden as the old 0.0 did.
                     "total": money(budget.total) if budget.total else None,
-                    "valid_until": budget.valid_until.strftime("%d/%m/%Y")
+                    "valid_until": message_date(budget.valid_until, locale)
                     if budget.valid_until
                     else None,
                     "public_url": _public_budget_url(budget.public_token),

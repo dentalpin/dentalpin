@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1230): the record-payment modal ignores a second submit while the first `POST /payments` is pending. Enter on the form bypassed the disabled footer button, so a second Enter (or key-repeat) booked the payment twice.
 - fix(#1183): the copilot `record_payment` tool now applies the REST allocation checks (budget needs `target_id`, on-account forbids it, allocations must sum to the amount) and refuses a bad call before touching the database.
 - fix(#1152): earned rows from completed treatment-plan sessions now carry the completing user as `professional_id` (payload key `completed_by`), so Payments → By professional credits them. Rows booked earlier keep `professional_id = NULL`; no backfill.
 

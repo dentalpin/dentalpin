@@ -37,7 +37,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/budget/frontend/pages/budgets/[id].vue
   - backend/app/modules/budget/router.py
-last_verified_commit: a13bd29
+last_verified_commit: da6d2444
 ---
 
 # Detalle del presupuesto
@@ -51,6 +51,7 @@ Desde aquí se mueve el presupuesto por todo su flujo
 ## De un vistazo
 
 - **Precio neto por línea.** Cada línea muestra lo que paga el paciente tras el descuento de línea **y** su parte del descuento global, con el precio sin descuento tachado. El descuento y el IVA del pie siguen la misma regla (IVA sobre la base descontada), igual que la factura.
+- **Un descuento en porcentaje no pasa del 100 %.** En una línea o como descuento global, un porcentaje mayor se rechaza al guardar (#1241). Un descuento en importe mayor que la línea se limita al importe de la línea.
 - **Layout en dos columnas.** Izquierda: líneas del presupuesto con
   ítem del catálogo, diente, superficies, cantidad, descuento e IVA.
   Derecha (de arriba abajo): tarjeta de **cobros** (slot
@@ -85,6 +86,10 @@ Desde aquí se mueve el presupuesto por todo su flujo
    tabla.
 2. Cambia ítem del catálogo, diente, superficies, cantidad,
    descuento o IVA. Los totales se recalculan al guardar.
+   Al añadir un ítem, el **Total línea** del diálogo es el importe
+   que mostrará la línea: con el IVA del ítem del catálogo incluido, y un
+   descuento absoluto nunca lo deja por debajo de cero (el descuento
+   global se aplica después).
 3. Al guardar se publica un `budget.updated` lógico interno (no
    evento aún), pero el invariante de totales se reescribe en el
    backend.

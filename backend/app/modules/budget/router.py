@@ -267,7 +267,10 @@ async def update_budget_item(
     if not item:
         raise HTTPException(status_code=404, detail="Budget item not found")
 
-    item = await BudgetItemService.update_item(db, item, data.model_dump(exclude_unset=True))
+    try:
+        item = await BudgetItemService.update_item(db, item, data.model_dump(exclude_unset=True))
+    except ValueError as e:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(e)) from e
 
     # Recalculate budget totals
     await BudgetService._recalculate_totals(db, budget)

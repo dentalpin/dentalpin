@@ -1346,6 +1346,9 @@
     "deleteCabinet": "حذف الغرفة",
     "deleteCabinetConfirm": "هل أنت متأكد من حذف الغرفة",
     "deleteCabinetNote": "لن تتأثر المواعيد القائمة في هذه الغرفة.",
+    "cabinetActive": "نشطة",
+    "cabinetInactive": "غير نشطة",
+    "cabinetActiveHint": "الغرفة غير النشطة لا تقبل مواعيد جديدة ولا تظهر في الأجندة. تُحفظ مواعيدها السابقة.",
     "createCabinet": "إنشاء غرفة",
     "roles": {
       "admin": "مسؤول",
@@ -1600,7 +1603,8 @@
       "notFound": "الغرفة غير موجودة",
       "createFailed": "فشل إنشاء الغرفة",
       "updateFailed": "فشل تحديث الغرفة",
-      "deleteFailed": "فشل حذف الغرفة"
+      "deleteFailed": "فشل حذف الغرفة",
+      "deleteHasHistory": "هذه الغرفة لديها مواعيد، لذا لا يمكن حذفها. قم بإلغاء تنشيطها بدلاً من ذلك."
     }
   },
   "professionals": {
