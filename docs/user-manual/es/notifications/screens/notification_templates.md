@@ -32,6 +32,8 @@ texto de sistema.
   del proveedor.
 - **SMS y Push web** muestran el texto en modo de solo lectura.
 
+Una variante de correo sin personalizar abre con el asunto y el contenido HTML de sistema listos para editar; no se guarda hasta que hagas un cambio y pulses **Guardar**. WhatsApp manual muestra también el texto de sistema cuando existe. El contenido del correo se inserta en el diseño de la clínica, con cabecera, pie y estilos. Los documentos HTML completos guardados anteriormente conservan su propio diseño.
+
 Pulsa una variable para insertarla en el último campo seleccionado. Puedes
 omitir los valores opcionales en la vista previa para comprobar cómo queda el
 mensaje cuando faltan datos. La vista previa usa ejemplos ficticios. Guarda

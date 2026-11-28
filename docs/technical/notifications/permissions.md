@@ -36,3 +36,5 @@ See `backend/app/core/auth/permissions.py` for the canonical role table.
 3. Add a row to the table above.
 4. Annotate the endpoint(s) with `Depends(require_permission(...))`.
 5. Update `frontend/app/config/permissions.ts` if it gates UI.
+
+The editor selection returns the bundled email subject and content blocks when no clinic override exists, without persisting them. Manual WhatsApp returns the system text when available. Email content fragments use the shared base layout in preview and delivery; legacy whole HTML documents and templates extending a base keep their original layout. The default email subject follows the localized file title (#1204).

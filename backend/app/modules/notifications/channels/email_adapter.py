@@ -26,10 +26,6 @@ _STATUS_MAP = {
 }
 
 
-def default_notification_subject(template_key: str) -> str:
-    return f"Notificación: {template_key}"
-
-
 class EmailAdapter:
     """Delivers the ``email`` channel via the core email service."""
 
@@ -52,6 +48,7 @@ class EmailAdapter:
             locale=msg.locale,
             to_name=msg.to_name,
             template_html=msg.body_html,
+            wrap_custom_html=True,
             template_text=msg.body_text,
             db=db,
             clinic_id=msg.clinic_id,

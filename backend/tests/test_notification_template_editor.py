@@ -81,7 +81,7 @@ async def test_editor_preview_uses_real_email_renderer_and_default(
     assert res.status_code == 204, res.text
     res = await client.post(f"{EDITOR}/preview", headers=auth_headers, params=EMAIL, json={})
     context = example_context(KEY, "es", test_clinic)
-    body = email_service._render_template(KEY, "es", context, custom_template=COPY["body_html"])
+    body = email_service.render_notification_html(COPY["body_html"], context, "es", strict=True)
     assert res.json()["data"] == {
         "subject": email_service.render_subject(COPY["subject"], context),
         "body_html": body,
@@ -117,7 +117,8 @@ async def test_editor_invalid_copy_leaves_saved_template_intact(client, auth_hea
             "minimal": True,
         },
     )
-    assert res.json()["data"]["body_html"] == "Team"
+    assert "Team" in res.json()["data"]["body_html"]
+    assert "email-header" in res.json()["data"]["body_html"]
 
 
 async def test_editor_scopes_copy_and_never_deletes_provider_mapping(
@@ -305,3 +306,106 @@ def test_every_notification_type_has_a_synthetic_context():
         sample = example_context(key, "es", None)
         assert set(sample) == set(available_fields(key, Channel.EMAIL))
         assert set(available_fields(key, Channel.WHATSAPP)) <= sample.keys()
+
+
+async def test_default_is_editable_and_saves_without_an_implicit_override(
+    client, auth_headers, db_session, test_clinic
+):
+    res = await client.get(EDITOR, headers=auth_headers, params=EMAIL)
+    assert res.status_code == 200
+    data = res.json()["data"]
+    assert not data["has_override"]
+    assert "{{ clinic_name }}" in data["current"]["subject"]
+    assert "{{ patient_name }}" in data["current"]["body_html"]
+    assert (
+        await NotificationService.get_clinic_template(
+            db_session, test_clinic.id, KEY, "es", "email"
+        )
+        is None
+    )
+    res = await client.put(EDITOR, headers=auth_headers, params=EMAIL, json=data["current"])
+    assert res.status_code == 204, res.text
+
+
+async def test_custom_email_layout_and_legacy_document(
+    client, auth_headers, test_clinic, monkeypatch
+):
+    from uuid import uuid4
+
+    from app.core.email.providers.base import EmailResult, EmailStatus
+    from app.modules.notifications.channels import OutboundMessage
+    from app.modules.notifications.channels.email_adapter import EmailAdapter
+
+    messages = []
+
+    async def capture(message, db=None, clinic_id=None):
+        messages.append(message)
+        return EmailResult(status=EmailStatus.SUCCESS, provider="test")
+
+    monkeypatch.setattr(email_service, "send", capture)
+    content = {**COPY, "body_html": "<p>Unique content for {{ patient_name }}</p>"}
+    preview = await client.post(
+        f"{EDITOR}/preview", headers=auth_headers, params=EMAIL, json={"content": content}
+    )
+    assert preview.status_code == 200, preview.text
+    html = preview.json()["data"]["body_html"]
+    assert 'class="email-header"' in html and 'class="email-footer"' in html
+    assert html.count("Unique content for Alex Example") == 1
+    context = example_context(KEY, "es", test_clinic)
+    await EmailAdapter().send(
+        None,
+        OutboundMessage(
+            channel=Channel.EMAIL,
+            to_address="test@example.invalid",
+            clinic_id=uuid4(),
+            template_key=KEY,
+            locale="es",
+            context=context,
+            subject=content["subject"],
+            body_html=content["body_html"],
+        ),
+    )
+    assert messages[-1].body_html == html
+    legacy = "<!DOCTYPE html><html><body><p>Legacy {{ patient_name }}</p></body></html>"
+    await EmailAdapter().send(
+        None,
+        OutboundMessage(
+            channel=Channel.EMAIL,
+            to_address="test@example.invalid",
+            clinic_id=uuid4(),
+            template_key=KEY,
+            locale="es",
+            context=context,
+            subject="Legacy",
+            body_html=legacy,
+        ),
+    )
+    assert (
+        messages[-1].body_html
+        == "<!DOCTYPE html><html><body><p>Legacy Alex Example</p></body></html>"
+    )
+
+
+async def test_default_subject_preview_matches_delivery(client, auth_headers, test_clinic):
+    res = await client.post(f"{EDITOR}/preview", headers=auth_headers, params=EMAIL, json={})
+    assert res.status_code == 200
+    assert res.json()["data"]["subject"] == email_service.render_default_subject(
+        KEY, "es", example_context(KEY, "es", test_clinic)
+    )
+
+
+async def test_all_shipped_email_defaults_can_be_saved(client, auth_headers, test_clinic):
+    from app.core.email.service import TEMPLATES_DIR
+    from app.modules.notifications.models import NOTIFICATION_TYPES
+
+    for key in NOTIFICATION_TYPES:
+        for folder in sorted(TEMPLATES_DIR.iterdir()):
+            if not (folder / f"{key}.html").is_file():
+                continue
+            path = f"/api/v1/notifications/templates/editor/{key}"
+            params = {"channel": "email", "locale": folder.name}
+            res = await client.get(path, headers=auth_headers, params=params)
+            assert res.status_code == 200, (key, folder.name, res.text)
+            content = res.json()["data"]["current"]
+            res = await client.put(path, headers=auth_headers, params=params, json=content)
+            assert res.status_code == 204, (key, folder.name, res.text)

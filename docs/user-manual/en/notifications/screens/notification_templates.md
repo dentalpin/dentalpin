@@ -26,6 +26,8 @@ uses clinic text or a system default, or has no system text.
   Use the provider settings for approved WhatsApp templates.
 - **SMS and Web Push** show the configured copy in read-only mode.
 
+An uncustomized email opens with the system subject and HTML content ready to edit; it is not saved until you make a change and choose **Save**. Manual WhatsApp similarly shows system text when available. Your email content is placed inside the clinic email layout, including its header, footer and styles. Previously saved complete HTML documents keep their existing layout.
+
 Choose a variable to insert it in the last focused field. Some fields are
 optional. You can omit optional sample values in the preview to check that
 your template still reads correctly. The preview uses fictional examples.

@@ -1,9 +1,10 @@
 """Read and mutate a clinic's editable template copy by its full identity."""
 
+import re
 from datetime import UTC, datetime
 from uuid import UUID
 
-from jinja2 import TemplateError
+from jinja2 import StrictUndefined, TemplateError
 from pydantic import BaseModel
 from sqlalchemy import delete, or_, update
 from sqlalchemy.dialects.postgresql import insert
@@ -13,7 +14,6 @@ from app.core.auth.models import Clinic
 from app.core.email import email_service
 
 from .channels import Channel, channel_registry
-from .channels.email_adapter import default_notification_subject
 from .models import NotificationTemplate, NotificationType
 from .service import NotificationService
 from .template_rendering import (
@@ -24,6 +24,14 @@ from .template_rendering import (
     whatsapp_text_fits,
 )
 from .template_variables import available_fields, example_context, optional_fields
+
+
+class _OptionalUndefined(StrictUndefined):
+    def __bool__(self) -> bool:
+        return False
+
+    def __iter__(self):
+        return iter(())
 
 
 class TemplateCopy(BaseModel):
@@ -121,9 +129,26 @@ class TemplateEditor:
             bundled = email_service.bundled_template(self.key, self.locale, "html")
             default_locale = bundled[1] if bundled else None
         samples = example_context(self.key, self.locale, self.clinic)
+        copy = _copy(current, self.channel)
+        if self.channel == Channel.EMAIL and not (current and current.clinic_id == self.clinic.id):
+            bundled_source = email_service.bundled_template_source(self.key, self.locale)
+            if bundled_source:
+                title, body, _ = bundled_source
+                # Match Jinja's normal empty output when optional event fields are absent.
+                for field in optional_fields(self.key):
+                    body = re.sub(
+                        r"{{\s*" + re.escape(field) + r"\s*}}",
+                        "{{ " + field + " | default('') }}",
+                        body,
+                    )
+                copy = TemplateCopy(
+                    subject=copy.subject if copy and copy.subject else title,
+                    body_html=copy.body_html if copy and copy.body_html else body,
+                    body_text=copy.body_text if copy else None,
+                )
         return TemplateSelection(
             editable=editable,
-            current=_copy(current, self.channel),
+            current=copy,
             has_override=current is not None and current.clinic_id == self.clinic.id,
             default_locale=default_locale,
             variables=[
@@ -147,7 +172,14 @@ class TemplateEditor:
                 if not whatsapp_text_fits(rendered):
                     raise TemplateValidationError("whatsapp_length")
                 return rendered
-            rendered = email_service.render_custom_template(source, context, strict=validate)
+            if field == "body_html":
+                rendered = email_service.render_notification_html(
+                    source, context, self.locale, strict=validate
+                )
+            elif field == "subject":
+                rendered = email_service.render_subject(source, context, strict=validate)
+            else:
+                rendered = email_service.render_custom_template(source, context, strict=validate)
             if field == "subject" and (len(rendered) > 255 or "\r" in rendered or "\n" in rendered):
                 raise TemplateValidationError("invalid_subject")
             return rendered
@@ -162,6 +194,9 @@ class TemplateEditor:
         self, content: TemplateCopy, *, minimal: bool = False, validate: bool = True
     ) -> TemplatePreview:
         context = example_context(self.key, self.locale, self.clinic, minimal=minimal)
+        for key in optional_fields(self.key):
+            if key not in context:
+                context[key] = _OptionalUndefined(name=key)
         if self.channel == Channel.WHATSAPP:
             if not content.body_text:
                 return TemplatePreview()
@@ -173,9 +208,13 @@ class TemplateEditor:
         if self.channel in (Channel.PUSH, Channel.SMS):
             return TemplatePreview(subject=content.subject, body_text=content.body_text)
 
-        subject = content.subject or default_notification_subject(self.key)
+        subject = (
+            self._render_field("subject", content.subject, context, validate=validate)
+            if content.subject
+            else email_service.render_default_subject(self.key, self.locale, context)
+        )
         return TemplatePreview(
-            subject=self._render_field("subject", subject, context, validate=validate),
+            subject=subject,
             body_html=self._email_body("body_html", content.body_html, context, "html", validate),
             body_text=self._email_body("body_text", content.body_text, context, "txt", validate),
         )
@@ -187,7 +226,8 @@ class TemplateEditor:
         return self._render_copy(
             _copy(row, self.channel) or TemplateCopy(),
             minimal=request.minimal,
-            validate=row is not None and row.clinic_id is not None,
+            # Saved legacy templates are rendered as delivered, including older Jinja syntax.
+            validate=False,
         )
 
     def _email_body(

@@ -6,7 +6,14 @@ from .channels import Channel
 from .models import NotificationType
 from .service import appointment_when_context
 
-_APPOINTMENT = ("appointment_date", "appointment_time", "professional_name")
+_APPOINTMENT = (
+    "appointment_date",
+    "appointment_time",
+    "professional_name",
+    "cabinet_name",
+    "treatment_type",
+    "notes",
+)
 _CONTACT = ("clinic_phone", "clinic_address")
 
 # These are send-time keys, independent of the legacy template row's variables
@@ -15,7 +22,7 @@ _EVENT_FIELDS: dict[NotificationType, tuple[str, ...]] = {
     "appointment_confirmation": (*_APPOINTMENT, *_CONTACT),
     "appointment_reminder": (*_APPOINTMENT, *_CONTACT, "checkin_url"),
     "appointment_cancelled": (*_APPOINTMENT, "cancellation_reason", "clinic_phone"),
-    "welcome": _CONTACT,
+    "welcome": (*_CONTACT, "clinic_hours"),
     "budget_sent": (
         "budget_number",
         "budget_date",
@@ -52,7 +59,7 @@ _EVENT_FIELDS: dict[NotificationType, tuple[str, ...]] = {
         "custom_message",
         *_CONTACT,
     ),
-    "recall_reminder": ("reason", "due_month"),
+    "recall_reminder": ("reason", "due_month", "clinic_phone"),
 }
 
 # Also treat fields absent on the generic staff-send path as optional. For
@@ -61,6 +68,9 @@ _OPTIONAL = {
     "clinic_phone",
     "clinic_address",
     "professional_name",
+    "cabinet_name",
+    "treatment_type",
+    "clinic_hours",
     "cancellation_reason",
     "checkin_url",
     "discount_amount",
@@ -120,6 +130,9 @@ def example_context(key: NotificationType, locale: str, clinic, *, minimal: bool
         "clinic_phone": "+34 900 000 000",
         "clinic_address": "42 Example Street",
         "professional_name": "Sam Example",
+        "cabinet_name": "Room 1",
+        "treatment_type": "Check-up",
+        "clinic_hours": "09:00–17:00",
         **appointment_when_context(datetime(2027, 3, 8, 9, 30, tzinfo=UTC), clinic, locale),
         "cancellation_reason": "Schedule change",
         "checkin_url": "https://example.invalid/check-in",
