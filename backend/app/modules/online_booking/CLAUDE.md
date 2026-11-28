@@ -35,3 +35,5 @@
 
 - Quotas are checked under the clinic lock in clinic-local day/week boundaries. Active contacts match normalized email or E.164 phone. Buffers are snapshotted on the request. Optional comments and names follow contact retention.
 - One migration per PR: `ob_0004` holds every column of the public page (no state that never shipped).
+
+- Height messages target only the referrer origin when it matches embed_origins; no wildcard fallback. HTTP loopback origins are permitted in development only.

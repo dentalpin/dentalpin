@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Report framed booking page height only to explicitly allowed parent origins; allow loopback HTTP URLs only in development.
+
 - fix(#1211): booking emails date the slot in the requester's language (or the clinic's) instead of a fixed `dd/mm/yyyy`.
 - fix(#1226): the logo field in the public page settings is labelled "Logo" and its button reads "Upload PNG, JPG or WebP" (new `onlineBooking.logo` key in all twelve locales) instead of repeating one text as label and button.
 - fix(#1208): the rejection email uses the language the visitor booked in, stored on the request (new nullable `language` column, migration `ob_0005`); older requests fall back to the clinic's language.

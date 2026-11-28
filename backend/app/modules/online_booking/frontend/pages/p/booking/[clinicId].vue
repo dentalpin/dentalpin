@@ -24,9 +24,11 @@ import {
 } from '../../../composables/usePublicBooking'
 import { PublicBookingError } from '../../../utils/publicBookingError'
 import {
+  allowedParentOrigin,
   apiLanguage,
   dayDistance,
   offsetDay,
+  postBookingHeight,
   safeUrl,
   splitDayParts,
   takeFragmentToken,
@@ -56,6 +58,35 @@ const showRestart = ref(false)
 const submitting = ref(false)
 const confirmToken = ref<string | null>(null)
 const resultStart = ref('')
+const bookingRoot = ref<HTMLElement | null>(null)
+let heightObserver: ResizeObserver | null = null
+let parentOrigin = ''
+
+function notifyParentHeight() {
+  if (!parentOrigin || !bookingRoot.value || window.parent === window) return
+  const rect = bookingRoot.value.getBoundingClientRect()
+  const height = Math.ceil(rect.height + Math.max(0, rect.top + window.scrollY))
+  postBookingHeight(window.parent, document.referrer, config.value?.embed_origins || [], height)
+}
+
+watch([config, stage], async () => {
+  parentOrigin = ''
+  if (window.parent === window || !document.referrer) return
+  parentOrigin = allowedParentOrigin(document.referrer, config.value?.embed_origins || []) || ''
+  await nextTick()
+  notifyParentHeight()
+})
+onMounted(() => {
+  if (bookingRoot.value && typeof ResizeObserver !== 'undefined') {
+    heightObserver = new ResizeObserver(notifyParentHeight)
+    heightObserver.observe(bookingRoot.value)
+  }
+  window.addEventListener('resize', notifyParentHeight)
+})
+onUnmounted(() => {
+  heightObserver?.disconnect()
+  window.removeEventListener('resize', notifyParentHeight)
+})
 
 // ----- language ---------------------------------------------------------------
 
@@ -384,6 +415,7 @@ const resultBodyValues = computed(() => {
 
 <template>
   <div
+    ref="bookingRoot"
     class="mx-auto w-full max-w-3xl px-4 py-6 space-y-6"
     :dir="locale === 'ar' ? 'rtl' : 'ltr'"
     :style="{ '--booking-accent': accent }"
