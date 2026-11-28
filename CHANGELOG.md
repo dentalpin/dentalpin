@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **NAV Online Számla:** credit notes are reported with per-line modification references and the right modification index, and a partial credit note goes to NAV as MODIFY instead of STORNO (#1069).
 - **Notifications:** an invalid reminder "hours before" value is rejected on save, and one clinic's bad setting no longer stops appointment reminders for other clinics (#1243).
 - **Notifications, webhooks:** a message or webhook interrupted by a restart while sending is now retried instead of staying "sending" forever (#1280).
 - **Budget settings:** saving an empty value for the quote validity or plan auto-close days is rejected with 422; a value already stored that way no longer breaks the settings page or stops plan auto-close for every clinic (#1276).
