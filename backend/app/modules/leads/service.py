@@ -91,12 +91,11 @@ class LeadService:
 
         term = (search or "").strip()
         if term:
-            pattern = f"%{term}%"
             conditions.append(
                 or_(
-                    Lead.full_name.ilike(pattern),
-                    Lead.phone.ilike(pattern),
-                    Lead.email.ilike(pattern),
+                    Lead.full_name.icontains(term, autoescape=True),
+                    Lead.phone.icontains(term, autoescape=True),
+                    Lead.email.icontains(term, autoescape=True),
                 )
             )
 

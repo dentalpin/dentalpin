@@ -253,6 +253,6 @@ class TreatmentConsumablesService:
             InventoryItem.clinic_id == clinic_id, InventoryItem.is_active
         )
         if needle:
-            item_stmt = item_stmt.where(InventoryItem.name.ilike(f"%{needle}%"))
+            item_stmt = item_stmt.where(InventoryItem.name.icontains(needle, autoescape=True))
         matched_items = (await db.execute(item_stmt.limit(limit))).scalars().all()
         return list(matched_treatments), list(matched_items)

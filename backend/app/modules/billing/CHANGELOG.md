@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the invoice search: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every row, and `ana_lopez` also matched `ana.lopez`.
 - fix(#1241): a percentage invoice line discount above 100 is refused (422, or 400 for a partial update) instead of giving a negative line that could be issued.
 - fix(#1201): new `open_receivable_conditions` (issued/partial, not history, not a credit note); `overdue_invoice_conditions` builds on it, and the reports' aging buckets use it.
 - fix(#1184): switching `reset_yearly` on for a continuous series (`PUT /series/{id}`) restarted its numbering mid-year, because the series still carried its creation year in `last_reset_year`; the next invoice reused an already-issued number's sequential (FAC-2027-0001 after FAC-2027-0003) and the one after hit `ix_invoices_clinic_number_unique`. `update_series` now sets `last_reset_year` to the clinic's current year on the off→on switch, so the count carries on and resets next January.

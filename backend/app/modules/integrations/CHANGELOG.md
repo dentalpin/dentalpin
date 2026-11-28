@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the public API patient search: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every row, and `ana_lopez` also matched `ana.lopez`.
 - fix(#1009): a delivery of a paused, auto-disabled or undecryptable subscription spends its attempts and ends `failed`; it was retried forever.
 
 - fix(#65): a webhook subscription now auto-disables after 25 consecutive delivery failures instead of 10. With the 1h backoff cap that is roughly a day of receiver downtime before a subscription is cut off. Dropped the empty `get_tools()` override; `BaseModule` already returns `[]`.

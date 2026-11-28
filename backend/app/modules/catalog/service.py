@@ -382,12 +382,13 @@ class CatalogService:
             # Search in internal_code and names (JSONB)
             from sqlalchemy.dialects.postgresql import TEXT
 
-            search_pattern = f"%{search_query}%"
             conditions.append(
                 or_(
-                    TreatmentCatalogItem.internal_code.ilike(search_pattern),
+                    TreatmentCatalogItem.internal_code.icontains(search_query, autoescape=True),
                     # Cast JSONB to text for searching
-                    func.cast(TreatmentCatalogItem.names, TEXT).ilike(search_pattern),
+                    func.cast(TreatmentCatalogItem.names, TEXT).icontains(
+                        search_query, autoescape=True
+                    ),
                 )
             )
 
@@ -593,8 +594,6 @@ class CatalogService:
         """Search catalog items by name or code."""
         from sqlalchemy.dialects.postgresql import TEXT
 
-        search_pattern = f"%{query}%"
-
         result = await db.execute(
             select(TreatmentCatalogItem)
             .where(
@@ -602,9 +601,9 @@ class CatalogService:
                 TreatmentCatalogItem.is_active.is_(True),
                 TreatmentCatalogItem.deleted_at.is_(None),
                 or_(
-                    TreatmentCatalogItem.internal_code.ilike(search_pattern),
+                    TreatmentCatalogItem.internal_code.icontains(query, autoescape=True),
                     # Cast JSONB to text for searching
-                    func.cast(TreatmentCatalogItem.names, TEXT).ilike(search_pattern),
+                    func.cast(TreatmentCatalogItem.names, TEXT).icontains(query, autoescape=True),
                 ),
             )
             .options(

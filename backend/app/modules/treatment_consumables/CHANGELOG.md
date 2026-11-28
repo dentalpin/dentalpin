@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- fix(#1245): the inventory item search: a typed `%` or `_` now matches literally, as in payments (#1033). `%` used to list every row, and `ana_lopez` also matched `ana.lopez`.
 - The Hindi screen subtitle no longer says stock is never deducted, and
   the module docstrings point at the deduction handler (follow-up to #821).
 
