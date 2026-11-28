@@ -60,8 +60,17 @@ no FKs.
 
 ## Permissions
 
-`treatment_plan.plans.{read,write}`. Clinical-note permissions live in
-the `clinical_notes` module since issue #60.
+`treatment_plan.plans.{read,write,confirm,close,reactivate}`.
+Clinical-note permissions live in the `clinical_notes` module since
+issue #60.
+
+`PlanDetailView.vue` gates each action on the permission of the route
+it calls (#1270): `plans.write` for item edits, reorder, doctor chip,
+reopen and budget generation; `plans.confirm`, `plans.close` and
+`plans.reactivate` for those transitions; chart planning also needs
+`odontogram.treatments.write`. Its `readonly` prop only forces a fully
+read-only view — callers must not derive it from another module's
+permission (the patient file used to pass `!odontogram.write`).
 
 ## Events emitted
 

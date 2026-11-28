@@ -27,7 +27,7 @@ related_permissions:
 related_paths:
   - backend/app/modules/recalls/frontend/pages/recalls/index.vue
   - backend/app/modules/recalls/router.py
-last_verified_commit: dd87ef44
+last_verified_commit: 0b0731be
 ---
 
 # Call list
@@ -94,6 +94,9 @@ move the recall to its next state.
 
 ## Troubleshooting
 
+- **Saving the recall settings fails with an interval error.** Each
+  interval must be a whole number of months from 0 to 60; 0 means no
+  recall is suggested for that reason.
 - **A patient with an already-booked appointment is still pending.**
   Auto-link only fires when **exactly one** active recall matches. If
   two or more match, link it manually with **Schedule appointment**

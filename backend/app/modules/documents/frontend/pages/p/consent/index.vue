@@ -170,7 +170,7 @@ async function submit() {
           v-model="idDocument"
           class="w-full"
           size="lg"
-          maxlength="32"
+          maxlength="64"
           autocomplete="off"
           autocapitalize="characters"
           spellcheck="false"

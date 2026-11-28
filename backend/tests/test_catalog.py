@@ -1647,3 +1647,48 @@ async def test_negative_surface_price_answers_422(
         headers=auth_headers,
     )
     assert response.status_code == 422, response.text
+
+
+@pytest.mark.parametrize(
+    "surface_prices",
+    [
+        {"1": 50, "02": 70},  # non-canonical key: pricing looked up "2" -> KeyError
+        {"1": 50, "6": 70},  # out of the 1..5 range
+        {"0": 50},
+        {"one": 50},  # not a number
+        {"1": 50, "01": 55},  # tier 1 again under another spelling
+        {"1": "50.001"},  # finer than the NUMERIC(10,2) price columns
+        {"1": 100_000_000},  # past NUMERIC(10,2)
+    ],
+)
+@pytest.mark.asyncio
+async def test_invalid_surface_prices_answer_422(
+    client: AsyncClient, auth_headers: dict, catalog_clinic_setup: dict, surface_prices: dict
+):
+    """Tier keys are canonical "1".."5" and prices fit NUMERIC(10,2) (#1240)."""
+    category_id = await _create_catalog_category(client, auth_headers, "per_surface_bad")
+    base = {
+        "category_id": category_id,
+        "names": {"es": "Obturación"},
+        "default_price": 60,
+        "pricing_strategy": "per_surface",
+    }
+    created = await client.post(
+        "/api/v1/catalog/items",
+        json={**base, "internal_code": "OBT-BAD", "surface_prices": surface_prices},
+        headers=auth_headers,
+    )
+    assert created.status_code == 422, created.text
+
+    ok = await client.post(
+        "/api/v1/catalog/items",
+        json={**base, "internal_code": "OBT-OK", "surface_prices": {"1": 50}},
+        headers=auth_headers,
+    )
+    assert ok.status_code == 201, ok.text
+    updated = await client.put(
+        f"/api/v1/catalog/items/{ok.json()['data']['id']}",
+        json={"surface_prices": surface_prices},
+        headers=auth_headers,
+    )
+    assert updated.status_code == 422, updated.text

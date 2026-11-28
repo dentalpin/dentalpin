@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import type { Cabinet } from '~/types'
+import { PERMISSIONS } from '~/config/permissions'
 
 const { t } = useI18n()
 const clinic = useClinic()
-const { isAdmin } = usePermissions()
+const { can } = usePermissions()
+// Same gate as POST/PUT/DELETE /agenda/cabinets; dentist holds it too.
+const canWrite = computed(() => can(PERMISSIONS.cabinets.write))
 
 const showForm = ref(false)
 const editing = ref<Cabinet | null>(null)
@@ -45,7 +48,7 @@ async function handleDelete() {
     :title="t('settings.cabinets')"
   >
     <template
-      v-if="isAdmin"
+      v-if="canWrite"
       #actions
     >
       <UButton
@@ -106,7 +109,7 @@ async function handleDelete() {
             </UBadge>
           </div>
           <div
-            v-if="isAdmin"
+            v-if="canWrite"
             class="flex items-center gap-1 shrink-0"
           >
             <UButton

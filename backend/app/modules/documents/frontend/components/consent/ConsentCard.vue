@@ -76,9 +76,13 @@ async function refresh() {
 async function create() {
   busy.value = true
   try {
-    const result = await api.post<{ data: { id: string } }>('/api/v1/documents/consents', {
+    const result = await api.post<{ data: { id: string, unknown_variables?: string[] } }>('/api/v1/documents/consents', {
       patient_id: props.ctx.patient.id, template_id: templateId.value
     })
+    const unknown = result.data.unknown_variables
+    if (unknown?.length) {
+      toast.add({ title: t('documents.consent.unknownVariables', { names: unknown.join(', ') }), color: 'warning' })
+    }
     await link(result.data.id, 'sign')
     await refresh()
   } finally { busy.value = false }

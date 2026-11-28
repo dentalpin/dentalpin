@@ -81,7 +81,8 @@ export default defineNuxtPlugin(() => {
     labelKey: 'invoiceSeries.title',
     descriptionKey: 'invoiceSeries.description',
     icon: 'i-lucide-hash',
-    permission: PERMISSIONS.admin.clinicRead,
+    // Same gate as GET/POST/PUT /billing/series; dentist holds it (#542).
+    permission: PERMISSIONS.billing.admin,
     to: '/settings/invoice-series',
     searchKeywords: ['series', 'numeracion', 'invoice', 'numbering', 'factura'],
     order: 10
