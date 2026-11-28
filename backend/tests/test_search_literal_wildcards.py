@@ -77,7 +77,7 @@ async def test_pipeline_search_treats_percent_and_underscore_literally(
     ).scalar_one()
     patient = Patient(id=uuid4(), clinic_id=test_clinic.id, first_name="Ana", last_name="Lopez")
     db_session.add(patient)
-    for title in ("Fase_1 implante", "Fase.1 ortodoncia", "Limpieza"):
+    for title in ("Fase_1 implante", "Fase.1 ortodoncia", "Limpieza", "Pago 40/60%"):
         db_session.add(
             TreatmentPlan(
                 id=uuid4(),
@@ -98,9 +98,12 @@ async def test_pipeline_search_treats_percent_and_underscore_literally(
         )
         return {r["plan_title"] for r in rows}
 
-    assert await titles("%") == set()
+    # Only the title with a real "%", not every plan.
+    assert await titles("%") == {"Pago 40/60%"}
     assert await titles("Fase_1") == {"Fase_1 implante"}
     assert await titles("fase") == {"Fase_1 implante", "Fase.1 ortodoncia"}
+    # The escape character "/" itself matches literally too.
+    assert await titles("40/60%") == {"Pago 40/60%"}
 
 
 @pytest.mark.asyncio
