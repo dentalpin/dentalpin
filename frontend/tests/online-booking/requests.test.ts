@@ -164,13 +164,27 @@ describe('online booking reception', () => {
     expect(label!.text()).not.toBe(button!.text())
   })
 
+  it.each([
+    [['body', 'reasons', 2, 'duration_minutes'], 'Input should be less than or equal to 480', 'onlineBooking.reasonDuration (3)'],
+    [['body', 'embed_origins', 0], 'Expected HTTPS origin', 'onlineBooking.embedOrigins (1)']
+  ])('shows a field-specific 422 error', async (loc, message, field) => {
+    wrapper = await mountSuspended(RequestsPage)
+    await clickByText(wrapper, 'onlineBooking.settingsTitle')
+    await vi.waitFor(() => expect(wrapper!.text()).toContain('onlineBooking.rules'))
+    put.mockRejectedValueOnce({ statusCode: 422, data: { detail: [{ loc, msg: message }] } })
+    await clickByText(wrapper, 'onlineBooking.saveSettings')
+    await vi.waitFor(() => expect(wrapper!.find('[role="alert"]').text()).toContain(field))
+    expect(wrapper!.find('[role="alert"]').text()).toContain(message)
+    expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.anything(), { errorToast: false })
+  })
+
   it('saves public branding without losing other settings', async () => {
     wrapper = await mountSuspended(RequestsPage)
     await clickByText(wrapper, 'onlineBooking.settingsTitle')
     await vi.waitFor(() => expect(wrapper!.find('input[maxlength="120"]').exists()).toBe(true))
     await wrapper.find('input[maxlength="120"]').setValue('Reserva dental')
     await clickByText(wrapper, 'onlineBooking.saveSettings')
-    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, slot_minutes: 30, title_es: 'Reserva dental' })))
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ enabled: false, slot_minutes: 30, title_es: 'Reserva dental' }), { errorToast: false }))
   })
 
   it('allows adding a visit reason and saving its duration', async () => {
@@ -182,9 +196,10 @@ describe('online booking reception', () => {
     await names[2]!.setValue('Tratamiento')
     await names[3]!.setValue('Treatment')
     const durations = wrapper.findAll('input[type="number"]')
+    expect(durations[durations.length - 5]!.attributes('max')).toBe('480')
     await durations[durations.length - 5]!.setValue('75')
     await clickByText(wrapper, 'onlineBooking.saveSettings')
-    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ reasons: expect.arrayContaining([expect.objectContaining({ name_es: 'Tratamiento', name_en: 'Treatment', duration_minutes: 75, active: true })]) })))
+    await vi.waitFor(() => expect(put).toHaveBeenCalledWith('/api/v1/online_booking/settings', expect.objectContaining({ reasons: expect.arrayContaining([expect.objectContaining({ name_es: 'Tratamiento', name_en: 'Treatment', duration_minutes: 75, active: true })]) }), { errorToast: false }))
   })
 
   it('paginates the queue and announces successful rejection', async () => {

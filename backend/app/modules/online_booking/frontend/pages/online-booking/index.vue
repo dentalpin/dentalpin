@@ -118,6 +118,25 @@ async function openSettings() {
     settingsError.value = t('onlineBooking.settingsError')
   }
 }
+function settingsValidationError(error: unknown): string {
+  const details = (error as { data?: { detail?: unknown } })?.data?.detail
+  if (!Array.isArray(details)) return t('onlineBooking.settingsError')
+  const labels: Record<string, string> = {
+    duration_minutes: 'reasonDuration', embed_origins: 'embedOrigins', public_url: 'publicUrl',
+    privacy_url: 'privacyUrl', redirect_url: 'redirectUrl', accent_color: 'accentColor'
+  }
+  const issues = details.flatMap((issue: { loc?: unknown, msg?: unknown }) => {
+    if (!Array.isArray(issue.loc)) return []
+    const key = [...issue.loc].reverse().find(part => typeof part === 'string' && part !== 'body')
+    if (!key) return []
+    const field = labels[key] ? t(`onlineBooking.${labels[key]}`) : key
+    const index = issue.loc.find(part => typeof part === 'number')
+    const name = typeof index === 'number' ? `${field} (${index + 1})` : field
+    return [typeof issue.msg === 'string' ? `${name}: ${issue.msg}` : name]
+  })
+  return issues.length ? issues.join('; ') : t('onlineBooking.settingsError')
+}
+
 async function saveSettings() {
   if (!settingsReady.value) return
   settingsLoading.value = true
@@ -134,7 +153,7 @@ async function saveSettings() {
     })) }
     for (const key of ['daily_limit', 'weekly_limit', 'active_patient_limit'] as const) if (!data[key]) data[key] = null
     for (const key of ['accent_color', 'title_es', 'intro_es', 'title_en', 'intro_en', 'public_url', 'professional_id', 'redirect_url', 'privacy_url'] as const) if (data[key] === '') (data as unknown as Record<string, unknown>)[key] = null
-    await api.put('/api/v1/online_booking/settings', data)
+    await api.put('/api/v1/online_booking/settings', data, { errorToast: false })
     if (logoFile.value) {
       await api.put('/api/v1/online_booking/settings/logo', { filename: logoFile.value.name, data: await logoBase64(logoFile.value) })
       logoFile.value = null
@@ -143,8 +162,8 @@ async function saveSettings() {
     }
     settingsOpen.value = false
     success.value = t('onlineBooking.settingsSaved')
-  } catch {
-    settingsError.value = t('onlineBooking.settingsError')
+  } catch (error) {
+    settingsError.value = errorStatus(error) === 422 ? settingsValidationError(error) : t('onlineBooking.settingsError')
   } finally {
     settingsLoading.value = false
   }
