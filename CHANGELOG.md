@@ -18,6 +18,7 @@ frontend as a Nuxt layer under its own Python package.
 
 ### Fixed
 
+- **Billing:** dentists, who hold `billing.admin`, now see the Invoice series settings page and can create, edit and reset series (#1273).
 - **Treatment plans:** the plan screen only offers the actions your role may perform (Confirm needs `plans.confirm`, Cancel plan `plans.close`, Reactivate `plans.reactivate`, edits `plans.write`), and assistants and receptionists can edit plans from the patient file again (#1270).
 - **Patients:** a receptionist no longer gets an "Access denied" toast when opening a patient (#1268).
 - **Recalls:** recall interval settings must be 0 to 60 months; a negative or huge value is rejected instead of producing an overdue suggestion or a server error (#1244).
